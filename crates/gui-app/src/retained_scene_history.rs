@@ -234,14 +234,27 @@ impl RetainedSceneHistory {
         while self.entries.len() >= MAX_ENTRIES {
             self.evict(0);
         }
-        self.entries.reserve(1);
-        while !self.entries.is_empty() && self.bytes_with_candidate(bytes, &geometry) > self.budget
+        // A growing vector may briefly own both allocations. Retire history
+        // before requesting storage, and reconsider growth after each eviction.
+        while !self.entries.is_empty()
+            && self
+                .bytes_with_candidate(bytes, &geometry)
+                .saturating_add(self.entry_growth_bytes())
+                > self.budget
         {
             self.evict(0);
         }
-        if self.bytes_with_candidate(bytes, &geometry) > self.budget {
+        if self
+            .bytes_with_candidate(bytes, &geometry)
+            .saturating_add(self.entry_growth_bytes())
+            > self.budget
+        {
             self.clear();
             return;
+        }
+        if self.entries.len() == self.entries.capacity() {
+            let capacity = self.entry_growth_capacity();
+            self.entries.reserve_exact(capacity - self.entries.len());
         }
         self.heap_bytes += bytes;
         self.active_geometry = None;
@@ -251,6 +264,21 @@ impl RetainedSceneHistory {
             heap_bytes: bytes,
             geometry,
         });
+    }
+
+    fn entry_growth_capacity(&self) -> usize {
+        self.entries
+            .capacity()
+            .saturating_mul(2)
+            .clamp(1, MAX_ENTRIES)
+    }
+
+    fn entry_growth_bytes(&self) -> usize {
+        if self.entries.len() < self.entries.capacity() {
+            0
+        } else {
+            capacity_bytes::<Entry>(self.entry_growth_capacity())
+        }
     }
 
     fn take(&mut self, key: &RetainedSceneCacheKey) -> Option<RetainedScene> {
@@ -339,6 +367,35 @@ mod tests {
     }
 
     #[test]
+    fn history_growth_admits_old_and_new_metadata_before_allocating() {
+        for fits_overlap in [false, true] {
+            let scene = scene();
+            let mut history = RetainedSceneHistory::default();
+            history.insert(key(0), scene.clone());
+            history.insert(key(1), scene.clone());
+            assert_eq!(history.entries.capacity(), 2);
+            let candidate_key = key(2);
+            let candidate = scene.clone();
+            let bytes =
+                candidate.heap_payload_bytes().unwrap() + candidate_key.heap_bytes().unwrap();
+            let peak = history.bytes_with_candidate(bytes, &candidate.geometry_observer())
+                + capacity_bytes::<Entry>(4);
+            history.budget = peak - usize::from(!fits_overlap);
+            history.insert(candidate_key, candidate);
+            assert!(history.entries.iter().any(|entry| entry.key == key(2)));
+            assert!(history.accounted_bytes() <= history.budget);
+            if fits_overlap {
+                assert_eq!(history.entries.len(), 3);
+                assert_eq!(history.entries.capacity(), 4);
+            } else {
+                assert_eq!(history.entries.len(), 2);
+                assert_eq!(history.entries.capacity(), 2);
+                assert!(history.entries.iter().all(|entry| entry.key != key(0)));
+            }
+        }
+    }
+
+    #[test]
     fn history_preserves_six_entries_and_retires_oldest_under_byte_pressure() {
         let scene = scene();
         let mut history = RetainedSceneHistory::default();
@@ -405,7 +462,7 @@ mod tests {
         let next = scene();
         let next_bytes = next.heap_payload_bytes().unwrap() + key(1).heap_bytes().unwrap();
         history.budget = next_bytes
-            + capacity_bytes::<Entry>(4)
+            + capacity_bytes::<Entry>(1)
             + capacity_bytes::<RetainedGeometryObserver>(history.retired_geometry.capacity())
             + pinned_bytes
             - 1;
