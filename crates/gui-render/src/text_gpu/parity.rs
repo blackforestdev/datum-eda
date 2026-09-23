@@ -175,7 +175,9 @@ fn owned_draw_matches_installed_text_renderer() {
                         &mut fonts,
                         &mut raster,
                         [256, 128],
-                        areas.iter().map(|area| owned_area(area, &layout)),
+                        areas
+                            .iter()
+                            .map(|area| owned_area(area, &layout, &run.rich_spans)),
                     )
                     .unwrap();
                     atlas.flush_for_test(&device, &queue);
@@ -221,7 +223,9 @@ fn owned_draw_matches_installed_text_renderer() {
                         &mut fonts,
                         &mut raster,
                         [256, 128],
-                        areas.iter().map(|area| owned_area(area, &layout)),
+                        areas
+                            .iter()
+                            .map(|area| owned_area(area, &layout, &run.rich_spans)),
                     )
                     .unwrap();
                     atlas.flush_for_test(&device, &queue);
@@ -405,8 +409,10 @@ fn pixels(
 fn owned_area<'a>(
     area: &TextArea<'_>,
     layout: &'a crate::text_layout::TextLayout,
-) -> super::Area<crate::text_layout::Runs<'a>> {
+    rich_spans: &'a [crate::TextRunSpan],
+) -> super::Area<'a, crate::text_layout::Runs<'a>> {
     super::Area {
+        rich_spans,
         rows: layout.layout_runs(),
         left: area.left,
         top: area.top,

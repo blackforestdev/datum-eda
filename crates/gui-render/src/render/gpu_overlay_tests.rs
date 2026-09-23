@@ -688,3 +688,6 @@ mod terminal_resource_tests;
 
 #[path = "gpu_glyph_continuation_tests.rs"]
 mod glyph_continuation_tests;
+
+#[path = "gpu_text_paint_tests.rs"]
+mod text_paint_tests;

@@ -19484,7 +19484,14 @@
       "s4_owned_layout_progress": {
         "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
         "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_text_paint_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
+          "status": "Rich-span color is now live paint identity; exact text/style/font/size shaping and layout are shared across recolors. Actual GPU shared-area/fresh-pixel proof passes. Full dependency combinations, preparation metadata accounting and qualification remain open."
+        }
+      ]
     },
     {
       "id": "REUSE-TEXT-LAYOUT",
@@ -19601,7 +19608,14 @@
       "s4_owned_layout_progress": {
         "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
         "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_text_paint_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
+          "status": "Rich-span color is now live paint identity; exact text/style/font/size shaping and layout are shared across recolors. Actual GPU shared-area/fresh-pixel proof passes. Full dependency combinations, preparation metadata accounting and qualification remain open."
+        }
+      ]
     },
     {
       "id": "REUSE-CONTROL-KEY",
@@ -28256,7 +28270,12 @@
       "Known terminal lineage and convergence failures remain unresolved; no full drift pass.",
       "No dependency, version, license, product mutation, shader/pass/AA or resize qualification change."
     ],
-    "followup_evidence": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
+    "followup_evidence": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json",
+    "rich_paint_identity_superseded_by": {
+      "work": "s4_text_paint_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
+      "status": "Rich-span color now belongs to exact glyph-preparation paint identity, while span text/style and font/size preserve shaping identity. Current areas borrow live colors; historical receipts and full dependency/accounting/qualification gaps remain."
+    }
   },
   "s2_screen_upload_owner_work": {
     "status": "Bounded screen upload ownership migration; GPI-S2 remains in progress",
@@ -28504,7 +28523,12 @@
       "Full per-adapter counters, native backend/scale/endurance/resource qualification and S2 completion remain open.",
       "No dependency, vendoring, Cargo, visual-prototype, product-authority, rendering schedule or resize qualification change."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json",
+    "rich_paint_identity_superseded_by": {
+      "work": "s4_text_paint_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
+      "status": "Rich-span color now belongs to exact glyph-preparation paint identity, while span text/style and font/size preserve shaping identity. Current areas borrow live colors; historical receipts and full dependency/accounting/qualification gaps remain."
+    }
   },
   "s2_world_bundle_key_work": {
     "status": "World bundle identity uses actual encoded batches; GPI-S2 remains in progress",
@@ -31997,7 +32021,12 @@
       "No native UX/endurance, latency improvement, global adoption, S4 completion or S5 qualification claim. No dependency, vendoring, prototype, font authority, budget amendment or resize change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
-    "subsequent_layout_migration": "Default Buffer/BufferLine retention was later replaced by s4_owned_layout_work; preserve this GPU slice as its original bounded evidence."
+    "subsequent_layout_migration": "Default Buffer/BufferLine retention was later replaced by s4_owned_layout_work; preserve this GPU slice as its original bounded evidence.",
+    "rich_paint_identity_superseded_by": {
+      "work": "s4_text_paint_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
+      "status": "Rich-span color now belongs to exact glyph-preparation paint identity, while span text/style and font/size preserve shaping identity. Current areas borrow live colors; historical receipts and full dependency/accounting/qualification gaps remain."
+    }
   },
   "s4_owned_layout_work": {
     "status": "Default text cache now retains Datum-owned shaping/layout; complete caps and private scratch accounting remain open",
@@ -33073,5 +33102,36 @@
       "Other S4 resource/shaping work and S5 native/backend/fault/fairness/endurance/independent qualification remain. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype or specification amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json"
+  },
+  "s4_text_paint_adoption_work": {
+    "status": "Default rich-text paint identity is separate from shared shaping/layout identity; full text dependency/accounting qualification remains open",
+    "base_commit": "4464cd6b",
+    "production_consumers": [
+      "Shared TextBufferCache and TextLayout used by workspace/terminal and dialog text",
+      "Default workspace and overlay Draw glyph preparation via build_text_areas"
+    ],
+    "retired_paths": [
+      "Including rich-span color in shaped-cache exact keys and lookup fingerprints",
+      "Baking current rich-span colors into retained ShapeLine attributes",
+      "Reshaping or retaining duplicate layouts for otherwise-identical differently colored rich runs"
+    ],
+    "behavior": [
+      "Retain span text, bold/italic style, face and size in shaping identity. Store stable span indices using the existing public Attrs metadata API; resolve colors from the current borrowed TextRun spans during glyph preparation. No dependency-private access or copied source.",
+      "Different colored areas share one immutable shape/layout while each produces its own glyph colors. Paint signatures include exact run-index/color-bit tuples in one flat vector, so recolors update GPU instances and unchanged paint remains reusable. Plain/default and intrinsic color glyph behavior is preserved.",
+      "Move the existing preparation signature builder into a small shared implementation module to keep the ceiling-bound geometry source below its existing limit. No new user-facing text policy, font, shaping mode, alignment, locale or layout authority."
+    ],
+    "proof": {
+      "renderer": "328 renderer tests pass, 11 diagnostic/visual cases filtered. New actual-GPU shared-color-layout test confirms one cached layout for two differently colored areas, unchanged cache revision across recolor, changed pixels matching a fresh renderer and warm preparation reuse. Existing owned-vs-library GPU rich/plain parity, cache bounds, layout and resource regressions pass.",
+      "boundary": "One additional focused test passes on final source: resolve paint indices and compare exact glyph/layout data with the library Buffer reference for split combining marks, RTL, equal-style spans, empty spans and line breaks at two wrap widths. This test was added after the 328-test suite; no larger full-suite count is claimed.",
+      "development": "Initial suite:326 pass,one old terminal color-key expectation fails. Updated that test to require unchanged shaping identity and changed paint identity. A new GPU test initially tried to inspect a private cache field; replaced it with production cache revision/entry and pixel assertions. Both failed receipts preserved.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh application build pass. Source health 2,265, dependency and governance gates pass.",
+      "drift": "Initial drift stopped at the obsolete terminal color-key test marker. Updated the guard and its missing-proof negative control; 11 guard tests and current guard pass. Full rerun stops at the existing Console golden mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "Current fixed font catalog/locale and supported Basic shaping profiles remain controlling; this does not add dynamic font/locale/shaping-feature controls or qualify every dependency combination. REUSE-TEXT-KEY/LAYOUT remain partial.",
+      "The flat paint-signature color vector is separate retained preparation metadata. Its complete CPU/peak/aggregate accounting remains outstanding with other signature/registry metadata; no complete shaped/scratch/resource cap acceptance follows.",
+      "Other S4 work and S5 native/backend/fault/fairness/endurance/independent qualification remain. No issue or S4/S5 closure, application performance claim, dependency, vendoring, license, prototype, numerical cap or specification amendment. Preserve GEFN, concurrent multi-device exclusion and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json"
   }
 }

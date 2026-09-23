@@ -19,13 +19,14 @@ pub(super) struct CachedTextBuffer {
 pub(super) fn build_text_areas<'a>(
     cache: &'a [CachedTextBuffer],
     indices: &[usize],
-    runs: &[TextRun],
-) -> Vec<Area<crate::text_layout::Runs<'a>>> {
+    runs: &'a [TextRun],
+) -> Vec<Area<'a, crate::text_layout::Runs<'a>>> {
     indices
         .iter()
         .zip(runs.iter())
         .map(|(index, run)| Area {
             rows: cache[*index].buffer.layout_runs(),
+            rich_spans: &run.rich_spans,
             left: run.x,
             top: run.y,
             scale: 1.0,
@@ -51,7 +52,6 @@ pub(super) fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBuf
             .iter()
             .map(|span| TextBufferSpanKey {
                 text: span.text.clone(),
-                color_bits: span.color.map(f32::to_bits),
                 bold: span.bold,
                 italic: span.italic,
             })
@@ -201,10 +201,7 @@ fn matches_run(key: &TextBufferKey, run: &TextRun, (width_px, height_px): (u32, 
             .iter()
             .zip(&run.rich_spans)
             .all(|(key, span)| {
-                key.text == span.text
-                    && key.color_bits == span.color.map(f32::to_bits)
-                    && key.bold == span.bold
-                    && key.italic == span.italic
+                key.text == span.text && key.bold == span.bold && key.italic == span.italic
             })
 }
 
@@ -212,7 +209,7 @@ fn shape_fingerprint<'a>(
     text: &str,
     size_bits: u32,
     face: TextFace,
-    spans: impl Iterator<Item = (&'a str, [u32; 3], bool, bool)>,
+    spans: impl Iterator<Item = (&'a str, bool, bool)>,
 ) -> u64 {
     let mut hash = std::collections::hash_map::DefaultHasher::new();
     (text, size_bits, face).hash(&mut hash);
@@ -227,14 +224,9 @@ fn run_fingerprint(run: &TextRun) -> u64 {
         &run.text,
         run.size.to_bits(),
         run.face,
-        run.rich_spans.iter().map(|span| {
-            (
-                span.text.as_str(),
-                span.color.map(f32::to_bits),
-                span.bold,
-                span.italic,
-            )
-        }),
+        run.rich_spans
+            .iter()
+            .map(|span| (span.text.as_str(), span.bold, span.italic)),
     )
 }
 
@@ -380,7 +372,7 @@ impl TextBufferCache {
                     key.face,
                     key.rich_spans
                         .iter()
-                        .map(|span| (span.text.as_str(), span.color_bits, span.bold, span.italic)),
+                        .map(|span| (span.text.as_str(), span.bold, span.italic)),
                 );
                 (fingerprint, index)
             }));
