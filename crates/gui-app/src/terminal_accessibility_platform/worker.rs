@@ -22,7 +22,7 @@ const WAKE_BYTES: usize = 64;
 const ANNOUNCEMENT_CAPACITY: usize = 64;
 
 struct PendingUpdate {
-    snapshot: TerminalAccessibilitySnapshot,
+    snapshot: Arc<TerminalAccessibilitySnapshot>,
     events: Vec<TerminalAccessibilityEvent>,
     terminal_available: bool,
     announcements: VecDeque<AccessibilityAnnouncement>,
@@ -32,7 +32,7 @@ struct PendingUpdate {
 
 struct Shared {
     pending: Option<PendingUpdate>,
-    latest_snapshot: TerminalAccessibilitySnapshot,
+    latest_snapshot: Arc<TerminalAccessibilitySnapshot>,
     terminal_available: bool,
     latest_preferences: Vec<GlobalPreferencesAccessibleNode>,
     latest_menus: Vec<MenuAccessibleNode>,
@@ -45,7 +45,7 @@ pub(crate) struct PlatformBridge {
 
 impl PlatformBridge {
     pub(crate) fn start(
-        snapshot: TerminalAccessibilitySnapshot,
+        snapshot: Arc<TerminalAccessibilitySnapshot>,
         events: Vec<TerminalAccessibilityEvent>,
     ) -> io::Result<Self> {
         Self::start_update(PendingUpdate {
@@ -110,7 +110,7 @@ impl PlatformBridge {
 
     pub(crate) fn publish(
         &mut self,
-        snapshot: TerminalAccessibilitySnapshot,
+        snapshot: Arc<TerminalAccessibilitySnapshot>,
         events: Vec<TerminalAccessibilityEvent>,
     ) {
         if let Ok(mut shared) = self.shared.lock() {
@@ -275,7 +275,7 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
                 state.menus = update.menus;
                 let messages = events::messages(
                     || active.take_serial(),
-                    previous.as_ref(),
+                    previous.as_deref(),
                     &state.snapshot,
                     &update.events,
                 );
@@ -351,7 +351,7 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
 }
 
 fn connect(
-    snapshot: &TerminalAccessibilitySnapshot,
+    snapshot: &Arc<TerminalAccessibilitySnapshot>,
     terminal_available: bool,
     preferences: Vec<GlobalPreferencesAccessibleNode>,
     menus: Vec<MenuAccessibleNode>,
@@ -387,8 +387,8 @@ fn connect(
     Ok((connection, service))
 }
 
-fn empty_snapshot() -> TerminalAccessibilitySnapshot {
-    TerminalAccessibilitySnapshot {
+fn empty_snapshot() -> Arc<TerminalAccessibilitySnapshot> {
+    Arc::new(TerminalAccessibilitySnapshot {
         session_id: String::new(),
         title: "Terminal".to_string(),
         text: String::new(),
@@ -398,7 +398,7 @@ fn empty_snapshot() -> TerminalAccessibilitySnapshot {
         focused: false,
         bell_count: 0,
         bounds: Default::default(),
-    }
+    })
 }
 
 fn take_update(shared: &Mutex<Shared>) -> Option<PendingUpdate> {
@@ -454,8 +454,8 @@ mod tests {
     use crate::console_accessibility::AnnouncementPriority;
     use crate::terminal_accessibility::TerminalAccessibilityBounds;
 
-    fn snapshot(text: &str) -> TerminalAccessibilitySnapshot {
-        TerminalAccessibilitySnapshot {
+    fn snapshot(text: &str) -> Arc<TerminalAccessibilitySnapshot> {
+        Arc::new(TerminalAccessibilitySnapshot {
             session_id: "s".into(),
             title: "Terminal".into(),
             text: text.into(),
@@ -465,7 +465,7 @@ mod tests {
             focused: true,
             bell_count: 0,
             bounds: TerminalAccessibilityBounds::default(),
-        }
+        })
     }
 
     #[test]
@@ -550,8 +550,10 @@ mod tests {
             focused: false,
         }];
         bridge.publish_menus(menus.clone());
+        let latest = snapshot("latest terminal");
+        let retired = Arc::downgrade(&latest);
         bridge.publish(
-            snapshot("latest terminal"),
+            Arc::clone(&latest),
             vec![TerminalAccessibilityEvent::TextChanged],
         );
         bridge.publish_preferences(preferences.clone());
@@ -563,12 +565,26 @@ mod tests {
         assert_eq!(pending.menus, menus);
         assert_eq!(pending.preferences, preferences);
         assert_eq!(pending.snapshot.text, "latest terminal");
+        assert!(Arc::ptr_eq(&pending.snapshot, &latest));
+        assert!(Arc::ptr_eq(
+            &bridge.shared.lock().unwrap().latest_snapshot,
+            &latest
+        ));
+        let service = ServiceState::new(Arc::clone(&pending.snapshot), true, Vec::new());
+        assert!(Arc::ptr_eq(&service.snapshot, &latest));
+        drop(latest);
         assert!(pending.terminal_available);
         assert_eq!(pending.announcements.len(), 1);
         // The next update after the pending batch was consumed must also retain
         // the independently cached menu projection.
         bridge.publish(snapshot("next terminal"), Vec::new());
         assert_eq!(take_update(&bridge.shared).unwrap().menus, menus);
+        // A consumed update and service may still read the previous generation.
+        assert_eq!(service.snapshot.text, "latest terminal");
+        drop(pending);
+        assert!(retired.upgrade().is_some());
+        drop(service);
+        assert!(retired.upgrade().is_none());
         bridge.publish_menus(Vec::new());
         let pending = take_update(&bridge.shared).unwrap();
         assert!(pending.menus.is_empty());

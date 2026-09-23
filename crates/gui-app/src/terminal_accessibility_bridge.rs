@@ -12,7 +12,7 @@ use datum_gui_protocol::GlobalPreferencesAccessibleNode;
 use datum_gui_protocol::gui_menu_model::accessibility::{
     MenuAccessibleNode, menu_accessibility_nodes,
 };
-use std::collections::VecDeque;
+use std::{collections::VecDeque, sync::Arc};
 
 const ANNOUNCEMENT_LOG_CAPACITY: usize = 64;
 
@@ -28,7 +28,7 @@ pub(crate) enum TerminalAccessibilityEvent {
 }
 
 pub(crate) struct LinuxTerminalAccessibilityBridge {
-    current: Option<TerminalAccessibilitySnapshot>,
+    current: Option<Arc<TerminalAccessibilitySnapshot>>,
     preferences: Vec<GlobalPreferencesAccessibleNode>,
     menus: Vec<MenuAccessibleNode>,
     platform: Option<PlatformBridge>,
@@ -131,7 +131,8 @@ impl LinuxTerminalAccessibilityBridge {
                 TerminalAccessibilityEvent::BoundsChanged,
             ]);
         }
-        self.current = Some(next.clone());
+        let next = Arc::new(next);
+        self.current = Some(Arc::clone(&next));
         if self.publish_platform {
             match &mut self.platform {
                 Some(platform) => platform.publish(next, events.clone()),
@@ -145,7 +146,7 @@ impl LinuxTerminalAccessibilityBridge {
 
     #[cfg(test)]
     pub(crate) fn current(&self) -> Option<&TerminalAccessibilitySnapshot> {
-        self.current.as_ref()
+        self.current.as_deref()
     }
 
     #[cfg(test)]

@@ -58,7 +58,7 @@ const STATE_SELECTABLE_TEXT: u32 = 38;
 
 #[derive(Clone)]
 pub(super) struct ServiceState {
-    pub(super) snapshot: TerminalAccessibilitySnapshot,
+    pub(super) snapshot: std::sync::Arc<TerminalAccessibilitySnapshot>,
     pub(super) application_id: i32,
     pub(super) registry_parent: (String, String),
     pub(super) bus_name: String,
@@ -69,12 +69,12 @@ pub(super) struct ServiceState {
 
 impl ServiceState {
     pub(super) fn new(
-        snapshot: TerminalAccessibilitySnapshot,
+        snapshot: impl Into<std::sync::Arc<TerminalAccessibilitySnapshot>>,
         terminal_available: bool,
         preferences: Vec<GlobalPreferencesAccessibleNode>,
     ) -> Self {
         Self {
-            snapshot,
+            snapshot: snapshot.into(),
             application_id: 0,
             registry_parent: (String::new(), NULL_PATH.into()),
             bus_name: String::new(),

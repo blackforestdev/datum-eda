@@ -1,0 +1,30 @@
+{
+  "status": "Default terminal accessibility publications share immutable snapshot allocations; S4 remains in progress",
+  "base_commit": "841fc66a",
+  "production_consumers": [
+    "Main terminal accessibility bridge",
+    "AT-SPI pending/latest update storage",
+    "AT-SPI service state and previous-generation event comparison",
+    "Interleaved Console announcements, preferences and menu publications carrying terminal state"
+  ],
+  "shared_owner": "Arc<TerminalAccessibilitySnapshot> across GUI and AT-SPI worker",
+  "retired_paths": [
+    "Deep text/link/title snapshot clones at bridge retention, worker queue/latest storage, service connection and previous-state event comparison"
+  ],
+  "behavior": "One immutable allocation per produced snapshot is shared through publication and dispatch. Existing coalescing, event generation, wake/reconnection attempts and PTY processing remain unchanged. Old generations survive only while readers retain them.",
+  "proof": {
+    "focused": "29 accessibility tests passed; 1 live-bus test ignored, 364 filtered. Existing interleaved publication regression now verifies shared allocation identity, immutable previous generation and final-reader release.",
+    "source_health": "Source-health gate, 13 policy tests and dependency-authority check passed.",
+    "drift": "Clippy and preceding checks passed; full drift exited 1 at existing console-routine-focused 1x golden mismatch: 3778 pixels (0.384318%), dat-console-revision-golden-hrak. Later gates not run; goldens unchanged."
+  },
+  "limits": [
+    "Core still constructs an accessibility projection per refresh; no claim of zero hidden-terminal work.",
+    "No full resource accounting, native timing or HP09/S4/S5 qualification; carried obligations unchanged.",
+    "No dependency, prototype, numerical budget or resize changes."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/accessibility-sharing/result.json",
+  "artifacts_sha256_uncompressed": {
+    "tests.log.gz": "c7ce2100ccb8359ecde65c60c0bee54c240a5799559f758f6b4e1179c932d23e",
+    "drift.log.gz": "d93b076f3e432b7c2581d86998001c1bb0d02cc839dd64efefd413dc16ca1779"
+  }
+}
