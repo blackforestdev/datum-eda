@@ -40,6 +40,16 @@ fn rich_color_changes_reuse_shapes_and_update_each_area() {
         "simultaneous colors share one layout"
     );
     let revision = renderer.renderer.text_buffers.revision();
+    prepared.menu_overlay_text_runs[0].text = "unused fallback ".repeat(4096);
+    prepared.menu_overlay_text_runs[1].text = "different unused fallback".into();
+    let prepares_before = renderer.renderer.text_preparation.overlay_prepares;
+    assert_eq!(original, capture(&mut renderer, &prepared));
+    assert_eq!(renderer.renderer.text_buffers.revision(), revision);
+    assert_eq!(
+        renderer.renderer.text_preparation.overlay_prepares,
+        prepares_before
+    );
+
     let prepares = renderer.renderer.text_preparation.overlay_prepares;
     prepared.menu_overlay_text_runs[0].rich_spans[0].color = [0.2, 0.1, 1.0];
     prepared.menu_overlay_text_runs[1].rich_spans[1].color = [1.0, 0.1, 0.2];

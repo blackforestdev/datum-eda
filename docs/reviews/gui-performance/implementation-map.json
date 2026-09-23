@@ -6679,7 +6679,14 @@
         "unfinished_qualification": "Warm zero shaping; miss correct changed key; uncached width parity",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_text_key_ownership_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
+          "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
+        }
+      ]
     },
     {
       "id": "HP15-02",
@@ -6759,7 +6766,14 @@
         "unfinished_qualification": "Bounded key and payload memory; oversized bypass and ownership release",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_text_key_ownership_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
+          "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
+        }
+      ]
     },
     {
       "id": "HP16-01",
@@ -15852,7 +15866,14 @@
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Implementation complete for this scalar-cache predicate; qualification remains unqualified under original acceptance rule.",
         "s4_implementation_evidence": "s4_width_cache_ownership_work"
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_text_key_ownership_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
+          "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
+        }
+      ]
     },
     {
       "id": "MEM-MESH-ENTRIES",
@@ -19561,6 +19582,11 @@
           "work": "s4_text_paint_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
           "status": "Rich-span color is now live paint identity; exact text/style/font/size shaping and layout are shared across recolors. Actual GPU shared-area/fresh-pixel proof passes. Full dependency combinations, preparation metadata accounting and qualification remain open."
+        },
+        {
+          "work": "s4_text_key_ownership_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
+          "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
         }
       ]
     },
@@ -19685,6 +19711,11 @@
           "work": "s4_text_paint_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
           "status": "Rich-span color is now live paint identity; exact text/style/font/size shaping and layout are shared across recolors. Actual GPU shared-area/fresh-pixel proof passes. Full dependency combinations, preparation metadata accounting and qualification remain open."
+        },
+        {
+          "work": "s4_text_key_ownership_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
+          "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
         }
       ]
     },
@@ -33466,5 +33497,38 @@
       "S4 remains selected with sixteen recorded implementation gaps; S5 qualification and the issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendor, license, prototype, specification cap or sequencing change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/result.json"
+  },
+  "s4_text_key_ownership_work": {
+    "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open",
+    "base_commit": "9d447d8a",
+    "production_consumers": [
+      "Shared TextBufferCache exact comparison, borrowed fingerprint and owned key construction for workspace/dialog/terminal rich runs",
+      "Thread-local scalar width/wrapped-height measurement cache admission and ownership reporting"
+    ],
+    "retired_paths": [
+      "Duplicating and hashing plain fallback text that TextLayout ignores when rich spans exist",
+      "Width-cache retained totals and byte admission that omit ring/key allocation headers"
+    ],
+    "behavior": [
+      "Use one canonical plain-text component: exact run.text for plain runs, empty for rich runs whose spans are authoritative. Retain/hash/compare only actual span text/style in rich keys. Preserve legacy extent derivation, font/size authority, paint, clipping and layout behavior. A fallback-only change can still affect explicitly derived extent; it no longer changes shaping identity.",
+      "Track boxed-key allocation cost separately from key text length. Charge Datum headers/alignment and full ring capacity in the existing 128 KiB total-owned allowance, while preserving 256 entries and 64 KiB key text. Eviction removes the exact charged box cost; release returns scoped payload/header ownership to zero."
+    ],
+    "dependency_audit": {
+      "font_catalog_locale": "load_datum_fonts constructs one process OnceLock catalog/locale; measurement and renderer systems clone it. Production db_mut occurs only while installing the initial embedded sources. No public TextRun locale/font-reload/revision controls exist.",
+      "shape_inputs": "Plain text or exact rich span text, face, size, span bold/italic. Basic shaping, tab width 8 and process locale are fixed. Direction follows exact paragraph input. Rich colors remain live paint.",
+      "layout_inputs": "Physical width/height extent, size-derived 1.22 line height, WordOrGlyph wrapping and default alignment. Placement/clip/target/atlas dependencies remain in layout or GPU preparation as appropriate.",
+      "boundary": "This identifies current immutable authority and mutable inputs; it does not claim dynamic font reload, arbitrary shaping feature support or the original independent S5 dependency qualification."
+    },
+    "proof": {
+      "renderer": "340 renderer tests pass, 11 diagnostic/visual cases filtered. Actual scoped allocator proof reconciles width-cache ring and string payload/header costs through 600 growth/eviction operations and final release. Rich key proof verifies zero retained fallback capacity, unchanged shared shaping on fallback edits and a miss when visible span text changes. GPU rich-paint test verifies fallback-only edits preserve pixels, cache revision and glyph prepare count, followed by correct rich-color updates.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2272, dependency authority and governance checks pass. Initial test compilation needed an explicit usize sum type; fixed and failed log preserved.",
+      "scope": "No native input or benchmark campaign. Full drift not rerun; recorded Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Earlier width payload completion did not include Datum allocation headers; this production correction repairs that omission and preserves its historical evidence. Measurement registry, private font/shaping scratch and native/RSS observations remain separate broader accounting boundaries.",
+      "Current-frame/source TextRun still owns any fallback string; only the retained shaping key removes its redundant copy. No claim that all GUI text allocations disappear or that measured frame latency improved.",
+      "No new predicate, S4/S5 or issue closure; sixteen recorded implementation gaps remain. Preserve original dependency qualification, GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendor, license, prototype, numerical specification cap or sequencing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json"
   }
 }
