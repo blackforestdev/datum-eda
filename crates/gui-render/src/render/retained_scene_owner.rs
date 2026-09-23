@@ -77,6 +77,23 @@ impl RetainedGeometryObserver {
 }
 
 impl RetainedScene {
+    pub(crate) fn admitted_hit_index(
+        regions: Vec<WorldHitRegion>,
+        budget: &Arc<crate::text_gpu::budget::Budget>,
+        scope: &crate::cpu_alloc::Scope,
+        limit: usize,
+    ) -> anyhow::Result<datum_gui_viewport::SpatialHitIndex<HitTarget>> {
+        let layouts =
+            datum_gui_viewport::SpatialHitIndex::<HitTarget>::construction_layouts(regions.len())
+                .ok_or_else(|| anyhow::anyhow!("retained hit index layout overflow"))?;
+        let bytes = layouts
+            .into_iter()
+            .map(crate::cpu_alloc::heap::allocation_bytes)
+            .fold(0usize, usize::saturating_add);
+        document_cpu::admit_constructor_allocation(budget, scope, bytes, limit, "hit index")?;
+        Ok(datum_gui_viewport::SpatialHitIndex::try_new(regions)?)
+    }
+
     pub(crate) fn registered_cpu(self) -> Self {
         document_cpu::register(&self);
         self

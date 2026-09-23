@@ -1,0 +1,56 @@
+{
+  "status": "Shared hit index reserves exact tree capacity and retained constructors admit its storage before allocation",
+  "base_commit": "419711c7",
+  "production_consumers": [
+    "Shared SpatialHitIndex constructors and their existing viewport consumers",
+    "Board and companion retained hit-index construction through native and capture paths"
+  ],
+  "retired_paths": [
+    "Incremental hit-tree node-vector growth during recursive construction",
+    "Retained constructors built the hit index without admitting its order/node allocations"
+  ],
+  "behavior": [
+    "Compute exact balanced-tree node count from region count in logarithmic time, with the existing eight-region leaf rule shared by planning and building. Expose checked allocation layouts without exposing the private node type. Reserve ordering and node storage exactly and fallibly before construction. Both retained constructors include those allocations with existing document ownership and live constructor staging before building the index. Retain topmost-hit ordering, query budget, shape semantics and compatibility constructor boundaries."
+  ],
+  "proof": {
+    "viewport": "48 viewport tests pass, including exact planned versus built node capacities at leaf/level boundaries, overflow-layout refusal, topmost-hit preservation and the existing 100000-region bounded-query case.",
+    "renderer": "361 renderer tests pass, 11 filtered. Real checked-in board hit-index test checks one-byte admission refusal, dropped staging on failure, exact allocator-inclusive retained bytes on success and release to zero. Existing constructor, GPU, painter and hit correctness tests pass.",
+    "app": "394 app tests pass, 16 ignored.",
+    "lint_build": "Strict renderer/app all-targets Clippy with app visual feature, fresh visual app build and source health2280/dependency/governance/format checks pass.",
+    "scope": "No new native OS-input/backend/scale/endurance or broad drift qualification; original S5 obligations remain."
+  },
+  "limits": [
+    "This admits index ordering/node arrays, not earlier hit-region/shape production or later shared-owner/index metadata allocations. Other construction growth, scope bookkeeping, complete staging/concurrent admission and external weak-container ownership remain open.",
+    "Twelve implementation gaps and original S5 qualification remain required. No full CPU/history predicate closure, dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/result.json",
+  "logs": {
+    "viewport": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/viewport.log.gz",
+      "uncompressed_sha256": "6050f072b340590290285528baf286710fba1e3edec3a91460132356b280ea76"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/renderer.log.gz",
+      "uncompressed_sha256": "226c0562e406511e46df37e5af1d5d7059a0c7ed2fd4e1f6967d8b8984549a2b"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/app.log.gz",
+      "uncompressed_sha256": "0b3d2b353125fa90f82981f8ac16841a3ad345d0929029bbe42f21da74dcbea9"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/clippy.log.gz",
+      "uncompressed_sha256": "8d95922c17a3aa5c008cda7b792e7715c7d41c9d0e0731dfdc00fa724942688c"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/build.log.gz",
+      "uncompressed_sha256": "dd35180a92c0103cffd37961da97593a84fa647cc2dbaabde6c4f8cf6051f5a4"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-viewport/src/hit.rs": "a98cdc2a7f6eb28c36b3bb535624fe27e3790d4388656e1cb15dfc6d9528c52a",
+    "crates/gui-render/src/render/document_cpu.rs": "4827a515ee7849eed5088361124bdb8d959c11fa3fac5df129caac35c88af9e4",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "22eb50536bbe5c8d977ec114af00a168a2648694f5616c58770583412b5c8d30",
+    "crates/gui-render/src/render/scene_retained_access.rs": "e54b5819da0ea89da4000db27d414712459777e7b32b941cb8356c006e3cd1a6",
+    "crates/gui-render/src/render/schematic_retained.rs": "a4bbbfe3f72591b8ab15cdb907c51ac8a98e3e56d5cd17251c9ca89942fea83d"
+  }
+}

@@ -159,15 +159,31 @@ pub(crate) fn admit_vertex_expansion(
         .checked_mul(6)
         .ok_or_else(|| anyhow::anyhow!("retained vertex count overflow"))?;
     let layout = std::alloc::Layout::array::<crate::Vertex>(count)?;
+    admit_constructor_allocation(
+        budget,
+        scope,
+        allocation_bytes(layout),
+        limit,
+        "vertex expansion",
+    )
+}
+
+pub(crate) fn admit_constructor_allocation(
+    budget: &Arc<Budget>,
+    scope: &crate::cpu_alloc::Scope,
+    additional_bytes: usize,
+    limit: usize,
+    operation: &str,
+) -> anyhow::Result<()> {
     let usage = scope.usage();
     let staging = usage.payload_bytes.saturating_add(usage.tracking_bytes);
     let existing = usage_for_identity(&Arc::downgrade(budget));
     let required = (existing as u64)
         .saturating_add(staging)
-        .saturating_add(allocation_bytes(layout) as u64);
+        .saturating_add(additional_bytes as u64);
     anyhow::ensure!(
         required <= limit as u64,
-        "retained scene vertex expansion exceeds document CPU budget: {required} bytes including live owners and constructor staging; limit {limit}"
+        "retained scene {operation} exceeds document CPU budget: {required} bytes including live owners and constructor staging; limit {limit}"
     );
     Ok(())
 }
@@ -296,6 +312,50 @@ fn check_limit(observer: &RetainedGeometryObserver, limit: usize) -> anyhow::Res
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn real_hit_index_admission_includes_staging_and_matches_allocator() {
+        let mut state = crate::gpu_surface_pass::board_fixture_state();
+        state.scene.scene_id = "construction-hit-index-admission".into();
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let budget = scene.world_vertices.document_budget().unwrap();
+        let scope = crate::cpu_alloc::Scope::new("hit-index-construction-proof");
+        let regions = scope.with(|| scene.world_hit_index.regions().to_vec());
+        assert!(!regions.is_empty());
+        let layouts =
+            datum_gui_viewport::SpatialHitIndex::<crate::HitTarget>::construction_layouts(
+                regions.len(),
+            )
+            .unwrap();
+        let extra: usize = layouts.into_iter().map(allocation_bytes).sum();
+        let staging = scope.usage();
+        let limit = usage(&scene.geometry_observer())
+            + (staging.payload_bytes + staging.tracking_bytes) as usize
+            + extra;
+        let error =
+            RetainedScene::admitted_hit_index(regions, budget, &scope, limit - 1).unwrap_err();
+        assert!(error.to_string().contains("hit index exceeds"));
+        assert_eq!(scope.usage().allocations, 0);
+        let regions = scope.with(|| scene.world_hit_index.regions().to_vec());
+        let index = scope
+            .with(|| RetainedScene::admitted_hit_index(regions, budget, &scope, limit))
+            .unwrap();
+        let bytes = index
+            .heap_bytes_with(
+                |target| {
+                    Some(match target {
+                        crate::HitTarget::AuthoredObject(id) => capacity_bytes::<u8>(id.capacity()),
+                        _ => 0,
+                    })
+                },
+                |layout| Some(allocation_bytes(layout)),
+            )
+            .unwrap();
+        let live = scope.usage();
+        assert_eq!(bytes as u64, live.payload_bytes + live.tracking_bytes);
+        drop(index);
+        assert_eq!(scope.usage().allocations, 0);
+    }
+
     #[test]
     fn board_and_companion_constructors_refuse_expansion_and_allow_retry() {
         let mut state = crate::gpu_surface_pass::board_fixture_state();

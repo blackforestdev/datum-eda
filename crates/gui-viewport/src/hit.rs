@@ -5,6 +5,7 @@ use std::collections::BinaryHeap;
 
 /// Maximum exact-shape candidates examined by one pointer query.
 pub const DEFAULT_HIT_QUERY_BUDGET: usize = 4_096;
+const LEAF_REGIONS: usize = 8;
 
 /// Surface-authored hit geometry. Identity and visibility policy stay generic.
 #[derive(Debug, Clone, PartialEq)]
@@ -98,16 +99,40 @@ impl<T> SpatialHitIndex<T> {
     }
 
     pub fn with_budget(regions: Vec<HitRegion<T>>, query_budget: usize) -> Self {
+        Self::try_with_budget(regions, query_budget).expect("hit index allocation succeeds")
+    }
+
+    /// New index storage only; supplied region/shape ownership is already live.
+    pub fn construction_layouts(region_count: usize) -> Option<[std::alloc::Layout; 2]> {
+        Some([
+            std::alloc::Layout::array::<usize>(region_count).ok()?,
+            std::alloc::Layout::array::<Node>(node_capacity(region_count)).ok()?,
+        ])
+    }
+
+    pub fn try_new(regions: Vec<HitRegion<T>>) -> Result<Self, std::collections::TryReserveError> {
+        Self::try_with_budget(regions, DEFAULT_HIT_QUERY_BUDGET)
+    }
+
+    pub fn try_with_budget(
+        regions: Vec<HitRegion<T>>,
+        query_budget: usize,
+    ) -> Result<Self, std::collections::TryReserveError> {
+        let mut order = Vec::new();
+        order.try_reserve_exact(regions.len())?;
+        order.extend(0..regions.len());
+        let mut nodes = Vec::new();
+        nodes.try_reserve_exact(node_capacity(regions.len()))?;
         let mut index = Self {
-            order: (0..regions.len()).collect(),
+            order,
             regions,
-            nodes: Vec::new(),
+            nodes,
             query_budget: query_budget.max(1),
         };
         if !index.order.is_empty() {
             index.build_node(0, index.order.len());
         }
-        index
+        Ok(index)
     }
 
     /// Retained heap payload, excluding this inline owner and allocator overhead.
@@ -250,7 +275,7 @@ impl<T> SpatialHitIndex<T> {
             right: None,
             max_order,
         });
-        if end - start > 8 {
+        if end - start > LEAF_REGIONS {
             let split_x = bounds.max_x.saturating_sub(bounds.min_x)
                 >= bounds.max_y.saturating_sub(bounds.min_y);
             self.order[start..end].sort_unstable_by_key(|&index| {
@@ -269,6 +294,26 @@ impl<T> SpatialHitIndex<T> {
         }
         node_index
     }
+}
+
+// Median splits form balanced levels. At the last level, only groups of nine
+// split once more; groups of eight or fewer are leaves. Count without walking
+// every prospective node, including when rejecting an impossible input layout.
+fn node_capacity(regions: usize) -> usize {
+    if regions == 0 {
+        return 0;
+    }
+    let mut groups = 1;
+    while regions / groups > LEAF_REGIONS {
+        groups *= 2;
+    }
+    let leaves = groups
+        + if regions / groups == LEAF_REGIONS {
+            regions % groups
+        } else {
+            0
+        };
+    2 * leaves - 1
 }
 
 fn expanded_bounds(points: &[PointNm], padding: i64) -> Option<RectNm> {
@@ -343,6 +388,40 @@ fn point_in_polygon(path: &[PointNm], point: PointNm) -> bool {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn planned_capacity_matches_balanced_tree_at_leaf_and_level_boundaries() {
+        for count in (0..130).chain([255, 256, 257, 511, 512, 513, 1023, 1024, 1025]) {
+            let regions = (0..count)
+                .map(|target| HitRegion {
+                    target,
+                    layer_id: None,
+                    shape: rect(0, 0, 10, 10),
+                })
+                .collect();
+            let index = SpatialHitIndex::try_new(regions).unwrap();
+            assert_eq!(index.nodes.len(), node_capacity(count));
+            assert_eq!(index.nodes.capacity(), index.nodes.len());
+            assert_eq!(index.order.capacity(), count);
+            let layouts = SpatialHitIndex::<usize>::construction_layouts(count).unwrap();
+            assert_eq!(
+                layouts[0].size(),
+                index.order.capacity() * std::mem::size_of::<usize>()
+            );
+            assert_eq!(
+                layouts[1].size(),
+                index.nodes.capacity() * std::mem::size_of::<Node>()
+            );
+            assert_eq!(
+                index
+                    .hit_test(PointNm { x: 5, y: 5 }, |_| true)
+                    .target
+                    .copied(),
+                count.checked_sub(1)
+            );
+        }
+        assert!(SpatialHitIndex::<usize>::construction_layouts(usize::MAX).is_none());
+    }
+
     #[test]
     fn retained_payload_counts_spare_shape_and_index_storage() {
         let mut path = Vec::with_capacity(128);
