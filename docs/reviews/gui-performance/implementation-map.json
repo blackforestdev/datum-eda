@@ -15053,6 +15053,11 @@
           "work": "s4_world_heap_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json",
           "status": "Retained scene/history costs now include Datum allocation headers and measured geometry Arc containers, with shared/weak lifetime deduplication. Actual allocator reconciliation passes. Registry/document metadata, construction peaks, active oversize, external ownership and aggregate qualification remain open."
+        },
+        {
+          "work": "s4_history_growth_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-growth/result.json",
+          "status": "World history entry metadata growth preflighted before allocation; complete CPU world/history cap remains open"
         }
       ]
     },
@@ -15131,6 +15136,11 @@
           "work": "s4_world_heap_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json",
           "status": "Retained scene/history costs now include Datum allocation headers and measured geometry Arc containers, with shared/weak lifetime deduplication. Actual allocator reconciliation passes. Registry/document metadata, construction peaks, active oversize, external ownership and aggregate qualification remain open."
+        },
+        {
+          "work": "s4_history_growth_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-growth/result.json",
+          "status": "World history entry metadata growth preflighted before allocation; complete CPU world/history cap remains open"
         }
       ]
     },
@@ -33785,5 +33795,31 @@
       "Twelve recorded S4 implementation gaps remain. No milestone/issue closure or full resource/global adoption acceptance. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/world-gpu-completion/result.json"
+  },
+  "s4_history_growth_admission_work": {
+    "status": "World history entry metadata growth preflighted before allocation; complete CPU world/history cap remains open",
+    "base_commit": "40a2a81d",
+    "production_consumers": [
+      "Main Runtime retained_scene_cache insertion during retained-scene invalidation and restoration"
+    ],
+    "retired_paths": [
+      "Vec::reserve before history budget eviction, with uncharged old/new metadata allocation overlap",
+      "Generic vector growth beyond the six-entry retention ceiling"
+    ],
+    "behavior": [
+      "Compute prospective entry-vector allocation cost including Datum headers while old metadata remains charged. Evict oldest history before allocation until candidate plus worst-case growth fits; reconsider growth after each eviction so freed existing slots avoid an unnecessary allocation.",
+      "Grow exact capacity from one slot, doubling up to six. Retain the same six-entry ceiling, actual scene/key accounting, shared/pinned geometry and authoritative document state. Refused derived history still bypasses retention as before."
+    ],
+    "proof": {
+      "app": "384 application tests pass, 16 ignored. New exact-boundary test admits old-plus-new metadata at the limit and evicts before allocating one byte below it; preserves the candidate and verifies retained capacity. Existing six-entry/history/active/pinned/resize/scoped-allocation proofs pass.",
+      "failures": "Initial focused run had an old pinned-refusal fixture assume four initial slots; changed to the new one-slot allocation. First full run had the new boundary fixture size an original key/scene then insert clones with smaller capacities; corrected to size and move the exact candidate. Both failed logs retained.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy, fresh app build, source health 2273, dependency authority and governance pass.",
+      "scope": "Renderer code unchanged; no repeated GPU/native/benchmark campaign or full drift rerun. Prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "This preflights history entry-vector growth only. Candidate scene construction, oversized active geometry, external complete scene references, document/schematic aggregation and broader CPU ownership remain open. MEM-WORLD-CPU/HISTORY are not closed.",
+      "Twelve recorded S4 gaps remain; no milestone or issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/history-growth/result.json"
   }
 }
