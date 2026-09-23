@@ -1,0 +1,45 @@
+{
+  "status": "Document history keys and occupied entry storage charged across live history owners",
+  "base_commit": "bd4e3e2a",
+  "production_consumers": [
+    "RetainedSceneHistory insertion, eviction, restoration and destruction",
+    "Shared retained document CPU usage and render-budget checks"
+  ],
+  "retired_paths": [
+    "Document admission counted scene payload but omitted independently owned history keys and occupied entry storage"
+  ],
+  "behavior": [
+    "Each published history entry owns a non-cloneable lifetime charge for its key allocations and occupied Entry storage. Candidate document admission includes those bytes before publication. Moving the entry retains its charge; eviction, restoration and owner destruction release it. Shared scene payload remains deduplicated across owners. Metadata-only ownership keeps its document accounting record alive."
+  ],
+  "proof": {
+    "app": "388 tests passed, 16 ignored. Real-scene cross-owner test verifies shared payload deduplication, independent key/entry charges, metadata-only admission refusal, restoration release and owner-drop release. Existing pressure/pinned payload tests remain passing.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature and fresh app build pass. Source health, dependency authority, traceability, project status, spec governance/parity and formatting checks pass.",
+    "scope": "No new native/backend/endurance qualification or broad GPU campaign. App tests exercise production document accounting. A subsequent source-only comment clarification changes no tested behavior."
+  },
+  "limits": [
+    "Spare history vector capacity and headers, retired-observer storage across owners, global document registry bookkeeping and construction peaks remain incomplete. Existing local allocation-inclusive history accounting remains active. This is not full MEM-WORLD-CPU/HISTORY closure.",
+    "Twelve implementation gaps and all original S5 qualification remain open. Existing Console golden discrepancy and nonblocking resize disposition unchanged. No dependency, vendor, license, visual prototype, numerical cap or sequencing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/result.json",
+  "logs": {
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/app.log.gz",
+      "uncompressed_sha256": "845dc3d91890cd58d80a3648e8716987d089e16bac96e1306dbbbc2625eeb8e4"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/clippy.log.gz",
+      "uncompressed_sha256": "c78601a7cc5be2be59b86446cc39e088dedff6a9c9e557b5b2a1a39014de83f4"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/build.log.gz",
+      "uncompressed_sha256": "082723d2630e186f193cd39dbbe35bf05086c67468bf034e3257edb60d39e104"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/retained_scene_history.rs": "c449fe29f580eefb5cad9d09e7878a6acce94e30cffa8cb247c2cd8002bbe04a",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "945261a24184d879923eb109083f94be4bb462b0a68eb01e972444d17dd3f692",
+    "crates/gui-render/src/render/document_cpu.rs": "f7bd8d7b33f76adab36e34e4983df3b2287a6c0cdb0335fc157f1b631d3bd5af",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "711002742d86151df231a8f121b519a4a3dc2e36aed26cd18e1e941172477e0c",
+    "crates/gui-render/src/render/gpu.rs": "44ee1412c9f8b1688cc3db5011d2d4de7258db436b79a0668dd5c34c7a25683f"
+  }
+}

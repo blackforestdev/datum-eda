@@ -5,6 +5,7 @@ use crate::cpu_alloc::heap::capacity_bytes;
 use std::sync::Arc;
 #[path = "document_cpu.rs"]
 mod document_cpu;
+pub use document_cpu::DocumentCpuCharge;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {

@@ -27,6 +27,7 @@ struct Entry {
     scene: RetainedScene,
     heap_bytes: usize,
     geometry: RetainedGeometryObserver,
+    _document_metadata: datum_gui_render::DocumentCpuCharge,
 }
 
 pub(super) struct RetainedSceneHistory {
@@ -281,7 +282,17 @@ impl RetainedSceneHistory {
             self.clear();
             return;
         }
-        while geometry.document_cpu_payload_bytes() > document_limit {
+        // Charge each occupied slot and its owned key to the document, even when
+        // another history owner holds the same shared scene payload.
+        let metadata_bytes = key
+            .heap_bytes()
+            .unwrap_or(usize::MAX)
+            .saturating_add(std::mem::size_of::<Entry>());
+        while geometry
+            .document_cpu_payload_bytes()
+            .saturating_add(metadata_bytes)
+            > document_limit
+        {
             let Some(index) = self
                 .entries
                 .iter()
@@ -291,7 +302,11 @@ impl RetainedSceneHistory {
             };
             self.evict(index);
         }
-        if geometry.document_cpu_payload_bytes() > document_limit {
+        if geometry
+            .document_cpu_payload_bytes()
+            .saturating_add(metadata_bytes)
+            > document_limit
+        {
             self.active_geometry = None;
             drop(scene);
             self.observe_retired(geometry);
@@ -324,11 +339,13 @@ impl RetainedSceneHistory {
         }
         self.heap_bytes += bytes;
         self.active_geometry = None;
+        let document_metadata = geometry.charge_document_metadata(metadata_bytes);
         self.entries.push(Entry {
             key,
             scene,
             heap_bytes: bytes,
             geometry,
+            _document_metadata: document_metadata,
         });
     }
 
@@ -350,6 +367,7 @@ impl RetainedSceneHistory {
     fn take(&mut self, key: &RetainedSceneCacheKey) -> Option<RetainedScene> {
         let index = self.entries.iter().position(|entry| &entry.key == key)?;
         let entry = self.remove(index);
+        drop(entry._document_metadata);
         self.limit_for_active(&entry.scene);
         Some(entry.scene)
     }

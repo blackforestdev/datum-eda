@@ -15083,6 +15083,11 @@
           "work": "s4_document_cpu_eviction_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/result.json",
           "status": "Aggregate document pressure evicts matching local history before failure and bypasses candidates without forgiving external pins"
+        },
+        {
+          "work": "s4_history_document_metadata_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/result.json",
+          "status": "Document history keys and occupied entry storage charged across live history owners"
         }
       ]
     },
@@ -15191,6 +15196,11 @@
           "work": "s4_document_cpu_eviction_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/result.json",
           "status": "Aggregate document pressure evicts matching local history before failure and bypasses candidates without forgiving external pins"
+        },
+        {
+          "work": "s4_history_document_metadata_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/result.json",
+          "status": "Document history keys and occupied entry storage charged across live history owners"
         }
       ]
     },
@@ -34246,5 +34256,29 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/result.json"
+  },
+  "s4_history_document_metadata_work": {
+    "status": "Document history keys and occupied entry storage charged across live history owners",
+    "base_commit": "bd4e3e2a",
+    "production_consumers": [
+      "RetainedSceneHistory insertion, eviction, restoration and destruction",
+      "Shared retained document CPU usage and render-budget checks"
+    ],
+    "retired_paths": [
+      "Document admission counted scene payload but omitted independently owned history keys and occupied entry storage"
+    ],
+    "behavior": [
+      "Each published history entry owns a non-cloneable lifetime charge for its key allocations and occupied Entry storage. Candidate document admission includes those bytes before publication. Moving the entry retains its charge; eviction, restoration and owner destruction release it. Shared scene payload remains deduplicated across owners. Metadata-only ownership keeps its document accounting record alive."
+    ],
+    "proof": {
+      "app": "388 tests passed, 16 ignored. Real-scene cross-owner test verifies shared payload deduplication, independent key/entry charges, metadata-only admission refusal, restoration release and owner-drop release. Existing pressure/pinned payload tests remain passing.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature and fresh app build pass. Source health, dependency authority, traceability, project status, spec governance/parity and formatting checks pass.",
+      "scope": "No new native/backend/endurance qualification or broad GPU campaign. App tests exercise production document accounting. A subsequent source-only comment clarification changes no tested behavior."
+    },
+    "limits": [
+      "Spare history vector capacity and headers, retired-observer storage across owners, global document registry bookkeeping and construction peaks remain incomplete. Existing local allocation-inclusive history accounting remains active. This is not full MEM-WORLD-CPU/HISTORY closure.",
+      "Twelve implementation gaps and all original S5 qualification remain open. Existing Console golden discrepancy and nonblocking resize disposition unchanged. No dependency, vendor, license, visual prototype, numerical cap or sequencing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/result.json"
   }
 }

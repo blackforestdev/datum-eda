@@ -1,6 +1,6 @@
 #[path = "retained_scene_owner.rs"]
 mod retained_scene_owner;
-pub use retained_scene_owner::{RetainedGeometryObserver, RetainedScene};
+pub use retained_scene_owner::{DocumentCpuCharge, RetainedGeometryObserver, RetainedScene};
 #[path = "renderer_state.rs"]
 mod renderer_state;
 pub use renderer_state::{
