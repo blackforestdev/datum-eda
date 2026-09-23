@@ -1,0 +1,43 @@
+{
+  "status": "Fixed uniforms retain two-generation admission across renderer recovery; complete replacement ownership remains open",
+  "base_commit": "b9f6a58e",
+  "production_consumers": [
+    "Renderer::new and recreate_for_device for all native hosts: fixed screen, board camera and schematic camera uniforms"
+  ],
+  "retired_paths": [
+    "Recovery creates fresh generation allowances for the three fixed uniform allocations"
+  ],
+  "behavior": [
+    "Reserve a generation before GPU allocation and attach the permit to the tracked allocation, including submission-held retirement. Reuse the existing allowance during replacement; third live generation fails explicitly. Host screen and aggregate GPU byte limits still apply. Failed later uniform construction rolls back preceding reservations."
+  ],
+  "proof": {
+    "renderer": "345 tests pass, 11 filtered: includes actual-GPU fixed-uniform recovery refusal, incremental submission release, partial-construction rollback, retry and final zero ownership. Existing world recovery test now pins world allocations while retiring unrelated fixed uniforms; all four world generation checks remain.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature and fresh app build pass. Source health 2274 and dependency authority pass.",
+    "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Dynamic surface-pane uniform slots still need generation continuity across truncate/reopen/recovery; this change does not complete MEM-REPLACEMENT. Other previously recorded S4 gaps and original S5 qualification remain.",
+    "No dependency, vendor, license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-generations/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/uniform-generations/tests.log.gz",
+      "uncompressed_sha256": "164275d5969a6bf4064a2c13b65b343c582deeeb9217e06bba9f26a266c07acb"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/uniform-generations/clippy.log.gz",
+      "uncompressed_sha256": "23340bc5a1692d2498fcbc92dfd8b88159cc62ee2d4c20bd1be137c234c2beb0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/uniform-generations/build.log.gz",
+      "uncompressed_sha256": "da7b93f7a493324528ba22ef8b3ece68cf97fb27ec50f9248dd5aee271ef2646"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "c48bf12afcfafececf81b708771af6eb774f2b380b4ca77d14cd746d70a9bf72",
+    "crates/gui-render/src/render/uniform_buffer.rs": "d15cb8a2af32213d48cde18f3107beed09213b12f3ab522df3f41755c87ae68d",
+    "crates/gui-render/src/render/uniform_buffer_tests.rs": "1894d8510811cd3f9c408b0c44ea5c12ded057bf20b85529e0c266a4e367de08",
+    "crates/gui-render/src/render/world_generation_tests.rs": "24574772c57c1623a3c495e116192fab8e391ec9269c7ffbf090e753bd64e38a"
+  }
+}
