@@ -114,7 +114,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
         bytemuck::cast_slice::<u32, u8>(&values)
     );
     // Multi-word vertices: changing one byte transfers only its aligned
-    // edge words. Internal gaps stay coalesced to bound queue-call overhead.
+    // words. Internal clean words never enter the staging payload.
     let mut vertices = [[0_u32; 5]; 3];
     owner
         .sync(&device, &queue, "vertex-fields", &vertices)
@@ -126,7 +126,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
         owner
             .sync(&device, &queue, "vertex-fields", &vertices)
             .unwrap(),
-        20
+        12
     );
     owner.flush_uploads(&device, &queue);
     assert_eq!(
@@ -272,4 +272,41 @@ fn repeated_preparation_queues_each_final_range_once() {
         read(&device, &queue, stream.buffer().unwrap(), 64),
         bytemuck::cast_slice::<u32, u8>(&values)
     );
+}
+
+#[test]
+fn changed_ranges_match_independent_word_oracle() {
+    let old = [0_u32; 12];
+    for mask in 0_u32..(1 << old.len()) {
+        let new: Vec<u32> = (0..old.len())
+            .map(|i| {
+                if mask & (1 << i) != 0 {
+                    i as u32 + 1
+                } else {
+                    0
+                }
+            })
+            .collect();
+        let mut reconstructed = bytemuck::cast_slice(&old).to_vec();
+        let mut copied = [false; 12];
+        let mut previous_end = None;
+        let bytes = dirty_ranges(
+            bytemuck::cast_slice(&old),
+            bytemuck::cast_slice(&new),
+            16,
+            |offset, data| {
+                let start = offset as usize;
+                assert!(previous_end.is_none_or(|end| end < start));
+                previous_end = Some(start + data.len());
+                for i in start / 4..(start + data.len()) / 4 {
+                    assert_ne!(old[i], new[i], "clean word transferred");
+                    assert!(!copied[i], "word transferred twice");
+                    copied[i] = true;
+                }
+                reconstructed[start..start + data.len()].copy_from_slice(data);
+            },
+        );
+        assert_eq!(bytes, mask.count_ones() as usize * 4);
+        assert_eq!(reconstructed, bytemuck::cast_slice::<u32, u8>(&new));
+    }
 }

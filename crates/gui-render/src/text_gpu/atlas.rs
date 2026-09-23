@@ -83,6 +83,7 @@ pub(crate) struct Atlas {
     pub(super) pages: Vec<Page>,
     pub generation: u64,
     pub(super) uploads: Uploads,
+    scatter: super::sparse_upload::Scatter,
     glyphs: HashMap<CacheKey, Option<GlyphLocation>>,
     pending_uploads: Vec<PendingUpload>,
     pending_copy_bytes: u64,
@@ -120,6 +121,7 @@ impl Atlas {
             pages: Vec::new(),
             generation: 1,
             uploads: Uploads::default(),
+            scatter: super::sparse_upload::Scatter::default(),
             glyphs: HashMap::new(),
             pending_uploads: Vec::new(),
             pending_copy_bytes: 0,
@@ -150,13 +152,14 @@ impl Atlas {
                 pixels: &upload.pixels[(upload.uploaded_rows * upload.stride) as usize..],
             })
             .collect();
-        let batch = super::upload::batch(
+        let batch = super::upload::batch_with_scatter(
             device,
             &self.owner,
             self.generation,
             &self.staging_budget,
             &uploads,
             buffers,
+            Some(&self.scatter),
         )?;
         self.pending_copy_bytes = 0;
         for upload in self.pending_uploads.drain(..) {
