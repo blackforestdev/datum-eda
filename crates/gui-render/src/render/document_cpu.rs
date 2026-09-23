@@ -23,6 +23,14 @@ struct Registry {
     head: Option<Box<Document>>,
 }
 static DOCUMENTS: Mutex<Registry> = Mutex::new(Registry { head: None });
+// Cold constructors must not each spend the same uncommitted document headroom.
+// Native hosts already construct serially; this also protects other API callers.
+static CONSTRUCTION: Mutex<()> = Mutex::new(());
+
+pub(crate) fn with_constructor<T>(scope: &crate::cpu_alloc::Scope, build: impl FnOnce() -> T) -> T {
+    let _construction = CONSTRUCTION.lock().unwrap_or_else(|e| e.into_inner());
+    scope.with(build)
+}
 
 impl Registry {
     fn find(&mut self, identity: &Weak<Budget>) -> Option<&mut Document> {
@@ -299,7 +307,12 @@ impl RetainedGeometryObserver {
         let live_identity = identity.upgrade()?;
         let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
         let document = documents.find(identity)?;
-        if history_entry && document.history_entries >= DOCUMENT_HISTORY_LIMIT {
+        if history_entry
+            && (document.history_entries >= DOCUMENT_HISTORY_LIMIT
+                || document_bytes(document)
+                    .checked_add(bytes)
+                    .is_none_or(|required| required > DOCUMENT_LIMIT))
+        {
             return None;
         }
         document.metadata_bytes = document
@@ -512,6 +525,37 @@ mod tests {
         assert!(admit_vertex_expansion(&budget, &scope, usize::MAX, limit).is_err());
         assert_eq!(scope.usage().allocations, before.allocations);
         assert_eq!(staging.len(), 4096);
+    }
+
+    #[test]
+    fn constructor_gate_covers_work_and_unwinds_without_poisoning_future_builds() {
+        let scope = crate::cpu_alloc::Scope::new("constructor-serialization");
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            with_constructor(&scope, || {
+                std::thread::spawn(|| assert!(CONSTRUCTION.try_lock().is_err()))
+                    .join()
+                    .unwrap();
+                panic!("construction failure");
+            });
+        }));
+        assert!(result.is_err());
+        assert_eq!(with_constructor(&scope, || 42), 42);
+    }
+
+    #[test]
+    fn history_byte_admission_is_atomic_and_releases_for_retry() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.scene_id = "cpu-document-history-byte-admission".into();
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let observer = scene.geometry_observer();
+        let remaining = DOCUMENT_LIMIT - observer.document_cpu_payload_bytes();
+        let charge = observer.try_charge_document_history(remaining).unwrap();
+        assert_eq!(observer.document_cpu_payload_bytes(), DOCUMENT_LIMIT);
+        assert!(observer.try_charge_document_history(1).is_none());
+        assert!(observer.try_charge_document_history(usize::MAX).is_none());
+        assert_eq!(observer.document_history_entries(), 1);
+        drop(charge);
+        assert!(observer.try_charge_document_history(remaining).is_some());
     }
 
     #[test]

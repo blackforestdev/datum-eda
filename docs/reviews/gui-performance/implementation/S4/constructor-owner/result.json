@@ -1,0 +1,49 @@
+{
+  "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented",
+  "base_commit": "b2b48e26",
+  "production_consumers": [
+    "Board and schematic retained constructors through registry publication",
+    "All retained-history owners using shared document entry admission"
+  ],
+  "retired_paths": [
+    "Concurrent constructors independently spending the same uncommitted document headroom",
+    "History slot admission without rechecking shared document byte capacity"
+  ],
+  "behavior": [
+    "A shared cold-constructor mutex encloses the scoped build and registry publication, so a later constructor sees prior published ownership. It does not affect warm scene reuse, rendering or input. Native construction was already serial; independent cold API builds are now serialized as well.",
+    "History entry admission checks both the six-entry limit and 64 MiB document total under the registry lock. Checked addition rejects overflow and over-cap requests without changing byte/entry charges. Dropping a charge permits retry."
+  ],
+  "proof": {
+    "renderer": "381 passed, zero failed, 11 filtered; includes cross-thread constructor exclusion/unwind recovery, exact-byte refusal/retry, both production constructors and existing shared-history concurrency tests.",
+    "app": "18 retained-scene application tests passed; 393 unrelated tests filtered.",
+    "build": "Fresh offline visual GUI application build passed."
+  },
+  "limitations": [
+    "Weak-observer lifetime accounting remains unreconciled. History vector metadata growth is separately charged by its owner; this change does not claim complete concurrent history-storage/constructor accounting or full resource-budget acceptance.",
+    "All original S5 qualification remains required. No S4 closure, dependency/license/prototype/budget/sequencing change. Preserve GEFN and nonblocking resize; exclude owner/Copilot engine-test changes."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/constructor-owner/renderer.log.gz",
+      "uncompressed_sha256": "ba2e8e3a5e1768c055335e4caa9a45e9a872dfd3befd981e1688a3589ee50a24"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/constructor-owner/app.log.gz",
+      "uncompressed_sha256": "9820bde617e7b2359f5101d2171fe8e3e42fbaec68dfd41e9e2c761971efa0f0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/constructor-owner/build.log.gz",
+      "uncompressed_sha256": "6e4861c879dc49cdf4f13e4b7e8102c57c92148561a8219bd2025be1e8df66e8"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/constructor-owner/check.log.gz",
+      "uncompressed_sha256": "60bc77f51a49a1bfd6425230d39a945f419b4b5a3c36952a19d6a5a1a02c8209"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/document_cpu.rs": "49fe929311318f4c13d9a880b385f8fc2d3e543a2cba3f117418f9641f7fc568",
+    "crates/gui-render/src/render/scene_retained_access.rs": "737e9c0cd9138994582272bb0c5343ea32aba453ec86a3c39ec64c1a6f0983fe",
+    "crates/gui-render/src/render/schematic_retained.rs": "869cccf1944a111094fa635bd111838f356a1eca2c82723fed256ed03fead283"
+  }
+}
