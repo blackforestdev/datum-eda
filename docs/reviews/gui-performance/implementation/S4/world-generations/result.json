@@ -1,0 +1,64 @@
+{
+  "status": "Default retained-world streams admit at most two live API allocations across replacement and host recovery; full document/resource qualification remains open",
+  "base_commit": "fa1051a8",
+  "production_consumers": [
+    "Shared RetainedBuffer for board vertices/strokes and schematic vertices/strokes",
+    "Renderer render_with_submission changed-source preparation and recreate_for_device used by native hosts"
+  ],
+  "retired_paths": [
+    "Unlimited count of replaced world allocations within the existing document byte ceiling",
+    "Resetting live allocation-count admission on empty content, document switches or device recreation",
+    "Keeping obsolete CPU world draw encodings while admitting interrupted cold replacements"
+  ],
+  "behavior": [
+    "Reserve one of two stream allocation slots before creating a replacement API buffer, alongside existing document/process byte admission. Warm capacity reuse does not consume another slot. Failure preserves current allocation/source and rolls back other reservations.",
+    "Store the slot permit with the same tracked allocation held by encoded draws and actual submissions. Clearing content and switching documents retain the shared stream limit; same-host device recreation inherits all four stream limits. Slots return only after the last resource hold retires.",
+    "Discard cached encodings when their world sources change before admitting new uploads. In-flight submissions retain independent holds, avoiding premature release. Interrupted cold replacements can discard obsolete CPU encodings instead of pinning a third allocation indefinitely."
+  ],
+  "proof": {
+    "renderer": "319 renderer tests pass, 10 diagnostic/visual cases filtered. New actual-GPU tests exercise two-allocation refusal, unchanged current allocation/source, document-budget rollback, warm reuse, clear/replacement continuity, retirement retry and queue callback release; actual Renderer recreation covers all four world streams.",
+    "production": "Extended native-continuation renderer test grows world data twice during an interrupted upload, checks obsolete cached encodings retire and reads back final GPU bytes. Existing default-path pixel, resource, continuation and recovery tests pass.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2257, dependency authority and governance checks pass.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "The allocation-count boundary is each host retained-world stream and its same-host replacements. Multiple distinct native hosts can each own streams for one document; existing64 MiB document byte admission still aggregates those allocations. This does not prove complete document-wide coherent-generation accounting or encoded-command metadata limits. MEM-WORLD-GPU remains partial.",
+    "CPU world/history, control-resource and complete text/scratch/metadata accounting, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+    "No new native-input or benchmark campaign. No dependency, vendoring, license, prototype, layout/font authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/world-generations/result.json",
+  "logs": {
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-generations/initial-tests.log.gz",
+      "uncompressed_sha256": "3c653aae9c382b51deaf9dc03f23a7511e751a0e29e8e0d013e7351a16103b44"
+    },
+    "recovery-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-generations/recovery-tests.log.gz",
+      "uncompressed_sha256": "c689e3a9723e6414e483e5906b201ebcf3117291921797f90d2b7bc04fe42127"
+    },
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-generations/tests.log.gz",
+      "uncompressed_sha256": "8c5bf47c78f154d2e853b75f2b7d6df4cad3ee18981be657d196d741815fa9d1"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-generations/clippy.log.gz",
+      "uncompressed_sha256": "42567c621f3ee6d5fb5593c7c6e6876605c453d24edd7ccf94b818e7b1481fca"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-generations/build.log.gz",
+      "uncompressed_sha256": "0c5c3d0e77c606e5ea3e8400941efb5d7b95309d02a7dbec6477f306a916f20f"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-generations/drift.log.gz",
+      "uncompressed_sha256": "ba0da5ca5df5ea07f8e18ff29a2ad9522399b2b6d6377f3a5588a4acdcc2c1b5"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "3303022d79ec49a523e51d8346f62f0af75c4276cd37a3febe6a8851fbb3d872",
+    "crates/gui-render/src/render/gpu_frame.rs": "1276745743c3a602ca12d6dc90569cc020984ecc55d9edaf031f9e82ae69a981",
+    "crates/gui-render/src/render/gpu_init.rs": "eefd0715a113207869185e1180efec771395a0e63bf280fb8547e0c5528a8579",
+    "crates/gui-render/src/render/retained_buffer.rs": "82c70fe8e90aa6dcf6dbd30606255eee7a531b71854223708f53f3a59586320b",
+    "crates/gui-render/src/render/vertex_allocation.rs": "f893f8b8840e70d4f75095cbe535af6a83eaeb665a7ef64873344b020f434b4b",
+    "crates/gui-render/src/render/world_generation_tests.rs": "2178e004d010a9d2ac8a7353e25b6cbc133d11481bc7ce283345bd92cc0315f5"
+  }
+}

@@ -6,6 +6,7 @@ pub(crate) struct VertexAllocation {
     buffer: Option<Tracked<wgpu::Buffer>>,
     owner: Option<Owner>,
     generation: u64,
+    generation_budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
     budgets: Vec<std::sync::Arc<crate::text_gpu::budget::Budget>>,
 }
 
@@ -21,6 +22,14 @@ impl VertexAllocation {
             budgets,
             ..Self::default()
         }
+    }
+
+    pub(crate) fn with_generation_limit(
+        mut self,
+        budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) -> Self {
+        self.generation_budget = Some(budget);
+        self
     }
 
     pub(crate) fn clear(&mut self) {
@@ -61,7 +70,12 @@ impl VertexAllocation {
             usage |= wgpu::BufferUsages::COPY_SRC;
         }
         let capacity = live.next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
-        let mut permits = Vec::with_capacity(self.budgets.len() + 1);
+        let mut permits = Vec::with_capacity(self.budgets.len() + 2);
+        if let Some(budget) = &self.generation_budget {
+            permits.push(budget.reserve(1).map_err(|_| {
+                anyhow::anyhow!("retained world stream already has two live GPU allocations")
+            })?);
+        }
         for budget in &self.budgets {
             permits.push(budget.reserve(capacity)?);
         }
