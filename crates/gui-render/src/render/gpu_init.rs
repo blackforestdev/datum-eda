@@ -346,10 +346,31 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             Some(old) => old.atlas.replacement(device),
             None => crate::text_gpu::Atlas::with_staging_budget(device, staging_budget),
         };
-        let text_renderer =
-            crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples, screen_budget.clone());
-        let menu_overlay_text_renderer =
-            crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples, screen_budget.clone());
+        let text_renderer = match previous {
+            Some(old) => old
+                .text_renderer
+                .replacement(device, &atlas, format, msaa_samples),
+            None => crate::text_gpu::Draw::new(
+                device,
+                &atlas,
+                format,
+                msaa_samples,
+                screen_budget.clone(),
+            ),
+        };
+        let menu_overlay_text_renderer = match previous {
+            Some(old) => {
+                old.menu_overlay_text_renderer
+                    .replacement(device, &atlas, format, msaa_samples)
+            }
+            None => crate::text_gpu::Draw::new(
+                device,
+                &atlas,
+                format,
+                msaa_samples,
+                screen_budget.clone(),
+            ),
+        };
         Ok(Self {
             measurements: None,
             pipeline,
