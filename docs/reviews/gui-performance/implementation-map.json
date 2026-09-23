@@ -3969,6 +3969,11 @@
           "work": "s4_upload_frame_work.frame_correlation_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json",
           "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts"
+        },
+        {
+          "work": "s4_upload_frame_work.pane_consumer_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json",
+          "status": "Retained-world bundles hold only referenced streams and expose prepared allocation-to-pane associations"
         }
       ]
     },
@@ -5379,6 +5384,11 @@
           "work": "s4_upload_frame_work.frame_correlation_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json",
           "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts"
+        },
+        {
+          "work": "s4_upload_frame_work.pane_consumer_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json",
+          "status": "Retained-world bundles hold only referenced streams and expose prepared allocation-to-pane associations"
         }
       ]
     },
@@ -20031,6 +20041,11 @@
           "work": "s4_upload_frame_work.frame_correlation_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json",
           "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts"
+        },
+        {
+          "work": "s4_upload_frame_work.pane_consumer_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json",
+          "status": "Retained-world bundles hold only referenced streams and expose prepared allocation-to-pane associations"
         }
       ]
     },
@@ -35629,6 +35644,30 @@
         "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edit excluded."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json"
+    },
+    "pane_consumer_followup": {
+      "status": "Retained-world bundles hold only referenced streams and expose prepared allocation-to-pane associations",
+      "production_consumers": [
+        "Default board and schematic retained-world bundle preparation and reuse"
+      ],
+      "retired_paths": [
+        "Unconditional retention and cache invalidation on unused vertex/stroke buffers"
+      ],
+      "behavior": [
+        "Bundle keys and lifetime holds now include only world streams referenced by their encoded draw batches. Replacing an unused stream preserves the cached bundle.",
+        "Each cached bundle records current pane/surface metadata. An allocation-free renderer iterator exposes its allocation IDs, including the bound pane uniform. Pane identity changes update metadata without rebuilding unchanged GPU commands.",
+        "Shared world allocation IDs appear for each referencing pane; process byte accounting remains one record per allocation. SubmissionRef retains its existing GPU lifetime hold."
+      ],
+      "proof": {
+        "renderer": "384 tests passed in the broad renderer run; the sole failure was the new fixture assuming only one preexisting surface. After explicitly selecting one source pane before adding a second, the affected actual-GPU test passed. Its earlier failure from reusing hidden quad commands is also preserved. No production-code changes followed the broad run.",
+        "checks": "Strict renderer/app visual all-target Clippy, fresh offline GUI build, source health and governance checks pass."
+      },
+      "limits": [
+        "This iterator reports prepared cached-world associations, not submitted/presented pane usage. Shell, overlay, text and terminal logical-consumer association remains unfinished; no all-consumer adoption or predicate closure.",
+        "All seven recorded S4 implementation gaps and original S5 qualification remain. No dependency, vendor, license, prototype, numerical-cap or sequencing change; preserve GEFN and nonblocking resize.",
+        "Owner/Copilot product_tests.rs changes are excluded."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json"
     }
   },
   "s4_text_owner_reconciliation": {
