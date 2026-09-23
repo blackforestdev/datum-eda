@@ -31182,5 +31182,44 @@
       "No dependency, prototype, numerical budget, layout/style or resize change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/control-admission/result.json"
+  },
+  "s4_accounting_boundary_review": {
+    "status": "Owner direction requested on implementation route versus a concrete acceptance-amendment proposal; current requirements remain operative",
+    "reviewed_head": "feae7bdc",
+    "controlling_requirements": [
+      "PM045 GP-045-05: full accounting remains required for S5 completion",
+      "PM045 GP-045-06: GPU accounting and memory remain in initial scope",
+      "Acceptance matrix ACC-01: stable allocation identity, ownership/lifetime and actual upload-boundary events, including text/atlas owners",
+      "Acceptance matrix ACC-02 and MEM-02: nested CPU capacities, shaped/atlas and aggregate caps",
+      "Implementation contract S2/S4 table and GPI-S4: unfinished accounting/cap implementation required before S5"
+    ],
+    "installed_source_sha256": {
+      "cosmic-text-0.15.0/src/buffer_line.rs": "b7db3ecae9d7dbad8fcc2b60fc6cebe277512818d535b2baed986352dcd41377",
+      "cosmic-text-0.15.0/src/attrs.rs": "49d1de956488eb3f8cd82dbd118d3489566bc31678d9aba313a4026849268c91",
+      "glyphon-0.10.0/src/text_atlas.rs": "69b96c7465ece31c97fd7cc1a7bf59c3aa357115ed07297ade28254ecb5b7e03"
+    },
+    "verified_boundary": {
+      "cpu": "BufferLine privately owns text String, AttrsList and cached shaping/layout state. Public values and active vectors do not expose all retained capacities; AttrsList range storage is private. This is an accessor limitation, not proof that external allocation tracking is impossible.",
+      "gpu": "TextAtlas inner atlases and growth are crate-private; glyphon performs queue.write_texture internally. Existing public allocator-report probe observes backend allocation sizes but lacks stable identities/upload events and is not portable to every backend.",
+      "datum_owned": "World/screen buffer, render-bundle and submission lifetimes are accessible and still need implementation. A private text boundary does not excuse these remaining migrations."
+    },
+    "routes_for_owner_direction": [
+      {
+        "route": "Retain full acceptance requirements",
+        "work": "Develop and validate a Datum-owned text resource/upload boundary using existing public shaping/raster APIs, and a lifetime-aware method for private CPU allocations. This is substantially more implementation than cache counters. Public API feasibility, performance, shaping/visual parity and counter conformance must precede acceptance. No copied dependency sources or new dependency authority is inferred.",
+        "specification": "No acceptance reduction proposed. Current S4/S5 prerequisites stay binding."
+      },
+      {
+        "route": "Develop a narrow acceptance amendment for review",
+        "work": "Prepare exact edits to PM045 GP-045-05/06, ACC-01/02, affected MEM-02 text/atlas/aggregate predicates and S2/S4/S5 prerequisites. Identify every affected adoption-map row. Opaque obligations would remain explicitly unqualified; no total memory or zero-upload claim could include them.",
+        "specification": "This would change acceptance scope, not merely sequencing. No such change is approved or applied by this record; the owner must review a concrete amendment first."
+      }
+    ],
+    "unchanged": [
+      "S4 remains selected and in progress; all recorded resource implementation and S5 qualification obligations remain required.",
+      "No dependency additions, vendoring, registry modifications, unsafe private-layout inference or renewed resize investigation.",
+      "No claim that the goal is achieved or that all useful Rust work is blocked."
+    ],
+    "owner_response": null
   }
 }
