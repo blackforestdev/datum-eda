@@ -1,10 +1,7 @@
 //! Track private layout scratch without inspecting dependency internals.
-use glyphon::cosmic_text::ShapeBuffer;
-use glyphon::{LayoutLine, ShapeLine, Wrap};
+use glyphon::{LayoutLine, ShapeLine};
 
 pub(crate) struct LayoutScratch {
-    // Release private allocations before their budget permits.
-    buffer: ShapeBuffer,
     scope: crate::cpu_alloc::Scope,
     permits: Option<[crate::text_gpu::budget::Permit; 2]>,
     host: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
@@ -14,7 +11,6 @@ pub(crate) struct LayoutScratch {
 impl Default for LayoutScratch {
     fn default() -> Self {
         Self {
-            buffer: ShapeBuffer::default(),
             scope: crate::cpu_alloc::Scope::new("layout-scratch-and-output"),
             permits: None,
             host: None,
@@ -24,25 +20,28 @@ impl Default for LayoutScratch {
 }
 
 impl LayoutScratch {
-    pub(crate) fn layout(&mut self, shape: &ShapeLine, size: f32, width: u32) -> Vec<LayoutLine> {
-        self.scope.with(|| {
-            let mut lines = Vec::new();
-            shape.layout_to_buffer(
-                &mut self.buffer,
-                size,
-                Some(width as f32),
-                Wrap::WordOrGlyph,
-                None,
-                &mut lines,
-                None,
-            );
-            lines
-        })
+    /// Stop at the first row rejected by the visible-extent consumer. Neither
+    /// later row boundaries nor their output glyph storage are constructed.
+    pub(crate) fn for_each_row(
+        &mut self,
+        shape: &ShapeLine,
+        size: f32,
+        width: u32,
+        mut consume: impl FnMut(LayoutLine) -> bool,
+    ) -> bool {
+        let mut rows = super::streaming_rows::Rows::new(shape, size, width);
+        while let Some(row) = self.scope.with(|| rows.next()) {
+            let output = self.scope.with(|| rows.layout(&row));
+            if !consume(output) {
+                return false;
+            }
+        }
+        true
     }
 
     /// Call only after output containers have been consumed into cache rows.
     /// Every retained output glyph vector is public and counted by that cache;
-    /// subtract its payload and tracking bytes to isolate private ShapeBuffer storage.
+    /// subtract its payload and tracking bytes to isolate transient Datum layout storage.
     pub(crate) fn private_bytes(
         &self,
         output_bytes: usize,
@@ -97,7 +96,6 @@ impl LayoutScratch {
     }
 
     pub(crate) fn clear(&mut self) {
-        self.buffer = ShapeBuffer::default();
         self.permits = None;
         self.host = None;
         self.charged_bytes = 0;
@@ -107,6 +105,34 @@ impl LayoutScratch {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn clipped_prefix_layout_peak_is_independent_of_hidden_paragraph_rows() {
+        let mut fonts = crate::load_datum_fonts();
+        let attrs = glyphon::AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));
+        let mut peaks = Vec::new();
+        for repeats in [20, 2000] {
+            let text = "a visible row followed by hidden content ".repeat(repeats);
+            let shape =
+                glyphon::ShapeLine::new(&mut fonts, &text, &attrs, glyphon::Shaping::Basic, 8);
+            let mut scratch = LayoutScratch::default();
+            let mut count = 0;
+            assert!(!scratch.for_each_row(&shape, 14.0, 120, |_| {
+                count += 1;
+                count < 3
+            }));
+            assert_eq!(count, 3);
+            let usage = scratch.scope.usage();
+            assert!(usage.allocator_installed);
+            assert_eq!(usage.payload_bytes + usage.tracking_bytes, 0);
+            peaks.push(usage.peak_payload_bytes);
+        }
+        assert!(peaks[0] > 0);
+        assert_eq!(
+            peaks[0], peaks[1],
+            "hidden rows must not grow layout output or scratch"
+        );
+    }
 
     #[test]
     fn private_layout_capacity_is_separate_from_outputs_and_evictable() {
@@ -131,21 +157,14 @@ mod tests {
         let private = scratch
             .private_bytes(output, output_tracking)
             .expect("test allocator installed");
-        assert!(private > 0);
+        assert_eq!(private, 0, "streaming layout retains no private scratch");
         assert_eq!(
             scratch.scope.usage().payload_bytes + scratch.scope.usage().tracking_bytes,
-            private + (output + output_tracking) as u64
+            (output + output_tracking) as u64
         );
-        let host = crate::text_gpu::budget::Budget::new(private);
+        let host = crate::text_gpu::budget::Budget::new(0);
         scratch.admit(output, output_tracking, &host);
-        assert_eq!(host.used(), private);
-        assert_eq!(scratch.reserved_bytes(), private);
-        scratch.admit(output, output_tracking, &host);
-        assert_eq!(
-            host.used(),
-            private,
-            "warm admission must not double reserve"
-        );
+        assert_eq!(host.used(), 0);
         let before: Vec<_> = layout
             .layout_runs()
             .map(|r| format!("{:?}", r.glyphs))
@@ -154,7 +173,7 @@ mod tests {
         scratch.admit(
             output,
             output_tracking,
-            &crate::text_gpu::budget::Budget::new(private - 1),
+            &crate::text_gpu::budget::Budget::new(0),
         );
         assert_eq!(host.used(), 0);
         assert_eq!(scratch.private_bytes(output, output_tracking), Some(0));

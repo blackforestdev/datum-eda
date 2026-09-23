@@ -1,0 +1,68 @@
+{
+  "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete",
+  "production_consumers": [
+    "TextLayout shared by default workspace, terminal, dialog and overlay text caches"
+  ],
+  "retired_paths": [
+    "Production whole-paragraph ShapeLine::layout_to_buffer and retained private ShapeBuffer layout scratch"
+  ],
+  "behavior": [
+    "Datum-owned logical word/glyph cursor and visual bidi-run ordering operate on borrowed public shaped data. The existing visible-row consumer stops construction after its first rejected row. Paint metadata, glyph identity, metrics and clipping remain under their existing owners.",
+    "The row materializer visits only the selected word/glyph ranges. Retained output remains charged by the existing text-cache inventory; no private layout scratch survives the call."
+  ],
+  "proof": [
+    "394 renderer tests passed, including installed-layout/renderer parity, plain/rich text and extent/paint changes.",
+    "Allocator proof: rejecting after three rows has identical peak layout bytes for 20 and 2000 repetitions, with zero live layout bytes after output release. This excludes shaping, which still processes a paragraph."
+  ],
+  "limitations": [
+    "Row output and temporary bidi/omission vectors still need pre-construction admission and overlap accounting. Shape/font/raster construction peaks remain open. No MEM-SHAPED/MEM-STAGING or other predicate is closed.",
+    "The first rejected row is still constructed to obtain exact metrics. Seven S4 implementation gaps and all original S5 qualification remain. No dependency, vendoring, prototype, cap or sequencing change; GEFN and nonblocking resize preserved."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
+  "base_commit": "53ba2716",
+  "logs": {
+    "compile": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/compile.log.gz",
+      "uncompressed_sha256": "91e651c6b39e3d9a8064275ff6aff194af1b69b798cca95c1405ca849399985b"
+    },
+    "initial-oracle": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/initial-oracle.log.gz",
+      "uncompressed_sha256": "f13475b37634a25d55cb01d4fa0f07cb6724e83c6474872df923aa2b8b17778f"
+    },
+    "oracle-mismatches": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/oracle-mismatches.log.gz",
+      "uncompressed_sha256": "41d2e8c8ba75ae3f6644473d4c9f38c4629f6b7a1bf32f719533c4fa8d675e94"
+    },
+    "oracle-pass": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/oracle-pass.log.gz",
+      "uncompressed_sha256": "2612cadb845adcadcbe6bf180d36eb40da6c011a5dbe85fd8c4c45fdb01f5bbc"
+    },
+    "scope-failure": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/scope-failure.log.gz",
+      "uncompressed_sha256": "bf87095d39fa547b5984939a72134364480655cc12bd67549cfeeada8247b470"
+    },
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/focused.log.gz",
+      "uncompressed_sha256": "136c28b3f560b566ccf7a7843c6d223a7701e1ac5c41789d8b4785e9374ecc38"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/renderer.log.gz",
+      "uncompressed_sha256": "dba4e797e75829dd2e47f1577471e34eaf4c8e93fdaafb709b5e62786bd06916"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/clippy.log.gz",
+      "uncompressed_sha256": "69d3c8bc17ed459d624705f3d5fa92fe38d69aca3901d022b2411ee39e3bd528"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/streaming-layout/build.log.gz",
+      "uncompressed_sha256": "4c45df5812320078992376bd6acec281afd13d861a6725763d8def0d42fbb878"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/layout_scratch.rs": "12648636acb8c03423d0b18935216607839a25a49d37d14f7c964441ed6871c3",
+    "crates/gui-render/src/text_layout.rs": "d7c731646d9b3a85500db29cba1ca630a6dc76b7e803eec61001cdcbbba843a8",
+    "crates/gui-render/src/layout_rows.rs": "6d65430884d84111ab116440d334c0248786a256980f254fb3e1f7dcc269ba99",
+    "crates/gui-render/src/layout_row_output.rs": "c0ec2f5ea0a3695383196d3bd96514c79095aef15e2a8d3a844abe7d444543ce",
+    "crates/gui-render/src/layout_rows_tests.rs": "63b4dd44d33c7b3949c9195002e90c309a8f66256cc54a4944791115bcea3c85"
+  }
+}

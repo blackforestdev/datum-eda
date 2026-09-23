@@ -10,6 +10,8 @@ use glyphon::cosmic_text::{BidiParagraphs, LineIter};
 pub(crate) mod scratch;
 use glyphon::{AttrsList, LayoutLine, LayoutRun, ShapeLine, Style, Weight};
 use scratch::LayoutScratch;
+#[path = "layout_rows.rs"]
+mod streaming_rows;
 
 struct Row {
     paragraph: usize,
@@ -197,8 +199,7 @@ impl TextLayout {
         index: usize,
         top: &mut f32,
     ) -> bool {
-        let lines = scratch.layout(&self.shapes[index], run.size, extent.0);
-        for layout in lines {
+        scratch.for_each_row(&self.shapes[index], run.size, extent.0, |layout| {
             let height = layout.line_height_opt.unwrap_or(run.size * 1.22);
             let leading = height - (layout.max_ascent + layout.max_descent);
             let baseline = *top + leading / 2.0 + layout.max_ascent;
@@ -213,8 +214,8 @@ impl TextLayout {
                 height,
             });
             *top += height;
-        }
-        true
+            true
+        })
     }
 
     /// Fork only shared shaping; the caller computes its own extent's layout.
