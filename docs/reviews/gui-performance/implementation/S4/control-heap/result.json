@@ -1,0 +1,51 @@
+{
+  "status": "Default retained control-mesh CPU admission includes Datum allocation overhead; full control resource qualification remains open",
+  "base_commit": "2b1c3506",
+  "production_consumers": [
+    "Renderer-owned ControlMeshCache used by shared control painters across production profiles"
+  ],
+  "retired_paths": [
+    "Payload-only mesh and entry-capacity accounting that omitted Datum allocator headers from the 4 MiB CPU limit"
+  ],
+  "behavior": [
+    "Charge mesh boxed storage and VecDeque entry capacity including Datum allocator headers through the existing owned heap accounting helper. Keys remain included in entry storage exactly once.",
+    "Retain the 256-entry and 4 MiB CPU limits, LRU ordering, warm reuse and eviction before constructing cacheable replacement meshes. Oversized required meshes retain the CTL-02 uncached painting path."
+  ],
+  "proof": {
+    "renderer": "324 tests pass,10 diagnostic/visual cases filtered. New allocator-backed test reconciles retained mesh and entry storage through growth, eviction, warm reuse and complete release; existing near-cap and oversized bypass tests pass. Existing shared-control warm reuse and fresh-render pixel comparison pass.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Initial Clippy invocation used nonexistent package datum-app; corrected to datum-gui-app, with both logs preserved. Source health2261; dependency and governance gates pass.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "This accounts retained cache heap storage with the production Datum allocator. Container growth transients, uncached frame geometry, output/scratch ownership and control-specific GPU 4 MiB admission are not completed by this slice. Allocator-internal slack remains separate. No complete MEM-MESH or qualification closure.",
+    "S4 resource implementation and S5 native/backend/fault/fairness/endurance qualification remain open. Preserve GEFN, nonblocking resize exclusion and separate concurrent multi-device failure.",
+    "No dependency, vendoring, license, prototype, drawing algorithm, numerical budget or specification change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/control-heap/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-heap/tests.log.gz",
+      "uncompressed_sha256": "0e7d34d71187b70e62158a4c9bdc12a3da90954a641692ff55d3e3fd974d89b4"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-heap/clippy.log.gz",
+      "uncompressed_sha256": "d76ed03ba8b1f317f2439aaa49a5a6b48be2817955dc3db1f2116a324a7a2e41"
+    },
+    "clippy-command-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-heap/clippy-command-error.log.gz",
+      "uncompressed_sha256": "25f40de23e96cf59416024efcc9f349a812124013a785c76f60d04e14f79c131"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-heap/build.log.gz",
+      "uncompressed_sha256": "026cb004d7b179ec6b3ceae58f4bc225ce66ac47d2635eed662640cad89fed79"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-heap/drift.log.gz",
+      "uncompressed_sha256": "e314005c6f4675d0b5be8ca790641a0d327f3adb069c2288d2056fefff4c7196"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/control_mesh.rs": "6fb4a849f47e31d8efe12dbfffd9b227e68db1807024311e3f90d244509efb3c",
+    "crates/gui-render/src/render/control_mesh_tests.rs": "bf0533a5adc9a473772cc94178b1524894368703a1f49fd054cc0875d92df91c"
+  }
+}

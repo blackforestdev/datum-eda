@@ -1,5 +1,6 @@
 //! Renderer-owned CPU control meshes; placement, color and clipping stay live.
 use super::*;
+use crate::cpu_alloc::heap::capacity_bytes;
 use std::collections::VecDeque;
 use std::ops::{Deref, DerefMut};
 
@@ -43,7 +44,7 @@ pub(crate) struct ControlMeshCache {
 impl ControlMeshCache {
     pub(crate) fn retained_cpu_bytes(&self) -> usize {
         std::mem::size_of::<Self>()
-            + self.entries.capacity() * std::mem::size_of::<Entry>()
+            + capacity_bytes::<Entry>(self.entries.capacity())
             + self.payload_bytes
     }
 
@@ -61,12 +62,12 @@ impl ControlMeshCache {
             return;
         }
         self.builds = self.builds.saturating_add(1);
-        let bytes = quad_count * std::mem::size_of::<[(f32, f32); 4]>();
+        let bytes = capacity_bytes::<[(f32, f32); 4]>(quad_count);
         let retain = self.reserve_mesh(bytes);
         // Eviction precedes allocation: cacheable replacement payload must not
         // coexist with history that its admission is about to discard.
         let mesh = build();
-        assert_eq!(std::mem::size_of_val(mesh.as_ref()), bytes);
+        assert_eq!(mesh.len(), quad_count);
         #[cfg(test)]
         {
             self.build_live_bytes = self.retained_cpu_bytes() + bytes;
@@ -80,7 +81,7 @@ impl ControlMeshCache {
 
     fn reserve_mesh(&mut self, bytes: usize) -> bool {
         // Oversized required content still paints through the uncached path.
-        if bytes > MAX_CPU_BYTES - std::mem::size_of::<Self>() - std::mem::size_of::<Entry>() {
+        if bytes > MAX_CPU_BYTES - std::mem::size_of::<Self>() - capacity_bytes::<Entry>(1) {
             return false;
         }
         if self.entries.len() < MAX_ENTRIES && self.entries.len() == self.entries.capacity() {
@@ -91,7 +92,7 @@ impl ControlMeshCache {
                 .entries
                 .pop_back()
                 .expect("payload exceeds cache budget");
-            self.payload_bytes -= std::mem::size_of_val(old.mesh.as_ref());
+            self.payload_bytes -= capacity_bytes::<[(f32, f32); 4]>(old.mesh.len());
         }
         let metadata_bytes = self.retained_cpu_bytes() - self.payload_bytes;
         if bytes > MAX_CPU_BYTES.saturating_sub(metadata_bytes) {
@@ -100,7 +101,7 @@ impl ControlMeshCache {
         while self.entries.len() >= MAX_ENTRIES || self.retained_cpu_bytes() + bytes > MAX_CPU_BYTES
         {
             let old = self.entries.pop_back().expect("bounded cache has an entry");
-            self.payload_bytes -= std::mem::size_of_val(old.mesh.as_ref());
+            self.payload_bytes -= capacity_bytes::<[(f32, f32); 4]>(old.mesh.len());
         }
         true
     }
