@@ -95,8 +95,16 @@ impl RetainedScene {
             drop(world_quads);
             // S3 / UVT-004: build typed schematic hit shapes independently from the
             // current tool's selection eligibility.
-            let mut world_hit_regions = Vec::new();
-            coordinate_hit::push_schematic_hit_regions(&mut world_hit_regions, schematic_scene);
+            let world_hit_regions =
+                coordinate_hit::schematic_hit_regions(schematic_scene, |bytes| {
+                    retained_scene_owner::document_cpu::admit_constructor_allocation(
+                        &budget,
+                        &scope,
+                        bytes,
+                        limit,
+                        "schematic hit regions",
+                    )
+                })?;
             let world_hit_index =
                 Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
             Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;

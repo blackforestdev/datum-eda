@@ -10,7 +10,7 @@
 //   * `RetainedScene::hit_test_authored_world` (board, filtered) and
 //     `hit_test_world` (schematic, unfiltered) — one scan core, so the board path
 //     stays byte-identical while the schematic surface gets a filter-free twin.
-//   * `push_schematic_hit_regions` — typed retained regions for the schematic
+//   * `schematic_hit_regions` — typed retained regions for the schematic
 //     primitives that participate in editor interaction.
 //
 // It is a real `#[path] mod` child of the crate root (declared in `scene.rs`), so
@@ -204,11 +204,39 @@ impl RetainedScene {
 /// Emit retained shapes from explicit schematic interaction metadata. Selection
 /// eligibility remains a tool concern; hit construction covers ordinary symbols,
 /// pins, wires, buses, labels, junctions, and no-connect markers.
-pub(crate) fn push_schematic_hit_regions(
-    out: &mut Vec<WorldHitRegion>,
+pub(crate) fn schematic_hit_regions(
     scene: &BoardReviewSceneV1,
-) {
-    for graphic in &scene.board_graphics {
+    admit: impl FnOnce(usize) -> anyhow::Result<()>,
+) -> anyhow::Result<Vec<WorldHitRegion>> {
+    use crate::cpu_alloc::heap::allocation_bytes;
+    use std::alloc::Layout;
+    let graphics = || {
+        scene
+            .board_graphics
+            .iter()
+            .filter(|graphic| graphic.schematic_hit_kind().is_some() && !graphic.path.is_empty())
+    };
+    let count = graphics().count();
+    let mut bytes = allocation_bytes(Layout::array::<WorldHitRegion>(count)?);
+    for graphic in graphics() {
+        let path_bytes = match graphic.schematic_hit_kind().expect("filtered kind") {
+            datum_gui_protocol::SchematicHitKind::Symbol
+            | datum_gui_protocol::SchematicHitKind::Label => 0,
+            _ => allocation_bytes(Layout::array::<PointNm>(graphic.path.len())?),
+        };
+        bytes = bytes
+            .checked_add(path_bytes)
+            .and_then(|bytes| {
+                bytes.checked_add(allocation_bytes(
+                    Layout::array::<u8>(graphic.object_id.len()).expect("existing string layout"),
+                ))
+            })
+            .ok_or_else(|| anyhow::anyhow!("schematic hit storage overflow"))?;
+    }
+    admit(bytes)?;
+    let mut out = Vec::new();
+    out.try_reserve_exact(count)?;
+    for graphic in graphics() {
         let Some(kind) = graphic.schematic_hit_kind() else {
             continue;
         };
@@ -222,19 +250,34 @@ pub(crate) fn push_schematic_hit_regions(
                 WorldHitShape::Rect(bounding_rect_nm(&graphic.path).expect("non-empty path"))
             }
             datum_gui_protocol::SchematicHitKind::Junction if graphic.path.len() >= 3 => {
-                WorldHitShape::Polygon(graphic.path.clone())
+                WorldHitShape::Polygon(copy_slice(&graphic.path)?)
             }
             _ => WorldHitShape::Polyline {
-                path: graphic.path.clone(),
+                path: copy_slice(&graphic.path)?,
                 half_width_nm: (width * 0.5).max(150_000.0),
             },
         };
         out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(graphic.object_id.clone()),
+            target: HitTarget::AuthoredObject(copy_string(&graphic.object_id)?),
             layer_id: None,
             shape,
         });
     }
+    Ok(out)
+}
+
+fn copy_slice<T: Copy>(source: &[T]) -> anyhow::Result<Vec<T>> {
+    let mut copy = Vec::new();
+    copy.try_reserve_exact(source.len())?;
+    copy.extend_from_slice(source);
+    Ok(copy)
+}
+
+fn copy_string(source: &str) -> anyhow::Result<String> {
+    let mut copy = String::new();
+    copy.try_reserve_exact(source.len())?;
+    copy.push_str(source);
+    Ok(copy)
 }
 
 /// The axis-aligned world bounding box of a point path, or `None` when empty.
@@ -345,6 +388,55 @@ mod coordinate_hit_tests {
 
     /// (a) The schematic pane emits hit regions for the first time — one per placed
     /// symbol, each tagged with the symbol's stable projected identity.
+    #[test]
+    fn schematic_hit_storage_is_admitted_before_cloning_and_matches_allocator() {
+        let state = schematic_workspace_state();
+        let scene = state.schematic_scene.as_ref().unwrap();
+        let scope = crate::cpu_alloc::Scope::new("schematic-hit-construction-proof");
+        let mut required = 0;
+        let regions = scope
+            .with(|| {
+                schematic_hit_regions(scene, |bytes| {
+                    required = bytes;
+                    assert_eq!(scope.usage().allocations, 0, "admission precedes clones");
+                    Ok(())
+                })
+            })
+            .unwrap();
+        assert!(!regions.is_empty());
+        assert_eq!(regions.capacity(), regions.len());
+        let usage = scope.usage();
+        assert_eq!(required as u64, usage.payload_bytes + usage.tracking_bytes);
+        let eligible = scene
+            .board_graphics
+            .iter()
+            .filter(|graphic| graphic.schematic_hit_kind().is_some() && !graphic.path.is_empty());
+        for (region, graphic) in regions.iter().zip(eligible) {
+            assert_eq!(
+                region.target,
+                HitTarget::AuthoredObject(graphic.object_id.clone())
+            );
+            match &region.shape {
+                WorldHitShape::Polyline { path, .. } | WorldHitShape::Polygon(path) => {
+                    assert_eq!(path, &graphic.path);
+                }
+                WorldHitShape::Rect(rect) => {
+                    assert_eq!(Some(*rect), bounding_rect_nm(&graphic.path))
+                }
+                _ => panic!("unexpected schematic hit shape"),
+            }
+        }
+        drop(regions);
+        assert_eq!(scope.usage().allocations, 0);
+        let refusal = schematic_hit_regions(scene, |bytes| {
+            assert_eq!(bytes, required);
+            assert_eq!(scope.usage().allocations, 0);
+            anyhow::bail!("test admission refusal")
+        });
+        assert!(refusal.is_err());
+        assert_eq!(scope.usage().allocations, 0);
+    }
+
     #[test]
     fn schematic_scene_emits_symbol_hit_regions() {
         let state = schematic_workspace_state();
