@@ -51,6 +51,10 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
         self.uploaded = 0;
     }
 
+    pub(crate) fn prepared_ref(&self) -> Option<crate::text_gpu::lifetime::SubmissionRef> {
+        self.allocation.prepared_ref()
+    }
+
     pub(crate) fn submission_ref(&self) -> Option<crate::text_gpu::lifetime::SubmissionRef> {
         self.allocation.submission_ref()
     }

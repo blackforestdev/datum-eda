@@ -6,7 +6,7 @@ use super::raster::Raster as SwashCache;
 use glyphon::{Color, LayoutRun, TextBounds};
 
 use super::atlas::Atlas;
-use super::lifetime::{Kind, SubmissionRef, Tracked};
+use super::lifetime::{Kind, RetirementReason, SubmissionRef, Tracked};
 
 pub(crate) struct Area<'a, R> {
     pub rich_spans: &'a [crate::TextRunSpan],
@@ -202,6 +202,9 @@ impl Draw {
         }
         let required = (instances.len() * std::mem::size_of::<Instance>()) as u64;
         if required == 0 {
+            if let Some(buffer) = &self.instances {
+                buffer.retire(RetirementReason::Cleared);
+            }
             self.instances = None;
             self.snapshot = Default::default();
         } else if self.instances.as_ref().is_none_or(|buffer| {
@@ -218,7 +221,7 @@ impl Draw {
                 capacity,
                 vec![generation_permit, screen_permit],
             )?;
-            self.instances = Some(atlas.owner.track_reserved(
+            let replacement = atlas.owner.track_reserved(
                 device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some("datum-glyph-instances"),
                     size: capacity,
@@ -230,8 +233,15 @@ impl Draw {
                 atlas.generation,
                 Kind::Instances,
                 reservation,
-            ));
+            );
+            if let Some(buffer) = &self.instances {
+                buffer.retire(RetirementReason::Replaced);
+            }
+            self.instances = Some(replacement);
             self.snapshot = Default::default();
+        }
+        if let Some(buffer) = &self.instances {
+            buffer.set_requested_bytes(required);
         }
         self.pending_instances = Some(instances);
         self.generation = Some(atlas.generation);

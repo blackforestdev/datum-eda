@@ -1,5 +1,5 @@
 //! GPU allocation lifetime shared by retained-world and screen vertex streams.
-use crate::text_gpu::lifetime::{Kind, Owner, SubmissionRef, Tracked};
+use crate::text_gpu::lifetime::{Kind, Owner, RetirementReason, SubmissionRef, Tracked};
 
 #[derive(Default)]
 pub(crate) struct VertexAllocation {
@@ -55,12 +55,18 @@ impl VertexAllocation {
     /// Call only after establishing the frame submission references.
     pub(crate) fn retire_uncached(&mut self) {
         if self.uncached {
+            if let Some(buffer) = &self.buffer {
+                buffer.retire(RetirementReason::Uncached);
+            }
             self.clear();
         }
     }
 
     pub(crate) fn clear(&mut self) {
         self.uncached = false;
+        if let Some(buffer) = &self.buffer {
+            buffer.retire(RetirementReason::Cleared);
+        }
         self.buffer = None;
     }
 
@@ -70,6 +76,10 @@ impl VertexAllocation {
 
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.buffer.as_deref()
+    }
+
+    pub(crate) fn prepared_ref(&self) -> Option<SubmissionRef> {
+        self.buffer.as_ref().map(Tracked::prepared_ref)
     }
 
     pub(crate) fn submission_ref(&self) -> Option<SubmissionRef> {
@@ -95,6 +105,7 @@ impl VertexAllocation {
             .as_ref()
             .is_some_and(|buffer| buffer.size() >= live && buffer.size() <= live.saturating_mul(4))
         {
+            self.buffer.as_ref().unwrap().set_requested_bytes(live);
             return Ok(false);
         }
         let mut usage =
@@ -129,12 +140,17 @@ impl VertexAllocation {
         });
         self.uncached = uncached;
         self.generation += 1;
-        self.buffer = Some(self.owner.get_or_insert_with(Owner::new).track_reserved(
+        let replacement = self.owner.get_or_insert_with(Owner::new).track_reserved(
             buffer,
             self.generation,
             Kind::Vertex,
             reservation,
-        ));
+        );
+        replacement.set_requested_bytes(live);
+        if let Some(buffer) = &self.buffer {
+            buffer.retire(RetirementReason::Replaced);
+        }
+        self.buffer = Some(replacement);
         Ok(true)
     }
 }
@@ -156,8 +172,17 @@ mod tests {
         allocation
             .replace_if_needed(&device, "admission", &[0; 16])
             .unwrap();
+        assert!(
+            !allocation
+                .replace_if_needed(&device, "reuse", &[0; 12])
+                .unwrap()
+        );
+        let observer = allocation.owner.as_ref().unwrap().observer();
         let held = allocation.submission_ref().unwrap();
         let original = allocation.owner.as_ref().unwrap().records();
+        assert_eq!(original[0].requested_bytes, 12);
+        assert_eq!(original[0].bytes, 16);
+        assert_eq!(original[0].submission_references, 1);
         let filler = budget.reserve(512 * 1024 * 1024 - budget.used()).unwrap();
         assert!(
             allocation
@@ -175,7 +200,13 @@ mod tests {
         let records = allocation.owner.as_ref().unwrap().records();
         assert_eq!(records.len(), 2);
         assert!(records.iter().any(|r| r.id == original[0].id && r.retiring));
+        let retired = records.iter().find(|r| r.id == original[0].id).unwrap();
+        assert_eq!(retired.retirement_reason, Some(RetirementReason::Replaced));
+        assert_eq!(retired.requested_bytes, 12);
         drop(held);
+        let released = observer.released_allocations();
+        assert_eq!(released[1].1.allocations, 1);
+        assert_eq!(released[1].1.capacity_bytes, 16);
         assert_eq!(budget.used(), baseline + 64);
         drop(allocation);
         assert_eq!(budget.used(), baseline);

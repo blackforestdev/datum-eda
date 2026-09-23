@@ -9,7 +9,7 @@ pub(crate) mod upload_totals;
 pub(crate) use atlas::{Atlas, UploadRequired};
 pub(crate) use draw::{Area, Draw};
 pub(crate) use lifetime::hold_until_done;
-pub use lifetime::{Kind, Observer, Record};
+pub use lifetime::{Kind, Observer, Record, ReleasedAllocations, RetirementReason};
 
 #[cfg(all(test, feature = "visual"))]
 mod parity;

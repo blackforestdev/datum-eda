@@ -45,6 +45,7 @@ mod terminal_core_render;
 mod terminal_render_cache;
 mod text_gpu;
 pub use text_gpu::upload_totals::{AllocationUploadFrame, UploadFrame, UploadTotals};
+pub use text_gpu::{ReleasedAllocations, RetirementReason};
 mod text_layout;
 pub use terminal_render_cache::TerminalRenderCache;
 mod terminal_pane_render;

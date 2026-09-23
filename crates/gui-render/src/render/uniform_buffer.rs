@@ -41,6 +41,7 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
                     usage: uniform_usage(),
                 }),
                 permits,
+                std::mem::size_of::<T>() as u64,
             ),
             value: Some(value),
             pending: None,
@@ -66,6 +67,7 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
                     mapped_at_creation: false,
                 }),
                 permits,
+                std::mem::size_of::<T>() as u64,
             ),
             value: None,
             pending: None,
@@ -76,6 +78,10 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
 
     pub(crate) fn buffer(&self) -> &wgpu::Buffer {
         &self.buffer
+    }
+
+    pub(crate) fn prepared_ref(&self) -> SubmissionRef {
+        self.buffer.prepared_ref()
     }
 
     pub(crate) fn submission_ref(&self) -> SubmissionRef {
@@ -157,8 +163,10 @@ fn reserve<T>(
     GpuReservation::new(bytes, vec![generation, host])
 }
 
-fn tracked(buffer: wgpu::Buffer, permits: GpuReservation) -> Tracked<wgpu::Buffer> {
-    Owner::new().track_reserved(buffer, 1, Kind::Uniform, permits)
+fn tracked(buffer: wgpu::Buffer, permits: GpuReservation, requested: u64) -> Tracked<wgpu::Buffer> {
+    let buffer = Owner::new().track_reserved(buffer, 1, Kind::Uniform, permits);
+    buffer.set_requested_bytes(requested);
+    buffer
 }
 
 /// Keep bindings and their allocation together; drop binding references first.

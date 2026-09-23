@@ -3984,6 +3984,11 @@
           "work": "s4_hidden_world_adoption",
           "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json",
           "status": "Default frame preparation and cold continuation stop board uploads when prepared surfaces have no board consumer"
+        },
+        {
+          "work": "s4_allocation_state_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json",
+          "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes"
         }
       ]
     },
@@ -5404,6 +5409,11 @@
           "work": "s4_text_owner_reconciliation.rich_input_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
           "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
+        },
+        {
+          "work": "s4_allocation_state_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json",
+          "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes"
         }
       ]
     },
@@ -16953,6 +16963,11 @@
           "work": "s4_replacement_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/replacement-review/result.json",
           "status": "MEM-REPLACEMENT retained-resource implementation complete; original qualification remains S5"
+        },
+        {
+          "work": "s4_allocation_state_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json",
+          "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes"
         }
       ],
       "s4_resolved_implementation_obligations": [
@@ -18093,6 +18108,11 @@
           "work": "s4_resource_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
           "status": "MEM-GPU-TOTAL admission/lifetime implementation complete; font cache pressure integrated; full resource qualification remains open"
+        },
+        {
+          "work": "s4_allocation_state_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json",
+          "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes"
         }
       ],
       "s4_resolved_implementation_obligations": [
@@ -18289,6 +18309,11 @@
           "work": "s4_hidden_world_adoption",
           "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json",
           "status": "Default frame preparation and cold continuation stop board uploads when prepared surfaces have no board consumer"
+        },
+        {
+          "work": "s4_allocation_state_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json",
+          "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes"
         }
       ]
     },
@@ -36024,5 +36049,36 @@
       "No dependency/vendor/license, prototype, numerical-cap or sequencing change. Preserve GEFN, nonblocking resize and owner/Copilot engine-file changes."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json"
+  },
+  "s4_allocation_state_work": {
+    "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes",
+    "production_consumers": [
+      "Every existing track_reserved allocation: atlas, glyph instances, world/screen/terminal vertices, terminal textures, uniforms, surface/capture attachments, staging, query/resolve/readback",
+      "Prepared retained-world bundle references and actual frame/upload completion ownership"
+    ],
+    "retired_paths": [
+      "Capacity-only records for reused or rounded vertex/glyph/uniform buffers",
+      "Undifferentiated prepared-cache and submission holds",
+      "Retirement boolean without first-cause or bounded final-release totals",
+      "Accounting receipt lifetime incorrectly extending the live-allocation snapshot"
+    ],
+    "behavior": [
+      "Records keep requested bytes separate from API capacity and cumulative submitted transfer totals. Vertex and glyph owners update requested extent when capacity is reused; uniforms use their logical struct extent. Other textures/query/staging owners request their full API extent. This is prepared request size, not initialized/submitted content or atlas occupied-glyph pixels.",
+      "Prepared world-bundle references and submission references maintain separate counts on the same identity. Directly submitted staging owners count exactly once until completion drops them. Shared references do not duplicate capacity.",
+      "First retirement cause distinguishes replacement, explicit clear, uncached retirement, transfer to submission and ordinary owner drop. All migrated owners retain fallback owner-drop accounting; explicit vertex/glyph/attachment replacement sites set their more specific cause.",
+      "After the GPU resource and its permits drop, a final guard updates fixed-size per-owner and process release totals by cause. Observer and receipt lifetime cannot retain GPU capacity. Released resources disappear from live snapshots even if an accounting receipt survives. No unbounded event log or new trace framework."
+    ],
+    "proof": {
+      "renderer": "388 renderer tests passed;0 failed;11 filtered. Actual-GPU vertex reuse reports12requested/16capacity, rejected replacement preserves its entire record, replacement retains the old cause/payload through submission and final release records16capacity bytes. Existing pixel/parity/resource lifetime tests passed.",
+      "final_receipt_change": "Six lifecycle tests pass after the final receipt/live-record separation. Added cases cover prepared/submitted sharing through producer close, first-cause stability, exact-once direct staging transfer/drop, and surviving receipt with zero live records and one final release.",
+      "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2299files, dependency authority and governance checks pass. Tests extracted to a module under the unchanged source-health ceiling.",
+      "failed_attempt": "Preserve test-module extraction compile failure from its moved helper namespace; corrected without changing runtime behavior."
+    },
+    "limits": [
+      "Seven S4 implementation gaps remain. Role counts are not complete named logical-consumer/reference-owner incidence. Final totals are bounded aggregates, not a durable per-allocation event history; concurrent snapshots are observations, not an atomic process transaction.",
+      "OwnerDropped reports the actual owner-lifetime event without inferring native close versus device-reset intent. Texture request extent is not atlas occupancy, and no physical driver residency or complete CPU/private-text/scratch accounting is established.",
+      "No full AC-05/HP08-03/MEM/REUSE-SCREEN, S4/S5 or issue closure; original native/endurance/negative qualification remains. No dependency/vendor/license, prototype, cap or sequencing change. Preserve GEFN, nonblocking resize and Copilot engine edits."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json"
   }
 }

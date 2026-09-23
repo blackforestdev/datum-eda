@@ -1,9 +1,21 @@
 //! Allocation identities and explicit submission holds for the shared GPU owners.
 use std::ops::Deref;
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, Weak};
 
+#[path = "lifetime_state.rs"]
+mod state;
+use state::{Metadata, ReferenceKind};
+pub use state::{ReleasedAllocations, RetirementReason};
+
 static PROCESS_ALLOCATIONS: Mutex<Vec<Weak<Identity>>> = Mutex::new(Vec::new());
+
+static PROCESS_RELEASED: Mutex<[ReleasedAllocations; 5]> = Mutex::new(
+    [ReleasedAllocations {
+        allocations: 0,
+        capacity_bytes: 0,
+    }; 5],
+);
 
 static NEXT_ID: AtomicU64 = AtomicU64::new(1);
 
@@ -26,7 +38,14 @@ pub struct Record {
     pub id: u64,
     pub owner: u64,
     pub generation: u64,
+    /// Allocated API capacity; never inferred from upload traffic.
     pub bytes: u64,
+    /// Latest requested logical buffer extent, or full requested texture/query/storage extent.
+    /// This describes prepared ownership, not submitted content or atlas occupancy.
+    pub requested_bytes: u64,
+    pub prepared_references: u64,
+    pub submission_references: u64,
+    pub retirement_reason: Option<RetirementReason>,
     pub kind: Kind,
     pub retiring: bool,
     /// Submitted source payload; buffer ranges already include copy alignment.
@@ -39,7 +58,8 @@ pub struct Record {
 
 struct Identity {
     record: Record,
-    active: AtomicBool,
+    metadata: Metadata,
+    owner: Arc<State>,
     uploads: Mutex<super::upload_totals::AllocationUploads>,
 }
 
@@ -47,6 +67,7 @@ struct State {
     id: u64,
     allocations: Mutex<Vec<Weak<Identity>>>,
     uploads: Mutex<super::upload_totals::Accounting>,
+    released: Mutex<[ReleasedAllocations; 5]>,
 }
 
 /// Retain observation across renderer close without retaining GPU resources.
@@ -54,6 +75,13 @@ struct State {
 pub struct Observer(Owner);
 
 impl Observer {
+    /// Final GPU-owner releases, grouped by first retirement cause. Fixed-size
+    /// cumulative counters survive resource teardown without retaining resources.
+    pub fn released_allocations(&self) -> [(RetirementReason, ReleasedAllocations); 5] {
+        let totals = *self.0.0.released.lock().unwrap_or_else(|e| e.into_inner());
+        state::released_snapshot(totals)
+    }
+
     pub fn submitted_upload_totals(&self) -> super::upload_totals::UploadTotals {
         self.0
             .0
@@ -120,23 +148,8 @@ impl Owner {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
             allocations: Mutex::new(Vec::new()),
             uploads: Mutex::new(Default::default()),
+            released: Mutex::new(Default::default()),
         }))
-    }
-
-    #[cfg(test)]
-    pub(crate) fn track<T>(
-        &self,
-        resource: T,
-        bytes: u64,
-        generation: u64,
-        kind: Kind,
-    ) -> Tracked<T> {
-        self.track_reserved(
-            resource,
-            generation,
-            kind,
-            super::budget::GpuReservation::new(bytes, Vec::new()).expect("test GPU reservation"),
-        )
     }
 
     pub(crate) fn track_reserved<T>(
@@ -152,13 +165,18 @@ impl Owner {
                 owner: self.0.id,
                 generation,
                 bytes: reservation.bytes(),
+                requested_bytes: reservation.bytes(),
+                prepared_references: 0,
+                submission_references: 0,
+                retirement_reason: None,
                 kind,
                 retiring: false,
                 submitted_source_bytes: 0,
                 submitted_transfer_bytes: 0,
                 last_upload: None,
             },
-            active: AtomicBool::new(true),
+            metadata: Metadata::new(reservation.bytes()),
+            owner: self.0.clone(),
             uploads: Mutex::new(Default::default()),
         });
         let mut entries = self.0.allocations.lock().unwrap_or_else(|e| e.into_inner());
@@ -173,6 +191,7 @@ impl Owner {
             resource,
             _reservation: reservation,
             _shared_permit: None,
+            _released: FinalRelease(identity.clone()),
             identity,
         }))
     }
@@ -188,10 +207,17 @@ fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
     let mut entries = source.lock().unwrap_or_else(|e| e.into_inner());
     let mut records = Vec::new();
     entries.retain(|entry| {
-        if let Some(identity) = entry.upgrade() {
+        if let Some(identity) = entry.upgrade()
+            && !identity.metadata.released.load(Ordering::Acquire)
+        {
             let uploads = identity.uploads.lock().unwrap_or_else(|e| e.into_inner());
+            let reason = identity.metadata.reason();
             records.push(Record {
-                retiring: !identity.active.load(Ordering::Acquire),
+                retiring: reason.is_some(),
+                retirement_reason: reason,
+                requested_bytes: identity.metadata.payload.load(Ordering::Acquire),
+                prepared_references: identity.metadata.prepared.load(Ordering::Acquire),
+                submission_references: identity.metadata.submitted.load(Ordering::Acquire),
                 submitted_source_bytes: uploads.source_bytes,
                 submitted_transfer_bytes: uploads.transfer_bytes,
                 last_upload: uploads.latest,
@@ -209,6 +235,12 @@ fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
 }
 
 impl crate::Renderer {
+    /// Final tracked API allocation releases across all migrated owners. Fixed-size
+    /// process totals; no driver residency or per-allocation event history.
+    pub fn gpu_process_released_allocations() -> [(RetirementReason, ReleasedAllocations); 5] {
+        state::released_snapshot(*PROCESS_RELEASED.lock().unwrap_or_else(|e| e.into_inner()))
+    }
+
     /// This host's screen vertices, glyph instances and uniform buffer capacities.
     /// Includes submission retirement; texture and staging subcaps remain separate.
     pub fn screen_gpu_reserved_bytes(&self) -> u64 {
@@ -273,6 +305,33 @@ struct Allocation<T> {
     _shared_permit: Option<Arc<super::budget::Permit>>,
     _reservation: super::budget::GpuReservation,
     identity: Arc<Identity>,
+    _released: FinalRelease,
+}
+
+struct FinalRelease(Arc<Identity>);
+impl Drop for FinalRelease {
+    fn drop(&mut self) {
+        self.0.metadata.released.store(true, Ordering::Release);
+        let reason = self
+            .0
+            .metadata
+            .reason()
+            .unwrap_or(RetirementReason::OwnerDropped);
+        let mut totals = self
+            .0
+            .owner
+            .released
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        let total = &mut totals[reason as usize - 1];
+        total.allocations += 1;
+        total.capacity_bytes += self.0.record.bytes;
+        drop(totals);
+        let mut process = PROCESS_RELEASED.lock().unwrap_or_else(|e| e.into_inner());
+        let total = &mut process[reason as usize - 1];
+        total.allocations += 1;
+        total.capacity_bytes += self.0.record.bytes;
+    }
 }
 
 pub(crate) struct Tracked<T>(Arc<Allocation<T>>);
@@ -311,7 +370,29 @@ impl<T> Tracked<T> {
 
     /// A queue completion callback now owns this handle instead of the producer.
     pub(crate) fn mark_retiring(&self) {
-        self.0.identity.active.store(false, Ordering::Release);
+        if self.0.identity.metadata.retire(RetirementReason::Submitted) {
+            self.0
+                .identity
+                .metadata
+                .submitted
+                .fetch_add(1, Ordering::AcqRel);
+        }
+    }
+
+    pub(crate) fn retire(&self, reason: RetirementReason) {
+        self.0.identity.metadata.retire(reason);
+    }
+
+    pub(crate) fn set_requested_bytes(&self, bytes: u64) {
+        assert!(
+            bytes <= self.0.identity.record.bytes,
+            "payload exceeds GPU capacity"
+        );
+        self.0
+            .identity
+            .metadata
+            .payload
+            .store(bytes, Ordering::Release);
     }
 
     pub(crate) fn with_shared_permit(mut self, permit: Arc<super::budget::Permit>) -> Self {
@@ -327,12 +408,32 @@ impl<T> Tracked<T> {
     }
 }
 
+trait ResourceIdentity: Send + Sync {
+    fn identity(&self) -> &Identity;
+}
+impl<T: Send + Sync> ResourceIdentity for Allocation<T> {
+    fn identity(&self) -> &Identity {
+        &self.identity
+    }
+}
 impl<T: Send + Sync + 'static> Tracked<T> {
-    pub fn submission_ref(&self) -> SubmissionRef {
+    fn reference(&self, kind: ReferenceKind) -> SubmissionRef {
+        self.0
+            .identity
+            .metadata
+            .counter(kind)
+            .fetch_add(1, Ordering::AcqRel);
         SubmissionRef {
             allocation_id: self.0.identity.record.id,
-            _resource: self.0.clone(),
+            kind,
+            resource: self.0.clone(),
         }
+    }
+    pub fn submission_ref(&self) -> SubmissionRef {
+        self.reference(ReferenceKind::Submission)
+    }
+    pub fn prepared_ref(&self) -> SubmissionRef {
+        self.reference(ReferenceKind::Prepared)
     }
 }
 
@@ -345,13 +446,31 @@ impl<T> Deref for Tracked<T> {
 
 impl<T> Drop for Tracked<T> {
     fn drop(&mut self) {
-        self.mark_retiring();
+        if self.0.identity.metadata.reason() == Some(RetirementReason::Submitted) {
+            self.0
+                .identity
+                .metadata
+                .submitted
+                .fetch_sub(1, Ordering::AcqRel);
+        }
+        self.retire(RetirementReason::OwnerDropped);
     }
 }
 
 pub(crate) struct SubmissionRef {
     pub(crate) allocation_id: u64,
-    _resource: Arc<dyn Send + Sync>,
+    kind: ReferenceKind,
+    resource: Arc<dyn ResourceIdentity>,
+}
+
+impl Drop for SubmissionRef {
+    fn drop(&mut self) {
+        self.resource
+            .identity()
+            .metadata
+            .counter(self.kind)
+            .fetch_sub(1, Ordering::AcqRel);
+    }
 }
 
 /// Call immediately AFTER the submission that consumes these resources/writes.
@@ -362,101 +481,5 @@ pub(crate) fn hold_until_done(queue: &wgpu::Queue, resources: Vec<SubmissionRef>
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn texture_reservation_survives_owner_and_every_submission_hold() {
-        let budget = super::super::budget::Budget::new(64);
-        let owner = Owner::new();
-        let texture = owner.track_reserved(
-            vec![0_u8; 64],
-            1,
-            Kind::Texture,
-            super::super::budget::GpuReservation::new(64, vec![budget.reserve(64).unwrap()])
-                .unwrap(),
-        );
-        let id = texture.id();
-        let first = texture.submission_ref();
-        let second = texture.submission_ref();
-        drop(texture);
-        drop(owner);
-        assert_eq!(budget.used(), 64);
-        assert!(budget.reserve(1).is_err());
-        let records = crate::Renderer::text_gpu_process_allocations();
-        assert!(
-            records
-                .iter()
-                .any(|record| record.id == id && record.retiring)
-        );
-        drop(first);
-        assert_eq!(budget.used(), 64);
-        drop(second);
-        assert_eq!(budget.used(), 0);
-        assert!(
-            !crate::Renderer::text_gpu_process_allocations()
-                .iter()
-                .any(|record| record.id == id)
-        );
-    }
-
-    #[test]
-    fn split_upload_reservation_survives_mapped_owner_and_packet_submissions() {
-        use super::super::budget::{Budget, GpuReservation};
-        let budget = Budget::new(96);
-        let mut reservation = GpuReservation::new(96, vec![budget.reserve(96).unwrap()]).unwrap();
-        assert!(reservation.split(97).is_err());
-        assert_eq!(reservation.bytes(), 96);
-        let owner = Owner::new();
-        let mapped = owner.track_reserved((), 1, Kind::Staging, reservation.split(64).unwrap());
-        let packet = owner.track_reserved((), 1, Kind::Staging, reservation.split(32).unwrap());
-        assert_eq!(reservation.bytes(), 0);
-        assert_eq!(owner.records().iter().map(|r| r.bytes).sum::<u64>(), 96);
-        let observer = owner.observer();
-        let first = packet.submission_ref();
-        let second = packet.submission_ref();
-        drop(reservation);
-        drop(mapped);
-        drop(packet);
-        drop(owner);
-        assert_eq!(budget.used(), 96);
-        assert!(budget.reserve(1).is_err());
-        assert_eq!(observer.allocations().len(), 1);
-        assert_eq!(observer.allocations()[0].bytes, 32);
-        assert!(observer.allocations()[0].retiring);
-        drop(first);
-        assert_eq!(budget.used(), 96);
-        drop(second);
-        assert_eq!(budget.used(), 0);
-        assert!(observer.allocations().is_empty());
-        assert!(budget.reserve(96).is_ok());
-    }
-
-    #[test]
-    fn submitted_allocation_stays_charged_after_cpu_replacement() {
-        let owner = Owner::new();
-        let observer = owner.observer();
-        let first = owner.track(vec![0_u8; 64], 64, 1, Kind::Instances);
-        let first_id = first.id();
-        let submitted = first.submission_ref();
-        let submitted_again = first.submission_ref();
-        let replacement = owner.track(vec![1_u8; 64], 64, 2, Kind::Instances);
-        assert_ne!(first_id, replacement.id());
-        drop(first);
-        let records = owner.records();
-        assert_eq!(records.iter().map(|r| r.bytes).sum::<u64>(), 128);
-        assert!(records.iter().find(|r| r.id == first_id).unwrap().retiring);
-        drop(submitted);
-        assert_eq!(
-            owner.records().len(),
-            2,
-            "later submission still pins old allocation"
-        );
-        drop(submitted_again);
-        assert_eq!(owner.records().len(), 1);
-        drop(owner);
-        assert_eq!(observer.allocations().len(), 1);
-        drop(replacement);
-        assert!(observer.allocations().is_empty());
-    }
-}
+#[path = "lifetime_tests.rs"]
+mod tests;
