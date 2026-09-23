@@ -366,9 +366,7 @@ impl Runtime {
             }
             HitTarget::GlobalPreferencesSettingName(key) => {
                 let dialog = &mut self.session.workspace_mut().ui.project_preferences;
-                dialog.open_choice_key = None;
-                dialog.explanation_key = Some(key.clone());
-                dialog.focus = GlobalPreferencesFocus::ExplanationClose;
+                dialog.open_explanation(key);
                 self.refresh_dialog_state();
                 true
             }
@@ -381,9 +379,7 @@ impl Runtime {
             HitTarget::GlobalPreferencesReset(key) => self.reset_project_preference(key),
             HitTarget::GlobalPreferencesExplanationClose => {
                 let dialog = &mut self.session.workspace_mut().ui.project_preferences;
-                if let Some(key) = dialog.explanation_key.take() {
-                    dialog.focus = GlobalPreferencesFocus::SettingName(key);
-                }
+                dialog.close_explanation();
                 self.refresh_dialog_state();
                 true
             }
@@ -585,9 +581,7 @@ impl Runtime {
             }
             GlobalPreferencesFocus::ExplanationClose if activate => {
                 let dialog = &mut self.session.workspace_mut().ui.project_preferences;
-                if let Some(key) = dialog.explanation_key.take() {
-                    dialog.focus = GlobalPreferencesFocus::SettingName(key);
-                }
+                dialog.close_explanation();
                 self.refresh_dialog_state();
                 Outcome::Dialog
             }

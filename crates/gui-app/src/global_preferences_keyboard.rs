@@ -180,9 +180,7 @@ impl Runtime {
             }
             GlobalPreferencesFocus::ExplanationClose if activate => {
                 let ui = &mut self.session.workspace_mut().ui.global_preferences;
-                if let Some(key) = ui.explanation_key.take() {
-                    ui.focus = GlobalPreferencesFocus::SettingName(key);
-                }
+                ui.close_explanation();
                 self.refresh_dialog_state();
                 Outcome::Dialog
             }

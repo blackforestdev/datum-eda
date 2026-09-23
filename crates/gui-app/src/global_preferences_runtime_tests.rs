@@ -439,7 +439,22 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
     assert!(ui.global_preferences.select_section("appearance"));
 
     let key = "datum.console.feedback_duration".to_owned();
-    ui.global_preferences.explanation_key = Some(key.clone());
+    ui.global_preferences.open_choice_key = Some(key.clone());
+    ui.global_preferences.open_explanation(&key);
+    assert!(ui.global_preferences.open_choice_key.is_none());
+    assert_eq!(
+        ui.global_preferences.focus,
+        datum_gui_protocol::GlobalPreferencesFocus::ExplanationClose
+    );
+    assert!(ui.global_preferences.close_explanation());
+    assert_eq!(
+        ui.global_preferences.focus,
+        datum_gui_protocol::GlobalPreferencesFocus::SettingName(key.clone())
+    );
+    let closed = ui.global_preferences.clone();
+    assert!(!ui.global_preferences.close_explanation());
+    assert_eq!(ui.global_preferences, closed);
+    ui.global_preferences.open_explanation(&key);
     ui.global_preferences.open_choice_key = Some(key);
     assert_eq!(
         ui.global_preferences.dismiss_innermost(),

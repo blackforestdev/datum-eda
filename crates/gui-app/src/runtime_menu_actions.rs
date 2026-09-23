@@ -111,9 +111,7 @@ impl Runtime {
             HitTarget::GlobalPreferencesReset(key) => self.reset_global_preference(key),
             HitTarget::GlobalPreferencesExplanationClose => {
                 let ui = &mut self.session.workspace_mut().ui.global_preferences;
-                if let Some(key) = ui.explanation_key.take() {
-                    ui.focus = datum_gui_protocol::GlobalPreferencesFocus::SettingName(key);
-                }
+                ui.close_explanation();
                 self.refresh_dialog_state();
                 true
             }

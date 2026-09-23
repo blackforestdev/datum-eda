@@ -5831,7 +5831,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
         "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
         "docs/reviews/gui-performance/implementation/S3/preferences-row-layout/result.json",
-        "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json"
+        "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
+        "docs/reviews/gui-performance/implementation/S3/shared-explanation-transition/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -8335,7 +8336,8 @@
         "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
         "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
         "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
-        "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json"
+        "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
+        "docs/reviews/gui-performance/implementation/S3/shared-explanation-transition/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -30158,6 +30160,34 @@
       "f64 accumulation addresses tested sub-f32-resolution motion; no claim of exact real arithmetic across every representable magnitude or unbounded stream.",
       "Wayland content-presentation timeout cause is unproven; related historical presentation issue dat-native-content-presentation-qo9y remains separate.",
       "No dependency/license, prototype, numerical budget, stored preference authority, sequencing or nonblocking resize change."
+    ]
+  },
+  "s3_shared_explanation_transition_work": {
+    "production_consumers": [
+      "Global Preferences pointer explanation activation/close",
+      "Global Preferences keyboard explanation activation/close",
+      "Project Preferences pointer explanation activation/close",
+      "Project Preferences keyboard explanation activation/close",
+      "Both Preferences Escape nested dismissal"
+    ],
+    "shared_owner": "GlobalPreferencesDialogState::open_explanation / close_explanation",
+    "retired_paths": [
+      "Global and Project private open-choice-clear/explanation-open/focus assignment",
+      "Four Runtime pointer/keyboard explanation take-and-focus-return branches",
+      "Separate Escape explanation take-and-focus-return branch"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shared-explanation-transition/result.json",
+    "proof": {
+      "application": "377 passed,16 ignored; visual-shell integration1 ignored",
+      "focused_regression": "Existing Preferences focus/dismissal regression now verifies opening dismisses choice, close restores exact setting-name focus, repeated close leaves state identical, and Escape preserves nested dismissal order.",
+      "source_inventory": "explanation_key.take appears only in the shared protocol close owner across gui-app and protocol. Production pointer, keyboard and Escape paths call it.",
+      "source_health": "Gate passes;13 policy tests pass; no legacy module changed.",
+      "full_drift": "Workspace Clippy passes; exit1 at existing Console routine-focused1x golden3778 pixels/0.384318% (dat-console-revision-golden-hrak). Subsequent gates did not run; goldens unchanged."
+    },
+    "limits": [
+      "No new native OS-input or rendered-pixel proof; desktop currently locked and unlock request pending. Earlier bounded native evidence is retained, not relabeled as proof of this candidate.",
+      "No runtime latency/allocation speedup claim. This is ownership convergence, not a new product interaction.",
+      "No prototype, dependency/license, preference authority, numerical budget, sequencing or resize-scope change; full S3 qualification remains open."
     ]
   }
 }
