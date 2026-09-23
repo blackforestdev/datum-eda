@@ -8,6 +8,9 @@ use super::PreparedTerminalGraphic;
 #[path = "terminal_graphic_texture.rs"]
 mod texture;
 use texture::CachedTerminalGraphicTexture;
+#[path = "terminal_texture_generations.rs"]
+mod texture_generations;
+use texture_generations::TextureGenerations;
 #[path = "terminal_upload.rs"]
 mod upload;
 
@@ -57,6 +60,7 @@ struct TerminalGraphicDraw {
 pub(super) struct TerminalGraphicsRenderer {
     screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     draw_generations: crate::text_gpu::slot_generations::SlotGenerations,
+    texture_generations: TextureGenerations,
     pipeline: wgpu::RenderPipeline,
     texture_layout: wgpu::BindGroupLayout,
     textures: Vec<CachedTerminalGraphicTexture>,
@@ -170,6 +174,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         Self {
             screen_budget,
             draw_generations: Default::default(),
+            texture_generations: Default::default(),
             pipeline,
             texture_layout,
             textures: Vec::new(),
@@ -194,6 +199,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             self.screen_budget.clone(),
         );
         replacement.draw_generations = self.draw_generations.clone();
+        replacement.texture_generations = self.texture_generations.clone();
         replacement
     }
 
@@ -231,6 +237,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                     &self.texture_layout,
                     graphic,
                     key,
+                    self.texture_generations.for_key(key),
                 )?);
             }
             let clip = (clip_x, clip_y, clip_right - clip_x, clip_bottom - clip_y);

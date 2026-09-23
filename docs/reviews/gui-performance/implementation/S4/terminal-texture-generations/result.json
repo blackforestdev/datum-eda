@@ -1,0 +1,49 @@
+{
+  "status": "Immutable terminal texture generations retain two-allocation admission across close/reopen and renderer recovery",
+  "base_commit": "73efd0f1",
+  "production_consumers": [
+    "TerminalGraphicsRenderer::sync texture cache construction and replacement across native hosts",
+    "CachedTerminalGraphicTexture allocation/submission lifetime"
+  ],
+  "retired_paths": [
+    "Terminal texture recreation with byte caps only and no preserved immutable-resource generation allowance"
+  ],
+  "behavior": [
+    "Share a weak registry keyed by existing placement/extent/pixel-allocation texture identity across recovery. Reserve one of two generations before API allocation, alongside terminal/process byte caps. Pin the decoded source inside the tracked GPU allocation through final submission retirement so an address cannot be reused while its registry allowance remains live. Independent immutable images keep separate allowances. TerminalCore/PTY state and decoding remain unchanged."
+  ],
+  "proof": {
+    "renderer": "350 renderer tests pass, 11 filtered. Actual-GPU sixel fixture test pins two texture generations across close/reopen, verifies third refusal and unchanged terminal bytes, verifies recovery refusal, retires/retries and closes to baseline while source snapshot remains present. Existing terminal pixel/chunk tests pass. Quad-generation test now clips draws while retaining texture cache, ensuring its refusal still tests quad ownership independently of the new earlier texture guard.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2277, dependency authority and governance pass.",
+    "attempt": "Initial test compile used is_empty on the snapshot graphics iterator, which is unstable; corrected to next().is_some(). Failed compile log retained.",
+    "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Terminal texture generation implementation is present; full MEM-REPLACEMENT still needs complete resource-family reconciliation and original S5 qualification. Registry/source-wrapper CPU metadata remains within existing open accounting obligations. No global replacement acceptance follows this test.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/tests.log.gz",
+      "uncompressed_sha256": "4603b61f0461138f5b9a4551ad33cb70d93051f16a5ac20810266078d269b118"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/clippy.log.gz",
+      "uncompressed_sha256": "2e2894a23d663b748c48d263995cdc0b82ab2edbfd36aa1d42c12e9cb2d4b1de"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/build.log.gz",
+      "uncompressed_sha256": "967ba07e9c2c9496cd2aa7b899bce2d5ae8d051454b1526ec0a8b2ba7f1dca8c"
+    },
+    "compile-attempt": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/compile-attempt.log.gz",
+      "uncompressed_sha256": "0404ca33236acfafae532f95a8108f430b8e6baf037c393626458ab1e1c5ce78"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/terminal_graphics.rs": "4d9b3bf079cc4cd9e5edccb844611f7acc6f23def18ea0d19fe06dc47d7eb136",
+    "crates/gui-render/src/render/terminal_texture_generations.rs": "a009f7a401f756df1dbbaffd1b48c2d25814c70eb3dd540f257f70c0688eeea7",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "7d54288b1d32c2d98f437701909ffd3a81034eeccbf6f0e3b3cd53fc34293cc7",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "0185354629b6359d2fb070069a5416b2e6d3f5dac0df8abe7aa5493c94a100f9"
+  }
+}

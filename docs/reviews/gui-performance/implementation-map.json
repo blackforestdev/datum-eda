@@ -16612,6 +16612,11 @@
           "work": "s4_terminal_quad_generations_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/result.json",
           "status": "Terminal quad slots and pane uniforms share preserved two-generation ownership across close/recovery"
+        },
+        {
+          "work": "s4_terminal_texture_generations_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/result.json",
+          "status": "Immutable terminal texture generations retain two-allocation admission across close/reopen and renderer recovery"
         }
       ]
     },
@@ -34081,5 +34086,30 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/result.json"
+  },
+  "s4_terminal_texture_generations_work": {
+    "status": "Immutable terminal texture generations retain two-allocation admission across close/reopen and renderer recovery",
+    "base_commit": "73efd0f1",
+    "production_consumers": [
+      "TerminalGraphicsRenderer::sync texture cache construction and replacement across native hosts",
+      "CachedTerminalGraphicTexture allocation/submission lifetime"
+    ],
+    "retired_paths": [
+      "Terminal texture recreation with byte caps only and no preserved immutable-resource generation allowance"
+    ],
+    "behavior": [
+      "Share a weak registry keyed by existing placement/extent/pixel-allocation texture identity across recovery. Reserve one of two generations before API allocation, alongside terminal/process byte caps. Pin the decoded source inside the tracked GPU allocation through final submission retirement so an address cannot be reused while its registry allowance remains live. Independent immutable images keep separate allowances. TerminalCore/PTY state and decoding remain unchanged."
+    ],
+    "proof": {
+      "renderer": "350 renderer tests pass, 11 filtered. Actual-GPU sixel fixture test pins two texture generations across close/reopen, verifies third refusal and unchanged terminal bytes, verifies recovery refusal, retires/retries and closes to baseline while source snapshot remains present. Existing terminal pixel/chunk tests pass. Quad-generation test now clips draws while retaining texture cache, ensuring its refusal still tests quad ownership independently of the new earlier texture guard.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2277, dependency authority and governance pass.",
+      "attempt": "Initial test compile used is_empty on the snapshot graphics iterator, which is unstable; corrected to next().is_some(). Failed compile log retained.",
+      "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Terminal texture generation implementation is present; full MEM-REPLACEMENT still needs complete resource-family reconciliation and original S5 qualification. Registry/source-wrapper CPU metadata remains within existing open accounting obligations. No global replacement acceptance follows this test.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/result.json"
   }
 }
