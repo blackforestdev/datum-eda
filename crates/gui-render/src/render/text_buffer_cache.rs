@@ -64,6 +64,15 @@ fn retain_recent_text_buffers<T>(
 const MAX_OVERLAY_BUFFERS: usize = 128;
 const MAX_OVERLAY_TEXT_BYTES: usize = 32 * 1024;
 
+fn key_text_bytes(key: &TextBufferKey) -> usize {
+    key.text.capacity()
+        + key
+            .rich_spans
+            .iter()
+            .map(|span| span.text.capacity())
+            .sum::<usize>()
+}
+
 fn retain_overlay_buffers<T>(
     entries: &mut Vec<T>,
     age: impl Fn(&T) -> u64,
@@ -160,6 +169,27 @@ fn run_fingerprint(run: &TextRun) -> u64 {
 }
 
 impl TextBufferCache {
+    pub(crate) fn key_usage(&self) -> crate::TextCacheKeyUsage {
+        crate::TextCacheKeyUsage {
+            entries: self.entries.len(),
+            key_text_bytes: self
+                .entries
+                .iter()
+                .map(|entry| key_text_bytes(&entry.key))
+                .sum(),
+            entry_storage_bytes: std::mem::size_of::<Self>()
+                + self.entries.capacity() * std::mem::size_of::<CachedTextBuffer>()
+                + self.lookup.capacity() * std::mem::size_of::<(u64, usize)>()
+                + self
+                    .entries
+                    .iter()
+                    .map(|entry| {
+                        entry.key.rich_spans.capacity() * std::mem::size_of::<TextBufferSpanKey>()
+                    })
+                    .sum::<usize>(),
+        }
+    }
+
     pub(crate) fn revision(&self) -> u64 {
         self.revision
     }
@@ -191,15 +221,7 @@ impl TextBufferCache {
         let changed = retain_overlay_buffers(
             &mut self.entries,
             |entry| entry.last_used_frame,
-            |entry| {
-                entry.key.text.len()
-                    + entry
-                        .key
-                        .rich_spans
-                        .iter()
-                        .map(|span| span.text.len())
-                        .sum::<usize>()
-            },
+            |entry| key_text_bytes(&entry.key),
         );
         if changed {
             // Only actual retirement/reordering invalidates index signatures.

@@ -56,7 +56,22 @@ pub struct WidthMeasurementCacheUsage {
     pub retained_bytes: usize,
 }
 
+/// Datum-owned shaped-cache keys and entry storage at the observation point.
+/// Excludes nested glyphon Buffer/font/atlas payload and temporary shaping work.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TextCacheKeyUsage {
+    pub entries: usize,
+    pub key_text_bytes: usize,
+    pub entry_storage_bytes: usize,
+}
+
 impl Renderer {
+    /// Overlay limits apply after its post-submission trim; workspace retention
+    /// follows its own profile. This is not complete shaped-text accounting.
+    pub fn text_cache_key_usage(&self) -> TextCacheKeyUsage {
+        self.text_buffers.key_usage()
+    }
+
     /// Enumerate all live measurement caches, including caches on other threads.
     /// Sum retained_bytes for the process total at this observation point.
     pub fn width_measurement_cache_usage() -> Vec<WidthMeasurementCacheUsage> {
