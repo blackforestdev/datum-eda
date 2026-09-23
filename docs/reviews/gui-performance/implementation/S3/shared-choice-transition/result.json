@@ -1,0 +1,29 @@
+{
+  "status": "bounded production migration; GPI-S3 remains in progress",
+  "base_commit": "9241912a",
+  "production_consumers": [
+    "Global Preferences control activation",
+    "Project Preferences control activation"
+  ],
+  "shared_owner": "GlobalPreferencesDialogState::toggle_choice",
+  "retired_paths": [
+    "Global private explanation-clear/choice-toggle/reveal transition",
+    "Project private explanation-clear/choice-toggle/reveal transition",
+    "Whole control clones during both activation paths, including choice option vectors and strings"
+  ],
+  "behavior": "Both default Runtime consumers use the shared choice transition. Global borrows control metadata for Boolean/Integer/explanation dispatch; Project rejects non-choice controls through the shared owner. Host-specific write coordinators and refresh paths remain unchanged.",
+  "verification": {
+    "app_tests": "377 passed; 16 ignored; visual-shell integration 1 ignored",
+    "native_runtime": "1 passed, 392 filtered: both hosts open/close choices, dismiss explanation, preserve state for missing key and retain Main preparation. Hidden X11/Vulkan surface; not OS input or visual qualification.",
+    "source_policy": "13 tests passed; source health passes; no touched module is legacy debt",
+    "boundaries": "Project tripwire, Global boundary and dependency authority pass",
+    "initial_command_correction": "cargo test --lib rejected because gui-app has no library target; reran the actual package and binary tests",
+    "warning_correction": "Removed Project unused control-type import after focused native pass; subsequent workspace Clippy checks final source.",
+    "full_drift": "Exit1: workspace Clippy and preceding checks pass; console-routine-focused scale1 golden fails3778 pixels (0.384318%), same pre-existing dat-console-revision-golden-hrak. Later drift gates did not run; goldens unchanged."
+  },
+  "limits": [
+    "No measured latency or allocator-byte claim; removal of option cloning follows production ownership and borrowing.",
+    "No visual behavior, stored preference authority, prototype, dependency/license, resource deadline, resize scope or S3 acceptance change.",
+    "Full drift outcome is recorded in drift.log.gz; existing unrelated golden conflict remains separately tracked."
+  ]
+}
