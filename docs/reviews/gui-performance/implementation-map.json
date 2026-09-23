@@ -7215,7 +7215,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-wheel-offsets/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-wheel-offsets/result.json",
+        "docs/reviews/gui-performance/implementation/S3/fractional-scroll-accumulation/result.json"
       ],
       "s3_native_wheel_offsets_progress": {
         "production_consumers": [
@@ -28743,7 +28744,7 @@
         "HP16-01": "Complete remaining consumer/backend/scale/fractional translation/clip and displayed-state proof. Same-release GLOBAL/PROJECT1/1.5/2 visual-override OS scroll, NEW1x focus cycle and MAIN1x File-menu activity retain stable production build totals; existing lookup-bypass negatives fail corresponding native work assertions. Larger-scale Preferences accepted extents are1440x1050/1918x1050. Retain stale captures and unqualified NEW final focus; visual overrides are not monitor transitions. Shared GPU72-case parity and Inspector/Menu direct-rectangle classification remain bounded; no extra general-tessellator negative prerequisite.",
         "HP16-02": "Complete actual authored-board/native contour/style/DPI qualification. General filler analytical concave/holed area cases and fan negative now recorded; existing cache key-field/DPI-key negative retained. Unit contours do not qualify native authored consumers.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
-        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Both hosts now have actual Wayland OS pixel-wheel reversal including +/-0.2625 physical pixels, outward boundary no-op and immediate reverse frame; exact final offset and timed stream remain open.",
+        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Both hosts now have actual Wayland OS pixel-wheel reversal including +/-0.2625 physical pixels, outward boundary no-op and immediate reverse frame; exact final offset and timed stream remain open. Current shared owner now preserves sub-f32-resolution accumulation at nonzero offsets. Predecessor fails new regression;47 viewport tests and18 X11 native-entry profiles pass. Wayland first host passes wheel assertions then content presentation times out; no complete backend result. Exact OS/timed/display qualification remains open.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Prescribed double-scale defect now detected through actual Global native entry at1.5x on both backends; restored positives cover all dialog profiles. Preserve distinction from OS-delivered and independent other-consumer negatives. Current real Runtime Main/Layers physical-line equivalence and Layers scaling negative now recorded for both backends/three overrides; OS dispatch, final pixels and terminal/remaining qualification stay open. Terminal real-PTY history is now mandatory: native Runtime one-row physical/line policy, local no-op boundaries and camera/preparation isolation pass on both backends at1/1.5/2 overrides. Both1.5x physical-sign negatives fail and explicitly recompiled normal positives pass; OS delivery, pixels and mouse-report bytes remain open. Actual Wayland OS physical-wheel delivery and fresh-target semantic outcomes now recorded for both Preferences with output scale1.05/visual override1; no other-scale conversion qualification.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
         "HP21-01": "Complete remaining OS input/capture/profile/scale qualification. All three default dialog adapters now share pointer dispatch; actual native surfaces detect ignored scrollbar consumption activating Units settings/New name through production WindowEvents, with restored positive. Direct dispatcher proof does not qualify OS delivery. Retain painted-only OS negative and unresolved delivery failures. Both-backend current native entry proof is recorded:24 closes,19 scrollbar focus cancellation cases across accepted extents. OS delivery, unavailable Wayland2x requested sizes and remaining qualification stay open.",
@@ -30129,6 +30130,34 @@
       "No measured latency or allocator-byte claim; removal of option cloning follows production ownership and borrowing.",
       "No visual behavior, stored preference authority, prototype, dependency/license, resource deadline, resize scope or S3 acceptance change.",
       "Full drift outcome is recorded in drift.log.gz; existing unrelated golden conflict remains separately tracked."
+    ]
+  },
+  "s3_fractional_scroll_accumulation_work": {
+    "production_consumers": [
+      "Global Preferences continuous scroll",
+      "Project Preferences continuous scroll",
+      "New Project continuous scroll"
+    ],
+    "retired_paths": [
+      "Per-event f32 offset addition that discards motion below the current offset resolution"
+    ],
+    "shared_owner": "datum_gui_viewport::scroll::ScrollViewport",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/fractional-scroll-accumulation/result.json",
+    "proof": {
+      "predecessor": "New test fails at expected500.01 after1000 deltas of0.00001 starting at500; old offset loses input.",
+      "viewport": "47 tests pass, including accumulation across repeated layout, reversal and boundary no-debt.",
+      "x11": "Actual production WindowEvent dispatch passes18 host/size/scale cases, scales1/1.5/2. Added1000 deltas each direction of0.000001 logical pixels with final-offset assertions. Existing grab/release/focus/close/content checks also pass.",
+      "wayland": "First Global1x native-entry wheel sequence passes. Later content-presentation timeout aborts the test before remaining profiles; retain failure, no complete Wayland result.",
+      "harness_correction": "Initial X11 test expected motion in non-overflow New Project. Expected stream now clamps to actual maximum; initial failed run preserved.",
+      "source_policy": "Source health and13 policy regression tests pass; no legacy source edited.",
+      "tracker_correction": "Initial drift stopped at missing roadmap:intake label on the new bug; corrected and project-state check passes.",
+      "full_drift": "Workspace Clippy passes. Exit1 at existing Console routine-focused1x golden mismatch3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates did not run; goldens unchanged."
+    },
+    "limits": [
+      "Native test supplies WindowEvents to actual surfaces; it is not OS-device delivery, screenshots, timed W-SCROLL or full HP18/S3 qualification.",
+      "f64 accumulation addresses tested sub-f32-resolution motion; no claim of exact real arithmetic across every representable magnitude or unbounded stream.",
+      "Wayland content-presentation timeout cause is unproven; related historical presentation issue dat-native-content-presentation-qo9y remains separate.",
+      "No dependency/license, prototype, numerical budget, stored preference authority, sequencing or nonblocking resize change."
     ]
   }
 }

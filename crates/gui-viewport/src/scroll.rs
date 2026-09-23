@@ -34,7 +34,8 @@ pub struct ScrollPress {
 pub struct ScrollViewport {
     pub viewport: ScreenRectPx,
     pub content_height: f32,
-    offset: f32,
+    // Accumulate below the rendered f32 offset resolution without dropping input.
+    offset: f64,
     drag_grab: Option<f32>,
 }
 
@@ -56,7 +57,7 @@ impl Default for ScrollViewport {
 
 impl ScrollViewport {
     pub fn offset(&self) -> f32 {
-        self.offset
+        self.offset as f32
     }
     pub fn maximum(&self) -> f32 {
         (self.content_height - self.viewport.height).max(0.0)
@@ -70,28 +71,31 @@ impl ScrollViewport {
         }
         self.viewport = viewport;
         self.content_height = content_height;
-        self.set_offset(self.offset);
+        self.set_precise_offset(self.offset);
         if self.maximum() == 0.0 {
             self.drag_grab = None;
         }
     }
     pub fn set_offset(&mut self, offset: f32) -> bool {
+        self.set_precise_offset(f64::from(offset))
+    }
+    fn set_precise_offset(&mut self, offset: f64) -> bool {
         if !offset.is_finite() {
             return false;
         }
-        let next = offset.clamp(0.0, self.maximum());
-        let changed = next != self.offset;
+        let next = offset.clamp(0.0, f64::from(self.maximum()));
+        let changed = next as f32 != self.offset();
         self.offset = next;
         changed
     }
     /// Positive deltas move content down, matching native wheel coordinates.
     pub fn wheel(&mut self, delta: f32) -> bool {
-        self.set_offset(self.offset - delta)
+        self.set_precise_offset(self.offset - f64::from(delta))
     }
     pub fn reveal(&mut self, top: f32, bottom: f32) {
-        if top < self.offset {
+        if top < self.offset() {
             self.set_offset(top);
-        } else if bottom > self.offset + self.viewport.height {
+        } else if bottom > self.offset() + self.viewport.height {
             self.set_offset(if bottom - top > self.viewport.height {
                 top
             } else {
@@ -114,7 +118,7 @@ impl ScrollViewport {
             .min(track.height);
         Some(ScreenRectPx {
             x: track.x + 2.0,
-            y: track.y + (track.height - height) * self.offset / self.maximum(),
+            y: track.y + (track.height - height) * self.offset() / self.maximum(),
             width: track.width - 4.0,
             height,
         })
@@ -127,13 +131,13 @@ impl ScrollViewport {
         if x < track.x || x > track.x + track.width || y < track.y || y > track.y + track.height {
             return ScrollPress::default();
         }
-        let before = self.offset;
+        let before = self.offset();
         let thumb = self.thumb().expect("scrollable track has thumb");
         if y >= thumb.y && y <= thumb.y + thumb.height {
             self.drag_grab = Some(y - thumb.y);
         } else {
             self.set_offset(
-                self.offset
+                self.offset()
                     + if y < thumb.y {
                         -self.viewport.height
                     } else {
@@ -143,7 +147,7 @@ impl ScrollViewport {
         }
         ScrollPress {
             consumed: true,
-            changed: self.offset != before,
+            changed: self.offset() != before,
         }
     }
     pub fn drag(&mut self, y: f32) -> bool {
@@ -205,6 +209,29 @@ mod tests {
         assert!(s.wheel(0.25));
         assert_eq!(s.offset(), 599.75);
     }
+    #[test]
+    fn tiny_wheel_deltas_accumulate_at_nonzero_offsets_across_layout() {
+        let mut s = scroll();
+        s.set_offset(500.0);
+        for _ in 0..1000 {
+            s.wheel(-0.00001);
+            s.layout(s.viewport, s.content_height);
+        }
+        assert!((s.offset() - 500.01).abs() < 0.0001);
+        for _ in 0..1000 {
+            s.wheel(0.00001);
+        }
+        assert_eq!(s.offset(), 500.0);
+        s.set_offset(s.maximum());
+        for _ in 0..1000 {
+            assert!(!s.wheel(-0.00001), "clamped input must not accumulate debt");
+        }
+        for _ in 0..1000 {
+            s.wheel(0.00001);
+        }
+        assert!((s.offset() - 599.99).abs() < 0.0001);
+    }
+
     #[test]
     fn thumb_endpoints_drag_page_and_resize_share_content_bounds() {
         let mut s = scroll();

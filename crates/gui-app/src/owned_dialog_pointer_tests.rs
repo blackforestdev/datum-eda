@@ -114,6 +114,20 @@ fn verify_wheel_offsets(
             0.0,
         );
     }
+    // Tiny deltas at a nonzero offset must accumulate through native dispatch.
+    let middle = maximum * 0.5;
+    wheel(pixel(-f64::from(middle * scale)), middle);
+    let mut precise = f64::from(middle);
+    for direction in [-1.0, 1.0] {
+        for _ in 0..1000 {
+            precise = (precise - direction * 0.000001).clamp(0.0, f64::from(maximum));
+            wheel(
+                pixel(direction * 0.000001 * f64::from(scale)),
+                precise as f32,
+            );
+        }
+    }
+    wheel(pixel(4096.0), 0.0);
     wheel(pixel(-f64::from(original * scale)), original);
     eprintln!(
         "host={index} scale={scale} native_entry_fractional_pixels_lines_boundaries=true maximum={maximum}"
