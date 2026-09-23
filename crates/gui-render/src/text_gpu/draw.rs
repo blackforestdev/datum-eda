@@ -27,6 +27,7 @@ struct Instance {
 
 pub(crate) struct Draw {
     screen_budget: std::sync::Arc<super::budget::Budget>,
+    generation_budget: std::sync::Arc<super::budget::Budget>,
     pipeline: wgpu::RenderPipeline,
     instances: Option<Tracked<wgpu::Buffer>>,
     batches: Vec<(usize, Range<u32>)>,
@@ -84,6 +85,7 @@ impl Draw {
         });
         Self {
             screen_budget,
+            generation_budget: super::budget::Budget::new(2),
             pipeline,
             instances: None,
             batches: Vec::new(),
@@ -92,6 +94,18 @@ impl Draw {
             generation: None,
             upload_bytes: 0,
         }
+    }
+
+    pub fn replacement(
+        &self,
+        device: &wgpu::Device,
+        atlas: &Atlas,
+        format: wgpu::TextureFormat,
+        samples: u32,
+    ) -> Self {
+        let mut replacement = Self::new(device, atlas, format, samples, self.screen_budget.clone());
+        replacement.generation_budget = self.generation_budget.clone();
+        replacement
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -188,6 +202,11 @@ impl Draw {
             required > buffer.size() || buffer.size() > required.saturating_mul(4)
         }) {
             let capacity = required.next_power_of_two();
+            let generation_permit = self.generation_budget.reserve(1).map_err(|_| {
+                anyhow::anyhow!(
+                    "glyph instances have two live GPU allocations; wait for retirement"
+                )
+            })?;
             let screen_permit = self.screen_budget.reserve(capacity)?;
             let permit = super::budget::gpu_process().reserve(capacity)?;
             self.instances = Some(atlas.owner.track_with_permits(
@@ -202,7 +221,7 @@ impl Draw {
                 capacity,
                 atlas.generation,
                 Kind::Instances,
-                vec![screen_permit, permit],
+                vec![generation_permit, screen_permit, permit],
             ));
             self.snapshot = Vec::new();
         }
@@ -280,3 +299,7 @@ impl Draw {
         Ok(())
     }
 }
+
+#[cfg(all(test, feature = "visual"))]
+#[path = "draw_generation_tests.rs"]
+mod generation_tests;

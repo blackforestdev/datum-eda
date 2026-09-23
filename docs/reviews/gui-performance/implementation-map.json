@@ -16597,6 +16597,11 @@
           "work": "s4_atlas_recovery_budget_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/result.json",
           "status": "Atlas recovery preserves host-local texture capacity admission across retired pages"
+        },
+        {
+          "work": "s4_glyph_instance_generations_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/result.json",
+          "status": "Workspace and overlay glyph instance buffers enforce two live allocations across empty preparation and recovery"
         }
       ]
     },
@@ -33993,5 +33998,30 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/result.json"
+  },
+  "s4_glyph_instance_generations_work": {
+    "status": "Workspace and overlay glyph instance buffers enforce two live allocations across empty preparation and recovery",
+    "base_commit": "06317d8f",
+    "production_consumers": [
+      "Shared Draw::prepare for workspace and overlay text",
+      "Renderer::recreate_for_device for both text draw owners across native hosts"
+    ],
+    "retired_paths": [
+      "Glyph instance replacement admitted only by byte caps, without a live-generation limit",
+      "Recovery constructs new draw owners without preserving instance generation allowance"
+    ],
+    "behavior": [
+      "Reserve one of two generation slots before allocating a replacement glyph instance buffer. Attach its permit to tracked GPU ownership through submission retirement. Preserve the allowance and host screen limit in Draw::replacement. Empty preparation releases active storage without forgiving submission holds; equal-capacity warm reuse needs no new generation."
+    ],
+    "proof": {
+      "renderer": "347 renderer tests pass, 11 filtered. New actual-GPU test pins two instance allocations, verifies third refusal preserves current identity and screen charge, verifies unchanged warm zero-byte reuse, clears text, recovers, verifies refusal persists, then releases and retries to final zero ownership. Existing text parity and production renderer tests pass.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2275, dependency authority and governance pass.",
+      "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Full MEM-REPLACEMENT still requires remaining resource families and original S5 qualification; atlas page-generation and terminal ownership require further reconciliation. Instance CPU snapshots/construction accounting remain within existing open resource obligations.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/result.json"
   }
 }

@@ -1,0 +1,44 @@
+{
+  "status": "Workspace and overlay glyph instance buffers enforce two live allocations across empty preparation and recovery",
+  "base_commit": "06317d8f",
+  "production_consumers": [
+    "Shared Draw::prepare for workspace and overlay text",
+    "Renderer::recreate_for_device for both text draw owners across native hosts"
+  ],
+  "retired_paths": [
+    "Glyph instance replacement admitted only by byte caps, without a live-generation limit",
+    "Recovery constructs new draw owners without preserving instance generation allowance"
+  ],
+  "behavior": [
+    "Reserve one of two generation slots before allocating a replacement glyph instance buffer. Attach its permit to tracked GPU ownership through submission retirement. Preserve the allowance and host screen limit in Draw::replacement. Empty preparation releases active storage without forgiving submission holds; equal-capacity warm reuse needs no new generation."
+  ],
+  "proof": {
+    "renderer": "347 renderer tests pass, 11 filtered. New actual-GPU test pins two instance allocations, verifies third refusal preserves current identity and screen charge, verifies unchanged warm zero-byte reuse, clears text, recovers, verifies refusal persists, then releases and retries to final zero ownership. Existing text parity and production renderer tests pass.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2275, dependency authority and governance pass.",
+    "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Full MEM-REPLACEMENT still requires remaining resource families and original S5 qualification; atlas page-generation and terminal ownership require further reconciliation. Instance CPU snapshots/construction accounting remain within existing open resource obligations.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/tests.log.gz",
+      "uncompressed_sha256": "1839032e4e8fc504825912343e98fff85463f4f5269274349dbb76c974598b3d"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/clippy.log.gz",
+      "uncompressed_sha256": "fcb476680dc629b5d772f33f8dc9ad438d26f494adca9cd3c2ee0f02c850db25"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/build.log.gz",
+      "uncompressed_sha256": "90b8ea74fbfdef1129fcf3eac33bfdf61a28dc34564538444d6ae623753e4265"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "6ee4906e3d061a425bffd198cea51a27d5886bea0a494ec50293eeb9513f94e7",
+    "crates/gui-render/src/text_gpu/draw.rs": "f8ee0f7fc84e0d09529580d7912f5aa49652b45ab3a6ab9e1a3d6979a92b18e1",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "2cbb6c8c858fb67242a2832e516d93ded2fd621c2906786034ee14e6ebaa4b80"
+  }
+}
