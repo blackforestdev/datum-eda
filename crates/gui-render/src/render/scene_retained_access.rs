@@ -197,6 +197,7 @@ impl RetainedScene {
             draw_commands: draw_commands.into(),
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions).into(),
         }
+        .registered_cpu()
     }
 
     // `hit_test_authored_world` (board) and `hit_test_world` (schematic,

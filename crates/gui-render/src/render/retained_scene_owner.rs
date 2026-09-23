@@ -3,6 +3,8 @@ use super::gpu_data::shared_geometry::GeometryElement;
 use super::*;
 use crate::cpu_alloc::heap::capacity_bytes;
 use std::sync::Arc;
+#[path = "document_cpu.rs"]
+mod document_cpu;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {
@@ -23,6 +25,7 @@ pub struct RetainedGeometryObserver {
     commands: std::sync::Weak<Vec<RetainedDrawCommand>>,
     hits: std::sync::Weak<datum_gui_viewport::SpatialHitIndex<HitTarget>>,
     metadata_bytes: [usize; 2],
+    document: Option<std::sync::Weak<crate::text_gpu::budget::Budget>>,
 }
 
 impl RetainedGeometryObserver {
@@ -73,6 +76,11 @@ impl RetainedGeometryObserver {
 }
 
 impl RetainedScene {
+    pub(crate) fn registered_cpu(self) -> Self {
+        document_cpu::register(&self);
+        self
+    }
+
     /// All live and submitted-retiring GPU world buffers for this scene/document,
     /// including other retained revisions and renderers sharing its scene ID.
     pub fn world_gpu_reserved_bytes(&self) -> u64 {
@@ -83,6 +91,7 @@ impl RetainedScene {
 
     pub fn geometry_observer(&self) -> RetainedGeometryObserver {
         RetainedGeometryObserver {
+            document: self.world_vertices.document_budget().map(Arc::downgrade),
             vertices: self.world_vertices.downgrade(),
             strokes: self.world_strokes.downgrade(),
             vertex_bytes: capacity_bytes::<Vertex>(self.world_vertices.len()),

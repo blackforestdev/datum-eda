@@ -15073,6 +15073,11 @@
           "work": "s4_shared_scene_metadata_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/result.json",
           "status": "Retained scenes share immutable draw commands and hit-index metadata; external clones remain fully observable after retirement"
+        },
+        {
+          "work": "s4_document_cpu_payload_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/result.json",
+          "status": "Retained CPU payload aggregation and render-time limit shared by live owners of each document"
         }
       ]
     },
@@ -15171,6 +15176,11 @@
           "work": "s4_shared_scene_metadata_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/result.json",
           "status": "Retained scenes share immutable draw commands and hit-index metadata; external clones remain fully observable after retirement"
+        },
+        {
+          "work": "s4_document_cpu_payload_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/result.json",
+          "status": "Retained CPU payload aggregation and render-time limit shared by live owners of each document"
         }
       ]
     },
@@ -34176,5 +34186,30 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/result.json"
+  },
+  "s4_document_cpu_payload_work": {
+    "status": "Retained CPU payload aggregation and render-time limit shared by live owners of each document",
+    "base_commit": "6c65bbba",
+    "production_consumers": [
+      "Board and companion schematic retained-scene constructors register weak allocation observations under the existing revision-independent document identity",
+      "Runtime native render and visual capture existing RetainedSceneHistory::check_render_budget boundary checks its active document across owners"
+    ],
+    "retired_paths": [
+      "Render-budget decision considers only one Runtime scene/history owner while other owners retain the same document"
+    ],
+    "behavior": [
+      "Keep a weak per-document observation registry; no scene payload is retained by registration. Count shared geometry/command/hit allocations once across registered scene constructions and external clones, plus per-document observer vector capacity. Prune released observations on registration/query. Fail the existing host render boundary when aggregate observed payload exceeds64MiB; local history checks still apply. Other document identities are independent. This is post-construction enforcement, not preallocation admission."
+    ],
+    "proof": {
+      "renderer": "352 renderer tests pass, 11 filtered. New production-constructor test aggregates distinct retained scenes with the same document identity, confirms clones add no payload, accepts exact usage and rejects one byte less, isolates another document, observes an external clone after original release, and returns to zero observed payload after final scene release. Existing lifetime and pixel tests pass.",
+      "app": "385 app tests pass, 16 ignored; native/capture use existing per-host failure propagation and local history limits.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health2279, dependency authority and governance pass.",
+      "scope": "No new native/backend/endurance campaign or full drift rerun; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Complete per-document allowance must still include cross-owner history keys/entry metadata, global registry storage and remaining bookkeeping. Weak-only container reclamation is lazy on registry access. Candidate construction-time admission remains open. No MEM-WORLD-CPU/HISTORY or S5 closure.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/result.json"
   }
 }
