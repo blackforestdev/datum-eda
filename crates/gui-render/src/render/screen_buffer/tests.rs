@@ -249,7 +249,7 @@ fn repeated_preparation_queues_each_final_range_once() {
     for i in 1..=1000 {
         values[1] = i;
         stream.sync(&device, &queue, "superseded", &values).unwrap();
-        assert_eq!(stream.pending, vec![0..64]);
+        assert_eq!(&*stream.pending, vec![0..64]);
     }
     stream.flush_uploads(&device, &queue);
     assert_eq!(
@@ -261,13 +261,13 @@ fn repeated_preparation_queues_each_final_range_once() {
         values[1] = i;
         values[14] = i;
         stream.sync(&device, &queue, "separate", &values).unwrap();
-        assert_eq!(stream.pending, vec![4..8, 56..60]);
+        assert_eq!(&*stream.pending, vec![4..8, 56..60]);
     }
     // Shrink within the existing capacity: an obsolete tail must not upload.
     stream
         .sync(&device, &queue, "shrink", &values[..8])
         .unwrap();
-    assert_eq!(stream.pending, vec![4..8]);
+    assert_eq!(&*stream.pending, vec![4..8]);
     stream.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, stream.buffer().unwrap(), 32),
@@ -275,11 +275,11 @@ fn repeated_preparation_queues_each_final_range_once() {
     );
     // Regrowth restores the discarded tail even though the API buffer survived.
     stream.sync(&device, &queue, "regrow", &values).unwrap();
-    assert_eq!(stream.pending, vec![32..64]);
+    assert_eq!(&*stream.pending, vec![32..64]);
     stream.cancel_uploads();
     stream.sync(&device, &queue, "retry", &values).unwrap();
     assert_eq!(
-        stream.pending,
+        &*stream.pending,
         vec![32..64],
         "cancellation preserves the submitted prefix"
     );
@@ -345,7 +345,7 @@ fn reverted_preparations_emit_no_upload_and_cancellation_keeps_submitted_bytes()
             stream.sync(&device, &queue, "pending", &changed).unwrap(),
             8
         );
-        assert_eq!(stream.pending, vec![4..8, 56..60]);
+        assert_eq!(&*stream.pending, vec![4..8, 56..60]);
         assert_eq!(
             stream.sync(&device, &queue, "reverted", &baseline).unwrap(),
             0
@@ -446,4 +446,59 @@ fn two_generations_survive_clear_and_device_replacement() {
     drop(second);
     drop(replacement);
     assert_eq!(budget.used(), 0);
+}
+
+#[test]
+#[ignore = "requires local GPU; range admission must preserve the submitted baseline"]
+fn range_growth_refusal_preserves_submitted_bytes_and_retries_after_release() {
+    use crate::text_gpu::{budget::Budget, staging_vec::StagingVec};
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let one = StagingVec::<std::ops::Range<usize>>::capacity_bytes(1).unwrap();
+    let two = StagingVec::<std::ops::Range<usize>>::capacity_bytes(2).unwrap();
+    let host = Budget::new(one + two);
+    let mut stream = ScreenBuffer::default().with_staging_budget(host.clone());
+    let baseline = [7_u32; 16];
+    stream
+        .sync(&device, &queue, "range-baseline", &baseline)
+        .unwrap();
+    stream.flush_uploads(&device, &queue);
+    assert_eq!(
+        host.used(),
+        one,
+        "empty reusable range slots remain charged"
+    );
+    let blocker = host.reserve(1).unwrap();
+    let mut changed = baseline;
+    changed[1] = 99;
+    changed[14] = 100;
+    assert!(
+        stream
+            .sync(&device, &queue, "range-refused", &changed)
+            .is_err()
+    );
+    assert!(stream.pending.is_empty());
+    assert_eq!(host.used(), one + 1);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&baseline)
+    );
+    drop(blocker);
+    assert_eq!(
+        stream
+            .sync(&device, &queue, "range-retry", &changed)
+            .unwrap(),
+        8
+    );
+    assert_eq!(host.used(), two);
+    stream.flush_uploads(&device, &queue);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&changed)
+    );
+    let replacement = stream.replacement();
+    assert!(std::sync::Arc::ptr_eq(&replacement.staging_budget, &host));
+    drop(stream);
+    assert_eq!(host.used(), 0);
 }

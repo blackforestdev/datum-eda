@@ -47,6 +47,14 @@ macro_rules! world_streams {
     }};
 }
 impl Renderer {
+    /// Retained dirty-range capacities and Datum headers, charged to staging.
+    /// Includes empty reusable slots; snapshot payload accounting is separate.
+    pub fn screen_upload_metadata_bytes(&self) -> u64 {
+        let mut bytes = self.terminal_graphics.pending_vertex_metadata_bytes();
+        screen_streams!(self, stream, bytes += stream.pending_metadata_bytes());
+        bytes
+    }
+
     pub(super) fn cancel_vertex_uploads(&mut self) {
         screen_streams!(self, stream, stream.cancel_uploads(), mut);
         world_streams!(self, stream, stream.cancel_uploads(), mut);

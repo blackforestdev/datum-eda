@@ -301,7 +301,7 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
         crate::text_gpu::upload::BufferUpload<'_>,
     >::capacity_bytes(count.entries)
     .unwrap();
-    let filler = budget.reserve(16 * 1024 * 1024 - metadata + 1).unwrap();
+    let filler = budget.reserve(budget.available() - metadata + 1).unwrap();
     assert!(
         renderer
             .renderer
@@ -331,7 +331,9 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
         .unwrap();
     assert_eq!(
         budget.used(),
-        expected as u64 + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
+        expected as u64
+            + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
+            + renderer.renderer.screen_upload_metadata_bytes()
     );
     let mut pending = Vec::new();
     renderer
@@ -346,7 +348,10 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
         .device
         .poll(wgpu::PollType::wait_indefinitely())
         .unwrap();
-    assert_eq!(budget.used(), 0);
+    assert_eq!(
+        budget.used(),
+        renderer.renderer.screen_upload_metadata_bytes()
+    );
     assert!(
         renderer
             .renderer

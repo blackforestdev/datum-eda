@@ -59,6 +59,7 @@ struct TerminalGraphicDraw {
 
 pub(super) struct TerminalGraphicsRenderer {
     screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    staging_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     draw_generations: crate::text_gpu::slot_generations::SlotGenerations,
     texture_generations: TextureGenerations,
     pipeline: wgpu::RenderPipeline,
@@ -76,6 +77,7 @@ impl TerminalGraphicsRenderer {
         format: wgpu::TextureFormat,
         samples: u32,
         screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+        staging_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     ) -> Self {
         let texture_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("datum-terminal-graphic-texture-layout"),
@@ -173,6 +175,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         });
         Self {
             screen_budget,
+            staging_budget,
             draw_generations: Default::default(),
             texture_generations: Default::default(),
             pipeline,
@@ -197,6 +200,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             format,
             samples,
             self.screen_budget.clone(),
+            self.staging_budget.clone(),
         );
         replacement.draw_generations = self.draw_generations.clone();
         replacement.texture_generations = self.texture_generations.clone();
@@ -249,6 +253,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                         self.screen_budget.clone(),
                         crate::text_gpu::budget::terminal_process(),
                     ])
+                    .with_staging_budget(self.staging_budget.clone())
                     .with_generation_limit(self.draw_generations.for_slot(visible)),
                     clip,
                     foreground,
@@ -289,6 +294,13 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         for draw in &mut self.draws {
             draw.vertices.cancel_uploads();
         }
+    }
+
+    pub(super) fn pending_vertex_metadata_bytes(&self) -> u64 {
+        self.draws
+            .iter()
+            .map(|draw| draw.vertices.pending_metadata_bytes())
+            .sum()
     }
 
     pub(super) fn append_vertex_uploads<'a>(

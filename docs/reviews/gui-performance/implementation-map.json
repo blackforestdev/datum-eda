@@ -17325,6 +17325,11 @@
           "work": "s4_producer_plan_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/producer-plan/result.json",
           "status": "Default buffer/texture producer descriptor storage admitted; full staging/accounting implementation remains open"
+        },
+        {
+          "work": "s4_range_storage_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json",
+          "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open"
         }
       ]
     },
@@ -17516,6 +17521,11 @@
           "work": "s4_producer_plan_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/producer-plan/result.json",
           "status": "Default buffer/texture producer descriptor storage admitted; full staging/accounting implementation remains open"
+        },
+        {
+          "work": "s4_range_storage_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json",
+          "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open"
         }
       ]
     },
@@ -19674,6 +19684,11 @@
           "work": "s4_large_glyph_reuse_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/result.json",
           "status": "GPU-admitted glyph instances retain exact-length snapshots above the former 256 KiB cutoff"
+        },
+        {
+          "work": "s4_range_storage_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json",
+          "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open"
         }
       ]
     },
@@ -34876,5 +34891,33 @@
       "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/producer-plan/result.json"
+  },
+  "s4_range_storage_work": {
+    "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open",
+    "base_commit": "6c9bf424",
+    "production_consumers": [
+      "Shared ScreenBuffer used by grid, board/schematic overlays, viewport/control streams, menu and Console rendering in each native host",
+      "Terminal graphic quad ScreenBuffer slots, including renderer replacement"
+    ],
+    "retired_paths": [
+      "Unbudgeted dirty-range Vec growth and historical capacity outside host/process staging admission"
+    ],
+    "behavior": [
+      "Range plans retain cached storage through the shared StagingVec owner. Growth reserves old/new allocation overlap before fallible construction, reuses capacity without allocation, and attempts amortized growth with exact-required fallback under pressure. Capacities plus Datum headers remain charged even when reusable slots are empty.",
+      "All default renderer screen streams and terminal graphic slots receive the existing host staging budget; replacement preserves that owner. Empty streams, uncached retirement and owner close release range storage.",
+      "Dirty ranges are counted before filling an admitted plan. Existing same-allocation preparation survives refused growth. A new GPU allocation clears the superseded preparation before subsequent refusal so retry cannot mistake old bytes for initialized replacement content.",
+      "screen_upload_metadata_bytes reports retained range capacity separately from snapshots and transient GPU copies. Existing staging oracles add/subtract this exact owned capacity while preserving copy-budget limits."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 371 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.86s",
+      "checks": "371 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh visual GUI build pass. Application tests were not rerun for these renderer changes.",
+      "coverage": "New real-GPU test refuses range growth at the old/new overlap boundary, reads unchanged submitted bytes, retries after pressure release, reads changed words, checks shared replacement budget and final release. New staging-owner test covers overlap refusal, preserved data, capacity reuse and release. Existing exact dirty-word, revert/cancel, sparse GPU readback, warm snapshot reuse, glyph/terminal/cold-world continuation and frame refusal/retry remain passing. Earlier370-pass run is preserved before final growth policy and added GPU regression."
+    },
+    "limits": [
+      "Prepared/submitted CPU snapshot payloads, glyph construction and batching, atlas/page/global observation metadata, private font/raster/layout peaks and complete S5 accounting/qualification remain unfinished. No MEM-STAGING/REUSE-SCREEN, S4, S5 or issue closure. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+      "Unchanged screen preparations retain their existing early return; changed preparations add a borrowed count pass. Empty reusable range capacity remains reserved rather than being reported as released on submission. No new latency or global performance acceptance is claimed.",
+      "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json"
   }
 }
