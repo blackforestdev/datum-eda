@@ -379,9 +379,7 @@ impl Runtime {
 
     pub(super) fn explain_global_preference(&mut self, key: &str) -> bool {
         let ui = &mut self.session.workspace_mut().ui.global_preferences;
-        ui.open_choice_key = None;
-        ui.explanation_key = Some(key.to_owned());
-        ui.focus = GlobalPreferencesFocus::ExplanationClose;
+        ui.open_explanation(key);
         ui.notice = Some(GlobalPreferencesNoticeUi::Polite(
             "Preference explanation opened.".to_owned(),
         ));

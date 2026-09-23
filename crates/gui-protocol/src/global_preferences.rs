@@ -450,11 +450,24 @@ impl GlobalPreferencesDialogState {
         true
     }
 
+    pub fn open_explanation(&mut self, key: &str) {
+        self.open_choice_key = None;
+        self.explanation_key = Some(key.to_owned());
+        self.focus = GlobalPreferencesFocus::ExplanationClose;
+    }
+
+    pub fn close_explanation(&mut self) -> bool {
+        let Some(key) = self.explanation_key.take() else {
+            return false;
+        };
+        self.focus = GlobalPreferencesFocus::SettingName(key);
+        true
+    }
+
     pub fn dismiss_innermost(&mut self) -> GlobalPreferencesDismissal {
         if self.open_choice_key.take().is_some() {
             GlobalPreferencesDismissal::ChoiceClosed
-        } else if let Some(key) = self.explanation_key.take() {
-            self.focus = GlobalPreferencesFocus::SettingName(key);
+        } else if self.close_explanation() {
             GlobalPreferencesDismissal::ExplanationClosed
         } else if self.focus == GlobalPreferencesFocus::Search && !self.search_query.is_empty() {
             self.search_query.clear();
