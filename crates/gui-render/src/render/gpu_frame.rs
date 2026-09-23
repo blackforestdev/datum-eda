@@ -42,6 +42,7 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
+        self.cancel_vertex_uploads();
         if prepared.is_overlay_only() {
             return self.render_overlay_only(
                 device,
@@ -438,9 +439,9 @@ impl Renderer {
         let command_buffer = encoder.finish();
         let finish_elapsed = finish_started.map(|started| started.elapsed());
         let submit_started = std::time::Instant::now();
-        self.flush_text_uploads(queue);
+        self.flush_frame_uploads(queue);
         let submission = queue.submit([command_buffer]);
-        self.hold_text_submission(queue);
+        self.hold_frame_submission(queue);
         on_submitted(submission);
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(measurement)?;

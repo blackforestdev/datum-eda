@@ -2,7 +2,7 @@
 mod atlas;
 mod budget;
 mod draw;
-mod lifetime;
+pub(crate) mod lifetime;
 
 pub(crate) use atlas::Atlas;
 pub(crate) use draw::{Area, Draw};

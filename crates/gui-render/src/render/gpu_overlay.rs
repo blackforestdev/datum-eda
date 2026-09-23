@@ -103,9 +103,9 @@ impl Renderer {
             }
         }
         self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
-        self.flush_text_uploads(queue);
+        self.flush_frame_uploads(queue);
         let submission = queue.submit([encoder.finish()]);
-        self.hold_text_submission(queue);
+        self.hold_frame_submission(queue);
         on_submitted(submission);
         self.text_buffers.trim_overlay();
         self.text_buffers.finish_frame();

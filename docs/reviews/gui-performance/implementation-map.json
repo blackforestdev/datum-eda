@@ -3851,7 +3851,14 @@
       "s4_private_text_heap_progress": {
         "implementation": "Default native executable scoped Rust allocation ownership for font construction, text preparation and measurements. Private font/shape/raster lifetime conformance and production GPU bridge verified.",
         "remaining": "Original full accounting/admission and qualification remain; overlapping logical/allocation views must not be summed. No predicate closure."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_vertex_submission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+          "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "AC-06",
@@ -16035,7 +16042,14 @@
         "unfinished_qualification": "64MiB GPU world/encoded-resource capacities per document; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_vertex_submission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+          "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-SCREEN-GPU",
@@ -16134,7 +16148,14 @@
         "unfinished_qualification": "16MiB host-local screen buffers; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_vertex_submission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+          "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-REPLACEMENT",
@@ -16233,7 +16254,14 @@
         "unfinished_qualification": "one old plus one new live cold replacement generation; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_vertex_submission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+          "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-ATLAS-LOCAL",
@@ -16666,7 +16694,14 @@
         "unfinished_qualification": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_vertex_submission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+          "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-STAGING-TOTAL",
@@ -16765,7 +16800,14 @@
         "unfinished_qualification": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_vertex_submission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+          "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-GPU-TOTAL",
@@ -16864,7 +16906,14 @@
         "unfinished_qualification": "512MiB all application GPU allocations including attachments and shared resources counted once; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_vertex_submission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+          "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-ATTACHMENTS",
@@ -31657,5 +31706,38 @@
       "Counts describe allocator calls that actually occur; optimized-away allocations need no heap accounting. Counter values are never an unsafe correctness precondition. No allocator hook callback uses registry mutexes or formatting; scope control/observation is outside callbacks."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
+  },
+  "s4_vertex_submission_work": {
+    "status": "Default world/screen vertices share allocation lifetime accounting and successful-frame upload boundary; complete ACC/MEM qualification remains open",
+    "base_commit": "4a07c29a",
+    "production_consumers": [
+      "Board and schematic retained vertices and strokes",
+      "Panel, viewport underlay/overlay, board interaction, Console, menu/dialog, schematic underlay/overlay and surface grid screen streams",
+      "Shared full-frame and overlay-only renderer used by native hosts; cached world render bundles"
+    ],
+    "retired_paths": [
+      "Vertex create_buffer_init and eager queue writes during fallible frame preparation",
+      "Raw-only vertex ownership with no process allocation identity or submission/bundle lifetime hold"
+    ],
+    "behavior": [
+      "Track actual API buffer capacity with stable owner/allocation identities and allocation generation using the existing Datum GPU owner. Shared references count capacity once. Preserve text-only reporting and expose migrated text/vertex process reporting separately.",
+      "Defer initial and changed vertex writes to the successful frame submission boundary. Next frame cancels unsubmitted writes and invalidates their source/snapshot authority. Closing a renderer drops pending data without queue work.",
+      "World pending uploads retain the existing immutable shared source without copying geometry. Normal screen pending ranges borrow the existing bounded snapshot; over-cap streams own a temporary payload released on flush/cancel. Existing vertex-span coalescing and warm zero-write reuse remain.",
+      "Submission completion callbacks and cached world bundles hold the same tracked allocation. Replacing/clearing a stream marks its old allocation retiring without dropping its accounting while these owners remain."
+    ],
+    "proof": {
+      "renderer": "290 final renderer tests passed with visual feature and included ignored GPU cases, 11 explicitly filtered (measurement/cost probes and visual_runner). Includes 3 vertex readback/cancellation tests, world-bundle reuse/replacement, 14 production GPU regressions and text GPU pixel oracle. Earlier candidate:274 unit tests,3 buffer tests,1 bundle test and14 production GPU tests passed before snapshot reuse refinement.",
+      "native": "Fresh native visual-feature build and1680x1050 datum-test/R1 capture exit0; visually inspected and exact decoded RGBA equality with preserved4a07c29a capture. No native input/performance or endurance acceptance.",
+      "lint": "gui-render/gui-app all-targets visual Clippy -D warnings passed; source health2237files,13 policy tests, dependency authority and Cargo resource policy passed.",
+      "drift": "Full drift rerun: workspace Clippy and preceding gates pass; stops at the existing console-routine-focused1x golden conflict,3778pixels(0.384318%). Failed evidence retained; later gates unrun. No golden update or full-drift acceptance."
+    },
+    "limits": [
+      "GPU world64MiB, screen16MiB, total512MiB, generation-count and staging16/64MiB admission remain unfinished. No predicate or S4/S5 closure.",
+      "Process observations cover migrated text and vertex API storage only. Uniforms, attachments, terminal graphics, complete device/document/host incidence, requested-payload/release-reason history, driver residency and staging remain separate work. Retiring means the primary stream owner retired; cached bundles can still retain it.",
+      "sync byte counts describe planned vertex writes; complete boundary counters remain unfinished. Internal clean words stay coalesced under the existing upload algorithm; REUSE-SCREEN exactness remains open.",
+      "Pending range metadata and over-cap payload are not a complete scratch-budget implementation. Failed frames release pending work on next render or renderer drop. No background drop-time queue submission.",
+      "No dependency/version/vendor/registry-source, prototype, appearance, budget or resize change. No global adoption or performance acceptance. Known Console golden conflict remains separately unqualified."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json"
   }
 }

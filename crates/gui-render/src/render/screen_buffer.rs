@@ -10,6 +10,9 @@ const MAX_SNAPSHOT_BYTES: usize = 256 * 1024;
 pub(crate) struct ScreenBuffer {
     snapshot: Box<[u8]>,
     allocation: VertexAllocation,
+    pending: Vec<std::ops::Range<usize>>,
+    // Only over-cap streams need an extra payload; normal uploads borrow snapshot.
+    pending_large: Box<[u8]>,
     #[cfg(test)]
     pub(crate) last_upload_bytes: usize,
 }
@@ -19,13 +22,45 @@ impl ScreenBuffer {
         self.allocation.buffer()
     }
 
+    pub(crate) fn submission_ref(&self) -> Option<crate::text_gpu::lifetime::SubmissionRef> {
+        self.allocation.submission_ref()
+    }
+
+    pub(crate) fn cancel_uploads(&mut self) {
+        if !self.pending.is_empty() {
+            self.pending.clear();
+            self.snapshot = Box::default();
+            self.pending_large = Box::default();
+        }
+    }
+
+    pub(crate) fn flush_uploads(&mut self, queue: &wgpu::Queue) {
+        let bytes = if self.pending_large.is_empty() {
+            &self.snapshot
+        } else {
+            &self.pending_large
+        };
+        for range in self.pending.drain(..) {
+            // Multiple preparations before submission supersede the old tail.
+            let end = range.end.min(bytes.len());
+            if range.start < end {
+                queue.write_buffer(
+                    self.allocation.buffer().unwrap(),
+                    range.start as u64,
+                    &bytes[range.start..end],
+                );
+            }
+        }
+        self.pending_large = Box::default();
+    }
+
     /// Exact bytes are the key: equal size, allocator reuse, NaN payloads and
     /// signed zero cannot produce a false hit. Placement is already baked into
     /// these screen vertices; painter order stays in the caller's draw schedule.
     pub(crate) fn sync<T: bytemuck::Pod>(
         &mut self,
         device: &wgpu::Device,
-        queue: &wgpu::Queue,
+        _queue: &wgpu::Queue,
         label: &str,
         vertices: &[T],
     ) -> usize {
@@ -41,21 +76,23 @@ impl ScreenBuffer {
         if self.allocation.buffer().is_some() && self.snapshot.as_ref() == bytes {
             return 0;
         }
-        let uploaded;
-        if self.allocation.replace_if_needed(device, label, bytes) {
-            uploaded = bytes.len();
-        } else if let Some(buffer) = self.allocation.buffer() {
-            uploaded = write_dirty_ranges(
-                queue,
-                buffer,
+        let uploaded = if self.allocation.replace_if_needed(device, label, bytes) {
+            self.pending.clear();
+            self.pending.push(0..bytes.len());
+            bytes.len()
+        } else {
+            dirty_ranges(
                 &self.snapshot,
                 bytes,
                 std::mem::size_of::<T>(),
-            );
-        } else {
-            unreachable!("missing buffers are replaced");
-        }
+                |offset, bytes| {
+                    self.pending
+                        .push(offset as usize..offset as usize + bytes.len())
+                },
+            )
+        };
         if bytes.len() <= MAX_SNAPSHOT_BYTES {
+            self.pending_large = Box::default();
             if self.snapshot.len() == bytes.len() {
                 self.snapshot.copy_from_slice(bytes);
             } else {
@@ -63,6 +100,7 @@ impl ScreenBuffer {
             }
         } else {
             self.snapshot = Box::default();
+            self.pending_large = bytes.into();
         }
         #[cfg(test)]
         {
@@ -84,6 +122,12 @@ pub(crate) fn write_dirty_ranges(
     new: &[u8],
     stride: usize,
 ) -> usize {
+    dirty_ranges(old, new, stride, |offset, bytes| {
+        queue.write_buffer(buffer, offset, bytes)
+    })
+}
+
+fn dirty_ranges(old: &[u8], new: &[u8], stride: usize, mut write: impl FnMut(u64, &[u8])) -> usize {
     assert!(stride > 0);
     assert_eq!(stride % wgpu::COPY_BUFFER_ALIGNMENT as usize, 0);
     let mut start = None;
@@ -93,11 +137,11 @@ pub(crate) fn write_dirty_ranges(
         if old.get(offset..end) != Some(&new[offset..end]) {
             start.get_or_insert(offset);
         } else if let Some(begin) = start.take() {
-            uploaded += write_trimmed_span(queue, buffer, old, new, begin, offset);
+            uploaded += write_trimmed_span(&mut write, old, new, begin, offset);
         }
     }
     if let Some(begin) = start {
-        uploaded += write_trimmed_span(queue, buffer, old, new, begin, new.len());
+        uploaded += write_trimmed_span(&mut write, old, new, begin, new.len());
     }
     uploaded
 }
@@ -105,8 +149,7 @@ pub(crate) fn write_dirty_ranges(
 // Preserve the existing number of queue writes. Word-by-word queue writes and
 // thousands of individual buffer copies both regress moving-stream CPU cost.
 fn write_trimmed_span(
-    queue: &wgpu::Queue,
-    buffer: &wgpu::Buffer,
+    write: &mut impl FnMut(u64, &[u8]),
     old: &[u8],
     new: &[u8],
     mut begin: usize,
@@ -120,7 +163,7 @@ fn write_trimmed_span(
         end -= word;
     }
     if begin < end {
-        queue.write_buffer(buffer, begin as u64, &new[begin..end]);
+        write(begin as u64, &new[begin..end]);
     }
     end - begin
 }
@@ -157,6 +200,68 @@ mod tests {
 
     #[test]
     #[ignore = "requires local GPU; run serially with visual feature"]
+    fn cancelled_uploads_rebuild_and_retired_vertices_remain_observable() {
+        use crate::text_gpu::lifetime::Kind;
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut owner = ScreenBuffer::default();
+        let values = [17_u32; 4];
+        owner.sync(&device, &queue, "cancelled", &values);
+        let buffer = owner.buffer().unwrap().clone();
+        assert_eq!(
+            read(&device, &queue, &buffer, 16),
+            vec![0; 16],
+            "preparation must not queue even the initial upload"
+        );
+        owner.cancel_uploads();
+        assert_eq!(owner.sync(&device, &queue, "retry", &values), 16);
+        owner.flush_uploads(&queue);
+        let held = owner.submission_ref().unwrap();
+        queue.submit([]);
+        // A bundle/submission hold pins exactly the allocation, after its stream retires.
+        let record = crate::Renderer::gpu_process_allocations()
+            .into_iter()
+            .find(|r| r.kind == Kind::Vertex && !r.retiring)
+            .unwrap();
+        let large = [23_u32; 64];
+        owner.sync(&device, &queue, "replacement", &large);
+        assert!(
+            crate::Renderer::gpu_process_allocations()
+                .iter()
+                .any(|r| r.id == record.id && r.retiring && r.bytes == 16)
+        );
+        assert!(
+            !crate::Renderer::text_gpu_process_allocations()
+                .iter()
+                .any(|r| r.id == record.id)
+        );
+        assert_eq!(
+            read(&device, &queue, &buffer, 16),
+            bytemuck::cast_slice::<u32, u8>(&values)
+        );
+        drop(buffer);
+        drop(held);
+        assert!(
+            !crate::Renderer::gpu_process_allocations()
+                .iter()
+                .any(|r| r.id == record.id)
+        );
+        owner.cancel_uploads();
+        assert_eq!(
+            owner.sync(&device, &queue, "replacement-retry", &large),
+            256
+        );
+        owner.flush_uploads(&queue);
+        assert_eq!(
+            read(&device, &queue, owner.buffer().unwrap(), 256),
+            bytemuck::cast_slice::<u32, u8>(&large)
+        );
+    }
+
+    #[test]
+    #[ignore = "requires local GPU; run serially with visual feature"]
     fn screen_upload_reuses_exact_content_and_bounds_retention() {
         let instance = wgpu::Instance::default();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -172,6 +277,7 @@ mod tests {
         values[1] = 17; // same address AND length, different content
         assert_eq!(owner.sync(&device, &queue, "proof", &values), 4);
         assert_eq!(owner.buffer(), Some(&first));
+        owner.flush_uploads(&queue);
         assert_eq!(
             read(&device, &queue, &first, 16),
             bytemuck::cast_slice::<u32, u8>(&values)
@@ -179,6 +285,7 @@ mod tests {
         values[0] = 18;
         values[3] = 19;
         assert_eq!(owner.sync(&device, &queue, "proof", &values), 8);
+        owner.flush_uploads(&queue);
         assert_eq!(
             read(&device, &queue, &first, 16),
             bytemuck::cast_slice::<u32, u8>(&values)
@@ -191,6 +298,7 @@ mod tests {
         vertices[0][4] = 0x0200;
         vertices[2][4] = 0x0300;
         assert_eq!(owner.sync(&device, &queue, "vertex-fields", &vertices), 20);
+        owner.flush_uploads(&queue);
         assert_eq!(
             read(&device, &queue, owner.buffer().unwrap(), 60),
             bytemuck::cast_slice::<[u32; 5], u8>(&vertices)
@@ -200,6 +308,7 @@ mod tests {
         owner.sync(&device, &queue, "short-prefix", &vertices[..2]);
         vertices[0][0] = 7;
         assert_eq!(owner.sync(&device, &queue, "grow-prefix", &vertices), 24);
+        owner.flush_uploads(&queue);
         assert_eq!(
             read(&device, &queue, owner.buffer().unwrap(), 60),
             bytemuck::cast_slice::<[u32; 5], u8>(&vertices)
@@ -222,6 +331,7 @@ mod tests {
                 "overlarge content bypasses retention"
             );
         }
+        owner.flush_uploads(&queue);
         assert_eq!(
             read(
                 &device,

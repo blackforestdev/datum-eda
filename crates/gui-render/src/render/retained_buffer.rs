@@ -5,6 +5,7 @@ use super::vertex_allocation::VertexAllocation;
 pub(crate) struct RetainedBuffer<T> {
     source: Option<SharedGeometry<T>>,
     allocation: VertexAllocation,
+    pending: bool,
 }
 
 impl<T> Default for RetainedBuffer<T> {
@@ -12,6 +13,7 @@ impl<T> Default for RetainedBuffer<T> {
         Self {
             source: None,
             allocation: VertexAllocation::default(),
+            pending: false,
         }
     }
 }
@@ -25,13 +27,35 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
         *self = Self::default();
     }
 
-    /// Return actual source bytes submitted for upload, zero for a warm source.
+    pub(crate) fn submission_ref(&self) -> Option<crate::text_gpu::lifetime::SubmissionRef> {
+        self.allocation.submission_ref()
+    }
+
+    pub(crate) fn cancel_uploads(&mut self) {
+        if self.pending {
+            self.source = None;
+            self.pending = false;
+        }
+    }
+
+    pub(crate) fn flush_uploads(&mut self, queue: &wgpu::Queue) {
+        if self.pending {
+            queue.write_buffer(
+                self.buffer().unwrap(),
+                0,
+                bytemuck::cast_slice(self.source.as_ref().unwrap().as_ref()),
+            );
+            self.pending = false;
+        }
+    }
+
+    /// Return source bytes planned for upload, zero for a warm source.
     /// Retaining the shared owner makes allocator-address reuse impossible until the old
     /// identity is replaced. Buffer capacity is never used as content identity.
     pub(crate) fn sync(
         &mut self,
         device: &wgpu::Device,
-        queue: &wgpu::Queue,
+        _queue: &wgpu::Queue,
         label: &str,
         source: &SharedGeometry<T>,
     ) -> usize {
@@ -45,11 +69,8 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
             return 0;
         }
         let bytes = bytemuck::cast_slice(source.as_ref());
-        if !self.allocation.replace_if_needed(device, label, bytes)
-            && let Some(buffer) = self.allocation.buffer()
-        {
-            queue.write_buffer(buffer, 0, bytes);
-        }
+        self.allocation.replace_if_needed(device, label, bytes);
+        self.pending = true;
         self.source = Some(source.clone());
         bytes.len()
     }
@@ -97,6 +118,9 @@ mod tests {
         let weak = source.downgrade();
         assert_eq!(retained.sync(&device, &queue, "proof", &source), 16);
         let buffer = retained.buffer().unwrap().clone();
+        assert_eq!(read(&device, &queue, &buffer, 16), vec![0; 16]);
+        retained.cancel_uploads();
+        assert_eq!(retained.sync(&device, &queue, "retry", &source), 16);
         assert_eq!(retained.sync(&device, &queue, "proof", &source.clone()), 0);
         drop(source);
         assert!(
@@ -114,6 +138,7 @@ mod tests {
             Some(&buffer),
             "same-size GPU capacity reused"
         );
+        retained.flush_uploads(&queue);
         assert_eq!(
             read(&device, &queue, &buffer, 16),
             bytemuck::cast_slice::<u32, u8>(replacement.as_ref())
@@ -138,6 +163,7 @@ mod tests {
         );
         assert_ne!(retained.buffer(), Some(&peak));
         assert_eq!(retained.sync(&device, &queue, "proof", &small), 0);
+        retained.flush_uploads(&queue);
         assert_eq!(
             read(&device, &queue, retained.buffer().unwrap(), 60),
             bytemuck::cast_slice::<u32, u8>(&small)
