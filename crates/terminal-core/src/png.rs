@@ -5,6 +5,8 @@ use crate::{GraphicDecodedBytesLimit, LimitError, LimitKind};
 
 const PNG_SIGNATURE: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
 
+/// Four consecutive RGBA channel bytes, suitable for borrowed renderer uploads.
+#[repr(C)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Rgba8 {
     pub red: u8,
