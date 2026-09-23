@@ -1,0 +1,39 @@
+{
+  "status": "Document registry pruning reuses admitted observer capacity without allocating",
+  "base_commit": "30ac9022",
+  "production_consumers": [
+    "Shared document CPU registry: native board/companion construction, history budget observation, GPU document usage"
+  ],
+  "retired_paths": [
+    "Observer-vector shrink_to_fit reallocation during registry pruning"
+  ],
+  "behavior": [
+    "Retain and charge existing observer-vector capacity while scenes remain. Release empty storage without replacement allocation. Growth remains fallible and admitted at publication."
+  ],
+  "proof": [
+    "10 document CPU tests passed; 365 filtered. New regression checks pointer/capacity stability, unchanged capacity accounting, zero scoped allocation peak and release of empty storage while identity remains pinned.",
+    "Strict renderer visual all-targets Clippy and fresh visual app build passed. Source-health, dependency and governance checks passed. Prior full renderer/app suites remain evidence for unchanged behavior; not rerun for this pruning-only change."
+  ],
+  "limits": [
+    "Spare observer capacity stays charged until the document has no registered live scene; this trades compaction for allocation-free observation and reuse.",
+    "Initial identity allocations, constructor peaks, concurrent construction, scope bookkeeping, external weak-container lifetime and application history retirement-buffer compaction remain open. Twelve broad implementation gaps and S5 qualification are unchanged."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/registry-pruning/result.json",
+  "logs": {
+    "test": {
+      "path": "docs/reviews/gui-performance/implementation/S4/registry-pruning/test.log.gz",
+      "uncompressed_sha256": "ff055478830bc574ac4b77c264dd9643b3f32976d8ae3f29daf0445974c07fd1"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/registry-pruning/clippy.log.gz",
+      "uncompressed_sha256": "b7d2de69084e3e331b852adb3701f9d5f4af93b850ef1790c1d249cdf723ea63"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/registry-pruning/build.log.gz",
+      "uncompressed_sha256": "d4c540ca3aba5cbebfb924095656a0224db270fbd0240b61458666531ff29569"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/document_cpu.rs": "d95eba126f91701039c94949ce0aa2b4d2fbf6ab56415f72121300e19f023a97"
+  }
+}
