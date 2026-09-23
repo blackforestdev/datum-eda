@@ -166,6 +166,49 @@ fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_uploa
     draw.pending_instances.as_mut().unwrap()[0].color ^= 1;
     draw.flush_uploads(&device, &queue);
     assert_eq!(draw.upload_bytes, 4);
+    let snapshot = draw.snapshot.as_ptr();
+    let cpu = draw.cpu_storage_bytes();
+    assert!(cpu >= bytes as u64);
+    assert_eq!(
+        atlas.staging_budget.used(),
+        cpu + atlas.pending_cpu_bytes() + atlas.pending_metadata_bytes()
+    );
+    let pressure = atlas
+        .staging_budget
+        .reserve(atlas.staging_budget.available())
+        .unwrap();
+    assert!(
+        prepare(
+            &mut draw,
+            &device,
+            &queue,
+            &mut atlas,
+            &mut fonts,
+            &mut raster,
+            &text
+        )
+        .is_err()
+    );
+    assert_eq!(draw.snapshot.as_ptr(), snapshot);
+    assert_eq!(draw.cpu_storage_bytes(), cpu);
+    assert!(draw.pending_instances.is_none());
+    assert_eq!(draw.instances.as_ref().unwrap().id(), id);
+    drop(pressure);
+    prepare(
+        &mut draw,
+        &device,
+        &queue,
+        &mut atlas,
+        &mut fonts,
+        &mut raster,
+        &text,
+    )
+    .unwrap();
+    draw.flush_uploads(&device, &queue);
+    assert_eq!(
+        draw.upload_bytes, 4,
+        "retry restores only the changed color word"
+    );
     prepare(
         &mut draw,
         &device,
@@ -180,4 +223,9 @@ fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_uploa
     assert!(draw.snapshot.is_empty());
     device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
     assert_eq!(screen.used(), 0);
+    drop(draw);
+    assert_eq!(
+        atlas.staging_budget.used(),
+        atlas.pending_cpu_bytes() + atlas.pending_metadata_bytes()
+    );
 }

@@ -72,6 +72,17 @@ impl<T> StagingVec<T> {
         Ok(())
     }
 
+    pub fn try_push(&mut self, value: T, host: &Arc<Budget>) -> anyhow::Result<()> {
+        self.ensure_capacity(
+            self.len()
+                .checked_add(1)
+                .ok_or_else(|| anyhow::anyhow!("staging element count overflow"))?,
+            host,
+        )?;
+        self.push(value);
+        Ok(())
+    }
+
     pub fn push(&mut self, value: T) {
         assert!(
             self.values.len() < self.values.capacity(),
@@ -111,6 +122,12 @@ impl<T> std::ops::Deref for StagingVec<T> {
     type Target = [T];
     fn deref(&self) -> &[T] {
         &self.values
+    }
+}
+
+impl<T> std::ops::DerefMut for StagingVec<T> {
+    fn deref_mut(&mut self) -> &mut [T] {
+        &mut self.values
     }
 }
 

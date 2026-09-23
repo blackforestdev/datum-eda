@@ -47,6 +47,11 @@ macro_rules! world_streams {
     }};
 }
 impl Renderer {
+    /// Glyph instance preparation, comparison and batch storage under staging admission.
+    pub fn glyph_upload_storage_bytes(&self) -> u64 {
+        self.text_renderer.cpu_storage_bytes() + self.menu_overlay_text_renderer.cpu_storage_bytes()
+    }
+
     /// Submitted and prepared screen comparison capacities, including Datum headers.
     /// These reusable CPU snapshots share host/process staging admission.
     pub fn screen_upload_snapshot_bytes(&self) -> u64 {
