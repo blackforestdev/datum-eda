@@ -179,7 +179,7 @@ impl Renderer {
         let (mut overlay, overlay_stats) = if !has_overlay_text {
             (Vec::new(), TextBufferCacheStats::default())
         } else {
-            self.text_buffers.indices(
+            self.text_buffers.overlay_indices(
                 &mut self.font_system,
                 prepared.menu_overlay_text_runs(),
                 width,

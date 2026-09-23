@@ -1,7 +1,8 @@
 //! Shaped-cache identity, layout reuse and bounded retention proofs.
+use super::retention_tests::{retain_overlay_buffers, retain_recent_text_buffers};
 use super::*;
 
-fn run() -> TextRun {
+pub(super) fn run() -> TextRun {
     TextRun {
         text: "Cache label".into(),
         rich_spans: vec![],
@@ -378,12 +379,16 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
         assert_eq!(stats.hits, 1);
         assert_eq!(cache.entries[indices[0]].key.text, runs[1].text);
     }
-    assert_eq!(cache.entries.len(), 1);
-    assert_eq!(cache.lookup.len(), 1);
-    assert!(cache.lookup.capacity() <= 4);
-    assert!(cache.entries.capacity() <= 4);
+    assert_eq!(cache.key_usage().label_entries, MAX_OVERLAY_BUFFERS);
+    assert_eq!(cache.lookup.len(), MAX_OVERLAY_BUFFERS);
     cache.begin_frame(Profile::Workspace);
     cache.begin_frame(Profile::Workspace);
+    assert_eq!(
+        cache.entries.len(),
+        MAX_OVERLAY_BUFFERS,
+        "bounded labels survive workspace history expiry"
+    );
+    cache.trim_payload_to(0);
     assert!(cache.lookup.is_empty());
     assert_eq!(cache.lookup.capacity(), 0);
     assert_eq!(cache.entries.capacity(), 0);

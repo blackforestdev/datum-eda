@@ -4,6 +4,8 @@ use super::*;
 mod admission;
 #[path = "text_cache_budget.rs"]
 pub(crate) mod budget;
+#[path = "text_cache_retention.rs"]
+mod retention;
 use crate::cpu_alloc::heap::{capacity_bytes, tracking_bytes};
 use crate::text_gpu::Area;
 use crate::text_layout::TextLayout;
@@ -14,6 +16,9 @@ pub(super) struct CachedTextBuffer {
     key: TextBufferKey,
     buffer: TextLayout,
     last_used_frame: u64,
+    last_workspace_frame: u64,
+    last_overlay_frame: u64,
+    overlay_retained: bool,
 }
 
 pub(super) fn build_text_areas<'a>(
@@ -92,14 +97,6 @@ fn text_buffer_frame_is_recent(last_used_frame: u64, current_frame: u64) -> bool
     last_used_frame >= current_frame.saturating_sub(1)
 }
 
-fn retain_recent_text_buffers<T>(
-    entries: &mut Vec<T>,
-    current_frame: u64,
-    last_used_frame: impl Fn(&T) -> u64,
-) {
-    entries.retain(|entry| text_buffer_frame_is_recent(last_used_frame(entry), current_frame));
-}
-
 const MAX_OVERLAY_BUFFERS: usize = 128;
 const MAX_OVERLAY_TEXT_BYTES: usize = 32 * 1024;
 
@@ -110,30 +107,6 @@ fn key_text_bytes(key: &TextBufferKey) -> usize {
             .iter()
             .map(|span| span.text.capacity())
             .sum::<usize>()
-}
-
-fn retain_overlay_buffers<T>(
-    entries: &mut Vec<T>,
-    age: impl Fn(&T) -> u64,
-    size: impl Fn(&T) -> usize,
-) -> bool {
-    let reordered = entries.windows(2).any(|pair| age(&pair[0]) < age(&pair[1]));
-    if reordered {
-        entries.sort_by_key(|entry| std::cmp::Reverse(age(entry)));
-    }
-    let old_len = entries.len();
-    let mut bytes = 0;
-    let mut count = 0;
-    entries.retain(|entry| {
-        let next = bytes + size(entry);
-        if count >= MAX_OVERLAY_BUFFERS || next > MAX_OVERLAY_TEXT_BYTES {
-            return false;
-        }
-        bytes = next;
-        count += 1;
-        true
-    });
-    reordered || entries.len() != old_len
 }
 
 pub(crate) struct TextBufferCache {
@@ -148,6 +121,7 @@ pub(crate) struct TextBufferCache {
     // payload; exact key comparison remains authoritative within each bucket.
     lookup: Vec<(u64, usize)>,
     frame: u64,
+    overlay_profile: bool,
     revision: u64,
     retained_revision: Option<u64>,
     #[cfg(test)]
@@ -171,6 +145,7 @@ impl Default for TextBufferCache {
             layout_output_tracking_bytes: 0,
             lookup: Vec::new(),
             frame: 0,
+            overlay_profile: false,
             revision: 0,
             retained_revision: None,
             #[cfg(test)]
@@ -242,6 +217,17 @@ impl TextBufferCache {
             owner_id: self.owner.id(),
             shaped_payload_bytes: layout_bytes + shapes.values().sum::<usize>(),
             entries: self.entries.len(),
+            label_entries: self
+                .entries
+                .iter()
+                .filter(|entry| entry.overlay_retained)
+                .count(),
+            label_key_text_bytes: self
+                .entries
+                .iter()
+                .filter(|entry| entry.overlay_retained)
+                .map(|entry| key_text_bytes(&entry.key))
+                .sum(),
             key_text_bytes: self
                 .entries
                 .iter()
@@ -283,42 +269,10 @@ impl TextBufferCache {
         &self.entries
     }
 
-    /// Workspace/terminal keeps two generations; dialog history is trimmed
-    /// after submission so every current-frame text-area borrow stays valid.
-    pub(crate) fn begin_frame(&mut self, profile: Profile) {
-        self.frame = self.frame.wrapping_add(1).max(1);
-        if matches!(profile, Profile::Workspace) {
-            let old_len = self.entries.len();
-            retain_recent_text_buffers(&mut self.entries, self.frame, |entry| {
-                entry.last_used_frame
-            });
-            if self.entries.len() != old_len {
-                self.revision = self.revision.wrapping_add(1);
-                self.rebuild_lookup();
-            }
-        }
-        self.publish_usage();
-    }
-
-    /// Called after glyph preparation/submission, when no text-area borrow is
-    /// live. Bound retained buffers and key text; current-frame scratch can grow
-    /// only with that frame's visible text. Glyph instances own their GPU data.
-    pub(crate) fn trim_overlay(&mut self) {
-        let changed = retain_overlay_buffers(
-            &mut self.entries,
-            |entry| entry.last_used_frame,
-            |entry| key_text_bytes(&entry.key),
-        );
-        if changed {
-            // Only actual retirement/reordering invalidates index signatures.
-            self.revision = self.revision.wrapping_add(1);
-            self.rebuild_lookup();
-        }
-    }
-
     /// Bound reusable CPU text after submission has consumed every layout run.
     /// Current preparation and private shaping scratch are separate.
     pub(crate) fn finish_frame(&mut self) {
+        self.trim_overlay();
         if self.retained_revision == Some(self.revision) {
             budget::submitted(self.owner.id());
             return;
@@ -387,17 +341,25 @@ impl TextBufferCache {
         }
     }
 
-    pub(crate) fn indices(
+    fn indices_for(
         &mut self,
         font_system: &mut FontSystem,
         text_runs: &[TextRun],
         width: u32,
         height: u32,
+        overlay: bool,
     ) -> (Vec<usize>, TextBufferCacheStats) {
         let mut indices = Vec::with_capacity(text_runs.len());
         let mut stats = TextBufferCacheStats::default();
         for run in text_runs {
             let (index, missed) = self.ensure_text_buffer(font_system, run, width, height);
+            let entry = &mut self.entries[index];
+            if overlay {
+                entry.overlay_retained = true;
+                entry.last_overlay_frame = self.frame;
+            } else {
+                entry.last_workspace_frame = self.frame;
+            }
             if missed {
                 stats.misses += 1;
             } else {
@@ -479,6 +441,9 @@ impl TextBufferCache {
             key,
             buffer,
             last_used_frame: self.frame,
+            last_workspace_frame: 0,
+            last_overlay_frame: 0,
+            overlay_retained: false,
         });
         let index = self.entries.len() - 1;
         let insertion = self
@@ -492,3 +457,7 @@ impl TextBufferCache {
 #[cfg(test)]
 #[path = "text_buffer_cache_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "text_cache_retention_tests.rs"]
+mod retention_tests;

@@ -519,3 +519,36 @@ fn failed_dialog_releases_excess_labels_and_retry_matches_fresh_pixels() {
     let mut fresh = hardware_renderer(960, 720);
     assert_eq!(recovered, capture(&mut fresh, &original));
 }
+
+#[test]
+#[ignore = "requires local GPU; composed label retention and pixel parity"]
+fn composed_workspace_dialog_limits_labels_without_losing_current_content() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let mut prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let template = prepared.menu_overlay_text_runs[0].clone();
+    prepared.menu_overlay_text_runs = (0..160)
+        .map(|n| {
+            let mut label = template.clone();
+            label.text = format!("Composed label {n}");
+            label.rich_spans.clear();
+            label.y = 80.0 + (n % 24) as f32 * 20.0;
+            label.x = 20.0 + (n / 24) as f32 * 130.0;
+            label
+        })
+        .collect();
+    let mut workspace = template;
+    workspace.text = "Workspace-owned text".into();
+    workspace.rich_spans.clear();
+    prepared.text_runs = vec![workspace];
+    assert!(!prepared.is_overlay_only());
+    let mut host = hardware_renderer(960, 720);
+    let first = capture(&mut host, &prepared);
+    let usage = host.renderer.text_cache_key_usage();
+    assert_eq!(usage.label_entries, 128);
+    assert!(usage.label_key_text_bytes <= 32 * 1024);
+    assert_eq!(usage.entries, 129);
+    assert_eq!(first, capture(&mut host, &prepared));
+    let mut fresh = hardware_renderer(960, 720);
+    assert_eq!(first, capture(&mut fresh, &prepared));
+}

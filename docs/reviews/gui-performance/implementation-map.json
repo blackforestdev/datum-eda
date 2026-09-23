@@ -15450,14 +15450,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Apply and account label-specific post-frame retention in full-scene composition containing both workspace and dialog labels, preserving shared current layouts and workspace reuse. Native overlay success/failure retention is implemented; preparing continuation storage and complete shaped ownership remain separately governed."
-        ],
+        "implementation_due": "Implemented at S4 for shared native/composed label count and allocated key retention; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "128 shaped buffers per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Label entry/key implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_composed_label_completion"
       },
       "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass.",
       "s4_implementation_progress": [
@@ -15465,6 +15464,11 @@
           "work": "s4_label_retention_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json",
           "status": "Failed native-dialog label retention fixed; composed workspace/dialog cache classification remains open"
+        },
+        {
+          "work": "s4_composed_label_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/composed-labels/result.json",
+          "status": "Label entry/key retention implementation complete across native and composed frames; original qualification remains S5"
         }
       ]
     },
@@ -15521,14 +15525,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Apply and account label-specific post-frame retention in full-scene composition containing both workspace and dialog labels, preserving shared current layouts and workspace reuse. Native overlay success/failure retention is implemented; preparing continuation storage and complete shaped ownership remain separately governed."
-        ],
+        "implementation_due": "Implemented at S4 for shared native/composed label count and allocated key retention; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "32KiB label key text per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Label entry/key implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_composed_label_completion"
       },
       "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass.",
       "s4_implementation_progress": [
@@ -15536,6 +15539,11 @@
           "work": "s4_label_retention_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json",
           "status": "Failed native-dialog label retention fixed; composed workspace/dialog cache classification remains open"
+        },
+        {
+          "work": "s4_composed_label_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/composed-labels/result.json",
+          "status": "Label entry/key retention implementation complete across native and composed frames; original qualification remains S5"
         }
       ]
     },
@@ -31668,10 +31676,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 18,
+    "rows_with_recorded_implementation_gaps": 16,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 9,
+    "rows_with_implementation_completed_at_s4": 11,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -31681,7 +31689,9 @@
       "MEM-SCREEN-GPU",
       "MEM-MESH-ENTRIES",
       "MEM-MESH-CPU",
-      "MEM-MESH-GPU"
+      "MEM-MESH-GPU",
+      "MEM-LABEL-ENTRIES",
+      "MEM-LABEL-KEYS"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -33379,6 +33389,43 @@
       "Preparing/continuing layouts, private shaping scratch and complete shared text CPU accounting remain distinct obligations. Native/RSS/negative-control/endurance and S5 qualification remain required.",
       "No S4/S5 or issue closure. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendor, licensing, prototype, specification cap or sequencing change."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json",
+    "composed_path_gap_resolved_by": "s4_composed_label_completion; original failure and qualification evidence preserved."
+  },
+  "s4_composed_label_completion": {
+    "status": "Label entry/key retention implementation complete across native and composed frames; original qualification remains S5",
+    "base_commit": "e4369ed8",
+    "production_consumers": [
+      "Shared TextBufferCache workspace and overlay index acquisition in prepare_frame_text",
+      "Full workspace/dialog composition and native overlay frame completion",
+      "Common non-continuation render error cleanup; upload continuation preserves current layouts"
+    ],
+    "retired_paths": [
+      "Full-scene overlay labels implicitly retained only under workspace history policy",
+      "Overlay-only completion as the sole label-specific count/key trimming path",
+      "Dropping bounded label history simply because another frame uses workspace text"
+    ],
+    "behavior": [
+      "Track workspace recency and label retention membership on each shared shaped entry. Workspace and overlay requests for an identical layout reuse one allocation. Label memberships are capped at 128 entries and 32 KiB of allocated key text; shared entries whose label membership evicts can remain for independent recent workspace use, charged once in complete shaped ownership.",
+      "Apply label trimming within common finish_frame for full and native-dialog success/error paths. Preserve pending continuations, including temporary upload refusal. Remove duplicated overlay-only trim calls. Workspace recency and bounded LRU label history now coexist.",
+      "Only sort/reindex when label eviction is required, preserving warm glyph preparation under the limits. Expose label membership/key totals separately from total cache entries/key storage; these are overlapping attribution views, not additive allocations.",
+      "Extract retention policy and focused tests into cohesive files to preserve existing source ceilings. No new cache, dependency, budget or authority."
+    ],
+    "implementation_determination": {
+      "MEM-LABEL-ENTRIES": "All overlay index requests acquire explicit label membership. Common successful/non-continuation failed frame completion trims to 128, after layout borrows finish. Current continuation pins are preparation, not post-frame retention. Workspace references retain their independent lifetime without duplicating shared layouts.",
+      "MEM-LABEL-KEYS": "Label admission/eviction sums actual plain and rich key String capacities. Oversized keys bypass label membership; complete underlying allocation, span/entry/lookup capacity and Datum headers remain counted by existing shaped ownership. The label key byte view and total shaped view overlap and are not summed. Owner teardown releases storage normally."
+    },
+    "proof": {
+      "renderer": "336 renderer tests pass, 11 diagnostic/visual cases filtered. New CPU proof checks shared index identity, 128 labels plus independent workspace retention, warm workspace reuse and oversized shared-key membership bypass. New full-frame GPU proof prepares 160 current labels, checks post-frame membership is 128 and repeated/fresh output pixels match; source review confirms trimming follows submission. Existing native dialog failure/recovery, allocated rich/plain key-capacity, shaping sharing, metadata retirement and continuation tests pass.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2271, dependency and governance gates pass.",
+      "failed_attempts": "Initial run exposed an obsolete profile-switch history expectation and unnecessary warm reindexing. Retained-label history now survives workspace frames; actual memory pressure still retires all metadata. Avoid sorting under the cap. Preserve failed test log. Source-health failures during extraction were corrected without raising ceilings.",
+      "scope": "No repeated native benchmark campaign or full drift; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Complete only label entry/key implementation obligations. Their original S5 statuses, tests and acceptance rules remain unqualified. Complete shaped CPU/private scratch/registry accounting, allocation peaks, native/RSS/endurance and aggregate qualification remain required.",
+      "A layout retained independently for workspace use remains visible in total cache storage after its label membership is evicted. Do not interpret label counts as total cache allocations or sum shared views.",
+      "S4 and the overall issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendor, licensing, prototype, specification cap or sequencing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/composed-labels/result.json"
   }
 }
