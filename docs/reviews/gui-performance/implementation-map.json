@@ -16587,6 +16587,11 @@
           "work": "s4_fixed_uniform_generations_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-generations/result.json",
           "status": "Fixed uniforms retain two-generation admission across renderer recovery; complete replacement ownership remains open"
+        },
+        {
+          "work": "s4_pane_uniform_generations_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/result.json",
+          "status": "Dynamic pane uniform generation continuity implemented across close/reopen and renderer recovery; full replacement predicate remains open"
         }
       ]
     },
@@ -33925,5 +33930,30 @@
       "No dependency, vendor, license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-generations/result.json"
+  },
+  "s4_pane_uniform_generations_work": {
+    "status": "Dynamic pane uniform generation continuity implemented across close/reopen and renderer recovery; full replacement predicate remains open",
+    "base_commit": "068dbc8d",
+    "production_consumers": [
+      "Renderer::prepare_surface_uniforms for board/schematic surface passes",
+      "Renderer::recreate_for_device across native hosts",
+      "Overlay-only clear and surface-pass truncation followed by reopening"
+    ],
+    "retired_paths": [
+      "Dynamic pane uniform construction with an unconditional fresh two-generation allowance"
+    ],
+    "behavior": [
+      "Share a weak slot-indexed generation registry across renderer recovery. Active uniforms and submission/encoding permits keep each slot allowance alive; registry entries do not retain GPU resources. Prune dead trailing slots and excess metadata capacity when acquiring a slot. Admit empty GPU uniform allocation under the preserved generation, host screen and aggregate byte limits before constructing its binding. Warm slots do not access the registry."
+    ],
+    "proof": {
+      "renderer": "346 renderer tests pass, 11 filtered. New actual-GPU test uses production pane preparation: pin first allocation, clear/reopen, pin second, refuse third with unchanged screen charge, refuse after recovery, release first, retry under identical allowance, finally release all bytes. Existing warm pixel, fixed uniform and world generation tests pass.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature and fresh app build pass. Source health 2274, dependency authority and governance pass.",
+      "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Closes the dynamic pane generation-continuity remainder recorded by s4_fixed_uniform_generations_work. Full MEM-REPLACEMENT remains open for other resource families and qualification. Registry CPU metadata is not newly claimed as complete resource accounting; original S4 accounting and S5 qualification obligations remain.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/result.json"
   }
 }

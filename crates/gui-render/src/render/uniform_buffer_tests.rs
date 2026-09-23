@@ -167,3 +167,79 @@ fn fixed_uniform_recovery_preserves_submission_generations() {
     assert!(budgets.iter().all(|b| b.used() == 0));
     assert_eq!(screen.used(), 0);
 }
+
+#[cfg(feature = "visual")]
+#[test]
+#[ignore = "requires local GPU; pane uniform close and recovery continuity"]
+fn pane_uniform_slots_preserve_retiring_generations_across_reopen_and_recovery() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let format = wgpu::TextureFormat::Rgba8UnormSrgb;
+    let state = crate::gpu_surface_pass::board_fixture_state();
+    let retained = crate::RetainedScene::from_workspace(&state, 960, 720);
+    let prepared = crate::PreparedScene::from_workspace_for_surface(
+        &state,
+        960,
+        720,
+        1.0,
+        crate::CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let mut first = crate::Renderer::new(&device, &queue, format, 1).unwrap();
+    first
+        .prepare_surface_uniforms(&device, &queue, &prepared, 960, 720)
+        .unwrap();
+    assert!(!first.surface_scene_uniforms.is_empty());
+    let budgets: Vec<_> = first
+        .surface_scene_uniforms
+        .iter()
+        .map(|b| b.buffer.generation_budget.clone())
+        .collect();
+    let first_holds: Vec<_> = first
+        .surface_scene_uniforms
+        .iter()
+        .map(|b| b.buffer.submission_ref())
+        .collect();
+    first.surface_scene_uniforms.clear();
+    first
+        .prepare_surface_uniforms(&device, &queue, &prepared, 960, 720)
+        .unwrap();
+    let second_holds: Vec<_> = first
+        .surface_scene_uniforms
+        .iter()
+        .map(|b| b.buffer.submission_ref())
+        .collect();
+    first.surface_scene_uniforms.clear();
+    assert!(budgets.iter().all(|b| b.used() == 2));
+    let screen = first.screen_budget.clone();
+    let before = screen.used();
+    assert!(
+        first
+            .prepare_surface_uniforms(&device, &queue, &prepared, 960, 720)
+            .is_err()
+    );
+    assert_eq!(screen.used(), before);
+    assert!(first.surface_scene_uniforms.is_empty());
+    let mut recovered = first
+        .recreate_for_device(&device, &queue, format, 1)
+        .unwrap();
+    drop(first);
+    assert!(
+        recovered
+            .prepare_surface_uniforms(&device, &queue, &prepared, 960, 720)
+            .is_err()
+    );
+    drop(first_holds);
+    recovered
+        .prepare_surface_uniforms(&device, &queue, &prepared, 960, 720)
+        .unwrap();
+    for (binding, budget) in recovered.surface_scene_uniforms.iter().zip(&budgets) {
+        assert!(Arc::ptr_eq(&binding.buffer.generation_budget, budget));
+        assert_eq!(budget.used(), 2);
+    }
+    drop(second_holds);
+    drop(recovered);
+    assert!(budgets.iter().all(|b| b.used() == 0));
+    assert_eq!(screen.used(), 0);
+}
