@@ -20,7 +20,7 @@ pub(crate) struct BufferUpload<'a> {
 pub(crate) struct Batch {
     // Drop encoded resource references before releasing their accounting.
     command: Option<wgpu::CommandBuffer>,
-    buffer: Tracked<wgpu::Buffer>,
+    buffers: Vec<Tracked<wgpu::Buffer>>,
 }
 
 impl Batch {
@@ -29,7 +29,10 @@ impl Batch {
     }
 
     pub fn hold(self, queue: &wgpu::Queue) {
-        super::hold_until_done(queue, vec![self.buffer.submission_ref()]);
+        super::hold_until_done(
+            queue,
+            self.buffers.iter().map(Tracked::submission_ref).collect(),
+        );
     }
 }
 
@@ -40,6 +43,40 @@ pub(crate) fn batch(
     host_budget: &Arc<Budget>,
     uploads: &[TextureUpload<'_>],
     buffers: &[BufferUpload<'_>],
+) -> anyhow::Result<Option<Batch>> {
+    batch_with_scatter(
+        device,
+        owner,
+        generation,
+        host_budget,
+        uploads,
+        buffers,
+        None,
+    )
+}
+
+pub(crate) fn required_bytes(uploads: &[TextureUpload<'_>], buffers: &[BufferUpload<'_>]) -> u64 {
+    uploads.iter().map(padded_bytes).sum::<u64>()
+        + super::sparse_upload::groups(buffers)
+            .iter()
+            .map(|group| {
+                if group.sparse {
+                    group.packet_bytes() * 2
+                } else {
+                    group.uploads.iter().map(|u| u.bytes.len() as u64).sum()
+                }
+            })
+            .sum::<u64>()
+}
+
+pub(crate) fn batch_with_scatter(
+    device: &wgpu::Device,
+    owner: &Owner,
+    generation: u64,
+    host_budget: &Arc<Budget>,
+    uploads: &[TextureUpload<'_>],
+    buffers: &[BufferUpload<'_>],
+    scatter: Option<&super::sparse_upload::Scatter>,
 ) -> anyhow::Result<Option<Batch>> {
     if uploads.is_empty() && buffers.is_empty() {
         return Ok(None);
@@ -78,20 +115,40 @@ pub(crate) fn batch(
             .checked_add(bytes)
             .ok_or_else(|| anyhow::anyhow!("buffer staging size overflow"))?;
     }
-    // Actual padded API capacity, not just source payload, is charged before allocation.
+    let groups = super::sparse_upload::groups(buffers);
+    let sparse_bytes: u64 = groups
+        .iter()
+        .filter(|g| g.sparse && scatter.is_some())
+        .map(|g| g.packet_bytes())
+        .sum();
+    // Sparse packets carry (destination word, value), and both their mapped
+    // upload buffer and storage buffer remain charged until completion.
+    capacity += sparse_bytes * 3 / 2;
+    for group in groups.iter().filter(|g| g.sparse && scatter.is_some()) {
+        anyhow::ensure!(
+            group.packet_bytes() <= u64::from(device.limits().max_storage_buffer_binding_size)
+                && group.uploads[0].buffer.size()
+                    <= u64::from(device.limits().max_storage_buffer_binding_size),
+            "fragmented upload exceeds storage binding limit"
+        );
+    }
     let host = host_budget.reserve(capacity)?;
     let process = super::budget::staging_process().reserve(capacity)?;
     let gpu = super::budget::gpu_process().reserve(capacity)?;
+    let direct_bytes = capacity - sparse_bytes * 2;
+    let mut allocations = Vec::new();
     let buffer = owner.track_with_permits(
         device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("datum-texture-upload-staging"),
-            size: capacity,
+            size: direct_bytes + sparse_bytes,
             usage: wgpu::BufferUsages::MAP_WRITE | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: true,
         }),
-        capacity,
+        direct_bytes + sparse_bytes,
         generation,
         Kind::Staging,
+        // Aggregate reservations are held on the mapped owner. Batch keeps all
+        // storage owners alive until the same completion boundary.
         vec![host, process, gpu],
     );
     {
@@ -104,9 +161,19 @@ pub(crate) fn batch(
                 offset += pitch;
             }
         }
-        for upload in buffers {
-            mapped[offset..offset + upload.bytes.len()].copy_from_slice(upload.bytes);
-            offset += upload.bytes.len();
+        for group in &groups {
+            if group.sparse && scatter.is_some() {
+                continue;
+            }
+            for upload in group.uploads {
+                mapped[offset..offset + upload.bytes.len()].copy_from_slice(upload.bytes);
+                offset += upload.bytes.len();
+            }
+        }
+        for group in groups.iter().filter(|g| g.sparse && scatter.is_some()) {
+            let len = group.packet_bytes() as usize;
+            group.fill(&mut mapped[offset..offset + len]);
+            offset += len;
         }
     }
     buffer.unmap();
@@ -142,19 +209,46 @@ pub(crate) fn batch(
         );
         offset += padded_bytes(upload);
     }
-    for upload in buffers {
-        encoder.copy_buffer_to_buffer(
-            &buffer,
-            offset,
-            upload.buffer,
-            upload.offset,
-            upload.bytes.len() as u64,
-        );
-        offset += upload.bytes.len() as u64;
+    for group in &groups {
+        if group.sparse && scatter.is_some() {
+            continue;
+        }
+        for upload in group.uploads {
+            encoder.copy_buffer_to_buffer(
+                &buffer,
+                offset,
+                upload.buffer,
+                upload.offset,
+                upload.bytes.len() as u64,
+            );
+            offset += upload.bytes.len() as u64;
+        }
     }
+    if let Some(scatter) = scatter {
+        for group in groups.iter().filter(|g| g.sparse) {
+            let bytes = group.packet_bytes();
+            let packet = owner.track_with_permits(
+                device.create_buffer(&wgpu::BufferDescriptor {
+                    label: Some("datum-scatter-packet"),
+                    size: bytes,
+                    usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
+                    mapped_at_creation: false,
+                }),
+                bytes,
+                generation,
+                Kind::Staging,
+                Vec::new(),
+            );
+            encoder.copy_buffer_to_buffer(&buffer, offset, &packet, 0, bytes);
+            scatter.encode(device, &mut encoder, &packet, group.uploads[0].buffer);
+            offset += bytes;
+            allocations.push(packet);
+        }
+    }
+    allocations.push(buffer);
     Ok(Some(Batch {
         command: Some(encoder.finish()),
-        buffer,
+        buffers: allocations,
     }))
 }
 
@@ -174,13 +268,14 @@ pub(crate) fn submit_buffers_for_test(
     queue: &wgpu::Queue,
     buffers: &[BufferUpload<'_>],
 ) {
-    if let Some(mut batch) = batch(
+    if let Some(mut batch) = batch_with_scatter(
         device,
         &Owner::new(),
         1,
         &Budget::new(16 * 1024 * 1024),
         &[],
         buffers,
+        Some(&super::sparse_upload::Scatter::default()),
     )
     .unwrap()
     {

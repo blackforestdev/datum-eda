@@ -169,55 +169,35 @@ impl ScreenBuffer {
     }
 }
 
-// A vertex is the update unit. Join adjacent changed vertices, preserving
-// unchanged vertex gaps. This avoids one queue write per coordinate/color word
-// during camera changes. Trim clean edge words within each resulting span;
-// internal clean words remain coalesced, so this is not byte-minimal transfer.
-// Production Vertex has a four-byte-aligned stride.
+// Transfer exactly the changed COPY_BUFFER_ALIGNMENT words. Adjacent dirty
+// words share a copy; clean words split it even inside a vertex or instance.
+// The caller batches these ranges into one explicit staging allocation.
 pub(crate) fn dirty_ranges<'a>(
     old: &[u8],
     new: &'a [u8],
     stride: usize,
     mut write: impl FnMut(u64, &'a [u8]),
 ) -> usize {
+    let word = wgpu::COPY_BUFFER_ALIGNMENT as usize;
     assert!(stride > 0);
-    assert_eq!(stride % wgpu::COPY_BUFFER_ALIGNMENT as usize, 0);
+    assert_eq!(stride % word, 0);
+    assert_eq!(new.len() % stride, 0);
     let mut start = None;
     let mut uploaded = 0;
-    for offset in (0..new.len()).step_by(stride) {
-        let end = offset + stride;
+    for offset in (0..new.len()).step_by(word) {
+        let end = offset + word;
         if old.get(offset..end) != Some(&new[offset..end]) {
             start.get_or_insert(offset);
         } else if let Some(begin) = start.take() {
-            uploaded += write_trimmed_span(&mut write, old, new, begin, offset);
+            write(begin as u64, &new[begin..offset]);
+            uploaded += offset - begin;
         }
     }
     if let Some(begin) = start {
-        uploaded += write_trimmed_span(&mut write, old, new, begin, new.len());
+        write(begin as u64, &new[begin..]);
+        uploaded += new.len() - begin;
     }
     uploaded
-}
-
-// Preserve the existing number of queue writes. Word-by-word queue writes and
-// thousands of individual buffer copies both regress moving-stream CPU cost.
-fn write_trimmed_span<'a>(
-    write: &mut impl FnMut(u64, &'a [u8]),
-    old: &[u8],
-    new: &'a [u8],
-    mut begin: usize,
-    mut end: usize,
-) -> usize {
-    let word = wgpu::COPY_BUFFER_ALIGNMENT as usize;
-    while begin < end && old.get(begin..begin + word) == Some(&new[begin..begin + word]) {
-        begin += word;
-    }
-    while begin < end && old.get(end - word..end) == Some(&new[end - word..end]) {
-        end -= word;
-    }
-    if begin < end {
-        write(begin as u64, &new[begin..end]);
-    }
-    end - begin
 }
 
 #[cfg(all(test, feature = "visual"))]

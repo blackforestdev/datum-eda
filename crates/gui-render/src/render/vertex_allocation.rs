@@ -65,7 +65,8 @@ impl VertexAllocation {
         {
             return Ok(false);
         }
-        let mut usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
+        let mut usage =
+            wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE;
         if cfg!(test) {
             usage |= wgpu::BufferUsages::COPY_SRC;
         }

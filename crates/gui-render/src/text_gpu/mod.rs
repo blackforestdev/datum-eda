@@ -12,3 +12,5 @@ pub use lifetime::{Kind, Observer, Record};
 
 #[cfg(all(test, feature = "visual"))]
 mod parity;
+
+pub(crate) mod sparse_upload;

@@ -186,7 +186,9 @@ impl Draw {
                 device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some("datum-glyph-instances"),
                     size: capacity,
-                    usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                    usage: wgpu::BufferUsages::VERTEX
+                        | wgpu::BufferUsages::COPY_DST
+                        | wgpu::BufferUsages::STORAGE,
                     mapped_at_creation: false,
                 }),
                 capacity,

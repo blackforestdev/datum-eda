@@ -16983,6 +16983,11 @@
           "work": "s4_text_heap_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json",
           "status": "Default owned text capacity admission includes measured Arc/Datum allocation overhead; returned layout glyphs and private scratch remain disjoint. Full allocation-time/private/remaining metadata and qualification gaps stay open."
+        },
+        {
+          "work": "s4_sparse_upload_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
+          "status": "Exact aligned destination runs and bounded-command scatter now replace internal clean-gap transfers. Protocol metadata and both packet capacities are charged; superseded plans, full boundary counters and qualification remain open."
         }
       ]
     },
@@ -17149,6 +17154,11 @@
           "work": "s4_text_heap_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json",
           "status": "Default owned text capacity admission includes measured Arc/Datum allocation overhead; returned layout glyphs and private scratch remain disjoint. Full allocation-time/private/remaining metadata and qualification gaps stay open."
+        },
+        {
+          "work": "s4_sparse_upload_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
+          "status": "Exact aligned destination runs and bounded-command scatter now replace internal clean-gap transfers. Protocol metadata and both packet capacities are charged; superseded plans, full boundary counters and qualification remain open."
         }
       ]
     },
@@ -19276,7 +19286,14 @@
         "unfinished_qualification": "Only exact dirty ranges plus documented alignment uploaded",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_sparse_upload_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
+          "status": "Exact aligned destination runs and bounded-command scatter now replace internal clean-gap transfers. Protocol metadata and both packet capacities are charged; superseded plans, full boundary counters and qualification remain open."
+        }
+      ]
     },
     {
       "id": "REUSE-WORLD-ALLOC",
@@ -28443,7 +28460,12 @@
       "Per-adapter upload accounting, absolute resource caps, full negative/backend/scale/endurance qualification and remaining S2 ownership work stay open.",
       "No dependency, vendoring, Cargo, visual-prototype, product-authority, renderer pass-count or resize-qualification change."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json",
+    "internal_gap_policy_superseded_by": {
+      "work": "s4_sparse_upload_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
+      "status": "Historical rejected copy experiments remain rejected. Current default uses exact destination-word plans and bounded-command scatter; protocol metadata, pending-union behavior and full boundary qualification remain explicit."
+    }
   },
   "s2_text_lookup_index_work": {
     "status": "Shared shaped-text lookup indexed in every default renderer; GPI-S2 remains in progress",
@@ -32969,5 +32991,36 @@
       "No dependency, vendoring, license, prototype, drawing algorithm, numerical budget or specification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/control-heap/result.json"
+  },
+  "s4_sparse_upload_adoption_work": {
+    "status": "Default shared screen/glyph dirty-word plans use bounded-command scatter for fragmented destinations; complete transfer qualification remains open",
+    "base_commit": "c6d87b1c",
+    "production_consumers": [
+      "Nine shared ScreenBuffer streams and terminal image quad buffers",
+      "Workspace and overlay glyph-instance uploads",
+      "Shared Atlas frame staging for all renderer profiles"
+    ],
+    "retired_paths": [
+      "Coalescing unchanged internal words into screen/glyph dirty spans",
+      "One GPU copy command per dirty run for large sorted non-overlapping storage-buffer update groups"
+    ],
+    "behavior": [
+      "Generate maximal exact four-byte-aligned dirty runs, preserving clean gaps inside vertices and glyph instances. Cold and over-snapshot-cap data still initialize the required range.",
+      "Use direct copies below 64 ranges; larger ordered groups use one packed (destination word,value) upload, one storage-buffer copy and one compute dispatch per destination. No per-word GPU command loop. One lazy pipeline belongs to the renderer atlas and retires with it.",
+      "Reserve both packet allocations under existing 16 MiB host / 64 MiB process staging and 512 MiB GPU caps before API allocation. Resource identities report both actual capacities; submission holds preserve aggregate reservations through completion. Scratch yields to the complete packet requirement.",
+      "The packed protocol adds 4 bytes of destination metadata per changed 4-byte word, with a separate GPU packet allocation. Report these as staging/protocol cost, never as zero-byte transfer or alignment. Destination payload alone is exact; complete boundary counter reconciliation remains open."
+    ],
+    "proof": {
+      "renderer": "326 renderer tests pass; 11 diagnostic/visual cases filtered. Exhaustive 4,096-mask dirty-word oracle, actual GPU 4,096-separated-word readback, clean-word preservation, mixed direct/scatter offsets, threshold/order checks, exact packet capacity, refusal/cancellation/completion release, existing default text/control pixel and lifecycle regressions pass.",
+      "diagnostic": "One optimized 4,096-vertex fixture; 12 alternating-order samples after 2 warmups; encoding only, GPU waits/submission outside timing. Median coalesced span 24,041 ns, exact scatter 74,361 ns. About 50,320 ns extra encoding cost in this fixture; no application speedup or native/backend qualification claimed. One packet copy plus one dispatch replaces 4,096 separate copy commands. Changed destination payload 16,384 bytes; protocol metadata 16,384 bytes; mapped packet 32,768 bytes plus storage packet 32,768 bytes. Historical debug diagnostics are not directly comparable.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health 2,263, dependency and governance gates pass. First focused GPU attempt found a WGSL reserved-word parse error; fixed and failure log preserved.",
+      "drift": "Full drift stops at the existing console-routine-focused 1x mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "ScreenBuffer still unions superseding pending plans; a change reverted before submission may be conservatively retransferred. Over-snapshot-cap streams still bypass CPU retention. Complete actual-boundary/consumer/generation counter qualification remains open; no REUSE-SCREEN or MEM-01 closure.",
+      "Full CPU scratch/metadata accounting, other S4 resources, cold multi-submission timing, native/backend/device recovery/fairness/endurance and S5 independent replay remain. No S4/S5 or issue closure.",
+      "Preserve painter order, geometry, pixels, GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype, numerical cap or specification amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json"
   }
 }

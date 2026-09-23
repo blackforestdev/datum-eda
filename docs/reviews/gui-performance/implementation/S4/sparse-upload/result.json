@@ -1,0 +1,74 @@
+{
+  "status": "Default shared screen/glyph dirty-word plans use bounded-command scatter for fragmented destinations; complete transfer qualification remains open",
+  "base_commit": "c6d87b1c",
+  "production_consumers": [
+    "Nine shared ScreenBuffer streams and terminal image quad buffers",
+    "Workspace and overlay glyph-instance uploads",
+    "Shared Atlas frame staging for all renderer profiles"
+  ],
+  "retired_paths": [
+    "Coalescing unchanged internal words into screen/glyph dirty spans",
+    "One GPU copy command per dirty run for large sorted non-overlapping storage-buffer update groups"
+  ],
+  "behavior": [
+    "Generate maximal exact four-byte-aligned dirty runs, preserving clean gaps inside vertices and glyph instances. Cold and over-snapshot-cap data still initialize the required range.",
+    "Use direct copies below 64 ranges; larger ordered groups use one packed (destination word,value) upload, one storage-buffer copy and one compute dispatch per destination. No per-word GPU command loop. One lazy pipeline belongs to the renderer atlas and retires with it.",
+    "Reserve both packet allocations under existing 16 MiB host / 64 MiB process staging and 512 MiB GPU caps before API allocation. Resource identities report both actual capacities; submission holds preserve aggregate reservations through completion. Scratch yields to the complete packet requirement.",
+    "The packed protocol adds 4 bytes of destination metadata per changed 4-byte word, with a separate GPU packet allocation. Report these as staging/protocol cost, never as zero-byte transfer or alignment. Destination payload alone is exact; complete boundary counter reconciliation remains open."
+  ],
+  "proof": {
+    "renderer": "326 renderer tests pass; 11 diagnostic/visual cases filtered. Exhaustive 4,096-mask dirty-word oracle, actual GPU 4,096-separated-word readback, clean-word preservation, mixed direct/scatter offsets, threshold/order checks, exact packet capacity, refusal/cancellation/completion release, existing default text/control pixel and lifecycle regressions pass.",
+    "diagnostic": "One optimized 4,096-vertex fixture; 12 alternating-order samples after 2 warmups; encoding only, GPU waits/submission outside timing. Median coalesced span 24,041 ns, exact scatter 74,361 ns. About 50,320 ns extra encoding cost in this fixture; no application speedup or native/backend qualification claimed. One packet copy plus one dispatch replaces 4,096 separate copy commands. Changed destination payload 16,384 bytes; protocol metadata 16,384 bytes; mapped packet 32,768 bytes plus storage packet 32,768 bytes. Historical debug diagnostics are not directly comparable.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health 2,263, dependency and governance gates pass. First focused GPU attempt found a WGSL reserved-word parse error; fixed and failure log preserved.",
+    "drift": "Full drift stops at the existing console-routine-focused 1x mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "ScreenBuffer still unions superseding pending plans; a change reverted before submission may be conservatively retransferred. Over-snapshot-cap streams still bypass CPU retention. Complete actual-boundary/consumer/generation counter qualification remains open; no REUSE-SCREEN or MEM-01 closure.",
+    "Full CPU scratch/metadata accounting, other S4 resources, cold multi-submission timing, native/backend/device recovery/fairness/endurance and S5 independent replay remain. No S4/S5 or issue closure.",
+    "Preserve painter order, geometry, pixels, GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype, numerical cap or specification amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/sparse-upload/tests.log.gz",
+      "uncompressed_sha256": "a063fb4dff5c5573607906555065aae6c5c820587a21fe21490e4c6e4fc4897e"
+    },
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/sparse-upload/initial-tests.log.gz",
+      "uncompressed_sha256": "524214926841aec565ad6384aa7b4ca8464dae754ab9abffb6451bfdd62bc297"
+    },
+    "shader-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/sparse-upload/shader-error.log.gz",
+      "uncompressed_sha256": "03625a3067c12a766b583ac8decdb952ffb11111a8c50e92863ecfddd0112d88"
+    },
+    "encoding": {
+      "path": "docs/reviews/gui-performance/implementation/S4/sparse-upload/encoding.log.gz",
+      "uncompressed_sha256": "0d012f64bd360b80667bccf83440348ecf73b45fd982c055a7d542fd46f7a564"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/sparse-upload/clippy.log.gz",
+      "uncompressed_sha256": "3a8701aeae3a9cb1e840c49d1dde2e21c8d9eb6fb66562473dbad9bb1505ccc8"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/sparse-upload/build.log.gz",
+      "uncompressed_sha256": "15ea9fcccbb68c4898570ebb00e758fecca79d3857a759540abeeeaf5d8c2f1a"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/sparse-upload/drift.log.gz",
+      "uncompressed_sha256": "1a3462a51836822f430e3824bea317c1a4670c7848db87c1e0d8c16f6c0e09e6"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text.rs": "c420513172963cdf46b5c0b489e1f7e39289ac37eb56bb4fd6dacc1ef1d7ac3d",
+    "crates/gui-render/src/render/screen_buffer.rs": "abac6919f261860269a9496059e36a3397f29e9df7958dda241edbab269108f6",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "0f2eff4cea798e4155cb65510eaf8d63ef2ac8cb4b3c563e786099e9e7fa28c1",
+    "crates/gui-render/src/render/vertex_allocation.rs": "134498daa42289db60886d9699fb49e73263e88146210c473b4041185ac46722",
+    "crates/gui-render/src/text_gpu/atlas.rs": "64f319ddf5b85469deed91e3112d8dcb8d9525182507ff41af3202d8a9dabd5d",
+    "crates/gui-render/src/text_gpu/draw.rs": "bfca241c863b48dab3db609164b9dbf53b179850b704b0c2e789489ec38e25d7",
+    "crates/gui-render/src/text_gpu/mod.rs": "11c72dff44ad579e1a50ca58a74f8d2024026cf70b4d495a7dd09d1e798db0b8",
+    "crates/gui-render/src/text_gpu/upload.rs": "1dbfecbbe0550c0c302ced2fa799cfc570f98f1f9e03b3997b97b115e6db2b57",
+    "crates/gui-render/src/text_gpu/scatter.wgsl": "9629b65ae47b58867d70ff52ad9b808abd89f78970e8ce0308429c1e0f95cd2b",
+    "crates/gui-render/src/text_gpu/sparse_upload.rs": "54ed65bbcd08f35dd888ff5c4eac11cdc9524e8e2392223e2d4fbb5894ec537a",
+    "crates/gui-render/src/text_gpu/sparse_upload_tests.rs": "44dd3309f42d7daeaa5c491d85c6c5e72992ced0767fa3ae1aead570794d6e48"
+  }
+}
