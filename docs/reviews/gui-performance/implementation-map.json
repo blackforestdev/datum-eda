@@ -16132,7 +16132,14 @@
         "unfinished_qualification": "4MiB control mesh GPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_control_gpu_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/control-gpu/result.json",
+          "status": "Bounded default control-bearing GPU retention; complete mesh accounting and S5 qualification remain open"
+        }
+      ]
     },
     {
       "id": "MEM-WORLD-GPU",
@@ -33184,5 +33191,33 @@
       "Remaining resource implementation and S5 native/backend/fault/fairness/endurance/independent qualification remain. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype, numerical cap or specification amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json"
+  },
+  "s4_control_gpu_adoption_work": {
+    "status": "Bounded default control-bearing GPU retention; complete mesh accounting and S5 qualification remain open",
+    "base_commit": "85609e3a",
+    "production_consumers": [
+      "Shared renderer panel buffers for shell chrome and controls",
+      "Shared menu-overlay buffers for menus and native Preferences/New Project dialog composition",
+      "Common full-frame and dialog submission lifetime hook; host device replacement"
+    ],
+    "retired_paths": [
+      "Panel/menu GPU retention constrained only by the broader screen budget, without the CTL-02 retained control allowance"
+    ],
+    "behavior": [
+      "Share a 4 MiB retained GPU allowance across panel and menu-overlay buffers. Charge actual entire allocation capacities, conservatively including mixed non-control vertices. Retiring retained allocations keep their reservation until the final submission reference releases.",
+      "If a replacement cannot reserve retention, including an individual oversized buffer, upload/render it under the existing hard 16 MiB screen and 512 MiB process GPU budgets. Drop its renderer cache owner only after establishing submission references; actual retirement remains completion-bound. No missing control geometry or bypass of hard admission.",
+      "Device replacement shares the original retention allowance. A failed hard admission preserves the previous allocation. Unchanged retained buffers keep the warm reuse path. Numerical budgets, visuals, dependencies and authoritative model state are unchanged."
+    ],
+    "proof": {
+      "renderer": "331 renderer tests pass, 11 diagnostic/visual cases filtered. Includes full-cache uncached overlay admission, pinned allocation retirement, device-replacement budget identity, release and warm retry. Added final-source oversized-buffer test separately passes with exact GPU readback of all 4 MiB + 4 bytes. Existing GPU/pixel/cache regressions pass.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy -D warnings and fresh application build pass. Source health 2267 and dependency authority pass.",
+      "scope": "No new native input or benchmark campaign. Full drift not rerun for this ownership slice; existing recorded Console golden discrepancy remains unresolved, not accepted or erased."
+    },
+    "limits": [
+      "This is conservative mixed-buffer retention, not per-mesh GPU payload attribution. Transient uncached allocations remain in hard screen/process totals; finer category counters, CPU frame output/scratch and complete CTL/MEM qualification remain open.",
+      "Retention refusal may require a fresh allocation/upload each frame until capacity becomes available; no measured default-path speedup is asserted.",
+      "No full MEM-MESH-GPU, S4/S5 or issue closure. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure. No new dependency, vendoring, license, prototype or specification amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/control-gpu/result.json"
   }
 }

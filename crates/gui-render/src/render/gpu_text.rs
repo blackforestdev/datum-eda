@@ -105,6 +105,8 @@ impl Renderer {
         resources.extend(self.text_renderer.submission_ref());
         resources.extend(self.menu_overlay_text_renderer.submission_ref());
         text_gpu::hold_until_done(queue, resources);
+        self.panel_gpu.retire_uncached_gpu();
+        self.menu_overlay_gpu.retire_uncached_gpu();
     }
 
     #[allow(clippy::too_many_arguments)]

@@ -11,6 +11,7 @@ pub use crate::text_gpu::{
 
 pub struct Renderer {
     pub(super) cold_world: gpu_vertex_upload::ColdWorldUploads,
+    pub(super) control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     pub(super) screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     pub(super) control_meshes: crate::global_preferences_primitives::ControlMeshCache,
     pub(super) schematic_world_strokes_gpu:
@@ -96,6 +97,13 @@ impl Renderer {
     /// Cache hits do not increment it; this is work count, not resource accounting.
     pub fn control_mesh_build_count(&self) -> usize {
         self.control_meshes.builds
+    }
+
+    /// Allocated panel/menu capacities admitted to retention, including retiring
+    /// submission references. Mixed non-control vertices are counted conservatively.
+    /// Uncached frame allocations are counted by the screen/process budgets instead.
+    pub fn control_mesh_retained_gpu_bytes(&self) -> u64 {
+        self.control_gpu_budget.used()
     }
 
     /// Retained CPU cache storage, including entry capacity and mesh payload.

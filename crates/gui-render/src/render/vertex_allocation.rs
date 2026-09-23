@@ -7,6 +7,8 @@ pub(crate) struct VertexAllocation {
     owner: Option<Owner>,
     generation: u64,
     generation_budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
+    retention_budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
+    uncached: bool,
     budgets: Vec<std::sync::Arc<crate::text_gpu::budget::Budget>>,
 }
 
@@ -32,7 +34,23 @@ impl VertexAllocation {
         self
     }
 
+    pub(crate) fn with_retention_budget(
+        mut self,
+        budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) -> Self {
+        self.retention_budget = Some(budget);
+        self
+    }
+
+    /// Call only after establishing the frame submission references.
+    pub(crate) fn retire_uncached(&mut self) {
+        if self.uncached {
+            self.clear();
+        }
+    }
+
     pub(crate) fn clear(&mut self) {
+        self.uncached = false;
         self.buffer = None;
     }
 
@@ -71,7 +89,7 @@ impl VertexAllocation {
             usage |= wgpu::BufferUsages::COPY_SRC;
         }
         let capacity = live.next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
-        let mut permits = Vec::with_capacity(self.budgets.len() + 2);
+        let mut permits = Vec::with_capacity(self.budgets.len() + 3);
         if let Some(budget) = &self.generation_budget {
             permits.push(budget.reserve(1).map_err(|_| {
                 anyhow::anyhow!("retained world stream already has two live GPU allocations")
@@ -81,12 +99,21 @@ impl VertexAllocation {
             permits.push(budget.reserve(capacity)?);
         }
         permits.push(crate::text_gpu::budget::gpu_process().reserve(capacity)?);
+        // Retention refusal bypasses the cache, never the hard frame budgets.
+        let mut uncached = false;
+        if let Some(budget) = &self.retention_budget {
+            match budget.reserve(capacity) {
+                Ok(permit) => permits.push(permit),
+                Err(_) => uncached = true,
+            }
+        }
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: capacity,
             usage,
             mapped_at_creation: false,
         });
+        self.uncached = uncached;
         self.generation += 1;
         let bytes = buffer.size();
         self.buffer = Some(

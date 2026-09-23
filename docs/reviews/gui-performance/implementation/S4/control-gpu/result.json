@@ -1,0 +1,54 @@
+{
+  "status": "Bounded default control-bearing GPU retention; complete mesh accounting and S5 qualification remain open",
+  "base_commit": "85609e3a",
+  "production_consumers": [
+    "Shared renderer panel buffers for shell chrome and controls",
+    "Shared menu-overlay buffers for menus and native Preferences/New Project dialog composition",
+    "Common full-frame and dialog submission lifetime hook; host device replacement"
+  ],
+  "retired_paths": [
+    "Panel/menu GPU retention constrained only by the broader screen budget, without the CTL-02 retained control allowance"
+  ],
+  "behavior": [
+    "Share a 4 MiB retained GPU allowance across panel and menu-overlay buffers. Charge actual entire allocation capacities, conservatively including mixed non-control vertices. Retiring retained allocations keep their reservation until the final submission reference releases.",
+    "If a replacement cannot reserve retention, including an individual oversized buffer, upload/render it under the existing hard 16 MiB screen and 512 MiB process GPU budgets. Drop its renderer cache owner only after establishing submission references; actual retirement remains completion-bound. No missing control geometry or bypass of hard admission.",
+    "Device replacement shares the original retention allowance. A failed hard admission preserves the previous allocation. Unchanged retained buffers keep the warm reuse path. Numerical budgets, visuals, dependencies and authoritative model state are unchanged."
+  ],
+  "proof": {
+    "renderer": "331 renderer tests pass, 11 diagnostic/visual cases filtered. Includes full-cache uncached overlay admission, pinned allocation retirement, device-replacement budget identity, release and warm retry. Added final-source oversized-buffer test separately passes with exact GPU readback of all 4 MiB + 4 bytes. Existing GPU/pixel/cache regressions pass.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy -D warnings and fresh application build pass. Source health 2267 and dependency authority pass.",
+    "scope": "No new native input or benchmark campaign. Full drift not rerun for this ownership slice; existing recorded Console golden discrepancy remains unresolved, not accepted or erased."
+  },
+  "limits": [
+    "This is conservative mixed-buffer retention, not per-mesh GPU payload attribution. Transient uncached allocations remain in hard screen/process totals; finer category counters, CPU frame output/scratch and complete CTL/MEM qualification remain open.",
+    "Retention refusal may require a fresh allocation/upload each frame until capacity becomes available; no measured default-path speedup is asserted.",
+    "No full MEM-MESH-GPU, S4/S5 or issue closure. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure. No new dependency, vendoring, license, prototype or specification amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/control-gpu/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-gpu/tests.log.gz",
+      "uncompressed_sha256": "0a6d89f12a71a05204ecdd20a76162ba815593160257174304d30d26f84c189a"
+    },
+    "oversize": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-gpu/oversize.log.gz",
+      "uncompressed_sha256": "f7cf735fa6355ed4ba9a62b743df42e5cd95582e9c68536d39139d40bd5d5293"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-gpu/clippy.log.gz",
+      "uncompressed_sha256": "445b790bb381829bf9b9ef2d3473650a2c63b17f32111e026bf7799ddae98f89"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-gpu/build.log.gz",
+      "uncompressed_sha256": "c6063d5f18ed22e9d33e59391693fb68e786eff40e6c6cede45cbc845b0aa462"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "7e9f6dbaf129db0f92954dbc6be25416efa714866817cd76456073fb29644d7f",
+    "crates/gui-render/src/render/gpu_text.rs": "3626638abd085586fdb088a822e4be3d697f45d7a34d9d6fbd00fe7987783ce8",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "dc2143076e2e0600ec9c4fb4d5f87e00f0ad6ea6c2baed094cf4a59f33c39fa3",
+    "crates/gui-render/src/render/renderer_state.rs": "1d6bb38f270a50041d071eb94c901ae8ca03fe17dfdc52675f7256c232cfdab7",
+    "crates/gui-render/src/render/screen_buffer.rs": "607e053942ad8c9581635bad5540bc36b3963b11467fb7341867ae4860044333",
+    "crates/gui-render/src/render/vertex_allocation.rs": "fd5bc31e611bd84dc636071e200d4c9f893bed93066d2521212e93a3a3e750a0"
+  }
+}

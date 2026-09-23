@@ -16,6 +16,7 @@ impl Renderer {
             msaa_samples,
             crate::text_gpu::budget::Budget::new(16 * 1024 * 1024),
             crate::text_gpu::budget::Budget::new(16 * 1024 * 1024),
+            crate::text_gpu::budget::Budget::new(4 * 1024 * 1024),
         )
     }
 
@@ -34,6 +35,7 @@ impl Renderer {
             msaa_samples,
             self.screen_budget.clone(),
             self.atlas.staging_budget.clone(),
+            self.control_gpu_budget.clone(),
         )?;
         replacement.surface_attachments = self.surface_attachments.replacement();
         replacement.world_vertices_gpu = self.world_vertices_gpu.replacement();
@@ -50,6 +52,7 @@ impl Renderer {
         msaa_samples: u32,
         screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
         staging_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+        control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     ) -> anyhow::Result<Self> {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-gui-render-shader"),
@@ -343,7 +346,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             control_meshes: Default::default(),
             cold_world: Default::default(),
             text_preparation: Default::default(),
-            panel_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone()),
+            panel_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone())
+                .with_retention_budget(control_gpu_budget.clone()),
             viewport_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
             ),
@@ -358,9 +362,11 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             },
             menu_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
-            ),
+            )
+            .with_retention_budget(control_gpu_budget.clone()),
             surface_attachments: gpu_surface::SurfaceAttachments::default(),
             screen_budget,
+            control_gpu_budget,
             msaa_format: format,
             msaa_samples,
         })
