@@ -3,16 +3,7 @@ use super::*;
 
 impl Atlas {
     pub(crate) fn pending_staging_bytes(&self) -> u64 {
-        self.pending_uploads
-            .iter()
-            .map(|upload| {
-                u64::from(
-                    upload
-                        .stride
-                        .next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT),
-                ) * u64::from(upload.size[1] - upload.uploaded_rows)
-            })
-            .sum()
+        self.pending_copy_bytes
     }
 
     pub(crate) fn submit_chunk(
@@ -61,6 +52,7 @@ impl Atlas {
         let submission = queue.submit([batch.command()]);
         batch.hold(queue);
         super::super::hold_until_done(queue, resources);
+        self.pending_copy_bytes -= limit - remaining;
         for (upload, rows) in self.pending_uploads.iter_mut().zip(counts) {
             upload.uploaded_rows += rows;
             self.uploads.bytes += u64::from(rows) * u64::from(upload.stride);

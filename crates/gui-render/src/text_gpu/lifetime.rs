@@ -172,7 +172,7 @@ impl crate::Renderer {
         super::budget::gpu_process().used()
     }
 
-    /// Shared explicit GPU staging and retained private layout scratch capacity.
+    /// Shared GPU staging, pending glyph pixels and retained private layout scratch.
     /// Other CPU pending payload, tracking metadata and scratch remain separate.
     pub fn upload_staging_reserved_bytes(&self) -> u64 {
         self.atlas.staging_budget.used()

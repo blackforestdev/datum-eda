@@ -16925,6 +16925,11 @@
           "work": "s4_layout_scratch_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/layout-scratch/result.json",
           "status": "Private retained layout scratch joins existing shared host/process staging admission and yields to required uploads; transient/private remaining scratch and metadata accounting plus qualification remain open."
+        },
+        {
+          "work": "s4_glyph_cpu_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/result.json",
+          "status": "Default CPU raster pixel retention shares host/process staging budgets, leaves bounded-copy headroom and yields preparation during cold accumulation. Full allocation-time/private/metadata accounting and qualification remain open."
         }
       ]
     },
@@ -17081,6 +17086,11 @@
           "work": "s4_layout_scratch_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/layout-scratch/result.json",
           "status": "Private retained layout scratch joins existing shared host/process staging admission and yields to required uploads; transient/private remaining scratch and metadata accounting plus qualification remain open."
+        },
+        {
+          "work": "s4_glyph_cpu_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/result.json",
+          "status": "Default CPU raster pixel retention shares host/process staging budgets, leaves bounded-copy headroom and yields preparation during cold accumulation. Full allocation-time/private/metadata accounting and qualification remain open."
         }
       ]
     },
@@ -32747,5 +32757,39 @@
       "No new native-input or benchmark campaign. No dependency, vendoring, license, prototype, layout/font authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/world-generations/result.json"
+  },
+  "s4_glyph_cpu_adoption_work": {
+    "status": "Default glyph preparation yields while retained CPU raster pixels share staging admission; complete scratch accounting remains unfinished",
+    "base_commit": "0c8a728b",
+    "production_consumers": [
+      "Datum Atlas raster preparation and mixed/chunked uploads",
+      "Shared Renderer full-scene and dialog text preparation used by Main/Global/Project/New"
+    ],
+    "retired_paths": [
+      "Preparing the entire cold glyph set before applying upload continuation",
+      "Uncharged retained CPU glyph-pixel vectors alongside explicit GPU staging",
+      "Flattening preparation errors into strings that lose typed continuation state"
+    ],
+    "behavior": [
+      "Retained image Vec capacity is charged to existing16 MiB host/64 MiB process staging-scratch budgets. Preflight room for the next bounded GPU copy before retaining an image; failed reservations roll back. CPU permits live beside each pending image until copying/discard releases it.",
+      "Pause at a cache miss after the pending padded copy plan reaches the existing4 MiB chunk size, or when the next image cannot be admitted alongside pending work. Upload existing pixels and resume preparation without repacking valid atlas addresses. A single image may exceed the chunk size if retained capacity and copy headroom fit; its rows still copy in bounded chunks.",
+      "Both production render paths use the same typed continuation handler. Incomplete text preparation cannot publish a frame/signature; required content is revisited against current inputs after the upload yields. Warm known glyphs bypass rasterization and queue checks.",
+      "Maintain pending padded copy bytes as an updated total, avoiding an upload-vector scan for every cold glyph miss. Successful mixed/chunked copies and repack/reset keep the total synchronized."
+    ],
+    "proof": {
+      "renderer": "320 renderer tests pass,10 diagnostic/visual cases filtered. New actual-GPU test verifies CPU capacity charge, pressure rollback, preservation of known glyphs, CPU-to-GPU staging handoff, callback release and close cleanup.",
+      "production": "Extended six-large-glyph fixture drives full-scene and dialog render_with_submission, proves raster preparation resumes after an upload yield, verifies refusal preserves pending bytes and atlas generation, applies changed color during continuation and matches fresh final pixels. Warm reuse remains unchanged.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2259, dependency authority and governance checks pass.",
+      "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance.",
+      "convergence": "Updated the existing guard to follow both production continuation callers into one shared preparation owner.11 guard tests pass, including missing/duplicate shared-owner and missing profile-call negative controls.",
+      "development": "Initial full drift stopped at the obsolete direct-call guard; updated its wiring and negative controls, then reran full drift. Initial319-test suite passed. New regression initially referenced a nonexistent test counter accessor; compilation failed, then the accessor was corrected. Expanded320-test suite passed, followed by final verification after the constant-time pending total change. Failed/intermediate logs retained."
+    },
+    "limits": [
+      "Rasterization itself returns an allocated image before admission. Transient raster peaks, private font/raster state, pending-container metadata/allocator headers and other CPU scratch remain unfinished. Admission of retained pixels is not a complete allocation-time memory ceiling or MEM-STAGING closure.",
+      "A single raster image that cannot fit retained capacity plus bounded copy headroom is explicitly refused; this does not establish all oversize-font/native resource qualification. Other hosts can consume process headroom between preflight and submission; actual atomic GPU admission may still refuse, preserving pending pixels for retry.",
+      "Complete world/history/control/text accounting, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+      "No native-input or broad benchmark campaign, dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/result.json"
   }
 }

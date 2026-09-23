@@ -9,7 +9,7 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
         let mut prepared =
             PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
         let template = prepared.menu_overlay_text_runs[0].clone();
-        let runs: Vec<_> = (0..4)
+        let runs: Vec<_> = (0..6)
             .map(|i| {
                 let mut run = template.clone();
                 run.text = "W".into();
@@ -67,8 +67,12 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
         assert!(
             renderer.renderer.upload_staging_reserved_bytes()
                 - renderer.renderer.layout_scratch_reserved_bytes()
+                - renderer.renderer.pending_glyph_pixel_bytes()
                 <= 4 * 1024 * 1024
         );
+        let first_rasters = renderer.renderer.atlas.rasterization_count();
+        assert!(renderer.renderer.pending_glyph_pixel_bytes() > 0);
+        assert!(renderer.renderer.upload_staging_reserved_bytes() <= 16 * 1024 * 1024);
         let generation = renderer.renderer.atlas.generation;
         renderer
             .device
@@ -125,6 +129,7 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
             assert_eq!(
                 renderer.renderer.upload_staging_reserved_bytes(),
                 renderer.renderer.layout_scratch_reserved_bytes()
+                    + renderer.renderer.pending_glyph_pixel_bytes()
             );
             if complete {
                 break;
@@ -136,7 +141,12 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
         );
         assert!(submissions >= 3);
         assert_eq!(renderer.renderer.atlas.generation, generation);
-        assert_eq!(renderer.renderer.text_preparation.overlay_prepares, 2);
+        assert!(
+            renderer.renderer.atlas.rasterization_count() > first_rasters,
+            "raster preparation must resume after the bounded pending queue drains"
+        );
+        assert!((2..=4).contains(&renderer.renderer.text_preparation.overlay_prepares));
+        assert_eq!(renderer.renderer.pending_glyph_pixel_bytes(), 0);
         let pixels = capture(&mut renderer, &prepared);
         let mut fresh = hardware_renderer(960, 720);
         assert!(pixels == capture(&mut fresh, &prepared));

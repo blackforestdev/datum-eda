@@ -1,0 +1,82 @@
+use super::*;
+
+#[test]
+#[ignore = "requires local GPU; shared CPU/GPU staging ownership"]
+fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let mut fonts = crate::load_datum_fonts();
+    let mut buffer = glyphon::Buffer::new(&mut fonts, glyphon::Metrics::new(18.0, 22.0));
+    buffer.set_text(
+        &mut fonts,
+        "AB",
+        &crate::text_attrs(crate::TextFace::Ui),
+        glyphon::Shaping::Basic,
+        None,
+    );
+    buffer.shape_until_scroll(&mut fonts, false);
+    let keys: Vec<_> = buffer
+        .layout_runs()
+        .next()
+        .unwrap()
+        .glyphs
+        .iter()
+        .map(|g| g.physical((0.0, 0.0), 1.0).cache_key)
+        .collect();
+    let mut raster = SwashCache::new();
+    let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+    let process = crate::text_gpu::budget::staging_process();
+    let baseline = process.used();
+    let mut atlas = Atlas::with_staging_budget(&device, host.clone());
+    atlas
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[0])
+        .unwrap();
+    let cpu = atlas.pending_cpu_bytes();
+    assert!(cpu > 0);
+    assert_eq!(host.used(), cpu);
+    assert_eq!(process.used(), baseline + cpu);
+    let padded = atlas.pending_staging_bytes();
+    let filler = host.reserve(host.available()).unwrap();
+    let error = atlas
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[1])
+        .unwrap_err();
+    assert!(error.is::<UploadRequired>());
+    assert_eq!(atlas.pending_cpu_bytes(), cpu);
+    assert_eq!(atlas.pending_staging_bytes(), padded);
+    assert_eq!(
+        process.used(),
+        baseline + cpu,
+        "failed admission rolls back"
+    );
+    let rasterizations = atlas.uploads.rasterizations;
+    assert!(
+        atlas
+            .glyph(&device, &queue, &mut fonts, &mut raster, keys[0])
+            .unwrap()
+            .is_some()
+    );
+    assert_eq!(
+        atlas.uploads.rasterizations, rasterizations,
+        "known glyph survives pressure"
+    );
+    drop(filler);
+    let mut batch = atlas.flush_uploads(&device, &[]).unwrap().unwrap();
+    assert_eq!(atlas.pending_cpu_bytes(), 0);
+    assert_eq!(
+        host.used(),
+        padded,
+        "CPU pixels retire after staging copy is built"
+    );
+    queue.submit([batch.command()]);
+    batch.hold(&queue);
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    assert_eq!(host.used(), 0);
+    atlas
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[1])
+        .unwrap();
+    assert!(host.used() > 0);
+    drop(atlas);
+    assert_eq!(host.used(), 0);
+    assert_eq!(process.used(), baseline);
+}

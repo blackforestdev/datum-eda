@@ -3,6 +3,39 @@ use super::*;
 const CHUNK_BYTES: u64 = 4 * 1024 * 1024;
 
 impl Renderer {
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn prepare_text_uploads(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        prepared: &PreparedScene,
+        width: u32,
+        height: u32,
+        overlay: bool,
+        on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
+    ) -> anyhow::Result<Option<(TextBufferCacheStats, bool)>> {
+        self.text_buffers
+            .release_layout_scratch_for(CHUNK_BYTES, &self.atlas.staging_budget);
+        match self.prepare_frame_text(device, queue, prepared, width, height, overlay) {
+            Ok(result) => {
+                if self.start_glyph_upload(device, queue, on_submitted)? {
+                    Ok(None)
+                } else {
+                    Ok(Some(result))
+                }
+            }
+            Err(error) if error.is::<crate::text_gpu::UploadRequired>() => {
+                self.text_preparation.upload_continuation = true;
+                anyhow::ensure!(
+                    self.resume_glyph_upload(device, queue, on_submitted)?,
+                    "glyph preparation yielded without pending uploads"
+                );
+                Ok(None)
+            }
+            Err(error) => Err(error),
+        }
+    }
+
     pub(crate) fn start_glyph_upload(
         &mut self,
         device: &wgpu::Device,
@@ -41,5 +74,12 @@ impl Renderer {
                 Some(measurements.incomplete_upload_submission(self.cold_world.measurement_frame)?);
         }
         Ok(true)
+    }
+}
+
+impl Renderer {
+    /// Retained raster pixel capacities, also included in staging/scratch usage.
+    pub fn pending_glyph_pixel_bytes(&self) -> u64 {
+        self.atlas.pending_cpu_bytes()
     }
 }

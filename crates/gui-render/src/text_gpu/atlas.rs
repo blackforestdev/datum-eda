@@ -9,6 +9,9 @@ use glyphon::{CacheKey, FontSystem, SwashCache, SwashContent};
 use super::lifetime::{Kind, Owner, SubmissionRef, Tracked};
 #[path = "atlas/chunks.rs"]
 mod chunks;
+#[path = "atlas/cpu_images.rs"]
+mod cpu_images;
+pub(crate) use cpu_images::UploadRequired;
 const RETAINED_LIMIT: u64 = 32 * 1024 * 1024;
 
 #[derive(Clone, Copy, Debug)]
@@ -71,6 +74,7 @@ struct PendingUpload {
     size: [u32; 2],
     stride: u32,
     pixels: Vec<u8>,
+    _cpu_permits: [super::budget::Permit; 2],
 }
 
 pub(crate) struct Atlas {
@@ -81,6 +85,7 @@ pub(crate) struct Atlas {
     pub(super) uploads: Uploads,
     glyphs: HashMap<CacheKey, Option<GlyphLocation>>,
     pending_uploads: Vec<PendingUpload>,
+    pending_copy_bytes: u64,
     local_budget: std::sync::Arc<super::budget::Budget>,
     pub(crate) staging_budget: std::sync::Arc<super::budget::Budget>,
     texture_budget: std::sync::Arc<super::budget::Budget>,
@@ -117,6 +122,7 @@ impl Atlas {
             uploads: Uploads::default(),
             glyphs: HashMap::new(),
             pending_uploads: Vec::new(),
+            pending_copy_bytes: 0,
             local_budget: super::budget::Budget::new(RETAINED_LIMIT),
             texture_budget: super::budget::process(),
         }
@@ -152,6 +158,7 @@ impl Atlas {
             &uploads,
             buffers,
         )?;
+        self.pending_copy_bytes = 0;
         for upload in self.pending_uploads.drain(..) {
             self.uploads.writes += 1;
             self.uploads.bytes +=
@@ -180,6 +187,7 @@ impl Atlas {
     pub fn repack(&mut self) {
         self.glyphs.clear();
         self.pending_uploads.clear();
+        self.pending_copy_bytes = 0;
         self.generation = self
             .generation
             .checked_add(1)
@@ -222,6 +230,7 @@ impl Atlas {
     pub(super) fn reset(&mut self) -> Vec<Page> {
         self.glyphs = HashMap::new();
         self.pending_uploads.clear();
+        self.pending_copy_bytes = 0;
         self.generation = self
             .generation
             .checked_add(1)
@@ -239,6 +248,9 @@ impl Atlas {
     ) -> anyhow::Result<Option<GlyphLocation>> {
         if let Some(location) = self.glyphs.get(&key) {
             return Ok(*location);
+        }
+        if self.pending_staging_bytes() >= cpu_images::CHUNK_BYTES {
+            return Err(UploadRequired.into());
         }
         self.uploads.rasterizations += 1;
         let Some(image) = raster.get_image_uncached(fonts, key) else {
@@ -260,6 +272,10 @@ impl Atlas {
             image.data.len() as u64 == size[0] as u64 * size[1] as u64 * bytes_per_pixel,
             "glyph raster payload does not match its extent"
         );
+        let padded = u64::from(
+            (size[0] * bytes_per_pixel as u32).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT),
+        ) * u64::from(size[1]);
+        let cpu_permits = self.reserve_cpu_image(image.data.capacity() as u64, padded)?;
         let mut slot = None;
         for (index, page) in self.pages.iter_mut().enumerate() {
             if page.color == color
@@ -327,6 +343,7 @@ impl Atlas {
                 (index, origin)
             }
         };
+        self.pending_copy_bytes += padded;
         self.pending_uploads.push(PendingUpload {
             uploaded_rows: 0,
             page: page_index,
@@ -334,6 +351,7 @@ impl Atlas {
             size,
             stride: size[0] * bytes_per_pixel as u32,
             pixels: image.data,
+            _cpu_permits: cpu_permits,
         });
         let location = GlyphLocation {
             page: page_index,

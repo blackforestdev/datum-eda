@@ -5,7 +5,7 @@ mod draw;
 pub(crate) mod lifetime;
 pub(crate) mod upload;
 
-pub(crate) use atlas::Atlas;
+pub(crate) use atlas::{Atlas, UploadRequired};
 pub(crate) use draw::{Area, Draw};
 pub(crate) use lifetime::hold_until_done;
 pub use lifetime::{Kind, Observer, Record};

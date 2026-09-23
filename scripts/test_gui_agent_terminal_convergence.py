@@ -300,8 +300,9 @@ fn ensure_text_buffer() { TextLayout::new(); }
 fn layout() { run.rich_spans; attributes.add_span(); ShapeLine::new(); }
 """
         render_gpu = """
-self.prepare_frame_text(device, queue, prepared, width, height, false);
-self.prepare_frame_text(device, queue, prepared, width, height, true);
+self.prepare_text_uploads(device, queue, prepared, width, height, false, on_submitted);
+self.prepare_text_uploads(device, queue, prepared, width, height, true, on_submitted);
+self.prepare_frame_text(device, queue, prepared, width, height, overlay);
 self.text_buffers.begin_frame(profile);
 self.text_buffers.indices();
 """
@@ -346,8 +347,10 @@ fn render_cursor() {}
         for broken in (
             render_gpu + begin,
             render_gpu.replace(begin, "") + begin,
-            render_gpu.replace("width, height, false)", "width, height, missing)"),
-            render_gpu.replace("width, height, true)", "width, height, missing)"),
+            render_gpu.replace("height, false, on_submitted)", "height, missing, on_submitted)"),
+            render_gpu.replace("height, true, on_submitted)", "height, missing, on_submitted)"),
+            render_gpu.replace("self.prepare_frame_text(", "self.unshared_prepare("),
+            render_gpu + "self.prepare_frame_text(device, queue, prepared, width, height, overlay)",
         ):
             failures = []
             guard.check_agent_tui_runtime(
