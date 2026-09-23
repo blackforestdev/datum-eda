@@ -42,7 +42,7 @@ impl RetainedScene {
         };
         let budget = retained_scene_owner::document_cpu::for_scene(&schematic_scene.scene_id);
         let scope = crate::cpu_alloc::Scope::new("retained-schematic-construction");
-        scope.with(|| {
+        retained_scene_owner::document_cpu::with_constructor(&scope, || {
             let layout =
                 ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
             let Some(scene_viewport) = layout.schematic_scene_viewport(&state.ui.layout) else {

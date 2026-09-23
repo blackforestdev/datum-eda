@@ -3949,6 +3949,11 @@
           "work": "s4_construction_admission_work.process_pad_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
           "status": "Default retained process apertures borrow pad data and compute only bounds"
+        },
+        {
+          "work": "s4_construction_admission_work.concurrency_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
+          "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
         }
       ]
     },
@@ -15068,7 +15073,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Reconcile concurrent constructor admission and weak-observer lifetimes against retained CPU/history ownership. Shared retained payload/history, emitted vectors, polygon scratch, command strings, borrowed process pads, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Selection-relation helpers already borrow strings without a cache; the preceding cache-ownership lead was incorrect. Preserve original S5 qualification and do not restart implemented owners."
+          "Reconcile weak-observer lifetimes and separately charged history-storage growth against complete document accounting. Board/schematic cold constructors now serialize through publication; shared history-key admission atomically checks bytes and entry count. Existing retained payload, emitted vectors, polygon scratch, borrowed inputs and vertex/hit/index/publication admission remain implemented. Preserve original S5 qualification and do not restart implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15180,6 +15185,11 @@
           "work": "s4_construction_admission_work.process_pad_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
           "status": "Default retained process apertures borrow pad data and compute only bounds"
+        },
+        {
+          "work": "s4_construction_admission_work.concurrency_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
+          "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
         }
       ]
     },
@@ -15241,7 +15251,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Reconcile concurrent constructor admission and weak-observer lifetimes against retained CPU/history ownership. Shared retained payload/history, emitted vectors, polygon scratch, command strings, borrowed process pads, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Selection-relation helpers already borrow strings without a cache; the preceding cache-ownership lead was incorrect. Preserve original S5 qualification and do not restart implemented owners."
+          "Reconcile weak-observer lifetimes and separately charged history-storage growth against complete document accounting. Board/schematic cold constructors now serialize through publication; shared history-key admission atomically checks bytes and entry count. Existing retained payload, emitted vectors, polygon scratch, borrowed inputs and vertex/hit/index/publication admission remain implemented. Preserve original S5 qualification and do not restart implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15353,6 +15363,11 @@
           "work": "s4_construction_admission_work.process_pad_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
           "status": "Default retained process apertures borrow pad data and compute only bounds"
+        },
+        {
+          "work": "s4_construction_admission_work.concurrency_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
+          "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
         }
       ]
     },
@@ -17487,6 +17502,11 @@
           "work": "s4_construction_admission_work.process_pad_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
           "status": "Default retained process apertures borrow pad data and compute only bounds"
+        },
+        {
+          "work": "s4_construction_admission_work.concurrency_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
+          "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
         }
       ]
     },
@@ -17743,6 +17763,11 @@
           "work": "s4_construction_admission_work.process_pad_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
           "status": "Default retained process apertures borrow pad data and compute only bounds"
+        },
+        {
+          "work": "s4_construction_admission_work.concurrency_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
+          "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
         }
       ]
     },
@@ -34885,6 +34910,32 @@
         "No dependency, license, prototype, numeric cap or sequencing change. GEFN and nonblocking resize preserved. Owner/Copilot engine tests excluded."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json"
+    },
+    "concurrency_followup": {
+      "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented",
+      "base_commit": "b2b48e26",
+      "production_consumers": [
+        "Board and schematic retained constructors through registry publication",
+        "All retained-history owners using shared document entry admission"
+      ],
+      "retired_paths": [
+        "Concurrent constructors independently spending the same uncommitted document headroom",
+        "History slot admission without rechecking shared document byte capacity"
+      ],
+      "behavior": [
+        "A shared cold-constructor mutex encloses the scoped build and registry publication, so a later constructor sees prior published ownership. It does not affect warm scene reuse, rendering or input. Native construction was already serial; independent cold API builds are now serialized as well.",
+        "History entry admission checks both the six-entry limit and 64 MiB document total under the registry lock. Checked addition rejects overflow and over-cap requests without changing byte/entry charges. Dropping a charge permits retry."
+      ],
+      "proof": {
+        "renderer": "381 passed, zero failed, 11 filtered; includes cross-thread constructor exclusion/unwind recovery, exact-byte refusal/retry, both production constructors and existing shared-history concurrency tests.",
+        "app": "18 retained-scene application tests passed; 393 unrelated tests filtered.",
+        "build": "Fresh offline visual GUI application build passed."
+      },
+      "limitations": [
+        "Weak-observer lifetime accounting remains unreconciled. History vector metadata growth is separately charged by its owner; this change does not claim complete concurrent history-storage/constructor accounting or full resource-budget acceptance.",
+        "All original S5 qualification remains required. No S4 closure, dependency/license/prototype/budget/sequencing change. Preserve GEFN and nonblocking resize; exclude owner/Copilot engine-test changes."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json"
     }
   },
   "s4_vertex_allocation_work": {

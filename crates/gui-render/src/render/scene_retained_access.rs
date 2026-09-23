@@ -189,109 +189,145 @@ impl RetainedScene {
     ) -> anyhow::Result<Self> {
         let budget = retained_scene_owner::document_cpu::for_scene(&state.scene.scene_id);
         let scope = crate::cpu_alloc::Scope::new("retained-board-construction");
-        scope.with(|| {
-        // This is the single world-scene resolve entry point; count the miss.
-        // (`reference_projection` below is derived here and nowhere else, so a pane
-        // op that reuses the retained scene provably never recomputes it.)
-        RETAINED_RESOLVE_COUNT.with(|count| count.set(count.get() + 1));
-        let started = std::time::Instant::now();
-        let layout =
-            ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
-        let scene_viewport = layout.scene_viewport(&state.ui.layout);
-        let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
-        let reference_projection = Projection::new(
-            board_field,
-            &state.scene.bounds,
-            CameraState::fit_to_bounds(&state.scene.bounds),
-        );
-        let mut world_quads = crate::geometry_output::Admitted::new(|bytes| {
- retained_scene_owner::document_cpu::admit_constructor_allocation(&budget, &scope, bytes, limit, "geometry emission")
- });
-        let mut world_strokes = crate::geometry_output::Admitted::new(|bytes| {
- retained_scene_owner::document_cpu::admit_constructor_allocation(&budget, &scope, bytes, limit, "geometry emission")
- });
-        let mut draw_commands = crate::geometry_output::Admitted::new(|bytes| {
- retained_scene_owner::document_cpu::admit_constructor_allocation(&budget, &scope, bytes, limit, "geometry emission")
- });
-        let geometry_started = std::time::Instant::now();
-        push_retained_scene_geometry(
-            &mut world_quads,
-            &mut world_strokes,
-            &mut draw_commands,
-            &state.scene,
-            &reference_projection,
-            state,
-        );
-        let board_graphics_started = std::time::Instant::now();
-        let board_graphics_before = world_quads.len();
-        push_retained_board_text_geometry_batches(
-            &mut world_quads,
-            &mut draw_commands,
-            &state.scene,
-            &reference_projection,
-            state,
-        );
-        push_retained_board_graphic_batches(
-            &mut world_quads,
-            &mut world_strokes,
-            &mut draw_commands,
-            &state.scene,
-            &reference_projection,
-            state,
-        );
-        let world_quads = world_quads.finish()?;
- let world_strokes = world_strokes.finish()?;
- let mut draw_commands = draw_commands.finish()?;
- scene_retained_access::sort_retained_draw_commands(&mut draw_commands, &state.scene.layers, |bytes| {
-            retained_scene_owner::document_cpu::admit_constructor_allocation(
-                &budget, &scope, bytes, limit, "draw command sorting",
-            )
-        })?;
-        trace_render_timing(format!(
-            "retained text+board_graphics batches={}ms/{}q",
-            board_graphics_started.elapsed().as_millis(),
-            world_quads.len().saturating_sub(board_graphics_before)
-        ));
-        let geometry_elapsed = geometry_started.elapsed();
-        let hits_started = std::time::Instant::now();
-        let world_hit_regions = board_hit_construction::build(&state.scene, state, |bytes| {
-            retained_scene_owner::document_cpu::admit_constructor_allocation(
-                &budget, &scope, bytes, limit, "board hit regions",
-            )
-        })?;
-        let hits_elapsed = hits_started.elapsed();
-        let vertex_started = std::time::Instant::now();
-        retained_scene_owner::document_cpu::admit_vertex_expansion(&budget, &scope, world_quads.len(), limit)?;
-        let world_vertices = gpu_data::try_quads_to_vertices(&world_quads)?;
-        let quad_count = world_quads.len();
-        drop(world_quads);
-        let vertex_elapsed = vertex_started.elapsed();
-        trace_render_timing(format!(
-            "retained total={}ms geometry={}ms hits={}ms vertices={}ms quads={} vertices={} hit_regions={}",
-            started.elapsed().as_millis(),
-            geometry_elapsed.as_millis(),
-            hits_elapsed.as_millis(),
-            vertex_elapsed.as_millis(),
-            quad_count,
-            world_vertices.len(),
-            world_hit_regions.len()
-        ));
-        let world_hit_index = Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
-        Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
-        Self {
-            surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
-            world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
-                world_vertices,
-                &state.scene.scene_id,
-            ),
-            world_strokes: gpu_data::shared_geometry::SharedGeometry::for_document(
-                world_strokes,
-                &state.scene.scene_id,
-            ),
-            draw_commands: draw_commands.into(),
-            world_hit_index: world_hit_index.into(),
-        }
-        .registered_cpu(&scope, limit)
+        retained_scene_owner::document_cpu::with_constructor(&scope, || {
+            // This is the single world-scene resolve entry point; count the miss.
+            // (`reference_projection` below is derived here and nowhere else, so a pane
+            // op that reuses the retained scene provably never recomputes it.)
+            RETAINED_RESOLVE_COUNT.with(|count| count.set(count.get() + 1));
+            let started = std::time::Instant::now();
+            let layout =
+                ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
+            let scene_viewport = layout.scene_viewport(&state.ui.layout);
+            let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
+            let reference_projection = Projection::new(
+                board_field,
+                &state.scene.bounds,
+                CameraState::fit_to_bounds(&state.scene.bounds),
+            );
+            let mut world_quads = crate::geometry_output::Admitted::new(|bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "geometry emission",
+                )
+            });
+            let mut world_strokes = crate::geometry_output::Admitted::new(|bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "geometry emission",
+                )
+            });
+            let mut draw_commands = crate::geometry_output::Admitted::new(|bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "geometry emission",
+                )
+            });
+            let geometry_started = std::time::Instant::now();
+            push_retained_scene_geometry(
+                &mut world_quads,
+                &mut world_strokes,
+                &mut draw_commands,
+                &state.scene,
+                &reference_projection,
+                state,
+            );
+            let board_graphics_started = std::time::Instant::now();
+            let board_graphics_before = world_quads.len();
+            push_retained_board_text_geometry_batches(
+                &mut world_quads,
+                &mut draw_commands,
+                &state.scene,
+                &reference_projection,
+                state,
+            );
+            push_retained_board_graphic_batches(
+                &mut world_quads,
+                &mut world_strokes,
+                &mut draw_commands,
+                &state.scene,
+                &reference_projection,
+                state,
+            );
+            let world_quads = world_quads.finish()?;
+            let world_strokes = world_strokes.finish()?;
+            let mut draw_commands = draw_commands.finish()?;
+            scene_retained_access::sort_retained_draw_commands(
+                &mut draw_commands,
+                &state.scene.layers,
+                |bytes| {
+                    retained_scene_owner::document_cpu::admit_constructor_allocation(
+                        &budget,
+                        &scope,
+                        bytes,
+                        limit,
+                        "draw command sorting",
+                    )
+                },
+            )?;
+            trace_render_timing(format!(
+                "retained text+board_graphics batches={}ms/{}q",
+                board_graphics_started.elapsed().as_millis(),
+                world_quads.len().saturating_sub(board_graphics_before)
+            ));
+            let geometry_elapsed = geometry_started.elapsed();
+            let hits_started = std::time::Instant::now();
+            let world_hit_regions = board_hit_construction::build(&state.scene, state, |bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "board hit regions",
+                )
+            })?;
+            let hits_elapsed = hits_started.elapsed();
+            let vertex_started = std::time::Instant::now();
+            retained_scene_owner::document_cpu::admit_vertex_expansion(
+                &budget,
+                &scope,
+                world_quads.len(),
+                limit,
+            )?;
+            let world_vertices = gpu_data::try_quads_to_vertices(&world_quads)?;
+            let quad_count = world_quads.len();
+            drop(world_quads);
+            let vertex_elapsed = vertex_started.elapsed();
+            trace_render_timing(format!(
+                "retained total={}ms geometry={}ms hits={}ms vertices={}ms quads={} vertices={} hit_regions={}",
+                started.elapsed().as_millis(),
+                geometry_elapsed.as_millis(),
+                hits_elapsed.as_millis(),
+                vertex_elapsed.as_millis(),
+                quad_count,
+                world_vertices.len(),
+                world_hit_regions.len()
+            ));
+            let world_hit_index =
+                Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
+            Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
+            Self {
+                surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
+                world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
+                    world_vertices,
+                    &state.scene.scene_id,
+                ),
+                world_strokes: gpu_data::shared_geometry::SharedGeometry::for_document(
+                    world_strokes,
+                    &state.scene.scene_id,
+                ),
+                draw_commands: draw_commands.into(),
+                world_hit_index: world_hit_index.into(),
+            }
+            .registered_cpu(&scope, limit)
         })
     }
 
