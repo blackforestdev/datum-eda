@@ -198,3 +198,29 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
     owner = ScreenBuffer::default(); // renderer/device replacement
     assert_eq!(owner.sync(&device, &queue, "proof", &values).unwrap(), 16);
 }
+
+#[test]
+#[ignore = "requires local GPU; screen subcap preservation across empty streams"]
+fn empty_stream_preserves_its_admission_budget() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let budget = crate::text_gpu::budget::Budget::new(16);
+    let mut stream = ScreenBuffer::with_budget(budget.clone());
+    stream.sync(&device, &queue, "subcap", &[1_u32; 4]).unwrap();
+    let held = stream.submission_ref().unwrap();
+    stream.sync::<u32>(&device, &queue, "empty", &[]).unwrap();
+    assert_eq!(budget.used(), 16);
+    assert!(stream.sync(&device, &queue, "held", &[1_u32; 4]).is_err());
+    assert!(stream.buffer().is_none());
+    drop(held);
+    assert!(
+        stream
+            .sync(&device, &queue, "oversize", &[1_u32; 5])
+            .is_err()
+    );
+    stream.sync(&device, &queue, "retry", &[1_u32; 4]).unwrap();
+    assert_eq!(budget.used(), 16);
+    drop(stream);
+    assert_eq!(budget.used(), 0);
+}

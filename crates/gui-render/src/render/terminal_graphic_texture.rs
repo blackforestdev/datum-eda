@@ -19,7 +19,11 @@ impl CachedTerminalGraphicTexture {
         graphic: &PreparedTerminalGraphic,
         key: TerminalGraphicTextureKey,
     ) -> anyhow::Result<CachedTerminalGraphicTexture> {
-        let bytes = u64::from(key.width) * u64::from(key.height) * 4;
+        let bytes = u64::from(key.width)
+            .checked_mul(u64::from(key.height))
+            .and_then(|pixels| pixels.checked_mul(4))
+            .ok_or_else(|| anyhow::anyhow!("terminal texture capacity overflow"))?;
+        let terminal_permit = crate::text_gpu::budget::terminal_process().reserve(bytes)?;
         let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("datum-terminal-graphic-texture"),
@@ -61,10 +65,10 @@ impl CachedTerminalGraphicTexture {
             bind_group,
             texture: Owner::new().track_with_permits(
                 texture,
-                u64::from(key.width) * u64::from(key.height) * 4,
+                bytes,
                 1,
                 Kind::TerminalTexture,
-                vec![permit],
+                vec![terminal_permit, permit],
             ),
             source: graphic.graphic.clone(),
             pending: true,

@@ -160,6 +160,17 @@ impl crate::Renderer {
         super::budget::gpu_process().used()
     }
 
+    /// Terminal image texture and quad capacities, including submitted retirement.
+    /// Shared glyph/text resources and upload staging have separate subcaps.
+    pub fn terminal_graphics_gpu_reserved_bytes() -> u64 {
+        super::budget::terminal_process().used()
+    }
+
+    /// This renderer's atlas capacity, including pages held by submitted work.
+    pub fn text_atlas_reserved_bytes(&self) -> u64 {
+        self.atlas.reserved_texture_bytes()
+    }
+
     /// Texture bytes reserved or allocated, including retiring submissions.
     /// This is API capacity, not physical driver residency or upload staging.
     pub fn text_atlas_process_bytes() -> u64 {

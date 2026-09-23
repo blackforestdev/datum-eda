@@ -61,6 +61,12 @@ pub(crate) fn gpu_process() -> Arc<Budget> {
         .clone()
 }
 
+/// Decoded terminal image textures and placement buffers across native hosts.
+pub(crate) fn terminal_process() -> Arc<Budget> {
+    static BUDGET: OnceLock<Arc<Budget>> = OnceLock::new();
+    BUDGET.get_or_init(|| Budget::new(64 * 1024 * 1024)).clone()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

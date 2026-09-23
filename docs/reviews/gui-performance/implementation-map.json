@@ -3877,6 +3877,11 @@
           "work": "s4_gpu_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-admission/result.json",
           "status": "Partial: shared preallocation admission for migrated default GPU resources; staging/query/readback coverage, subcaps and full qualification remain open."
+        },
+        {
+          "work": "s4_resource_subcaps_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
+          "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
         }
       ]
     },
@@ -16410,14 +16415,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for Datum-owned atlas texture capacities and live/retiring/shared ownership; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "32MiB atlas/renderer actual format/mips/extent; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Implementation complete for this atlas texture-cap predicate; qualification remains unqualified under original acceptance rule.",
+        "s4_implementation_evidence": "s4_resource_subcaps_work"
       },
       "s4_owned_text_gpu_progress": {
         "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
@@ -16426,7 +16430,14 @@
       "s4_atlas_process_admission_progress": {
         "implementation": "Default pre-allocation128MiB process atlas reservation retained through real resource/submission lifetime; weak process text allocation enumeration. See s4_atlas_process_admission_work.",
         "remaining": "Original full resource/accounting implementation and combined subcap obligations dueS4; full native/resource qualification dueS5. No acceptance-rule or status change."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_resource_subcaps_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
+          "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
+        }
+      ]
     },
     {
       "id": "MEM-ATLAS-TOTAL",
@@ -16526,14 +16537,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for Datum-owned atlas texture capacities and live/retiring/shared ownership; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "128MiB aggregate atlas; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Implementation complete for this atlas texture-cap predicate; qualification remains unqualified under original acceptance rule.",
+        "s4_implementation_evidence": "s4_resource_subcaps_work"
       },
       "s4_owned_text_gpu_progress": {
         "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
@@ -16542,7 +16552,14 @@
       "s4_atlas_process_admission_progress": {
         "implementation": "Default pre-allocation128MiB process atlas reservation retained through real resource/submission lifetime; weak process text allocation enumeration. See s4_atlas_process_admission_work.",
         "remaining": "Original full resource/accounting implementation and combined subcap obligations dueS4; full native/resource qualification dueS5. No acceptance-rule or status change."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_resource_subcaps_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
+          "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
+        }
+      ]
     },
     {
       "id": "MEM-TERM-CPU",
@@ -16650,6 +16667,11 @@
           "work": "s4_terminal_gpu_retention_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
           "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_resource_subcaps_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
+          "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
         }
       ]
     },
@@ -16998,6 +17020,11 @@
           "work": "s4_gpu_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-admission/result.json",
           "status": "Partial: shared preallocation admission for migrated default GPU resources; staging/query/readback coverage, subcaps and full qualification remain open."
+        },
+        {
+          "work": "s4_resource_subcaps_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
+          "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
         }
       ]
     },
@@ -31217,14 +31244,16 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 24,
+    "rows_with_recorded_implementation_gaps": 22,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 3,
+    "rows_with_implementation_completed_at_s4": 5,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
-      "MEM-WIDTH-PAYLOAD"
+      "MEM-WIDTH-PAYLOAD",
+      "MEM-ATLAS-LOCAL",
+      "MEM-ATLAS-TOTAL"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -31957,5 +31986,38 @@
       "No dependency, vendor, license, prototype, numerical budget or resize-policy change. No performance or global adoption claim."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-admission/result.json"
+  },
+  "s4_resource_subcaps_work": {
+    "status": "Local and aggregate atlas texture admission implementation complete; terminal texture/quad GPU subcap adopted; full qualification remains open",
+    "base_commit": "8b4df34a",
+    "production_consumers": [
+      "Shared workspace/menu glyph atlas used by default native renderers",
+      "Terminal graphics textures across native hosts",
+      "Terminal graphics placement vertices through shared ScreenBuffer/VertexAllocation"
+    ],
+    "retired_paths": [
+      "Atlas local cap based only on current page-vector bytes",
+      "Unbounded terminal-specific texture/quad allocation beneath the global GPU cap",
+      "Empty screen-stream reset that discarded configured allocation ownership"
+    ],
+    "behavior": [
+      "Reserve the existing 32 MiB atlas-local limit before allocation alongside the 128 MiB atlas process and 512 MiB migrated GPU permits. All three permits follow the same physical texture through retirement. Repacking reuses the allocation; it does not reset reservations.",
+      "Terminal textures and 96-byte placement quads share a 64 MiB process budget in addition to global GPU admission. No per-host duplicate pool; permits survive owner close while submitted references remain. Retain stricter TerminalCore protocol admission unchanged.",
+      "Shared vertex owners accept an additional resource budget and preserve it when a stream becomes empty. Rejection precedes GPU allocation and propagates through existing render errors; no required content is silently omitted.",
+      "Expose local atlas and process terminal reserved-byte counters. Remove redundant atlas Page byte storage; allocation records and reservations remain the production accounting authority."
+    ],
+    "proof": {
+      "renderer": "298 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Actual-GPU tests cover local atlas retired-page refusal/retry, terminal texture success followed by quad admission refusal and cancellation, and empty-stream budget preservation. Existing pixel/reuse/cancellation tests pass.",
+      "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings, source health (2240 files), and dependency authority pass.",
+      "native": "No additional OS-input or screenshot campaign. Prior gpu-admission native capture retained as historical evidence; current actual-GPU regression suite verifies affected rendering paths. This is not new native qualification.",
+      "drift": "Full drift passes preceding checks and stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+    },
+    "limits": [
+      "Atlas local/aggregate texture-cap implementation is complete for MEM-ATLAS-LOCAL/TOTAL; original native/resource/negative qualification and acceptance remain due at S5. This does not complete private CPU/shaped-text or staging accounting.",
+      "Terminal GPU admission covers decoded image textures and placement buffers. Shared text atlases and host uniforms retain their respective budgets; terminal CPU decoded-pixel ownership and complete native/host/recovery accounting remain open.",
+      "Full application GPU admission still lacks staging/query/readback coverage; world/screen/control subcaps, resource incidence and S4/S5 completion remain open.",
+      "No dependency, vendor, license, prototype, rendering layout, numerical-budget or nonblocking resize-policy change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json"
   }
 }
