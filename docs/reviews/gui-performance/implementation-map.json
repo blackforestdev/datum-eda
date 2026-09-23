@@ -3964,6 +3964,11 @@
           "work": "s4_upload_frame_work.destination_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json",
           "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation"
+        },
+        {
+          "work": "s4_upload_frame_work.frame_correlation_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json",
+          "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts"
         }
       ]
     },
@@ -5369,6 +5374,11 @@
           "work": "s4_upload_frame_work.destination_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json",
           "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation"
+        },
+        {
+          "work": "s4_upload_frame_work.frame_correlation_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json",
+          "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts"
         }
       ]
     },
@@ -19974,7 +19984,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete consumer incidence and correlation of per-allocation byte deltas with native/frame receipts. Common submitted uploads now carry stable destination IDs/generations with source/transfer totals; shared batch/frame totals, exact admitted screen snapshots and bounded receipt metadata are implemented. Uncached CTL-02 control transfers remain explicit. Preserve original S5 qualification."
+          "Complete shared-resource consumer incidence for logical panes. Common uploads now carry destination IDs/generations, cumulative source/transfer totals and latest renderer owner/attempt contributions that join native frame receipts. Exact screen snapshots and bounded receipt metadata are implemented; original S5 qualification and uncached CTL-02 transfer disposition remain unchanged."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "Only exact dirty ranges plus documented alignment uploaded",
@@ -20016,6 +20026,11 @@
           "work": "s4_upload_frame_work.destination_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json",
           "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation"
+        },
+        {
+          "work": "s4_upload_frame_work.frame_correlation_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json",
+          "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts"
         }
       ]
     },
@@ -35588,6 +35603,32 @@
         "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edit excluded."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json"
+    },
+    "frame_correlation_followup": {
+      "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts",
+      "base_commit": "49e5ca34",
+      "production_consumers": [
+        "Shared Batch::hold for every attributed world/screen/uniform/glyph/terminal upload",
+        "Renderer allocation snapshots and last_upload_frame, joined through the existing native surface receipt owner/attempt pair"
+      ],
+      "retired_paths": [
+        "Per-allocation cumulative-only upload observation without renderer-attempt association"
+      ],
+      "behavior": [
+        "The existing submission boundary returns the active renderer owner/attempt. Each destination maintains one latest framed contribution and cumulative source/transfer totals under one lock, so snapshots are internally consistent. Multiple chunks in the same attempt accumulate; a new attempt or renderer owner starts a new contribution.",
+        "Warm frames allocate no upload receipt and do not relabel old destination contributions. Consumers compare owner/attempt with UploadFrame; a different key means zero for that frame. The fixed-size latest value replaces itself rather than creating event history. Uploads outside a renderer attempt still update cumulative totals.",
+        "Export AllocationUploadFrame and UploadFrame alongside UploadTotals for native/measurement consumers. Existing native receipts already report the same host/window-associated frame key; no focus-taking test or new trace framework is introduced."
+      ],
+      "proof": {
+        "renderer": "17 upload-focused tests passed;0 failed;379 filtered. Actual default Renderer capture at initial, camera-changed and size-changed states reconciles summed destination source/transfer bytes with frame totals. Immediate warm frames sum to zero and retain pixel parity. Mixed texture/buffer proof joins stable IDs to the batch owner/attempt and distinguishes a following zero-upload attempt; scalar chunk/recovery-key proof validates accumulation/reset.",
+        "lint_build": "Strict visual renderer/app all-target Clippy and fresh offline visual GUI build pass. Source health2296files. No full-suite or native benchmark rerun for the bounded correlation change."
+      },
+      "limits": [
+        "Seven implementation gaps remain. Full shared-resource consumer incidence, allocation payload/reference/release reason and CPU/private-text accounting remain open. This correlates upload bytes to a host/frame, not to every logical pane sharing a resource.",
+        "Only the latest per-allocation frame contribution is retained; historical consumers must archive snapshots before later attempts overwrite it or resources retire. This is submitted API work, not completion, presentation or driver traffic. Original S5 qualification remains unchanged.",
+        "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edit excluded."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json"
     }
   },
   "s4_text_owner_reconciliation": {

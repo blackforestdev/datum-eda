@@ -96,6 +96,7 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
             .iter()
             .all(|r| r.submitted_source_bytes == 0 && r.submitted_transfer_bytes == 0)
     );
+    owner.begin_upload_frame();
     pending = batch(&device, &owner, 3, &host, &upload, &buffers)
         .unwrap()
         .unwrap();
@@ -158,6 +159,35 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
         ),
         (9, 8, 8)
     );
+    let frame = owner.last_upload_frame().unwrap();
+    let destination_frame = texture_record.last_upload.unwrap();
+    assert_eq!(
+        (destination_frame.owner, destination_frame.attempt),
+        (frame.owner, frame.attempt)
+    );
+    assert_eq!(
+        (
+            destination_frame.source_bytes,
+            destination_frame.transfer_bytes
+        ),
+        (6, 512)
+    );
+    owner.finish_upload_frame(Some(true));
+    owner.begin_upload_frame();
+    assert_ne!(
+        owner.last_upload_frame().unwrap().attempt,
+        destination_frame.attempt
+    );
+    assert_eq!(
+        destinations
+            .records()
+            .iter()
+            .find(|r| r.id == texture.id())
+            .unwrap()
+            .last_upload,
+        Some(destination_frame)
+    );
+    owner.finish_upload_frame(Some(true));
     let (tx, rx) = std::sync::mpsc::channel();
     readback
         .slice(..)

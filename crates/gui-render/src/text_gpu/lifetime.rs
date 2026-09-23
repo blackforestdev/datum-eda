@@ -34,13 +34,13 @@ pub struct Record {
     /// API upload representation, including texture row padding or scatter indices.
     /// Not driver bus traffic, completion timing, or allocated staging capacity.
     pub submitted_transfer_bytes: u64,
+    pub last_upload: Option<super::upload_totals::AllocationUploadFrame>,
 }
 
 struct Identity {
     record: Record,
     active: AtomicBool,
-    source_bytes: AtomicU64,
-    transfer_bytes: AtomicU64,
+    uploads: Mutex<super::upload_totals::AllocationUploads>,
 }
 
 struct State {
@@ -96,12 +96,15 @@ impl Owner {
             .latest()
     }
 
-    pub(crate) fn record_upload(&self, totals: super::upload_totals::UploadTotals) {
+    pub(crate) fn record_upload(
+        &self,
+        totals: super::upload_totals::UploadTotals,
+    ) -> Option<(u64, u64)> {
         self.0
             .uploads
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .record(totals);
+            .record(totals)
     }
 
     pub fn id(&self) -> u64 {
@@ -153,10 +156,10 @@ impl Owner {
                 retiring: false,
                 submitted_source_bytes: 0,
                 submitted_transfer_bytes: 0,
+                last_upload: None,
             },
             active: AtomicBool::new(true),
-            source_bytes: AtomicU64::new(0),
-            transfer_bytes: AtomicU64::new(0),
+            uploads: Mutex::new(Default::default()),
         });
         let mut entries = self.0.allocations.lock().unwrap_or_else(|e| e.into_inner());
         entries.retain(|entry| entry.strong_count() != 0);
@@ -186,10 +189,12 @@ fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
     let mut records = Vec::new();
     entries.retain(|entry| {
         if let Some(identity) = entry.upgrade() {
+            let uploads = identity.uploads.lock().unwrap_or_else(|e| e.into_inner());
             records.push(Record {
                 retiring: !identity.active.load(Ordering::Acquire),
-                submitted_source_bytes: identity.source_bytes.load(Ordering::Acquire),
-                submitted_transfer_bytes: identity.transfer_bytes.load(Ordering::Acquire),
+                submitted_source_bytes: uploads.source_bytes,
+                submitted_transfer_bytes: uploads.transfer_bytes,
+                last_upload: uploads.latest,
                 ..identity.record
             });
             true
@@ -290,13 +295,12 @@ impl UploadTarget<'_> {
     }
 }
 impl SubmittedUpload {
-    pub fn commit(self) {
+    pub fn commit(self, attempt: Option<(u64, u64)>) {
         self.identity
-            .source_bytes
-            .fetch_add(self.source, Ordering::AcqRel);
-        self.identity
-            .transfer_bytes
-            .fetch_add(self.transfer, Ordering::AcqRel);
+            .uploads
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .record(attempt, self.source, self.transfer);
     }
 }
 

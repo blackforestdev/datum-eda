@@ -1,0 +1,52 @@
+{
+  "status": "Submitted destination contributions correlate to the same renderer owner/attempt as native frame receipts",
+  "base_commit": "49e5ca34",
+  "production_consumers": [
+    "Shared Batch::hold for every attributed world/screen/uniform/glyph/terminal upload",
+    "Renderer allocation snapshots and last_upload_frame, joined through the existing native surface receipt owner/attempt pair"
+  ],
+  "retired_paths": [
+    "Per-allocation cumulative-only upload observation without renderer-attempt association"
+  ],
+  "behavior": [
+    "The existing submission boundary returns the active renderer owner/attempt. Each destination maintains one latest framed contribution and cumulative source/transfer totals under one lock, so snapshots are internally consistent. Multiple chunks in the same attempt accumulate; a new attempt or renderer owner starts a new contribution.",
+    "Warm frames allocate no upload receipt and do not relabel old destination contributions. Consumers compare owner/attempt with UploadFrame; a different key means zero for that frame. The fixed-size latest value replaces itself rather than creating event history. Uploads outside a renderer attempt still update cumulative totals.",
+    "Export AllocationUploadFrame and UploadFrame alongside UploadTotals for native/measurement consumers. Existing native receipts already report the same host/window-associated frame key; no focus-taking test or new trace framework is introduced."
+  ],
+  "proof": {
+    "renderer": "17 upload-focused tests passed;0 failed;379 filtered. Actual default Renderer capture at initial, camera-changed and size-changed states reconciles summed destination source/transfer bytes with frame totals. Immediate warm frames sum to zero and retain pixel parity. Mixed texture/buffer proof joins stable IDs to the batch owner/attempt and distinguishes a following zero-upload attempt; scalar chunk/recovery-key proof validates accumulation/reset.",
+    "lint_build": "Strict visual renderer/app all-target Clippy and fresh offline visual GUI build pass. Source health2296files. No full-suite or native benchmark rerun for the bounded correlation change."
+  },
+  "limits": [
+    "Seven implementation gaps remain. Full shared-resource consumer incidence, allocation payload/reference/release reason and CPU/private-text accounting remain open. This correlates upload bytes to a host/frame, not to every logical pane sharing a resource.",
+    "Only the latest per-allocation frame contribution is retained; historical consumers must archive snapshots before later attempts overwrite it or resources retire. This is submitted API work, not completion, presentation or driver traffic. Original S5 qualification remains unchanged.",
+    "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edit excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/upload-correlation/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-correlation/renderer.log.gz",
+      "uncompressed_sha256": "14c4cca33853e031314489eb562ff8b8c2370a1ec78cc2f0af402cdaf0cfcb01"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-correlation/clippy.log.gz",
+      "uncompressed_sha256": "5b1df0de2f5141983fc9f1c7fd5366fcbd850bd646ce7c640f138fd0770dd73f"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-correlation/build.log.gz",
+      "uncompressed_sha256": "1f79b21e1b5c1f29f9843aad186bad266f1b455f4ae52f802540f847a9a7fd59"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-correlation/check.log.gz",
+      "uncompressed_sha256": "ec82ff378cfc3753e747cc3430e03f3d8f7f8878e27d1febcebeb440a52e0bfe"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "80018acbf7724b4bd89bb7192f774980c62f09379c071df8c7bf64fa0eea0fb4",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "5244afff15c16c957b68a187acae116c9327da51bc3647644a58deeb145fc3d8",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "78f0a4cd5ba3c31cf94a4bdade45d9cb0d1312f6bed2455ee431d4faa9e62b4d",
+    "crates/gui-render/src/text_gpu/upload.rs": "25d613256b24d2ce6ae76fbd647d94ad531de499e3a3e27680f1b3a5662f0e74",
+    "crates/gui-render/src/text_gpu/upload_tests.rs": "44c3e0839ee16a317dcb4fe042d780cbd67bfd6709393b7003bc93b2a13f185f",
+    "crates/gui-render/src/text_gpu/upload_totals.rs": "7023e70d97f07e171aebc859aea0fdb6680d061bb980f9a7f72116f0596b77fc"
+  }
+}
