@@ -5,7 +5,7 @@
 use super::staging_vec::StagingVec;
 
 use super::raster::Raster as SwashCache;
-use glyphon::{CacheKey, FontSystem, SwashContent};
+use glyphon::{CacheKey, SwashContent};
 
 use super::lifetime::{Kind, Owner, SubmissionRef, Tracked};
 #[path = "atlas/chunks.rs"]
@@ -286,7 +286,7 @@ impl Atlas {
         &mut self,
         device: &wgpu::Device,
         _queue: &wgpu::Queue,
-        fonts: &mut FontSystem,
+        fonts: &mut impl crate::text_layout::fonts::Source,
         raster: &mut SwashCache,
         key: CacheKey,
     ) -> anyhow::Result<Option<GlyphLocation>> {

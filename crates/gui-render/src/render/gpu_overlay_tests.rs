@@ -47,7 +47,7 @@ fn hardware_renderer_with_atlas_limit(
     }))
     .unwrap();
     let renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, DEFAULT_MSAA_SAMPLES).unwrap();
-    let usage = renderer.text_cpu_usage();
+    let usage = renderer.font_cpu_usage().allocation;
     assert!(usage.allocator_installed);
     assert!(
         usage.payload_bytes > 0,

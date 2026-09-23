@@ -1,5 +1,6 @@
 use super::*;
 use crate::text_color;
+use glyphon::Shaping;
 use glyphon::{Buffer, Metrics};
 
 #[test]
@@ -94,11 +95,11 @@ fn shape_container_cost_measures_arc_and_allocator_overhead_without_double_count
     let expected = shape_container_bytes();
     let scope = crate::cpu_alloc::Scope::new("shape-container-proof");
     let shape = scope.with(|| {
-        Arc::new(ShapeLine {
+        Arc::new(fonts::Shape::untracked(ShapeLine {
             rtl: false,
             spans: Vec::new(),
             metrics_opt: None,
-        })
+        }))
     });
     assert_eq!(
         expected as u64,

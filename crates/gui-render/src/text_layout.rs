@@ -1,12 +1,14 @@
 //! Retained plain/rich shaping and visible layout owned by Datum.
 use std::sync::Arc;
+#[path = "font_owner.rs"]
+pub(crate) mod fonts;
 
 use crate::cpu_alloc::heap::capacity_bytes;
 use crate::{TextRun, text_attrs};
 use glyphon::cosmic_text::{BidiParagraphs, LineIter};
 #[path = "layout_scratch.rs"]
 pub(crate) mod scratch;
-use glyphon::{AttrsList, FontSystem, LayoutLine, LayoutRun, ShapeLine, Shaping, Style, Weight};
+use glyphon::{AttrsList, LayoutLine, LayoutRun, ShapeLine, Style, Weight};
 use scratch::LayoutScratch;
 
 struct Row {
@@ -19,14 +21,14 @@ struct Row {
 
 #[derive(Default)]
 pub(crate) struct TextLayout {
-    shapes: Vec<Arc<ShapeLine>>,
+    shapes: Vec<Arc<fonts::Shape>>,
     rows: Vec<Row>,
     complete: bool,
 }
 
 impl TextLayout {
     pub fn new(
-        fonts: &mut FontSystem,
+        fonts: &mut impl fonts::Source,
         scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
@@ -38,7 +40,7 @@ impl TextLayout {
 
     pub fn relayout(
         &mut self,
-        fonts: &mut FontSystem,
+        fonts: &mut impl fonts::Source,
         scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
@@ -49,7 +51,7 @@ impl TextLayout {
     // Explicit-font oracle only; production font authority remains TextFace.
     #[cfg(all(test, feature = "visual"))]
     pub(crate) fn with_test_attrs(
-        fonts: &mut FontSystem,
+        fonts: &mut impl fonts::Source,
         scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
@@ -62,7 +64,7 @@ impl TextLayout {
 
     fn relayout_with_attrs(
         &mut self,
-        fonts: &mut FontSystem,
+        fonts: &mut impl fonts::Source,
         scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
@@ -81,13 +83,7 @@ impl TextLayout {
         }
         let mut process = |text: &str, attributes: AttrsList| -> bool {
             let index = self.shapes.len();
-            self.shapes.push(Arc::new(ShapeLine::new(
-                fonts,
-                text,
-                &attributes,
-                Shaping::Basic,
-                8,
-            )));
+            self.shapes.push(Arc::new(fonts.shape(text, &attributes)));
             self.append_layout(scratch, run, extent, index, &mut top)
         };
         if run.rich_spans.is_empty() {
@@ -216,7 +212,7 @@ impl TextLayout {
     }
 
     pub fn layout_storage_bytes(&self) -> usize {
-        capacity_bytes::<Arc<ShapeLine>>(self.shapes.capacity())
+        capacity_bytes::<Arc<fonts::Shape>>(self.shapes.capacity())
             + capacity_bytes::<Row>(self.rows.capacity())
             + self
                 .rows
@@ -230,22 +226,7 @@ impl TextLayout {
     /// scratch and allocator-internal slack remain separate.
     pub fn shape_allocations(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
         self.shapes.iter().map(|shape| {
-            let bytes = shape_container_bytes()
-                + capacity_bytes::<glyphon::ShapeSpan>(shape.spans.capacity())
-                + shape
-                    .spans
-                    .iter()
-                    .map(|span| {
-                        capacity_bytes::<glyphon::ShapeWord>(span.words.capacity())
-                            + span
-                                .words
-                                .iter()
-                                .map(|word| {
-                                    capacity_bytes::<glyphon::ShapeGlyph>(word.glyphs.capacity())
-                                })
-                                .sum::<usize>()
-                    })
-                    .sum::<usize>();
+            let bytes = shape_container_bytes() + shape.payload_bytes();
             (Arc::as_ptr(shape) as usize, bytes)
         })
     }
@@ -287,14 +268,14 @@ mod tests;
 fn shape_container_bytes() -> usize {
     if !crate::cpu_alloc::installed() {
         // External consumers without Datum's allocator retain public-size reporting.
-        return std::mem::size_of::<ShapeLine>();
+        return std::mem::size_of::<fonts::Shape>();
     }
     static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
     *BYTES.get_or_init(|| {
-        crate::cpu_alloc::heap::arc_bytes(ShapeLine {
+        crate::cpu_alloc::heap::arc_bytes(fonts::Shape::untracked(ShapeLine {
             rtl: false,
             spans: Vec::new(),
             metrics_opt: None,
-        })
+        }))
     })
 }

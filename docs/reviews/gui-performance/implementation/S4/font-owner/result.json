@@ -1,0 +1,68 @@
+{
+  "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open",
+  "base_commit": "0df8d361",
+  "production_consumers": [
+    "Default Renderer font creation and shared TextLayout shaping for workspace/overlay native and offscreen consumers",
+    "Shared Raster font acquisition and native SurfaceTransaction ownership observation"
+  ],
+  "retired_paths": [
+    "Renderer FontSystem mutation attributed only to the general text preparation scope",
+    "Indistinguishable mutable font/cache and retained shape allocations in that scope"
+  ],
+  "behavior": [
+    "Datum Fonts owns the existing FontSystem and scopes construction, shaping and raster font acquisition. Immutable shared catalog initialization retains its independent process scope. No private dependency layout is read or changed.",
+    "Returned shapes carry a lifetime lease for their nested public vector capacities and headers. Arc shape sharing increments no payload total; private font usage subtracts returned shapes once. The existing shaped-cache capacity report includes the new Arc wrapper size and retains existing admission/retention semantics.",
+    "The generic Source adapter preserves the same shaping/raster APIs and immutable font authority; all production renderer construction selects the owned implementation. Existing raw FontSystem support remains for independent reference and layout tests, not an alternate default renderer.",
+    "font_cpu_usage reports scope totals, returned shape bytes and the remaining private FontSystem database/cache/shaping state. Native shared surface observation emits it with the window identity only when verbose logging is enabled. Tracking and ownership are default behavior."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 376 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.54s",
+    "checks": "376 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh GUI build passed. Existing raw/glyphon oracle, whole-cache heap, text identity and actual native-render-path GPU parity scenarios passed. Application tests were not rerun.",
+    "coverage": "New owner lifetime test checks private/output partition, shared shape deduplication, font-owner close with shapes still alive, final shared-reference retirement and zero remaining scope allocations. Updated common GPU setup checks the new font scope rather than the old general text scope.",
+    "failed_attempts": "Preserve initial missing test-only Shaping import compile failure and347-pass/29-failure run. All29 failures stopped at the common setup assertion checking the obsolete general text scope before rendering. Corrected setup uses font_cpu_usage().allocation; final full suite passes."
+  },
+  "limits": [
+    "No complete MEM-SHAPED/MEM-STAGING/ACC, S4/S5 or issue closure. Per-renderer private FontSystem database, caches and shaping scratch are observed as a combined owner; cache/scratch admission and synchronous construction peaks remain unresolved.",
+    "Shared catalog ownership, measurement-thread FontSystem scope and ordinary preparation/layout/raster scopes remain distinct. Do not sum returned_shape_bytes with shaped-cache payload again. Wrapper/scope registry bookkeeping and allocator/native/RSS classification remain separate obligations.",
+    "No dependency/license/prototype/font authority/cap/sequencing amendment or runtime tier/latency acceptance. Preserve failed evidence, Console golden issue, GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/font-owner/renderer.log.gz",
+      "uncompressed_sha256": "4e194b15dea7a868ab0c1ee1da142ebf5c1a75d9e8a82e0f662e66fbf34e179c"
+    },
+    "renderer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/font-owner/renderer-initial.log.gz",
+      "uncompressed_sha256": "76c9a511f4ec08bbfed9b436ecb6ff6ae9e4dafa1a3e2bc7a961c438f1168f6f"
+    },
+    "compile-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/font-owner/compile-initial.log.gz",
+      "uncompressed_sha256": "1cce7da1f01085bfb936eb3f07e76e5121a1e1284794af74d081e71a735de72e"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/font-owner/clippy.log.gz",
+      "uncompressed_sha256": "e885e3801ebd551c0c2731d54c25b91008c43f038c06815995d41e48d4227e80"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/font-owner/build.log.gz",
+      "uncompressed_sha256": "67a502dbb4bea4d858dabb33a615874e0cebf8471704abf5f1c211b6bb7fd843"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/native_surface_transaction.rs": "f1d4ef7fd1214b3a9adf2019a56b3c7986abe57261fc1d2b1535d310c6def2de",
+    "crates/gui-render/src/cpu_alloc.rs": "20126dec62b5f196d7c3eb919eaf423c186e6a8477d7b9769aa608700ba62c36",
+    "crates/gui-render/src/render/gpu_init.rs": "ebb3954b757d2f157098a850591a8971db906ee9cb94ec8e89b7df6eec573f40",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "052fdd4044a6c0e64547e524b9b579690899330a207166c10ecb6b9a877cc0d6",
+    "crates/gui-render/src/render/renderer_state.rs": "54436d27838cbdb796d548e7627b2d0b6b083c67710c8053d3abac2ba6cc2686",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "8e435de581ea0d998c5e5495d450bee13a58de4c943cfc30d65f52a5601ab2cd",
+    "crates/gui-render/src/render/text_cache_retention.rs": "f724a1d1bfe6dd5e4bf4c02bd28a6135a4450c517cdc84c141cf9e50a5bca7e2",
+    "crates/gui-render/src/text_gpu/atlas.rs": "7c1420fd3e98570f27db8ca82a1e20edb7bbb09c3a7c5e81dd2720f9809ef6d1",
+    "crates/gui-render/src/text_gpu/draw.rs": "b18e4bef1920a67441ea42d1c192e48877cababf0ac74108a9ff0d2794a6e2c5",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "5046efa9f62005cadadbdc42ffafeaae76d4e97018077c7c45af63f03b9fa8e4",
+    "crates/gui-render/src/text_gpu/raster.rs": "8b96baeaa48ec4149285583d15708e8854a3cbeab5e6db1785ef7490dbdade5a",
+    "crates/gui-render/src/text_layout.rs": "c10efe1bac282f28db213311c876a31e930255fa8362572098ddd3c0eef5925a",
+    "crates/gui-render/src/text_layout_tests.rs": "d2068df798998930d623b08da7be1c3f49f5c1b2ff7067ca11b5d54cc7d16e24",
+    "crates/gui-render/src/font_owner.rs": "13fe6a03c1095fb2844bd1fff72d92d250bb7636ece880e9fe79c6fbc5ac2602"
+  }
+}

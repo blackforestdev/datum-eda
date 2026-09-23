@@ -3,7 +3,7 @@ use super::staging_vec::StagingVec;
 use std::ops::Range;
 
 use super::raster::Raster as SwashCache;
-use glyphon::{Color, FontSystem, LayoutRun, TextBounds};
+use glyphon::{Color, LayoutRun, TextBounds};
 
 use super::atlas::Atlas;
 use super::lifetime::{Kind, SubmissionRef, Tracked};
@@ -116,7 +116,7 @@ impl Draw {
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         atlas: &mut Atlas,
-        fonts: &mut FontSystem,
+        fonts: &mut impl crate::text_layout::fonts::Source,
         raster: &mut SwashCache,
         resolution: [u32; 2],
         areas: impl IntoIterator<Item = Area<'a, R>>,
