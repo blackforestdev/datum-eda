@@ -127,6 +127,7 @@ impl CachedTerminalGraphicTexture {
         *remaining -= part.padded_bytes;
         let count = part.bytes.len() / 4;
         out.extend(std::iter::once(crate::text_gpu::upload::TextureUpload {
+            target: Some(self.texture.upload_target()),
             texture: &self.texture,
             origin: part.origin,
             size: part.size,
@@ -185,6 +186,7 @@ mod tests {
                 1,
                 &crate::text_gpu::budget::Budget::new(256 * 1024),
                 &[crate::text_gpu::upload::TextureUpload {
+                    target: None,
                     texture: &texture,
                     origin: part.origin,
                     size: part.size,

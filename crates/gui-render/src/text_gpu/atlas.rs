@@ -169,7 +169,8 @@ impl Atlas {
             + super::staging_vec::StagingVec::<super::upload::TextureUpload<'_>>::capacity_bytes(
                 self.pending_uploads.len(),
             )?
-            + super::upload::retention_metadata_bytes(buffers, true)?)
+            + super::upload::retention_metadata_bytes(buffers, true)?
+            + super::upload::destination_metadata_bytes(self.pending_uploads.len())?)
     }
 
     pub fn flush_uploads(
@@ -181,6 +182,7 @@ impl Atlas {
             super::staging_vec::StagingVec::new(self.pending_uploads.len(), &self.staging_budget)?;
         for upload in self.pending_uploads.iter() {
             uploads.push(super::upload::TextureUpload {
+                target: Some(self.pages[upload.page].texture.upload_target()),
                 texture: &self.pages[upload.page].texture,
                 origin: [upload.origin[0], upload.origin[1] + upload.uploaded_rows],
                 size: [upload.size[0], upload.size[1] - upload.uploaded_rows],

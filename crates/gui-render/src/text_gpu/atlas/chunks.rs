@@ -31,7 +31,8 @@ impl Atlas {
         Ok(bytes
             + StagingVec::<super::super::upload::TextureUpload<'_>>::capacity_bytes(count)?
             + StagingVec::<SubmissionRef>::capacity_bytes(self.pages.len())?
-            + super::super::upload::retention_metadata_bytes(&[], false)?)
+            + super::super::upload::retention_metadata_bytes(&[], false)?
+            + super::super::upload::destination_metadata_bytes(count)?)
     }
 
     pub(crate) fn submit_chunk(
@@ -58,6 +59,7 @@ impl Atlas {
             let first = (upload.uploaded_rows * upload.stride) as usize;
             let bytes = (rows * upload.stride) as usize;
             uploads.push(super::super::upload::TextureUpload {
+                target: Some(self.pages[upload.page].texture.upload_target()),
                 texture: &self.pages[upload.page].texture,
                 origin: [upload.origin[0], upload.origin[1] + upload.uploaded_rows],
                 size: [upload.size[0], rows],

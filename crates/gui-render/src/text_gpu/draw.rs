@@ -261,6 +261,7 @@ impl Draw {
                 std::mem::size_of::<Instance>(),
                 |offset, bytes| {
                     out.extend(std::iter::once(super::upload::BufferUpload {
+                        target: Some(buffer.upload_target()),
                         buffer,
                         offset,
                         bytes,

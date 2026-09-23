@@ -82,7 +82,8 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
             + pages
             + raster.reserved_bytes()
             + crate::text_gpu::staging_vec::StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(1)
-                .unwrap(),
+                .unwrap()
+            + crate::text_gpu::upload::destination_metadata_bytes(1).unwrap(),
         "CPU pixels retire after staging copy is built"
     );
     queue.submit([batch.command()]);

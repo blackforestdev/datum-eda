@@ -29,11 +29,18 @@ pub struct Record {
     pub bytes: u64,
     pub kind: Kind,
     pub retiring: bool,
+    /// Submitted source payload; buffer ranges already include copy alignment.
+    pub submitted_source_bytes: u64,
+    /// API upload representation, including texture row padding or scatter indices.
+    /// Not driver bus traffic, completion timing, or allocated staging capacity.
+    pub submitted_transfer_bytes: u64,
 }
 
 struct Identity {
     record: Record,
     active: AtomicBool,
+    source_bytes: AtomicU64,
+    transfer_bytes: AtomicU64,
 }
 
 struct State {
@@ -144,8 +151,12 @@ impl Owner {
                 bytes: reservation.bytes(),
                 kind,
                 retiring: false,
+                submitted_source_bytes: 0,
+                submitted_transfer_bytes: 0,
             },
             active: AtomicBool::new(true),
+            source_bytes: AtomicU64::new(0),
+            transfer_bytes: AtomicU64::new(0),
         });
         let mut entries = self.0.allocations.lock().unwrap_or_else(|e| e.into_inner());
         entries.retain(|entry| entry.strong_count() != 0);
@@ -177,6 +188,8 @@ fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
         if let Some(identity) = entry.upgrade() {
             records.push(Record {
                 retiring: !identity.active.load(Ordering::Acquire),
+                submitted_source_bytes: identity.source_bytes.load(Ordering::Acquire),
+                submitted_transfer_bytes: identity.transfer_bytes.load(Ordering::Acquire),
                 ..identity.record
             });
             true
@@ -259,7 +272,39 @@ struct Allocation<T> {
 
 pub(crate) struct Tracked<T>(Arc<Allocation<T>>);
 
+/// Borrowed during planning; retaining a receipt retains accounting, not GPU data.
+#[derive(Clone, Copy)]
+pub(crate) struct UploadTarget<'a>(&'a Arc<Identity>);
+pub(crate) struct SubmittedUpload {
+    identity: Arc<Identity>,
+    source: u64,
+    transfer: u64,
+}
+impl UploadTarget<'_> {
+    pub fn receipt(self, source: u64, transfer: u64) -> SubmittedUpload {
+        SubmittedUpload {
+            identity: self.0.clone(),
+            source,
+            transfer,
+        }
+    }
+}
+impl SubmittedUpload {
+    pub fn commit(self) {
+        self.identity
+            .source_bytes
+            .fetch_add(self.source, Ordering::AcqRel);
+        self.identity
+            .transfer_bytes
+            .fetch_add(self.transfer, Ordering::AcqRel);
+    }
+}
+
 impl<T> Tracked<T> {
+    pub(crate) fn upload_target(&self) -> UploadTarget<'_> {
+        UploadTarget(&self.0.identity)
+    }
+
     /// A queue completion callback now owns this handle instead of the producer.
     pub(crate) fn mark_retiring(&self) {
         self.0.identity.active.store(false, Ordering::Release);

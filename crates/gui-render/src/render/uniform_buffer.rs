@@ -96,6 +96,7 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
                 bytemuck::bytes_of(value),
                 |offset, bytes| {
                     out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
+                        target: Some(self.buffer.upload_target()),
                         buffer: &self.buffer,
                         offset: offset as u64,
                         bytes,

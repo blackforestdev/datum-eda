@@ -31,7 +31,8 @@ impl TerminalGraphicsRenderer {
         Ok(StagingVec::<TextureUpload<'_>>::capacity_bytes(count)?
             + StagingVec::<(usize, usize)>::capacity_bytes(count)?
             + StagingVec::<SubmissionRef>::capacity_bytes(count)?
-            + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?)
+            + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?
+            + crate::text_gpu::upload::destination_metadata_bytes(count)?)
     }
 
     fn upload_chunk(

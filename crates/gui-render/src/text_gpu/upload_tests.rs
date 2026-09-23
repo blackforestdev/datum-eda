@@ -22,7 +22,8 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
     });
     let owner = Owner::new();
     let observer = owner.observer();
-    let metadata = StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(1).unwrap();
+    let metadata = StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(1).unwrap()
+        + destination_metadata_bytes(2).unwrap();
     let host = Budget::new(520 + metadata);
     let target = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("mixed-buffer-proof"),
@@ -30,19 +31,25 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: false,
     });
+    let destinations = Owner::new();
+    let texture = destinations.track(texture, 6, 7, Kind::Texture);
+    let target = destinations.track(target, 16, 9, Kind::Vertex);
     let buffers = [
         BufferUpload {
+            target: Some(target.upload_target()),
             buffer: &target,
             offset: 4,
             bytes: &[9, 0, 0, 0],
         },
         BufferUpload {
+            target: Some(target.upload_target()),
             buffer: &target,
             offset: 12,
             bytes: &[10, 0, 0, 0],
         },
     ];
     let upload = [TextureUpload {
+        target: Some(texture.upload_target()),
         texture: &texture,
         origin: [0, 0],
         size: [3, 2],
@@ -83,6 +90,12 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
         drop(filler);
     }
     assert_eq!(observer.submitted_upload_totals(), Default::default());
+    assert!(
+        destinations
+            .records()
+            .iter()
+            .all(|r| r.submitted_source_bytes == 0 && r.submitted_transfer_bytes == 0)
+    );
     pending = batch(&device, &owner, 3, &host, &upload, &buffers)
         .unwrap()
         .unwrap();
@@ -126,6 +139,25 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
         ..Default::default()
     };
     assert_eq!(observer.submitted_upload_totals(), expected);
+    let records = destinations.records();
+    let texture_record = records.iter().find(|r| r.id == texture.id()).unwrap();
+    assert_eq!(
+        (
+            texture_record.generation,
+            texture_record.submitted_source_bytes,
+            texture_record.submitted_transfer_bytes
+        ),
+        (7, 6, 512)
+    );
+    let buffer_record = records.iter().find(|r| r.id == target.id()).unwrap();
+    assert_eq!(
+        (
+            buffer_record.generation,
+            buffer_record.submitted_source_bytes,
+            buffer_record.submitted_transfer_bytes
+        ),
+        (9, 8, 8)
+    );
     let (tx, rx) = std::sync::mpsc::channel();
     readback
         .slice(..)

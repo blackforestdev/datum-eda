@@ -3959,6 +3959,11 @@
           "work": "s4_construction_admission_work.lifetime_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
           "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
+        },
+        {
+          "work": "s4_upload_frame_work.destination_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json",
+          "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation"
         }
       ]
     },
@@ -5358,7 +5363,14 @@
         "unfinished_qualification": "CPU/GPU lifetime and final resource content correct within budgets",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_upload_frame_work.destination_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json",
+          "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation"
+        }
+      ]
     },
     {
       "id": "HP09-01",
@@ -19962,7 +19974,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Reconcile complete per-consumer/frame upload attribution and accounting metadata with the measurement contract. Shared submission-boundary payload/padding/scatter totals and exact admitted large-screen snapshots are now implemented; uncached CTL-02 control transfers remain explicit. Full original qualification remains S5."
+          "Complete consumer incidence and correlation of per-allocation byte deltas with native/frame receipts. Common submitted uploads now carry stable destination IDs/generations with source/transfer totals; shared batch/frame totals, exact admitted screen snapshots and bounded receipt metadata are implemented. Uncached CTL-02 control transfers remain explicit. Preserve original S5 qualification."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "Only exact dirty ranges plus documented alignment uploaded",
@@ -19999,6 +20011,11 @@
           "work": "s4_upload_frame_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-frames/result.json",
           "status": "Shared submitted upload totals attributed to render attempts and native surface receipts; finer pane attribution and full qualification remain open"
+        },
+        {
+          "work": "s4_upload_frame_work.destination_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json",
+          "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation"
         }
       ]
     },
@@ -35541,7 +35558,37 @@
       "Latest receipt observation is bounded and must be archived before the next attempt for historical analysis. Upload-only attempts do not establish a displayed frame or GPU completion. Private text/cap and remaining allocation metadata obligations are unchanged.",
       "No dependency/license/prototype/cap/sequencing change. Preserve historical failures, known Console golden failure, GEFN and nonblocking resize."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/upload-frames/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/upload-frames/result.json",
+    "destination_followup": {
+      "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation",
+      "base_commit": "3d2d55c8",
+      "production_consumers": [
+        "Retained board/schematic world upload chunks",
+        "All shared screen/control vertex and uniform uploads",
+        "Workspace/overlay glyph instance buffers and atlas full/chunk uploads",
+        "Terminal graphics quad buffers and texture chunks"
+      ],
+      "retired_paths": [
+        "Default buffer/texture upload descriptors without destination allocation attribution",
+        "Submitted byte totals available only at batch/renderer level"
+      ],
+      "behavior": [
+        "Borrow destination identity during planning without allocating or cloning identity handles per dirty range. The shared batch creates one admitted receipt per buffer group or texture copy. Only Batch::hold, after queue.submit, commits counters to the stable allocation identity; cancelled/refused batches do not increment them.",
+        "Record submitted_source_bytes and submitted_transfer_bytes alongside allocation ID, owner, generation, capacity and retiring state. Source bytes are aligned buffer ranges or unpadded texture pixels. Transfer bytes describe the API upload representation, including texture row padding and sparse destination indices; they are not driver traffic, GPU duration or staging allocation capacity.",
+        "Receipt vectors share existing16MiB host/64MiB process staging admission and completion lifetime. Cold world, atlas and terminal preflights include their capacity. Existing frame/cumulative totals remain separate; no unbounded per-frame event history is retained. All default descriptor producers provide identity; anonymous descriptors remain confined to test/diagnostic fixtures."
+      ],
+      "proof": {
+        "renderer": "384 passed;0 failed;11 filtered. Extended mixed-upload proof checks distinct target IDs/generations,6-to512texture padding and8-to8buffer ranges after submission; cancellation/refusal leaves destination totals zero. Extended sparse readback proof checks4096*4source versus4096*8transfer bytes and the separate direct target. Existing default pixel/reuse/cancellation/continuation/recovery tests pass.",
+        "lint_build": "Strict visual renderer/app all-target Clippy and fresh offline GUI build pass. Source health2296files; no native input or broad benchmark campaign.",
+        "initial_failure": "Initial renderer run381passed,3failed: world continuation, atlas pixel retirement and frame staging assertions omitted new receipt storage. Preserve initial log; include exact receipt capacities without changing any resource cap. Final run passes."
+      },
+      "limits": [
+        "Seven recorded implementation gaps remain. Complete consumer incidence and correlation of per-allocation deltas with native/frame receipts remain open under REUSE-SCREEN/AC-05; creation payload/reference/release-reason and full CPU/private-text accounting are not established by these upload counters.",
+        "Counters describe submitted API work, not completion or presentation. Readback/capture/opt-in timestamp copies are separate from this common upload path. Original S5 native/negative/resource/endurance qualification remains required; no full predicate/S4/S5 closure.",
+        "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edit excluded."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json"
+    }
   },
   "s4_text_owner_reconciliation": {
     "base_commit": "cd7e0258",

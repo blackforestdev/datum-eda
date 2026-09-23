@@ -5,6 +5,7 @@ use super::staging_vec::StagingVec;
 use std::sync::Arc;
 
 pub(crate) struct TextureUpload<'a> {
+    pub target: Option<super::lifetime::UploadTarget<'a>>,
     pub texture: &'a wgpu::Texture,
     pub origin: [u32; 2],
     pub size: [u32; 2],
@@ -13,6 +14,7 @@ pub(crate) struct TextureUpload<'a> {
 }
 
 pub(crate) struct BufferUpload<'a> {
+    pub target: Option<super::lifetime::UploadTarget<'a>>,
     pub buffer: &'a wgpu::Buffer,
     pub offset: u64,
     pub bytes: &'a [u8],
@@ -48,6 +50,7 @@ pub(crate) struct Batch {
     owner: Owner,
     totals: super::upload_totals::UploadTotals,
     buffers: StagingVec<Tracked<wgpu::Buffer>>,
+    destinations: StagingVec<super::lifetime::SubmittedUpload>,
 }
 
 impl Batch {
@@ -56,16 +59,22 @@ impl Batch {
     }
 
     /// Called immediately after queue.submit at every production upload site.
-    pub fn hold(self, queue: &wgpu::Queue) {
+    pub fn hold(mut self, queue: &wgpu::Queue) {
         assert!(
             self.command.is_none(),
             "upload must be submitted before its hold"
         );
         self.owner.record_upload(self.totals);
+        for destination in self.destinations.drain_all() {
+            destination.commit();
+        }
         // Move the already admitted owners into completion; no second reference
         // vector is allocated after submission.
         self.buffers.iter().for_each(Tracked::mark_retiring);
-        queue.on_submitted_work_done(move || drop(self.buffers));
+        queue.on_submitted_work_done(move || {
+            drop(self.buffers);
+            drop(self.destinations);
+        });
     }
 }
 
@@ -93,7 +102,14 @@ pub(crate) fn retention_metadata_bytes(
     buffers: &[BufferUpload<'_>],
     scatter: bool,
 ) -> anyhow::Result<u64> {
-    StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(allocation_count(buffers, scatter))
+    Ok(
+        StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(allocation_count(buffers, scatter))?
+            + destination_metadata_bytes(super::sparse_upload::groups(buffers).count())?,
+    )
+}
+
+pub(crate) fn destination_metadata_bytes(count: usize) -> anyhow::Result<u64> {
+    StagingVec::<super::lifetime::SubmittedUpload>::capacity_bytes(count)
 }
 
 fn allocation_count(buffers: &[BufferUpload<'_>], scatter: bool) -> usize {
@@ -182,6 +198,30 @@ pub(crate) fn batch_with_scatter(
     let process = super::budget::staging_process().reserve(capacity)?;
     let mut reservation = super::budget::GpuReservation::new(capacity, vec![host, process])?;
     let direct_bytes = capacity - sparse_bytes * 2;
+    let mut destinations = StagingVec::new(
+        uploads.len() + super::sparse_upload::groups(buffers).count(),
+        host_budget,
+    )?;
+    for upload in uploads {
+        if let Some(target) = upload.target {
+            destinations.push(target.receipt(upload.pixels.len() as u64, padded_bytes(upload)));
+        }
+    }
+    for group in super::sparse_upload::groups(buffers) {
+        if let Some(target) = group.uploads[0].target {
+            let source = group
+                .uploads
+                .iter()
+                .map(|upload| upload.bytes.len() as u64)
+                .sum();
+            let transfer = if group.sparse && scatter.is_some() {
+                group.packet_bytes()
+            } else {
+                source
+            };
+            destinations.push(target.receipt(source, transfer));
+        }
+    }
     let mut allocations =
         StagingVec::new(allocation_count(buffers, scatter.is_some()), host_budget)?;
     let mapped_reservation = reservation.split(direct_bytes + sparse_bytes)?;
@@ -314,6 +354,7 @@ pub(crate) fn batch_with_scatter(
         owner: owner.clone(),
         totals,
         buffers: allocations,
+        destinations,
     }))
 }
 
