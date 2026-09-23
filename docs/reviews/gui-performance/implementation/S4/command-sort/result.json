@@ -1,0 +1,66 @@
+{
+  "status": "Shared retained command sort uses admitted, fallibly reserved scratch and stable painter order",
+  "base_commit": "c1d85226",
+  "production_consumers": [
+    "Default board retained construction",
+    "Default companion schematic retained construction; native and capture use both"
+  ],
+  "retired_paths": [
+    "Stable slice sort allocating opaque scratch without constructor admission"
+  ],
+  "behavior": [
+    "Admit exact key/index scratch capacity plus Datum headers before allocating. Compute each command layer priority once, sort priority/original-index pairs without further heap allocation, and apply permutation cycles in place. Equal-priority commands preserve original painter order. Refusal leaves commands untouched and propagates through existing constructor error handling. Already ordered commands, including zero/one command, return without scratch allocation or admission callback."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 367 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.85s",
+    "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 16.16s",
+    "final_fast_path": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 377 filtered out; finished in 0.02s",
+    "sequence": "Full367 renderer and394 app proofs precede final allocation-free already-ordered fast path; final targeted ordering/refusal/allocator proof, strict Clippy and fresh build follow it.",
+    "initial_fast_path_failure": "The initial fast-path test assumed every real-board rotation required sorting; authored commands shared a stage, correctly bypassing admission. Final test adds the supported layerless case, distinguishes ordered input and requires nonvacuous permutation proof. Failed log preserved.",
+    "checks": "Real-board commands reordered through multiple rotations/reversal match the previous stable-sort semantics exactly. Admission occurs before scratch allocation, refusal preserves input, allocator peak equals exact key payload and scratch releases after sorting. Existing GPU/painter, constructor and application tests pass. Strict visual Clippy, fresh GUI build, source/dependency/format/governance checks pass."
+  },
+  "limits": [
+    "Scratch admission covers this construction stage; earlier geometry/command growth, initial identity and scope metadata, concurrent constructors and external weak-container lifetime remain open. No full MEM-WORLD-CPU closure or end-to-end latency claim.",
+    "Twelve implementation gaps and original S5 qualification remain open. Existing Console golden failure is preserved; no repeated full drift campaign for this normal-module change. No dependency, prototype, cap, sequencing or nonblocking resize disposition change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/command-sort/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/renderer.log.gz",
+      "uncompressed_sha256": "fc7726f790adcb3038f98e84da319dd5a68f138ae8c934520d7ebfc81e81c695"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/app.log.gz",
+      "uncompressed_sha256": "3fbe9c8bfb17921dbca6ea8caabd615d7cda519f47f418612f7a461f169da16d"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/clippy.log.gz",
+      "uncompressed_sha256": "c9e51949972940d39da4845ea23408c43ff7acc32d8b2ee237e5f416ca7e60ef"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/build.log.gz",
+      "uncompressed_sha256": "e6a286851cdde29349acc1bb9e5a0975f65260460ed8649f97e0a450104cb4a5"
+    },
+    "fast-path": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/fast-path.log.gz",
+      "uncompressed_sha256": "fb432def43527e2186a55ca5ca7c601588de750c363914c6a0c07e8ac63c917d"
+    },
+    "final-clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/final-clippy.log.gz",
+      "uncompressed_sha256": "a96b7f2d99f5b572d9df85dcc68617a6072e9a0df3d217d391514026c9179632"
+    },
+    "final-build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/final-build.log.gz",
+      "uncompressed_sha256": "143c948fca8d3872b4f30163af63beed0f4577efcc9aa944524bf753beee63c2"
+    },
+    "fast-path-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/command-sort/fast-path-initial.log.gz",
+      "uncompressed_sha256": "4eaf766f8304fe868f6acc9e3a1ff4cadc8bee946c7077baacf9c186845d9163"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/scene_retained_access.rs": "57c4737c561261164bb9c048e8ed19547d0e25fcc42b89103117c630afd620f3",
+    "crates/gui-render/src/render/schematic_retained.rs": "bb24663ceeea5a40246f3635e968e9a6f4a5fed67ec61960bcbedf75fdc51608",
+    "crates/gui-render/src/render/document_cpu.rs": "c39792db01c2bfa7566b13007fed5bc7c69abfa839c03e0847eb78d7813e5afd"
+  }
+}

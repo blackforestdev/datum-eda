@@ -84,7 +84,16 @@ impl RetainedScene {
             scene_retained_access::sort_retained_draw_commands(
                 &mut draw_commands,
                 &schematic_scene.layers,
-            );
+                |bytes| {
+                    retained_scene_owner::document_cpu::admit_constructor_allocation(
+                        &budget,
+                        &scope,
+                        bytes,
+                        limit,
+                        "draw command sorting",
+                    )
+                },
+            )?;
             retained_scene_owner::document_cpu::admit_vertex_expansion(
                 &budget,
                 &scope,
