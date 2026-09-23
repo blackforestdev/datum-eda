@@ -171,7 +171,10 @@ fn admission_compacts_spare_metadata_without_discarding_required_layouts() {
         .filter(|owner| owner.owner_id != cache.owner.id())
         .map(|owner| owner.bytes)
         .sum();
-    let filler = budget::Owner::new(32 * 1024 * 1024 - others - required);
+    let filler = budget::Owner::new(0);
+    filler.publish(
+        32 * 1024 * 1024 - others - required - crate::Renderer::text_cache_registry_bytes(),
+    );
     cache.admit_frame(&mut [&mut indices]).unwrap();
     assert_eq!(indices, [0, 1, 2]);
     assert_eq!(cache.entries.capacity(), cache.entries.len());

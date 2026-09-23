@@ -1,0 +1,45 @@
+{
+  "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open",
+  "base_commit": "0d5e4153",
+  "production_consumers": [
+    "Every default TextBufferCache owner publication, frame admission, retention and close",
+    "Renderer text_cache_process_usage and new text_cache_registry_bytes observation"
+  ],
+  "retired_paths": [
+    "BTreeMap owner registry with private unreported node storage",
+    "Process allowance computed only from cache payloads, omitting its shared registry"
+  ],
+  "behavior": [
+    "Replace the small live-renderer owner map with a compact vector. Account inline registry/mutex storage plus allocated vector capacity and Datum allocation headers. Charge that storage once against the existing 32 MiB process allowance before applying the unchanged 8 MiB local cap.",
+    "Update existing owner records without allocation. Closing owners releases spare storage above four times live size and releases all heap storage when empty. Public per-renderer bytes remain disjoint from the shared registry observation."
+  ],
+  "proof": {
+    "renderer": "342 renderer tests passed, 11 diagnostic/visual cases filtered. Actual scoped allocator reconciliation covers 64 owner registrations, warm update, shrink and final zero allocations. Boundary arithmetic includes metadata. Existing three-layout exact-allowance admission test retains correct shared shapes with the registry charge included.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2272, dependency authority and governance gates pass.",
+    "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Registry capacity is accounted at admission/retention. Cache construction peaks, registration growth transients, private font/raster storage and broader scratch accounting remain separate open boundaries; this is not complete MEM-SHAPED-TOTAL or MEM-SHAPED-LOCAL acceptance.",
+    "Snapshot return-vector allocation belongs to the observing caller, not retained registry storage. System allocator slack and process RSS remain separately qualified.",
+    "No dependency, vendor, license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize. Sixteen recorded implementation gaps remain; no milestone or issue closure."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-registry/tests.log.gz",
+      "uncompressed_sha256": "4ef7bdfc3759d82dc4247af192a0d9668232dc534c7086df525c489de5221fe0"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-registry/clippy.log.gz",
+      "uncompressed_sha256": "81362ffe4691125b0eddf5c2279c1d8500197b1a82c0eebb568ae38199b0ab1f"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-registry/build.log.gz",
+      "uncompressed_sha256": "0a9e2c714eb893c4a478ef8ceb8fd0b4c31a020c045dd2f4c96e266689213808"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "aec4353e03209eb93cac0e6c5f7958018257da82cfeada4f9ae8ccf100b90909",
+    "crates/gui-render/src/render/text_cache_budget.rs": "71baa35fa81150781abc3189dbf1cefa35942fa41bfa89ef7412e6f1f0f4ae1e"
+  }
+}

@@ -1,5 +1,4 @@
 //! Process ownership and admission for owned text-cache capacities.
-use std::collections::BTreeMap;
 use std::sync::{
     Mutex,
     atomic::{AtomicU64, Ordering},
@@ -7,7 +6,28 @@ use std::sync::{
 
 const PROCESS_LIMIT: usize = 32 * 1024 * 1024;
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
-static OWNERS: Mutex<BTreeMap<u64, TextCacheOwnerUsage>> = Mutex::new(BTreeMap::new());
+static OWNERS: Mutex<Registry> = Mutex::new(Registry(Vec::new()));
+
+struct Registry(Vec<TextCacheOwnerUsage>);
+impl Registry {
+    fn bytes(&self) -> usize {
+        std::mem::size_of::<Mutex<Self>>()
+            + crate::cpu_alloc::heap::capacity_bytes::<TextCacheOwnerUsage>(self.0.capacity())
+    }
+    fn insert(&mut self, id: u64, usage: TextCacheOwnerUsage) {
+        if let Some(owner) = self.0.iter_mut().find(|owner| owner.owner_id == id) {
+            *owner = usage;
+        } else {
+            self.0.push(usage);
+        }
+    }
+    fn remove(&mut self, id: u64) {
+        self.0.retain(|owner| owner.owner_id != id);
+        if self.0.capacity() > self.0.len().saturating_mul(4) {
+            self.0 = std::mem::take(&mut self.0).into_boxed_slice().into_vec();
+        }
+    }
+}
 
 /// Public retained capacities plus measured Arc/Datum headers; private scratch is separate.
 #[derive(Clone, Copy, Debug)]
@@ -47,14 +67,15 @@ impl Drop for Owner {
         OWNERS
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .remove(&self.0);
+            .remove(self.0);
     }
 }
 
-fn allowance(owners: &BTreeMap<u64, TextCacheOwnerUsage>, id: u64, limit: usize) -> usize {
-    limit.saturating_sub(
+fn allowance(owners: &Registry, id: u64, limit: usize) -> usize {
+    limit.saturating_sub(owners.bytes()).saturating_sub(
         owners
-            .values()
+            .0
+            .iter()
             .filter(|o| o.owner_id != id)
             .map(|o| o.bytes)
             .sum(),
@@ -120,7 +141,9 @@ fn set_preparing(id: u64, preparing: bool) {
     if let Some(owner) = OWNERS
         .lock()
         .unwrap_or_else(|e| e.into_inner())
-        .get_mut(&id)
+        .0
+        .iter_mut()
+        .find(|owner| owner.owner_id == id)
     {
         owner.preparing = preparing;
     }
@@ -129,13 +152,15 @@ fn set_preparing(id: u64, preparing: bool) {
 impl crate::Renderer {
     /// Enumerate CPU text capacities and accounted headers for every live renderer cache.
     /// Preparing owners may exceed retention caps; this is not scratch accounting.
+    /// Add text_cache_registry_bytes once for total process ownership.
     pub fn text_cache_process_usage() -> Vec<TextCacheOwnerUsage> {
-        OWNERS
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .values()
-            .copied()
-            .collect()
+        OWNERS.lock().unwrap_or_else(|e| e.into_inner()).0.clone()
+    }
+
+    /// Shared owner registry, including spare capacity and Datum allocation headers.
+    /// Charged once to the process allowance, not to each renderer's local cap.
+    pub fn text_cache_registry_bytes() -> usize {
+        OWNERS.lock().unwrap_or_else(|e| e.into_inner()).bytes()
     }
 
     pub fn text_cache_key_usage(&self) -> crate::TextCacheKeyUsage {
@@ -148,7 +173,7 @@ mod tests {
     use super::*;
     #[test]
     fn admission_counts_other_owners_including_active_frames() {
-        let mut owners = BTreeMap::new();
+        let mut owners = Registry(Vec::new());
         for id in 1..=5 {
             owners.insert(
                 id,
@@ -160,9 +185,57 @@ mod tests {
                 },
             );
         }
-        assert_eq!(allowance(&owners, 5, 32), 0);
-        owners.remove(&1);
-        assert_eq!(allowance(&owners, 5, 32), 8);
-        assert_eq!(allowance(&owners, 2, 32), 8);
+        let limit = 32 + owners.bytes();
+        assert_eq!(allowance(&owners, 5, limit), 0);
+        owners.remove(1);
+        assert_eq!(allowance(&owners, 5, limit), 8);
+        assert_eq!(allowance(&owners, 2, limit), 8);
+    }
+    #[test]
+    fn registry_reports_actual_heap_through_growth_update_and_close() {
+        let scope = crate::cpu_alloc::Scope::new("text-owner-registry");
+        let mut registry = Registry(Vec::new());
+        let assert_heap = |registry: &Registry| {
+            let usage = scope.usage();
+            assert_eq!(
+                registry.bytes() - std::mem::size_of::<Mutex<Registry>>(),
+                (usage.payload_bytes + usage.tracking_bytes) as usize
+            );
+        };
+        for id in 1..=64 {
+            scope.with(|| {
+                registry.insert(
+                    id,
+                    TextCacheOwnerUsage {
+                        owner_id: id,
+                        bytes: 8,
+                        preparing: true,
+                        retention_overflow: false,
+                    },
+                )
+            });
+            assert_heap(&registry);
+        }
+        let before = registry.bytes();
+        scope.with(|| {
+            registry.insert(
+                64,
+                TextCacheOwnerUsage {
+                    owner_id: 64,
+                    bytes: 16,
+                    preparing: false,
+                    retention_overflow: false,
+                },
+            )
+        });
+        assert_eq!(registry.bytes(), before, "warm updates do not allocate");
+        assert_eq!(allowance(&registry, 64, before + 63 * 8 + 16), 16);
+        assert_eq!(allowance(&registry, 64, before + 63 * 8 + 15), 15);
+        for id in 1..=64 {
+            scope.with(|| registry.remove(id));
+            assert_heap(&registry);
+        }
+        assert_eq!(registry.0.capacity(), 0);
+        assert_eq!(scope.usage().allocations, 0);
     }
 }
