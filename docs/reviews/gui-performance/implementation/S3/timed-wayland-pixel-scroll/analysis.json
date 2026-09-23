@@ -1,0 +1,124 @@
+{
+  "trials": [
+    {
+      "host": "global",
+      "boundary": "top",
+      "events": 3600,
+      "initial_offset": 0.0,
+      "final_offset": 0,
+      "maximum": 124.0,
+      "exact_delta_and_recurrence": true,
+      "unscripted_pointer_moves": 0,
+      "main_counter_deltas": {
+        "requested": 0,
+        "coalesced": 0,
+        "received": 0,
+        "presentations": 0
+      },
+      "strict_zero_main_presentations_pass": true,
+      "driver": {
+        "time": 1790128400.6684864,
+        "kind": "stream_end",
+        "count": 3600,
+        "elapsed": 30.000170407933183,
+        "max_lateness_seconds": 0.00105892529245466
+      }
+    },
+    {
+      "host": "global",
+      "boundary": "bottom",
+      "events": 3600,
+      "initial_offset": 124.0,
+      "final_offset": 64.0,
+      "maximum": 124.0,
+      "exact_delta_and_recurrence": true,
+      "unscripted_pointer_moves": 0,
+      "main_counter_deltas": {
+        "requested": 0,
+        "coalesced": 0,
+        "received": 1,
+        "presentations": 1
+      },
+      "strict_zero_main_presentations_pass": false,
+      "driver": {
+        "time": 1790128484.7213573,
+        "kind": "stream_end",
+        "count": 3600,
+        "elapsed": 30.00011354603339,
+        "max_lateness_seconds": 0.002046080306172371
+      }
+    },
+    {
+      "host": "project",
+      "boundary": "top",
+      "events": 3600,
+      "initial_offset": 0.0,
+      "final_offset": 0,
+      "maximum": 124.0,
+      "exact_delta_and_recurrence": true,
+      "unscripted_pointer_moves": 0,
+      "main_counter_deltas": {
+        "requested": 0,
+        "coalesced": 0,
+        "received": 0,
+        "presentations": 0
+      },
+      "strict_zero_main_presentations_pass": true,
+      "driver": {
+        "time": 1790128570.8686295,
+        "kind": "stream_end",
+        "count": 3600,
+        "elapsed": 30.000145877012983,
+        "max_lateness_seconds": 0.0017962489509955049
+      }
+    },
+    {
+      "host": "project",
+      "boundary": "bottom",
+      "events": 3600,
+      "initial_offset": 124.0,
+      "final_offset": 64.0,
+      "maximum": 124.0,
+      "exact_delta_and_recurrence": true,
+      "unscripted_pointer_moves": 0,
+      "main_counter_deltas": {
+        "requested": 0,
+        "coalesced": 0,
+        "received": 0,
+        "presentations": 0
+      },
+      "strict_zero_main_presentations_pass": true,
+      "driver": {
+        "time": 1790128636.7369862,
+        "kind": "stream_end",
+        "count": 3600,
+        "elapsed": 30.00013341102749,
+        "max_lateness_seconds": 0.0018731390591710806
+      }
+    }
+  ],
+  "input_free_comparisons": [
+    {
+      "host": "global",
+      "input_free_interval_seconds": 44.7542085647583,
+      "main_counter_deltas": {
+        "requested": 0,
+        "coalesced": 0,
+        "received": 1,
+        "presentations": 1
+      }
+    },
+    {
+      "host": "project",
+      "input_free_interval_seconds": 34.699214935302734,
+      "main_counter_deltas": {
+        "requested": 0,
+        "coalesced": 0,
+        "received": 1,
+        "presentations": 1
+      }
+    }
+  ],
+  "total_events": 14400,
+  "attribution": "All four streams induce zero recorded Main requests/coalesced damage. Global bottom contains one additional native received/present event; input-free intervals also contain one with zero requests. Consistent with unsolicited native redraw, not a wheel broadcast; preserve the original strict zero-presentation failure. No compositor/kernel root cause or final pixel claim."
+}
