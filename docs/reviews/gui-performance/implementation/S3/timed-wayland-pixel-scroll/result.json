@@ -1,0 +1,208 @@
+{
+  "status": "bounded actual Wayland timed pixel input/offset proof; full W-SCROLL/HP18/HP23/S3 remain open",
+  "candidate_head": "2569f7d5",
+  "production_code_commit": "4773d8d7",
+  "binary_sha256": "ec6b666391efa6019e3686a0023883677f995965f0c2f7ad074dec60dbb6ffe6",
+  "production_consumers": [
+    "Global Preferences",
+    "Project Preferences"
+  ],
+  "retired_paths": [],
+  "owner_report": "Owner reports laptop display timeout required waking the screen, and power settings have now been adjusted. Preserve earlier failed trial; no retrospective per-event input attribution is inferred.",
+  "setup": "KDE input-only portal Start code0/devices3/clipboardfalse; output temporarily1x with app visual override1, physical1920x1080, Main1280x800 and each dialog960x720. Existing release source/binary hashes verified before launch. Startup pointer movements outside measured streams are preserved.",
+  "proof": {
+    "trials": [
+      {
+        "host": "global",
+        "boundary": "top",
+        "events": 3600,
+        "initial_offset": 0.0,
+        "final_offset": 0,
+        "maximum": 124.0,
+        "exact_delta_and_recurrence": true,
+        "unscripted_pointer_moves": 0,
+        "main_counter_deltas": {
+          "requested": 0,
+          "coalesced": 0,
+          "received": 0,
+          "presentations": 0
+        },
+        "strict_zero_main_presentations_pass": true,
+        "driver": {
+          "time": 1790128400.6684864,
+          "kind": "stream_end",
+          "count": 3600,
+          "elapsed": 30.000170407933183,
+          "max_lateness_seconds": 0.00105892529245466
+        }
+      },
+      {
+        "host": "global",
+        "boundary": "bottom",
+        "events": 3600,
+        "initial_offset": 124.0,
+        "final_offset": 64.0,
+        "maximum": 124.0,
+        "exact_delta_and_recurrence": true,
+        "unscripted_pointer_moves": 0,
+        "main_counter_deltas": {
+          "requested": 0,
+          "coalesced": 0,
+          "received": 1,
+          "presentations": 1
+        },
+        "strict_zero_main_presentations_pass": false,
+        "driver": {
+          "time": 1790128484.7213573,
+          "kind": "stream_end",
+          "count": 3600,
+          "elapsed": 30.00011354603339,
+          "max_lateness_seconds": 0.002046080306172371
+        }
+      },
+      {
+        "host": "project",
+        "boundary": "top",
+        "events": 3600,
+        "initial_offset": 0.0,
+        "final_offset": 0,
+        "maximum": 124.0,
+        "exact_delta_and_recurrence": true,
+        "unscripted_pointer_moves": 0,
+        "main_counter_deltas": {
+          "requested": 0,
+          "coalesced": 0,
+          "received": 0,
+          "presentations": 0
+        },
+        "strict_zero_main_presentations_pass": true,
+        "driver": {
+          "time": 1790128570.8686295,
+          "kind": "stream_end",
+          "count": 3600,
+          "elapsed": 30.000145877012983,
+          "max_lateness_seconds": 0.0017962489509955049
+        }
+      },
+      {
+        "host": "project",
+        "boundary": "bottom",
+        "events": 3600,
+        "initial_offset": 124.0,
+        "final_offset": 64.0,
+        "maximum": 124.0,
+        "exact_delta_and_recurrence": true,
+        "unscripted_pointer_moves": 0,
+        "main_counter_deltas": {
+          "requested": 0,
+          "coalesced": 0,
+          "received": 0,
+          "presentations": 0
+        },
+        "strict_zero_main_presentations_pass": true,
+        "driver": {
+          "time": 1790128636.7369862,
+          "kind": "stream_end",
+          "count": 3600,
+          "elapsed": 30.00013341102749,
+          "max_lateness_seconds": 0.0018731390591710806
+        }
+      }
+    ],
+    "input_free_comparisons": [
+      {
+        "host": "global",
+        "input_free_interval_seconds": 44.7542085647583,
+        "main_counter_deltas": {
+          "requested": 0,
+          "coalesced": 0,
+          "received": 1,
+          "presentations": 1
+        }
+      },
+      {
+        "host": "project",
+        "input_free_interval_seconds": 34.699214935302734,
+        "main_counter_deltas": {
+          "requested": 0,
+          "coalesced": 0,
+          "received": 1,
+          "presentations": 1
+        }
+      }
+    ],
+    "total_events": 14400,
+    "attribution": "All four streams induce zero recorded Main requests/coalesced damage. Global bottom contains one additional native received/present event; input-free intervals also contain one with zero requests. Consistent with unsolicited native redraw, not a wheel broadcast; preserve the original strict zero-presentation failure. No compositor/kernel root cause or final pixel claim."
+  },
+  "strict_locality_failure": "Initial assertion that every frame belonged to Global failed on bottom trial. Do not hide that failure:1 extra Main presentation/native received event, zero recorded Main requests/coalesced damage. No-input comparisons also have1 native event/presentation with zero requests. Source NativeFrameCoordinator::redraw_received/begin_frame accepts such native tokens; this supports unsolicited-native attribution, not a compositor/driver root-cause claim.",
+  "cleanup": "Both owned targets exit0 after SIGTERM cleanup. Portal explicitly closed and display restored to1.05; kscreen-doctor confirms1829x1029 logical geometry and1.05 scale. Cleanup is not overall application teardown qualification.",
+  "limits": [
+    "Four30-second streams at120/s, signs alternate every2s; exact +/-0.25 delivered physical/logical deltas at1x and all14400 offset recurrences verified. This is only the pixel portion of W-SCROLL.",
+    "Separate timed fractional line-delta recipe, other backend/scale/consumer profiles and exact native final pixels/pinned chrome/clip-hit parity remain unqualified.",
+    "No CPU/GPU speedup, input latency/display pacing, complete resource budget or full S3 acceptance. GPU/verbose/timing diagnostics enabled.",
+    "Prior failed3,600-call trial and delta mismatch remain preserved. No arbitrary failure removal or cause asserted solely from owner report.",
+    "No production Rust, dependency/license, prototype, preference authority, numerical budget, sequencing or resize-scope change."
+  ],
+  "artifacts": {
+    "global-result.json.gz": {
+      "sha256_uncompressed": "ef9d7f9d954b84cb914ad64b56fa9e06eef4d2082e44cd03fd2e1f00e9dd0842",
+      "bytes_uncompressed": 5264
+    },
+    "global-native.log.gz": {
+      "sha256_uncompressed": "04e778caf9a68c690aa2de9db2693c1186def573f4ae71a4233577124842c538",
+      "bytes_uncompressed": 15813587
+    },
+    "global-stderr.log.gz": {
+      "sha256_uncompressed": "e8ced4ff26fefb10ffe794f4c63bcf224e3a65f94d0b671f4f43a343d871046d",
+      "bytes_uncompressed": 223440
+    },
+    "global-timed-analysis.json.gz": {
+      "sha256_uncompressed": "d542f76279fecedb9ad952b61596bfe99455456cae497d1b8f20b3a550d21806",
+      "bytes_uncompressed": 1012
+    },
+    "project-result.json.gz": {
+      "sha256_uncompressed": "f4ca060f745e4e2bb212e7300cfe1cde456a7fede372d1777679865ddd40b79b",
+      "bytes_uncompressed": 8838
+    },
+    "project-native.log.gz": {
+      "sha256_uncompressed": "5abbc8df84757bbe4b23e69698c921a7618a81924bb9b0be99366fca02fd6dc2",
+      "bytes_uncompressed": 15810987
+    },
+    "project-stderr.log.gz": {
+      "sha256_uncompressed": "5f7a2e76aa641cb447cb40921923f12368da515b1f31610641e95c0fa88d8db8",
+      "bytes_uncompressed": 223907
+    },
+    "project-timed-analysis.json.gz": {
+      "sha256_uncompressed": "aa7381296689240be5e95d9e1257af7292ca0f14902c56408781f570f2d3d879",
+      "bytes_uncompressed": 1043
+    },
+    "portal-result.json.gz": {
+      "sha256_uncompressed": "cdea84d70755fec14b1530ce7813146868d4988420efb82792b2217644c27c05",
+      "bytes_uncompressed": 2832725
+    },
+    "portal-driver.py.gz": {
+      "sha256_uncompressed": "124970aa6b70f2da02a50d39f1cb935bc0e61c4b9362d551d3d00fbd37abe05a",
+      "bytes_uncompressed": 4262
+    },
+    "target-driver.py.gz": {
+      "sha256_uncompressed": "3c6fdf3d102571144e4c8d26e0459df72ed0e7d3fe239b5d8b8d7ab1b7918544",
+      "bytes_uncompressed": 3448
+    },
+    "analyzer.py.gz": {
+      "sha256_uncompressed": "f28e9041b824881d6251a4c7dec2cb2c821d3f7bbf7bf73a7e02b3213723cc39",
+      "bytes_uncompressed": 3901
+    },
+    "initial-strict-analyzer.py.gz": {
+      "sha256_uncompressed": "2f010413647cf424634298d430fe20b2bd8c862878791047e81d729f933b6348",
+      "bytes_uncompressed": 1935
+    },
+    "per-trial-analyzer.py.gz": {
+      "sha256_uncompressed": "471524c1fb6e190be662d8a819173245ab273927ac8cac71348b2c5b14843596",
+      "bytes_uncompressed": 2046
+    },
+    "display-restored.txt.gz": {
+      "sha256_uncompressed": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+      "bytes_uncompressed": 862
+    }
+  }
+}
