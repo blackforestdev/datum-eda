@@ -201,6 +201,68 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
         device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
     }
     assert_eq!(renderer.world_upload_chunk_count(), 5);
+    // Switching away from the board cancels an unfinished cold upload. The
+    // document remains loaded, but neither its GPU payload nor upload work is needed.
+    retained.world_vertices = SharedGeometry::for_document(vertices.clone(), "cold-world-proof");
+    assert!(
+        !renderer
+            .render_with_submission(
+                &device,
+                &queue,
+                &view,
+                &prepared,
+                &retained,
+                None,
+                960,
+                720,
+                &mut |_| {}
+            )
+            .unwrap()
+    );
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    assert!(renderer.pending_world_upload_bytes() > 0);
+    let mut hidden = prepared.clone();
+    hidden
+        .surface_passes
+        .retain(|pass| pass.surface != crate::SceneSurface::Board);
+    assert!(
+        !hidden.surface_passes.is_empty(),
+        "fixture has a non-board pane"
+    );
+    let uploaded = renderer.world_upload_chunk_bytes();
+    let retired_id = renderer
+        .world_vertices_gpu
+        .submission_ref()
+        .unwrap()
+        .allocation_id;
+    renderer
+        .render(&device, &queue, &view, &hidden, &retained, None, 960, 720)
+        .unwrap();
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    assert_eq!(
+        renderer.world_upload_chunk_bytes(),
+        uploaded,
+        "hidden board adds no world upload"
+    );
+    assert_eq!(renderer.pending_world_upload_bytes(), 0);
+    assert!(renderer.world_vertices_gpu.buffer().is_none());
+    assert!(renderer.world_strokes_gpu.buffer().is_none());
+    assert!(
+        !Renderer::gpu_process_allocations()
+            .iter()
+            .any(|record| record.id == retired_id)
+    );
+    // Reopening reconstructs the current geometry. The readback below verifies
+    // complete content, not just allocation size or a successful submission.
+    renderer
+        .render(&device, &queue, &view, &prepared, &retained, None, 960, 720)
+        .unwrap();
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    assert_eq!(
+        renderer.world_upload_chunk_bytes() - uploaded,
+        (std::mem::size_of_val(vertices.as_slice())
+            + std::mem::size_of_val(retained.world_strokes().as_ref())) as u64
+    );
     let expected: &[u8] = bytemuck::cast_slice(&vertices);
     let readback = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,

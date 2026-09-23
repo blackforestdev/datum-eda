@@ -100,7 +100,7 @@ impl Renderer {
         board_interaction: &[Vertex],
         console_overlay: &[Vertex],
         menu_overlay: &[Vertex],
-        world: &gpu_data::shared_geometry::SharedGeometry<Vertex>,
+        world: Option<&gpu_data::shared_geometry::SharedGeometry<Vertex>>,
         schematic_world: Option<&RetainedScene>,
         schematic_underlay: &[Vertex],
         schematic_overlay: &[Vertex],
@@ -132,8 +132,13 @@ impl Renderer {
             "datum-gui-render-menu-overlay-vertex-buffer",
             menu_overlay,
         )?;
-        self.world_vertices_gpu
-            .sync(device, queue, "datum-world-vertices", world)?;
+        if let Some(world) = world {
+            self.world_vertices_gpu
+                .sync(device, queue, "datum-world-vertices", world)?;
+        } else {
+            self.world_vertices_gpu.clear();
+            self.world_strokes_gpu.clear();
+        }
         if let Some(scene) = schematic_world {
             self.schematic_world_vertices_gpu.sync(
                 device,

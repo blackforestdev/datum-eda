@@ -3979,6 +3979,11 @@
           "work": "s4_text_owner_reconciliation.rich_input_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
           "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
+        },
+        {
+          "work": "s4_hidden_world_adoption",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json",
+          "status": "Default frame preparation and cold continuation stop board uploads when prepared surfaces have no board consumer"
         }
       ]
     },
@@ -5950,7 +5955,14 @@
         "proof": "219 renderer tests pass. Existing Preferences legacy comparison retains identical vertices/text/hits across profiles; New constrained form compares native layout against old shell layout at1/1.5/2x and retains reveal tests. All native profiles assert empty editor regions and physical clip/hit bounds. GPU dialog parity passes1 test/259 filtered against general and legacy rendering. Workspace Clippy, fresh release and13 source-policy tests pass. New binarybcbe537b native Global/Project1.5x and New2x scrollbar close/release/fresh Main click replays pass.",
         "limits": "Structural removal of native editor-shell solver work, not a numerical CPU/allocation budget or full HP12/HP13 acceptance. ShellLayout remains the prepared-scene envelope; status-edge arithmetic retained for exact dialog geometry. Main editor still uses its governed shell solver. No new solver-counter conformance or isolated shell-solver negative replay. Remaining S3 native/backend/visual/resource qualification stays open. No dependency/license/prototype/resize change."
       },
-      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row.",
+      "s4_implementation_progress": [
+        {
+          "work": "s4_hidden_world_adoption",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json",
+          "status": "Default frame preparation and cold continuation stop board uploads when prepared surfaces have no board consumer"
+        }
+      ]
     },
     {
       "id": "HP12-02",
@@ -18271,7 +18283,14 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_hidden_world_adoption",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json",
+          "status": "Default frame preparation and cold continuation stop board uploads when prepared surfaces have no board consumer"
+        }
+      ]
     },
     {
       "id": "Q-CPU-P95",
@@ -35977,5 +35996,33 @@
       "No production code, dependency/vendor/license, prototype, numerical cap or sequencing change. Owner/Copilot engine-test edit excluded."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/replacement-review/result.json"
+  },
+  "s4_hidden_world_adoption": {
+    "status": "Default frame preparation and cold continuation stop board uploads when prepared surfaces have no board consumer",
+    "production_consumers": [
+      "Full Renderer frame preparation and shared retained-world continuation",
+      "Dialog-only renderer retirement of prior world allocations"
+    ],
+    "retired_paths": [
+      "Unconditional board vertex/stroke synchronization in every full frame",
+      "Cold continuation matching board CPU identity without checking whether the board is still drawn",
+      "Retention of prior board/schematic allocation owners after switching a renderer to dialog-only content"
+    ],
+    "behavior": [
+      "Prepared board-world demand includes composed board surfaces and the existing single-viewport fallback with visible board commands. No draw path is removed or restyled.",
+      "When demand disappears, source matching rejects an unfinished board continuation. Preparation clears pending source/upload state and both board GPU owners instead of copying another chunk. Existing submission holds preserve already submitted resources until completion.",
+      "Dialog-only rendering clears all four world stream owners together with world bundles/uniforms. Reopening uses authoritative retained CPU geometry and the existing bounded cold-upload path."
+    ],
+    "proof": {
+      "renderer": "386 renderer tests passed;0 failed;11 filtered. The actual-GPU cold-world test now switches away during a multi-chunk upload, verifies zero added world bytes, no pending bytes, owner release and allocation disappearance after completion, then reopens and compares complete buffer readback with current retained vertices. Existing renderer pixel/parity and recovery cases passed.",
+      "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2297files and governance checks pass.",
+      "failed_attempt": "Initial compile exposed the timing diagnostic still calling len on the newly optional board input; corrected to report zero absent vertices. Preserve initial compile log."
+    },
+    "limits": [
+      "The audit reconfirmed MEM-01 explicitly requires consumer/resource-generation attribution; REUSE-SCREEN stays open. This change does not complete that accounting or close any of the seven recorded S4 implementation gaps.",
+      "This is renderer world-upload/retirement behavior, not proof of all native hidden-work scheduling, CPU scene preparation, resource budgets or S5 qualification. Schematic full-frame selection retains its existing prepare_schematic_pass contract.",
+      "No dependency/vendor/license, prototype, numerical-cap or sequencing change. Preserve GEFN, nonblocking resize and owner/Copilot engine-file changes."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json"
   }
 }
