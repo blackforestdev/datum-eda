@@ -1,0 +1,40 @@
+{
+  "status": "Default retained process apertures borrow pad data and compute only bounds",
+  "base_commit": "baf3b907",
+  "production_consumers": [
+    "Retained board copper, mask/paste apertures and selected-pad overlay"
+  ],
+  "retired_paths": [
+    "Full PadPrimitive and layer-name cloning for each retained process aperture; owned adapter now test-only"
+  ],
+  "proof": {
+    "renderer": "379 passed; 0 failed; 11 filtered. Existing aperture, retained geometry and refusal tests preserved.",
+    "build": "Fresh datum-gui visual application build passed offline.",
+    "selection_reconciliation": "render/selection_relation.rs resolves component identity through borrowed strings and iteration. No production selection-relation cache exists; remove that stale implementation-gap assertion."
+  },
+  "limitations": [
+    "No complete CPU/staging/accounting or S4 closure. Concurrent constructor admission and weak-observer lifetime accounting remain unreconciled; original S5 qualification remains required.",
+    "No dependency, license, prototype, numeric cap or sequencing change. GEFN and nonblocking resize preserved. Owner/Copilot engine tests excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/process-pad/renderer.log.gz",
+      "uncompressed_sha256": "5248e92d995fba9a2e764c69f10252f0c21ce61d8115071afd2456f1ad4490ea"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/process-pad/build.log.gz",
+      "uncompressed_sha256": "908376d0b15c6c3d8895f75033e5a7309fd294a04e0f63086fc438d5fa53ae36"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/process-pad/check.log.gz",
+      "uncompressed_sha256": "60bc77f51a49a1bfd6425230d39a945f419b4b5a3c36952a19d6a5a1a02c8209"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/pads_and_layers.rs": "00451a6f009c21367005789008fbd0f039524e2647e0a99831fbc96a4d59f313",
+    "crates/gui-render/src/render/retained.rs": "c74f1ff7fcc2144adf2d81d3c0f6c564b9110772523d4384323637f4e637bafc",
+    "crates/gui-render/src/render/world_primitives.rs": "a65ea3aa387fcfd0280643dfce3f0384b39dd1fa661defdaef87b5603a67d752",
+    "crates/gui-render/src/render/selection_relation.rs": "4511640bfc9b60e55fe279035b6841fb982fa95c9b4e2766c0d313ff197bac4e"
+  }
+}
