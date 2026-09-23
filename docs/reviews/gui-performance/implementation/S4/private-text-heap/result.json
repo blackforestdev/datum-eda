@@ -1,0 +1,124 @@
+{
+  "status": "Datum scoped Rust allocation accounting installed in native GUI; private text lifetimes observable, full cap/overhead qualification remains open",
+  "base_commit": "93027ec4",
+  "production_consumers": [
+    "Native datum-gui executable allocator installed at native_gpu boundary",
+    "Renderer font construction and shared full/overlay prepare_frame_text scope",
+    "Shared font catalog and scalar width/wrapped-height FontSystem measurement scopes",
+    "Renderer::text_cpu_usage and cpu_alloc::usage process observations"
+  ],
+  "retired_paths": [
+    "Public output-vector capacities as the only available evidence for private FontSystem/ShapeBuffer/Swash Rust heap allocations in the native GUI"
+  ],
+  "behavior": [
+    "Original Datum System allocator wrapper records requested Rust layout bytes and prefix alignment/header bytes separately. Allocated blocks retain an Arc to their stable scope owner through realloc and deallocation on any thread; no dependency private layout is read.",
+    "Synchronous nested scope restoration survives unwinding. Scope creation and observation allocate outside tracked domains to avoid ownership cycles and recursive observation. Failed layout/reallocation leaves original ownership intact.",
+    "Default native font creation and text preparation are scoped; shared catalog and measurement scopes are separate. Private capacities remain observable after the scope handle closes until the last allocated block frees. Owner ID matches each renderer local report to process observation.",
+    "Reports explicitly include allocator_installed. Reusable renderer-library consumers without the executable allocator cannot treat zero counters as a passing result. Logical public cache reports overlap these allocation scopes and must not be summed."
+  ],
+  "proof": {
+    "allocator": "6 final conformance tests passed: exact Vec capacity growth/shrink, cross-thread deallocation, nested/unwind restoration,4096-byte alignment/zeroing/reallocation, impossible-layout failure, observation after scope close, shared Arc/weak lifetime and equal-size replacement, and actual private font/shape/raster close-to-zero.",
+    "renderer": "255 final renderer unit tests passed after raw-Arc/realloc-contract reconciliation;7 text/GPU owner tests including60pixel oracle and14 production GPU regressions passed before that ownership correction. The final private-font/raster conformance tests and native capture verify the corrected path.",
+    "app": "380 native application tests passed,16 intentionally ignored.",
+    "failed_attempts": "Initial unwind test assumed test-harness panic-output allocation was released immediately; the accounting correctly retained338bytes. Separate the panic-output domain from the independently checked restoration domain. Initial include-root placement tripped immutable touched-monolith shrink policy; put accounting under renderer resource ownership and move text-color conversion beside font attributes, lowering existing ceilings.",
+    "safety_review": "Reviewed official GlobalAlloc non-unwind/layout/realloc contracts, Layout::extend alignment and Arc raw-reference requirements. Corrected initial borrowed Arc::as_ptr ownership to an explicit into_raw/from_raw scope guard; replaced out-of-contract usize::MAX realloc test with the largest valid aligned request, which the allocator prefix cannot fit. No source copied. Final allocator/native proof follows these corrections.",
+    "review_sources": [
+      "https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html",
+      "https://doc.rust-lang.org/std/alloc/struct.Layout.html#method.extend",
+      "https://doc.rust-lang.org/std/sync/struct.Arc.html#method.increment_strong_count"
+    ],
+    "native": "Final visual-feature datum-gui build and native1680x1050 datum-test/R1 capture completed with exit0 after the raw-Arc/realloc-contract corrections. Inspected rendered board, schematic, labels and inspector. Decoded RGBA bytes equal the earlier candidate capture; this is correction parity, not a System-only performance baseline or full native qualification.",
+    "lint_policy": "Final combined gui-render/gui-app all-targets visual Clippy passes -D warnings. Source health2237files and13 policy tests, dependency authority, terminal convergence, project state, traceability, spec governance/parity pass. Unchanged full drift/endurance not rerun; known Console golden failure remains separately unqualified."
+  },
+  "limits": [
+    "This changes the native executable allocator wrapper. Unscoped allocations also carry a prefix; per-scope tracking_bytes does not claim all process tracking metadata. Runtime overhead, allocator slack, native malloc/mappings, driver memory and RSS remain separate and unqualified.",
+    "Scopes cover Rust allocations made synchronously at the stated boundaries, including owned output/cache and some library metadata. They are not an exclusive private-field decomposition, automatic background-thread attribution, complete per-allocation event history or host-incidence qualification.",
+    "Complete per-resource admission/classification, active-frame/private scratch caps, staging/chunking and aggregate CPU/GPU caps remain required atS4. This validates a lifetime-aware method; it does not close full ACC/MEM predicates or S4/S5.",
+    "No dependency, vendor, registry-source modification, unsafe dependency-layout inference, prototype/font/budget/resize amendment. No performance or global adoption acceptance.",
+    "Counts describe allocator calls that actually occur; optimized-away allocations need no heap accounting. Counter values are never an unsafe correctness precondition. No allocator hook callback uses registry mutexes or formatting; scope control/observation is outside callbacks."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json",
+  "logs": {
+    "unit": {
+      "path": "unit.log.gz",
+      "uncompressed_sha256": "4800b2c30bbf90b6d1ab89d273203b7dc299d15ffb496641ec656766e158bcca"
+    },
+    "all-unit": {
+      "path": "all-unit.log.gz",
+      "uncompressed_sha256": "ea8b7b8ba5cea4c842d87210b6b19a97dbc264e9b38a32b6b4a3f2e84a4760aa"
+    },
+    "unit-final": {
+      "path": "unit-final.log.gz",
+      "uncompressed_sha256": "312f0f4e9a566534446ad9ff64f75409f8bd971e2f3b2c4d2dba4bdf2645d051"
+    },
+    "unit-contract": {
+      "path": "unit-contract.log.gz",
+      "uncompressed_sha256": "b97a81206bf65e55cd99b6caa8dad12d073d32858e95ac172c33160be4514dd8"
+    },
+    "final-unit": {
+      "path": "final-unit.log.gz",
+      "uncompressed_sha256": "bfd9cbf31ca17c453321a11a85d97b8e0e1f0b1cece5acc44f18adf12091cf62"
+    },
+    "owner": {
+      "path": "owner.log.gz",
+      "uncompressed_sha256": "7039cb22cfe77d090f9e037c1ec0dfdefc6a323789afd0d1016df4c4f0bf29b4"
+    },
+    "gpu": {
+      "path": "gpu.log.gz",
+      "uncompressed_sha256": "e1ab9bafd007ec6866b103187ea846473f42aca92387351d9b6238ed3979078c"
+    },
+    "app-unit": {
+      "path": "app-unit.log.gz",
+      "uncompressed_sha256": "1dad5c83f378011fb92081a6925143aafcbff812869306e7cf45c1c9372aed66"
+    },
+    "native": {
+      "path": "native.log.gz",
+      "uncompressed_sha256": "40c2b7aeefea794fd8f42ab094311be291c3c0841b42e12b299f36c852bfc2c1"
+    },
+    "native-final": {
+      "path": "native-final.log.gz",
+      "uncompressed_sha256": "a882fe6413aad6fba7362353d54f50ec9970b47fafb02552b75a5fc6af0d8733"
+    },
+    "clippy-final": {
+      "path": "clippy-final.log.gz",
+      "uncompressed_sha256": "94e8a34e848d25fa9074ba965aac93b8a6fe7877f24bee4e9d63da7df83b0589"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/native_gpu.rs": "7f63670b9f04ef38f1bac1435113e995031c86f51124308313d2c3cd8d87fa1e",
+    "crates/gui-render/src/render/geometry.rs": "bc0dba2c600bccac7336c90b8642280b2abe151f6721765708ab39ddb3d7b17e",
+    "crates/gui-render/src/render/gpu.rs": "a5e24ba1ab8285cf1d7d83f1dcf2ce14c1c9dbad0fd2e4e02a2353308d8f5e28",
+    "crates/gui-render/src/render/gpu_init.rs": "42ade63b17cc64e1fe0a063ba42b3a730246d6252e62014b1e81bdb3f3b1bf86",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "9eba3494b89b494359fc62c7fb8e44538f5cb150856ced4015564b2c40b311a4",
+    "crates/gui-render/src/render/gpu_text.rs": "5baafc2cd12e8a188486b5f9615807f8a4e62213de63b4610e63da4118bb2d76",
+    "crates/gui-render/src/render/renderer_state.rs": "72a5c84a094d85ea29f0a60190cc401ae7b0d691e3540cbcd3626a02ca701360",
+    "crates/gui-render/src/render/text_metrics.rs": "6d07e2b1643ec3ec9475f084c6bf596f33d56d1e1ebbd5a41ca262a59cb1eb23",
+    "crates/gui-render/src/cpu_alloc.rs": "399417ac5a50bd307d528e7ecccbf3bcf7720ac6006513f93d76e7c1fd71b320",
+    "crates/gui-render/src/cpu_alloc_tests.rs": "ae8ac5a64ce84a2e4c44250852698b28a59d83cf7f0262e0b41ae3f523fe84c3"
+  },
+  "application_sha256": "7927f6d896330883d3cac42b5ba1ad2839a3818b67a1b1f616db4b93ec61a981",
+  "native_capture": {
+    "path": "native.png",
+    "sha256": "40e986a2655402722e7ebb62db7dacbfdbd02134da611989bfd2b12db0a81d2a",
+    "size": [
+      1680,
+      1050
+    ],
+    "earlier_candidate_rgba_equal": true,
+    "qualification": "One native executable capture; no OS-input/backend matrix or performance acceptance."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib cpu_alloc -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual text_gpu -- --include-ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual gpu_overlay_tests -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render -p datum-gui-app --all-targets --features visual -- -D warnings",
+    "timeout 120s python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --offline -p datum-gui-app --bin datum-gui --features visual -- --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb --select R1 --visual-test --screenshot-out /tmp/pm045-private-text-native-final.png --window-size 1680x1050 --exit-after-screenshot"
+  ],
+  "environment": {
+    "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)",
+    "kernel": "Linux 6.12.107+deb13-amd64 x86_64 GNU/Linux",
+    "scope": "Local x86_64 native executable and explicit GPU tests; no sanitizer/Miri or portable backend qualification claim."
+  }
+}

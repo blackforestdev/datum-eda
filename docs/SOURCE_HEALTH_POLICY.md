@@ -88,6 +88,14 @@ immutable shape payloads and independent visible layout rows replace opaque
 retained buffers. Unit, extent-reuse and installed-renderer pixel comparisons
 cover this ownership change; private font/scratch accounting remains open.
 
+PM045 S4 scoped private-text accounting keeps the allocator implementation in
+normal `cpu_alloc` and moves the existing text-color conversion beside font/text
+attributes in `render/text_metrics`. Native allocator installation stays at the
+existing shared native GPU boundary. The renderer include ceiling falls from
+7,159 to 7,153 lines and geometry production from 1,189 to 1,183; no exception or
+limit increase is introduced. Allocator conformance and text pixel parity support
+this ownership change; full overhead/resource qualification remains separate.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

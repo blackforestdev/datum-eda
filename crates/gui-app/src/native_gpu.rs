@@ -1,4 +1,8 @@
 //! Shared native device creation and explicit measurement feature admission.
+#[global_allocator]
+static TEXT_ACCOUNTING_ALLOCATOR: datum_gui_render::cpu_alloc::Allocator =
+    datum_gui_render::cpu_alloc::Allocator;
+
 use super::*;
 
 pub(super) type Bundle = (

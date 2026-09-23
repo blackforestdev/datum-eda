@@ -4,7 +4,9 @@ use text_buffer_cache::build_text_areas;
 
 #[path = "text_metrics.rs"]
 mod text_metrics;
-use text_metrics::{load_datum_fonts, measure_font_system, measured_text_run_width_px, text_attrs};
+use text_metrics::{
+    load_datum_fonts, measure_font_system, measured_text_run_width_px, text_attrs, text_color,
+};
 
 fn push_points(
     out: &mut Vec<Quad>,
@@ -1150,14 +1152,6 @@ fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
             run.size *= scale;
         }
     }
-}
-
-fn text_color(color: [f32; 3]) -> Color {
-    Color::rgb(
-        (color[0].clamp(0.0, 1.0) * 255.0).round() as u8,
-        (color[1].clamp(0.0, 1.0) * 255.0).round() as u8,
-        (color[2].clamp(0.0, 1.0) * 255.0).round() as u8,
-    )
 }
 
 fn text_prepare_signature(

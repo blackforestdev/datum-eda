@@ -3829,7 +3829,8 @@
         "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
         "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
         "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
-        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
+        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json",
+        "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
       ],
       "s4_owned_text_gpu_progress": {
         "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
@@ -3846,6 +3847,10 @@
       "s4_atlas_process_admission_progress": {
         "implementation": "Default pre-allocation128MiB process atlas reservation retained through real resource/submission lifetime; weak process text allocation enumeration. See s4_atlas_process_admission_work.",
         "remaining": "Original full resource/accounting implementation and combined subcap obligations dueS4; full native/resource qualification dueS5. No acceptance-rule or status change."
+      },
+      "s4_private_text_heap_progress": {
+        "implementation": "Default native executable scoped Rust allocation ownership for font construction, text preparation and measurements. Private font/shape/raster lifetime conformance and production GPU bridge verified.",
+        "remaining": "Original full accounting/admission and qualification remain; overlapping logical/allocation views must not be summed. No predicate closure."
       }
     },
     {
@@ -15088,7 +15093,8 @@
         "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
         "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
         "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json",
-        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -15113,6 +15119,10 @@
       "s4_text_process_retention_progress": {
         "implementation": "Default owner registration/public-capacity publication and serialized process post-frame admission; see s4_text_process_retention_work.",
         "remaining": "Original complete active/private/shared/lifetime accounting and admission dueS4; qualification dueS5. No predicate closure."
+      },
+      "s4_private_text_heap_progress": {
+        "implementation": "Default native executable scoped Rust allocation ownership for font construction, text preparation and measurements. Private font/shape/raster lifetime conformance and production GPU bridge verified.",
+        "remaining": "Original full accounting/admission and qualification remain; overlapping logical/allocation views must not be summed. No predicate closure."
       }
     },
     {
@@ -15209,7 +15219,8 @@
         "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
         "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
         "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json",
-        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -15234,6 +15245,10 @@
       "s4_text_process_retention_progress": {
         "implementation": "Default owner registration/public-capacity publication and serialized process post-frame admission; see s4_text_process_retention_work.",
         "remaining": "Original complete active/private/shared/lifetime accounting and admission dueS4; qualification dueS5. No predicate closure."
+      },
+      "s4_private_text_heap_progress": {
+        "implementation": "Default native executable scoped Rust allocation ownership for font construction, text preparation and measurements. Private font/shape/raster lifetime conformance and production GPU bridge verified.",
+        "remaining": "Original full accounting/admission and qualification remain; overlapping logical/allocation views must not be summed. No predicate closure."
       }
     },
     {
@@ -31340,7 +31355,8 @@
       "still_requires_validation": "Private FontSystem shaping scratch and Swash ScaleContext lifetime/capacity remain to be accounted for by a validated Datum-owned method. Public output-vector capacities alone are insufficient. The route is not a conformance result or an assertion that all private accounting is solved.",
       "migration_boundary": "Reuse the shared font authority and native/device owners; migrate bounded consumers with legacy parity and counter conformance, then retire competing production text paths. All original resource limits and S5 qualifications remain required.",
       "gpu_progress": "Default Atlas/Draw migration recorded in s4_owned_text_gpu_work. Existing Buffer/FontSystem remain shaping owners; all full accounting/cap requirements still apply.",
-      "current_draw_bridge": "Datum Draw consumes owned TextLayout layout-run iterators. Production retained Buffer/BufferLine caches are retired; public ShapeLine/LayoutLine payloads are directly owned and counted. FontSystem/ShapeBuffer/ScaleContext scratch and complete caps remain unfinished."
+      "current_draw_bridge": "Datum Draw consumes owned TextLayout layout-run iterators. Production retained Buffer/BufferLine caches are retired; public ShapeLine/LayoutLine payloads are directly owned and counted. FontSystem/ShapeBuffer/ScaleContext scratch and complete caps remain unfinished.",
+      "private_heap_progress": "Native executable now uses Datum scoped System allocation ownership; see s4_private_text_heap_work. Private synchronous Rust allocation lifetimes are observable without dependency edits. Exclusive resource classification, complete caps and overhead/native qualification remain unfinished."
     }
   },
   "s4_shared_geometry_work": {
@@ -31600,5 +31616,46 @@
       "No full MEM-ATLAS, ACC, S4/S5, native/endurance or relative-performance acceptance; no dependency/vendor/prototype/font/numerical budget/resize amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
+  },
+  "s4_private_text_heap_work": {
+    "status": "Datum scoped Rust allocation accounting installed in native GUI; private text lifetimes observable, full cap/overhead qualification remains open",
+    "base_commit": "93027ec4",
+    "production_consumers": [
+      "Native datum-gui executable allocator installed at native_gpu boundary",
+      "Renderer font construction and shared full/overlay prepare_frame_text scope",
+      "Shared font catalog and scalar width/wrapped-height FontSystem measurement scopes",
+      "Renderer::text_cpu_usage and cpu_alloc::usage process observations"
+    ],
+    "retired_paths": [
+      "Public output-vector capacities as the only available evidence for private FontSystem/ShapeBuffer/Swash Rust heap allocations in the native GUI"
+    ],
+    "behavior": [
+      "Original Datum System allocator wrapper records requested Rust layout bytes and prefix alignment/header bytes separately. Allocated blocks retain an Arc to their stable scope owner through realloc and deallocation on any thread; no dependency private layout is read.",
+      "Synchronous nested scope restoration survives unwinding. Scope creation and observation allocate outside tracked domains to avoid ownership cycles and recursive observation. Failed layout/reallocation leaves original ownership intact.",
+      "Default native font creation and text preparation are scoped; shared catalog and measurement scopes are separate. Private capacities remain observable after the scope handle closes until the last allocated block frees. Owner ID matches each renderer local report to process observation.",
+      "Reports explicitly include allocator_installed. Reusable renderer-library consumers without the executable allocator cannot treat zero counters as a passing result. Logical public cache reports overlap these allocation scopes and must not be summed."
+    ],
+    "proof": {
+      "allocator": "6 final conformance tests passed: exact Vec capacity growth/shrink, cross-thread deallocation, nested/unwind restoration,4096-byte alignment/zeroing/reallocation, impossible-layout failure, observation after scope close, shared Arc/weak lifetime and equal-size replacement, and actual private font/shape/raster close-to-zero.",
+      "renderer": "255 final renderer unit tests passed after raw-Arc/realloc-contract reconciliation;7 text/GPU owner tests including60pixel oracle and14 production GPU regressions passed before that ownership correction. The final private-font/raster conformance tests and native capture verify the corrected path.",
+      "app": "380 native application tests passed,16 intentionally ignored.",
+      "failed_attempts": "Initial unwind test assumed test-harness panic-output allocation was released immediately; the accounting correctly retained338bytes. Separate the panic-output domain from the independently checked restoration domain. Initial include-root placement tripped immutable touched-monolith shrink policy; put accounting under renderer resource ownership and move text-color conversion beside font attributes, lowering existing ceilings.",
+      "safety_review": "Reviewed official GlobalAlloc non-unwind/layout/realloc contracts, Layout::extend alignment and Arc raw-reference requirements. Corrected initial borrowed Arc::as_ptr ownership to an explicit into_raw/from_raw scope guard; replaced out-of-contract usize::MAX realloc test with the largest valid aligned request, which the allocator prefix cannot fit. No source copied. Final allocator/native proof follows these corrections.",
+      "review_sources": [
+        "https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html",
+        "https://doc.rust-lang.org/std/alloc/struct.Layout.html#method.extend",
+        "https://doc.rust-lang.org/std/sync/struct.Arc.html#method.increment_strong_count"
+      ],
+      "native": "Final visual-feature datum-gui build and native1680x1050 datum-test/R1 capture completed with exit0 after the raw-Arc/realloc-contract corrections. Inspected rendered board, schematic, labels and inspector. Decoded RGBA bytes equal the earlier candidate capture; this is correction parity, not a System-only performance baseline or full native qualification.",
+      "lint_policy": "Final combined gui-render/gui-app all-targets visual Clippy passes -D warnings. Source health2237files and13 policy tests, dependency authority, terminal convergence, project state, traceability, spec governance/parity pass. Unchanged full drift/endurance not rerun; known Console golden failure remains separately unqualified."
+    },
+    "limits": [
+      "This changes the native executable allocator wrapper. Unscoped allocations also carry a prefix; per-scope tracking_bytes does not claim all process tracking metadata. Runtime overhead, allocator slack, native malloc/mappings, driver memory and RSS remain separate and unqualified.",
+      "Scopes cover Rust allocations made synchronously at the stated boundaries, including owned output/cache and some library metadata. They are not an exclusive private-field decomposition, automatic background-thread attribution, complete per-allocation event history or host-incidence qualification.",
+      "Complete per-resource admission/classification, active-frame/private scratch caps, staging/chunking and aggregate CPU/GPU caps remain required atS4. This validates a lifetime-aware method; it does not close full ACC/MEM predicates or S4/S5.",
+      "No dependency, vendor, registry-source modification, unsafe dependency-layout inference, prototype/font/budget/resize amendment. No performance or global adoption acceptance.",
+      "Counts describe allocator calls that actually occur; optimized-away allocations need no heap accounting. Counter values are never an unsafe correctness precondition. No allocator hook callback uses registry mutexes or formatting; scope control/observation is outside callbacks."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
   }
 }
