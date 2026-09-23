@@ -200,8 +200,8 @@ fn shared_document_history_metadata_is_charged_per_owner_and_released_on_take() 
     key.scene_id = state.scene.scene_id.clone();
     key.selection = "selected-object".repeat(128);
     let second_key = key.clone();
-    let first_charge = key.heap_bytes().unwrap() + std::mem::size_of::<Entry>();
-    let second_charge = second_key.heap_bytes().unwrap() + std::mem::size_of::<Entry>();
+    let first_charge = key.heap_bytes().unwrap() + capacity_bytes::<Entry>(1);
+    let second_charge = second_key.heap_bytes().unwrap() + capacity_bytes::<Entry>(1);
     first.insert(key.clone(), scene.clone());
     assert_eq!(
         observer.document_cpu_payload_bytes(),
@@ -227,4 +227,82 @@ fn shared_document_history_metadata_is_charged_per_owner_and_released_on_take() 
     drop(second);
     assert_eq!(observer.document_cpu_payload_bytes(), baseline);
     assert_eq!(restored, scene);
+}
+
+#[test]
+fn document_history_container_charges_spare_capacity_and_growth_overlap() {
+    for fits_overlap in [false, true] {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.scene_id = format!("history-document-container-{fits_overlap}");
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let observer = scene.geometry_observer();
+        let baseline = observer.document_cpu_payload_bytes();
+        let mut history = RetainedSceneHistory::default();
+        history.insert(tests::key(0), scene.clone());
+        history.insert(tests::key(1), scene.clone());
+        let candidate_key = tests::key(2);
+        let peak = observer.document_cpu_payload_bytes()
+            + candidate_key.heap_bytes().unwrap()
+            + capacity_bytes::<Entry>(4);
+        history.insert_document(
+            candidate_key,
+            scene.clone(),
+            peak - usize::from(!fits_overlap),
+        );
+        assert_eq!(history.entries.len(), if fits_overlap { 3 } else { 2 });
+        assert_eq!(history.entries.capacity(), if fits_overlap { 4 } else { 2 });
+        let expected_keys: usize = history
+            .entries
+            .iter()
+            .map(|entry| entry.key.heap_bytes().unwrap())
+            .sum();
+        assert_eq!(
+            observer.document_cpu_payload_bytes(),
+            baseline + expected_keys + capacity_bytes::<Entry>(history.entries.capacity())
+        );
+        let restored = history.take(&tests::key(2)).unwrap();
+        let remaining_keys: usize = history
+            .entries
+            .iter()
+            .map(|entry| entry.key.heap_bytes().unwrap())
+            .sum();
+        assert_eq!(
+            observer.document_cpu_payload_bytes(),
+            baseline + remaining_keys + capacity_bytes::<Entry>(history.entries.capacity())
+        );
+        history.clear();
+        assert_eq!(history.entries.capacity(), 0);
+        assert!(history.entry_storage.is_none());
+        assert_eq!(observer.document_cpu_payload_bytes(), baseline);
+        assert_eq!(restored, scene);
+    }
+}
+
+#[test]
+fn history_storage_retains_allocating_document_identity_until_release() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "history-storage-owner-first".into();
+    let first = RetainedScene::from_workspace(&state, 960, 720);
+    let mut history = RetainedSceneHistory::default();
+    history.insert(tests::key(0), first);
+    state.scene.scene_id = "history-storage-owner-second".into();
+    let second = RetainedScene::from_workspace(&state, 960, 720);
+    let observer = second.geometry_observer();
+    history.insert(tests::key(1), second);
+    drop(history.take(&tests::key(1)).unwrap());
+    // The second document caused vector growth. Its scene can disappear while
+    // the allocation remains live with another document's entry in it.
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        capacity_bytes::<Entry>(history.entries.capacity())
+    );
+    let reopened = RetainedScene::from_workspace(&state, 960, 720);
+    assert!(observer.shares_document_with(&reopened.geometry_observer()));
+    let before_clear = observer.document_cpu_payload_bytes();
+    let storage = capacity_bytes::<Entry>(history.entries.capacity());
+    history.clear();
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        before_clear - storage
+    );
 }

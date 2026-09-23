@@ -15088,6 +15088,11 @@
           "work": "s4_history_document_metadata_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/result.json",
           "status": "Document history keys and occupied entry storage charged across live history owners"
+        },
+        {
+          "work": "s4_history_storage_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-storage/result.json",
+          "status": "History vector full capacity and allocator header charged through allocation lifetime"
         }
       ]
     },
@@ -15201,6 +15206,11 @@
           "work": "s4_history_document_metadata_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/result.json",
           "status": "Document history keys and occupied entry storage charged across live history owners"
+        },
+        {
+          "work": "s4_history_storage_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-storage/result.json",
+          "status": "History vector full capacity and allocator header charged through allocation lifetime"
         }
       ]
     },
@@ -34280,5 +34290,30 @@
       "Twelve implementation gaps and all original S5 qualification remain open. Existing Console golden discrepancy and nonblocking resize disposition unchanged. No dependency, vendor, license, visual prototype, numerical cap or sequencing change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/history-document-metadata/result.json"
+  },
+  "s4_history_storage_work": {
+    "status": "History vector full capacity and allocator header charged through allocation lifetime",
+    "base_commit": "19e33a56",
+    "production_consumers": [
+      "RetainedSceneHistory growth, reuse, eviction, restoration, clearing and destruction",
+      "Shared retained document CPU usage and admission"
+    ],
+    "retired_paths": [
+      "Occupied Entry estimates omitted unused vector slots and allocator headers",
+      "Weak-only metadata identity could disappear while allocation storage outlived its allocating scene"
+    ],
+    "behavior": [
+      "History keys retain separate per-entry charges. Each vector allocation is charged once, including its full actual capacity and Datum allocator header, to the document causing that allocation. Charge remains with the buffer through reuse and partial eviction, and releases when storage is freed. Growth admission includes old plus proposed new allocations before reserve. Replacement storage is charged to its allocating document and old storage charge retires. Metadata charge pins only shared document identity, never scene payload; reopening that document still sees the charge."
+    ],
+    "proof": {
+      "app": "390 app tests passed, 16 ignored. Growth test verifies exact spare capacity/header charges, old-plus-new overlap refusal and eviction, reuse and clear release. Mixed-document test verifies storage survives allocating-scene removal, identity persists across reopen, and clear releases the exact allocation charge. Existing cross-owner key, pinned payload and pressure tests pass.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature and fresh app build pass; source health, dependency authority, traceability, project status, spec governance/parity, diff and formatting checks pass.",
+      "scope": "No new native/backend/endurance campaign or broad GPU qualification; production accounting and default history owner are exercised by app tests."
+    },
+    "limits": [
+      "Retired-observer storage across owners, global document registry bookkeeping and scene construction peaks remain incomplete. Existing local allocation-inclusive history caps remain active. This advances history storage admission, not full MEM-WORLD-CPU/HISTORY acceptance.",
+      "Twelve implementation gaps and original S5 qualification remain open. Console golden discrepancy and nonblocking resize unchanged. No dependency, vendor, license, visual prototype, numerical cap or sequencing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/history-storage/result.json"
   }
 }

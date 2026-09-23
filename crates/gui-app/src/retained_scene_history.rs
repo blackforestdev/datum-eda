@@ -32,6 +32,7 @@ struct Entry {
 
 pub(super) struct RetainedSceneHistory {
     entries: Vec<Entry>,
+    entry_storage: Option<datum_gui_render::DocumentCpuCharge>,
     heap_bytes: usize,
     active_bytes: usize,
     active_geometry: Option<RetainedGeometryObserver>,
@@ -43,6 +44,7 @@ impl Default for RetainedSceneHistory {
     fn default() -> Self {
         Self {
             entries: Vec::new(),
+            entry_storage: None,
             heap_bytes: 0,
             active_bytes: 0,
             active_geometry: None,
@@ -100,6 +102,7 @@ impl RetainedSceneHistory {
             self.evict(0);
         }
         self.entries = Vec::new();
+        self.entry_storage = None;
         self.prune_retired();
     }
 
@@ -250,6 +253,7 @@ impl RetainedSceneHistory {
         }
         if self.entries.is_empty() {
             self.entries = Vec::new();
+            self.entry_storage = None;
         }
     }
 
@@ -282,15 +286,13 @@ impl RetainedSceneHistory {
             self.clear();
             return;
         }
-        // Charge each occupied slot and its owned key to the document, even when
-        // another history owner holds the same shared scene payload.
-        let metadata_bytes = key
-            .heap_bytes()
-            .unwrap_or(usize::MAX)
-            .saturating_add(std::mem::size_of::<Entry>());
+        // Keys belong to their document. The vector allocation has a separate
+        // lifetime charge, including spare slots and its allocator header.
+        let metadata_bytes = key.heap_bytes().unwrap_or(usize::MAX);
         while geometry
             .document_cpu_payload_bytes()
             .saturating_add(metadata_bytes)
+            .saturating_add(self.entry_growth_bytes())
             > document_limit
         {
             let Some(index) = self
@@ -305,6 +307,7 @@ impl RetainedSceneHistory {
         if geometry
             .document_cpu_payload_bytes()
             .saturating_add(metadata_bytes)
+            .saturating_add(self.entry_growth_bytes())
             > document_limit
         {
             self.active_geometry = None;
@@ -336,6 +339,11 @@ impl RetainedSceneHistory {
         if self.entries.len() == self.entries.capacity() {
             let capacity = self.entry_growth_capacity();
             self.entries.reserve_exact(capacity - self.entries.len());
+            // Admission above includes the old allocation plus this replacement.
+            // Keep the allocating document identity until the buffer is released.
+            self.entry_storage = Some(
+                geometry.charge_document_metadata(capacity_bytes::<Entry>(self.entries.capacity())),
+            );
         }
         self.heap_bytes += bytes;
         self.active_geometry = None;
