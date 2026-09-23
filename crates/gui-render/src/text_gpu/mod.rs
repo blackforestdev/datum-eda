@@ -17,3 +17,5 @@ mod parity;
 pub(crate) mod sparse_upload;
 
 pub(crate) mod slot_generations;
+
+mod staging_vec;

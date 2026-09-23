@@ -312,7 +312,10 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
         .flush_frame_uploads(&renderer.device, &renderer.queue)
         .unwrap()
         .unwrap();
-    assert_eq!(budget.used(), expected as u64);
+    assert_eq!(
+        budget.used(),
+        expected as u64 + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
+    );
     let mut pending = Vec::new();
     renderer
         .renderer

@@ -31,14 +31,14 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
             bytes: &value,
         })
         .collect();
-    let plan = groups(&uploads);
+    let plan: Vec<_> = groups(&uploads).collect();
     assert_eq!(plan.len(), 1);
     assert!(plan[0].sparse);
     assert_eq!(plan[0].packet_bytes(), 4096 * 8);
-    assert!(!groups(&uploads[..63])[0].sparse);
+    assert!(!groups(&uploads[..63]).next().unwrap().sparse);
     uploads.swap(1, 2);
     assert!(
-        !groups(&uploads)[0].sparse,
+        !groups(&uploads).next().unwrap().sparse,
         "out-of-order ranges retain ordered copies"
     );
     uploads.swap(1, 2);
@@ -54,11 +54,15 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     assert_eq!(required, 4096 * 16 + 4);
     let owner = Owner::new();
     let observer = owner.observer();
-    let host = Budget::new(required);
+    let metadata = crate::text_gpu::staging_vec::StagingVec::<
+        crate::text_gpu::lifetime::Tracked<wgpu::Buffer>,
+    >::capacity_bytes(2)
+    .unwrap();
+    let host = Budget::new(required + metadata);
     let scatter = Scatter::default();
     let create = || batch_with_scatter(&device, &owner, 1, &host, &[], &uploads, Some(&scatter));
     let pending = create().unwrap().unwrap();
-    assert_eq!(host.used(), required);
+    assert_eq!(host.used(), required + metadata);
     assert_eq!(
         owner.records().iter().map(|r| r.bytes).sum::<u64>(),
         required

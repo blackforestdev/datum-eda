@@ -13,8 +13,10 @@ impl Atlas {
         limit: u64,
     ) -> anyhow::Result<wgpu::SubmissionIndex> {
         let mut remaining = limit;
-        let mut uploads = Vec::new();
-        let mut counts = Vec::new();
+        let mut uploads = super::super::staging_vec::StagingVec::new(
+            self.pending_uploads.len(),
+            &self.staging_budget,
+        )?;
         for upload in &self.pending_uploads {
             let pitch = u64::from(
                 upload
@@ -36,7 +38,6 @@ impl Atlas {
                 stride: upload.stride,
                 pixels: &upload.pixels[first..first + bytes],
             });
-            counts.push(rows);
             remaining -= pitch * u64::from(rows);
         }
         let mut batch = super::super::upload::batch(
@@ -48,12 +49,25 @@ impl Atlas {
             &[],
         )?
         .ok_or_else(|| anyhow::anyhow!("glyph continuation has no pending upload"))?;
+        drop(uploads);
         let resources = self.submission_refs();
         let submission = queue.submit([batch.command()]);
         batch.hold(queue);
         super::super::hold_until_done(queue, resources);
         self.pending_copy_bytes -= limit - remaining;
-        for (upload, rows) in self.pending_uploads.iter_mut().zip(counts) {
+        let mut copied = limit - remaining;
+        for upload in &mut self.pending_uploads {
+            let pitch = u64::from(
+                upload
+                    .stride
+                    .next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT),
+            );
+            let rows =
+                (copied / pitch).min(u64::from(upload.size[1] - upload.uploaded_rows)) as u32;
+            if rows == 0 {
+                break;
+            }
+            copied -= pitch * u64::from(rows);
             upload.uploaded_rows += rows;
             self.uploads.bytes += u64::from(rows) * u64::from(upload.stride);
             self.uploads.writes += 1;

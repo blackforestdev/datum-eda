@@ -68,7 +68,9 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     assert_eq!(atlas.pending_metadata_bytes(), 0);
     assert_eq!(
         host.used(),
-        padded,
+        padded
+            + crate::text_gpu::staging_vec::StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(1)
+                .unwrap(),
         "CPU pixels retire after staging copy is built"
     );
     queue.submit([batch.command()]);

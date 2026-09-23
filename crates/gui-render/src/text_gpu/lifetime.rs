@@ -231,6 +231,11 @@ struct Allocation<T> {
 pub(crate) struct Tracked<T>(Arc<Allocation<T>>);
 
 impl<T> Tracked<T> {
+    /// A queue completion callback now owns this handle instead of the producer.
+    pub(crate) fn mark_retiring(&self) {
+        self.0.identity.active.store(false, Ordering::Release);
+    }
+
     pub(crate) fn with_shared_permit(mut self, permit: Arc<super::budget::Permit>) -> Self {
         Arc::get_mut(&mut self.0)
             .expect("attach shared permit before publishing allocation")
@@ -261,7 +266,7 @@ impl<T> Deref for Tracked<T> {
 
 impl<T> Drop for Tracked<T> {
     fn drop(&mut self) {
-        self.0.identity.active.store(false, Ordering::Release);
+        self.mark_retiring();
     }
 }
 

@@ -10,10 +10,14 @@ pub(super) struct Group<'a> {
     pub sparse: bool,
 }
 
-pub(super) fn groups<'a>(uploads: &'a [BufferUpload<'a>]) -> Vec<Group<'a>> {
-    let mut groups = Vec::new();
+pub(super) fn groups<'a>(
+    uploads: &'a [BufferUpload<'a>],
+) -> impl Iterator<Item = Group<'a>> + Clone {
     let mut start = 0;
-    while start < uploads.len() {
+    std::iter::from_fn(move || {
+        if start == uploads.len() {
+            return None;
+        }
         let mut end = start + 1;
         while end < uploads.len() && uploads[end].buffer == uploads[start].buffer {
             end += 1;
@@ -27,13 +31,12 @@ pub(super) fn groups<'a>(uploads: &'a [BufferUpload<'a>]) -> Vec<Group<'a>> {
             && group
                 .windows(2)
                 .all(|pair| pair[0].offset + pair[0].bytes.len() as u64 <= pair[1].offset);
-        groups.push(Group {
+        start = end;
+        Some(Group {
             uploads: group,
             sparse,
-        });
-        start = end;
-    }
-    groups
+        })
+    })
 }
 
 impl Group<'_> {
