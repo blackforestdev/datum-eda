@@ -1,6 +1,28 @@
 //! Current layout admission; refusal releases derived storage, never source text.
 use super::*;
 
+pub(crate) trait FrameIndices {
+    fn indices_mut(&mut self) -> &mut [usize];
+    fn clear_indices(&mut self);
+}
+impl FrameIndices for crate::text_gpu::staging_vec::StagingVec<usize> {
+    fn indices_mut(&mut self) -> &mut [usize] {
+        self
+    }
+    fn clear_indices(&mut self) {
+        self.clear();
+    }
+}
+#[cfg(test)]
+impl FrameIndices for Vec<usize> {
+    fn indices_mut(&mut self) -> &mut [usize] {
+        self
+    }
+    fn clear_indices(&mut self) {
+        self.clear();
+    }
+}
+
 impl TextBufferCache {
     pub(crate) fn admit_layout_scratch(
         &mut self,
@@ -48,7 +70,10 @@ impl TextBufferCache {
 
     /// On refusal, cached layouts and every supplied index group are discarded.
     /// Retry must rebuild them from current TextRun input before requesting admission.
-    pub(crate) fn admit_frame(&mut self, indices: &mut [&mut Vec<usize>]) -> anyhow::Result<()> {
+    pub(crate) fn admit_frame(
+        &mut self,
+        indices: &mut [&mut impl FrameIndices],
+    ) -> anyhow::Result<()> {
         let result = budget::admit(self.owner.id(), |limit| {
             if self.admission_payload_bytes() > limit {
                 // All current-frame indices remain pinned. Unused history may
@@ -68,7 +93,7 @@ impl TextBufferCache {
                 });
                 if next != old {
                     for group in indices.iter_mut() {
-                        for index in group.iter_mut() {
+                        for index in group.indices_mut().iter_mut() {
                             *index = remap[*index];
                             assert_ne!(*index, usize::MAX, "current text index was not pinned");
                         }
@@ -107,7 +132,7 @@ impl TextBufferCache {
                 self.layout_output_tracking_bytes = 0;
                 self.retained_revision = None;
                 for group in indices.iter_mut() {
-                    group.clear();
+                    group.clear_indices();
                 }
                 self.published_bytes = self.retained_payload_bytes();
             } else {

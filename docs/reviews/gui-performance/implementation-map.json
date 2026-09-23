@@ -15441,6 +15441,11 @@
           "work": "s4_text_registry_accounting_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json",
           "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open"
+        },
+        {
+          "work": "s4_text_preparation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
+          "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15595,6 +15600,11 @@
           "work": "s4_text_registry_accounting_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json",
           "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open"
+        },
+        {
+          "work": "s4_text_preparation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
+          "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17352,6 +17362,11 @@
           "work": "s4_glyph_lookup_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json",
           "status": "Atlas glyph lookup bucket capacity admitted before rasterization; private text accounting remains open"
+        },
+        {
+          "work": "s4_text_preparation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
+          "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
         }
       ]
     },
@@ -17568,6 +17583,11 @@
           "work": "s4_glyph_lookup_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json",
           "status": "Atlas glyph lookup bucket capacity admitted before rasterization; private text accounting remains open"
+        },
+        {
+          "work": "s4_text_preparation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
+          "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
         }
       ]
     },
@@ -35138,5 +35158,35 @@
       "Construction-time local/process overlap, temporary rich/layout/raster scratch and private font/raster classification remain unresolved; all cap deadlines and S5 qualification remain unchanged.",
       "No spec/sequencing amendment, dependency/license change, new framework or prototype edit. Preserve GEFN and nonblocking resize."
     ]
+  },
+  "s4_text_preparation_work": {
+    "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open",
+    "base_commit": "c760e080",
+    "production_consumers": [
+      "Shared workspace/overlay preparation for native main and auxiliary hosts",
+      "Default offscreen/capture renderer through the same text preparation path"
+    ],
+    "retired_paths": [
+      "Unbudgeted production text-index Vec allocation",
+      "Uncharged retained workspace/overlay paint-signature capacity",
+      "Allocated temporary draw-area vectors for workspace/overlay glyph preparation"
+    ],
+    "behavior": [
+      "Production indices reserve exact capacity through StagingVec before filling/shaping and retain host/process permits through the complete preparation call. Existing remapping/refusal uses the same admitted index storage; source text stays authoritative.",
+      "Paint signatures reserve actual run/span-color capacity including allocator headers before construction and hold permits until signature retirement. Old/new overlap is charged. Exact paint/layout identity and overlay signature limit remain unchanged. Signature capacity is included in renderer staging observations.",
+      "Text areas are borrowed iterators consumed directly by shared glyph preparation. No copied area Vec is allocated. Both full-frame and overlay-only rendering use these same owners.",
+      "GlyphPreparation identity/continuation lifetime moves into a normal module to keep the expanded preparation adapter within its source-health limit; no alternate runtime path introduced."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 374 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.62s",
+      "checks": "374 renderer tests passed,11 filtered. Afterwards GlyphPreparation was extracted without behavior changes to meet the normal source budget; final strict visual renderer/app all-target Clippy and fresh GUI build verify the final module wiring. Application tests were not rerun.",
+      "coverage": "Existing actual-GPU current text/pixel parity, rich paint identity, warm reuse, atlas retry, full/overlay continuation, pressure/refusal and resource release cases pass. Staging equations now include retained signatures; transient indices drop before the render attempt completes."
+    },
+    "limits": [
+      "No complete MEM-SHAPED/MEM-STAGING, S4/S5 or issue closure. Private font/raster and rich/layout construction peaks, complete cross-owner accounting and original qualification remain due.",
+      "Signature construction retains the existing Vec builder behind pre-admission; universal process OOM recovery is not claimed. No performance ratio or native tier acceptance follows from structural allocation removal.",
+      "No dependency/license/prototype/cap/sequencing change; preserve historical failures, Console golden issue, GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json"
   }
 }

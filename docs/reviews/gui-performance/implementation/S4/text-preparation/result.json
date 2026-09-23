@@ -1,0 +1,56 @@
+{
+  "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open",
+  "base_commit": "c760e080",
+  "production_consumers": [
+    "Shared workspace/overlay preparation for native main and auxiliary hosts",
+    "Default offscreen/capture renderer through the same text preparation path"
+  ],
+  "retired_paths": [
+    "Unbudgeted production text-index Vec allocation",
+    "Uncharged retained workspace/overlay paint-signature capacity",
+    "Allocated temporary draw-area vectors for workspace/overlay glyph preparation"
+  ],
+  "behavior": [
+    "Production indices reserve exact capacity through StagingVec before filling/shaping and retain host/process permits through the complete preparation call. Existing remapping/refusal uses the same admitted index storage; source text stays authoritative.",
+    "Paint signatures reserve actual run/span-color capacity including allocator headers before construction and hold permits until signature retirement. Old/new overlap is charged. Exact paint/layout identity and overlay signature limit remain unchanged. Signature capacity is included in renderer staging observations.",
+    "Text areas are borrowed iterators consumed directly by shared glyph preparation. No copied area Vec is allocated. Both full-frame and overlay-only rendering use these same owners.",
+    "GlyphPreparation identity/continuation lifetime moves into a normal module to keep the expanded preparation adapter within its source-health limit; no alternate runtime path introduced."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 374 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.62s",
+    "checks": "374 renderer tests passed,11 filtered. Afterwards GlyphPreparation was extracted without behavior changes to meet the normal source budget; final strict visual renderer/app all-target Clippy and fresh GUI build verify the final module wiring. Application tests were not rerun.",
+    "coverage": "Existing actual-GPU current text/pixel parity, rich paint identity, warm reuse, atlas retry, full/overlay continuation, pressure/refusal and resource release cases pass. Staging equations now include retained signatures; transient indices drop before the render attempt completes."
+  },
+  "limits": [
+    "No complete MEM-SHAPED/MEM-STAGING, S4/S5 or issue closure. Private font/raster and rich/layout construction peaks, complete cross-owner accounting and original qualification remain due.",
+    "Signature construction retains the existing Vec builder behind pre-admission; universal process OOM recovery is not claimed. No performance ratio or native tier acceptance follows from structural allocation removal.",
+    "No dependency/license/prototype/cap/sequencing change; preserve historical failures, Console golden issue, GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-preparation/renderer.log.gz",
+      "uncompressed_sha256": "af24ea6b324d25b856a2b4f5a71b47de835ca5ecb59bcb35490f1b621e99efd8"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-preparation/clippy.log.gz",
+      "uncompressed_sha256": "cbed9eb9b41e2526396687127797f8eeaeaf30f42ef68fa9222196ff9756aff6"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-preparation/build.log.gz",
+      "uncompressed_sha256": "c7f93e01add31db89cc1eb9bd6ba04cd5ae3c5f6e63a99503a0856a318fcb535"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "d9c5b783ff82f9f70fdad1506f71384a7b191c3702cf7ad480e92effdedfd7e0",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "9db4cc0b0a5be96914d14fe941b27da2caacf6d55542e851e691ca6518de24d6",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "38719e1272d46aafaee02d15a4aa25b03d7137a37c3b96906443b91616657a61",
+    "crates/gui-render/src/render/gpu_text.rs": "184479d9952030f276554df5e9593530da201dea0635d2b613690055a95d4821",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "ceae7e315f8f6bcefadc297edb3b3a6a127877c5f9bd1ede6b2cf5d7f6771400",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "9578f3bdeffa2e62700ff5acf678a01f98713d8cb20638d6a42cc7368f6bc0b6",
+    "crates/gui-render/src/render/text_cache_admission.rs": "bba807e4309088b27c9e1e4d326960690abc4946a3d1e68f096d1469c09c6c54",
+    "crates/gui-render/src/render/text_cache_retention.rs": "fd17f316afd5635b8255867d9cd065aca9cad31fc6947e5fd718a4ec2e54d1d8",
+    "crates/gui-render/src/render/text_prepare_identity.rs": "5ee2b2e982772f82c325ec3db65c385c0b7c5eac8c7afa0c52fcbf6c22c6d45c",
+    "crates/gui-render/src/render/glyph_preparation.rs": "1c882125f2fd0cd13d53e393ec91b8fae8ba85a5ff15499a1b997a6c52baac68"
+  }
+}

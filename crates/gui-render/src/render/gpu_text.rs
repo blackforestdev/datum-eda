@@ -5,43 +5,9 @@ use super::*;
 mod continuation;
 const MAX_OVERLAY_SIGNATURE_RUNS: usize = 128;
 
-#[derive(Default)]
-pub(crate) struct GlyphPreparation {
-    upload_continuation: bool,
-    prepared: Option<(u64, u64, TextPrepareSignature)>,
-    overlay_prepared: Option<(u64, u64, TextPrepareSignature)>,
-    #[cfg(test)]
-    pub(crate) forced_overlay_errors: usize,
-    #[cfg(test)]
-    pub(crate) workspace_prepares: usize,
-    #[cfg(test)]
-    pub(crate) atlas_retries: usize,
-    #[cfg(test)]
-    pub(crate) overlay_prepares: usize,
-}
-
-impl GlyphPreparation {
-    pub(crate) fn is_continuing(&self) -> bool {
-        self.upload_continuation
-    }
-
-    pub(crate) fn cancel(&mut self) {
-        self.upload_continuation = false;
-        self.prepared = None;
-        self.overlay_prepared = None;
-    }
-
-    #[cfg(all(test, feature = "visual"))]
-    pub(crate) fn force_overlay_errors(&mut self, count: usize) {
-        self.overlay_prepared = None;
-        self.forced_overlay_errors = count;
-    }
-
-    #[cfg(all(test, feature = "visual"))]
-    pub(crate) fn is_invalid(&self) -> bool {
-        self.prepared.is_none()
-    }
-}
+#[path = "glyph_preparation.rs"]
+mod preparation;
+pub(crate) use preparation::GlyphPreparation;
 
 fn has_text_payload(runs: &[TextRun]) -> bool {
     runs.iter().any(|run| {
@@ -189,20 +155,28 @@ impl Renderer {
             self.text_resolution = [width, height];
         }
         let (mut workspace, stats) = if !has_workspace_text {
-            (Vec::new(), TextBufferCacheStats::default())
+            (Default::default(), TextBufferCacheStats::default())
         } else {
-            self.text_buffers
-                .indices(&mut self.font_system, &prepared.text_runs, width, height)
+            self.text_buffers.admitted_indices(
+                &mut self.font_system,
+                &prepared.text_runs,
+                width,
+                height,
+                false,
+                &self.atlas.staging_budget,
+            )?
         };
         let (mut overlay, overlay_stats) = if !has_overlay_text {
-            (Vec::new(), TextBufferCacheStats::default())
+            (Default::default(), TextBufferCacheStats::default())
         } else {
-            self.text_buffers.overlay_indices(
+            self.text_buffers.admitted_indices(
                 &mut self.font_system,
                 prepared.menu_overlay_text_runs(),
                 width,
                 height,
-            )
+                true,
+                &self.atlas.staging_budget,
+            )?
         };
         self.text_buffers
             .admit_layout_scratch(&self.atlas.staging_budget);
@@ -220,28 +194,43 @@ impl Renderer {
         // their actual text owner instead of an empty workspace statistic.
         let stats = if overlay_only { overlay_stats } else { stats };
         let signature = has_workspace_text
-            .then(|| text_prepare_signature(&workspace, &prepared.text_runs, width, height));
+            .then(|| {
+                text_prepare_identity::admitted_signature(
+                    &workspace,
+                    &prepared.text_runs,
+                    width,
+                    height,
+                    &self.atlas.staging_budget,
+                )
+            })
+            .transpose()?;
         let revision = self.text_buffers.revision();
         let reuse = signature.as_ref().is_some_and(|signature| {
             self.text_preparation.prepared.as_ref().is_some_and(
                 |(old_revision, atlas_generation, old)| {
                     *old_revision == revision
                         && *atlas_generation == self.atlas.generation
-                        && old == signature
+                        && old.value == signature.value
                 },
             )
         });
         let overlay_signature = (has_overlay_text && overlay.len() <= MAX_OVERLAY_SIGNATURE_RUNS)
             .then(|| {
-                text_prepare_signature(&overlay, prepared.menu_overlay_text_runs(), width, height)
+                text_prepare_identity::admitted_signature(
+                    &overlay,
+                    prepared.menu_overlay_text_runs(),
+                    width,
+                    height,
+                    &self.atlas.staging_budget,
+                )
             })
-            .filter(|signature| signature.runs.capacity() <= MAX_OVERLAY_SIGNATURE_RUNS);
+            .transpose()?;
         let reuse_overlay = overlay_signature.as_ref().is_some_and(|signature| {
             self.text_preparation.overlay_prepared.as_ref().is_some_and(
                 |(old_revision, atlas_generation, old)| {
                     *old_revision == revision
                         && *atlas_generation == self.atlas.generation
-                        && old == signature
+                        && old.value == signature.value
                 },
             )
         });
@@ -349,5 +338,21 @@ impl Renderer {
                 .map_err(|error| error.context("prepare overlay text"))?;
         }
         Ok(())
+    }
+}
+
+impl Renderer {
+    /// Retained workspace/overlay paint signatures; transient indices retire at
+    /// the end of text preparation and use the same host/process staging budgets.
+    pub fn text_preparation_storage_bytes(&self) -> u64 {
+        self.text_preparation
+            .prepared
+            .as_ref()
+            .map_or(0, |(_, _, s)| s.bytes)
+            + self
+                .text_preparation
+                .overlay_prepared
+                .as_ref()
+                .map_or(0, |(_, _, s)| s.bytes)
     }
 }
