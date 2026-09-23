@@ -498,3 +498,40 @@ fn spare_dispatch_time_rotates_batches_with_one_shared_application_byte_cap() {
     assert_eq!(second.applied_bytes, GUI_DRAIN_BYTE_LIMIT / 2);
     assert!(!second.pending);
 }
+
+#[test]
+fn render_panes_borrow_matching_active_and_parked_lane_projections() {
+    use datum_gui_protocol::{TerminalSplitDirection, TerminalSplitNode};
+    let mut registry = synthetic_registry(2);
+    registry.terminal_tabs.truncate(1);
+    registry.terminal_tabs[0].root = TerminalSplitNode::Split {
+        direction: TerminalSplitDirection::SideBySide,
+        ratio_millis: 500,
+        first: Box::new(TerminalSplitNode::session("synthetic-0")),
+        second: Box::new(TerminalSplitNode::session("synthetic-1")),
+    };
+    registry.terminal_tabs[0].focused_session_id = "synthetic-1".into();
+    registry.sessions[1].parked_lane.status = "parked output".into();
+    let parked = &registry.sessions[1].parked_lane as *const TerminalLaneState;
+    let lane = TerminalLaneState {
+        status: "active output".into(),
+        ..Default::default()
+    };
+    let panes = registry.take_active_tab_render_states(&lane).unwrap();
+    assert_eq!(panes.len(), 2);
+    assert_eq!(panes[0].session_id, "synthetic-0");
+    assert!(std::ptr::eq(panes[0].lane, &lane));
+    assert!(!panes[0].focused);
+    assert_eq!(panes[1].session_id, "synthetic-1");
+    assert!(std::ptr::eq(panes[1].lane, parked));
+    assert_eq!(panes[1].lane.status, "parked output");
+    assert!(panes[1].focused);
+    drop(panes);
+    registry.active_pending_id = Some("pending".into());
+    assert!(
+        registry
+            .take_active_tab_render_states(&lane)
+            .unwrap()
+            .is_empty()
+    );
+}
