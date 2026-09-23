@@ -244,18 +244,21 @@ impl Draw {
         self.batches.clear();
     }
 
-    pub fn append_uploads<'a>(&'a self, out: &mut Vec<super::upload::BufferUpload<'a>>) -> u64 {
+    pub fn append_uploads<'a>(
+        &'a self,
+        out: &mut impl Extend<super::upload::BufferUpload<'a>>,
+    ) -> u64 {
         match (&self.pending_instances, &self.instances) {
             (Some(instances), Some(buffer)) => crate::gpu_data::screen_buffer::dirty_ranges(
                 bytemuck::cast_slice(&self.snapshot),
                 bytemuck::cast_slice(instances),
                 std::mem::size_of::<Instance>(),
                 |offset, bytes| {
-                    out.push(super::upload::BufferUpload {
+                    out.extend(std::iter::once(super::upload::BufferUpload {
                         buffer,
                         offset,
                         bytes,
-                    })
+                    }))
                 },
             ) as u64,
             _ => 0,

@@ -82,16 +82,16 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
     pub(crate) fn append_chunk<'a>(
         &'a self,
         remaining: &mut usize,
-        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+        out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
     ) -> usize {
         let count = self.pending_bytes().min(*remaining);
         if count != 0 {
             let bytes: &[u8] = bytemuck::cast_slice(self.source.as_ref().unwrap().as_ref());
-            out.push(crate::text_gpu::upload::BufferUpload {
+            out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
                 buffer: self.buffer().unwrap(),
                 offset: self.uploaded as u64,
                 bytes: &bytes[self.uploaded..self.uploaded + count],
-            });
+            }));
             *remaining -= count;
         }
         count

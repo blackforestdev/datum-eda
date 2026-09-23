@@ -1,0 +1,72 @@
+{
+  "status": "Default buffer/texture producer descriptor storage admitted; full staging/accounting implementation remains open",
+  "base_commit": "5870d56c",
+  "production_consumers": [
+    "Frame screen/control streams, terminal quads, fixed/pane uniforms and workspace/overlay glyph instances",
+    "Glyph-continuation transfer-size decision",
+    "Cold board/schematic world geometry continuation",
+    "Terminal image upload continuation and destination submission retention"
+  ],
+  "retired_paths": [
+    "Unbudgeted frame BufferUpload descriptor Vec",
+    "Temporary frame descriptor allocation solely to decide glyph continuation",
+    "Unbudgeted cold-world descriptor Vec and collected destination-reference Vec",
+    "Unbudgeted terminal texture descriptor/count/reference Vec paths"
+  ],
+  "behavior": [
+    "Shared producers emit through standard Extend. The frame makes an allocation-free count pass, admits exact descriptor capacity against existing staging limits, then fills the same ordered plan. Refusal precedes producer consumption and retains pending content for retry.",
+    "Glyph continuation uses the count/byte sink directly without retaining descriptors. Empty StagingVec storage no longer reserves zero-byte permits or touches process-budget atomics.",
+    "Cold-world continuation admits four descriptor slots and keeps its four destination handles in a fixed array through queue completion, removing another heap vector. Scratch-release preflight includes descriptor storage.",
+    "Terminal image continuation counts only the selected chunk descriptors, then admits descriptor, source-index/count and destination-reference storage. The admitted references move directly to completion; counts commit only after successful submission. One count pass serves both scratch preflight and allocation."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 369 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.64s",
+    "terminal": "test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 328 filtered out; finished in 2.73s",
+    "checks": "369 renderer tests passed with the complete producer migration. Afterwards, one redundant terminal count scan was removed;52 focused terminal tests passed on that final source, followed by strict visual renderer/app all-target Clippy and a fresh visual application build. Application tests were not rerun.",
+    "coverage": "Full run includes sparse/mixed GPU readback, staging refusal/retry, terminal image and quad paths, glyph and cold-world continuation, and warm uniforms. Extended real uniform/screen producer test proves zero-allocation count preflight and preservation under descriptor-budget refusal. Existing staging heap test covers exact capacities/headers and release. The earlier369-pass buffer-only run is preserved separately."
+  },
+  "limits": [
+    "No full MEM-STAGING/ACC-01/02, S4 or S5 closure. Producer pending-range/snapshot storage, page/global observation metadata, private font/raster/layout construction peaks and other transient scratch remain under the existing unfinished rows. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+    "Count/fill uses two borrowed producer traversals; no new latency or global performance acceptance is claimed. GPU byte counters/copy limits remain separate from CPU metadata.",
+    "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/producer-plan/result.json",
+  "logs": {
+    "renderer-before-terminal": {
+      "path": "docs/reviews/gui-performance/implementation/S4/producer-plan/renderer-before-terminal.log.gz",
+      "uncompressed_sha256": "368618fdc0acdc4cc2503a21867b0256a3fa812fc7cd67e1e91d5fbeecd9c846"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/producer-plan/renderer.log.gz",
+      "uncompressed_sha256": "52be1f3015db303c0a73281b388ae9f983f0b02cca20d9b4a46a08dcf4076112"
+    },
+    "terminal": {
+      "path": "docs/reviews/gui-performance/implementation/S4/producer-plan/terminal.log.gz",
+      "uncompressed_sha256": "02fcd2cfc5088213ea3943920da3b54d0eb290b9083689f02ace29dddd45a234"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/producer-plan/clippy.log.gz",
+      "uncompressed_sha256": "96c9a935be4e3bfefb054acc6ba2e1d584519b85dd8503fc270ab3ef2e4f1f21"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/producer-plan/build.log.gz",
+      "uncompressed_sha256": "e57b0b3573db99d5df5237ecf59b4970a58a8f9901a12fddb426b4b7949a150f"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload.rs": "804aef2bef462f436e77bf3bc9149b7a7a733dfc628f6a07dd5309a519d9e6c2",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "4a969444542681db1dccb62742a1d3da9cdcff47919fa00b7a82a16ad7406db3",
+    "crates/gui-render/src/render/gpu_text.rs": "baa370fcf8344a24ba187962d234393ceb61703da93c7c56fd46390a0a22e11c",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "8415f0ebee7480c70dec1a26b1ac17b8ab867b3ad481af4387aedefb49f853cf",
+    "crates/gui-render/src/render/retained_buffer.rs": "ca63e6768d5a957b123a7d9a443b6e5f87443e386168a9fb9eabf25cd2eb6b69",
+    "crates/gui-render/src/render/screen_buffer.rs": "bcc95149eb8e811e1fa9f115e4d55ec29d41ffcae31e331d5ca066fcc35ee1e9",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "f65aee6029af6ac7050a36cfd1e69749e5d1514245ba01df1c8c0b2c0ebae3cd",
+    "crates/gui-render/src/render/terminal_graphics.rs": "d5740d32c80260baaee1f3f6619e58ef90f17f1ad941c65b84b8f17d74f8df5d",
+    "crates/gui-render/src/render/terminal_upload.rs": "d278ac76959c33076b106eaf804701d3b673e86d0472338b23f1d2a41a68e488",
+    "crates/gui-render/src/render/uniform_buffer.rs": "ee911e74efafc497b599b947a2468b50ba01a09d3a5e9fb9458d715c4feb85e5",
+    "crates/gui-render/src/text_gpu/draw.rs": "b956023f5b214957d43480bb866146c70b1f98b1e60ee29c5032e3f0ad0fa133",
+    "crates/gui-render/src/text_gpu/mod.rs": "bb503a948c5cae525cd6a21256217963dd854ebebf4bc23a9d0e2b82f8a1d27b",
+    "crates/gui-render/src/text_gpu/staging_vec.rs": "5932949f9cd326eeeb2e197c068f5406f6c7a82c0390565b09e8602d34baf0f8",
+    "crates/gui-render/src/text_gpu/upload.rs": "9753c974d6d09c81c2b6cfc9a962dd49ffab12ea5329a5f32abce716a79a434c"
+  }
+}

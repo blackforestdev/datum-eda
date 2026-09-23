@@ -293,7 +293,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
 
     pub(super) fn append_vertex_uploads<'a>(
         &'a self,
-        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+        out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
     ) {
         for draw in &self.draws {
             draw.vertices.append_uploads(out);

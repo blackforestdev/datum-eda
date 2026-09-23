@@ -18,6 +18,30 @@ pub(crate) struct BufferUpload<'a> {
     pub bytes: &'a [u8],
 }
 
+/// Allocation-free first pass over the same producers that fill the upload plan.
+#[derive(Default)]
+pub(crate) struct UploadCount {
+    pub entries: usize,
+    pub bytes: u64,
+}
+impl<'a> Extend<BufferUpload<'a>> for UploadCount {
+    fn extend<I: IntoIterator<Item = BufferUpload<'a>>>(&mut self, uploads: I) {
+        for upload in uploads {
+            self.entries += 1;
+            self.bytes += upload.bytes.len() as u64;
+        }
+    }
+}
+
+impl<'a> Extend<TextureUpload<'a>> for UploadCount {
+    fn extend<I: IntoIterator<Item = TextureUpload<'a>>>(&mut self, uploads: I) {
+        for upload in uploads {
+            self.entries += 1;
+            self.bytes += upload.pixels.len() as u64;
+        }
+    }
+}
+
 pub(crate) struct Batch {
     // Drop encoded resource references before releasing their accounting.
     command: Option<wgpu::CommandBuffer>,
