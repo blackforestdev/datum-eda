@@ -17340,6 +17340,11 @@
           "work": "s4_glyph_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-storage/result.json",
           "status": "Glyph instance preparation, snapshots and batch capacities admitted; private text and other accounting remain open"
+        },
+        {
+          "work": "s4_atlas_storage_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-storage/result.json",
+          "status": "Atlas page/pending records and continuation references use shared admission; glyph lookup and private text accounting remain open"
         }
       ]
     },
@@ -17546,6 +17551,11 @@
           "work": "s4_glyph_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-storage/result.json",
           "status": "Glyph instance preparation, snapshots and batch capacities admitted; private text and other accounting remain open"
+        },
+        {
+          "work": "s4_atlas_storage_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-storage/result.json",
+          "status": "Atlas page/pending records and continuation references use shared admission; glyph lookup and private text accounting remain open"
         }
       ]
     },
@@ -34996,5 +35006,35 @@
       "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-storage/result.json"
+  },
+  "s4_atlas_storage_work": {
+    "status": "Atlas page/pending records and continuation references use shared admission; glyph lookup and private text accounting remain open",
+    "base_commit": "609623c0",
+    "production_consumers": [
+      "Shared Atlas used by workspace and overlay text in native/offscreen renderers",
+      "Bounded glyph upload continuation and native scratch-release preflight"
+    ],
+    "retired_paths": [
+      "Separate pending-record permit pair and infallible Vec::with_capacity growth",
+      "Unbudgeted atlas page-record Vec growth",
+      "Unbudgeted continuation page-reference Vec",
+      "Continuation descriptor reservation for all pending glyphs rather than just the selected chunk"
+    ],
+    "behavior": [
+      "Page records and pending uploads use the existing StagingVec owner, with fallible growth, exact capacity/header charging and old/new overlap. Page capacity is reserved before API texture creation. Pending upload pressure still yields UploadRequired without losing existing glyph pixels.",
+      "Glyph continuation preflights the selected row prefix, allocates only its descriptor count, and moves admitted page references into queue completion. Scratch release accounts for GPU copies plus descriptor/retention/page-reference metadata.",
+      "Page metadata is reported separately through atlas_page_metadata_bytes and remains charged across repack while pages are reusable; renderer/page-owner retirement releases it. Pending-record storage still releases when all pending uploads drain."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 372 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 26.18s",
+      "checks": "372 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh visual GUI build pass. Application tests were not rerun for this renderer-only migration.",
+      "coverage": "Existing actual-GPU atlas local/process/generation tests, glyph continuation/current-content parity, CPU pixel/metadata pressure and growth/refusal/repack/close proof, glyph instance pressure/retry, cold-world and terminal paths remain passing. Exact resource equations now include live atlas page metadata; GPU transfer limits and pixel oracles remain unchanged."
+    },
+    "limits": [
+      "No full MEM-STAGING/ACC-02, S4/S5 or issue closure. Glyph lookup HashMap capacity, private font/raster/shaping/layout construction peaks, global observation metadata and full large-work/qualification proof remain unfinished. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+      "Continuation counts the selected prefix before encoding; no new latency/global performance acceptance is claimed. GPU page allocation limits remain separately enforced.",
+      "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-storage/result.json"
   }
 }

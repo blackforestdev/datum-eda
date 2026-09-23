@@ -2,6 +2,7 @@
 //!
 //! Shared by workspace and overlay drawing. Full PM045 accounting also requires
 //! CPU/font scratch, aggregate staging and cross-host qualification.
+use super::staging_vec::StagingVec;
 use std::collections::HashMap;
 
 use glyphon::{CacheKey, FontSystem, SwashCache, SwashContent};
@@ -82,14 +83,13 @@ struct PendingUpload {
 pub(crate) struct Atlas {
     pub owner: Owner,
     pub layout: wgpu::BindGroupLayout,
-    pub(super) pages: Vec<Page>,
+    pub(super) pages: StagingVec<Page>,
     pub generation: u64,
     pub(super) uploads: Uploads,
     scatter: super::sparse_upload::Scatter,
     glyphs: HashMap<CacheKey, Option<GlyphLocation>>,
-    pending_uploads: Vec<PendingUpload>,
+    pending_uploads: StagingVec<PendingUpload>,
     pending_copy_bytes: u64,
-    pending_metadata_permits: Option<[super::budget::Permit; 2]>,
     local_budget: std::sync::Arc<super::budget::Budget>,
     page_generations: std::sync::Arc<super::budget::Budget>,
     page_generation: std::sync::Weak<super::budget::Permit>,
@@ -123,14 +123,13 @@ impl Atlas {
                     count: None,
                 }],
             }),
-            pages: Vec::new(),
+            pages: Default::default(),
             generation: 1,
             uploads: Uploads::default(),
             scatter: super::sparse_upload::Scatter::default(),
             glyphs: HashMap::new(),
-            pending_uploads: Vec::new(),
+            pending_uploads: Default::default(),
             pending_copy_bytes: 0,
-            pending_metadata_permits: None,
             local_budget: super::budget::Budget::new(RETAINED_LIMIT),
             page_generations: super::budget::Budget::new(2),
             page_generation: std::sync::Weak::new(),
@@ -178,7 +177,7 @@ impl Atlas {
     ) -> anyhow::Result<Option<super::upload::Batch>> {
         let mut uploads =
             super::staging_vec::StagingVec::new(self.pending_uploads.len(), &self.staging_budget)?;
-        for upload in &self.pending_uploads {
+        for upload in self.pending_uploads.iter() {
             uploads.push(super::upload::TextureUpload {
                 texture: &self.pages[upload.page].texture,
                 origin: [upload.origin[0], upload.origin[1] + upload.uploaded_rows],
@@ -198,7 +197,7 @@ impl Atlas {
         )?;
         drop(uploads);
         self.pending_copy_bytes = 0;
-        for upload in self.pending_uploads.drain(..) {
+        for upload in self.pending_uploads.drain_all() {
             self.uploads.writes += 1;
             self.uploads.bytes +=
                 u64::from(upload.size[1] - upload.uploaded_rows) * u64::from(upload.stride);
@@ -233,7 +232,7 @@ impl Atlas {
             .generation
             .checked_add(1)
             .expect("atlas epoch exhausted");
-        for page in &mut self.pages {
+        for page in self.pages.iter_mut() {
             page.shelves = Shelves::default();
         }
     }
@@ -268,7 +267,7 @@ impl Atlas {
     /// pages through completion of their last submission (including queued writes).
     /// A CPU reset alone is not GPU release, and these bytes must remain charged.
     #[cfg(all(test, feature = "visual"))]
-    pub(super) fn reset(&mut self) -> Vec<Page> {
+    pub(super) fn reset(&mut self) -> StagingVec<Page> {
         self.glyphs = HashMap::new();
         self.pending_uploads.clear();
         self.release_empty_pending_metadata();
@@ -355,6 +354,7 @@ impl Atlas {
                         })?)
                     }
                 };
+                self.reserve_page_metadata()?;
                 let local_permit = self.local_budget.reserve(bytes)?;
                 let permit = self.texture_budget.reserve(bytes)?;
                 let reservation =
