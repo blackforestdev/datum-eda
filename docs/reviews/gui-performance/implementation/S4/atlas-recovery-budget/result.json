@@ -1,0 +1,42 @@
+{
+  "status": "Atlas recovery preserves host-local texture capacity admission across retired pages",
+  "base_commit": "cd031ac4",
+  "production_consumers": [
+    "Renderer::recreate_for_device for all native hosts, workspace and overlay shared glyph atlas"
+  ],
+  "retired_paths": [
+    "Recovery initializes a fresh 32 MiB local glyph texture allowance independent of old submitted pages"
+  ],
+  "behavior": [
+    "Atlas::replacement reconstructs device layout and empty content while retaining local/process texture admission, staging admission and allocation observer identity. Increment atlas epoch for the new device resources. Old pages remain charged until their last submission hold is released; refusal creates no replacement page."
+  ],
+  "proof": {
+    "renderer": "346 renderer tests pass, 11 filtered. Extended actual-GPU local atlas test pins a full-cap page, resets, confirms refusal, recovers, confirms the same allowance/observer and continued refusal, then releases the old page and successfully retries. Final ownership returns to zero.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2274, dependency authority and governance pass.",
+    "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Corrects a recovery omission in the atlas local-cap implementation; previous local/reset evidence did not cover renderer replacement. Full S5 atlas qualification remains unproven. No complete MEM-REPLACEMENT closure: atlas generation-count and other resource-family work remain separate.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/tests.log.gz",
+      "uncompressed_sha256": "e08ca45fbefcf8df77ba4a94c7882eb588038abb9f70f0c9985dd71d4c1f3fba"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/clippy.log.gz",
+      "uncompressed_sha256": "ca320a94796970ca0a00c685cb146d47f023237f7179c18aaefe6929e89617f7"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/build.log.gz",
+      "uncompressed_sha256": "9ee4af8603b4ab1fa0e963a05195a5c92fec6d97057f048036472980f8b9f901"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "4e6717ba6978adcf7d4f72277028e57ce6a3c7bd292ef80f6f66aaf4b0018e42",
+    "crates/gui-render/src/text_gpu/atlas.rs": "9375af33dad28f3e7a84a6c47c8f8e7b6beb9a3347a240bcf48f74b0822757a8",
+    "crates/gui-render/src/text_gpu/atlas/tests.rs": "cf41ef87cb4e8f278b0afb923612950ae6def6257bc82eb3564150af7ca4b831"
+  }
+}

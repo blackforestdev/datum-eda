@@ -16592,6 +16592,11 @@
           "work": "s4_pane_uniform_generations_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/result.json",
           "status": "Dynamic pane uniform generation continuity implemented across close/reopen and renderer recovery; full replacement predicate remains open"
+        },
+        {
+          "work": "s4_atlas_recovery_budget_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/result.json",
+          "status": "Atlas recovery preserves host-local texture capacity admission across retired pages"
         }
       ]
     },
@@ -16719,6 +16724,11 @@
           "work": "s4_glyph_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
           "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_atlas_recovery_budget_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/result.json",
+          "status": "Atlas recovery preserves host-local texture capacity admission across retired pages"
         }
       ]
     },
@@ -16846,6 +16856,11 @@
           "work": "s4_glyph_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
           "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_atlas_recovery_budget_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/result.json",
+          "status": "Atlas recovery preserves host-local texture capacity admission across retired pages"
         }
       ]
     },
@@ -33955,5 +33970,28 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/result.json"
+  },
+  "s4_atlas_recovery_budget_work": {
+    "status": "Atlas recovery preserves host-local texture capacity admission across retired pages",
+    "base_commit": "cd031ac4",
+    "production_consumers": [
+      "Renderer::recreate_for_device for all native hosts, workspace and overlay shared glyph atlas"
+    ],
+    "retired_paths": [
+      "Recovery initializes a fresh 32 MiB local glyph texture allowance independent of old submitted pages"
+    ],
+    "behavior": [
+      "Atlas::replacement reconstructs device layout and empty content while retaining local/process texture admission, staging admission and allocation observer identity. Increment atlas epoch for the new device resources. Old pages remain charged until their last submission hold is released; refusal creates no replacement page."
+    ],
+    "proof": {
+      "renderer": "346 renderer tests pass, 11 filtered. Extended actual-GPU local atlas test pins a full-cap page, resets, confirms refusal, recovers, confirms the same allowance/observer and continued refusal, then releases the old page and successfully retries. Final ownership returns to zero.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2274, dependency authority and governance pass.",
+      "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Corrects a recovery omission in the atlas local-cap implementation; previous local/reset evidence did not cover renderer replacement. Full S5 atlas qualification remains unproven. No complete MEM-REPLACEMENT closure: atlas generation-count and other resource-family work remain separate.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-recovery-budget/result.json"
   }
 }
