@@ -117,7 +117,7 @@ fn prompt_style_boundaries_do_not_restart_glyph_positioning() {
 }
 
 #[test]
-fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {
+fn terminal_rich_span_colors_invalidate_paint_but_preserve_shaping() {
     let mut run = TextRun {
         text: "$ command".to_string(),
         rich_spans: vec![TextRunSpan {
@@ -135,10 +135,15 @@ fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {
         layout_size: None,
     };
     let original = text_buffer_key(&run, 1280, 768);
+    let paint = text_prepare_signature(&[0], std::slice::from_ref(&run), 1280, 768);
     run.rich_spans[0].color = TEXT_SECONDARY;
-    assert_ne!(
+    assert_eq!(
         original,
         text_buffer_key(&run, 1280, 768),
-        "rich terminal colors are shaped into the cached buffer"
+        "rich terminal color changes preserve shaping identity"
+    );
+    assert_ne!(
+        paint,
+        text_prepare_signature(&[0], std::slice::from_ref(&run), 1280, 768)
     );
 }

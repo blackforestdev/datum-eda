@@ -6,7 +6,8 @@ use glyphon::{Color, FontSystem, LayoutRun, SwashCache, TextBounds};
 use super::atlas::Atlas;
 use super::lifetime::{Kind, SubmissionRef, Tracked};
 
-pub(crate) struct Area<R> {
+pub(crate) struct Area<'a, R> {
+    pub rich_spans: &'a [crate::TextRunSpan],
     pub rows: R,
     pub left: f32,
     pub top: f32,
@@ -102,7 +103,7 @@ impl Draw {
         fonts: &mut FontSystem,
         raster: &mut SwashCache,
         resolution: [u32; 2],
-        areas: impl IntoIterator<Item = Area<R>>,
+        areas: impl IntoIterator<Item = Area<'a, R>>,
     ) -> anyhow::Result<()> {
         self.generation = None;
         self.pending_instances = None;
@@ -155,7 +156,14 @@ impl Draw {
                             (right - left) as u32,
                             (bottom - top) as u32,
                         ],
-                        color: glyph.color_opt.unwrap_or(area.default_color).0,
+                        color: glyph
+                            .metadata
+                            .checked_sub(1)
+                            .and_then(|index| area.rich_spans.get(index))
+                            .map(|span| crate::text_color(span.color))
+                            .or(glyph.color_opt)
+                            .unwrap_or(area.default_color)
+                            .0,
                         is_color: u32::from(location.color),
                     });
                     // Only adjacent glyphs are batched; overlapping text retains

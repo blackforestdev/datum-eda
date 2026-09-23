@@ -338,7 +338,6 @@ struct TextRun {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct TextBufferSpanKey {
     text: String,
-    color_bits: [u32; 3],
     bold: bool,
     italic: bool,
 }
@@ -361,6 +360,7 @@ struct TextBufferCacheStats {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct TextPrepareSignature {
+    span_colors: Vec<(usize, [u32; 3])>,
     width: u32,
     height: u32,
     runs: Vec<TextPrepareRunKey>,

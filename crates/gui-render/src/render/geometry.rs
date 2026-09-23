@@ -1154,33 +1154,9 @@ fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
     }
 }
 
-fn text_prepare_signature(
-    indices: &[usize],
-    runs: &[TextRun],
-    width: u32,
-    height: u32,
-) -> TextPrepareSignature {
-    TextPrepareSignature {
-        width,
-        height,
-        runs: indices
-            .iter()
-            .zip(runs.iter())
-            .map(|(index, run)| TextPrepareRunKey {
-                buffer_index: *index,
-                x_bits: run.x.to_bits(),
-                y_bits: run.y.to_bits(),
-                color_bits: run.color.map(f32::to_bits),
-                clip_bounds: run.clip_bounds.map(|rect| RectBits {
-                    x_bits: rect.x.to_bits(),
-                    y_bits: rect.y.to_bits(),
-                    width_bits: rect.width.to_bits(),
-                    height_bits: rect.height.to_bits(),
-                }),
-            })
-            .collect(),
-    }
-}
+#[path = "text_prepare_identity.rs"]
+mod text_prepare_identity;
+use text_prepare_identity::text_prepare_signature;
 
 #[cfg(test)]
 #[allow(dead_code)]

@@ -252,7 +252,7 @@ def check_agent_tui_runtime(
         "terminal_font_advance_matches_shared_logical_cell_width",
         "terminal_cell_advance_combines_smaller_ink_with_explicit_spacing",
         "prompt_style_boundaries_do_not_restart_glyph_positioning",
-        "terminal_rich_span_colors_participate_in_the_buffer_cache_key",
+        "terminal_rich_span_colors_invalidate_paint_but_preserve_shaping",
     ):
         if marker not in terminal_font_tests:
             failures.append(f"terminal cell-metric convergence proof is missing {marker}")

@@ -319,7 +319,7 @@ fn styled_terminal_colors_share_one_shaping_origin() {}
 fn colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells() {}
 fn hidpi_keeps_terminal_glyphs_and_cursor_on_the_same_device_pixel_grid() {}
 fn prompt_style_boundaries_do_not_restart_glyph_positioning() {}
-fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {}
+fn terminal_rich_span_colors_invalidate_paint_but_preserve_shaping() {}
 """
         terminal_core_render = """
 const CURSOR_HORIZONTAL_INSET_PX: f32 = 1.0;
@@ -393,7 +393,7 @@ fn render_cursor() {}
                 "styled_terminal_colors_share_one_shaping_origin", "removed"
             ).replace(
                 "prompt_style_boundaries_do_not_restart_glyph_positioning", "removed"
-            ),
+            ).replace("terminal_rich_span_colors_invalidate_paint_but_preserve_shaping", "removed"),
             terminal_core_render
             .replace("CURSOR_HORIZONTAL_INSET_PX", "removed")
             .replace("draw_rich_text", "draw_text")
@@ -406,6 +406,7 @@ fn render_cursor() {}
         self.assertIn(
             "terminal focus must precede child mouse-report forwarding", failures
         )
+        self.assertIn("terminal cell-metric convergence proof is missing terminal_rich_span_colors_invalidate_paint_but_preserve_shaping", failures)
         self.assertIn("terminal mouse routing is missing advance_terminal_tab_drag", failures)
         self.assertIn("terminal mouse routing is missing cancel_terminal_tab_drag", failures)
         self.assertIn("terminal mouse routing is missing advance_terminal_text_selection", failures)

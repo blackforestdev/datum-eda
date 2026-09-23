@@ -2,7 +2,7 @@
 use std::sync::Arc;
 
 use crate::cpu_alloc::heap::capacity_bytes;
-use crate::{TextRun, text_attrs, text_color};
+use crate::{TextRun, text_attrs};
 use glyphon::cosmic_text::{BidiParagraphs, LineIter};
 #[path = "layout_scratch.rs"]
 pub(crate) mod scratch;
@@ -112,9 +112,9 @@ impl TextLayout {
                 .collect();
             let mut spans = Vec::with_capacity(run.rich_spans.len());
             let mut offset = 0;
-            for span in &run.rich_spans {
+            for (index, span) in run.rich_spans.iter().enumerate() {
                 let end = offset + span.text.len();
-                let mut style = attrs.clone().color(text_color(span.color));
+                let mut style = attrs.clone().metadata(index + 1);
                 if span.bold {
                     style = style.weight(Weight::BOLD);
                 }

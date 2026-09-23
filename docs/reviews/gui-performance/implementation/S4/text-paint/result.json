@@ -1,0 +1,84 @@
+{
+  "status": "Default rich-text paint identity is separate from shared shaping/layout identity; full text dependency/accounting qualification remains open",
+  "base_commit": "4464cd6b",
+  "production_consumers": [
+    "Shared TextBufferCache and TextLayout used by workspace/terminal and dialog text",
+    "Default workspace and overlay Draw glyph preparation via build_text_areas"
+  ],
+  "retired_paths": [
+    "Including rich-span color in shaped-cache exact keys and lookup fingerprints",
+    "Baking current rich-span colors into retained ShapeLine attributes",
+    "Reshaping or retaining duplicate layouts for otherwise-identical differently colored rich runs"
+  ],
+  "behavior": [
+    "Retain span text, bold/italic style, face and size in shaping identity. Store stable span indices using the existing public Attrs metadata API; resolve colors from the current borrowed TextRun spans during glyph preparation. No dependency-private access or copied source.",
+    "Different colored areas share one immutable shape/layout while each produces its own glyph colors. Paint signatures include exact run-index/color-bit tuples in one flat vector, so recolors update GPU instances and unchanged paint remains reusable. Plain/default and intrinsic color glyph behavior is preserved.",
+    "Move the existing preparation signature builder into a small shared implementation module to keep the ceiling-bound geometry source below its existing limit. No new user-facing text policy, font, shaping mode, alignment, locale or layout authority."
+  ],
+  "proof": {
+    "renderer": "328 renderer tests pass, 11 diagnostic/visual cases filtered. New actual-GPU shared-color-layout test confirms one cached layout for two differently colored areas, unchanged cache revision across recolor, changed pixels matching a fresh renderer and warm preparation reuse. Existing owned-vs-library GPU rich/plain parity, cache bounds, layout and resource regressions pass.",
+    "boundary": "One additional focused test passes on final source: resolve paint indices and compare exact glyph/layout data with the library Buffer reference for split combining marks, RTL, equal-style spans, empty spans and line breaks at two wrap widths. This test was added after the 328-test suite; no larger full-suite count is claimed.",
+    "development": "Initial suite:326 pass,one old terminal color-key expectation fails. Updated that test to require unchanged shaping identity and changed paint identity. A new GPU test initially tried to inspect a private cache field; replaced it with production cache revision/entry and pixel assertions. Both failed receipts preserved.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh application build pass. Source health 2,265, dependency and governance gates pass.",
+    "drift": "Initial drift stopped at the obsolete terminal color-key test marker. Updated the guard and its missing-proof negative control; 11 guard tests and current guard pass. Full rerun stops at the existing Console golden mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "Current fixed font catalog/locale and supported Basic shaping profiles remain controlling; this does not add dynamic font/locale/shaping-feature controls or qualify every dependency combination. REUSE-TEXT-KEY/LAYOUT remain partial.",
+    "The flat paint-signature color vector is separate retained preparation metadata. Its complete CPU/peak/aggregate accounting remains outstanding with other signature/registry metadata; no complete shaped/scratch/resource cap acceptance follows.",
+    "Other S4 work and S5 native/backend/fault/fairness/endurance/independent qualification remain. No issue or S4/S5 closure, application performance claim, dependency, vendoring, license, prototype, numerical cap or specification amendment. Preserve GEFN, concurrent multi-device exclusion and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/tests.log.gz",
+      "uncompressed_sha256": "6da1dd25964c6ea0d9f1a473cf9680d9a2b88f322fb2139a9a277ee3498044cc"
+    },
+    "boundaries": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/boundaries.log.gz",
+      "uncompressed_sha256": "dc26cf117b081a3d0a55dd9c548cbe4ede5b99201a7e93cd2b1bb240f3fa7d2d"
+    },
+    "old-expectation": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/old-expectation.log.gz",
+      "uncompressed_sha256": "37ea89f1765a21af41e733d9753522a4d3e0e2ed0e7392afb3e5a6ef2b29d7b1"
+    },
+    "test-compile-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/test-compile-error.log.gz",
+      "uncompressed_sha256": "cf182e66be7bb607459010bee529d0610db854e17bcf27f86987c0c1934f623f"
+    },
+    "guard": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/guard.log.gz",
+      "uncompressed_sha256": "49e33eba2d5dfb1bcc001f27cdf808c87f0e5ffdecc5a55cf1092d4749d13135"
+    },
+    "initial-drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/initial-drift.log.gz",
+      "uncompressed_sha256": "1713b8dc2495d43fb64a16b3cbb6c5a22cfa9b82e626d0279c9d7e91f37e43a7"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/clippy.log.gz",
+      "uncompressed_sha256": "26e08455e95924da06505469182b5d1b600a58d53ab7edbd5805b28357b0e10c"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/build.log.gz",
+      "uncompressed_sha256": "7ab96ec2539dac8045c4ada707a4bb93f98b796e9168c00c37314a3abfe50b6a"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-paint/drift.log.gz",
+      "uncompressed_sha256": "6293064e2a7118bf9741643a7058b9d5030c5722abf9b95699d81b3cde39ab8e"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/geometry.rs": "9150188bd953d4455e7341596d7608677f252d42585ffd710fc54ba5aa6804c3",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "6a45c2f12c83c5af1057fbcd69613d588094b0b84ffd704a9fa1226ec381bb9c",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "7959758aef51b9557be1eeec2f3aaed96d17b82f01199d7d9b37c872d8ebb7f6",
+    "crates/gui-render/src/render/types.rs": "fe8c836b9c56e962bd62200edb613919f5de0ae651f1f0a8a8f8d5c767f6edaf",
+    "crates/gui-render/src/terminal_font_tests.rs": "29ca2991d532f416ce28dfef2f62b77de7f5aec09871eb08efcc12c1040e791d",
+    "crates/gui-render/src/text_gpu/draw.rs": "753c2e393f5ec9afa1295ee87af32197555d8b7d6f54c59b0545e9094bed2767",
+    "crates/gui-render/src/text_gpu/parity.rs": "d8fafb0886d7beef071672778572fd03db1bc173e556531956c9d22e41097a72",
+    "crates/gui-render/src/text_layout.rs": "0855bbe4be8e5ac318d7d24af7e5bf45bde49a7cbf95665bebaf5c4e8a3f2214",
+    "crates/gui-render/src/text_layout_tests.rs": "01aa5c4ae90e301eaeff64546cf5c6a7829ff47f426763ca60343403b8f5ec88",
+    "scripts/check_gui_agent_terminal_convergence.py": "b12f383f08bd3ec7037a448a9d7b95734f0228244082452bf75aaa6b3ab6047e",
+    "scripts/test_gui_agent_terminal_convergence.py": "ad29114f013a44b3113948d63a316801a2a9719666d0fe2a64f0b58e952adc2c",
+    "crates/gui-render/src/render/gpu_text_paint_tests.rs": "f3199a148900a68530c2b56889667e84d3a97885e0b619f3b84d582998cbe641",
+    "crates/gui-render/src/render/text_prepare_identity.rs": "db5f478e3d9267ba6f597eb8ce56a661546f5952788c5a2760eaa967f612e0db"
+  }
+}
