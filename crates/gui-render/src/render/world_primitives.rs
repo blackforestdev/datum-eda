@@ -81,10 +81,14 @@ pub(super) fn admit_outline_points(out: &mut impl Output<Quad>, count: usize) ->
 
 pub(super) fn world_pad_outline(
     pad: &datum_gui_protocol::PadPrimitive,
+    bounds: datum_gui_protocol::RectNm,
     inset_nm: f32,
     reference_projection: &Projection,
 ) -> Vec<PointNm> {
-    let (width_nm, height_nm) = pad_dimensions_nm(pad);
+    let (width_nm, height_nm) = (
+        (bounds.max_x - bounds.min_x).max(1) as f32,
+        (bounds.max_y - bounds.min_y).max(1) as f32,
+    );
     let center = (pad.center.x as f32, pad.center.y as f32);
     let width_nm = (width_nm - inset_nm * 2.0).max(1.0);
     let height_nm = (height_nm - inset_nm * 2.0).max(1.0);

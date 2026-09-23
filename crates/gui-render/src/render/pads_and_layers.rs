@@ -74,25 +74,25 @@ fn push_pad_primitive(
 fn push_pad_primitive_world(
     out: &mut impl Output<Quad>,
     pad: &datum_gui_protocol::PadPrimitive,
-    layer_id: &str,
+    bounds: datum_gui_protocol::RectNm,
     outer_color: [f32; 3],
     drill_nm: Option<i64>,
     dimmed: bool,
     reference_projection: &Projection,
 ) {
     let outer_color = dim_authored_color(outer_color, dimmed);
-    let _ = layer_id;
     // Ellipses use 64 points; rounded rectangles use at most 36. Include
     // floating-point input and nanometre output overlap before construction.
     if !world_primitives::admit_outline_points(out, 64) {
         return;
     }
-    let copper_outline = world_primitives::world_pad_outline(pad, 0.0, reference_projection);
+    let copper_outline =
+        world_primitives::world_pad_outline(pad, bounds, 0.0, reference_projection);
     push_world_polygon_fill(out, &copper_outline, outer_color);
     if let Some(drill_nm) = drill_nm.filter(|value| *value > 0) {
         let half = drill_nm as f32 * 0.5;
-        let center_x = (pad.bounds.min_x + pad.bounds.max_x) as f32 * 0.5;
-        let center_y = (pad.bounds.min_y + pad.bounds.max_y) as f32 * 0.5;
+        let center_x = (bounds.min_x + bounds.max_x) as f32 * 0.5;
+        let center_y = (bounds.min_y + bounds.max_y) as f32 * 0.5;
         let hole = datum_gui_protocol::RectNm {
             min_x: (center_x - half).round() as i64,
             min_y: (center_y - half).round() as i64,
@@ -121,12 +121,10 @@ enum PadProcessLayerKind {
     Paste,
 }
 
-fn derived_process_pad(
+fn process_pad_bounds(
     pad: &datum_gui_protocol::PadPrimitive,
-    process_layer_id: &str,
     kind: PadProcessLayerKind,
-    _setup: &datum_gui_protocol::ScenePadExpansionSetup,
-) -> datum_gui_protocol::PadPrimitive {
+) -> datum_gui_protocol::RectNm {
     let (width_nm, height_nm) = pad_dimensions_nm(pad);
     let (expanded_width_nm, expanded_height_nm) = match kind {
         PadProcessLayerKind::Mask => {
@@ -149,15 +147,25 @@ fn derived_process_pad(
     let half_h = expanded_height_nm * 0.5;
     let center_x = pad.center.x as f32;
     let center_y = pad.center.y as f32;
-    let mut derived = pad.clone();
-    derived.layer_id = process_layer_id.to_string();
-    derived.bounds = datum_gui_protocol::RectNm {
+    datum_gui_protocol::RectNm {
         min_x: (center_x - half_w).round() as i64,
         min_y: (center_y - half_h).round() as i64,
         max_x: (center_x + half_w).round() as i64,
         max_y: (center_y + half_h).round() as i64,
-    };
-    // Process apertures are not annular copper objects; render as the opening/aperture shape.
+    }
+}
+
+// Retain the original owned adapter only for the existing aperture reference tests.
+#[cfg(test)]
+fn derived_process_pad(
+    pad: &datum_gui_protocol::PadPrimitive,
+    process_layer_id: &str,
+    kind: PadProcessLayerKind,
+    _setup: &datum_gui_protocol::ScenePadExpansionSetup,
+) -> datum_gui_protocol::PadPrimitive {
+    let mut derived = pad.clone();
+    derived.layer_id = process_layer_id.to_string();
+    derived.bounds = process_pad_bounds(pad, kind);
     derived.drill_nm = None;
     derived
 }

@@ -152,7 +152,7 @@ fn push_retained_scene_geometry(
                 push_pad_primitive_world(
                     out,
                     pad,
-                    render_layer,
+                    pad.bounds,
                     if active {
                         selected_copper_color(layer_app(render_layer).pad_copper)
                     } else if hovered || related {
@@ -286,12 +286,12 @@ fn push_retained_scene_geometry(
                 if !membership.iter().any(|member| member == layer_id) {
                     continue;
                 }
-                let derived = derived_process_pad(pad, layer_id, *kind, &scene.pad_expansion_setup);
+                let bounds = process_pad_bounds(pad, *kind);
                 let quad_start = out.len();
                 push_pad_primitive_world(
                     out,
-                    &derived,
-                    layer_id,
+                    pad,
+                    bounds,
                     if active {
                         selected_silk_color(mask_or_paste_layer_color(layer_id, sl))
                     } else {
@@ -468,7 +468,7 @@ fn push_retained_scene_geometry(
                 push_pad_primitive_world(
                     out,
                     pad,
-                    render_layer,
+                    pad.bounds,
                     selected_copper_color(layer_app(render_layer).pad_copper),
                     pad.drill_nm,
                     dimmed,

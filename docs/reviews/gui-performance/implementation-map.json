@@ -3944,6 +3944,11 @@
           "work": "s4_construction_admission_work.input_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
           "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
+        },
+        {
+          "work": "s4_construction_admission_work.process_pad_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
+          "status": "Default retained process apertures borrow pad data and compute only bounds"
         }
       ]
     },
@@ -15063,7 +15068,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Finish remaining construction ownership, including derived process-pad copies and selection-relation cache ownership; reconcile concurrent constructor admission and weak-observer lifetimes. Shared retained payload/history, emitted vectors, polygon scratch, command strings, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Preserve original S5 qualification and do not restart implemented owners."
+          "Reconcile concurrent constructor admission and weak-observer lifetimes against retained CPU/history ownership. Shared retained payload/history, emitted vectors, polygon scratch, command strings, borrowed process pads, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Selection-relation helpers already borrow strings without a cache; the preceding cache-ownership lead was incorrect. Preserve original S5 qualification and do not restart implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15170,6 +15175,11 @@
           "work": "s4_construction_admission_work.input_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
           "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
+        },
+        {
+          "work": "s4_construction_admission_work.process_pad_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
+          "status": "Default retained process apertures borrow pad data and compute only bounds"
         }
       ]
     },
@@ -15231,7 +15241,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Finish remaining construction ownership, including derived process-pad copies and selection-relation cache ownership; reconcile concurrent constructor admission and weak-observer lifetimes. Shared retained payload/history, emitted vectors, polygon scratch, command strings, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Preserve original S5 qualification and do not restart implemented owners."
+          "Reconcile concurrent constructor admission and weak-observer lifetimes against retained CPU/history ownership. Shared retained payload/history, emitted vectors, polygon scratch, command strings, borrowed process pads, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Selection-relation helpers already borrow strings without a cache; the preceding cache-ownership lead was incorrect. Preserve original S5 qualification and do not restart implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15338,6 +15348,11 @@
           "work": "s4_construction_admission_work.input_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
           "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
+        },
+        {
+          "work": "s4_construction_admission_work.process_pad_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
+          "status": "Default retained process apertures borrow pad data and compute only bounds"
         }
       ]
     },
@@ -17467,6 +17482,11 @@
           "work": "s4_construction_admission_work.input_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
           "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
+        },
+        {
+          "work": "s4_construction_admission_work.process_pad_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
+          "status": "Default retained process apertures borrow pad data and compute only bounds"
         }
       ]
     },
@@ -17718,6 +17738,11 @@
           "work": "s4_construction_admission_work.input_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
           "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
+        },
+        {
+          "work": "s4_construction_admission_work.process_pad_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json",
+          "status": "Default retained process apertures borrow pad data and compute only bounds"
         }
       ]
     },
@@ -34840,6 +34865,26 @@
         "The owner/Copilot preferences product-test edit is excluded. No dependency/license/prototype/cap/sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json"
+    },
+    "process_pad_followup": {
+      "status": "Default retained process apertures borrow pad data and compute only bounds",
+      "base_commit": "baf3b907",
+      "production_consumers": [
+        "Retained board copper, mask/paste apertures and selected-pad overlay"
+      ],
+      "retired_paths": [
+        "Full PadPrimitive and layer-name cloning for each retained process aperture; owned adapter now test-only"
+      ],
+      "proof": {
+        "renderer": "379 passed; 0 failed; 11 filtered. Existing aperture, retained geometry and refusal tests preserved.",
+        "build": "Fresh datum-gui visual application build passed offline.",
+        "selection_reconciliation": "render/selection_relation.rs resolves component identity through borrowed strings and iteration. No production selection-relation cache exists; remove that stale implementation-gap assertion."
+      },
+      "limitations": [
+        "No complete CPU/staging/accounting or S4 closure. Concurrent constructor admission and weak-observer lifetime accounting remain unreconciled; original S5 qualification remains required.",
+        "No dependency, license, prototype, numeric cap or sequencing change. GEFN and nonblocking resize preserved. Owner/Copilot engine tests excluded."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/process-pad/result.json"
     }
   },
   "s4_vertex_allocation_work": {
