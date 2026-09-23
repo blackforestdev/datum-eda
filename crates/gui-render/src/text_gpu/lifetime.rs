@@ -3,6 +3,8 @@ use std::ops::Deref;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, Weak};
 
+static PROCESS_ALLOCATIONS: Mutex<Vec<Weak<Identity>>> = Mutex::new(Vec::new());
+
 static NEXT_ID: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -63,6 +65,17 @@ impl Owner {
         generation: u64,
         kind: Kind,
     ) -> Tracked<T> {
+        self.track_with_permit(resource, bytes, generation, kind, None)
+    }
+
+    pub(super) fn track_with_permit<T>(
+        &self,
+        resource: T,
+        bytes: u64,
+        generation: u64,
+        kind: Kind,
+        permit: Option<super::budget::Permit>,
+    ) -> Tracked<T> {
         let identity = Arc::new(Identity {
             record: Record {
                 id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
@@ -77,29 +90,56 @@ impl Owner {
         let mut entries = self.0.allocations.lock().unwrap_or_else(|e| e.into_inner());
         entries.retain(|entry| entry.strong_count() != 0);
         entries.push(Arc::downgrade(&identity));
-        Tracked(Arc::new(Allocation { resource, identity }))
+        let mut process = PROCESS_ALLOCATIONS
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        process.retain(|entry| entry.strong_count() != 0);
+        process.push(Arc::downgrade(&identity));
+        Tracked(Arc::new(Allocation {
+            resource,
+            _permit: permit,
+            identity,
+        }))
     }
 
     /// API-owned bytes, including submitted allocations whose CPU owner retired.
     /// Driver residency, allocation metadata and staging are separate boundaries.
     pub fn records(&self) -> Vec<Record> {
-        let mut entries = self.0.allocations.lock().unwrap_or_else(|e| e.into_inner());
-        let mut records = Vec::new();
-        entries.retain(|entry| {
-            if let Some(identity) = entry.upgrade() {
-                records.push(Record {
-                    retiring: !identity.active.load(Ordering::Acquire),
-                    ..identity.record
-                });
-                true
-            } else {
-                false
-            }
-        });
-        if entries.capacity() > entries.len().saturating_mul(4) {
-            *entries = std::mem::take(&mut *entries).into_boxed_slice().into_vec();
+        records(&self.0.allocations)
+    }
+}
+
+fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
+    let mut entries = source.lock().unwrap_or_else(|e| e.into_inner());
+    let mut records = Vec::new();
+    entries.retain(|entry| {
+        if let Some(identity) = entry.upgrade() {
+            records.push(Record {
+                retiring: !identity.active.load(Ordering::Acquire),
+                ..identity.record
+            });
+            true
+        } else {
+            false
         }
-        records
+    });
+    if entries.capacity() > entries.len().saturating_mul(4) {
+        *entries = std::mem::take(&mut *entries).into_boxed_slice().into_vec();
+    }
+    records
+}
+
+impl crate::Renderer {
+    /// All live and submission-retiring text texture/instance API allocations.
+    /// Weak process observation does not prolong GPU resource lifetime.
+    pub fn text_gpu_process_allocations() -> Vec<Record> {
+        records(&PROCESS_ALLOCATIONS)
+    }
+
+    /// Texture bytes reserved or allocated, including retiring submissions.
+    /// This is API capacity, not physical driver residency or upload staging.
+    pub fn text_atlas_process_bytes() -> u64 {
+        super::budget::process().used()
     }
 }
 
@@ -107,6 +147,7 @@ impl Owner {
 // still holds the API object. Submission references own this SAME allocation.
 struct Allocation<T> {
     resource: T,
+    _permit: Option<super::budget::Permit>,
     identity: Arc<Identity>,
 }
 
@@ -154,6 +195,41 @@ pub(crate) fn hold_until_done(queue: &wgpu::Queue, resources: Vec<SubmissionRef>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn texture_reservation_survives_owner_and_every_submission_hold() {
+        let budget = super::super::budget::Budget::new(64);
+        let owner = Owner::new();
+        let texture = owner.track_with_permit(
+            vec![0_u8; 64],
+            64,
+            1,
+            Kind::Texture,
+            Some(budget.reserve(64).unwrap()),
+        );
+        let id = texture.id();
+        let first = texture.submission_ref();
+        let second = texture.submission_ref();
+        drop(texture);
+        drop(owner);
+        assert_eq!(budget.used(), 64);
+        assert!(budget.reserve(1).is_err());
+        let records = crate::Renderer::text_gpu_process_allocations();
+        assert!(
+            records
+                .iter()
+                .any(|record| record.id == id && record.retiring)
+        );
+        drop(first);
+        assert_eq!(budget.used(), 64);
+        drop(second);
+        assert_eq!(budget.used(), 0);
+        assert!(
+            !crate::Renderer::text_gpu_process_allocations()
+                .iter()
+                .any(|record| record.id == id)
+        );
+    }
 
     #[test]
     fn submitted_allocation_stays_charged_after_cpu_replacement() {

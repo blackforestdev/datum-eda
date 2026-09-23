@@ -3828,7 +3828,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
         "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
-        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
       ],
       "s4_owned_text_gpu_progress": {
         "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
@@ -3841,6 +3842,10 @@
       "s4_text_process_retention_progress": {
         "implementation": "Default owner registration/public-capacity publication and serialized process post-frame admission; see s4_text_process_retention_work.",
         "remaining": "Original complete active/private/shared/lifetime accounting and admission dueS4; qualification dueS5. No predicate closure."
+      },
+      "s4_atlas_process_admission_progress": {
+        "implementation": "Default pre-allocation128MiB process atlas reservation retained through real resource/submission lifetime; weak process text allocation enumeration. See s4_atlas_process_admission_work.",
+        "remaining": "Original full resource/accounting implementation and combined subcap obligations dueS4; full native/resource qualification dueS5. No acceptance-rule or status change."
       }
     },
     {
@@ -16307,7 +16312,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
-        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -16324,6 +16330,10 @@
       "s4_owned_text_gpu_progress": {
         "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
         "remaining": "Full original acceptance remains unqualified. Complete staging/CPU/aggregate caps, device/host incidence and required resource/native/recovery conformance remain due under existing S4/S5 deadlines."
+      },
+      "s4_atlas_process_admission_progress": {
+        "implementation": "Default pre-allocation128MiB process atlas reservation retained through real resource/submission lifetime; weak process text allocation enumeration. See s4_atlas_process_admission_work.",
+        "remaining": "Original full resource/accounting implementation and combined subcap obligations dueS4; full native/resource qualification dueS5. No acceptance-rule or status change."
       }
     },
     {
@@ -16418,7 +16428,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
-        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -16435,6 +16446,10 @@
       "s4_owned_text_gpu_progress": {
         "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
         "remaining": "Full original acceptance remains unqualified. Complete staging/CPU/aggregate caps, device/host incidence and required resource/native/recovery conformance remain due under existing S4/S5 deadlines."
+      },
+      "s4_atlas_process_admission_progress": {
+        "implementation": "Default pre-allocation128MiB process atlas reservation retained through real resource/submission lifetime; weak process text allocation enumeration. See s4_atlas_process_admission_work.",
+        "remaining": "Original full resource/accounting implementation and combined subcap obligations dueS4; full native/resource qualification dueS5. No acceptance-rule or status change."
       }
     },
     {
@@ -31552,5 +31567,38 @@
       "No native/endurance/global adoption, full MEM-SHAPED, S4 or S5 acceptance. No dependency, vendor, prototype, font, numerical budget or resize amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json"
+  },
+  "s4_atlas_process_admission_work": {
+    "status": "Default atlas textures reserve aggregate API capacity before creation and retain it through submission completion; full resource qualification remains open",
+    "base_commit": "b549d17d",
+    "production_consumers": [
+      "Atlas::glyph texture-page creation shared by full/overlay text on every native Renderer",
+      "Tracked text allocation/submission holds and process weak allocation inventory",
+      "Renderer::text_gpu_process_allocations and text_atlas_process_bytes"
+    ],
+    "retired_paths": [
+      "Renderer-local32MiB retained texture check as the sole atlas allocation admission boundary",
+      "Owner-observer-only visibility of text GPU allocations after renderer close"
+    ],
+    "behavior": [
+      "Reserve exact texture extent/format capacity against128MiB process atlas budget before creating a GPU texture. Preserve local32MiB page limit. Failed admission follows existing explicit preparation failure/retry, never silently omitting required text.",
+      "Atomic checked reservation cannot overbook across render threads or overflow arithmetic. Unused reservations release on drop. A successful reservation belongs to the same allocation as the GPU resource and survives every submission hold; resource drops before reservation/identity.",
+      "A weak process inventory enumerates stable allocation ID, renderer text owner, generation, kind, bytes and retiring status for text pages and instance buffers. Closed owners with submission-held resources remain observable without a surviving local observer.",
+      "Warm glyph/instance paths retain their existing allocation/reuse behavior. No staging/queue rewrite is introduced.",
+      "Page binding reference drops before the charged texture owner; GPU resource drops before its reservation and allocation identity. Final owner/GPU tests cover this order."
+    ],
+    "proof": {
+      "owner": "7 owner/budget/GPU tests passed, including concurrent overbooking rejection, shared three-atlas pressure before GPU allocation, retirement-held rejection/re-admission, multiple submission holds and real queue completion release. Includes60 exact pixel comparisons from the retained draw oracle.",
+      "gpu": "14 production GPU regressions passed, including default full/dialog parity, scrolling, atlas pressure/retry/reindex and warm reuse.",
+      "build": "Renderer all-targets visual Clippy with -D warnings and fresh datum-gui build passed.",
+      "policy": "Source health2235files, dependency authority, terminal convergence, project state, traceability, spec governance/parity passed. No roadmap-state change; unchanged full drift/native/endurance not rerun. Known Console golden failure remains separately unqualified."
+    },
+    "limits": [
+      "128MiB covers atlas texture API capacity, including reservations/live/submission-retiring textures. It is not physical driver residency, CPU atlas metadata, upload staging or all-application512MiB GPU accounting.",
+      "Pending raster images and wgpu queue upload staging remain outside a complete16MiB host/64MiB aggregate chunked admission implementation. Private font/raster scratch and complete allocation/release/device/host qualification remain required.",
+      "The process inventory covers Datum text textures and instance buffers, not every application GPU allocation. Per-owner observers and existing original qualification remain.",
+      "No full MEM-ATLAS, ACC, S4/S5, native/endurance or relative-performance acceptance; no dependency/vendor/prototype/font/numerical budget/resize amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
   }
 }
