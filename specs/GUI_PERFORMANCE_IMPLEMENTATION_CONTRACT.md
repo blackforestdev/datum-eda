@@ -325,3 +325,73 @@ required before S4; a separate evidence-based exit review must precede selection
 This approval does not complete S3, qualify resource bounds, solve private
 resource accounting, authorize dependencies, change numerical budgets or alter
 the nonblocking resize exclusion. S3 remains selected and in progress.
+
+## Proposed amendment: S3 bounded implementation exit
+
+Status: prepared for owner review; not applied. The owner requested faster,
+bounded execution after reviewing the cost of fragmented S3 validation. That
+direction authorizes this concrete proposal and readiness reconciliation; it is
+not recorded as approval of the replacement exit criteria below.
+
+The existing adoption map's `s3_bounded_exit_review` records the production
+inventory, credited evidence, known failures and all 20 affected requirement
+IDs. It is a review of existing implementation, not new runtime proof. The
+following four edits are the complete proposed contract change:
+
+1. Replace the S3 table's required-evidence cell with:
+
+   > Establish bounded shared-implementation readiness from the current default
+   > production consumers of shared dialog/control/scroll/clip/hit owners,
+   > retirement of the New Project general backdrop and competing machinery,
+   > affected correctness and defect-sensitive tests, bounded native adapter
+   > evidence, and warm reuse/eviction behavior at explicitly recorded limits.
+   > Preserve legitimate discrete Layers/terminal semantics and existing
+   > preference/project authority. Record every unfinished S3 qualification
+   > predicate individually in its existing adoption-map row as required at S5,
+   > including complete per-consumer native input/focus/final-state/static
+   > appearance, backend/scale, prescribed negative controls, pass/forbidden-work
+   > and cache qualification. None becomes passed through readiness. Missing
+   > default-path adoption or an unexplained implementation regression still
+   > blocks S3 exit. Complete S2-owned resource dependencies retain their S4
+   > implementation and S5 qualification deadlines. No other unfinished
+   > implementation is deferred by this amendment.
+
+2. Append to the S5 table's required-evidence cell:
+
+   > Close every outstanding qualification predicate carried from S3, under
+   > its unchanged acceptance rule and actual applicable consumer scope.
+   > Consolidate native input/focus/final-state/static appearance, backend/scale,
+   > negative-control, pass/forbidden-work and cache proof with the existing
+   > pinned-candidate qualification. S3 readiness is not full adoption or
+   > performance acceptance. Missing proof and unresolved failures remain
+   > explicit; qualification is not satisfied merely by moving its deadline.
+
+3. Replace the GPI-S3 completion action with:
+
+   > Adopt shared dialog/control/scroll/clip/hit owners in default production
+   > consumers, retire New Project backdrop and competing paths, and establish
+   > bounded implementation readiness under the S3 table. Preserve unfinished
+   > qualification individually for S5; do not declare global acceptance.
+
+4. Append the following supersession to the approved S3 resource clarification:
+
+   > The subsequently approved S3 bounded implementation exit supersedes only
+   > the requirement that all remaining S3 functional/native/negative
+   > qualification precede S4. Those obligations now precede S5 completion;
+   > their original acceptance rules remain unchanged. The earlier S4 resource
+   > implementation deadline remains binding. A separate evidence-based
+   > readiness review still precedes S3 completion and S4 selection; approval
+   > alone completes neither. Unexplained implementation regressions remain
+   > blocking. The historical approval and failed evidence are preserved.
+
+If approved, apply all four edits together, mirror GPI-S3 in the Frontier and
+generated progress, and assign the 20 listed rows' unfinished qualification to
+S5 without changing their partial statuses. This avoids leaving the earlier
+S3 prerequisite in force while claiming permission to advance. The pending
+proposal itself neither selects S4 nor changes any deadline.
+
+Bounded evidence may be reused for unchanged code and applicable scenarios;
+affected regressions must be checked after relevant changes. Final S5 proof,
+independent replay and endurance remain required. No new framework, dependency,
+prototype change, reduced numerical budget, invented Inspector scroll adapter,
+resize investigation or acceptance waiver is proposed.

@@ -30435,5 +30435,421 @@
     ],
     "strict_locality_failure": "Initial assertion that every frame belonged to Global failed on bottom trial. Do not hide that failure:1 extra Main presentation/native received event, zero recorded Main requests/coalesced damage. No-input comparisons also have1 native event/presentation with zero requests. Source NativeFrameCoordinator::redraw_received/begin_frame accepts such native tokens; this supports unsolicited-native attribution, not a compositor/driver root-cause claim.",
     "cleanup": "Both owned targets exit0 after SIGTERM cleanup. Portal explicitly closed and display restored to1.05; kscreen-doctor confirms1829x1029 logical geometry and1.05 scale. Cleanup is not overall application teardown qualification."
+  },
+  "s3_bounded_exit_review": {
+    "status": "Prepared readiness assessment and sequencing proposal; owner review pending. S3 remains in progress under current exit.",
+    "reviewed_head": "5e4b84ec",
+    "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-amendment-s3-bounded-implementation-exit",
+    "finding": "Recorded default production adoption and affected proof support a bounded-readiness exit proposal. No new missing shared-component migration was identified in the reviewed inventory. This is not full row qualification, independent replay, or a completed S3 exit under the currently effective contract.",
+    "production_inventory": [
+      {
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "owner": "Shared dialog-only preparation/envelope and owned_dialog_pointer dispatch",
+        "retired": "New Project workspace/general backdrop preparation and three private native pointer dispatch blocks"
+      },
+      {
+        "consumers": [
+          "GLOBAL",
+          "PROJECT"
+        ],
+        "owner": "GlobalPreferencesDialogState choice/explanation transitions; common scroll/focus surface",
+        "retired": "Private choice/explanation open/close/focus transitions and cloned choice payloads"
+      },
+      {
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "owner": "ScrollViewport accumulation and shared physical/line conversion",
+        "retired": "Per-event f32 accumulation that discarded tiny finite motion"
+      },
+      {
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW",
+          "INSPECTOR",
+          "REVISION",
+          "PROJECT panel",
+          "LAYERS",
+          "TERMINAL",
+          "TERM_OVERLAY",
+          "MENU"
+        ],
+        "owner": "Shared contour/text/hit clip intersection and retained control owners where applicable",
+        "retired": "Private clipping loops/intersections, unclipped content/hit emission and repeated invariant curved-control construction; consumer-specific evidence remains in original map records"
+      }
+    ],
+    "source_inventory": {
+      "crates/gui-app/src/app_native_events.rs": "a424cf77878b0613afa6127db26f9045cbae3651a255a694724dc54df1b981fd",
+      "crates/gui-app/src/app_shell.rs": "1eb609dc4634fb87f866d574be48349ac463ec4acad85040421c6562c388ca4b",
+      "crates/gui-app/src/global_preferences_window.rs": "29bc905a5ac7863ff527ffc5a1a45188b77672ae97614bc6658c587ed81aa24a",
+      "crates/gui-app/src/main.rs": "01fed146ccaed51fe9f8331d8762c36e00d597b98e8b18154caba98f59dbfb8b",
+      "crates/gui-app/src/native_scroll_input.rs": "db9a3c9fa282386bcca80dfbea27615bb331323a3994ff15826960fba9bab8e5",
+      "crates/gui-app/src/new_project_window.rs": "6ba218159b83a5a182932f8b135a3743c3249c8ce03c880b075ebf6398c9c039",
+      "crates/gui-app/src/pane_cameras.rs": "4ffc98713d6fef2b255172c0d9b7c9d4687d40aa3a7389312f5e245ddbd2ce0d",
+      "crates/gui-app/src/project_preferences_window.rs": "3657f681916088e55e83eda27986ea58594702aac4bc6a60fbfd6b2c6020c97d",
+      "crates/gui-app/src/runtime_camera_pane.rs": "373e4a52681eaae057cdf976f48d33539a44f1a62694f5f6517b320375eddf33",
+      "crates/gui-app/src/runtime_menu_actions.rs": "6057de3802713fe753fb0cd18c4de3fe099505c95d7d29b7b1ede211c3b3412b",
+      "crates/gui-app/src/runtime_primary_pointer.rs": "b462285f94451a76eeb2dc86e7a49843709fbf37e7dae78d602139f225e1633e",
+      "crates/gui-app/src/runtime_revision_workspace.rs": "b1221a4305a02b2c873793326ae543035b66b023f13a4a2ad510ab8eaba030c6",
+      "crates/gui-app/src/runtime_terminal_geometry.rs": "2e02ea056317d366d1b17b4685ce65fef7700415ee674cb72eb701630230d0dd",
+      "crates/gui-app/src/runtime_terminal_render.rs": "7a9b85f54be0f1a1970fc20802216c180eadf6193376677c6dab9cad6a5397ef",
+      "crates/gui-render/src/render/shell_layout.rs": "82c7b84f58d75d4442042ad268f89c22d86d15492d9a2bc84535a23669bdef14"
+    },
+    "evidence_review": [
+      {
+        "map_record": "s3_new_project_dialog_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json",
+        "sha256": "75ea966a6086030a8dc4bb73481086b5e5599815eaa42e768fe6af90954c0f75"
+      },
+      {
+        "map_record": "s3_shared_content_clipping_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json",
+        "sha256": "6c276b0a8d9c94db64e87666f44cbe181c15c0173868f40daac227fe429ed24b"
+      },
+      {
+        "map_record": "s3_inspector_clipping_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-clipping/result.json",
+        "sha256": "f7e2a20f6015b409dde049aa7af64f403e5a1b94787442b8a677296a8f9dd501"
+      },
+      {
+        "map_record": "s3_project_layers_clipping_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/project-layers-clipping/result.json",
+        "sha256": "ee50c0621e93c6250ed79684108ff650e7bd2ca26d6483917f1d4d3fc953308c"
+      },
+      {
+        "map_record": "s3_terminal_cell_clipping_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json",
+        "sha256": "8a1a5b516a3e7607a24a83f4b9d0634db9aff75d0ae92b090660cd074fb65567"
+      },
+      {
+        "map_record": "s3_main_menu_clipping_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/main-menu-clipping/result.json",
+        "sha256": "83969e4edc841c3d1bc0600a09f8579cc2a3572ce0998e0e213b2123724228b4"
+      },
+      {
+        "map_record": "s3_owned_dialog_pointer_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
+        "sha256": "e55cf7ab9ce7dfbe5e0f7712431ba03945f897d26ac2db26c5dad604a256c74c"
+      },
+      {
+        "map_record": "s3_retained_control_gpu_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/retained-control-gpu/result.json",
+        "sha256": "8ab264d5843343a59860058e70bc011270247ed104741affc842bb7a8534c0c1"
+      },
+      {
+        "map_record": "s3_shared_choice_transition_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-choice-transition/result.json",
+        "sha256": "a5a1d83821258abba608d2728a4ff2600a683aa778219a10bb7261039db11bd2"
+      },
+      {
+        "map_record": "s3_shared_explanation_transition_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-explanation-transition/result.json",
+        "sha256": "140315e00b4f91064f782a79991fdf7652bdb2950c41823655070d4a5b2f04ff"
+      },
+      {
+        "map_record": "s3_fractional_scroll_accumulation_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/fractional-scroll-accumulation/result.json",
+        "sha256": "2fa134c7e9a501b5cda2cea19873321687a0af95f5a7a0a49b9b797d5e8391d1"
+      },
+      {
+        "map_record": "s3_wayland_consolidated_input_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json",
+        "sha256": "6573bb1743f86f47f609c616fc57891ebbccbc610ba868e8cc60fa6ff80ecc94"
+      },
+      {
+        "map_record": "s3_timed_wayland_pixel_scroll_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/timed-wayland-pixel-scroll/result.json",
+        "sha256": "7993309ddf1afb470f1f65f517f85a17547913ac3deb6d98d30760f3eab49bd4"
+      }
+    ],
+    "existing_proof_credited": [
+      "377 app tests and shared explanation regression; 47 viewport tests including defect-sensitive fractional accumulation. These are recorded results on their original candidates, not reruns on this review commit.",
+      "Both-backend production native-entry coverage: 12 host/size/scale wheel profiles per backend; supplied events remain distinct from OS delivery.",
+      "72 retained-control GPU comparisons plus no-reuse negative; shared clipping, painter-order, capture, routing and timer negatives remain credited within original scopes.",
+      "Actual Wayland Global/Project OS scroll/fresh-target evidence and four timed quarter-pixel streams: 14400 exact events, correct offsets, no unscripted movement. No full line-input or visual coverage claim."
+    ],
+    "known_failures": [
+      {
+        "finding": "Global-bottom strict zero-Main-presentation assertion failed once in timed stream.",
+        "disposition": "Retain failure; recorded Main requests/coalesced damage stayed zero, native received/present increased once, with same behavior in input-free intervals. Evidence supports unsolicited-native attribution, not a renderer regression or compositor root cause. Full locality qualification remains open; no waiver of the original assertion."
+      },
+      {
+        "finding": "Full drift stops at Console routine-focused 1x golden mismatch: 3778 pixels.",
+        "disposition": "Existing dat-console-revision-golden-hrak remains open. Prior receipts attribute changed labels/layout to separately committed work. No golden blessing or full-drift pass; this proposal does not close the issue."
+      },
+      {
+        "finding": "Historical delivery, stale-capture and Wayland content-presentation failures.",
+        "disposition": "Preserve failures and dat-native-content-presentation-qo9y. Later bounded passes establish only their observed cases; no retrospective lock/driver cause or general reliability pass."
+      }
+    ],
+    "qualification_proposal": {
+      "HP10-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "BOARD",
+          "LAYERS"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP10-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP10-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "BOARD",
+          "LAYERS"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP10-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP12-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP12-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP12-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP12-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP13-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP13-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP13-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP13-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP14-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP14-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP14-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP14-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP16-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW",
+          "MAIN",
+          "INSPECTOR",
+          "MENU"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP16-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP16-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW",
+          "MAIN",
+          "INSPECTOR",
+          "MENU"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP16-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP16-03": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW",
+          "MAIN",
+          "INSPECTOR",
+          "MENU"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP16-03",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP18-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP18-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP19-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "LAYERS",
+          "TERMINAL"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP19-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP20-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP20-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP21-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP21-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP21-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP21-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP22-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR",
+          "REVISION",
+          "TERMINAL",
+          "TERM_OVERLAY"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP22-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP22-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR",
+          "REVISION",
+          "TERMINAL",
+          "TERM_OVERLAY"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP22-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP23-01": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP23-01",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      },
+      "HP23-02": {
+        "current_status": "unchanged; original test status remains authoritative",
+        "consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "INSPECTOR"
+        ],
+        "acceptance_rule": "unchanged in this requirement row",
+        "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP23-02",
+        "proposed_qualification_deadline": "GPI-S5",
+        "deadline_effective": false
+      }
+    },
+    "finite_readiness_remainder": [
+      "Owner disposition of the exact four-clause replacement; current resource-only amendment does not authorize this broader transfer.",
+      "Apply approved contract/Frontier/row deadlines together, then record the bounded-readiness determination and select S4 only if no missing adoption or unexplained implementation regression is found."
+    ],
+    "execution_limits": [
+      "No new benchmark, Cargo rebuild, desktop session or unaffected negative replay for this documentation review.",
+      "An actual new regression triggers a focused reproduction/fix, not automatic reopening of the entire native matrix.",
+      "The original per-row scenarios and consumer applicability bound S5 work. No nonexistent Inspector adapter or unsupported requested native size is invented.",
+      "All original requirements, failures, partial statuses, S4 resource implementation, S5 comprehensive qualification and resize exclusions remain unchanged until explicit amendment disposition."
+    ]
   }
 }
