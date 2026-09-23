@@ -45,7 +45,24 @@ pub struct Renderer {
     pub(super) measurements: Option<gpu_measurements::GpuMeasurements>,
 }
 
+/// Retained scalar measurement storage for one live cache owner.
+/// Font-system/shaping scratch and accounting-registry storage are separate.
+#[derive(Clone, Debug)]
+pub struct WidthMeasurementCacheUsage {
+    pub owner_id: u64,
+    pub thread: std::thread::ThreadId,
+    pub entries: usize,
+    pub key_bytes: usize,
+    pub retained_bytes: usize,
+}
+
 impl Renderer {
+    /// Enumerate all live measurement caches, including caches on other threads.
+    /// Sum retained_bytes for the process total at this observation point.
+    pub fn width_measurement_cache_usage() -> Vec<WidthMeasurementCacheUsage> {
+        crate::text_metrics::measurement_cache_usage()
+    }
+
     /// Cumulative control-mesh builds for this owner, saturating at usize::MAX.
     /// Cache hits do not increment it; this is work count, not resource accounting.
     pub fn control_mesh_build_count(&self) -> usize {

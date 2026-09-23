@@ -1,6 +1,6 @@
 #[path = "renderer_state.rs"]
 mod renderer_state;
-pub use renderer_state::Renderer;
+pub use renderer_state::{Renderer, WidthMeasurementCacheUsage};
 #[path = "gpu_measurements.rs"]
 mod gpu_measurements;
 pub use gpu_measurements::{GpuCancellationObserver, GpuFrameSample, GpuMeasurementCancellation};

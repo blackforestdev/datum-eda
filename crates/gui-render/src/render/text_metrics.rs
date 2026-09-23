@@ -88,75 +88,10 @@ pub(super) fn text_attrs(face: TextFace) -> Attrs<'static> {
     }
 }
 
-const MAX_MEASUREMENTS: usize = 256;
-const MAX_MEASUREMENT_TEXT_BYTES: usize = 64 * 1024;
-
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum MeasurementKind {
-    Width,
-    WrappedHeight(u32),
-}
-
-#[derive(Default)]
-struct MeasurementCache {
-    entries: std::collections::VecDeque<(String, u32, TextFace, MeasurementKind, f32)>,
-    text_bytes: usize,
-    #[cfg(test)]
-    misses: usize,
-}
-
-impl MeasurementCache {
-    fn measure(
-        &mut self,
-        text: &str,
-        size: f32,
-        face: TextFace,
-        miss: impl FnOnce() -> f32,
-    ) -> f32 {
-        self.measure_kind(text, size, face, MeasurementKind::Width, miss)
-    }
-
-    fn measure_kind(
-        &mut self,
-        text: &str,
-        size: f32,
-        face: TextFace,
-        kind: MeasurementKind,
-        miss: impl FnOnce() -> f32,
-    ) -> f32 {
-        if let Some(index) = self
-            .entries
-            .iter()
-            .position(|(label, bits, font, cached_kind, _)| {
-                *bits == size.to_bits() && *font == face && *cached_kind == kind && label == text
-            })
-        {
-            let entry = self.entries.remove(index).expect("matched entry exists");
-            let width = entry.4;
-            self.entries.push_front(entry);
-            return width;
-        }
-        #[cfg(test)]
-        {
-            self.misses += 1;
-        }
-        let width = miss();
-        // Arbitrary user text must not turn scalar measurement reuse into an
-        // unbounded string history. Oversized strings are measured but not held.
-        if text.len() <= MAX_MEASUREMENT_TEXT_BYTES {
-            while self.entries.len() >= MAX_MEASUREMENTS
-                || self.text_bytes + text.len() > MAX_MEASUREMENT_TEXT_BYTES
-            {
-                let old = self.entries.pop_back().expect("bounded cache has entries");
-                self.text_bytes -= old.0.len();
-            }
-            self.text_bytes += text.len();
-            self.entries
-                .push_front((text.to_owned(), size.to_bits(), face, kind, width));
-        }
-        width
-    }
-}
+#[path = "measurement_cache.rs"]
+mod measurement_cache;
+pub(crate) use measurement_cache::usage as measurement_cache_usage;
+use measurement_cache::{MeasurementCache, MeasurementKind};
 
 thread_local! {
     // Font inventory/attributes are immutable here; text, exact size and face
@@ -305,62 +240,6 @@ mod tests {
             TextFace::Terminal,
         ] {
             assert_eq!(layout(&mut shared, face), layout(&mut legacy, face));
-        }
-    }
-
-    #[test]
-    fn exact_measurements_reuse_only_identical_font_size_and_text() {
-        let mut cache = MeasurementCache::default();
-        for (text, size, face) in [
-            ("Project Preferences", 13.0, TextFace::Ui),
-            ("Project Preferences", 14.0, TextFace::Ui),
-            ("Project Preferences", 13.0, TextFace::UiStrong),
-            ("Global Preferences", 13.0, TextFace::Ui),
-            ("Units · µm", 13.0, TextFace::Mono),
-        ] {
-            let actual = measure_uncached(text, size, face);
-            let first = cache.measure(text, size, face, || actual);
-            assert_eq!(first.to_bits(), actual.to_bits());
-            assert_eq!(
-                cache
-                    .measure(text, size, face, || panic!("cache hit reshaped text"))
-                    .to_bits(),
-                actual.to_bits()
-            );
-        }
-        assert_eq!(cache.entries.len(), 5);
-    }
-
-    #[test]
-    fn measurement_cache_bounds_changing_labels_and_keeps_recent_hits() {
-        let mut cache = MeasurementCache::default();
-        for n in 0..1000 {
-            let kind = if n % 2 == 0 {
-                MeasurementKind::WrappedHeight(100.0_f32.to_bits())
-            } else {
-                MeasurementKind::Width
-            };
-            cache.measure_kind(&format!("label-{n}"), 13.0, TextFace::Ui, kind, || n as f32);
-            assert!(cache.entries.len() <= MAX_MEASUREMENTS);
-            assert!(cache.text_bytes <= MAX_MEASUREMENT_TEXT_BYTES);
-        }
-        assert_eq!(
-            cache.measure("label-999", 13.0, TextFace::Ui, || panic!(
-                "recent label evicted"
-            )),
-            999.0
-        );
-        let large = "x".repeat(MAX_MEASUREMENT_TEXT_BYTES + 1);
-        cache.measure(&large, 13.0, TextFace::Ui, || 1.0);
-        assert!(!cache.entries.iter().any(|entry| entry.0 == large));
-        for n in 0..20 {
-            cache.measure(
-                &format!("{n}{}", "x".repeat(8000)),
-                13.0,
-                TextFace::Ui,
-                || 1.0,
-            );
-            assert!(cache.text_bytes <= MAX_MEASUREMENT_TEXT_BYTES);
         }
     }
 }
