@@ -99,6 +99,7 @@ impl RetainedScene {
             coordinate_hit::push_schematic_hit_regions(&mut world_hit_regions, schematic_scene);
             let world_hit_index =
                 Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
+            Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
             Ok(Some(
                 Self {
                     surface_size_independent: Self::scene_is_surface_size_independent(
@@ -115,7 +116,7 @@ impl RetainedScene {
                     draw_commands: draw_commands.into(),
                     world_hit_index: world_hit_index.into(),
                 }
-                .registered_cpu(),
+                .registered_cpu(&scope, limit)?,
             ))
         })
     }

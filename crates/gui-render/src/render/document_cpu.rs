@@ -107,19 +107,47 @@ pub(crate) fn gpu_usage() -> Vec<crate::gpu_data::DocumentGpuUsage> {
     result
 }
 
-pub(super) fn register(scene: &RetainedScene) {
+pub(super) fn register(
+    scene: &RetainedScene,
+    scope: &crate::cpu_alloc::Scope,
+    limit: usize,
+) -> anyhow::Result<()> {
     let observer = scene.geometry_observer();
     let Some(identity) = observer.document.clone() else {
-        return;
+        return Ok(());
     };
     let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
     prune(&mut documents);
     let document = documents
         .find(&identity)
         .expect("scene owns registered document identity");
-    if observer.heap_bytes_excluding(&document.scenes) != 0 {
-        document.scenes.push(observer);
+    if observer.heap_bytes_excluding(&document.scenes) == 0 {
+        return Ok(());
     }
+    let capacity = if document.scenes.len() == document.scenes.capacity() {
+        document.scenes.capacity().saturating_mul(2).max(1)
+    } else {
+        0
+    };
+    let growth = allocation_bytes(std::alloc::Layout::array::<RetainedGeometryObserver>(
+        capacity,
+    )?);
+    let staging = scope.usage();
+    let required = (document_bytes(document) as u64)
+        .saturating_add(staging.payload_bytes)
+        .saturating_add(staging.tracking_bytes)
+        .saturating_add(growth as u64);
+    anyhow::ensure!(
+        required <= limit as u64,
+        "retained scene registry publication exceeds document CPU budget: {required} bytes including constructor and replacement storage; limit {limit}"
+    );
+    if capacity != 0 {
+        document
+            .scenes
+            .try_reserve_exact(capacity - document.scenes.len())?;
+    }
+    document.scenes.push(observer);
+    Ok(())
 }
 
 fn usage(observer: &RetainedGeometryObserver) -> usize {
@@ -135,6 +163,10 @@ fn usage_for_identity(identity: &Weak<Budget>) -> usize {
     let Some(document) = documents.find(identity) else {
         return 0;
     };
+    document_bytes(document)
+}
+
+fn document_bytes(document: &Document) -> usize {
     document.scenes.iter().enumerate().fold(
         capacity_bytes::<RetainedGeometryObserver>(document.scenes.capacity())
             .saturating_add(document.metadata_bytes)
@@ -312,6 +344,48 @@ fn check_limit(observer: &RetainedGeometryObserver, limit: usize) -> anyhow::Res
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn publication_refusal_preserves_registry_and_retry_registers_unique_metadata() {
+        let mut state = crate::gpu_surface_pass::board_fixture_state();
+        state.scene.scene_id = "construction-publication-refusal".into();
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let scope = crate::cpu_alloc::Scope::new("publication-candidate");
+        let mut candidate = scene.clone();
+        candidate.draw_commands = scope.with(|| Arc::new(scene.draw_commands.as_ref().clone()));
+        let before = usage(&scene.geometry_observer());
+        let candidate_bytes = scope.usage();
+        let error = register(&candidate, &scope, 0).unwrap_err();
+        assert!(error.to_string().contains("registry publication exceeds"));
+        assert_eq!(usage(&scene.geometry_observer()), before);
+        assert_eq!(scope.usage().allocations, candidate_bytes.allocations);
+        register(&candidate, &scope, DOCUMENT_LIMIT).unwrap();
+        assert!(usage(&scene.geometry_observer()) > before);
+        drop(candidate);
+        drop(scene);
+        gpu_usage();
+        assert_eq!(scope.usage().allocations, 0);
+    }
+
+    #[test]
+    fn shared_owner_refusal_allocates_no_owners_and_preserves_staging() {
+        let mut state = crate::gpu_surface_pass::board_fixture_state();
+        state.scene.scene_id = "construction-owner-refusal".into();
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let budget = scene.world_vertices.document_budget().unwrap();
+        let scope = crate::cpu_alloc::Scope::new("shared-owner-staging");
+        let mut vertices = scope.with(|| scene.world_vertices().to_vec());
+        scope.with(|| vertices.reserve_exact(7));
+        let strokes = scope.with(|| scene.world_strokes.to_vec());
+        let before = scope.usage();
+        let error =
+            RetainedScene::admit_shared_owners(&vertices, &strokes, budget, &scope, 0).unwrap_err();
+        assert!(error.to_string().contains("shared owners exceeds"));
+        RetainedScene::admit_shared_owners(&vertices, &strokes, budget, &scope, DOCUMENT_LIMIT)
+            .unwrap();
+        assert_eq!(scope.usage().allocations, before.allocations);
+        assert_eq!(vertices.as_slice(), scene.world_vertices());
+    }
+
     #[test]
     fn real_hit_index_admission_includes_staging_and_matches_allocator() {
         let mut state = crate::gpu_surface_pass::board_fixture_state();

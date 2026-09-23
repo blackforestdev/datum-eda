@@ -94,9 +94,37 @@ impl RetainedScene {
         Ok(datum_gui_viewport::SpatialHitIndex::try_new(regions)?)
     }
 
-    pub(crate) fn registered_cpu(self) -> Self {
-        document_cpu::register(&self);
-        self
+    pub(crate) fn admit_shared_owners(
+        vertices: &Vec<Vertex>,
+        strokes: &Vec<WorldStrokeInstance>,
+        budget: &Arc<crate::text_gpu::budget::Budget>,
+        scope: &crate::cpu_alloc::Scope,
+        limit: usize,
+    ) -> anyhow::Result<()> {
+        let bytes = Vertex::container_bytes()
+            .saturating_add(WorldStrokeInstance::container_bytes())
+            .saturating_add(commands_container_bytes())
+            .saturating_add(hits_container_bytes())
+            .saturating_add(if vertices.capacity() == vertices.len() {
+                0
+            } else {
+                capacity_bytes::<Vertex>(vertices.len())
+            })
+            .saturating_add(if strokes.capacity() == strokes.len() {
+                0
+            } else {
+                capacity_bytes::<WorldStrokeInstance>(strokes.len())
+            });
+        document_cpu::admit_constructor_allocation(budget, scope, bytes, limit, "shared owners")
+    }
+
+    pub(crate) fn registered_cpu(
+        self,
+        scope: &crate::cpu_alloc::Scope,
+        limit: usize,
+    ) -> anyhow::Result<Self> {
+        document_cpu::register(&self, scope, limit)?;
+        Ok(self)
     }
 
     /// All live and submitted-retiring GPU world buffers for this scene/document,
@@ -160,10 +188,16 @@ impl RetainedScene {
     }
 }
 fn commands_container_bytes() -> usize {
+    if !crate::cpu_alloc::installed() {
+        return std::mem::size_of::<Vec<RetainedDrawCommand>>();
+    }
     static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
     *BYTES.get_or_init(|| crate::cpu_alloc::heap::arc_bytes(Vec::<RetainedDrawCommand>::new()))
 }
 fn hits_container_bytes() -> usize {
+    if !crate::cpu_alloc::installed() {
+        return std::mem::size_of::<datum_gui_viewport::SpatialHitIndex<HitTarget>>();
+    }
     static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
     *BYTES.get_or_init(|| {
         crate::cpu_alloc::heap::arc_bytes(datum_gui_viewport::SpatialHitIndex::<HitTarget>::new(

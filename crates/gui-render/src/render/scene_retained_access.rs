@@ -217,7 +217,8 @@ impl RetainedScene {
             world_hit_regions.len()
         ));
         let world_hit_index = Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
-        Ok(Self {
+        Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
+        Self {
             surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
             world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
                 world_vertices,
@@ -230,7 +231,7 @@ impl RetainedScene {
             draw_commands: draw_commands.into(),
             world_hit_index: world_hit_index.into(),
         }
-        .registered_cpu())
+        .registered_cpu(&scope, limit)
         })
     }
 
