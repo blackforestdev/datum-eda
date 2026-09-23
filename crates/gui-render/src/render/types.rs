@@ -198,14 +198,6 @@ struct PreparedTerminalGraphic {
     rect: RectPx,
     clip: RectPx,
 }
-#[derive(Debug, Clone, PartialEq)]
-pub struct RetainedScene {
-    surface_size_independent: bool,
-    world_vertices: gpu_data::shared_geometry::SharedGeometry<Vertex>,
-    world_strokes: gpu_data::shared_geometry::SharedGeometry<WorldStrokeInstance>,
-    draw_commands: Vec<RetainedDrawCommand>,
-    world_hit_index: datum_gui_viewport::SpatialHitIndex<HitTarget>,
-}
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum RetainedDrawCommand {
     Quads {

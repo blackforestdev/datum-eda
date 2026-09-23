@@ -13,9 +13,10 @@ fn resize_keeps_complete_active_charge_while_retiring_obsolete_history() {
     assert!(scene.can_reuse_for_surface_resize());
     let payload = scene.heap_payload_bytes().unwrap();
     let geometry = scene.geometry_observer();
-    assert!(
-        payload > geometry.heap_bytes_excluding([]),
-        "the fixture must expose command/hit ownership beyond shared geometry"
+    assert_eq!(
+        payload,
+        geometry.heap_bytes_excluding([]),
+        "the observer includes command/hit ownership as well as geometry"
     );
     let mut history = RetainedSceneHistory::default();
     history.insert(tests::key(0), tests::scene());
@@ -87,6 +88,10 @@ fn companion_schematic_uses_active_and_retiring_cpu_ownership() {
     let payload = scene.heap_payload_bytes().unwrap();
     let pinned = scene.clone();
     let pinned_geometry = pinned.geometry_observer().heap_bytes_excluding([]);
+    assert_eq!(
+        pinned_geometry, payload,
+        "external clone retains complete shared metadata"
+    );
     let reusable = scene.can_reuse_for_surface_resize();
     let mut owner = RetainedSceneHistory::default();
     owner.limit_for_active(&scene);

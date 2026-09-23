@@ -10,8 +10,8 @@ impl RetainedScene {
             surface_size_independent: true,
             world_vertices: Vec::new().into(),
             world_strokes: Vec::new().into(),
-            draw_commands: Vec::new(),
-            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(Vec::new()),
+            draw_commands: Vec::new().into(),
+            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(Vec::new()).into(),
         }
     }
 }

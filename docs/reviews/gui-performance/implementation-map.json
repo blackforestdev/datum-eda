@@ -15068,6 +15068,11 @@
           "work": "s4_schematic_cpu_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/result.json",
           "status": "Companion schematic adopts existing active/retiring CPU scene ownership; complete CPU document aggregation and construction bounds remain open"
+        },
+        {
+          "work": "s4_shared_scene_metadata_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/result.json",
+          "status": "Retained scenes share immutable draw commands and hit-index metadata; external clones remain fully observable after retirement"
         }
       ]
     },
@@ -15161,6 +15166,11 @@
           "work": "s4_schematic_cpu_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/result.json",
           "status": "Companion schematic adopts existing active/retiring CPU scene ownership; complete CPU document aggregation and construction bounds remain open"
+        },
+        {
+          "work": "s4_shared_scene_metadata_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/result.json",
+          "status": "Retained scenes share immutable draw commands and hit-index metadata; external clones remain fully observable after retirement"
         }
       ]
     },
@@ -34139,5 +34149,32 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/result.json"
+  },
+  "s4_shared_scene_metadata_work": {
+    "status": "Retained scenes share immutable draw commands and hit-index metadata; external clones remain fully observable after retirement",
+    "base_commit": "8a6a3451",
+    "production_consumers": [
+      "Board, companion schematic and empty RetainedScene constructors",
+      "Runtime retained-scene active/history ownership, resize reuse and external clone retirement via existing observer"
+    ],
+    "retired_paths": [
+      "Deep-copy draw-command strings and hit-index storage on RetainedScene::clone",
+      "Weak observer tracks geometry but loses externally held scene metadata after cache eviction"
+    ],
+    "behavior": [
+      "Own immutable draw commands and hit index through separate Arc allocations. Keep RetainedScene cloning allocation-free and preserve content equality/hit/draw behavior. Extend the existing RetainedGeometryObserver compatibility API to independently deduplicate all four allocations and charge measured Arc containers and Datum headers through weak retirement. Move RetainedScene and its CPU ownership/accounting into a normal module; include ceiling ratchets from7152 to7146."
+    ],
+    "proof": {
+      "renderer": "351 renderer tests pass, 11 filtered. Real allocator proof verifies full scene capacities, zero allocation when cloning, shared command/hit owners, complete retained bytes after original drops, weak-only container charges and final zero. Existing hit/selection/render/pixel tests pass.",
+      "app": "385 app tests pass, 16 ignored. Active/history clones now deduplicate all metadata without false eviction; explicit one-byte pressure still evicts. Resize keeps complete active charge; companion external clone observer equals complete payload.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2278, 13 source-health governance regression tests, dependency authority and governance pass.",
+      "attempt": "Initial renderer compile retained an obsolete geometry-only test import/expectation; corrected. Initial app run had383passes/2failures/16ignored from assumptions that metadata is copied/unobserved; tests updated to enforce complete sharing plus actual eviction pressure. Both failed logs retained.",
+      "scope": "No new native/backend/endurance campaign or full drift rerun; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Closes the external full-scene metadata lifetime gap recorded in earlier CPU scene slices. Complete per-document aggregation across owners and construction-time admission remain open; no MEM-WORLD-CPU/HISTORY or S5 qualification closure.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/result.json"
   }
 }

@@ -1,0 +1,68 @@
+{
+  "status": "Retained scenes share immutable draw commands and hit-index metadata; external clones remain fully observable after retirement",
+  "base_commit": "8a6a3451",
+  "production_consumers": [
+    "Board, companion schematic and empty RetainedScene constructors",
+    "Runtime retained-scene active/history ownership, resize reuse and external clone retirement via existing observer"
+  ],
+  "retired_paths": [
+    "Deep-copy draw-command strings and hit-index storage on RetainedScene::clone",
+    "Weak observer tracks geometry but loses externally held scene metadata after cache eviction"
+  ],
+  "behavior": [
+    "Own immutable draw commands and hit index through separate Arc allocations. Keep RetainedScene cloning allocation-free and preserve content equality/hit/draw behavior. Extend the existing RetainedGeometryObserver compatibility API to independently deduplicate all four allocations and charge measured Arc containers and Datum headers through weak retirement. Move RetainedScene and its CPU ownership/accounting into a normal module; include ceiling ratchets from7152 to7146."
+  ],
+  "proof": {
+    "renderer": "351 renderer tests pass, 11 filtered. Real allocator proof verifies full scene capacities, zero allocation when cloning, shared command/hit owners, complete retained bytes after original drops, weak-only container charges and final zero. Existing hit/selection/render/pixel tests pass.",
+    "app": "385 app tests pass, 16 ignored. Active/history clones now deduplicate all metadata without false eviction; explicit one-byte pressure still evicts. Resize keeps complete active charge; companion external clone observer equals complete payload.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2278, 13 source-health governance regression tests, dependency authority and governance pass.",
+    "attempt": "Initial renderer compile retained an obsolete geometry-only test import/expectation; corrected. Initial app run had383passes/2failures/16ignored from assumptions that metadata is copied/unobserved; tests updated to enforce complete sharing plus actual eviction pressure. Both failed logs retained.",
+    "scope": "No new native/backend/endurance campaign or full drift rerun; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Closes the external full-scene metadata lifetime gap recorded in earlier CPU scene slices. Complete per-document aggregation across owners and construction-time admission remain open; no MEM-WORLD-CPU/HISTORY or S5 qualification closure.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/tests.log.gz",
+      "uncompressed_sha256": "8c28de6dad57dd8fec54630767e5fa3ecf8399341eab25325dd39c1007b8df7c"
+    },
+    "app-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/app-tests.log.gz",
+      "uncompressed_sha256": "2cc48d7f59875092faa8661a9039bbd8008d00b67dd0cb9215b4238be33fda9b"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/clippy.log.gz",
+      "uncompressed_sha256": "be09157783c7507856d9a3dd25a10f3f891598344fd848b678205171c1030a69"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/build.log.gz",
+      "uncompressed_sha256": "fae75bd29378ed6d4ebd0a4a8412c3c99b9bef38ec1b68bfb108c6c78f586fcc"
+    },
+    "compile-attempt": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/compile-attempt.log.gz",
+      "uncompressed_sha256": "f83cbf5fecfd3151e6a23b9700b627f0b0cf1962531d77c34357af5882e9865c"
+    },
+    "app-attempt": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/app-attempt.log.gz",
+      "uncompressed_sha256": "9b0e881d6a4692499c863831d50c2fce9e1a687ed8340802b6afb0d91aac5f96"
+    },
+    "source-health-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shared-scene-metadata/source-health-tests.log.gz",
+      "uncompressed_sha256": "d08ee84269b97171a6aa107278f182f0a4e96fd1d3e1217b1e81b4436aa99aae"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu.rs": "1c021d2eae93bf38809b9eade6445d0e82f8d58fced1e672cace55ec06e0a4fe",
+    "crates/gui-render/src/render/preferences_scene.rs": "1ae07a1a4183a9fe023dfcfc48c8c4c170965128aa05612af933924adf734be2",
+    "crates/gui-render/src/render/retained_heap_tests.rs": "842040cd62e5e34e667668bf131b51283fa076a3c6be00795e5ef3d2b1243791",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "fb6a2b22b1169b382542cb20ca2dba7a4aca05191ef00f1ff22c35e89307f19d",
+    "crates/gui-render/src/render/scene_retained_access.rs": "de5f672f55addf42f670e3c535a5bf354629fa5af0dd49ba90f5cb9174445f60",
+    "crates/gui-render/src/render/schematic_retained.rs": "7a1630859532b61596a25db88091b88fd5c0efe784c9b4012b29037ac4b68d07",
+    "crates/gui-render/src/render/types.rs": "52009ef5819bbc7d6e8851726341c0d27de7ee1ff473b185fbedd88dab7309a1",
+    "crates/gui-app/src/retained_scene_history.rs": "15a7221739f04c681f37dc3ca5f83d4f847e58ca854470bf6918ffa7fa72c15b",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "6a020e8470df1c81f504bdfbe593e4891293be779e05240acadeb778024ceaf7"
+  }
+}
