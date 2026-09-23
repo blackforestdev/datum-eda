@@ -128,8 +128,8 @@ fn control_mesh_keys_bounds_and_lru_are_complete() {
     let bytes = cache.payload_bytes;
     cache.with_mesh(
         key(999),
-        || vec![[(0.0, 0.0); 4]; MAX_PAYLOAD_BYTES / 32 + 1].into_boxed_slice(),
-        |mesh| assert!(std::mem::size_of_val(mesh) > MAX_PAYLOAD_BYTES),
+        || vec![[(0.0, 0.0); 4]; MAX_CPU_BYTES / 32 + 1].into_boxed_slice(),
+        |mesh| assert!(std::mem::size_of_val(mesh) > MAX_CPU_BYTES),
     );
     assert_eq!(cache.payload_bytes, bytes);
     assert!(!cache.entries.iter().any(|entry| entry.key == key(999)));
@@ -138,13 +138,14 @@ fn control_mesh_keys_bounds_and_lru_are_complete() {
     for n in 0..5 {
         cache.with_mesh(
             key(n),
-            || vec![[(0.0, 0.0); 4]; MAX_PAYLOAD_BYTES / 64].into_boxed_slice(),
+            || vec![[(0.0, 0.0); 4]; MAX_CPU_BYTES / 64].into_boxed_slice(),
             |_| {},
         );
-        assert!(cache.payload_bytes <= MAX_PAYLOAD_BYTES);
-        assert!(cache.entries.len() <= 2);
+        assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
+        assert_eq!(cache.entries.len(), 1);
     }
-    assert_eq!(cache.payload_bytes, MAX_PAYLOAD_BYTES);
+    assert_eq!(cache.payload_bytes, MAX_CPU_BYTES / 2);
+    assert!(cache.retained_cpu_bytes() > cache.payload_bytes);
 }
 
 #[test]
@@ -192,4 +193,30 @@ fn placement_and_color_reuse_control_mesh_but_geometry_and_dpi_miss() {
         );
     }
     assert_eq!(cache.builds, 6);
+}
+
+#[test]
+fn metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit() {
+    let mut cache = ControlMeshCache::default();
+    let metadata = cache.retained_cpu_bytes();
+    assert!(metadata >= MAX_ENTRIES * std::mem::size_of::<Entry>());
+    let capacity = cache.entries.capacity();
+    let mut consumed = false;
+    cache.with_mesh(
+        key(42),
+        || vec![[(0.0, 0.0); 4]; MAX_CPU_BYTES / 32].into_boxed_slice(),
+        |mesh| {
+            consumed = true;
+            assert_eq!(std::mem::size_of_val(mesh), MAX_CPU_BYTES);
+        },
+    );
+    assert!(consumed, "uncacheable content must still paint");
+    assert!(cache.entries.is_empty(), "payload alone fills the cap");
+    assert_eq!(cache.retained_cpu_bytes(), metadata);
+    for n in 0..512 {
+        cache.with_mesh(key(n), || Box::new([]), |_| {});
+        assert_eq!(cache.entries.capacity(), capacity);
+        assert_eq!(cache.retained_cpu_bytes(), metadata);
+    }
+    assert_eq!(cache.entries.len(), MAX_ENTRIES);
 }

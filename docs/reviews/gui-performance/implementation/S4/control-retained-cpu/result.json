@@ -1,0 +1,31 @@
+{
+  "status": "Retained CPU control-cache cap includes metadata; complete MEM-MESH-CPU and HP16-03 remain partial",
+  "base_commit": "c17d11ac",
+  "production_consumers": [
+    "MAIN frame_preparation.rs shared control painter",
+    "GLOBAL/PROJECT preferences_scene.rs shared control painter",
+    "NEW new_project_scene.rs shared control painter"
+  ],
+  "shared_owner": "render/control_mesh.rs ControlMeshCache",
+  "retired_paths": [
+    "Payload-only 4MiB admission that omitted key/entry allocation capacity and owner storage",
+    "Growing entry table excluded from byte accounting"
+  ],
+  "behavior": "Reserve the 256-entry table once; charge actual entry capacity, inline owner and boxed mesh payload together against4MiB. Evict LRU before retention; paint but do not cache a mesh that cannot fit with metadata. Expose retained CPU bytes on Renderer with explicit exclusions. No contour, placement, color, clipping or key change.",
+  "proof": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib control_mesh -- --nocapture",
+    "tests": "5 passed;227 filtered. Includes4MiB-payload bypass with content consumed,512-key zero-payload churn with stable allocation capacity, half-cap payload eviction, LRU/key completeness and contour/placement reuse.",
+    "source_health": "Normal-budget files; gate passes and13 policy tests pass. Exact-file rustfmt only.",
+    "drift": "Workspace Clippy and preceding governance/terminal gates pass; Console7 app/8 protocol/9 renderer and TerminalCore4 proof tests pass. Full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates not run; goldens unchanged."
+  },
+  "limitations": [
+    "Counts retained Rust-owned cache capacity, not allocator bookkeeping, temporary construction vectors, prepared-frame output or GPU/in-flight allocations. Complete live CPU/aggregate/resource acceptance remains open.",
+    "The256-entry table reserves14336 bytes on this build; owner inline storage is additionally charged. Full meshes remain rendered when retention is bypassed.",
+    "No runtime performance claim, native matrix replay, full MEM-MESH-CPU/HP16-03 acceptance, dependency/license/prototype/numerical-budget/resize change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/control-retained-cpu/result.json",
+  "artifacts_sha256_uncompressed": {
+    "tests.log.gz": "3668ca18d8e6ce06e38400b6ce7f626a9c20e39016c3f64594985d118a011082",
+    "drift.log.gz": "14c82332a02cbf9eb6ff47bd9f742614dcec42bef4f6126b7a29afb9caf7b146"
+  }
+}

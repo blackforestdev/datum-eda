@@ -5,7 +5,7 @@ use std::ops::{Deref, DerefMut};
 
 type Mesh = Box<[[(f32, f32); 4]]>;
 const MAX_ENTRIES: usize = 256;
-const MAX_PAYLOAD_BYTES: usize = 4 * 1024 * 1024;
+const MAX_CPU_BYTES: usize = 4 * 1024 * 1024;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum MeshKind {
@@ -31,14 +31,31 @@ struct Entry {
     mesh: Mesh,
 }
 
-#[derive(Default)]
 pub(crate) struct ControlMeshCache {
     entries: VecDeque<Entry>,
     payload_bytes: usize,
     pub(crate) builds: usize,
 }
 
+impl Default for ControlMeshCache {
+    fn default() -> Self {
+        Self {
+            // Reserve the bounded entry table once so admission includes its
+            // actual capacity and insertion cannot grow it beyond the budget.
+            entries: VecDeque::with_capacity(MAX_ENTRIES),
+            payload_bytes: 0,
+            builds: 0,
+        }
+    }
+}
+
 impl ControlMeshCache {
+    pub(crate) fn retained_cpu_bytes(&self) -> usize {
+        std::mem::size_of::<Self>()
+            + self.entries.capacity() * std::mem::size_of::<Entry>()
+            + self.payload_bytes
+    }
+
     fn with_mesh(
         &mut self,
         key: Key,
@@ -54,11 +71,13 @@ impl ControlMeshCache {
         self.builds = self.builds.saturating_add(1);
         let mesh = build();
         let bytes = std::mem::size_of_val(mesh.as_ref());
-        if bytes > MAX_PAYLOAD_BYTES {
+        let metadata_bytes = self.retained_cpu_bytes() - self.payload_bytes;
+        if bytes > MAX_CPU_BYTES.saturating_sub(metadata_bytes) {
             consume(&mesh);
             return;
         }
-        while self.entries.len() >= MAX_ENTRIES || self.payload_bytes + bytes > MAX_PAYLOAD_BYTES {
+        while self.entries.len() >= MAX_ENTRIES || self.retained_cpu_bytes() + bytes > MAX_CPU_BYTES
+        {
             let old = self.entries.pop_back().expect("bounded cache has an entry");
             self.payload_bytes -= std::mem::size_of_val(old.mesh.as_ref());
         }
