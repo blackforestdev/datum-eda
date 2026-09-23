@@ -1,0 +1,54 @@
+{
+  "status": "Default per-host attachment generation admission enforced across replacement and device recovery; full qualification remains open",
+  "base_commit": "a638cb5b",
+  "production_consumers": [
+    "Shared native MSAA attachment creation for full and overlay frames",
+    "Main and auxiliary same-host recovery through Renderer::recreate_for_device",
+    "Existing submitted attachment lifetime holds and retirement callbacks"
+  ],
+  "retired_paths": [
+    "Attachment creation without explicit live-generation admission",
+    "Fresh attachment-generation allowance when recreating a renderer for the same host"
+  ],
+  "behavior": [
+    "Reserve one of two host attachment generation slots before API allocation, alongside existing exact byte/process admission. Keep the slot with the same tracked texture-view allocation through retirement.",
+    "Refuse a third held generation without replacing the working attachment or advancing its allocation count. Failed texture/view preparation releases the reserved slot. Warm unchanged-key access does not reserve or allocate.",
+    "Same-host renderer recreation inherits the old attachment allowance, including generations still held by submitted work. New hosts receive independent allowances. Expose the reserved-generation count.",
+    "Release the temporary texture handle after creating its tracked view so a failed replacement cannot release accounting before its final local resource handle."
+  ],
+  "proof": {
+    "renderer": "305 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Actual-GPU proof holds two generations, rejects a third before publication, rejects fresh recovery allocation against the same limit, and succeeds after retirement. Existing failure/rollback, queue-completion and unchanged-extent proofs pass.",
+    "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings and source health (2242 files) pass.",
+    "build": "Fresh native visual datum-gui application build passes; no new native screenshot or OS-input qualification in this slice.",
+    "drift": "Full drift battery ran and stopped at the existing console-routine-focused 1x golden mismatch: 3778 pixels (0.384318%), tracked by dat-console-revision-golden-hrak. Preceding gates pass; later gates remain unrun. No full-drift acceptance."
+  },
+  "limits": [
+    "No new native resize CPU, OS-input, endurance, concurrent multi-device or driver-residency qualification. Existing nonblocking resize disposition remains unchanged.",
+    "This closes attachment generation admission behavior, not complete MEM-ATTACHMENTS acceptance or S4/S5. Original aggregate/subcap and native qualification remain required. World/other resource generation policies, staging and complete accounting remain open.",
+    "No dependency, vendor, license, prototype, numerical-budget or rendering-layout change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-generations/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/attachment-generations/tests.log.gz",
+      "uncompressed_sha256": "eee6ec1f3964651dc98e417c88ad3272936440dbfdcf12e97140d7cc9e1322be"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/attachment-generations/clippy.log.gz",
+      "uncompressed_sha256": "30ef2973f42804437c4c284ba0b12b86544dd17b3ade21e62713f722233a05db"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/attachment-generations/build.log.gz",
+      "uncompressed_sha256": "375c11ea0854af8352a85bbc68b6ebbfb2ca2f0d0d5a26ba974f71ef060d8b8e"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/attachment-generations/drift.log.gz",
+      "uncompressed_sha256": "6e74654fc8b01217fd842e4fc4d5f1adca94d2a7635fb638df1454b6884cb8c8"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "c74b6ae61541e44b8fcd65e87334e42d2c2a4ec8f7274af878f4825fdb69621e",
+    "crates/gui-render/src/render/gpu_surface.rs": "7914a7e1e495b3da43f616b221212aa37b6992937c536f540b99d6c578255564"
+  },
+  "binary_sha256": "694273c957f6a2c34dc8e57e883c84f906a8e20f1bded63142a65e712d68114b"
+}

@@ -26,13 +26,15 @@ impl Renderer {
         format: wgpu::TextureFormat,
         msaa_samples: u32,
     ) -> anyhow::Result<Self> {
-        Self::new_with_screen_budget(
+        let mut replacement = Self::new_with_screen_budget(
             device,
             queue,
             format,
             msaa_samples,
             self.screen_budget.clone(),
-        )
+        )?;
+        replacement.surface_attachments = self.surface_attachments.replacement();
+        Ok(replacement)
     }
 
     fn new_with_screen_budget(
