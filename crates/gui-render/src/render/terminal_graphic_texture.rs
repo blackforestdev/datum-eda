@@ -1,6 +1,8 @@
 //! Terminal texture identity, pending upload and submission ownership.
 use super::{PreparedTerminalGraphic, TerminalGraphicTextureKey};
 use crate::text_gpu::lifetime::{Kind, Owner, SubmissionRef, Tracked};
+#[path = "terminal_rgba_upload.rs"]
+mod upload;
 
 pub(super) struct CachedTerminalGraphicTexture {
     pub(super) key: TerminalGraphicTextureKey,
@@ -23,6 +25,10 @@ impl CachedTerminalGraphicTexture {
             .checked_mul(u64::from(key.height))
             .and_then(|pixels| pixels.checked_mul(4))
             .ok_or_else(|| anyhow::anyhow!("terminal texture capacity overflow"))?;
+        anyhow::ensure!(
+            bytes == std::mem::size_of_val(graphic.graphic.placement().pixels()) as u64,
+            "terminal texture extent does not match RGBA payload"
+        );
         let terminal_permit = crate::text_gpu::budget::terminal_process().reserve(bytes)?;
         let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
@@ -83,32 +89,119 @@ impl CachedTerminalGraphicTexture {
         if !self.pending {
             return;
         }
-        let bytes = self
-            .source
-            .placement()
-            .pixels()
-            .iter()
-            .flat_map(|pixel| [pixel.red, pixel.green, pixel.blue, pixel.alpha])
-            .collect::<Vec<_>>();
+        write_rgba(
+            queue,
+            &self.texture,
+            self.source.placement().pixels(),
+            self.key.width,
+            self.key.height,
+        );
+        self.pending = false;
+    }
+}
+
+fn write_rgba(
+    queue: &wgpu::Queue,
+    texture: &wgpu::Texture,
+    pixels: &[datum_terminal_core::Rgba8],
+    width: u32,
+    height: u32,
+) {
+    upload::chunks(pixels, width, height, |x, y, w, h, bytes| {
         queue.write_texture(
             wgpu::TexelCopyTextureInfo {
-                texture: &self.texture,
+                texture,
                 mip_level: 0,
-                origin: wgpu::Origin3d::ZERO,
+                origin: wgpu::Origin3d { x, y, z: 0 },
                 aspect: wgpu::TextureAspect::All,
             },
-            &bytes,
+            bytes,
             wgpu::TexelCopyBufferLayout {
                 offset: 0,
-                bytes_per_row: Some(self.key.width * 4),
-                rows_per_image: Some(self.key.height),
+                bytes_per_row: Some(w * 4),
+                rows_per_image: Some(h),
             },
             wgpu::Extent3d {
-                width: self.key.width,
-                height: self.key.height,
+                width: w,
+                height: h,
                 depth_or_array_layers: 1,
             },
         );
-        self.pending = false;
+    });
+}
+
+#[cfg(all(test, feature = "visual"))]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[ignore = "requires local GPU; borrowed terminal upload row boundaries"]
+    fn multi_chunk_odd_width_upload_matches_decoded_pixels() {
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let (width, height) = (257_u32, 513_u32);
+        let pixels: Vec<_> = (0..width * height)
+            .map(|i| datum_terminal_core::Rgba8 {
+                red: i as u8,
+                green: (i / 7) as u8,
+                blue: (i / 257) as u8,
+                alpha: 255 - i as u8,
+            })
+            .collect();
+        let texture = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("terminal-chunk-proof"),
+            size: wgpu::Extent3d {
+                width,
+                height,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::COPY_SRC,
+            view_formats: &[],
+        });
+        write_rgba(&queue, &texture, &pixels, width, height);
+        let stride = (width * 4).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT);
+        let readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("terminal-chunk-readback"),
+            size: u64::from(stride) * u64::from(height),
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        encoder.copy_texture_to_buffer(
+            texture.as_image_copy(),
+            wgpu::TexelCopyBufferInfo {
+                buffer: &readback,
+                layout: wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(stride),
+                    rows_per_image: Some(height),
+                },
+            },
+            texture.size(),
+        );
+        queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        readback
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        rx.recv().unwrap().unwrap();
+        let data = readback.slice(..).get_mapped_range();
+        let expected: Vec<_> = pixels
+            .iter()
+            .flat_map(|p| [p.red, p.green, p.blue, p.alpha])
+            .collect();
+        for y in 0..height as usize {
+            assert_eq!(
+                &data[y * stride as usize..y * stride as usize + width as usize * 4],
+                &expected[y * width as usize * 4..(y + 1) * width as usize * 4]
+            );
+        }
     }
 }

@@ -1,0 +1,59 @@
+{
+  "status": "Default terminal image uploads borrow decoded pixels in bounded writes; full staging accounting remains open",
+  "base_commit": "71fa6c5a",
+  "production_consumers": [
+    "Terminal graphic texture uploads shared by native main and terminal pane rendering",
+    "Datum-owned decoded RGBA pixels produced by existing terminal graphics protocols"
+  ],
+  "retired_paths": [
+    "Image-sized RGBA Vec allocation and per-channel conversion before each new terminal texture upload",
+    "Single unbounded-size terminal queue.write_texture call"
+  ],
+  "behavior": [
+    "Give the Datum-owned Rgba8 type an explicit repr(C) four-channel layout. Keep terminal-core forbid(unsafe_code) unchanged; the renderer owns one immutable byte-view conversion guarded by compile-time size, alignment and all field-offset assertions.",
+    "Borrow the source pixel storage without a temporary allocation or conversion loop. Partition into complete rows of at most 256 KiB per queue write, with a horizontal fallback for exceptionally wide rows and exact final-tail dimensions.",
+    "Preserve deferred upload timing, source ownership, texture identity, texture/submission permits and warm no-upload reuse. Validate extent versus payload before allocating a texture."
+  ],
+  "proof": {
+    "renderer": "301 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Chunk proof verifies source pointer identity, exact coverage/channel order, empty input, odd widths, row tails and wide-row splitting. Actual-GPU 257x513 texture readback matches every decoded channel across three writes; existing terminal pixel/reuse/cancellation tests pass.",
+    "core": "135 terminal-core tests pass; protocol decoding/state remains unchanged.",
+    "lint": "All-targets renderer/app/terminal-core visual Clippy -D warnings passes; dependency authority, terminal renderer boundary and source health (2241 files) pass.",
+    "build": "Fresh visual native application build passes offline; binary hash recorded. No native input or screenshot campaign.",
+    "drift": "Full drift passes preceding checks and stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+  },
+  "limits": [
+    "Bounding individual queue writes does not bound wgpu internal staging accumulated before submission. Full 16 MiB host / 64 MiB process staging and 512 MiB GPU-total accounting remain unfinished; no MEM-STAGING predicate closure.",
+    "This removes the Datum image-sized conversion allocation; decoded pixel/source retention, driver staging and full terminal CPU ownership are separate remaining boundaries. No measured throughput or broad performance acceptance.",
+    "No native input/screenshot campaign for this slice; actual GPU upload readback and existing terminal render comparisons are the affected pixel evidence.",
+    "No dependency, vendor, license, protocol semantics, prototype, numerical-budget or nonblocking resize-policy change. S4/S5 remain open."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-borrowed-upload/result.json",
+  "logs": {
+    "tests": {
+      "path": "tests.log.gz",
+      "uncompressed_sha256": "c871decf3c960f763ed8231d460c5f102c5f95f708c6cc71bdef8cbc3ba7cfc6"
+    },
+    "core-tests": {
+      "path": "core-tests.log.gz",
+      "uncompressed_sha256": "486fe4b21d46044256c0ca20a343bc6ece330f25be6e0e80e4118e9a18d4f3cb"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "f368bee158c9005121181c44c29e226f843462b6cbec6a3867318c5babaf7cf1"
+    },
+    "build": {
+      "path": "build.log.gz",
+      "uncompressed_sha256": "f3d1006faf39b629e32c65836ef6d0a1e86a5a94e95de3231374d5af6ca0b18a"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "8080b39f7ad42ed712c037434fbfa668a19c1b833ff4a51b8b44734d10800896"
+    }
+  },
+  "binary_sha256": "9af5db72455d1d8f0d444b197800de08f805a32ac0ed42314a20bd5ba9139d4b",
+  "source_sha256": {
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "1d67a3b2ce9dfb7e21b5e29494a2fd3d1ee0b365736fb4698d75aed9c5c8d3cb",
+    "crates/gui-render/src/render/terminal_rgba_upload.rs": "1d82ec0645c51a474d751f542ba9ab9ad91c9de1884055c9b6d6fc6b78e067e0",
+    "crates/terminal-core/src/png.rs": "c8f41aca597c85839e13b4ce95742b3d6969a1290219c6395194f4b38bc3b0db"
+  }
+}
