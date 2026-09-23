@@ -30252,7 +30252,38 @@
       "driver_elapsed_seconds": 30.000177324051037,
       "driver_max_lateness_seconds": 0.0039071920327842236,
       "disposition": "Failed W-SCROLL: not every issued call reached shared native scroll path; delivered values differ from intended0.25;149 unscripted pointer moves contaminate trial; final4.6757813 is not prescribed expected final state. Do not infer source of changes or lost delivery. Project/bottom-boundary trials not run.",
-      "cleanup": "Owned Global process terminated; portal explicitly closed, both tool sessions exit0."
+      "cleanup": "Owned Global process terminated; portal explicitly closed, both tool sessions exit0.",
+      "pointer_interval_followup": {
+        "input_artifacts": [
+          "portal-result.json.gz",
+          "timed-global-native.log.gz"
+        ],
+        "two_second_bins_received": [
+          240,
+          240,
+          240,
+          133,
+          0,
+          0,
+          0,
+          184,
+          240,
+          240,
+          240,
+          240,
+          240,
+          240,
+          240
+        ],
+        "scheduled_per_bin": 240,
+        "first_unscripted_motion_seconds": 6.798969268798828,
+        "last_unscripted_motion_seconds": 15.42692494392395,
+        "stable_pointer_trace_records_checked": 2565,
+        "stable_pointer_offset_recurrence": "Every checked after offset matches clamp(before - delivered_delta / scale,0,maximum), tolerance0.00001",
+        "observed_path": "Pointer traverses Main during the gap, then returns to Global; stationary full2-second bins each contain240 native scroll records. No scroll records in bins4/5/6.",
+        "interpretation": "Missing shared-path delivery overlaps unscripted pointer excursion. This does not establish renderer event loss, input origin, or general portal reliability. Delta mismatch remains separate.",
+        "disposition": "Failed timed trial remains failed; selected stationary intervals are not complete W-SCROLL, final-state, other-host or performance acceptance."
+      }
     },
     "limits": [
       "No W-SCROLL, full HP18/HP23/S3, native visual/OS stream reliability or default-path speedup acceptance.",
