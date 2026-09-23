@@ -78,7 +78,8 @@ pub struct WidthMeasurementCacheUsage {
 }
 
 /// Datum-owned cache keys, unique shape payloads and layout/entry capacities.
-/// Excludes Arc/allocator bookkeeping, font/scratch internals and GPU resources.
+/// Includes measured Arc/Datum allocation headers. Font/private scratch,
+/// accounting-registry storage and GPU resources remain separate.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct TextCacheKeyUsage {
     pub owner_id: u64,

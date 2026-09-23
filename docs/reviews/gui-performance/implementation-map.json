@@ -15452,14 +15452,21 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Apply and account label-specific post-frame retention in full-scene composition containing both workspace and dialog labels, preserving shared current layouts and workspace reuse. Native overlay success/failure retention is implemented; preparing continuation storage and complete shaped ownership remain separately governed."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "128 shaped buffers per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
       },
-      "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass."
+      "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass.",
+      "s4_implementation_progress": [
+        {
+          "work": "s4_label_retention_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json",
+          "status": "Failed native-dialog label retention fixed; composed workspace/dialog cache classification remains open"
+        }
+      ]
     },
     {
       "id": "MEM-LABEL-KEYS",
@@ -15516,14 +15523,21 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Apply and account label-specific post-frame retention in full-scene composition containing both workspace and dialog labels, preserving shared current layouts and workspace reuse. Native overlay success/failure retention is implemented; preparing continuation storage and complete shaped ownership remain separately governed."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "32KiB label key text per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
       },
-      "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass."
+      "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass.",
+      "s4_implementation_progress": [
+        {
+          "work": "s4_label_retention_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json",
+          "status": "Failed native-dialog label retention fixed; composed workspace/dialog cache classification remains open"
+        }
+      ]
     },
     {
       "id": "MEM-WIDTH-ENTRIES",
@@ -33337,5 +33351,34 @@
       "S4 as a whole and the implementation issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendoring, licensing, prototype, numerical specification cap or sequencing amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/control-retention/result.json"
+  },
+  "s4_label_retention_adoption_work": {
+    "status": "Failed native-dialog label retention fixed; composed workspace/dialog cache classification remains open",
+    "base_commit": "c8844d94",
+    "production_consumers": [
+      "Renderer::render_with_submission common entry used by native Global/Project Preferences and New Project dialog hosts",
+      "Synchronous Renderer::render caller, including diagnostic capture",
+      "Shared TextBufferCache post-frame count/key/payload settling and glyph preparation cancellation"
+    ],
+    "retired_paths": [
+      "Returning an overlay frame error without applying post-frame label entry/key retention bounds"
+    ],
+    "behavior": [
+      "After a non-continuation overlay frame error, trim label history to 128 entries/32 KiB key capacity, settle shaped retention and invalidate prepared glyph signatures/draw state. Current TextRun input remains authoritative for retry.",
+      "Preserve pending upload continuations, including temporarily refused staging submissions. Their current layouts and copied atlas pages remain reusable; Ok(false) is not a completed frame. Successful frames keep the existing post-submit trim path.",
+      "Correct TextCacheKeyUsage documentation to reflect existing measured Arc/Datum allocation headers, keeping font/private scratch, registry and GPU storage separate."
+    ],
+    "proof": {
+      "renderer": "334 renderer tests pass, 11 diagnostic/visual cases filtered. New real GPU test prepares 160 distinct labels exceeding 32 KiB key text, forces zero atlas allowance after successful CPU layout admission, verifies retained entry/key bounds, restores allowance and compares recovered pixels against a fresh renderer. Existing oversized glyph continuation/refusal proof preserves one preparation/raster path and current-color output.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2269, dependency and governance checks pass.",
+      "failed_attempts": "Initial compilation accessed private glyph state; replaced with a cancellation method. Initial cleanup incorrectly cancelled temporarily refused upload continuations, caught by existing regression; excluded pending continuations. Initial ASCII test exceeded shaped CPU admission before atlas failure; changed to multibyte labels to exercise the intended post-layout GPU refusal. Preserve both logs.",
+      "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "MEM-LABEL-ENTRIES/KEYS stay implementation-open: full-scene composition can include dialog labels in the workspace cache without a separate label category/trim. Default native dialogs use the corrected overlay owner; that narrower scope does not establish all-path adoption.",
+      "Preparing/continuing layouts, private shaping scratch and complete shared text CPU accounting remain distinct obligations. Native/RSS/negative-control/endurance and S5 qualification remain required.",
+      "No S4/S5 or issue closure. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendor, licensing, prototype, specification cap or sequencing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json"
   }
 }

@@ -466,3 +466,56 @@ fn oversized_control_gpu_buffer_uploads_all_content_without_retention() {
     drop(source);
     drop(held);
 }
+
+#[test]
+#[ignore = "requires local GPU; failed dialog retention and recovery"]
+fn failed_dialog_releases_excess_labels_and_retry_matches_fresh_pixels() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let original =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut oversized =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let template = oversized.menu_overlay_text_runs[0].clone();
+    oversized.menu_overlay_text_runs = (0..160)
+        .map(|n| {
+            let mut run = template.clone();
+            run.text = format!("{n:03} {}", "🙂".repeat(55));
+            run.rich_spans.clear();
+            run
+        })
+        .collect();
+    let mut host = hardware_renderer(960, 720);
+    host.renderer.atlas.set_test_limit(0);
+    let target =
+        crate::capture_resource::CaptureTarget::new(&host.device, host.extent(), OUTPUT_FORMAT)
+            .unwrap();
+    let error = host
+        .renderer
+        .render(
+            &host.device,
+            &host.queue,
+            &target.create_view(&Default::default()),
+            &oversized,
+            &RetainedScene::empty(),
+            None,
+            960,
+            720,
+        )
+        .unwrap_err();
+    assert!(
+        format!("{error:#}").contains("GPU resource budget exhausted"),
+        "{error:#}"
+    );
+    let usage = host.renderer.text_cache_key_usage();
+    assert!(
+        usage.entries > 0,
+        "exercise post-layout failure, not wholesale CPU admission refusal"
+    );
+    assert!(usage.entries <= 128);
+    assert!(usage.key_text_bytes <= 32 * 1024);
+    assert!(host.renderer.text_preparation.is_invalid());
+    host.renderer.atlas.set_test_limit(32 * 1024 * 1024);
+    let recovered = capture(&mut host, &original);
+    let mut fresh = hardware_renderer(960, 720);
+    assert_eq!(recovered, capture(&mut fresh, &original));
+}

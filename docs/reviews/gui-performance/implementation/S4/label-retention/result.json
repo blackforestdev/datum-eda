@@ -1,0 +1,57 @@
+{
+  "status": "Failed native-dialog label retention fixed; composed workspace/dialog cache classification remains open",
+  "base_commit": "c8844d94",
+  "production_consumers": [
+    "Renderer::render_with_submission common entry used by native Global/Project Preferences and New Project dialog hosts",
+    "Synchronous Renderer::render caller, including diagnostic capture",
+    "Shared TextBufferCache post-frame count/key/payload settling and glyph preparation cancellation"
+  ],
+  "retired_paths": [
+    "Returning an overlay frame error without applying post-frame label entry/key retention bounds"
+  ],
+  "behavior": [
+    "After a non-continuation overlay frame error, trim label history to 128 entries/32 KiB key capacity, settle shaped retention and invalidate prepared glyph signatures/draw state. Current TextRun input remains authoritative for retry.",
+    "Preserve pending upload continuations, including temporarily refused staging submissions. Their current layouts and copied atlas pages remain reusable; Ok(false) is not a completed frame. Successful frames keep the existing post-submit trim path.",
+    "Correct TextCacheKeyUsage documentation to reflect existing measured Arc/Datum allocation headers, keeping font/private scratch, registry and GPU storage separate."
+  ],
+  "proof": {
+    "renderer": "334 renderer tests pass, 11 diagnostic/visual cases filtered. New real GPU test prepares 160 distinct labels exceeding 32 KiB key text, forces zero atlas allowance after successful CPU layout admission, verifies retained entry/key bounds, restores allowance and compares recovered pixels against a fresh renderer. Existing oversized glyph continuation/refusal proof preserves one preparation/raster path and current-color output.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2269, dependency and governance checks pass.",
+    "failed_attempts": "Initial compilation accessed private glyph state; replaced with a cancellation method. Initial cleanup incorrectly cancelled temporarily refused upload continuations, caught by existing regression; excluded pending continuations. Initial ASCII test exceeded shaped CPU admission before atlas failure; changed to multibyte labels to exercise the intended post-layout GPU refusal. Preserve both logs.",
+    "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "MEM-LABEL-ENTRIES/KEYS stay implementation-open: full-scene composition can include dialog labels in the workspace cache without a separate label category/trim. Default native dialogs use the corrected overlay owner; that narrower scope does not establish all-path adoption.",
+    "Preparing/continuing layouts, private shaping scratch and complete shared text CPU accounting remain distinct obligations. Native/RSS/negative-control/endurance and S5 qualification remain required.",
+    "No S4/S5 or issue closure. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendor, licensing, prototype, specification cap or sequencing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/label-retention/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/label-retention/tests.log.gz",
+      "uncompressed_sha256": "ae097a68982832d08aacf8937da2ed23fe7c5d563cac688cc43a023e62cc968a"
+    },
+    "compile-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/label-retention/compile-error.log.gz",
+      "uncompressed_sha256": "1c1b58fa2b2ff38c0b5a94d93f50bb7e5c63bdd6810ac0ff683d4c8e910bd507"
+    },
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/label-retention/initial-tests.log.gz",
+      "uncompressed_sha256": "caf0ab399431368fc71ac6c20d870ea2adb8d2fac725869d67743314da4a8f8c"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/label-retention/clippy.log.gz",
+      "uncompressed_sha256": "8027ed90fbb394ae39b0b3f49ab6fd48757c5fa2675f0bb4c47cb6f1364818a9"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/label-retention/build.log.gz",
+      "uncompressed_sha256": "97e03f4e865ebad733e6c4683822fe2318fdc3352a1c25abb674a100a18c47eb"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "e61ad963904866ad6429d06cad274e69c91f8a7c07c58e2c3094c5f2d9cd5e61",
+    "crates/gui-render/src/render/gpu_text.rs": "dbbf756fec0dc3951cbd1649e7594fc2a818502feaca0a6ea00137d91c6e0fad",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "b500c3dd55da68ad66d8bd82298ac65bd752de33b008280ce5410bccb99fa69a",
+    "crates/gui-render/src/render/renderer_state.rs": "ae5d3bc3b19d23aa8a792f35d3c9e22ca261f603372442f22d3a46466530f6dc"
+  }
+}
