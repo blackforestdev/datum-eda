@@ -4,6 +4,7 @@ use super::*;
 mod admission;
 #[path = "text_cache_budget.rs"]
 pub(crate) mod budget;
+use crate::cpu_alloc::heap::{capacity_bytes, tracking_bytes};
 use crate::text_gpu::Area;
 use crate::text_layout::TextLayout;
 use crate::text_layout::scratch::LayoutScratch;
@@ -142,6 +143,7 @@ pub(crate) struct TextBufferCache {
     layout_scratch: LayoutScratch,
     layout_output_revision: u64,
     layout_output_bytes: usize,
+    layout_output_tracking_bytes: usize,
     // Sorted shaping fingerprint + entry index. This owns no text or shaping
     // payload; exact key comparison remains authoritative within each bucket.
     lookup: Vec<(u64, usize)>,
@@ -166,6 +168,7 @@ impl Default for TextBufferCache {
             layout_scratch: LayoutScratch::default(),
             layout_output_revision: 0,
             layout_output_bytes: 0,
+            layout_output_tracking_bytes: 0,
             lookup: Vec::new(),
             frame: 0,
             revision: 0,
@@ -253,13 +256,20 @@ impl TextBufferCache {
                 .map(|entry| key_text_bytes(&entry.key))
                 .sum(),
             entry_storage_bytes: std::mem::size_of::<Self>()
-                + self.entries.capacity() * std::mem::size_of::<CachedTextBuffer>()
-                + self.lookup.capacity() * std::mem::size_of::<(u64, usize)>()
+                + capacity_bytes::<CachedTextBuffer>(self.entries.capacity())
+                + capacity_bytes::<(u64, usize)>(self.lookup.capacity())
                 + self
                     .entries
                     .iter()
                     .map(|entry| {
-                        entry.key.rich_spans.capacity() * std::mem::size_of::<TextBufferSpanKey>()
+                        capacity_bytes::<TextBufferSpanKey>(entry.key.rich_spans.capacity())
+                            + tracking_bytes::<u8>(entry.key.text.capacity())
+                            + entry
+                                .key
+                                .rich_spans
+                                .iter()
+                                .map(|span| tracking_bytes::<u8>(span.text.capacity()))
+                                .sum::<usize>()
                     })
                     .sum::<usize>(),
         }

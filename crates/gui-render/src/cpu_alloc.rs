@@ -1,6 +1,8 @@
 //! Scoped Rust-heap ownership for library allocations with private capacities.
 //! Native malloc/mappings and allocator-internal slack remain separate from Rust
 //! requested layout bytes. No dependency layout or private field is inspected.
+#[path = "heap_accounting.rs"]
+pub(crate) mod heap;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
 use std::ptr;

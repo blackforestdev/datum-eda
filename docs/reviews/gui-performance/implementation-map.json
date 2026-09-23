@@ -15217,6 +15217,11 @@
           "work": "s4_text_frame_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
           "status": "Default current-frame public payload admission precedes glyph preparation, evicts only unused history and preserves required text/refusal semantics. Full allocation-time/private/scratch accounting and qualification remain open."
+        },
+        {
+          "work": "s4_text_heap_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json",
+          "status": "Default owned text capacity admission includes measured Arc/Datum allocation overhead; returned layout glyphs and private scratch remain disjoint. Full allocation-time/private/remaining metadata and qualification gaps stay open."
         }
       ]
     },
@@ -15350,6 +15355,11 @@
           "work": "s4_text_frame_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
           "status": "Default current-frame public payload admission precedes glyph preparation, evicts only unused history and preserves required text/refusal semantics. Full allocation-time/private/scratch accounting and qualification remain open."
+        },
+        {
+          "work": "s4_text_heap_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json",
+          "status": "Default owned text capacity admission includes measured Arc/Datum allocation overhead; returned layout glyphs and private scratch remain disjoint. Full allocation-time/private/remaining metadata and qualification gaps stay open."
         }
       ]
     },
@@ -16930,6 +16940,11 @@
           "work": "s4_glyph_cpu_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/result.json",
           "status": "Default CPU raster pixel retention shares host/process staging budgets, leaves bounded-copy headroom and yields preparation during cold accumulation. Full allocation-time/private/metadata accounting and qualification remain open."
+        },
+        {
+          "work": "s4_text_heap_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json",
+          "status": "Default owned text capacity admission includes measured Arc/Datum allocation overhead; returned layout glyphs and private scratch remain disjoint. Full allocation-time/private/remaining metadata and qualification gaps stay open."
         }
       ]
     },
@@ -17091,6 +17106,11 @@
           "work": "s4_glyph_cpu_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/result.json",
           "status": "Default CPU raster pixel retention shares host/process staging budgets, leaves bounded-copy headroom and yields preparation during cold accumulation. Full allocation-time/private/metadata accounting and qualification remain open."
+        },
+        {
+          "work": "s4_text_heap_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json",
+          "status": "Default owned text capacity admission includes measured Arc/Datum allocation overhead; returned layout glyphs and private scratch remain disjoint. Full allocation-time/private/remaining metadata and qualification gaps stay open."
         }
       ]
     },
@@ -32791,5 +32811,38 @@
       "No native-input or broad benchmark campaign, dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/result.json"
+  },
+  "s4_text_heap_adoption_work": {
+    "status": "Default owned text capacities include measured Arc containers and Datum allocation headers; full allocation-time/private accounting remains unfinished",
+    "base_commit": "9d751dd0",
+    "production_consumers": [
+      "Shared TextBufferCache admission/retention and process ownership reports",
+      "TextLayout shape/layout vectors shared by workspace, terminal and dialog text",
+      "Private LayoutScratch admission and Atlas pending CPU image admission"
+    ],
+    "retired_paths": [
+      "Counting only ShapeLine struct size for shared Arc containers",
+      "Excluding Datum header/alignment bytes from owned text vectors/strings and retained raster pixels",
+      "Excluding private ShapeBuffer allocation tracking bytes from scratch admission"
+    ],
+    "behavior": [
+      "Calculate requested Vec/String capacity plus actual Datum header/alignment cost using the same layout function as the installed allocator. Empty and zero-sized storage carries no allocation charge; internal System allocator slack remains separate.",
+      "Measure the concrete Arc<ShapeLine> container through the existing scoped allocator once, using an empty public ShapeLine value. No assumed Arc header layout or dependency-private inspection. Count shared shapes once across layout variants, including nested public span/word/glyph capacities.",
+      "Existing 8 MiB renderer/32 MiB process text admission now includes owned container costs. Key text capacity stays a distinct diagnostic/cap field; its allocator headers join entry storage.",
+      "Charge retained CPU glyph image headers to existing staging/scratch admission. Private layout scratch includes tracking bytes after subtracting returned glyph-vector payload and headers, preventing overlap with shaped-layout accounting."
+    ],
+    "proof": {
+      "renderer": "322 renderer tests pass,10 diagnostic/visual cases filtered. New tests compare capacity costs with actual allocator observations for growth, alignment and empty/ZST storage; concrete Arc costs reconcile through shared-layout deduplication and final release.",
+      "production": "Existing shared-cache pressure/admission/eviction/reconstruction, private-scratch separation, actual-GPU CPU/GPU pixel staging handoff, glyph continuation, final pixel parity and world/terminal/resource regressions pass with revised totals.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2260, dependency authority and governance checks pass.",
+      "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "Cache/layout/raster construction still allocates before retention admission; refused text preparation may retain current CPU content for retry. Transient peaks, private font/raster state, owner/registry and other container metadata, and complete scratch accounting remain unfinished. No full MEM-SHAPED or MEM-STAGING closure.",
+      "Exact Arc/Datum header costs require the production/test Datum allocator. External consumers without it retain public capacity reporting. Allocator-internal slack/native mappings remain RSS observations; allocation-scope and capacity views overlap and must not be summed.",
+      "Complete world/history/control/resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+      "No native-input or benchmark campaign, dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json"
   }
 }

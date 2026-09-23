@@ -275,7 +275,10 @@ impl Atlas {
         let padded = u64::from(
             (size[0] * bytes_per_pixel as u32).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT),
         ) * u64::from(size[1]);
-        let cpu_permits = self.reserve_cpu_image(image.data.capacity() as u64, padded)?;
+        let cpu_permits = self.reserve_cpu_image(
+            crate::cpu_alloc::heap::capacity_bytes::<u8>(image.data.capacity()) as u64,
+            padded,
+        )?;
         let mut slot = None;
         for (index, page) in self.pages.iter_mut().enumerate() {
             if page.color == color

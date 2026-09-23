@@ -12,9 +12,18 @@ impl TextBufferCache {
                 .iter()
                 .map(|entry| entry.buffer.layout_glyph_bytes())
                 .sum();
+            self.layout_output_tracking_bytes = self
+                .entries
+                .iter()
+                .map(|entry| entry.buffer.layout_glyph_tracking_bytes())
+                .sum();
             self.layout_output_revision = self.revision;
         }
-        self.layout_scratch.admit(self.layout_output_bytes, host);
+        self.layout_scratch.admit(
+            self.layout_output_bytes,
+            self.layout_output_tracking_bytes,
+            host,
+        );
     }
 
     pub(crate) fn release_layout_scratch_for(

@@ -1,6 +1,7 @@
 //! Retained plain/rich shaping and visible layout owned by Datum.
 use std::sync::Arc;
 
+use crate::cpu_alloc::heap::capacity_bytes;
 use crate::{TextRun, text_attrs, text_color};
 use glyphon::cosmic_text::{BidiParagraphs, LineIter};
 #[path = "layout_scratch.rs"]
@@ -203,35 +204,44 @@ impl TextLayout {
             .sum()
     }
 
+    pub(crate) fn layout_glyph_tracking_bytes(&self) -> usize {
+        self.rows
+            .iter()
+            .map(|row| {
+                crate::cpu_alloc::heap::tracking_bytes::<glyphon::LayoutGlyph>(
+                    row.layout.glyphs.capacity(),
+                )
+            })
+            .sum()
+    }
+
     pub fn layout_storage_bytes(&self) -> usize {
-        self.shapes.capacity() * std::mem::size_of::<Arc<ShapeLine>>()
-            + self.rows.capacity() * std::mem::size_of::<Row>()
+        capacity_bytes::<Arc<ShapeLine>>(self.shapes.capacity())
+            + capacity_bytes::<Row>(self.rows.capacity())
             + self
                 .rows
                 .iter()
-                .map(|row| {
-                    row.layout.glyphs.capacity() * std::mem::size_of::<glyphon::LayoutGlyph>()
-                })
+                .map(|row| capacity_bytes::<glyphon::LayoutGlyph>(row.layout.glyphs.capacity()))
                 .sum::<usize>()
     }
 
-    /// Unique public shape payloads. The cache deduplicates these live addresses
-    /// across extent variants. Arc/allocator bookkeeping and scratch are separate.
+    /// Unique public shapes plus measured Arc and Datum allocator overhead.
+    /// The cache deduplicates these addresses across extent variants; private
+    /// scratch and allocator-internal slack remain separate.
     pub fn shape_allocations(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
         self.shapes.iter().map(|shape| {
-            let bytes = std::mem::size_of::<ShapeLine>()
-                + shape.spans.capacity() * std::mem::size_of::<glyphon::ShapeSpan>()
+            let bytes = shape_container_bytes()
+                + capacity_bytes::<glyphon::ShapeSpan>(shape.spans.capacity())
                 + shape
                     .spans
                     .iter()
                     .map(|span| {
-                        span.words.capacity() * std::mem::size_of::<glyphon::ShapeWord>()
+                        capacity_bytes::<glyphon::ShapeWord>(span.words.capacity())
                             + span
                                 .words
                                 .iter()
                                 .map(|word| {
-                                    word.glyphs.capacity()
-                                        * std::mem::size_of::<glyphon::ShapeGlyph>()
+                                    capacity_bytes::<glyphon::ShapeGlyph>(word.glyphs.capacity())
                                 })
                                 .sum::<usize>()
                     })
@@ -273,3 +283,18 @@ impl<'a> Iterator for Runs<'a> {
 #[cfg(test)]
 #[path = "text_layout_tests.rs"]
 mod tests;
+
+fn shape_container_bytes() -> usize {
+    if !crate::cpu_alloc::installed() {
+        // External consumers without Datum's allocator retain public-size reporting.
+        return std::mem::size_of::<ShapeLine>();
+    }
+    static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+    *BYTES.get_or_init(|| {
+        crate::cpu_alloc::heap::arc_bytes(ShapeLine {
+            rtl: false,
+            spans: Vec::new(),
+            metrics_opt: None,
+        })
+    })
+}

@@ -1,0 +1,64 @@
+{
+  "status": "Default owned text capacities include measured Arc containers and Datum allocation headers; full allocation-time/private accounting remains unfinished",
+  "base_commit": "9d751dd0",
+  "production_consumers": [
+    "Shared TextBufferCache admission/retention and process ownership reports",
+    "TextLayout shape/layout vectors shared by workspace, terminal and dialog text",
+    "Private LayoutScratch admission and Atlas pending CPU image admission"
+  ],
+  "retired_paths": [
+    "Counting only ShapeLine struct size for shared Arc containers",
+    "Excluding Datum header/alignment bytes from owned text vectors/strings and retained raster pixels",
+    "Excluding private ShapeBuffer allocation tracking bytes from scratch admission"
+  ],
+  "behavior": [
+    "Calculate requested Vec/String capacity plus actual Datum header/alignment cost using the same layout function as the installed allocator. Empty and zero-sized storage carries no allocation charge; internal System allocator slack remains separate.",
+    "Measure the concrete Arc<ShapeLine> container through the existing scoped allocator once, using an empty public ShapeLine value. No assumed Arc header layout or dependency-private inspection. Count shared shapes once across layout variants, including nested public span/word/glyph capacities.",
+    "Existing 8 MiB renderer/32 MiB process text admission now includes owned container costs. Key text capacity stays a distinct diagnostic/cap field; its allocator headers join entry storage.",
+    "Charge retained CPU glyph image headers to existing staging/scratch admission. Private layout scratch includes tracking bytes after subtracting returned glyph-vector payload and headers, preventing overlap with shaped-layout accounting."
+  ],
+  "proof": {
+    "renderer": "322 renderer tests pass,10 diagnostic/visual cases filtered. New tests compare capacity costs with actual allocator observations for growth, alignment and empty/ZST storage; concrete Arc costs reconcile through shared-layout deduplication and final release.",
+    "production": "Existing shared-cache pressure/admission/eviction/reconstruction, private-scratch separation, actual-GPU CPU/GPU pixel staging handoff, glyph continuation, final pixel parity and world/terminal/resource regressions pass with revised totals.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2260, dependency authority and governance checks pass.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "Cache/layout/raster construction still allocates before retention admission; refused text preparation may retain current CPU content for retry. Transient peaks, private font/raster state, owner/registry and other container metadata, and complete scratch accounting remain unfinished. No full MEM-SHAPED or MEM-STAGING closure.",
+    "Exact Arc/Datum header costs require the production/test Datum allocator. External consumers without it retain public capacity reporting. Allocator-internal slack/native mappings remain RSS observations; allocation-scope and capacity views overlap and must not be summed.",
+    "Complete world/history/control/resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+    "No native-input or benchmark campaign, dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-heap/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-heap/tests.log.gz",
+      "uncompressed_sha256": "06f6ef8feac41a1cd8bf155d62ed742b79744ed84183a0bfdd51f3325ad0561c"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-heap/clippy.log.gz",
+      "uncompressed_sha256": "6444dee7d9d13e03759877cb85d082fbf4615b0dd1ba7c3a6135dac69267302e"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-heap/build.log.gz",
+      "uncompressed_sha256": "481e3790fa64d09c7fc4c7bb11ad887f4d5aae23ef46aa251f7064c2fceee572"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-heap/drift.log.gz",
+      "uncompressed_sha256": "ff2665b40ace78dcbd36fc5f0c3b5e609b080af043cd296ad52d7b68c5675d21"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/cpu_alloc.rs": "54330e9cdcf11dcf9c0aed52cbdb96938bba2ea36a18da660e72af5851505db2",
+    "crates/gui-render/src/layout_scratch.rs": "6875897a0d9d5f8f3364cfb2cc7a5887e72a250da8410dbeee4fc44103ca377f",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "5019767956b9438ecbaed0f28c1ef7e7dd04c6ad03dc7edfe98ce23db2d16b6e",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "c0443ac6aac55eebde09cd77a1139b229fb3daca918ddd3aad73aa240e985e0b",
+    "crates/gui-render/src/render/text_cache_admission.rs": "f3588f3515d037d3c377c62dbf1acde59fa2af21e86fea96f679e5a4b13def5b",
+    "crates/gui-render/src/render/text_cache_budget.rs": "a60c6fff548fb1778ad684019c818f3026b198597b2b3ca35fa0bffa84b4a519",
+    "crates/gui-render/src/text_gpu/atlas.rs": "833a29d8d0dceaaa1315087b93beab7f0b6e732854b6512ad9728f13f13531d2",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images.rs": "eeccae46a7f898659a95b7d5d1511f0a98de5480ff14bcf6d28e9626a8419fc7",
+    "crates/gui-render/src/text_layout.rs": "fbf8ec933bfbf74e0d4b3e02c7e1bba3890eddedaf5a0d7df7e21eeb58d8aab0",
+    "crates/gui-render/src/text_layout_tests.rs": "4524b9e1367d26544facc0a09b2a11e5a615581ff1334342d63e8665849a849a",
+    "crates/gui-render/src/heap_accounting.rs": "2fe05514f471d2721865fb914d4444773c2e8f666fbbccd93f68f1616a0af433"
+  }
+}
