@@ -15098,6 +15098,11 @@
           "work": "s4_cpu_bookkeeping_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/result.json",
           "status": "Document registry records and retired-observer buffers included in retained CPU accounting"
+        },
+        {
+          "work": "s4_document_identity_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-identity/result.json",
+          "status": "Shared CPU/GPU document identity registry includes owned scene ID and budget allocation in CPU totals"
         }
       ]
     },
@@ -15221,6 +15226,11 @@
           "work": "s4_cpu_bookkeeping_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/result.json",
           "status": "Document registry records and retired-observer buffers included in retained CPU accounting"
+        },
+        {
+          "work": "s4_document_identity_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-identity/result.json",
+          "status": "Shared CPU/GPU document identity registry includes owned scene ID and budget allocation in CPU totals"
         }
       ]
     },
@@ -34352,5 +34362,30 @@
       "Twelve implementation gaps and original S5 qualification remain open. No MEM-WORLD-CPU/HISTORY closure, dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/result.json"
+  },
+  "s4_document_identity_work": {
+    "status": "Shared CPU/GPU document identity registry includes owned scene ID and budget allocation in CPU totals",
+    "base_commit": "d8d6ba98",
+    "production_consumers": [
+      "SharedGeometry document budget lookup for board and companion scene construction",
+      "Retained document CPU accounting, history metadata ownership and GPU reservation snapshot"
+    ],
+    "retired_paths": [
+      "Separate BTreeMap of scene IDs and weak GPU budgets outside retained CPU accounting"
+    ],
+    "behavior": [
+      "Use the existing per-document owned registry for scene-ID budget lookup, retained CPU observations and GPU reservation reporting. Include scene-ID allocation capacity and measured shared Budget allocation/header once in document CPU totals. Preserve budget identity while scene geometry, metadata storage or GPU permits own it. Retire records only after all those owners release. GPU reservation snapshot remains sorted by scene ID and existing CPU/GPU 64 MiB limits remain separate and unchanged."
+    ],
+    "proof": {
+      "renderer": "355 renderer tests pass, 11 filtered. Includes actual-GPU document sharing/retirement/replacement coverage, existing reopen-permit identity test, measured Budget allocation through last weak drop, and real production scene construction whose complete document CPU total matches live allocator bytes then returns to zero.",
+      "app": "391 app tests pass, 16 ignored, including document pressure, metadata, mixed-document reopen and retirement storage tests.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health and dependency/governance/format checks pass.",
+      "scope": "No native OS-input/backend/scale/endurance qualification or broad drift replay; original S5 obligations remain."
+    },
+    "limits": [
+      "Complete scene/bookkeeping construction and reallocation admission remains open; accounting after allocation is not a hard peak cap. Registry cleanup remains lazy on access. Full CPU/history predicate closure requires final ownership/admission reconciliation, including externally held weak-container lifetime rather than extrapolating from the tested normal owner lifecycle.",
+      "Twelve implementation gaps and original S5 proof remain open. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/document-identity/result.json"
   }
 }

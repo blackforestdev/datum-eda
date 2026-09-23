@@ -1,0 +1,49 @@
+{
+  "status": "Shared CPU/GPU document identity registry includes owned scene ID and budget allocation in CPU totals",
+  "base_commit": "d8d6ba98",
+  "production_consumers": [
+    "SharedGeometry document budget lookup for board and companion scene construction",
+    "Retained document CPU accounting, history metadata ownership and GPU reservation snapshot"
+  ],
+  "retired_paths": [
+    "Separate BTreeMap of scene IDs and weak GPU budgets outside retained CPU accounting"
+  ],
+  "behavior": [
+    "Use the existing per-document owned registry for scene-ID budget lookup, retained CPU observations and GPU reservation reporting. Include scene-ID allocation capacity and measured shared Budget allocation/header once in document CPU totals. Preserve budget identity while scene geometry, metadata storage or GPU permits own it. Retire records only after all those owners release. GPU reservation snapshot remains sorted by scene ID and existing CPU/GPU 64 MiB limits remain separate and unchanged."
+  ],
+  "proof": {
+    "renderer": "355 renderer tests pass, 11 filtered. Includes actual-GPU document sharing/retirement/replacement coverage, existing reopen-permit identity test, measured Budget allocation through last weak drop, and real production scene construction whose complete document CPU total matches live allocator bytes then returns to zero.",
+    "app": "391 app tests pass, 16 ignored, including document pressure, metadata, mixed-document reopen and retirement storage tests.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health and dependency/governance/format checks pass.",
+    "scope": "No native OS-input/backend/scale/endurance qualification or broad drift replay; original S5 obligations remain."
+  },
+  "limits": [
+    "Complete scene/bookkeeping construction and reallocation admission remains open; accounting after allocation is not a hard peak cap. Registry cleanup remains lazy on access. Full CPU/history predicate closure requires final ownership/admission reconciliation, including externally held weak-container lifetime rather than extrapolating from the tested normal owner lifecycle.",
+    "Twelve implementation gaps and original S5 proof remain open. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/document-identity/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-identity/renderer.log.gz",
+      "uncompressed_sha256": "bfb17a0e15a167e78d00fdc41557fc47776bff0712c471f17dcc01d6462a2fc7"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-identity/app.log.gz",
+      "uncompressed_sha256": "21302f1af982961da4dab797427e27060bf2b1a5008938d21e1d29fb8dddca67"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-identity/clippy.log.gz",
+      "uncompressed_sha256": "a0bdb2103c48d8009db1ffc0d5ab66f30aa49c521bb261b8d5037eab2cb6fe8a"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-identity/build.log.gz",
+      "uncompressed_sha256": "8fb727269cdadd284e1c89ce9ade55f945eb85ac9df5bbb4abe2c562be5348f7"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/document_cpu.rs": "ca3d92009767682fdc01cd435bbac5413c6b289b01eb4e713f8d172e3b29fad5",
+    "crates/gui-render/src/render/document_gpu_budget.rs": "80cbb2d2416dd35379f6ff3345f11a978e3bb78154938cd692c1c1cc55b482bf",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "0dbe3fdb589bf5444c83d48cbddc597990a99fb5f9aa8d90e20adc4cbfc28f2b",
+    "crates/gui-render/src/text_gpu/budget.rs": "03928b98755bed3f02ffa2fc5728815206e9ef67903a25c2308f35e4a9b328cd"
+  }
+}

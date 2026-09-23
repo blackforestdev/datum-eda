@@ -16,6 +16,18 @@ impl Budget {
             used: AtomicU64::new(0),
         })
     }
+    pub(crate) fn cpu_allocation_bytes() -> usize {
+        if !crate::cpu_alloc::installed() {
+            return std::mem::size_of::<Self>();
+        }
+        static BYTES: OnceLock<usize> = OnceLock::new();
+        *BYTES.get_or_init(|| {
+            crate::cpu_alloc::heap::arc_bytes(Self {
+                limit: 0,
+                used: AtomicU64::new(0),
+            })
+        })
+    }
     pub fn used(&self) -> u64 {
         self.used.load(Ordering::Acquire)
     }
@@ -80,6 +92,23 @@ pub(crate) fn terminal_process() -> Arc<Budget> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn budget_container_measurement_matches_allocated_capacity_until_last_weak_drop() {
+        let expected = Budget::cpu_allocation_bytes();
+        let scope = crate::cpu_alloc::Scope::new("document-budget-container");
+        let budget = scope.with(|| Budget::new(64));
+        let weak = Arc::downgrade(&budget);
+        let bytes = || {
+            let usage = scope.usage();
+            (usage.payload_bytes + usage.tracking_bytes) as usize
+        };
+        assert_eq!(bytes(), expected);
+        drop(budget);
+        assert_eq!(bytes(), expected);
+        drop(weak);
+        assert_eq!(bytes(), 0);
+    }
+
     #[test]
     fn failed_second_reservation_rolls_back_first() {
         let atlas = Budget::new(32);

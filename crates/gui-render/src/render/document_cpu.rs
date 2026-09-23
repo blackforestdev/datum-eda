@@ -8,6 +8,7 @@ use std::sync::{Arc, Mutex, Weak};
 
 const DOCUMENT_LIMIT: usize = 64 * 1024 * 1024;
 struct Document {
+    scene_id: String,
     identity: Weak<Budget>,
     scenes: Vec<RetainedGeometryObserver>,
     metadata_bytes: usize,
@@ -32,10 +33,16 @@ impl Registry {
         }
         None
     }
-    fn insert(&mut self, identity: Weak<Budget>, observer: RetainedGeometryObserver) {
+    fn insert(
+        &mut self,
+        scene_id: String,
+        identity: Weak<Budget>,
+        scenes: Vec<RetainedGeometryObserver>,
+    ) {
         self.head = Some(Box::new(Document {
+            scene_id,
             identity,
-            scenes: vec![observer],
+            scenes,
             metadata_bytes: 0,
             next: self.head.take(),
         }));
@@ -49,13 +56,52 @@ fn prune(documents: &mut Registry) {
         if document.scenes.capacity() > document.scenes.len().saturating_mul(4) {
             document.scenes.shrink_to_fit();
         }
-        if document.scenes.is_empty() && document.metadata_bytes == 0 {
+        if document.scenes.is_empty()
+            && document.metadata_bytes == 0
+            && document.identity.strong_count() == 0
+        {
             *cursor = document.next.take();
         } else {
             *cursor = Some(document);
             cursor = &mut cursor.as_mut().expect("retained document").next;
         }
     }
+}
+
+pub(crate) fn for_scene(scene_id: &str) -> Arc<Budget> {
+    let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
+    prune(&mut documents);
+    let mut cursor = documents.head.as_deref();
+    while let Some(document) = cursor {
+        if document.scene_id == scene_id
+            && let Some(budget) = document.identity.upgrade()
+        {
+            return budget;
+        }
+        cursor = document.next.as_deref();
+    }
+    let budget = Budget::new(DOCUMENT_LIMIT as u64);
+    documents.insert(scene_id.to_owned(), Arc::downgrade(&budget), Vec::new());
+    budget
+}
+
+pub(crate) fn gpu_usage() -> Vec<crate::gpu_data::DocumentGpuUsage> {
+    let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
+    prune(&mut documents);
+    let mut result = Vec::new();
+    let mut cursor = documents.head.as_deref();
+    while let Some(document) = cursor {
+        if let Some(budget) = document.identity.upgrade() {
+            result.push(crate::gpu_data::DocumentGpuUsage {
+                scene_id: document.scene_id.clone(),
+                reserved_bytes: budget.used(),
+                limit_bytes: DOCUMENT_LIMIT as u64,
+            });
+        }
+        cursor = document.next.as_deref();
+    }
+    result.sort_unstable_by(|a, b| a.scene_id.cmp(&b.scene_id));
+    result
 }
 
 pub(super) fn register(scene: &RetainedScene) {
@@ -65,12 +111,11 @@ pub(super) fn register(scene: &RetainedScene) {
     };
     let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
     prune(&mut documents);
-    if let Some(document) = documents.find(&identity) {
-        if observer.heap_bytes_excluding(&document.scenes) != 0 {
-            document.scenes.push(observer);
-        }
-    } else {
-        documents.insert(identity, observer);
+    let document = documents
+        .find(&identity)
+        .expect("scene owns registered document identity");
+    if observer.heap_bytes_excluding(&document.scenes) != 0 {
+        document.scenes.push(observer);
     }
 }
 
@@ -86,6 +131,8 @@ fn usage(observer: &RetainedGeometryObserver) -> usize {
     document.scenes.iter().enumerate().fold(
         capacity_bytes::<RetainedGeometryObserver>(document.scenes.capacity())
             .saturating_add(document.metadata_bytes)
+            .saturating_add(capacity_bytes::<u8>(document.scene_id.capacity()))
+            .saturating_add(Budget::cpu_allocation_bytes())
             .saturating_add(allocation_bytes(std::alloc::Layout::new::<Document>())),
         |bytes, (index, scene)| {
             bytes.saturating_add(scene.heap_bytes_excluding(&document.scenes[..index]))
@@ -178,6 +225,30 @@ fn check_limit(observer: &RetainedGeometryObserver, limit: usize) -> anyhow::Res
 mod tests {
     use super::*;
     #[test]
+    fn production_document_payload_and_identity_match_live_allocator_bytes() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.scene_id = "cpu-document-allocator-warmup".into();
+        drop(RetainedScene::from_workspace(&state, 960, 720));
+        gpu_usage();
+        state.scene.scene_id = "cpu-document-allocator-owned".into();
+        let scope = crate::cpu_alloc::Scope::new("complete-document-owner");
+        let scene = scope.with(|| RetainedScene::from_workspace(&state, 960, 720));
+        let observer = scene.geometry_observer();
+        let live = || {
+            let value = scope.usage();
+            (value.payload_bytes + value.tracking_bytes) as usize
+        };
+        assert_eq!(usage(&observer), live());
+        let clone = scene.clone();
+        drop(scene);
+        assert_eq!(usage(&observer), live());
+        drop(clone);
+        drop(observer);
+        gpu_usage();
+        assert_eq!(live(), 0);
+    }
+
+    #[test]
     fn registry_records_match_allocator_and_release_independently() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         state.scene.scene_id = "cpu-registry-first".into();
@@ -188,10 +259,17 @@ mod tests {
         let mut registry = Registry::default();
         for scene in [&first, &second] {
             let observer = scene.geometry_observer();
-            scope.with(|| registry.insert(observer.document.clone().unwrap(), observer));
+            scope.with(|| {
+                registry.insert(
+                    "registry-owned-key".into(),
+                    observer.document.clone().unwrap(),
+                    vec![observer],
+                )
+            });
         }
         let record_bytes = allocation_bytes(std::alloc::Layout::new::<Document>())
-            + capacity_bytes::<RetainedGeometryObserver>(1);
+            + capacity_bytes::<RetainedGeometryObserver>(1)
+            + capacity_bytes::<u8>("registry-owned-key".len());
         let live = || {
             let usage = scope.usage();
             (usage.payload_bytes + usage.tracking_bytes) as usize
