@@ -1,4 +1,4 @@
-//! Explicit mapped staging for texture copies in the caller's frame submission.
+//! Explicit mapped staging for texture and buffer copies in the caller's frame submission.
 use super::budget::Budget;
 use super::lifetime::{Kind, Owner, Tracked};
 use std::sync::Arc;
@@ -9,6 +9,12 @@ pub(super) struct TextureUpload<'a> {
     pub size: [u32; 2],
     pub stride: u32,
     pub pixels: &'a [u8],
+}
+
+pub(crate) struct BufferUpload<'a> {
+    pub buffer: &'a wgpu::Buffer,
+    pub offset: u64,
+    pub bytes: &'a [u8],
 }
 
 pub(crate) struct Batch {
@@ -27,14 +33,15 @@ impl Batch {
     }
 }
 
-pub(super) fn textures(
+pub(super) fn batch(
     device: &wgpu::Device,
     owner: &Owner,
     generation: u64,
     host_budget: &Arc<Budget>,
     uploads: &[TextureUpload<'_>],
+    buffers: &[BufferUpload<'_>],
 ) -> anyhow::Result<Option<Batch>> {
-    if uploads.is_empty() {
+    if uploads.is_empty() && buffers.is_empty() {
         return Ok(None);
     }
     let mut capacity = 0_u64;
@@ -54,6 +61,22 @@ pub(super) fn textures(
         capacity = capacity
             .checked_add(padded_bytes(upload))
             .ok_or_else(|| anyhow::anyhow!("texture staging size overflow"))?;
+    }
+    for upload in buffers {
+        let bytes = upload.bytes.len() as u64;
+        anyhow::ensure!(
+            bytes > 0
+                && bytes.is_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT)
+                && upload.offset.is_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT)
+                && upload
+                    .offset
+                    .checked_add(bytes)
+                    .is_some_and(|end| end <= upload.buffer.size()),
+            "invalid buffer upload range"
+        );
+        capacity = capacity
+            .checked_add(bytes)
+            .ok_or_else(|| anyhow::anyhow!("buffer staging size overflow"))?;
     }
     // Actual padded API capacity, not just source payload, is charged before allocation.
     let host = host_budget.reserve(capacity)?;
@@ -80,6 +103,10 @@ pub(super) fn textures(
                 mapped[offset..offset + row.len()].copy_from_slice(row);
                 offset += pitch;
             }
+        }
+        for upload in buffers {
+            mapped[offset..offset + upload.bytes.len()].copy_from_slice(upload.bytes);
+            offset += upload.bytes.len();
         }
     }
     buffer.unmap();
@@ -115,6 +142,16 @@ pub(super) fn textures(
         );
         offset += padded_bytes(upload);
     }
+    for upload in buffers {
+        encoder.copy_buffer_to_buffer(
+            &buffer,
+            offset,
+            upload.buffer,
+            upload.offset,
+            upload.bytes.len() as u64,
+        );
+        offset += upload.bytes.len() as u64;
+    }
     Ok(Some(Batch {
         command: Some(encoder.finish()),
         buffer,
@@ -129,6 +166,27 @@ fn padded_stride(upload: &TextureUpload<'_>) -> u32 {
 
 fn padded_bytes(upload: &TextureUpload<'_>) -> u64 {
     u64::from(padded_stride(upload)) * u64::from(upload.size[1])
+}
+
+#[cfg(all(test, feature = "visual"))]
+pub(crate) fn submit_buffers_for_test(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    buffers: &[BufferUpload<'_>],
+) {
+    if let Some(mut batch) = batch(
+        device,
+        &Owner::new(),
+        1,
+        &Budget::new(16 * 1024 * 1024),
+        &[],
+        buffers,
+    )
+    .unwrap()
+    {
+        queue.submit([batch.command()]);
+        batch.hold(queue);
+    }
 }
 
 #[cfg(all(test, feature = "visual"))]

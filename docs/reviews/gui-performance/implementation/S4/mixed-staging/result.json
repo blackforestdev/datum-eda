@@ -1,0 +1,71 @@
+{
+  "status": "Default uniform and workspace/overlay glyph-instance uploads now share explicitly admitted staging with glyph textures; complete resource qualification remains open",
+  "base_commit": "8c9f1f0a",
+  "production_consumers": [
+    "Main and auxiliary renderer screen uniforms and live-surface scene uniforms",
+    "Workspace and overlay text instance buffers",
+    "Existing shared glyph-atlas upload batch and frame submission"
+  ],
+  "retired_paths": [
+    "Opaque queue.write_buffer uploads for uniforms and glyph instances",
+    "Independent consumption of those producer plans before complete staging admission",
+    "The obsolete queue-only dirty-range wrapper used by glyph instances"
+  ],
+  "behavior": [
+    "Extend the shared mapped batch with validated aligned buffer ranges. Pack exact source spans directly after padded texture rows, copy to their original destination offsets, and charge one total API capacity to host16 MiB/process-staging64 MiB/GPU512 MiB admission before allocation.",
+    "Borrow producer payloads without an extra CPU payload copy. Collect all affected producers before admission, then consume pending uniforms, glyph instances and glyph pixels only after successful staging creation. Refusal preserves their plans for cancellation/retry.",
+    "Use the existing frame submission and completion hold. Preserve per-word uniform updates, existing per-vertex glyph span policy, source upload counters, warm-zero uploads, allocation reuse, painter ordering and unchanged gaps."
+  ],
+  "proof": {
+    "renderer": "308 renderer tests pass, 11 diagnostic/visual cases filtered. Mixed actual-GPU test covers sparse buffer copies after padded texture rows, untouched words, all three admission failures/rollback and completion release. New default-frame test verifies failed staging admission preserves pending uniform data, successful retry consumes it, and the next warm flush creates no batch. Existing glyph, uniform, workspace/dialog pixel tests pass.",
+    "lint": "Visual all-targets renderer/app Clippy -D warnings, source health2245, dependency authority and governance checks pass. Initial Clippy requested is_multiple_of instead of equivalent modulo alignment checks; the style-only correction preserves tested behavior and the failed lint log.",
+    "build": "Fresh native visual application build passes.",
+    "native": "1680x1050 datum-test/R1 capture exactly matches atlas-staging/native.png. No OS-input or endurance qualification.",
+    "drift": "Full drift stops at the existing console-routine-focused1x mismatch:3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding checks pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "World/screen/terminal-placement vertices and terminal image pixels still use opaque queue staging. CPU pending payload/metadata/scratch and diagnostic query/readback accounting remain unfinished.",
+    "Oversized cold batch continuation still requires bounded chunks with correct coordinator/submission accounting. This slice does not add hidden submissions or synchronous wait loops; admission fails rather than omitting required content. No complete MEM-STAGING predicate closure.",
+    "Glyph instance spans retain internal unchanged words; full exact changed-byte transfer remains open. No new throughput, full native/backend/fault/resource qualification or S4/S5 closure.",
+    "No dependency, vendor, license, prototype, font, layout or numerical-budget change. Preserve GEFN and nonblocking resize CPU disposition."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/mixed-staging/tests.log.gz",
+      "uncompressed_sha256": "bd02bb8ce6ae63e83368dbe2942789f0a2b1b912e7b0ca28dbb9d9ba0c9f09c1"
+    },
+    "initial-clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/mixed-staging/initial-clippy.log.gz",
+      "uncompressed_sha256": "506b19445bfa07f55ce5cfaa32bec25ea4122a12b3f389f654bb0f8c78359500"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/mixed-staging/clippy.log.gz",
+      "uncompressed_sha256": "753a1990ee55d55fc5d7d2a7cfe6ec0a2e0f1d6ee6eb3b2a37c1cf8a7ce681d4"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/mixed-staging/build.log.gz",
+      "uncompressed_sha256": "4cd4e3f7ad53275303aac12e5d61ac9b81931d36a2815bfadecb702bcb274ee4"
+    },
+    "native": {
+      "path": "docs/reviews/gui-performance/implementation/S4/mixed-staging/native.log.gz",
+      "uncompressed_sha256": "6560eff0899e521e7230efd02ccb3fa1a513b7dd28e1f48d8c6b6dee14f753bb"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/mixed-staging/drift.log.gz",
+      "uncompressed_sha256": "24239beccad3e86289fbcdb8aec1f2f8865f6e5f766d880f7741e9c391aa461f"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text.rs": "71f3443130481289f6478c8243bdd9207ec0472d417ef8c1d0ecfdbae23fc1d8",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "ba8051f4315e569a31c7b7b743d979324ed4a020c70a1677d0c7208876e06548",
+    "crates/gui-render/src/render/screen_buffer.rs": "64bc7333e0a655d41fe05714dddd576a11ce09b250d615945a5c1b94a47750a8",
+    "crates/gui-render/src/render/uniform_buffer.rs": "7d0c331675be49f55c13d5419bfe9ff428a6c5b2ec33673cdf9c5d6540aadacf",
+    "crates/gui-render/src/text_gpu/atlas.rs": "c17255b52b7c5edee239495913224bcc71dd2478e57e8c7f0eb378abcb753ce2",
+    "crates/gui-render/src/text_gpu/draw.rs": "237fd9bd7a5e2aa564d6e5f214692727bb4644cbc419290a078c063be6f7cb16",
+    "crates/gui-render/src/text_gpu/parity.rs": "6df1b9ea2a5607326052e46b9730b21b943b8e28ef5df470b26ce1c26260d2ea",
+    "crates/gui-render/src/text_gpu/upload.rs": "2e29e95c5b83fa449eca94917aaf82df565af846eae5d1d6e718f14b70fe5f79",
+    "crates/gui-render/src/text_gpu/upload_tests.rs": "e3344064ef7b4502611ef34de0f6870be7816295bc4be84c18da62fd9ab52c14"
+  },
+  "binary_sha256": "b768f40c9e92dbf49aebc8aa21924b6710d31f0bcf01632dd8cc4d978c9e1791"
+}

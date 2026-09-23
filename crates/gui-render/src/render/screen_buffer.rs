@@ -160,19 +160,12 @@ impl ScreenBuffer {
 // during camera changes. Trim clean edge words within each resulting span;
 // internal clean words remain coalesced, so this is not byte-minimal transfer.
 // Production Vertex has a four-byte-aligned stride.
-pub(crate) fn write_dirty_ranges(
-    queue: &wgpu::Queue,
-    buffer: &wgpu::Buffer,
+pub(crate) fn dirty_ranges<'a>(
     old: &[u8],
-    new: &[u8],
+    new: &'a [u8],
     stride: usize,
+    mut write: impl FnMut(u64, &'a [u8]),
 ) -> usize {
-    dirty_ranges(old, new, stride, |offset, bytes| {
-        queue.write_buffer(buffer, offset, bytes)
-    })
-}
-
-fn dirty_ranges(old: &[u8], new: &[u8], stride: usize, mut write: impl FnMut(u64, &[u8])) -> usize {
     assert!(stride > 0);
     assert_eq!(stride % wgpu::COPY_BUFFER_ALIGNMENT as usize, 0);
     let mut start = None;
@@ -193,10 +186,10 @@ fn dirty_ranges(old: &[u8], new: &[u8], stride: usize, mut write: impl FnMut(u64
 
 // Preserve the existing number of queue writes. Word-by-word queue writes and
 // thousands of individual buffer copies both regress moving-stream CPU cost.
-fn write_trimmed_span(
-    write: &mut impl FnMut(u64, &[u8]),
+fn write_trimmed_span<'a>(
+    write: &mut impl FnMut(u64, &'a [u8]),
     old: &[u8],
-    new: &[u8],
+    new: &'a [u8],
     mut begin: usize,
     mut end: usize,
 ) -> usize {

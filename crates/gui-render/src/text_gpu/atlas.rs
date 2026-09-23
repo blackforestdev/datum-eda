@@ -128,6 +128,7 @@ impl Atlas {
     pub fn flush_uploads(
         &mut self,
         device: &wgpu::Device,
+        buffers: &[super::upload::BufferUpload<'_>],
     ) -> anyhow::Result<Option<super::upload::Batch>> {
         let uploads: Vec<_> = self
             .pending_uploads
@@ -140,12 +141,13 @@ impl Atlas {
                 pixels: &upload.pixels,
             })
             .collect();
-        let batch = super::upload::textures(
+        let batch = super::upload::batch(
             device,
             &self.owner,
             self.generation,
             &self.staging_budget,
             &uploads,
+            buffers,
         )?;
         for upload in self.pending_uploads.drain(..) {
             self.uploads.writes += 1;
@@ -156,7 +158,7 @@ impl Atlas {
 
     #[cfg(all(test, feature = "visual"))]
     pub fn flush_for_test(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
-        if let Some(mut batch) = self.flush_uploads(device).unwrap() {
+        if let Some(mut batch) = self.flush_uploads(device, &[]).unwrap() {
             queue.submit([batch.command()]);
             batch.hold(queue);
         }
