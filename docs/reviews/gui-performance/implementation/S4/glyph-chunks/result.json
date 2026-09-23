@@ -1,0 +1,73 @@
+{
+  "status": "Default full-scene and dialog atlas uploads now support bounded continuation; full accounting and qualification remain unfinished",
+  "base_commit": "30d939a3",
+  "production_consumers": [
+    "Shared workspace and overlay glyph atlas in Renderer full-scene rendering",
+    "Dialog-only Renderer path used by Global/Project/New native hosts",
+    "Existing native upload-only queue/retry adapters and offscreen/capture convenience clients"
+  ],
+  "retired_paths": [
+    "Requirement to admit the entire oversized glyph-pixel batch alongside all frame buffers in one staging allocation",
+    "Unconditional cancellation/repack of valid text preparation after a deliberate upload-only yield"
+  ],
+  "behavior": [
+    "Small atlas updates whose padded pixels plus frame buffers fit4 MiB remain in the ordinary mixed frame submission. Larger combined plans submit atlas rows in at most4 MiB padded chunks using the shared explicit builder and existing host16 MiB/process64 MiB/global-GPU512 MiB admission. Numeric caps are unchanged.",
+    "Pending glyph uploads retain a submitted row offset. Offset/counters advance only after successful admission and actual submission; batch and page accounting remain held until completion. Completed CPU glyph payloads leave the pending list.",
+    "Explicit continuation preserves successful text preparation and pending instance buffers while atlas chunks drain. On the final attempt, ordinary signatures recheck latest scene inputs; changed text updates instances. Failed preparation still invalidates/retries normally. No queued PreparedScene clone or native wait is introduced.",
+    "Prepare full-scene text before encoding or allocating frame queries, so an upload-only attempt cannot create a partial scene submission or numerical timing sample. Dialog-only rendering returns the same incomplete-frame result as full-scene rendering. Existing native adapters retain damage and resume through their queue receipt.",
+    "Opt-in cold measurement receipts remain explicitly incomplete under one frame identity across submissions. Complete cold timestamp/span attribution is still required; small/warm frame timing remains available."
+  ],
+  "proof": {
+    "renderer": "311 renderer tests pass;11 diagnostic/visual cases filtered. Actual-GPU oversized-glyph proof exercises full-scene and dialog paths, more than one4 MiB chunk, staging admission refusal with unchanged progress/no submission, current text-color change between chunks, no repack/restart loop, warmed preparation reuse and exact fresh-render pixels.",
+    "regressions": "Existing text/atlas pressure and retry, measurement parity, terminal/world continuation, uniform/screen staging and GPU lifetime tests pass in the renderer suite.",
+    "lint_build": "Visual all-targets renderer/app Clippy -D warnings and fresh native application build pass. Source health2251, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+    "drift": "Full drift stops at the existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance.",
+    "development": "Initial compilation exposed the instance byte counter return type and a whole-Renderer borrow across mutable atlas admission. Preserve failures; use one shared buffer-plan macro to retain disjoint field borrowing without duplicating the stream inventory. Final production behavior passes the suite."
+  },
+  "limits": [
+    "No complete CPU pending/scratch/metadata, private shaped text, world history/generation or diagnostic query/readback accounting. Atlas/world/terminal GPU transfer continuation does not establish complete MEM-STAGING or MEM-GPU-TOTAL closure.",
+    "Cold multi-submission MET-04/GPU-01..03 timestamp/span attribution remains unqualified. Native/backend/fairness/fault/endurance/resource qualification remains required; no new OS-input or native-latency campaign in this slice. Existing adapters are unchanged.",
+    "No S4/S5 or issue closure. No dependency, vendoring, license, prototype, visual layout, font, numerical budget or production protocol change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
+  "logs": {
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/focused.log.gz",
+      "uncompressed_sha256": "2f1b0866b49ac420016d91f00933380984754f2123e98d9364ca5100e3a88037"
+    },
+    "initial-focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/initial-focused.log.gz",
+      "uncompressed_sha256": "9c3270bae37f3499e14456a04ba51816c040c230b434e763081a4352de90fa80"
+    },
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/tests.log.gz",
+      "uncompressed_sha256": "bba9005c77f8402fd82d0eabcfa967f4d8fbb476f85d192e8bc6bcdc5fb748e8"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/clippy.log.gz",
+      "uncompressed_sha256": "7440393a878dd77d7aea6f44082f58d80528fc04f0cfdcd9e13c29cb54900c1a"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/build.log.gz",
+      "uncompressed_sha256": "7097dbbce6031845fee383df178c957871f7bbefb75f94eaa7594ac086ed9cb4"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/drift.log.gz",
+      "uncompressed_sha256": "cf7366bacb898e2461f5cd2877ec12f557b1170f05952323f9fb15fce0fe0f91"
+    },
+    "initial-check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/initial-check.log.gz",
+      "uncompressed_sha256": "4e74c84f8ca7fac8c6dac9953e7b996e3c3d03ce2768e2d2e855649a0683685e"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "fc950b91e5006be18908d00ba91c8a7716620485cd9a094c135f968b72ad3ace",
+    "crates/gui-render/src/render/gpu_overlay.rs": "9ded0152b47f81461e6bf1c156c8236488b295f1b2f2039cf830f73cf9ad1d69",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "df3fca530f1ef36ffd8d2f288e85fb057194250b638559ab98dd1faf77b6ed35",
+    "crates/gui-render/src/render/gpu_text.rs": "26efaa84f40df4060cfdd6376b545fb16e9d1f19e302da05209575b8f515b825",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "707de68b697f12088cccf73751f029320eba8e9815f75ee4de948a466d2aee8f",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "307f65c7171fcc8175b2de8582756ef53cc1235ce468074a1b901f0b827df5e8",
+    "crates/gui-render/src/text_gpu/atlas.rs": "c13c4b5fb0ad77a06fffcd3cf8337cb1c1e03a720f85fed2215467718a341b30",
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": "e564034f5a1d65e86574d5d52decfd805b7ad5b21dc9d84d1d39998ced6dcc38"
+  }
+}

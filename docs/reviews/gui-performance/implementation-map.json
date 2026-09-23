@@ -3648,6 +3648,11 @@
           "work": "s4_terminal_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
           "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_glyph_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
+          "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -16482,6 +16487,11 @@
           "work": "s4_resource_subcaps_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
           "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
+        },
+        {
+          "work": "s4_glyph_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
+          "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -16604,6 +16614,11 @@
           "work": "s4_resource_subcaps_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
           "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
+        },
+        {
+          "work": "s4_glyph_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
+          "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -16876,6 +16891,11 @@
           "work": "s4_terminal_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
           "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_glyph_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
+          "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -17022,6 +17042,11 @@
           "work": "s4_terminal_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
           "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_glyph_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
+          "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -17193,6 +17218,11 @@
           "work": "s4_terminal_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
           "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_glyph_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
+          "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -32524,5 +32554,38 @@
       "No dependency, vendoring, licensing, prototype, visual layout or production protocol/admission-limit change. Large sixel fixture limits are test-only. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json"
+  },
+  "s4_glyph_chunk_staging_work": {
+    "status": "Default full-scene and dialog atlas uploads now support bounded continuation; full accounting and qualification remain unfinished",
+    "base_commit": "30d939a3",
+    "production_consumers": [
+      "Shared workspace and overlay glyph atlas in Renderer full-scene rendering",
+      "Dialog-only Renderer path used by Global/Project/New native hosts",
+      "Existing native upload-only queue/retry adapters and offscreen/capture convenience clients"
+    ],
+    "retired_paths": [
+      "Requirement to admit the entire oversized glyph-pixel batch alongside all frame buffers in one staging allocation",
+      "Unconditional cancellation/repack of valid text preparation after a deliberate upload-only yield"
+    ],
+    "behavior": [
+      "Small atlas updates whose padded pixels plus frame buffers fit4 MiB remain in the ordinary mixed frame submission. Larger combined plans submit atlas rows in at most4 MiB padded chunks using the shared explicit builder and existing host16 MiB/process64 MiB/global-GPU512 MiB admission. Numeric caps are unchanged.",
+      "Pending glyph uploads retain a submitted row offset. Offset/counters advance only after successful admission and actual submission; batch and page accounting remain held until completion. Completed CPU glyph payloads leave the pending list.",
+      "Explicit continuation preserves successful text preparation and pending instance buffers while atlas chunks drain. On the final attempt, ordinary signatures recheck latest scene inputs; changed text updates instances. Failed preparation still invalidates/retries normally. No queued PreparedScene clone or native wait is introduced.",
+      "Prepare full-scene text before encoding or allocating frame queries, so an upload-only attempt cannot create a partial scene submission or numerical timing sample. Dialog-only rendering returns the same incomplete-frame result as full-scene rendering. Existing native adapters retain damage and resume through their queue receipt.",
+      "Opt-in cold measurement receipts remain explicitly incomplete under one frame identity across submissions. Complete cold timestamp/span attribution is still required; small/warm frame timing remains available."
+    ],
+    "proof": {
+      "renderer": "311 renderer tests pass;11 diagnostic/visual cases filtered. Actual-GPU oversized-glyph proof exercises full-scene and dialog paths, more than one4 MiB chunk, staging admission refusal with unchanged progress/no submission, current text-color change between chunks, no repack/restart loop, warmed preparation reuse and exact fresh-render pixels.",
+      "regressions": "Existing text/atlas pressure and retry, measurement parity, terminal/world continuation, uniform/screen staging and GPU lifetime tests pass in the renderer suite.",
+      "lint_build": "Visual all-targets renderer/app Clippy -D warnings and fresh native application build pass. Source health2251, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+      "drift": "Full drift stops at the existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance.",
+      "development": "Initial compilation exposed the instance byte counter return type and a whole-Renderer borrow across mutable atlas admission. Preserve failures; use one shared buffer-plan macro to retain disjoint field borrowing without duplicating the stream inventory. Final production behavior passes the suite."
+    },
+    "limits": [
+      "No complete CPU pending/scratch/metadata, private shaped text, world history/generation or diagnostic query/readback accounting. Atlas/world/terminal GPU transfer continuation does not establish complete MEM-STAGING or MEM-GPU-TOTAL closure.",
+      "Cold multi-submission MET-04/GPU-01..03 timestamp/span attribution remains unqualified. Native/backend/fairness/fault/endurance/resource qualification remains required; no new OS-input or native-latency campaign in this slice. Existing adapters are unchanged.",
+      "No S4/S5 or issue closure. No dependency, vendoring, license, prototype, visual layout, font, numerical budget or production protocol change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json"
   }
 }

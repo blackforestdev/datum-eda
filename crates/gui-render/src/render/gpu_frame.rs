@@ -50,6 +50,9 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        if self.resume_glyph_upload(device, queue, on_submitted)? {
+            return Ok(false);
+        }
         if self.cold_world.active
             && self.world_upload_sources_match(prepared, retained, schematic_retained)
         {
@@ -60,9 +63,15 @@ impl Renderer {
         self.cancel_vertex_uploads();
         self.cancel_uniform_uploads();
         if prepared.is_overlay_only() {
-            return self
-                .render_overlay_only(device, queue, target, prepared, width, height, on_submitted)
-                .map(|()| true);
+            return self.render_overlay_only(
+                device,
+                queue,
+                target,
+                prepared,
+                width,
+                height,
+                on_submitted,
+            );
         }
         let render_started = std::time::Instant::now();
         let panel_vertices = prepared.panel_vertices();
@@ -127,8 +136,15 @@ impl Renderer {
         if self.submit_terminal_upload_chunk(device, queue, on_submitted)? {
             return Ok(false);
         }
-        let mut measurement = self.begin_gpu_measurement()?;
         let upload_elapsed = upload_started.elapsed();
+        let text_prepare_started = std::time::Instant::now();
+        let (text_cache_stats, skipped_text_prepare) =
+            self.prepare_frame_text(device, queue, prepared, width, height, false)?;
+        let text_prepare_elapsed = text_prepare_started.elapsed();
+        if self.start_glyph_upload(device, queue, on_submitted)? {
+            return Ok(false);
+        }
+        let mut measurement = self.begin_gpu_measurement()?;
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
@@ -346,10 +362,6 @@ impl Renderer {
             measurement.as_mut(),
         )?;
         let encode_elapsed = encode_started.elapsed();
-        let text_prepare_started = std::time::Instant::now();
-        let (text_cache_stats, skipped_text_prepare) =
-            self.prepare_frame_text(device, queue, prepared, width, height, false)?;
-        let text_prepare_elapsed = text_prepare_started.elapsed();
         let text_encode_started = std::time::Instant::now();
         // Geometry already clears/resolves the target. An empty text stage has
         // no load/store dependency and must not add another pass/resolve.

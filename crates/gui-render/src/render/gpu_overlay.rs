@@ -35,8 +35,7 @@ impl Renderer {
         width: u32,
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
-    ) -> anyhow::Result<()> {
-        let mut measurement = self.begin_gpu_measurement()?;
+    ) -> anyhow::Result<bool> {
         let started = std::env::var_os("DATUM_TRACE_TIMING")
             .is_some()
             .then(std::time::Instant::now);
@@ -60,6 +59,10 @@ impl Renderer {
         let has_text = prepared.has_overlay_text();
         let (text_stats, _) =
             self.prepare_frame_text(device, queue, prepared, width, height, true)?;
+        if self.start_glyph_upload(device, queue, on_submitted)? {
+            return Ok(false);
+        }
+        let mut measurement = self.begin_gpu_measurement()?;
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-dialog-encoder"),
@@ -127,6 +130,6 @@ impl Renderer {
                 text_stats.misses,
             ));
         }
-        Ok(())
+        Ok(true)
     }
 }
