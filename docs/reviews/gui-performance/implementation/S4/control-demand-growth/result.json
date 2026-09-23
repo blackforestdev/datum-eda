@@ -1,0 +1,29 @@
+{
+  "status": "Corrected control-entry allocation policy; full resource qualification remains partial",
+  "base_commit": "d583bcf7",
+  "production_consumers": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW; all via shared ControlMeshCache"
+  ],
+  "retired_paths": [
+    "06b6882d eager reservation of256entry slots per renderer"
+  ],
+  "behavior": "Empty cache owns no entry allocation. Reserve only on an admitted new-slot demand; charge actual resulting capacity. Evict payload displaced by table growth even if incoming mesh then bypasses retention. Oversized full-cap mesh still paints without allocating an empty table. Keep256entry/4MiB retained CPU ceilings, key/contour/reuse semantics.",
+  "proof": {
+    "focused": "6 control-mesh tests passed;227filtered. Added zero-allocation empty/oversize assertions, below-cap first growth and allocation-growth/bypass eviction regression. Existing contour/LRU/reuse tests pass.",
+    "source_health": "Gate and13 policy tests pass; exact-file formatter only.",
+    "drift": "Workspace Clippy and preceding gates pass. Full drift exits1 at known Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Goldens unchanged; later checks not run."
+  },
+  "limits": [
+    "Correction of own preallocation mistake, not a specification amendment or a new cap.",
+    "Counts retained capacity; transient reallocation/construction, prepared frame, GPU/in-flight and aggregate accounting still open.",
+    "No measured CPU/latency improvement, full resource/native qualification, dependency/license/prototype or resize-scope change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/control-demand-growth/result.json",
+  "artifacts_sha256_uncompressed": {
+    "tests.log.gz": "7ca50b97409246fcb33e4de0237deebcf8e97d6422f8c6e0463d33e6f3d3e31c",
+    "drift.log.gz": "17ef314e8e0b3ca2629f35d7e257ec20eba3870e91e5ef4a65c9f2e4fd51cf6d"
+  }
+}
