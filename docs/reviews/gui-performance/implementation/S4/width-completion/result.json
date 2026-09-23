@@ -1,0 +1,61 @@
+{
+  "status": "HP15-02 scalar measurement-cache implementation complete; original qualification remains S5",
+  "base_commit": "11e32ee7",
+  "production_consumers": [
+    "Global and Project shared preferences renderer through dialog_coordinates/global_preferences_dialog/global_preferences_primitives",
+    "Menu chrome measurements",
+    "Inspector render_inspector and inspector_dispatch; shared width/height API also serves New Project and input text"
+  ],
+  "retired_paths": [
+    "Infallible optional measurement deque/key retention and boxed-key conversion after successful measurement"
+  ],
+  "behavior": [
+    "Deque growth and owned string key reservation are fallible. If optional retention cannot allocate, return the already computed exact measurement. Charge actual String capacity and Datum headers; after eviction or growth publish final ownership even if key retention fails. Entry/key/payload caps and LRU remain unchanged."
+  ],
+  "requirement_reconciliation": {
+    "authority": "GUI_SHARED_ENGINEERING_CONTRACT E04 explicitly assigns Label widths to the existing thread-local text measurement owner, with256 entries/64KiB keys; MEM-WIDTH-PAYLOAD adds128KiB. HP15 in RECOVERY_PLAN requires supported dependencies, exact results, bounded churn and ownership release. This closes only that scalar-cache implementation, not all text memory or global adoption.",
+    "capacity_lifetime": "Previously completed MEM-WIDTH-ENTRIES/KEYS/PAYLOAD plus current allocator conformance cover full scalar entry storage, key capacities/headers, eviction/oversize bypass and thread lifetime. Current strings are no longer assumed capacity=len.",
+    "dependencies": "Exact text, size bits, all five TextFace variants, measurement kind and effective wrapped width determine keys. text_metrics provides one immutable process font catalog/locale and fixed per-face style/spacing; text_shape uses Basic/tab8, WordOrGlyph/default alignment and size-derived metrics. Direction derives from text. Existing public-shape oracle covers all five faces, three sizes, three extents, multiline/tab/bidi/Unicode, and measurement-height tests cover kind/wrap/size/face misses. No mutable font/locale/features path exists; a future reload must invalidate caches as already documented.",
+    "remaining_other_owners": "Private font/shaping/raster ownership, transient scratch, global observation metadata and full aggregate accounting remain open under AC-05 and MEM-SHAPED/STAGING predicates. The existing HP15-02 original qualification is unchanged and unqualified."
+  },
+  "proof": {
+    "renderer": "test result: ok. 367 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.36s",
+    "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 16.00s",
+    "checks": "Current full renderer includes measurement heap exact-byte/eviction/release, thread ownership, oversize bypass, all-face key parity, wrapped-height dependency and public shaping/layout oracle. Strict visual Clippy, fresh GUI build, source/dependency/format/governance gates pass. Allocation-failure return path is source-reviewed; no process-wide OOM recovery claim or artificial allocator-failure run."
+  },
+  "limits": [
+    "HP15-02 implementation completion is restricted to the E04 scalar measurement owner. No native/independent/negative/endurance acceptance; all50 carried S2 qualification obligations remain S5.",
+    "Remaining implementation inventory becomes16 complete,11 recorded gaps,23 with no new defect asserted. Private text/resource construction and other owners remain unfinished. No dependency, prototype, numerical cap, sequencing or resize disposition change; existing Console golden failure remains open."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/width-completion/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-completion/renderer.log.gz",
+      "uncompressed_sha256": "d21f572eb0db82c6ab95080a558350cc9e7b42db6fe791f2fa2679ab8b426773"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-completion/app.log.gz",
+      "uncompressed_sha256": "c789c0c0579c847d25559be3fb46812e12876a4d2a4665f5fe6a22be524cea9c"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-completion/clippy.log.gz",
+      "uncompressed_sha256": "9676c576a007ba78c4db01db926d047c1d57f6cb5f5fb851108a9aa4bff57848"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-completion/build.log.gz",
+      "uncompressed_sha256": "2ef351e64992c17c10e49531cdc5816e675491855571851b85e16392338dc33e"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/measurement_cache.rs": "918f7557129bfc3027cfddb07fb4a26e2508738fe0c8026275771dc8a8704145",
+    "crates/gui-render/src/render/measurement_heap_tests.rs": "1c9457167c23f70819de35b9641f143418a32801a6ef785bc8d64e1aefabf9db",
+    "crates/gui-render/src/render/text_metrics.rs": "6d07e2b1643ec3ec9475f084c6bf596f33d56d1e1ebbd5a41ca262a59cb1eb23",
+    "crates/gui-render/src/render/text_shape.rs": "40d11f9135aadba28cb7a6ab1063e430abb5207b41ffb711062bf1d3961d6648",
+    "crates/gui-render/src/render/dialog_coordinates.rs": "109dc61c81c15b5c31e71592a7a74084eb45cd7a241d8fe9f13ddb9e8976c03b",
+    "crates/gui-render/src/global_preferences_dialog.rs": "deb6b1bac584e5b658efbf38ca4f6f3847cc91d2cc2a190ae835969452aec1f7",
+    "crates/gui-render/src/global_preferences_primitives.rs": "93d592abb96169dd3b48d3eca4691e03ed97bcfaf3f466da30aa631dad0fe8ec",
+    "crates/gui-render/src/menu_chrome.rs": "417f2652addb7ec700f8ec4d286457f2885b5b6341103de41d0a1f90f4ea18ac",
+    "crates/gui-render/src/side_panels/render_inspector.rs": "61a5a430bd52396f288a96d9c63367d354a1fbef6507bba02d2b0152f1a319f2",
+    "crates/gui-render/src/side_panels/inspector_dispatch.rs": "5658196d7f0547df023c5272a70ded589350aab71da1d8d83a32c9b29650c2c8"
+  }
+}

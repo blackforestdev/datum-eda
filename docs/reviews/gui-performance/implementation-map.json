@@ -6766,21 +6766,28 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
-          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
-        ],
+        "implementation_due": "Implemented at S4 for the E04 scalar measurement-cache owner; original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "Bounded key and payload memory; oversized bypass and ownership release",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Scalar-cache implementation complete; original acceptance rule and qualification remain unqualified.",
+        "s4_resolved_implementation_obligations": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
+          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
+        ],
+        "s4_implementation_evidence": "s4_width_completion_work"
       },
       "s4_implementation_progress": [
         {
           "work": "s4_text_key_ownership_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
           "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
+        },
+        {
+          "work": "s4_width_completion_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/width-completion/result.json",
+          "status": "HP15-02 scalar measurement-cache implementation complete; original qualification remains S5"
         }
       ]
     },
@@ -31968,10 +31975,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 12,
+    "rows_with_recorded_implementation_gaps": 11,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 15,
+    "rows_with_implementation_completed_at_s4": 16,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -31987,7 +31994,8 @@
       "REUSE-TEXT-KEY",
       "REUSE-TEXT-LAYOUT",
       "HP15-01",
-      "MEM-WORLD-GPU"
+      "MEM-WORLD-GPU",
+      "HP15-02"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -34706,5 +34714,36 @@
       "Twelve implementation gaps and original S5 qualification remain open. Existing Console golden failure is preserved; no repeated full drift campaign for this normal-module change. No dependency, prototype, cap, sequencing or nonblocking resize disposition change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/command-sort/result.json"
+  },
+  "s4_width_completion_work": {
+    "status": "HP15-02 scalar measurement-cache implementation complete; original qualification remains S5",
+    "base_commit": "11e32ee7",
+    "production_consumers": [
+      "Global and Project shared preferences renderer through dialog_coordinates/global_preferences_dialog/global_preferences_primitives",
+      "Menu chrome measurements",
+      "Inspector render_inspector and inspector_dispatch; shared width/height API also serves New Project and input text"
+    ],
+    "retired_paths": [
+      "Infallible optional measurement deque/key retention and boxed-key conversion after successful measurement"
+    ],
+    "behavior": [
+      "Deque growth and owned string key reservation are fallible. If optional retention cannot allocate, return the already computed exact measurement. Charge actual String capacity and Datum headers; after eviction or growth publish final ownership even if key retention fails. Entry/key/payload caps and LRU remain unchanged."
+    ],
+    "requirement_reconciliation": {
+      "authority": "GUI_SHARED_ENGINEERING_CONTRACT E04 explicitly assigns Label widths to the existing thread-local text measurement owner, with256 entries/64KiB keys; MEM-WIDTH-PAYLOAD adds128KiB. HP15 in RECOVERY_PLAN requires supported dependencies, exact results, bounded churn and ownership release. This closes only that scalar-cache implementation, not all text memory or global adoption.",
+      "capacity_lifetime": "Previously completed MEM-WIDTH-ENTRIES/KEYS/PAYLOAD plus current allocator conformance cover full scalar entry storage, key capacities/headers, eviction/oversize bypass and thread lifetime. Current strings are no longer assumed capacity=len.",
+      "dependencies": "Exact text, size bits, all five TextFace variants, measurement kind and effective wrapped width determine keys. text_metrics provides one immutable process font catalog/locale and fixed per-face style/spacing; text_shape uses Basic/tab8, WordOrGlyph/default alignment and size-derived metrics. Direction derives from text. Existing public-shape oracle covers all five faces, three sizes, three extents, multiline/tab/bidi/Unicode, and measurement-height tests cover kind/wrap/size/face misses. No mutable font/locale/features path exists; a future reload must invalidate caches as already documented.",
+      "remaining_other_owners": "Private font/shaping/raster ownership, transient scratch, global observation metadata and full aggregate accounting remain open under AC-05 and MEM-SHAPED/STAGING predicates. The existing HP15-02 original qualification is unchanged and unqualified."
+    },
+    "proof": {
+      "renderer": "test result: ok. 367 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.36s",
+      "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 16.00s",
+      "checks": "Current full renderer includes measurement heap exact-byte/eviction/release, thread ownership, oversize bypass, all-face key parity, wrapped-height dependency and public shaping/layout oracle. Strict visual Clippy, fresh GUI build, source/dependency/format/governance gates pass. Allocation-failure return path is source-reviewed; no process-wide OOM recovery claim or artificial allocator-failure run."
+    },
+    "limits": [
+      "HP15-02 implementation completion is restricted to the E04 scalar measurement owner. No native/independent/negative/endurance acceptance; all50 carried S2 qualification obligations remain S5.",
+      "Remaining implementation inventory becomes16 complete,11 recorded gaps,23 with no new defect asserted. Private text/resource construction and other owners remain unfinished. No dependency, prototype, numerical cap, sequencing or resize disposition change; existing Console golden failure remains open."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/width-completion/result.json"
   }
 }
