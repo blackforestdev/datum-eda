@@ -1,0 +1,48 @@
+{
+  "status": "Multiline measurement reuses call-local layout scratch; HP15-01 remains open for inspector consumer reconciliation",
+  "base_commit": "c25d7082",
+  "production_consumers": [
+    "Width and wrapped-height misses through text_metrics::text_shape::measure; shared Preferences, menu and New Project measurements"
+  ],
+  "retired_paths": [
+    "ShapeLine::layout convenience call creating fresh working scratch and line container for every paragraph"
+  ],
+  "behavior": [
+    "Allocate one ShapeBuffer and line container per measurement call. Reuse across paragraphs, clear returned glyph layouts before shaping the next paragraph, and release all working storage at call return. Existing thread-local scalar-cache hits still skip the measurement closure. No additional retained cache."
+  ],
+  "consumer_audit": {
+    "shared_measurements": "Global and Project share render_preferences_dialog and global_preferences_primitives. Menu chrome, input text and New Project use measured_text_run_width_px. Cache keys check exact text, size bits, face, measurement kind and effective wrap width. Immutable font/locale authority reviewed in s4_text_dependency_completion.",
+    "remaining_inspector": "side_panels/render_inspector.rs::push_inspector_title_band sizes SELECTED using estimated_text_run_width_px minus padding. HP15-01 lists INSPECTOR, so shared measurement helper tests do not establish all-consumer adoption. Reconcile this sizing path and affected appearance before closing implementation."
+  },
+  "proof": {
+    "focused": "9 text_metrics tests passed, 345 filtered, on final source. Existing oracle covers all five TextFace values, sizes 9/13/22, unwrapped and 40/100 widths, empty/newline/tab, combining, RTL and mixed-language paragraphs against Buffer layout. Cache key/warm-hit, ownership/eviction and thread-exit tests pass.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy, fresh app build, source health 2272, dependency authority and governance pass.",
+    "scope": "No native input, broad benchmark or full renderer/drift rerun. No latency claim. Prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "HP15-01 remains unqualified and incomplete until the mapped inspector width consumer is reconciled. Fourteen recorded S4 implementation gaps remain; helper tests do not establish consumer adoption.",
+    "Private font/raster storage, construction peaks and full resource accounting remain separate open work. No appearance, prototype, dependency, vendor, license, cap or sequencing change; preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/width-dependencies/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-dependencies/tests.log.gz",
+      "uncompressed_sha256": "f552940882a6988298f565bf0bdc96bc201dca2b077b671da2ca88b58770feae"
+    },
+    "final-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-dependencies/final-tests.log.gz",
+      "uncompressed_sha256": "f83ee12bc4f4f20d72dbbf7688eee20e3879ed053de7c0334e5c914e42c4d5e8"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-dependencies/clippy.log.gz",
+      "uncompressed_sha256": "cc961000afa6db4952f8368a60c402e3b6a9523f4d8a5adf098dcb19b909daa2"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/width-dependencies/build.log.gz",
+      "uncompressed_sha256": "ae973bb51076efe026c1c6982531a5598ca341caeae2fe65cddb270ddd6b1b8a"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_shape.rs": "40d11f9135aadba28cb7a6ab1063e430abb5207b41ffb711062bf1d3961d6648"
+  }
+}
