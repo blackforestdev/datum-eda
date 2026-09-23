@@ -168,6 +168,11 @@ impl SurfaceAttachments {
             // during creation. Keep the old reference until this check passes;
             // the caller aborts before uploads, encoding or submission.
             anyhow::ensure!(healthy(), "surface attachment replacement failed");
+            if let Some(previous) = &self.current {
+                previous
+                    .view
+                    .retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
+            }
             self.current = Some(replacement);
         }
         Ok(&self

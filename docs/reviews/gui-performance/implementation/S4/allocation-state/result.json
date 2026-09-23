@@ -1,0 +1,71 @@
+{
+  "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes",
+  "production_consumers": [
+    "Every existing track_reserved allocation: atlas, glyph instances, world/screen/terminal vertices, terminal textures, uniforms, surface/capture attachments, staging, query/resolve/readback",
+    "Prepared retained-world bundle references and actual frame/upload completion ownership"
+  ],
+  "retired_paths": [
+    "Capacity-only records for reused or rounded vertex/glyph/uniform buffers",
+    "Undifferentiated prepared-cache and submission holds",
+    "Retirement boolean without first-cause or bounded final-release totals",
+    "Accounting receipt lifetime incorrectly extending the live-allocation snapshot"
+  ],
+  "behavior": [
+    "Records keep requested bytes separate from API capacity and cumulative submitted transfer totals. Vertex and glyph owners update requested extent when capacity is reused; uniforms use their logical struct extent. Other textures/query/staging owners request their full API extent. This is prepared request size, not initialized/submitted content or atlas occupied-glyph pixels.",
+    "Prepared world-bundle references and submission references maintain separate counts on the same identity. Directly submitted staging owners count exactly once until completion drops them. Shared references do not duplicate capacity.",
+    "First retirement cause distinguishes replacement, explicit clear, uncached retirement, transfer to submission and ordinary owner drop. All migrated owners retain fallback owner-drop accounting; explicit vertex/glyph/attachment replacement sites set their more specific cause.",
+    "After the GPU resource and its permits drop, a final guard updates fixed-size per-owner and process release totals by cause. Observer and receipt lifetime cannot retain GPU capacity. Released resources disappear from live snapshots even if an accounting receipt survives. No unbounded event log or new trace framework."
+  ],
+  "proof": {
+    "renderer": "388 renderer tests passed;0 failed;11 filtered. Actual-GPU vertex reuse reports12requested/16capacity, rejected replacement preserves its entire record, replacement retains the old cause/payload through submission and final release records16capacity bytes. Existing pixel/parity/resource lifetime tests passed.",
+    "final_receipt_change": "Six lifecycle tests pass after the final receipt/live-record separation. Added cases cover prepared/submitted sharing through producer close, first-cause stability, exact-once direct staging transfer/drop, and surviving receipt with zero live records and one final release.",
+    "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2299files, dependency authority and governance checks pass. Tests extracted to a module under the unchanged source-health ceiling.",
+    "failed_attempt": "Preserve test-module extraction compile failure from its moved helper namespace; corrected without changing runtime behavior."
+  },
+  "limits": [
+    "Seven S4 implementation gaps remain. Role counts are not complete named logical-consumer/reference-owner incidence. Final totals are bounded aggregates, not a durable per-allocation event history; concurrent snapshots are observations, not an atomic process transaction.",
+    "OwnerDropped reports the actual owner-lifetime event without inferring native close versus device-reset intent. Texture request extent is not atlas occupancy, and no physical driver residency or complete CPU/private-text/scratch accounting is established.",
+    "No full AC-05/HP08-03/MEM/REUSE-SCREEN, S4/S5 or issue closure; original native/endurance/negative qualification remains. No dependency/vendor/license, prototype, cap or sequencing change. Preserve GEFN, nonblocking resize and Copilot engine edits."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json",
+  "base_commit": "86e18b0b",
+  "logs": {
+    "test": {
+      "path": "docs/reviews/gui-performance/implementation/S4/allocation-state/test.log.gz",
+      "uncompressed_sha256": "e174ec10996aca7382bded9b242e10276d152df3e53e7c8a0e0e221d0a641c12"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/allocation-state/renderer.log.gz",
+      "uncompressed_sha256": "c0f69bf29457cb2175f7c00532f600f001461f1bce3a89ca247be5df74654155"
+    },
+    "final": {
+      "path": "docs/reviews/gui-performance/implementation/S4/allocation-state/final.log.gz",
+      "uncompressed_sha256": "d9bbdcaa7c5d816545fc9aff778fa7678df0624973bf26d3d7849a01421d0aa4"
+    },
+    "receipts": {
+      "path": "docs/reviews/gui-performance/implementation/S4/allocation-state/receipts.log.gz",
+      "uncompressed_sha256": "7b0e245654d49c95bb8c74745c280fd4fde890da2a81863a305954d4efffb503"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/allocation-state/clippy.log.gz",
+      "uncompressed_sha256": "d989deb1c9b23f74ec21eb56935febc51871f4ef41fe0ea01a2fb871dd876fdf"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/allocation-state/build.log.gz",
+      "uncompressed_sha256": "ff77f87edd71f8be8419277662b329a6eb93cea084e5cce5f61975e9bf274e6e"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "ef461cebba06ce169238843a67a1f9678dec965afee13fd37692f48653ad0198",
+    "crates/gui-render/src/render/gpu_surface.rs": "63a5d77cb189a23bf576d0dc1ed55f8fd95c378f254709b3a5f647f2eeac9b87",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "9d6a5d7689d61498e5dcbcb7abb183c8d5bf25a70a411a2765f8b5c5259eb9a6",
+    "crates/gui-render/src/render/retained_buffer.rs": "9ebd54a061fef9f30c394074a675cce3b16ac21ee39a7a1291b1a12febfd53f2",
+    "crates/gui-render/src/render/uniform_buffer.rs": "1d87b8dee85d27fd955cac130b50487b199053211b965b896b7548de21aca50b",
+    "crates/gui-render/src/render/vertex_allocation.rs": "3ce91082be72ace0f12db32df74f3d056030b118fbc6c880f1049b634bd6ad8b",
+    "crates/gui-render/src/text_gpu/draw.rs": "2bb4c30c4457ff0d23a0539014a3fd90eeea694b904e2b8d940d1b83aa483cf0",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "1d10927c36acf172303cff469f3c7e51c43062b7b3246b990a14c3db8eb6e189",
+    "crates/gui-render/src/text_gpu/mod.rs": "aefbc0ec087ab1f046da3a6acd92f52069f9be86d0d6f420155e325120b6747d",
+    "crates/gui-render/src/text_gpu/lifetime_state.rs": "0f105ad6e09aa58a9580f7568e0265db59e1db614065e03dcc1c9be45705a62a",
+    "crates/gui-render/src/text_gpu/lifetime_tests.rs": "21d8058b52008495bd39892e49a14065f3f7cfc05e5bdc387cf9e57f36b499e6"
+  }
+}

@@ -121,19 +121,19 @@ impl Renderer {
             }
             let allocations = match surface.surface {
                 SceneSurface::Board => [
-                    self.world_vertices_gpu.submission_ref(),
-                    self.world_strokes_gpu.submission_ref(),
+                    self.world_vertices_gpu.prepared_ref(),
+                    self.world_strokes_gpu.prepared_ref(),
                 ],
                 SceneSurface::Schematic => [
-                    self.schematic_world_vertices_gpu.submission_ref(),
-                    self.schematic_world_strokes_gpu.submission_ref(),
+                    self.schematic_world_vertices_gpu.prepared_ref(),
+                    self.schematic_world_strokes_gpu.prepared_ref(),
                 ],
             }
             .into_iter()
             .enumerate()
             .filter(|(index, _)| used_kinds & (1 << index) != 0)
             .filter_map(|(_, allocation)| allocation)
-            .chain(std::iter::once(binding.buffer.submission_ref()))
+            .chain(std::iter::once(binding.buffer.prepared_ref()))
             .collect();
             let cached = CachedSurfaceBundle {
                 pane_id: surface.pane_id,
