@@ -91,6 +91,7 @@ impl Runtime {
                 format!("prepared scene build end {prepared_build_ms}ms")
             });
         }
+        self.retained_scene_cache.check_render_budget()?;
         let scene_elapsed = scene_started.elapsed();
         // P2.2a: resolve the companion schematic world buffer lazily (cleared on
         // every scene/frame invalidation, so this stays fresh). `None` when the

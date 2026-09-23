@@ -1,0 +1,47 @@
+{
+  "status": "Over-budget retained CPU world ownership now fails native frame/capture explicitly; complete construction/accounting remains open",
+  "base_commit": "29f8dce8",
+  "production_consumers": [
+    "Runtime::render before Main frame submission, including cached prepared scenes",
+    "Runtime::capture_visual_screenshot before renderer submission",
+    "Existing App::redraw_main_window -> NativeFrameCoordinator::render_failed per-host failure/retry path"
+  ],
+  "retired_paths": [
+    "Rendering success despite accounted active/history/pinned world ownership exceeding the existing history byte budget"
+  ],
+  "behavior": [
+    "Check current accounted history/active/pinned/shared geometry against the existing 64 MiB allowance before submitting a Main frame or capture. Return an error with total, limit, active and history bytes rather than quietly admitting an over-budget tier.",
+    "Preserve required derived content and authoritative model/terminal state. Native failure uses the existing affected-host pause/recovery reporter; other hosts continue. Capture propagates the error instead of returning a successful image. Accounting check uses existing immutable geometry observers and performs no allocation on success."
+  ],
+  "proof": {
+    "app": "384 application tests pass, 16 ignored. Extended active-history test requires the explicit limit error for a one-byte test budget, verifies required scene equality, and verifies success when allowance is restored. Existing frame-owner error test proves only the failed host pauses, damage survives and manual retry resumes.",
+    "source": "Reviewed app_frame.rs render-error propagation and native_frame_coordinator.rs::render_failed; capture and native paths both invoke the budget check. No new recovery authority or content mutation path.",
+    "lint_build": "Strict renderer/app all-targets Clippy with app visual feature and fresh visual application build pass. Source health 2273, dependency authority and governance pass.",
+    "scope": "No native input/fault campaign, broad benchmark or full drift rerun. Existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Post-construction failure reporting does not bound candidate construction peaks or make oversized active data fit. Required content is intentionally not discarded to manufacture cap compliance; over-budget tier remains a failure.",
+    "Current check covers the existing active/history/retired board owner. Companion schematic/document aggregation and externally retained full-scene metadata remain unresolved. MEM-WORLD-CPU/HISTORY and full ACC/S5 qualification remain open.",
+    "Twelve recorded S4 gaps remain; no milestone/issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/tests.log.gz",
+      "uncompressed_sha256": "b47bfdc1aaac9c3786e914edb1ca0737252724be005a535d2d7c7f9db8eb47dc"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/clippy.log.gz",
+      "uncompressed_sha256": "1c80ccd9d873af3dbbade9e21fc08be66a73dcc85ab3dbff0a84369063e4afa0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/build.log.gz",
+      "uncompressed_sha256": "c289830dba1e94cb88f0497b7ef4cc710ebe7a3d74af5293abb3f1548575a228"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/main.rs": "1dba218289c5ceb6bc1d324ef98ccf443eebdbe2e2bdb19b430e0c696edccf02",
+    "crates/gui-app/src/retained_scene_history.rs": "8cdbfced14c580be96bef508fe0840308e1494ffaf68d229b2915c91df0487a1",
+    "crates/gui-app/src/runtime_present.rs": "c04fc5530951641fc217f725f11dc34db472316aa467d58ad109e5e0b60a3ee4"
+  }
+}

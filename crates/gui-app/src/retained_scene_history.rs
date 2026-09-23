@@ -67,6 +67,21 @@ impl RetainedSceneCacheKey {
 }
 
 impl RetainedSceneHistory {
+    /// Required derived content is never silently discarded to meet a tier cap.
+    /// Report failure through the host render boundary while preserving model
+    /// authority and the charged active/pinned owners for inspection or retry.
+    pub(super) fn check_render_budget(&self) -> anyhow::Result<()> {
+        let bytes = self.accounted_bytes();
+        anyhow::ensure!(
+            bytes <= self.budget,
+            "retained world CPU budget exceeded: {bytes} accounted bytes; limit {} (active {}, history {}, pinned/shared ownership included)",
+            self.budget,
+            self.active_bytes,
+            self.owned_history_bytes()
+        );
+        Ok(())
+    }
+
     pub(super) fn clear(&mut self) {
         if let Some(observer) = self.active_geometry.take() {
             self.observe_retired(observer);
@@ -446,6 +461,16 @@ mod tests {
             "cache refusal never changes active geometry"
         );
         assert_eq!(history.owned_history_bytes(), 0);
+        let error = history.check_render_budget().unwrap_err().to_string();
+        assert!(error.contains("retained world CPU budget exceeded"));
+        assert!(error.contains("limit 1"));
+        assert_eq!(
+            scene, active_before,
+            "budget failure preserves required scene"
+        );
+        history.budget = MAX_PAYLOAD_BYTES;
+        history.limit_for_active(&scene);
+        history.check_render_budget().unwrap();
     }
     #[test]
     fn externally_pinned_geometry_remains_charged_after_history_clear() {
