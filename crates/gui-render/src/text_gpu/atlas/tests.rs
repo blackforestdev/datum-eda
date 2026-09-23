@@ -245,3 +245,90 @@ fn owned_atlas_upload_reuse_reset_and_retirement_handoff() {
     drop(atlas);
     assert_eq!(budget.used(), 0);
 }
+
+#[test]
+#[ignore = "requires local GPU; shared atlas page generation ownership"]
+fn atlas_page_generations_count_once_and_survive_every_page_hold() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let mut fonts = crate::load_datum_fonts();
+    let mut buffer = glyphon::Buffer::new(&mut fonts, glyphon::Metrics::new(18.0, 22.0));
+    buffer.set_text(
+        &mut fonts,
+        "AB",
+        &crate::text_attrs(crate::TextFace::Ui),
+        glyphon::Shaping::Basic,
+        None,
+    );
+    buffer.shape_until_scroll(&mut fonts, false);
+    let keys: Vec<_> = buffer
+        .layout_runs()
+        .flat_map(|r| {
+            r.glyphs
+                .iter()
+                .map(|g| g.physical((0.0, 0.0), 1.0).cache_key)
+        })
+        .collect();
+    let mut raster = SwashCache::new();
+    let mut first = Atlas::new(&device);
+    let generations = first.page_generations.clone();
+    let local = first.local_budget.clone();
+    first
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[0])
+        .unwrap();
+    // Fill the shelf to force a second physical page in the same generation.
+    first.pages[0].shelves.y = first.pages[0].extent;
+    first
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[1])
+        .unwrap();
+    assert_eq!(first.pages.len(), 2);
+    assert_eq!(generations.used(), 1);
+    let mut second = first.replacement(&device);
+    let mut third = second.replacement(&device);
+    let mut first_holds = first.submission_refs();
+    drop(first);
+    second
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[0])
+        .unwrap();
+    let second_holds = second.submission_refs();
+    assert_eq!(generations.used(), 2);
+    let before = local.used();
+    assert!(
+        third
+            .glyph(&device, &queue, &mut fonts, &mut raster, keys[0])
+            .unwrap_err()
+            .to_string()
+            .contains("two live page generations")
+    );
+    assert!(third.pages.is_empty());
+    assert_eq!(local.used(), before);
+    // Repacking existing textures changes addresses, not physical generations.
+    second.repack();
+    second
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[1])
+        .unwrap();
+    assert_eq!(generations.used(), 2);
+    drop(second);
+    drop(first_holds.pop());
+    assert_eq!(
+        generations.used(),
+        2,
+        "the other first-generation page is still live"
+    );
+    assert!(
+        third
+            .glyph(&device, &queue, &mut fonts, &mut raster, keys[0])
+            .is_err()
+    );
+    drop(first_holds);
+    assert_eq!(generations.used(), 1);
+    third
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[0])
+        .unwrap();
+    assert_eq!(generations.used(), 2);
+    drop(second_holds);
+    drop(third);
+    assert_eq!(generations.used(), 0);
+    assert_eq!(local.used(), 0);
+}

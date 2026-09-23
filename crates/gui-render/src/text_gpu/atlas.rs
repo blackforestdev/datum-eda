@@ -91,6 +91,8 @@ pub(crate) struct Atlas {
     pending_copy_bytes: u64,
     pending_metadata_permits: Option<[super::budget::Permit; 2]>,
     local_budget: std::sync::Arc<super::budget::Budget>,
+    page_generations: std::sync::Arc<super::budget::Budget>,
+    page_generation: std::sync::Weak<super::budget::Permit>,
     pub(crate) staging_budget: std::sync::Arc<super::budget::Budget>,
     texture_budget: std::sync::Arc<super::budget::Budget>,
 }
@@ -130,6 +132,8 @@ impl Atlas {
             pending_copy_bytes: 0,
             pending_metadata_permits: None,
             local_budget: super::budget::Budget::new(RETAINED_LIMIT),
+            page_generations: super::budget::Budget::new(2),
+            page_generation: std::sync::Weak::new(),
             texture_budget: super::budget::process(),
         }
     }
@@ -138,6 +142,7 @@ impl Atlas {
     pub fn replacement(&self, device: &wgpu::Device) -> Self {
         let mut replacement = Self::with_staging_budget(device, self.staging_budget.clone());
         replacement.local_budget = self.local_budget.clone();
+        replacement.page_generations = self.page_generations.clone();
         replacement.texture_budget = self.texture_budget.clone();
         replacement.owner = self.owner.clone();
         replacement.generation = self.generation.wrapping_add(1);
@@ -255,6 +260,7 @@ impl Atlas {
             .generation
             .checked_add(1)
             .expect("atlas epoch exhausted");
+        self.page_generation = std::sync::Weak::new();
         std::mem::take(&mut self.pages)
     }
 
@@ -322,6 +328,16 @@ impl Atlas {
                 let extent = 1024.min(limit).max(size[0]).max(size[1]);
                 anyhow::ensure!(extent <= limit, "glyph exceeds device texture extent");
                 let bytes = extent as u64 * extent as u64 * bytes_per_pixel;
+                let generation_permit = match self.page_generation.upgrade() {
+                    Some(permit) => permit,
+                    None => {
+                        std::sync::Arc::new(self.page_generations.reserve(1).map_err(|_| {
+                            anyhow::anyhow!(
+                                "atlas has two live page generations; wait for retirement"
+                            )
+                        })?)
+                    }
+                };
                 let local_permit = self.local_budget.reserve(bytes)?;
                 let permit = self.texture_budget.reserve(bytes)?;
                 let gpu_permit = super::budget::gpu_process().reserve(bytes)?;
@@ -357,14 +373,18 @@ impl Atlas {
                     .reserve(size, extent)
                     .expect("validated glyph extent");
                 let index = self.pages.len();
+                self.page_generation = std::sync::Arc::downgrade(&generation_permit);
                 self.pages.push(Page {
-                    texture: self.owner.track_with_permits(
-                        texture,
-                        bytes,
-                        self.generation,
-                        Kind::Texture,
-                        vec![local_permit, permit, gpu_permit],
-                    ),
+                    texture: self
+                        .owner
+                        .track_with_permits(
+                            texture,
+                            bytes,
+                            self.generation,
+                            Kind::Texture,
+                            vec![local_permit, permit, gpu_permit],
+                        )
+                        .with_shared_permit(generation_permit),
                     bind_group,
                     extent,
                     color,
