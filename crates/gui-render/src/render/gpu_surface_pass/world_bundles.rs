@@ -37,12 +37,13 @@ impl Renderer {
         prepared: &PreparedScene,
         schematic: Option<&RetainedScene>,
     ) {
-        for (index, (surface, (_, bind_group))) in prepared
+        for (index, (surface, binding)) in prepared
             .surface_passes()
             .iter()
             .zip(&self.surface_scene_uniforms)
             .enumerate()
         {
+            let bind_group = &binding.bind_group;
             let (vertex, stroke, commands) = match surface.surface {
                 SceneSurface::Board => (
                     self.world_vertices_gpu.buffer(),
@@ -103,6 +104,7 @@ impl Renderer {
             }
             .into_iter()
             .flatten()
+            .chain(std::iter::once(binding.buffer.submission_ref()))
             .collect();
             let cached = CachedSurfaceBundle {
                 bundle: encoder.finish(&wgpu::RenderBundleDescriptor {

@@ -13,7 +13,6 @@ use std::collections::BTreeMap;
 use std::ops::Range;
 use taffy::prelude::*;
 use uuid::Uuid;
-use wgpu::util::DeviceExt;
 mod bottom_dock;
 mod datum_console;
 mod design_tokens;

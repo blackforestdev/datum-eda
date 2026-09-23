@@ -32,10 +32,10 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
                 .renderer
                 .surface_scene_uniforms
                 .iter()
-                .any(|(owner, _)| if step == 0 {
-                    owner.last_upload_bytes == 64
+                .any(|binding| if step == 0 {
+                    binding.buffer.last_upload_bytes == 64
                 } else {
-                    owner.last_upload_bytes > 0 && owner.last_upload_bytes < 64
+                    binding.buffer.last_upload_bytes > 0 && binding.buffer.last_upload_bytes < 64
                 })
         );
         assert!(changed == capture_retained(&mut renderer, &prepared, &retained));
@@ -45,7 +45,7 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
                 .renderer
                 .surface_scene_uniforms
                 .iter()
-                .all(|(owner, _)| owner.last_upload_bytes == 0)
+                .all(|binding| binding.buffer.last_upload_bytes == 0)
         );
         fresh.renderer = Renderer::new(
             &fresh.device,
@@ -71,7 +71,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
                 .renderer
                 .surface_scene_uniforms
                 .iter()
-                .any(|(owner, _)| owner.last_upload_bytes > 0 && owner.last_upload_bytes < 64)
+                .any(|binding| binding.buffer.last_upload_bytes > 0
+                    && binding.buffer.last_upload_bytes < 64)
         );
         fresh.renderer = Renderer::new(
             &fresh.device,
@@ -92,7 +93,7 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
                 .renderer
                 .surface_scene_uniforms
                 .iter()
-                .all(|(owner, _)| owner.last_upload_bytes == 64)
+                .all(|binding| binding.buffer.last_upload_bytes == 64)
         );
     }
     let dialog_state = crate::global_preferences_dialog_tests::state_with_preferences_open();

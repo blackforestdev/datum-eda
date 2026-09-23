@@ -3867,6 +3867,11 @@
           "work": "s4_attachment_lifetime_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
           "status": "Partial: shared attachment identity/capacity/submission retirement adopted; full accounting/caps/qualification remain open."
+        },
+        {
+          "work": "s4_uniform_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
+          "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -16178,6 +16183,11 @@
           "work": "s4_vertex_submission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
           "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_uniform_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
+          "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -16289,6 +16299,11 @@
           "work": "s4_attachment_lifetime_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
           "status": "Partial: shared attachment identity/capacity/submission retirement adopted; full accounting/caps/qualification remain open."
+        },
+        {
+          "work": "s4_uniform_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
+          "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -16968,6 +16983,11 @@
           "work": "s4_attachment_lifetime_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
           "status": "Partial: shared attachment identity/capacity/submission retirement adopted; full accounting/caps/qualification remain open."
+        },
+        {
+          "work": "s4_uniform_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
+          "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -31863,5 +31883,37 @@
       "No full ACC/MEM predicate, S4 or S5 closure. No dependency, vendor, license, prototype, budget, sample-count or nonblocking resize change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json"
+  },
+  "s4_uniform_lifetime_work": {
+    "status": "Default uniform allocation, binding and deferred-upload owners consolidated; full caps/accounting qualification remain open",
+    "base_commit": "ae59757d",
+    "production_consumers": [
+      "Screen resolution uniform for full/overlay native hosts",
+      "Per-pane camera uniforms and cached world bundles",
+      "Existing board/schematic fallback bindings"
+    ],
+    "retired_paths": [
+      "Raw fallback uniform buffer creation retained only by bind groups",
+      "Pane buffer/bind-group tuples whose field-drop order released accounting first",
+      "Eager uniform queue writes during fallible frame preparation"
+    ],
+    "behavior": [
+      "All default uniform buffers use the existing tracked GPU allocation owner. UniformBinding keeps binding references before allocation ownership in drop order; cached bundles and submissions retain the same allocation, counted once.",
+      "sync plans differences against submitted content. Cancellation discards only the pending value; successful-frame flush writes exact aligned changed words and then updates submitted identity. Preserve mapped initialization of fixed default values, warm zero-write reuse and independent board/schematic buffers.",
+      "Remove the obsolete root DeviceExt import after consolidating initialization in the normal uniform_buffer module. Ratchet the existing root ceiling7153to7152; reconcile policy receipt and inventory without changing policy."
+    ],
+    "proof": {
+      "renderer": "293 renderer tests pass, including actual-GPU cancelled-uniform readback, exact changed words, warm reuse and retirement, plus existing pane close/reopen/camera and world-bundle pixel regressions.11 measurement/cost/visual-runner cases explicitly filtered.",
+      "lint": "All-targets visual gui-render/gui-app Clippy -D warnings passes. Source health2239files,13 policy tests, dependency and parity gates pass.",
+      "native": "Fresh visual-feature datum-gui build and1680x1050 datum-test/R1 capture exit0; inspected and exact decoded RGBA equality with prior attachment-lifetime capture.",
+      "cache": "The offline focused check and full renderer verification rebuilt successfully after the earlier shared-cache loss. Root cause of dat-wf8i remains unconfirmed; no cleanup or dependency download performed.",
+      "drift": "Full drift rerun passes workspace Clippy and preceding gates after offline cache rebuild; stops at the existing console-routine-focused1x mismatch:3778pixels(0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+    },
+    "limits": [
+      "Aggregate GPU512MiB and per-resource admission/caps, complete host/device incidence and release-reason accounting, staging/chunking and query/readback storage remain unfinished. No full ACC/MEM predicate or S4/S5 closure.",
+      "Uniform sync byte counts describe planned writes; mapped initialization is separate from queue writes. Complete calibrated boundary counters and performance/endurance qualification remain open.",
+      "No dependency, vendor, license, prototype, initial uniform values, shader/layout, budget or nonblocking resize amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json"
   }
 }

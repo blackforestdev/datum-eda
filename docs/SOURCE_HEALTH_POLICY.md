@@ -178,6 +178,12 @@ Reviewers verify:
   change; and
 - protected governance changes have project-owner approval.
 
+PM045 S4 consolidates raw legacy scene-buffer initialization and bindings into
+`render/uniform_buffer.rs`. The renderer root no longer supplies a broad
+`DeviceExt` import to that path; its exact expanded ceiling decreases from
+7,153 to 7,152. The shared owner retains bindings, deferred uniform updates and
+submission references. Remaining include debt and normal budgets are unchanged.
+
 ## Required Enforcement Surface
 
 The standard drift battery must invoke blocking checks for source discovery and

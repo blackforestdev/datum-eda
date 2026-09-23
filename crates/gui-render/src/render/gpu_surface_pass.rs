@@ -53,28 +53,22 @@ impl Renderer {
         self.surface_scene_uniforms
             .truncate(prepared.surface_passes().len());
         while self.surface_scene_uniforms.len() < prepared.surface_passes().len() {
-            let buffer = gpu_data::uniform_buffer::UniformBuffer::empty(
-                device,
-                "datum-surface-scene-uniform-buffer",
-            );
-            let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: Some("datum-surface-scene-bind-group"),
-                layout: &self.scene_bind_group_layout,
-                entries: &[wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: buffer.buffer().as_entire_binding(),
-                }],
-            });
-            self.surface_scene_uniforms.push((buffer, bind_group));
+            self.surface_scene_uniforms
+                .push(gpu_data::uniform_buffer::UniformBinding::new(
+                    device,
+                    &self.scene_bind_group_layout,
+                    "datum-surface-scene-bind-group",
+                    None,
+                ));
         }
-        for (surface, (buffer, _)) in prepared
+        for (surface, binding) in prepared
             .surface_passes()
             .iter()
             .zip(&mut self.surface_scene_uniforms)
         {
             let field = inset_rect(surface.scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let projection = Projection::new(field, &surface.bounds, surface.camera);
-            buffer.sync(
+            binding.buffer.sync(
                 queue,
                 SceneUniform {
                     resolution: [width as f32, height as f32, 0.0, 0.0],
