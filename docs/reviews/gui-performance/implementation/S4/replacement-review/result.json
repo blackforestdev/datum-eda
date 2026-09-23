@@ -1,0 +1,94 @@
+{
+  "status": "MEM-REPLACEMENT retained-resource implementation complete; original qualification remains S5",
+  "base_commit": "976467a8",
+  "reason": "Reconcile the stale generic implementation-gap entry against landed production owners and recent passing GPU evidence; do not rebuild owners that already enforce the requirement.",
+  "controlling_clauses": [
+    "GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md MEM-02 GPU world/encoded-resource row: one old plus one new live cold replacement generation",
+    "GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md MEM-02 lifecycle recovery paragraph: one transient replacement generation with unchanged aggregate/subcaps and recovery qualification targets",
+    "GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md approved S4 implementation / S5 qualification sequencing"
+  ],
+  "production_consumers": [
+    {
+      "family": "Board/schematic world vertices and strokes",
+      "owner": "RetainedBuffer + VertexAllocation",
+      "mechanism": "Four persistent stream generation budgets reserve before allocation; cached encodings and actual submissions retain the same permits. Clear, document switch and recovery preserve allowance."
+    },
+    {
+      "family": "Screen/control geometry",
+      "owner": "ScreenBuffer + VertexAllocation",
+      "mechanism": "All nine shared screen streams carry two-allocation admission; control retention bypass does not bypass hard generation/byte admission."
+    },
+    {
+      "family": "Fixed screen/camera and dynamic pane uniforms",
+      "owner": "UniformBuffer + SlotGenerations",
+      "mechanism": "Fixed owners migrate their budget across recovery; pane slot identity survives close/reopen while retired submission holds remain."
+    },
+    {
+      "family": "Native surface attachments",
+      "owner": "SurfaceAttachments",
+      "mechanism": "Same-host replacement shares the two-generation allowance and refuses a third held generation before publication."
+    },
+    {
+      "family": "Workspace/overlay glyph instances and atlas pages",
+      "owner": "text_gpu Draw/Atlas",
+      "mechanism": "Instance streams retain allocation limits through empty preparation/recovery. Physical atlas pages share a permit for their generation; all page/submission holds preserve the generation until final retirement."
+    },
+    {
+      "family": "Terminal graphics quads and immutable textures",
+      "owner": "TerminalGraphics + SlotGenerations/TextureGenerations",
+      "mechanism": "Quad slots and texture keys retain their two-allocation allowance across consumer close, reopen and recovery."
+    }
+  ],
+  "retired_paths": [
+    "Historical unlimited stream/attachment replacement and reset-on-clear/recovery paths already retired by the listed implementation slices; no new competing default path found in this reconciliation."
+  ],
+  "boundary_review": [
+    "The unit is a replaceable retained resource family/slot, not a global limit of two allocations across unrelated buffers, hosts or atlas pages. Shared document/process byte owners remain simultaneous constraints; identity sharing counts each actual allocation once.",
+    "Submission/cold-upload staging and capture readback are transient operations with separate capacity/admission/lifetime requirements, not additional retained scene generations. Opt-in timestamp ring resource accounting and opaque backend/driver residency remain separate measurement obligations; no complete accounting claim follows.",
+    "CPU resource metadata, query/capture/staging reporting and private text construction are not closed by this retained GPU generation review. Recovery timing, all-native fault injection, negative controls, RSS and endurance remain unqualified at S5."
+  ],
+  "proof": {
+    "renderer_log": "docs/reviews/gui-performance/implementation/S4/history-lifetime/renderer.log.gz",
+    "uncompressed_sha256": "086f963b34646189347c71a800fd0950df82f190b640f4eb927d2ce31b8f5128",
+    "result": "383 passed;0 failed;11 filtered in the existing history-lifetime run. No test rerun for this documentation-only reconciliation.",
+    "selected_passed_tests": [
+      "renderer_recreation_preserves_all_four_world_stream_limits",
+      "two_live_allocations_survive_clear_and_document_switch_until_retirement",
+      "two_generations_survive_clear_and_device_replacement",
+      "fixed_uniform_recovery_preserves_submission_generations",
+      "pane_uniform_slots_preserve_retiring_generations_across_reopen_and_recovery",
+      "third_attachment_generation_waits_for_retirement_even_after_recovery",
+      "atlas_page_generations_count_once_and_survive_every_page_hold",
+      "instance_generation_limits_survive_empty_preparation_and_device_replacement",
+      "terminal_texture_generations_survive_close_reopen_and_recovery",
+      "submitted_allocation_stays_charged_after_cpu_replacement"
+    ],
+    "source_continuity": "git diff 166f26b0..HEAD is empty for every reviewed owner/test below. The intervening production commit changes only text-key preflight, not resource replacement."
+  },
+  "limits": [
+    "Only MEM-REPLACEMENT implementation closes. Its original acceptance rule and S5 proof status remain unchanged; no full lifecycle/resource/global-adoption or S4/S5 acceptance.",
+    "Seven recorded S4 implementation gaps remain. Preserve all50S2 qualification predicates,20S3 rows and S1 obligations, existing Console golden disposition, GEFN and nonblocking resize.",
+    "No production code, dependency/vendor/license, prototype, numerical cap or sequencing change. Owner/Copilot engine-test edit excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/replacement-review/result.json",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "74fa44c694c3fe99569b785c8d56f8ef22c9e75c111395b3b7c388fbbb0e4f27",
+    "crates/gui-render/src/render/retained_buffer.rs": "ca63e6768d5a957b123a7d9a443b6e5f87443e386168a9fb9eabf25cd2eb6b69",
+    "crates/gui-render/src/render/vertex_allocation.rs": "d58d683771790b86f26d135150f59065a421662bcaf6a043ee96da3693805412",
+    "crates/gui-render/src/render/screen_buffer.rs": "639be5e2791321712440066636eb147d37fbf843b34a5afb937df7614e84636e",
+    "crates/gui-render/src/render/uniform_buffer.rs": "ee911e74efafc497b599b947a2468b50ba01a09d3a5e9fb9458d715c4feb85e5",
+    "crates/gui-render/src/render/gpu_surface.rs": "30f89bb3fad7cf94e963015a025db39b05db511a4e140c15fc5fd0597e9e5549",
+    "crates/gui-render/src/render/terminal_graphics.rs": "4aefe2946fc7ea36b2f60ddc6fbfa5c8226755f38049f4735458968c0c5cc3a6",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "f65aee6029af6ac7050a36cfd1e69749e5d1514245ba01df1c8c0b2c0ebae3cd",
+    "crates/gui-render/src/render/terminal_texture_generations.rs": "a009f7a401f756df1dbbaffd1b48c2d25814c70eb3dd540f257f70c0688eeea7",
+    "crates/gui-render/src/render/world_generation_tests.rs": "24574772c57c1623a3c495e116192fab8e391ec9269c7ffbf090e753bd64e38a",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "9bd33e1cc194c6d924853e3c5ee8c3413bce72717062bba8f1d4161f815f250e",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "0eb51261c5ca1ed2231dea2d417f9f47773850ea69935ffeb72195c8b9760617",
+    "crates/gui-render/src/text_gpu/atlas.rs": "7c1420fd3e98570f27db8ca82a1e20edb7bbb09c3a7c5e81dd2720f9809ef6d1",
+    "crates/gui-render/src/text_gpu/draw.rs": "b18e4bef1920a67441ea42d1c192e48877cababf0ac74108a9ff0d2794a6e2c5",
+    "crates/gui-render/src/text_gpu/slot_generations.rs": "a1b292cbca1c8f82d9218c705303b14d82383a3162012e280ec7753a0205a9b6",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "1bb0b10733eb92a8870c5b04d76da001519e1109a427ea9626681acce2ae66ef",
+    "crates/gui-render/src/text_gpu/budget.rs": "cfab1762867fca884a1d5e185c0c25054a7211574f18730f63f841c5c2d529cf",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "5046efa9f62005cadadbdc42ffafeaae76d4e97018077c7c45af63f03b9fa8e4"
+  }
+}

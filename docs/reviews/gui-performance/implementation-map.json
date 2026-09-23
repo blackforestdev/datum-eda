@@ -16821,14 +16821,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4: retained GPU resource generation admission and replacement continuity. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "one old plus one new live cold replacement generation; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Retained resource replacement generation implementation complete; original acceptance rule and qualification remain unqualified.",
+        "s4_implementation_evidence": "s4_replacement_completion"
       },
       "s4_implementation_progress": [
         {
@@ -16885,7 +16884,15 @@
           "work": "s4_terminal_texture_generations_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/result.json",
           "status": "Immutable terminal texture generations retain two-allocation admission across close/reopen and renderer recovery"
+        },
+        {
+          "work": "s4_replacement_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/replacement-review/result.json",
+          "status": "MEM-REPLACEMENT retained-resource implementation complete; original qualification remains S5"
         }
+      ],
+      "s4_resolved_implementation_obligations": [
+        "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
       ]
     },
     {
@@ -32328,10 +32335,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 8,
+    "rows_with_recorded_implementation_gaps": 7,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 19,
+    "rows_with_implementation_completed_at_s4": 20,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -32351,7 +32358,8 @@
       "HP15-02",
       "MEM-GPU-TOTAL",
       "MEM-WORLD-CPU",
-      "MEM-WORLD-HISTORY"
+      "MEM-WORLD-HISTORY",
+      "MEM-REPLACEMENT"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -35711,5 +35719,79 @@
       "No dependency/vendor/license, prototype, numerical cap, sequencing or authority change. Preserve GEFN, nonblocking resize and existing Console golden disposition."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json"
+  },
+  "s4_replacement_completion": {
+    "status": "MEM-REPLACEMENT retained-resource implementation complete; original qualification remains S5",
+    "base_commit": "976467a8",
+    "reason": "Reconcile the stale generic implementation-gap entry against landed production owners and recent passing GPU evidence; do not rebuild owners that already enforce the requirement.",
+    "controlling_clauses": [
+      "GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md MEM-02 GPU world/encoded-resource row: one old plus one new live cold replacement generation",
+      "GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md MEM-02 lifecycle recovery paragraph: one transient replacement generation with unchanged aggregate/subcaps and recovery qualification targets",
+      "GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md approved S4 implementation / S5 qualification sequencing"
+    ],
+    "production_consumers": [
+      {
+        "family": "Board/schematic world vertices and strokes",
+        "owner": "RetainedBuffer + VertexAllocation",
+        "mechanism": "Four persistent stream generation budgets reserve before allocation; cached encodings and actual submissions retain the same permits. Clear, document switch and recovery preserve allowance."
+      },
+      {
+        "family": "Screen/control geometry",
+        "owner": "ScreenBuffer + VertexAllocation",
+        "mechanism": "All nine shared screen streams carry two-allocation admission; control retention bypass does not bypass hard generation/byte admission."
+      },
+      {
+        "family": "Fixed screen/camera and dynamic pane uniforms",
+        "owner": "UniformBuffer + SlotGenerations",
+        "mechanism": "Fixed owners migrate their budget across recovery; pane slot identity survives close/reopen while retired submission holds remain."
+      },
+      {
+        "family": "Native surface attachments",
+        "owner": "SurfaceAttachments",
+        "mechanism": "Same-host replacement shares the two-generation allowance and refuses a third held generation before publication."
+      },
+      {
+        "family": "Workspace/overlay glyph instances and atlas pages",
+        "owner": "text_gpu Draw/Atlas",
+        "mechanism": "Instance streams retain allocation limits through empty preparation/recovery. Physical atlas pages share a permit for their generation; all page/submission holds preserve the generation until final retirement."
+      },
+      {
+        "family": "Terminal graphics quads and immutable textures",
+        "owner": "TerminalGraphics + SlotGenerations/TextureGenerations",
+        "mechanism": "Quad slots and texture keys retain their two-allocation allowance across consumer close, reopen and recovery."
+      }
+    ],
+    "retired_paths": [
+      "Historical unlimited stream/attachment replacement and reset-on-clear/recovery paths already retired by the listed implementation slices; no new competing default path found in this reconciliation."
+    ],
+    "boundary_review": [
+      "The unit is a replaceable retained resource family/slot, not a global limit of two allocations across unrelated buffers, hosts or atlas pages. Shared document/process byte owners remain simultaneous constraints; identity sharing counts each actual allocation once.",
+      "Submission/cold-upload staging and capture readback are transient operations with separate capacity/admission/lifetime requirements, not additional retained scene generations. Opt-in timestamp ring resource accounting and opaque backend/driver residency remain separate measurement obligations; no complete accounting claim follows.",
+      "CPU resource metadata, query/capture/staging reporting and private text construction are not closed by this retained GPU generation review. Recovery timing, all-native fault injection, negative controls, RSS and endurance remain unqualified at S5."
+    ],
+    "proof": {
+      "renderer_log": "docs/reviews/gui-performance/implementation/S4/history-lifetime/renderer.log.gz",
+      "uncompressed_sha256": "086f963b34646189347c71a800fd0950df82f190b640f4eb927d2ce31b8f5128",
+      "result": "383 passed;0 failed;11 filtered in the existing history-lifetime run. No test rerun for this documentation-only reconciliation.",
+      "selected_passed_tests": [
+        "renderer_recreation_preserves_all_four_world_stream_limits",
+        "two_live_allocations_survive_clear_and_document_switch_until_retirement",
+        "two_generations_survive_clear_and_device_replacement",
+        "fixed_uniform_recovery_preserves_submission_generations",
+        "pane_uniform_slots_preserve_retiring_generations_across_reopen_and_recovery",
+        "third_attachment_generation_waits_for_retirement_even_after_recovery",
+        "atlas_page_generations_count_once_and_survive_every_page_hold",
+        "instance_generation_limits_survive_empty_preparation_and_device_replacement",
+        "terminal_texture_generations_survive_close_reopen_and_recovery",
+        "submitted_allocation_stays_charged_after_cpu_replacement"
+      ],
+      "source_continuity": "git diff 166f26b0..HEAD is empty for every reviewed owner/test below. The intervening production commit changes only text-key preflight, not resource replacement."
+    },
+    "limits": [
+      "Only MEM-REPLACEMENT implementation closes. Its original acceptance rule and S5 proof status remain unchanged; no full lifecycle/resource/global-adoption or S4/S5 acceptance.",
+      "Seven recorded S4 implementation gaps remain. Preserve all50S2 qualification predicates,20S3 rows and S1 obligations, existing Console golden disposition, GEFN and nonblocking resize.",
+      "No production code, dependency/vendor/license, prototype, numerical cap or sequencing change. Owner/Copilot engine-test edit excluded."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/replacement-review/result.json"
   }
 }
