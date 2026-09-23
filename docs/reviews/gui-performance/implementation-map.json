@@ -3653,6 +3653,11 @@
           "work": "s4_glyph_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
           "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_query_resource_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/query-resources/result.json",
+          "status": "Existing opt-in query/resolve/readback resources now use shared global admission and completion retention; query bytes are logical API capacity. Full accounting, cold timing and qualification remain open."
         }
       ]
     },
@@ -17223,6 +17228,11 @@
           "work": "s4_glyph_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
           "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_query_resource_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/query-resources/result.json",
+          "status": "Existing opt-in query/resolve/readback resources now use shared global admission and completion retention; query bytes are logical API capacity. Full accounting, cold timing and qualification remain open."
         }
       ]
     },
@@ -32587,5 +32597,36 @@
       "No S4/S5 or issue closure. No dependency, vendoring, license, prototype, visual layout, font, numerical budget or production protocol change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json"
+  },
+  "s4_query_resource_adoption_work": {
+    "status": "Existing opt-in query/resolve/readback resources use shared GPU admission and retirement; full accounting/qualification remains unfinished",
+    "base_commit": "a0222ba6",
+    "production_consumers": [
+      "GpuMeasurements enabled through the production Renderer measurement API",
+      "Full-scene and dialog submissions using the existing timestamp ring"
+    ],
+    "retired_paths": [
+      "Unbudgeted query, resolve and readback allocation in the measurement ring",
+      "Query clones and encoded readback resources surviving owner close without shared allocation-accounting holds"
+    ],
+    "behavior": [
+      "Reserve all three resources in a slot before API allocation against the existing512 MiB process GPU cap. Failed slot/ring construction rolls back prior permits and tracked allocations. Three slots reserve2304 bytes total: exact resolve/readback buffer capacities plus public logical timestamp capacity.",
+      "Publish Query, QueryResolve and Readback records with allocation owner/device epoch, capacity and live/retiring state. Query-set bytes mean32 u64 results, not backend-private query-pool storage or physical residency.",
+      "A prepared FrameQueries holds all three slot allocations. After actual queue submission, transfer holds to the shared completion callback before validating the receipt, so cancellation or stale receipt failure cannot prematurely release submitted accounting. Map cancellation retains the same existing failure semantics.",
+      "Default uninstrumented rendering still creates no measurement ring. No new measurement mode, timing experiment, dependency or scheduler path."
+    ],
+    "proof": {
+      "renderer": "313 renderer tests pass;10 diagnostic/visual cases filtered. Includes the existing real-GPU timestamp ring completion/failure controls as well as pixel parity and world/terminal/atlas continuation tests.",
+      "resource": "New actual-GPU test refuses partial ring admission with complete rollback, counts all9 records and2304 logical/API bytes, holds an encoding slot after owner close, submits/resolves a real timestamp pass, cancels mapping/owner, deterministically retains the submitted slot with an explicit lifetime hold, and verifies release after hold drop/GPU completion.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2253, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+      "drift": "Full drift stops at the existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "Query-set logical capacity is not backend-private query-pool allocation/residency. Driver storage remains separately reported; no physical GPU memory completeness claim.",
+      "This adds query/resolve/readback resources to global GPU admission. Complete host/process CPU scratch classification, private shaped-text accounting, world/history retention and all resource-budget qualification remain unfinished. No MEM-GPU-TOTAL or MEM-STAGING closure.",
+      "Cold multi-submission MET-04/GPU-01..03 timing remains explicitly incomplete. No new native input/backend/endurance/fairness qualification and no S4/S5 or issue closure.",
+      "No dependency, vendor, license, prototype, layout, font, protocol, numeric admission-cap or ordinary rendering selection change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/query-resources/result.json"
   }
 }

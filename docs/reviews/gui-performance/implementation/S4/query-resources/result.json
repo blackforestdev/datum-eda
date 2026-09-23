@@ -1,0 +1,63 @@
+{
+  "status": "Existing opt-in query/resolve/readback resources use shared GPU admission and retirement; full accounting/qualification remains unfinished",
+  "base_commit": "a0222ba6",
+  "production_consumers": [
+    "GpuMeasurements enabled through the production Renderer measurement API",
+    "Full-scene and dialog submissions using the existing timestamp ring"
+  ],
+  "retired_paths": [
+    "Unbudgeted query, resolve and readback allocation in the measurement ring",
+    "Query clones and encoded readback resources surviving owner close without shared allocation-accounting holds"
+  ],
+  "behavior": [
+    "Reserve all three resources in a slot before API allocation against the existing512 MiB process GPU cap. Failed slot/ring construction rolls back prior permits and tracked allocations. Three slots reserve2304 bytes total: exact resolve/readback buffer capacities plus public logical timestamp capacity.",
+    "Publish Query, QueryResolve and Readback records with allocation owner/device epoch, capacity and live/retiring state. Query-set bytes mean32 u64 results, not backend-private query-pool storage or physical residency.",
+    "A prepared FrameQueries holds all three slot allocations. After actual queue submission, transfer holds to the shared completion callback before validating the receipt, so cancellation or stale receipt failure cannot prematurely release submitted accounting. Map cancellation retains the same existing failure semantics.",
+    "Default uninstrumented rendering still creates no measurement ring. No new measurement mode, timing experiment, dependency or scheduler path."
+  ],
+  "proof": {
+    "renderer": "313 renderer tests pass;10 diagnostic/visual cases filtered. Includes the existing real-GPU timestamp ring completion/failure controls as well as pixel parity and world/terminal/atlas continuation tests.",
+    "resource": "New actual-GPU test refuses partial ring admission with complete rollback, counts all9 records and2304 logical/API bytes, holds an encoding slot after owner close, submits/resolves a real timestamp pass, cancels mapping/owner, deterministically retains the submitted slot with an explicit lifetime hold, and verifies release after hold drop/GPU completion.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2253, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+    "drift": "Full drift stops at the existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "Query-set logical capacity is not backend-private query-pool allocation/residency. Driver storage remains separately reported; no physical GPU memory completeness claim.",
+    "This adds query/resolve/readback resources to global GPU admission. Complete host/process CPU scratch classification, private shaped-text accounting, world/history retention and all resource-budget qualification remain unfinished. No MEM-GPU-TOTAL or MEM-STAGING closure.",
+    "Cold multi-submission MET-04/GPU-01..03 timing remains explicitly incomplete. No new native input/backend/endurance/fairness qualification and no S4/S5 or issue closure.",
+    "No dependency, vendor, license, prototype, layout, font, protocol, numeric admission-cap or ordinary rendering selection change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/query-resources/result.json",
+  "logs": {
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/query-resources/focused.log.gz",
+      "uncompressed_sha256": "f61eb2c80a54c1aabeb7c2094d8b5b546284cdad3161898981dfbbab9e6cfdce"
+    },
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/query-resources/tests.log.gz",
+      "uncompressed_sha256": "9c36e124b94e93fd7d5b86fa9394aef88f32dbd363d5285a78dbb68613b74bdf"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/query-resources/clippy.log.gz",
+      "uncompressed_sha256": "f0c647b4928891d77ff9bf171d9b45ef55b7d2d9a64e7eaa2a6163333454bfc0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/query-resources/build.log.gz",
+      "uncompressed_sha256": "fa5c4270061f9566c5398a74a991f76fbdee6fd1d7ae42558631547dac407f52"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/query-resources/drift.log.gz",
+      "uncompressed_sha256": "712f3e05a7d48a688060aba5ac237742acd3f89506c26706d6e416ff20a67fcb"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "1fdd7dd9dd6b5613fdf9a765f4e67c26bdb6310f7dbfffa03fc672fedccb554b",
+    "crates/gui-render/src/render/gpu_overlay.rs": "74efdd279b2b653a329ac59ac54a180dc69d94fb710372a430f018696e2eb27c",
+    "crates/gui-render/src/render/gpu_measurements.rs": "142bb35ed0f8958d2a626b071896574d11ce431cf27e980845b99c2f0d2a1c4b",
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": "56476e3158cf72fb612faf1cb5bfa6173c07e5da73be5b0d21c480b1ce8e9d31",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "4f4e43f40f3c09bebd6fc998a17347712d238045f963b116c222952b1fd08e07",
+    "crates/gui-render/src/render/gpu_measurement_resources.rs": "96fb65efc08cf979b4dd51472fe70e9082e63dbf7c1bd012dfc4aea494e72145",
+    "crates/gui-render/src/render/gpu_measurement_resource_tests.rs": "1b8d70388ec5e9d80d4c5a373c3624e1bb35f8baf1a53e82bfa51005cc1082db",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "2ff18bf7ba02371ee8bed982727acc2ec853486306eea98310d63b558b66ccc4"
+  }
+}

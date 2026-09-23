@@ -80,6 +80,7 @@ impl Renderer {
 
     pub(super) fn submit_gpu_measurement(
         &mut self,
+        queue: &wgpu::Queue,
         frame: Option<FrameQueries>,
     ) -> anyhow::Result<()> {
         if let Some(cold_frame) = self.cold_world.measurement_frame.take()
@@ -88,7 +89,7 @@ impl Renderer {
             m.incomplete_upload_submission(Some(cold_frame))?;
         }
         if let (Some(m), Some(frame)) = (&mut self.measurements, frame) {
-            m.submitted(frame)?;
+            m.submitted(queue, frame)?;
         }
         Ok(())
     }

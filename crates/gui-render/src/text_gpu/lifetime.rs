@@ -16,6 +16,9 @@ pub enum Kind {
     Attachment,
     Uniform,
     Staging,
+    Query,
+    QueryResolve,
+    Readback,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -155,21 +158,22 @@ impl crate::Renderer {
             .collect()
     }
 
-    /// Migrated text, terminal textures, vertices, uniforms and MSAA API allocations.
-    /// Includes explicit texture staging and retirement; opaque queue staging, driver
-    /// residency and query/readback storage remain separate.
+    /// Migrated renderer resources, explicit staging and opt-in query/readback storage.
+    /// Query bytes describe requested timestamp capacity, not backend-private storage.
+    /// Driver residency and allocator metadata remain separate.
     pub fn gpu_process_allocations() -> Vec<Record> {
         records(&PROCESS_ALLOCATIONS)
     }
 
     /// Reserved migrated GPU capacity, including pending creation and retirement.
-    /// Opaque queue staging, query/readback allocations and driver residency remain separate.
+    /// Includes logical query capacity and exact resolve/readback buffer capacities;
+    /// backend-private storage and driver residency remain separate.
     pub fn gpu_process_reserved_bytes() -> u64 {
         super::budget::gpu_process().used()
     }
 
     /// Explicit migrated staging capacity, including submission retirement.
-    /// Does not include producers still using opaque queue writes or CPU scratch.
+    /// CPU pending payload, metadata and scratch remain separate.
     pub fn upload_staging_reserved_bytes(&self) -> u64 {
         self.atlas.staging_budget.used()
     }
