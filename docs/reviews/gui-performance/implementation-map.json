@@ -15019,7 +15019,14 @@
         "unfinished_qualification": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_history_active_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json",
+          "status": "Default Runtime surface invalidation preserves the cached complete active-scene estimate when reusing geometry and retires only obsolete history. Full allocation/aggregate/peak accounting and qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-WORLD-HISTORY",
@@ -15085,7 +15092,14 @@
         "unfinished_qualification": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_history_active_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json",
+          "status": "Default Runtime surface invalidation preserves the cached complete active-scene estimate when reusing geometry and retires only obsolete history. Full allocation/aggregate/peak accounting and qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-SHAPED-LOCAL",
@@ -32887,5 +32901,34 @@
       "No dependency, vendoring, license, prototype, font/layout authority or numerical budget change. No native-input or benchmark campaign. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-refusal/result.json"
+  },
+  "s4_history_active_adoption_work": {
+    "status": "Default surface invalidation preserves the complete registered active-scene charge when geometry is reused; complete world resource accounting remains unfinished",
+    "base_commit": "1b1af038",
+    "production_consumers": [
+      "Runtime::invalidate_surface_size for the Main retained scene",
+      "RetainedSceneHistory shared history/active/retiring ownership transition"
+    ],
+    "retired_paths": [
+      "Clearing the active accounting registration while Runtime retains a resize-independent scene",
+      "Counting only weakly observed shared geometry after that clear, omitting the still-live command and hit-index capacities"
+    ],
+    "behavior": [
+      "Move the board scene/history resize decision into one shared ownership transition. If the registered active scene is size-independent, retire obsolete history entries while keeping its cached active bytes and geometry observer.",
+      "If the scene is absent or depends on surface size, drop it and clear active/history accounting using existing retiring-geometry observation. Preserve the existing renderer reuse predicate and all prepared-scene/hit invalidation behavior.",
+      "Reuse the active byte total already computed at construction/restore; repeated surface invalidation does not traverse draw commands or the hit index merely to restore accounting. Schematic handling retains its existing independent path."
+    ],
+    "proof": {
+      "app": "382 application tests pass,16 ignored; the visual-shell integration case remains separately ignored. New tests exercise the production ownership method with existing fixture geometry, verify1000 repeated invalidations preserve the full active total and geometry identity while history capacity is released, and verify dependent/absent scenes fully invalidate.",
+      "scope": "CPU ownership transition proof; no native-window/input or resize CPU qualification claimed. Existing history tests for pinned retirement, deduplication, active pressure and six-entry retention pass. Renderer source is unchanged; previous renderer verification remains scoped evidence.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2261, dependency authority and governance checks pass.",
+      "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "This preserves the existing complete scene payload estimate across surface invalidation; it does not complete allocator/Arc/registry metadata accounting, pre-construction peak admission, all external scene ownership or schematic/document-wide aggregation. Oversized required active scenes still have the previously recorded admission limitations. No full MEM-WORLD-CPU/HISTORY closure.",
+      "Other resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+      "No renderer reuse criterion, drawing, prototype, numerical budget, dependency, vendoring or license change. No native input or benchmark campaign. GEFN preserved; unresolved resize CPU investigation/qualification remains nonblocking and was not reopened."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json"
   }
 }

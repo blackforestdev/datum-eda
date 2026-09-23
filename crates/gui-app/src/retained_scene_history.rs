@@ -70,12 +70,31 @@ impl RetainedSceneHistory {
         if let Some(observer) = self.active_geometry.take() {
             self.observe_retired(observer);
         }
+        self.active_bytes = 0;
+        self.clear_history_preserving_active();
+    }
+
+    fn clear_history_preserving_active(&mut self) {
         while !self.entries.is_empty() {
             self.evict(0);
         }
         self.entries = Vec::new();
-        self.active_bytes = 0;
         self.prune_retired();
+    }
+
+    /// Runtime keeps the exact registered scene when its construction is size
+    /// independent. Preserve its complete cached charge without rewalking hits
+    /// or draw commands on every resize; obsolete history still retires.
+    pub(super) fn invalidate_surface_size(&mut self, active: &mut Option<RetainedScene>) {
+        if active
+            .as_ref()
+            .is_some_and(RetainedScene::can_reuse_for_surface_resize)
+        {
+            self.clear_history_preserving_active();
+        } else {
+            *active = None;
+            self.clear();
+        }
     }
 
     fn owned_history_bytes(&self) -> usize {
@@ -296,7 +315,7 @@ impl Runtime {
 mod tests {
     use super::*;
 
-    fn key(index: usize) -> RetainedSceneCacheKey {
+    pub(super) fn key(index: usize) -> RetainedSceneCacheKey {
         RetainedSceneCacheKey {
             scene_id: format!("scene-{index}"),
             source_revision: "revision".into(),
@@ -313,7 +332,7 @@ mod tests {
         }
     }
 
-    fn scene() -> RetainedScene {
+    pub(super) fn scene() -> RetainedScene {
         RetainedScene::from_workspace(
             &datum_gui_protocol::load_fixture_workspace_state(),
             960,
@@ -426,3 +445,7 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "retained_scene_resize_tests.rs"]
+mod resize_tests;

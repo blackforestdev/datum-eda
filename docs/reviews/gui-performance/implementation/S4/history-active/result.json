@@ -1,0 +1,52 @@
+{
+  "status": "Default surface invalidation preserves the complete registered active-scene charge when geometry is reused; complete world resource accounting remains unfinished",
+  "base_commit": "1b1af038",
+  "production_consumers": [
+    "Runtime::invalidate_surface_size for the Main retained scene",
+    "RetainedSceneHistory shared history/active/retiring ownership transition"
+  ],
+  "retired_paths": [
+    "Clearing the active accounting registration while Runtime retains a resize-independent scene",
+    "Counting only weakly observed shared geometry after that clear, omitting the still-live command and hit-index capacities"
+  ],
+  "behavior": [
+    "Move the board scene/history resize decision into one shared ownership transition. If the registered active scene is size-independent, retire obsolete history entries while keeping its cached active bytes and geometry observer.",
+    "If the scene is absent or depends on surface size, drop it and clear active/history accounting using existing retiring-geometry observation. Preserve the existing renderer reuse predicate and all prepared-scene/hit invalidation behavior.",
+    "Reuse the active byte total already computed at construction/restore; repeated surface invalidation does not traverse draw commands or the hit index merely to restore accounting. Schematic handling retains its existing independent path."
+  ],
+  "proof": {
+    "app": "382 application tests pass,16 ignored; the visual-shell integration case remains separately ignored. New tests exercise the production ownership method with existing fixture geometry, verify1000 repeated invalidations preserve the full active total and geometry identity while history capacity is released, and verify dependent/absent scenes fully invalidate.",
+    "scope": "CPU ownership transition proof; no native-window/input or resize CPU qualification claimed. Existing history tests for pinned retirement, deduplication, active pressure and six-entry retention pass. Renderer source is unchanged; previous renderer verification remains scoped evidence.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2261, dependency authority and governance checks pass.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "This preserves the existing complete scene payload estimate across surface invalidation; it does not complete allocator/Arc/registry metadata accounting, pre-construction peak admission, all external scene ownership or schematic/document-wide aggregation. Oversized required active scenes still have the previously recorded admission limitations. No full MEM-WORLD-CPU/HISTORY closure.",
+    "Other resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+    "No renderer reuse criterion, drawing, prototype, numerical budget, dependency, vendoring or license change. No native input or benchmark campaign. GEFN preserved; unresolved resize CPU investigation/qualification remains nonblocking and was not reopened."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-active/tests.log.gz",
+      "uncompressed_sha256": "a45537d29500106ea0b2d33afcae2a85bda2062b7080fa3907aeaba12ce2505c"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-active/clippy.log.gz",
+      "uncompressed_sha256": "e5511b4939fbe176681e9a451a99cbc5e66185a88541595e61b6d61ade6c39a7"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-active/build.log.gz",
+      "uncompressed_sha256": "99afa3baebc3acd8d6fbea8055d70bc89cf080cdc21fcbd0317ad3c03a2d7742"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-active/drift.log.gz",
+      "uncompressed_sha256": "c275533b19579987b60ed3dcda085b358bb94f7731afb412cbb4620d2162eec8"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/interaction_refresh.rs": "8f0f12208367cbbeec495f26070bc1ea132e6aa9c43af4c8ac81e75a1fdc50ff",
+    "crates/gui-app/src/retained_scene_history.rs": "e328e246e56d79a3afa524f410a9c675c3c64a3e5da89f409794836b4e6fd0cd",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "11d852c7505dbdd276dabe14c4c90b4ad651ec75ac83936f8abec2ee161839f1"
+  }
+}

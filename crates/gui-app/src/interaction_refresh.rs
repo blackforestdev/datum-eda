@@ -41,14 +41,8 @@ impl Runtime {
         self.presented_hits.clear();
         // Historical entries carry old surface keys. Preserve only live geometry
         // whose construction has no dependency on the reference projection size.
-        self.retained_scene_cache.clear();
-        if self
-            .retained_scene
-            .as_ref()
-            .is_some_and(|scene| !scene.can_reuse_for_surface_resize())
-        {
-            self.retained_scene = None;
-        }
+        self.retained_scene_cache
+            .invalidate_surface_size(&mut self.retained_scene);
         if self
             .schematic_retained_scene
             .as_ref()
