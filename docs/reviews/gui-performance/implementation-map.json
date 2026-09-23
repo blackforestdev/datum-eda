@@ -5409,7 +5409,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
         "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP10-02",
@@ -5534,7 +5535,8 @@
         "retired_paths": [],
         "proof": "Real Board Runtime test passes X11/Wayland at1/1.5/2x override: Layers quarter/1.25-line inputs preserve ceil-to-row policy and match equivalent physical pixels; corresponding camera increments match physical/line input in both directions. Layers leaves camera unchanged; boundary/outside no-op and prepared-scene-cache assertions retained. Isolated double physical scaling fails Layers1.5x on both backends (one row instead of two). Copy restored; normal root app explicitly recompiled and both1.5x tests pass. Workspace Clippy/source-policy13 and relevant gates pass.",
         "limits": "Direct Runtime::handle_native_wheel calls on real native-host Runtime, not OS delivery or the outer App WindowEvent dispatcher. Layers geometry/hit regions prepared and published for test; no actual Main scrolled-pixel or native final-target capture acceptance. Camera is reset to its initial view between equivalent input comparisons; authored board unchanged. Width/height1280x800 at1x,1918x1050 at1.5/2x; overrides are not OS monitor transitions. Negative stops in Layers before camera comparisons, so no independent camera negative claimed. Terminal/console, timed workloads and full HP10/HP19/S3 remain open. Production source/release unchanged; no dependency/license/prototype/resource/resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP11-01",
@@ -5749,7 +5751,8 @@
         "retired_paths": "Both native preparation entries stop calling ShellLayout::for_surface -> for_window -> solve_shell_layout_with_taffy. Native dialog preparation no longer constructs/solves the unused six-leaf-plus-root editor grid; both Preferences and New share rounded extent construction.",
         "proof": "219 renderer tests pass. Existing Preferences legacy comparison retains identical vertices/text/hits across profiles; New constrained form compares native layout against old shell layout at1/1.5/2x and retains reveal tests. All native profiles assert empty editor regions and physical clip/hit bounds. GPU dialog parity passes1 test/259 filtered against general and legacy rendering. Workspace Clippy, fresh release and13 source-policy tests pass. New binarybcbe537b native Global/Project1.5x and New2x scrollbar close/release/fresh Main click replays pass.",
         "limits": "Structural removal of native editor-shell solver work, not a numerical CPU/allocation budget or full HP12/HP13 acceptance. ShellLayout remains the prepared-scene envelope; status-edge arithmetic retained for exact dialog geometry. Main editor still uses its governed shell solver. No new solver-counter conformance or isolated shell-solver negative replay. Remaining S3 native/backend/visual/resource qualification stays open. No dependency/license/prototype/resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP12-02",
@@ -5954,7 +5957,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
         "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
         "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP13-01",
@@ -6102,7 +6106,8 @@
         "retired_paths": "Both native preparation entries stop calling ShellLayout::for_surface -> for_window -> solve_shell_layout_with_taffy. Native dialog preparation no longer constructs/solves the unused six-leaf-plus-root editor grid; both Preferences and New share rounded extent construction.",
         "proof": "219 renderer tests pass. Existing Preferences legacy comparison retains identical vertices/text/hits across profiles; New constrained form compares native layout against old shell layout at1/1.5/2x and retains reveal tests. All native profiles assert empty editor regions and physical clip/hit bounds. GPU dialog parity passes1 test/259 filtered against general and legacy rendering. Workspace Clippy, fresh release and13 source-policy tests pass. New binarybcbe537b native Global/Project1.5x and New2x scrollbar close/release/fresh Main click replays pass.",
         "limits": "Structural removal of native editor-shell solver work, not a numerical CPU/allocation budget or full HP12/HP13 acceptance. ShellLayout remains the prepared-scene envelope; status-edge arithmetic retained for exact dialog geometry. Main editor still uses its governed shell solver. No new solver-counter conformance or isolated shell-solver negative replay. Remaining S3 native/backend/visual/resource qualification stays open. No dependency/license/prototype/resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP13-02",
@@ -6188,7 +6193,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-painter-order-negative/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP14-01",
@@ -6368,7 +6374,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/choice-measurement-labels/result.json",
         "proof": "218 renderer tests pass; existing GPU dialog parity test passes1 with258 filtered; fresh guarded offline release build passes. Source health and dependency authority pass.",
         "limits": "Removes one temporary String allocation per available SingleChoice preparation by source inspection. No aggregate allocation or frame-time measurement. Unavailable formatting, text-run ownership, shaping cache and labels/geometry remain unchanged. No new native qualification, full HP14/S3 acceptance, prototype/dependency/license/resource deadline or resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP14-02",
@@ -6471,7 +6478,8 @@
         "retired_paths": "None in this verification slice; exercise existing close and reconstruction ownership.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-reopen-cache/result.json",
         "limits": "Native X11/Xwayland at 1x override, 1000x750, existing release binary and opt-in timing diagnostics. No new production consumers or competing paths retired. Cold misses and distinct window identities corroborate renderer-cache recreation; they do not measure complete FontSystem, atlas, allocator, scratch, GPU or in-flight release. Full resource implementation remains S4 and qualification S5. Remaining working-set/native/backend and S3 exit proof stays open. No performance, dependency, license, prototype, budget or resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP15-01",
@@ -6750,7 +6758,8 @@
       },
       "s3_native_control_build_counts_progress": "218 renderer tests, app/test Clippy and release build pass. Real X11 GLOBAL/PROJECT1x OS scrollbar roundtrips retain build totals23/20 across bottom/top/bottom. Isolated lookup bypass fails both hosts with102/124/148 and94/116/140 builds. Restored release SHA matches positive exactly and both native positives repeat. Cumulative count belongs to one renderer lifetime and saturates at usize::MAX; a saturated/reset series cannot qualify work deltas. Work count only, not CPU/GPU bytes or complete ACC/method/overhead qualification. Existing cache-build tests and native negative provide bounded count sensitivity, not global counter admission. MAIN/NEW are instrumented but not newly qualified; remaining consumer/backend/scale/fractional and resource proofs remain open. No visual/layout/dependency/license/resize change or full S3 acceptance.",
       "s3_main_new_native_control_reuse_progress": "NEW delivers10 non-synthetic Tab releases with changed native presentations; second five-step cycle stays at14 control builds and produces0 Main preparations/presentations. Its negative rises72/81/90/99/108 in that cycle and fails. MAIN opens/closes File twice with native pointer/Escape delivery; control builds stay1 while negative rises4/5/6/7 and fails. Main open/closed captures visually confirm menu states. Normal release SHA remains unchanged. Bounded1x X11 scenarios only. NEW final capture shows earlier UnitsSummary focus rather than final expected Name; no final-focus/capture reliability claim. Main counts describe shared pane-focus mesh during menu activity; rectangular menu controls remain direct primitives, not newly cached meshes. No Inspector selection-state, all-profile/backend/fractional/AA, resource/method or full HP16/S3 acceptance. SIGTERM not teardown proof. No dependency/license/prototype/resize or sequencing change.",
-      "s3_preferences_native_control_profiles_progress": "Four positives retain Global23/Project20 builds across bottom/top/bottom at1440x1050 (1.5 override) and1918x1050 (2 override). All four existing cache-lookup-bypass negatives fail with increasing build counts. Project2x final image shows bottom rows and thumb. Visual-scale overrides are not OS monitor/DPI transitions. Actual KWin-constrained extents are recorded, not requested1440x1080/1920x1440. Global1.5/2 images still show Appearance and Project1.5 an earlier top state; their final displayed states remain unqualified. Work-count passes do not establish capture reliability, all controls/settings, fractional input, other backends, byte bounds or full HP16/S3 acceptance. SIGTERM not teardown proof. No source/dependency/license/prototype/resource/resize change."
+      "s3_preferences_native_control_profiles_progress": "Four positives retain Global23/Project20 builds across bottom/top/bottom at1440x1050 (1.5 override) and1918x1050 (2 override). All four existing cache-lookup-bypass negatives fail with increasing build counts. Project2x final image shows bottom rows and thumb. Visual-scale overrides are not OS monitor/DPI transitions. Actual KWin-constrained extents are recorded, not requested1440x1080/1920x1440. Global1.5/2 images still show Appearance and Project1.5 an earlier top state; their final displayed states remain unqualified. Work-count passes do not establish capture reliability, all controls/settings, fractional input, other backends, byte bounds or full HP16/S3 acceptance. SIGTERM not teardown proof. No source/dependency/license/prototype/resource/resize change.",
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP16-02",
@@ -6864,7 +6873,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/retained-control-gpu/result.json",
         "proof": "72 GPU comparisons: four shape cases, three fractional placements, clipped/unclipped and three DPI cache keys. Exact scanline-reference pixels;12 builds. Isolated no-reuse defect fails second-draw build assertion; byte-restored source passes.",
         "limits": "DPI values exercise cache identity, not native monitor transitions or scaled surface profiles. Both paths use shared arc generation and clipping, so this is fan-versus-scanline parity and reuse proof, not independent arc/clip correctness. No native adapter, actual complete working set, GPU resource accounting, frame-time or full HP16/S3 qualification. Runtime, dependency/license, prototype, resource deadlines and resize scope unchanged."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP16-03",
@@ -6967,7 +6977,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP17-01",
@@ -7230,7 +7241,8 @@
         "retired_paths": [],
         "proof": "Existing real-surface native input test now checks every supplied wheel delta against an independent logical-offset arithmetic oracle. Quarter-pixel deltas divide by scale once; quarter-line deltas move10 logical pixels. Forward/reverse sequences, bottom clamp/outward/reversal and horizontal-only pixel input retain expected offsets; restore original offset before existing control/capture/close assertions.12 host/profile cases pass on each of X11 and Wayland using one test binary. Workspace Clippy and13 source-policy tests pass.",
         "limits": "Supplied WindowEvents through production entry, not OS-generated/delivered wheel streams.79 bounded wheel assertions per case, not timed30s/120Hz W-SCROLL or native monitor-scale movement. Maximum is read from actual laid-out viewport; this does not independently qualify extent computation. Original offset is restored without an extra presentation before existing target tests; no intermediate scrolled-pixel acceptance. First Wayland attempt stalls after first offset sequence at extra hidden-window presentation and exits124 under90s timeout; obsolete extra presentation removed, failure retained. No new isolated converter negative. Main/Layers/terminal and remaining native/profile qualification stay open. No production/dependency/license/prototype/resource-deadline/resize changes."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP19-01",
@@ -7428,7 +7440,8 @@
         ],
         "retired_paths": "Existing native test no longer silently skips reversal when startup history is empty. No production path retired in this verification slice.",
         "limits": "Real native backend Runtime and PTY with supplied wheel deltas, not OS event delivery, outer App dispatch, visible final pixels, terminal mouse-report bytes or monitor DPI transition. Scale uses Runtime override; actual accepted extents recorded. No W-SCROLL timing, full HP19/S3 qualification, resource/latency or global adoption claim. Production Rust/release behavior unchanged in this slice. No dependencies/licenses/prototypes/budgets or nonblocking resize scope changed."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP20-01",
@@ -7531,7 +7544,8 @@
         "retired_paths": "No runtime retirement; scaled native qualification of existing shared paths.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP21-01",
@@ -7720,7 +7734,8 @@
       "s3_native_entry_backends_progress": {
         "proof": "Same test binary passes both native backends:12 Wayland host/profile closes with10 scrollbar focus-cancel/fresh-control cases, and12 X11 closes with9 scrollbar cases. Global/Project/New all enter production native event routing on real native surfaces. Source-policy13 tests and workspace Clippy pass. No production source/release change.",
         "limits": "WindowEvents are supplied directly using a real ActiveEventLoop, not OS-generated input. Wayland2x requested1400x1080 (Preferences) and1240x1240 (New) were constrained to heights1050; assert renderer configuration equals accepted extent and retain unavailable requested-size rows as unqualified. Visual scale override does not prove monitor transitions. Initial exact-size assertion failure retained. No new negative replay, screenshots, timing/resource/OS delivery or complete HP21/S3 acceptance. Existing X11 missing-cancellation negative remains earlier evidence. Production releasebcbe537b unchanged; no dependency/license/prototype/resource-deadline/resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP21-02",
@@ -7865,7 +7880,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
         "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
         "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP22-01",
@@ -8101,7 +8117,8 @@
         "preserved": "Measured terminal tab strip, existing resize handle, normal content geometry, terminal cell/split/PTY authority and painting order. Collapsed content width now follows shared zero-width clamp instead of private one-pixel clamp.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json",
         "limits": "Structural retirement and actual-rendered-geometry regression, not numerical CPU/resource or complete native pixel/HP/S3 qualification. Very narrow test extents are deterministic geometry cases, not supported native window-size acceptance. No dependency/license/prototype/budget/deadline or resize-qualification change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP22-02",
@@ -8253,7 +8270,8 @@
         "retired_paths": "No runtime path retirement; removes false-pass gap in existing scroll regression by requiring pinned search presence and unchanged hit/text layout.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/pinned-search-negative/result.json",
         "limits": "Existing actual Preferences preparation regression at four size/scale cases, not native window dispatch or complete GPU pixel/static qualification. Only test strengthened in active checkout; injected clipping/translation live in isolated source copy and are restored. Other consumers/native profiles and full HP22/S3 remain open. No production behavior, dependency/license/prototype/budget/resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP23-01",
@@ -8442,7 +8460,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
         "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
         "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP23-02",
@@ -8589,7 +8608,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json",
         "proof": "System Python Gio available. Installed org.freedesktop.portal.RemoteDesktop reports version2, device mask7, pointer/axis/keyboard methods. CreateSession and SelectDevices(types3) succeed. KWin confirms portal-owned Remote control requested prompt. No Start response before600s; helper closes Session and KWin reports no remaining portal window. No input, screen capture or network session requested/executed.",
         "limits": "Desktop consent remains required before portal input can run. No Wayland event delivery, fractional scroll, focus, reduced-motion or HP23/S3 qualification follows. Target driver prepared and syntax checked only; revised command-dispatch branch is unexecuted. No new request will be opened automatically. No production/dependency/license/prototype/resource deadline/resize change."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
     },
     {
       "id": "HP24-01",
@@ -28636,11 +28656,11 @@
     }
   },
   "s3_exit_reconciliation": {
-    "status": "S3 production migrations have bounded consumer evidence; functional exit qualification remains incomplete. Current reconciliation supersedes obsolete obstacle descriptions, not historical receipts.",
+    "status": "Historical full-qualification reconciliation retained. Owner-approved bounded S3 exit now controls readiness; unfinished qualification is required at S5.",
     "exit_obstacles": [
       {
-        "kind": "remaining S3 functional qualification",
-        "detail": "Complete the exact per-predicate actions in current_review.remaining_actions, preserving positive/negative/native consumer scope. New regressions still block advancement; successful helper or opt-in observations do not complete all consumers."
+        "kind": "bounded implementation readiness review",
+        "detail": "Reconcile recorded production adoption and known failures against approved S3 exit before S4; remaining_actions now specifies S5 qualification, not mandatory S3 replay."
       }
     ],
     "scope": "No predicate marked passed, no acceptance rule changed, no S3 completion or S4 selection. Resource associations and original failed receipts remain intact.",
@@ -30437,9 +30457,9 @@
     "cleanup": "Both owned targets exit0 after SIGTERM cleanup. Portal explicitly closed and display restored to1.05; kscreen-doctor confirms1829x1029 logical geometry and1.05 scale. Cleanup is not overall application teardown qualification."
   },
   "s3_bounded_exit_review": {
-    "status": "Prepared readiness assessment and sequencing proposal; owner review pending. S3 remains in progress under current exit.",
+    "status": "Owner approved exact ccf42618 four-clause proposal; applied. Readiness determination remains separate.",
     "reviewed_head": "5e4b84ec",
-    "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-amendment-s3-bounded-implementation-exit",
+    "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s3-bounded-implementation-exit",
     "finding": "Recorded default production adoption and affected proof support a bounded-readiness exit proposal. No new missing shared-component migration was identified in the reviewed inventory. This is not full row qualification, independent replay, or a completed S3 exit under the currently effective contract.",
     "production_inventory": [
       {
@@ -30599,7 +30619,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP10-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP10-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30610,7 +30630,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP10-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP12-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30621,7 +30641,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP12-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP12-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30632,7 +30652,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP12-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP13-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30644,7 +30664,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP13-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP13-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30656,7 +30676,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP13-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP14-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30667,7 +30687,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP14-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP14-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30678,7 +30698,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP14-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP16-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30693,7 +30713,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP16-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP16-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30708,7 +30728,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP16-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP16-03": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30723,7 +30743,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP16-03",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP18-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30735,7 +30755,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP18-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP19-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30748,7 +30768,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP19-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP20-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30760,7 +30780,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP20-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP21-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30772,7 +30792,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP21-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP21-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30784,7 +30804,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP21-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP22-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30799,7 +30819,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP22-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP22-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30814,7 +30834,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP22-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP23-01": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30826,7 +30846,7 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP23-01",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       },
       "HP23-02": {
         "current_status": "unchanged; original test status remains authoritative",
@@ -30838,18 +30858,22 @@
         "acceptance_rule": "unchanged in this requirement row",
         "remaining_work_ref": "s3_exit_reconciliation.current_review.remaining_actions.HP23-02",
         "proposed_qualification_deadline": "GPI-S5",
-        "deadline_effective": false
+        "deadline_effective": true
       }
     },
     "finite_readiness_remainder": [
-      "Owner disposition of the exact four-clause replacement; current resource-only amendment does not authorize this broader transfer.",
-      "Apply approved contract/Frontier/row deadlines together, then record the bounded-readiness determination and select S4 only if no missing adoption or unexplained implementation regression is found."
+      "Complete evidence-based readiness determination against approved exit; select S4 only if no missing default adoption or unexplained implementation regression remains."
     ],
     "execution_limits": [
       "No new benchmark, Cargo rebuild, desktop session or unaffected negative replay for this documentation review.",
       "An actual new regression triggers a focused reproduction/fix, not automatic reopening of the entire native matrix.",
       "The original per-row scenarios and consumer applicability bound S5 work. No nonexistent Inspector adapter or unsupported requested native size is invented.",
       "All original requirements, failures, partial statuses, S4 resource implementation, S5 comprehensive qualification and resize exclusions remain unchanged until explicit amendment disposition."
-    ]
+    ],
+    "owner_disposition": {
+      "response": "proceed",
+      "context": "Direct response to request to approve exact four-clause S3 exit amendment in ccf42618",
+      "effect": "Qualification due at S5; S3 bounded readiness requires separate evidence-based exit review."
+    }
   }
 }

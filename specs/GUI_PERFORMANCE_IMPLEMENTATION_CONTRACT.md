@@ -57,9 +57,9 @@ earlier proven behavior; it is not a destructive reset of shared work.
 | S0 | Separate owner execution grant; pin current source/fixture/environment, select the first bounded S1 change from attributable work or a demonstrated correctness defect, and validate only the measurements used for that selection and its proof | Record production entry points, matched baseline, verified input/final state, applicable counters and their conformance/overhead, relevant static/input regressions, and every outstanding ADM/GPU/ACC obligation with its owning S1–S4 component. No global admission, budget or performance pass follows. Keep measurement repair separable from behavior changes. |
 | S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | Establish implementation readiness from the current production call-site inventory for all four native hosts, retired competing default paths, shared-owner correctness regressions, actual per-host native adapter evidence, and implemented surface-generation/submission/attachment-lifetime accounting. Preserve bounded affected-change positive/negative evidence and all failed attempts; an unexplained regression still blocks advancement. Record each unfinished SH/LF/affected-HP predicate in its existing map row. Outstanding prescribed per-row negative-control replays, complete native final-state/static/input/focus coverage, backend/scale coverage and full resource/method qualification become explicit S5 exit prerequisites. They remain unqualified, not satisfied by S1 readiness. Rollback preserves coherent shared adoption. Resize qualification stays separately nonblocking. |
 | S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Establish bounded shared-implementation readiness from the default production consumers of retained world, encoding, screen/uniform upload and shaped-text ownership; retired competing paths; affected warm/replacement/eviction and painter/AA/text correctness proofs; and explicit resource limits. Keep each unfinished implementation and qualification predicate in its existing map row. Complete accounting/caps, exact changed-range transfers and complete shaping/layout dependency implementation are S4 exit prerequisites; full native/replacement/device-reset/negative and budget qualification is required at S5. Partial limits are not complete byte caps. Unexplained regressions block readiness. Preserve separately reversible geometry/text/upload patches. |
-| S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. Only the complete S2-owned resource accounting/cap dependencies of HP14-01, HP14-02 and HP16-03 follow the approved S4 implementation and S5 qualification deadlines. S3 still requires shared production adoption, bounded warm reuse/eviction behavior and the other functional/input/focus/pass predicates at explicitly recorded current limits. Complete resource bounds, including the working-set resource precondition of HP14-01, remain unqualified until S5; implementation must be complete at S4. Record these resource dependencies individually against the existing MEM rows in the adoption map without changing acceptance rules or marking them passed. No other S3 predicate moves, and unexplained regressions still prevent advancement. |
+| S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | Establish bounded shared-implementation readiness from the current default production consumers of shared dialog/control/scroll/clip/hit owners, retirement of the New Project general backdrop and competing machinery, affected correctness and defect-sensitive tests, bounded native adapter evidence, and warm reuse/eviction behavior at explicitly recorded limits. Preserve legitimate discrete Layers/terminal semantics and existing preference/project authority. Record every unfinished S3 qualification predicate individually in its existing adoption-map row as required at S5, including complete per-consumer native input/focus/final-state/static appearance, backend/scale, prescribed negative controls, pass/forbidden-work and cache qualification. None becomes passed through readiness. Missing default-path adoption or an unexplained implementation regression still blocks S3 exit. Complete S2-owned resource dependencies retain their S4 implementation and S5 qualification deadlines. No other unfinished implementation is deferred by this amendment. |
 | S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. Complete every unfinished S2 accounting/cap, exact changed-range transfer and shaping/layout dependency implementation carried in the adoption map, with affected positive/negative and counter-conformance proof. Private dependency internals remain a technical boundary to resolve within owner-authorized scope, not a waiver or permission to modify third-party code. |
-| S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. Close every in-scope SH/LF/affected-HP predicate carried from S1, including prescribed negative controls and native final-state/static/input/focus and complete resource/method proof. S1 readiness does not waive any such result. Close every in-scope qualification predicate carried from S2, including exact warm/replacement/address-reuse/eviction/device-reset negatives, painter/AA/text parity, complete byte caps and ACC-01/02 conformance across the required consumers/configurations. Unfinished implementation at S4 blocks S5 entry; moving a predicate does not satisfy it. |
+| S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. Close every in-scope SH/LF/affected-HP predicate carried from S1, including prescribed negative controls and native final-state/static/input/focus and complete resource/method proof. S1 readiness does not waive any such result. Close every in-scope qualification predicate carried from S2, including exact warm/replacement/address-reuse/eviction/device-reset negatives, painter/AA/text parity, complete byte caps and ACC-01/02 conformance across the required consumers/configurations. Unfinished implementation at S4 blocks S5 entry; moving a predicate does not satisfy it. Close every outstanding qualification predicate carried from S3, under its unchanged acceptance rule and actual applicable consumer scope. Consolidate native input/focus/final-state/static appearance, backend/scale, negative-control, pass/forbidden-work and cache proof with the existing pinned-candidate qualification. S3 readiness is not full adoption or performance acceptance. Missing proof and unresolved failures remain explicit; qualification is not satisfied merely by moving its deadline. |
 
 S1 owns scheduler/surface generations, redraw/configure/acquire/submit/present
 counts and changed surface-resource lifetime accounting. S2 owns retained
@@ -165,7 +165,7 @@ record remains history, not a competing live contract.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S3 -->
 
-**GPI-S3.** Adopt shared dialog/control/scroll/clip/hit paths; remove New Project backdrop and competing paths with per-adapter proof.
+**GPI-S3.** Adopt shared dialog/control/scroll/clip/hit owners in default production consumers, retire New Project backdrop and competing paths, and establish bounded implementation readiness under the S3 table. Preserve unfinished qualification individually for S5; do not declare global acceptance.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4 -->
 
@@ -326,72 +326,25 @@ This approval does not complete S3, qualify resource bounds, solve private
 resource accounting, authorize dependencies, change numerical budgets or alter
 the nonblocking resize exclusion. S3 remains selected and in progress.
 
-## Proposed amendment: S3 bounded implementation exit
+The subsequently approved S3 bounded implementation exit supersedes only the requirement that all remaining S3 functional/native/negative qualification precede S4. Those obligations now precede S5 completion; their original acceptance rules remain unchanged. The earlier S4 resource implementation deadline remains binding. A separate evidence-based readiness review still precedes S3 completion and S4 selection; approval alone completes neither. Unexplained implementation regressions remain blocking. The historical approval and failed evidence are preserved.
 
-Status: prepared for owner review; not applied. The owner requested faster,
-bounded execution after reviewing the cost of fragmented S3 validation. That
-direction authorizes this concrete proposal and readiness reconciliation; it is
-not recorded as approval of the replacement exit criteria below.
+## Owner amendment: S3 bounded implementation exit
 
-The existing adoption map's `s3_bounded_exit_review` records the production
-inventory, credited evidence, known failures and all 20 affected requirement
-IDs. It is a review of existing implementation, not new runtime proof. The
-following four edits are the complete proposed contract change:
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-EXIT-APPROVED -->
 
-1. Replace the S3 table's required-evidence cell with:
+The owner replied `proceed` to the explicit request to approve the exact
+four-clause amendment in commit `ccf42618`. All four edits are applied: the
+S3 table and GPI-S3 define bounded implementation readiness, the S5 table
+requires every carried qualification predicate, and the earlier resource-only
+clarification is explicitly superseded for qualification timing. Its S4
+resource implementation deadline remains unchanged.
 
-   > Establish bounded shared-implementation readiness from the current default
-   > production consumers of shared dialog/control/scroll/clip/hit owners,
-   > retirement of the New Project general backdrop and competing machinery,
-   > affected correctness and defect-sensitive tests, bounded native adapter
-   > evidence, and warm reuse/eviction behavior at explicitly recorded limits.
-   > Preserve legitimate discrete Layers/terminal semantics and existing
-   > preference/project authority. Record every unfinished S3 qualification
-   > predicate individually in its existing adoption-map row as required at S5,
-   > including complete per-consumer native input/focus/final-state/static
-   > appearance, backend/scale, prescribed negative controls, pass/forbidden-work
-   > and cache qualification. None becomes passed through readiness. Missing
-   > default-path adoption or an unexplained implementation regression still
-   > blocks S3 exit. Complete S2-owned resource dependencies retain their S4
-   > implementation and S5 qualification deadlines. No other unfinished
-   > implementation is deferred by this amendment.
+The existing adoption map retains all 20 S3 rows and their original acceptance
+rules, partial statuses, failed evidence and remaining actions, assigning
+unfinished qualification to S5. No missing production adoption or unexplained
+implementation regression is deferred. Approval alone does not complete S3;
+an evidence-based readiness review must precede S4 selection.
 
-2. Append to the S5 table's required-evidence cell:
-
-   > Close every outstanding qualification predicate carried from S3, under
-   > its unchanged acceptance rule and actual applicable consumer scope.
-   > Consolidate native input/focus/final-state/static appearance, backend/scale,
-   > negative-control, pass/forbidden-work and cache proof with the existing
-   > pinned-candidate qualification. S3 readiness is not full adoption or
-   > performance acceptance. Missing proof and unresolved failures remain
-   > explicit; qualification is not satisfied merely by moving its deadline.
-
-3. Replace the GPI-S3 completion action with:
-
-   > Adopt shared dialog/control/scroll/clip/hit owners in default production
-   > consumers, retire New Project backdrop and competing paths, and establish
-   > bounded implementation readiness under the S3 table. Preserve unfinished
-   > qualification individually for S5; do not declare global acceptance.
-
-4. Append the following supersession to the approved S3 resource clarification:
-
-   > The subsequently approved S3 bounded implementation exit supersedes only
-   > the requirement that all remaining S3 functional/native/negative
-   > qualification precede S4. Those obligations now precede S5 completion;
-   > their original acceptance rules remain unchanged. The earlier S4 resource
-   > implementation deadline remains binding. A separate evidence-based
-   > readiness review still precedes S3 completion and S4 selection; approval
-   > alone completes neither. Unexplained implementation regressions remain
-   > blocking. The historical approval and failed evidence are preserved.
-
-If approved, apply all four edits together, mirror GPI-S3 in the Frontier and
-generated progress, and assign the 20 listed rows' unfinished qualification to
-S5 without changing their partial statuses. This avoids leaving the earlier
-S3 prerequisite in force while claiming permission to advance. The pending
-proposal itself neither selects S4 nor changes any deadline.
-
-Bounded evidence may be reused for unchanged code and applicable scenarios;
-affected regressions must be checked after relevant changes. Final S5 proof,
-independent replay and endurance remain required. No new framework, dependency,
-prototype change, reduced numerical budget, invented Inspector scroll adapter,
-resize investigation or acceptance waiver is proposed.
+No dependency, prototype, numerical budget, independent replay, endurance or
+nonblocking resize boundary changes. Reuse bounded evidence for unchanged
+code/scenarios; check affected regressions after relevant changes.
