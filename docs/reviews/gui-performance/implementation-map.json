@@ -17099,6 +17099,11 @@
           "work": "s4_sparse_upload_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
           "status": "Exact aligned destination runs and bounded-command scatter now replace internal clean-gap transfers. Protocol metadata and both packet capacities are charged; superseded plans, full boundary counters and qualification remain open."
+        },
+        {
+          "work": "s4_glyph_metadata_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/result.json",
+          "status": "Pending glyph upload metadata admitted with pixel/GPU staging; complete staging and atlas CPU accounting remain open"
         }
       ]
     },
@@ -17270,6 +17275,11 @@
           "work": "s4_sparse_upload_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
           "status": "Exact aligned destination runs and bounded-command scatter now replace internal clean-gap transfers. Protocol metadata and both packet capacities are charged; superseded plans, full boundary counters and qualification remain open."
+        },
+        {
+          "work": "s4_glyph_metadata_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/result.json",
+          "status": "Pending glyph upload metadata admitted with pixel/GPU staging; complete staging and atlas CPU accounting remain open"
         }
       ]
     },
@@ -33712,5 +33722,33 @@
       "HP15-02 resource accounting, construction peaks/private storage and all other S4 gaps remain. Thirteen recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/inspector-width/result.json"
+  },
+  "s4_glyph_metadata_admission_work": {
+    "status": "Pending glyph upload metadata admitted with pixel/GPU staging; complete staging and atlas CPU accounting remain open",
+    "base_commit": "50542143",
+    "production_consumers": [
+      "Shared Atlas glyph preparation and mixed-frame flush for all default renderer hosts",
+      "Bounded glyph upload continuation, repack, cancellation/reset and teardown"
+    ],
+    "retired_paths": [
+      "Uncharged pending-upload Vec capacity alongside charged raster pixels",
+      "Retained empty upload-record capacity after flush or repack"
+    ],
+    "behavior": [
+      "Reserve both host 16 MiB and process 64 MiB staging permits for full PendingUpload vector capacity and Datum allocator headers before growth. Charge old and replacement storage simultaneously until moving/freeing old records. Pixel/copy preflight sees the metadata reservation.",
+      "Capacity pressure with queued glyphs yields UploadRequired without changing queued records/pixels/copy ranges. Retry follows ordinary bounded continuation. Empty queues release metadata storage and permits after full flush, final chunk, repack or reset; close drops ownership.",
+      "Expose pending_glyph_metadata_bytes separately from pending_glyph_pixel_bytes; staging totals include both, with no duplicate per-image charge."
+    ],
+    "proof": {
+      "renderer": "344 renderer tests passed, 11 diagnostic/visual cases filtered. Actual GPU glyph ownership regression fills record capacity, refuses growth under exhausted budget, preserves records/pixels/copy bytes, retries after release and verifies host/process totals and zero on repack/close. Existing cold glyph continuation verifies staged metadata plus pixels plus scratch through real submissions and pixel parity.",
+      "failure": "Initial full suite: 343 pass, one failure because its staging equality omitted newly charged record metadata (360 bytes in that sample). Updated exact ownership sum; preserved initial failed log.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy, fresh application build, source health 2273, dependency authority and governance pass.",
+      "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "MEM-STAGING-LOCAL/TOTAL remain open for other scratch/command-plan/construction ownership and qualification. Glyph lookup-map/page metadata and private font/raster ownership remain separate work; this slice does not claim complete atlas CPU accounting.",
+      "Thirteen recorded S4 implementation gaps remain; no milestone or issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/result.json"
   }
 }

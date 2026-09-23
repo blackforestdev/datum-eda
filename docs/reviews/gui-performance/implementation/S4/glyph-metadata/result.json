@@ -1,0 +1,54 @@
+{
+  "status": "Pending glyph upload metadata admitted with pixel/GPU staging; complete staging and atlas CPU accounting remain open",
+  "base_commit": "50542143",
+  "production_consumers": [
+    "Shared Atlas glyph preparation and mixed-frame flush for all default renderer hosts",
+    "Bounded glyph upload continuation, repack, cancellation/reset and teardown"
+  ],
+  "retired_paths": [
+    "Uncharged pending-upload Vec capacity alongside charged raster pixels",
+    "Retained empty upload-record capacity after flush or repack"
+  ],
+  "behavior": [
+    "Reserve both host 16 MiB and process 64 MiB staging permits for full PendingUpload vector capacity and Datum allocator headers before growth. Charge old and replacement storage simultaneously until moving/freeing old records. Pixel/copy preflight sees the metadata reservation.",
+    "Capacity pressure with queued glyphs yields UploadRequired without changing queued records/pixels/copy ranges. Retry follows ordinary bounded continuation. Empty queues release metadata storage and permits after full flush, final chunk, repack or reset; close drops ownership.",
+    "Expose pending_glyph_metadata_bytes separately from pending_glyph_pixel_bytes; staging totals include both, with no duplicate per-image charge."
+  ],
+  "proof": {
+    "renderer": "344 renderer tests passed, 11 diagnostic/visual cases filtered. Actual GPU glyph ownership regression fills record capacity, refuses growth under exhausted budget, preserves records/pixels/copy bytes, retries after release and verifies host/process totals and zero on repack/close. Existing cold glyph continuation verifies staged metadata plus pixels plus scratch through real submissions and pixel parity.",
+    "failure": "Initial full suite: 343 pass, one failure because its staging equality omitted newly charged record metadata (360 bytes in that sample). Updated exact ownership sum; preserved initial failed log.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy, fresh application build, source health 2273, dependency authority and governance pass.",
+    "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "MEM-STAGING-LOCAL/TOTAL remain open for other scratch/command-plan/construction ownership and qualification. Glyph lookup-map/page metadata and private font/raster ownership remain separate work; this slice does not claim complete atlas CPU accounting.",
+    "Thirteen recorded S4 implementation gaps remain; no milestone or issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/tests.log.gz",
+      "uncompressed_sha256": "9e339796ab485f52d227e8628dc98760937721113d6eb2eb771ae86cccd3ac78"
+    },
+    "final-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/final-tests.log.gz",
+      "uncompressed_sha256": "c92ac00e7f74cd7687e5b7d94e78a1025ecd7e18171239b1db143edf4a5bb46c"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/clippy.log.gz",
+      "uncompressed_sha256": "076650000304a8c5a434e81dfc8a521e288d86c979b2db5b867b2e0d4bf3d8c0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/build.log.gz",
+      "uncompressed_sha256": "b26df3922ceab21464fb7025c5581387223c89b1f60ac1be9893103eb927bac1"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "5eb495ce66f286b4403cb383ca2fda1d2ac38d19011d048be4118f9eaac953d3",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "97cb8dd1a4f341d1803f96f2534cdea2b5e74d0c29540dc4d9ef0dfa0043c21d",
+    "crates/gui-render/src/text_gpu/atlas.rs": "d157f2fceebc044827dcf5410be48f97288242eab5f2cf2da14eed2147b026ad",
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": "ad1ed437c913332a05487b7d9a470e07b474ecb5e1ad16e06dede2c29dcffb9f",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs": "a2de33c5046195020e3bac370c7d279272a981bdb143e6124b8747f0a37f514c",
+    "crates/gui-render/src/text_gpu/atlas/pending_metadata.rs": "fd8cf6d5d09fc313d07c318ac4023d3f2bd3ea5473369d8f456d6bf4f574d2fd"
+  }
+}

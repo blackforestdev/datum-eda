@@ -11,6 +11,8 @@ use super::lifetime::{Kind, Owner, SubmissionRef, Tracked};
 mod chunks;
 #[path = "atlas/cpu_images.rs"]
 mod cpu_images;
+#[path = "atlas/pending_metadata.rs"]
+mod pending_metadata;
 pub(crate) use cpu_images::UploadRequired;
 const RETAINED_LIMIT: u64 = 32 * 1024 * 1024;
 
@@ -87,6 +89,7 @@ pub(crate) struct Atlas {
     glyphs: HashMap<CacheKey, Option<GlyphLocation>>,
     pending_uploads: Vec<PendingUpload>,
     pending_copy_bytes: u64,
+    pending_metadata_permits: Option<[super::budget::Permit; 2]>,
     local_budget: std::sync::Arc<super::budget::Budget>,
     pub(crate) staging_budget: std::sync::Arc<super::budget::Budget>,
     texture_budget: std::sync::Arc<super::budget::Budget>,
@@ -125,6 +128,7 @@ impl Atlas {
             glyphs: HashMap::new(),
             pending_uploads: Vec::new(),
             pending_copy_bytes: 0,
+            pending_metadata_permits: None,
             local_budget: super::budget::Budget::new(RETAINED_LIMIT),
             texture_budget: super::budget::process(),
         }
@@ -167,6 +171,7 @@ impl Atlas {
             self.uploads.bytes +=
                 u64::from(upload.size[1] - upload.uploaded_rows) * u64::from(upload.stride);
         }
+        self.release_empty_pending_metadata();
         Ok(batch)
     }
 
@@ -190,6 +195,7 @@ impl Atlas {
     pub fn repack(&mut self) {
         self.glyphs.clear();
         self.pending_uploads.clear();
+        self.release_empty_pending_metadata();
         self.pending_copy_bytes = 0;
         self.generation = self
             .generation
@@ -233,6 +239,7 @@ impl Atlas {
     pub(super) fn reset(&mut self) -> Vec<Page> {
         self.glyphs = HashMap::new();
         self.pending_uploads.clear();
+        self.release_empty_pending_metadata();
         self.pending_copy_bytes = 0;
         self.generation = self
             .generation
@@ -278,10 +285,17 @@ impl Atlas {
         let padded = u64::from(
             (size[0] * bytes_per_pixel as u32).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT),
         ) * u64::from(size[1]);
-        let cpu_permits = self.reserve_cpu_image(
+        self.reserve_pending_metadata()?;
+        let cpu_permits = match self.reserve_cpu_image(
             crate::cpu_alloc::heap::capacity_bytes::<u8>(image.data.capacity()) as u64,
             padded,
-        )?;
+        ) {
+            Ok(permits) => permits,
+            Err(error) => {
+                self.release_empty_pending_metadata();
+                return Err(error);
+            }
+        };
         let mut slot = None;
         for (index, page) in self.pages.iter_mut().enumerate() {
             if page.color == color
