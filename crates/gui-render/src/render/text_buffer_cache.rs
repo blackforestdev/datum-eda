@@ -23,29 +23,25 @@ pub(super) struct CachedTextBuffer {
 
 pub(super) fn build_text_areas<'a>(
     cache: &'a [CachedTextBuffer],
-    indices: &[usize],
+    indices: &'a [usize],
     runs: &'a [TextRun],
-) -> Vec<Area<'a, crate::text_layout::Runs<'a>>> {
-    indices
-        .iter()
-        .zip(runs.iter())
-        .map(|(index, run)| Area {
-            rows: cache[*index].buffer.layout_runs(),
-            rich_spans: &run.rich_spans,
-            left: run.x,
-            top: run.y,
-            scale: 1.0,
-            bounds: run
-                .clip_bounds
-                .map_or_else(TextBounds::default, |rect| TextBounds {
-                    left: rect.x.floor() as i32,
-                    top: rect.y.floor() as i32,
-                    right: (rect.x + rect.width).ceil() as i32,
-                    bottom: (rect.y + rect.height).ceil() as i32,
-                }),
-            default_color: text_color(run.color),
-        })
-        .collect()
+) -> impl Iterator<Item = Area<'a, crate::text_layout::Runs<'a>>> {
+    indices.iter().zip(runs.iter()).map(|(index, run)| Area {
+        rows: cache[*index].buffer.layout_runs(),
+        rich_spans: &run.rich_spans,
+        left: run.x,
+        top: run.y,
+        scale: 1.0,
+        bounds: run
+            .clip_bounds
+            .map_or_else(TextBounds::default, |rect| TextBounds {
+                left: rect.x.floor() as i32,
+                top: rect.y.floor() as i32,
+                right: (rect.x + rect.width).ceil() as i32,
+                bottom: (rect.y + rect.height).ceil() as i32,
+            }),
+        default_color: text_color(run.color),
+    })
 }
 
 pub(super) fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
@@ -349,15 +345,15 @@ impl TextBufferCache {
         }
     }
 
-    fn indices_for(
+    fn fill_indices(
         &mut self,
         font_system: &mut FontSystem,
         text_runs: &[TextRun],
         width: u32,
         height: u32,
         overlay: bool,
-    ) -> (Vec<usize>, TextBufferCacheStats) {
-        let mut indices = Vec::with_capacity(text_runs.len());
+        indices: &mut impl Extend<usize>,
+    ) -> TextBufferCacheStats {
         let mut stats = TextBufferCacheStats::default();
         for run in text_runs {
             let (index, missed) = self.ensure_text_buffer(font_system, run, width, height);
@@ -373,10 +369,10 @@ impl TextBufferCache {
             } else {
                 stats.hits += 1;
             }
-            indices.push(index);
+            indices.extend(std::iter::once(index));
         }
         self.publish_usage();
-        (indices, stats)
+        stats
     }
 
     fn ensure_text_buffer(

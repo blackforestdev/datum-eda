@@ -2,6 +2,41 @@
 use super::*;
 
 impl TextBufferCache {
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn admitted_indices(
+        &mut self,
+        fonts: &mut FontSystem,
+        runs: &[TextRun],
+        width: u32,
+        height: u32,
+        overlay: bool,
+        host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) -> anyhow::Result<(
+        crate::text_gpu::staging_vec::StagingVec<usize>,
+        TextBufferCacheStats,
+    )> {
+        let bytes = crate::text_gpu::staging_vec::StagingVec::<usize>::capacity_bytes(runs.len())?;
+        self.release_layout_scratch_for(bytes, host);
+        let mut indices = crate::text_gpu::staging_vec::StagingVec::new(runs.len(), host)?;
+        let stats = self.fill_indices(fonts, runs, width, height, overlay, &mut indices);
+        Ok((indices, stats))
+    }
+
+    #[cfg(test)]
+    fn indices_for(
+        &mut self,
+        fonts: &mut FontSystem,
+        runs: &[TextRun],
+        width: u32,
+        height: u32,
+        overlay: bool,
+    ) -> (Vec<usize>, TextBufferCacheStats) {
+        let mut indices = Vec::with_capacity(runs.len());
+        let stats = self.fill_indices(fonts, runs, width, height, overlay, &mut indices);
+        (indices, stats)
+    }
+
+    #[cfg(test)]
     pub(crate) fn indices(
         &mut self,
         font_system: &mut FontSystem,
@@ -12,6 +47,7 @@ impl TextBufferCache {
         self.indices_for(font_system, text_runs, width, height, self.overlay_profile)
     }
 
+    #[cfg(test)]
     pub(crate) fn overlay_indices(
         &mut self,
         font_system: &mut FontSystem,
