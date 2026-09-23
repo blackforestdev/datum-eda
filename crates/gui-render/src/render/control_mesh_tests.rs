@@ -116,7 +116,7 @@ fn control_mesh_keys_bounds_and_lru_are_complete() {
     assert!(!cache.entries.iter().any(|entry| entry.key == key(1)));
     assert_eq!(
         cache.payload_bytes,
-        MAX_ENTRIES * 3 * std::mem::size_of::<[(f32, f32); 4]>()
+        MAX_ENTRIES * capacity_bytes::<[(f32, f32); 4]>(3)
     );
     eprintln!(
         "control cache entries={} payload_bytes={} key_bytes={} entry_storage_bytes={}",
@@ -150,7 +150,10 @@ fn control_mesh_keys_bounds_and_lru_are_complete() {
             "old payload must retire before constructing the next cacheable mesh"
         );
     }
-    assert_eq!(cache.payload_bytes, MAX_CPU_BYTES / 2);
+    assert_eq!(
+        cache.payload_bytes,
+        capacity_bytes::<[(f32, f32); 4]>(MAX_CPU_BYTES / 64)
+    );
     assert!(cache.retained_cpu_bytes() > cache.payload_bytes);
 }
 
@@ -230,7 +233,7 @@ fn metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit() {
         assert!(cache.entries.capacity() <= MAX_ENTRIES);
         assert_eq!(
             cache.retained_cpu_bytes(),
-            metadata + cache.entries.capacity() * std::mem::size_of::<Entry>()
+            metadata + capacity_bytes::<Entry>(cache.entries.capacity())
         );
         if n == 0 {
             assert!(cache.entries.capacity() < MAX_ENTRIES);
@@ -245,8 +248,10 @@ fn entry_growth_evicts_payload_even_when_the_new_mesh_bypasses_retention() {
         entries: VecDeque::with_capacity(1),
         ..Default::default()
     };
-    let count =
-        (MAX_CPU_BYTES - cache.retained_cpu_bytes()) / std::mem::size_of::<[(f32, f32); 4]>();
+    let count = (MAX_CPU_BYTES
+        - cache.retained_cpu_bytes()
+        - crate::cpu_alloc::heap::tracking_bytes::<[(f32, f32); 4]>(1))
+        / std::mem::size_of::<[(f32, f32); 4]>();
     let mesh = || vec![[(0.0, 0.0); 4]; count].into_boxed_slice();
     cache.with_mesh(key(1), count, mesh, |_| {});
     assert_eq!(cache.entries.len(), 1);
@@ -258,4 +263,35 @@ fn entry_growth_evicts_payload_even_when_the_new_mesh_bypasses_retention() {
     assert!(cache.entries.is_empty());
     assert_eq!(cache.payload_bytes, 0);
     assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
+}
+
+#[test]
+fn complete_retained_cost_matches_actual_allocations_through_growth_and_eviction() {
+    let scope = crate::cpu_alloc::Scope::new("control-mesh-owned-capacity-proof");
+    let mut cache = ControlMeshCache::default();
+    for n in 0..300 {
+        scope.with(|| {
+            cache.with_mesh(
+                key(n),
+                4096,
+                || vec![[(0.0, 0.0); 4]; 4096].into_boxed_slice(),
+                |mesh| assert_eq!(mesh.len(), 4096),
+            )
+        });
+        let usage = scope.usage();
+        assert_eq!(
+            cache.retained_cpu_bytes() - std::mem::size_of::<ControlMeshCache>(),
+            (usage.payload_bytes + usage.tracking_bytes) as usize
+        );
+        assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
+        assert!(cache.build_live_bytes <= MAX_CPU_BYTES);
+    }
+    let before = cache.retained_cpu_bytes();
+    scope.with(|| cache.with_mesh(key(299), 4096, || panic!("warm mesh rebuilt"), |_| {}));
+    assert_eq!(cache.retained_cpu_bytes(), before);
+    drop(cache);
+    assert_eq!(
+        scope.usage().payload_bytes + scope.usage().tracking_bytes,
+        0
+    );
 }
