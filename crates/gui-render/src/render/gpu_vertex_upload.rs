@@ -47,6 +47,14 @@ macro_rules! world_streams {
     }};
 }
 impl Renderer {
+    /// Submitted and prepared screen comparison capacities, including Datum headers.
+    /// These reusable CPU snapshots share host/process staging admission.
+    pub fn screen_upload_snapshot_bytes(&self) -> u64 {
+        let mut bytes = self.terminal_graphics.vertex_snapshot_bytes();
+        screen_streams!(self, stream, bytes += stream.snapshot_bytes());
+        bytes
+    }
+
     /// Retained dirty-range capacities and Datum headers, charged to staging.
     /// Includes empty reusable slots; snapshot payload accounting is separate.
     pub fn screen_upload_metadata_bytes(&self) -> u64 {

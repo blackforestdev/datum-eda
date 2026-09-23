@@ -457,7 +457,8 @@ fn range_growth_refusal_preserves_submitted_bytes_and_retries_after_release() {
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
     let one = StagingVec::<std::ops::Range<usize>>::capacity_bytes(1).unwrap();
     let two = StagingVec::<std::ops::Range<usize>>::capacity_bytes(2).unwrap();
-    let host = Budget::new(one + two);
+    let snapshot = StagingVec::<u8>::capacity_bytes(64).unwrap();
+    let host = Budget::new(one + two + 2 * snapshot);
     let mut stream = ScreenBuffer::default().with_staging_budget(host.clone());
     let baseline = [7_u32; 16];
     stream
@@ -466,10 +467,10 @@ fn range_growth_refusal_preserves_submitted_bytes_and_retries_after_release() {
     stream.flush_uploads(&device, &queue);
     assert_eq!(
         host.used(),
-        one,
+        one + snapshot,
         "empty reusable range slots remain charged"
     );
-    let blocker = host.reserve(1).unwrap();
+    let blocker = host.reserve(snapshot + 1).unwrap();
     let mut changed = baseline;
     changed[1] = 99;
     changed[14] = 100;
@@ -479,7 +480,7 @@ fn range_growth_refusal_preserves_submitted_bytes_and_retries_after_release() {
             .is_err()
     );
     assert!(stream.pending.is_empty());
-    assert_eq!(host.used(), one + 1);
+    assert_eq!(host.used(), one + 2 * snapshot + 1);
     assert_eq!(
         read(&device, &queue, stream.buffer().unwrap(), 64),
         bytemuck::cast_slice::<u32, u8>(&baseline)
@@ -491,7 +492,7 @@ fn range_growth_refusal_preserves_submitted_bytes_and_retries_after_release() {
             .unwrap(),
         8
     );
-    assert_eq!(host.used(), two);
+    assert_eq!(host.used(), two + 2 * snapshot);
     stream.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, stream.buffer().unwrap(), 64),
@@ -500,5 +501,55 @@ fn range_growth_refusal_preserves_submitted_bytes_and_retries_after_release() {
     let replacement = stream.replacement();
     assert!(std::sync::Arc::ptr_eq(&replacement.staging_budget, &host));
     drop(stream);
+    assert_eq!(host.used(), 0);
+}
+
+#[test]
+#[ignore = "requires local GPU; snapshot admission must preserve pending and submitted data"]
+fn snapshot_refusal_preserves_baseline_and_retries_without_partial_transfer() {
+    use crate::text_gpu::{budget::Budget, staging_vec::StagingVec};
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let range = StagingVec::<std::ops::Range<usize>>::capacity_bytes(1).unwrap();
+    let snapshot = StagingVec::<u8>::capacity_bytes(64).unwrap();
+    let host = Budget::new(range + 2 * snapshot);
+    let mut stream = ScreenBuffer::default().with_staging_budget(host.clone());
+    let baseline = [7_u32; 16];
+    stream
+        .sync(&device, &queue, "snapshot-baseline", &baseline)
+        .unwrap();
+    stream.flush_uploads(&device, &queue);
+    assert_eq!(host.used(), range + snapshot);
+    let blocker = host.reserve(1).unwrap();
+    let changed = [99_u32; 16];
+    assert!(
+        stream
+            .sync(&device, &queue, "snapshot-refused", &changed)
+            .is_err()
+    );
+    assert!(stream.pending.is_empty());
+    assert!(stream.prepared.is_empty());
+    assert_eq!(host.used(), range + snapshot + 1);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&baseline)
+    );
+    drop(blocker);
+    assert_eq!(
+        stream
+            .sync(&device, &queue, "snapshot-retry", &changed)
+            .unwrap(),
+        64
+    );
+    stream.flush_uploads(&device, &queue);
+    assert_eq!(host.used(), range + 2 * snapshot);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&changed)
+    );
+    stream
+        .sync::<u32>(&device, &queue, "snapshot-empty", &[])
+        .unwrap();
     assert_eq!(host.used(), 0);
 }

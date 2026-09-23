@@ -296,6 +296,13 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
+    pub(super) fn vertex_snapshot_bytes(&self) -> u64 {
+        self.draws
+            .iter()
+            .map(|draw| draw.vertices.snapshot_bytes())
+            .sum()
+    }
+
     pub(super) fn pending_vertex_metadata_bytes(&self) -> u64 {
         self.draws
             .iter()

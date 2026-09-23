@@ -81,6 +81,24 @@ impl<T> StagingVec<T> {
     }
 }
 
+impl<T: Copy> StagingVec<T> {
+    pub fn from_slice(values: &[T], host: &Arc<Budget>) -> anyhow::Result<Self> {
+        let mut result = Self::new(values.len(), host)?;
+        result.values.extend_from_slice(values);
+        Ok(result)
+    }
+
+    pub fn copy_from_slice(&mut self, values: &[T]) {
+        self.values.copy_from_slice(values);
+    }
+}
+
+impl<T> AsRef<[T]> for StagingVec<T> {
+    fn as_ref(&self) -> &[T] {
+        &self.values
+    }
+}
+
 impl<T> Extend<T> for StagingVec<T> {
     fn extend<I: IntoIterator<Item = T>>(&mut self, values: I) {
         for value in values {
