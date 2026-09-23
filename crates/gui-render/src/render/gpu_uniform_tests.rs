@@ -42,12 +42,33 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
         let changed_upload = renderer.renderer.last_upload_frame().unwrap();
         assert_eq!(changed_upload.rendered, Some(true));
         assert!(changed_upload.totals.buffer_payload_bytes > 0);
+        let attributed = |frame: crate::UploadFrame| {
+            Renderer::gpu_process_allocations()
+                .into_iter()
+                .filter_map(|record| record.last_upload)
+                .filter(|last| last.owner == frame.owner && last.attempt == frame.attempt)
+                .fold((0, 0), |(source, transfer), last| {
+                    (source + last.source_bytes, transfer + last.transfer_bytes)
+                })
+        };
+        assert_eq!(
+            attributed(changed_upload),
+            (
+                changed_upload.totals.buffer_payload_bytes
+                    + changed_upload.totals.texture_source_bytes,
+                changed_upload.totals.buffer_payload_bytes
+                    + changed_upload.totals.texture_source_bytes
+                    + changed_upload.totals.texture_padding_bytes
+                    + changed_upload.totals.scatter_index_bytes,
+            )
+        );
         assert!(changed == capture_retained(&mut renderer, &prepared, &retained));
         let warm_upload = renderer.renderer.last_upload_frame().unwrap();
         assert_eq!(warm_upload.owner, changed_upload.owner);
         assert_eq!(warm_upload.attempt, changed_upload.attempt + 1);
         assert_eq!(warm_upload.rendered, Some(true));
         assert_eq!(warm_upload.totals, crate::UploadTotals::default());
+        assert_eq!(attributed(warm_upload), (0, 0));
         assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 0);
         assert!(
             renderer

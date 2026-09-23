@@ -64,9 +64,9 @@ impl Batch {
             self.command.is_none(),
             "upload must be submitted before its hold"
         );
-        self.owner.record_upload(self.totals);
+        let attempt = self.owner.record_upload(self.totals);
         for destination in self.destinations.drain_all() {
-            destination.commit();
+            destination.commit(attempt);
         }
         // Move the already admitted owners into completion; no second reference
         // vector is allocated after submission.

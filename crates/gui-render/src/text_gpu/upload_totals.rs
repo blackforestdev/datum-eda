@@ -57,6 +57,48 @@ pub struct UploadFrame {
     pub totals: UploadTotals,
 }
 
+/// Latest submitted contribution by one allocation to a renderer attempt.
+/// Match owner/attempt to UploadFrame; a different key means zero for that frame.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct AllocationUploadFrame {
+    pub owner: u64,
+    pub attempt: u64,
+    pub source_bytes: u64,
+    pub transfer_bytes: u64,
+}
+
+#[derive(Default)]
+pub(super) struct AllocationUploads {
+    pub source_bytes: u64,
+    pub transfer_bytes: u64,
+    pub latest: Option<AllocationUploadFrame>,
+}
+impl AllocationUploads {
+    pub fn record(&mut self, attempt: Option<(u64, u64)>, source: u64, transfer: u64) {
+        self.source_bytes = self.source_bytes.saturating_add(source);
+        self.transfer_bytes = self.transfer_bytes.saturating_add(transfer);
+        if let Some((owner, attempt)) = attempt {
+            if !self
+                .latest
+                .is_some_and(|last| last.owner == owner && last.attempt == attempt)
+            {
+                self.latest = Some(AllocationUploadFrame {
+                    owner,
+                    attempt,
+                    source_bytes: 0,
+                    transfer_bytes: 0,
+                });
+            }
+            let last = self
+                .latest
+                .as_mut()
+                .expect("initialized allocation attempt");
+            last.source_bytes = last.source_bytes.saturating_add(source);
+            last.transfer_bytes = last.transfer_bytes.saturating_add(transfer);
+        }
+    }
+}
+
 #[derive(Default)]
 pub(super) struct Accounting {
     pub total: UploadTotals,
@@ -81,7 +123,7 @@ impl Accounting {
         self.active = true;
     }
 
-    pub fn record(&mut self, totals: UploadTotals) {
+    pub fn record(&mut self, totals: UploadTotals) -> Option<(u64, u64)> {
         self.total.add(totals);
         if self.active {
             self.latest
@@ -89,6 +131,9 @@ impl Accounting {
                 .expect("active upload attempt")
                 .totals
                 .add(totals);
+            self.latest.map(|frame| (frame.owner, frame.attempt))
+        } else {
+            None
         }
     }
 
@@ -112,5 +157,31 @@ impl crate::Renderer {
     /// Offscreen callers use the same path; capture readback is excluded.
     pub fn last_upload_frame(&self) -> Option<UploadFrame> {
         self.atlas.owner.last_upload_frame()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn allocation_uploads_accumulate_chunks_and_distinguish_recovered_attempts() {
+        let mut uploads = AllocationUploads::default();
+        uploads.record(Some((1, 1)), 4, 8);
+        uploads.record(Some((1, 1)), 6, 256);
+        assert_eq!(uploads.latest.unwrap().source_bytes, 10);
+        assert_eq!(uploads.latest.unwrap().transfer_bytes, 264);
+        uploads.record(Some((1, 2)), 3, 256);
+        assert_eq!(uploads.latest.unwrap().source_bytes, 3);
+        uploads.record(Some((2, 2)), 5, 8);
+        assert_eq!(
+            uploads.latest.unwrap(),
+            AllocationUploadFrame {
+                owner: 2,
+                attempt: 2,
+                source_bytes: 5,
+                transfer_bytes: 8
+            }
+        );
+        assert_eq!((uploads.source_bytes, uploads.transfer_bytes), (18, 528));
     }
 }
