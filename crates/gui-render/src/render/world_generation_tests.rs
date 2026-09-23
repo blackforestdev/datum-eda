@@ -84,16 +84,30 @@ fn renderer_recreation_preserves_all_four_world_stream_limits() {
     let mut second = first
         .recreate_for_device(&device, &queue, format, 4)
         .unwrap();
-    let mut third = second
-        .recreate_for_device(&device, &queue, format, 4)
-        .unwrap();
-    macro_rules! exercise {
+    macro_rules! pin_first {
         ($field:ident) => {{
             let source = SharedGeometry::from(vec![bytemuck::Zeroable::zeroed(); 3]);
             first
                 .$field
                 .sync(&device, &queue, "first", &source)
                 .unwrap();
+            first.$field.submission_ref().unwrap()
+        }};
+    }
+    let holds = (
+        pin_first!(world_vertices_gpu),
+        pin_first!(world_strokes_gpu),
+        pin_first!(schematic_world_vertices_gpu),
+        pin_first!(schematic_world_strokes_gpu),
+    );
+    // Retire fixed uniforms while retaining the world allocations under test.
+    drop(first);
+    let mut third = second
+        .recreate_for_device(&device, &queue, format, 4)
+        .unwrap();
+    macro_rules! exercise {
+        ($field:ident, $held:expr) => {{
+            let source = SharedGeometry::from(vec![bytemuck::Zeroable::zeroed(); 3]);
             second
                 .$field
                 .sync(&device, &queue, "second", &source)
@@ -105,7 +119,7 @@ fn renderer_recreation_preserves_all_four_world_stream_limits() {
                     .is_err()
             );
             assert!(third.$field.buffer().is_none());
-            first.$field.clear();
+            drop($held);
             third
                 .$field
                 .sync(&device, &queue, "retry", &source)
@@ -113,8 +127,8 @@ fn renderer_recreation_preserves_all_four_world_stream_limits() {
             assert_eq!(third.$field.generation_budget.used(), 2);
         }};
     }
-    exercise!(world_vertices_gpu);
-    exercise!(world_strokes_gpu);
-    exercise!(schematic_world_vertices_gpu);
-    exercise!(schematic_world_strokes_gpu);
+    exercise!(world_vertices_gpu, holds.0);
+    exercise!(world_strokes_gpu, holds.1);
+    exercise!(schematic_world_vertices_gpu, holds.2);
+    exercise!(schematic_world_strokes_gpu, holds.3);
 }

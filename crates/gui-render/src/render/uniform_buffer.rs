@@ -6,6 +6,7 @@ use wgpu::util::DeviceExt;
 
 pub(crate) struct UniformBuffer<T> {
     buffer: Tracked<wgpu::Buffer>,
+    pub(crate) generation_budget: Arc<Budget>,
     value: Option<T>,
     pending: Option<T>,
     #[cfg(test)]
@@ -19,8 +20,19 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
         value: T,
         screen_budget: &Arc<Budget>,
     ) -> anyhow::Result<Self> {
-        let permits = reserve::<T>(screen_budget)?;
+        Self::new_in_generation(device, label, value, screen_budget, Budget::new(2))
+    }
+
+    pub(crate) fn new_in_generation(
+        device: &wgpu::Device,
+        label: &str,
+        value: T,
+        screen_budget: &Arc<Budget>,
+        generation_budget: Arc<Budget>,
+    ) -> anyhow::Result<Self> {
+        let permits = reserve::<T>(screen_budget, &generation_budget)?;
         Ok(Self {
+            generation_budget,
             buffer: tracked(
                 device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                     label: Some(label),
@@ -41,8 +53,10 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
         label: &str,
         screen_budget: &Arc<Budget>,
     ) -> anyhow::Result<Self> {
-        let permits = reserve::<T>(screen_budget)?;
+        let generation_budget = Budget::new(2);
+        let permits = reserve::<T>(screen_budget, &generation_budget)?;
         Ok(Self {
+            generation_budget,
             buffer: tracked(
                 device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some(label),
@@ -129,11 +143,17 @@ fn uniform_usage() -> wgpu::BufferUsages {
     }
 }
 
-fn reserve<T>(screen_budget: &Arc<Budget>) -> anyhow::Result<Vec<Permit>> {
+fn reserve<T>(
+    screen_budget: &Arc<Budget>,
+    generations: &Arc<Budget>,
+) -> anyhow::Result<Vec<Permit>> {
+    let generation = generations.reserve(1).map_err(|_| {
+        anyhow::anyhow!("uniform has two live GPU allocations; wait for retirement before recovery")
+    })?;
     let bytes = (std::mem::size_of::<T>() as u64).next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
     let host = screen_budget.reserve(bytes)?;
     let process = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
-    Ok(vec![host, process])
+    Ok(vec![generation, host, process])
 }
 
 fn tracked(buffer: wgpu::Buffer, permits: Vec<Permit>) -> Tracked<wgpu::Buffer> {
@@ -158,6 +178,15 @@ impl<T: bytemuck::Pod> UniformBinding<T> {
             Some(value) => UniformBuffer::new(device, label, value, screen_budget)?,
             None => UniformBuffer::empty(device, label, screen_budget)?,
         };
+        Self::from_buffer(device, layout, label, buffer)
+    }
+
+    pub(crate) fn from_buffer(
+        device: &wgpu::Device,
+        layout: &wgpu::BindGroupLayout,
+        label: &str,
+        buffer: UniformBuffer<T>,
+    ) -> anyhow::Result<Self> {
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout,
@@ -228,113 +257,5 @@ fn write_changed_ranges<'a>(
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[cfg(feature = "visual")]
-    #[test]
-    #[ignore = "requires local GPU; deferred uniform and lifetime readback"]
-    fn cancelled_uniform_updates_leave_submitted_bytes_and_retirement_intact() {
-        let instance = wgpu::Instance::default();
-        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-        let (device, queue) =
-            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
-        let read = |buffer: &wgpu::Buffer| {
-            let target = device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("uniform-readback"),
-                size: 16,
-                usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            });
-            let mut encoder = device.create_command_encoder(&Default::default());
-            encoder.copy_buffer_to_buffer(buffer, 0, &target, 0, 16);
-            queue.submit([encoder.finish()]);
-            let (tx, rx) = std::sync::mpsc::channel();
-            target
-                .slice(..)
-                .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-            rx.recv().unwrap().unwrap();
-            let data = target.slice(..).get_mapped_range().to_vec();
-            target.unmap();
-            data
-        };
-        let mut owner = UniformBuffer::new(
-            &device,
-            "uniform",
-            [1_u32; 4],
-            &Budget::new(16 * 1024 * 1024),
-        )
-        .unwrap();
-        let id = owner.buffer.id();
-        assert_eq!(owner.sync(&queue, [2_u32; 4]), 16);
-        assert_eq!(
-            read(owner.buffer()),
-            bytemuck::cast_slice::<u32, u8>(&[1; 4])
-        );
-        owner.cancel_uploads();
-        assert_eq!(owner.sync(&queue, [1_u32; 4]), 0);
-        owner.flush_uploads(&device, &queue);
-        assert_eq!(
-            read(owner.buffer()),
-            bytemuck::cast_slice::<u32, u8>(&[1; 4])
-        );
-        assert_eq!(owner.sync(&queue, [1, 2, 1, 3]), 8);
-        owner.flush_uploads(&device, &queue);
-        assert_eq!(
-            read(owner.buffer()),
-            bytemuck::cast_slice::<u32, u8>(&[1, 2, 1, 3])
-        );
-        assert_eq!(owner.sync(&queue, [1, 2, 1, 3]), 0);
-        let held = owner.submission_ref();
-        drop(owner);
-        assert!(
-            crate::Renderer::gpu_process_allocations()
-                .iter()
-                .any(|r| r.id == id && r.kind == Kind::Uniform && r.bytes == 16 && r.retiring)
-        );
-        drop(held);
-        assert!(
-            !crate::Renderer::gpu_process_allocations()
-                .iter()
-                .any(|r| r.id == id)
-        );
-    }
-
-    #[test]
-    fn uniform_ranges_transfer_only_dirty_aligned_words() {
-        for mask in 0_u32..256 {
-            let old = [0_u8; 32];
-            let mut new = old;
-            for index in 0..8 {
-                if mask & (1 << index) != 0 {
-                    new[4 * index + index % 4] = 1;
-                }
-            }
-            let mut result = old;
-            let mut writes = 0;
-            let bytes = write_changed_ranges(Some(&old), &new, |offset, data| {
-                assert_eq!(offset % 4, 0);
-                assert_eq!(data.len() % 4, 0);
-                for word in data.chunks_exact(4) {
-                    assert_ne!(word, [0; 4]);
-                }
-                result[offset..offset + data.len()].copy_from_slice(data);
-                writes += 1;
-            });
-            assert_eq!(result, new);
-            assert_eq!(bytes, mask.count_ones() as usize * 4);
-            assert_eq!(writes, (mask & !(mask << 1)).count_ones());
-        }
-        let mut writes = 0;
-        assert_eq!(
-            write_changed_ranges(None, &[0; 64], |offset, data| {
-                assert_eq!(offset, 0);
-                assert_eq!(data, [0; 64]);
-                writes += 1;
-            }),
-            64
-        );
-        assert_eq!(writes, 1, "new storage must be initialized in full");
-    }
-}
+#[path = "uniform_buffer_tests.rs"]
+mod tests;

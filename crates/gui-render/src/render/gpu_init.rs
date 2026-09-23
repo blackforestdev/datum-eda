@@ -17,6 +17,7 @@ impl Renderer {
             crate::text_gpu::budget::Budget::new(16 * 1024 * 1024),
             crate::text_gpu::budget::Budget::new(16 * 1024 * 1024),
             crate::text_gpu::budget::Budget::new(4 * 1024 * 1024),
+            None,
         )
     }
 
@@ -36,6 +37,7 @@ impl Renderer {
             self.screen_budget.clone(),
             self.atlas.staging_budget.clone(),
             self.control_gpu_budget.clone(),
+            Some(self),
         )?;
         replacement.surface_attachments = self.surface_attachments.replacement();
         replacement.world_vertices_gpu = self.world_vertices_gpu.replacement();
@@ -54,6 +56,7 @@ impl Renderer {
         Ok(replacement)
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn new_with_screen_budget(
         device: &wgpu::Device,
         _queue: &wgpu::Queue,
@@ -62,6 +65,7 @@ impl Renderer {
         screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
         staging_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
         control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+        previous: Option<&Self>,
     ) -> anyhow::Result<Self> {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-gui-render-shader"),
@@ -195,7 +199,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                     count: None,
                 }],
             });
-        let uniform_buffer = gpu_data::uniform_buffer::UniformBuffer::new(
+        let uniform_buffer = gpu_data::uniform_buffer::UniformBuffer::new_in_generation(
             device,
             "datum-gui-render-uniform-buffer",
             ScreenUniform {
@@ -203,6 +207,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 _pad: [0.0, 0.0],
             },
             &screen_budget,
+            previous.map_or_else(
+                || crate::text_gpu::budget::Budget::new(2),
+                |old| old.uniform_buffer.generation_budget.clone(),
+            ),
         )?;
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("datum-gui-render-uniform-bg"),
@@ -218,19 +226,40 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport_size: [1.0, 1.0, 0.0, 0.0],
             camera_center_scale: [0.0, 0.0, 1.0, 0.0],
         };
-        let scene_bind_group = gpu_data::uniform_buffer::UniformBinding::new(
+        let scene_bind_group = gpu_data::uniform_buffer::UniformBinding::from_buffer(
             device,
             &scene_bind_group_layout,
             "datum-gui-render-scene-bg",
-            Some(scene_uniform),
-            &screen_budget,
+            gpu_data::uniform_buffer::UniformBuffer::new_in_generation(
+                device,
+                "datum-gui-render-scene-bg",
+                scene_uniform,
+                &screen_budget,
+                previous.map_or_else(
+                    || crate::text_gpu::budget::Budget::new(2),
+                    |old| old.scene_bind_group.buffer.generation_budget.clone(),
+                ),
+            )?,
         )?;
-        let schematic_scene_bind_group = gpu_data::uniform_buffer::UniformBinding::new(
+        let schematic_scene_bind_group = gpu_data::uniform_buffer::UniformBinding::from_buffer(
             device,
             &scene_bind_group_layout,
             "datum-gui-render-schematic-scene-bg",
-            Some(scene_uniform),
-            &screen_budget,
+            gpu_data::uniform_buffer::UniformBuffer::new_in_generation(
+                device,
+                "datum-gui-render-schematic-scene-bg",
+                scene_uniform,
+                &screen_budget,
+                previous.map_or_else(
+                    || crate::text_gpu::budget::Budget::new(2),
+                    |old| {
+                        old.schematic_scene_bind_group
+                            .buffer
+                            .generation_budget
+                            .clone()
+                    },
+                ),
+            )?,
         )?;
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-gui-render-pipeline-layout"),
