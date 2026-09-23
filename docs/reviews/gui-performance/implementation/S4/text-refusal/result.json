@@ -1,0 +1,56 @@
+{
+  "status": "Default rejected text admission releases derived capacity and rebuilds from current input on retry; full allocation-time accounting remains unfinished",
+  "base_commit": "fd749f4c",
+  "production_consumers": [
+    "Shared TextBufferCache frame admission for workspace, terminal and overlay text",
+    "Renderer full-scene and dialog preparation used by default native hosts"
+  ],
+  "retired_paths": [
+    "Retaining rejected current CPU text layouts and index capacities indefinitely after admission failure",
+    "Reporting the rejected requested capacity as if it were still retained after cleanup",
+    "Allowing old preparation signatures to survive cache refusal"
+  ],
+  "behavior": [
+    "Preserve current layouts and remap indices when evicting only unused history suffices. If required layouts still exceed the existing local/process allowance, discard all rejected cache entries, lookup capacity and private layout scratch; invalidate every supplied index group and cache revision.",
+    "Keep requested bytes distinct from actual retained bytes under the existing serialized process admission lock. Refusal records the original requested total/error, publishes the surviving inline cache-object size and clears the preparing state while retaining the overflow signal.",
+    "Invalidate workspace/overlay preparation signatures and pending draw preparation before returning the error. No partial frame submits. Authoritative TextRun/model input is untouched; the next attempt reconstructs current layouts and uses current text/color."
+  ],
+  "proof": {
+    "renderer": "323 renderer tests pass,10 diagnostic/visual cases filtered. Serial cache tests verify history-only success, local oversized-capacity refusal, all index-group invalidation, zero entry/lookup capacities, scratch release, accurate stopped-owner reporting and identical reconstruction.",
+    "production": "Actual-GPU test primes warm full-scene and dialog frames, forces process pressure, verifies no glyph preparation or submission, confirms zero cached text/shaped bytes and scratch, then retries changed text/color and matches a fresh renderer pixel-for-pixel.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2260, dependency authority and governance checks pass.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "CPU layout/key construction still precedes admission. This closes retained rejected cache capacity, not transient allocation peaks or all private font/raster, registry and other metadata accounting. An empty cache still reports its inline object size; other owners may themselves exceed admission. No complete MEM-SHAPED/MEM-STAGING closure.",
+    "GPU atlas/instance resources and font caches retain their existing independent lifetime policies; this is not complete renderer teardown. Failed frames require reconstruction on retry and do not imply qualified error UX or native memory/resource acceptance.",
+    "Complete world/history/control/resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+    "No dependency, vendoring, license, prototype, font/layout authority or numerical budget change. No native-input or benchmark campaign. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-refusal/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-refusal/tests.log.gz",
+      "uncompressed_sha256": "2f9136181de84a5743e1cfd422ca9e8303cc0101b69b22b08d1bf248933c3703"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-refusal/clippy.log.gz",
+      "uncompressed_sha256": "74fda67e588fc690ed50c2c3da1aad6a6fa4e72ea411468d00f8a2923fe509c2"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-refusal/build.log.gz",
+      "uncompressed_sha256": "4e28ce7c4f9f146d7999a2baa8e5cdeeaeffc9ff6a7e69366b918ed01e759a1d"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-refusal/drift.log.gz",
+      "uncompressed_sha256": "4a4ea9113734b867b8ae2b8ce9b75dcf6d8439edf62db9da0762d3601e3eb5a5"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "ed7b37a2939914c9a67d561d88fb05895ece963fb92213145e1de7d43a4f8a6c",
+    "crates/gui-render/src/render/gpu_text.rs": "f463984a75aa0e4d5b5c5bb3cb74e52543fd05a8e7b72f2aea0071e316f85634",
+    "crates/gui-render/src/render/text_cache_admission.rs": "ec4433ddece2a29fdaddfcbc72310dc246ce5a32575b42a801d9045ff2cc834a",
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "41826f83b1345fc0f737616692ff85c57392bcd0d4d08623324696d09328d330",
+    "crates/gui-render/src/render/text_cache_budget.rs": "f7ac60acfaa1cb965b66a786c96040207b4f8c7b6ba285a84fafebfa71f7d880"
+  }
+}

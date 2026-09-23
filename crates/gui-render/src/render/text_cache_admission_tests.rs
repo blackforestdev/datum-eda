@@ -43,7 +43,7 @@ fn current_layout_admission_evicts_only_history_and_remaps_current_indices() {
 
 #[test]
 #[ignore = "requires serial process-wide cache admission"]
-fn required_layout_refusal_preserves_current_content_for_retry() {
+fn required_layout_refusal_releases_derived_storage_and_rebuilds_current_content() {
     let mut fonts = crate::load_datum_fonts();
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
@@ -51,13 +51,50 @@ fn required_layout_refusal_preserves_current_content_for_retry() {
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Overlay);
     let (mut current, _) = cache.indices(&mut fonts, &prepared.menu_overlay_text_runs, 960, 720);
-    let before = current.clone();
-    let count = cache.entries.len();
+    let before: Vec<_> = cache
+        .entries
+        .iter()
+        .map(|entry| {
+            entry
+                .buffer
+                .layout_runs()
+                .map(|row| format!("{:?}", row.glyphs))
+                .collect::<Vec<_>>()
+        })
+        .collect();
+    let revision = cache.revision;
+    let scratch_budget = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+    cache.admit_layout_scratch(&scratch_budget);
     let filler = budget::Owner::new(32 * 1024 * 1024);
     assert!(cache.admit_frame(&mut [&mut current]).is_err());
-    assert_eq!(current, before);
-    assert_eq!(cache.entries.len(), count);
+    assert!(current.is_empty());
+    assert_eq!(cache.entries.capacity(), 0);
+    assert_eq!(cache.lookup.capacity(), 0);
+    assert_ne!(cache.revision, revision);
+    assert_eq!(scratch_budget.used(), 0);
+    assert_eq!(cache.layout_scratch.private_bytes(0, 0), Some(0));
+    let usage = crate::Renderer::text_cache_process_usage()
+        .into_iter()
+        .find(|owner| owner.owner_id == cache.owner.id())
+        .unwrap();
+    assert!(!usage.preparing && usage.retention_overflow);
+    assert_eq!(usage.bytes, std::mem::size_of::<TextBufferCache>());
     drop(filler);
+    let (mut current, stats) =
+        cache.indices(&mut fonts, &prepared.menu_overlay_text_runs, 960, 720);
+    assert!(stats.misses > 0);
+    let rebuilt: Vec<_> = cache
+        .entries
+        .iter()
+        .map(|entry| {
+            entry
+                .buffer
+                .layout_runs()
+                .map(|row| format!("{:?}", row.glyphs))
+                .collect::<Vec<_>>()
+        })
+        .collect();
+    assert_eq!(rebuilt, before);
     cache.admit_frame(&mut [&mut current]).unwrap();
     cache.finish_frame();
     // A warm admitted frame must leave the public preparing state after submit.
@@ -72,4 +109,34 @@ fn required_layout_refusal_preserves_current_content_for_retry() {
             .unwrap()
             .preparing
     );
+}
+
+#[test]
+#[ignore = "requires serial process-wide cache admission"]
+fn local_capacity_refusal_drops_oversized_key_allocation_and_all_index_groups() {
+    let mut fonts = crate::load_datum_fonts();
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Workspace);
+    let (mut workspace, _) =
+        cache.indices(&mut fonts, &prepared.menu_overlay_text_runs[..1], 960, 720);
+    let (mut overlay, _) =
+        cache.indices(&mut fonts, &prepared.menu_overlay_text_runs[1..2], 960, 720);
+    // Model an oversized owned capacity without shaping megabytes of synthetic text.
+    cache.entries[0].key.text.reserve(8 * 1024 * 1024);
+    cache.revision = cache.revision.wrapping_add(1);
+    assert!(cache.retained_payload_bytes() > 8 * 1024 * 1024);
+    let error = cache
+        .admit_frame(&mut [&mut workspace, &mut overlay])
+        .unwrap_err();
+    assert!(error.to_string().contains("required text layout exceeds"));
+    assert!(workspace.is_empty() && overlay.is_empty());
+    assert_eq!(
+        cache.retained_payload_bytes(),
+        std::mem::size_of::<TextBufferCache>()
+    );
+    assert_eq!(cache.entries.capacity(), 0);
+    assert_eq!(cache.lookup.capacity(), 0);
 }

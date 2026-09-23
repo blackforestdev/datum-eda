@@ -1,4 +1,4 @@
-//! Required current-frame layout admission without evicting visible text.
+//! Current layout admission; refusal releases derived storage, never source text.
 use super::*;
 
 impl TextBufferCache {
@@ -46,6 +46,8 @@ impl TextBufferCache {
         }
     }
 
+    /// On refusal, cached layouts and every supplied index group are discarded.
+    /// Retry must rebuild them from current TextRun input before requesting admission.
     pub(crate) fn admit_frame(&mut self, indices: &mut [&mut Vec<usize>]) -> anyhow::Result<()> {
         let result = budget::admit(self.owner.id(), |limit| {
             if self.admission_payload_bytes() > limit {
@@ -75,8 +77,30 @@ impl TextBufferCache {
                     self.rebuild_lookup();
                 }
             }
-            self.published_bytes = self.admission_payload_bytes();
-            self.published_bytes
+            let required_bytes = self.admission_payload_bytes();
+            if required_bytes > limit {
+                // The frame will return an error before borrowing layout rows or
+                // preparing glyphs. TextRun/model input remains authoritative for
+                // retry; retaining rejected derived capacity cannot relieve pressure.
+                self.entries = Vec::new();
+                self.lookup = Vec::new();
+                self.layout_scratch.clear();
+                self.revision = self.revision.wrapping_add(1);
+                self.layout_output_revision = self.revision;
+                self.layout_output_bytes = 0;
+                self.layout_output_tracking_bytes = 0;
+                self.retained_revision = None;
+                for group in indices.iter_mut() {
+                    group.clear();
+                }
+                self.published_bytes = self.retained_payload_bytes();
+            } else {
+                self.published_bytes = required_bytes;
+            }
+            budget::Admission {
+                required_bytes,
+                retained_bytes: self.published_bytes,
+            }
         });
         self.published_revision = self.revision;
         result

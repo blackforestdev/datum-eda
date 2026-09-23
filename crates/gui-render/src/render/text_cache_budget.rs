@@ -78,24 +78,32 @@ pub(crate) fn settle(id: u64, trim: impl FnOnce(usize) -> usize) {
     );
 }
 
+pub(crate) struct Admission {
+    pub required_bytes: usize,
+    pub retained_bytes: usize,
+}
+
 /// Current-frame layouts must be admitted before glyph preparation. Eviction
 /// runs under the same process lock as post-frame retention.
-pub(crate) fn admit(id: u64, trim: impl FnOnce(usize) -> usize) -> anyhow::Result<()> {
+pub(crate) fn admit(id: u64, trim: impl FnOnce(usize) -> Admission) -> anyhow::Result<()> {
     let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
     let available = allowance(&owners, id, PROCESS_LIMIT).min(8 * 1024 * 1024);
-    let bytes = trim(available);
+    let Admission {
+        required_bytes,
+        retained_bytes,
+    } = trim(available);
     owners.insert(
         id,
         TextCacheOwnerUsage {
             owner_id: id,
-            bytes,
-            preparing: true,
-            retention_overflow: bytes > available,
+            bytes: retained_bytes,
+            preparing: required_bytes <= available,
+            retention_overflow: required_bytes > available,
         },
     );
     anyhow::ensure!(
-        bytes <= available,
-        "required text layout exceeds CPU cache admission (requested {bytes} bytes; available {available})"
+        required_bytes <= available,
+        "required text layout exceeds CPU cache admission (requested {required_bytes} bytes; available {available})"
     );
     Ok(())
 }

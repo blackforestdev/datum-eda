@@ -185,6 +185,10 @@ fn text_cache_pressure_refuses_before_glyphs_and_retries_current_frame() {
             view_formats: &[],
         });
         let view = target.create_view(&Default::default());
+        let before = capture(&mut renderer, &prepared);
+        let overlay_prepares = renderer.renderer.text_preparation.overlay_prepares;
+        let workspace_prepares = renderer.renderer.text_preparation.workspace_prepares;
+        let atlas_bytes = renderer.renderer.text_atlas_reserved_bytes();
         let filler = crate::text_buffer_cache::budget::Owner::new(32 * 1024 * 1024);
         let error = renderer
             .renderer
@@ -205,11 +209,26 @@ fn text_cache_pressure_refuses_before_glyphs_and_retries_current_frame() {
                 .to_string()
                 .contains("required text layout exceeds CPU cache admission")
         );
-        assert_eq!(renderer.renderer.text_preparation.overlay_prepares, 0);
-        assert_eq!(renderer.renderer.text_preparation.workspace_prepares, 0);
-        assert_eq!(renderer.renderer.text_atlas_reserved_bytes(), 0);
+        assert_eq!(
+            renderer.renderer.text_preparation.overlay_prepares,
+            overlay_prepares
+        );
+        assert_eq!(
+            renderer.renderer.text_preparation.workspace_prepares,
+            workspace_prepares
+        );
+        assert_eq!(renderer.renderer.text_atlas_reserved_bytes(), atlas_bytes);
+        let usage = renderer.renderer.text_cache_key_usage();
+        assert_eq!(usage.entries, 0);
+        assert_eq!(usage.key_text_bytes, 0);
+        assert_eq!(usage.shaped_payload_bytes, 0);
+        assert_eq!(renderer.renderer.layout_scratch_reserved_bytes(), 0);
+        assert!(renderer.renderer.text_preparation.is_invalid());
         drop(filler);
+        prepared.menu_overlay_text_runs[0].text.push_str(" latest");
+        prepared.menu_overlay_text_runs[0].color = [1.0, 0.0, 0.0];
         let pixels = capture(&mut renderer, &prepared);
+        assert_ne!(pixels, before);
         let mut fresh = hardware_renderer(960, 720);
         assert!(pixels == capture(&mut fresh, &prepared));
     }
