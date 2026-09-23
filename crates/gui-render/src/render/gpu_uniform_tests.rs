@@ -248,7 +248,7 @@ fn screen_streams_and_uniforms_share_one_host_limit() {
 
 #[test]
 #[ignore = "requires local GPU; staging refusal must preserve producer updates"]
-fn frame_staging_refusal_preserves_uniform_plan_until_retry() {
+fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
     let mut renderer = hardware_renderer(960, 720);
     let budget = renderer.renderer.atlas.staging_budget.clone();
     renderer.renderer.uniform_buffer.sync(
@@ -258,12 +258,26 @@ fn frame_staging_refusal_preserves_uniform_plan_until_retry() {
             _pad: [0.0, 0.0],
         },
     );
+    renderer
+        .renderer
+        .panel_gpu
+        .sync(
+            &renderer.device,
+            &renderer.queue,
+            "staged-panel",
+            &[Vertex {
+                pos: [1.0, 2.0],
+                color: [0.1, 0.2, 0.3],
+            }; 6],
+        )
+        .unwrap();
     let expected = {
         let mut pending = Vec::new();
         renderer
             .renderer
             .uniform_buffer
             .append_uploads(&mut pending);
+        renderer.renderer.panel_gpu.append_uploads(&mut pending);
         pending
             .iter()
             .map(|upload| upload.bytes.len())
@@ -283,6 +297,7 @@ fn frame_staging_refusal_preserves_uniform_plan_until_retry() {
             .renderer
             .uniform_buffer
             .append_uploads(&mut pending);
+        renderer.renderer.panel_gpu.append_uploads(&mut pending);
         assert_eq!(
             pending
                 .iter()
@@ -303,6 +318,7 @@ fn frame_staging_refusal_preserves_uniform_plan_until_retry() {
         .renderer
         .uniform_buffer
         .append_uploads(&mut pending);
+    renderer.renderer.panel_gpu.append_uploads(&mut pending);
     assert!(pending.is_empty());
     renderer.queue.submit([batch.command()]);
     batch.hold(&renderer.queue);

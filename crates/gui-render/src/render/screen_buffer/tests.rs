@@ -39,7 +39,7 @@ fn cancelled_uploads_rebuild_and_retired_vertices_remain_observable() {
     );
     owner.cancel_uploads();
     assert_eq!(owner.sync(&device, &queue, "retry", &values).unwrap(), 16);
-    owner.flush_uploads(&queue);
+    owner.flush_uploads(&device, &queue);
     let held = owner.submission_ref().unwrap();
     queue.submit([]);
     // A bundle/submission hold pins exactly the allocation, after its stream retires.
@@ -77,7 +77,7 @@ fn cancelled_uploads_rebuild_and_retired_vertices_remain_observable() {
             .unwrap(),
         256
     );
-    owner.flush_uploads(&queue);
+    owner.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, owner.buffer().unwrap(), 256),
         bytemuck::cast_slice::<u32, u8>(&large)
@@ -100,7 +100,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
     values[1] = 17; // same address AND length, different content
     assert_eq!(owner.sync(&device, &queue, "proof", &values).unwrap(), 4);
     assert_eq!(owner.buffer(), Some(&first));
-    owner.flush_uploads(&queue);
+    owner.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, &first, 16),
         bytemuck::cast_slice::<u32, u8>(&values)
@@ -108,7 +108,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
     values[0] = 18;
     values[3] = 19;
     assert_eq!(owner.sync(&device, &queue, "proof", &values).unwrap(), 8);
-    owner.flush_uploads(&queue);
+    owner.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, &first, 16),
         bytemuck::cast_slice::<u32, u8>(&values)
@@ -128,7 +128,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
             .unwrap(),
         20
     );
-    owner.flush_uploads(&queue);
+    owner.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, owner.buffer().unwrap(), 60),
         bytemuck::cast_slice::<[u32; 5], u8>(&vertices)
@@ -150,7 +150,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
             .unwrap(),
         24
     );
-    owner.flush_uploads(&queue);
+    owner.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, owner.buffer().unwrap(), 60),
         bytemuck::cast_slice::<[u32; 5], u8>(&vertices)
@@ -173,7 +173,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
             "overlarge content bypasses retention"
         );
     }
-    owner.flush_uploads(&queue);
+    owner.flush_uploads(&device, &queue);
     assert_eq!(
         read(
             &device,
@@ -239,7 +239,7 @@ fn repeated_preparation_queues_each_final_range_once() {
         stream.sync(&device, &queue, "superseded", &values).unwrap();
         assert_eq!(stream.pending, vec![0..64]);
     }
-    stream.flush_uploads(&queue);
+    stream.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, stream.buffer().unwrap(), 64),
         bytemuck::cast_slice::<u32, u8>(&values)
@@ -256,7 +256,7 @@ fn repeated_preparation_queues_each_final_range_once() {
         .sync(&device, &queue, "shrink", &values[..8])
         .unwrap();
     assert_eq!(stream.pending, vec![4..8]);
-    stream.flush_uploads(&queue);
+    stream.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, stream.buffer().unwrap(), 32),
         bytemuck::cast_slice::<u32, u8>(&values[..8])
@@ -267,7 +267,7 @@ fn repeated_preparation_queues_each_final_range_once() {
     stream.cancel_uploads();
     stream.sync(&device, &queue, "retry", &values).unwrap();
     assert_eq!(stream.pending, vec![0..64]);
-    stream.flush_uploads(&queue);
+    stream.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, stream.buffer().unwrap(), 64),
         bytemuck::cast_slice::<u32, u8>(&values)

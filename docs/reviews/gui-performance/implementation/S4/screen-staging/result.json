@@ -1,0 +1,64 @@
+{
+  "status": "All default screen-space vertex streams and terminal placement quads now use shared explicitly admitted frame staging; complete staging/resource qualification remains open",
+  "base_commit": "ab4caf49",
+  "production_consumers": [
+    "Nine renderer screen streams: panel, viewport underlay/overlay, board interaction, Console, menu overlay, schematic underlay/overlay, surface grid",
+    "Terminal image placement quads, shared by foreground/background drawing",
+    "Default full and overlay-only render paths in main and auxiliary native hosts"
+  ],
+  "retired_paths": [
+    "Opaque queue.write_buffer upload path for ScreenBuffer consumers",
+    "Independent terminal placement-buffer flush before shared staging admission"
+  ],
+  "behavior": [
+    "Borrow the existing normalized pending ranges and final payload into the shared mixed upload batch. Screen and terminal placement copies now count toward the same actual mapped capacity as uniforms, glyph instances and atlas pixels under host16 MiB/process-staging64 MiB/GPU512 MiB admission.",
+    "Do not clear a screen plan or release its over-cap temporary payload until shared batch creation succeeds. Admission refusal preserves all migrated producers; cancellation still invalidates unsubmitted snapshots.",
+    "Use a single screen-stream inventory for collection, cancellation, successful consumption and submission retention; preserve destination allocations, painter order, dirty gaps, final bytes and existing frame submission.",
+    "Keep retained-world and terminal-image uploads on their current path pending bounded cold continuation; this slice introduces no new loaded-board size restriction."
+  ],
+  "proof": {
+    "renderer": "308 renderer tests pass, 11 diagnostic/visual cases filtered. Default-frame refusal/retry now covers combined uniform and panel payloads; each plan survives refusal and is consumed after successful retry, followed by zero warm staging. Existing screen readback, supersession/shrink/regrow/cancellation, terminal resource and pixel parity tests exercise the migrated staging path.",
+    "lint": "Visual all-targets renderer/app Clippy -D warnings and source health2245 pass; dependency authority and governance checks pass.",
+    "build": "Fresh native visual application build passes.",
+    "native": "1680x1050 datum-test/R1 capture exactly matches mixed-staging/native.png; no new OS-input/endurance/throughput qualification.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding checks pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "Four board/schematic retained-world vertex/stroke streams and terminal image pixels still use opaque queue staging. CPU pending payload/metadata/scratch, diagnostic query/readback and complete resource accounting remain unfinished.",
+    "Oversized cold batch continuation still requires bounded chunks with coordinator/submission accounting. Admission fails rather than silently omitting required content; no complete MEM-STAGING predicate closure.",
+    "Existing per-vertex spans can retain internal unchanged words; full exact changed-byte transfer remains open. No full native/backend/fault/resource qualification or S4/S5 closure.",
+    "No dependency, vendor, license, prototype, font, layout or numerical-budget change. Preserve GEFN and nonblocking resize CPU disposition."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/screen-staging/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-staging/tests.log.gz",
+      "uncompressed_sha256": "55da28a3d7ebd5f2b880e1cbfe3cc14afb4a39a6fa052797b3ece282c16c3010"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-staging/clippy.log.gz",
+      "uncompressed_sha256": "864e424437f9ea0a3ded96b04e88547a7b148dae92093ffa50e87816d96f0622"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-staging/build.log.gz",
+      "uncompressed_sha256": "006866954b862585c089689a6ebcc632902d28055921fd382c14d5b2d60b6647"
+    },
+    "native": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-staging/native.log.gz",
+      "uncompressed_sha256": "6560eff0899e521e7230efd02ccb3fa1a513b7dd28e1f48d8c6b6dee14f753bb"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-staging/drift.log.gz",
+      "uncompressed_sha256": "4300f17cb4820f888ea4e058c52b5a0c0082f3a521815e5cdc98512fff0a411d"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text.rs": "69870f9a591d365de17e90252ce4435f9d64133b990fc9fd209dd505146b3f19",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "11c84bd4b9297b84edcb0b5ad7d4a1743a068ad0396bd750bd36dc2e063d493b",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "4ba7ad476ce4d2798c162bd08a0074e33e62273e2437c7704ab49f653be768cf",
+    "crates/gui-render/src/render/screen_buffer.rs": "cd7ec1559a1e89f5908f62ba95af4eb1458c3623a342209d3225afe27c7918dd",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "c05054ba82a967b6678b3994398182af5e37915d1f72d8ab53c4ee036c334e06",
+    "crates/gui-render/src/render/terminal_graphics.rs": "bf5113a60b2460b5863057c48a2c14c61ed4c1ae24a925e4254517d6af2f69dc"
+  },
+  "binary_sha256": "c52b871e3c68a63d4087b96906fd7bff6d9e9ffbe93b44615e8a44ba36b84920"
+}
