@@ -39,6 +39,7 @@ pub(super) struct RetainedSceneHistory {
     retired_geometry: Vec<RetainedGeometryObserver>,
     retired_storage: Option<datum_gui_render::DocumentCpuCharge>,
     budget: usize,
+    construction_error: Option<String>,
 }
 
 impl Default for RetainedSceneHistory {
@@ -52,6 +53,7 @@ impl Default for RetainedSceneHistory {
             retired_geometry: Vec::new(),
             retired_storage: None,
             budget: MAX_PAYLOAD_BYTES,
+            construction_error: None,
         }
     }
 }
@@ -76,6 +78,9 @@ impl RetainedSceneHistory {
     /// Report failure through the host render boundary while preserving model
     /// authority and the charged active/pinned owners for inspection or retry.
     pub(super) fn check_render_budget(&mut self) -> anyhow::Result<()> {
+        if let Some(error) = &self.construction_error {
+            anyhow::bail!("{error}");
+        }
         self.trim_for_active_document(MAX_PAYLOAD_BYTES);
         let bytes = self.accounted_bytes();
         anyhow::ensure!(
@@ -91,7 +96,12 @@ impl RetainedSceneHistory {
         Ok(())
     }
 
+    pub(super) fn retry_construction(&mut self) {
+        self.construction_error = None;
+    }
+
     pub(super) fn clear(&mut self) {
+        self.retry_construction();
         if let Some(observer) = self.active_geometry.take() {
             self.observe_retired(observer);
         }
@@ -245,6 +255,7 @@ impl RetainedSceneHistory {
     }
 
     fn limit_for_active_document(&mut self, scene: &RetainedScene, document_limit: usize) {
+        self.retry_construction();
         self.active_geometry = Some(scene.geometry_observer());
         self.prune_retired();
         self.active_bytes = scene
@@ -410,73 +421,8 @@ impl RetainedSceneHistory {
     }
 }
 
-impl Runtime {
-    pub(super) fn ensure_schematic_retained_scene(&mut self) {
-        if self.schematic_retained_scene.is_none() {
-            let scene = RetainedScene::from_workspace_schematic_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-            );
-            if let Some(scene) = &scene {
-                self.schematic_scene_accounting.limit_for_active(scene);
-            }
-            self.schematic_retained_scene = scene;
-        }
-    }
-
-    pub(super) fn clear_schematic_retained_scene(&mut self) {
-        self.schematic_retained_scene = None;
-        self.schematic_scene_accounting.clear();
-    }
-
-    pub(super) fn retained_scene_cache_key(&self) -> RetainedSceneCacheKey {
-        let workspace = self.workspace();
-        RetainedSceneCacheKey {
-            scene_id: workspace.scene.scene_id.clone(),
-            source_revision: workspace.scene.source_revision.clone(),
-            width: self.config.width,
-            height: self.config.height,
-            scale_bits: self.scale_factor.to_bits(),
-            dock_height_px: workspace.ui.effective_dock_height_px(),
-            show_authored: workspace.ui.filters.show_authored,
-            show_proposed: workspace.ui.filters.show_proposed,
-            show_unrouted: workspace.ui.filters.show_unrouted,
-            dim_unrelated: workspace.ui.filters.dim_unrelated,
-            layer_visibility: workspace
-                .ui
-                .filters
-                .layer_visibility
-                .iter()
-                .map(|(key, value)| (key.clone(), *value))
-                .collect(),
-            selection: retained_selection_cache_key(workspace, &workspace.selection),
-        }
-    }
-
-    pub(super) fn restore_cached_retained_scene(&mut self) -> bool {
-        let key = self.retained_scene_cache_key();
-        if let Some(retained) = self.retained_scene_cache.take(&key) {
-            self.retained_scene = Some(retained);
-            return true;
-        }
-        false
-    }
-
-    pub(super) fn ensure_retained_scene(&mut self) {
-        if self.retained_scene.is_none() {
-            let retained = RetainedScene::from_workspace_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-            );
-            self.retained_scene_cache.limit_for_active(&retained);
-            self.retained_scene = Some(retained);
-        }
-    }
-}
+#[path = "retained_scene_lifecycle.rs"]
+mod lifecycle;
 
 #[cfg(test)]
 mod tests {

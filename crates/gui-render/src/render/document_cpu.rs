@@ -6,7 +6,7 @@ use crate::cpu_alloc::heap::{allocation_bytes, capacity_bytes};
 use crate::text_gpu::budget::Budget;
 use std::sync::{Arc, Mutex, Weak};
 
-const DOCUMENT_LIMIT: usize = 64 * 1024 * 1024;
+pub(crate) const DOCUMENT_LIMIT: usize = 64 * 1024 * 1024;
 const DOCUMENT_HISTORY_LIMIT: usize = 6;
 struct Document {
     scene_id: String,
@@ -126,6 +126,10 @@ fn usage(observer: &RetainedGeometryObserver) -> usize {
     let Some(identity) = &observer.document else {
         return 0;
     };
+    usage_for_identity(identity)
+}
+
+fn usage_for_identity(identity: &Weak<Budget>) -> usize {
     let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
     prune(&mut documents);
     let Some(document) = documents.find(identity) else {
@@ -141,6 +145,31 @@ fn usage(observer: &RetainedGeometryObserver) -> usize {
             bytes.saturating_add(scene.heap_bytes_excluding(&document.scenes[..index]))
         },
     )
+}
+
+/// Check the live constructor staging plus proposed quad-to-vertex expansion
+/// against the document allowance before allocating the expanded vertex buffer.
+pub(crate) fn admit_vertex_expansion(
+    budget: &Arc<Budget>,
+    scope: &crate::cpu_alloc::Scope,
+    quads: usize,
+    limit: usize,
+) -> anyhow::Result<()> {
+    let count = quads
+        .checked_mul(6)
+        .ok_or_else(|| anyhow::anyhow!("retained vertex count overflow"))?;
+    let layout = std::alloc::Layout::array::<crate::Vertex>(count)?;
+    let usage = scope.usage();
+    let staging = usage.payload_bytes.saturating_add(usage.tracking_bytes);
+    let existing = usage_for_identity(&Arc::downgrade(budget));
+    let required = (existing as u64)
+        .saturating_add(staging)
+        .saturating_add(allocation_bytes(layout) as u64);
+    anyhow::ensure!(
+        required <= limit as u64,
+        "retained scene vertex expansion exceeds document CPU budget: {required} bytes including live owners and constructor staging; limit {limit}"
+    );
+    Ok(())
 }
 
 /// Exclusive lifetime charge for a history owner's separately allocated metadata.
@@ -268,6 +297,47 @@ fn check_limit(observer: &RetainedGeometryObserver, limit: usize) -> anyhow::Res
 mod tests {
     use super::*;
     #[test]
+    fn board_and_companion_constructors_refuse_expansion_and_allow_retry() {
+        let mut state = crate::gpu_surface_pass::board_fixture_state();
+        state.scene.scene_id = "construction-board-refusal".into();
+        let error = RetainedScene::from_workspace_bounded(&state, 960, 720, 1.0, 0).unwrap_err();
+        assert!(error.to_string().contains("vertex expansion exceeds"));
+        let board = RetainedScene::try_from_workspace_for_surface(&state, 960, 720, 1.0).unwrap();
+        assert!(!board.world_vertices().is_empty() || !board.world_strokes().is_empty());
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../engine/testdata/import/kicad/simple-demo.kicad_sch");
+        let mut schematic =
+            datum_gui_protocol::load_kicad_schematic_workspace_state(&path).unwrap();
+        schematic.scene.scene_id = "construction-schematic-refusal".into();
+        state.schematic_scene = Some(schematic.scene);
+        let error =
+            RetainedScene::schematic_workspace_bounded(&state, 960, 720, 1.0, 0).unwrap_err();
+        assert!(error.to_string().contains("vertex expansion exceeds"));
+        assert!(
+            RetainedScene::try_from_workspace_schematic_for_surface(&state, 960, 720, 1.0)
+                .unwrap()
+                .is_some()
+        );
+    }
+
+    #[test]
+    fn vertex_expansion_admission_includes_live_owners_staging_and_requested_capacity() {
+        let budget = for_scene("construction-expansion-boundary");
+        let scope = crate::cpu_alloc::Scope::new("construction-boundary-proof");
+        let staging = scope.with(|| vec![0u8; 4096]);
+        let before = scope.usage();
+        let existing = usage_for_identity(&Arc::downgrade(&budget));
+        let limit = existing
+            + (before.payload_bytes + before.tracking_bytes) as usize
+            + capacity_bytes::<crate::Vertex>(6);
+        admit_vertex_expansion(&budget, &scope, 1, limit).unwrap();
+        assert!(admit_vertex_expansion(&budget, &scope, 1, limit - 1).is_err());
+        assert!(admit_vertex_expansion(&budget, &scope, usize::MAX, limit).is_err());
+        assert_eq!(scope.usage().allocations, before.allocations);
+        assert_eq!(staging.len(), 4096);
+    }
+
+    #[test]
     fn concurrent_history_admission_cannot_exceed_six_or_release_early() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         state.scene.scene_id = "cpu-document-history-concurrency".into();
@@ -311,9 +381,22 @@ mod tests {
         let scope = crate::cpu_alloc::Scope::new("complete-document-owner");
         let scene = scope.with(|| RetainedScene::from_workspace(&state, 960, 720));
         let observer = scene.geometry_observer();
+        let construction_owner = crate::cpu_alloc::usage()
+            .into_iter()
+            .filter(|value| {
+                value.label == "retained-board-construction"
+                    && value.owner_id > scope.usage().owner_id
+            })
+            .map(|value| value.owner_id)
+            .max()
+            .expect("constructor owner");
         let live = || {
             let value = scope.usage();
-            (value.payload_bytes + value.tracking_bytes) as usize
+            let construction = crate::cpu_alloc::usage()
+                .into_iter()
+                .find(|value| value.owner_id == construction_owner)
+                .map_or(0, |value| value.payload_bytes + value.tracking_bytes);
+            (value.payload_bytes + value.tracking_bytes + construction) as usize
         };
         assert_eq!(usage(&observer), live());
         let clone = scene.clone();

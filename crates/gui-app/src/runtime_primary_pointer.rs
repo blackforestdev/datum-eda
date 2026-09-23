@@ -127,7 +127,10 @@ impl Runtime {
         // above must not rebuild a dirty scene (including terminal snapshots)
         // merely to compute an unused world point.
         let prepared_started = std::time::Instant::now();
-        let world_point = self.prepared_scene().world_point_at_screen(x, y);
+        let Some(prepared) = self.prepared_scene() else {
+            return focus_changed;
+        };
+        let world_point = prepared.world_point_at_screen(x, y);
         let prepared_elapsed = prepared_started.elapsed();
         if let Some((world_point, SceneSurface::Schematic)) = world_point {
             // UVT-004 resolves a schematic world point and symbol-region hit;
@@ -137,7 +140,9 @@ impl Runtime {
         if let Some((world_point, SceneSurface::Board)) = world_point {
             let retained_started = std::time::Instant::now();
             let retained_target = {
-                self.ensure_retained_scene();
+                if !self.ensure_retained_scene() {
+                    return focus_changed;
+                }
                 let retained = self
                     .retained_scene
                     .as_ref()

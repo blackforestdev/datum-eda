@@ -484,14 +484,18 @@ impl Runtime {
             return false;
         }
         let world_point = {
-            let prepared = self.prepared_scene();
+            let Some(prepared) = self.prepared_scene() else {
+                return false;
+            };
             prepared.world_point_at_screen(x, y)
         };
         let Some((world_point, SceneSurface::Board)) = world_point else {
             return false;
         };
         let retained_target = {
-            self.ensure_retained_scene();
+            if !self.ensure_retained_scene() {
+                return false;
+            }
             let retained = self
                 .retained_scene
                 .as_ref()
@@ -546,7 +550,9 @@ impl Runtime {
     /// symbol hit regions (built lazily like the board's, and reused when the render
     /// path already resolved it). `None` when there is no schematic scene/pane.
     pub(super) fn schematic_world_hit(&mut self, world_point: PointNm) -> Option<HitTarget> {
-        self.ensure_schematic_retained_scene();
+        if !self.ensure_schematic_retained_scene() {
+            return None;
+        }
         self.schematic_retained_scene
             .as_ref()?
             .hit_test_world(world_point)
@@ -573,8 +579,9 @@ impl Runtime {
         }
         // Ensure the caches exist: the prepared build also builds the board
         // retained scene; the companion schematic retained scene is built here.
-        let _ = self.prepared_scene();
-        self.ensure_schematic_retained_scene();
+        if self.prepared_scene().is_none() || !self.ensure_schematic_retained_scene() {
+            return self.clear_interaction_overlay();
+        }
         let resolved = {
             let prepared = self
                 .prepared_scene
