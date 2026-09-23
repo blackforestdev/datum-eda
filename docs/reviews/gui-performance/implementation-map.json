@@ -34572,5 +34572,27 @@
       "Twelve implementation gaps and original S5 qualification remain open. No full CPU/history predicate closure, dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/scene-publication/result.json"
+  },
+  "s4_registry_pruning_work": {
+    "status": "Document registry pruning reuses admitted observer capacity without allocating",
+    "base_commit": "30ac9022",
+    "production_consumers": [
+      "Shared document CPU registry: native board/companion construction, history budget observation, GPU document usage"
+    ],
+    "retired_paths": [
+      "Observer-vector shrink_to_fit reallocation during registry pruning"
+    ],
+    "behavior": [
+      "Retain and charge existing observer-vector capacity while scenes remain. Release empty storage without replacement allocation. Growth remains fallible and admitted at publication."
+    ],
+    "proof": [
+      "10 document CPU tests passed; 365 filtered. New regression checks pointer/capacity stability, unchanged capacity accounting, zero scoped allocation peak and release of empty storage while identity remains pinned.",
+      "Strict renderer visual all-targets Clippy and fresh visual app build passed. Source-health, dependency and governance checks passed. Prior full renderer/app suites remain evidence for unchanged behavior; not rerun for this pruning-only change."
+    ],
+    "limits": [
+      "Spare observer capacity stays charged until the document has no registered live scene; this trades compaction for allocation-free observation and reuse.",
+      "Initial identity allocations, constructor peaks, concurrent construction, scope bookkeeping, external weak-container lifetime and application history retirement-buffer compaction remain open. Twelve broad implementation gaps and S5 qualification are unchanged."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/registry-pruning/result.json"
   }
 }

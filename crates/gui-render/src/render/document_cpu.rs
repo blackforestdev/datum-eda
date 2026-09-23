@@ -56,8 +56,10 @@ fn prune(documents: &mut Registry) {
     let mut cursor = &mut documents.head;
     while let Some(mut document) = cursor.take() {
         document.scenes.retain(RetainedGeometryObserver::is_live);
-        if document.scenes.capacity() > document.scenes.len().saturating_mul(4) {
-            document.scenes.shrink_to_fit();
+        // Pruning must not allocate while observing or enforcing a budget.
+        // Keep admitted capacity for reuse; release it when no scene remains.
+        if document.scenes.is_empty() {
+            document.scenes = Vec::new();
         }
         if document.scenes.is_empty()
             && document.metadata_bytes == 0
@@ -344,6 +346,39 @@ fn check_limit(observer: &RetainedGeometryObserver, limit: usize) -> anyhow::Res
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn pruning_reuses_charged_capacity_without_allocating_and_releases_empty_storage() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.scene_id = "registry-pruning-reuse".into();
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let observer = scene.geometry_observer();
+        let budget = scene.world_vertices.document_budget().unwrap().clone();
+        let mut registry = Registry::default();
+        let mut scenes = Vec::with_capacity(32);
+        scenes.push(observer.clone());
+        let pointer = scenes.as_ptr();
+        registry.insert(
+            "registry-pruning-reuse".into(),
+            Arc::downgrade(&budget),
+            scenes,
+        );
+        let before = document_bytes(registry.head.as_ref().unwrap());
+        let scope = crate::cpu_alloc::Scope::new("registry-pruning-allocation");
+        scope.with(|| prune(&mut registry));
+        let document = registry.head.as_ref().unwrap();
+        assert_eq!(document.scenes.as_ptr(), pointer);
+        assert_eq!(document.scenes.capacity(), 32);
+        assert_eq!(document_bytes(document), before);
+        assert_eq!(scope.usage().peak_payload_bytes, 0);
+        drop(scene);
+        scope.with(|| prune(&mut registry));
+        assert_eq!(registry.head.as_ref().unwrap().scenes.capacity(), 0);
+        assert_eq!(scope.usage().peak_payload_bytes, 0);
+        drop(budget);
+        prune(&mut registry);
+        assert!(registry.head.is_none());
+    }
+
     #[test]
     fn publication_refusal_preserves_registry_and_retry_registers_unique_metadata() {
         let mut state = crate::gpu_surface_pass::board_fixture_state();
