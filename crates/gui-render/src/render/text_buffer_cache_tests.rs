@@ -542,3 +542,80 @@ fn owned_shape_accounting_deduplicates_extent_variants_and_releases_eviction() {
     cache.begin_frame(Profile::Workspace);
     assert_eq!(cache.key_usage().shaped_payload_bytes, 0);
 }
+
+#[test]
+fn retained_payload_pressure_retires_oldest_and_reconstructs_exactly() {
+    let mut fonts = crate::load_datum_fonts();
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Workspace);
+    let old = run();
+    cache.indices(&mut fonts, &[old], 1280, 800);
+    cache.begin_frame(Profile::Workspace);
+    let mut recent = run();
+    recent.text = "Newest shaped payload".into();
+    cache.indices(&mut fonts, &[recent.clone()], 1280, 800);
+    let original: Vec<_> = cache.entries[1]
+        .buffer
+        .layout_runs()
+        .map(|row| format!("{:?}", row.glyphs))
+        .collect();
+    let before = cache.retained_payload_bytes();
+    cache.trim_payload_to(before - 1);
+    assert_eq!(cache.entries.len(), 1);
+    assert_eq!(cache.entries[0].key.text, recent.text);
+    assert!(cache.retained_payload_bytes() < before);
+    // A limit smaller than any entry bypasses retention, never visible content.
+    cache.trim_payload_to(std::mem::size_of::<TextBufferCache>());
+    assert!(cache.entries.is_empty());
+    assert_eq!(cache.lookup.capacity(), 0);
+    let (_, stats) = cache.indices(&mut fonts, &[recent], 1280, 800);
+    assert_eq!(stats.misses, 1);
+    let reconstructed: Vec<_> = cache.entries[0]
+        .buffer
+        .layout_runs()
+        .map(|row| format!("{:?}", row.glyphs))
+        .collect();
+    assert_eq!(original, reconstructed);
+}
+
+#[test]
+fn unchanged_finished_frame_preserves_shaping_and_revision() {
+    let mut fonts = crate::load_datum_fonts();
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Workspace);
+    cache.indices(&mut fonts, &[run()], 1280, 800);
+    cache.finish_frame();
+    let revision = cache.revision;
+    let shape = cache.entries[0].buffer.shape_storage();
+    cache.begin_frame(Profile::Workspace);
+    cache.indices(&mut fonts, &[run()], 1280, 800);
+    cache.finish_frame();
+    assert_eq!(cache.revision, revision);
+    assert_eq!(cache.retained_revision, Some(revision));
+    assert_eq!(cache.entries[0].buffer.shape_storage(), shape);
+}
+
+#[test]
+fn finished_frame_applies_eight_mib_ceiling_to_owned_capacity() {
+    let mut fonts = crate::load_datum_fonts();
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Workspace);
+    cache.indices(&mut fonts, &[run()], 1280, 800);
+    // A short live key may own capacity from a previous larger allocation.
+    cache.entries[0].key.text.reserve(8 * 1024 * 1024);
+    assert!(cache.retained_payload_bytes() > 8 * 1024 * 1024);
+    assert!(
+        !cache.entries[0]
+            .buffer
+            .layout_runs()
+            .collect::<Vec<_>>()
+            .is_empty()
+    );
+    let revision = cache.revision;
+    cache.finish_frame();
+    assert!(cache.retained_payload_bytes() <= 8 * 1024 * 1024);
+    assert!(cache.entries.is_empty());
+    assert_ne!(cache.revision, revision);
+    assert_eq!(cache.entries.capacity(), 0);
+    assert_eq!(cache.lookup.capacity(), 0);
+}

@@ -1,0 +1,61 @@
+{
+  "status": "Bounded default retained-payload cap implemented; full MEM-SHAPED predicates remain open",
+  "base_commit": "f662983d",
+  "production_consumers": [
+    "Renderer::render_with_submission full workspace/terminal path",
+    "Renderer::render_overlay_only dialog path",
+    "Shared TextBufferCache::finish_frame after successful queue submission"
+  ],
+  "retired_paths": [
+    "Workspace age-only retention and overlay entry/key-only retention as the sole post-frame text limits"
+  ],
+  "behavior": [
+    "After submission, bound reusable key strings, entry/index/rich-span capacities, unique public ShapeLine payloads and visible layout capacities to8MiB. Preserve existing overlay128entry/32KiB key bounds.",
+    "Only pressure sorts by generation and retires oldest entries in batches; geometric reduction bounds recount work. Retired entry/index peak capacity is released by the existing rebuild owner.",
+    "Unchanged cache revisions skip payload traversal entirely. Retirement advances revision to invalidate prepared index signatures; next use reconstructs exact text from model-owned inputs.",
+    "Apply retention before fallible post-submit diagnostic collection so diagnostic errors cannot skip retirement."
+  ],
+  "proof": {
+    "unit": "14 focused text-cache tests passed, including pressure/oldest retirement, exact reconstruction, warm identity/revision preservation, and actual8MiB capacity enforcement.",
+    "gpu": "14 production GPU tests passed, including full/dialog pixel equivalence, scrolling, pressure/reindex and cache reuse.",
+    "build": "Fresh datum-gui build passed; renderer all-targets visual-feature Clippy passed with -D warnings.",
+    "policy": "Source health2233files, dependency authority, terminal convergence, traceability, spec governance/parity and project state check passed. No roadmap-state change. Unchanged full drift/native/endurance checks not rerun; known Console golden failure remains unqualified."
+  },
+  "limits": [
+    "Post-submission retained public payload is bounded. Active frame/construction peaks, private FontSystem/ShapeBuffer/raster scratch, Arc/allocator bookkeeping, stable CPU lifetime records and32MiB process admission remain unfinished.",
+    "No complete MEM-SHAPED-LOCAL/TOTAL, S4 or S5 acceptance. Oversized text is rendered before cache retirement; no content or authoritative model omission.",
+    "No dependency/vendor/prototype/font/budget/resize change. Existing Console golden failure remains separately tracked; unchanged native/endurance/qualification scenarios are not rerun or claimed."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json",
+  "logs": {
+    "unit-final": {
+      "path": "unit-final.log.gz",
+      "uncompressed_sha256": "1ba640110ff8929e0e9f47df3324cd73e1b66602dc6834a752fdd8eec0f5dbe3"
+    },
+    "gpu": {
+      "path": "gpu.log.gz",
+      "uncompressed_sha256": "afaf081ddeff4398c827745edf93247e20ed915fbb213ce77beb0fe33a2e7584"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "fc98cbe1c197690b4e5c28e184939df3e68ba52b42af2f26a4aab8d902eb777a"
+    },
+    "build": {
+      "path": "build.log.gz",
+      "uncompressed_sha256": "3233b21383f978a8003da1a0ed683a4176e6b1bf7c589f1472f0c603c932d342"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "d2cd509cc1149ace5ae7bb357b450607fe4394764b47ec8d0b6ce264b46e789f",
+    "crates/gui-render/src/render/gpu_overlay.rs": "e4e6b6b5341b5833a0bb6c337f652800da164b5d91846e7f0022e6a4bc8f4159",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "d7a20b23a6270f5d1b5bf805ac24216f41ea587f7b5d9cc9ac66e35cc5b91507",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "7bc77e0c8ae3da7a30ba54e861f89ac0004189750ce78677318af7dca5bb3499"
+  },
+  "application_sha256": "93bea56f6168f8b7d469b431bd8e23419ee7e840fa92c40ad2878e1fc042984a",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib text_buffer_cache",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual gpu_overlay_tests -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --all-targets --features visual -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline -p datum-gui-app --bin datum-gui"
+  ]
+}

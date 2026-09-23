@@ -107,8 +107,9 @@ impl Renderer {
         let submission = queue.submit([encoder.finish()]);
         self.hold_text_submission(queue);
         on_submitted(submission);
-        self.submit_gpu_measurement(measurement)?;
         self.text_buffers.trim_overlay();
+        self.text_buffers.finish_frame();
+        self.submit_gpu_measurement(measurement)?;
         if let Some(started) = started {
             trace_render_timing(format!(
                 "dialog renderer={}us passes=1 text_cache={}/{}",

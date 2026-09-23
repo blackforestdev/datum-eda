@@ -15076,7 +15076,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
         "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
-        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -15093,6 +15094,10 @@
       "s4_owned_layout_progress": {
         "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
         "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
+      },
+      "s4_shaped_retention_progress": {
+        "implementation": "Shared full/overlay post-submit8MiB public retained-payload cap; production paths and focused proof in s4_shaped_retention_work.",
+        "remaining": "Complete live/frame/private/shared/process accounting and admission remain due atS4; original S5 acceptance unchanged."
       }
     },
     {
@@ -15187,7 +15192,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
         "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
-        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -15204,6 +15210,10 @@
       "s4_owned_layout_progress": {
         "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
         "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
+      },
+      "s4_shaped_retention_progress": {
+        "implementation": "Shared full/overlay post-submit8MiB public retained-payload cap; production paths and focused proof in s4_shaped_retention_work.",
+        "remaining": "Complete live/frame/private/shared/process accounting and admission remain due atS4; original S5 acceptance unchanged."
       }
     },
     {
@@ -31466,5 +31476,35 @@
       "shaped_payload_bytes is a deduplicated observation of retained public capacities, not a complete CPU stable-allocation-ID or lifetime ledger."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
+  },
+  "s4_shaped_retention_work": {
+    "status": "Bounded default retained-payload cap implemented; full MEM-SHAPED predicates remain open",
+    "base_commit": "f662983d",
+    "production_consumers": [
+      "Renderer::render_with_submission full workspace/terminal path",
+      "Renderer::render_overlay_only dialog path",
+      "Shared TextBufferCache::finish_frame after successful queue submission"
+    ],
+    "retired_paths": [
+      "Workspace age-only retention and overlay entry/key-only retention as the sole post-frame text limits"
+    ],
+    "behavior": [
+      "After submission, bound reusable key strings, entry/index/rich-span capacities, unique public ShapeLine payloads and visible layout capacities to8MiB. Preserve existing overlay128entry/32KiB key bounds.",
+      "Only pressure sorts by generation and retires oldest entries in batches; geometric reduction bounds recount work. Retired entry/index peak capacity is released by the existing rebuild owner.",
+      "Unchanged cache revisions skip payload traversal entirely. Retirement advances revision to invalidate prepared index signatures; next use reconstructs exact text from model-owned inputs.",
+      "Apply retention before fallible post-submit diagnostic collection so diagnostic errors cannot skip retirement."
+    ],
+    "proof": {
+      "unit": "14 focused text-cache tests passed, including pressure/oldest retirement, exact reconstruction, warm identity/revision preservation, and actual8MiB capacity enforcement.",
+      "gpu": "14 production GPU tests passed, including full/dialog pixel equivalence, scrolling, pressure/reindex and cache reuse.",
+      "build": "Fresh datum-gui build passed; renderer all-targets visual-feature Clippy passed with -D warnings.",
+      "policy": "Source health2233files, dependency authority, terminal convergence, traceability, spec governance/parity and project state check passed. No roadmap-state change. Unchanged full drift/native/endurance checks not rerun; known Console golden failure remains unqualified."
+    },
+    "limits": [
+      "Post-submission retained public payload is bounded. Active frame/construction peaks, private FontSystem/ShapeBuffer/raster scratch, Arc/allocator bookkeeping, stable CPU lifetime records and32MiB process admission remain unfinished.",
+      "No complete MEM-SHAPED-LOCAL/TOTAL, S4 or S5 acceptance. Oversized text is rendered before cache retirement; no content or authoritative model omission.",
+      "No dependency/vendor/prototype/font/budget/resize change. Existing Console golden failure remains separately tracked; unchanged native/endurance/qualification scenarios are not rerun or claimed."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json"
   }
 }

@@ -140,6 +140,7 @@ pub(crate) struct TextBufferCache {
     lookup: Vec<(u64, usize)>,
     frame: u64,
     revision: u64,
+    retained_revision: Option<u64>,
     #[cfg(test)]
     pub(crate) shape_reuses: usize,
     #[cfg(test)]
@@ -267,6 +268,36 @@ impl TextBufferCache {
         );
         if changed {
             // Only actual retirement/reordering invalidates index signatures.
+            self.revision = self.revision.wrapping_add(1);
+            self.rebuild_lookup();
+        }
+    }
+
+    /// Bound reusable CPU text after submission has consumed every layout run.
+    /// Current preparation, private shaping scratch and process totals are separate.
+    pub(crate) fn finish_frame(&mut self) {
+        if self.retained_revision == Some(self.revision) {
+            return;
+        }
+        self.trim_payload_to(8 * 1024 * 1024);
+        self.retained_revision = Some(self.revision);
+    }
+
+    fn retained_payload_bytes(&self) -> usize {
+        let usage = self.key_usage();
+        usage.key_text_bytes + usage.entry_storage_bytes + usage.shaped_payload_bytes
+    }
+
+    fn trim_payload_to(&mut self, limit: usize) {
+        if self.retained_payload_bytes() <= limit {
+            return;
+        }
+        // Pressure is uncommon. Newest generations survive first; halving avoids
+        // a quadratic full-payload recount for a large obsolete text generation.
+        self.entries.sort_by_key(|entry| entry.last_used_frame);
+        while !self.entries.is_empty() && self.retained_payload_bytes() > limit {
+            let retire = self.entries.len().div_ceil(2);
+            self.entries.drain(..retire);
             self.revision = self.revision.wrapping_add(1);
             self.rebuild_lookup();
         }
