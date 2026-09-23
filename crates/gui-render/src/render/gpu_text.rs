@@ -8,8 +8,8 @@ const MAX_OVERLAY_SIGNATURE_RUNS: usize = 128;
 #[derive(Default)]
 pub(crate) struct GlyphPreparation {
     upload_continuation: bool,
-    prepared: Option<(u64, TextPrepareSignature)>,
-    overlay_prepared: Option<(u64, TextPrepareSignature)>,
+    prepared: Option<(u64, u64, TextPrepareSignature)>,
+    overlay_prepared: Option<(u64, u64, TextPrepareSignature)>,
     #[cfg(test)]
     pub(crate) forced_overlay_errors: usize,
     #[cfg(test)]
@@ -205,10 +205,13 @@ impl Renderer {
             .then(|| text_prepare_signature(&workspace, &prepared.text_runs, width, height));
         let revision = self.text_buffers.revision();
         let reuse = signature.as_ref().is_some_and(|signature| {
-            self.text_preparation
-                .prepared
-                .as_ref()
-                .is_some_and(|(old_revision, old)| *old_revision == revision && old == signature)
+            self.text_preparation.prepared.as_ref().is_some_and(
+                |(old_revision, atlas_generation, old)| {
+                    *old_revision == revision
+                        && *atlas_generation == self.atlas.generation
+                        && old == signature
+                },
+            )
         });
         let overlay_signature = (has_overlay_text && overlay.len() <= MAX_OVERLAY_SIGNATURE_RUNS)
             .then(|| {
@@ -216,10 +219,13 @@ impl Renderer {
             })
             .filter(|signature| signature.runs.capacity() <= MAX_OVERLAY_SIGNATURE_RUNS);
         let reuse_overlay = overlay_signature.as_ref().is_some_and(|signature| {
-            self.text_preparation
-                .overlay_prepared
-                .as_ref()
-                .is_some_and(|(old_revision, old)| *old_revision == revision && old == signature)
+            self.text_preparation.overlay_prepared.as_ref().is_some_and(
+                |(old_revision, atlas_generation, old)| {
+                    *old_revision == revision
+                        && *atlas_generation == self.atlas.generation
+                        && old == signature
+                },
+            )
         });
         // Prepare mutates glyph instances even on failure. No old signature may
         // survive a partial attempt, including one that fails its retry.
@@ -263,9 +269,10 @@ impl Renderer {
         } else {
             false
         };
-        self.text_preparation.prepared = signature.map(|signature| (revision, signature));
+        self.text_preparation.prepared =
+            signature.map(|signature| (revision, self.atlas.generation, signature));
         self.text_preparation.overlay_prepared =
-            overlay_signature.map(|signature| (revision, signature));
+            overlay_signature.map(|signature| (revision, self.atlas.generation, signature));
         Ok((stats, !has_workspace_text || (reuse && !retried)))
     }
 
