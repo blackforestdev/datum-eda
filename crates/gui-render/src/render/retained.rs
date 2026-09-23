@@ -2,6 +2,7 @@
 mod retained_board_graphics;
 use retained_board_graphics::{
     push_retained_board_graphic_batches, push_retained_board_text_geometry_batches,
+    trace_retained_stage,
 };
 
 /// Retained authored-board geometry pass.
@@ -24,9 +25,9 @@ use retained_board_graphics::{
 /// - unknown-layer fallback appearance: deliberately divergent so unresolved
 ///   layer identity stays visible (see `resolve_layer_appearance_with_scene`).
 fn push_retained_scene_geometry(
-    out: &mut Vec<Quad>,
-    strokes: &mut Vec<WorldStrokeInstance>,
-    draw_commands: &mut Vec<RetainedDrawCommand>,
+    out: &mut impl Output<Quad>,
+    strokes: &mut impl Output<WorldStrokeInstance>,
+    draw_commands: &mut impl Output<RetainedDrawCommand>,
     scene: &BoardReviewSceneV1,
     reference_projection: &Projection,
     state: &ReviewWorkspaceState,
@@ -629,18 +630,4 @@ fn push_retained_scene_geometry(
     let outline_started = std::time::Instant::now();
     let outline_before = out.len();
     trace_retained_stage("outline", outline_started, outline_before, out.len());
-}
-
-fn trace_retained_stage(
-    name: &str,
-    started: std::time::Instant,
-    before_quads: usize,
-    after_quads: usize,
-) {
-    trace_render_timing(format!(
-        "retained stage {name} {}ms +{}q total={}q",
-        started.elapsed().as_millis(),
-        after_quads.saturating_sub(before_quads),
-        after_quads
-    ));
 }

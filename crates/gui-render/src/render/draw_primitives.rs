@@ -24,7 +24,7 @@ fn overlay_route_width_px(
 }
 
 fn push_overlay(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     overlay: &ProposalOverlayPrimitive,
     projection: &Projection,
     color: [f32; 3],
@@ -220,7 +220,7 @@ fn push_overlay(
 }
 
 fn push_overlay_move_preview(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     overlay: &ProposalOverlayPrimitive,
     projection: &Projection,
     color: [f32; 3],
@@ -282,7 +282,7 @@ fn push_overlay_move_preview(
 
 #[allow(dead_code)]
 fn push_polygon_fill(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     polygon: &[PointNm],
     projection: &Projection,
     color: [f32; 3],
@@ -377,7 +377,7 @@ fn push_component_primitive(
 #[cfg(test)]
 #[allow(dead_code)]
 fn push_component_primitive_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     component: &datum_gui_protocol::ComponentBounds,
     selected: bool,
     related: bool,
@@ -448,7 +448,7 @@ fn push_component_primitive_world(
 
 #[allow(dead_code)]
 fn push_component_graphic_primitive(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     graphic: &ComponentGraphicPrimitive,
     projection: &Projection,
     selected: bool,
@@ -504,8 +504,8 @@ fn push_component_graphic_primitive(
 
 #[allow(clippy::too_many_arguments)]
 fn push_component_graphic_primitive_world(
-    out: &mut Vec<Quad>,
-    strokes: &mut Vec<WorldStrokeInstance>,
+    out: &mut impl Output<Quad>,
+    strokes: &mut impl Output<WorldStrokeInstance>,
     graphic: &ComponentGraphicPrimitive,
     scene_layers: &[datum_gui_protocol::SceneLayer],
     selected: bool,
@@ -576,8 +576,13 @@ fn push_component_graphic_primitive_world(
     if graphic.render_role == "component_mechanical" {
         push_world_polyline_segments(out, &path, w, color);
     } else {
-        push_world_stroke_path(strokes, &path, color,
-            graphic.width_nm.unwrap_or(SILK_LINE_NM), 1.0);
+        push_world_stroke_path(
+            strokes,
+            &path,
+            color,
+            graphic.width_nm.unwrap_or(SILK_LINE_NM),
+            1.0,
+        );
         return;
     }
     // Round-cap each vertex so that separate fp_line segments sharing an
@@ -600,17 +605,18 @@ fn push_component_graphic_primitive_world(
 }
 
 fn push_board_text_geometry_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     text_geometry: &BoardTextGeometryPrimitive,
     glyph_mesh_assets: &BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive>,
     color: [f32; 3],
     _reference_projection: &Projection,
 ) {
     if let Some(transform) = text_geometry.world_transform_nm
-        && !text_geometry.glyphs.is_empty() {
-            push_board_text_mesh_world(out, text_geometry, glyph_mesh_assets, transform, color);
-            return;
-        }
+        && !text_geometry.glyphs.is_empty()
+    {
+        push_board_text_mesh_world(out, text_geometry, glyph_mesh_assets, transform, color);
+        return;
+    }
     for fill in &text_geometry.fills {
         push_world_polygon_fill_contours(out, &fill.outer, &fill.holes, color);
     }
@@ -625,7 +631,7 @@ fn push_board_text_geometry_world(
 }
 
 fn push_board_text_mesh_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     text_geometry: &BoardTextGeometryPrimitive,
     glyph_mesh_assets: &BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive>,
     transform: Affine2DFixedPrimitive,

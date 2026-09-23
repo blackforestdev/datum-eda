@@ -1,3 +1,4 @@
+mod geometry_output;
 use datum_gui_protocol::{
     Affine2DFixedPrimitive, BoardGraphicPrimitive, BoardReviewSceneV1, BoardTextGeometryPrimitive,
     BoardTextPrimitive, ComponentGraphicPrimitive, ComponentTextPrimitive, GlyphMeshAssetPrimitive,
@@ -8,11 +9,17 @@ pub use datum_gui_viewport::CameraState;
 use eda_engine::board::BoardText;
 use eda_engine::export::render_silkscreen_text_strokes;
 use eda_engine::ir::geometry::{LayerId, Point};
+use geometry_output::Output;
+#[path = "render/world_primitives.rs"]
+mod world_primitives;
 use glyphon::{Attrs, Color, Family, FontSystem, SwashCache, TextBounds, Weight};
 use std::collections::BTreeMap;
 use std::ops::Range;
 use taffy::prelude::*;
 use uuid::Uuid;
+use world_primitives::{
+    push_convex_polygon_fill, push_world_quad, push_world_rect_nm, push_world_triangle,
+};
 mod bottom_dock;
 #[cfg(feature = "visual")]
 pub mod capture_resource;

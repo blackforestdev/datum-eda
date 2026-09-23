@@ -3929,6 +3929,11 @@
           "work": "s4_resource_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
           "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
+        },
+        {
+          "work": "s4_construction_admission_work.geometry_emission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/geometry-emission/result.json",
+          "status": "Both retained constructors admit quad/stroke/command vector growth before allocation; other temporary construction ownership remains open"
         }
       ]
     },
@@ -15048,7 +15053,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Finish construction temporaries and owned command strings before claiming complete CPU peaks; reconcile concurrent constructor admission and weak-observer lifetime ownership. Current production already implements document-shared retained payload accounting, six history entries, vector-growth/vertex/hit/index/publication admission and failure/retry. Preserve full original S5 qualification; do not restart those implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15140,6 +15145,11 @@
           "work": "s4_scene_publication_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/scene-publication/result.json",
           "status": "Retained shared-owner and registry-publication allocations admitted before construction/publication"
+        },
+        {
+          "work": "s4_construction_admission_work.geometry_emission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/geometry-emission/result.json",
+          "status": "Both retained constructors admit quad/stroke/command vector growth before allocation; other temporary construction ownership remains open"
         }
       ]
     },
@@ -15201,7 +15211,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Finish construction temporaries and owned command strings before claiming complete CPU peaks; reconcile concurrent constructor admission and weak-observer lifetime ownership. Current production already implements document-shared retained payload accounting, six history entries, vector-growth/vertex/hit/index/publication admission and failure/retry. Preserve full original S5 qualification; do not restart those implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15293,6 +15303,11 @@
           "work": "s4_scene_publication_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/scene-publication/result.json",
           "status": "Retained shared-owner and registry-publication allocations admitted before construction/publication"
+        },
+        {
+          "work": "s4_construction_admission_work.geometry_emission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/geometry-emission/result.json",
+          "status": "Both retained constructors admit quad/stroke/command vector growth before allocation; other temporary construction ownership remains open"
         }
       ]
     },
@@ -17407,6 +17422,11 @@
           "work": "s4_resource_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
           "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
+        },
+        {
+          "work": "s4_construction_admission_work.geometry_emission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/geometry-emission/result.json",
+          "status": "Both retained constructors admit quad/stroke/command vector growth before allocation; other temporary construction ownership remains open"
         }
       ]
     },
@@ -17643,6 +17663,11 @@
           "work": "s4_resource_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
           "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
+        },
+        {
+          "work": "s4_construction_admission_work.geometry_emission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/geometry-emission/result.json",
+          "status": "Both retained constructors admit quad/stroke/command vector growth before allocation; other temporary construction ownership remains open"
         }
       ]
     },
@@ -34680,7 +34705,32 @@
       "This admits the vertex-expansion allocation, not every constructor allocation. Earlier quad/stroke/command/hit/layout growth, later metadata/index/registry allocation, allocation-owner scope bookkeeping, complete staging-tier admission and concurrent whole-constructor reservations remain open. Complete CPU/history ownership reconciliation, including externally held weak containers, also remains open.",
       "Twelve implementation gaps and original S5 qualification remain required. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json",
+    "geometry_emission_followup": {
+      "status": "Both retained constructors admit quad/stroke/command vector growth before allocation; other temporary construction ownership remains open",
+      "base_commit": "8f14617c",
+      "production_consumers": [
+        "Default retained board and companion schematic construction through the existing fallible native/capture/input preparation entry points",
+        "Shared retained geometry, pad/via, graphic/text and stroke emitters; shared draw-command merging"
+      ],
+      "retired_paths": [
+        "Plain Vec growth for retained quad, stroke and draw-command output before the first construction budget check"
+      ],
+      "behavior": [
+        "A typed shared output interface retains ordinary Vec semantics for existing screen consumers and selects admitted output explicitly in both retained constructors. Growth accounts existing document owners, live constructor scope and proposed capacity/header before fallible allocation, including old/new overlap. Refused output cannot be finalized or published as a partial scene. Existing native failure/retry and authoritative source state remain unchanged.",
+        "Same emission algorithms, command merge and painter ordering serve both output implementations. Shared world primitive extraction keeps the legacy root below its existing source ceiling. No geometry counting pass, cold double rendering, per-frame measurement campaign or third-party change."
+      ],
+      "proof": {
+        "renderer": "378 passed;0 failed;11 filtered, including selected ignored GPU tests. New real-board differential compares all emitted quads, strokes and merged commands with ordinary Vec output; refusal test verifies zero capacity allocated. Existing actual board/schematic tests now require geometry-emission refusal and successful retry; full renderer parity/reuse/lifetime suite passes.",
+        "checks": "Strict renderer/app visual all-target Clippy and fresh visual GUI build pass. Source health2292 passes. Existing app lifecycle refusal proof from construction-admission is reused because failure/retry routing is unchanged; app suite not rerun.",
+        "failed_attempts": "Preserve intermediate missing trait imports, remaining concrete Vec consumers, and primitive-extraction compile failures. Corrected before final passing suite."
+      },
+      "limits": [
+        "This bounds emitted vector growth, not every allocation during construction. Polygon/path/text tessellation temporaries, command-owned strings, scope bookkeeping and concurrent whole-constructor reservation remain unresolved. No MEM-WORLD/SHAPED/STAGING or S4 closure follows. Ten recorded gaps and all original S5 qualification remain.",
+        "No dependency/license/prototype/authority/numerical-cap/sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/geometry-emission/result.json"
+    }
   },
   "s4_vertex_allocation_work": {
     "status": "Admitted retained vertex buffers allocate fallibly before expansion",
