@@ -1,0 +1,80 @@
+use super::*;
+use glyphon::{Buffer, Metrics};
+
+#[test]
+fn owned_layout_matches_buffer_for_plain_rich_and_extent_changes() {
+    let mut fonts = crate::load_datum_fonts();
+    let mut scratch = ShapeBuffer::default();
+    for rich in [false, true] {
+        for text in [
+            "",
+            "a\n",
+            "one\n\ntwo",
+            "a\r\nb\n\rc\rd",
+            "Unicode e\u{301} Ω العربية אבג",
+            "a\tb\tlong_unbroken_word_123456",
+            "👩‍🔧 😀",
+        ] {
+            let mut run = crate::TextRun {
+                text: text.into(),
+                x: 0.0,
+                y: 0.0,
+                size: 13.0,
+                color: [1.0; 3],
+                face: crate::TextFace::Ui,
+                clip_bounds: None,
+                layout_size: None,
+                rich_spans: Vec::new(),
+            };
+            if rich {
+                run.rich_spans.push(crate::TextRunSpan {
+                    text: text.into(),
+                    color: [0.3, 0.8, 0.1],
+                    bold: true,
+                    italic: true,
+                });
+            }
+            let mut owned = TextLayout::default();
+            for (width, height) in [(45, 16), (180, 150), (45, 150), (180, 16)] {
+                owned.relayout(&mut fonts, &mut scratch, &run, (width, height));
+                let mut reference =
+                    Buffer::new(&mut fonts, Metrics::new(run.size, run.size * 1.22));
+                reference.set_size(&mut fonts, Some(width as f32), Some(height as f32));
+                let attrs = text_attrs(run.face);
+                if rich {
+                    reference.set_rich_text(
+                        &mut fonts,
+                        [(
+                            text,
+                            attrs
+                                .clone()
+                                .weight(Weight::BOLD)
+                                .style(Style::Italic)
+                                .color(text_color(run.rich_spans[0].color)),
+                        )],
+                        &attrs,
+                        Shaping::Basic,
+                        None,
+                    );
+                } else {
+                    reference.set_text(&mut fonts, text, &attrs, Shaping::Basic, None);
+                }
+                reference.shape_until_scroll(&mut fonts, false);
+                let signature = |line: LayoutRun<'_>| {
+                    (
+                        line.line_y.to_bits(),
+                        line.line_top.to_bits(),
+                        line.line_height.to_bits(),
+                        line.line_w.to_bits(),
+                        format!("{:?}", line.glyphs),
+                    )
+                };
+                assert_eq!(
+                    owned.layout_runs().map(signature).collect::<Vec<_>>(),
+                    reference.layout_runs().map(signature).collect::<Vec<_>>(),
+                    "rich={rich} {text:?} {width}x{height}"
+                );
+            }
+        }
+    }
+}

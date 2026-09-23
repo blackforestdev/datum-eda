@@ -296,7 +296,8 @@ if run.face != TextFace::Terminal { run.size *= scale; }
         cache = """
 fn begin_frame() { retain_recent_text_buffers(); entry.last_used_frame = 1; }
 fn animated_agent_text_cache_retains_only_two_visible_generations() {}
-fn ensure_text_buffer() { buffer.set_rich_text(); }
+fn ensure_text_buffer() { TextLayout::new(); }
+fn layout() { run.rich_spans; attributes.add_span(); ShapeLine::new(); }
 """
         render_gpu = """
 self.prepare_frame_text(device, queue, prepared, width, height, false);
@@ -381,7 +382,7 @@ fn render_cursor() {}
             geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf")
             .replace("if run.face != TextFace::Terminal", "if true"),
             cache.replace("last_used_frame", "unbounded_generation").replace(
-                "set_rich_text", "set_text"
+                "attributes.add_span", "attributes_ignored"
             ),
             render_gpu.replace("self.text_buffers.begin_frame(profile);\n", ""),
             bottom_dock,

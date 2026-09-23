@@ -81,6 +81,13 @@ owner. The renderer root include ceiling falls from 7,191 to 7,167 lines;
 ratchet downward; existing include debt remains open. Renderer unit tests,
 installed-renderer pixel parity and production GPU tests cover the migration.
 
+PM045 S4 retained text shaping/layout moves into the normal `text_layout`
+module. Its cache entry moves from `render/types.rs` into `text_buffer_cache`;
+the renderer root include ceiling falls from 7,167 to 7,159 lines. Shared
+immutable shape payloads and independent visible layout rows replace opaque
+retained buffers. Unit, extent-reuse and installed-renderer pixel comparisons
+cover this ownership change; private font/scratch accounting remains open.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

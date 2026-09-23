@@ -33,8 +33,8 @@ pub(super) fn load_datum_fonts() -> FontSystem {
 }
 
 /// Real shaped width of a single text run, in px, using cosmic-text/glyphon with
-/// the exact per-`TextFace` `Attrs` and `Metrics` gpu.rs renders with (see
-/// `ensure_text_buffer`: `Metrics::new(size, size * 1.22)`, `text_attrs(face)`).
+/// the per-`TextFace` attributes and line height of size × 1.22 used by the
+/// retained `TextLayout` owner and the GPU draw path.
 /// Unlike `estimated_text_run_width_px` (a fixed-advance monospace-style estimate
 /// with baked padding), this reflects the PROPORTIONAL IBM Plex Sans Condensed UI
 /// face, so per-label error is zero and downstream layout gaps stay uniform.
@@ -145,6 +145,7 @@ pub(super) fn measured_text_run_height_px(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use glyphon::{Buffer, Metrics, Shaping};
 
     #[test]
     fn wrapped_height_reuses_only_matching_layout_dependencies() {

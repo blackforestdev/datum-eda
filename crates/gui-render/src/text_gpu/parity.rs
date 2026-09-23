@@ -14,7 +14,7 @@ fn owned_draw_matches_installed_text_renderer() {
     let format = wgpu::TextureFormat::Rgba8UnormSrgb;
     let mut fonts = crate::load_datum_fonts();
     let mut raster = SwashCache::new();
-    let mut buffer = Buffer::new(&mut fonts, Metrics::new(18.0, 22.0));
+    let mut buffer = Buffer::new(&mut fonts, Metrics::new(18.0, 18.0 * 1.22));
     buffer.set_size(&mut fonts, Some(200.0), Some(128.0));
     let cache = Cache::new(&device);
     let mut viewport = Viewport::new(&device, &cache);
@@ -85,7 +85,7 @@ fn owned_draw_matches_installed_text_renderer() {
                                     attrs
                                         .clone()
                                         .style(glyphon::Style::Italic)
-                                        .color(glyphon::Color::rgba(30, 190, 230, 127)),
+                                        .color(glyphon::Color::rgb(30, 190, 230)),
                                 ),
                             ],
                             &attrs,
@@ -94,6 +94,50 @@ fn owned_draw_matches_installed_text_renderer() {
                         );
                     }
                     buffer.shape_until_scroll(&mut fonts, false);
+                    let mut run = crate::TextRun {
+                        text: text.into(),
+                        rich_spans: Vec::new(),
+                        x: left,
+                        y: top,
+                        size: 18.0,
+                        color: [1.0; 3],
+                        face,
+                        clip_bounds: None,
+                        layout_size: None,
+                    };
+                    if text == "rich" {
+                        run.rich_spans = vec![
+                            crate::TextRunSpan {
+                                text: "Bold ".into(),
+                                color: [240.0 / 255.0, 70.0 / 255.0, 30.0 / 255.0],
+                                bold: true,
+                                italic: false,
+                            },
+                            crate::TextRunSpan {
+                                text: "Italic".into(),
+                                color: [30.0 / 255.0, 190.0 / 255.0, 230.0 / 255.0],
+                                bold: false,
+                                italic: true,
+                            },
+                        ];
+                    }
+                    let layout = if text == "😀🌍" {
+                        crate::text_layout::TextLayout::with_test_attrs(
+                            &mut fonts,
+                            &mut glyphon::cosmic_text::ShapeBuffer::default(),
+                            &run,
+                            (200, 128),
+                            &glyphon::Attrs::new()
+                                .family(glyphon::Family::Name("Noto Color Emoji")),
+                        )
+                    } else {
+                        crate::text_layout::TextLayout::new(
+                            &mut fonts,
+                            &mut glyphon::cosmic_text::ShapeBuffer::default(),
+                            &run,
+                            (200, 128),
+                        )
+                    };
                     let area = TextArea {
                         buffer: &buffer,
                         left,
@@ -130,7 +174,7 @@ fn owned_draw_matches_installed_text_renderer() {
                         &mut fonts,
                         &mut raster,
                         [256, 128],
-                        areas.clone(),
+                        areas.iter().map(|area| owned_area(area, &layout)),
                     )
                     .unwrap();
                     atlas.flush_uploads(&queue);
@@ -166,7 +210,7 @@ fn owned_draw_matches_installed_text_renderer() {
                         &mut fonts,
                         &mut raster,
                         [256, 128],
-                        areas,
+                        areas.iter().map(|area| owned_area(area, &layout)),
                     )
                     .unwrap();
                     atlas.flush_uploads(&queue);
@@ -335,4 +379,18 @@ fn pixels(
     let bytes = readback.slice(..).get_mapped_range().to_vec();
     readback.unmap();
     bytes
+}
+
+fn owned_area<'a>(
+    area: &TextArea<'_>,
+    layout: &'a crate::text_layout::TextLayout,
+) -> super::Area<crate::text_layout::Runs<'a>> {
+    super::Area {
+        rows: layout.layout_runs(),
+        left: area.left,
+        top: area.top,
+        scale: area.scale,
+        bounds: area.bounds,
+        default_color: area.default_color,
+    }
 }

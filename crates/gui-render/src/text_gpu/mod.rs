@@ -4,7 +4,7 @@ mod draw;
 mod lifetime;
 
 pub(crate) use atlas::Atlas;
-pub(crate) use draw::Draw;
+pub(crate) use draw::{Area, Draw};
 pub(crate) use lifetime::hold_until_done;
 pub use lifetime::{Kind, Observer, Record};
 

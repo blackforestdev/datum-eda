@@ -3765,7 +3765,9 @@
         "crates/gui-render/src/text_gpu/atlas.rs",
         "crates/gui-render/src/text_gpu/draw.rs",
         "crates/gui-render/src/text_gpu/lifetime.rs",
-        "crates/gui-render/src/render/gpu_text.rs"
+        "crates/gui-render/src/render/gpu_text.rs",
+        "crates/gui-render/src/text_layout.rs",
+        "crates/gui-render/src/render/text_buffer_cache.rs"
       ],
       "test": {
         "status": "planned; not executed",
@@ -3824,11 +3826,16 @@
         "status": "Unqualified; original acceptance rule and proof status preserved."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
       ],
       "s4_owned_text_gpu_progress": {
         "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
         "remaining": "Full original acceptance remains unqualified. Complete staging/CPU/aggregate caps, device/host incidence and required resource/native/recovery conformance remain due under existing S4/S5 deadlines."
+      },
+      "s4_owned_layout_progress": {
+        "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
+        "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
       }
     },
     {
@@ -15035,7 +15042,10 @@
         "crates/gui-app/src/runtime_primary_pointer.rs",
         "crates/gui-app/src/runtime_revision_workspace.rs",
         "crates/gui-app/src/runtime_terminal_geometry.rs",
-        "crates/gui-app/src/runtime_terminal_render.rs"
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-render/src/text_layout.rs",
+        "crates/gui-render/src/render/text_buffer_cache.rs",
+        "crates/gui-render/src/text_gpu/draw.rs"
       ],
       "test": {
         "status": "Partial implementation: shared shaped-cache entry and lookup vectors release obsolete peak capacity at existing workspace/dialog retirement points. 640-label real-buffer negative/positive and GPU reindex/native regression proof recorded. Complete 8 MiB/renderer and 32 MiB/process key/shaping/capacity accounting and acceptance remain unqualified.",
@@ -15065,7 +15075,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
-        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -15078,6 +15089,10 @@
         "unfinished_qualification": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s4_owned_layout_progress": {
+        "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
+        "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
       }
     },
     {
@@ -15138,7 +15153,10 @@
         "crates/gui-app/src/runtime_primary_pointer.rs",
         "crates/gui-app/src/runtime_revision_workspace.rs",
         "crates/gui-app/src/runtime_terminal_geometry.rs",
-        "crates/gui-app/src/runtime_terminal_render.rs"
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-render/src/text_layout.rs",
+        "crates/gui-render/src/render/text_buffer_cache.rs",
+        "crates/gui-render/src/text_gpu/draw.rs"
       ],
       "test": {
         "status": "Partial implementation: shared shaped-cache entry and lookup vectors release obsolete peak capacity at existing workspace/dialog retirement points. 640-label real-buffer negative/positive and GPU reindex/native regression proof recorded. Complete 8 MiB/renderer and 32 MiB/process key/shaping/capacity accounting and acceptance remain unqualified.",
@@ -15168,7 +15186,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
-        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -15181,6 +15200,10 @@
         "unfinished_qualification": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s4_owned_layout_progress": {
+        "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
+        "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
       }
     },
     {
@@ -18854,7 +18877,10 @@
         "crates/gui-app/src/runtime_primary_pointer.rs",
         "crates/gui-app/src/runtime_revision_workspace.rs",
         "crates/gui-app/src/runtime_terminal_geometry.rs",
-        "crates/gui-app/src/runtime_terminal_render.rs"
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-render/src/text_layout.rs",
+        "crates/gui-render/src/render/text_buffer_cache.rs",
+        "crates/gui-render/src/text_gpu/draw.rs"
       ],
       "test": {
         "status": "Partial shared shaped-cache adoption: borrowed indexed lookup retains exact collision-safe existing keys, extent-only relayout and workspace/dialog profiles. Warm fixture compares 160 keys instead of 12880; collision and disabled-index negatives fail as required. Recency reordering/cap/reindex/two-generation retirement and metadata release pass. GPU scroll/relayout/atlas-reindex and four native smokes pass. Full configurable shaping-key, shaped payload/atlas accounting and per-adapter qualification remain open.",
@@ -18884,7 +18910,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
-        "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -18897,6 +18924,10 @@
         "unfinished_qualification": "Shaping changes exactly when semantic shaping key changes",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s4_owned_layout_progress": {
+        "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
+        "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
       }
     },
     {
@@ -18962,7 +18993,10 @@
         "crates/gui-app/src/runtime_primary_pointer.rs",
         "crates/gui-app/src/runtime_revision_workspace.rs",
         "crates/gui-app/src/runtime_terminal_geometry.rs",
-        "crates/gui-app/src/runtime_terminal_render.rs"
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-render/src/text_layout.rs",
+        "crates/gui-render/src/render/text_buffer_cache.rs",
+        "crates/gui-render/src/text_gpu/draw.rs"
       ],
       "test": {
         "status": "Partial shared production adoption: extent-only misses reuse an unused matching Buffer in place, preserving shaping storage and invalidating glyph revision; current-frame consumers retain independent layouts. Original clone and missing current-frame guard negatives fail. Real CPU fresh-layout/glyph parity, GPU fresh-dialog pixels and four native regression smokes pass. Complete shaping/layout dependency, byte accounting and per-adapter/backend qualification remain open. Further bounded production adoption: unchanged overlay glyph preparation reused with 128-record signature cap; no-op trim preserves cache revision. GPU warm/scroll/parity, retry/reindex/atlas pressure and oversized bypass regressions pass. Full qualification remains open.",
@@ -18993,7 +19027,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-relayout/result.json",
         "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json",
-        "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
+        "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -19006,6 +19041,10 @@
         "unfinished_qualification": "Layout correct; unchanged shaping reused; GPU placement/atlas/target current",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s4_owned_layout_progress": {
+        "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
+        "remaining": "Original full accounting/cap, dependency and native/resource acceptance obligations remain required; bounded evidence does not close this predicate."
       }
     },
     {
@@ -31261,7 +31300,7 @@
       "still_requires_validation": "Private FontSystem shaping scratch and Swash ScaleContext lifetime/capacity remain to be accounted for by a validated Datum-owned method. Public output-vector capacities alone are insufficient. The route is not a conformance result or an assertion that all private accounting is solved.",
       "migration_boundary": "Reuse the shared font authority and native/device owners; migrate bounded consumers with legacy parity and counter conformance, then retire competing production text paths. All original resource limits and S5 qualifications remain required.",
       "gpu_progress": "Default Atlas/Draw migration recorded in s4_owned_text_gpu_work. Existing Buffer/FontSystem remain shaping owners; all full accounting/cap requirements still apply.",
-      "current_draw_bridge": "Datum Draw now consumes public Buffer layout runs through TextArea. Owned layout can now replace that bridge without the private glyphon draw/atlas interface. Font/raster scratch and full accounting still require implementation."
+      "current_draw_bridge": "Datum Draw consumes owned TextLayout layout-run iterators. Production retained Buffer/BufferLine caches are retired; public ShapeLine/LayoutLine payloads are directly owned and counted. FontSystem/ShapeBuffer/ScaleContext scratch and complete caps remain unfinished."
     }
   },
   "s4_shared_geometry_work": {
@@ -31387,6 +31426,45 @@
       "Staging is now visible Datum-owned data but complete16MiB per-host/64MiB aggregate chunking/caps and queue staging lifetime qualification remain open.",
       "No native UX/endurance, latency improvement, global adoption, S4 completion or S5 qualification claim. No dependency, vendoring, prototype, font authority, budget amendment or resize change."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+    "subsequent_layout_migration": "Default Buffer/BufferLine retention was later replaced by s4_owned_layout_work; preserve this GPU slice as its original bounded evidence."
+  },
+  "s4_owned_layout_work": {
+    "status": "Default text cache now retains Datum-owned shaping/layout; complete caps and private scratch accounting remain open",
+    "base_commit": "3dc6a079",
+    "production_consumers": [
+      "TextBufferCache::ensure_text_buffer for shared workspace/terminal and overlay text",
+      "Renderer::prepare_frame_text through build_text_areas into the Datum Draw owner",
+      "All native Renderer hosts inherit this default owner; native per-consumer qualification remains separate"
+    ],
+    "shared_owner": "crates/gui-render/src/text_layout.rs with TextBufferCache and text_gpu::Area",
+    "retired_paths": [
+      "Retained cosmic-text Buffer/BufferLine creation, copied paragraph strings and opaque active/inactive layout caches",
+      "Deep cloning shaped/layout vectors when simultaneous extents need distinct layouts",
+      "Rebuilding plain/rich text/style input on width-only relayout when existing shaping covers the viewport"
+    ],
+    "behavior": [
+      "Retain public ShapeLine payloads by shared immutable ownership; each extent owns its visible LayoutLine/glyph vectors. Extend the shaped paragraph prefix only when needed, preserving the existing glyph-bound visibility and baseline semantics.",
+      "Preserve Basic shaping, tab width8, WordOrGlyph wrapping, font authority, key matching, two-generation workspace retention and existing overlay entry/key limits. Rich span attributes use original byte intersections; temporary rich concatenation/attributes drop after new shaping.",
+      "Public shaped_payload_bytes counts retained layout capacities plus unique shared shape payloads across extent variants. The report distinguishes these from keys/entry metadata and excludes private font/scratch and allocator/Arc bookkeeping.",
+      "Draw consumes a generic borrowed layout-run iterator; installed Buffer remains only a test oracle, not a default rendering dependency. Move the cache entry into its owner and ratchet the renderer root ceiling7159."
+    ],
+    "proof": {
+      "unit": "242 renderer unit tests passed, including56 exact plain/rich text/extent comparisons, preserved shape identity on relayout and simultaneous extents, and unique payload accounting/release after eviction.",
+      "pixels": "60 exact offscreen comparisons against installed glyphon pass with Datum-owned layout feeding Datum Draw.48 use production UI/terminal font authority;12 retain the explicit existing Noto Color Emoji oracle through a test-only attrs adapter. Covers scales1/1.25/2, MSAA1/4, clipping, fractional placement, rich styles, overlap and warm zero-upload/allocation reuse. No production font override added.",
+      "production_gpu": "14 production GPU tests passed after final layout changes, including dialog/general parity, scrolling, atlas pressure/retry/reindex and cache reuse.",
+      "build": "Fresh datum-gui application build passed.",
+      "policy": "Source health2233files,13 source-policy tests and dependency authority passed.",
+      "failed_attempts": "Initial test type-name compilation error corrected. Oracle caught viewport stopping at baseline/top instead of glyph bounds, including trailing empty rows. Corrected visibility and preserved failed logs. A color-fixture assertion failed when production faces did not select Noto Color Emoji; restored the explicit-font oracle using owned shaping, without changing production fonts or removing the color assertion. Failures are not prescribed negative-control acceptance.",
+      "drift": "Workspace Clippy and preceding gates passed. Updated obsolete set_rich_text marker to require Datum TextLayout routing and paragraph style/shape construction; all11 guard tests pass. Resumed drift from that gate, preserving earlier checks, and reached the existing Console golden mismatch:3778pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun; no golden changed."
+    },
+    "limits": [
+      "FontSystem, public ShapeBuffer private scratch, raster ScaleContext and transient rich paragraph/attribute construction remain outside the retained-payload report. Arc/allocator bookkeeping is also separate.",
+      "8MiB renderer/32MiB process shaped-payload cap implementation, complete current-frame/scratch/aggregate accounting and full ACC/MEM conformance remain unfinished. Existing key/entry limits are preserved, not promoted to full byte caps.",
+      "Rendering-only layout runs borrow glyph/position data; editing/source-text authority remains in TextRun and terminal/model state. No new editing API is asserted.",
+      "No global adoption, native UX/endurance, relative-performance, S4 completion or S5 acceptance claim. No dependency/vendor/prototype/font/budget/resize amendment.",
+      "shaped_payload_bytes is a deduplicated observation of retained public capacities, not a complete CPU stable-allocation-ID or lifetime ledger."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
   }
 }

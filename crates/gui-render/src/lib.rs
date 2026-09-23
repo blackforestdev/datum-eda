@@ -8,10 +8,7 @@ pub use datum_gui_viewport::CameraState;
 use eda_engine::board::BoardText;
 use eda_engine::export::render_silkscreen_text_strokes;
 use eda_engine::ir::geometry::{LayerId, Point};
-use glyphon::{
-    Attrs, Buffer, Color, Family, FontSystem, Metrics, Shaping, SwashCache, TextArea, TextBounds,
-    Weight,
-};
+use glyphon::{Attrs, Color, Family, FontSystem, SwashCache, TextBounds, Weight};
 use std::collections::BTreeMap;
 use std::ops::Range;
 use taffy::prelude::*;
@@ -32,6 +29,7 @@ mod terminal_clipboard_menu;
 mod terminal_core_render;
 mod terminal_render_cache;
 mod text_gpu;
+mod text_layout;
 pub use terminal_render_cache::TerminalRenderCache;
 mod terminal_pane_render;
 pub use terminal_pane_render::TerminalPaneRenderState;
