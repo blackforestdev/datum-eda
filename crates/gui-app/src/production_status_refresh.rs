@@ -39,15 +39,13 @@ pub(super) fn refresh_after_terminal_output(
             &backing.request,
         );
     }
-    let before_production = session.workspace().production.clone();
-    let before_checks = session.workspace().checks.clone();
-    let before_source_shards = session.workspace().source_shards.clone();
     let next_production = refresh_production_status(&backing.request)?;
     let next_checks = refresh_check_run_review_state(&backing.request)?;
     let next_source_shards = refresh_source_shard_status(&backing.request)?;
-    if next_production == before_production
-        && next_checks == before_checks
-        && next_source_shards == before_source_shards
+    let before = session.workspace();
+    if next_production == before.production
+        && next_checks == before.checks
+        && next_source_shards == before.source_shards
     {
         return Ok(ProductionStatusRefresh::Unchanged);
     }
@@ -66,12 +64,12 @@ fn refresh_workspace_after_terminal_output(
     include_review: bool,
     request: &datum_gui_protocol::LiveReviewRequest,
 ) -> Result<ProductionStatusRefresh> {
-    let before = session.workspace().clone();
     let next = if include_review {
         load_live_workspace_state(request)?
     } else {
         load_board_editor_workspace_state(request)?
     };
+    let before = session.workspace();
     if next.scene == before.scene
         && next.review == before.review
         && next.production == before.production

@@ -1,0 +1,33 @@
+{
+  "status": "Bounded production copy removal; S4 and HP09 qualification remain open",
+  "base_commit": "fca87716",
+  "production_consumers": [
+    "Terminal-triggered production status refresh",
+    "Terminal-triggered board-editor and review workspace refresh"
+  ],
+  "shared_owner": "crates/gui-app/src/production_status_refresh.rs",
+  "retired_paths": [
+    "Cloned full current WorkspaceState used only for equality comparison",
+    "Cloned current production/check/source-shard collections used only for equality comparison"
+  ],
+  "behavior": "Compare replacement state with immutably borrowed current state, then take the existing mutable borrow to publish changes. Keep pending flags, retry limits, loaders, journal reconciliation and PTY processing unchanged. This removes redundant copies; it does not suppress required terminal work.",
+  "proof": {
+    "application": "cargo test --offline -p datum-gui-app --bin datum-gui through guarded proof runner: 377 passed, 16 ignored; existing real-session/job-control tests included. No new native window trial.",
+    "source_health": "Normal-budget module; source health passes and 13 policy regression tests pass. Exact-file formatting produced no additional edits.",
+    "dependency": "Dependency authority passes; no dependency changes.",
+    "drift": "Workspace Clippy and preceding checks pass. Old local wrapper initially rejected a Python command at Cargo-only guard; preserve exit2. Resume the unexecuted terminal proof using guarded Cargo (4 tests pass; probe errors0), then remaining original gates. Console routing7 app/8 protocol and render9 tests pass; exit1 at known Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates not run; goldens unchanged."
+  },
+  "limits": [
+    "No measured CPU/latency/allocator-byte claim.",
+    "No full hidden-render, reopen/PTy-state, S4 resource or S5 qualification follows.",
+    "Only current-state comparison copies are removed; loading fresh project state remains required.",
+    "No visual/prototype, settings authority, dependency/license, numerical budget or resize-scope change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/workspace-refresh-borrow/result.json",
+  "source_sha256": "26a79457f0562c61746ac1bf627e18336558b2de1b9aafb5b583700e59702424",
+  "log_sha256_uncompressed": {
+    "drift.log.gz": "be4375da8045d74c7c3c3e90b4453ca8fcd1f1d962651ead09d0cd1f9d983284",
+    "drift-resume.log.gz": "b508a57e57a9d750906e3674c9b8850dde16ec185d9ba92657b85767f5ce3649",
+    "drift-tail.log.gz": "944feba9b8d0e0654b0c17b94faeba2ff437318c47bad0efab9a61e0ed1a4a03"
+  }
+}

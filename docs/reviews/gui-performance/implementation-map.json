@@ -30920,5 +30920,39 @@
     "qualification_status": "All original partial test statuses and acceptance rules retained",
     "resource_implementation_deadline": "S4; original 50 S2 predicates and named resource associations unchanged",
     "limitations": "No full native/profile/static/input/focus/resource qualification or global adoption acceptance; resize remains separately nonblocking."
+  },
+  "s4_workspace_refresh_borrow_work": {
+    "status": "Bounded production copy removal; S4 and HP09 qualification remain open",
+    "base_commit": "fca87716",
+    "production_consumers": [
+      "Terminal-triggered production status refresh",
+      "Terminal-triggered board-editor and review workspace refresh"
+    ],
+    "shared_owner": "crates/gui-app/src/production_status_refresh.rs",
+    "retired_paths": [
+      "Cloned full current WorkspaceState used only for equality comparison",
+      "Cloned current production/check/source-shard collections used only for equality comparison"
+    ],
+    "behavior": "Compare replacement state with immutably borrowed current state, then take the existing mutable borrow to publish changes. Keep pending flags, retry limits, loaders, journal reconciliation and PTY processing unchanged. This removes redundant copies; it does not suppress required terminal work.",
+    "proof": {
+      "application": "cargo test --offline -p datum-gui-app --bin datum-gui through guarded proof runner: 377 passed, 16 ignored; existing real-session/job-control tests included. No new native window trial.",
+      "source_health": "Normal-budget module; source health passes and 13 policy regression tests pass. Exact-file formatting produced no additional edits.",
+      "dependency": "Dependency authority passes; no dependency changes.",
+      "drift": "Workspace Clippy and preceding checks pass. Old local wrapper initially rejected a Python command at Cargo-only guard; preserve exit2. Resume the unexecuted terminal proof using guarded Cargo (4 tests pass; probe errors0), then remaining original gates. Console routing7 app/8 protocol and render9 tests pass; exit1 at known Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates not run; goldens unchanged."
+    },
+    "limits": [
+      "No measured CPU/latency/allocator-byte claim.",
+      "No full hidden-render, reopen/PTy-state, S4 resource or S5 qualification follows.",
+      "Only current-state comparison copies are removed; loading fresh project state remains required.",
+      "No visual/prototype, settings authority, dependency/license, numerical budget or resize-scope change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/workspace-refresh-borrow/result.json"
+  },
+  "s4_carried_work_inventory": {
+    "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
+    "carried_rows": 50,
+    "rows_with_recorded_implementation_gaps": 27,
+    "rows_with_no_new_implementation_defect_asserted": 23,
+    "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change."
   }
 }
