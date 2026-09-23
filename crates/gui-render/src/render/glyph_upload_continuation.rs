@@ -64,8 +64,10 @@ impl Renderer {
         if !self.text_preparation.upload_continuation || !self.atlas.has_pending_uploads() {
             return Ok(false);
         }
-        self.text_buffers
-            .release_layout_scratch_for(CHUNK_BYTES, &self.atlas.staging_budget);
+        self.text_buffers.release_layout_scratch_for(
+            self.atlas.chunk_staging_bytes(CHUNK_BYTES)?,
+            &self.atlas.staging_budget,
+        );
         let submission = self.atlas.submit_chunk(device, queue, CHUNK_BYTES)?;
         on_submitted(submission);
         if let Some(measurements) = &mut self.measurements {
@@ -77,6 +79,11 @@ impl Renderer {
 }
 
 impl Renderer {
+    /// Atlas page-record capacity and headers, including reusable page ownership.
+    pub fn atlas_page_metadata_bytes(&self) -> u64 {
+        self.atlas.page_metadata_bytes()
+    }
+
     /// Pending raster upload record capacity, charged to staging/scratch separately from pixels.
     pub fn pending_glyph_metadata_bytes(&self) -> u64 {
         self.atlas.pending_metadata_bytes()

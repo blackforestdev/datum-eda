@@ -35,9 +35,11 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     let cpu = atlas.pending_cpu_bytes();
     assert!(cpu > 0);
     let metadata = atlas.pending_metadata_bytes();
+    let pages = atlas.page_metadata_bytes();
+    assert!(pages > 0);
     assert!(metadata > 0);
-    assert_eq!(host.used(), cpu + metadata);
-    assert_eq!(process.used(), baseline + cpu + metadata);
+    assert_eq!(host.used(), cpu + metadata + pages);
+    assert_eq!(process.used(), baseline + cpu + metadata + pages);
     let padded = atlas.pending_staging_bytes();
     let filler = host.reserve(host.available()).unwrap();
     let error = atlas
@@ -48,7 +50,7 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     assert_eq!(atlas.pending_staging_bytes(), padded);
     assert_eq!(
         process.used(),
-        baseline + cpu + metadata,
+        baseline + cpu + metadata + pages,
         "failed admission rolls back"
     );
     let rasterizations = atlas.uploads.rasterizations;
@@ -69,6 +71,7 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     assert_eq!(
         host.used(),
         padded
+            + pages
             + crate::text_gpu::staging_vec::StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(1)
                 .unwrap(),
         "CPU pixels retire after staging copy is built"
@@ -76,7 +79,7 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     queue.submit([batch.command()]);
     batch.hold(&queue);
     device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-    assert_eq!(host.used(), 0);
+    assert_eq!(host.used(), pages);
     atlas
         .glyph(&device, &queue, &mut fonts, &mut raster, keys[1])
         .unwrap();
@@ -108,12 +111,12 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     assert!(atlas.pending_metadata_bytes() > old_metadata);
     assert_eq!(
         host.used(),
-        atlas.pending_cpu_bytes() + atlas.pending_metadata_bytes()
+        atlas.pending_cpu_bytes() + atlas.pending_metadata_bytes() + atlas.page_metadata_bytes()
     );
     assert_eq!(process.used(), baseline + host.used());
     atlas.repack();
     assert_eq!(atlas.pending_metadata_bytes(), 0);
-    assert_eq!(host.used(), 0);
+    assert_eq!(host.used(), pages);
     drop(atlas);
     assert_eq!(host.used(), 0);
     assert_eq!(process.used(), baseline);

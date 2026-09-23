@@ -51,6 +51,18 @@ impl<T> StagingVec<T> {
         crate::cpu_alloc::heap::capacity_bytes::<T>(self.values.capacity()) as u64
     }
 
+    pub fn capacity(&self) -> usize {
+        self.values.capacity()
+    }
+
+    pub fn drain_all(&mut self) -> std::vec::Drain<'_, T> {
+        self.values.drain(..)
+    }
+
+    pub fn retain(&mut self, keep: impl FnMut(&T) -> bool) {
+        self.values.retain(keep);
+    }
+
     pub fn clear(&mut self) {
         self.values.clear();
     }

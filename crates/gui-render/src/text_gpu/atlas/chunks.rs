@@ -6,18 +6,44 @@ impl Atlas {
         self.pending_copy_bytes
     }
 
+    fn chunk_plan(&self, limit: u64) -> anyhow::Result<(usize, u64)> {
+        let mut remaining = limit;
+        let mut count = 0;
+        for upload in self.pending_uploads.iter() {
+            let pitch = u64::from(
+                upload
+                    .stride
+                    .next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT),
+            );
+            anyhow::ensure!(pitch <= limit, "glyph row exceeds staging chunk");
+            let rows = (remaining / pitch).min(u64::from(upload.size[1] - upload.uploaded_rows));
+            if rows == 0 {
+                break;
+            }
+            count += 1;
+            remaining -= pitch * rows;
+        }
+        Ok((count, limit - remaining))
+    }
+
+    pub(crate) fn chunk_staging_bytes(&self, limit: u64) -> anyhow::Result<u64> {
+        let (count, bytes) = self.chunk_plan(limit)?;
+        Ok(bytes
+            + StagingVec::<super::super::upload::TextureUpload<'_>>::capacity_bytes(count)?
+            + StagingVec::<SubmissionRef>::capacity_bytes(self.pages.len())?
+            + super::super::upload::retention_metadata_bytes(&[], false)?)
+    }
+
     pub(crate) fn submit_chunk(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         limit: u64,
     ) -> anyhow::Result<wgpu::SubmissionIndex> {
+        let (count, _) = self.chunk_plan(limit)?;
         let mut remaining = limit;
-        let mut uploads = super::super::staging_vec::StagingVec::new(
-            self.pending_uploads.len(),
-            &self.staging_budget,
-        )?;
-        for upload in &self.pending_uploads {
+        let mut uploads = super::super::staging_vec::StagingVec::new(count, &self.staging_budget)?;
+        for upload in self.pending_uploads.iter() {
             let pitch = u64::from(
                 upload
                     .stride
@@ -50,13 +76,14 @@ impl Atlas {
         )?
         .ok_or_else(|| anyhow::anyhow!("glyph continuation has no pending upload"))?;
         drop(uploads);
-        let resources = self.submission_refs();
+        let mut resources = StagingVec::new(self.pages.len(), &self.staging_budget)?;
+        resources.extend(self.pages.iter().map(|page| page.texture.submission_ref()));
         let submission = queue.submit([batch.command()]);
         batch.hold(queue);
-        super::super::hold_until_done(queue, resources);
+        queue.on_submitted_work_done(move || drop(resources));
         self.pending_copy_bytes -= limit - remaining;
         let mut copied = limit - remaining;
-        for upload in &mut self.pending_uploads {
+        for upload in self.pending_uploads.iter_mut() {
             let pitch = u64::from(
                 upload
                     .stride
