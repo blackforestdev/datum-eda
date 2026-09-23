@@ -21,6 +21,16 @@ pub(crate) struct GlyphPreparation {
 }
 
 impl GlyphPreparation {
+    pub(crate) fn is_continuing(&self) -> bool {
+        self.upload_continuation
+    }
+
+    pub(crate) fn cancel(&mut self) {
+        self.upload_continuation = false;
+        self.prepared = None;
+        self.overlay_prepared = None;
+    }
+
     #[cfg(all(test, feature = "visual"))]
     pub(crate) fn force_overlay_errors(&mut self, count: usize) {
         self.overlay_prepared = None;

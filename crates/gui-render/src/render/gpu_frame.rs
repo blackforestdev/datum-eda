@@ -50,6 +50,44 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        let result = self.render_submission_inner(
+            device,
+            queue,
+            target,
+            prepared,
+            retained,
+            schematic_retained,
+            width,
+            height,
+            on_submitted,
+        );
+        if result.is_err() && prepared.is_overlay_only() && !self.text_preparation.is_continuing() {
+            // No layout borrow survives an error. Failed frames must obey the
+            // same post-frame label retention caps as submitted dialogs. Do not
+            // trim pending continuations, including temporarily refused copies:
+            // their current layouts and already copied glyph pages remain reusable.
+            self.text_buffers.trim_overlay();
+            self.text_buffers.finish_frame();
+            self.text_preparation.cancel();
+            self.text_renderer.cancel_preparation();
+            self.menu_overlay_text_renderer.cancel_preparation();
+        }
+        result
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn render_submission_inner(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        target: &wgpu::TextureView,
+        prepared: &PreparedScene,
+        retained: &RetainedScene,
+        schematic_retained: Option<&RetainedScene>,
+        width: u32,
+        height: u32,
+        on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
+    ) -> anyhow::Result<bool> {
         if self.resume_glyph_upload(device, queue, on_submitted)? {
             return Ok(false);
         }
