@@ -238,7 +238,8 @@ unsafe fn allocate(layout: Layout, zeroed: bool) -> *mut u8 {
 
 impl crate::Renderer {
     /// Rust allocations attributed to font creation and synchronous text preparation.
-    /// Public cache-capacity reports overlap this scope; do not sum the two views.
+    /// Nested layout-scratch-and-output scopes are separately enumerated by usage().
+    /// Public cache-capacity reports overlap these scopes; do not sum the two views.
     pub fn text_cpu_usage(&self) -> Usage {
         self.text_cpu.usage()
     }

@@ -125,7 +125,7 @@ fn owned_draw_matches_installed_text_renderer() {
                     let layout = if text == "😀🌍" {
                         crate::text_layout::TextLayout::with_test_attrs(
                             &mut fonts,
-                            &mut glyphon::cosmic_text::ShapeBuffer::default(),
+                            &mut crate::text_layout::scratch::LayoutScratch::default(),
                             &run,
                             (200, 128),
                             &glyphon::Attrs::new()
@@ -134,7 +134,7 @@ fn owned_draw_matches_installed_text_renderer() {
                     } else {
                         crate::text_layout::TextLayout::new(
                             &mut fonts,
-                            &mut glyphon::cosmic_text::ShapeBuffer::default(),
+                            &mut crate::text_layout::scratch::LayoutScratch::default(),
                             &run,
                             (200, 128),
                         )

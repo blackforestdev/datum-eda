@@ -80,6 +80,11 @@ impl Renderer {
         let (buffers, text_bytes, overlay_bytes) = frame_buffers!(self);
         // Admit and encode the complete mixed batch before consuming any producer.
         // Failure retains every pending update for cancellation/retry.
+        // Reuse private layout scratch unless it competes with the real copy plan.
+        let staging = self.atlas.pending_staging_bytes()
+            + buffers.iter().map(|b| b.bytes.len() as u64).sum::<u64>();
+        self.text_buffers
+            .release_layout_scratch_for(staging, &self.atlas.staging_budget);
         let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;
         self.uniform_buffer.finish_uploads();
         for binding in &mut self.surface_scene_uniforms {
@@ -169,6 +174,8 @@ impl Renderer {
                 height,
             )
         };
+        self.text_buffers
+            .admit_layout_scratch(&self.atlas.staging_budget);
         self.text_buffers
             .admit_frame(&mut [&mut workspace, &mut overlay])?;
         // Preserve workspace diagnostic semantics; dialog-only frames report

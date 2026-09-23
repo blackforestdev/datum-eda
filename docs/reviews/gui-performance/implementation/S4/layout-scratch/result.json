@@ -1,0 +1,65 @@
+{
+  "status": "Default private layout scratch tracking and retained-capacity admission; full text accounting unfinished",
+  "base_commit": "c35a0374",
+  "production_consumers": [
+    "Shared TextLayout and TextBufferCache used by full-scene and dialog Renderer text preparation",
+    "Shared glyph, world, terminal and mixed-frame upload admission"
+  ],
+  "retired_paths": [
+    "Unaccounted retained private ShapeBuffer payload in production layout",
+    "Allowing reusable layout scratch to block local upload staging without eviction"
+  ],
+  "behavior": [
+    "Datum allocation scope measures live requested Rust bytes allocated during public layout_to_buffer calls. Subtract exact capacities of returned glyph vectors to isolate private retained scratch without dependency internals or copied sources. Public layout payload remains separately counted once.",
+    "Charge retained private scratch to existing16 MiB host/64 MiB process staging-scratch budgets. Reuse warm reservations and memoize output capacity by cache revision. Refused retention drops reusable ShapeBuffer only; required returned glyph layouts survive.",
+    "Before mixed-frame or bounded glyph/world/terminal uploads, discard reusable private scratch if available host or process staging capacity cannot accommodate the copy. GPU staging still uses authoritative atomic reservation and submission retirement."
+  ],
+  "proof": {
+    "renderer": "317 renderer tests pass,10 diagnostic/visual cases filtered. New real-layout test verifies private/output separation, warm reservation reuse, refusal release, output preservation, reconstruction parity and final release. Existing actual-GPU upload continuation and text parity tests pass with shared staging counters distinguishing retained private scratch.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2256 and dependency authority pass.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "Retained scratch reservation follows layout allocation; transient allocation peaks are not bounded by this change. Allocator headers/registry metadata, other font/shaping/raster/pending scratch and complete CPU text ownership remain unfinished. No full MEM-STAGING or MEM-SHAPED closure.",
+    "Private tracking requires the existing Datum allocator installed by production GUI and tests. External consumers without it cannot obtain private byte totals. Public capacity views and allocation-scope views overlap and must not be summed.",
+    "World/history/control/complete resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance/resource qualification remain. No native input or broad benchmark campaign, no S4/S5 or issue closure.",
+    "No dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/layout-scratch/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/layout-scratch/tests.log.gz",
+      "uncompressed_sha256": "d3ea21a802f9a4111245aec68d01283c93c357dbb9791637df4587b9b4728f90"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/layout-scratch/clippy.log.gz",
+      "uncompressed_sha256": "9562cebf21c45e21a7aa8f9cf7dc79bab011374172cb7db3c2b3df40315896a7"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/layout-scratch/build.log.gz",
+      "uncompressed_sha256": "7f6f12bceca05c5f2a7d1585b340b39d61aad2ca6f0cdbcf6cc22882cca8e4a8"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/layout-scratch/drift.log.gz",
+      "uncompressed_sha256": "aa6278b91d7306c7d885582987523948735e5c8250e27b8bdceebaff1761a1a9"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/cpu_alloc.rs": "cc429d062f11b99a21305fcba1d53bba3750ac493690058f1f759c3b76b78436",
+    "crates/gui-render/src/render/cold_world_upload.rs": "056afb4e72bce48eafad0fb1e9d4b1b981164766ac4adeab05072b20076aa288",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "42cff8b54331fda528800da03fdb0037af923ad7163c1ed403342c9993c9d654",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "0301e4b500535cb4068701e1f8132b08f4b4f0b10e3905dd29bb89a4ba980034",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "ff933c86be6bc68c2a668c3faa4d01fe54a68f57a844d2e788215cc400ffc0c4",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "2b0ebc31f04f4f165c895556505f0ca8dae5035328dad2787a24dd79510bcecb",
+    "crates/gui-render/src/render/gpu_text.rs": "5329d5d1bc1fa0444146711b973c7ade2419bc5893be4c3670e1cca34634799f",
+    "crates/gui-render/src/render/terminal_upload.rs": "e8b4239bf8d1dc1f20a96d9303b899bc1bbed015c192dac0c072b6252955ac29",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "cd2e4b49058382c26df70b90c569cebbfe3ad08fa18efafa8904489be287356f",
+    "crates/gui-render/src/render/text_cache_admission.rs": "db47ecc7968a900fea0020cc61e0fc753a9e4ffe0d3c6d458ebfe5f3f152e3be",
+    "crates/gui-render/src/text_gpu/budget.rs": "72be0c8dcd8518b5a37c8590bc9d87c003d720f25eed4c515f9616ce429bb19d",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "d0927d5b85be0b5b0e2d444dddc8e24a399940f2025a318045b5a3593458769d",
+    "crates/gui-render/src/text_gpu/parity.rs": "60c23a0866f15fd40c7f7cb6848317fcb862cd49158765c7ee46e0c24448905c",
+    "crates/gui-render/src/text_layout.rs": "a2188da5829d861417e9fc153fee38fc7b86e0226d0a94ca12199e48588e1a1b",
+    "crates/gui-render/src/text_layout_tests.rs": "c4a2ca838c295a00a922ccc5b4d1e65191c3ce336640cde51d746bd73bcf63e7",
+    "crates/gui-render/src/layout_scratch.rs": "3168283400a171ec6f000d9b93b972af2dab91fd05ebb908e0565bab8efd7248"
+  }
+}

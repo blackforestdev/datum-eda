@@ -51,6 +51,8 @@ impl Renderer {
         queue: &wgpu::Queue,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
+        self.text_buffers
+            .release_layout_scratch_for(CHUNK_BYTES as u64, &self.atlas.staging_budget);
         let mut remaining = CHUNK_BYTES;
         let mut uploads = Vec::new();
         let counts = [

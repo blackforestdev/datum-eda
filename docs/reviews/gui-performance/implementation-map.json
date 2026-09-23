@@ -16915,6 +16915,11 @@
           "work": "s4_glyph_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
           "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_layout_scratch_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/layout-scratch/result.json",
+          "status": "Private retained layout scratch joins existing shared host/process staging admission and yields to required uploads; transient/private remaining scratch and metadata accounting plus qualification remain open."
         }
       ]
     },
@@ -17066,6 +17071,11 @@
           "work": "s4_glyph_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-chunks/result.json",
           "status": "Oversized glyph pixels now use bounded explicit continuation in both render paths. Small plans retain mixed single submission. Full accounting/qualification remains open; cold timing explicitly incomplete."
+        },
+        {
+          "work": "s4_layout_scratch_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/layout-scratch/result.json",
+          "status": "Private retained layout scratch joins existing shared host/process staging admission and yields to required uploads; transient/private remaining scratch and metadata accounting plus qualification remain open."
         }
       ]
     },
@@ -32673,5 +32683,34 @@
       "No dependency, vendoring, license, prototype, layout/font authority, production protocol or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json"
+  },
+  "s4_layout_scratch_adoption_work": {
+    "status": "Default private layout scratch tracking and retained-capacity admission; full text accounting unfinished",
+    "base_commit": "c35a0374",
+    "production_consumers": [
+      "Shared TextLayout and TextBufferCache used by full-scene and dialog Renderer text preparation",
+      "Shared glyph, world, terminal and mixed-frame upload admission"
+    ],
+    "retired_paths": [
+      "Unaccounted retained private ShapeBuffer payload in production layout",
+      "Allowing reusable layout scratch to block local upload staging without eviction"
+    ],
+    "behavior": [
+      "Datum allocation scope measures live requested Rust bytes allocated during public layout_to_buffer calls. Subtract exact capacities of returned glyph vectors to isolate private retained scratch without dependency internals or copied sources. Public layout payload remains separately counted once.",
+      "Charge retained private scratch to existing16 MiB host/64 MiB process staging-scratch budgets. Reuse warm reservations and memoize output capacity by cache revision. Refused retention drops reusable ShapeBuffer only; required returned glyph layouts survive.",
+      "Before mixed-frame or bounded glyph/world/terminal uploads, discard reusable private scratch if available host or process staging capacity cannot accommodate the copy. GPU staging still uses authoritative atomic reservation and submission retirement."
+    ],
+    "proof": {
+      "renderer": "317 renderer tests pass,10 diagnostic/visual cases filtered. New real-layout test verifies private/output separation, warm reservation reuse, refusal release, output preservation, reconstruction parity and final release. Existing actual-GPU upload continuation and text parity tests pass with shared staging counters distinguishing retained private scratch.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2256 and dependency authority pass.",
+      "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "Retained scratch reservation follows layout allocation; transient allocation peaks are not bounded by this change. Allocator headers/registry metadata, other font/shaping/raster/pending scratch and complete CPU text ownership remain unfinished. No full MEM-STAGING or MEM-SHAPED closure.",
+      "Private tracking requires the existing Datum allocator installed by production GUI and tests. External consumers without it cannot obtain private byte totals. Public capacity views and allocation-scope views overlap and must not be summed.",
+      "World/history/control/complete resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance/resource qualification remain. No native input or broad benchmark campaign, no S4/S5 or issue closure.",
+      "No dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/layout-scratch/result.json"
   }
 }

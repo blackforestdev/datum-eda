@@ -32,6 +32,8 @@ impl Renderer {
         if !self.text_preparation.upload_continuation || !self.atlas.has_pending_uploads() {
             return Ok(false);
         }
+        self.text_buffers
+            .release_layout_scratch_for(CHUNK_BYTES, &self.atlas.staging_budget);
         let submission = self.atlas.submit_chunk(device, queue, CHUNK_BYTES)?;
         on_submitted(submission);
         if let Some(measurements) = &mut self.measurements {

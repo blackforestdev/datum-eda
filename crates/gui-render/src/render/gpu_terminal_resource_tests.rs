@@ -237,18 +237,25 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
             )
             .unwrap();
         assert_eq!(ready, attempt == 2);
-        assert!(renderer.renderer.upload_staging_reserved_bytes() <= 4 * 1024 * 1024);
+        assert!(
+            renderer.renderer.upload_staging_reserved_bytes()
+                - renderer.renderer.layout_scratch_reserved_bytes()
+                <= 4 * 1024 * 1024
+        );
         renderer
             .device
             .poll(wgpu::PollType::wait_indefinitely())
             .unwrap();
-        assert_eq!(renderer.renderer.upload_staging_reserved_bytes(), 0);
+        assert_eq!(
+            renderer.renderer.upload_staging_reserved_bytes(),
+            renderer.renderer.layout_scratch_reserved_bytes()
+        );
         if attempt == 0 {
             let filler = renderer
                 .renderer
                 .atlas
                 .staging_budget
-                .reserve(16 * 1024 * 1024)
+                .reserve(renderer.renderer.atlas.staging_budget.available())
                 .unwrap();
             let result = renderer.renderer.render_with_submission(
                 &renderer.device,

@@ -172,8 +172,8 @@ impl crate::Renderer {
         super::budget::gpu_process().used()
     }
 
-    /// Explicit migrated staging capacity, including submission retirement.
-    /// CPU pending payload, metadata and scratch remain separate.
+    /// Shared explicit GPU staging and retained private layout scratch capacity.
+    /// Other CPU pending payload, tracking metadata and scratch remain separate.
     pub fn upload_staging_reserved_bytes(&self) -> u64 {
         self.atlas.staging_budget.used()
     }
