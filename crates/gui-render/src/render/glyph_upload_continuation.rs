@@ -79,6 +79,11 @@ impl Renderer {
 }
 
 impl Renderer {
+    /// Glyph lookup buckets, including cached misses and reusable empty slots.
+    pub fn atlas_lookup_metadata_bytes(&self) -> u64 {
+        self.atlas.lookup_metadata_bytes()
+    }
+
     /// Atlas page-record capacity and headers, including reusable page ownership.
     pub fn atlas_page_metadata_bytes(&self) -> u64 {
         self.atlas.page_metadata_bytes()

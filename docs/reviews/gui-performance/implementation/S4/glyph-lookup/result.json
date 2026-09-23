@@ -1,0 +1,61 @@
+{
+  "status": "Atlas glyph lookup bucket capacity admitted before rasterization; private text accounting remains open",
+  "base_commit": "eeb1444a",
+  "production_consumers": [
+    "Shared Atlas used by workspace and overlay text in default native and offscreen renderers"
+  ],
+  "retired_paths": [
+    "Unbudgeted HashMap glyph lookup allocation and growth"
+  ],
+  "behavior": [
+    "Datum-owned open-addressed lookup uses standard-library RandomState, exact CacheKey comparison and cached hashes for rehashing. No dependency addition or third-party source modification. Cached misses and glyph locations retain their existing semantics.",
+    "Bucket storage uses shared StagingVec under existing host16MiB/process64MiB staging limits. Old/new growth overlap is reserved before allocation and before rasterization; refusal preserves the old table. Pending upload work can drain before retry. Repack retains charged reusable buckets; reset/drop releases them.",
+    "atlas_lookup_metadata_bytes reports allocated bucket capacity and Datum allocator headers, including empty slots. GPU transfer limits and painter order remain unchanged."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 373 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 29.32s",
+    "focused": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 383 filtered out; finished in 0.32s",
+    "checks": "Full renderer run passed373 tests,11 filtered before the final collision and process-budget assertions. Final focused test passed; strict visual renderer/app all-target Clippy and fresh GUI build passed. Application tests were not rerun.",
+    "coverage": "Known-capacity, old/new overlap refusal, exact key/miss/value lookup, collision probing, update, repack reuse, release and process budget checks. Full renderer includes actual GPU text/atlas/current-content continuation and staging-resource oracles.",
+    "failed_attempt": "The isolated focused test initially measured9264 versus9224 bytes because first-use staging_process initialized its shared40-byte budget object inside the bucket-only scope. Full-suite initialization order hid this test attribution error. Initialize shared infrastructure outside the bucket scope and check process usage separately; preserve original failure. No production counter offset or tolerance was added."
+  },
+  "limits": [
+    "No full MEM-STAGING/ACC-02, S4/S5 or issue closure. Private font/raster/shaping/layout construction peaks, global observation metadata, large-work admission/continuation and original qualification remain unfinished. Inventory unchanged:16 implemented,11 recorded gaps,23 with no new defect asserted.",
+    "No latency/global performance acceptance. Original failed evidence, Console golden failure, GEFN and nonblocking resize preserved. No numerical cap, prototype or sequencing amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/renderer.log.gz",
+      "uncompressed_sha256": "decfc9bd5064dbfa8725893cbc5cefa7a15b915eea00f6f610e5077120aed3bc"
+    },
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/focused.log.gz",
+      "uncompressed_sha256": "f3ad3829d21cd159bd44fe414e6cb1d01ea8b84959a4c010be8df11c55609492"
+    },
+    "focused-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/focused-initial.log.gz",
+      "uncompressed_sha256": "d572cb49042803d08b16eab5c09d7e9393397dcdbc88676c40b1b2aba76244bd"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/clippy.log.gz",
+      "uncompressed_sha256": "892e0c0a6396cab526f5b346121928b338621b2c55cc84bbce855d05b353e0be"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/build.log.gz",
+      "uncompressed_sha256": "ed5a0b13166fe13357aefd68dc7ad76ee7b86dc3714af1bceab3d9702371eb77"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "b7c7077df4b303cd20278ef34cd5c52672edb714307a87c7f3f781f42074aee4",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "1126a93c28b1861d838415519e0bcbaf926b4191f783912014aa798f2fc5009e",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "eb64b6cf211673003fcb7274f4cf11637f423c0b18cb8bbed8dcc731e32567a0",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "ebfe38be4ef57d8afd10f6eed011166d0ba4d211e6e9e561bdc812aece9fa2e0",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "278313ce7ba0d361eaefa0e754c52cfba36c9e00d9cb389578a0f2091842ce0a",
+    "crates/gui-render/src/text_gpu/atlas.rs": "3b2c8553a22af4f296a07d3477c57aabf6fa7dbb2c1b064c3408555154a05bee",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs": "6cafe5c6638d0b0892d9da746abb545e24816b20bb896410b9029e58707cc87b",
+    "crates/gui-render/src/text_gpu/atlas/pending_metadata.rs": "067b194c9333a66217f5e02c42098fcc7e115576384d20907abd8463be5450aa",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "842b123955a85b9955401ee16e41f284ff73939df6033325486b19da5b0cf104",
+    "crates/gui-render/src/text_gpu/atlas/glyph_map.rs": "f07382b18971deaf680a6170887bba281042e0881b6f84a8a22f0dffbf28618a"
+  }
+}

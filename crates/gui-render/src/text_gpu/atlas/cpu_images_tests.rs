@@ -35,7 +35,7 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     let cpu = atlas.pending_cpu_bytes();
     assert!(cpu > 0);
     let metadata = atlas.pending_metadata_bytes();
-    let pages = atlas.page_metadata_bytes();
+    let pages = atlas.page_metadata_bytes() + atlas.lookup_metadata_bytes();
     assert!(pages > 0);
     assert!(metadata > 0);
     assert_eq!(host.used(), cpu + metadata + pages);
@@ -111,7 +111,10 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     assert!(atlas.pending_metadata_bytes() > old_metadata);
     assert_eq!(
         host.used(),
-        atlas.pending_cpu_bytes() + atlas.pending_metadata_bytes() + atlas.page_metadata_bytes()
+        atlas.pending_cpu_bytes()
+            + atlas.pending_metadata_bytes()
+            + atlas.page_metadata_bytes()
+            + atlas.lookup_metadata_bytes()
     );
     assert_eq!(process.used(), baseline + host.used());
     atlas.repack();
