@@ -5,14 +5,15 @@ use super::vertex_allocation::VertexAllocation;
 // comparison baseline. Each is bounded by this stream's admitted GPU capacity;
 // all screen streams therefore retain at most twice their shared GPU allowance
 // in snapshot payload, plus allocation headers. Shrink/uncached retirement trims
-// obsolete storage instead of retaining each stream's historical peak.
+// obsolete storage instead of retaining each stream's historical peak. Their
+// actual capacities and headers also share host/process staging admission.
 
 pub(crate) struct ScreenBuffer {
-    snapshot: Box<[u8]>,
+    snapshot: crate::text_gpu::staging_vec::StagingVec<u8>,
     allocation: VertexAllocation,
     pending: crate::text_gpu::staging_vec::StagingVec<std::ops::Range<usize>>,
     staging_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
-    prepared: Box<[u8]>,
+    prepared: crate::text_gpu::staging_vec::StagingVec<u8>,
     has_prepared: bool,
     #[cfg(test)]
     pub(crate) last_upload_bytes: usize,
@@ -21,12 +22,12 @@ pub(crate) struct ScreenBuffer {
 impl Default for ScreenBuffer {
     fn default() -> Self {
         Self {
-            snapshot: Box::default(),
+            snapshot: Default::default(),
             allocation: VertexAllocation::default()
                 .with_generation_limit(crate::text_gpu::budget::Budget::new(2)),
             pending: Default::default(),
             staging_budget: crate::text_gpu::budget::Budget::new(16 * 1024 * 1024),
-            prepared: Box::default(),
+            prepared: Default::default(),
             has_prepared: false,
             #[cfg(test)]
             last_upload_bytes: 0,
@@ -90,9 +91,13 @@ impl ScreenBuffer {
         self.allocation.retire_uncached();
         if self.allocation.buffer().is_none() {
             self.pending = Default::default();
-            self.snapshot = Box::default();
-            self.prepared = Box::default();
+            self.snapshot = Default::default();
+            self.prepared = Default::default();
         }
+    }
+
+    pub(crate) fn snapshot_bytes(&self) -> u64 {
+        self.snapshot.allocated_bytes() + self.prepared.allocated_bytes()
     }
 
     pub(crate) fn pending_metadata_bytes(&self) -> u64 {
@@ -111,7 +116,7 @@ impl ScreenBuffer {
         self.pending.clear();
         self.has_prepared = false;
         if self.prepared.len() as u64 > self.allocation.buffer().map_or(0, wgpu::Buffer::size) {
-            self.prepared = Box::default();
+            self.prepared = Default::default();
         }
     }
 
@@ -164,9 +169,9 @@ impl ScreenBuffer {
         let bytes: &[u8] = bytemuck::cast_slice(vertices);
         if bytes.is_empty() {
             self.allocation.clear();
-            self.snapshot = Box::default();
+            self.snapshot = Default::default();
             self.pending = Default::default();
-            self.prepared = Box::default();
+            self.prepared = Default::default();
             self.has_prepared = false;
             return Ok(0);
         }
@@ -180,7 +185,7 @@ impl ScreenBuffer {
         if self.allocation.replace_if_needed(device, label, bytes)? {
             // A fresh allocation has no submitted content, even if the prior
             // allocation's snapshot happens to match a later preparation.
-            self.snapshot = Box::default();
+            self.snapshot = Default::default();
             self.cancel_uploads();
         }
         let mut ranges = 0;
@@ -188,6 +193,16 @@ impl ScreenBuffer {
             ranges += 1
         });
         self.pending.ensure_capacity(ranges, &self.staging_budget)?;
+        // Keep the previous plan and its bytes intact until replacement storage
+        // is admitted. Both old/new capacities count during allocation.
+        let prepared = if self.prepared.len() != bytes.len() {
+            Some(crate::text_gpu::staging_vec::StagingVec::from_slice(
+                bytes,
+                &self.staging_budget,
+            )?)
+        } else {
+            None
+        };
         self.pending.clear();
         let uploaded = dirty_ranges(
             &self.snapshot,
@@ -198,10 +213,10 @@ impl ScreenBuffer {
                     .push(offset as usize..offset as usize + bytes.len())
             },
         );
-        if self.prepared.len() == bytes.len() {
-            self.prepared.copy_from_slice(bytes);
+        if let Some(prepared) = prepared {
+            self.prepared = prepared;
         } else {
-            self.prepared = bytes.into();
+            self.prepared.copy_from_slice(bytes);
         }
         self.has_prepared = true;
         #[cfg(test)]

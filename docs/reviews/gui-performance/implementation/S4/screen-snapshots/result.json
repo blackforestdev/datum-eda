@@ -1,0 +1,58 @@
+{
+  "status": "ScreenBuffer prepared/submitted CPU snapshots admitted under shared staging budgets; other resource accounting and large-work qualification remain open",
+  "base_commit": "9150b6bd",
+  "production_consumers": [
+    "Shared grid, board/schematic overlays, viewport/control, menu and Console ScreenBuffer owners in every native renderer",
+    "Terminal graphic quad snapshots through the same ScreenBuffer owner"
+  ],
+  "retired_paths": [
+    "Infallible boxed-byte preparation copy outside staging admission",
+    "Uncharged submitted/prepared screen comparison snapshot capacity"
+  ],
+  "behavior": [
+    "Both submitted and prepared byte snapshots use the existing admitted StagingVec owner. Exact element capacity and Datum headers reserve against host16MiB/process64MiB staging before fallible allocation; old/new storage stays charged during replacement. This is the CPU upload/comparison storage used by the existing ScreenBuffer path.",
+    "Same-size preparations overwrite reusable storage and successful submission swaps snapshots as before. Reverts/cancellation preserve the submitted baseline. Replacement storage must be admitted before mutating pending ranges or prepared bytes; refusal preserves a valid same-allocation prior plan and cannot queue partial copies.",
+    "Empty/uncached/closed streams release snapshots; screen_upload_snapshot_bytes separates these capacities from range metadata and GPU copies. Resource oracles now include the newly charged CPU storage without changing numerical limits."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 372 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.71s",
+    "checks": "372 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh visual GUI build pass. Application tests were not rerun for these renderer changes.",
+    "coverage": "New actual-GPU test fills the snapshot budget, refuses the second snapshot without partial transfer, reads the original GPU bytes, retries after pressure release, reads the changed bytes and checks empty-stream release. Existing range-growth refusal proof now accounts for snapshot overlap. Warm snapshot pointer reuse, exact dirty words/reverts, oversized control retention bypass, native-renderer pixel parity and cold-world/glyph/terminal continuation remain passing.",
+    "initial_failure": "Initial run:370 passed,1 failed,11 filtered. The remaining uniform staging post-completion oracle omitted128 bytes of newly charged snapshot capacity/header. The exact snapshot counter was added to that assertion; failed log preserved. No GPU copy cap or pixel assertion relaxed."
+  },
+  "limits": [
+    "No full MEM-STAGING/REUSE-SCREEN, S4/S5 or issue closure. Glyph-instance construction/snapshots/batching, private font/raster/layout peaks, atlas/page/global observation metadata and complete original qualification remain unfinished. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+    "Screen CPU snapshots and copies now compete under the actual existing staging cap. Larger admitted screen workloads may require additional bounded transfer continuation; they are not accepted through a refused allocation. Existing large-control and real-fixture tests pass, but this is not full tier/cap/endurance qualification. Reusable snapshot capacities remain charged after submission.",
+    "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/result.json",
+  "logs": {
+    "renderer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/renderer-initial.log.gz",
+      "uncompressed_sha256": "b641f2354abebd52800aadbba3f0fef43656501c037222cb54cf89cc41b26793"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/renderer.log.gz",
+      "uncompressed_sha256": "dd890d1c00749ab678ed1a8234db80e82e68544384d03e018cb05265c203435d"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/clippy.log.gz",
+      "uncompressed_sha256": "ef850535781bdf55e96dcf96553a9d271dfcda72c199059786eabdb0a0b32357"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/build.log.gz",
+      "uncompressed_sha256": "4248de66f5ac580d90e85806507b8afdf1ccb9271cb72e27476332e3890316dd"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "617bd23d63d84a2f265a9d8b51c0a58f604cb9cac439e5543f46906df7782c95",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "2cd0e87b7832cffe147672c27f1d854eaceefca192b66c29ebc0a43cfbfc7b6c",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "43e3868c6587ffdc6ffa4295dd1ad06c63121df7f09779ec735d73fe5654c60b",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "fa5b9d9738a46eef73cf7b7221d4a2547a16f8351d68d978e518e27aa584fcc6",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "3ad23fe6a7e8d3d62c9732659923feb455b47ed9a0aae826a59cd4bba71ea213",
+    "crates/gui-render/src/render/screen_buffer.rs": "639be5e2791321712440066636eb147d37fbf843b34a5afb937df7614e84636e",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "6eefe39a9176f16a2ced8a52e57322a0d09b75c2ba18b934bfb93f618a91182e",
+    "crates/gui-render/src/render/terminal_graphics.rs": "4aefe2946fc7ea36b2f60ddc6fbfa5c8226755f38049f4735458968c0c5cc3a6",
+    "crates/gui-render/src/text_gpu/staging_vec.rs": "81f361bb773639092c6172f5b60a0f0f9717abe06d9bd1e02af3c32bedcd3d36"
+  }
+}

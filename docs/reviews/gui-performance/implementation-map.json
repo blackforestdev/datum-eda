@@ -17330,6 +17330,11 @@
           "work": "s4_range_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json",
           "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open"
+        },
+        {
+          "work": "s4_screen_snapshot_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/result.json",
+          "status": "ScreenBuffer prepared/submitted CPU snapshots admitted under shared staging budgets; other resource accounting and large-work qualification remain open"
         }
       ]
     },
@@ -17526,6 +17531,11 @@
           "work": "s4_range_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json",
           "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open"
+        },
+        {
+          "work": "s4_screen_snapshot_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/result.json",
+          "status": "ScreenBuffer prepared/submitted CPU snapshots admitted under shared staging budgets; other resource accounting and large-work qualification remain open"
         }
       ]
     },
@@ -34919,5 +34929,34 @@
       "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json"
+  },
+  "s4_screen_snapshot_work": {
+    "status": "ScreenBuffer prepared/submitted CPU snapshots admitted under shared staging budgets; other resource accounting and large-work qualification remain open",
+    "base_commit": "9150b6bd",
+    "production_consumers": [
+      "Shared grid, board/schematic overlays, viewport/control, menu and Console ScreenBuffer owners in every native renderer",
+      "Terminal graphic quad snapshots through the same ScreenBuffer owner"
+    ],
+    "retired_paths": [
+      "Infallible boxed-byte preparation copy outside staging admission",
+      "Uncharged submitted/prepared screen comparison snapshot capacity"
+    ],
+    "behavior": [
+      "Both submitted and prepared byte snapshots use the existing admitted StagingVec owner. Exact element capacity and Datum headers reserve against host16MiB/process64MiB staging before fallible allocation; old/new storage stays charged during replacement. This is the CPU upload/comparison storage used by the existing ScreenBuffer path.",
+      "Same-size preparations overwrite reusable storage and successful submission swaps snapshots as before. Reverts/cancellation preserve the submitted baseline. Replacement storage must be admitted before mutating pending ranges or prepared bytes; refusal preserves a valid same-allocation prior plan and cannot queue partial copies.",
+      "Empty/uncached/closed streams release snapshots; screen_upload_snapshot_bytes separates these capacities from range metadata and GPU copies. Resource oracles now include the newly charged CPU storage without changing numerical limits."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 372 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.71s",
+      "checks": "372 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh visual GUI build pass. Application tests were not rerun for these renderer changes.",
+      "coverage": "New actual-GPU test fills the snapshot budget, refuses the second snapshot without partial transfer, reads the original GPU bytes, retries after pressure release, reads the changed bytes and checks empty-stream release. Existing range-growth refusal proof now accounts for snapshot overlap. Warm snapshot pointer reuse, exact dirty words/reverts, oversized control retention bypass, native-renderer pixel parity and cold-world/glyph/terminal continuation remain passing.",
+      "initial_failure": "Initial run:370 passed,1 failed,11 filtered. The remaining uniform staging post-completion oracle omitted128 bytes of newly charged snapshot capacity/header. The exact snapshot counter was added to that assertion; failed log preserved. No GPU copy cap or pixel assertion relaxed."
+    },
+    "limits": [
+      "No full MEM-STAGING/REUSE-SCREEN, S4/S5 or issue closure. Glyph-instance construction/snapshots/batching, private font/raster/layout peaks, atlas/page/global observation metadata and complete original qualification remain unfinished. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+      "Screen CPU snapshots and copies now compete under the actual existing staging cap. Larger admitted screen workloads may require additional bounded transfer continuation; they are not accepted through a refused allocation. Existing large-control and real-fixture tests pass, but this is not full tier/cap/endurance qualification. Reusable snapshot capacities remain charged after submission.",
+      "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/screen-snapshots/result.json"
   }
 }
