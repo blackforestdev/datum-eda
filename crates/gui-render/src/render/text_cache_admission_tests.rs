@@ -305,3 +305,108 @@ fn oversized_plain_and_rich_keys_refuse_before_shaping_and_preserve_warm_cache()
     });
     TextBufferCache::admit_input_keys(&[run.clone(), run]).unwrap();
 }
+
+#[test]
+fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
+    use crate::text_gpu::{budget::Budget, staging_vec::StagingVec};
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut run = prepared.menu_overlay_text_runs[0].clone();
+    run.layout_size = Some((400.0, 200.0));
+    run.rich_spans = vec![
+        crate::TextRunSpan {
+            text: "Unicode e\u{301} Ω\n".into(),
+            color: [1.0; 3],
+            bold: true,
+            italic: false,
+        },
+        crate::TextRunSpan {
+            text: "אבג finish".into(),
+            color: [0.5; 3],
+            bold: false,
+            italic: true,
+        },
+    ];
+    let host = Budget::new(16 * 1024 * 1024);
+    let mut fonts = crate::text_layout::fonts::Fonts::new(host.clone());
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Overlay);
+    let before = fonts.usage().allocation;
+    // Index storage fits exactly; concatenation cannot be allocated.
+    let index_bytes = StagingVec::<usize>::capacity_bytes(1).unwrap();
+    let filler = host.reserve(host.available() - index_bytes).unwrap();
+    assert!(
+        cache
+            .admitted_indices(
+                &mut fonts,
+                std::slice::from_ref(&run),
+                960,
+                720,
+                true,
+                &host
+            )
+            .is_err()
+    );
+    assert!(cache.entries.is_empty());
+    assert_eq!(
+        fonts.usage().allocation.peak_payload_bytes,
+        before.peak_payload_bytes
+    );
+    assert_eq!(
+        host.available(),
+        index_bytes,
+        "failed batch releases its indices"
+    );
+    drop(filler);
+    let (indices, stats) = cache
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            true,
+            &host,
+        )
+        .unwrap();
+    assert_eq!(stats.misses, 1);
+    assert!(!cache.entries[indices[0]].buffer.needs_input());
+    drop(indices);
+    assert_eq!(
+        host.used(),
+        fonts.reserved_bytes(),
+        "concatenation does not survive preparation"
+    );
+    let filler = host.reserve(host.available() - index_bytes).unwrap();
+    let (indices, stats) = cache
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            true,
+            &host,
+        )
+        .unwrap();
+    assert_eq!(stats.hits, 1);
+    drop(indices);
+    cache.begin_frame(Profile::Overlay);
+    run.layout_size = Some((300.0, 200.0));
+    let (indices, stats) = cache
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            true,
+            &host,
+        )
+        .unwrap();
+    assert_eq!(stats.misses, 1);
+    assert_eq!(
+        cache.shape_reuses, 1,
+        "complete shapes relayout without copying input"
+    );
+    drop(indices);
+    drop(filler);
+}
