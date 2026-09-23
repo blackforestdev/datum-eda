@@ -1,3 +1,6 @@
+#[path = "render/glyph_mesh_lookup.rs"]
+mod glyph_mesh_lookup;
+use glyph_mesh_lookup::GlyphMeshLookup;
 #[path = "render/world_polygon.rs"]
 mod world_polygon;
 use world_polygon::{push_world_polygon_fill, push_world_polygon_fill_contours};
@@ -16,6 +19,7 @@ use geometry_output::Output;
 #[path = "render/world_primitives.rs"]
 mod world_primitives;
 use glyphon::{Attrs, Color, Family, FontSystem, SwashCache, TextBounds, Weight};
+#[cfg(test)]
 use std::collections::BTreeMap;
 use std::ops::Range;
 use taffy::prelude::*;

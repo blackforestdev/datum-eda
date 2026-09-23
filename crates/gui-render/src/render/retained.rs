@@ -34,7 +34,11 @@ fn push_retained_scene_geometry(
 ) {
     let active_move_component_uuid: Option<String> = None;
     let sl = &scene.layers;
-    let preview_affected_ids = proposal_preview_affected_ids(state);
+    let preview_ids = proposal_preview_ids(state);
+    let Some(mut preview_affected_ids) = out.scratch(preview_ids.clone().count()) else {
+        return;
+    };
+    preview_affected_ids.extend(preview_ids);
     let layer_app = |id: &str| resolve_layer_appearance_with_scene(Some(id), sl);
     // Render copper in physical stack order first; later stages (paste/mask/silk/mechanical/edge)
     // are handled by explicit render-stage grouping below.
@@ -217,36 +221,32 @@ fn push_retained_scene_geometry(
         }
     }
     trace_retained_stage("copper", copper_started, copper_before, out.len());
-    let mechanical_graphics: Vec<_> = scene
-        .component_graphics
-        .iter()
-        .filter(|graphic| {
-            graphic.render_role == "component_mechanical"
-                && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
-        })
-        .collect();
-    let mut process_layers: Vec<_> = scene
+    let mechanical_graphics = scene.component_graphics.iter().filter(|graphic| {
+        graphic.render_role == "component_mechanical"
+            && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
+    });
+    let process = scene
         .layers
         .iter()
-        .filter_map(|layer| match render_stage_for_layer(&layer.layer_id, sl) {
-            RenderStage::BottomPaste | RenderStage::TopPaste => {
-                Some((layer.layer_id.clone(), PadProcessLayerKind::Paste))
-            }
-            RenderStage::BottomMask | RenderStage::TopMask => {
-                Some((layer.layer_id.clone(), PadProcessLayerKind::Mask))
-            }
-            _ => None,
-        })
-        .collect();
-    process_layers.sort_by_key(|(layer_id, _)| scene_layer_stack_priority(layer_id, sl));
-    let silkscreen_graphics: Vec<_> = scene
-        .component_graphics
-        .iter()
-        .filter(|graphic| {
-            graphic.render_role == "component_silkscreen"
-                && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
-        })
-        .collect();
+        .enumerate()
+        .filter_map(|(index, layer)| {
+            let kind = match render_stage_for_layer(&layer.layer_id, sl) {
+                RenderStage::BottomPaste | RenderStage::TopPaste => PadProcessLayerKind::Paste,
+                RenderStage::BottomMask | RenderStage::TopMask => PadProcessLayerKind::Mask,
+                _ => return None,
+            };
+            Some((index, layer.layer_id.as_str(), kind))
+        });
+    let Some(mut process_layers) = out.scratch(process.clone().count()) else {
+        return;
+    };
+    process_layers.extend(process);
+    process_layers
+        .sort_unstable_by_key(|(index, layer, _)| (scene_layer_stack_priority(layer, sl), *index));
+    let silkscreen_graphics = scene.component_graphics.iter().filter(|graphic| {
+        graphic.render_role == "component_silkscreen"
+            && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
+    });
     let post_started = std::time::Instant::now();
     let post_before = out.len();
     let mut process_pad_elapsed = std::time::Duration::ZERO;
@@ -260,9 +260,9 @@ fn push_retained_scene_geometry(
     for stage in POST_COPPER_STAGES {
         let process_before = out.len();
         let process_started = std::time::Instant::now();
-        for (layer_id, kind) in process_layers
+        for (_, layer_id, kind) in process_layers
             .iter()
-            .filter(|(layer_id, _)| render_stage_for_layer(layer_id, sl) == stage)
+            .filter(|(_, layer_id, _)| render_stage_for_layer(layer_id, sl) == stage)
         {
             if !authored_visible(state) || !layer_visible(state, layer_id) {
                 continue;
@@ -303,7 +303,7 @@ fn push_retained_scene_geometry(
                 );
                 scene_retained_access::finish_retained_draw_commands(
                     draw_commands,
-                    Some(layer_id.as_str()),
+                    Some(layer_id),
                     quad_start,
                     out.len(),
                     strokes.len(),
@@ -315,7 +315,7 @@ fn push_retained_scene_geometry(
         process_pad_quads += out.len().saturating_sub(process_before);
         let mechanical_before = out.len();
         let mechanical_started = std::time::Instant::now();
-        for graphic in mechanical_graphics.iter().filter(|graphic| {
+        for graphic in mechanical_graphics.clone().filter(|graphic| {
             graphic_render_stage(graphic.layer_id.as_deref(), sl, RenderStage::Mechanical) == stage
         }) {
             if !authored_visible(state) {
@@ -366,7 +366,7 @@ fn push_retained_scene_geometry(
         mechanical_quads += out.len().saturating_sub(mechanical_before);
         let silkscreen_before = out.len();
         let silkscreen_started = std::time::Instant::now();
-        for graphic in silkscreen_graphics.iter().filter(|graphic| {
+        for graphic in silkscreen_graphics.clone().filter(|graphic| {
             graphic_render_stage(graphic.layer_id.as_deref(), sl, RenderStage::TopSilk) == stage
         }) {
             if !authored_visible(state) {
@@ -500,15 +500,11 @@ fn push_retained_scene_geometry(
     if unrouted_visible(state) {
         // Local batch buffer whose tuple shape is self-documenting inline.
         #[allow(clippy::type_complexity)]
-        let mut unrouted_batches: Vec<(
-            Vec<PointNm>,
-            [f32; 3],
-            [f32; 3],
-            f32,
-            f32,
-            f32,
-            f32,
-        )> = Vec::new();
+        let Some(mut unrouted_batches): Option<
+            Vec<(&[PointNm], [f32; 3], [f32; 3], f32, f32, f32, f32)>,
+        > = out.scratch(scene.unrouted_primitives.len()) else {
+            return;
+        };
         for unrouted in &scene.unrouted_primitives {
             let related = unrouted_matches_active_action(unrouted, state);
             let dimmed = dim_unrelated_active(state) && !related;
@@ -534,7 +530,7 @@ fn push_retained_scene_geometry(
                 + ((under_width_nm - width_nm) * 0.5))
                 .max(endpoint_radius_nm + 0.5);
             unrouted_batches.push((
-                unrouted.path.clone(),
+                unrouted.path.as_slice(),
                 color,
                 under_color,
                 width_nm,

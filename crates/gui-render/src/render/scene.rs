@@ -265,13 +265,15 @@ mod selection_relation;
 use selection_relation::{component_is_selection_active, component_is_selection_related};
 
 fn proposal_preview_affected_ids(state: &ReviewWorkspaceState) -> Vec<&str> {
+    proposal_preview_ids(state).collect()
+}
+fn proposal_preview_ids(state: &ReviewWorkspaceState) -> impl Iterator<Item = &str> + Clone {
     state
         .production
         .proposals
         .iter()
         .filter_map(|proposal| proposal.preview.as_ref())
         .flat_map(|preview| preview.affected_objects.iter().map(String::as_str))
-        .collect()
 }
 
 fn source_object_matches_preview(

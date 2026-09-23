@@ -557,9 +557,12 @@ fn push_component_graphic_primitive_world(
     ) as f32
         * width_scale;
     let path = if graphic.closed {
-        close_path(&graphic.path)
+        let Some(path) = world_primitives::closed_world_path(out, &graphic.path) else {
+            return;
+        };
+        path
     } else {
-        graphic.path.clone()
+        std::borrow::Cow::Borrowed(graphic.path.as_slice())
     };
     if graphic.closed && graphic.render_role == "component_mechanical" {
         push_world_dashed_polyline_segments(
@@ -589,7 +592,7 @@ fn push_component_graphic_primitive_world(
     // endpoint don't leave diagonal gaps at 90-degree corners. Each cap is
     // a small filled circle matching the stroke width.
     let half = (w * 0.5) as i64;
-    for pt in &path {
+    for pt in path.iter() {
         push_world_ellipse_nm(
             out,
             datum_gui_protocol::RectNm {
@@ -607,7 +610,7 @@ fn push_component_graphic_primitive_world(
 fn push_board_text_geometry_world(
     out: &mut impl Output<Quad>,
     text_geometry: &BoardTextGeometryPrimitive,
-    glyph_mesh_assets: &BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive>,
+    glyph_mesh_assets: &impl GlyphMeshLookup,
     color: [f32; 3],
     _reference_projection: &Projection,
 ) {
@@ -633,12 +636,12 @@ fn push_board_text_geometry_world(
 fn push_board_text_mesh_world(
     out: &mut impl Output<Quad>,
     text_geometry: &BoardTextGeometryPrimitive,
-    glyph_mesh_assets: &BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive>,
+    glyph_mesh_assets: &impl GlyphMeshLookup,
     transform: Affine2DFixedPrimitive,
     color: [f32; 3],
 ) {
     for glyph in &text_geometry.glyphs {
-        let Some(asset) = glyph_mesh_assets.get(&glyph.glyph_handle) else {
+        let Some(asset) = glyph_mesh_assets.mesh(&glyph.glyph_handle) else {
             trace_text_mesh_skip(format!(
                 "{} missing glyph mesh asset font={} glyph={} tolerance={} epoch={}",
                 text_geometry.object_id,

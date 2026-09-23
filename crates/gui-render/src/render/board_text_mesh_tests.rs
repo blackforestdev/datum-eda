@@ -92,6 +92,25 @@ fn board_text_mesh_path_bypasses_legacy_fill_fragments() {
         &projection,
     );
 
+    let indexed_assets = vec![asset.clone(), asset.clone()];
+    let mut indexed_out = Vec::new();
+    let lookup = glyph_mesh_lookup::MeshIndex::new(&indexed_assets, &mut indexed_out).unwrap();
+    assert!(
+        std::ptr::eq(lookup.mesh(&handle).unwrap(), &indexed_assets[1]),
+        "last duplicate retains map semantics"
+    );
+    push_board_text_geometry_world(
+        &mut indexed_out,
+        &text_geometry,
+        &lookup,
+        [1.0; 3],
+        &projection,
+    );
+    assert_eq!(indexed_out, out);
+    let mut refused = geometry_output::Admitted::new(|_| anyhow::bail!("index refused"));
+    assert!(glyph_mesh_lookup::MeshIndex::new(&indexed_assets, &mut refused).is_none());
+    assert!(refused.finish().is_err());
+
     assert_eq!(
         out.len(),
         1,

@@ -89,11 +89,10 @@ pub(super) fn push_retained_board_text_geometry_batches(
     }
     let sl = &scene.layers;
     let dimmed = dim_unrelated_active(state);
-    let glyph_mesh_assets: BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive> = scene
-        .glyph_mesh_assets
-        .iter()
-        .map(|asset| (asset.handle, asset))
-        .collect();
+    let Some(glyph_mesh_assets) = glyph_mesh_lookup::MeshIndex::new(&scene.glyph_mesh_assets, out)
+    else {
+        return;
+    };
     for stage in POST_COPPER_STAGES {
         for text_geometry in scene
             .board_text_geometries
