@@ -16403,6 +16403,11 @@
           "work": "s4_host_buffer_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/host-buffers/result.json",
           "status": "Shared host buffer admission adopted across default streams and device replacement. Full original qualification and remaining subcaps stay open."
+        },
+        {
+          "work": "s4_screen_generation_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/screen-generations/result.json",
+          "status": "Screen vertex replacement generation admission implemented; full replacement/resource qualification remains open"
         }
       ]
     },
@@ -16519,6 +16524,11 @@
           "work": "s4_uniform_lifetime_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
           "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_screen_generation_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/screen-generations/result.json",
+          "status": "Screen vertex replacement generation admission implemented; full replacement/resource qualification remains open"
         }
       ]
     },
@@ -33530,5 +33540,31 @@
       "No new predicate, S4/S5 or issue closure; sixteen recorded implementation gaps remain. Preserve original dependency qualification, GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendor, license, prototype, numerical specification cap or sequencing change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json"
+  },
+  "s4_screen_generation_adoption_work": {
+    "status": "Screen vertex replacement generation admission implemented; full replacement/resource qualification remains open",
+    "base_commit": "7bcd54a1",
+    "production_consumers": [
+      "All nine Renderer screen streams: surface grid, schematic underlay/overlay, panels, viewport underlay/overlay, board interaction, console vertices and menu overlay",
+      "Renderer::recreate_for_device for all shared native hosts"
+    ],
+    "retired_paths": [
+      "Screen vertex replacement limited only by byte capacity, without a live-generation ceiling",
+      "Fresh screen generation allowance on same-host device replacement"
+    ],
+    "behavior": [
+      "Each screen stream reserves one of two live generation permits before creating a replacement buffer. Submission references keep both byte and generation reservations until retirement. Refusal preserves the old buffer and uploaded content. Empty/clear does not reset held permits.",
+      "VertexAllocation::replacement preserves hard budgets, optional control retention and generation authority while starting with empty device resources. Renderer recovery migrates every screen stream through that owner. Existing world and surface generation paths remain."
+    ],
+    "proof": {
+      "renderer": "341 tests pass, 11 diagnostic/visual cases filtered. New actual GPU regression pins two differently sized generations, rejects a third while reading unchanged old pixels, clears and replaces the owner, verifies continued refusal, releases one old reference, retries with exact readback and observes zero byte reservations on final release.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2272 and dependency/governance gates pass.",
+      "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "This bounds nine screen vertex streams, not every GPU resource generation; glyph/terminal/uniform and document-wide ownership review and S5 native/resource qualification remain required. MEM-REPLACEMENT remains open.",
+      "No numerical cap, dependency, vendoring, license, visual prototype, specification sequencing or acceptance change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure. Sixteen recorded S4 implementation gaps remain; no milestone or issue closure."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/screen-generations/result.json"
   }
 }
