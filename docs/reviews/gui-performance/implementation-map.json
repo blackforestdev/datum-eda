@@ -15058,6 +15058,11 @@
           "work": "s4_history_growth_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-growth/result.json",
           "status": "World history entry metadata growth preflighted before allocation; complete CPU world/history cap remains open"
+        },
+        {
+          "work": "s4_world_cpu_failure_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/result.json",
+          "status": "Over-budget retained CPU world ownership now fails native frame/capture explicitly; complete construction/accounting remains open"
         }
       ]
     },
@@ -15141,6 +15146,11 @@
           "work": "s4_history_growth_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-growth/result.json",
           "status": "World history entry metadata growth preflighted before allocation; complete CPU world/history cap remains open"
+        },
+        {
+          "work": "s4_world_cpu_failure_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/result.json",
+          "status": "Over-budget retained CPU world ownership now fails native frame/capture explicitly; complete construction/accounting remains open"
         }
       ]
     },
@@ -33821,5 +33831,33 @@
       "Twelve recorded S4 gaps remain; no milestone or issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/history-growth/result.json"
+  },
+  "s4_world_cpu_failure_work": {
+    "status": "Over-budget retained CPU world ownership now fails native frame/capture explicitly; complete construction/accounting remains open",
+    "base_commit": "29f8dce8",
+    "production_consumers": [
+      "Runtime::render before Main frame submission, including cached prepared scenes",
+      "Runtime::capture_visual_screenshot before renderer submission",
+      "Existing App::redraw_main_window -> NativeFrameCoordinator::render_failed per-host failure/retry path"
+    ],
+    "retired_paths": [
+      "Rendering success despite accounted active/history/pinned world ownership exceeding the existing history byte budget"
+    ],
+    "behavior": [
+      "Check current accounted history/active/pinned/shared geometry against the existing 64 MiB allowance before submitting a Main frame or capture. Return an error with total, limit, active and history bytes rather than quietly admitting an over-budget tier.",
+      "Preserve required derived content and authoritative model/terminal state. Native failure uses the existing affected-host pause/recovery reporter; other hosts continue. Capture propagates the error instead of returning a successful image. Accounting check uses existing immutable geometry observers and performs no allocation on success."
+    ],
+    "proof": {
+      "app": "384 application tests pass, 16 ignored. Extended active-history test requires the explicit limit error for a one-byte test budget, verifies required scene equality, and verifies success when allowance is restored. Existing frame-owner error test proves only the failed host pauses, damage survives and manual retry resumes.",
+      "source": "Reviewed app_frame.rs render-error propagation and native_frame_coordinator.rs::render_failed; capture and native paths both invoke the budget check. No new recovery authority or content mutation path.",
+      "lint_build": "Strict renderer/app all-targets Clippy with app visual feature and fresh visual application build pass. Source health 2273, dependency authority and governance pass.",
+      "scope": "No native input/fault campaign, broad benchmark or full drift rerun. Existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Post-construction failure reporting does not bound candidate construction peaks or make oversized active data fit. Required content is intentionally not discarded to manufacture cap compliance; over-budget tier remains a failure.",
+      "Current check covers the existing active/history/retired board owner. Companion schematic/document aggregation and externally retained full-scene metadata remain unresolved. MEM-WORLD-CPU/HISTORY and full ACC/S5 qualification remain open.",
+      "Twelve recorded S4 gaps remain; no milestone/issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/result.json"
   }
 }

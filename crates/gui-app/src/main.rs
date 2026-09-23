@@ -276,6 +276,7 @@ impl Runtime {
             self.ensure_retained_scene();
             self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
         }
+        self.retained_scene_cache.check_render_budget()?;
         if self.schematic_retained_scene.is_none() {
             self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
                 self.session.workspace(),
