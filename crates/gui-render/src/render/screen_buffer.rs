@@ -71,6 +71,30 @@ impl ScreenBuffer {
         self.pending_large = Box::default();
     }
 
+    // Preparations supersede one another before submission. Keep their union,
+    // not an upload history: every final byte is queued at most once. Unchanged
+    // gaps remain gaps; this does not widen the existing dirty-span policy.
+    fn normalize_pending(&mut self, live_bytes: usize) {
+        if self.pending.len() > 1 {
+            self.pending.sort_unstable_by_key(|range| range.start);
+        }
+        let mut retained = 0;
+        for index in 0..self.pending.len() {
+            let mut range = self.pending[index].clone();
+            range.end = range.end.min(live_bytes);
+            if range.start >= range.end {
+                continue;
+            }
+            if retained > 0 && range.start <= self.pending[retained - 1].end {
+                self.pending[retained - 1].end = self.pending[retained - 1].end.max(range.end);
+            } else {
+                self.pending[retained] = range;
+                retained += 1;
+            }
+        }
+        self.pending.truncate(retained);
+    }
+
     /// Exact bytes are the key: equal size, allocator reuse, NaN payloads and
     /// signed zero cannot produce a false hit. Placement is already baked into
     /// these screen vertices; painter order stays in the caller's draw schedule.
@@ -111,6 +135,7 @@ impl ScreenBuffer {
                 },
             )
         };
+        self.normalize_pending(bytes.len());
         if bytes.len() <= MAX_SNAPSHOT_BYTES {
             self.pending_large = Box::default();
             if self.snapshot.len() == bytes.len() {

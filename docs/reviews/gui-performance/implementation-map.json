@@ -16824,6 +16824,11 @@
           "work": "s4_terminal_borrowed_upload_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-borrowed-upload/result.json",
           "status": "Partial: eliminate terminal image conversion allocation and bound individual writes. Aggregate staging, CPU retention and original qualification remain open."
+        },
+        {
+          "work": "s4_screen_upload_union_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json",
+          "status": "Repeated screen preparations now queue each covered final byte at most once; complete staging admission and exact-transfer requirements remain open."
         }
       ]
     },
@@ -16940,6 +16945,11 @@
           "work": "s4_terminal_borrowed_upload_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-borrowed-upload/result.json",
           "status": "Partial: eliminate terminal image conversion allocation and bound individual writes. Aggregate staging, CPU retention and original qualification remain open."
+        },
+        {
+          "work": "s4_screen_upload_union_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json",
+          "status": "Repeated screen preparations now queue each covered final byte at most once; complete staging admission and exact-transfer requirements remain open."
         }
       ]
     },
@@ -32216,5 +32226,34 @@
       "No dependency, vendor, license, prototype, numerical-budget or rendering-layout change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-generations/result.json"
+  },
+  "s4_screen_upload_union_work": {
+    "status": "Default screen upload plans retain a bounded union instead of repeated overlapping writes; full staging and exact-transfer predicates remain open",
+    "base_commit": "ed871684",
+    "production_consumers": [
+      "Nine default renderer screen streams: panel, viewport underlay/overlay, board interaction, Console, menu overlay, schematic underlay/overlay and surface grid",
+      "Terminal graphic placement quads through the same ScreenBuffer owner"
+    ],
+    "retired_paths": [
+      "Accumulating overlapping pending screen upload ranges across repeated preparations before submission",
+      "Retaining obsolete pending tail ranges after the live prefix shrinks"
+    ],
+    "behavior": [
+      "Normalize pending ranges after changed preparation, merge only overlapping or adjacent spans, and clip to the latest live prefix. Each final covered byte is queued at most once per flush, while separated unchanged gaps remain untouched.",
+      "Initial full upload supersedes later edits to that same allocation. Shrink/regrow and cancellation still restore all required bytes; warm unchanged content still returns without allocation or planning work. No additional payload snapshot or GPU resource is introduced."
+    ],
+    "proof": {
+      "renderer": "306 renderer tests pass, 11 diagnostic/visual cases filtered. New actual-GPU regression performs 2000 superseding preparations, verifies bounded pending ranges, preserved gaps, shrink/regrow and cancellation, and reads back final GPU contents. Existing visual control, upload, retirement and admission regressions pass.",
+      "lint": "Visual all-targets renderer/app Clippy -D warnings and source health (2242 files) pass.",
+      "build": "Fresh native visual datum-gui application build passes; no new native capture/input qualification.",
+      "drift": "Full drift stops at the existing console-routine-focused 1x golden mismatch: 3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun. No full-drift acceptance."
+    },
+    "limits": [
+      "Existing per-vertex spans still coalesce internal unchanged words, and edits reverted before submission can remain dirty. This is not full exact changed-byte transfer.",
+      "This removes duplicate screen staging work but does not bound all wgpu internal staging, host/process scratch or oversized cold work. MEM-STAGING-LOCAL/TOTAL and complete resource accounting remain unfinished; no carried predicate is closed.",
+      "No new native OS-input, endurance, throughput or resize CPU qualification. Preserve GEFN and the nonblocking resize disposition.",
+      "No dependency, vendor, license, prototype, visual layout or numerical-budget change. GPI-S4/S5 remain open."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json"
   }
 }

@@ -224,3 +224,52 @@ fn empty_stream_preserves_its_admission_budget() {
     drop(stream);
     assert_eq!(budget.used(), 0);
 }
+
+#[test]
+#[ignore = "requires local GPU; pending upload supersession and cancellation"]
+fn repeated_preparation_queues_each_final_range_once() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let mut stream = ScreenBuffer::default();
+    let mut values = [0_u32; 16];
+    stream.sync(&device, &queue, "initial", &values).unwrap();
+    for i in 1..=1000 {
+        values[1] = i;
+        stream.sync(&device, &queue, "superseded", &values).unwrap();
+        assert_eq!(stream.pending, vec![0..64]);
+    }
+    stream.flush_uploads(&queue);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&values)
+    );
+    // Separated edits stay separated, even across repeated preparation.
+    for i in 1001..=2000 {
+        values[1] = i;
+        values[14] = i;
+        stream.sync(&device, &queue, "separate", &values).unwrap();
+        assert_eq!(stream.pending, vec![4..8, 56..60]);
+    }
+    // Shrink within the existing capacity: an obsolete tail must not upload.
+    stream
+        .sync(&device, &queue, "shrink", &values[..8])
+        .unwrap();
+    assert_eq!(stream.pending, vec![4..8]);
+    stream.flush_uploads(&queue);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 32),
+        bytemuck::cast_slice::<u32, u8>(&values[..8])
+    );
+    // Regrowth restores the discarded tail even though the API buffer survived.
+    stream.sync(&device, &queue, "regrow", &values).unwrap();
+    assert_eq!(stream.pending, vec![32..64]);
+    stream.cancel_uploads();
+    stream.sync(&device, &queue, "retry", &values).unwrap();
+    assert_eq!(stream.pending, vec![0..64]);
+    stream.flush_uploads(&queue);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&values)
+    );
+}

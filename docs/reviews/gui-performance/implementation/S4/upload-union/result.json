@@ -1,0 +1,52 @@
+{
+  "status": "Default screen upload plans retain a bounded union instead of repeated overlapping writes; full staging and exact-transfer predicates remain open",
+  "base_commit": "ed871684",
+  "production_consumers": [
+    "Nine default renderer screen streams: panel, viewport underlay/overlay, board interaction, Console, menu overlay, schematic underlay/overlay and surface grid",
+    "Terminal graphic placement quads through the same ScreenBuffer owner"
+  ],
+  "retired_paths": [
+    "Accumulating overlapping pending screen upload ranges across repeated preparations before submission",
+    "Retaining obsolete pending tail ranges after the live prefix shrinks"
+  ],
+  "behavior": [
+    "Normalize pending ranges after changed preparation, merge only overlapping or adjacent spans, and clip to the latest live prefix. Each final covered byte is queued at most once per flush, while separated unchanged gaps remain untouched.",
+    "Initial full upload supersedes later edits to that same allocation. Shrink/regrow and cancellation still restore all required bytes; warm unchanged content still returns without allocation or planning work. No additional payload snapshot or GPU resource is introduced."
+  ],
+  "proof": {
+    "renderer": "306 renderer tests pass, 11 diagnostic/visual cases filtered. New actual-GPU regression performs 2000 superseding preparations, verifies bounded pending ranges, preserved gaps, shrink/regrow and cancellation, and reads back final GPU contents. Existing visual control, upload, retirement and admission regressions pass.",
+    "lint": "Visual all-targets renderer/app Clippy -D warnings and source health (2242 files) pass.",
+    "build": "Fresh native visual datum-gui application build passes; no new native capture/input qualification.",
+    "drift": "Full drift stops at the existing console-routine-focused 1x golden mismatch: 3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun. No full-drift acceptance."
+  },
+  "limits": [
+    "Existing per-vertex spans still coalesce internal unchanged words, and edits reverted before submission can remain dirty. This is not full exact changed-byte transfer.",
+    "This removes duplicate screen staging work but does not bound all wgpu internal staging, host/process scratch or oversized cold work. MEM-STAGING-LOCAL/TOTAL and complete resource accounting remain unfinished; no carried predicate is closed.",
+    "No new native OS-input, endurance, throughput or resize CPU qualification. Preserve GEFN and the nonblocking resize disposition.",
+    "No dependency, vendor, license, prototype, visual layout or numerical-budget change. GPI-S4/S5 remain open."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-union/tests.log.gz",
+      "uncompressed_sha256": "1d1dc05a4e294d58ab64c8711b6fbcdbf3812dee9da4544bb0e24f62cf5ae1e6"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-union/clippy.log.gz",
+      "uncompressed_sha256": "c66c60b6f4689e4025f445a5844b85604106f590d35364521a1a3a5878e86114"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-union/build.log.gz",
+      "uncompressed_sha256": "5e8b26c35f11bd60032837a8f40fa75c8fb2a2f228f40440df5c850c39b54d03"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-union/drift.log.gz",
+      "uncompressed_sha256": "e7faab4087727e2106c848bfe3804bdb9ede521f423976eb1621bb0f0e2ad3d9"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/screen_buffer.rs": "95461d16d0a0b5d9df08ea4b94b0390a4f6ab30a2d542305d0369a1f96589e0e",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "c6a59780af086c568636c776865447aa821744eab6520a27d0d7a12147e9b68b"
+  },
+  "binary_sha256": "d4a6af11c00cc5d01cb1c5b72bd2f3621302e03d3a59d53756ff409c73d74089"
+}
