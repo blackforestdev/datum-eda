@@ -4,6 +4,7 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 
+#[derive(Debug)]
 pub(crate) struct Budget {
     limit: u64,
     used: AtomicU64,

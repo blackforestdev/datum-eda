@@ -3892,6 +3892,11 @@
           "work": "s4_terminal_borrowed_upload_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-borrowed-upload/result.json",
           "status": "Partial: eliminate terminal image conversion allocation and bound individual writes. Aggregate staging, CPU retention and original qualification remain open."
+        },
+        {
+          "work": "s4_document_gpu_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-gpu/result.json",
+          "status": "Partial: document-shared world buffer admission and retirement implemented. Complete generation/encoded-resource obligations and qualification remain open."
         }
       ]
     },
@@ -16097,6 +16102,11 @@
           "work": "s4_vertex_submission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
           "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_document_gpu_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-gpu/result.json",
+          "status": "Partial: document-shared world buffer admission and retirement implemented. Complete generation/encoded-resource obligations and qualification remain open."
         }
       ]
     },
@@ -17061,6 +17071,11 @@
           "work": "s4_host_buffer_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/host-buffers/result.json",
           "status": "Shared host buffer admission adopted across default streams and device replacement. Full original qualification and remaining subcaps stay open."
+        },
+        {
+          "work": "s4_document_gpu_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-gpu/result.json",
+          "status": "Partial: document-shared world buffer admission and retirement implemented. Complete generation/encoded-resource obligations and qualification remain open."
         }
       ]
     },
@@ -32122,5 +32137,38 @@
       "No dependency, vendor, license, protocol semantics, prototype, numerical-budget or nonblocking resize-policy change. S4/S5 remain open."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-borrowed-upload/result.json"
+  },
+  "s4_document_gpu_admission_work": {
+    "status": "Default world vertex/stroke allocations share document-scoped 64 MiB admission; full encoded-resource/generation qualification remains open",
+    "base_commit": "5acd93b4",
+    "production_consumers": [
+      "Board retained-scene vertex and stroke construction",
+      "Companion schematic retained-scene vertex and stroke construction",
+      "Four retained GPU streams in native full-frame rendering",
+      "Cached world bundles and existing submission references retaining those buffers"
+    ],
+    "retired_paths": [
+      "Default world-buffer allocation with only process-global GPU admission",
+      "Equal-capacity buffer reuse across different document budget owners"
+    ],
+    "behavior": [
+      "Associate immutable retained geometry with a weakly registered GPU budget keyed by the existing revision-independent protocol scene ID. Geometry for the same document across revisions/renderers shares one 64 MiB allowance; other scene identities remain independent.",
+      "Reserve document capacity before API buffer creation, alongside process GPU admission. Allocation/submission permits keep the budget discoverable after CPU owners close, so rebuilding geometry cannot reset charges for retiring resources.",
+      "When switching document owners, stage a newly charged allocation before replacing the old buffer. Refusal preserves the working allocation. Same-document warm reuse and boxed CPU payload ownership remain unchanged.",
+      "Expose the document reserved-buffer total through RetainedScene. The registry holds weak budget references and prunes expired entries on lookup; it never pins CPU geometry or GPU payloads."
+    ],
+    "proof": {
+      "renderer": "304 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Actual-GPU proof covers multiple streams/revisions, cross-document isolation, full-budget refusal preserving data, retirement, owner switching and retry. CPU-owner-close/permit-retirement registry identity and real retained-builder sharing tests pass. Existing cached-bundle replacement now uses production document identity.",
+      "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings, dependency authority and source health (2242 files) pass.",
+      "native": "Fresh native visual application build and 1680x1050 datum-test/R1 capture exit 0. Inspected image; decoded RGBA exactly equals the host-buffers baseline. No native resource/endurance qualification.",
+      "drift": "Full drift passes preceding checks and stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+    },
+    "limits": [
+      "This enforces world vertex/stroke byte capacity, not the complete one-old-plus-one-new generation policy or all encoded-resource accounting/qualification. MEM-WORLD-GPU remains open under its original rule.",
+      "CPU world/history limits, control-specific GPU limits, private text payload, staging/readback/query accounting and S4/S5 qualification remain unfinished. API capacities are not driver residency.",
+      "Identity follows the existing imported scene/document ID; no new resolver/document authority or native schematic-content qualification is asserted.",
+      "No dependency, vendor, license, prototype, numerical-budget, geometry-content or nonblocking resize-policy change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/document-gpu/result.json"
   }
 }

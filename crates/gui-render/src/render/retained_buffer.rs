@@ -6,6 +6,7 @@ pub(crate) struct RetainedBuffer<T> {
     source: Option<SharedGeometry<T>>,
     allocation: VertexAllocation,
     pending: bool,
+    document_budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
 }
 
 impl<T> Default for RetainedBuffer<T> {
@@ -14,6 +15,7 @@ impl<T> Default for RetainedBuffer<T> {
             source: None,
             allocation: VertexAllocation::default(),
             pending: false,
+            document_budget: None,
         }
     }
 }
@@ -69,7 +71,24 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
             return Ok(0);
         }
         let bytes = bytemuck::cast_slice(source.as_ref());
-        self.allocation.replace_if_needed(device, label, bytes)?;
+        let budget = source.document_budget();
+        let same_document = match (&self.document_budget, budget) {
+            (Some(current), Some(next)) => std::sync::Arc::ptr_eq(current, next),
+            (None, None) => true,
+            _ => false,
+        };
+        if same_document {
+            self.allocation.replace_if_needed(device, label, bytes)?;
+        } else {
+            // A reused API buffer cannot stay charged to the previous document.
+            // Admit the replacement before retiring the old working allocation.
+            let mut replacement = budget.map_or_else(VertexAllocation::default, |budget| {
+                VertexAllocation::with_budget(budget.clone())
+            });
+            replacement.replace_if_needed(device, label, bytes)?;
+            self.allocation = replacement;
+            self.document_budget = budget.cloned();
+        }
         self.pending = true;
         self.source = Some(source.clone());
         Ok(bytes.len())
@@ -104,6 +123,56 @@ mod tests {
         let bytes = target.slice(..).get_mapped_range().to_vec();
         target.unmap();
         bytes
+    }
+
+    #[test]
+    #[ignore = "requires local GPU; document admission across streams and retirement"]
+    fn document_buffers_share_admission_and_switch_owners_atomically() {
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let a = SharedGeometry::for_document(vec![1_u32; 4], "document-admission-a");
+        let revision = SharedGeometry::for_document(vec![2_u32; 4], "document-admission-a");
+        let other = SharedGeometry::for_document(vec![3_u32; 4], "document-admission-b");
+        let budget = a.document_budget().unwrap().clone();
+        let other_budget = other.document_budget().unwrap().clone();
+        assert!(std::sync::Arc::ptr_eq(
+            &budget,
+            revision.document_budget().unwrap()
+        ));
+        assert!(!std::sync::Arc::ptr_eq(&budget, &other_budget));
+        let mut first = RetainedBuffer::default();
+        let mut second = RetainedBuffer::default();
+        first.sync(&device, &queue, "first", &a).unwrap();
+        first.flush_uploads(&queue);
+        second.sync(&device, &queue, "second", &revision).unwrap();
+        assert_eq!(budget.used(), 32);
+        let held = first.submission_ref().unwrap();
+        let original = first.buffer().unwrap().clone();
+        let filler = budget.reserve(64 * 1024 * 1024 - budget.used()).unwrap();
+        let bigger = SharedGeometry::for_document(vec![4_u32; 8], "document-admission-a");
+        assert!(first.sync(&device, &queue, "refused", &bigger).is_err());
+        assert_eq!(first.buffer(), Some(&original));
+        assert_eq!(
+            read(&device, &queue, first.buffer().unwrap(), 16),
+            bytemuck::cast_slice::<u32, u8>(&a)
+        );
+        // Equal-sized geometry belonging to another document needs a new charged owner.
+        first.sync(&device, &queue, "other", &other).unwrap();
+        assert_ne!(first.buffer(), Some(&original));
+        assert_eq!(other_budget.used(), 16);
+        assert_eq!(budget.used(), 64 * 1024 * 1024);
+        drop(original);
+        drop(held);
+        assert_eq!(budget.used(), 64 * 1024 * 1024 - 16);
+        drop(filler);
+        first.sync(&device, &queue, "retry", &bigger).unwrap();
+        assert_eq!(budget.used(), 48);
+        assert_eq!(other_budget.used(), 0);
+        drop(first);
+        drop(second);
+        assert_eq!(budget.used(), 0);
     }
 
     #[test]

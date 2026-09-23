@@ -295,7 +295,10 @@ mod tests {
         // A real retained-scene replacement can shrink a previous large world
         // allocation. Its original prefix and draw commands preserve geometry.
         let mut oversized = retained.clone();
-        oversized.world_vertices = retained.world_vertices.repeat(8).into();
+        oversized.world_vertices = crate::gpu_data::shared_geometry::SharedGeometry::for_document(
+            retained.world_vertices.repeat(8),
+            &state.scene.scene_id,
+        );
         renderer
             .render(
                 &device, &queue, &view, &prepared, &oversized, None, 1280, 800,

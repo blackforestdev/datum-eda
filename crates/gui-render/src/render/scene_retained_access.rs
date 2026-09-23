@@ -35,6 +35,14 @@ impl RetainedGeometryObserver {
 }
 
 impl RetainedScene {
+    /// All live and submitted-retiring GPU world buffers for this scene/document,
+    /// including other retained revisions and renderers sharing its scene ID.
+    pub fn world_gpu_reserved_bytes(&self) -> u64 {
+        self.world_vertices
+            .document_budget()
+            .map_or(0, |budget| budget.used())
+    }
+
     pub fn geometry_observer(&self) -> RetainedGeometryObserver {
         RetainedGeometryObserver {
             vertices: self.world_vertices.downgrade(),
@@ -231,8 +239,14 @@ impl RetainedScene {
         ));
         Self {
             surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
-            world_vertices: world_vertices.into(),
-            world_strokes: world_strokes.into(),
+            world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
+                world_vertices,
+                &state.scene.scene_id,
+            ),
+            world_strokes: gpu_data::shared_geometry::SharedGeometry::for_document(
+                world_strokes,
+                &state.scene.scene_id,
+            ),
             draw_commands,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         }
@@ -297,6 +311,26 @@ impl RetainedScene {
 
 #[cfg(test)]
 mod retained_storage_tests {
+    #[test]
+    fn retained_revisions_share_one_document_gpu_budget_for_vertices_and_strokes() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let first = RetainedScene::from_workspace(&state, 960, 720);
+        let second = RetainedScene::from_workspace(&state, 1280, 800);
+        let budget = first.world_vertices.document_budget().unwrap();
+        assert!(std::sync::Arc::ptr_eq(
+            budget,
+            first.world_strokes.document_budget().unwrap()
+        ));
+        assert!(std::sync::Arc::ptr_eq(
+            budget,
+            second.world_vertices.document_budget().unwrap()
+        ));
+        assert!(std::sync::Arc::ptr_eq(
+            budget,
+            second.world_strokes.document_budget().unwrap()
+        ));
+    }
+
     #[test]
     fn retained_payload_accounts_geometry_and_refuses_unknown_targets() {
         let state = datum_gui_protocol::load_fixture_workspace_state();
