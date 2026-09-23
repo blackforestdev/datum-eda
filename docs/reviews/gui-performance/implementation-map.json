@@ -3999,6 +3999,11 @@
           "work": "s4_text_owner_reconciliation.batch_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
           "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.streaming_layout",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
+          "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
         }
       ]
     },
@@ -5434,6 +5439,11 @@
           "work": "s4_text_owner_reconciliation.batch_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
           "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.streaming_layout",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
+          "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
         }
       ]
     },
@@ -15654,6 +15664,11 @@
           "work": "s4_text_owner_reconciliation.batch_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
           "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.streaming_layout",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
+          "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15838,6 +15853,11 @@
           "work": "s4_text_owner_reconciliation.batch_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
           "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.streaming_layout",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
+          "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17667,6 +17687,11 @@
           "work": "s4_text_owner_reconciliation.rich_input_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
           "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.streaming_layout",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
+          "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
         }
       ]
     },
@@ -17943,6 +17968,11 @@
           "work": "s4_text_owner_reconciliation.rich_input_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
           "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.streaming_layout",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
+          "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
         }
       ]
     },
@@ -35886,6 +35916,53 @@
         "No dependency/vendor/license, prototype, numerical-cap or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition and Copilot engine edits."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json"
+    },
+    "construction_route_review": {
+      "status": "Streaming row production adopted; pre-construction admission and complete route qualification remain pending",
+      "base_commit": "53ba2716",
+      "installed_api_evidence": {
+        "package": "cosmic-text 0.15.0 already installed through glyphon 0.10.0",
+        "file": "src/shape.rs",
+        "sha256": "615110123ec7e3ab29d0dc17de8c717cab1c8ac3b02f4024fe82b54f16ddd191",
+        "findings": [
+          "ShapeLine::new/build and ShapeWord/ShapeSpan constructors are infallible; they offer no caller allocation quota. Lower-level public constructors do not themselves solve pre-construction admission.",
+          "ShapeLine::layout_to_buffer accepts width, wrap, alignment and output storage but no height/row limit. LayoutScratch calls it for a whole paragraph; TextLayout::append_layout discards rows below the visible extent only after construction.",
+          "Public ShapeLine/ShapeSpan/ShapeWord/ShapeGlyph data and LayoutGlyph/LayoutLine output types are sufficient inputs/outputs for an independently implemented Datum row producer. No source copying, vendoring, dependency addition or modification was performed."
+        ]
+      },
+      "next_production_component": {
+        "owner": "crates/gui-render/src/layout_scratch.rs and crates/gui-render/src/text_layout.rs",
+        "change": "Finish pre-construction admission and refusal propagation for Datum row output and temporary bidi/omission storage, including old/new overlap. Streaming visible-row production is now the default and the full-paragraph layout path is retired; this alone does not establish cap compliance.",
+        "authority": "Existing owner-approved Datum-owned route and GPI-S4 execution authority; no new dependency or sequencing amendment required.",
+        "proof": "Reuse existing plain/rich/Unicode/extent and installed-renderer parity cases; add relevant growth/refusal and visible-prefix cases to the same owners. No broad measurement campaign or native focus prerequisite."
+      },
+      "remaining_boundaries": [
+        "Streaming layout is a production migration, not complete construction-cap proof. None of the seven remaining implementation gaps is closed.",
+        "Replacing layout output construction alone will not close the infallible shaping/font/raster peaks or cross-owner construction overlap. Those remain S4 implementation obligations; original S5 qualification is unchanged.",
+        "The dependency boundary prevents modifying installed third-party sources or adding a direct/transitive dependency without exact owner ratification. The selected row-producer route uses existing public data and needs neither."
+      ]
+    },
+    "streaming_layout": {
+      "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete",
+      "production_consumers": [
+        "TextLayout shared by default workspace, terminal, dialog and overlay text caches"
+      ],
+      "retired_paths": [
+        "Production whole-paragraph ShapeLine::layout_to_buffer and retained private ShapeBuffer layout scratch"
+      ],
+      "behavior": [
+        "Datum-owned logical word/glyph cursor and visual bidi-run ordering operate on borrowed public shaped data. The existing visible-row consumer stops construction after its first rejected row. Paint metadata, glyph identity, metrics and clipping remain under their existing owners.",
+        "The row materializer visits only the selected word/glyph ranges. Retained output remains charged by the existing text-cache inventory; no private layout scratch survives the call."
+      ],
+      "proof": [
+        "394 renderer tests passed, including installed-layout/renderer parity, plain/rich text and extent/paint changes.",
+        "Allocator proof: rejecting after three rows has identical peak layout bytes for 20 and 2000 repetitions, with zero live layout bytes after output release. This excludes shaping, which still processes a paragraph."
+      ],
+      "limitations": [
+        "Row output and temporary bidi/omission vectors still need pre-construction admission and overlap accounting. Shape/font/raster construction peaks remain open. No MEM-SHAPED/MEM-STAGING or other predicate is closed.",
+        "The first rejected row is still constructed to obtain exact metrics. Seven S4 implementation gaps and all original S5 qualification remain. No dependency, vendoring, prototype, cap or sequencing change; GEFN and nonblocking resize preserved."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json"
     }
   },
   "s4_text_preparation_work": {
