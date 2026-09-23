@@ -77,6 +77,22 @@ impl TextBufferCache {
                     self.rebuild_lookup();
                 }
             }
+            if self.admission_payload_bytes() > limit {
+                // Current layouts may fit once obsolete spare metadata slots
+                // retire. Moving entries preserves their indices and shared
+                // shape allocations; never reject solely for reusable slack.
+                let changed = self.entries.capacity() > self.entries.len()
+                    || self.lookup.capacity() > self.lookup.len();
+                if changed {
+                    self.entries = std::mem::take(&mut self.entries)
+                        .into_boxed_slice()
+                        .into_vec();
+                    self.lookup = std::mem::take(&mut self.lookup)
+                        .into_boxed_slice()
+                        .into_vec();
+                    self.revision = self.revision.wrapping_add(1);
+                }
+            }
             let required_bytes = self.admission_payload_bytes();
             if required_bytes > limit {
                 // The frame will return an error before borrowing layout rows or

@@ -14,7 +14,7 @@ static OWNERS: Mutex<BTreeMap<u64, TextCacheOwnerUsage>> = Mutex::new(BTreeMap::
 pub struct TextCacheOwnerUsage {
     pub owner_id: u64,
     pub bytes: usize,
-    /// Changed CPU layout exists before successful submission/retention admission.
+    /// This owner is preparing a frame, including a warm frame with unchanged storage.
     pub preparing: bool,
     /// Required owner storage could not fit even after cache retirement.
     pub retention_overflow: bool,
@@ -108,13 +108,21 @@ pub(crate) fn admit(id: u64, trim: impl FnOnce(usize) -> Admission) -> anyhow::R
     Ok(())
 }
 
+pub(crate) fn preparing(id: u64) {
+    set_preparing(id, true);
+}
+
 pub(crate) fn submitted(id: u64) {
+    set_preparing(id, false);
+}
+
+fn set_preparing(id: u64, preparing: bool) {
     if let Some(owner) = OWNERS
         .lock()
         .unwrap_or_else(|e| e.into_inner())
         .get_mut(&id)
     {
-        owner.preparing = false;
+        owner.preparing = preparing;
     }
 }
 

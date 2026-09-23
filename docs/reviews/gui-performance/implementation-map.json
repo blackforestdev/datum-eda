@@ -15251,6 +15251,11 @@
           "work": "s4_text_refusal_release_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-refusal/result.json",
           "status": "Rejected frame admission releases derived layouts, index capacities and scratch; source input survives for reconstruction. Exact retained bytes replace rejected requested bytes in owner reporting. Transient/private/other accounting and full qualification remain open."
+        },
+        {
+          "work": "s4_text_admission_compaction_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
+          "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open"
         }
       ]
     },
@@ -15394,6 +15399,11 @@
           "work": "s4_text_refusal_release_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-refusal/result.json",
           "status": "Rejected frame admission releases derived layouts, index capacities and scratch; source input survives for reconstruction. Exact retained bytes replace rejected requested bytes in owner reporting. Transient/private/other accounting and full qualification remain open."
+        },
+        {
+          "work": "s4_text_admission_compaction_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
+          "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open"
         }
       ]
     },
@@ -33428,5 +33438,32 @@
       "S4 and the overall issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendor, licensing, prototype, specification cap or sequencing change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/composed-labels/result.json"
+  },
+  "s4_text_admission_compaction_work": {
+    "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open",
+    "base_commit": "e6804f72",
+    "production_consumers": [
+      "Shared TextBufferCache::admit_frame for workspace and native/composed overlay layouts",
+      "All TextBufferCache::begin_frame profiles and process ownership observations"
+    ],
+    "retired_paths": [
+      "Refusing all required layouts solely because reusable entry/index spare capacity consumes the remaining allowance",
+      "Reporting a warm frame as submitted/idle throughout preparation because its byte revision did not change"
+    ],
+    "behavior": [
+      "After retiring unused history, compact entry and lookup capacity if required ownership still exceeds allowance. Recompute actual costs before refusing. Current indices and Arc-owned shaped allocations survive metadata movement; revision invalidates stale prepare identity as needed. Ordinary below-budget frames retain their existing capacity and warm path.",
+      "Publish preparing state at every begin_frame even when owned bytes are unchanged; existing finish/admission paths settle the state. No new allocations or change to process allowance arithmetic for this state update."
+    ],
+    "proof": {
+      "renderer": "338 renderer tests pass, 11 diagnostic/visual cases filtered. New serial pressure proof leaves exactly enough process allowance for required compact storage, verifies successful admission, unchanged three indices and shared shape addresses, exact final capacity and cost. New warm-frame proof verifies preparing/submitted transitions with unchanged bytes and a cache hit. Existing refusal, history eviction/remapping, shared layout, native/composed cache and GPU/pixel tests pass.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2271, dependency authority and governance gates pass.",
+      "scope": "No native input or broad benchmark campaign. Full drift not rerun; recorded Console golden mismatch remains unresolved."
+    },
+    "limits": [
+      "Construction/growth peaks, accounting registry and private font/scratch ownership remain separate unresolved full-accounting boundaries. This corrects admission of already prepared required layouts; it does not claim allocation-time construction caps or complete MEM-SHAPED-LOCAL/TOTAL acceptance.",
+      "Per-owner preparation state is not a transactional snapshot across every render thread. Existing serialized budget admission still accounts all other owner bytes.",
+      "S4 remains selected with sixteen recorded implementation gaps; S5 qualification and the issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendor, license, prototype, specification cap or sequencing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json"
   }
 }

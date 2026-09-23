@@ -140,3 +140,84 @@ fn local_capacity_refusal_drops_oversized_key_allocation_and_all_index_groups() 
     assert_eq!(cache.entries.capacity(), 0);
     assert_eq!(cache.lookup.capacity(), 0);
 }
+
+#[test]
+#[ignore = "requires serial process-wide cache admission"]
+fn admission_compacts_spare_metadata_without_discarding_required_layouts() {
+    let mut fonts = crate::load_datum_fonts();
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Overlay);
+    let (mut indices, _) =
+        cache.indices(&mut fonts, &prepared.menu_overlay_text_runs[..3], 960, 720);
+    let shapes: Vec<_> = indices
+        .iter()
+        .map(|i| cache.entries[*i].buffer.shape_storage())
+        .collect();
+    cache.entries.reserve_exact(3);
+    cache.lookup.reserve_exact(3);
+    cache.revision = cache.revision.wrapping_add(1);
+    let before = cache.retained_payload_bytes();
+    let required = before
+        - capacity_bytes::<CachedTextBuffer>(cache.entries.capacity())
+        - capacity_bytes::<(u64, usize)>(cache.lookup.capacity())
+        + capacity_bytes::<CachedTextBuffer>(cache.entries.len())
+        + capacity_bytes::<(u64, usize)>(cache.lookup.len());
+    assert!(before > required);
+    let others: usize = crate::Renderer::text_cache_process_usage()
+        .iter()
+        .filter(|owner| owner.owner_id != cache.owner.id())
+        .map(|owner| owner.bytes)
+        .sum();
+    let filler = budget::Owner::new(32 * 1024 * 1024 - others - required);
+    cache.admit_frame(&mut [&mut indices]).unwrap();
+    assert_eq!(indices, [0, 1, 2]);
+    assert_eq!(cache.entries.capacity(), cache.entries.len());
+    assert_eq!(cache.lookup.capacity(), cache.lookup.len());
+    assert_eq!(cache.retained_payload_bytes(), required);
+    assert_eq!(
+        shapes,
+        indices
+            .iter()
+            .map(|i| cache.entries[*i].buffer.shape_storage())
+            .collect::<Vec<_>>()
+    );
+    drop(filler);
+}
+
+#[test]
+fn warm_frames_publish_preparing_without_changing_owned_bytes() {
+    let mut fonts = crate::load_datum_fonts();
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut cache = TextBufferCache::default();
+    let owner = cache.owner.id();
+    let usage = || {
+        crate::Renderer::text_cache_process_usage()
+            .into_iter()
+            .find(|u| u.owner_id == owner)
+            .unwrap()
+    };
+    cache.begin_frame(Profile::Overlay);
+    cache.indices(&mut fonts, &prepared.menu_overlay_text_runs[..1], 960, 720);
+    cache.finish_frame();
+    let before = usage();
+    assert!(!before.preparing);
+    cache.begin_frame(Profile::Overlay);
+    assert!(usage().preparing);
+    assert_eq!(usage().bytes, before.bytes);
+    assert_eq!(
+        cache
+            .indices(&mut fonts, &prepared.menu_overlay_text_runs[..1], 960, 720)
+            .1
+            .hits,
+        1
+    );
+    assert!(usage().preparing);
+    cache.finish_frame();
+    assert!(!usage().preparing);
+    assert_eq!(usage().bytes, before.bytes);
+}

@@ -39,6 +39,7 @@ impl TextBufferCache {
             self.rebuild_lookup();
         }
         self.publish_usage();
+        budget::preparing(self.owner.id());
     }
 
     /// Called after glyph preparation/submission, when no text-area borrow is
