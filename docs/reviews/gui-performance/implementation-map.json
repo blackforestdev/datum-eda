@@ -15387,14 +15387,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for retained scalar-cache owner; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "256 width entries/thread with all owner threads enumerated; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Implementation complete for this scalar-cache predicate; qualification remains unqualified under original acceptance rule.",
+        "s4_implementation_evidence": "s4_width_cache_ownership_work"
       }
     },
     {
@@ -15486,14 +15485,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for retained scalar-cache owner; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "64KiB width key text/thread; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Implementation complete for this scalar-cache predicate; qualification remains unqualified under original acceptance rule.",
+        "s4_implementation_evidence": "s4_width_cache_ownership_work"
       }
     },
     {
@@ -15588,14 +15586,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for retained scalar-cache owner; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "128KiB total owned width payload/thread; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Implementation complete for this scalar-cache predicate; qualification remains unqualified under original acceptance rule.",
+        "s4_implementation_evidence": "s4_width_cache_ownership_work"
       }
     },
     {
@@ -30953,9 +30950,15 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 27,
+    "rows_with_recorded_implementation_gaps": 24,
     "rows_with_no_new_implementation_defect_asserted": 23,
-    "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change."
+    "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
+    "rows_with_implementation_completed_at_s4": 3,
+    "completed_at_s4": [
+      "MEM-WIDTH-ENTRIES",
+      "MEM-WIDTH-KEYS",
+      "MEM-WIDTH-PAYLOAD"
+    ]
   },
   "s4_control_retained_cpu_work": {
     "status": "Retained CPU control-cache cap includes metadata; complete MEM-MESH-CPU and HP16-03 remain partial",
@@ -31039,5 +31042,39 @@
       "No measured CPU/latency improvement, full resource/native qualification, dependency/license/prototype or resize-scope change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/control-demand-growth/result.json"
+  },
+  "s4_width_cache_ownership_work": {
+    "status": "Scalar width/wrapped-height retained storage caps and live per-thread ownership implemented; full qualification remains S5",
+    "base_commit": "57d588d2",
+    "production_consumers": [
+      "All UI text width measurement callers through measured_text_run_width_px",
+      "Console history wrapped-height callers through measured_text_run_height_px"
+    ],
+    "shared_owner": "render/measurement_cache.rs; extracted from font/measurement facade text_metrics.rs",
+    "retired_paths": [
+      "Unaccounted thread-local scalar cache ownership",
+      "String-owned keys without explicit exact-sized backing",
+      "Entry/key-only admission without explicit total retained storage check"
+    ],
+    "behavior": "Demand-grown LRU keeps256entries,64KiB exact-sized boxed key text and128KiB retained owner+entry capacity+key storage per cache. Default thread-local owners register stable IDs and thread IDs; publish retained totals after admitted misses/evictions; unregister on drop. Renderer::width_measurement_cache_usage enumerates live owners for process summation. Hits reuse existing keys/results without allocation, font shaping or accounting-registry lock. Font/size/text/wrap-kind key semantics unchanged.",
+    "proof": {
+      "focused": "7 text-metrics tests passed228filtered: exact width and wrapping reuse, shared-font parity, churn/eviction/bypass, exact retained report arithmetic and two real thread-local owners with retirement on thread exit.",
+      "initial_failure": "Test sum type inference failed compilation; explicit usize annotation corrected. Not a negative control.",
+      "source_health": "Coherent cache/accounting owner extracted; both modules normal budget. Gate and13 policy tests pass.",
+      "dependency": "Authority check passes; no third-party changes.",
+      "drift": "Workspace Clippy and preceding governance/terminal checks pass. Full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Goldens unchanged; later checks not run."
+    },
+    "implementation_completed": [
+      "MEM-WIDTH-ENTRIES",
+      "MEM-WIDTH-KEYS",
+      "MEM-WIDTH-PAYLOAD"
+    ],
+    "limits": [
+      "Retained scalar cache ownership at completed mutations; not a peak/transient allocator trace or per-allocation ACC-01 lifecycle ledger.",
+      "FontSystem/internal shaping caches, miss-time Buffer scratch and accounting-registry storage are separate from this scalar-cache payload. No full shaped-text/ACC/resource acceptance.",
+      "Public report allocates a snapshot only when queried. Normal misses update an existing registry entry; cache hits do not touch registry.",
+      "Complete native churn/negative/performance and independent qualification remain S5. No measured speedup, prototype, dependency/license, budget or resize-scope change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/width-cache-ownership/result.json"
   }
 }

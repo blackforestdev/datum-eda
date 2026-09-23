@@ -1,0 +1,39 @@
+{
+  "status": "Scalar width/wrapped-height retained storage caps and live per-thread ownership implemented; full qualification remains S5",
+  "base_commit": "57d588d2",
+  "production_consumers": [
+    "All UI text width measurement callers through measured_text_run_width_px",
+    "Console history wrapped-height callers through measured_text_run_height_px"
+  ],
+  "shared_owner": "render/measurement_cache.rs; extracted from font/measurement facade text_metrics.rs",
+  "retired_paths": [
+    "Unaccounted thread-local scalar cache ownership",
+    "String-owned keys without explicit exact-sized backing",
+    "Entry/key-only admission without explicit total retained storage check"
+  ],
+  "behavior": "Demand-grown LRU keeps256entries,64KiB exact-sized boxed key text and128KiB retained owner+entry capacity+key storage per cache. Default thread-local owners register stable IDs and thread IDs; publish retained totals after admitted misses/evictions; unregister on drop. Renderer::width_measurement_cache_usage enumerates live owners for process summation. Hits reuse existing keys/results without allocation, font shaping or accounting-registry lock. Font/size/text/wrap-kind key semantics unchanged.",
+  "proof": {
+    "focused": "7 text-metrics tests passed228filtered: exact width and wrapping reuse, shared-font parity, churn/eviction/bypass, exact retained report arithmetic and two real thread-local owners with retirement on thread exit.",
+    "initial_failure": "Test sum type inference failed compilation; explicit usize annotation corrected. Not a negative control.",
+    "source_health": "Coherent cache/accounting owner extracted; both modules normal budget. Gate and13 policy tests pass.",
+    "dependency": "Authority check passes; no third-party changes.",
+    "drift": "Workspace Clippy and preceding governance/terminal checks pass. Full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Goldens unchanged; later checks not run."
+  },
+  "implementation_completed": [
+    "MEM-WIDTH-ENTRIES",
+    "MEM-WIDTH-KEYS",
+    "MEM-WIDTH-PAYLOAD"
+  ],
+  "limits": [
+    "Retained scalar cache ownership at completed mutations; not a peak/transient allocator trace or per-allocation ACC-01 lifecycle ledger.",
+    "FontSystem/internal shaping caches, miss-time Buffer scratch and accounting-registry storage are separate from this scalar-cache payload. No full shaped-text/ACC/resource acceptance.",
+    "Public report allocates a snapshot only when queried. Normal misses update an existing registry entry; cache hits do not touch registry.",
+    "Complete native churn/negative/performance and independent qualification remain S5. No measured speedup, prototype, dependency/license, budget or resize-scope change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/width-cache-ownership/result.json",
+  "artifacts_sha256_uncompressed": {
+    "tests-initial.log.gz": "ccbefd7bfd9b9147e42d0b46aeff56562b5345efd8ad4020c5ea93c443694c6c",
+    "tests.log.gz": "a1b165d99cc4ee80ef1adfb44aaf2d07fbd9a40815da1a4d45adedfd725fe1d1",
+    "drift.log.gz": "f55400dc80fe5535e216be29be7df734d75a3c2e8f65fadce34a78c2fb58de79"
+  }
+}
