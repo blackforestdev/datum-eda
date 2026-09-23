@@ -186,3 +186,45 @@ fn document_pressure_bypasses_candidate_without_forgiving_external_owner() {
     history.prune_retired();
     assert_eq!(history.accounted_bytes(), before);
 }
+
+#[test]
+fn shared_document_history_metadata_is_charged_per_owner_and_released_on_take() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "history-document-metadata-owners".into();
+    let scene = RetainedScene::from_workspace(&state, 960, 720);
+    let observer = scene.geometry_observer();
+    let baseline = observer.document_cpu_payload_bytes();
+    let mut first = RetainedSceneHistory::default();
+    let mut second = RetainedSceneHistory::default();
+    let mut key = tests::key(0);
+    key.scene_id = state.scene.scene_id.clone();
+    key.selection = "selected-object".repeat(128);
+    let second_key = key.clone();
+    let first_charge = key.heap_bytes().unwrap() + std::mem::size_of::<Entry>();
+    let second_charge = second_key.heap_bytes().unwrap() + std::mem::size_of::<Entry>();
+    first.insert(key.clone(), scene.clone());
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        baseline + first_charge
+    );
+    // Shared payload fits, but metadata from the other owner leaves no room.
+    second.insert_document(second_key.clone(), scene.clone(), baseline + first_charge);
+    assert!(second.entries.is_empty());
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        baseline + first_charge
+    );
+    second.insert(second_key, scene.clone());
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        baseline + first_charge + second_charge
+    );
+    let restored = first.take(&key).unwrap();
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        baseline + second_charge
+    );
+    drop(second);
+    assert_eq!(observer.document_cpu_payload_bytes(), baseline);
+    assert_eq!(restored, scene);
+}
