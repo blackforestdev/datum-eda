@@ -8,11 +8,24 @@ pub(super) struct CachedTerminalGraphicTexture {
     pub(super) key: TerminalGraphicTextureKey,
     pub(super) bind_group: wgpu::BindGroup,
     // Bindings drop first; the record survives through the final GPU handle.
-    texture: Tracked<wgpu::Texture>,
+    texture: Tracked<TerminalTexture>,
     // Preserve pixel allocation identity while its address is in the cache key.
     source: datum_terminal_core::RenderGraphic,
     pub(super) pending: bool,
     pub(super) uploaded: usize,
+}
+
+// Pin the key's pixel allocation through every GPU submission, preventing
+// address reuse from associating a new image with a retiring image's allowance.
+struct TerminalTexture {
+    texture: wgpu::Texture,
+    _source: datum_terminal_core::RenderGraphic,
+}
+impl std::ops::Deref for TerminalTexture {
+    type Target = wgpu::Texture;
+    fn deref(&self) -> &Self::Target {
+        &self.texture
+    }
 }
 
 impl CachedTerminalGraphicTexture {
@@ -21,6 +34,7 @@ impl CachedTerminalGraphicTexture {
         layout: &wgpu::BindGroupLayout,
         graphic: &PreparedTerminalGraphic,
         key: TerminalGraphicTextureKey,
+        generations: std::sync::Arc<crate::text_gpu::budget::Budget>,
     ) -> anyhow::Result<CachedTerminalGraphicTexture> {
         let bytes = u64::from(key.width)
             .checked_mul(u64::from(key.height))
@@ -30,6 +44,9 @@ impl CachedTerminalGraphicTexture {
             bytes == std::mem::size_of_val(graphic.graphic.placement().pixels()) as u64,
             "terminal texture extent does not match RGBA payload"
         );
+        let generation = generations.reserve(1).map_err(|_| {
+            anyhow::anyhow!("terminal texture has two live GPU allocations; wait for retirement")
+        })?;
         let terminal_permit = crate::text_gpu::budget::terminal_process().reserve(bytes)?;
         let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
@@ -71,11 +88,14 @@ impl CachedTerminalGraphicTexture {
             key,
             bind_group,
             texture: Owner::new().track_with_permits(
-                texture,
+                TerminalTexture {
+                    texture,
+                    _source: graphic.graphic.clone(),
+                },
                 bytes,
                 1,
                 Kind::TerminalTexture,
-                vec![terminal_permit, permit],
+                vec![generation, terminal_permit, permit],
             ),
             source: graphic.graphic.clone(),
             pending: true,
