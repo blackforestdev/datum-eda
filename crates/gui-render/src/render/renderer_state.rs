@@ -48,7 +48,7 @@ pub struct Renderer {
     pub(super) schematic_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) font_system: FontSystem,
     pub(super) text_cpu: crate::cpu_alloc::Scope,
-    pub(super) swash_cache: SwashCache,
+    pub(super) swash_cache: crate::text_gpu::raster::Raster,
     pub(super) text_resolution: [u32; 2],
     pub(super) atlas: TextAtlas,
     pub(super) text_renderer: TextRenderer,

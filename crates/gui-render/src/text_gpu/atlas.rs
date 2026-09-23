@@ -4,7 +4,8 @@
 //! CPU/font scratch, aggregate staging and cross-host qualification.
 use super::staging_vec::StagingVec;
 
-use glyphon::{CacheKey, FontSystem, SwashCache, SwashContent};
+use super::raster::Raster as SwashCache;
+use glyphon::{CacheKey, FontSystem, SwashContent};
 
 use super::lifetime::{Kind, Owner, SubmissionRef, Tracked};
 #[path = "atlas/chunks.rs"]
@@ -77,7 +78,7 @@ struct PendingUpload {
     origin: [u32; 2],
     size: [u32; 2],
     stride: u32,
-    pixels: Vec<u8>,
+    pixels: super::raster::Pixels,
     _cpu_permits: [super::budget::Permit; 2],
 }
 
@@ -300,7 +301,7 @@ impl Atlas {
             result => result?,
         }
         self.uploads.rasterizations += 1;
-        let Some(image) = raster.get_image_uncached(fonts, key) else {
+        let Some((image, pixels)) = raster.image(fonts, key, &self.staging_budget) else {
             self.glyphs.insert(key, None);
             return Ok(None);
         };
@@ -316,15 +317,23 @@ impl Atlas {
         };
         let bytes_per_pixel = if color { 4 } else { 1 };
         anyhow::ensure!(
-            image.data.len() as u64 == size[0] as u64 * size[1] as u64 * bytes_per_pixel,
+            pixels.len() as u64 == size[0] as u64 * size[1] as u64 * bytes_per_pixel,
             "glyph raster payload does not match its extent"
         );
         let padded = u64::from(
             (size[0] * bytes_per_pixel as u32).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT),
         ) * u64::from(size[1]);
-        self.reserve_pending_metadata()?;
+        if self.reserve_pending_metadata().is_err() {
+            raster.clear();
+            self.reserve_pending_metadata()?;
+        }
+        let image_bytes = crate::cpu_alloc::heap::capacity_bytes::<u8>(pixels.capacity()) as u64;
+        raster.release_for(
+            image_bytes + (self.pending_staging_bytes() + padded).min(cpu_images::CHUNK_BYTES),
+            &self.staging_budget,
+        );
         let cpu_permits = match self.reserve_cpu_image(
-            crate::cpu_alloc::heap::capacity_bytes::<u8>(image.data.capacity()) as u64,
+            crate::cpu_alloc::heap::capacity_bytes::<u8>(pixels.capacity()) as u64,
             padded,
         ) {
             Ok(permits) => permits,
@@ -417,7 +426,7 @@ impl Atlas {
             origin,
             size,
             stride: size[0] * bytes_per_pixel as u32,
-            pixels: image.data,
+            pixels,
             _cpu_permits: cpu_permits,
         });
         let location = GlyphLocation {

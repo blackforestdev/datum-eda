@@ -14,6 +14,7 @@ fn owned_draw_matches_installed_text_renderer() {
     let format = wgpu::TextureFormat::Rgba8UnormSrgb;
     let mut fonts = crate::load_datum_fonts();
     let mut raster = SwashCache::new();
+    let mut owned_raster = super::raster::Raster::new();
     let mut buffer = Buffer::new(&mut fonts, Metrics::new(18.0, 18.0 * 1.22));
     buffer.set_size(&mut fonts, Some(200.0), Some(128.0));
     let cache = Cache::new(&device);
@@ -173,7 +174,7 @@ fn owned_draw_matches_installed_text_renderer() {
                         &queue,
                         &mut atlas,
                         &mut fonts,
-                        &mut raster,
+                        &mut owned_raster,
                         [256, 128],
                         areas
                             .iter()
@@ -221,7 +222,7 @@ fn owned_draw_matches_installed_text_renderer() {
                         &queue,
                         &mut atlas,
                         &mut fonts,
-                        &mut raster,
+                        &mut owned_raster,
                         [256, 128],
                         areas
                             .iter()

@@ -16,6 +16,8 @@ impl Renderer {
     ) -> anyhow::Result<Option<(TextBufferCacheStats, bool)>> {
         self.text_buffers
             .release_layout_scratch_for(CHUNK_BYTES, &self.atlas.staging_budget);
+        self.swash_cache
+            .release_for(CHUNK_BYTES, &self.atlas.staging_budget);
         match self.prepare_frame_text(device, queue, prepared, width, height, overlay) {
             Ok(result) => {
                 if self.start_glyph_upload(device, queue, on_submitted)? {
@@ -65,6 +67,10 @@ impl Renderer {
             return Ok(false);
         }
         self.text_buffers.release_layout_scratch_for(
+            self.atlas.chunk_staging_bytes(CHUNK_BYTES)?,
+            &self.atlas.staging_budget,
+        );
+        self.swash_cache.release_for(
             self.atlas.chunk_staging_bytes(CHUNK_BYTES)?,
             &self.atlas.staging_budget,
         );

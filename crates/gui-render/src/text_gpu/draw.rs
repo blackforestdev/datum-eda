@@ -2,7 +2,8 @@
 use super::staging_vec::StagingVec;
 use std::ops::Range;
 
-use glyphon::{Color, FontSystem, LayoutRun, SwashCache, TextBounds};
+use super::raster::Raster as SwashCache;
+use glyphon::{Color, FontSystem, LayoutRun, TextBounds};
 
 use super::atlas::Atlas;
 use super::lifetime::{Kind, SubmissionRef, Tracked};

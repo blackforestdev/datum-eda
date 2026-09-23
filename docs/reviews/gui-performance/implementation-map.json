@@ -17367,6 +17367,11 @@
           "work": "s4_text_preparation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
           "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
+        },
+        {
+          "work": "s4_raster_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/raster-owner/result.json",
+          "status": "Datum raster owner accounts and admits retained private scratch separately from pixel lifetimes; construction peaks/font ownership remain open"
         }
       ]
     },
@@ -17588,6 +17593,11 @@
           "work": "s4_text_preparation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
           "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
+        },
+        {
+          "work": "s4_raster_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/raster-owner/result.json",
+          "status": "Datum raster owner accounts and admits retained private scratch separately from pixel lifetimes; construction peaks/font ownership remain open"
         }
       ]
     },
@@ -35188,5 +35198,36 @@
       "No dependency/license/prototype/cap/sequencing change; preserve historical failures, Console golden issue, GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json"
+  },
+  "s4_raster_owner_work": {
+    "status": "Datum raster owner accounts and admits retained private scratch separately from pixel lifetimes; construction peaks/font ownership remain open",
+    "base_commit": "da02e73b",
+    "production_consumers": [
+      "Default shared Atlas/Draw raster path used by workspace and overlay text across native and offscreen renderers",
+      "Full/dialog glyph continuation and final mixed upload submission"
+    ],
+    "retired_paths": [
+      "Unobserved retained SwashCache private scratch",
+      "Implicit overlap of returned raster pixels with private-scratch observations"
+    ],
+    "behavior": [
+      "A Datum-owned wrapper scopes installed SwashCache creation/rasterization. Font loading occurs outside raster scope through the public API. Returned Vec capacity has an independent lifetime lease through pending Atlas uploads; subtract it once to isolate retained private scratch including Datum headers.",
+      "Retained private scratch holds host/process staging permits. Growth or host changes re-admit current capacity; refused retention clears only reusable scratch. Returned glyph images remain available and unchanged. Pixel capacity retains existing separate admission and copy preflight.",
+      "Pending metadata/pixel and continuation/final-copy pressure can retire optional raster scratch before refusing required work. Clearing the raster cache does not invalidate uploaded atlas locations or pending image pixels. Drop releases scratch; surviving pixels retain their own accounting until copied/dropped.",
+      "Renderer reports reserved raster scratch separately. Existing native/offscreen staging equations now include it. The installed renderer remains the independent pixel oracle; no third-party source is modified or vendored."
+    ],
+    "proof": {
+      "renderer": "test result: FAILED. 374 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.80s",
+      "focused": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 385 filtered out; finished in 0.91s",
+      "checks": "Full renderer run:374 passed and1 stale pressure-fixture failure,11 filtered. Corrected fixture retires the newly evictable scratch before deliberately exhausting required storage; focused rerun passed1. Final strict visual renderer/app all-target Clippy and fresh GUI build pass. Final production edit after that full run only collapses an equivalent nested conditional for Clippy.",
+      "coverage": "New private raster lifetime test verifies actual scope total equals private scratch plus output capacity, host re-admission, pressure release, byte-identical surviving pixels and final zero allocations. Existing installed-renderer pixel oracle, workspace/dialog continuation, rich text, warm reuse and resource release cases passed.",
+      "failed_attempts": "Initial compile caught one test reference still calling the old raster type. Preserve that log. Full run failure840vs424 was pending metadata capacity growing after newly evictable scratch freed room; forced-full test now clears scratch before filling the host. Preserve initial Clippy nested-if style rejection and corrected final result."
+    },
+    "limits": [
+      "No complete MEM-STAGING/ACC-02, S4/S5 or issue closure. Private font/shaping state and synchronous raster/layout construction peaks remain unresolved. Post-construction scratch admission does not prove a construction-time ceiling.",
+      "Exact private scratch observation requires the installed Datum allocator. Wrapper/scope registry bookkeeping, allocator slack/native mappings and complete cross-host/native qualification remain separate. No runtime latency or tier acceptance claim.",
+      "No dependency/license/prototype/cap/sequencing amendment. Preserve failed evidence, Console golden issue, GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/raster-owner/result.json"
   }
 }

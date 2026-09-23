@@ -152,7 +152,9 @@ fn owned_atlas_upload_reuse_reset_and_retirement_handoff() {
         .physical((0.0, 0.0), 1.0)
         .cache_key;
     let mut raster = SwashCache::new();
-    let reference = raster.get_image_uncached(&mut fonts, key).unwrap();
+    let reference = glyphon::SwashCache::new()
+        .get_image_uncached(&mut fonts, key)
+        .unwrap();
     let mut atlas = Atlas::new(&device);
     let budget = super::super::budget::Budget::new(2 * 1024 * 1024);
     atlas.texture_budget = budget.clone();
