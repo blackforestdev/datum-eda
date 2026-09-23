@@ -70,3 +70,40 @@ fn rich_color_changes_reuse_shapes_and_update_each_area() {
         prepares + 1
     );
 }
+
+#[test]
+#[ignore = "requires local GPU; atlas epoch invalidates both prepared text groups"]
+fn atlas_repack_reprepares_workspace_and_overlay_without_reshaping() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let mut prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    prepared.text_runs = vec![prepared.menu_overlay_text_runs[0].clone()];
+    let mut renderer = hardware_renderer(960, 720);
+    let original = capture(&mut renderer, &prepared);
+    assert_eq!(original, capture(&mut renderer, &prepared));
+    let revision = renderer.renderer.text_buffers.revision();
+    let workspace = renderer.renderer.text_preparation.workspace_prepares;
+    let overlay = renderer.renderer.text_preparation.overlay_prepares;
+    // Deliberately retain the old signatures: atlas identity itself must reject
+    // them rather than relying on a caller to remember both invalidations.
+    renderer.renderer.atlas.repack();
+    assert_eq!(original, capture(&mut renderer, &prepared));
+    assert_eq!(renderer.renderer.text_buffers.revision(), revision);
+    assert_eq!(
+        renderer.renderer.text_preparation.workspace_prepares,
+        workspace + 1
+    );
+    assert_eq!(
+        renderer.renderer.text_preparation.overlay_prepares,
+        overlay + 1
+    );
+    assert_eq!(original, capture(&mut renderer, &prepared));
+    assert_eq!(
+        renderer.renderer.text_preparation.workspace_prepares,
+        workspace + 1
+    );
+    assert_eq!(
+        renderer.renderer.text_preparation.overlay_prepares,
+        overlay + 1
+    );
+}

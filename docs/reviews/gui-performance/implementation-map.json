@@ -19584,14 +19584,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
-        ],
+        "implementation_due": "Implemented at S4 for current production shaping/layout dependencies; original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "Shaping changes exactly when semantic shaping key changes",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Dependency implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_text_dependency_completion"
       },
       "s4_owned_layout_progress": {
         "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
@@ -19607,6 +19606,11 @@
           "work": "s4_text_key_ownership_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
           "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
+        },
+        {
+          "work": "s4_text_dependency_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-dependencies/result.json",
+          "status": "Current production shaping/layout dependency implementation complete; original independent/native qualification remains S5"
         }
       ]
     },
@@ -19713,14 +19717,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
-        ],
+        "implementation_due": "Implemented at S4 for current production shaping/layout dependencies; original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "Layout correct; unchanged shaping reused; GPU placement/atlas/target current",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Dependency implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_text_dependency_completion"
       },
       "s4_owned_layout_progress": {
         "implementation": "Default retained shaping/layout migrated to TextLayout; shared shape identity, visible layouts and unique public payload report verified in s4_owned_layout_work.",
@@ -19736,6 +19739,11 @@
           "work": "s4_text_key_ownership_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
           "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open"
+        },
+        {
+          "work": "s4_text_dependency_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-dependencies/result.json",
+          "status": "Current production shaping/layout dependency implementation complete; original independent/native qualification remains S5"
         }
       ]
     },
@@ -31737,10 +31745,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 16,
+    "rows_with_recorded_implementation_gaps": 14,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 11,
+    "rows_with_implementation_completed_at_s4": 13,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -31752,7 +31760,9 @@
       "MEM-MESH-CPU",
       "MEM-MESH-GPU",
       "MEM-LABEL-ENTRIES",
-      "MEM-LABEL-KEYS"
+      "MEM-LABEL-KEYS",
+      "REUSE-TEXT-KEY",
+      "REUSE-TEXT-LAYOUT"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -33603,5 +33613,38 @@
       "No dependency, vendor, license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize. Sixteen recorded implementation gaps remain; no milestone or issue closure."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json"
+  },
+  "s4_text_dependency_completion": {
+    "status": "Current production shaping/layout dependency implementation complete; original independent/native qualification remains S5",
+    "base_commit": "47101b0b",
+    "production_consumers": [
+      "Shared TextBufferCache for workspace, terminal, composed overlay and native Preferences/New Project labels",
+      "Renderer workspace and overlay glyph preparation for every shared host",
+      "Thread-local measurement and renderer shaping use the same process catalog/locale authority"
+    ],
+    "retired_paths": [
+      "GPU reuse signatures that relied only on caller invalidation after atlas repack"
+    ],
+    "behavior": [
+      "Include atlas generation explicitly beside cache revision and exact placement/paint/target signature for both GPU text groups. Publish the resulting generation after preparation/retry. An atlas reset refreshes glyph instances without invalidating retained shaping."
+    ],
+    "dependency_review": {
+      "exact_text_and_style": "text_buffer_cache.rs: canonical plain text or exact rich span text/bold/italic; size bits and TextFace. Fingerprint only selects candidates; matches_run checks exact inputs, so collision is not identity. Rich span segmentation remains semantic because output metadata selects live span paint.",
+      "font_revision_language_features": "text_metrics.rs: one immutable OnceLock font database and locale cloned by measurement and renderer FontSystems; production db_mut only installs initial embedded sources. TextFace determines font family/weight/terminal spacing. TextLayout uses Basic shaping/tab width 8; direction derives from exact paragraph text. No production mutable font catalog, locale, alignment or feature controls exist. Their lifetime is the cache authority, not omitted mutable dependencies. Future reload must invalidate both caches as documented.",
+      "layout": "Effective width/height derives from explicit layout_size, otherwise clip/legacy estimate, clamped to current target. Extent changes relayout immutable shared shapes; concurrent extents retain independent rows. Metrics derive from exact size, fixed 1.22 line height, WordOrGlyph wrap and default alignment. Existing fallback-derived extent remains unchanged.",
+      "gpu": "Exact signature includes per-run position, plain/rich paint, clip, target width/height and cache revision; this change includes actual atlas generation. Device, texture format and MSAA belong to immutable Renderer/Draw construction; recreate_for_device creates fresh text owners/signatures. Atlas retry and cache retirement invalidate both groups.",
+      "scope": "Current production controls only; no claim of newly supporting dynamic font reload, arbitrary shaping features, absent schematic content or full independent native qualification."
+    },
+    "proof": {
+      "renderer": "343 renderer tests passed, 11 diagnostic/visual cases filtered. New GPU regression deliberately retains old signatures across atlas repack: both groups prepare once, cache revision and pixels stay unchanged, next frame is warm. Existing collision/exact-key, five-face font catalog, plain/rich/bidi layout oracle, wrap/placement/clip, rich paint, atlas pressure/retry, reindex, and fresh-pixel parity tests pass.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy, fresh application build, source health 2272, dependency authority and governance pass.",
+      "scope": "No broad benchmark/native campaign or full drift rerun; prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "REUSE-TEXT-KEY and REUSE-TEXT-LAYOUT implementation gaps close for current default production controls; original acceptance rules, planned test status and full S5 qualification remain unchanged. This is not global adoption/performance acceptance.",
+      "HP15-01/02 and shaped-text/resource accounting remain open: construction peaks, private font/raster storage and other retained/scratch ownership are not proved by key correctness.",
+      "No dependency, vendoring, license, visual prototype, numerical cap or specification sequencing change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-dependencies/result.json"
   }
 }

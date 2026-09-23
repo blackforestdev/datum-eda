@@ -1,0 +1,59 @@
+{
+  "status": "Current production shaping/layout dependency implementation complete; original independent/native qualification remains S5",
+  "base_commit": "47101b0b",
+  "production_consumers": [
+    "Shared TextBufferCache for workspace, terminal, composed overlay and native Preferences/New Project labels",
+    "Renderer workspace and overlay glyph preparation for every shared host",
+    "Thread-local measurement and renderer shaping use the same process catalog/locale authority"
+  ],
+  "retired_paths": [
+    "GPU reuse signatures that relied only on caller invalidation after atlas repack"
+  ],
+  "behavior": [
+    "Include atlas generation explicitly beside cache revision and exact placement/paint/target signature for both GPU text groups. Publish the resulting generation after preparation/retry. An atlas reset refreshes glyph instances without invalidating retained shaping."
+  ],
+  "dependency_review": {
+    "exact_text_and_style": "text_buffer_cache.rs: canonical plain text or exact rich span text/bold/italic; size bits and TextFace. Fingerprint only selects candidates; matches_run checks exact inputs, so collision is not identity. Rich span segmentation remains semantic because output metadata selects live span paint.",
+    "font_revision_language_features": "text_metrics.rs: one immutable OnceLock font database and locale cloned by measurement and renderer FontSystems; production db_mut only installs initial embedded sources. TextFace determines font family/weight/terminal spacing. TextLayout uses Basic shaping/tab width 8; direction derives from exact paragraph text. No production mutable font catalog, locale, alignment or feature controls exist. Their lifetime is the cache authority, not omitted mutable dependencies. Future reload must invalidate both caches as documented.",
+    "layout": "Effective width/height derives from explicit layout_size, otherwise clip/legacy estimate, clamped to current target. Extent changes relayout immutable shared shapes; concurrent extents retain independent rows. Metrics derive from exact size, fixed 1.22 line height, WordOrGlyph wrap and default alignment. Existing fallback-derived extent remains unchanged.",
+    "gpu": "Exact signature includes per-run position, plain/rich paint, clip, target width/height and cache revision; this change includes actual atlas generation. Device, texture format and MSAA belong to immutable Renderer/Draw construction; recreate_for_device creates fresh text owners/signatures. Atlas retry and cache retirement invalidate both groups.",
+    "scope": "Current production controls only; no claim of newly supporting dynamic font reload, arbitrary shaping features, absent schematic content or full independent native qualification."
+  },
+  "proof": {
+    "renderer": "343 renderer tests passed, 11 diagnostic/visual cases filtered. New GPU regression deliberately retains old signatures across atlas repack: both groups prepare once, cache revision and pixels stay unchanged, next frame is warm. Existing collision/exact-key, five-face font catalog, plain/rich/bidi layout oracle, wrap/placement/clip, rich paint, atlas pressure/retry, reindex, and fresh-pixel parity tests pass.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy, fresh application build, source health 2272, dependency authority and governance pass.",
+    "scope": "No broad benchmark/native campaign or full drift rerun; prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "REUSE-TEXT-KEY and REUSE-TEXT-LAYOUT implementation gaps close for current default production controls; original acceptance rules, planned test status and full S5 qualification remain unchanged. This is not global adoption/performance acceptance.",
+    "HP15-01/02 and shaped-text/resource accounting remain open: construction peaks, private font/raster storage and other retained/scratch ownership are not proved by key correctness.",
+    "No dependency, vendoring, license, visual prototype, numerical cap or specification sequencing change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-dependencies/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-dependencies/tests.log.gz",
+      "uncompressed_sha256": "5d1a20ce8423fe77bf0acd01bdaf40dc77f61969952861915db003bbee565d3d"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-dependencies/clippy.log.gz",
+      "uncompressed_sha256": "a5bd14a4cba127285222dbab6b886f1607d8dd255dfe578fc5a2bd4e05b13e56"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-dependencies/build.log.gz",
+      "uncompressed_sha256": "6c2b82944a79148a03dee0bf8b6f390c44469975ea2c8c96a30d1497ce297cd1"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text.rs": "ef4c9601910a1ff39a5fa632bf1854cbff2b292f7bc0e111ec523859d43ce6bb",
+    "crates/gui-render/src/render/gpu_text_paint_tests.rs": "d02baa94a2eb45e837ef5aa54e72e76ca21748dc50a8c6b30da0ad06d1810246",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "afe89ac00b625b465d52b4ca5a8868d9bfd44015c254ca142617c42fae661925",
+    "crates/gui-render/src/render/text_metrics.rs": "6d07e2b1643ec3ec9475f084c6bf596f33d56d1e1ebbd5a41ca262a59cb1eb23",
+    "crates/gui-render/src/render/text_prepare_identity.rs": "db5f478e3d9267ba6f597eb8ce56a661546f5952788c5a2760eaa967f612e0db",
+    "crates/gui-render/src/render/gpu_init.rs": "28dc083f94c01f66d81fd0980ae31a485e6ef1c9e3ff2c29fbc93b55fd236cff",
+    "crates/gui-render/src/text_layout.rs": "0855bbe4be8e5ac318d7d24af7e5bf45bde49a7cbf95665bebaf5c4e8a3f2214",
+    "crates/gui-render/src/layout_scratch.rs": "6875897a0d9d5f8f3364cfb2cc7a5887e72a250da8410dbeee4fc44103ca377f",
+    "crates/gui-render/src/render/types.rs": "fe8c836b9c56e962bd62200edb613919f5de0ae651f1f0a8a8f8d5c767f6edaf",
+    "crates/gui-render/src/render/measurement_cache.rs": "3157df70c04241c528b535fed6d826f5d0ed74702c2aea7d2f11c5e73caae895"
+  }
+}
