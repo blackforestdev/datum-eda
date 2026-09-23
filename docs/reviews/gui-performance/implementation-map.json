@@ -15233,7 +15233,8 @@
         "unfinished_qualification": "128 shaped buffers per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass."
     },
     {
       "id": "MEM-LABEL-KEYS",
@@ -15296,7 +15297,8 @@
         "unfinished_qualification": "32KiB label key text per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_retained_key_progress": "See s4_text_key_capacity_work: actual key capacities and metadata reported; overlay post-submit retention uses capacities. Complete live-frame/shaped/aggregate accounting still open; no full predicate pass."
     },
     {
       "id": "MEM-WIDTH-ENTRIES",
@@ -31076,5 +31078,30 @@
       "Complete native churn/negative/performance and independent qualification remain S5. No measured speedup, prototype, dependency/license, budget or resize-scope change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/width-cache-ownership/result.json"
+  },
+  "s4_text_key_capacity_work": {
+    "status": "Datum-owned text key capacity now drives overlay retirement; full shaped-memory/live-frame accounting remains open",
+    "base_commit": "2b040d7e",
+    "production_consumers": [
+      "GLOBAL/PROJECT default overlay preparation and post-submission trim",
+      "NEW shared overlay profile",
+      "All Renderer text-cache ownership queries; workspace uses its own two-generation retention profile"
+    ],
+    "shared_owner": "TextBufferCache / Renderer::text_cache_key_usage",
+    "retired_paths": [
+      "Logical string length used as the retained key-allocation byte count"
+    ],
+    "behavior": "Charge plain and rich-span String capacities to the existing32KiB retained overlay key-text limit. Report entry count, key allocation bytes and actual entry/index/rich-span metadata capacity. Existing trim evicts whole shaped entries and invalidates glyph indices; required content remains shaped before post-submission retirement. Entry128cap and workspace two-generation policy unchanged.",
+    "proof": {
+      "focused": "10 text_buffer_cache tests passed226filtered: plain/rich allocated capacity over cap retires entries, releases metadata, invalidates revision and reconstructs label; existing exact keys, shaping/layout reuse, churn, two-generation and glyph-signature tests pass.",
+      "source_health": "Gate and13 policy tests pass; normal-budget sources, exact-file formatting only.",
+      "drift": "Clippy and preceding checks pass. Full drift exits1 at known Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Goldens unchanged; later gates not run."
+    },
+    "limits": [
+      "These are post-submission retained-key limits, not a128-buffer live-frame/scratch bound. MEM-LABEL-ENTRIES/KEYS and complete resource rows remain unqualified.",
+      "Entry storage includes inline Buffer objects but excludes their nested private payload, FontSystem, glyph atlas and transient shaping. Public installed BufferLine APIs do not expose private text/attrs and inactive Cached payload capacities. No source vendoring, modification or private-layout inference.",
+      "No complete ACC,8MiB shaped cap,32MiB aggregate, native/profile qualification, dependency/license/prototype/numerical-budget or resize change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-capacity/result.json"
   }
 }

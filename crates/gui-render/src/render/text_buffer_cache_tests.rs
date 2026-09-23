@@ -464,3 +464,53 @@ fn explicit_layout_extent_survives_visibility_changes() {
     label.layout_size = Some((120.0, 30.0));
     assert_ne!(text_buffer_key(&label, 960, 300), expected);
 }
+
+#[test]
+fn overlay_key_budget_charges_allocated_plain_and_rich_text_capacity() {
+    let mut fonts = FontSystem::new();
+    load_datum_fonts(&mut fonts);
+    for rich in [false, true] {
+        let mut cache = TextBufferCache::default();
+        let mut label = run();
+        label.rich_spans.push(TextRunSpan {
+            text: "retained span".into(),
+            color: TEXT_PRIMARY,
+            bold: false,
+            italic: false,
+        });
+        cache.begin_frame(Profile::Overlay);
+        let (indices, _) = cache.indices(&mut fonts, std::slice::from_ref(&label), 960, 720);
+        let entry = &mut cache.entries[indices[0]];
+        let text = if rich {
+            &mut entry.key.rich_spans[0].text
+        } else {
+            &mut entry.key.text
+        };
+        text.reserve(MAX_OVERLAY_TEXT_BYTES + 1);
+        let usage = cache.key_usage();
+        assert_eq!(usage.entries, 1);
+        let key = &cache.entries[0].key;
+        assert_eq!(
+            usage.key_text_bytes,
+            key.text.capacity() + key.rich_spans[0].text.capacity()
+        );
+        assert!(usage.key_text_bytes > MAX_OVERLAY_TEXT_BYTES);
+        assert!(usage.entry_storage_bytes >= std::mem::size_of::<CachedTextBuffer>());
+        let revision = cache.revision();
+        cache.trim_overlay();
+        assert!(
+            cache.revision() > revision,
+            "retirement invalidates glyph indices"
+        );
+        assert_eq!(cache.key_usage().entries, 0);
+        assert_eq!(cache.key_usage().key_text_bytes, 0);
+        assert_eq!(
+            cache.key_usage().entry_storage_bytes,
+            std::mem::size_of::<TextBufferCache>()
+        );
+        cache.begin_frame(Profile::Overlay);
+        assert_eq!(cache.indices(&mut fonts, &[label], 960, 720).1.misses, 1);
+        cache.trim_overlay();
+        assert!(cache.key_usage().key_text_bytes <= MAX_OVERLAY_TEXT_BYTES);
+    }
+}
