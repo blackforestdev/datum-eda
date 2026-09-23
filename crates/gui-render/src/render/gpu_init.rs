@@ -358,6 +358,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             scene_bind_group,
             scene_bind_group_layout,
             surface_scene_uniforms: Vec::new(),
+            pane_uniform_generations: previous
+                .map(|old| old.pane_uniform_generations.clone())
+                .unwrap_or_default(),
             world_vertices_gpu: Default::default(),
             world_strokes_gpu: Default::default(),
             schematic_world_vertices_gpu: Default::default(),

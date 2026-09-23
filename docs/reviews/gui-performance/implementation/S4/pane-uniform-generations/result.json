@@ -1,0 +1,46 @@
+{
+  "status": "Dynamic pane uniform generation continuity implemented across close/reopen and renderer recovery; full replacement predicate remains open",
+  "base_commit": "068dbc8d",
+  "production_consumers": [
+    "Renderer::prepare_surface_uniforms for board/schematic surface passes",
+    "Renderer::recreate_for_device across native hosts",
+    "Overlay-only clear and surface-pass truncation followed by reopening"
+  ],
+  "retired_paths": [
+    "Dynamic pane uniform construction with an unconditional fresh two-generation allowance"
+  ],
+  "behavior": [
+    "Share a weak slot-indexed generation registry across renderer recovery. Active uniforms and submission/encoding permits keep each slot allowance alive; registry entries do not retain GPU resources. Prune dead trailing slots and excess metadata capacity when acquiring a slot. Admit empty GPU uniform allocation under the preserved generation, host screen and aggregate byte limits before constructing its binding. Warm slots do not access the registry."
+  ],
+  "proof": {
+    "renderer": "346 renderer tests pass, 11 filtered. New actual-GPU test uses production pane preparation: pin first allocation, clear/reopen, pin second, refuse third with unchanged screen charge, refuse after recovery, release first, retry under identical allowance, finally release all bytes. Existing warm pixel, fixed uniform and world generation tests pass.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature and fresh app build pass. Source health 2274, dependency authority and governance pass.",
+    "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Closes the dynamic pane generation-continuity remainder recorded by s4_fixed_uniform_generations_work. Full MEM-REPLACEMENT remains open for other resource families and qualification. Registry CPU metadata is not newly claimed as complete resource accounting; original S4 accounting and S5 qualification obligations remain.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/tests.log.gz",
+      "uncompressed_sha256": "1b7ade53e57998c8ab68aa46fdada0020e4a51615b8170b65e5ac4486e6137ca"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/clippy.log.gz",
+      "uncompressed_sha256": "6a02965a102bac77370cf2fcd352b089b5383d6cb552f96d2c1fbba4280c4bbc"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-uniform-generations/build.log.gz",
+      "uncompressed_sha256": "1ec958136ab8f81128f2530101a7db8d0752ae58b26b92ac46859f86908fea34"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "0b99e62b6f62b2d3b61971dec0368aa394fcf2380726ba2a3fa82253eccdcae0",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "92c81a8280fe99325084f084dc5e8c2775a2f3093dd41b753e5f0033a950ff37",
+    "crates/gui-render/src/render/renderer_state.rs": "626a9997b74afb38692f42e8defa700faf4a635757fdbb2139d5f699d047f857",
+    "crates/gui-render/src/render/uniform_buffer.rs": "c9a39dcfa8ab901e86b1e069135fd41afb2346276b4400c935bce285870e9991",
+    "crates/gui-render/src/render/uniform_buffer_tests.rs": "71dee43d32450981120fdd033e47024426ed0ab0cd38d68fe3e9798ae35b49fc"
+  }
+}

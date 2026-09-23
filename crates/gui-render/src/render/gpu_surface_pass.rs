@@ -53,14 +53,20 @@ impl Renderer {
         self.surface_scene_uniforms
             .truncate(prepared.surface_passes().len());
         while self.surface_scene_uniforms.len() < prepared.surface_passes().len() {
-            self.surface_scene_uniforms
-                .push(gpu_data::uniform_buffer::UniformBinding::new(
+            self.surface_scene_uniforms.push(
+                gpu_data::uniform_buffer::UniformBinding::from_buffer(
                     device,
                     &self.scene_bind_group_layout,
                     "datum-surface-scene-bind-group",
-                    None,
-                    &self.screen_budget,
-                )?);
+                    gpu_data::uniform_buffer::UniformBuffer::empty_in_generation(
+                        device,
+                        "datum-surface-scene-uniform",
+                        &self.screen_budget,
+                        self.pane_uniform_generations
+                            .for_slot(self.surface_scene_uniforms.len()),
+                    )?,
+                )?,
+            );
         }
         for (surface, binding) in prepared
             .surface_passes()
