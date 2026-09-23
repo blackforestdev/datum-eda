@@ -1,0 +1,72 @@
+{
+  "status": "Default MSAA attachments share process and submission lifetime accounting; full caps and qualification remain open",
+  "base_commit": "fd7dc71f",
+  "production_consumers": [
+    "Shared Renderer MSAA attachment owner for Main, Global/Project Preferences and New Project full/overlay rendering"
+  ],
+  "retired_paths": [
+    "Separate current-only attachment identity as the sole renderer GPU capacity observation"
+  ],
+  "behavior": [
+    "Use the existing GPU Owner and tracked allocation for each MSAA view. Snapshot owner identifies the same process owner; snapshot allocation generation matches the tracked record generation. API capacity uses the existing physical extent/format/sample calculation.",
+    "Successful frame submissions retain the current tracked attachment until queue completion. Replacement and renderer close mark an allocation retiring while submitted references remain. A public weak observer survives renderer close without pinning GPU storage.",
+    "Existing attachment clones share the same primary owner; diagnostic retained-extent caches remain supported without duplicate byte charging. Preserve guarded publication, failure rollback, unchanged-extent reuse, format and sample count."
+  ],
+  "proof": {
+    "renderer": "292 final renderer tests pass including real GPU attachment clear/submit/replacement/completion/close with exact byte reconciliation, explicit shared-reference hold, existing failure recovery, warm/forced replacement and production GPU pixel comparisons.11 measurement/cost/visual-runner cases explicitly filtered.",
+    "lint": "All-targets visual gui-render/gui-app Clippy -D warnings passes. Source health2239files,13 policy tests and dependency authority pass.",
+    "native": "Fresh visual-feature datum-gui build and1680x1050 datum-test/R1 capture exit0; inspected and decoded RGBA exactly equals the preserved vertex-submission capture. No native input/endurance/performance acceptance.",
+    "initial_attempt": "Initial test compilation exposed the existing opt-in retained-extent probe cloning attachments. Preserve it with Arc ownership of the same Tracked view. Failed compile log retained; final full renderer proof follows correction.",
+    "drift": "Full drift attempted: formatting/resource policy passed, workspace Clippy failed when shared dependency/fingerprint/build artifacts disappeared during compilation (missing libautocfg and dep-info paths). No rustc/Cargo/cleanup process remained on inspection; cause unconfirmed, recorded dat-wf8i. Earlier focused visual Clippy,292 renderer tests and native capture remain valid. Later drift gates unrun; known Console golden discrepancy is not newly retested. No cleanup or repeated broad rebuild performed."
+  },
+  "limits": [
+    "Uniforms, staging, driver residency and complete device/document/host incidence and release-reason history remain outside this process report. Aggregate512MiB GPU and other resource admission/caps remain unfinished.",
+    "Native lifecycle admission continues to own generation bounds and recovery; this change does not add an offscreen replacement limit or qualify all native failure/device combinations.",
+    "No full ACC/MEM predicate, S4 or S5 closure. No dependency, vendor, license, prototype, budget, sample-count or nonblocking resize change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
+  "logs": {
+    "check": {
+      "path": "check.log.gz",
+      "uncompressed_sha256": "c90b89be645fc6e72e1c14f4c29bbef3b0d15627d4cc11d3d133778cb21970c1"
+    },
+    "tests": {
+      "path": "tests.log.gz",
+      "uncompressed_sha256": "16a0146ba3aec7391e0d5120ed79ca6f5ad7b9f9e53b689115ee0a6fd8ff7974"
+    },
+    "final": {
+      "path": "final.log.gz",
+      "uncompressed_sha256": "db27a35d865c39676b8ad9d66f9cc84eb7944adcef286305269df35c3085a23c"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "b14bbd6175a0a3cee472bd1cf3b2c4fe181699c47dc95ecb1106ab8d97bd985f"
+    },
+    "native": {
+      "path": "native.log.gz",
+      "uncompressed_sha256": "268f8c9125ba91da3919d4d7d2cc1b5395ad694c3cca1396e7a257df900c19af"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "6b556a2d7a3eed16d59387eec2c97aa4b6c767682e63fa73befce893f6930816"
+    }
+  },
+  "native_capture": {
+    "path": "native.png",
+    "sha256": "40e986a2655402722e7ebb62db7dacbfdbd02134da611989bfd2b12db0a81d2a",
+    "preserved_capture_rgba_equal": true
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_surface.rs": "c034eb85626707991015c8211f7047a676d8bc996bd58be92808518f153018be",
+    "crates/gui-render/src/render/gpu_text.rs": "8df996f54543e1ab4559ad518d23000f64b6d6d38f47769f7345cbacc3d4b7e7",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "1d378e6c3194f95ccbd2083e8d33b5ba1d4ea89f263e8b5d02e3bc94b428d30b"
+  },
+  "application_sha256": "cdd4ede4172e8d783cc7b521975c123967ea35818e147ee29e898b3be9125d09",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib -- --include-ignored --skip gpu_measurements::tests::real_gpu --skip gpu_surface::attachment_cost_probe --skip visual::visual_runner --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render -p datum-gui-app --all-targets --features visual -- -D warnings",
+    "timeout 120s python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --offline -p datum-gui-app --bin datum-gui --features visual -- --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb --select R1 --visual-test --screenshot-out /tmp/pm045-s4-attachments-native.png --window-size 1680x1050 --exit-after-screenshot",
+    "bash /tmp/pm045-s4-drift.sh (offline; nested terminal-core Cargo guarded)"
+  ],
+  "native_binary_survives_cache_failure": true
+}

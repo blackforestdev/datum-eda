@@ -60,6 +60,7 @@ impl Renderer {
 
     pub(crate) fn hold_frame_submission(&mut self, queue: &wgpu::Queue) {
         let mut resources = self.vertex_submission_refs();
+        resources.extend(self.surface_attachments.submission_ref());
         resources.extend(self.atlas.submission_refs());
         resources.extend(self.text_renderer.submission_ref());
         resources.extend(self.menu_overlay_text_renderer.submission_ref());

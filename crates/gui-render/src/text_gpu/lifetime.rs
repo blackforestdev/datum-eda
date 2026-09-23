@@ -13,6 +13,7 @@ pub enum Kind {
     Instances,
     Vertex,
     TerminalTexture,
+    Attachment,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -49,6 +50,10 @@ impl Observer {
 pub(crate) struct Owner(Arc<State>);
 
 impl Owner {
+    pub fn id(&self) -> u64 {
+        self.0.id
+    }
+
     pub fn observer(&self) -> Observer {
         Observer(self.clone())
     }
@@ -141,8 +146,8 @@ impl crate::Renderer {
             .collect()
     }
 
-    /// Migrated text, terminal textures and world/screen vertex API allocations, including retirement.
-    /// Attachments, uniforms, driver residency and staging are not included.
+    /// Migrated text, terminal textures, vertices and MSAA attachment API allocations.
+    /// Includes retirement; uniforms, driver residency and staging remain separate.
     pub fn gpu_process_allocations() -> Vec<Record> {
         records(&PROCESS_ALLOCATIONS)
     }
