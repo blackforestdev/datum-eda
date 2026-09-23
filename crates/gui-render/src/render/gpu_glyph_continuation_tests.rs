@@ -64,7 +64,11 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
             renderer.renderer.atlas.has_pending_uploads(),
             "fixture must exceed one chunk"
         );
-        assert!(renderer.renderer.upload_staging_reserved_bytes() <= 4 * 1024 * 1024);
+        assert!(
+            renderer.renderer.upload_staging_reserved_bytes()
+                - renderer.renderer.layout_scratch_reserved_bytes()
+                <= 4 * 1024 * 1024
+        );
         let generation = renderer.renderer.atlas.generation;
         renderer
             .device
@@ -75,7 +79,7 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
             .renderer
             .atlas
             .staging_budget
-            .reserve(16 * 1024 * 1024)
+            .reserve(renderer.renderer.atlas.staging_budget.available())
             .unwrap();
         assert!(
             renderer
@@ -118,7 +122,10 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
                 .device
                 .poll(wgpu::PollType::wait_indefinitely())
                 .unwrap();
-            assert_eq!(renderer.renderer.upload_staging_reserved_bytes(), 0);
+            assert_eq!(
+                renderer.renderer.upload_staging_reserved_bytes(),
+                renderer.renderer.layout_scratch_reserved_bytes()
+            );
             if complete {
                 break;
             }

@@ -73,6 +73,8 @@ impl crate::Renderer {
         queue: &wgpu::Queue,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        self.text_buffers
+            .release_layout_scratch_for(CHUNK_BYTES as u64, &self.atlas.staging_budget);
         let Some(submission) = self
             .terminal_graphics
             .upload_chunk(device, queue, &self.atlas)?

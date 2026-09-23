@@ -19,6 +19,9 @@ impl Budget {
     pub fn used(&self) -> u64 {
         self.used.load(Ordering::Acquire)
     }
+    pub fn available(&self) -> u64 {
+        self.limit.saturating_sub(self.used())
+    }
     pub fn reserve(self: &Arc<Self>, bytes: u64) -> anyhow::Result<Permit> {
         self.used
             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |used| {

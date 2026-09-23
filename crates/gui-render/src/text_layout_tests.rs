@@ -4,7 +4,7 @@ use glyphon::{Buffer, Metrics};
 #[test]
 fn owned_layout_matches_buffer_for_plain_rich_and_extent_changes() {
     let mut fonts = crate::load_datum_fonts();
-    let mut scratch = ShapeBuffer::default();
+    let mut scratch = LayoutScratch::default();
     for rich in [false, true] {
         for text in [
             "",

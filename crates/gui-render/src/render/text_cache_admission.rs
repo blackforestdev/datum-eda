@@ -2,6 +2,33 @@
 use super::*;
 
 impl TextBufferCache {
+    pub(crate) fn admit_layout_scratch(
+        &mut self,
+        host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) {
+        if self.layout_output_revision != self.revision {
+            self.layout_output_bytes = self
+                .entries
+                .iter()
+                .map(|entry| entry.buffer.layout_glyph_bytes())
+                .sum();
+            self.layout_output_revision = self.revision;
+        }
+        self.layout_scratch.admit(self.layout_output_bytes, host);
+    }
+
+    pub(crate) fn release_layout_scratch_for(
+        &mut self,
+        bytes: u64,
+        host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) {
+        if bytes > host.available()
+            || bytes > crate::text_gpu::budget::staging_process().available()
+        {
+            self.layout_scratch.clear();
+        }
+    }
+
     fn admission_payload_bytes(&self) -> usize {
         if self.published_revision == self.revision {
             self.published_bytes
@@ -50,3 +77,11 @@ impl TextBufferCache {
 #[cfg(test)]
 #[path = "text_cache_admission_tests.rs"]
 mod tests;
+
+impl crate::Renderer {
+    /// Private retained layout scratch charged to the shared staging/scratch cap.
+    /// Returned glyph vectors remain in public shaped-payload accounting.
+    pub fn layout_scratch_reserved_bytes(&self) -> u64 {
+        self.text_buffers.layout_scratch.reserved_bytes()
+    }
+}

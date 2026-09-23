@@ -6,7 +6,7 @@ mod admission;
 pub(crate) mod budget;
 use crate::text_gpu::Area;
 use crate::text_layout::TextLayout;
-use glyphon::cosmic_text::ShapeBuffer;
+use crate::text_layout::scratch::LayoutScratch;
 use std::hash::{Hash, Hasher};
 
 pub(super) struct CachedTextBuffer {
@@ -139,7 +139,9 @@ pub(crate) struct TextBufferCache {
     published_revision: u64,
     published_bytes: usize,
     entries: Vec<CachedTextBuffer>,
-    layout_scratch: ShapeBuffer,
+    layout_scratch: LayoutScratch,
+    layout_output_revision: u64,
+    layout_output_bytes: usize,
     // Sorted shaping fingerprint + entry index. This owns no text or shaping
     // payload; exact key comparison remains authoritative within each bucket.
     lookup: Vec<(u64, usize)>,
@@ -161,7 +163,9 @@ impl Default for TextBufferCache {
             published_revision: 0,
             published_bytes: std::mem::size_of::<Self>(),
             entries: Vec::new(),
-            layout_scratch: ShapeBuffer::default(),
+            layout_scratch: LayoutScratch::default(),
+            layout_output_revision: 0,
+            layout_output_bytes: 0,
             lookup: Vec::new(),
             frame: 0,
             revision: 0,

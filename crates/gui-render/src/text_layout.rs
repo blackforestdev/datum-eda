@@ -2,10 +2,11 @@
 use std::sync::Arc;
 
 use crate::{TextRun, text_attrs, text_color};
-use glyphon::cosmic_text::{BidiParagraphs, LineIter, ShapeBuffer};
-use glyphon::{
-    AttrsList, FontSystem, LayoutLine, LayoutRun, ShapeLine, Shaping, Style, Weight, Wrap,
-};
+use glyphon::cosmic_text::{BidiParagraphs, LineIter};
+#[path = "layout_scratch.rs"]
+pub(crate) mod scratch;
+use glyphon::{AttrsList, FontSystem, LayoutLine, LayoutRun, ShapeLine, Shaping, Style, Weight};
+use scratch::LayoutScratch;
 
 struct Row {
     paragraph: usize,
@@ -25,7 +26,7 @@ pub(crate) struct TextLayout {
 impl TextLayout {
     pub fn new(
         fonts: &mut FontSystem,
-        scratch: &mut ShapeBuffer,
+        scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
     ) -> Self {
@@ -37,7 +38,7 @@ impl TextLayout {
     pub fn relayout(
         &mut self,
         fonts: &mut FontSystem,
-        scratch: &mut ShapeBuffer,
+        scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
     ) {
@@ -48,7 +49,7 @@ impl TextLayout {
     #[cfg(all(test, feature = "visual"))]
     pub(crate) fn with_test_attrs(
         fonts: &mut FontSystem,
-        scratch: &mut ShapeBuffer,
+        scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
         attrs: &glyphon::Attrs<'_>,
@@ -61,7 +62,7 @@ impl TextLayout {
     fn relayout_with_attrs(
         &mut self,
         fonts: &mut FontSystem,
-        scratch: &mut ShapeBuffer,
+        scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
         attrs: &glyphon::Attrs<'_>,
@@ -153,22 +154,13 @@ impl TextLayout {
 
     fn append_layout(
         &mut self,
-        scratch: &mut ShapeBuffer,
+        scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
         index: usize,
         top: &mut f32,
     ) -> bool {
-        let mut lines = Vec::new();
-        self.shapes[index].layout_to_buffer(
-            scratch,
-            run.size,
-            Some(extent.0 as f32),
-            Wrap::WordOrGlyph,
-            None,
-            &mut lines,
-            None,
-        );
+        let lines = scratch.layout(&self.shapes[index], run.size, extent.0);
         for layout in lines {
             let height = layout.line_height_opt.unwrap_or(run.size * 1.22);
             let leading = height - (layout.max_ascent + layout.max_descent);
@@ -202,6 +194,13 @@ impl TextLayout {
             layout: self,
             next: 0,
         }
+    }
+
+    pub(crate) fn layout_glyph_bytes(&self) -> usize {
+        self.rows
+            .iter()
+            .map(|row| row.layout.glyphs.capacity() * std::mem::size_of::<glyphon::LayoutGlyph>())
+            .sum()
     }
 
     pub fn layout_storage_bytes(&self) -> usize {
