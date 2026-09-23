@@ -316,7 +316,7 @@ fn history_storage_retains_allocating_document_identity_until_release() {
 }
 
 #[test]
-fn retirement_observer_storage_is_charged_through_growth_shrink_and_drop() {
+fn retirement_observer_storage_is_charged_through_growth_reuse_and_drop() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.scene.scene_id = "history-retirement-storage".into();
     let mut history = RetainedSceneHistory::default();
@@ -342,14 +342,17 @@ fn retirement_observer_storage_is_charged_through_growth_shrink_and_drop() {
         payload_registry
             + capacity_bytes::<RetainedGeometryObserver>(history.retired_geometry.capacity())
     );
+    let capacity = history.retired_geometry.capacity();
+    let pointer = history.retired_geometry.as_ptr();
     pins.truncate(1);
     history.prune_retired();
-    assert_eq!(history.retired_geometry.capacity(), 1);
+    assert_eq!(history.retired_geometry.capacity(), capacity);
+    assert_eq!(history.retired_geometry.as_ptr(), pointer);
     let before_drop = observer.document_cpu_payload_bytes();
     drop(history);
     assert_eq!(
         observer.document_cpu_payload_bytes(),
-        before_drop - capacity_bytes::<RetainedGeometryObserver>(1)
+        before_drop - capacity_bytes::<RetainedGeometryObserver>(capacity)
     );
     drop(pins);
     assert_eq!(observer.document_cpu_payload_bytes(), 0);

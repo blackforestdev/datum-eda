@@ -150,17 +150,11 @@ impl RetainedSceneHistory {
                         .chain(active.iter()),
                 ) != 0
         });
-        if self.retired_geometry.capacity() > self.retired_geometry.len().saturating_mul(4) {
-            self.retired_geometry = std::mem::take(&mut self.retired_geometry)
-                .into_boxed_slice()
-                .into_vec();
-            if self.retired_geometry.is_empty() {
-                self.retired_storage = None;
-            } else if let Some(charge) = &mut self.retired_storage {
-                charge.resize(capacity_bytes::<RetainedGeometryObserver>(
-                    self.retired_geometry.capacity(),
-                ));
-            }
+        // Retirement and budget observation cannot allocate replacement storage.
+        // Spare slots remain charged to their owner and reusable until empty.
+        if self.retired_geometry.is_empty() {
+            self.retired_geometry = Vec::new();
+            self.retired_storage = None;
         }
     }
 

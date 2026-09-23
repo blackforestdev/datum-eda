@@ -34594,5 +34594,30 @@
       "Initial identity allocations, constructor peaks, concurrent construction, scope bookkeeping, external weak-container lifetime and application history retirement-buffer compaction remain open. Twelve broad implementation gaps and S5 qualification are unchanged."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/registry-pruning/result.json"
+  },
+  "s4_retirement_reuse_work": {
+    "status": "Allocation-free retirement adopted by shared scene history and process text cache registry",
+    "base_commit": "f819361d",
+    "production_consumers": [
+      "RetainedSceneHistory retirement pruning for native board/companion owners",
+      "Process text-cache registry owner removal on renderer destruction/recovery"
+    ],
+    "retired_paths": [
+      "History retirement-buffer boxed-slice compaction and charge resize during pruning",
+      "Text-cache owner registry boxed-slice compaction during owner removal"
+    ],
+    "behavior": [
+      "Reuse existing charged capacity while owners remain, releasing empty buffers and their charges without replacement allocation. Preserve local/document history accounting and process text allowance deduction."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 20 passed; 0 failed; 4 ignored; 0 measured; 351 filtered out; finished in 3.18s",
+      "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 15.86s",
+      "checks": "Strict visual renderer/app all-targets Clippy, fresh visual GUI build, formatting, source-health, dependency and governance checks passed. Existing tests extended for pointer stability, full spare capacity charge, and release. No broad GPU/native qualification rerun."
+    },
+    "limits": [
+      "Retained spare capacity can remain larger after partial retirement; it is fully charged and reusable, never exempted from limits.",
+      "History retirement-buffer growth, text registry initial/growth admission, full construction/concurrent peaks, private text/scratch and weak-container lifetime remain open. Twelve broad implementation gaps and original S5 qualification unchanged."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/retirement-reuse/result.json"
   }
 }
