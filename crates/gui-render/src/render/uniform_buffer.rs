@@ -1,7 +1,7 @@
 //! Fixed-size uniform ownership with exact aligned changed-range uploads.
 use crate::text_gpu::budget::{Budget, Permit};
 use crate::text_gpu::lifetime::{Kind, Owner, SubmissionRef, Tracked};
-use std::sync::{Arc, Mutex, Weak};
+use std::sync::Arc;
 use wgpu::util::DeviceExt;
 
 pub(crate) struct UniformBuffer<T> {
@@ -160,32 +160,6 @@ fn reserve<T>(
 fn tracked(buffer: wgpu::Buffer, permits: Vec<Permit>) -> Tracked<wgpu::Buffer> {
     let bytes = buffer.size();
     Owner::new().track_with_permits(buffer, bytes, 1, Kind::Uniform, permits)
-}
-
-/// Slot identity survives pane close and renderer recovery. Weak entries keep
-/// neither allocations nor allowances alive after their final submission retires.
-#[derive(Clone, Default)]
-pub(crate) struct PaneUniformGenerations(Arc<Mutex<Vec<Weak<Budget>>>>);
-
-impl PaneUniformGenerations {
-    pub(crate) fn for_slot(&self, slot: usize) -> Arc<Budget> {
-        let mut slots = self.0.lock().unwrap_or_else(|e| e.into_inner());
-        while slots.last().is_some_and(|owner| owner.strong_count() == 0) {
-            slots.pop();
-        }
-        if slots.capacity() > slots.len().saturating_mul(4) {
-            slots.shrink_to_fit();
-        }
-        if slots.len() <= slot {
-            slots.resize_with(slot + 1, Weak::new);
-        }
-        if let Some(owner) = slots[slot].upgrade() {
-            return owner;
-        }
-        let owner = Budget::new(2);
-        slots[slot] = Arc::downgrade(&owner);
-        owner
-    }
 }
 
 /// Keep bindings and their allocation together; drop binding references first.

@@ -56,6 +56,7 @@ struct TerminalGraphicDraw {
 
 pub(super) struct TerminalGraphicsRenderer {
     screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    draw_generations: crate::text_gpu::slot_generations::SlotGenerations,
     pipeline: wgpu::RenderPipeline,
     texture_layout: wgpu::BindGroupLayout,
     textures: Vec<CachedTerminalGraphicTexture>,
@@ -168,6 +169,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         });
         Self {
             screen_budget,
+            draw_generations: Default::default(),
             pipeline,
             texture_layout,
             textures: Vec::new(),
@@ -175,6 +177,24 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             upload_chunks: 0,
             upload_bytes: 0,
         }
+    }
+
+    pub(super) fn replacement(
+        &self,
+        device: &wgpu::Device,
+        screen_layout: &wgpu::BindGroupLayout,
+        format: wgpu::TextureFormat,
+        samples: u32,
+    ) -> Self {
+        let mut replacement = Self::new(
+            device,
+            screen_layout,
+            format,
+            samples,
+            self.screen_budget.clone(),
+        );
+        replacement.draw_generations = self.draw_generations.clone();
+        replacement
     }
 
     pub(super) fn sync(
@@ -221,7 +241,8 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                     vertices: ScreenBuffer::with_budgets(vec![
                         self.screen_budget.clone(),
                         crate::text_gpu::budget::terminal_process(),
-                    ]),
+                    ])
+                    .with_generation_limit(self.draw_generations.for_slot(visible)),
                     clip,
                     foreground,
                 });

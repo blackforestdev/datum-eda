@@ -15,3 +15,5 @@ pub use lifetime::{Kind, Observer, Record};
 mod parity;
 
 pub(crate) mod sparse_upload;
+
+pub(crate) mod slot_generations;
