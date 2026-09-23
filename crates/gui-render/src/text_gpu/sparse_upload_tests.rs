@@ -53,6 +53,7 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     let required = crate::text_gpu::upload::required_bytes(&[], &uploads);
     assert_eq!(required, 4096 * 16 + 4);
     let owner = Owner::new();
+    let observer = owner.observer();
     let host = Budget::new(required);
     let scatter = Scatter::default();
     let create = || batch_with_scatter(&device, &owner, 1, &host, &[], &uploads, Some(&scatter));
@@ -66,9 +67,23 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     assert_eq!(owner.records().len(), 2);
     drop(pending);
     assert_eq!(host.used(), 0);
+    assert_eq!(observer.submitted_upload_totals(), Default::default());
     let mut pending = create().unwrap().unwrap();
     queue.submit([pending.command()]);
     pending.hold(&queue);
+    assert_eq!(
+        observer.submitted_upload_totals(),
+        crate::UploadTotals {
+            batches: 1,
+            buffer_payload_bytes: 4096 * 4 + 4,
+            scatter_index_bytes: 4096 * 4,
+            staging_capacity_bytes: required,
+            buffer_copy_bytes: 4096 * 8 + 4,
+            buffer_copies: 2,
+            scatter_dispatches: 1,
+            ..Default::default()
+        }
+    );
     let readback = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("sparse-readback"),
         size: target.size() + 4,
@@ -95,6 +110,18 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     readback.unmap();
     assert_eq!(host.used(), 0);
     assert!(owner.records().is_empty());
+    // Negative control: deliberately repeat the identical upload. Counters must
+    // reflect real submitted work even though the output pixels stay unchanged.
+    let first = observer.submitted_upload_totals();
+    let mut repeated = create().unwrap().unwrap();
+    queue.submit([repeated.command()]);
+    repeated.hold(&queue);
+    let mut doubled = first;
+    doubled.add(first);
+    assert_eq!(observer.submitted_upload_totals(), doubled);
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    drop(owner);
+    assert_eq!(observer.submitted_upload_totals(), doubled);
 }
 
 #[test]

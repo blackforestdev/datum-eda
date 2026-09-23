@@ -19302,7 +19302,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete actual upload-boundary accounting for exact screen/glyph payload and scatter protocol metadata; reconcile over-cap snapshot bypass. Exact aligned word plans, bounded-command scatter and submitted-baseline reverts are implemented, not complete MEM-01 acceptance."
+          "Reconcile complete per-consumer/frame upload attribution and accounting metadata with the measurement contract. Shared submission-boundary payload/padding/scatter totals and exact admitted large-screen snapshots are now implemented; uncached CTL-02 control transfers remain explicit. Full original qualification remains S5."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "Only exact dirty ranges plus documented alignment uploaded",
@@ -19319,6 +19319,11 @@
           "work": "s4_submitted_screen_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json",
           "status": "Default ScreenBuffer now compares submitted content and replaces pending plans; reverted edits emit no transfer. Two bounded reusable snapshots replace one. Over-cap bypass, CPU accounting, protocol/boundary counters and full qualification remain open."
+        },
+        {
+          "work": "s4_upload_totals_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-totals/result.json",
+          "status": "Submitted common upload totals and exact large-screen reuse implemented; full accounting and qualification remain open"
         }
       ]
     },
@@ -33133,7 +33138,8 @@
       "Over-cap content still bypasses comparison retention. Complete actual transfer-boundary counters must distinguish dirty destination payload, protocol metadata and GPU packet copies. No REUSE-SCREEN, MEM-01, S4/S5 or issue closure.",
       "Other S4 resource/shaping work and S5 native/backend/fault/fairness/endurance/independent qualification remain. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype or specification amendment."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json",
+    "snapshot_policy_superseded_by": "s4_upload_totals_adoption_work: snapshot payload retention now follows live GPU capacity; previous 256 KiB per-snapshot bypass no longer describes the default path."
   },
   "s4_text_paint_adoption_work": {
     "status": "Default rich-text paint identity is separate from shared shaping/layout identity; full text dependency/accounting qualification remains open",
@@ -33253,5 +33259,34 @@
       "No dependency, vendoring, license, prototype, numerical budget or specification amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/capture-gpu/result.json"
+  },
+  "s4_upload_totals_adoption_work": {
+    "status": "Submitted common upload totals and exact large-screen reuse implemented; full accounting and qualification remain open",
+    "base_commit": "52688d5d",
+    "production_consumers": [
+      "Common mapped uploader used by full/dialog frame screen vertices, glyph instances and uniforms",
+      "Glyph atlas, retained world and terminal image cold upload chunks",
+      "All production ScreenBuffer streams, including uncached panel/menu retirement"
+    ],
+    "retired_paths": [
+      "Inferring submitted transfer totals from prepared dirty ranges or pending atlas images",
+      "Dropping submitted screen snapshots solely because payload exceeds 256 KiB and repeatedly uploading unchanged large buffers"
+    ],
+    "behavior": [
+      "Accumulate exact encoding-boundary buffer payload, texture source bytes, row padding, scatter index bytes, staging capacity, buffer copy bytes/count, texture copy count and scatter dispatch count. Publish only after queue submission at the common Batch hold boundary. Refused and cancelled batches contribute zero. Per-owner fixed counters saturate; existing observers retain totals through host close without holding GPU allocations.",
+      "Screen snapshots now follow admitted GPU capacity, with at most two snapshots per stream. Production screen streams share the 16 MiB GPU allowance, so retained snapshot payload is at most 32 MiB per renderer plus allocation headers; this replaces the former 4.5 MiB bound for nine 256 KiB double snapshots. Trim obsolete prepared capacity after shrink; release both snapshots when an uncached control buffer retires. Construction peaks, prepared source geometry and dirty-range metadata are separate.",
+      "Exact dirty comparisons now cover large admitted buffers. Preserve separate submitted/prepared baselines, cancellation, sparse scatter and hard GPU budgets. Oversized uncached control allocations still require fresh upload by CTL-02 design."
+    ],
+    "proof": {
+      "renderer": "333 renderer tests pass, 11 diagnostic/visual cases filtered. Mixed texture/buffer proof reconciles 6 source + 506 padding + 8 buffer bytes; sparse proof separates 16384 changed bytes and 16384 index bytes with a mixed direct copy. Refusal/cancellation counters remain zero; deliberate repeated submission doubles totals and observer retains them after owner drop. GPU large-screen proof verifies zero unchanged upload, a four-byte edit, exact readback and snapshot shrink. Existing cache/lifetime/pixel regressions pass.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2269, dependency authority and governance gates pass.",
+      "scope": "No broad benchmarks or native input campaign. Full drift not rerun; recorded Console golden discrepancy remains unresolved."
+    },
+    "limits": [
+      "Totals are renderer-owner cumulative submission observations, not GPU execution or per-consumer/frame classifications. Texture padding describes staging footprint, not texture pixel payload; mapped capacity and scatter packet capacity are not additional logical payload. Readback and device-internal work remain outside upload totals.",
+      "Larger retained CPU snapshots trade memory for exact large-screen reuse. Full T1 RSS/peak and scale qualification, pending-range metadata, CPU construction/transient accounting and all required S5 scenarios remain open.",
+      "No complete REUSE-SCREEN/MEM-01/ACC-01, S4/S5 or issue acceptance. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendoring, prototype, numerical specification cap or licensing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/upload-totals/result.json"
   }
 }

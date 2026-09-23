@@ -30,6 +30,7 @@ mod terminal_clipboard_menu;
 mod terminal_core_render;
 mod terminal_render_cache;
 mod text_gpu;
+pub use text_gpu::upload_totals::UploadTotals;
 mod text_layout;
 pub use terminal_render_cache::TerminalRenderCache;
 mod terminal_pane_render;

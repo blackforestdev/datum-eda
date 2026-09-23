@@ -20,6 +20,8 @@ pub(crate) struct BufferUpload<'a> {
 pub(crate) struct Batch {
     // Drop encoded resource references before releasing their accounting.
     command: Option<wgpu::CommandBuffer>,
+    owner: Owner,
+    totals: super::upload_totals::UploadTotals,
     buffers: Vec<Tracked<wgpu::Buffer>>,
 }
 
@@ -28,7 +30,13 @@ impl Batch {
         self.command.take().expect("upload command submitted once")
     }
 
+    /// Called immediately after queue.submit at every production upload site.
     pub fn hold(self, queue: &wgpu::Queue) {
+        assert!(
+            self.command.is_none(),
+            "upload must be submitted before its hold"
+        );
+        self.owner.record_upload(self.totals);
         super::hold_until_done(
             queue,
             self.buffers.iter().map(Tracked::submission_ref).collect(),
@@ -180,6 +188,11 @@ pub(crate) fn batch_with_scatter(
     let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
         label: Some("datum-texture-upload-copies"),
     });
+    let mut totals = super::upload_totals::UploadTotals {
+        batches: 1,
+        staging_capacity_bytes: capacity,
+        ..Default::default()
+    };
     let mut offset = 0;
     for upload in uploads {
         encoder.copy_buffer_to_texture(
@@ -207,6 +220,9 @@ pub(crate) fn batch_with_scatter(
                 depth_or_array_layers: 1,
             },
         );
+        totals.texture_source_bytes += upload.pixels.len() as u64;
+        totals.texture_padding_bytes += padded_bytes(upload) - upload.pixels.len() as u64;
+        totals.texture_copies += 1;
         offset += padded_bytes(upload);
     }
     for group in &groups {
@@ -221,6 +237,9 @@ pub(crate) fn batch_with_scatter(
                 upload.offset,
                 upload.bytes.len() as u64,
             );
+            totals.buffer_payload_bytes += upload.bytes.len() as u64;
+            totals.buffer_copy_bytes += upload.bytes.len() as u64;
+            totals.buffer_copies += 1;
             offset += upload.bytes.len() as u64;
         }
     }
@@ -241,6 +260,11 @@ pub(crate) fn batch_with_scatter(
             );
             encoder.copy_buffer_to_buffer(&buffer, offset, &packet, 0, bytes);
             scatter.encode(device, &mut encoder, &packet, group.uploads[0].buffer);
+            totals.buffer_payload_bytes += bytes / 2;
+            totals.scatter_index_bytes += bytes / 2;
+            totals.buffer_copy_bytes += bytes;
+            totals.buffer_copies += 1;
+            totals.scatter_dispatches += 1;
             offset += bytes;
             allocations.push(packet);
         }
@@ -248,6 +272,8 @@ pub(crate) fn batch_with_scatter(
     allocations.push(buffer);
     Ok(Some(Batch {
         command: Some(encoder.finish()),
+        owner: owner.clone(),
+        totals,
         buffers: allocations,
     }))
 }

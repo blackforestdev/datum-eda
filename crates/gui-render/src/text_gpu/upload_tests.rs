@@ -21,6 +21,7 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
         view_formats: &[],
     });
     let owner = Owner::new();
+    let observer = owner.observer();
     let host = Budget::new(520);
     let target = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("mixed-buffer-proof"),
@@ -80,6 +81,7 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
         assert!(owner.records().is_empty());
         drop(filler);
     }
+    assert_eq!(observer.submitted_upload_totals(), Default::default());
     pending = batch(&device, &owner, 3, &host, &upload, &buffers)
         .unwrap()
         .unwrap();
@@ -111,6 +113,18 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
     // The batch remains charged even when its encoded command has moved to the queue.
     assert_eq!(host.used(), 520);
     pending.hold(&queue);
+    let expected = crate::UploadTotals {
+        batches: 1,
+        buffer_payload_bytes: 8,
+        texture_source_bytes: 6,
+        texture_padding_bytes: 506,
+        staging_capacity_bytes: 520,
+        buffer_copy_bytes: 8,
+        buffer_copies: 2,
+        texture_copies: 1,
+        ..Default::default()
+    };
+    assert_eq!(observer.submitted_upload_totals(), expected);
     let (tx, rx) = std::sync::mpsc::channel();
     readback
         .slice(..)

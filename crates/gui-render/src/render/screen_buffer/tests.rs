@@ -157,26 +157,31 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
         read(&device, &queue, owner.buffer().unwrap(), 60),
         bytemuck::cast_slice::<[u32; 5], u8>(&vertices)
     );
-    let at_cap = vec![42_u32; MAX_SNAPSHOT_BYTES / 4];
+    const FORMER_SNAPSHOT_CAP: usize = 256 * 1024;
+    let at_cap = vec![42_u32; FORMER_SNAPSHOT_CAP / 4];
     assert_eq!(
         owner.sync(&device, &queue, "proof", &at_cap).unwrap(),
-        MAX_SNAPSHOT_BYTES
+        FORMER_SNAPSHOT_CAP
     );
     owner.flush_uploads(&device, &queue);
-    assert_eq!(owner.snapshot.len(), MAX_SNAPSHOT_BYTES);
+    assert_eq!(owner.snapshot.len(), FORMER_SNAPSHOT_CAP);
     assert_eq!(owner.sync(&device, &queue, "proof", &at_cap).unwrap(), 0);
-    let oversized = vec![43_u32; MAX_SNAPSHOT_BYTES / 4 + 1];
-    for _ in 0..2 {
+    let mut oversized = vec![43_u32; FORMER_SNAPSHOT_CAP / 4 + 1];
+    for expected in [FORMER_SNAPSHOT_CAP + 4, 0] {
         assert_eq!(
             owner.sync(&device, &queue, "proof", &oversized).unwrap(),
-            MAX_SNAPSHOT_BYTES + 4
+            expected
         );
         owner.flush_uploads(&device, &queue);
-        assert!(
-            owner.snapshot.is_empty(),
-            "overlarge content bypasses retention"
-        );
+        assert_eq!(owner.snapshot.len(), oversized.len() * 4);
     }
+    oversized[100] = 44;
+    assert_eq!(
+        owner
+            .sync(&device, &queue, "large-dirty", &oversized)
+            .unwrap(),
+        4
+    );
     owner.flush_uploads(&device, &queue);
     assert_eq!(
         read(
@@ -193,6 +198,9 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
         16,
         "obsolete peak capacity released"
     );
+    owner.flush_uploads(&device, &queue);
+    assert!(owner.prepared.len() <= 16);
+    assert!(owner.snapshot.len() <= 16);
     assert_ne!(owner.buffer(), Some(&first));
     // Clearing releases both owners; identical content must upload again.
     assert_eq!(owner.sync::<u32>(&device, &queue, "proof", &[]).unwrap(), 0);
