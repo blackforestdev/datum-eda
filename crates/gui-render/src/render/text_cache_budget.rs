@@ -4,6 +4,7 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 
+pub(super) const LOCAL_LIMIT: usize = 8 * 1024 * 1024;
 const PROCESS_LIMIT: usize = 32 * 1024 * 1024;
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
 static OWNERS: Mutex<Registry> = Mutex::new(Registry(Vec::new()));
@@ -88,7 +89,7 @@ fn allowance(owners: &Registry, id: u64, limit: usize) -> usize {
 /// cache and must not publish recursively. Active other owners remain charged.
 pub(crate) fn settle(id: u64, trim: impl FnOnce(usize) -> usize) {
     let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
-    let available = allowance(&owners, id, PROCESS_LIMIT).min(8 * 1024 * 1024);
+    let available = allowance(&owners, id, PROCESS_LIMIT).min(LOCAL_LIMIT);
     let bytes = trim(available);
     owners.insert(
         id,
@@ -110,7 +111,7 @@ pub(crate) struct Admission {
 /// runs under the same process lock as post-frame retention.
 pub(crate) fn admit(id: u64, trim: impl FnOnce(usize) -> Admission) -> anyhow::Result<()> {
     let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
-    let available = allowance(&owners, id, PROCESS_LIMIT).min(8 * 1024 * 1024);
+    let available = allowance(&owners, id, PROCESS_LIMIT).min(LOCAL_LIMIT);
     let Admission {
         required_bytes,
         retained_bytes,

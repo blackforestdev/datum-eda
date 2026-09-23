@@ -224,3 +224,84 @@ fn warm_frames_publish_preparing_without_changing_owned_bytes() {
     assert!(!usage().preparing);
     assert_eq!(usage().bytes, before.bytes);
 }
+
+#[test]
+fn oversized_plain_and_rich_keys_refuse_before_shaping_and_preserve_warm_cache() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut run = prepared.menu_overlay_text_runs[0].clone();
+    run.text = "preserved warm label".into();
+    run.rich_spans.clear();
+    let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+    let mut fonts = crate::text_layout::fonts::Fonts::new(host.clone());
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Overlay);
+    let (indices, _) = cache
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            true,
+            &host,
+        )
+        .unwrap();
+    drop(indices);
+    let revision = cache.revision();
+    let font_usage = fonts.usage().allocation;
+    let used = host.used();
+    let mut rejected = run.clone();
+    rejected.text = "x".repeat(budget::LOCAL_LIMIT);
+    for rich in [false, true] {
+        if rich {
+            rejected.rich_spans.push(crate::TextRunSpan {
+                text: std::mem::take(&mut rejected.text),
+                color: [1.0; 3],
+                bold: true,
+                italic: false,
+            });
+        }
+        let error = cache
+            .admitted_indices(
+                &mut fonts,
+                std::slice::from_ref(&rejected),
+                960,
+                720,
+                true,
+                &host,
+            )
+            .err()
+            .expect("oversized input refused");
+        assert!(error.to_string().contains("before shaping"));
+        assert_eq!(cache.revision(), revision);
+        assert_eq!(host.used(), used, "no index/staging allocation on refusal");
+        assert_eq!(
+            fonts.usage().allocation.peak_payload_bytes,
+            font_usage.peak_payload_bytes
+        );
+        assert_eq!(fonts.usage().allocation.allocations, font_usage.allocations);
+    }
+    let (indices, stats) = cache
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            true,
+            &host,
+        )
+        .unwrap();
+    assert_eq!(indices.len(), 1);
+    assert_eq!(stats.hits, 1);
+    assert_eq!(stats.misses, 0);
+    // Rich spans replace fallback text; unused fallback size cannot reject them.
+    run.text = "x".repeat(budget::LOCAL_LIMIT);
+    run.rich_spans.push(crate::TextRunSpan {
+        text: "visible".into(),
+        color: [1.0; 3],
+        bold: false,
+        italic: false,
+    });
+    TextBufferCache::admit_input_keys(&[run.clone(), run]).unwrap();
+}

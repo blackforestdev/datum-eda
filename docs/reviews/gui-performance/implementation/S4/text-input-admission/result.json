@@ -1,0 +1,45 @@
+{
+  "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping",
+  "base_commit": "166f26b0",
+  "production_consumers": [
+    "gpu_text.rs shared workspace text preparation",
+    "gpu_text.rs shared menu/dialog overlay text preparation"
+  ],
+  "retired_paths": [
+    "Copying and shaping a key whose minimum owned storage already exceeds the renderer text-cache cap"
+  ],
+  "behavior": [
+    "Preflight each required key before index/staging allocation or font-cache release. Count owned plain/rich text and span/entry storage against the existing8MiB local ceiling with saturating arithmetic. Rich spans replace unused fallback text. Do not sum duplicate runs or extent variants and accidentally reject shared content.",
+    "Use one existing local-cap constant for preflight, retained admission and post-frame settling. Errors follow the existing production Result path; authoritative input and valid cached layouts remain unchanged."
+  ],
+  "proof": {
+    "focused": "1 passed;0 failed;394 filtered. Exercises actual admitted_indices with installed Fonts for oversized plain/rich input, verifies font allocation count/peak and host staging usage unchanged, preserves cache revision and confirms subsequent valid input is a warm hit. Also checks unused rich fallback and repeated keys are not falsely rejected.",
+    "build": "Fresh offline visual GUI application build passed. Source health2296files and whitespace checks pass. No broad benchmark, native-input or repeated full-renderer campaign for this bounded admission change."
+  },
+  "limits": [
+    "This lower-bound check prevents work for necessarily invalid keys. It does not bound one synchronous library shape/layout operation, aggregate multiple smaller new keys, or close text/staging construction-peak requirements. Eight recorded implementation gaps remain; original S5 qualification is unchanged.",
+    "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN and nonblocking resize. Owner/Copilot engine-test edit excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
+  "logs": {
+    "test": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-input-admission/test.log.gz",
+      "uncompressed_sha256": "d42d35726bcefd89eeb1d3e6cf7de8e8adbd4460fbe2bec77f2faf8ba52edd94"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-input-admission/build.log.gz",
+      "uncompressed_sha256": "e710ac20b2d60da7a9b676314375949cf77abbb7eea9a2eb30516eda4985fdff"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-input-admission/check.log.gz",
+      "uncompressed_sha256": "ec82ff378cfc3753e747cc3430e03f3d8f7f8878e27d1febcebeb440a52e0bfe"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_cache_budget.rs": "755f664b27b8a48e90d891487f1051bb0ea6faace8d1c68655e48d2cf3f8c17b",
+    "crates/gui-render/src/render/text_cache_retention.rs": "c226cf161c203861d6fbea5ece6a72d6de0b679dbd175d0b95b1f5d5e9e0d42b",
+    "crates/gui-render/src/render/text_cache_admission.rs": "49faf09b3107929ff5486146b858ff0e4dc245aa61acf5737e97d0fcf74d178d",
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "b3ba03cc8b2ecf14fa6593e63a96a37ebc70b7d349f1741bb7efaede69abcf5b",
+    "crates/gui-render/src/render/gpu_text.rs": "278f15166e58e0a81eea47dedb81a3c243076d2347703bb701674c1c47d16a7f"
+  }
+}

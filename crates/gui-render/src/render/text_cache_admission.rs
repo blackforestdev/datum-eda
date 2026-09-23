@@ -24,6 +24,26 @@ impl FrameIndices for Vec<usize> {
 }
 
 impl TextBufferCache {
+    /// Reject impossible keys before copying text or invoking the shaper. This
+    /// lower bound uses the capacities owned by a fresh key, not caller spare
+    /// capacity. Duplicate runs and cached extents must not be summed together.
+    pub(super) fn admit_input_keys(runs: &[TextRun]) -> anyhow::Result<()> {
+        for run in runs {
+            let bytes = run.rich_spans.iter().fold(
+                std::mem::size_of::<CachedTextBuffer>()
+                    .saturating_add(capacity_bytes::<u8>(shaping_text(run).len()))
+                    .saturating_add(capacity_bytes::<TextBufferSpanKey>(run.rich_spans.len())),
+                |bytes, span| bytes.saturating_add(capacity_bytes::<u8>(span.text.len())),
+            );
+            anyhow::ensure!(
+                bytes <= budget::LOCAL_LIMIT,
+                "required text key exceeds CPU cache admission before shaping (at least {bytes} bytes; limit {})",
+                budget::LOCAL_LIMIT
+            );
+        }
+        Ok(())
+    }
+
     pub(crate) fn admit_layout_scratch(
         &mut self,
         host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
