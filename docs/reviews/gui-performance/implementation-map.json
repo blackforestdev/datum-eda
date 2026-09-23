@@ -17315,6 +17315,11 @@
           "work": "s4_gpu_reservation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json",
           "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open"
+        },
+        {
+          "work": "s4_staging_plan_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/staging-plan/result.json",
+          "status": "Shared CPU upload plan and batch-retention admission implemented; full staging/accounting implementation remains open"
         }
       ]
     },
@@ -17496,6 +17501,11 @@
           "work": "s4_gpu_reservation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json",
           "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open"
+        },
+        {
+          "work": "s4_staging_plan_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/staging-plan/result.json",
+          "status": "Shared CPU upload plan and batch-retention admission implemented; full staging/accounting implementation remains open"
         }
       ]
     },
@@ -34791,5 +34801,36 @@
       "Query accounting remains logical timestamp capacity; backend-private storage, driver residency and swapchain ownership remain separate. All carried S5 qualification, the existing Console golden failure, GEFN and nonblocking resize disposition remain unchanged. No dependency, prototype, numerical cap or sequencing change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json"
+  },
+  "s4_staging_plan_work": {
+    "status": "Shared CPU upload plan and batch-retention admission implemented; full staging/accounting implementation remains open",
+    "base_commit": "561e46ac",
+    "production_consumers": [
+      "All explicit mixed buffer/texture upload batches, including world/screen/control vertices, uniforms, glyphs and terminal pixels",
+      "Atlas full-frame flush and bounded glyph continuation",
+      "Frame and cold-world layout-scratch release preflight"
+    ],
+    "retired_paths": [
+      "Heap-allocated sparse group plan Vec; grouping now borrows source ranges through a cloneable iterator",
+      "Unbudgeted batch allocation-owner Vec and the second post-submit submission-reference Vec",
+      "Unbudgeted atlas texture descriptor Vec and separate glyph continuation row-count Vec"
+    ],
+    "behavior": [
+      "StagingVec reserves exact CPU element capacity plus Datum allocation headers against existing host16MiB/process64MiB staging budgets before fallible allocation. Fixed-capacity insertion cannot grow outside admission. Element storage drops before permits.",
+      "Each batch moves its admitted retained-owner vector into the queue completion callback; GPU identities are marked retiring at that transfer. GPU and CPU retention charges survive submission and retire on completion or unsubmitted cancellation. GPU upload byte counters remain GPU capacity, separate from CPU metadata.",
+      "Atlas flush and continuation use admitted descriptor storage. Continuation commits the same prefix/row counts from its copied-byte total without allocating a parallel counts vector. Sparse grouping preserves buffer identity, order, overlap and64-range threshold.",
+      "Frame and cold-world scratch-release estimates include the metadata that overlaps GPU staging so optional private layout scratch can yield room before admission. Numerical copy and resource limits remain unchanged."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 369 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.29s",
+      "checks": "Full renderer includes mixed and sparse real-GPU readback, duplicate-upload negative control, cancellation/refusal rollback, glyph continuation/current-content parity, cold-world continuation, warm uniforms and staging refusal/retry. New scoped-allocator test reconciles CPU plan capacity plus headers, budget refusal, release and overflow. Strict visual renderer/app all-target Clippy and fresh GUI build pass. Application tests were not rerun for these renderer-only changes.",
+      "initial_failure": "Initial run:367 passed,2 failed,11 filtered. Cold-world and uniform staging tests assumed host staging totals contained only GPU bytes. Their exact expected totals now include the admitted CPU retention-vector capacity; GPU transfer oracles/caps were not loosened. Failed log preserved. Scratch-release preflight was also completed before final proof."
+    },
+    "limits": [
+      "No MEM-STAGING, ACC-01/02, S4 or S5 closure. Producer BufferUpload vectors, page/submission observer metadata, private font/raster/layout construction peaks and other scratch still require complete accounting/admission. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+      "Grouping trades temporary heap storage for repeated borrowed scans; no new latency or global performance acceptance is claimed. Batch CPU retention remains charged until its completion callback.",
+      "Original qualification, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/staging-plan/result.json"
   }
 }

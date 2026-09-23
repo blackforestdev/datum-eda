@@ -155,22 +155,38 @@ impl Atlas {
         !self.pending_uploads.is_empty()
     }
 
+    /// Copy capacity and both planning/retirement vectors overlap during encoding.
+    pub(crate) fn required_staging_bytes(
+        &self,
+        buffers: &[super::upload::BufferUpload<'_>],
+    ) -> anyhow::Result<u64> {
+        if self.pending_uploads.is_empty() && buffers.is_empty() {
+            return Ok(0);
+        }
+        Ok(self.pending_staging_bytes()
+            + super::upload::required_bytes(&[], buffers)
+            + super::staging_vec::StagingVec::<super::upload::TextureUpload<'_>>::capacity_bytes(
+                self.pending_uploads.len(),
+            )?
+            + super::upload::retention_metadata_bytes(buffers, true)?)
+    }
+
     pub fn flush_uploads(
         &mut self,
         device: &wgpu::Device,
         buffers: &[super::upload::BufferUpload<'_>],
     ) -> anyhow::Result<Option<super::upload::Batch>> {
-        let uploads: Vec<_> = self
-            .pending_uploads
-            .iter()
-            .map(|upload| super::upload::TextureUpload {
+        let mut uploads =
+            super::staging_vec::StagingVec::new(self.pending_uploads.len(), &self.staging_budget)?;
+        for upload in &self.pending_uploads {
+            uploads.push(super::upload::TextureUpload {
                 texture: &self.pages[upload.page].texture,
                 origin: [upload.origin[0], upload.origin[1] + upload.uploaded_rows],
                 size: [upload.size[0], upload.size[1] - upload.uploaded_rows],
                 stride: upload.stride,
                 pixels: &upload.pixels[(upload.uploaded_rows * upload.stride) as usize..],
-            })
-            .collect();
+            });
+        }
         let batch = super::upload::batch_with_scatter(
             device,
             &self.owner,
@@ -180,6 +196,7 @@ impl Atlas {
             buffers,
             Some(&self.scatter),
         )?;
+        drop(uploads);
         self.pending_copy_bytes = 0;
         for upload in self.pending_uploads.drain(..) {
             self.uploads.writes += 1;

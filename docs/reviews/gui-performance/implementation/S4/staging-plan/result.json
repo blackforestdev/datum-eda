@@ -1,0 +1,65 @@
+{
+  "status": "Shared CPU upload plan and batch-retention admission implemented; full staging/accounting implementation remains open",
+  "base_commit": "561e46ac",
+  "production_consumers": [
+    "All explicit mixed buffer/texture upload batches, including world/screen/control vertices, uniforms, glyphs and terminal pixels",
+    "Atlas full-frame flush and bounded glyph continuation",
+    "Frame and cold-world layout-scratch release preflight"
+  ],
+  "retired_paths": [
+    "Heap-allocated sparse group plan Vec; grouping now borrows source ranges through a cloneable iterator",
+    "Unbudgeted batch allocation-owner Vec and the second post-submit submission-reference Vec",
+    "Unbudgeted atlas texture descriptor Vec and separate glyph continuation row-count Vec"
+  ],
+  "behavior": [
+    "StagingVec reserves exact CPU element capacity plus Datum allocation headers against existing host16MiB/process64MiB staging budgets before fallible allocation. Fixed-capacity insertion cannot grow outside admission. Element storage drops before permits.",
+    "Each batch moves its admitted retained-owner vector into the queue completion callback; GPU identities are marked retiring at that transfer. GPU and CPU retention charges survive submission and retire on completion or unsubmitted cancellation. GPU upload byte counters remain GPU capacity, separate from CPU metadata.",
+    "Atlas flush and continuation use admitted descriptor storage. Continuation commits the same prefix/row counts from its copied-byte total without allocating a parallel counts vector. Sparse grouping preserves buffer identity, order, overlap and64-range threshold.",
+    "Frame and cold-world scratch-release estimates include the metadata that overlaps GPU staging so optional private layout scratch can yield room before admission. Numerical copy and resource limits remain unchanged."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 369 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.29s",
+    "checks": "Full renderer includes mixed and sparse real-GPU readback, duplicate-upload negative control, cancellation/refusal rollback, glyph continuation/current-content parity, cold-world continuation, warm uniforms and staging refusal/retry. New scoped-allocator test reconciles CPU plan capacity plus headers, budget refusal, release and overflow. Strict visual renderer/app all-target Clippy and fresh GUI build pass. Application tests were not rerun for these renderer-only changes.",
+    "initial_failure": "Initial run:367 passed,2 failed,11 filtered. Cold-world and uniform staging tests assumed host staging totals contained only GPU bytes. Their exact expected totals now include the admitted CPU retention-vector capacity; GPU transfer oracles/caps were not loosened. Failed log preserved. Scratch-release preflight was also completed before final proof."
+  },
+  "limits": [
+    "No MEM-STAGING, ACC-01/02, S4 or S5 closure. Producer BufferUpload vectors, page/submission observer metadata, private font/raster/layout construction peaks and other scratch still require complete accounting/admission. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+    "Grouping trades temporary heap storage for repeated borrowed scans; no new latency or global performance acceptance is claimed. Batch CPU retention remains charged until its completion callback.",
+    "Original qualification, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/staging-plan/result.json",
+  "logs": {
+    "renderer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/staging-plan/renderer-initial.log.gz",
+      "uncompressed_sha256": "7389f48bd493709e85b9994856f54244860dbc55e80a661dfaad655d0ba522a6"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/staging-plan/renderer.log.gz",
+      "uncompressed_sha256": "e1346e47817da4f29a4e3a368b538e3cbf6254ea03496fc3d824c2b4b4f44f1b"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/staging-plan/clippy.log.gz",
+      "uncompressed_sha256": "7f0eaa3117ab611588b2f93fcd0010feff2888ff82f0cbf5a85d5fa6052006ea"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/staging-plan/build.log.gz",
+      "uncompressed_sha256": "8a0061b6ba9f0c0ba9061922877354a5307cc45897ed6265ae5fd6e0f25fddfd"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload.rs": "0f061255b946c6bae54fa3eab726cc06dbb519e811c19cf95164398756f8360c",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "d511d3be5836a051b24722be8a168d9b8ebc712a887cdfa65755258a1eefeeec",
+    "crates/gui-render/src/render/gpu_text.rs": "bbe15010e780b6b65461165eefa6ad32bb1252c643bbf5ba3424f5158e9856a7",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "aa99ccfdf76f4a4bc961b7f448d4211eb06f4cb6e2cd954341fccf061855bcd7",
+    "crates/gui-render/src/text_gpu/atlas.rs": "14f3ccc55d7e1279d91f0e49daddd6cd4b435c40f86aa39cd36a37be8e9deea0",
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": "ff53aa33168e145be480fe7b21182e8f4b1ca7d88e8b5c49b0763b46a58cc6c2",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs": "ed08b775711e7da0e1a5e22e520fb979035ee6ea4d741727894c2e1eba06ea98",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "0ef4673b261f145fbe7d9a6f04690ad8d468123337735a0663e82ce279233c82",
+    "crates/gui-render/src/text_gpu/mod.rs": "2c0a44eaa1e85bc2b7e477deb97fd3b79da8a92b068ea206aa20f472c427f4c2",
+    "crates/gui-render/src/text_gpu/sparse_upload.rs": "d176e76ea32a0ec7017a9fc14707ebeb7a6fd30b708b58e1d431a1723ca9f779",
+    "crates/gui-render/src/text_gpu/sparse_upload_tests.rs": "f1727a72656fd019189c04d3c853e3db5c0708437bf26f25781d37159db6b6f0",
+    "crates/gui-render/src/text_gpu/upload.rs": "4762ebe4650246c634e5f20737a9935ada9ff4f56a795ad1996b3a996d763083",
+    "crates/gui-render/src/text_gpu/upload_tests.rs": "0aa8eed920f3aee3dc9e0491959e2f51916dfa394c9fc48ea427f095ab9fd770",
+    "crates/gui-render/src/text_gpu/staging_vec.rs": "873d4cc34b8653ec481d01d3a0b4ea07cdef4a58030405dd3a0dddeaaeb5fece"
+  }
+}

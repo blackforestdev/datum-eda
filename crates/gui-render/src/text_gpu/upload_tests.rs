@@ -22,7 +22,8 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
     });
     let owner = Owner::new();
     let observer = owner.observer();
-    let host = Budget::new(520);
+    let metadata = StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(1).unwrap();
+    let host = Budget::new(520 + metadata);
     let target = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("mixed-buffer-proof"),
         size: 16,
@@ -53,7 +54,7 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
         .unwrap();
     assert_eq!(
         host.used(),
-        520,
+        520 + metadata,
         "count padded texture rows plus exact buffer range bytes"
     );
     assert!(batch(&device, &owner, 2, &host, &upload, &buffers).is_err());
@@ -111,7 +112,7 @@ fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_ga
     encoder.copy_buffer_to_buffer(&target, 0, &readback, 512, 16);
     queue.submit([pending.command(), encoder.finish()]);
     // The batch remains charged even when its encoded command has moved to the queue.
-    assert_eq!(host.used(), 520);
+    assert_eq!(host.used(), 520 + metadata);
     pending.hold(&queue);
     let expected = crate::UploadTotals {
         batches: 1,

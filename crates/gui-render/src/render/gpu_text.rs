@@ -91,8 +91,7 @@ impl Renderer {
         // Admit and encode the complete mixed batch before consuming any producer.
         // Failure retains every pending update for cancellation/retry.
         // Reuse private layout scratch unless it competes with the real copy plan.
-        let staging = self.atlas.pending_staging_bytes()
-            + crate::text_gpu::upload::required_bytes(&[], &buffers);
+        let staging = self.atlas.required_staging_bytes(&buffers)?;
         self.text_buffers
             .release_layout_scratch_for(staging, &self.atlas.staging_budget);
         let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;

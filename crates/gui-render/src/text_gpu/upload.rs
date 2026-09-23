@@ -1,6 +1,7 @@
 //! Explicit mapped staging for texture and buffer copies in the caller's frame submission.
 use super::budget::Budget;
 use super::lifetime::{Kind, Owner, Tracked};
+use super::staging_vec::StagingVec;
 use std::sync::Arc;
 
 pub(crate) struct TextureUpload<'a> {
@@ -22,7 +23,7 @@ pub(crate) struct Batch {
     command: Option<wgpu::CommandBuffer>,
     owner: Owner,
     totals: super::upload_totals::UploadTotals,
-    buffers: Vec<Tracked<wgpu::Buffer>>,
+    buffers: StagingVec<Tracked<wgpu::Buffer>>,
 }
 
 impl Batch {
@@ -37,10 +38,10 @@ impl Batch {
             "upload must be submitted before its hold"
         );
         self.owner.record_upload(self.totals);
-        super::hold_until_done(
-            queue,
-            self.buffers.iter().map(Tracked::submission_ref).collect(),
-        );
+        // Move the already admitted owners into completion; no second reference
+        // vector is allocated after submission.
+        self.buffers.iter().for_each(Tracked::mark_retiring);
+        queue.on_submitted_work_done(move || drop(self.buffers));
     }
 }
 
@@ -63,10 +64,23 @@ pub(crate) fn batch(
     )
 }
 
+/// CPU owners retained by a nonempty batch, separately from GPU copy capacity.
+pub(crate) fn retention_metadata_bytes(
+    buffers: &[BufferUpload<'_>],
+    scatter: bool,
+) -> anyhow::Result<u64> {
+    StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(allocation_count(buffers, scatter))
+}
+
+fn allocation_count(buffers: &[BufferUpload<'_>], scatter: bool) -> usize {
+    1 + super::sparse_upload::groups(buffers)
+        .filter(|g| scatter && g.sparse)
+        .count()
+}
+
 pub(crate) fn required_bytes(uploads: &[TextureUpload<'_>], buffers: &[BufferUpload<'_>]) -> u64 {
     uploads.iter().map(padded_bytes).sum::<u64>()
         + super::sparse_upload::groups(buffers)
-            .iter()
             .map(|group| {
                 if group.sparse {
                     group.packet_bytes() * 2
@@ -125,14 +139,14 @@ pub(crate) fn batch_with_scatter(
     }
     let groups = super::sparse_upload::groups(buffers);
     let sparse_bytes: u64 = groups
-        .iter()
+        .clone()
         .filter(|g| g.sparse && scatter.is_some())
         .map(|g| g.packet_bytes())
         .sum();
     // Sparse packets carry (destination word, value), and both their mapped
     // upload buffer and storage buffer remain charged until completion.
     capacity += sparse_bytes * 3 / 2;
-    for group in groups.iter().filter(|g| g.sparse && scatter.is_some()) {
+    for group in groups.clone().filter(|g| g.sparse && scatter.is_some()) {
         anyhow::ensure!(
             group.packet_bytes() <= u64::from(device.limits().max_storage_buffer_binding_size)
                 && group.uploads[0].buffer.size()
@@ -144,7 +158,8 @@ pub(crate) fn batch_with_scatter(
     let process = super::budget::staging_process().reserve(capacity)?;
     let mut reservation = super::budget::GpuReservation::new(capacity, vec![host, process])?;
     let direct_bytes = capacity - sparse_bytes * 2;
-    let mut allocations = Vec::new();
+    let mut allocations =
+        StagingVec::new(allocation_count(buffers, scatter.is_some()), host_budget)?;
     let mapped_reservation = reservation.split(direct_bytes + sparse_bytes)?;
     let buffer = owner.track_reserved(
         device.create_buffer(&wgpu::BufferDescriptor {
@@ -169,7 +184,7 @@ pub(crate) fn batch_with_scatter(
                 offset += pitch;
             }
         }
-        for group in &groups {
+        for group in groups.clone() {
             if group.sparse && scatter.is_some() {
                 continue;
             }
@@ -178,7 +193,7 @@ pub(crate) fn batch_with_scatter(
                 offset += upload.bytes.len();
             }
         }
-        for group in groups.iter().filter(|g| g.sparse && scatter.is_some()) {
+        for group in groups.clone().filter(|g| g.sparse && scatter.is_some()) {
             let len = group.packet_bytes() as usize;
             group.fill(&mut mapped[offset..offset + len]);
             offset += len;
@@ -225,7 +240,7 @@ pub(crate) fn batch_with_scatter(
         totals.texture_copies += 1;
         offset += padded_bytes(upload);
     }
-    for group in &groups {
+    for group in groups.clone() {
         if group.sparse && scatter.is_some() {
             continue;
         }
@@ -244,7 +259,7 @@ pub(crate) fn batch_with_scatter(
         }
     }
     if let Some(scatter) = scatter {
-        for group in groups.iter().filter(|g| g.sparse) {
+        for group in groups.clone().filter(|g| g.sparse) {
             let bytes = group.packet_bytes();
             let packet_reservation = reservation.split(bytes)?;
             let packet = owner.track_reserved(
