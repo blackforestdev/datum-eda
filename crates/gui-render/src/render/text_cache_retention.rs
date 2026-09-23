@@ -20,7 +20,7 @@ impl TextBufferCache {
         self.release_layout_scratch_for(bytes, host);
         fonts.release_for(bytes);
         let mut indices = crate::text_gpu::staging_vec::StagingVec::new(runs.len(), host)?;
-        let stats = self.fill_indices(fonts, runs, width, height, overlay, &mut indices);
+        let stats = self.fill_indices(fonts, runs, width, height, overlay, &mut indices, host)?;
         Ok((indices, stats))
     }
 
@@ -34,7 +34,10 @@ impl TextBufferCache {
         overlay: bool,
     ) -> (Vec<usize>, TextBufferCacheStats) {
         let mut indices = Vec::with_capacity(runs.len());
-        let stats = self.fill_indices(fonts, runs, width, height, overlay, &mut indices);
+        let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+        let stats = self
+            .fill_indices(fonts, runs, width, height, overlay, &mut indices, &host)
+            .unwrap();
         (indices, stats)
     }
 

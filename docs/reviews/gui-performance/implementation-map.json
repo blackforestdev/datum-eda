@@ -3974,6 +3974,11 @@
           "work": "s4_upload_frame_work.pane_consumer_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json",
           "status": "Retained-world bundles hold only referenced streams and expose prepared allocation-to-pane associations"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.rich_input_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
+          "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
         }
       ]
     },
@@ -5389,6 +5394,11 @@
           "work": "s4_upload_frame_work.pane_consumer_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json",
           "status": "Retained-world bundles hold only referenced streams and expose prepared allocation-to-pane associations"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.rich_input_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
+          "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
         }
       ]
     },
@@ -15592,6 +15602,11 @@
           "work": "s4_text_owner_reconciliation.input_admission_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
           "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.rich_input_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
+          "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15766,6 +15781,11 @@
           "work": "s4_text_owner_reconciliation.input_admission_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
           "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.rich_input_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
+          "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17585,6 +17605,11 @@
           "work": "s4_text_owner_reconciliation.input_admission_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
           "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.rich_input_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
+          "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
         }
       ]
     },
@@ -17856,6 +17881,11 @@
           "work": "s4_text_owner_reconciliation.input_admission_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
           "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.rich_input_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
+          "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
         }
       ]
     },
@@ -35722,6 +35752,33 @@
         "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN and nonblocking resize. Owner/Copilot engine-test edit excluded."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json"
+    },
+    "rich_input_admission": {
+      "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired",
+      "production_consumers": [
+        "Shared TextBufferCache preparation for workspace, terminal and dialog/overlay rich text; default owned TextLayout construction and partial-shape continuation"
+      ],
+      "retired_paths": [
+        "Unadmitted String concatenation inside production TextLayout",
+        "Temporary rich-span range/style Vec and paragraph-reference Vec",
+        "Repeated rich-input copying for complete shared-shape relayout"
+      ],
+      "behavior": [
+        "Cold and incomplete rich input uses the existing StagingVec with exact concatenated UTF-8 capacity, charged to host and process staging budgets before allocation. Checked bulk copies cannot grow beyond admission. Storage and permits release after preparation.",
+        "Exact cache hits allocate no concatenated input. Complete shared shapes relayout without input concatenation. Paragraphs and span/style intersections are consumed directly from borrowed inputs; text, style, paint indices, bidi and line-breaking behavior are preserved.",
+        "Failure propagates through existing admitted_indices/render error handling before key copy or shaping for the refused run. Earlier successful cache entries remain published and source TextRun/model content survives for retry. Test-only layout oracle convenience constructors remain separate from default production preparation."
+      ],
+      "proof": {
+        "renderer": "386 renderer tests passed;0 failed;11 filtered, including owned/installed renderer parity, Unicode/rich layout, clipping, shared shapes, atlas continuation and resource lifetime tests. Final bulk-copy substitution then passed the focused rich-text set: test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 389 filtered out; finished in 0.73s",
+        "pressure": "New production-cache test leaves only index capacity available: rich concatenation refuses before font allocation, releases temporary indices and preserves retry input. Retry succeeds; concat permits retire after preparation. Warm hit and complete-shape extent change succeed without concat capacity.",
+        "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2297files and governance checks pass. Cold preparation extracted into a focused Rust module to satisfy the existing source-health ceiling; no ceiling change."
+      },
+      "limits": [
+        "Seven S4 implementation gaps remain open. This admits Datum-owned concatenated input and removes two temporary vectors; it does not cap synchronous private bidi/shaping/layout/raster construction or complete shaped-payload batch overlap.",
+        "No complete MEM-STAGING/MEM-SHAPED/ACC acceptance, global adoption or S4/S5 closure. Original qualification obligations remain unchanged.",
+        "No dependency, vendor, license, prototype, numerical-budget or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition and owner/Copilot engine-file edits."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json"
     }
   },
   "s4_text_preparation_work": {

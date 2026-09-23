@@ -1,0 +1,58 @@
+{
+  "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired",
+  "production_consumers": [
+    "Shared TextBufferCache preparation for workspace, terminal and dialog/overlay rich text; default owned TextLayout construction and partial-shape continuation"
+  ],
+  "retired_paths": [
+    "Unadmitted String concatenation inside production TextLayout",
+    "Temporary rich-span range/style Vec and paragraph-reference Vec",
+    "Repeated rich-input copying for complete shared-shape relayout"
+  ],
+  "behavior": [
+    "Cold and incomplete rich input uses the existing StagingVec with exact concatenated UTF-8 capacity, charged to host and process staging budgets before allocation. Checked bulk copies cannot grow beyond admission. Storage and permits release after preparation.",
+    "Exact cache hits allocate no concatenated input. Complete shared shapes relayout without input concatenation. Paragraphs and span/style intersections are consumed directly from borrowed inputs; text, style, paint indices, bidi and line-breaking behavior are preserved.",
+    "Failure propagates through existing admitted_indices/render error handling before key copy or shaping for the refused run. Earlier successful cache entries remain published and source TextRun/model content survives for retry. Test-only layout oracle convenience constructors remain separate from default production preparation."
+  ],
+  "proof": {
+    "renderer": "386 renderer tests passed;0 failed;11 filtered, including owned/installed renderer parity, Unicode/rich layout, clipping, shared shapes, atlas continuation and resource lifetime tests. Final bulk-copy substitution then passed the focused rich-text set: test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 389 filtered out; finished in 0.73s",
+    "pressure": "New production-cache test leaves only index capacity available: rich concatenation refuses before font allocation, releases temporary indices and preserves retry input. Retry succeeds; concat permits retire after preparation. Warm hit and complete-shape extent change succeed without concat capacity.",
+    "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2297files and governance checks pass. Cold preparation extracted into a focused Rust module to satisfy the existing source-health ceiling; no ceiling change."
+  },
+  "limits": [
+    "Seven S4 implementation gaps remain open. This admits Datum-owned concatenated input and removes two temporary vectors; it does not cap synchronous private bidi/shaping/layout/raster construction or complete shaped-payload batch overlap.",
+    "No complete MEM-STAGING/MEM-SHAPED/ACC acceptance, global adoption or S4/S5 closure. Original qualification obligations remain unchanged.",
+    "No dependency, vendor, license, prototype, numerical-budget or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition and owner/Copilot engine-file edits."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
+  "base_commit": "81b0293b",
+  "logs": {
+    "test": {
+      "path": "docs/reviews/gui-performance/implementation/S4/rich-input/test.log.gz",
+      "uncompressed_sha256": "741bd0378710faa78853584825a9650694bca2646fc949eb3f71a8926309d4c1"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/rich-input/renderer.log.gz",
+      "uncompressed_sha256": "223e1b70da48e14f2acceeed026e5261c02f607d03a7b1d562b758dc5ee9a104"
+    },
+    "final": {
+      "path": "docs/reviews/gui-performance/implementation/S4/rich-input/final.log.gz",
+      "uncompressed_sha256": "5a62e5b9fd4013622a010ba524de766ec75fd47ec9b53c5f919ae16ee2753c3a"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/rich-input/clippy.log.gz",
+      "uncompressed_sha256": "99865f3f79278a06643a95e7a880e058af7f91042fa1ac8582960ee0bdc5f6ea"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/rich-input/build.log.gz",
+      "uncompressed_sha256": "bec36ce9ae7a4edb6d2838ff7e0422dc812bad38819514b89c6285674e3b8697"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_buffer_cache.rs": "4ef54ffaf7f42c7ff7266bf278392b62e29dc8e7eeb1d1ed994b8f255ab9441c",
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "3cf2a554db5cbb9936bedbe7c4156b1a1ff2b0a710d343cfebb9daca75f3de4c",
+    "crates/gui-render/src/render/text_cache_retention.rs": "035a2a60d2b9449469fd3f54777adb0c8560ce48d11c9a49b77f7fe3f7d2bb95",
+    "crates/gui-render/src/text_gpu/staging_vec.rs": "5f04a0276c6ca6ea96ea273ec5f8853ce3a2ba5451ed77c7db3391cadd8f8651",
+    "crates/gui-render/src/text_layout.rs": "efbc66558bce23b74b8c15fb4b8dfad977a099596e58c5c86817fc69d096e030",
+    "crates/gui-render/src/render/text_cache_prepare.rs": "e31856c04d2bf6813af9b943d04cfed93804fb2d7b2f91ff474c7e067111155a"
+  }
+}

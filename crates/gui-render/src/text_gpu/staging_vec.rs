@@ -105,6 +105,14 @@ impl<T> StagingVec<T> {
 }
 
 impl<T: Copy> StagingVec<T> {
+    pub fn extend_from_slice(&mut self, values: &[T]) {
+        assert!(
+            values.len() <= self.values.capacity() - self.values.len(),
+            "upload plan exceeds admitted capacity"
+        );
+        self.values.extend_from_slice(values);
+    }
+
     pub fn from_slice(values: &[T], host: &Arc<Budget>) -> anyhow::Result<Self> {
         let mut result = Self::new(values.len(), host)?;
         result.values.extend_from_slice(values);

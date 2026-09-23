@@ -27,17 +27,56 @@ pub(crate) struct TextLayout {
 }
 
 impl TextLayout {
+    pub fn needs_input(&self) -> bool {
+        !self.complete
+    }
+
+    pub fn with_input(
+        fonts: &mut impl fonts::Source,
+        scratch: &mut LayoutScratch,
+        run: &TextRun,
+        extent: (u32, u32),
+        rich_text: &str,
+    ) -> Self {
+        let mut result = Self::default();
+        result.relayout_with_input(fonts, scratch, run, extent, rich_text);
+        result
+    }
+
+    pub fn relayout_with_input(
+        &mut self,
+        fonts: &mut impl fonts::Source,
+        scratch: &mut LayoutScratch,
+        run: &TextRun,
+        extent: (u32, u32),
+        rich_text: &str,
+    ) {
+        self.relayout_with_attrs(
+            fonts,
+            scratch,
+            run,
+            extent,
+            &text_attrs(run.face),
+            rich_text,
+        );
+    }
+
+    #[cfg(test)]
     pub fn new(
         fonts: &mut impl fonts::Source,
         scratch: &mut LayoutScratch,
         run: &TextRun,
         extent: (u32, u32),
     ) -> Self {
-        let mut result = Self::default();
-        result.relayout(fonts, scratch, run, extent);
-        result
+        let text: String = run
+            .rich_spans
+            .iter()
+            .map(|span| span.text.as_str())
+            .collect();
+        Self::with_input(fonts, scratch, run, extent, &text)
     }
 
+    #[cfg(test)]
     pub fn relayout(
         &mut self,
         fonts: &mut impl fonts::Source,
@@ -45,7 +84,12 @@ impl TextLayout {
         run: &TextRun,
         extent: (u32, u32),
     ) {
-        self.relayout_with_attrs(fonts, scratch, run, extent, &text_attrs(run.face));
+        let text: String = run
+            .rich_spans
+            .iter()
+            .map(|span| span.text.as_str())
+            .collect();
+        self.relayout_with_input(fonts, scratch, run, extent, &text);
     }
 
     // Explicit-font oracle only; production font authority remains TextFace.
@@ -58,10 +102,16 @@ impl TextLayout {
         attrs: &glyphon::Attrs<'_>,
     ) -> Self {
         let mut result = Self::default();
-        result.relayout_with_attrs(fonts, scratch, run, extent, attrs);
+        let text: String = run
+            .rich_spans
+            .iter()
+            .map(|span| span.text.as_str())
+            .collect();
+        result.relayout_with_attrs(fonts, scratch, run, extent, attrs, &text);
         result
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn relayout_with_attrs(
         &mut self,
         fonts: &mut impl fonts::Source,
@@ -69,6 +119,7 @@ impl TextLayout {
         run: &TextRun,
         extent: (u32, u32),
         attrs: &glyphon::Attrs<'_>,
+        rich_text: &str,
     ) {
         self.rows.clear();
         let mut top = 0.0;
@@ -98,47 +149,36 @@ impl TextLayout {
                 }
             }
         } else {
-            // Rich spans can split a UTF-8 paragraph at arbitrary style boundaries.
-            // Only this transient concatenation is needed by the shaping API;
-            // the retained key already owns the original span strings.
-            let text: String = run
-                .rich_spans
-                .iter()
-                .map(|span| span.text.as_str())
-                .collect();
-            let mut spans = Vec::with_capacity(run.rich_spans.len());
-            let mut offset = 0;
-            for (index, span) in run.rich_spans.iter().enumerate() {
-                let end = offset + span.text.len();
-                let mut style = attrs.clone().metadata(index + 1);
-                if span.bold {
-                    style = style.weight(Weight::BOLD);
-                }
-                if span.italic {
-                    style = style.style(Style::Italic);
-                }
-                spans.push((offset..end, style));
-                offset = end;
-            }
-            let paragraphs: Vec<&str> = BidiParagraphs::new(&text).collect();
-            for paragraph in paragraphs
-                .iter()
-                .copied()
-                .chain(paragraphs.is_empty().then_some(""))
-                .skip(cached)
-            {
+            // Borrow the caller's admitted concatenation. Iterate paragraphs and
+            // source spans directly instead of building two temporary vectors.
+            let mut paragraphs = BidiParagraphs::new(rich_text).peekable();
+            let empty = paragraphs.peek().is_none();
+            for paragraph in paragraphs.chain(empty.then_some("")).skip(cached) {
                 let start = if paragraph.is_empty() {
                     0
                 } else {
-                    paragraph.as_ptr() as usize - text.as_ptr() as usize
+                    paragraph.as_ptr() as usize - rich_text.as_ptr() as usize
                 };
                 let end = start + paragraph.len();
                 let mut attributes = AttrsList::new(attrs);
-                for (range, style) in &spans {
-                    let left = range.start.max(start);
-                    let right = range.end.min(end);
+                let mut offset = 0;
+                for (index, span) in run.rich_spans.iter().enumerate() {
+                    let span_end = offset + span.text.len();
+                    let left = offset.max(start);
+                    let right = span_end.min(end);
                     if left < right {
-                        attributes.add_span(left - start..right - start, style);
+                        let mut style = attrs.clone().metadata(index + 1);
+                        if span.bold {
+                            style = style.weight(Weight::BOLD);
+                        }
+                        if span.italic {
+                            style = style.style(Style::Italic);
+                        }
+                        attributes.add_span(left - start..right - start, &style);
+                    }
+                    offset = span_end;
+                    if offset >= end {
+                        break;
                     }
                 }
                 if !process(paragraph, attributes) {
