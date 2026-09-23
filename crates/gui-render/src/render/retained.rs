@@ -62,16 +62,16 @@ fn push_retained_scene_geometry(
                 let (fill_color, outline_color) = (za.zone_fill, za.zone_outline);
                 push_world_polygon_fill(out, &zone.polygon, dim_authored_color(fill_color, dimmed));
                 let zone_weight = AuthoredStrokePrimitive::CopperZoneOutline;
-                push_world_stroke_path(
+                gpu_strokes::push_world_stroke_loop(
                     strokes,
-                    &close_path(&zone.polygon),
+                    &zone.polygon,
                     dim_authored_color(outline_color, dimmed),
                     zone_weight.nominal_nm(),
                     1.0,
                 );
                 scene_retained_access::finish_retained_draw_commands(
                     draw_commands,
-                    Some(zone.layer_id.clone()),
+                    Some(zone.layer_id.as_str()),
                     quad_start,
                     out.len(),
                     stroke_start,
@@ -111,7 +111,7 @@ fn push_retained_scene_geometry(
             push_world_stroke_path(strokes, &track.path, color, track_width_nm as i64, 1.0);
             scene_retained_access::finish_retained_draw_commands(
                 draw_commands,
-                Some(track.layer_id.clone()),
+                Some(track.layer_id.as_str()),
                 out.len(),
                 out.len(),
                 start,
@@ -162,7 +162,7 @@ fn push_retained_scene_geometry(
                 );
                 scene_retained_access::finish_retained_draw_commands(
                     draw_commands,
-                    Some(render_layer.to_string()),
+                    Some(render_layer),
                     quad_start,
                     out.len(),
                     strokes.len(),
@@ -208,7 +208,7 @@ fn push_retained_scene_geometry(
             );
             scene_retained_access::finish_retained_draw_commands(
                 draw_commands,
-                Some(display_layer.to_string()),
+                Some(display_layer),
                 quad_start,
                 out.len(),
                 strokes.len(),
@@ -303,7 +303,7 @@ fn push_retained_scene_geometry(
                 );
                 scene_retained_access::finish_retained_draw_commands(
                     draw_commands,
-                    Some(layer_id.clone()),
+                    Some(layer_id.as_str()),
                     quad_start,
                     out.len(),
                     strokes.len(),
@@ -355,7 +355,7 @@ fn push_retained_scene_geometry(
             );
             scene_retained_access::finish_retained_draw_commands(
                 draw_commands,
-                graphic.layer_id.clone(),
+                graphic.layer_id.as_deref(),
                 quad_start,
                 out.len(),
                 stroke_start,
@@ -400,7 +400,7 @@ fn push_retained_scene_geometry(
             );
             scene_retained_access::finish_retained_draw_commands(
                 draw_commands,
-                graphic.layer_id.clone(),
+                graphic.layer_id.as_deref(),
                 quad_start,
                 out.len(),
                 stroke_start,

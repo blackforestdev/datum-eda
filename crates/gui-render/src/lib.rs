@@ -1,3 +1,6 @@
+#[path = "render/world_polygon.rs"]
+mod world_polygon;
+use world_polygon::{push_world_polygon_fill, push_world_polygon_fill_contours};
 mod geometry_output;
 use datum_gui_protocol::{
     Affine2DFixedPrimitive, BoardGraphicPrimitive, BoardReviewSceneV1, BoardTextGeometryPrimitive,

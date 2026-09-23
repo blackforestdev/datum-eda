@@ -4,6 +4,30 @@ use std::ops::{Deref, DerefMut};
 pub(crate) trait Output<T>: DerefMut<Target = [T]> + Extend<T> {
     fn push(&mut self, value: T);
     fn reserve(&mut self, additional: usize);
+    fn admit_temporary(&mut self, _bytes: usize) -> bool {
+        true
+    }
+    fn allocation_failed(&mut self, error: anyhow::Error) {
+        panic!("geometry allocation failed: {error}");
+    }
+    fn scratch<U>(&mut self, capacity: usize) -> Option<Vec<U>> {
+        let result = (|| -> anyhow::Result<Option<Vec<U>>> {
+            let layout = std::alloc::Layout::array::<U>(capacity)?;
+            if !self.admit_temporary(crate::cpu_alloc::heap::allocation_bytes(layout)) {
+                return Ok(None);
+            }
+            let mut values = Vec::new();
+            values.try_reserve_exact(capacity)?;
+            Ok(Some(values))
+        })();
+        match result {
+            Ok(values) => values,
+            Err(error) => {
+                self.allocation_failed(error);
+                None
+            }
+        }
+    }
 }
 impl<T> Output<T> for Vec<T> {
     fn push(&mut self, value: T) {
@@ -61,6 +85,18 @@ impl<T, F> Deref for Admitted<T, F> {
     }
 }
 impl<T, F: FnMut(usize) -> anyhow::Result<()>> Output<T> for Admitted<T, F> {
+    fn admit_temporary(&mut self, bytes: usize) -> bool {
+        if self.failure.is_none() {
+            self.failure = (self.admit)(bytes).err();
+        }
+        self.failure.is_none()
+    }
+    fn allocation_failed(&mut self, error: anyhow::Error) {
+        if self.failure.is_none() {
+            self.failure = Some(error);
+        }
+    }
+
     fn reserve(&mut self, additional: usize) {
         if self.failure.is_none() {
             self.failure = self.grow(additional).err();
