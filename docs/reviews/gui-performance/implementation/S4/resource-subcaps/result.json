@@ -1,0 +1,58 @@
+{
+  "status": "Local and aggregate atlas texture admission implementation complete; terminal texture/quad GPU subcap adopted; full qualification remains open",
+  "base_commit": "8b4df34a",
+  "production_consumers": [
+    "Shared workspace/menu glyph atlas used by default native renderers",
+    "Terminal graphics textures across native hosts",
+    "Terminal graphics placement vertices through shared ScreenBuffer/VertexAllocation"
+  ],
+  "retired_paths": [
+    "Atlas local cap based only on current page-vector bytes",
+    "Unbounded terminal-specific texture/quad allocation beneath the global GPU cap",
+    "Empty screen-stream reset that discarded configured allocation ownership"
+  ],
+  "behavior": [
+    "Reserve the existing 32 MiB atlas-local limit before allocation alongside the 128 MiB atlas process and 512 MiB migrated GPU permits. All three permits follow the same physical texture through retirement. Repacking reuses the allocation; it does not reset reservations.",
+    "Terminal textures and 96-byte placement quads share a 64 MiB process budget in addition to global GPU admission. No per-host duplicate pool; permits survive owner close while submitted references remain. Retain stricter TerminalCore protocol admission unchanged.",
+    "Shared vertex owners accept an additional resource budget and preserve it when a stream becomes empty. Rejection precedes GPU allocation and propagates through existing render errors; no required content is silently omitted.",
+    "Expose local atlas and process terminal reserved-byte counters. Remove redundant atlas Page byte storage; allocation records and reservations remain the production accounting authority."
+  ],
+  "proof": {
+    "renderer": "298 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Actual-GPU tests cover local atlas retired-page refusal/retry, terminal texture success followed by quad admission refusal and cancellation, and empty-stream budget preservation. Existing pixel/reuse/cancellation tests pass.",
+    "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings, source health (2240 files), and dependency authority pass.",
+    "native": "No additional OS-input or screenshot campaign. Prior gpu-admission native capture retained as historical evidence; current actual-GPU regression suite verifies affected rendering paths. This is not new native qualification.",
+    "drift": "Full drift passes preceding checks and stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+  },
+  "limits": [
+    "Atlas local/aggregate texture-cap implementation is complete for MEM-ATLAS-LOCAL/TOTAL; original native/resource/negative qualification and acceptance remain due at S5. This does not complete private CPU/shaped-text or staging accounting.",
+    "Terminal GPU admission covers decoded image textures and placement buffers. Shared text atlases and host uniforms retain their respective budgets; terminal CPU decoded-pixel ownership and complete native/host/recovery accounting remain open.",
+    "Full application GPU admission still lacks staging/query/readback coverage; world/screen/control subcaps, resource incidence and S4/S5 completion remain open.",
+    "No dependency, vendor, license, prototype, rendering layout, numerical-budget or nonblocking resize-policy change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
+  "logs": {
+    "tests": {
+      "path": "tests.log.gz",
+      "uncompressed_sha256": "70d949270bf575c2edec1d72bac2dad6200f0f911fea09b1ac6b113c203a8939"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "65be7889264f1d7fb43ff5bda2ed83b9a818fee36541409903dff095e3c75656"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "15479ca044b48f6fba1cd75480fd5e280fdd5e49b358af9f9038332e50224dbf"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "f31c68426392177fafe4571b59a1f07e92c19e9a527551988aa470ea06335a63",
+    "crates/gui-render/src/render/screen_buffer.rs": "1289d66aa18f233f0eb39fce2f299dd963d28c61cadda6b9a4149f19bc979fe7",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "c69ef6c3f885553b192d4da4087fe6044a0bfa4425649b70feb661d8d66a43ba",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "d887d21348590219ddc0eb30bcfc62ca4118325f81131b09528d75a47e92c1c3",
+    "crates/gui-render/src/render/terminal_graphics.rs": "07aa3e4fb6fbe2e982310a9f9b0b1733431eb25631acf44a195f7b96205b0c0e",
+    "crates/gui-render/src/render/vertex_allocation.rs": "77ee733d46d7c7f7534d4dce8cd02cbf9ef2d1f9ae6e0061fdc899913061c8da",
+    "crates/gui-render/src/text_gpu/atlas.rs": "ff0f0cb308b09897a11f44228fdafc3340e8e381917f27667122d2a8c31c2dee",
+    "crates/gui-render/src/text_gpu/budget.rs": "c0e8b21852224f1284d30e79b859dc6a3b287fb9862cd05fc5a4ce57bbded2a4",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "8d8f200df27216f1919dfb51b32539b5c057b8464a2a707049a187ba4e46e30f"
+  }
+}

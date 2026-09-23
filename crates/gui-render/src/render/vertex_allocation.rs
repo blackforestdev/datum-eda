@@ -6,9 +6,21 @@ pub(crate) struct VertexAllocation {
     buffer: Option<Tracked<wgpu::Buffer>>,
     owner: Option<Owner>,
     generation: u64,
+    budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
 }
 
 impl VertexAllocation {
+    pub(crate) fn with_budget(budget: std::sync::Arc<crate::text_gpu::budget::Budget>) -> Self {
+        Self {
+            budget: Some(budget),
+            ..Self::default()
+        }
+    }
+
+    pub(crate) fn clear(&mut self) {
+        self.buffer = None;
+    }
+
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.buffer.as_deref()
     }
@@ -43,7 +55,11 @@ impl VertexAllocation {
             usage |= wgpu::BufferUsages::COPY_SRC;
         }
         let capacity = live.next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
-        let permit = crate::text_gpu::budget::gpu_process().reserve(capacity)?;
+        let mut permits = Vec::with_capacity(2);
+        if let Some(budget) = &self.budget {
+            permits.push(budget.reserve(capacity)?);
+        }
+        permits.push(crate::text_gpu::budget::gpu_process().reserve(capacity)?);
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: capacity,
@@ -55,7 +71,7 @@ impl VertexAllocation {
         self.buffer = Some(
             self.owner
                 .get_or_insert_with(Owner::new)
-                .track_with_permits(buffer, bytes, self.generation, Kind::Vertex, vec![permit]),
+                .track_with_permits(buffer, bytes, self.generation, Kind::Vertex, permits),
         );
         Ok(true)
     }

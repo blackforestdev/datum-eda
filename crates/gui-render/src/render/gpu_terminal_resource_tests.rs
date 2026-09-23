@@ -123,3 +123,55 @@ fn terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels() {
     }
     assert!(cold == capture_retained(&mut renderer, &prepared, &retained));
 }
+
+#[test]
+#[ignore = "requires local GPU and serial execution: terminal process admission"]
+fn terminal_admission_includes_quads_and_holds_capacity_until_retirement() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 220;
+    let snapshot = super::super::tests::sixel_snapshot(true);
+    let retained = RetainedScene::from_workspace(&state, 960, 720);
+    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+    let mut prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+        &state,
+        960,
+        720,
+        1.0,
+        camera,
+        &retained,
+        Some(&snapshot),
+    );
+    prepared.terminal_graphics.truncate(1);
+    let placement = prepared.terminal_graphics[0].graphic.placement();
+    let bytes = u64::from(placement.width()) * u64::from(placement.height()) * 4;
+    let mut renderer = hardware_renderer(960, 720);
+    let budget = crate::text_gpu::budget::terminal_process();
+    let baseline = budget.used();
+    // Leave exactly texture capacity: the placement quad must also be admitted.
+    let filler = budget.reserve(64 * 1024 * 1024 - baseline - bytes).unwrap();
+    assert!(
+        renderer
+            .renderer
+            .sync_terminal_graphics(&renderer.device, &renderer.queue, &prepared, 960, 720,)
+            .is_err()
+    );
+    assert_eq!(budget.used(), 64 * 1024 * 1024);
+    renderer.renderer.terminal_graphics.cancel_uploads();
+    assert_eq!(budget.used(), 64 * 1024 * 1024 - bytes);
+    drop(filler);
+    renderer
+        .renderer
+        .sync_terminal_graphics(&renderer.device, &renderer.queue, &prepared, 960, 720)
+        .unwrap();
+    assert_eq!(budget.used(), baseline + bytes + 96);
+    let held: Vec<_> = renderer
+        .renderer
+        .terminal_graphics
+        .submission_refs()
+        .collect();
+    drop(renderer);
+    assert_eq!(budget.used(), baseline + bytes + 96);
+    drop(held);
+    assert_eq!(budget.used(), baseline);
+}

@@ -19,6 +19,13 @@ pub(crate) struct ScreenBuffer {
 }
 
 impl ScreenBuffer {
+    pub(crate) fn with_budget(budget: std::sync::Arc<crate::text_gpu::budget::Budget>) -> Self {
+        Self {
+            allocation: VertexAllocation::with_budget(budget),
+            ..Self::default()
+        }
+    }
+
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.allocation.buffer()
     }
@@ -71,7 +78,10 @@ impl ScreenBuffer {
         }
         let bytes: &[u8] = bytemuck::cast_slice(vertices);
         if bytes.is_empty() {
-            *self = Self::default();
+            self.allocation.clear();
+            self.snapshot = Box::default();
+            self.pending = Vec::new();
+            self.pending_large = Box::default();
             return Ok(0);
         }
         if self.allocation.buffer().is_some() && self.snapshot.as_ref() == bytes {

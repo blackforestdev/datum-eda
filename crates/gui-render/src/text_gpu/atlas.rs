@@ -50,7 +50,6 @@ pub(super) struct Page {
     // Release the page's binding reference before its charged texture owner.
     pub bind_group: wgpu::BindGroup,
     pub texture: Tracked<wgpu::Texture>,
-    pub bytes: u64,
     extent: u32,
     color: bool,
     shelves: Shelves,
@@ -58,8 +57,8 @@ pub(super) struct Page {
 
 #[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) struct Uploads {
-    pub writes: u64,
     pub bytes: u64,
+    pub writes: u64,
     pub rasterizations: u64,
 }
 
@@ -79,7 +78,7 @@ pub(crate) struct Atlas {
     pub(super) uploads: Uploads,
     glyphs: HashMap<CacheKey, Option<GlyphLocation>>,
     pending_uploads: Vec<PendingUpload>,
-    retained_limit: u64,
+    local_budget: std::sync::Arc<super::budget::Budget>,
     texture_budget: std::sync::Arc<super::budget::Budget>,
 }
 
@@ -105,7 +104,7 @@ impl Atlas {
             uploads: Uploads::default(),
             glyphs: HashMap::new(),
             pending_uploads: Vec::new(),
-            retained_limit: RETAINED_LIMIT,
+            local_budget: super::budget::Budget::new(RETAINED_LIMIT),
             texture_budget: super::budget::process(),
         }
     }
@@ -169,11 +168,28 @@ impl Atlas {
 
     #[cfg(all(test, feature = "visual"))]
     pub(crate) fn set_test_limit(&mut self, bytes: u64) {
-        self.retained_limit = bytes;
+        assert_eq!(
+            self.local_budget.used(),
+            0,
+            "test limit requires an empty atlas"
+        );
+        self.local_budget = super::budget::Budget::new(bytes);
     }
 
-    pub fn retained_texture_bytes(&self) -> u64 {
-        self.pages.iter().map(|page| page.bytes).sum()
+    pub fn reserved_texture_bytes(&self) -> u64 {
+        self.local_budget.used()
+    }
+
+    #[cfg(all(test, feature = "visual"))]
+    fn retained_texture_bytes(&self) -> u64 {
+        self.pages
+            .iter()
+            .map(|page| {
+                page.texture.width() as u64
+                    * page.texture.height() as u64
+                    * page.texture.format().block_copy_size(None).unwrap() as u64
+            })
+            .sum()
     }
 
     /// Invalidate ALL prepared references. The caller owns retirement of returned
@@ -237,10 +253,7 @@ impl Atlas {
                 let extent = 1024.min(limit).max(size[0]).max(size[1]);
                 anyhow::ensure!(extent <= limit, "glyph exceeds device texture extent");
                 let bytes = extent as u64 * extent as u64 * bytes_per_pixel;
-                anyhow::ensure!(
-                    self.retained_texture_bytes() + bytes <= self.retained_limit,
-                    "glyph atlas retained texture budget exhausted"
-                );
+                let local_permit = self.local_budget.reserve(bytes)?;
                 let permit = self.texture_budget.reserve(bytes)?;
                 let gpu_permit = super::budget::gpu_process().reserve(bytes)?;
                 let texture = device.create_texture(&wgpu::TextureDescriptor {
@@ -281,13 +294,12 @@ impl Atlas {
                         bytes,
                         self.generation,
                         Kind::Texture,
-                        vec![permit, gpu_permit],
+                        vec![local_permit, permit, gpu_permit],
                     ),
                     bind_group,
                     extent,
                     color,
                     shelves,
-                    bytes,
                 });
                 (index, origin)
             }
@@ -323,6 +335,53 @@ mod tests {
         assert_eq!(shelves.reserve([3, 2], 10), Some([7, 0]));
         assert_eq!(shelves.reserve([10, 7], 10), Some([0, 3]));
         assert_eq!(shelves.reserve([1, 1], 10), None);
+    }
+
+    #[test]
+    #[ignore = "requires local GPU; local atlas retirement admission"]
+    fn local_atlas_limit_counts_retired_pages_before_replacement() {
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut fonts = crate::load_datum_fonts();
+        let mut buffer = glyphon::Buffer::new(&mut fonts, glyphon::Metrics::new(18.0, 22.0));
+        buffer.set_text(
+            &mut fonts,
+            "A",
+            &crate::text_attrs(crate::TextFace::Ui),
+            glyphon::Shaping::Basic,
+            None,
+        );
+        buffer.shape_until_scroll(&mut fonts, false);
+        let key = buffer.layout_runs().next().unwrap().glyphs[0]
+            .physical((0.0, 0.0), 1.0)
+            .cache_key;
+        let mut raster = SwashCache::new();
+        let mut atlas = Atlas::new(&device);
+        atlas.set_test_limit(1024 * 1024);
+        let local = atlas.local_budget.clone();
+        atlas
+            .glyph(&device, &queue, &mut fonts, &mut raster, key)
+            .unwrap();
+        let held = atlas.submission_refs();
+        drop(atlas.reset());
+        assert_eq!(atlas.retained_texture_bytes(), 0);
+        assert_eq!(local.used(), 1024 * 1024);
+        assert!(
+            atlas
+                .glyph(&device, &queue, &mut fonts, &mut raster, key)
+                .is_err()
+        );
+        assert!(atlas.pages.is_empty());
+        drop(held);
+        assert_eq!(local.used(), 0);
+        atlas
+            .glyph(&device, &queue, &mut fonts, &mut raster, key)
+            .unwrap();
+        assert_eq!(local.used(), 1024 * 1024);
+        drop(atlas);
+        assert_eq!(local.used(), 0);
     }
 
     #[test]
@@ -445,7 +504,12 @@ mod tests {
         assert_eq!(atlas.generation, epoch + 1);
         assert_eq!(atlas.retained_texture_bytes(), 0);
         assert_eq!(
-            retiring.iter().map(|page| page.bytes).sum::<u64>(),
+            retiring
+                .iter()
+                .map(|page| page.texture.width() as u64
+                    * page.texture.height() as u64
+                    * page.texture.format().block_copy_size(None).unwrap() as u64)
+                .sum::<u64>(),
             retained
         );
         let replacement = atlas

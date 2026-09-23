@@ -209,7 +209,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             if visible == self.draws.len() {
                 self.draws.push(TerminalGraphicDraw {
                     texture_key: key,
-                    vertices: ScreenBuffer::default(),
+                    vertices: ScreenBuffer::with_budget(crate::text_gpu::budget::terminal_process()),
                     clip,
                     foreground,
                 });
