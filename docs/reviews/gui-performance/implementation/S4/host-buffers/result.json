@@ -1,0 +1,79 @@
+{
+  "status": "Shared 16 MiB host-local screen-buffer admission implemented across default streams and same-host device replacement; full qualification remains open",
+  "base_commit": "c5be57e8",
+  "production_consumers": [
+    "Nine fixed screen streams: panel, viewport underlay/overlay, board interaction, Console, menu overlay, schematic underlay/overlay, surface grid",
+    "Screen, pane and fallback uniform buffers",
+    "Workspace and overlay glyph-instance buffers",
+    "Terminal image placement buffers, also retaining the terminal process subcap",
+    "Main native runtime and shared Global/Project/New Project auxiliary device-replacement paths"
+  ],
+  "retired_paths": [
+    "Independent unbounded screen-stream defaults in Renderer initialization",
+    "Uniform and glyph-instance allocation with only aggregate GPU admission",
+    "Same-host device replacement creating a new screen-buffer allowance"
+  ],
+  "behavior": [
+    "Create one 16 MiB screen-buffer budget per native renderer host. Pass the same owner into all default host-local screen streams, uniforms and glyph draws; terminal quads reserve both host and terminal allowances. Existing global GPU admission still applies.",
+    "Keep budget permits with actual allocations through cached bundles and submission retirement. Empty streams preserve budget ownership; normal warm allocation reuse needs no new reservation.",
+    "Renderer::recreate_for_device shares the prior host budget during staging and retirement. Main and auxiliary recovery consumers use it; a new window receives its own budget. Constructor refusal rolls back partial uniform allocations.",
+    "Expose host reserved-buffer capacity. Required content is not silently omitted: exhausted admission returns through existing renderer/native error paths."
+  ],
+  "proof": {
+    "renderer": "299 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Actual-GPU proof exercises all nine screen streams against the same limit, retirement, uniform/partial-constructor rollback, independent-host rendering, same-host replacement and retry. Glyph parity checks instance-capacity accounting; terminal proof checks simultaneous host and terminal charging.",
+    "app": "380 application tests pass; 16 previously ignored cases remain ignored.",
+    "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings, dependency authority and source health (2240 files) pass.",
+    "native": "Fresh visual native application build and 1680x1050 datum-test/R1 capture exit 0. Inspected image; decoded RGBA exactly equals the preceding gpu-admission baseline. No native fault/endurance acceptance.",
+    "drift": "Full drift passes preceding checks and stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+  },
+  "limits": [
+    "MEM-SCREEN-GPU buffer admission implementation is complete; original native/resource/negative qualification remains S5. Same-device GPU recreation proof is not native device-loss/endurance acceptance.",
+    "World/document and control-specific GPU subcaps, staging/query/readback inclusion, private CPU/shaped payload limits and complete host/resource incidence qualification remain open. Textures/attachments retain their separate budgets.",
+    "No dependency, vendor, license, prototype, numerical-budget, rendering-layout or nonblocking resize-policy change. No full S4/S5 or global resource acceptance."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/host-buffers/result.json",
+  "logs": {
+    "tests": {
+      "path": "tests.log.gz",
+      "uncompressed_sha256": "33a5dfdc613835164b18e124bc94a5b479b17fe704be19e3d737110a643d643b"
+    },
+    "app-tests": {
+      "path": "app-tests.log.gz",
+      "uncompressed_sha256": "dd3ff49eb2c3997fc523d1e5c98da890e58f7f7bed1a77a49134a8213533ffda"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "318fbe87e42c51bf8b70804c8ae4fbd47e92b57d9bdbad3c83149dbfe3116c1f"
+    },
+    "native": {
+      "path": "native.log.gz",
+      "uncompressed_sha256": "158ce67a586db56ddb3766780ba0cff55b5e316e35369643d8fa3205fbab2394"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "ca8bd3cd2fcd22479dd7989a3be78c4dbf47aa0973e075f1802970f6482edbd7"
+    }
+  },
+  "native_capture": {
+    "path": "native.png",
+    "sha256": "40e986a2655402722e7ebb62db7dacbfdbd02134da611989bfd2b12db0a81d2a",
+    "prior_capture_rgba_equal": true
+  },
+  "binary_sha256": "9cb0b400eb755e2162dee37b93e9a5a6e02958cf4724065980d43713548a00c6",
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "c0fb2e6b3794f9f2ca401064bfef97ae7559cb3a31bf5398f0af1926e62c81eb",
+    "crates/gui-app/src/native_device_recovery.rs": "b1cf04930825560600e121d82d40885c210879e8ad9eb7a6e28be1c5f2613fb3",
+    "crates/gui-render/src/render/gpu_init.rs": "4eb49146602a40a01b67262c34fe7d62405d4d94d8602a499d0651c733f11629",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "9bc7493281ccdd4829c6499fab98ede9786691ab3e5ffc3c476e18fce0974ff1",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "568eb2d110b4df54419476d7f444eb861f85588e61a88e652b3b06f4baede3a9",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "3a2f3c9a869a14d2fad26a0a17756295599a7960513d7391380d8d72438fd377",
+    "crates/gui-render/src/render/renderer_state.rs": "a44605c14b28c04d1b6d00040a76def014b980ea39f074eaa090315bcef1a990",
+    "crates/gui-render/src/render/screen_buffer.rs": "26263f5cdc78bc5894b05cdf44c4c7a1745d5e2955fc3eb333106242385ef88f",
+    "crates/gui-render/src/render/terminal_graphics.rs": "08daea288461b0b899535624fdb05aa43c8d84a1225e139306135d2ce0922af0",
+    "crates/gui-render/src/render/uniform_buffer.rs": "6f77ec51531cf02f4fb53a488eafb89203a531cb6d40df5dd6a477722a7322e8",
+    "crates/gui-render/src/render/vertex_allocation.rs": "89821c774b66ecd81fac6191459c1be1d37fd7fe805088e4b1a0d78589af4367",
+    "crates/gui-render/src/text_gpu/draw.rs": "9e644375a7cc15facb0d282f01be56e6536975041dbfa9928c0d5c06b040fa01",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "a839d674b64c0086e3be1e73b554fde703c8ec6264b734374f51da39e664cc2c",
+    "crates/gui-render/src/text_gpu/parity.rs": "93b5a379abb69e17837618fd73a8cf33f7686091baf2af3acf4072476b2512cf"
+  }
+}

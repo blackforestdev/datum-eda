@@ -150,7 +150,7 @@ impl Runtime {
             self.window.inner_size(),
             None,
         );
-        let mut renderer = Renderer::new(
+        let mut renderer = self.renderer.recreate_for_device(
             &device,
             &queue,
             config.format,

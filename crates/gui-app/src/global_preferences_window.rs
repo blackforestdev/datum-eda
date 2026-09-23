@@ -103,13 +103,19 @@ impl GlobalPreferencesWindowSurface {
         window: std::sync::Arc<Window>,
         scale_factor_override: Option<f32>,
     ) -> Result<Self> {
-        Self::new_with_device(runtime.native_device_view(), window, scale_factor_override)
+        Self::new_with_device(
+            runtime.native_device_view(),
+            window,
+            scale_factor_override,
+            None,
+        )
     }
 
     fn new_with_device(
         gpu: native_gpu::DeviceView<'_>,
         window: std::sync::Arc<Window>,
         scale_factor_override: Option<f32>,
+        previous: Option<&Renderer>,
     ) -> Result<Self> {
         let surface = gpu
             .instance
@@ -123,12 +129,13 @@ impl GlobalPreferencesWindowSurface {
             Some(gpu.config.format),
         );
         let format = config.format;
-        let mut renderer = Renderer::new(
-            gpu.device,
-            gpu.queue,
-            format,
-            select_msaa_samples(gpu.adapter, format),
-        )?;
+        let samples = select_msaa_samples(gpu.adapter, format);
+        let mut renderer = match previous {
+            Some(renderer) => {
+                renderer.recreate_for_device(gpu.device, gpu.queue, format, samples)?
+            }
+            None => Renderer::new(gpu.device, gpu.queue, format, samples)?,
+        };
         let measurements = native_gpu_measurements::Host::new(
             &mut renderer,
             gpu.device,
@@ -167,8 +174,12 @@ impl GlobalPreferencesWindowSurface {
     }
 
     pub(super) fn replacement(&self, gpu: native_gpu::DeviceView<'_>) -> Result<Self> {
-        let mut replacement =
-            Self::new_with_device(gpu, self.window.clone(), Some(self.scale_factor))?;
+        let mut replacement = Self::new_with_device(
+            gpu,
+            self.window.clone(),
+            Some(self.scale_factor),
+            Some(&self.renderer),
+        )?;
         replacement.cursor_position = self.cursor_position;
         replacement.scroll = self.scroll.clone();
         replacement.scroll.release();

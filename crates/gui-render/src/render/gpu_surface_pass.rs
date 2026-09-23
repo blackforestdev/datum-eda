@@ -59,6 +59,7 @@ impl Renderer {
                     &self.scene_bind_group_layout,
                     "datum-surface-scene-bind-group",
                     None,
+                    &self.screen_budget,
                 )?);
         }
         for (surface, binding) in prepared

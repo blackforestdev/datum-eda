@@ -146,6 +146,8 @@ fn terminal_admission_includes_quads_and_holds_capacity_until_retirement() {
     let placement = prepared.terminal_graphics[0].graphic.placement();
     let bytes = u64::from(placement.width()) * u64::from(placement.height()) * 4;
     let mut renderer = hardware_renderer(960, 720);
+    let host_budget = renderer.renderer.screen_budget.clone();
+    let host_baseline = host_budget.used();
     let budget = crate::text_gpu::budget::terminal_process();
     let baseline = budget.used();
     // Leave exactly texture capacity: the placement quad must also be admitted.
@@ -165,13 +167,16 @@ fn terminal_admission_includes_quads_and_holds_capacity_until_retirement() {
         .sync_terminal_graphics(&renderer.device, &renderer.queue, &prepared, 960, 720)
         .unwrap();
     assert_eq!(budget.used(), baseline + bytes + 96);
+    assert_eq!(host_budget.used(), host_baseline + 96);
     let held: Vec<_> = renderer
         .renderer
         .terminal_graphics
         .submission_refs()
         .collect();
     drop(renderer);
+    assert_eq!(host_budget.used(), 96);
     assert_eq!(budget.used(), baseline + bytes + 96);
     drop(held);
+    assert_eq!(host_budget.used(), 0);
     assert_eq!(budget.used(), baseline);
 }

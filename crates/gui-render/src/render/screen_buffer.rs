@@ -19,6 +19,15 @@ pub(crate) struct ScreenBuffer {
 }
 
 impl ScreenBuffer {
+    pub(crate) fn with_budgets(
+        budgets: Vec<std::sync::Arc<crate::text_gpu::budget::Budget>>,
+    ) -> Self {
+        Self {
+            allocation: VertexAllocation::with_budgets(budgets),
+            ..Self::default()
+        }
+    }
+
     pub(crate) fn with_budget(budget: std::sync::Arc<crate::text_gpu::budget::Budget>) -> Self {
         Self {
             allocation: VertexAllocation::with_budget(budget),

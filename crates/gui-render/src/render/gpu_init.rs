@@ -9,6 +9,39 @@ impl Renderer {
         format: wgpu::TextureFormat,
         msaa_samples: u32,
     ) -> anyhow::Result<Self> {
+        Self::new_with_screen_budget(
+            device,
+            _queue,
+            format,
+            msaa_samples,
+            crate::text_gpu::budget::Budget::new(16 * 1024 * 1024),
+        )
+    }
+
+    /// Replace this host's device resources without resetting its live/retiring allowance.
+    pub fn recreate_for_device(
+        &self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        format: wgpu::TextureFormat,
+        msaa_samples: u32,
+    ) -> anyhow::Result<Self> {
+        Self::new_with_screen_budget(
+            device,
+            queue,
+            format,
+            msaa_samples,
+            self.screen_budget.clone(),
+        )
+    }
+
+    fn new_with_screen_budget(
+        device: &wgpu::Device,
+        _queue: &wgpu::Queue,
+        format: wgpu::TextureFormat,
+        msaa_samples: u32,
+        screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) -> anyhow::Result<Self> {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-gui-render-shader"),
             source: wgpu::ShaderSource::Wgsl(
@@ -148,6 +181,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 resolution: [1.0, 1.0],
                 _pad: [0.0, 0.0],
             },
+            &screen_budget,
         )?;
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("datum-gui-render-uniform-bg"),
@@ -168,12 +202,14 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             &scene_bind_group_layout,
             "datum-gui-render-scene-bg",
             Some(scene_uniform),
+            &screen_budget,
         )?;
         let schematic_scene_bind_group = gpu_data::uniform_buffer::UniformBinding::new(
             device,
             &scene_bind_group_layout,
             "datum-gui-render-schematic-scene-bg",
             Some(scene_uniform),
+            &screen_budget,
         )?;
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-gui-render-pipeline-layout"),
@@ -251,14 +287,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             &uniform_bind_group_layout,
             format,
             msaa_samples,
+            screen_budget.clone(),
         );
         let text_cpu = crate::cpu_alloc::Scope::new("renderer-text");
         let font_system = text_cpu.with(load_datum_fonts);
         let swash_cache = text_cpu.with(SwashCache::new);
         let atlas = crate::text_gpu::Atlas::new(device);
-        let text_renderer = crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples);
+        let text_renderer =
+            crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples, screen_budget.clone());
         let menu_overlay_text_renderer =
-            crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples);
+            crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples, screen_budget.clone());
         Ok(Self {
             measurements: None,
             pipeline,
@@ -275,10 +313,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_world_vertices_gpu: Default::default(),
             schematic_world_strokes_gpu: Default::default(),
             surface_world_bundles: Vec::new(),
-            surface_grid_gpu: Default::default(),
+            surface_grid_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            ),
             schematic_scene_bind_group,
-            schematic_underlay_gpu: Default::default(),
-            schematic_overlay_gpu: Default::default(),
+            schematic_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            ),
+            schematic_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            ),
             font_system,
             text_cpu,
             swash_cache,
@@ -289,13 +333,24 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             text_buffers: Default::default(),
             control_meshes: Default::default(),
             text_preparation: Default::default(),
-            panel_gpu: Default::default(),
-            viewport_underlay_gpu: Default::default(),
-            viewport_overlay_gpu: Default::default(),
-            board_interaction_gpu: Default::default(),
-            console_gpu: gpu_console::ConsoleGpuResources::default(),
-            menu_overlay_gpu: Default::default(),
+            panel_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone()),
+            viewport_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            ),
+            viewport_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            ),
+            board_interaction_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            ),
+            console_gpu: gpu_console::ConsoleGpuResources {
+                vertices: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone()),
+            },
+            menu_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            ),
             surface_attachments: gpu_surface::SurfaceAttachments::default(),
+            screen_budget,
             msaa_format: format,
             msaa_samples,
         })

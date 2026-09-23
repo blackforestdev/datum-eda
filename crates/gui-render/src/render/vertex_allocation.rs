@@ -6,13 +6,19 @@ pub(crate) struct VertexAllocation {
     buffer: Option<Tracked<wgpu::Buffer>>,
     owner: Option<Owner>,
     generation: u64,
-    budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
+    budgets: Vec<std::sync::Arc<crate::text_gpu::budget::Budget>>,
 }
 
 impl VertexAllocation {
     pub(crate) fn with_budget(budget: std::sync::Arc<crate::text_gpu::budget::Budget>) -> Self {
+        Self::with_budgets(vec![budget])
+    }
+
+    pub(crate) fn with_budgets(
+        budgets: Vec<std::sync::Arc<crate::text_gpu::budget::Budget>>,
+    ) -> Self {
         Self {
-            budget: Some(budget),
+            budgets,
             ..Self::default()
         }
     }
@@ -55,8 +61,8 @@ impl VertexAllocation {
             usage |= wgpu::BufferUsages::COPY_SRC;
         }
         let capacity = live.next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
-        let mut permits = Vec::with_capacity(2);
-        if let Some(budget) = &self.budget {
+        let mut permits = Vec::with_capacity(self.budgets.len() + 1);
+        for budget in &self.budgets {
             permits.push(budget.reserve(capacity)?);
         }
         permits.push(crate::text_gpu::budget::gpu_process().reserve(capacity)?);

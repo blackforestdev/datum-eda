@@ -25,6 +25,7 @@ struct Instance {
 }
 
 pub(crate) struct Draw {
+    screen_budget: std::sync::Arc<super::budget::Budget>,
     pipeline: wgpu::RenderPipeline,
     instances: Option<Tracked<wgpu::Buffer>>,
     batches: Vec<(usize, Range<u32>)>,
@@ -40,6 +41,7 @@ impl Draw {
         atlas: &Atlas,
         format: wgpu::TextureFormat,
         samples: u32,
+        screen_budget: std::sync::Arc<super::budget::Budget>,
     ) -> Self {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-glyph-shader"),
@@ -80,6 +82,7 @@ impl Draw {
             cache: None,
         });
         Self {
+            screen_budget,
             pipeline,
             instances: None,
             batches: Vec::new(),
@@ -177,6 +180,7 @@ impl Draw {
             required > buffer.size() || buffer.size() > required.saturating_mul(4)
         }) {
             let capacity = required.next_power_of_two();
+            let screen_permit = self.screen_budget.reserve(capacity)?;
             let permit = super::budget::gpu_process().reserve(capacity)?;
             self.instances = Some(atlas.owner.track_with_permits(
                 device.create_buffer(&wgpu::BufferDescriptor {
@@ -188,7 +192,7 @@ impl Draw {
                 capacity,
                 atlas.generation,
                 Kind::Instances,
-                vec![permit],
+                vec![screen_permit, permit],
             ));
             self.snapshot = Vec::new();
         }

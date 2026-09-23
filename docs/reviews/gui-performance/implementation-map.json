@@ -3882,6 +3882,11 @@
           "work": "s4_resource_subcaps_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
           "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
+        },
+        {
+          "work": "s4_host_buffer_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/host-buffers/result.json",
+          "status": "Shared host buffer admission adopted across default streams and device replacement. Full original qualification and remaining subcaps stay open."
         }
       ]
     },
@@ -16179,14 +16184,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for host screen/uniform/glyph-instance/terminal-quad allocation capacities, including replacement and retirement; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "16MiB host-local screen buffers; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Implementation complete for host-local screen-buffer admission; qualification remains unqualified under the original acceptance rule.",
+        "s4_implementation_evidence": "s4_host_buffer_admission_work"
       },
       "s4_implementation_progress": [
         {
@@ -16198,6 +16202,11 @@
           "work": "s4_uniform_lifetime_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
           "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_host_buffer_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/host-buffers/result.json",
+          "status": "Shared host buffer admission adopted across default streams and device replacement. Full original qualification and remaining subcaps stay open."
         }
       ]
     },
@@ -17025,6 +17034,11 @@
           "work": "s4_resource_subcaps_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
           "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
+        },
+        {
+          "work": "s4_host_buffer_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/host-buffers/result.json",
+          "status": "Shared host buffer admission adopted across default streams and device replacement. Full original qualification and remaining subcaps stay open."
         }
       ]
     },
@@ -31244,16 +31258,17 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 22,
+    "rows_with_recorded_implementation_gaps": 21,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 5,
+    "rows_with_implementation_completed_at_s4": 6,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
       "MEM-WIDTH-PAYLOAD",
       "MEM-ATLAS-LOCAL",
-      "MEM-ATLAS-TOTAL"
+      "MEM-ATLAS-TOTAL",
+      "MEM-SCREEN-GPU"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -32019,5 +32034,40 @@
       "No dependency, vendor, license, prototype, rendering layout, numerical-budget or nonblocking resize-policy change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json"
+  },
+  "s4_host_buffer_admission_work": {
+    "status": "Shared 16 MiB host-local screen-buffer admission implemented across default streams and same-host device replacement; full qualification remains open",
+    "base_commit": "c5be57e8",
+    "production_consumers": [
+      "Nine fixed screen streams: panel, viewport underlay/overlay, board interaction, Console, menu overlay, schematic underlay/overlay, surface grid",
+      "Screen, pane and fallback uniform buffers",
+      "Workspace and overlay glyph-instance buffers",
+      "Terminal image placement buffers, also retaining the terminal process subcap",
+      "Main native runtime and shared Global/Project/New Project auxiliary device-replacement paths"
+    ],
+    "retired_paths": [
+      "Independent unbounded screen-stream defaults in Renderer initialization",
+      "Uniform and glyph-instance allocation with only aggregate GPU admission",
+      "Same-host device replacement creating a new screen-buffer allowance"
+    ],
+    "behavior": [
+      "Create one 16 MiB screen-buffer budget per native renderer host. Pass the same owner into all default host-local screen streams, uniforms and glyph draws; terminal quads reserve both host and terminal allowances. Existing global GPU admission still applies.",
+      "Keep budget permits with actual allocations through cached bundles and submission retirement. Empty streams preserve budget ownership; normal warm allocation reuse needs no new reservation.",
+      "Renderer::recreate_for_device shares the prior host budget during staging and retirement. Main and auxiliary recovery consumers use it; a new window receives its own budget. Constructor refusal rolls back partial uniform allocations.",
+      "Expose host reserved-buffer capacity. Required content is not silently omitted: exhausted admission returns through existing renderer/native error paths."
+    ],
+    "proof": {
+      "renderer": "299 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Actual-GPU proof exercises all nine screen streams against the same limit, retirement, uniform/partial-constructor rollback, independent-host rendering, same-host replacement and retry. Glyph parity checks instance-capacity accounting; terminal proof checks simultaneous host and terminal charging.",
+      "app": "380 application tests pass; 16 previously ignored cases remain ignored.",
+      "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings, dependency authority and source health (2240 files) pass.",
+      "native": "Fresh visual native application build and 1680x1050 datum-test/R1 capture exit 0. Inspected image; decoded RGBA exactly equals the preceding gpu-admission baseline. No native fault/endurance acceptance.",
+      "drift": "Full drift passes preceding checks and stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+    },
+    "limits": [
+      "MEM-SCREEN-GPU buffer admission implementation is complete; original native/resource/negative qualification remains S5. Same-device GPU recreation proof is not native device-loss/endurance acceptance.",
+      "World/document and control-specific GPU subcaps, staging/query/readback inclusion, private CPU/shaped payload limits and complete host/resource incidence qualification remain open. Textures/attachments retain their separate budgets.",
+      "No dependency, vendor, license, prototype, numerical-budget, rendering-layout or nonblocking resize-policy change. No full S4/S5 or global resource acceptance."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/host-buffers/result.json"
   }
 }
