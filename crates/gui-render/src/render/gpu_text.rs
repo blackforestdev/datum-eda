@@ -1,10 +1,13 @@
 //! Prepare all consumers of the shared glyph atlas before encoding either one.
 use super::*;
 
+#[path = "glyph_upload_continuation.rs"]
+mod continuation;
 const MAX_OVERLAY_SIGNATURE_RUNS: usize = 128;
 
 #[derive(Default)]
 pub(crate) struct GlyphPreparation {
+    upload_continuation: bool,
     prepared: Option<(u64, TextPrepareSignature)>,
     overlay_prepared: Option<(u64, TextPrepareSignature)>,
     #[cfg(test)]
@@ -50,21 +53,31 @@ impl PreparedScene {
     }
 }
 
+macro_rules! frame_buffers {
+    ($this:ident) => {{
+        let mut buffers = Vec::new();
+        gpu_vertex_upload::screen_streams!($this, stream, stream.append_uploads(&mut buffers));
+        $this.terminal_graphics.append_vertex_uploads(&mut buffers);
+        $this.uniform_buffer.append_uploads(&mut buffers);
+        for binding in &$this.surface_scene_uniforms {
+            binding.buffer.append_uploads(&mut buffers);
+        }
+        let text_bytes = $this.text_renderer.append_uploads(&mut buffers);
+        let overlay_bytes = $this
+            .menu_overlay_text_renderer
+            .append_uploads(&mut buffers);
+        (buffers, text_bytes, overlay_bytes)
+    }};
+}
+pub(super) use frame_buffers;
+
 impl Renderer {
     pub(crate) fn flush_frame_uploads(
         &mut self,
         device: &wgpu::Device,
         _queue: &wgpu::Queue,
     ) -> anyhow::Result<Option<crate::text_gpu::upload::Batch>> {
-        let mut buffers = Vec::new();
-        gpu_vertex_upload::screen_streams!(self, stream, stream.append_uploads(&mut buffers));
-        self.terminal_graphics.append_vertex_uploads(&mut buffers);
-        self.uniform_buffer.append_uploads(&mut buffers);
-        for binding in &self.surface_scene_uniforms {
-            binding.buffer.append_uploads(&mut buffers);
-        }
-        let text_bytes = self.text_renderer.append_uploads(&mut buffers);
-        let overlay_bytes = self.menu_overlay_text_renderer.append_uploads(&mut buffers);
+        let (buffers, text_bytes, overlay_bytes) = frame_buffers!(self);
         // Admit and encode the complete mixed batch before consuming any producer.
         // Failure retains every pending update for cancellation/retry.
         let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;
@@ -116,10 +129,13 @@ impl Renderer {
         overlay_only: bool,
     ) -> anyhow::Result<(TextBufferCacheStats, bool)> {
         // A previous frame may have failed after text preparation but before
-        // submission. Never reuse signatures for data that did not reach GPU.
-        if self.atlas.has_pending_uploads()
-            || self.text_renderer.has_pending_uploads()
-            || self.menu_overlay_text_renderer.has_pending_uploads()
+        // submission. Only an explicit upload continuation preserves valid
+        // preparation; its instance data remains pending for the final submission.
+        let continued = std::mem::take(&mut self.text_preparation.upload_continuation);
+        if !continued
+            && (self.atlas.has_pending_uploads()
+                || self.text_renderer.has_pending_uploads()
+                || self.menu_overlay_text_renderer.has_pending_uploads())
         {
             self.atlas.repack();
             self.text_renderer.cancel_preparation();

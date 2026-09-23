@@ -685,3 +685,6 @@ fn oversized_overlay_signature_bypasses_reuse_without_omitting_text() {
 
 #[path = "gpu_terminal_resource_tests.rs"]
 mod terminal_resource_tests;
+
+#[path = "gpu_glyph_continuation_tests.rs"]
+mod glyph_continuation_tests;

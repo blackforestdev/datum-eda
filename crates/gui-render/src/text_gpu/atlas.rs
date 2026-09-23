@@ -7,6 +7,8 @@ use std::collections::HashMap;
 use glyphon::{CacheKey, FontSystem, SwashCache, SwashContent};
 
 use super::lifetime::{Kind, Owner, SubmissionRef, Tracked};
+#[path = "atlas/chunks.rs"]
+mod chunks;
 const RETAINED_LIMIT: u64 = 32 * 1024 * 1024;
 
 #[derive(Clone, Copy, Debug)]
@@ -63,6 +65,7 @@ pub(super) struct Uploads {
 }
 
 struct PendingUpload {
+    uploaded_rows: u32,
     page: usize,
     origin: [u32; 2],
     size: [u32; 2],
@@ -135,10 +138,10 @@ impl Atlas {
             .iter()
             .map(|upload| super::upload::TextureUpload {
                 texture: &self.pages[upload.page].texture,
-                origin: upload.origin,
-                size: upload.size,
+                origin: [upload.origin[0], upload.origin[1] + upload.uploaded_rows],
+                size: [upload.size[0], upload.size[1] - upload.uploaded_rows],
                 stride: upload.stride,
-                pixels: &upload.pixels,
+                pixels: &upload.pixels[(upload.uploaded_rows * upload.stride) as usize..],
             })
             .collect();
         let batch = super::upload::batch(
@@ -151,7 +154,8 @@ impl Atlas {
         )?;
         for upload in self.pending_uploads.drain(..) {
             self.uploads.writes += 1;
-            self.uploads.bytes += upload.pixels.len() as u64;
+            self.uploads.bytes +=
+                u64::from(upload.size[1] - upload.uploaded_rows) * u64::from(upload.stride);
         }
         Ok(batch)
     }
@@ -324,6 +328,7 @@ impl Atlas {
             }
         };
         self.pending_uploads.push(PendingUpload {
+            uploaded_rows: 0,
             page: page_index,
             origin,
             size,
