@@ -701,13 +701,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 7146
+        "expanded_lines": 6855
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Shared shell solve and bounded cache ownership extracted from textual layout into render/shell_layout.rs. App-only cache retired; remaining include debt retains exact downward ceiling. Uniform allocation/binding ownership consolidated in uniform_buffer; obsolete root DeviceExt import removed, expanded ceiling7152. RetainedScene immutable metadata and weak lifetime accounting extracted to retained_scene_owner.rs; expanded ceiling ratchets7152 to7146."
+      "note": "Shared shell solve and bounded cache ownership extracted from textual layout into render/shell_layout.rs. App-only cache retired; remaining include debt retains exact downward ceiling. Uniform allocation/binding ownership consolidated in uniform_buffer; obsolete root DeviceExt import removed, expanded ceiling7152. RetainedScene immutable metadata and weak lifetime accounting extracted to retained_scene_owner.rs; expanded ceiling ratchets7152 to7146. PM045 board hit construction and shared allocation-free component bounds extracted into normal modules; exact ceiling ratcheted. Remaining debt preserved."
     },
     "crates/gui-render/src/render/draw_primitives.rs": {
       "kind": "rust-production",
@@ -734,24 +734,13 @@
     "crates/gui-render/src/render/pads_and_layers.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1104
+        "pre_test_lines": 434
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
-    "crates/gui-render/src/render/retained.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 902
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Rust production module exceeds the normal authored production limit before inline tests. PM045 board hit construction and shared allocation-free component bounds extracted into normal modules; exact ceiling ratcheted. Remaining debt preserved."
     },
     "crates/gui-render/src/render/tests.rs": {
       "kind": "rust-test",

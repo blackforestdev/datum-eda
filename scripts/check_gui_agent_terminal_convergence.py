@@ -505,6 +505,7 @@ def main() -> int:
     render_geometry = RENDER_GEOMETRY.read_text() + RENDER_GEOMETRY.with_name("text_metrics.rs").read_text()
     text_buffer_cache = (
         TEXT_BUFFER_CACHE.read_text()
+        + TEXT_BUFFER_CACHE.with_name("text_cache_retention.rs").read_text()
         + TEXT_BUFFER_CACHE.with_name("text_buffer_cache_tests.rs").read_text()
         + (TEXT_BUFFER_CACHE.parent.parent / "text_layout.rs").read_text()
     )

@@ -102,9 +102,10 @@ fn push_scene_overlay_and_hits(
             continue;
         }
         if let Some(lid) = text.layer_id.as_deref()
-            && !layer_visible(state, lid) {
-                continue;
-            }
+            && !layer_visible(state, lid)
+        {
+            continue;
+        }
         if active_move_component_uuid.as_deref() == Some(text.component_uuid.as_str()) {
             continue;
         }
@@ -479,10 +480,10 @@ fn point_in_rect(point: PointNm, rect: datum_gui_protocol::RectNm) -> bool {
 }
 
 fn board_text_hit_rect(text: &BoardTextPrimitive) -> datum_gui_protocol::RectNm {
-    let lines: Vec<&str> = text.text.lines().collect();
-    let line_count = lines.len().max(1) as f64;
-    let max_chars = lines
-        .iter()
+    let line_count = text.text.lines().count().max(1) as f64;
+    let max_chars = text
+        .text
+        .lines()
         .map(|line| line.chars().count())
         .max()
         .unwrap_or_else(|| text.text.chars().count())

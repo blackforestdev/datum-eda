@@ -1,3 +1,7 @@
+#[path = "board_hit_construction.rs"]
+mod board_hit_construction;
+#[path = "hit_construction.rs"]
+mod hit_construction;
 #[path = "prepared_scene_access.rs"]
 mod prepared_scene_access;
 #[path = "scene_console.rs"]
@@ -213,9 +217,13 @@ fn pad_visible_on_any_copper_layer(
     state: &ReviewWorkspaceState,
     pad: &datum_gui_protocol::PadPrimitive,
 ) -> bool {
-    pad_copper_layer_ids(pad)
-        .into_iter()
-        .any(|layer_id| layer_visible(state, layer_id))
+    if pad.copper_layer_ids.is_empty() {
+        layer_visible(state, &pad.layer_id)
+    } else {
+        pad.copper_layer_ids
+            .iter()
+            .any(|layer_id| layer_visible(state, layer_id))
+    }
 }
 
 fn dim_unrelated_active(state: &ReviewWorkspaceState) -> bool {
