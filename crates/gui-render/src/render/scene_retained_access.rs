@@ -1,5 +1,50 @@
 use super::*;
 
+/// Non-owning CPU geometry lifetime observation. Weak references retain only
+/// the small shared owner, never the separately boxed vertex/stroke payload.
+#[derive(Clone)]
+pub struct RetainedGeometryObserver {
+    vertices: std::sync::Weak<Box<[Vertex]>>,
+    strokes: std::sync::Weak<Box<[WorldStrokeInstance]>>,
+    vertex_bytes: usize,
+    stroke_bytes: usize,
+}
+
+impl RetainedGeometryObserver {
+    pub fn is_live(&self) -> bool {
+        self.vertices.strong_count() != 0 || self.strokes.strong_count() != 0
+    }
+
+    /// Deduplicate each allocation independently. Box slots remain allocated
+    /// until weak observers also drop; Arc/allocator headers are excluded.
+    pub fn heap_bytes_excluding<'a>(&self, others: impl IntoIterator<Item = &'a Self>) -> usize {
+        let slot = std::mem::size_of::<Box<[u8]>>();
+        let mut vertices =
+            slot + usize::from(self.vertices.strong_count() != 0) * self.vertex_bytes;
+        let mut strokes = slot + usize::from(self.strokes.strong_count() != 0) * self.stroke_bytes;
+        for other in others {
+            if self.vertices.ptr_eq(&other.vertices) {
+                vertices = 0;
+            }
+            if self.strokes.ptr_eq(&other.strokes) {
+                strokes = 0;
+            }
+        }
+        vertices + strokes
+    }
+}
+
+impl RetainedScene {
+    pub fn geometry_observer(&self) -> RetainedGeometryObserver {
+        RetainedGeometryObserver {
+            vertices: self.world_vertices.downgrade(),
+            strokes: self.world_strokes.downgrade(),
+            vertex_bytes: std::mem::size_of_val(self.world_vertices.as_ref()),
+            stroke_bytes: std::mem::size_of_val(self.world_strokes.as_ref()),
+        }
+    }
+}
+
 pub(crate) fn finish_retained_draw_commands(
     commands: &mut Vec<RetainedDrawCommand>,
     layer_id: Option<String>,
@@ -272,6 +317,36 @@ mod retained_storage_tests {
     }
 
     use super::*;
+
+    #[test]
+    fn geometry_observers_deduplicate_individual_allocations_and_follow_release() {
+        let first = RetainedScene::from_workspace(
+            &datum_gui_protocol::load_fixture_workspace_state(),
+            960,
+            720,
+        );
+        let first_observer = first.geometry_observer();
+        let mut second = first.clone();
+        second.world_vertices = first.world_vertices.to_vec().into();
+        let second_observer = second.geometry_observer();
+        assert_eq!(
+            second_observer.heap_bytes_excluding([&first_observer]),
+            second.world_vertices.heap_bytes()
+        );
+        assert_eq!(first_observer.heap_bytes_excluding([&first_observer]), 0);
+        drop(first);
+        assert!(
+            first_observer.is_live(),
+            "shared strokes still have a strong owner"
+        );
+        drop(second);
+        assert!(!first_observer.is_live());
+        assert!(!second_observer.is_live());
+        assert_eq!(
+            first_observer.heap_bytes_excluding([]),
+            2 * std::mem::size_of::<Box<[u8]>>()
+        );
+    }
 
     #[test]
     fn cloned_retained_scene_shares_immutable_stroke_storage() {

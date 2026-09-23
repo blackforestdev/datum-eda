@@ -1,5 +1,6 @@
 //! Bounded derived-scene history; document/session authority stays elsewhere.
 use super::{RetainedScene, Runtime, retained_selection_cache_key};
+use datum_gui_render::RetainedGeometryObserver;
 
 const MAX_ENTRIES: usize = 6;
 const MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
@@ -24,12 +25,15 @@ struct Entry {
     key: RetainedSceneCacheKey,
     scene: RetainedScene,
     heap_bytes: usize,
+    geometry: RetainedGeometryObserver,
 }
 
 pub(super) struct RetainedSceneHistory {
     entries: Vec<Entry>,
     heap_bytes: usize,
     active_bytes: usize,
+    active_geometry: Option<RetainedGeometryObserver>,
+    retired_geometry: Vec<RetainedGeometryObserver>,
     budget: usize,
 }
 
@@ -39,6 +43,8 @@ impl Default for RetainedSceneHistory {
             entries: Vec::new(),
             heap_bytes: 0,
             active_bytes: 0,
+            active_geometry: None,
+            retired_geometry: Vec::new(),
             budget: MAX_PAYLOAD_BYTES,
         }
     }
@@ -61,9 +67,15 @@ impl RetainedSceneCacheKey {
 
 impl RetainedSceneHistory {
     pub(super) fn clear(&mut self) {
+        if let Some(observer) = self.active_geometry.take() {
+            self.observe_retired(observer);
+        }
+        while !self.entries.is_empty() {
+            self.evict(0);
+        }
         self.entries = Vec::new();
-        self.heap_bytes = 0;
         self.active_bytes = 0;
+        self.prune_retired();
     }
 
     fn owned_history_bytes(&self) -> usize {
@@ -74,6 +86,94 @@ impl RetainedSceneHistory {
         )
     }
 
+    fn prune_retired(&mut self) {
+        let entries = &self.entries;
+        let active = &self.active_geometry;
+        self.retired_geometry.retain(|observer| {
+            observer.is_live()
+                && observer.heap_bytes_excluding(
+                    entries
+                        .iter()
+                        .map(|entry| &entry.geometry)
+                        .chain(active.iter()),
+                ) != 0
+        });
+        if self.retired_geometry.capacity() > self.retired_geometry.len().saturating_mul(4) {
+            self.retired_geometry = std::mem::take(&mut self.retired_geometry)
+                .into_boxed_slice()
+                .into_vec();
+        }
+    }
+
+    fn covered_geometry(&self) -> impl Iterator<Item = &RetainedGeometryObserver> {
+        self.entries
+            .iter()
+            .map(|entry| &entry.geometry)
+            .chain(self.active_geometry.iter())
+    }
+
+    fn observe_retired(&mut self, observer: RetainedGeometryObserver) {
+        self.prune_retired();
+        if observer.is_live()
+            && observer.heap_bytes_excluding(self.covered_geometry().chain(&self.retired_geometry))
+                != 0
+        {
+            self.retired_geometry.push(observer);
+        }
+    }
+
+    fn accounted_bytes(&self) -> usize {
+        let mut duplicates = 0usize;
+        for (index, entry) in self.entries.iter().enumerate() {
+            let full = entry.geometry.heap_bytes_excluding([]);
+            let unique = entry.geometry.heap_bytes_excluding(
+                self.entries[..index]
+                    .iter()
+                    .map(|previous| &previous.geometry),
+            );
+            duplicates = duplicates.saturating_add(full - unique);
+        }
+        if self.active_bytes != 0
+            && let Some(active) = &self.active_geometry
+        {
+            duplicates = duplicates.saturating_add(
+                active.heap_bytes_excluding([])
+                    - active.heap_bytes_excluding(self.entries.iter().map(|entry| &entry.geometry)),
+            );
+        }
+        let retired_bytes = self
+            .retired_geometry
+            .iter()
+            .enumerate()
+            .map(|(index, observer)| {
+                observer.heap_bytes_excluding(
+                    self.covered_geometry()
+                        .chain(&self.retired_geometry[..index]),
+                )
+            })
+            .fold(0usize, usize::saturating_add);
+        self.owned_history_bytes()
+            .saturating_add(self.active_bytes)
+            .saturating_sub(duplicates)
+            .saturating_add(retired_bytes)
+            .saturating_add(
+                self.retired_geometry.capacity() * std::mem::size_of::<RetainedGeometryObserver>(),
+            )
+    }
+
+    fn bytes_with_candidate(&self, bytes: usize, geometry: &RetainedGeometryObserver) -> usize {
+        let duplicates = geometry.heap_bytes_excluding([])
+            - geometry.heap_bytes_excluding(self.entries.iter().map(|entry| &entry.geometry));
+        self.accounted_bytes().saturating_add(bytes - duplicates)
+    }
+
+    fn evict(&mut self, index: usize) {
+        let entry = self.remove(index);
+        let observer = entry.geometry.clone();
+        drop(entry);
+        self.observe_retired(observer);
+    }
+
     fn remove(&mut self, index: usize) -> Entry {
         let entry = self.entries.remove(index);
         self.heap_bytes -= entry.heap_bytes;
@@ -81,13 +181,13 @@ impl RetainedSceneHistory {
     }
 
     fn limit_for_active(&mut self, scene: &RetainedScene) {
+        self.active_geometry = Some(scene.geometry_observer());
+        self.prune_retired();
         self.active_bytes = scene
             .heap_payload_bytes()
             .unwrap_or(self.budget.saturating_add(1));
-        while !self.entries.is_empty()
-            && self.owned_history_bytes().saturating_add(self.active_bytes) > self.budget
-        {
-            self.remove(0);
+        while !self.entries.is_empty() && self.accounted_bytes() > self.budget {
+            self.evict(0);
         }
         if self.entries.is_empty() {
             self.entries = Vec::new();
@@ -97,8 +197,11 @@ impl RetainedSceneHistory {
     pub(super) fn insert(&mut self, key: RetainedSceneCacheKey, scene: RetainedScene) {
         // The caller moves the old active scene here before rebuilding/restoring.
         self.active_bytes = 0;
+        let geometry = scene.geometry_observer();
+        self.active_geometry = Some(geometry.clone());
+        self.prune_retired();
         if let Some(index) = self.entries.iter().position(|entry| entry.key == key) {
-            self.remove(index);
+            self.evict(index);
         }
         let Some(bytes) = scene
             .heap_payload_bytes()
@@ -112,23 +215,24 @@ impl RetainedSceneHistory {
             return;
         }
         while self.entries.len() >= MAX_ENTRIES {
-            self.remove(0);
+            self.evict(0);
         }
         self.entries.reserve(1);
-        while !self.entries.is_empty()
-            && self.owned_history_bytes().saturating_add(bytes) > self.budget
+        while !self.entries.is_empty() && self.bytes_with_candidate(bytes, &geometry) > self.budget
         {
-            self.remove(0);
+            self.evict(0);
         }
-        if self.owned_history_bytes().saturating_add(bytes) > self.budget {
+        if self.bytes_with_candidate(bytes, &geometry) > self.budget {
             self.clear();
             return;
         }
         self.heap_bytes += bytes;
+        self.active_geometry = None;
         self.entries.push(Entry {
             key,
             scene,
             heap_bytes: bytes,
+            geometry,
         });
     }
 
@@ -227,20 +331,21 @@ mod tests {
         assert_eq!(history.entries.len(), 6);
         assert!(history.take(&key(0)).is_none());
         assert!(history.take(&key(7)).is_some());
-        let bytes = scene.heap_payload_bytes().unwrap() + key(0).heap_bytes().unwrap();
+        let bytes = scene.clone().heap_payload_bytes().unwrap() + key(0).heap_bytes().unwrap();
+        let shared_bytes = scene.geometry_observer().heap_bytes_excluding([]);
         let mut history = RetainedSceneHistory {
-            budget: 2 * bytes + 4 * std::mem::size_of::<Entry>(),
+            budget: 2 * bytes - shared_bytes + 4 * std::mem::size_of::<Entry>(),
             ..Default::default()
         };
         for index in 0..3 {
             history.insert(key(index), scene.clone());
-            assert!(history.owned_history_bytes() <= history.budget);
+            assert!(history.accounted_bytes() <= history.budget);
         }
         assert_eq!(history.entries.len(), 2);
         assert!(history.take(&key(0)).is_none());
         let recovered = history.take(&key(2)).expect("recent geometry retained");
         assert_eq!(recovered, scene);
-        assert!(history.owned_history_bytes() + history.active_bytes <= history.budget);
+        assert!(history.accounted_bytes() <= history.budget);
         history.clear();
         assert_eq!(history.owned_history_bytes(), 0);
     }
@@ -252,10 +357,10 @@ mod tests {
         for index in 0..3 {
             history.insert(key(index), scene.clone());
         }
-        history.budget = history.owned_history_bytes();
+        history.budget = history.accounted_bytes();
         history.limit_for_active(&scene);
         assert!(history.entries.len() < 3);
-        assert!(history.owned_history_bytes() + history.active_bytes <= history.budget);
+        assert!(history.accounted_bytes() <= history.budget);
         let active_before = scene.clone();
         history.budget = 1;
         history.insert(key(8), scene.clone());
@@ -267,5 +372,57 @@ mod tests {
             "cache refusal never changes active geometry"
         );
         assert_eq!(history.owned_history_bytes(), 0);
+    }
+    #[test]
+    fn externally_pinned_geometry_remains_charged_after_history_clear() {
+        let old = scene();
+        let pinned = old.clone();
+        let observed = old.geometry_observer();
+        let pinned_bytes = observed.heap_bytes_excluding([]);
+        let mut history = RetainedSceneHistory::default();
+        history.insert(key(0), old);
+        history.clear();
+        assert_eq!(history.owned_history_bytes(), 0);
+        assert_eq!(history.retired_geometry.len(), 1);
+        assert!(history.accounted_bytes() >= pinned_bytes);
+        let next = scene();
+        let next_bytes = next.heap_payload_bytes().unwrap() + key(1).heap_bytes().unwrap();
+        history.budget = next_bytes
+            + 4 * std::mem::size_of::<Entry>()
+            + history.retired_geometry.capacity() * std::mem::size_of::<RetainedGeometryObserver>()
+            + pinned_bytes
+            - 1;
+        history.insert(key(1), next);
+        assert!(
+            history.entries.is_empty(),
+            "pinned payload consumes admission headroom"
+        );
+        drop(pinned);
+        assert!(!observed.is_live());
+        history.insert(key(1), scene());
+        assert_eq!(
+            history.entries.len(),
+            1,
+            "released payload restores headroom"
+        );
+        assert!(history.retired_geometry.is_empty());
+        assert_eq!(history.retired_geometry.capacity(), 0);
+        assert!(history.accounted_bytes() <= history.budget);
+    }
+    #[test]
+    fn active_and_history_charge_shared_geometry_once() {
+        let scene = scene();
+        let geometry_bytes = scene.geometry_observer().heap_bytes_excluding([]);
+        let mut history = RetainedSceneHistory::default();
+        for index in 0..3 {
+            history.insert(key(index), scene.clone());
+        }
+        let history_bytes = history.owned_history_bytes() - 2 * geometry_bytes;
+        assert_eq!(history.accounted_bytes(), history_bytes);
+        history.limit_for_active(&scene);
+        assert_eq!(
+            history.accounted_bytes(),
+            history_bytes + scene.heap_payload_bytes().unwrap() - geometry_bytes
+        );
     }
 }

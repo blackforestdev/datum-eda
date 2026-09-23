@@ -48,7 +48,6 @@ impl<T> SharedGeometry<T> {
         Arc::ptr_eq(&self.0, &other.0)
     }
 
-    #[cfg(test)]
     pub(crate) fn downgrade(&self) -> std::sync::Weak<Box<[T]>> {
         Arc::downgrade(&self.0)
     }
