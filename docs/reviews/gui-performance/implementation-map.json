@@ -28656,13 +28656,8 @@
     }
   },
   "s3_exit_reconciliation": {
-    "status": "Historical full-qualification reconciliation retained. Owner-approved bounded S3 exit now controls readiness; unfinished qualification is required at S5.",
-    "exit_obstacles": [
-      {
-        "kind": "bounded implementation readiness review",
-        "detail": "Reconcile recorded production adoption and known failures against approved S3 exit before S4; remaining_actions now specifies S5 qualification, not mandatory S3 replay."
-      }
-    ],
+    "status": "S3 bounded readiness complete under approved exit; historical full-qualification reconciliation retained for S5.",
+    "exit_obstacles": [],
     "scope": "No predicate marked passed, no acceptance rule changed, no S3 completion or S4 selection. Resource associations and original failed receipts remain intact.",
     "latest_native_focus_evidence": {
       "status": "bounded shared native focus-key correction; three owned-dialog Escape cases pass",
@@ -28781,7 +28776,7 @@
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open. Current Project explanation keyboard fix additionally exercised through Wayland OS Tab/Enter; nested Escape dismisses explanation then closes dialog and restores Main focus. Exact displayed query/pixels remain unverified.",
         "HP23-02": "Actual Wayland1x Global/Project timed pixel input and exact offset proof now covers both boundaries. All four streams have zero recorded Main requests/coalesced damage; Global bottom has1 extra native-received Main presentation also seen in input-free comparisons. Preserve strict zero-presentation assertion failure and bounded unsolicited-native attribution. Separate timed line recipe, remaining profiles and native visual/reduced-motion qualification remain open. Existing idle/timer negatives and X11 reduced-motion1/1.5/2 evidence stay credited; no monitor-transition or full S3 acceptance."
       },
-      "next_action": "Reconcile remaining S3 functional/native/profile gaps against recorded receipts; the consolidated Global/Project Wayland OS wheel/local-idle batch is now recorded. Do not repeat this bounded case solely for an unrelated later commit; timed/final-state and missing consumer/profile predicates remain required.",
+      "next_action": "GPI-S4 is selected by the separate readiness determination. Remaining_actions is the carried S5 qualification inventory; do not reopen unchanged S3 cases solely for a later unrelated commit.",
       "negative_control_scope_review": {
         "HP13-02": "Existing row says reduce AA OR move text behind card. Recorded painter-order failure/restored positive covers this shared-owner alternative; native controlling visual parity stays required.",
         "HP16-01": "Existing row says general scanline OR repeated arcs. Verified retained-control-gpu artifact hashes and patch: bypassing with_mesh lookup calls rounded_fill build closure again, which recomputes rounded_rect_points and its arc vertices. Build-count assertion detects2 vs1; restored positive passes. This is invariant contour-work sensitivity, not independent trigonometric/arc correctness or all native consumer qualification. No additional general-tessellator negative is imposed.",
@@ -30457,7 +30452,7 @@
     "cleanup": "Both owned targets exit0 after SIGTERM cleanup. Portal explicitly closed and display restored to1.05; kscreen-doctor confirms1829x1029 logical geometry and1.05 scale. Cleanup is not overall application teardown qualification."
   },
   "s3_bounded_exit_review": {
-    "status": "Owner approved exact ccf42618 four-clause proposal; applied. Readiness determination remains separate.",
+    "status": "S3 bounded implementation readiness satisfied under owner-approved d1a4199a exit; full qualification remains partial and required at S5.",
     "reviewed_head": "5e4b84ec",
     "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s3-bounded-implementation-exit",
     "finding": "Recorded default production adoption and affected proof support a bounded-readiness exit proposal. No new missing shared-component migration was identified in the reviewed inventory. This is not full row qualification, independent replay, or a completed S3 exit under the currently effective contract.",
@@ -30587,6 +30582,21 @@
         "map_record": "s3_timed_wayland_pixel_scroll_work",
         "evidence": "docs/reviews/gui-performance/implementation/S3/timed-wayland-pixel-scroll/result.json",
         "sha256": "7993309ddf1afb470f1f65f517f85a17547913ac3deb6d98d30760f3eab49bd4"
+      },
+      {
+        "map_record": "s3_native_label_reuse_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
+        "sha256": "4c9d90cc68ea50370d92ba15900e8c7f8af2428085e67faf132d6d10c3ea4366"
+      },
+      {
+        "map_record": "s3_real_overlay_churn_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json",
+        "sha256": "f5639eea843b088c4bfc261c9cf41026826986935754db4b39cda596faefe0f9"
+      },
+      {
+        "map_record": "s3_control_cache_negatives_work",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
+        "sha256": "622181f733b2d0dfc81861e13e99d46ad6cdd5e27d183987906e667976fb7a0d"
       }
     ],
     "existing_proof_credited": [
@@ -30861,9 +30871,7 @@
         "deadline_effective": true
       }
     },
-    "finite_readiness_remainder": [
-      "Complete evidence-based readiness determination against approved exit; select S4 only if no missing default adoption or unexplained implementation regression remains."
-    ],
+    "finite_readiness_remainder": [],
     "execution_limits": [
       "No new benchmark, Cargo rebuild, desktop session or unaffected negative replay for this documentation review.",
       "An actual new regression triggers a focused reproduction/fix, not automatic reopening of the entire native matrix.",
@@ -30874,6 +30882,43 @@
       "response": "proceed",
       "context": "Direct response to request to approve exact four-clause S3 exit amendment in ccf42618",
       "effect": "Qualification due at S5; S3 bounded readiness requires separate evidence-based exit review."
+    },
+    "determination": {
+      "approved_contract_commit": "d1a4199a",
+      "production_candidate": "4773d8d7; subsequent changes through d1a4199a are evidence/governance only",
+      "acceptance": "Recorded shared default consumers and retired competing paths, affected positive/negative correctness evidence, bounded native adapter evidence and bounded warm reuse/eviction satisfy the amended implementation exit. No missing default adoption or unexplained implementation regression identified in this review.",
+      "verification": "15 inventoried production source hashes and 13 reviewed receipt hashes unchanged from ccf42618; current convergence guard passes. Warm native-label, real-overlay churn and control-cache eviction negatives additionally reviewed within their stated limits. No new runtime trial.",
+      "failures": "Known failures retain the exact dispositions above. Main native redraw attribution does not erase strict assertion failure. Console golden conflict remains separately tracked, not blessed. Historical native reliability/capture failures remain qualification gaps, not newly accepted behavior.",
+      "result": "GPI-S3 complete for bounded readiness; select GPI-S4. Overall implementation issue remains in progress; no complete HP-row, resource-budget, all-consumer qualification or product acceptance."
     }
+  },
+  "s3_readiness": {
+    "status": "Bounded implementation readiness complete under approved S3 exit",
+    "review_ref": "s3_bounded_exit_review",
+    "qualification_carried_to_s5": [
+      "HP10-01",
+      "HP10-02",
+      "HP12-01",
+      "HP12-02",
+      "HP13-01",
+      "HP13-02",
+      "HP14-01",
+      "HP14-02",
+      "HP16-01",
+      "HP16-02",
+      "HP16-03",
+      "HP18-01",
+      "HP19-01",
+      "HP20-01",
+      "HP21-01",
+      "HP21-02",
+      "HP22-01",
+      "HP22-02",
+      "HP23-01",
+      "HP23-02"
+    ],
+    "qualification_status": "All original partial test statuses and acceptance rules retained",
+    "resource_implementation_deadline": "S4; original 50 S2 predicates and named resource associations unchanged",
+    "limitations": "No full native/profile/static/input/focus/resource qualification or global adoption acceptance; resize remains separately nonblocking."
   }
 }

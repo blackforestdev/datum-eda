@@ -348,3 +348,24 @@ an evidence-based readiness review must precede S4 selection.
 No dependency, prototype, numerical budget, independent replay, endurance or
 nonblocking resize boundary changes. Reuse bounded evidence for unchanged
 code/scenarios; check affected regressions after relevant changes.
+
+## S3 bounded implementation readiness
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-BOUNDED-READY -->
+
+The separate determination in the existing adoption map's
+`s3_bounded_exit_review` establishes the approved S3 implementation exit.
+Default dialog/control/scroll/clip/hit consumers, New Project backdrop and
+competing-path retirement, affected positive/negative correctness tests,
+bounded native adapter evidence and bounded warm reuse/eviction are recorded.
+The reviewed source inventory is unchanged from the proposal; the convergence
+guard passes. No missing default adoption or unexplained implementation
+regression was identified. Known strict native-redraw, Console golden and
+historical input/capture failures retain their explicit scoped dispositions;
+no failed receipt is erased or relabeled passed.
+
+GPI-S3 is complete for bounded implementation readiness and GPI-S4 is selected.
+All 20 S3 qualification rows retain their original partial statuses and are
+required at S5. All 50 carried S2 implementation predicates remain due at S4.
+No full HP-row, resource-budget, global adoption, product or resize acceptance
+follows. The overall implementation issue remains open.
