@@ -37,6 +37,7 @@ pub(super) struct RetainedSceneHistory {
     active_bytes: usize,
     active_geometry: Option<RetainedGeometryObserver>,
     retired_geometry: Vec<RetainedGeometryObserver>,
+    retired_storage: Option<datum_gui_render::DocumentCpuCharge>,
     budget: usize,
 }
 
@@ -49,6 +50,7 @@ impl Default for RetainedSceneHistory {
             active_bytes: 0,
             active_geometry: None,
             retired_geometry: Vec::new(),
+            retired_storage: None,
             budget: MAX_PAYLOAD_BYTES,
         }
     }
@@ -142,6 +144,13 @@ impl RetainedSceneHistory {
             self.retired_geometry = std::mem::take(&mut self.retired_geometry)
                 .into_boxed_slice()
                 .into_vec();
+            if self.retired_geometry.is_empty() {
+                self.retired_storage = None;
+            } else if let Some(charge) = &mut self.retired_storage {
+                charge.resize(capacity_bytes::<RetainedGeometryObserver>(
+                    self.retired_geometry.capacity(),
+                ));
+            }
         }
     }
 
@@ -158,7 +167,18 @@ impl RetainedSceneHistory {
             && observer.heap_bytes_excluding(self.covered_geometry().chain(&self.retired_geometry))
                 != 0
         {
+            let previous_capacity = self.retired_geometry.capacity();
             self.retired_geometry.push(observer);
+            if self.retired_geometry.capacity() != previous_capacity {
+                let bytes =
+                    capacity_bytes::<RetainedGeometryObserver>(self.retired_geometry.capacity());
+                self.retired_storage = Some(
+                    self.retired_geometry
+                        .last()
+                        .expect("retired observer")
+                        .charge_document_metadata(bytes),
+                );
+            }
         }
     }
 
