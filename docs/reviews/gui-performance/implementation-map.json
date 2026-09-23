@@ -31184,7 +31184,7 @@
     "evidence": "docs/reviews/gui-performance/implementation/S4/control-admission/result.json"
   },
   "s4_accounting_boundary_review": {
-    "status": "Owner direction requested on implementation route versus a concrete acceptance-amendment proposal; current requirements remain operative",
+    "status": "Owner selected full accounting and a Datum-owned implementation route using existing dependencies; no acceptance amendment",
     "reviewed_head": "feae7bdc",
     "controlling_requirements": [
       "PM045 GP-045-05: full accounting remains required for S5 completion",
@@ -31196,7 +31196,10 @@
     "installed_source_sha256": {
       "cosmic-text-0.15.0/src/buffer_line.rs": "b7db3ecae9d7dbad8fcc2b60fc6cebe277512818d535b2baed986352dcd41377",
       "cosmic-text-0.15.0/src/attrs.rs": "49d1de956488eb3f8cd82dbd118d3489566bc31678d9aba313a4026849268c91",
-      "glyphon-0.10.0/src/text_atlas.rs": "69b96c7465ece31c97fd7cc1a7bf59c3aa357115ed07297ade28254ecb5b7e03"
+      "glyphon-0.10.0/src/text_atlas.rs": "69b96c7465ece31c97fd7cc1a7bf59c3aa357115ed07297ade28254ecb5b7e03",
+      "cosmic-text-0.15.0/src/shape.rs": "615110123ec7e3ab29d0dc17de8c717cab1c8ac3b02f4024fe82b54f16ddd191",
+      "cosmic-text-0.15.0/src/swash.rs": "955a684430853c736c2e8f8e8c364a2a8217238232d222d0dd064e201ad4803d",
+      "glyphon-0.10.0/src/lib.rs": "f1d156ecb66f06af4eafe4e5c93452281ec13186d1e67a4101956103830f4d71"
     },
     "verified_boundary": {
       "cpu": "BufferLine privately owns text String, AttrsList and cached shaping/layout state. Public values and active vectors do not expose all retained capacities; AttrsList range storage is private. This is an accessor limitation, not proof that external allocation tracking is impossible.",
@@ -31220,7 +31223,15 @@
       "No dependency additions, vendoring, registry modifications, unsafe private-layout inference or renewed resize investigation.",
       "No claim that the goal is achieved or that all useful Rust work is blocked."
     ],
-    "owner_response": null
+    "owner_response": "Keep full accounting; develop a Datum-owned implementation route using existing dependencies.",
+    "selected_route": "Retain full acceptance requirements",
+    "owner_response_effect": "Develop within existing dependency authority and original S4/S5 prerequisites. Do not prepare a narrower acceptance waiver or infer approval to vendor or change dependencies.",
+    "implementation_route": {
+      "public_shaping_layout": "Existing glyphon reexports ShapeLine/ShapeSpan/ShapeWord/ShapeGlyph and LayoutLine. ShapeLine::new/layout expose owned nested vectors. Develop countable Datum-owned cache storage against those APIs, preserving exact existing font/text/layout semantics. Current TextRenderer expects Buffer, so changing only the cached type is not a complete production migration.",
+      "public_rasterization": "Existing SwashCache::get_image_uncached returns raster images. Develop original Datum atlas allocation, glyph placement and draw ownership so actual texture/buffer creation and upload boundaries are visible and enforceable. Preserve mask/color rendering, clipping, painter order and device recovery; do not copy library implementation sources.",
+      "still_requires_validation": "Private FontSystem shaping scratch and Swash ScaleContext lifetime/capacity remain to be accounted for by a validated Datum-owned method. Public output-vector capacities alone are insufficient. The route is not a conformance result or an assertion that all private accounting is solved.",
+      "migration_boundary": "Reuse the shared font authority and native/device owners; migrate bounded consumers with legacy parity and counter conformance, then retire competing production text paths. All original resource limits and S5 qualifications remain required."
+    }
   },
   "s4_shared_geometry_work": {
     "status": "Default world geometry now uses a shared boxed payload; full world lifetime/cap accounting remains open",
@@ -31250,6 +31261,36 @@
       "Arc/control-block and allocator overhead, construction scratch, unique shared accounting and native budget qualification remain open.",
       "No dependency, prototype, numerical budget, visual or resize changes; pending text-accounting route question remains unresolved."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/shared-geometry/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/shared-geometry/result.json",
+    "subsequent_owner_direction": "Owner selected full accounting; see s4_accounting_boundary_review.owner_response. No acceptance-scope question remains pending."
+  },
+  "s4_retired_geometry_work": {
+    "status": "Main history admission now charges pinned retired geometry and deduplicates shared CPU arrays; complete world/resource qualification remains open",
+    "base_commit": "eb1cbb23",
+    "production_consumers": [
+      "Main retained-scene history insert/restore/clear",
+      "Main active retained-scene budget pruning",
+      "Shared Board/schematic RetainedScene geometry observation"
+    ],
+    "shared_owner": "RetainedGeometryObserver plus RetainedSceneHistory::accounted_bytes/bytes_with_candidate",
+    "retired_paths": [
+      "Forgetting renderer-held CPU geometry when a history entry is evicted or cleared",
+      "Charging identical geometry allocations repeatedly across active/history scenes"
+    ],
+    "behavior": "Observe separately boxed vertex/stroke allocations without retaining their payload. Charge live retired payload, surviving Box slots and observer vector capacity; remove dead or covered observations. Deduplicate each vertex/stroke allocation independently across active, cached, incoming and retired state. Prune or refuse derived history when pinned geometry consumes headroom; actual scene/model content is untouched.",
+    "proof": {
+      "renderer": "3 retained-storage tests passed,235filtered, including independent vertex/stroke deduplication, sharing and release.",
+      "app": "4 history tests passed,392filtered, including rejection with pinned retired geometry, admission after release, observer storage release and active/history deduplication.",
+      "policy": "Source health,13 policy tests and dependency authority passed.",
+      "corrected_attempt": "Initial new pressure test measured one scene but inserted a clone with different nested Vec capacities. Corrected it to move the measured scene. Preserved the initial failed and corrected logs; final tests also cover shared admission accounting.",
+      "drift": "Clippy and preceding checks passed; full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun; goldens unchanged."
+    },
+    "limits": [
+      "History geometry sharing is now deduplicated; Arc/allocator headers, construction peaks, companion document-wide ownership and GPU/in-flight resource lifetime remain outside this bounded guard.",
+      "Required active or externally pinned content can exceed the budget; only derived history is pruned/refused. No full MEM-WORLD-CPU/HISTORY, aggregate, native or S4/S5 acceptance.",
+      "Weak observers keep small reference metadata only; payload release follows final strong CPU ownership, not GPU completion. GPU accounting needs its own submission lifetime boundary.",
+      "No dependency, prototype, numerical budget or resize change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/retired-geometry/result.json"
   }
 }

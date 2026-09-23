@@ -1,0 +1,36 @@
+{
+  "status": "Main history admission now charges pinned retired geometry and deduplicates shared CPU arrays; complete world/resource qualification remains open",
+  "base_commit": "eb1cbb23",
+  "production_consumers": [
+    "Main retained-scene history insert/restore/clear",
+    "Main active retained-scene budget pruning",
+    "Shared Board/schematic RetainedScene geometry observation"
+  ],
+  "shared_owner": "RetainedGeometryObserver plus RetainedSceneHistory::accounted_bytes/bytes_with_candidate",
+  "retired_paths": [
+    "Forgetting renderer-held CPU geometry when a history entry is evicted or cleared",
+    "Charging identical geometry allocations repeatedly across active/history scenes"
+  ],
+  "behavior": "Observe separately boxed vertex/stroke allocations without retaining their payload. Charge live retired payload, surviving Box slots and observer vector capacity; remove dead or covered observations. Deduplicate each vertex/stroke allocation independently across active, cached, incoming and retired state. Prune or refuse derived history when pinned geometry consumes headroom; actual scene/model content is untouched.",
+  "proof": {
+    "renderer": "3 retained-storage tests passed,235filtered, including independent vertex/stroke deduplication, sharing and release.",
+    "app": "4 history tests passed,392filtered, including rejection with pinned retired geometry, admission after release, observer storage release and active/history deduplication.",
+    "policy": "Source health,13 policy tests and dependency authority passed.",
+    "corrected_attempt": "Initial new pressure test measured one scene but inserted a clone with different nested Vec capacities. Corrected it to move the measured scene. Preserved the initial failed and corrected logs; final tests also cover shared admission accounting.",
+    "drift": "Clippy and preceding checks passed; full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun; goldens unchanged."
+  },
+  "limits": [
+    "History geometry sharing is now deduplicated; Arc/allocator headers, construction peaks, companion document-wide ownership and GPU/in-flight resource lifetime remain outside this bounded guard.",
+    "Required active or externally pinned content can exceed the budget; only derived history is pruned/refused. No full MEM-WORLD-CPU/HISTORY, aggregate, native or S4/S5 acceptance.",
+    "Weak observers keep small reference metadata only; payload release follows final strong CPU ownership, not GPU completion. GPU accounting needs its own submission lifetime boundary.",
+    "No dependency, prototype, numerical budget or resize change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/retired-geometry/result.json",
+  "artifacts_sha256_uncompressed": {
+    "render-tests.log.gz": "78bde1e2e54b7685826f4156adf3fab3cd891dbeefa212e9cedca42ff0ae5d8a",
+    "initial-app-tests.log.gz": "73819f7be4467347a92f3034c5f71e21d48544d52cc4d2caf80c520f69879e44",
+    "corrected-app-tests.log.gz": "2e913e213ea93d076e1dfe5de2969a517ea9e9d1180ee8b8b1cde6c35eb6e2b9",
+    "app-tests.log.gz": "23e26e2b77c69da4b5a008f8ef4b372c7939db86e50126bfab9e25ec29616a38",
+    "drift.log.gz": "ad94f453859de2b1e9cf13511025ae509699777676d8e41b73472f3510f39472"
+  }
+}
