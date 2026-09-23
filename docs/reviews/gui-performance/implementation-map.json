@@ -3862,6 +3862,11 @@
           "work": "s4_terminal_gpu_retention_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
           "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_attachment_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
+          "status": "Partial: shared attachment identity/capacity/submission retirement adopted; full accounting/caps/qualification remain open."
         }
       ]
     },
@@ -16279,6 +16284,11 @@
           "work": "s4_vertex_submission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
           "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_attachment_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
+          "status": "Partial: shared attachment identity/capacity/submission retirement adopted; full accounting/caps/qualification remain open."
         }
       ]
     },
@@ -16953,6 +16963,11 @@
           "work": "s4_terminal_gpu_retention_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
           "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_attachment_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
+          "status": "Partial: shared attachment identity/capacity/submission retirement adopted; full accounting/caps/qualification remain open."
         }
       ]
     },
@@ -17041,7 +17056,14 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_attachment_lifetime_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json",
+          "status": "Partial: shared attachment identity/capacity/submission retirement adopted; full accounting/caps/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-CLOSED-LIVE",
@@ -31813,5 +31835,33 @@
       "No new dependency, vendor, license, protocol limits, TerminalCore/PTY behavior, visual prototype, budget or resize amendment. No native OS-input/performance/endurance acceptance."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json"
+  },
+  "s4_attachment_lifetime_work": {
+    "status": "Default MSAA attachments share process and submission lifetime accounting; full caps and qualification remain open",
+    "base_commit": "fd7dc71f",
+    "production_consumers": [
+      "Shared Renderer MSAA attachment owner for Main, Global/Project Preferences and New Project full/overlay rendering"
+    ],
+    "retired_paths": [
+      "Separate current-only attachment identity as the sole renderer GPU capacity observation"
+    ],
+    "behavior": [
+      "Use the existing GPU Owner and tracked allocation for each MSAA view. Snapshot owner identifies the same process owner; snapshot allocation generation matches the tracked record generation. API capacity uses the existing physical extent/format/sample calculation.",
+      "Successful frame submissions retain the current tracked attachment until queue completion. Replacement and renderer close mark an allocation retiring while submitted references remain. A public weak observer survives renderer close without pinning GPU storage.",
+      "Existing attachment clones share the same primary owner; diagnostic retained-extent caches remain supported without duplicate byte charging. Preserve guarded publication, failure rollback, unchanged-extent reuse, format and sample count."
+    ],
+    "proof": {
+      "renderer": "292 final renderer tests pass including real GPU attachment clear/submit/replacement/completion/close with exact byte reconciliation, explicit shared-reference hold, existing failure recovery, warm/forced replacement and production GPU pixel comparisons.11 measurement/cost/visual-runner cases explicitly filtered.",
+      "lint": "All-targets visual gui-render/gui-app Clippy -D warnings passes. Source health2239files,13 policy tests and dependency authority pass.",
+      "native": "Fresh visual-feature datum-gui build and1680x1050 datum-test/R1 capture exit0; inspected and decoded RGBA exactly equals the preserved vertex-submission capture. No native input/endurance/performance acceptance.",
+      "initial_attempt": "Initial test compilation exposed the existing opt-in retained-extent probe cloning attachments. Preserve it with Arc ownership of the same Tracked view. Failed compile log retained; final full renderer proof follows correction.",
+      "drift": "Full drift attempted: formatting/resource policy passed, workspace Clippy failed when shared dependency/fingerprint/build artifacts disappeared during compilation (missing libautocfg and dep-info paths). No rustc/Cargo/cleanup process remained on inspection; cause unconfirmed, recorded dat-wf8i. Earlier focused visual Clippy,292 renderer tests and native capture remain valid. Later drift gates unrun; known Console golden discrepancy is not newly retested. No cleanup or repeated broad rebuild performed."
+    },
+    "limits": [
+      "Uniforms, staging, driver residency and complete device/document/host incidence and release-reason history remain outside this process report. Aggregate512MiB GPU and other resource admission/caps remain unfinished.",
+      "Native lifecycle admission continues to own generation bounds and recovery; this change does not add an offscreen replacement limit or qualify all native failure/device combinations.",
+      "No full ACC/MEM predicate, S4 or S5 closure. No dependency, vendor, license, prototype, budget, sample-count or nonblocking resize change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-lifetime/result.json"
   }
 }

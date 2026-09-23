@@ -1,5 +1,6 @@
 use super::Renderer;
-use std::sync::atomic::{AtomicU64, Ordering};
+use crate::text_gpu::lifetime::{Kind, Observer, Owner, SubmissionRef, Tracked};
+use std::sync::Arc;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct AttachmentKey {
@@ -41,15 +42,15 @@ pub struct SurfaceAttachmentSnapshot {
 pub(crate) struct SurfaceAttachment {
     key: AttachmentKey,
     allocation: u64,
-    view: wgpu::TextureView,
+    view: Arc<Tracked<wgpu::TextureView>>,
 }
 
 /// Keep the resource and its exact reuse identity together. Native admission
-/// waits for prior work before replacing an extent; wgpu retains backend GPU
-/// references after CPU handles are dropped. This owner does not invent a GPU
-/// completion signal from replacement or close.
+/// waits for prior work before replacing an extent. Shared submission references
+/// retain the same tracked allocation until the queue reports completion;
+/// replacement and close are not themselves completion signals.
 pub(crate) struct SurfaceAttachments {
-    owner: u64,
+    owner: Owner,
     allocations: u64,
     current: Option<SurfaceAttachment>,
     #[cfg(all(test, feature = "visual", target_os = "linux"))]
@@ -57,11 +58,8 @@ pub(crate) struct SurfaceAttachments {
 }
 impl Default for SurfaceAttachments {
     fn default() -> Self {
-        static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
         Self {
-            owner: NEXT_OWNER
-                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
-                .expect("attachment owner exhausted"),
+            owner: Owner::new(),
             allocations: 0,
             current: None,
             #[cfg(all(test, feature = "visual", target_os = "linux"))]
@@ -70,10 +68,16 @@ impl Default for SurfaceAttachments {
     }
 }
 impl SurfaceAttachments {
+    pub(super) fn submission_ref(&self) -> Option<SubmissionRef> {
+        self.current
+            .as_ref()
+            .map(|attachment| attachment.view.submission_ref())
+    }
+
     fn snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
         let current = self.current.as_ref()?;
         Some(SurfaceAttachmentSnapshot {
-            owner: self.owner,
+            owner: self.owner.id(),
             allocation: current.allocation,
             allocations_created: self.allocations,
             extent: current.key.extent,
@@ -127,7 +131,15 @@ impl SurfaceAttachments {
             let replacement = SurfaceAttachment {
                 key,
                 allocation: self.allocations,
-                view: texture.create_view(&wgpu::TextureViewDescriptor::default()),
+                view: Arc::new(
+                    self.owner.track(
+                        texture.create_view(&wgpu::TextureViewDescriptor::default()),
+                        key.payload_bytes()
+                            .expect("render attachment has a sized format"),
+                        self.allocations,
+                        Kind::Attachment,
+                    ),
+                ),
             };
             // Backend error callbacks may report allocation/validation failure
             // during creation. Keep the old reference until this check passes;
@@ -144,6 +156,12 @@ impl SurfaceAttachments {
 }
 
 impl Renderer {
+    /// Observe this host's current and submitted-retiring attachment capacities.
+    /// Survives renderer close without keeping the GPU allocation alive.
+    pub fn surface_attachment_allocation_observer(&self) -> Observer {
+        self.surface_attachments.owner.observer()
+    }
+
     /// Prepare native attachments before scene uploads and encoding. The host
     /// supplies its existing device-health signal; this does not install another
     /// backend error handler or claim that deferred errors have already arrived.
@@ -201,8 +219,8 @@ mod tests {
             AttachmentKey::new(1, 1, key.format, 8)
         );
         assert_ne!(
-            SurfaceAttachments::default().owner,
-            SurfaceAttachments::default().owner
+            SurfaceAttachments::default().owner.id(),
+            SurfaceAttachments::default().owner.id()
         );
     }
 
@@ -251,6 +269,72 @@ mod tests {
         assert_eq!(recovered.allocations_created, 4);
         assert_ne!(recovered.allocation, first.allocation);
         assert_eq!(recovered.owner, first.owner);
+    }
+
+    #[cfg(all(feature = "visual", target_os = "linux"))]
+    #[test]
+    fn attachment_retirement_reconciles_submission_completion_and_close() {
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut owner = SurfaceAttachments::default();
+        let observer = owner.owner.observer();
+        let key = AttachmentKey::new(32, 64, wgpu::TextureFormat::Rgba8Unorm, 4);
+        let view = owner.ensure(&device, key);
+        let mut encoder = device.create_command_encoder(&Default::default());
+        {
+            let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view,
+                    resolve_target: None,
+                    depth_slice: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                ..Default::default()
+            });
+        }
+        let first = observer.allocations()[0];
+        assert_eq!(first.owner, owner.snapshot().unwrap().owner);
+        assert_eq!(first.generation, owner.snapshot().unwrap().allocation);
+        assert_eq!(first.bytes, 32 * 64 * 4 * 4);
+        let extra = owner.submission_ref().unwrap();
+        let submitted = owner.submission_ref().unwrap();
+        queue.submit([encoder.finish()]);
+        crate::text_gpu::hold_until_done(&queue, vec![submitted]);
+        owner.ensure(&device, AttachmentKey::new(64, 32, key.format, 4));
+        let records = observer.allocations();
+        assert_eq!(records.len(), 2);
+        assert_eq!(
+            records.iter().map(|r| r.bytes).sum::<u64>(),
+            first.bytes * 2
+        );
+        assert!(records.iter().any(|r| r.id == first.id && r.retiring));
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        assert_eq!(
+            observer.allocations().len(),
+            2,
+            "explicit shared reference remains"
+        );
+        drop(extra);
+        assert_eq!(
+            observer.allocations().len(),
+            1,
+            "completed submission released its hold"
+        );
+        drop(owner);
+        assert!(
+            observer.allocations().is_empty(),
+            "observer cannot pin a closed attachment"
+        );
+        assert!(
+            !Renderer::gpu_process_allocations()
+                .iter()
+                .any(|r| r.id == first.id)
+        );
     }
 
     #[cfg(all(feature = "visual", target_os = "linux"))]
