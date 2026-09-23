@@ -79,6 +79,9 @@ impl RetainedSceneHistory {
             self.active_bytes,
             self.owned_history_bytes()
         );
+        if let Some(active) = &self.active_geometry {
+            active.check_document_cpu_budget()?;
+        }
         Ok(())
     }
 

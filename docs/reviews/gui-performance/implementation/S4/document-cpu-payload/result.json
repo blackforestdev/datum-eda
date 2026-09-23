@@ -1,0 +1,50 @@
+{
+  "status": "Retained CPU payload aggregation and render-time limit shared by live owners of each document",
+  "base_commit": "6c65bbba",
+  "production_consumers": [
+    "Board and companion schematic retained-scene constructors register weak allocation observations under the existing revision-independent document identity",
+    "Runtime native render and visual capture existing RetainedSceneHistory::check_render_budget boundary checks its active document across owners"
+  ],
+  "retired_paths": [
+    "Render-budget decision considers only one Runtime scene/history owner while other owners retain the same document"
+  ],
+  "behavior": [
+    "Keep a weak per-document observation registry; no scene payload is retained by registration. Count shared geometry/command/hit allocations once across registered scene constructions and external clones, plus per-document observer vector capacity. Prune released observations on registration/query. Fail the existing host render boundary when aggregate observed payload exceeds64MiB; local history checks still apply. Other document identities are independent. This is post-construction enforcement, not preallocation admission."
+  ],
+  "proof": {
+    "renderer": "352 renderer tests pass, 11 filtered. New production-constructor test aggregates distinct retained scenes with the same document identity, confirms clones add no payload, accepts exact usage and rejects one byte less, isolates another document, observes an external clone after original release, and returns to zero observed payload after final scene release. Existing lifetime and pixel tests pass.",
+    "app": "385 app tests pass, 16 ignored; native/capture use existing per-host failure propagation and local history limits.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health2279, dependency authority and governance pass.",
+    "scope": "No new native/backend/endurance campaign or full drift rerun; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Complete per-document allowance must still include cross-owner history keys/entry metadata, global registry storage and remaining bookkeeping. Weak-only container reclamation is lazy on registry access. Candidate construction-time admission remains open. No MEM-WORLD-CPU/HISTORY or S5 closure.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/tests.log.gz",
+      "uncompressed_sha256": "ab78d3e6a82460c0edbe29543a2e2839a5bd4114b6a94ba4739b32e97fe5c278"
+    },
+    "app-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/app-tests.log.gz",
+      "uncompressed_sha256": "076f5d79a83ccad78ba37c84ca60892b15c16c0d4c3af3ab96b95616031d840a"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/clippy.log.gz",
+      "uncompressed_sha256": "5380608bb8358abb1ea5b061bb0b4cb2e261a883879897cfb444e5398a1d386f"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/build.log.gz",
+      "uncompressed_sha256": "49eaf5514ccccb70a0490836f46f0a1bcae5653b64a7b8b4ba8348e9f29a7313"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/document_cpu.rs": "1f65d66401444a22f9537d8e0aa7f031b0219723f46ac806d0fdcd62517a0b52",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "6d5204b92810f27ebbd674c6555b2f8aae07527208df19d167706c10c2e093ae",
+    "crates/gui-render/src/render/scene_retained_access.rs": "0a15857ce05933e86a9cea15786680e024adc6e579db2aa7d7681d47a9d6e4b0",
+    "crates/gui-render/src/render/schematic_retained.rs": "d0951a764d5d794792518eee106e459345d55537bc682b568ea37516ef9a816f",
+    "crates/gui-app/src/retained_scene_history.rs": "dd2f3b0c6fed4fb2594d10b987ed79ac6acffbb32ab48b5b4ed27435086d045b"
+  }
+}
