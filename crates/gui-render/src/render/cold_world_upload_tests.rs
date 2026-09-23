@@ -87,6 +87,7 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
                     - renderer.atlas_lookup_metadata_bytes()
                     <= CHUNK_BYTES as u64
                         + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
+                        + crate::text_gpu::upload::destination_metadata_bytes(4).unwrap()
             );
         }
         device.poll(wgpu::PollType::wait_indefinitely()).unwrap();

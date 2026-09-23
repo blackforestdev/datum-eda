@@ -1,0 +1,71 @@
+{
+  "status": "Default common uploads publish source/transfer totals per stable destination allocation and generation",
+  "base_commit": "3d2d55c8",
+  "production_consumers": [
+    "Retained board/schematic world upload chunks",
+    "All shared screen/control vertex and uniform uploads",
+    "Workspace/overlay glyph instance buffers and atlas full/chunk uploads",
+    "Terminal graphics quad buffers and texture chunks"
+  ],
+  "retired_paths": [
+    "Default buffer/texture upload descriptors without destination allocation attribution",
+    "Submitted byte totals available only at batch/renderer level"
+  ],
+  "behavior": [
+    "Borrow destination identity during planning without allocating or cloning identity handles per dirty range. The shared batch creates one admitted receipt per buffer group or texture copy. Only Batch::hold, after queue.submit, commits counters to the stable allocation identity; cancelled/refused batches do not increment them.",
+    "Record submitted_source_bytes and submitted_transfer_bytes alongside allocation ID, owner, generation, capacity and retiring state. Source bytes are aligned buffer ranges or unpadded texture pixels. Transfer bytes describe the API upload representation, including texture row padding and sparse destination indices; they are not driver traffic, GPU duration or staging allocation capacity.",
+    "Receipt vectors share existing16MiB host/64MiB process staging admission and completion lifetime. Cold world, atlas and terminal preflights include their capacity. Existing frame/cumulative totals remain separate; no unbounded per-frame event history is retained. All default descriptor producers provide identity; anonymous descriptors remain confined to test/diagnostic fixtures."
+  ],
+  "proof": {
+    "renderer": "384 passed;0 failed;11 filtered. Extended mixed-upload proof checks distinct target IDs/generations,6-to512texture padding and8-to8buffer ranges after submission; cancellation/refusal leaves destination totals zero. Extended sparse readback proof checks4096*4source versus4096*8transfer bytes and the separate direct target. Existing default pixel/reuse/cancellation/continuation/recovery tests pass.",
+    "lint_build": "Strict visual renderer/app all-target Clippy and fresh offline GUI build pass. Source health2296files; no native input or broad benchmark campaign.",
+    "initial_failure": "Initial renderer run381passed,3failed: world continuation, atlas pixel retirement and frame staging assertions omitted new receipt storage. Preserve initial log; include exact receipt capacities without changing any resource cap. Final run passes."
+  },
+  "limits": [
+    "Seven recorded implementation gaps remain. Complete consumer incidence and correlation of per-allocation deltas with native/frame receipts remain open under REUSE-SCREEN/AC-05; creation payload/reference/release-reason and full CPU/private-text accounting are not established by these upload counters.",
+    "Counters describe submitted API work, not completion or presentation. Readback/capture/opt-in timestamp copies are separate from this common upload path. Original S5 native/negative/resource/endurance qualification remains required; no full predicate/S4/S5 closure.",
+    "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edit excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/upload-destinations/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-destinations/renderer.log.gz",
+      "uncompressed_sha256": "c4b2e63a393be0f45785e4acd524a0bb7e9cfdbf07fea5d457bdae8f8af4c2e3"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-destinations/clippy.log.gz",
+      "uncompressed_sha256": "2e39205061a2fca6f5c1b571c18eaf7b637dc95be237e959760ca723679e58de"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-destinations/build.log.gz",
+      "uncompressed_sha256": "7d3a35b148dc9d3ef86f83c7568b09be1afe99f2928df5482e02474cd002b31a"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-destinations/check.log.gz",
+      "uncompressed_sha256": "ec82ff378cfc3753e747cc3430e03f3d8f7f8878e27d1febcebeb440a52e0bfe"
+    },
+    "initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-destinations/initial.log.gz",
+      "uncompressed_sha256": "3f43f54354f37311e71faa3d514c7b88a58a7f4decd54bb23fcc12720ccc1046"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload.rs": "ad79572b54b3ead647070efcac23f005019929afab586985045b1767e642dc58",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "72fa08a94c3f2273a456851f61bba157aaabbebf1b82b36e5ba55a60425aa951",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "37225486f1d8503c4d19002fd9dfbae34aa617de99c54777d6f5807175c815d5",
+    "crates/gui-render/src/render/retained_buffer.rs": "2a0afd2fee2d3b8929ae9135273f2c73d2a25531b9f2c7dda8ca57996a5270d3",
+    "crates/gui-render/src/render/screen_buffer.rs": "aa71c739321f372bb479cbb31f9fde2174fa6186de14d3aed864b79c041c6cc1",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "60a4f71349cef2d436c0f53f1d127aca76912a69706a6bff6ee66432acf007dd",
+    "crates/gui-render/src/render/terminal_upload.rs": "29ca299223308a67c8ae0ffe9423a91e3489ad7b417e06c2db69cf16e577ed65",
+    "crates/gui-render/src/render/uniform_buffer.rs": "f8a763d3bdcf73d6680bceca0ef0db582f43be67c2be12dd15df0ab393a23cea",
+    "crates/gui-render/src/render/vertex_allocation.rs": "4a5c482c191f40ba1680ea015f7018518da9ace1cdf8588f5a9f483d7ff2bbf9",
+    "crates/gui-render/src/text_gpu/atlas.rs": "b272ce774b3c69dfe7a68cd45793392d195d073988bf2281af4c473718ff879f",
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": "f82ceac89578d697d41a12f16898d0ce7680c75b645151ac36ff8127ec1fe7f9",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs": "8c3e3ceaefae3cf129bb9c562502a884bee4ae76fdc1f1561856b78e14abd496",
+    "crates/gui-render/src/text_gpu/draw.rs": "5d40538e3f8513c30456ec0ebfde8594c260893d636cc1ceaa6116e37babb223",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "083b9f0e07aea3d683e18c6f9651d6bd5dcdfbca56b771181c08c5bb3b8c0c7f",
+    "crates/gui-render/src/text_gpu/sparse_upload_tests.rs": "aa58ea2ba01c6bd0c61dbcd59f806f12dce4b49e3ba2eb79f6d3babba9348132",
+    "crates/gui-render/src/text_gpu/upload.rs": "35115a8dc90bc0b0271fcc5c0f89538c708e010cc7c5ad0976d99ffcd4b3c0e0",
+    "crates/gui-render/src/text_gpu/upload_tests.rs": "608b9e1ade6033a45ec46632259530c555bfef2fd51f250030b965fecdd9157d"
+  }
+}

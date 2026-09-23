@@ -57,7 +57,8 @@ impl Renderer {
         self.release_text_scratch_for(
             CHUNK_BYTES as u64
                 + descriptor_bytes
-                + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?,
+                + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?
+                + crate::text_gpu::upload::destination_metadata_bytes(4)?,
         );
         let mut remaining = CHUNK_BYTES;
         let mut uploads =

@@ -24,8 +24,17 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: false,
     });
+    let destinations = Owner::new();
+    let target = destinations.track(
+        target,
+        4096 * 20,
+        4,
+        crate::text_gpu::lifetime::Kind::Vertex,
+    );
+    let direct = destinations.track(direct, 4, 5, crate::text_gpu::lifetime::Kind::Vertex);
     let mut uploads: Vec<_> = (0..4096)
         .map(|i| BufferUpload {
+            target: Some(target.upload_target()),
             buffer: &target,
             offset: i * 20,
             bytes: &value,
@@ -45,6 +54,7 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     uploads.insert(
         0,
         BufferUpload {
+            target: Some(direct.upload_target()),
             buffer: &direct,
             offset: 0,
             bytes: &value,
@@ -57,7 +67,8 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     let metadata = crate::text_gpu::staging_vec::StagingVec::<
         crate::text_gpu::lifetime::Tracked<wgpu::Buffer>,
     >::capacity_bytes(2)
-    .unwrap();
+    .unwrap()
+        + crate::text_gpu::upload::destination_metadata_bytes(2).unwrap();
     let host = Budget::new(required + metadata);
     let scatter = Scatter::default();
     let create = || batch_with_scatter(&device, &owner, 1, &host, &[], &uploads, Some(&scatter));
@@ -74,7 +85,27 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     assert_eq!(observer.submitted_upload_totals(), Default::default());
     let mut pending = create().unwrap().unwrap();
     queue.submit([pending.command()]);
+    assert!(
+        destinations
+            .records()
+            .iter()
+            .all(|r| r.submitted_source_bytes == 0)
+    );
     pending.hold(&queue);
+    let records = destinations.records();
+    let sparse = records.iter().find(|r| r.id == target.id()).unwrap();
+    assert_eq!(
+        (
+            sparse.submitted_source_bytes,
+            sparse.submitted_transfer_bytes
+        ),
+        (4096 * 4, 4096 * 8)
+    );
+    let plain = records.iter().find(|r| r.id == direct.id()).unwrap();
+    assert_eq!(
+        (plain.submitted_source_bytes, plain.submitted_transfer_bytes),
+        (4, 4)
+    );
     assert_eq!(
         observer.submitted_upload_totals(),
         crate::UploadTotals {
@@ -143,12 +174,14 @@ fn sparse_encoding_comparison() {
     let bytes = vec![0x35; 4096 * 20];
     let sparse: Vec<_> = (0..4096)
         .map(|i| BufferUpload {
+            target: None,
             buffer: &target,
             offset: i * 20,
             bytes: &bytes[..4],
         })
         .collect();
     let span = [BufferUpload {
+        target: None,
         buffer: &target,
         offset: 0,
         bytes: &bytes[..bytes.len() - 16],

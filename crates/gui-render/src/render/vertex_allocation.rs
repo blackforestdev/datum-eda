@@ -64,6 +64,10 @@ impl VertexAllocation {
         self.buffer = None;
     }
 
+    pub(crate) fn upload_target(&self) -> Option<crate::text_gpu::lifetime::UploadTarget<'_>> {
+        self.buffer.as_ref().map(Tracked::upload_target)
+    }
+
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.buffer.as_deref()
     }

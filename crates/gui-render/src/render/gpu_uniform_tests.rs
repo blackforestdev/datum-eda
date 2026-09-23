@@ -341,6 +341,7 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
         budget.used(),
         expected as u64
             + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
+            + crate::text_gpu::upload::destination_metadata_bytes(2).unwrap()
             + renderer.renderer.screen_upload_metadata_bytes()
             + renderer.renderer.screen_upload_snapshot_bytes()
             + renderer.renderer.glyph_upload_storage_bytes()

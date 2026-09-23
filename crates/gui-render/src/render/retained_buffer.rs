@@ -88,6 +88,7 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
         if count != 0 {
             let bytes: &[u8] = bytemuck::cast_slice(self.source.as_ref().unwrap().as_ref());
             out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
+                target: self.allocation.upload_target(),
                 buffer: self.buffer().unwrap(),
                 offset: self.uploaded as u64,
                 bytes: &bytes[self.uploaded..self.uploaded + count],

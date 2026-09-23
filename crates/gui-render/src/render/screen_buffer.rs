@@ -129,6 +129,7 @@ impl ScreenBuffer {
             let end = range.end.min(bytes.len());
             if range.start < end {
                 out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
+                    target: self.allocation.upload_target(),
                     buffer: self.allocation.buffer().unwrap(),
                     offset: range.start as u64,
                     bytes: &bytes[range.start..end],
