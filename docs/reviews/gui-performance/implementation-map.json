@@ -15108,6 +15108,11 @@
           "work": "s4_document_history_cap_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-history-cap/result.json",
           "status": "Six historical entries admitted atomically per document across local owners"
+        },
+        {
+          "work": "s4_construction_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json",
+          "status": "Default retained constructors admit quad-to-vertex expansion before allocation and propagate refusal through existing host failure path"
         }
       ]
     },
@@ -15241,6 +15246,11 @@
           "work": "s4_document_history_cap_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-history-cap/result.json",
           "status": "Six historical entries admitted atomically per document across local owners"
+        },
+        {
+          "work": "s4_construction_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json",
+          "status": "Default retained constructors admit quad-to-vertex expansion before allocation and propagate refusal through existing host failure path"
         }
       ]
     },
@@ -34423,5 +34433,35 @@
       "Twelve implementation gaps and original S5 qualification remain required. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/document-history-cap/result.json"
+  },
+  "s4_construction_admission_work": {
+    "status": "Default retained constructors admit quad-to-vertex expansion before allocation and propagate refusal through existing host failure path",
+    "base_commit": "d628abda",
+    "production_consumers": [
+      "Main and companion retained scene constructors",
+      "Runtime rendering and screenshot capture",
+      "Renderer offscreen visual capture",
+      "Pointer, hover, marking-menu and authoring hit preparation"
+    ],
+    "retired_paths": [
+      "Unconditional expanded vertex allocation before document budget checking",
+      "Input preparation assumed retained construction could not fail",
+      "Quad staging remained live through final scene metadata construction"
+    ],
+    "behavior": [
+      "Measure live constructor allocations with the existing Datum allocator scope and include existing document owners plus proposed vertex capacity/header before quad-to-vertex expansion. Reject overflow or excess before allocating the expanded vertex buffer. Release source quads immediately after conversion. Fallible constructors feed default native and capture consumers; compatibility Self-returning convenience constructors explicitly expect successful admission. On refusal, retire matching local history and retry once while preserving unrelated history and pinned payload. Cache an unresolved construction error so input does not rebuild repeatedly; rendering checks return it to the existing paused-host boundary, and an explicit native render retry clears the error and attempts construction again. No partial scene is published."
+    ],
+    "proof": {
+      "renderer": "358 renderer tests pass, 11 filtered. Checked-in simple-demo board and schematic constructors refuse at a private zero-budget test boundary then succeed with the unchanged production allowance. Exact admission test covers live document bytes, constructor staging, proposed six-vertex allocation, one-byte refusal, overflow and unchanged tracked allocation count. Existing GPU/painter/reuse/retirement tests pass.",
+      "app": "394 app tests pass, 16 ignored. Lifecycle tests verify matching-only history eviction, a single retry, persistent refusal surfaced by budget checking, suppression of input rebuilds and explicit retry recovery.",
+      "lint_build": "Strict renderer/app all-targets Clippy with app visual feature and fresh visual app build pass. Source health2280, dependency authority and governance/format checks pass. Lifecycle extraction and prepared-scene method relocation keep production modules within their existing ceilings.",
+      "prior_failure": "Two initial renderer runs had 357 passes and one invalid new-test assertion: the legacy review fixture has no retained world geometry. Preserve both logs. Use the already-established checked-in KiCad board fixture; its focused constructor test and final renderer suite pass.",
+      "scope": "No new native OS-input/backend/scale/endurance or broad drift campaign. Unit failure propagation is not full native failure qualification; original S5 obligations remain."
+    },
+    "limits": [
+      "This admits the vertex-expansion allocation, not every constructor allocation. Earlier quad/stroke/command/hit/layout growth, later metadata/index/registry allocation, allocation-owner scope bookkeeping, complete staging-tier admission and concurrent whole-constructor reservations remain open. Complete CPU/history ownership reconciliation, including externally held weak containers, also remains open.",
+      "Twelve implementation gaps and original S5 qualification remain required. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json"
   }
 }

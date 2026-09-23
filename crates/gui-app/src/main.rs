@@ -273,10 +273,13 @@ impl Runtime {
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
+            self.retained_scene_cache.retry_construction();
             self.ensure_retained_scene();
+            self.retained_scene_cache.check_render_budget()?;
             self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
         }
         self.retained_scene_cache.check_render_budget()?;
+        self.schematic_scene_accounting.retry_construction();
         self.ensure_schematic_retained_scene();
         self.schematic_scene_accounting.check_render_budget()?;
         let retained = self
@@ -374,20 +377,6 @@ impl Runtime {
         convert_texture_pixels_to_rgba(&mut pixels, self.config.format)?;
         image::RgbaImage::from_raw(width, height, pixels)
             .context("construct visual shell image from readback pixels")
-    }
-
-    fn prepared_scene(&mut self) -> &PreparedScene {
-        if self.prepared_scene.is_none() {
-            self.scene_dirty = false;
-            self.ensure_retained_scene();
-            self.prepared_scene = Some(
-                self.build_terminal_prepared_scene()
-                    .expect("approved active TerminalCore snapshot fits production limits"),
-            );
-        }
-        self.prepared_scene
-            .as_ref()
-            .expect("prepared scene initialized above")
     }
 
     // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001: there is
@@ -763,7 +752,9 @@ impl Runtime {
         if !self.active_tool_is_authoring() || !self.workspace().authoring.gesture.is_active() {
             return false;
         }
-        let prepared = self.prepared_scene();
+        let Some(prepared) = self.prepared_scene() else {
+            return false;
+        };
         // Authoring is a board-scene gesture; only the board surface drives it.
         let Some((world, SceneSurface::Board)) =
             prepared.world_point_at_screen(screen_pos.0, screen_pos.1)
@@ -898,7 +889,9 @@ impl Runtime {
 
     fn authoring_target_object_id(&mut self, world: PointNm) -> Option<String> {
         let target = {
-            self.ensure_retained_scene();
+            if !self.ensure_retained_scene() {
+                return None;
+            }
             let retained = self
                 .retained_scene
                 .as_ref()

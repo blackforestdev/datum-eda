@@ -117,6 +117,35 @@ impl RetainedScene {
         height: u32,
         scale_factor: f32,
     ) -> Self {
+        Self::try_from_workspace_for_surface(state, width, height, scale_factor)
+            .expect("retained scene construction fits document budget")
+    }
+
+    pub fn try_from_workspace_for_surface(
+        state: &ReviewWorkspaceState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+    ) -> anyhow::Result<Self> {
+        Self::from_workspace_bounded(
+            state,
+            width,
+            height,
+            scale_factor,
+            retained_scene_owner::document_cpu::DOCUMENT_LIMIT,
+        )
+    }
+
+    pub(crate) fn from_workspace_bounded(
+        state: &ReviewWorkspaceState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+        limit: usize,
+    ) -> anyhow::Result<Self> {
+        let budget = retained_scene_owner::document_cpu::for_scene(&state.scene.scene_id);
+        let scope = crate::cpu_alloc::Scope::new("retained-board-construction");
+        scope.with(|| {
         // This is the single world-scene resolve entry point; count the miss.
         // (`reference_projection` below is derived here and nowhere else, so a pane
         // op that reuses the retained scene provably never recomputes it.)
@@ -172,7 +201,10 @@ impl RetainedScene {
         push_retained_world_hit_regions(&mut world_hit_regions, &state.scene, state);
         let hits_elapsed = hits_started.elapsed();
         let vertex_started = std::time::Instant::now();
+        retained_scene_owner::document_cpu::admit_vertex_expansion(&budget, &scope, world_quads.len(), limit)?;
         let world_vertices = quads_to_vertices(&world_quads);
+        let quad_count = world_quads.len();
+        drop(world_quads);
         let vertex_elapsed = vertex_started.elapsed();
         trace_render_timing(format!(
             "retained total={}ms geometry={}ms hits={}ms vertices={}ms quads={} vertices={} hit_regions={}",
@@ -180,11 +212,11 @@ impl RetainedScene {
             geometry_elapsed.as_millis(),
             hits_elapsed.as_millis(),
             vertex_elapsed.as_millis(),
-            world_quads.len(),
+            quad_count,
             world_vertices.len(),
             world_hit_regions.len()
         ));
-        Self {
+        Ok(Self {
             surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
             world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
                 world_vertices,
@@ -197,7 +229,8 @@ impl RetainedScene {
             draw_commands: draw_commands.into(),
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions).into(),
         }
-        .registered_cpu()
+        .registered_cpu())
+        })
     }
 
     // `hit_test_authored_world` (board) and `hit_test_world` (schematic,

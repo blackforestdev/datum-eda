@@ -125,16 +125,20 @@ impl OffscreenRenderer {
             OUTPUT_FORMAT,
         )?;
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
-        let retained =
-            RetainedScene::from_workspace_for_surface(state, self.width, self.height, scale_factor);
-        // P2.2a: companion schematic world buffer for the additive second GPU pass
-        // (None when the state has no schematic scene / Schematic pane).
-        let schematic_retained = RetainedScene::from_workspace_schematic_for_surface(
+        let retained = RetainedScene::try_from_workspace_for_surface(
             state,
             self.width,
             self.height,
             scale_factor,
-        );
+        )?;
+        // P2.2a: companion schematic world buffer for the additive second GPU pass
+        // (None when the state has no schematic scene / Schematic pane).
+        let schematic_retained = RetainedScene::try_from_workspace_schematic_for_surface(
+            state,
+            self.width,
+            self.height,
+            scale_factor,
+        )?;
         let camera = camera.unwrap_or_else(|| CameraState::fit_to_bounds(&state.scene.bounds));
         let prepared = if state.ui.global_preferences.open {
             PreparedScene::from_workspace_with_terminal_renderer(

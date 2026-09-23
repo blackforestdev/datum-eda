@@ -3,6 +3,20 @@
 use super::*;
 
 impl Runtime {
+    pub(super) fn prepared_scene(&mut self) -> Option<&PreparedScene> {
+        if self.prepared_scene.is_none() {
+            self.scene_dirty = false;
+            if !self.ensure_retained_scene() {
+                return None;
+            }
+            self.prepared_scene = Some(
+                self.build_terminal_prepared_scene()
+                    .expect("approved active TerminalCore snapshot fits production limits"),
+            );
+        }
+        self.prepared_scene.as_ref()
+    }
+
     pub(super) fn build_terminal_prepared_scene(&mut self) -> Result<PreparedScene> {
         let schematic_camera = self.schematic_camera_for_render();
         // Closed docks consume no terminal render input. Leave dirty rows in

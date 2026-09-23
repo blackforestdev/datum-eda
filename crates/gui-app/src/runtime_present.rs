@@ -14,6 +14,8 @@ impl Runtime {
         if self.device_health.failed() {
             return Ok(false);
         }
+        self.retained_scene_cache.retry_construction();
+        self.schematic_scene_accounting.retry_construction();
         let render_started = std::time::Instant::now();
         let acquire_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| {
@@ -78,6 +80,7 @@ impl Runtime {
                 let retained_started = std::time::Instant::now();
                 append_gui_verbose_diagnostic_line(|| "retained scene build begin");
                 self.ensure_retained_scene();
+                self.retained_scene_cache.check_render_budget()?;
                 retained_build_ms = retained_started.elapsed().as_millis();
                 append_gui_verbose_diagnostic_line(|| {
                     format!("retained scene build end {retained_build_ms}ms")
