@@ -1,18 +1,26 @@
 //! Shared shaped-buffer ownership and bounded workspace/dialog retention.
 use super::*;
-use glyphon::Style;
+use crate::text_gpu::Area;
+use crate::text_layout::TextLayout;
+use glyphon::cosmic_text::ShapeBuffer;
 use std::hash::{Hash, Hasher};
+
+pub(super) struct CachedTextBuffer {
+    key: TextBufferKey,
+    buffer: TextLayout,
+    last_used_frame: u64,
+}
 
 pub(super) fn build_text_areas<'a>(
     cache: &'a [CachedTextBuffer],
     indices: &[usize],
     runs: &[TextRun],
-) -> Vec<TextArea<'a>> {
+) -> Vec<Area<crate::text_layout::Runs<'a>>> {
     indices
         .iter()
         .zip(runs.iter())
-        .map(|(index, run)| TextArea {
-            buffer: &cache[*index].buffer,
+        .map(|(index, run)| Area {
+            rows: cache[*index].buffer.layout_runs(),
             left: run.x,
             top: run.y,
             scale: 1.0,
@@ -25,7 +33,6 @@ pub(super) fn build_text_areas<'a>(
                     bottom: (rect.y + rect.height).ceil() as i32,
                 }),
             default_color: text_color(run.color),
-            custom_glyphs: &[],
         })
         .collect()
 }
@@ -127,6 +134,7 @@ fn retain_overlay_buffers<T>(
 #[derive(Default)]
 pub(crate) struct TextBufferCache {
     entries: Vec<CachedTextBuffer>,
+    layout_scratch: ShapeBuffer,
     // Sorted shaping fingerprint + entry index. This owns no text or shaping
     // payload; exact key comparison remains authoritative within each bucket.
     lookup: Vec<(u64, usize)>,
@@ -197,7 +205,14 @@ fn run_fingerprint(run: &TextRun) -> u64 {
 
 impl TextBufferCache {
     pub(crate) fn key_usage(&self) -> crate::TextCacheKeyUsage {
+        let mut shapes = std::collections::BTreeMap::new();
+        let mut layout_bytes = 0;
+        for entry in &self.entries {
+            layout_bytes += entry.buffer.layout_storage_bytes();
+            shapes.extend(entry.buffer.shape_allocations());
+        }
         crate::TextCacheKeyUsage {
+            shaped_payload_bytes: layout_bytes + shapes.values().sum::<usize>(),
             entries: self.entries.len(),
             key_text_bytes: self
                 .entries
@@ -348,13 +363,12 @@ impl TextBufferCache {
         }
         if let Some(index) = reusable {
             // No current-frame text area references this entry. Relayout its
-            // existing Buffer instead of cloning paragraphs and retaining an
-            // obsolete extent. The shaping fingerprint and index stay valid.
+            // shared shaped paragraphs without cloning glyph payloads or retaining
+            // an obsolete extent. The shaping fingerprint and index stay valid.
             let entry = &mut self.entries[index];
             entry
                 .buffer
-                .set_size(font_system, Some(extent.0 as f32), Some(extent.1 as f32));
-            entry.buffer.shape_until_scroll(font_system, false);
+                .relayout(font_system, &mut self.layout_scratch, run, extent);
             entry.key.width_px = extent.0;
             entry.key.height_px = extent.1;
             entry.last_used_frame = self.frame;
@@ -366,50 +380,19 @@ impl TextBufferCache {
             return (index, true);
         }
         let key = text_buffer_key(run, width, height);
-        // Extent belongs to layout. Clone the existing public Buffer cache so
-        // already shaped paragraphs survive wrap/clip-size changes. FontSystem,
-        // shaping mode, line metrics and font inventory are fixed by this owner;
-        // all variable text/face/size/rich-style inputs still have to match.
-        let mut buffer = if let Some(index) = shaped {
+        // Simultaneous extents share immutable shaping, never cloned glyph
+        // vectors or copied paragraph strings. Each owns only its visible layout.
+        let buffer = if let Some(index) = shaped {
             #[cfg(test)]
             {
                 self.shape_reuses += 1;
             }
-            let mut buffer = self.entries[index].buffer.clone();
-            buffer.set_size(font_system, Some(extent.0 as f32), Some(extent.1 as f32));
+            let mut buffer = self.entries[index].buffer.fork_for_relayout();
+            buffer.relayout(font_system, &mut self.layout_scratch, run, extent);
             buffer
         } else {
-            let mut buffer = Buffer::new(font_system, Metrics::new(run.size, run.size * 1.22));
-            let (buffer_width, buffer_height) = extent;
-            buffer.set_size(
-                font_system,
-                Some(buffer_width as f32),
-                Some(buffer_height as f32),
-            );
-            let attrs = text_attrs(run.face);
-            if run.rich_spans.is_empty() {
-                buffer.set_text(font_system, &run.text, &attrs, Shaping::Basic, None);
-            } else {
-                buffer.set_rich_text(
-                    font_system,
-                    run.rich_spans.iter().map(|span| {
-                        let mut span_attrs = attrs.clone().color(text_color(span.color));
-                        if span.bold {
-                            span_attrs = span_attrs.weight(Weight::BOLD);
-                        }
-                        if span.italic {
-                            span_attrs = span_attrs.style(Style::Italic);
-                        }
-                        (span.text.as_str(), span_attrs)
-                    }),
-                    &attrs,
-                    Shaping::Basic,
-                    None,
-                );
-            }
-            buffer
+            TextLayout::new(font_system, &mut self.layout_scratch, run, extent)
         };
-        buffer.shape_until_scroll(font_system, false);
         self.revision = self.revision.wrapping_add(1);
         self.entries.push(CachedTextBuffer {
             key,

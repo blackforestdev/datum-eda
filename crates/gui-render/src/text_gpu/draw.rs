@@ -1,10 +1,19 @@
 //! Original instance-based glyph drawing over Datum's texture-page owner.
 use std::ops::Range;
 
-use glyphon::{FontSystem, SwashCache, TextArea};
+use glyphon::{Color, FontSystem, LayoutRun, SwashCache, TextBounds};
 
 use super::atlas::Atlas;
 use super::lifetime::{Kind, SubmissionRef, Tracked};
+
+pub(crate) struct Area<R> {
+    pub rows: R,
+    pub left: f32,
+    pub top: f32,
+    pub scale: f32,
+    pub bounds: TextBounds,
+    pub default_color: Color,
+}
 
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -82,7 +91,7 @@ impl Draw {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub fn prepare<'a>(
+    pub fn prepare<'a, R: IntoIterator<Item = LayoutRun<'a>>>(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -90,7 +99,7 @@ impl Draw {
         fonts: &mut FontSystem,
         raster: &mut SwashCache,
         resolution: [u32; 2],
-        areas: impl IntoIterator<Item = TextArea<'a>>,
+        areas: impl IntoIterator<Item = Area<R>>,
     ) -> anyhow::Result<()> {
         self.generation = None;
         self.pending_instances = None;
@@ -99,17 +108,13 @@ impl Draw {
         anyhow::ensure!(!resolution.contains(&0), "zero text target extent");
         let mut instances = Vec::new();
         for area in areas {
-            anyhow::ensure!(
-                area.custom_glyphs.is_empty(),
-                "custom glyph adapter is not implemented"
-            );
             let bounds = [
                 area.bounds.left.max(0),
                 area.bounds.top.max(0),
                 area.bounds.right.min(resolution[0] as i32),
                 area.bounds.bottom.min(resolution[1] as i32),
             ];
-            for row in area.buffer.layout_runs() {
+            for row in area.rows {
                 let row_top = (area.top + row.line_top * area.scale) as i32;
                 if row_top > bounds[3]
                     || row_top + ((row.line_height * area.scale) as i32) < bounds[1]

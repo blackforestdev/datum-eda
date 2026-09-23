@@ -242,7 +242,9 @@ def check_agent_tui_runtime(
     for marker in ("draw_rich_text", "selection_contains", "render_cursor"):
         if marker not in terminal_core_render:
             failures.append(f"TerminalCore renderer is missing {marker}")
-    if "set_rich_text" not in text_cache:
+    if not all(marker in text_cache for marker in (
+        "TextLayout::new", "run.rich_spans", "attributes.add_span", "ShapeLine::new",
+    )):
         failures.append("terminal styled rows must use one rich-text shaping buffer")
     for marker in (
         "terminal_font_advance_matches_shared_logical_cell_width",
@@ -499,7 +501,11 @@ def main() -> int:
         + TERMINAL_CLOSE_TESTS.read_text()
     )
     render_geometry = RENDER_GEOMETRY.read_text() + RENDER_GEOMETRY.with_name("text_metrics.rs").read_text()
-    text_buffer_cache = TEXT_BUFFER_CACHE.read_text() + TEXT_BUFFER_CACHE.with_name("text_buffer_cache_tests.rs").read_text()
+    text_buffer_cache = (
+        TEXT_BUFFER_CACHE.read_text()
+        + TEXT_BUFFER_CACHE.with_name("text_buffer_cache_tests.rs").read_text()
+        + (TEXT_BUFFER_CACHE.parent.parent / "text_layout.rs").read_text()
+    )
     # Full-frame encoding is a normal child module after the resize diagnostic
     # extraction; retain the same generation-count invariant across both files.
     render_gpu = "\n".join(RENDER_GPU.with_name(name).read_text() for name in ("gpu.rs", "gpu_frame.rs", "gpu_overlay.rs", "gpu_text.rs"))

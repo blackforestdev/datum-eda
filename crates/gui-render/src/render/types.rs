@@ -353,12 +353,6 @@ struct TextBufferKey {
     height_px: u32,
 }
 
-struct CachedTextBuffer {
-    key: TextBufferKey,
-    buffer: Buffer,
-    last_used_frame: u64,
-}
-
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 struct TextBufferCacheStats {
     hits: usize,

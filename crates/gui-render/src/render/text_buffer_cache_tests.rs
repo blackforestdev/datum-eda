@@ -265,7 +265,7 @@ fn extent_changes_relayout_cached_shaping_with_fresh_buffer_parity() {
     let mut cache = TextBufferCache::default();
     let mut label = run();
     label.text = "Text across several wrap widths: µm and Ω".into();
-    let signature = |buffer: &Buffer| {
+    let signature = |buffer: &TextLayout| {
         buffer
             .layout_runs()
             .map(|line| {
@@ -287,7 +287,7 @@ fn extent_changes_relayout_cached_shaping_with_fresh_buffer_parity() {
         });
         let (indices, _) = cache.indices(&mut fonts, std::slice::from_ref(&label), 400, 300);
         let reused = &cache.entries()[indices[0]].buffer;
-        assert!(reused.lines[0].shape_opt().is_some());
+        assert!(!reused.shape_storage().is_null());
         let mut fresh = TextBufferCache::default();
         let (fresh_indices, _) = fresh.indices(&mut fonts, std::slice::from_ref(&label), 400, 300);
         assert_eq!(
@@ -392,7 +392,7 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
 #[test]
 fn relayout_moves_unused_entries_but_preserves_current_frame_layouts() {
     let mut fonts = load_datum_fonts();
-    let signature = |buffer: &Buffer| {
+    let signature = |buffer: &TextLayout| {
         buffer
             .layout_runs()
             .map(|line| (line.line_w.to_bits(), format!("{:?}", line.glyphs)))
@@ -413,7 +413,7 @@ fn relayout_moves_unused_entries_but_preserves_current_frame_layouts() {
             assert_eq!(cache.entries.len(), 1, "obsolete layout must not be cloned");
             assert_ne!(cache.revision(), revision);
             let buffer = &cache.entries[0].buffer;
-            let storage = buffer.lines[0].shape_opt().unwrap().spans.as_ptr();
+            let storage = buffer.shape_storage();
             assert_eq!(*shape_storage.get_or_insert(storage), storage);
             let mut fresh = TextBufferCache::default();
             fresh.indices(&mut fonts, std::slice::from_ref(&label), width, 300);
@@ -507,4 +507,38 @@ fn overlay_key_budget_charges_allocated_plain_and_rich_text_capacity() {
         cache.trim_overlay();
         assert!(cache.key_usage().key_text_bytes <= MAX_OVERLAY_TEXT_BYTES);
     }
+}
+
+#[test]
+fn owned_shape_accounting_deduplicates_extent_variants_and_releases_eviction() {
+    let mut fonts = load_datum_fonts();
+    let mut cache = TextBufferCache::default();
+    let mut label = run();
+    label.text = "Shared shape storage across simultaneous extents".into();
+    cache.begin_frame(Profile::Workspace);
+    cache.indices(&mut fonts, std::slice::from_ref(&label), 180, 300);
+    let unique_shape_bytes: usize = cache.entries[0]
+        .buffer
+        .shape_allocations()
+        .map(|(_, bytes)| bytes)
+        .sum();
+    assert!(unique_shape_bytes > 0);
+    cache.indices(&mut fonts, std::slice::from_ref(&label), 90, 300);
+    assert_eq!(cache.entries.len(), 2);
+    assert_eq!(
+        cache.entries[0].buffer.shape_storage(),
+        cache.entries[1].buffer.shape_storage()
+    );
+    let layout_bytes: usize = cache
+        .entries
+        .iter()
+        .map(|entry| entry.buffer.layout_storage_bytes())
+        .sum();
+    assert_eq!(
+        cache.key_usage().shaped_payload_bytes,
+        unique_shape_bytes + layout_bytes
+    );
+    cache.begin_frame(Profile::Workspace);
+    cache.begin_frame(Profile::Workspace);
+    assert_eq!(cache.key_usage().shaped_payload_bytes, 0);
 }

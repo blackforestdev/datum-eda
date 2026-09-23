@@ -61,13 +61,14 @@ pub struct WidthMeasurementCacheUsage {
     pub retained_bytes: usize,
 }
 
-/// Datum-owned shaped-cache keys and entry storage at the observation point.
-/// Excludes nested glyphon Buffer/font/atlas payload and temporary shaping work.
+/// Datum-owned cache keys, unique shape payloads and layout/entry capacities.
+/// Excludes Arc/allocator bookkeeping, font/scratch internals and GPU resources.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct TextCacheKeyUsage {
     pub entries: usize,
     pub key_text_bytes: usize,
     pub entry_storage_bytes: usize,
+    pub shaped_payload_bytes: usize,
 }
 
 impl Renderer {

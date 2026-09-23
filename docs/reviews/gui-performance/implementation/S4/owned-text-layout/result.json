@@ -1,0 +1,121 @@
+{
+  "status": "Default text cache now retains Datum-owned shaping/layout; complete caps and private scratch accounting remain open",
+  "base_commit": "3dc6a079",
+  "production_consumers": [
+    "TextBufferCache::ensure_text_buffer for shared workspace/terminal and overlay text",
+    "Renderer::prepare_frame_text through build_text_areas into the Datum Draw owner",
+    "All native Renderer hosts inherit this default owner; native per-consumer qualification remains separate"
+  ],
+  "shared_owner": "crates/gui-render/src/text_layout.rs with TextBufferCache and text_gpu::Area",
+  "retired_paths": [
+    "Retained cosmic-text Buffer/BufferLine creation, copied paragraph strings and opaque active/inactive layout caches",
+    "Deep cloning shaped/layout vectors when simultaneous extents need distinct layouts",
+    "Rebuilding plain/rich text/style input on width-only relayout when existing shaping covers the viewport"
+  ],
+  "behavior": [
+    "Retain public ShapeLine payloads by shared immutable ownership; each extent owns its visible LayoutLine/glyph vectors. Extend the shaped paragraph prefix only when needed, preserving the existing glyph-bound visibility and baseline semantics.",
+    "Preserve Basic shaping, tab width8, WordOrGlyph wrapping, font authority, key matching, two-generation workspace retention and existing overlay entry/key limits. Rich span attributes use original byte intersections; temporary rich concatenation/attributes drop after new shaping.",
+    "Public shaped_payload_bytes counts retained layout capacities plus unique shared shape payloads across extent variants. The report distinguishes these from keys/entry metadata and excludes private font/scratch and allocator/Arc bookkeeping.",
+    "Draw consumes a generic borrowed layout-run iterator; installed Buffer remains only a test oracle, not a default rendering dependency. Move the cache entry into its owner and ratchet the renderer root ceiling7159."
+  ],
+  "proof": {
+    "unit": "242 renderer unit tests passed, including56 exact plain/rich text/extent comparisons, preserved shape identity on relayout and simultaneous extents, and unique payload accounting/release after eviction.",
+    "pixels": "60 exact offscreen comparisons against installed glyphon pass with Datum-owned layout feeding Datum Draw.48 use production UI/terminal font authority;12 retain the explicit existing Noto Color Emoji oracle through a test-only attrs adapter. Covers scales1/1.25/2, MSAA1/4, clipping, fractional placement, rich styles, overlap and warm zero-upload/allocation reuse. No production font override added.",
+    "production_gpu": "14 production GPU tests passed after final layout changes, including dialog/general parity, scrolling, atlas pressure/retry/reindex and cache reuse.",
+    "build": "Fresh datum-gui application build passed.",
+    "policy": "Source health2233files,13 source-policy tests and dependency authority passed.",
+    "failed_attempts": "Initial test type-name compilation error corrected. Oracle caught viewport stopping at baseline/top instead of glyph bounds, including trailing empty rows. Corrected visibility and preserved failed logs. A color-fixture assertion failed when production faces did not select Noto Color Emoji; restored the explicit-font oracle using owned shaping, without changing production fonts or removing the color assertion. Failures are not prescribed negative-control acceptance.",
+    "drift": "Workspace Clippy and preceding gates passed. Updated obsolete set_rich_text marker to require Datum TextLayout routing and paragraph style/shape construction; all11 guard tests pass. Resumed drift from that gate, preserving earlier checks, and reached the existing Console golden mismatch:3778pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun; no golden changed."
+  },
+  "limits": [
+    "FontSystem, public ShapeBuffer private scratch, raster ScaleContext and transient rich paragraph/attribute construction remain outside the retained-payload report. Arc/allocator bookkeeping is also separate.",
+    "8MiB renderer/32MiB process shaped-payload cap implementation, complete current-frame/scratch/aggregate accounting and full ACC/MEM conformance remain unfinished. Existing key/entry limits are preserved, not promoted to full byte caps.",
+    "Rendering-only layout runs borrow glyph/position data; editing/source-text authority remains in TextRun and terminal/model state. No new editing API is asserted.",
+    "No global adoption, native UX/endurance, relative-performance, S4 completion or S5 acceptance claim. No dependency/vendor/prototype/font/budget/resize amendment.",
+    "shaped_payload_bytes is a deduplicated observation of retained public capacities, not a complete CPU stable-allocation-ID or lifetime ledger."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
+  "logs": {
+    "app-build.log": {
+      "path": "app-build.log.gz",
+      "uncompressed_sha256": "251a650abf91a257b75a55f935e1f1360b8295f3c80d9cd99b18802a64def8eb"
+    },
+    "drift-tail.log": {
+      "path": "drift-tail.log.gz",
+      "uncompressed_sha256": "0b4240e477a58f22eaa99850655e0d52ffcaa11bfa60f33dcc076be919677325"
+    },
+    "drift.log": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "b0a3b166ec6d609a556c900a50e2540aff12ca99d4d45b43b0eba9368c81d147"
+    },
+    "final-gpu.log": {
+      "path": "final-gpu.log.gz",
+      "uncompressed_sha256": "d345a053833b7156377f9c0e1759de8e753fa076c1d771d73833112e319141be"
+    },
+    "final-unit.log": {
+      "path": "final-unit.log.gz",
+      "uncompressed_sha256": "fe1e2e97b8e5c5e196050428f9448ff1b58369d152d48b3f3757b7a2edeb8ba7"
+    },
+    "first.log": {
+      "path": "first.log.gz",
+      "uncompressed_sha256": "546bf56e18a84d99f080b1eb76b2f8e1781074a7c55be66a63160350a2e8b24c"
+    },
+    "glyph-bound.log": {
+      "path": "glyph-bound.log.gz",
+      "uncompressed_sha256": "c7ffdd3a822b1c75e3fa9872ec3acd4dba71e3e464c659919fae25b35e974b33"
+    },
+    "gpu.log": {
+      "path": "gpu.log.gz",
+      "uncompressed_sha256": "78fb7dc141944c51210f864d3a7f6ab72a44879735b2e598b9f62795ca40e693"
+    },
+    "parity.log": {
+      "path": "parity.log.gz",
+      "uncompressed_sha256": "3accc3876009dfcbf253a8f5ba017641a9615d744f7809f5d77dbfaf7c0e1c7e"
+    },
+    "pixel-font-oracle.log": {
+      "path": "pixel-font-oracle.log.gz",
+      "uncompressed_sha256": "d141e2291abc89a7553982b8bf3d037f7c8ada8478db7dc290e1d1fe7b417943"
+    },
+    "pixel-parity.log": {
+      "path": "pixel-parity.log.gz",
+      "uncompressed_sha256": "39c32dce5dc04cb93e15ca773e2c7821aa13e1235c39906d45db3e105caf2744"
+    },
+    "top-bound.log": {
+      "path": "top-bound.log.gz",
+      "uncompressed_sha256": "e5512d5849e96d4ab67e08b4b94e02bf2b656715473674f26c9d69ecb794aa32"
+    },
+    "unit.log": {
+      "path": "unit.log.gz",
+      "uncompressed_sha256": "4797fcd0be1812fb8dbcb031128dd89f1d267c125c6b80d38fa4e71cc6caf6a1"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "1692b9f0e900b1192b050c52ad744f3c500519d33989f60d152c645375f4f1c3",
+    "crates/gui-render/src/render/renderer_state.rs": "e736e71bbdd41f5b574c37928668c9f27bf85e803fe7e8a1b1011e2d9539b916",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "a6a3205249f6876fb4cbed4ff44f9b59622cf865ea6f7f9ff7ad8a5c72136cc4",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "6c91f6cbc96510f6f5adbacd463f7a92764ebd8989def0e9565d8657e5f862a7",
+    "crates/gui-render/src/render/text_metrics.rs": "4758d4eefc0956b812e1b24fe6d5afc3288650b6c15bf90f1817fa8528d8839a",
+    "crates/gui-render/src/render/types.rs": "78cff086c2390d2e2c14a1017a12e3b6bed383ef33e1e1cd035babf5630a3f84",
+    "crates/gui-render/src/terminal_font_tests.rs": "1405f2cc4c75c3f39228b3a2058b7e570aa7fe56d4e183e974c5302821993bb8",
+    "crates/gui-render/src/text_gpu/draw.rs": "76b1ea809960cea590cd6759b7756c6165e738323124fa822d722851b2e2258d",
+    "crates/gui-render/src/text_gpu/mod.rs": "8b46b52bff92ea20d09eb6c69ffb29bcf05fe48390c8a3d063f49021f943ce54",
+    "crates/gui-render/src/text_gpu/parity.rs": "41e96579455f95ae29b6bf37d25dde7e48b30398bee9390548d47c94573abcf1",
+    "scripts/check_gui_agent_terminal_convergence.py": "42582612ec1bf035fada015e60718d5ce540ac6978ec03067a2a637a1c5e4869",
+    "scripts/test_gui_agent_terminal_convergence.py": "e0dd20bf87c665285d0bf8bb12c551d832f0594841ba7093954f62fdad51332f",
+    "crates/gui-render/src/text_layout.rs": "9b932643144251b7f4c9d0ee6342b5a9d6f49d293ac4615535a99fa92808640a",
+    "crates/gui-render/src/text_layout_tests.rs": "ff6790c59ff5c6a38d6ac4de38c8ce722f78ada507ac4fe0aea0cd3ee5da908b"
+  },
+  "application_sha256": "e163fcbf2ec99bb8b50f534e078090ab0c3f592d95bb634cfc23104c1f90f05e",
+  "environment": {
+    "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)",
+    "kernel": "Linux 6.12.107+deb13-amd64 x86_64 GNU/Linux",
+    "adapter_scope": "Default wgpu adapter; production GPU tests reject CPU adapters. No native backend matrix claimed."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual text_gpu::parity::owned_draw_matches_installed_text_renderer -- --include-ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual gpu_overlay_tests -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline -p datum-gui-app --bin datum-gui",
+    "bash /tmp/pm045-s4-drift.sh; then corrected guard and resumed scripts/run_drift_gates.sh from test_gui_agent_terminal_convergence.py, using same offline guarded wrapper"
+  ]
+}

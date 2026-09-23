@@ -1,5 +1,6 @@
 use super::*;
 use crate::text_buffer_cache::text_buffer_key;
+use glyphon::{Buffer, Metrics, Shaping};
 
 #[test]
 fn terminal_face_shapes_box_drawing_and_powerline_without_notdef() {
