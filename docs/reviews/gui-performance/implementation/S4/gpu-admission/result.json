@@ -1,0 +1,87 @@
+{
+  "status": "Default migrated GPU resources reserve shared capacity before creation; complete MEM-GPU-TOTAL and S4 remain open",
+  "base_commit": "31c24d86",
+  "production_consumers": [
+    "Retained world and screen/control/terminal vertex buffers",
+    "Screen, pane and fallback uniforms for shared native renderers",
+    "Datum glyph atlas pages and glyph instance buffers",
+    "Terminal graphic textures",
+    "Native MSAA surface attachments"
+  ],
+  "retired_paths": [
+    "Unreserved creation of the migrated buffers and textures",
+    "Infallible renderer/stream constructors that could not return admission refusal"
+  ],
+  "behavior": [
+    "Reuse the existing checked atomic reservation and RAII lifetime owner for a shared 512 MiB process pool. Reserve before API creation; hold permits through cached bundles and submission retirement, counting each tracked allocation once.",
+    "Atlas pages acquire both the existing 128 MiB atlas process permit and the shared GPU permit; failed second admission rolls back the first. Allocation refusal preserves an existing vertex allocation and permits retry after capacity returns.",
+    "Propagate admission errors through full/overlay preparation and renderer initialization/recovery to existing native Result paths. Preserve deferred uploads and warm reuse."
+  ],
+  "proof": {
+    "renderer": "295 renderer tests pass, including serial actual-GPU refusal/retry/retirement, reservation rollback, and existing pixel/reuse/cancellation tests; 11 measurement/cost/visual-runner cases filtered.",
+    "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings passes. Source health checks 2240 files; dependency authority and Cargo resource policy pass.",
+    "native": "Fresh visual application build and 1680x1050 datum-test/R1 capture exit 0. Inspected image; decoded RGBA exactly equals the prior uniform-lifetime capture.",
+    "drift": "Full drift stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Earlier checks pass; later gates unrun. Failure retained; no golden update or full-drift acceptance."
+  },
+  "limits": [
+    "Staging and diagnostic query/readback buffers are not yet migrated; this is not complete 512 MiB application GPU admission or MEM-GPU-TOTAL acceptance.",
+    "Per-host/document/resource subcaps, complete allocation incidence/release reasons, generation limits, exact transfer predicates and S5 qualification remain open. Required content is not silently omitted on refusal; rendering returns an error.",
+    "No dependency, vendor, license, prototype, numerical budget or resize-policy change. No performance or global adoption claim."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-admission/result.json",
+  "logs": {
+    "tests": {
+      "path": "tests.log.gz",
+      "uncompressed_sha256": "bf276a0ee78c898b654cac3d3baa3158daebaf99e7dcad462478383a721309bb"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "00839f4440d2477612b1a1f2113b9f6d5b68a88f41a8473f21102617dcd9685d"
+    },
+    "native": {
+      "path": "native.log.gz",
+      "uncompressed_sha256": "2b362cbeee4aed570f9a71e96c6f8eec195110fe31d948e344742ba339083beb"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "8bed6640ad016e552341e9ca54b7fb4c857073e3d4e029a1672ca7cb953e21e4"
+    }
+  },
+  "native_capture": {
+    "path": "native.png",
+    "sha256": "40e986a2655402722e7ebb62db7dacbfdbd02134da611989bfd2b12db0a81d2a",
+    "prior_capture_rgba_equal": true
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "88a4c1133a362fe0c3ca4d8023b5fdb7734776c4b1ab6800ac6a872bf3f85a01",
+    "crates/gui-app/src/native_device_recovery.rs": "bef72488a9b591d1ded18049e86b6d90c0f97adcd624a120f1c99a3313085246",
+    "crates/gui-app/src/runtime_init.rs": "c6c30b168fdfe9795c59fc36253ca73d1b84123d5892501eecbe21c193518a5b",
+    "crates/gui-render/src/render/attachment_cost_probe.rs": "909b4d84acc513d4d86f63f7629fd3df785d63befd8fbf256e9a450cce6989d3",
+    "crates/gui-render/src/render/gpu_console.rs": "5655c09328ff08500aa16f2cdb448ca28df5ea27bd76097d44bb2c7b18999f17",
+    "crates/gui-render/src/render/gpu_control_tests.rs": "fd770e85ba94c87739a2bed922d5dab88acee3d093614d62191bdfdbccee1aca",
+    "crates/gui-render/src/render/gpu_frame.rs": "fc1398d404bc061ab855b19f6c9fb75a06bc066f4454a7cf42995db2414adc66",
+    "crates/gui-render/src/render/gpu_init.rs": "94db1f1c0ddcf300ec637096aac758c815ff2a9f8d9594db04a5ed3ccd58009d",
+    "crates/gui-render/src/render/gpu_overlay.rs": "7e79a47ca875ede11cbc40439af7d899231f65e6dccba53d62384f7fb378b16d",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "ae7a0c67b55a0ade71fd87ad954fe763a7e2cf2cb0e82ab02e1c12387d765b6a",
+    "crates/gui-render/src/render/gpu_surface.rs": "8a898ea7f30723433a214676ff33f24f2a269f7e0860894c5483de2726613151",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "39948d8e4730d417c3a73c6bf762a9eba9a896638df384621b71712543f18ca2",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "ec1d29c053e074235476d922e6b1667fb756514b8059c023fd5935c355cf0c28",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "24edf1fbf82f0fb0880ab4c776f371956e00c314ae7d9d46d4d05882fce67618",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "070ab368f08107048763b02a47e0d1e15773b7055dcef7b82daf9a163f5d6ac2",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "53b83ee22abf16e20912031f2d27aec25cc4fbecb53db737ef8f237875c5e386",
+    "crates/gui-render/src/render/retained_buffer.rs": "c0bc1ddd0a21332e51d9065f319c2fd37561a356001451a020b8ef5b86e205a8",
+    "crates/gui-render/src/render/screen_buffer.rs": "7f17e347c8028ede8484ce955683aef5c22bbc1d146e436c6201827f49c3a569",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "b248ae9cb11ee5694ce862e453f69bb4bf6a469ddf57a0b6029f3c2580a0fe0e",
+    "crates/gui-render/src/render/terminal_graphics.rs": "1b18caa130b5ee4ecbc043dab4165bf7afe08c43e9449ebe973377ca09303b95",
+    "crates/gui-render/src/render/uniform_buffer.rs": "5c0c752cfd6a9ff5b7c1d52b3f7f515a4341ddd248add0c4fcc1dd281a7966b8",
+    "crates/gui-render/src/render/vertex_allocation.rs": "560faf8b29d9ce425791730878cb662aa8948841df76c26ff14f344f26d03c2d",
+    "crates/gui-render/src/text_gpu/atlas.rs": "ece430a5b0350fee2a5e02f1890aa48bfec4f967d169a3378fd952b3ad0d7598",
+    "crates/gui-render/src/text_gpu/budget.rs": "27ce7bcb3bf2c472516d700f410d61431062bcc77e22fdee6c5a654b9d015232",
+    "crates/gui-render/src/text_gpu/draw.rs": "67ad133ae82d5a0e382e60774b170a4192fdc81a0daa046aaadf6acf37c75c9c",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "f502ab191f0de9cdc4deac667ecd065e8fd192a73e401d105961d4281302c25d",
+    "crates/gui-render/src/text_gpu/mod.rs": "7030adaceb1a4ebda03049e026a7e85e29e2a291797ab4941b23622aa1b62e52",
+    "crates/gui-render/src/visual_capture.rs": "ef96babafaee8b0addff92a5c03d565ea71ee86534f44e95d5c49618d2ea91a7",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "4ad7126536570f9d1a38a89cc42e073fdc964e2f0bcc9696e99a3b6caa23411c"
+  },
+  "binary_sha256": "848224a50d1db295399f5bf82c4c97f0a35200348cc8d08b3fe1b3d3c86da2dd"
+}

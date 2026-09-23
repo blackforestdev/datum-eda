@@ -21,13 +21,10 @@ fn terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels() {
     );
     assert!(prepared.terminal_graphics.len() >= 2);
     let mut renderer = hardware_renderer(960, 720);
-    renderer.renderer.sync_terminal_graphics(
-        &renderer.device,
-        &renderer.queue,
-        &prepared,
-        960,
-        720,
-    );
+    renderer
+        .renderer
+        .sync_terminal_graphics(&renderer.device, &renderer.queue, &prepared, 960, 720)
+        .unwrap();
     let cancelled: Vec<_> = Renderer::gpu_process_allocations()
         .into_iter()
         .filter(|r| r.kind == crate::text_gpu::Kind::TerminalTexture)

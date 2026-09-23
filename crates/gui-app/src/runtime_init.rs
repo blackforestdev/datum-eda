@@ -66,7 +66,7 @@ impl Runtime {
         let device_health = native_device_recovery::DeviceHealth::observe(&device, wake);
         let renderer_started = std::time::Instant::now();
         append_gui_diagnostic_line("renderer init begin");
-        let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples);
+        let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples)?;
         let measurements =
             native_gpu_measurements::Host::new(&mut renderer, &device, &queue, &window, None)?;
         append_gui_diagnostic_line("renderer init end");

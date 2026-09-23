@@ -52,7 +52,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
             &fresh.queue,
             OUTPUT_FORMAT,
             DEFAULT_MSAA_SAMPLES,
-        );
+        )
+        .unwrap();
         assert!(changed == capture_retained(&mut fresh, &prepared, &retained));
 
         let mut moved_camera = camera;
@@ -79,7 +80,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
             &fresh.queue,
             OUTPUT_FORMAT,
             DEFAULT_MSAA_SAMPLES,
-        );
+        )
+        .unwrap();
         assert!(moved_pixels == capture_retained(&mut fresh, &moved, &retained));
 
         let mut closed = prepared.clone();
@@ -126,7 +128,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
         &fresh.queue,
         OUTPUT_FORMAT,
         DEFAULT_MSAA_SAMPLES,
-    );
+    )
+    .unwrap();
     assert!(changed == capture(&mut fresh, &resized));
     assert!(changed == capture(&mut renderer, &resized));
     assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 0);

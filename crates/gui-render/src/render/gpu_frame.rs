@@ -72,7 +72,7 @@ impl Renderer {
         let schematic_overlay_vertices = prepared.schematic_overlay_vertices();
         let (surface_grid_vertices, surface_grid_batches) =
             surface_grid_pass::build_surface_grids(prepared);
-        self.prepare_surface_uniforms(device, queue, prepared, width, height);
+        self.prepare_surface_uniforms(device, queue, prepared, width, height)?;
         self.uniform_buffer.sync(
             queue,
             ScreenUniform {
@@ -94,27 +94,27 @@ impl Renderer {
             schematic_pass.as_ref().map(|(_, _, _, scene)| *scene),
             schematic_underlay_vertices,
             schematic_overlay_vertices,
-        );
+        )?;
         self.surface_grid_gpu.sync(
             device,
             queue,
             "datum-surface-grid-vertex-buffer",
             &surface_grid_vertices,
-        );
+        )?;
         self.world_strokes_gpu
-            .sync(device, queue, "datum-world-strokes", world_strokes);
+            .sync(device, queue, "datum-world-strokes", world_strokes)?;
         if let Some((_, _, _, scene)) = schematic_pass.as_ref() {
             self.schematic_world_strokes_gpu.sync(
                 device,
                 queue,
                 "datum-schematic-world-strokes",
                 scene.world_strokes(),
-            );
+            )?;
         }
-        self.sync_terminal_graphics(device, queue, prepared, width, height);
+        self.sync_terminal_graphics(device, queue, prepared, width, height)?;
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
-        let msaa_view = self.ensure_msaa(device, width, height).clone();
+        let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),

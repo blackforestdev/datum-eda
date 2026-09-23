@@ -56,7 +56,7 @@ impl OffscreenRenderer {
             trace: wgpu::Trace::Off,
         }))
         .context("request offscreen wgpu device")?;
-        let renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, DEFAULT_MSAA_SAMPLES);
+        let renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, DEFAULT_MSAA_SAMPLES)?;
 
         Ok(Self {
             device,

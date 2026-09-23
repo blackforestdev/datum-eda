@@ -8,7 +8,7 @@ impl Renderer {
         _queue: &wgpu::Queue,
         format: wgpu::TextureFormat,
         msaa_samples: u32,
-    ) -> Self {
+    ) -> anyhow::Result<Self> {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-gui-render-shader"),
             source: wgpu::ShaderSource::Wgsl(
@@ -148,7 +148,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 resolution: [1.0, 1.0],
                 _pad: [0.0, 0.0],
             },
-        );
+        )?;
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("datum-gui-render-uniform-bg"),
             layout: &uniform_bind_group_layout,
@@ -168,13 +168,13 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             &scene_bind_group_layout,
             "datum-gui-render-scene-bg",
             Some(scene_uniform),
-        );
+        )?;
         let schematic_scene_bind_group = gpu_data::uniform_buffer::UniformBinding::new(
             device,
             &scene_bind_group_layout,
             "datum-gui-render-schematic-scene-bg",
             Some(scene_uniform),
-        );
+        )?;
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-gui-render-pipeline-layout"),
             bind_group_layouts: &[&uniform_bind_group_layout],
@@ -259,7 +259,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let text_renderer = crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples);
         let menu_overlay_text_renderer =
             crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples);
-        Self {
+        Ok(Self {
             measurements: None,
             pipeline,
             world_pipeline,
@@ -298,6 +298,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             surface_attachments: gpu_surface::SurfaceAttachments::default(),
             msaa_format: format,
             msaa_samples,
-        }
+        })
     }
 }

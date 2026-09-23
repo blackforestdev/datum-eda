@@ -242,6 +242,7 @@ impl Atlas {
                     "glyph atlas retained texture budget exhausted"
                 );
                 let permit = self.texture_budget.reserve(bytes)?;
+                let gpu_permit = super::budget::gpu_process().reserve(bytes)?;
                 let texture = device.create_texture(&wgpu::TextureDescriptor {
                     label: Some("datum-glyph-page"),
                     size: wgpu::Extent3d {
@@ -275,12 +276,12 @@ impl Atlas {
                     .expect("validated glyph extent");
                 let index = self.pages.len();
                 self.pages.push(Page {
-                    texture: self.owner.track_with_permit(
+                    texture: self.owner.track_with_permits(
                         texture,
                         bytes,
                         self.generation,
                         Kind::Texture,
-                        Some(permit),
+                        vec![permit, gpu_permit],
                     ),
                     bind_group,
                     extent,
