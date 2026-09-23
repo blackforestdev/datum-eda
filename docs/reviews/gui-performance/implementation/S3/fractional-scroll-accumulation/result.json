@@ -1,0 +1,35 @@
+{
+  "status": "bounded production HP18 fix; GPI-S3 remains in progress",
+  "base_commit": "ca2b28b8",
+  "issue": "dat-scroll-fractional-accumulation-rz6j",
+  "production_consumers": [
+    "Global Preferences continuous scroll",
+    "Project Preferences continuous scroll",
+    "New Project continuous scroll"
+  ],
+  "shared_owner": "datum_gui_viewport::scroll::ScrollViewport",
+  "retired_paths": [
+    "Per-event f32 offset addition that discards motion below the current offset resolution"
+  ],
+  "change": "Accumulate wheel offsets in f64 and expose f32 geometry as before. Unchanged layout retains accumulated fractions; clamping discards excess at boundaries. Damage is requested only when the exposed offset changes. Explicit offset/reveal/drag APIs retain their f32 coordinate contract; discrete Layers/terminal row policy is unchanged.",
+  "proof": {
+    "predecessor": "New test fails at expected500.01 after1000 deltas of0.00001 starting at500; old offset loses input.",
+    "viewport": "47 tests pass, including accumulation across repeated layout, reversal and boundary no-debt.",
+    "x11": "Actual production WindowEvent dispatch passes18 host/size/scale cases, scales1/1.5/2. Added1000 deltas each direction of0.000001 logical pixels with final-offset assertions. Existing grab/release/focus/close/content checks also pass.",
+    "wayland": "First Global1x native-entry wheel sequence passes. Later content-presentation timeout aborts the test before remaining profiles; retain failure, no complete Wayland result.",
+    "harness_correction": "Initial X11 test expected motion in non-overflow New Project. Expected stream now clamps to actual maximum; initial failed run preserved.",
+    "source_policy": "Source health and13 policy regression tests pass; no legacy source edited.",
+    "tracker_correction": "Initial drift stopped at missing roadmap:intake label on the new bug; corrected and project-state check passes.",
+    "full_drift": "Workspace Clippy passes. Exit1 at existing Console routine-focused1x golden mismatch3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates did not run; goldens unchanged."
+  },
+  "limitations": [
+    "Native test supplies WindowEvents to actual surfaces; it is not OS-device delivery, screenshots, timed W-SCROLL or full HP18/S3 qualification.",
+    "f64 accumulation addresses tested sub-f32-resolution motion; no claim of exact real arithmetic across every representable magnitude or unbounded stream.",
+    "Wayland content-presentation timeout cause is unproven; related historical presentation issue dat-native-content-presentation-qo9y remains separate.",
+    "No dependency/license, prototype, numerical budget, stored preference authority, sequencing or nonblocking resize change."
+  ],
+  "source_sha256": {
+    "crates/gui-viewport/src/scroll.rs": "ddc81312b09810bbfbc384c2898c36059937237ba91071e419d414f2a314268b",
+    "crates/gui-app/src/owned_dialog_pointer_tests.rs": "34a2254ca1e65570bf795ff51157b2b6e2ea3b2c1e65a369b196edeca97ebf67"
+  }
+}
