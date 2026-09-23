@@ -1,5 +1,6 @@
 //! Reusable glyph preparation identity and continuation lifetime.
 use super::*;
+use crate::text_buffer_cache::TextBufferCache;
 
 #[derive(Default)]
 pub(crate) struct GlyphPreparation {
@@ -37,4 +38,18 @@ impl GlyphPreparation {
     pub(crate) fn is_invalid(&self) -> bool {
         self.prepared.is_none()
     }
+}
+
+/// Shared pressure policy, using disjoint field borrows while upload plans borrow vertices.
+pub(super) fn release_scratch(
+    layouts: &mut TextBufferCache,
+    raster: &mut crate::text_gpu::raster::Raster,
+    fonts: &mut crate::text_layout::fonts::Fonts,
+    host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
+    bytes: u64,
+) {
+    use crate::text_layout::fonts::Source;
+    layouts.release_layout_scratch_for(bytes, host);
+    raster.release_for(bytes, host);
+    fonts.release_for(bytes);
 }

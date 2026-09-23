@@ -53,9 +53,7 @@ macro_rules! frame_buffers {
         let metadata = crate::text_gpu::staging_vec::StagingVec::<
             crate::text_gpu::upload::BufferUpload<'_>,
         >::capacity_bytes(count.entries)?;
-        $this
-            .text_buffers
-            .release_layout_scratch_for(metadata, &$this.atlas.staging_budget);
+        $this.release_text_scratch_for(metadata);
         let mut buffers = crate::text_gpu::staging_vec::StagingVec::new(
             count.entries,
             &$this.atlas.staging_budget,
@@ -76,10 +74,14 @@ impl Renderer {
         // Failure retains every pending update for cancellation/retry.
         // Reuse private layout scratch unless it competes with the real copy plan.
         let staging = self.atlas.required_staging_bytes(&buffers)?;
-        self.text_buffers
-            .release_layout_scratch_for(staging, &self.atlas.staging_budget);
-        self.swash_cache
-            .release_for(staging, &self.atlas.staging_budget);
+        preparation::release_scratch(
+            &mut self.text_buffers,
+            &mut self.swash_cache,
+            &mut self.font_system,
+            &self.atlas.staging_budget,
+            staging,
+        );
+
         let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;
         drop(buffers);
         self.uniform_buffer.finish_uploads();
@@ -363,5 +365,22 @@ impl Renderer {
     /// Private retained raster scratch, excluding separately admitted pending pixels.
     pub fn raster_scratch_reserved_bytes(&self) -> u64 {
         self.swash_cache.reserved_bytes()
+    }
+}
+
+impl Renderer {
+    /// Reclaim cheap reusable layout/raster storage first, then font caches if
+    /// required work still lacks admission. Font identity and returned shapes survive.
+    pub(crate) fn release_text_scratch_for(&mut self, bytes: u64) {
+        preparation::release_scratch(
+            &mut self.text_buffers,
+            &mut self.swash_cache,
+            &mut self.font_system,
+            &self.atlas.staging_budget,
+            bytes,
+        );
+    }
+    pub fn font_cache_reserved_bytes(&self) -> u64 {
+        self.font_system.reserved_bytes()
     }
 }

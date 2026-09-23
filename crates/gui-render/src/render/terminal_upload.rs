@@ -93,9 +93,8 @@ impl crate::Renderer {
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
         let capacity = self.terminal_graphics.upload_plan().entries;
-        self.text_buffers.release_layout_scratch_for(
+        self.release_text_scratch_for(
             CHUNK_BYTES as u64 + TerminalGraphicsRenderer::upload_metadata_bytes(capacity)?,
-            &self.atlas.staging_budget,
         );
         let Some(submission) =
             self.terminal_graphics

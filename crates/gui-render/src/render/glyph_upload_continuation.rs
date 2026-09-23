@@ -14,10 +14,8 @@ impl Renderer {
         overlay: bool,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<Option<(TextBufferCacheStats, bool)>> {
-        self.text_buffers
-            .release_layout_scratch_for(CHUNK_BYTES, &self.atlas.staging_budget);
-        self.swash_cache
-            .release_for(CHUNK_BYTES, &self.atlas.staging_budget);
+        self.release_text_scratch_for(CHUNK_BYTES);
+
         match self.prepare_frame_text(device, queue, prepared, width, height, overlay) {
             Ok(result) => {
                 if self.start_glyph_upload(device, queue, on_submitted)? {
@@ -66,14 +64,8 @@ impl Renderer {
         if !self.text_preparation.upload_continuation || !self.atlas.has_pending_uploads() {
             return Ok(false);
         }
-        self.text_buffers.release_layout_scratch_for(
-            self.atlas.chunk_staging_bytes(CHUNK_BYTES)?,
-            &self.atlas.staging_budget,
-        );
-        self.swash_cache.release_for(
-            self.atlas.chunk_staging_bytes(CHUNK_BYTES)?,
-            &self.atlas.staging_budget,
-        );
+        self.release_text_scratch_for(self.atlas.chunk_staging_bytes(CHUNK_BYTES)?);
+
         let submission = self.atlas.submit_chunk(device, queue, CHUNK_BYTES)?;
         on_submitted(submission);
         if let Some(measurements) = &mut self.measurements {
