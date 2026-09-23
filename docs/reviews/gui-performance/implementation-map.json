@@ -3994,6 +3994,11 @@
           "work": "s4_allocation_state_work.renderer_origin_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-host/result.json",
           "status": "Default GPU allocations retain renderer-origin identity linked to native window/queue receipts"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.batch_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
+          "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
         }
       ]
     },
@@ -5424,6 +5429,11 @@
           "work": "s4_allocation_state_work.renderer_origin_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-host/result.json",
           "status": "Default GPU allocations retain renderer-origin identity linked to native window/queue receipts"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.batch_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
+          "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
         }
       ]
     },
@@ -15566,7 +15576,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete whole text preparation/admission and retirement accounting across active owners, including construction overlap; current retained key/layout/shared-shape capacities already have implementation and whole-cache heap conformance (s4_text_owner_reconciliation). Keep private font/raster storage classification and temporary scratch disjoint from retained shaped payload. Preserve all local/process ceilings; successful post-construction admission alone does not prove transient peaks."
+          "Complete pre-construction admission and overlap accounting across active text owners, including a synchronous library shape/layout call. Per-layout batch admission now stops further accumulation and remaps workspace/overlay references together; incremental retained totals have whole-cache heap conformance. Private font/raster/layout scratch remains disjoint from retained shaped payload. Preserve all local/process ceilings; post-construction admission does not establish transient peak compliance."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15639,6 +15649,11 @@
           "work": "s4_text_owner_reconciliation.rich_input_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
           "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.batch_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
+          "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15745,7 +15760,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete whole text preparation/admission and retirement accounting across active owners, including construction overlap; current retained key/layout/shared-shape capacities already have implementation and whole-cache heap conformance (s4_text_owner_reconciliation). Keep private font/raster storage classification and temporary scratch disjoint from retained shaped payload. Preserve all local/process ceilings; successful post-construction admission alone does not prove transient peaks."
+          "Complete pre-construction admission and overlap accounting across active text owners, including a synchronous library shape/layout call. Per-layout batch admission now stops further accumulation and remaps workspace/overlay references together; incremental retained totals have whole-cache heap conformance. Private font/raster/layout scratch remains disjoint from retained shaped payload. Preserve all local/process ceilings; post-construction admission does not establish transient peak compliance."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15818,6 +15833,11 @@
           "work": "s4_text_owner_reconciliation.rich_input_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json",
           "status": "Default rich-text concatenation admitted before allocation; temporary span and paragraph vectors retired"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.batch_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
+          "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -35838,6 +35858,34 @@
         "No dependency, vendor, license, prototype, numerical-budget or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition and owner/Copilot engine-file edits."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/rich-input/result.json"
+    },
+    "batch_admission": {
+      "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs",
+      "production_consumers": [
+        "Default TextBufferCache admitted_indices for workspace/terminal and dialog/overlay text",
+        "Shared Renderer prepare_frame_text for composed and dialog-only rendering"
+      ],
+      "retired_paths": [
+        "Discovering payload overflow only after shaping the complete production batch",
+        "Recounting the entire cache to publish each cold preparation change"
+      ],
+      "behavior": [
+        "Every new or relaid-out cache entry reaches existing local/process admission before the next run. Required over-budget derived storage is released and remaining runs are not shaped. Final admission remains for warm frames and concurrent-owner changes.",
+        "Overlay admission receives earlier workspace indices. History retirement remaps both groups before glyph borrowing; failure clears both. Retry rebuilds from unchanged TextRun input, with no dropped required labels.",
+        "Prepared byte totals update from touched key/layout capacities, entry/index capacity changes and newly created shape allocations. Forked shared shape prefixes count once. This avoids a full-cache scan per label; pressure retirement still reconciles the full inventory. Test-only fixture builders retain deliberate unadmitted construction for negative/retention tests."
+      ],
+      "proof": {
+        "renderer": "391 renderer tests passed;0 failed;11 filtered, including rendering parity, atlas pressure, shared layout and retirement paths.",
+        "focused": "29 text-cache tests passed after final proof additions. With room only for the existing workspace, the first extra overlay shape causes rejection and the remaining eleven runs are never shaped; prior indices clear, retry reconstructs all labels, and warm retry performs no shaping. A second case evicts oversized unused history and remaps workspace1to0 while retaining both required groups.",
+        "accounting": "Whole-owner heap conformance now checks incremental totals against an independent full inventory across shared plain/rich extent variants and subsequent relayout. Actual retained heap remains reconciled after font-owner release.",
+        "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2301files and governance checks pass. Initial compile failure from one test caller missing the new prior-group argument is preserved."
+      },
+      "limits": [
+        "Per-layout admission bounds accumulation across a batch, not the synchronous peak inside one library shaping/layout call or simultaneous pre-admission construction by multiple owners. Pre-construction admission/overlap and private scratch remain unresolved; seven S4 implementation gaps remain.",
+        "No complete MEM-SHAPED/MEM-STAGING/ACC, S4/S5 or issue closure. Original local/process ceilings and required-content, native, negative and endurance qualification remain unchanged.",
+        "No dependency/vendor/license, prototype, numerical-cap or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition and Copilot engine edits."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json"
     }
   },
   "s4_text_preparation_work": {

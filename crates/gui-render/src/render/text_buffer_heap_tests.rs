@@ -31,10 +31,20 @@ fn complete_retained_text_accounting_matches_heap_after_shared_layout_constructi
     narrow.layout_size = Some((90.0, 300.0));
     scope.with(|| {
         cache.begin_frame(Profile::Workspace);
-        let (indices, stats) = cache.indices(&mut fonts, &[plain, rich, narrow], 960, 720);
+        let mut runs = [plain, rich, narrow];
+        let (indices, stats) = cache.indices(&mut fonts, &runs, 960, 720);
         assert_eq!(stats.misses, 3);
         assert_eq!(indices.len(), 3);
+        assert_eq!(cache.published_bytes, cache.retained_payload_bytes());
+        cache.begin_frame(Profile::Workspace);
+        runs[0].layout_size = Some((220.0, 300.0));
+        cache.indices(&mut fonts, &runs, 960, 720);
     });
+    assert_eq!(
+        cache.published_bytes,
+        cache.retained_payload_bytes(),
+        "incremental preparation equals the independent full cache inventory"
+    );
     drop(fonts);
     let usage = scope.usage();
     let returned_glyphs: usize = cache
