@@ -51,12 +51,17 @@ impl PreparedScene {
 }
 
 impl Renderer {
-    pub(crate) fn flush_frame_uploads(&mut self, queue: &wgpu::Queue) {
+    pub(crate) fn flush_frame_uploads(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> anyhow::Result<Option<crate::text_gpu::upload::Batch>> {
+        let atlas_upload = self.atlas.flush_uploads(device)?;
         self.flush_vertex_uploads(queue);
         self.flush_uniform_uploads(queue);
-        self.atlas.flush_uploads(queue);
         self.text_renderer.flush_uploads(queue);
         self.menu_overlay_text_renderer.flush_uploads(queue);
+        Ok(atlas_upload)
     }
 
     pub(crate) fn hold_frame_submission(&mut self, queue: &wgpu::Queue) {
