@@ -58,6 +58,9 @@ impl Renderer {
     }
 
     pub(super) fn begin_gpu_measurement(&mut self) -> anyhow::Result<Option<FrameQueries>> {
+        if self.cold_world.measurement_frame.is_some() {
+            return Ok(None);
+        }
         self.measurements
             .as_mut()
             .map(GpuMeasurements::begin)
@@ -79,6 +82,11 @@ impl Renderer {
         &mut self,
         frame: Option<FrameQueries>,
     ) -> anyhow::Result<()> {
+        if let Some(cold_frame) = self.cold_world.measurement_frame.take()
+            && let Some(m) = &mut self.measurements
+        {
+            m.incomplete_upload_submission(Some(cold_frame))?;
+        }
         if let (Some(m), Some(frame)) = (&mut self.measurements, frame) {
             m.submitted(frame)?;
         }

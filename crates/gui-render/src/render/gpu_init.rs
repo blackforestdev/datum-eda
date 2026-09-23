@@ -337,6 +337,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             menu_overlay_text_renderer,
             text_buffers: Default::default(),
             control_meshes: Default::default(),
+            cold_world: Default::default(),
             text_preparation: Default::default(),
             panel_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone()),
             viewport_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(

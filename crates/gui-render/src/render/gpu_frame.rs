@@ -14,21 +14,29 @@ impl Renderer {
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
-        self.render_with_submission(
-            device,
-            queue,
-            target,
-            prepared,
-            retained,
-            schematic_retained,
-            width,
-            height,
-            &mut |_| {},
-        )
+        // Synchronous convenience for offscreen/capture clients. Native hosts use
+        // render_with_submission and yield to the coordinator between chunks.
+        loop {
+            if self.render_with_submission(
+                device,
+                queue,
+                target,
+                prepared,
+                retained,
+                schematic_retained,
+                width,
+                height,
+                &mut |_| {},
+            )? {
+                return Ok(());
+            }
+            device.poll(wgpu::PollType::wait_indefinitely())?;
+        }
     }
 
     /// Native hosts observe the actual frame submission before any fallible
     /// post-submit measurement collection or presentation can discard the frame.
+    /// False means an upload-only submission: retain damage and retry after completion.
     #[allow(clippy::too_many_arguments)]
     pub fn render_with_submission(
         &mut self,
@@ -41,21 +49,21 @@ impl Renderer {
         width: u32,
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
-    ) -> anyhow::Result<()> {
+    ) -> anyhow::Result<bool> {
+        if self.cold_world.active
+            && self.world_upload_sources_match(prepared, retained, schematic_retained)
+        {
+            self.submit_world_upload_chunk(device, queue, on_submitted)?;
+            return Ok(false);
+        }
+        self.cold_world.active = false;
         self.cancel_vertex_uploads();
         self.cancel_uniform_uploads();
         if prepared.is_overlay_only() {
-            return self.render_overlay_only(
-                device,
-                queue,
-                target,
-                prepared,
-                width,
-                height,
-                on_submitted,
-            );
+            return self
+                .render_overlay_only(device, queue, target, prepared, width, height, on_submitted)
+                .map(|()| true);
         }
-        let mut measurement = self.begin_gpu_measurement()?;
         let render_started = std::time::Instant::now();
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
@@ -111,6 +119,11 @@ impl Renderer {
                 scene.world_strokes(),
             )?;
         }
+        if self.pending_world_upload_bytes() != 0 {
+            self.submit_world_upload_chunk(device, queue, on_submitted)?;
+            return Ok(false);
+        }
+        let mut measurement = self.begin_gpu_measurement()?;
         self.sync_terminal_graphics(device, queue, prepared, width, height)?;
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
@@ -481,6 +494,6 @@ impl Renderer {
                 skipped_text_prepare,
             ));
         }
-        Ok(())
+        Ok(true)
     }
 }

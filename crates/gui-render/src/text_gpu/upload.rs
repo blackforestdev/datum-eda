@@ -3,7 +3,7 @@ use super::budget::Budget;
 use super::lifetime::{Kind, Owner, Tracked};
 use std::sync::Arc;
 
-pub(super) struct TextureUpload<'a> {
+pub(crate) struct TextureUpload<'a> {
     pub texture: &'a wgpu::Texture,
     pub origin: [u32; 2],
     pub size: [u32; 2],
@@ -33,7 +33,7 @@ impl Batch {
     }
 }
 
-pub(super) fn batch(
+pub(crate) fn batch(
     device: &wgpu::Device,
     owner: &Owner,
     generation: u64,

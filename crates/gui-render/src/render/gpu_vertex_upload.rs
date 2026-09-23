@@ -5,6 +5,9 @@
 //! module, rather than another textual inclusion into the renderer root.
 
 use super::*;
+#[path = "cold_world_upload.rs"]
+mod cold_world;
+pub(super) use cold_world::ColdWorldUploads;
 
 // Shared inventories for plan collection, cancellation, consumption and retirement.
 macro_rules! screen_streams {
@@ -56,7 +59,6 @@ impl Renderer {
     }
 
     pub(super) fn flush_vertex_uploads(&mut self, queue: &wgpu::Queue) {
-        world_streams!(self, stream, stream.flush_uploads(queue), mut);
         self.terminal_graphics.flush_textures(queue);
     }
 

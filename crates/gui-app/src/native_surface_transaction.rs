@@ -421,6 +421,13 @@ impl SurfaceTransaction {
         self.trace_lifecycle("submit");
     }
 
+    /// Upload-only work owns a normal submission receipt but cannot retire damage.
+    pub(crate) fn defer_upload_continuation(&mut self) {
+        self.recovery
+            .borrow_mut()
+            .defer(RetryReason::Queue, Instant::now());
+    }
+
     /// The sole product notification/presentation boundary for acquired native
     /// frames. Success retires consumed damage only in the coordinator afterward.
     pub(crate) fn present(
