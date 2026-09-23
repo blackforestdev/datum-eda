@@ -83,7 +83,7 @@ mod via;
 pub(crate) use via::push_via_primitive_world;
 #[path = "render/gpu_data.rs"]
 mod gpu_data;
-pub use gpu_data::Vertex;
+pub use gpu_data::{DocumentGpuUsage, Vertex};
 pub(crate) use gpu_data::{SceneUniform, ScreenUniform, quads_to_vertices};
 #[path = "render/gpu_strokes.rs"]
 mod gpu_strokes;

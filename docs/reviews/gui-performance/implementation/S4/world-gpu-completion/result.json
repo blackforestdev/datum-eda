@@ -1,0 +1,56 @@
+{
+  "status": "MEM-WORLD-GPU current production capacity/admission implementation complete; original qualification remains S5",
+  "base_commit": "41c44366",
+  "production_consumers": [
+    "scene_retained_access board world vertices/strokes and schematic_retained schematic vertices/strokes use SharedGeometry::for_document",
+    "All four Renderer RetainedBuffer streams, cached surface world bundles, submission retirement and recreate_for_device",
+    "Renderer::world_document_gpu_usage exposes each shared document reservation once"
+  ],
+  "retired_paths": [
+    "No remaining competing default world buffer admission path found; this slice adds per-document observation to the existing shared enforced owner"
+  ],
+  "behavior": [
+    "Expose revision-independent scene identity, reserved world capacity and the same constant 64 MiB limit used for admission. Snapshot values include preparing/current/submitted-retiring reservations and do not retain owners after return. Dead weak registry rows retire on observation or subsequent admission.",
+    "Reconcile existing default enforcement: VertexAllocation reserves aligned capacity against document and 512 MiB process limits before creating buffers; same-document capacity reuse does not reserve twice; document switch replaces the charged allocation. Bundle/submission references pin the original tracked record and permits, never duplicate bytes. Two-generation stream limits survive clear and same-host recovery."
+  ],
+  "boundary_review": {
+    "encoded_resources": "CachedSurfaceBundle retains existing world buffers and shared host uniform binding using SubmissionRef. It creates no new world vertex allocation. The installed unchanged wgpu-core 28.0.1 command/bundle.rs RenderBundle stores a CPU command stream/resource references and executes into the native encoder; no standalone application-owned world-buffer allocation is hidden by a second bundle charge. Dependency source was read only, not copied/modified.",
+    "separate_obligations": "CPU bundle batches/command metadata and registry storage remain under broader CPU/ACC accounting; driver/native command allocation is not API-live world buffer capacity. Uniform storage remains host-screen admission. Whole-resource replacement MEM-REPLACEMENT and global GPU/ACC conformance remain open. Resolved schematic content performance still needs its separate fixture admission."
+  },
+  "proof": {
+    "renderer": "344 renderer tests passed, 11 diagnostic/visual cases filtered. Extended actual GPU document test reconciles observation at 32 bytes, exact cap refusal with unchanged buffer/readback, document switch while old allocation is pinned, 48-byte retry, zero final capacity and removal after owners release. Existing world bundle replacement/visibility/order/shrink, four-stream recovery/generation and bounded upload tests pass.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy, fresh app build, source health 2273, dependency authority and governance pass.",
+    "scope": "No native/backend/scale or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Only MEM-WORLD-GPU implementation closes. Original native counter-conformance, failure/recovery, resource/RSS and independent S5 qualification remain unqualified. Snapshot queries are diagnostics; the resource cap itself runs by default.",
+    "Twelve recorded S4 implementation gaps remain. No milestone/issue closure or full resource/global adoption acceptance. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/world-gpu-completion/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-gpu-completion/tests.log.gz",
+      "uncompressed_sha256": "bcd393f38fb5312a8f664894a3e8dc36e41b72b200aa74e7a018c25efcf81100"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-gpu-completion/clippy.log.gz",
+      "uncompressed_sha256": "113b30002a38271f73f2d0fe4fa3e753a3fa8a7d0e9937a845ff2cc6ea00e9bc"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-gpu-completion/build.log.gz",
+      "uncompressed_sha256": "2ae7ca43a16cb1babe27c65eb3bd0ca2b78a093b28d8c51bd64721a045385621"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "bee382f7dc581d3aff82d701cdb491f58e62258d7d205eb77a7a988084f72e58",
+    "crates/gui-render/src/render/document_gpu_budget.rs": "260c233d2bb9d04baff86658e5d740d65460c1b31ef470c018668e51f2f416ab",
+    "crates/gui-render/src/render/gpu_data.rs": "38db59c5dc30e5fe06dd03dd21e3832a466be3c6273683a8d3525390ec85153a",
+    "crates/gui-render/src/render/retained_buffer.rs": "51a4e9e126d63d087268f7c08308141618626f186d80177e23466b38502a8e7c",
+    "crates/gui-render/src/render/shared_geometry.rs": "6c3d58861ee712a2e84893e75acbde4d94d668f273f8b3e4eeb834638c7908aa",
+    "crates/gui-render/src/render/scene_retained_access.rs": "cb8e8c5178a64938e7e4ee5185034ee49f006f8a44f3f119bb5b7536cc936f1f",
+    "crates/gui-render/src/render/schematic_retained.rs": "86dbb0f85d5b45fe0ce2c99283ce8120f5d16f7f5c3facfa234480ca22d977cf",
+    "crates/gui-render/src/render/vertex_allocation.rs": "f7151665c654fb66288a27523477f48e2d83164b2be7cc1c14e98d3acfd5e57b",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "a5269be93ae39155170d45e6c189b4f7b3a6a395177edee57805a4e70597c935",
+    "crates/gui-render/src/render/gpu_init.rs": "28dc083f94c01f66d81fd0980ae31a485e6ef1c9e3ff2c29fbc93b55fd236cff"
+  }
+}

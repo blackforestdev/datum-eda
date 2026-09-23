@@ -16278,14 +16278,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for current document world-buffer capacities/admission and encoded shared-resource retention; original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB GPU world/encoded-resource capacities per document; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "World GPU capacity implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_world_gpu_completion"
       },
       "s4_implementation_progress": [
         {
@@ -16307,6 +16306,11 @@
           "work": "s4_world_generation_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-generations/result.json",
           "status": "Two-live-allocation limit per retained-world stream survives clear, document switch and same-host recovery; obsolete CPU encodings retire before changed-source admission. Full document-wide generation/metadata boundary and qualification remain open."
+        },
+        {
+          "work": "s4_world_gpu_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/world-gpu-completion/result.json",
+          "status": "MEM-WORLD-GPU current production capacity/admission implementation complete; original qualification remains S5"
         }
       ]
     },
@@ -31764,10 +31768,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 13,
+    "rows_with_recorded_implementation_gaps": 12,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 14,
+    "rows_with_implementation_completed_at_s4": 15,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -31782,7 +31786,8 @@
       "MEM-LABEL-KEYS",
       "REUSE-TEXT-KEY",
       "REUSE-TEXT-LAYOUT",
-      "HP15-01"
+      "HP15-01",
+      "MEM-WORLD-GPU"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -33750,5 +33755,35 @@
       "Thirteen recorded S4 implementation gaps remain; no milestone or issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/result.json"
+  },
+  "s4_world_gpu_completion": {
+    "status": "MEM-WORLD-GPU current production capacity/admission implementation complete; original qualification remains S5",
+    "base_commit": "41c44366",
+    "production_consumers": [
+      "scene_retained_access board world vertices/strokes and schematic_retained schematic vertices/strokes use SharedGeometry::for_document",
+      "All four Renderer RetainedBuffer streams, cached surface world bundles, submission retirement and recreate_for_device",
+      "Renderer::world_document_gpu_usage exposes each shared document reservation once"
+    ],
+    "retired_paths": [
+      "No remaining competing default world buffer admission path found; this slice adds per-document observation to the existing shared enforced owner"
+    ],
+    "behavior": [
+      "Expose revision-independent scene identity, reserved world capacity and the same constant 64 MiB limit used for admission. Snapshot values include preparing/current/submitted-retiring reservations and do not retain owners after return. Dead weak registry rows retire on observation or subsequent admission.",
+      "Reconcile existing default enforcement: VertexAllocation reserves aligned capacity against document and 512 MiB process limits before creating buffers; same-document capacity reuse does not reserve twice; document switch replaces the charged allocation. Bundle/submission references pin the original tracked record and permits, never duplicate bytes. Two-generation stream limits survive clear and same-host recovery."
+    ],
+    "boundary_review": {
+      "encoded_resources": "CachedSurfaceBundle retains existing world buffers and shared host uniform binding using SubmissionRef. It creates no new world vertex allocation. The installed unchanged wgpu-core 28.0.1 command/bundle.rs RenderBundle stores a CPU command stream/resource references and executes into the native encoder; no standalone application-owned world-buffer allocation is hidden by a second bundle charge. Dependency source was read only, not copied/modified.",
+      "separate_obligations": "CPU bundle batches/command metadata and registry storage remain under broader CPU/ACC accounting; driver/native command allocation is not API-live world buffer capacity. Uniform storage remains host-screen admission. Whole-resource replacement MEM-REPLACEMENT and global GPU/ACC conformance remain open. Resolved schematic content performance still needs its separate fixture admission."
+    },
+    "proof": {
+      "renderer": "344 renderer tests passed, 11 diagnostic/visual cases filtered. Extended actual GPU document test reconciles observation at 32 bytes, exact cap refusal with unchanged buffer/readback, document switch while old allocation is pinned, 48-byte retry, zero final capacity and removal after owners release. Existing world bundle replacement/visibility/order/shrink, four-stream recovery/generation and bounded upload tests pass.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy, fresh app build, source health 2273, dependency authority and governance pass.",
+      "scope": "No native/backend/scale or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Only MEM-WORLD-GPU implementation closes. Original native counter-conformance, failure/recovery, resource/RSS and independent S5 qualification remain unqualified. Snapshot queries are diagnostics; the resource cap itself runs by default.",
+      "Twelve recorded S4 implementation gaps remain. No milestone/issue closure or full resource/global adoption acceptance. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/world-gpu-completion/result.json"
   }
 }

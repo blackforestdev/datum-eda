@@ -204,6 +204,12 @@ mod tests {
         let a = SharedGeometry::for_document(vec![1_u32; 4], "document-admission-a");
         let revision = SharedGeometry::for_document(vec![2_u32; 4], "document-admission-a");
         let other = SharedGeometry::for_document(vec![3_u32; 4], "document-admission-b");
+        let observed = |id: &str| {
+            crate::Renderer::world_document_gpu_usage()
+                .into_iter()
+                .find(|row| row.scene_id == id)
+                .unwrap()
+        };
         let budget = a.document_budget().unwrap().clone();
         let other_budget = other.document_budget().unwrap().clone();
         assert!(std::sync::Arc::ptr_eq(
@@ -217,6 +223,11 @@ mod tests {
         first.flush_uploads(&device, &queue);
         second.sync(&device, &queue, "second", &revision).unwrap();
         assert_eq!(budget.used(), 32);
+        assert_eq!(observed("document-admission-a").reserved_bytes, 32);
+        assert_eq!(
+            observed("document-admission-a").limit_bytes,
+            64 * 1024 * 1024
+        );
         let held = first.submission_ref().unwrap();
         let original = first.buffer().unwrap().clone();
         let filler = budget.reserve(64 * 1024 * 1024 - budget.used()).unwrap();
@@ -232,16 +243,30 @@ mod tests {
         assert_ne!(first.buffer(), Some(&original));
         assert_eq!(other_budget.used(), 16);
         assert_eq!(budget.used(), 64 * 1024 * 1024);
+        assert_eq!(
+            observed("document-admission-a").reserved_bytes,
+            64 * 1024 * 1024
+        );
+        assert_eq!(observed("document-admission-b").reserved_bytes, 16);
         drop(original);
         drop(held);
         assert_eq!(budget.used(), 64 * 1024 * 1024 - 16);
         drop(filler);
         first.sync(&device, &queue, "retry", &bigger).unwrap();
         assert_eq!(budget.used(), 48);
+        assert_eq!(observed("document-admission-a").reserved_bytes, 48);
         assert_eq!(other_budget.used(), 0);
         drop(first);
         drop(second);
         assert_eq!(budget.used(), 0);
+        assert_eq!(observed("document-admission-a").reserved_bytes, 0);
+        drop((a, revision, other, bigger, budget, other_budget));
+        assert!(
+            crate::Renderer::world_document_gpu_usage()
+                .iter()
+                .all(|row| row.scene_id != "document-admission-a"
+                    && row.scene_id != "document-admission-b")
+        );
     }
 
     #[test]

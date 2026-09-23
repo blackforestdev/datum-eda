@@ -1,5 +1,6 @@
 #[path = "document_gpu_budget.rs"]
 mod document_gpu_budget;
+pub use document_gpu_budget::DocumentGpuUsage;
 #[path = "retained_buffer.rs"]
 pub(crate) mod retained_buffer;
 #[path = "shared_geometry.rs"]
