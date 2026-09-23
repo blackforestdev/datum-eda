@@ -168,6 +168,7 @@ impl Renderer {
                 height,
                 false,
                 &self.atlas.staging_budget,
+                None,
             )?
         };
         let (mut overlay, overlay_stats) = if !has_overlay_text {
@@ -180,6 +181,7 @@ impl Renderer {
                 height,
                 true,
                 &self.atlas.staging_budget,
+                Some(&mut workspace),
             )?
         };
         self.text_buffers

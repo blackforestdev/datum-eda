@@ -11,6 +11,7 @@ impl TextBufferCache {
         height: u32,
         overlay: bool,
         host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
+        mut prior: Option<&mut crate::text_gpu::staging_vec::StagingVec<usize>>,
     ) -> anyhow::Result<(
         crate::text_gpu::staging_vec::StagingVec<usize>,
         TextBufferCacheStats,
@@ -20,7 +21,22 @@ impl TextBufferCache {
         self.release_layout_scratch_for(bytes, host);
         fonts.release_for(bytes);
         let mut indices = crate::text_gpu::staging_vec::StagingVec::new(runs.len(), host)?;
-        let stats = self.fill_indices(fonts, runs, width, height, overlay, &mut indices, host)?;
+        let stats = self.fill_indices(
+            fonts,
+            runs,
+            width,
+            height,
+            overlay,
+            &mut indices,
+            host,
+            |cache, current| {
+                if let Some(prior) = prior.as_deref_mut() {
+                    cache.admit_frame(&mut [prior, current])
+                } else {
+                    cache.admit_frame(&mut [current])
+                }
+            },
+        )?;
         Ok((indices, stats))
     }
 
@@ -36,7 +52,16 @@ impl TextBufferCache {
         let mut indices = Vec::with_capacity(runs.len());
         let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
         let stats = self
-            .fill_indices(fonts, runs, width, height, overlay, &mut indices, &host)
+            .fill_indices(
+                fonts,
+                runs,
+                width,
+                height,
+                overlay,
+                &mut indices,
+                &host,
+                |_, _| Ok(()),
+            )
             .unwrap();
         (indices, stats)
     }

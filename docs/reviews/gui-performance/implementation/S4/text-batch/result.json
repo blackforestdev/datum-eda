@@ -1,0 +1,59 @@
+{
+  "status": "Shared workspace/overlay preparation admits each changed layout and stops rejected batches before shaping subsequent runs",
+  "production_consumers": [
+    "Default TextBufferCache admitted_indices for workspace/terminal and dialog/overlay text",
+    "Shared Renderer prepare_frame_text for composed and dialog-only rendering"
+  ],
+  "retired_paths": [
+    "Discovering payload overflow only after shaping the complete production batch",
+    "Recounting the entire cache to publish each cold preparation change"
+  ],
+  "behavior": [
+    "Every new or relaid-out cache entry reaches existing local/process admission before the next run. Required over-budget derived storage is released and remaining runs are not shaped. Final admission remains for warm frames and concurrent-owner changes.",
+    "Overlay admission receives earlier workspace indices. History retirement remaps both groups before glyph borrowing; failure clears both. Retry rebuilds from unchanged TextRun input, with no dropped required labels.",
+    "Prepared byte totals update from touched key/layout capacities, entry/index capacity changes and newly created shape allocations. Forked shared shape prefixes count once. This avoids a full-cache scan per label; pressure retirement still reconciles the full inventory. Test-only fixture builders retain deliberate unadmitted construction for negative/retention tests."
+  ],
+  "proof": {
+    "renderer": "391 renderer tests passed;0 failed;11 filtered, including rendering parity, atlas pressure, shared layout and retirement paths.",
+    "focused": "29 text-cache tests passed after final proof additions. With room only for the existing workspace, the first extra overlay shape causes rejection and the remaining eleven runs are never shaped; prior indices clear, retry reconstructs all labels, and warm retry performs no shaping. A second case evicts oversized unused history and remaps workspace1to0 while retaining both required groups.",
+    "accounting": "Whole-owner heap conformance now checks incremental totals against an independent full inventory across shared plain/rich extent variants and subsequent relayout. Actual retained heap remains reconciled after font-owner release.",
+    "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2301files and governance checks pass. Initial compile failure from one test caller missing the new prior-group argument is preserved."
+  },
+  "limits": [
+    "Per-layout admission bounds accumulation across a batch, not the synchronous peak inside one library shaping/layout call or simultaneous pre-admission construction by multiple owners. Pre-construction admission/overlap and private scratch remain unresolved; seven S4 implementation gaps remain.",
+    "No complete MEM-SHAPED/MEM-STAGING/ACC, S4/S5 or issue closure. Original local/process ceilings and required-content, native, negative and endurance qualification remain unchanged.",
+    "No dependency/vendor/license, prototype, numerical-cap or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition and Copilot engine edits."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json",
+  "base_commit": "6c5986a6",
+  "logs": {
+    "test": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-batch/test.log.gz",
+      "uncompressed_sha256": "801c9781811e55977468ac2d74bb925fcdaeaf652e7b761b8e48f3879458b4c9"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-batch/renderer.log.gz",
+      "uncompressed_sha256": "f94e1b24a6971e3445318dfb4952b98faf9b856873544dff60ef3c8379199fce"
+    },
+    "final": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-batch/final.log.gz",
+      "uncompressed_sha256": "75122fdeb496b2e35ade734a220b06f48fa645cb605be8264fe2a0228aaeaad3"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-batch/clippy.log.gz",
+      "uncompressed_sha256": "e992e8ff1439cb6bc6d15996cb08c6f0095e8190a724b03f1cee3188101ce64b"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-batch/build.log.gz",
+      "uncompressed_sha256": "63200861055c5231a0163db0a7f09dfa5ad6ce8e9d9ca1b263f19c1b8f6f4d54"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text.rs": "06ef3e97873d51494ab83741a5311aa4c1dfb10be54db7d986bb0ae0ef613e48",
+    "crates/gui-render/src/render/text_buffer_heap_tests.rs": "c5200491ee838a3bf366de998ffe62f8685fc513a812bde0242396225f73dc2a",
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "a89e0459fb70adedeaba34f22ac96c33af36f08cfc6e4527b36d8cd90508b298",
+    "crates/gui-render/src/render/text_cache_prepare.rs": "7fba8e4d9981433b1bade8ffd332cab4de57f46e22a09356c3d4b1380d4af943",
+    "crates/gui-render/src/render/text_cache_retention.rs": "dd70072c53efe974f0f1978291332a3ab4adf154086a1a56bc155d1c3d747a90",
+    "crates/gui-render/src/render/text_batch_admission_tests.rs": "f35e0dc861beb095f40dd49d0f658c2df428a27ce4c8083f6776cc331dd8cb83"
+  }
+}

@@ -245,6 +245,7 @@ fn oversized_plain_and_rich_keys_refuse_before_shaping_and_preserve_warm_cache()
             720,
             true,
             &host,
+            None,
         )
         .unwrap();
     drop(indices);
@@ -270,6 +271,7 @@ fn oversized_plain_and_rich_keys_refuse_before_shaping_and_preserve_warm_cache()
                 720,
                 true,
                 &host,
+                None,
             )
             .err()
             .expect("oversized input refused");
@@ -290,6 +292,7 @@ fn oversized_plain_and_rich_keys_refuse_before_shaping_and_preserve_warm_cache()
             720,
             true,
             &host,
+            None,
         )
         .unwrap();
     assert_eq!(indices.len(), 1);
@@ -344,7 +347,8 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
                 960,
                 720,
                 true,
-                &host
+                &host,
+                None
             )
             .is_err()
     );
@@ -367,6 +371,7 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
             720,
             true,
             &host,
+            None,
         )
         .unwrap();
     assert_eq!(stats.misses, 1);
@@ -386,6 +391,7 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
             720,
             true,
             &host,
+            None,
         )
         .unwrap();
     assert_eq!(stats.hits, 1);
@@ -400,6 +406,7 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
             720,
             true,
             &host,
+            None,
         )
         .unwrap();
     assert_eq!(stats.misses, 1);

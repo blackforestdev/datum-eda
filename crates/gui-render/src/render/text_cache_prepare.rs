@@ -3,15 +3,16 @@ use super::*;
 
 impl TextBufferCache {
     #[allow(clippy::too_many_arguments)]
-    pub(super) fn fill_indices(
+    pub(super) fn fill_indices<I: Extend<usize>>(
         &mut self,
         font_system: &mut impl crate::text_layout::fonts::Source,
         text_runs: &[TextRun],
         width: u32,
         height: u32,
         overlay: bool,
-        indices: &mut impl Extend<usize>,
+        indices: &mut I,
         host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
+        mut admit: impl FnMut(&mut Self, &mut I) -> anyhow::Result<()>,
     ) -> anyhow::Result<TextBufferCacheStats> {
         let mut stats = TextBufferCacheStats::default();
         for run in text_runs {
@@ -37,6 +38,9 @@ impl TextBufferCache {
                 stats.hits += 1;
             }
             indices.extend(std::iter::once(index));
+            if missed {
+                admit(self, indices)?;
+            }
         }
         self.publish_usage();
         Ok(stats)
@@ -50,6 +54,7 @@ impl TextBufferCache {
         height: u32,
         host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
     ) -> anyhow::Result<(usize, bool)> {
+        self.publish_usage();
         let extent = text_buffer_extent(run, width, height);
         let fingerprint = run_fingerprint(run);
         let first = self.lookup.partition_point(|(hash, _)| *hash < fingerprint);
@@ -103,6 +108,8 @@ impl TextBufferCache {
             // shared shaped paragraphs without cloning glyph payloads or retaining
             // an obsolete extent. The shaping fingerprint and index stay valid.
             let entry = &mut self.entries[index];
+            let old_layout = entry.buffer.layout_storage_bytes();
+            let old_shapes = entry.buffer.shape_allocations().count();
             entry.buffer.relayout_with_input(
                 font_system,
                 &mut self.layout_scratch,
@@ -113,13 +120,24 @@ impl TextBufferCache {
             entry.key.width_px = extent.0;
             entry.key.height_px = extent.1;
             entry.last_used_frame = self.frame;
-            self.revision = self.revision.wrapping_add(1);
+            let new_bytes = entry.buffer.layout_storage_bytes()
+                + entry
+                    .buffer
+                    .shape_allocations()
+                    .skip(old_shapes)
+                    .map(|(_, bytes)| bytes)
+                    .sum::<usize>();
+            self.publish_preparation_delta(old_layout, new_bytes);
             #[cfg(test)]
             {
                 self.shape_reuses += 1;
             }
             return Ok((index, true));
         }
+        let old_capacity = self.preparation_metadata_bytes();
+        let shared_shapes = shaped.map_or(0, |index| {
+            self.entries[index].buffer.shape_allocations().count()
+        });
         let key = text_buffer_key(run, width, height);
         // Simultaneous extents share immutable shaping, never cloned glyph
         // vectors or copied paragraph strings. Each owns only its visible layout.
@@ -146,7 +164,20 @@ impl TextBufferCache {
                 rich_text,
             )
         };
-        self.revision = self.revision.wrapping_add(1);
+        let added = key_text_bytes(&key)
+            + capacity_bytes::<TextBufferSpanKey>(key.rich_spans.capacity())
+            + tracking_bytes::<u8>(key.text.capacity())
+            + key
+                .rich_spans
+                .iter()
+                .map(|span| tracking_bytes::<u8>(span.text.capacity()))
+                .sum::<usize>()
+            + buffer.layout_storage_bytes()
+            + buffer
+                .shape_allocations()
+                .skip(shared_shapes)
+                .map(|(_, bytes)| bytes)
+                .sum::<usize>();
         self.entries.push(CachedTextBuffer {
             key,
             buffer,
@@ -160,6 +191,26 @@ impl TextBufferCache {
             .lookup
             .partition_point(|item| *item < (fingerprint, index));
         self.lookup.insert(insertion, (fingerprint, index));
+        self.publish_preparation_delta(old_capacity, self.preparation_metadata_bytes() + added);
         Ok((index, true))
     }
+    fn preparation_metadata_bytes(&self) -> usize {
+        capacity_bytes::<CachedTextBuffer>(self.entries.capacity())
+            + capacity_bytes::<(u64, usize)>(self.lookup.capacity())
+    }
+
+    fn publish_preparation_delta(&mut self, removed: usize, added: usize) {
+        self.published_bytes = self
+            .published_bytes
+            .checked_sub(removed)
+            .and_then(|bytes| bytes.checked_add(added))
+            .expect("text preparation accounting overflow");
+        self.revision = self.revision.wrapping_add(1);
+        self.published_revision = self.revision;
+        self.owner.publish(self.published_bytes);
+    }
 }
+
+#[cfg(test)]
+#[path = "text_batch_admission_tests.rs"]
+mod tests;
