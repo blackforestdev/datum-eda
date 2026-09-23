@@ -157,45 +157,24 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 resource: uniform_buffer.buffer().as_entire_binding(),
             }],
         });
-        let scene_uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("datum-gui-render-scene-uniform-buffer"),
-            contents: bytemuck::bytes_of(&SceneUniform {
-                resolution: [1.0, 1.0, 0.0, 0.0],
-                viewport_origin: [0.0, 0.0, 0.0, 0.0],
-                viewport_size: [1.0, 1.0, 0.0, 0.0],
-                camera_center_scale: [0.0, 0.0, 1.0, 0.0],
-            }),
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-        });
-        let scene_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("datum-gui-render-scene-bg"),
-            layout: &scene_bind_group_layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: scene_uniform_buffer.as_entire_binding(),
-            }],
-        });
-        // P2.2a: independent uniform + bind group for the companion schematic pass
-        // (same layout/pipeline as the board world pass, distinct backing buffer).
-        let schematic_scene_uniform_buffer =
-            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("datum-gui-render-schematic-scene-uniform-buffer"),
-                contents: bytemuck::bytes_of(&SceneUniform {
-                    resolution: [1.0, 1.0, 0.0, 0.0],
-                    viewport_origin: [0.0, 0.0, 0.0, 0.0],
-                    viewport_size: [1.0, 1.0, 0.0, 0.0],
-                    camera_center_scale: [0.0, 0.0, 1.0, 0.0],
-                }),
-                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-            });
-        let schematic_scene_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("datum-gui-render-schematic-scene-bg"),
-            layout: &scene_bind_group_layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: schematic_scene_uniform_buffer.as_entire_binding(),
-            }],
-        });
+        let scene_uniform = SceneUniform {
+            resolution: [1.0, 1.0, 0.0, 0.0],
+            viewport_origin: [0.0, 0.0, 0.0, 0.0],
+            viewport_size: [1.0, 1.0, 0.0, 0.0],
+            camera_center_scale: [0.0, 0.0, 1.0, 0.0],
+        };
+        let scene_bind_group = gpu_data::uniform_buffer::UniformBinding::new(
+            device,
+            &scene_bind_group_layout,
+            "datum-gui-render-scene-bg",
+            Some(scene_uniform),
+        );
+        let schematic_scene_bind_group = gpu_data::uniform_buffer::UniformBinding::new(
+            device,
+            &scene_bind_group_layout,
+            "datum-gui-render-schematic-scene-bg",
+            Some(scene_uniform),
+        );
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-gui-render-pipeline-layout"),
             bind_group_layouts: &[&uniform_bind_group_layout],

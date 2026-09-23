@@ -43,6 +43,7 @@ impl Renderer {
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
         self.cancel_vertex_uploads();
+        self.cancel_uniform_uploads();
         if prepared.is_overlay_only() {
             return self.render_overlay_only(
                 device,
@@ -180,7 +181,7 @@ impl Renderer {
                                 continue;
                             };
                             pass.set_pipeline(&self.world_pipeline);
-                            pass.set_bind_group(0, &self.scene_bind_group, &[]);
+                            pass.set_bind_group(0, &self.scene_bind_group.bind_group, &[]);
                             pass.set_scissor_rect(
                                 prepared.scene_viewport.x.max(0.0).floor() as u32,
                                 prepared.scene_viewport.y.max(0.0).floor() as u32,
@@ -197,7 +198,7 @@ impl Renderer {
                             draw_world_strokes(
                                 &mut pass,
                                 &self.world_stroke_pipeline,
-                                &self.scene_bind_group,
+                                &self.scene_bind_group.bind_group,
                                 buffer,
                                 prepared.scene_viewport,
                                 std::slice::from_ref(range),
@@ -234,7 +235,11 @@ impl Renderer {
                                 continue;
                             };
                             pass.set_pipeline(&self.world_pipeline);
-                            pass.set_bind_group(0, &self.schematic_scene_bind_group, &[]);
+                            pass.set_bind_group(
+                                0,
+                                &self.schematic_scene_bind_group.bind_group,
+                                &[],
+                            );
                             pass.set_scissor_rect(
                                 scene_viewport.x.max(0.0).floor() as u32,
                                 scene_viewport.y.max(0.0).floor() as u32,
@@ -251,7 +256,7 @@ impl Renderer {
                             draw_world_strokes(
                                 &mut pass,
                                 &self.world_stroke_pipeline,
-                                &self.schematic_scene_bind_group,
+                                &self.schematic_scene_bind_group.bind_group,
                                 buffer,
                                 *scene_viewport,
                                 std::slice::from_ref(range),

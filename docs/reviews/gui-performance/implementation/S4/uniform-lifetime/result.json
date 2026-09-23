@@ -1,0 +1,78 @@
+{
+  "status": "Default uniform allocation, binding and deferred-upload owners consolidated; full caps/accounting qualification remain open",
+  "base_commit": "ae59757d",
+  "production_consumers": [
+    "Screen resolution uniform for full/overlay native hosts",
+    "Per-pane camera uniforms and cached world bundles",
+    "Existing board/schematic fallback bindings"
+  ],
+  "retired_paths": [
+    "Raw fallback uniform buffer creation retained only by bind groups",
+    "Pane buffer/bind-group tuples whose field-drop order released accounting first",
+    "Eager uniform queue writes during fallible frame preparation"
+  ],
+  "behavior": [
+    "All default uniform buffers use the existing tracked GPU allocation owner. UniformBinding keeps binding references before allocation ownership in drop order; cached bundles and submissions retain the same allocation, counted once.",
+    "sync plans differences against submitted content. Cancellation discards only the pending value; successful-frame flush writes exact aligned changed words and then updates submitted identity. Preserve mapped initialization of fixed default values, warm zero-write reuse and independent board/schematic buffers.",
+    "Remove the obsolete root DeviceExt import after consolidating initialization in the normal uniform_buffer module. Ratchet the existing root ceiling7153to7152; reconcile policy receipt and inventory without changing policy."
+  ],
+  "proof": {
+    "renderer": "293 renderer tests pass, including actual-GPU cancelled-uniform readback, exact changed words, warm reuse and retirement, plus existing pane close/reopen/camera and world-bundle pixel regressions.11 measurement/cost/visual-runner cases explicitly filtered.",
+    "lint": "All-targets visual gui-render/gui-app Clippy -D warnings passes. Source health2239files,13 policy tests, dependency and parity gates pass.",
+    "native": "Fresh visual-feature datum-gui build and1680x1050 datum-test/R1 capture exit0; inspected and exact decoded RGBA equality with prior attachment-lifetime capture.",
+    "cache": "The offline focused check and full renderer verification rebuilt successfully after the earlier shared-cache loss. Root cause of dat-wf8i remains unconfirmed; no cleanup or dependency download performed.",
+    "drift": "Full drift rerun passes workspace Clippy and preceding gates after offline cache rebuild; stops at the existing console-routine-focused1x mismatch:3778pixels(0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+  },
+  "limits": [
+    "Aggregate GPU512MiB and per-resource admission/caps, complete host/device incidence and release-reason accounting, staging/chunking and query/readback storage remain unfinished. No full ACC/MEM predicate or S4/S5 closure.",
+    "Uniform sync byte counts describe planned writes; mapped initialization is separate from queue writes. Complete calibrated boundary counters and performance/endurance qualification remain open.",
+    "No dependency, vendor, license, prototype, initial uniform values, shader/layout, budget or nonblocking resize amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
+  "logs": {
+    "check": {
+      "path": "check.log.gz",
+      "uncompressed_sha256": "28bbb17fa791833e81e534086824119a69621cc76391914b2089c1b6d373be13"
+    },
+    "tests": {
+      "path": "tests.log.gz",
+      "uncompressed_sha256": "c779b4e89a98d6d3bd62530cd256395ec24e3df459d975e12d67a0e5d1f97605"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "56ab1ba49a2275303ee6614c109c89d77f54e49ec51b3676bd9206b4f25d2702"
+    },
+    "native": {
+      "path": "native.log.gz",
+      "uncompressed_sha256": "57b4db5840d1ae1bf9fff451f1aa7a90d58232f92af92f972168ba4c71f64f8d"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "5b03a69264a65a4db231e953fcef21be63cb8288c830259b086421ebe0cab7a3"
+    }
+  },
+  "native_capture": {
+    "path": "native.png",
+    "sha256": "40e986a2655402722e7ebb62db7dacbfdbd02134da611989bfd2b12db0a81d2a",
+    "prior_capture_rgba_equal": true
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "4bc540030305042b50b6e5e65af1afefefb6e5d76fc0218252c7c955f65ec426",
+    "crates/gui-render/src/render/gpu_frame.rs": "8f4525b247cdd97a730245545c103b1123f1539e102670f702b03374d143a290",
+    "crates/gui-render/src/render/gpu_init.rs": "444857b9e64ab58c68c387a3459dd74da888f88cad9e0aa258e6a7e68d241a2a",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "438c6482376f0247833bb350bc4a72e01944caab70ae5cc2a358898a844511b7",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "74297c6e5162ffd3884180c2377138c835c57afcce56656146b466dedad5ca03",
+    "crates/gui-render/src/render/gpu_text.rs": "c27c80b912f62271419e0e076e8c0181163aa27a9c560833c7b450809af79837",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "2ed205be9ac649b48fb5f664b29275cfd61f711d6817e2f0105ea60efb1832fc",
+    "crates/gui-render/src/render/renderer_state.rs": "72d197ff7b808703f7157cd8900f27e5f4fbb29e08655cfa25a7721ca1e8ef5d",
+    "crates/gui-render/src/render/uniform_buffer.rs": "f5ab32c53f53f625e0f1f7f7950d7e5eb95a55467d1e82c248436b60f4b7e65f",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "87095a9ce4b05fd475e10342ff620500deda9c7163fc2c3d99f46642709c5330"
+  },
+  "application_sha256": "5d3b7b13e1a7447d2ca5b6cb3ff52b2fd8197b2745a8790a8ccbd6e20e6d0c63",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib -- --include-ignored --skip gpu_measurements::tests::real_gpu --skip gpu_surface::attachment_cost_probe --skip visual::visual_runner --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render -p datum-gui-app --all-targets --features visual -- -D warnings",
+    "timeout 120s python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --offline -p datum-gui-app --bin datum-gui --features visual -- --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb --select R1 --visual-test --screenshot-out /tmp/pm045-s4-uniform-native.png --window-size 1680x1050 --exit-after-screenshot",
+    "bash /tmp/pm045-s4-drift.sh (offline; nested terminal-core Cargo guarded)"
+  ]
+}

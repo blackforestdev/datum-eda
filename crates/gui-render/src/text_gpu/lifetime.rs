@@ -14,6 +14,7 @@ pub enum Kind {
     Vertex,
     TerminalTexture,
     Attachment,
+    Uniform,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -146,8 +147,8 @@ impl crate::Renderer {
             .collect()
     }
 
-    /// Migrated text, terminal textures, vertices and MSAA attachment API allocations.
-    /// Includes retirement; uniforms, driver residency and staging remain separate.
+    /// Migrated text, terminal textures, vertices, uniforms and MSAA API allocations.
+    /// Includes retirement; driver residency, staging and query/readback storage remain separate.
     pub fn gpu_process_allocations() -> Vec<Record> {
         records(&PROCESS_ALLOCATIONS)
     }
