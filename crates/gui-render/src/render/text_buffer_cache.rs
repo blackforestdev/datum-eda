@@ -347,7 +347,7 @@ impl TextBufferCache {
 
     fn fill_indices(
         &mut self,
-        font_system: &mut FontSystem,
+        font_system: &mut impl crate::text_layout::fonts::Source,
         text_runs: &[TextRun],
         width: u32,
         height: u32,
@@ -377,7 +377,7 @@ impl TextBufferCache {
 
     fn ensure_text_buffer(
         &mut self,
-        font_system: &mut FontSystem,
+        font_system: &mut impl crate::text_layout::fonts::Source,
         run: &TextRun,
         width: u32,
         height: u32,

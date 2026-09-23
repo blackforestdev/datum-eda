@@ -15446,6 +15446,11 @@
           "work": "s4_text_preparation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
           "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
+        },
+        {
+          "work": "s4_font_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
+          "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15605,6 +15610,11 @@
           "work": "s4_text_preparation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-preparation/result.json",
           "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open"
+        },
+        {
+          "work": "s4_font_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
+          "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17372,6 +17382,11 @@
           "work": "s4_raster_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/raster-owner/result.json",
           "status": "Datum raster owner accounts and admits retained private scratch separately from pixel lifetimes; construction peaks/font ownership remain open"
+        },
+        {
+          "work": "s4_font_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
+          "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
         }
       ]
     },
@@ -17598,6 +17613,11 @@
           "work": "s4_raster_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/raster-owner/result.json",
           "status": "Datum raster owner accounts and admits retained private scratch separately from pixel lifetimes; construction peaks/font ownership remain open"
+        },
+        {
+          "work": "s4_font_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
+          "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
         }
       ]
     },
@@ -35229,5 +35249,35 @@
       "No dependency/license/prototype/cap/sequencing amendment. Preserve failed evidence, Console golden issue, GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/raster-owner/result.json"
+  },
+  "s4_font_owner_work": {
+    "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open",
+    "base_commit": "0df8d361",
+    "production_consumers": [
+      "Default Renderer font creation and shared TextLayout shaping for workspace/overlay native and offscreen consumers",
+      "Shared Raster font acquisition and native SurfaceTransaction ownership observation"
+    ],
+    "retired_paths": [
+      "Renderer FontSystem mutation attributed only to the general text preparation scope",
+      "Indistinguishable mutable font/cache and retained shape allocations in that scope"
+    ],
+    "behavior": [
+      "Datum Fonts owns the existing FontSystem and scopes construction, shaping and raster font acquisition. Immutable shared catalog initialization retains its independent process scope. No private dependency layout is read or changed.",
+      "Returned shapes carry a lifetime lease for their nested public vector capacities and headers. Arc shape sharing increments no payload total; private font usage subtracts returned shapes once. The existing shaped-cache capacity report includes the new Arc wrapper size and retains existing admission/retention semantics.",
+      "The generic Source adapter preserves the same shaping/raster APIs and immutable font authority; all production renderer construction selects the owned implementation. Existing raw FontSystem support remains for independent reference and layout tests, not an alternate default renderer.",
+      "font_cpu_usage reports scope totals, returned shape bytes and the remaining private FontSystem database/cache/shaping state. Native shared surface observation emits it with the window identity only when verbose logging is enabled. Tracking and ownership are default behavior."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 376 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.54s",
+      "checks": "376 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh GUI build passed. Existing raw/glyphon oracle, whole-cache heap, text identity and actual native-render-path GPU parity scenarios passed. Application tests were not rerun.",
+      "coverage": "New owner lifetime test checks private/output partition, shared shape deduplication, font-owner close with shapes still alive, final shared-reference retirement and zero remaining scope allocations. Updated common GPU setup checks the new font scope rather than the old general text scope.",
+      "failed_attempts": "Preserve initial missing test-only Shaping import compile failure and347-pass/29-failure run. All29 failures stopped at the common setup assertion checking the obsolete general text scope before rendering. Corrected setup uses font_cpu_usage().allocation; final full suite passes."
+    },
+    "limits": [
+      "No complete MEM-SHAPED/MEM-STAGING/ACC, S4/S5 or issue closure. Per-renderer private FontSystem database, caches and shaping scratch are observed as a combined owner; cache/scratch admission and synchronous construction peaks remain unresolved.",
+      "Shared catalog ownership, measurement-thread FontSystem scope and ordinary preparation/layout/raster scopes remain distinct. Do not sum returned_shape_bytes with shaped-cache payload again. Wrapper/scope registry bookkeeping and allocator/native/RSS classification remain separate obligations.",
+      "No dependency/license/prototype/font authority/cap/sequencing amendment or runtime tier/latency acceptance. Preserve failed evidence, Console golden issue, GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json"
   }
 }

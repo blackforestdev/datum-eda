@@ -1,6 +1,6 @@
 //! Datum ownership of private raster scratch and independently retained pixels.
 use super::budget::{Budget, Permit, staging_process};
-use glyphon::{CacheKey, FontSystem, SwashImage};
+use glyphon::{CacheKey, SwashImage};
 use std::sync::{
     Arc,
     atomic::{AtomicU64, Ordering},
@@ -75,18 +75,14 @@ impl Raster {
 
     pub fn image(
         &mut self,
-        fonts: &mut FontSystem,
+        fonts: &mut impl crate::text_layout::fonts::Source,
         key: CacheKey,
         host: &Arc<Budget>,
     ) -> Option<(SwashImage, Pixels)> {
-        // Load font ownership outside raster scratch. The installed API uses
-        // this same key when constructing its scaler; no private fields inspected.
-        fonts.get_font(key.font_id, key.font_weight)?;
-        let image = self.scope.with(|| {
-            self.cache
-                .get_or_insert_with(crate::SwashCache::new)
-                .get_image_uncached(fonts, key)
-        });
+        let cache = self
+            .scope
+            .with(|| self.cache.get_or_insert_with(crate::SwashCache::new));
+        let image = fonts.raster(cache, &self.scope, key);
         let output = image.map(|mut image| {
             let data = std::mem::take(&mut image.data);
             let bytes = crate::cpu_alloc::heap::capacity_bytes::<u8>(data.capacity()) as u64;

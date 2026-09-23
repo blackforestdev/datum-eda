@@ -46,7 +46,7 @@ pub struct Renderer {
     pub(super) schematic_scene_bind_group: gpu_data::uniform_buffer::UniformBinding<SceneUniform>,
     pub(super) schematic_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) schematic_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
-    pub(super) font_system: FontSystem,
+    pub(super) font_system: crate::text_layout::fonts::Fonts,
     pub(super) text_cpu: crate::cpu_alloc::Scope,
     pub(super) swash_cache: crate::text_gpu::raster::Raster,
     pub(super) text_resolution: [u32; 2],

@@ -177,6 +177,13 @@ impl SurfaceTransaction {
                 renderer.last_upload_frame()
             )
         });
+        super::append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "native font ownership window={:?} usage={:?}",
+                self.window,
+                renderer.font_cpu_usage()
+            )
+        });
         let Some(attachment) = renderer.surface_attachment_snapshot() else {
             return;
         };

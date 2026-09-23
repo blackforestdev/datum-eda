@@ -5,7 +5,7 @@ impl TextBufferCache {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn admitted_indices(
         &mut self,
-        fonts: &mut FontSystem,
+        fonts: &mut impl crate::text_layout::fonts::Source,
         runs: &[TextRun],
         width: u32,
         height: u32,
@@ -25,7 +25,7 @@ impl TextBufferCache {
     #[cfg(test)]
     fn indices_for(
         &mut self,
-        fonts: &mut FontSystem,
+        fonts: &mut impl crate::text_layout::fonts::Source,
         runs: &[TextRun],
         width: u32,
         height: u32,
@@ -39,7 +39,7 @@ impl TextBufferCache {
     #[cfg(test)]
     pub(crate) fn indices(
         &mut self,
-        font_system: &mut FontSystem,
+        font_system: &mut impl crate::text_layout::fonts::Source,
         text_runs: &[TextRun],
         width: u32,
         height: u32,
@@ -50,7 +50,7 @@ impl TextBufferCache {
     #[cfg(test)]
     pub(crate) fn overlay_indices(
         &mut self,
-        font_system: &mut FontSystem,
+        font_system: &mut impl crate::text_layout::fonts::Source,
         text_runs: &[TextRun],
         width: u32,
         height: u32,
