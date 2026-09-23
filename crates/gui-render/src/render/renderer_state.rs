@@ -51,4 +51,10 @@ impl Renderer {
     pub fn control_mesh_build_count(&self) -> usize {
         self.control_meshes.builds
     }
+
+    /// Retained CPU cache storage, including entry capacity and mesh payload.
+    /// Does not include transient construction, frame output or GPU buffers.
+    pub fn control_mesh_retained_cpu_bytes(&self) -> usize {
+        self.control_meshes.retained_cpu_bytes()
+    }
 }

@@ -6978,7 +6978,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row.",
+      "s4_retained_cpu_progress": "Shared production ControlMeshCache now bounds retained owner+entry capacity+boxed payload to4MiB with256entries. See s4_control_retained_cpu_work. Transient construction, prepared output, GPU/in-flight and complete accounting remain open; no full row pass."
     },
     {
       "id": "HP17-01",
@@ -15793,7 +15794,8 @@
         "unfinished_qualification": "4MiB control mesh CPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
-      }
+      },
+      "s4_retained_cpu_progress": "Shared production ControlMeshCache now bounds retained owner+entry capacity+boxed payload to4MiB with256entries. See s4_control_retained_cpu_work. Transient construction, prepared output, GPU/in-flight and complete accounting remain open; no full row pass."
     },
     {
       "id": "MEM-MESH-GPU",
@@ -30954,5 +30956,32 @@
     "rows_with_recorded_implementation_gaps": 27,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change."
+  },
+  "s4_control_retained_cpu_work": {
+    "status": "Retained CPU control-cache cap includes metadata; complete MEM-MESH-CPU and HP16-03 remain partial",
+    "base_commit": "c17d11ac",
+    "production_consumers": [
+      "MAIN frame_preparation.rs shared control painter",
+      "GLOBAL/PROJECT preferences_scene.rs shared control painter",
+      "NEW new_project_scene.rs shared control painter"
+    ],
+    "shared_owner": "render/control_mesh.rs ControlMeshCache",
+    "retired_paths": [
+      "Payload-only 4MiB admission that omitted key/entry allocation capacity and owner storage",
+      "Growing entry table excluded from byte accounting"
+    ],
+    "behavior": "Reserve the 256-entry table once; charge actual entry capacity, inline owner and boxed mesh payload together against4MiB. Evict LRU before retention; paint but do not cache a mesh that cannot fit with metadata. Expose retained CPU bytes on Renderer with explicit exclusions. No contour, placement, color, clipping or key change.",
+    "proof": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib control_mesh -- --nocapture",
+      "tests": "5 passed;227 filtered. Includes4MiB-payload bypass with content consumed,512-key zero-payload churn with stable allocation capacity, half-cap payload eviction, LRU/key completeness and contour/placement reuse.",
+      "source_health": "Normal-budget files; gate passes and13 policy tests pass. Exact-file rustfmt only.",
+      "drift": "Workspace Clippy and preceding governance/terminal gates pass; Console7 app/8 protocol/9 renderer and TerminalCore4 proof tests pass. Full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates not run; goldens unchanged."
+    },
+    "limitations": [
+      "Counts retained Rust-owned cache capacity, not allocator bookkeeping, temporary construction vectors, prepared-frame output or GPU/in-flight allocations. Complete live CPU/aggregate/resource acceptance remains open.",
+      "The256-entry table reserves14336 bytes on this build; owner inline storage is additionally charged. Full meshes remain rendered when retention is bypassed.",
+      "No runtime performance claim, native matrix replay, full MEM-MESH-CPU/HP16-03 acceptance, dependency/license/prototype/numerical-budget/resize change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/control-retained-cpu/result.json"
   }
 }
