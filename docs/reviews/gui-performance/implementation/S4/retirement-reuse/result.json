@@ -1,0 +1,48 @@
+{
+  "status": "Allocation-free retirement adopted by shared scene history and process text cache registry",
+  "base_commit": "f819361d",
+  "production_consumers": [
+    "RetainedSceneHistory retirement pruning for native board/companion owners",
+    "Process text-cache registry owner removal on renderer destruction/recovery"
+  ],
+  "retired_paths": [
+    "History retirement-buffer boxed-slice compaction and charge resize during pruning",
+    "Text-cache owner registry boxed-slice compaction during owner removal"
+  ],
+  "behavior": [
+    "Reuse existing charged capacity while owners remain, releasing empty buffers and their charges without replacement allocation. Preserve local/document history accounting and process text allowance deduction."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 20 passed; 0 failed; 4 ignored; 0 measured; 351 filtered out; finished in 3.18s",
+    "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 15.86s",
+    "checks": "Strict visual renderer/app all-targets Clippy, fresh visual GUI build, formatting, source-health, dependency and governance checks passed. Existing tests extended for pointer stability, full spare capacity charge, and release. No broad GPU/native qualification rerun."
+  },
+  "limits": [
+    "Retained spare capacity can remain larger after partial retirement; it is fully charged and reusable, never exempted from limits.",
+    "History retirement-buffer growth, text registry initial/growth admission, full construction/concurrent peaks, private text/scratch and weak-container lifetime remain open. Twelve broad implementation gaps and original S5 qualification unchanged."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/retirement-reuse/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/retirement-reuse/renderer.log.gz",
+      "uncompressed_sha256": "ccbe51001bd9d2afdaccc1a74e38530791de9a0f2be452535f7e7cfae48c8aa9"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/retirement-reuse/app.log.gz",
+      "uncompressed_sha256": "4585e6c70d57ae4562554f3f22264260b73414da27965d6ccd1617a3722aaf57"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/retirement-reuse/clippy.log.gz",
+      "uncompressed_sha256": "2037d9c8f0e80f7757a5ac0632e6733e5559872a1014b3f2d21b1234fb453b40"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/retirement-reuse/build.log.gz",
+      "uncompressed_sha256": "c812b2d0a1b37a1d778bd6bb408afbb1a36c969dbee8fd8e35b3ed1aef2681ff"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/retained_scene_history.rs": "2b4f6cfaf6728a4e434d2eb78c55d25bfd2a1fd9255c6c7260ce3ee063c9b4c1",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "69bd4532486a5041d7d433f24eb1fa6badd215a9bf946070c850f577d223d28b",
+    "crates/gui-render/src/render/text_cache_budget.rs": "6156becd8d57cbc3a002a2101cfc256a895a7dfaa570cf7e5f686876cee5117e"
+  }
+}

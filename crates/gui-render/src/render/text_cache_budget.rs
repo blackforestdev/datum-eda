@@ -23,8 +23,10 @@ impl Registry {
     }
     fn remove(&mut self, id: u64) {
         self.0.retain(|owner| owner.owner_id != id);
-        if self.0.capacity() > self.0.len().saturating_mul(4) {
-            self.0 = std::mem::take(&mut self.0).into_boxed_slice().into_vec();
+        // Removing an owner must not allocate outside admission. Preserve the
+        // charged slots for another host; release storage after the final owner.
+        if self.0.is_empty() {
+            self.0 = Vec::new();
         }
     }
 }
@@ -231,9 +233,18 @@ mod tests {
         assert_eq!(registry.bytes(), before, "warm updates do not allocate");
         assert_eq!(allowance(&registry, 64, before + 63 * 8 + 16), 16);
         assert_eq!(allowance(&registry, 64, before + 63 * 8 + 15), 15);
+        let pointer = registry.0.as_ptr();
         for id in 1..=64 {
             scope.with(|| registry.remove(id));
             assert_heap(&registry);
+            if id < 64 {
+                assert_eq!(registry.bytes(), before, "spare slots stay charged");
+                assert_eq!(
+                    registry.0.as_ptr(),
+                    pointer,
+                    "removal does not replace storage"
+                );
+            }
         }
         assert_eq!(registry.0.capacity(), 0);
         assert_eq!(scope.usage().allocations, 0);
