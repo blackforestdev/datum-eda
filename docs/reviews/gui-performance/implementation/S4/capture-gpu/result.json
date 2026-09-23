@@ -1,0 +1,54 @@
+{
+  "status": "Shared visual capture allocations now obey process GPU admission and tracked completion lifetimes; full resource acceptance remains open",
+  "base_commit": "2918179d",
+  "production_consumers": [
+    "Native Runtime visual screenshot target and readback",
+    "OffscreenRenderer workspace/terminal capture and warm rendering",
+    "Existing renderer pixel-parity capture helper"
+  ],
+  "retired_paths": [
+    "Independent raw screenshot/offscreen target texture allocation",
+    "Independent raw screenshot/offscreen readback buffer allocation"
+  ],
+  "behavior": [
+    "One Datum-owned capture resource module reserves actual four-byte texture extents and padded readback capacity against the existing 512 MiB process GPU limit before API allocation. Existing RGBA/BGRA formats, output pixels and row padding are preserved.",
+    "Both render and copy submissions hold charged resources through completion, including an early render/readback error and warm rendering without a readback. Independent capture owners appear in the existing process allocation registry.",
+    "Readback is not upload staging; its capacity is classified as Readback and charged to the GPU process total. No new subcap or changes to the default renderer path."
+  ],
+  "proof": {
+    "renderer": "333 renderer tests pass; 11 diagnostic/visual cases filtered. New actual-GPU test verifies target/readback capacity admission, refusal before creation, submission and pinned-reference retirement to baseline. Existing capture/pixel regressions pass.",
+    "lint_build": "Strict visual renderer/app all-targets Clippy and fresh visual application build pass. Source health 2268, dependency authority and governance gates pass. Initial Clippy exposed a raw-texture test helper; migrated that helper to the shared owner and preserved the failed log.",
+    "scope": "No native input or benchmark campaign. Prior Console golden discrepancy remains unresolved; full drift not rerun."
+  },
+  "limits": [
+    "Only the existing four-byte RGBA/BGRA visual capture formats are supported; driver residency, CPU image allocations, internal API metadata and broader accounting/qualification remain separate.",
+    "This closes a feature-gated capture allocation bypass, not full MEM-GPU-TOTAL/ACC-01, S4/S5 or issue acceptance. GEFN, nonblocking resize and concurrent multi-device qualification boundaries remain unchanged.",
+    "No dependency, vendoring, license, prototype, numerical budget or specification amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/capture-gpu/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/capture-gpu/tests.log.gz",
+      "uncompressed_sha256": "2ef3838f8575ae0bfda5f562a3c98a61a8c7fb509b0ed045746237381dd314ce"
+    },
+    "initial-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/capture-gpu/initial-error.log.gz",
+      "uncompressed_sha256": "50f1f7f4a4228ef0ea259f92509962212359f1d28558346637528d8793325b20"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/capture-gpu/clippy.log.gz",
+      "uncompressed_sha256": "78f98e5397697743574e1c81525a19c6a56300469f1e2d524725d28c3d82d542"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/capture-gpu/build.log.gz",
+      "uncompressed_sha256": "9d4d37f8c77a6f267630ddba17f5ab51f4f3e27ce70e148c91382ad1a7e3f476"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/main.rs": "a03c9c9d7c9e71107783c73c3e8cfc587c6dbdb4014c3c4b33f539a7ac24d743",
+    "crates/gui-render/src/lib.rs": "1f246c37e05ee0b4ad20152d778618a566d6e992b683e3df026446257a05669a",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "668d566713519e206b9653be8cea60dc15a6ba96667eb27cbc494f0d42dfbe07",
+    "crates/gui-render/src/visual_capture.rs": "caaed6f6e68506ba640003c93abd2c88ce8c9b5239d6544f4331934abcbfdcc9",
+    "crates/gui-render/src/capture_resource.rs": "fb09d0336e43d59312cabb9452aca04b7ff0b1de25621613ebd4f909c59846bf"
+  }
+}

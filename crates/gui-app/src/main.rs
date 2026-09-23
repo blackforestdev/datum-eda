@@ -261,20 +261,15 @@ impl Runtime {
 
     #[cfg(feature = "visual")]
     fn capture_visual_screenshot(&mut self) -> Result<image::RgbaImage> {
-        let target = self.device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("datum-gui-layer-b-visual-capture-target"),
-            size: wgpu::Extent3d {
+        let target = datum_gui_render::capture_resource::CaptureTarget::new(
+            &self.device,
+            wgpu::Extent3d {
                 width: self.config.width,
                 height: self.config.height,
                 depth_or_array_layers: 1,
             },
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: self.config.format,
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
-            view_formats: &[],
-        });
+            self.config.format,
+        )?;
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
@@ -298,7 +293,7 @@ impl Runtime {
             .as_ref()
             .context("prepared scene should exist before visual screenshot")?;
         let schematic_retained = self.schematic_retained_scene.as_ref();
-        self.renderer.render(
+        let rendered = self.renderer.render(
             &self.device,
             &self.queue,
             &target_view,
@@ -307,24 +302,25 @@ impl Runtime {
             schematic_retained,
             self.config.width,
             self.config.height,
-        )?;
+        );
+        target.hold_submission(&self.queue);
+        rendered?;
         self.read_visual_texture(&target)
     }
 
     #[cfg(feature = "visual")]
-    fn read_visual_texture(&self, texture: &wgpu::Texture) -> Result<image::RgbaImage> {
+    fn read_visual_texture(
+        &self,
+        texture: &datum_gui_render::capture_resource::CaptureTarget,
+    ) -> Result<image::RgbaImage> {
         let width = self.config.width;
         let height = self.config.height;
         let unpadded_bytes_per_row = width * COPY_BYTES_PER_PIXEL;
         let padded_bytes_per_row =
             align_to(unpadded_bytes_per_row, WGPU_COPY_BYTES_PER_ROW_ALIGNMENT);
         let buffer_size = padded_bytes_per_row as u64 * height as u64;
-        let output_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("datum-gui-layer-b-visual-readback-buffer"),
-            size: buffer_size,
-            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-            mapped_at_creation: false,
-        });
+        let output_buffer =
+            datum_gui_render::capture_resource::CaptureReadback::new(&self.device, buffer_size)?;
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
@@ -352,6 +348,8 @@ impl Runtime {
             },
         );
         self.queue.submit([encoder.finish()]);
+        texture.hold_submission(&self.queue);
+        output_buffer.hold_submission(&self.queue);
 
         let buffer_slice = output_buffer.slice(..);
         let (sender, receiver) = mpsc::channel();
