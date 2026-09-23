@@ -4,12 +4,19 @@ use std::{ops::Deref, sync::Arc};
 /// Unlike Arc<[T]>, moving a boxed slice here does not copy its elements into
 /// the reference-counted allocation. A weak owner can later observe retirement
 /// without keeping the potentially large payload allocation alive.
-#[derive(Debug, PartialEq)]
-pub(crate) struct SharedGeometry<T>(Arc<Box<[T]>>);
+#[derive(Debug)]
+pub(crate) struct SharedGeometry<T>(Arc<Box<[T]>>, Option<Arc<crate::text_gpu::budget::Budget>>);
+
+// Admission metadata does not change geometric equality.
+impl<T: PartialEq> PartialEq for SharedGeometry<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0
+    }
+}
 
 impl<T> Clone for SharedGeometry<T> {
     fn clone(&self) -> Self {
-        Self(Arc::clone(&self.0))
+        Self(Arc::clone(&self.0), self.1.clone())
     }
 }
 
@@ -21,7 +28,7 @@ impl<T> From<Vec<T>> for SharedGeometry<T> {
 
 impl<T> From<Box<[T]>> for SharedGeometry<T> {
     fn from(value: Box<[T]>) -> Self {
-        Self(Arc::new(value))
+        Self(Arc::new(value), None)
     }
 }
 
@@ -39,6 +46,17 @@ impl<T> AsRef<[T]> for SharedGeometry<T> {
 }
 
 impl<T> SharedGeometry<T> {
+    pub(crate) fn for_document(value: Vec<T>, scene_id: &str) -> Self {
+        Self(
+            Arc::new(value.into_boxed_slice()),
+            Some(super::document_gpu_budget::for_scene(scene_id)),
+        )
+    }
+
+    pub(crate) fn document_budget(&self) -> Option<&Arc<crate::text_gpu::budget::Budget>> {
+        self.1.as_ref()
+    }
+
     /// Box payload and the Box slot in the Arc allocation; excludes Arc headers.
     pub(crate) fn heap_bytes(&self) -> usize {
         std::mem::size_of_val(self.as_ref()) + std::mem::size_of::<Box<[T]>>()

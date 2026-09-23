@@ -1,0 +1,67 @@
+{
+  "status": "Default world vertex/stroke allocations share document-scoped 64 MiB admission; full encoded-resource/generation qualification remains open",
+  "base_commit": "5acd93b4",
+  "production_consumers": [
+    "Board retained-scene vertex and stroke construction",
+    "Companion schematic retained-scene vertex and stroke construction",
+    "Four retained GPU streams in native full-frame rendering",
+    "Cached world bundles and existing submission references retaining those buffers"
+  ],
+  "retired_paths": [
+    "Default world-buffer allocation with only process-global GPU admission",
+    "Equal-capacity buffer reuse across different document budget owners"
+  ],
+  "behavior": [
+    "Associate immutable retained geometry with a weakly registered GPU budget keyed by the existing revision-independent protocol scene ID. Geometry for the same document across revisions/renderers shares one 64 MiB allowance; other scene identities remain independent.",
+    "Reserve document capacity before API buffer creation, alongside process GPU admission. Allocation/submission permits keep the budget discoverable after CPU owners close, so rebuilding geometry cannot reset charges for retiring resources.",
+    "When switching document owners, stage a newly charged allocation before replacing the old buffer. Refusal preserves the working allocation. Same-document warm reuse and boxed CPU payload ownership remain unchanged.",
+    "Expose the document reserved-buffer total through RetainedScene. The registry holds weak budget references and prunes expired entries on lookup; it never pins CPU geometry or GPU payloads."
+  ],
+  "proof": {
+    "renderer": "304 renderer tests pass; 11 diagnostic/visual-runner cases filtered. Actual-GPU proof covers multiple streams/revisions, cross-document isolation, full-budget refusal preserving data, retirement, owner switching and retry. CPU-owner-close/permit-retirement registry identity and real retained-builder sharing tests pass. Existing cached-bundle replacement now uses production document identity.",
+    "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings, dependency authority and source health (2242 files) pass.",
+    "native": "Fresh native visual application build and 1680x1050 datum-test/R1 capture exit 0. Inspected image; decoded RGBA exactly equals the host-buffers baseline. No native resource/endurance qualification.",
+    "drift": "Full drift passes preceding checks and stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Failed evidence retained, later gates unrun; no golden update or full-drift acceptance."
+  },
+  "limits": [
+    "This enforces world vertex/stroke byte capacity, not the complete one-old-plus-one-new generation policy or all encoded-resource accounting/qualification. MEM-WORLD-GPU remains open under its original rule.",
+    "CPU world/history limits, control-specific GPU limits, private text payload, staging/readback/query accounting and S4/S5 qualification remain unfinished. API capacities are not driver residency.",
+    "Identity follows the existing imported scene/document ID; no new resolver/document authority or native schematic-content qualification is asserted.",
+    "No dependency, vendor, license, prototype, numerical-budget, geometry-content or nonblocking resize-policy change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/document-gpu/result.json",
+  "logs": {
+    "tests": {
+      "path": "tests.log.gz",
+      "uncompressed_sha256": "49a8c6da8be513eb0361f4089685433ad0d3cbe293c2eb060dbbe19281bfd422"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "218d80ea63986349cb2611682bc587e55d2fdcb5f507af46b2c129c4e33f07bc"
+    },
+    "native": {
+      "path": "native.log.gz",
+      "uncompressed_sha256": "4da5b1efbd0fd17178955244eee976a429dd05fd0143709b2543319124280197"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "52c6a0ead6d9a15eaa623c4f9eaddfa1a2130bf3d4fff06c16b48ea342687af0"
+    }
+  },
+  "native_capture": {
+    "path": "native.png",
+    "sha256": "40e986a2655402722e7ebb62db7dacbfdbd02134da611989bfd2b12db0a81d2a",
+    "prior_capture_rgba_equal": true
+  },
+  "binary_sha256": "e9d1e65d4874af8eef595d1397a9904eeeb94f20c09f08739b0176506e56af44",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_data.rs": "3dcecc5e8d8c757053a2b527f11c25abc8bc48b7f23adf8e52b782ce3373591b",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "a5269be93ae39155170d45e6c189b4f7b3a6a395177edee57805a4e70597c935",
+    "crates/gui-render/src/render/retained_buffer.rs": "8e6330f185e46268f623721cdd91cd0e9e254274ac0d898df56a113c61d657e1",
+    "crates/gui-render/src/render/scene_retained_access.rs": "f99da3416aa4f5e3e99ee0d54ee39342c1eabedba71f88d0d2b551b818d23a26",
+    "crates/gui-render/src/render/schematic_retained.rs": "86dbb0f85d5b45fe0ce2c99283ce8120f5d16f7f5c3facfa234480ca22d977cf",
+    "crates/gui-render/src/render/shared_geometry.rs": "da766d801c4e1d7d4c54446aa01391107842ef6417303690551b8a63cc15a006",
+    "crates/gui-render/src/text_gpu/budget.rs": "f77c4c6df5fca0a0aa36a3f6bdae61f081d4c9e828003fb0e77e8eea2f14880c",
+    "crates/gui-render/src/render/document_gpu_budget.rs": "c739d46f3d85052d60733a6652f98fd2ce199f94d13e1b4d09b4f4929b5ff3e0"
+  }
+}

@@ -59,8 +59,14 @@ impl RetainedScene {
         coordinate_hit::push_schematic_hit_regions(&mut world_hit_regions, schematic_scene);
         Some(Self {
             surface_size_independent: Self::scene_is_surface_size_independent(schematic_scene),
-            world_vertices: world_vertices.into(),
-            world_strokes: world_strokes.into(),
+            world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
+                world_vertices,
+                &schematic_scene.scene_id,
+            ),
+            world_strokes: gpu_data::shared_geometry::SharedGeometry::for_document(
+                world_strokes,
+                &schematic_scene.scene_id,
+            ),
             draw_commands,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         })
