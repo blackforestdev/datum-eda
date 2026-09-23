@@ -34619,5 +34619,28 @@
       "History retirement-buffer growth, text registry initial/growth admission, full construction/concurrent peaks, private text/scratch and weak-container lifetime remain open. Twelve broad implementation gaps and original S5 qualification unchanged."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/retirement-reuse/result.json"
+  },
+  "s4_schematic_hit_work": {
+    "status": "Schematic hit-region payload admitted before allocation with fallible exact reservations",
+    "base_commit": "047c3875",
+    "production_consumers": [
+      "Default companion schematic retained construction used by native and capture consumers"
+    ],
+    "retired_paths": [
+      "Infallible schematic hit-region Vec growth and object-ID/path clones before admission"
+    ],
+    "behavior": [
+      "Count eligible typed schematic hits and their owned IDs/path storage without allocation. Include Datum headers and region-vector storage in document constructor admission before allocating. Reserve exact capacities fallibly and preserve hit order, shape semantics, width rules and source identity. Fail through existing retained-constructor error handling."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 365 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 30.07s",
+      "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 16.67s",
+      "checks": "Real checked-in schematic test verifies preflight precedes cloning, exact reserved cost equals measured live allocator bytes, copied geometry/identity and final release. Existing schematic hover/hit, GPU, app and constructor tests pass. Strict visual Clippy, fresh GUI build and source/dependency/governance gates pass."
+    },
+    "limits": [
+      "Board hit construction, geometry/command/sort staging, initial identity and scope bookkeeping, concurrent construction and external weak-container lifetime remain open. Admission covers this entire schematic hit construction stage, not the complete document constructor.",
+      "Twelve broad implementation gaps and original S5 qualification remain unchanged. No prototype, dependency, cap, sequencing or resize acceptance change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-hit/result.json"
   }
 }

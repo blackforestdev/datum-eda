@@ -1,0 +1,45 @@
+{
+  "status": "Schematic hit-region payload admitted before allocation with fallible exact reservations",
+  "base_commit": "047c3875",
+  "production_consumers": [
+    "Default companion schematic retained construction used by native and capture consumers"
+  ],
+  "retired_paths": [
+    "Infallible schematic hit-region Vec growth and object-ID/path clones before admission"
+  ],
+  "behavior": [
+    "Count eligible typed schematic hits and their owned IDs/path storage without allocation. Include Datum headers and region-vector storage in document constructor admission before allocating. Reserve exact capacities fallibly and preserve hit order, shape semantics, width rules and source identity. Fail through existing retained-constructor error handling."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 365 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 30.07s",
+    "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 16.67s",
+    "checks": "Real checked-in schematic test verifies preflight precedes cloning, exact reserved cost equals measured live allocator bytes, copied geometry/identity and final release. Existing schematic hover/hit, GPU, app and constructor tests pass. Strict visual Clippy, fresh GUI build and source/dependency/governance gates pass."
+  },
+  "limits": [
+    "Board hit construction, geometry/command/sort staging, initial identity and scope bookkeeping, concurrent construction and external weak-container lifetime remain open. Admission covers this entire schematic hit construction stage, not the complete document constructor.",
+    "Twelve broad implementation gaps and original S5 qualification remain unchanged. No prototype, dependency, cap, sequencing or resize acceptance change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-hit/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/schematic-hit/renderer.log.gz",
+      "uncompressed_sha256": "0caef38c54e24a299c8f9d9dc0c3a4c3cef5f4ac02937193bfde26b04cb6e46a"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/schematic-hit/app.log.gz",
+      "uncompressed_sha256": "4ade640cee919b9dc0b009e1e5a4ae78cd630302cdf117d12845e7e1e0bda9c8"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/schematic-hit/clippy.log.gz",
+      "uncompressed_sha256": "909dbbd139c5be30b000f74755e6fd85d707ac48a4ed3c985fecf92a8efb5fae"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/schematic-hit/build.log.gz",
+      "uncompressed_sha256": "ae0fd99edf177969f4620b6b38cd46e803c954aa50bf98a173fe099cd73c055f"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/coordinate_hit.rs": "5dd06793b4ef036b302958cb9568b7a0b9cd0a7ef116c103f5475092edb12556",
+    "crates/gui-render/src/render/schematic_retained.rs": "2a47833acb928639b6d5f98d30bfb14459137c20330d6fffe3348dd169f8f4cf"
+  }
+}
