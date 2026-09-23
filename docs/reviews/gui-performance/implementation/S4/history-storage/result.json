@@ -1,0 +1,44 @@
+{
+  "status": "History vector full capacity and allocator header charged through allocation lifetime",
+  "base_commit": "19e33a56",
+  "production_consumers": [
+    "RetainedSceneHistory growth, reuse, eviction, restoration, clearing and destruction",
+    "Shared retained document CPU usage and admission"
+  ],
+  "retired_paths": [
+    "Occupied Entry estimates omitted unused vector slots and allocator headers",
+    "Weak-only metadata identity could disappear while allocation storage outlived its allocating scene"
+  ],
+  "behavior": [
+    "History keys retain separate per-entry charges. Each vector allocation is charged once, including its full actual capacity and Datum allocator header, to the document causing that allocation. Charge remains with the buffer through reuse and partial eviction, and releases when storage is freed. Growth admission includes old plus proposed new allocations before reserve. Replacement storage is charged to its allocating document and old storage charge retires. Metadata charge pins only shared document identity, never scene payload; reopening that document still sees the charge."
+  ],
+  "proof": {
+    "app": "390 app tests passed, 16 ignored. Growth test verifies exact spare capacity/header charges, old-plus-new overlap refusal and eviction, reuse and clear release. Mixed-document test verifies storage survives allocating-scene removal, identity persists across reopen, and clear releases the exact allocation charge. Existing cross-owner key, pinned payload and pressure tests pass.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature and fresh app build pass; source health, dependency authority, traceability, project status, spec governance/parity, diff and formatting checks pass.",
+    "scope": "No new native/backend/endurance campaign or broad GPU qualification; production accounting and default history owner are exercised by app tests."
+  },
+  "limits": [
+    "Retired-observer storage across owners, global document registry bookkeeping and scene construction peaks remain incomplete. Existing local allocation-inclusive history caps remain active. This advances history storage admission, not full MEM-WORLD-CPU/HISTORY acceptance.",
+    "Twelve implementation gaps and original S5 qualification remain open. Console golden discrepancy and nonblocking resize unchanged. No dependency, vendor, license, visual prototype, numerical cap or sequencing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/history-storage/result.json",
+  "logs": {
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-storage/app.log.gz",
+      "uncompressed_sha256": "e4f5b19c32da28e3d63279be8d916e0cc839440c161553605dae17d65731de34"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-storage/clippy.log.gz",
+      "uncompressed_sha256": "89549a56314155d46391c9cb8e796293b0ca113f6ab37dbcac0d7a98f0914b48"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-storage/build.log.gz",
+      "uncompressed_sha256": "8263a029967b644ba28cc051fa50d1b56c09b0e7b4ee720647fc6a3fe45d1beb"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/retained_scene_history.rs": "498de6e616e812d766616bd7c19b0c190c9ce771e4719c7bdd3dd8c80996e2dc",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "1d8e38fe959ac20feda8f2e50f0849fe74f1e9e213be33883a24f545bc06a544",
+    "crates/gui-render/src/render/document_cpu.rs": "d30b150c783a1a968ec2f04b401696ae73e362b14f5e3579ae71087a8a126a54"
+  }
+}

@@ -1,10 +1,10 @@
 //! Shared retained payload accounting for revision-independent document owners.
-//! This supplements local history caps; construction, spare history capacity and
+//! This supplements local history caps; construction, retired-observer storage and
 //! global registry admission remain separate. Observation never retains payloads.
 use super::{RetainedGeometryObserver, RetainedScene};
 use crate::cpu_alloc::heap::capacity_bytes;
 use crate::text_gpu::budget::Budget;
-use std::sync::{Mutex, Weak};
+use std::sync::{Arc, Mutex, Weak};
 
 const DOCUMENT_LIMIT: usize = 64 * 1024 * 1024;
 struct Document {
@@ -68,7 +68,7 @@ fn usage(observer: &RetainedGeometryObserver) -> usize {
 /// Exclusive lifetime charge for a history owner's separately allocated metadata.
 /// Moving a charge transfers ownership; dropping it releases the document charge.
 pub struct DocumentCpuCharge {
-    identity: Option<Weak<Budget>>,
+    identity: Option<Arc<Budget>>,
     bytes: usize,
 }
 impl Drop for DocumentCpuCharge {
@@ -77,7 +77,10 @@ impl Drop for DocumentCpuCharge {
             return;
         };
         let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
-        if let Some(document) = documents.iter_mut().find(|d| d.identity.ptr_eq(identity)) {
+        if let Some(document) = documents
+            .iter_mut()
+            .find(|d| d.identity.ptr_eq(&Arc::downgrade(identity)))
+        {
             document.metadata_bytes -= self.bytes;
         }
         prune(&mut documents);
@@ -90,12 +93,13 @@ impl RetainedGeometryObserver {
     pub fn charge_document_metadata(&self, bytes: usize) -> DocumentCpuCharge {
         let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
         let identity = self.document.as_ref().and_then(|identity| {
+            let live_identity = identity.upgrade()?;
             let document = documents.iter_mut().find(|d| d.identity.ptr_eq(identity))?;
             document.metadata_bytes = document
                 .metadata_bytes
                 .checked_add(bytes)
                 .expect("document CPU metadata overflow");
-            Some(identity.clone())
+            Some(live_identity)
         });
         DocumentCpuCharge { identity, bytes }
     }
@@ -115,7 +119,7 @@ impl RetainedGeometryObserver {
 
     /// Enforce retained payload across all registered owners of this document.
     /// Includes registered history metadata and per-document observer storage.
-    /// Spare history capacity, global storage and construction remain separate.
+    /// Retired-observer/global storage and construction remain separate.
     pub fn check_document_cpu_budget(&self) -> anyhow::Result<()> {
         check_limit(self, DOCUMENT_LIMIT)
     }
