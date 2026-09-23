@@ -15270,6 +15270,11 @@
           "work": "s4_text_admission_compaction_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/result.json",
           "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open"
+        },
+        {
+          "work": "s4_text_registry_accounting_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json",
+          "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open"
         }
       ]
     },
@@ -15418,6 +15423,11 @@
           "work": "s4_text_admission_compaction_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/result.json",
           "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open"
+        },
+        {
+          "work": "s4_text_registry_accounting_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json",
+          "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open"
         }
       ]
     },
@@ -33566,5 +33576,32 @@
       "No numerical cap, dependency, vendoring, license, visual prototype, specification sequencing or acceptance change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure. Sixteen recorded S4 implementation gaps remain; no milestone or issue closure."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/screen-generations/result.json"
+  },
+  "s4_text_registry_accounting_work": {
+    "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open",
+    "base_commit": "0d5e4153",
+    "production_consumers": [
+      "Every default TextBufferCache owner publication, frame admission, retention and close",
+      "Renderer text_cache_process_usage and new text_cache_registry_bytes observation"
+    ],
+    "retired_paths": [
+      "BTreeMap owner registry with private unreported node storage",
+      "Process allowance computed only from cache payloads, omitting its shared registry"
+    ],
+    "behavior": [
+      "Replace the small live-renderer owner map with a compact vector. Account inline registry/mutex storage plus allocated vector capacity and Datum allocation headers. Charge that storage once against the existing 32 MiB process allowance before applying the unchanged 8 MiB local cap.",
+      "Update existing owner records without allocation. Closing owners releases spare storage above four times live size and releases all heap storage when empty. Public per-renderer bytes remain disjoint from the shared registry observation."
+    ],
+    "proof": {
+      "renderer": "342 renderer tests passed, 11 diagnostic/visual cases filtered. Actual scoped allocator reconciliation covers 64 owner registrations, warm update, shrink and final zero allocations. Boundary arithmetic includes metadata. Existing three-layout exact-allowance admission test retains correct shared shapes with the registry charge included.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2272, dependency authority and governance gates pass.",
+      "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Registry capacity is accounted at admission/retention. Cache construction peaks, registration growth transients, private font/raster storage and broader scratch accounting remain separate open boundaries; this is not complete MEM-SHAPED-TOTAL or MEM-SHAPED-LOCAL acceptance.",
+      "Snapshot return-vector allocation belongs to the observing caller, not retained registry storage. System allocator slack and process RSS remain separately qualified.",
+      "No dependency, vendor, license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize. Sixteen recorded implementation gaps remain; no milestone or issue closure."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json"
   }
 }
