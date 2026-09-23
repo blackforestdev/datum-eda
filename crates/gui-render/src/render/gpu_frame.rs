@@ -444,9 +444,18 @@ impl Renderer {
         let command_buffer = encoder.finish();
         let finish_elapsed = finish_started.map(|started| started.elapsed());
         let submit_started = std::time::Instant::now();
-        self.flush_frame_uploads(queue);
-        let submission = queue.submit([command_buffer]);
+        let mut uploads = self.flush_frame_uploads(device, queue)?;
+        let submission = queue.submit(
+            uploads
+                .as_mut()
+                .map(|batch| batch.command())
+                .into_iter()
+                .chain([command_buffer]),
+        );
         self.hold_frame_submission(queue);
+        if let Some(batch) = uploads {
+            batch.hold(queue);
+        }
         on_submitted(submission);
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(measurement)?;

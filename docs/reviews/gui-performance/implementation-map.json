@@ -16829,6 +16829,11 @@
           "work": "s4_screen_upload_union_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json",
           "status": "Repeated screen preparations now queue each covered final byte at most once; complete staging admission and exact-transfer requirements remain open."
+        },
+        {
+          "work": "s4_atlas_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json",
+          "status": "Glyph atlas staging migrated to exact padded-capacity admission and submission retirement; remaining producers, scratch, cold chunks and original qualification stay open."
         }
       ]
     },
@@ -16950,6 +16955,11 @@
           "work": "s4_screen_upload_union_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json",
           "status": "Repeated screen preparations now queue each covered final byte at most once; complete staging admission and exact-transfer requirements remain open."
+        },
+        {
+          "work": "s4_atlas_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json",
+          "status": "Glyph atlas staging migrated to exact padded-capacity admission and submission retirement; remaining producers, scratch, cold chunks and original qualification stay open."
         }
       ]
     },
@@ -17096,6 +17106,11 @@
           "work": "s4_attachment_generation_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-generations/result.json",
           "status": "Per-host two-generation admission now enforced through creation, retirement and recovery. Original full qualification and remaining aggregate accounting stay open."
+        },
+        {
+          "work": "s4_atlas_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json",
+          "status": "Glyph atlas staging migrated to exact padded-capacity admission and submission retirement; remaining producers, scratch, cold chunks and original qualification stay open."
         }
       ]
     },
@@ -32255,5 +32270,39 @@
       "No dependency, vendor, license, prototype, visual layout or numerical-budget change. GPI-S4/S5 remain open."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json"
+  },
+  "s4_atlas_staging_work": {
+    "status": "Default glyph texture uploads use Datum-owned explicitly admitted staging in the existing frame submission; complete staging/resource qualification remains open",
+    "base_commit": "71268cff",
+    "production_consumers": [
+      "Shared workspace/overlay glyph atlas in the main native renderer",
+      "Global Preferences, Project Preferences and New Project native renderer paths",
+      "Same-host main/auxiliary device recreation retains the staging allowance"
+    ],
+    "retired_paths": [
+      "Opaque queue.write_texture staging for default glyph-atlas uploads",
+      "Uncharged glyph upload buffer capacity and early release before submitted work completes"
+    ],
+    "behavior": [
+      "Pack pending glyph pixels directly into one mapped buffer sized to actual 256-byte row-aligned API capacity. No 16 MiB preallocation, extra CPU payload copy or warm empty-batch allocation.",
+      "Reserve host 16 MiB, process staging 64 MiB and GPU-total 512 MiB before API allocation; later refusal rolls back earlier reservations. Track stable allocation identity, capacity, generation and retirement; unsubmitted cancellation releases the buffer and encoded references in the correct order.",
+      "Submit upload-copy commands before render commands in the same existing queue submission. Retain the staging allocation and all three charges through the completion callback. Same-host recovery shares the original allowance.",
+      "Expose separate explicit staging host/process counters; preserve source-payload upload counters separately from padded staging capacity."
+    ],
+    "proof": {
+      "renderer": "307 renderer tests pass; 11 diagnostic/visual cases filtered. Actual-GPU proof covers all three admission refusals, padded allocation accounting, cancellation, row readback and completion release; glyph baseline pixel parity and production workspace/dialog regressions pass.",
+      "lint": "Visual all-targets renderer/app Clippy -D warnings passes; source health passes for 2245 files. Existing atlas tests moved intact into a dedicated test module to preserve normal source budgets.",
+      "build": "Fresh native visual application build passes.",
+      "native": "1680x1050 datum-test/R1 native capture matches the prior document-gpu capture pixel-for-pixel. No new OS-input or endurance qualification.",
+      "drift": "Full drift stops at existing console-routine-focused 1x mismatch: 3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun. No full-drift acceptance.",
+      "initial_failure": "Initial run:306 pass,1 failure. Texture-only retirement assertion summed the new staging allocation too. Corrected the assertion to filter Texture; dedicated staging proof verifies its independent admission/lifetime. Failed log retained. Initial full drift also caught nonvisual dead-code on visual-only test helpers; their feature guards were narrowed, preserving the already-tested visual code and production behavior."
+    },
+    "limits": [
+      "Oversized cold glyph batches currently return admission failure before any queue write; bounded chunk continuation remains required. This is not completion of MEM-STAGING-LOCAL/TOTAL or the oversized-cold-work predicate. Required content is not silently skipped or rendered at reduced fidelity.",
+      "Vertex, uniform, glyph-instance and terminal-image producers still use opaque queue staging. CPU pending glyph images/metadata/scratch, diagnostic query/readback and complete total-resource accounting remain open. Explicit staging counters intentionally exclude those unmigrated classes.",
+      "No complete native/backend/scale/fault/endurance/throughput qualification, resource-budget acceptance, S4/S5 closure or change to GEFN/nonblocking resize CPU disposition.",
+      "No dependency, vendor, license, prototype, font, visual-layout or numerical-budget change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json"
   }
 }

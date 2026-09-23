@@ -15,6 +15,7 @@ pub enum Kind {
     TerminalTexture,
     Attachment,
     Uniform,
+    Staging,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -155,15 +156,26 @@ impl crate::Renderer {
     }
 
     /// Migrated text, terminal textures, vertices, uniforms and MSAA API allocations.
-    /// Includes retirement; driver residency, staging and query/readback storage remain separate.
+    /// Includes explicit texture staging and retirement; opaque queue staging, driver
+    /// residency and query/readback storage remain separate.
     pub fn gpu_process_allocations() -> Vec<Record> {
         records(&PROCESS_ALLOCATIONS)
     }
 
     /// Reserved migrated GPU capacity, including pending creation and retirement.
-    /// Query/readback allocations, upload staging and driver residency remain separate.
+    /// Opaque queue staging, query/readback allocations and driver residency remain separate.
     pub fn gpu_process_reserved_bytes() -> u64 {
         super::budget::gpu_process().used()
+    }
+
+    /// Explicit migrated staging capacity, including submission retirement.
+    /// Does not include producers still using opaque queue writes or CPU scratch.
+    pub fn upload_staging_reserved_bytes(&self) -> u64 {
+        self.atlas.staging_budget.used()
+    }
+
+    pub fn upload_staging_process_reserved_bytes() -> u64 {
+        super::budget::staging_process().used()
     }
 
     /// Terminal image texture and quad capacities, including submitted retirement.

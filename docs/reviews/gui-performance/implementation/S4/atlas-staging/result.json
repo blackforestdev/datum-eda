@@ -1,0 +1,79 @@
+{
+  "status": "Default glyph texture uploads use Datum-owned explicitly admitted staging in the existing frame submission; complete staging/resource qualification remains open",
+  "base_commit": "71268cff",
+  "production_consumers": [
+    "Shared workspace/overlay glyph atlas in the main native renderer",
+    "Global Preferences, Project Preferences and New Project native renderer paths",
+    "Same-host main/auxiliary device recreation retains the staging allowance"
+  ],
+  "retired_paths": [
+    "Opaque queue.write_texture staging for default glyph-atlas uploads",
+    "Uncharged glyph upload buffer capacity and early release before submitted work completes"
+  ],
+  "behavior": [
+    "Pack pending glyph pixels directly into one mapped buffer sized to actual 256-byte row-aligned API capacity. No 16 MiB preallocation, extra CPU payload copy or warm empty-batch allocation.",
+    "Reserve host 16 MiB, process staging 64 MiB and GPU-total 512 MiB before API allocation; later refusal rolls back earlier reservations. Track stable allocation identity, capacity, generation and retirement; unsubmitted cancellation releases the buffer and encoded references in the correct order.",
+    "Submit upload-copy commands before render commands in the same existing queue submission. Retain the staging allocation and all three charges through the completion callback. Same-host recovery shares the original allowance.",
+    "Expose separate explicit staging host/process counters; preserve source-payload upload counters separately from padded staging capacity."
+  ],
+  "proof": {
+    "renderer": "307 renderer tests pass; 11 diagnostic/visual cases filtered. Actual-GPU proof covers all three admission refusals, padded allocation accounting, cancellation, row readback and completion release; glyph baseline pixel parity and production workspace/dialog regressions pass.",
+    "lint": "Visual all-targets renderer/app Clippy -D warnings passes; source health passes for 2245 files. Existing atlas tests moved intact into a dedicated test module to preserve normal source budgets.",
+    "build": "Fresh native visual application build passes.",
+    "native": "1680x1050 datum-test/R1 native capture matches the prior document-gpu capture pixel-for-pixel. No new OS-input or endurance qualification.",
+    "drift": "Full drift stops at existing console-routine-focused 1x mismatch: 3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun. No full-drift acceptance.",
+    "initial_failure": "Initial run:306 pass,1 failure. Texture-only retirement assertion summed the new staging allocation too. Corrected the assertion to filter Texture; dedicated staging proof verifies its independent admission/lifetime. Failed log retained. Initial full drift also caught nonvisual dead-code on visual-only test helpers; their feature guards were narrowed, preserving the already-tested visual code and production behavior."
+  },
+  "limits": [
+    "Oversized cold glyph batches currently return admission failure before any queue write; bounded chunk continuation remains required. This is not completion of MEM-STAGING-LOCAL/TOTAL or the oversized-cold-work predicate. Required content is not silently skipped or rendered at reduced fidelity.",
+    "Vertex, uniform, glyph-instance and terminal-image producers still use opaque queue staging. CPU pending glyph images/metadata/scratch, diagnostic query/readback and complete total-resource accounting remain open. Explicit staging counters intentionally exclude those unmigrated classes.",
+    "No complete native/backend/scale/fault/endurance/throughput qualification, resource-budget acceptance, S4/S5 closure or change to GEFN/nonblocking resize CPU disposition.",
+    "No dependency, vendor, license, prototype, font, visual-layout or numerical-budget change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-staging/tests.log.gz",
+      "uncompressed_sha256": "378b0a9a368cbdba87a881845e669c49f1b1c2e198176d97e4a5e5b8f54e90e5"
+    },
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-staging/initial-tests.log.gz",
+      "uncompressed_sha256": "ca72eb1dc83a686cdecf7bd3e3645af852e421a9f8b466cd4f2af45782ab57ef"
+    },
+    "initial-drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-staging/initial-drift.log.gz",
+      "uncompressed_sha256": "042f165d386e3b897d322bd08b15a4bb116ffeae2491d15ab80436e745141fc1"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-staging/clippy.log.gz",
+      "uncompressed_sha256": "9b2e0f9c5140ef81a6dc203178ce8d4cc84ca9447a29ac26dc0cb9026ffdada0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-staging/build.log.gz",
+      "uncompressed_sha256": "112567fbd7cec5c11549cf60d01d625b654a93c8f4ca1b3720c21a3f81f77e2f"
+    },
+    "native": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-staging/native.log.gz",
+      "uncompressed_sha256": "6560eff0899e521e7230efd02ccb3fa1a513b7dd28e1f48d8c6b6dee14f753bb"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/atlas-staging/drift.log.gz",
+      "uncompressed_sha256": "98660a144f59e1004e355f5d90374b821dfc0db4dbf9a83277e4c940f149b125"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "e4bea7321831bc176756e0243653a506e72dbd35a21bddfbe7f8d2730dabd094",
+    "crates/gui-render/src/render/gpu_init.rs": "2253610824d8a902f52284ed3c61ec241f21f10c48e94d5b70c6ff829a68577d",
+    "crates/gui-render/src/render/gpu_overlay.rs": "308b1c59a86730f8dab78b83b38be24b6daf34383c96392ae45ba8c119a0ad89",
+    "crates/gui-render/src/render/gpu_text.rs": "4301711d206ea658299e7cb80bcf8d0b08393f0c31b7c2205dbbecddab367dc4",
+    "crates/gui-render/src/text_gpu/atlas.rs": "49bfce57abc6782ce43cd8a8608dddf710dff81057a8987c0a56a60a52c5ea53",
+    "crates/gui-render/src/text_gpu/atlas/tests.rs": "604ccc808dfb2aac1b19e1642635c5f172f0f91cf9082c1fe69039633e2ae34f",
+    "crates/gui-render/src/text_gpu/budget.rs": "de4ffde427b625894785b0bdd4415f4b7c36d4d47bbfc63d2f9700593c5ad8aa",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "23dcc4c52fca027757c342ab6ba0811df6e85f69347c06630ad05107dec9bbd7",
+    "crates/gui-render/src/text_gpu/mod.rs": "1179043794334cc14afb4b5f55c48fd5abca7bdecf58ba9e3942df2871a5bff5",
+    "crates/gui-render/src/text_gpu/parity.rs": "1f15698482e1537200c2753b73ee9250666ecf0195bbd04fd447bc9efe497bf6",
+    "crates/gui-render/src/text_gpu/upload.rs": "f486f0cb80129dd196db11e229c8eefd7b3fbbacf8e36df5f32a745409261800",
+    "crates/gui-render/src/text_gpu/upload_tests.rs": "05ccbc8ee3e4764daa646b7fb9429c92775de550decc443222c3dd3c330965b4"
+  },
+  "binary_sha256": "22bfca74096e40ac953002a42b175e39e6d6bc0e8c28fd0eb8f3a5a9e0193745"
+}

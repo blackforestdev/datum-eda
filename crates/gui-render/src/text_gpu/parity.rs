@@ -178,7 +178,7 @@ fn owned_draw_matches_installed_text_renderer() {
                         areas.iter().map(|area| owned_area(area, &layout)),
                     )
                     .unwrap();
-                    atlas.flush_uploads(&queue);
+                    atlas.flush_for_test(&device, &queue);
                     assert_eq!(
                         screen_budget.used(),
                         atlas
@@ -224,7 +224,7 @@ fn owned_draw_matches_installed_text_renderer() {
                         areas.iter().map(|area| owned_area(area, &layout)),
                     )
                     .unwrap();
-                    atlas.flush_uploads(&queue);
+                    atlas.flush_for_test(&device, &queue);
                     assert_eq!(
                         screen_budget.used(),
                         atlas

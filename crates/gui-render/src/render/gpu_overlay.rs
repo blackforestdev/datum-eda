@@ -103,9 +103,18 @@ impl Renderer {
             }
         }
         self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
-        self.flush_frame_uploads(queue);
-        let submission = queue.submit([encoder.finish()]);
+        let mut uploads = self.flush_frame_uploads(device, queue)?;
+        let submission = queue.submit(
+            uploads
+                .as_mut()
+                .map(|batch| batch.command())
+                .into_iter()
+                .chain([encoder.finish()]),
+        );
         self.hold_frame_submission(queue);
+        if let Some(batch) = uploads {
+            batch.hold(queue);
+        }
         on_submitted(submission);
         self.text_buffers.trim_overlay();
         self.text_buffers.finish_frame();
