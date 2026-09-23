@@ -468,6 +468,13 @@ mod tests {
         }
         history.budget = history.accounted_bytes();
         history.limit_for_active(&scene);
+        assert_eq!(
+            history.entries.len(),
+            3,
+            "active clone shares complete scene payload"
+        );
+        history.budget -= 1;
+        history.limit_for_active(&scene);
         assert!(history.entries.len() < 3);
         assert!(history.accounted_bytes() <= history.budget);
         let active_before = scene.clone();

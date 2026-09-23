@@ -184,6 +184,14 @@ PM045 S4 consolidates raw legacy scene-buffer initialization and bindings into
 7,153 to 7,152. The shared owner retains bindings, deferred uniform updates and
 submission references. Remaining include debt and normal budgets are unchanged.
 
+PM045 S4 moves `RetainedScene` and its immutable metadata/weak lifetime accounting
+into the normal `render/retained_scene_owner.rs` module. Command and hit-index
+owners are shared across clones and remain observed through external retirement.
+The renderer root's literal include expansion decreases from 7,152 to 7,146;
+its exact ceiling ratchets accordingly. Allocator, renderer and application
+history/resize tests cover the change. Normal budgets are unchanged. Remaining
+include debt, complete document aggregation and construction-time admission stay open.
+
 ## Required Enforcement Surface
 
 The standard drift battery must invoke blocking checks for source discovery and

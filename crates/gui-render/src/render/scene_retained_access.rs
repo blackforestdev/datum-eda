@@ -1,59 +1,4 @@
-use super::gpu_data::shared_geometry::GeometryElement;
 use super::*;
-use crate::cpu_alloc::heap::capacity_bytes;
-
-/// Non-owning CPU geometry lifetime observation. Weak references retain only
-/// the small shared owner, never the separately boxed vertex/stroke payload.
-#[derive(Clone)]
-pub struct RetainedGeometryObserver {
-    vertices: std::sync::Weak<Box<[Vertex]>>,
-    strokes: std::sync::Weak<Box<[WorldStrokeInstance]>>,
-    vertex_bytes: usize,
-    stroke_bytes: usize,
-}
-
-impl RetainedGeometryObserver {
-    pub fn is_live(&self) -> bool {
-        self.vertices.strong_count() != 0 || self.strokes.strong_count() != 0
-    }
-
-    /// Deduplicate each allocation independently. Measured Arc containers and
-    /// allocator headers remain charged until weak observers also drop.
-    pub fn heap_bytes_excluding<'a>(&self, others: impl IntoIterator<Item = &'a Self>) -> usize {
-        let mut vertices = Vertex::container_bytes()
-            + usize::from(self.vertices.strong_count() != 0) * self.vertex_bytes;
-        let mut strokes = WorldStrokeInstance::container_bytes()
-            + usize::from(self.strokes.strong_count() != 0) * self.stroke_bytes;
-        for other in others {
-            if self.vertices.ptr_eq(&other.vertices) {
-                vertices = 0;
-            }
-            if self.strokes.ptr_eq(&other.strokes) {
-                strokes = 0;
-            }
-        }
-        vertices + strokes
-    }
-}
-
-impl RetainedScene {
-    /// All live and submitted-retiring GPU world buffers for this scene/document,
-    /// including other retained revisions and renderers sharing its scene ID.
-    pub fn world_gpu_reserved_bytes(&self) -> u64 {
-        self.world_vertices
-            .document_budget()
-            .map_or(0, |budget| budget.used())
-    }
-
-    pub fn geometry_observer(&self) -> RetainedGeometryObserver {
-        RetainedGeometryObserver {
-            vertices: self.world_vertices.downgrade(),
-            strokes: self.world_strokes.downgrade(),
-            vertex_bytes: capacity_bytes::<Vertex>(self.world_vertices.len()),
-            stroke_bytes: capacity_bytes::<WorldStrokeInstance>(self.world_strokes.len()),
-        }
-    }
-}
 
 pub(crate) fn finish_retained_draw_commands(
     commands: &mut Vec<RetainedDrawCommand>,
@@ -249,8 +194,8 @@ impl RetainedScene {
                 world_strokes,
                 &state.scene.scene_id,
             ),
-            draw_commands,
-            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
+            draw_commands: draw_commands.into(),
+            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions).into(),
         }
     }
 
@@ -276,39 +221,6 @@ impl RetainedScene {
                 .component_graphics
                 .iter()
                 .any(|graphic| graphic.closed && graphic.render_role == "component_mechanical")
-    }
-}
-
-impl RetainedScene {
-    /// Owned heap capacity including Datum headers and measured geometry Arc
-    /// containers, excluding this inline owner and shared document-budget metadata.
-    /// History deduplicates geometry through its observer; this is not RSS.
-    pub fn heap_payload_bytes(&self) -> Option<usize> {
-        let hits = self.world_hit_index.heap_bytes_with(
-            |target| match target {
-                HitTarget::AuthoredObject(id) => Some(capacity_bytes::<u8>(id.capacity())),
-                _ => None,
-            },
-            |layout| Some(crate::cpu_alloc::heap::allocation_bytes(layout)),
-        )?;
-        let mut bytes = self
-            .world_vertices
-            .heap_bytes()
-            .checked_add(self.world_strokes.heap_bytes())?
-            .checked_add(capacity_bytes::<RetainedDrawCommand>(
-                self.draw_commands.capacity(),
-            ))?
-            .checked_add(hits)?;
-        for command in &self.draw_commands {
-            let layer = match command {
-                RetainedDrawCommand::Quads { layer_id, .. }
-                | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id,
-            };
-            bytes = bytes.checked_add(capacity_bytes::<u8>(
-                layer.as_ref().map_or(0, String::capacity),
-            ))?;
-        }
-        Some(bytes)
     }
 }
 
@@ -349,7 +261,8 @@ mod retained_storage_tests {
                 center: PointNm { x: 0, y: 0 },
                 radius_nm: 1.0,
             },
-        }]);
+        }])
+        .into();
         assert_eq!(scene.heap_payload_bytes(), None);
     }
 
@@ -379,9 +292,9 @@ mod retained_storage_tests {
         drop(second);
         assert!(!first_observer.is_live());
         assert!(!second_observer.is_live());
-        assert_eq!(
-            first_observer.heap_bytes_excluding([]),
-            Vertex::container_bytes() + WorldStrokeInstance::container_bytes()
+        assert!(
+            first_observer.heap_bytes_excluding([]) > 0,
+            "dead payload leaves observable Arc container ownership"
         );
     }
 

@@ -67,8 +67,8 @@ impl RetainedScene {
                 world_strokes,
                 &schematic_scene.scene_id,
             ),
-            draw_commands,
-            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
+            draw_commands: draw_commands.into(),
+            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions).into(),
         })
     }
 }
