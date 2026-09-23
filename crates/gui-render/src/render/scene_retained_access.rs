@@ -1,4 +1,6 @@
+use super::gpu_data::shared_geometry::GeometryElement;
 use super::*;
+use crate::cpu_alloc::heap::capacity_bytes;
 
 /// Non-owning CPU geometry lifetime observation. Weak references retain only
 /// the small shared owner, never the separately boxed vertex/stroke payload.
@@ -15,13 +17,13 @@ impl RetainedGeometryObserver {
         self.vertices.strong_count() != 0 || self.strokes.strong_count() != 0
     }
 
-    /// Deduplicate each allocation independently. Box slots remain allocated
-    /// until weak observers also drop; Arc/allocator headers are excluded.
+    /// Deduplicate each allocation independently. Measured Arc containers and
+    /// allocator headers remain charged until weak observers also drop.
     pub fn heap_bytes_excluding<'a>(&self, others: impl IntoIterator<Item = &'a Self>) -> usize {
-        let slot = std::mem::size_of::<Box<[u8]>>();
-        let mut vertices =
-            slot + usize::from(self.vertices.strong_count() != 0) * self.vertex_bytes;
-        let mut strokes = slot + usize::from(self.strokes.strong_count() != 0) * self.stroke_bytes;
+        let mut vertices = Vertex::container_bytes()
+            + usize::from(self.vertices.strong_count() != 0) * self.vertex_bytes;
+        let mut strokes = WorldStrokeInstance::container_bytes()
+            + usize::from(self.strokes.strong_count() != 0) * self.stroke_bytes;
         for other in others {
             if self.vertices.ptr_eq(&other.vertices) {
                 vertices = 0;
@@ -47,8 +49,8 @@ impl RetainedScene {
         RetainedGeometryObserver {
             vertices: self.world_vertices.downgrade(),
             strokes: self.world_strokes.downgrade(),
-            vertex_bytes: std::mem::size_of_val(self.world_vertices.as_ref()),
-            stroke_bytes: std::mem::size_of_val(self.world_strokes.as_ref()),
+            vertex_bytes: capacity_bytes::<Vertex>(self.world_vertices.len()),
+            stroke_bytes: capacity_bytes::<WorldStrokeInstance>(self.world_strokes.len()),
         }
     }
 }
@@ -278,32 +280,33 @@ impl RetainedScene {
 }
 
 impl RetainedScene {
-    /// Heap payload of one retained scene, excluding allocator/Arc headers and
-    /// this inline owner. Shared geometry is conservatively charged in full to
-    /// each history entry; this is cache admission, not process-wide accounting.
+    /// Owned heap capacity including Datum headers and measured geometry Arc
+    /// containers, excluding this inline owner and shared document-budget metadata.
+    /// History deduplicates geometry through its observer; this is not RSS.
     pub fn heap_payload_bytes(&self) -> Option<usize> {
-        let hits = self
-            .world_hit_index
-            .heap_payload_bytes(|target| match target {
-                HitTarget::AuthoredObject(id) => Some(id.capacity()),
+        let hits = self.world_hit_index.heap_bytes_with(
+            |target| match target {
+                HitTarget::AuthoredObject(id) => Some(capacity_bytes::<u8>(id.capacity())),
                 _ => None,
-            })?;
+            },
+            |layout| Some(crate::cpu_alloc::heap::allocation_bytes(layout)),
+        )?;
         let mut bytes = self
             .world_vertices
             .heap_bytes()
             .checked_add(self.world_strokes.heap_bytes())?
-            .checked_add(
-                self.draw_commands
-                    .capacity()
-                    .checked_mul(std::mem::size_of::<RetainedDrawCommand>())?,
-            )?
+            .checked_add(capacity_bytes::<RetainedDrawCommand>(
+                self.draw_commands.capacity(),
+            ))?
             .checked_add(hits)?;
         for command in &self.draw_commands {
             let layer = match command {
                 RetainedDrawCommand::Quads { layer_id, .. }
                 | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id,
             };
-            bytes = bytes.checked_add(layer.as_ref().map_or(0, String::capacity))?;
+            bytes = bytes.checked_add(capacity_bytes::<u8>(
+                layer.as_ref().map_or(0, String::capacity),
+            ))?;
         }
         Some(bytes)
     }
@@ -378,7 +381,7 @@ mod retained_storage_tests {
         assert!(!second_observer.is_live());
         assert_eq!(
             first_observer.heap_bytes_excluding([]),
-            2 * std::mem::size_of::<Box<[u8]>>()
+            Vertex::container_bytes() + WorldStrokeInstance::container_bytes()
         );
     }
 
@@ -398,3 +401,7 @@ mod retained_storage_tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "retained_heap_tests.rs"]
+mod heap_tests;

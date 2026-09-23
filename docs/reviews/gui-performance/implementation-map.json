@@ -15025,6 +15025,11 @@
           "work": "s4_history_active_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json",
           "status": "Default Runtime surface invalidation preserves the cached complete active-scene estimate when reusing geometry and retires only obsolete history. Full allocation/aggregate/peak accounting and qualification remain open."
+        },
+        {
+          "work": "s4_world_heap_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json",
+          "status": "Retained scene/history costs now include Datum allocation headers and measured geometry Arc containers, with shared/weak lifetime deduplication. Actual allocator reconciliation passes. Registry/document metadata, construction peaks, active oversize, external ownership and aggregate qualification remain open."
         }
       ]
     },
@@ -15098,6 +15103,11 @@
           "work": "s4_history_active_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json",
           "status": "Default Runtime surface invalidation preserves the cached complete active-scene estimate when reusing geometry and retires only obsolete history. Full allocation/aggregate/peak accounting and qualification remain open."
+        },
+        {
+          "work": "s4_world_heap_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json",
+          "status": "Retained scene/history costs now include Datum allocation headers and measured geometry Arc containers, with shared/weak lifetime deduplication. Actual allocator reconciliation passes. Registry/document metadata, construction peaks, active oversize, external ownership and aggregate qualification remain open."
         }
       ]
     },
@@ -28627,7 +28637,12 @@
       "Companion schematic/native auxiliary resource bounds, per-adapter counters, backend/scale/endurance and S2 completion remain open.",
       "No dependency, vendoring, Cargo, license, visual-prototype, model mutation, pass/resolve schedule or resize qualification change."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json",
+    "owned_heap_cost_superseded_by": {
+      "work": "s4_world_heap_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json",
+      "status": "Current world/history reporting and admission include Datum headers and measured geometry Arc containers. Historical proof is preserved; registry/document metadata, construction/active oversize, external ownership, aggregation and qualification remain open."
+    }
   },
   "s2_text_entry_retirement_work": {
     "status": "partial S2 memory retirement improvement; no S2 exit or full shaped-text byte-cap qualification",
@@ -33009,7 +33024,12 @@
       "Other resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
       "No renderer reuse criterion, drawing, prototype, numerical budget, dependency, vendoring or license change. No native input or benchmark campaign. GEFN preserved; unresolved resize CPU investigation/qualification remains nonblocking and was not reopened."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/history-active/result.json",
+    "owned_heap_cost_superseded_by": {
+      "work": "s4_world_heap_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json",
+      "status": "Current world/history reporting and admission include Datum headers and measured geometry Arc containers. Historical proof is preserved; registry/document metadata, construction/active oversize, external ownership, aggregation and qualification remain open."
+    }
   },
   "s4_control_heap_adoption_work": {
     "status": "Default retained control-mesh CPU admission includes Datum allocation overhead; full control resource qualification remains open",
@@ -33133,5 +33153,36 @@
       "Other S4 work and S5 native/backend/fault/fairness/endurance/independent qualification remain. No issue or S4/S5 closure, application performance claim, dependency, vendoring, license, prototype, numerical cap or specification amendment. Preserve GEFN, concurrent multi-device exclusion and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/text-paint/result.json"
+  },
+  "s4_world_heap_adoption_work": {
+    "status": "Default retained-world/history admission includes owned allocation headers and measured geometry Arc containers; complete world accounting remains open",
+    "base_commit": "ef2194cc",
+    "production_consumers": [
+      "RetainedScene owned geometry, draw-command and spatial hit-index capacity reporting",
+      "RetainedGeometryObserver shared and weak-retiring allocation deduplication",
+      "Runtime RetainedSceneHistory active/history admission, keys, entry and observer vectors"
+    ],
+    "retired_paths": [
+      "Charging only raw geometry payload and a Box slot while excluding Arc/control and Datum headers",
+      "Payload-only hit-index, command-string, history-key and history-vector accounting"
+    ],
+    "behavior": [
+      "Reuse Datum heap allocation accounting across renderer and app through the existing cpu_alloc module. The viewport exposes a caller-supplied allocation-cost policy; its existing payload-only API remains available to callers without Datum allocator coupling. No crate dependency change.",
+      "Measure each concrete Arc<Box<[Vertex]>> and Arc<Box<[WorldStrokeInstance]>> container once using the scoped allocator. Count actual boxed capacities plus Datum tracking/alignment headers. Weak observers charge only surviving containers after payload release and deduplicate vertex/stroke allocations independently.",
+      "Count retained hit region/order/node vectors, path vectors, layer/target strings, command storage/layer strings, history key strings/layer storage, entry capacity and retired-observer capacity with their allocation headers. Inline fields are included only in their containing allocation.",
+      "Apply revised totals to the existing 64 MiB history/active admission policy and six-entry retention without changing numerical caps or authoritative model state. Preserve cached active totals during size-independent surface reuse."
+    ],
+    "proof": {
+      "renderer": "330 renderer tests pass; 11 diagnostic/visual cases filtered. New scoped allocator test exactly reconciles a retained scene with nonempty geometry, empty stroke storage, command strings and hit-index paths/strings; weak-only container charges match observed live allocations through final release. Existing GPU, pixel, cache and lifetime regressions pass.",
+      "app_viewport": "383 application tests pass; 16 ignored; visual-shell integration remains separately ignored. 47 viewport tests pass. New history test reconciles six cloned scenes, independent command/hit/key storage and entry capacity against actual allocations while charging shared geometry once; drop returns observed ownership to zero. Existing active/resize-preservation, pinned-retirement, refusal, eviction and hit tests pass.",
+      "lint_build": "Strict visual renderer/app/viewport all-targets Clippy -D warnings and fresh app build pass. Source health 2,267, dependency and governance gates pass. Initial renderer compilation used the wrong module path for WorldStrokeInstance; corrected and failed log preserved.",
+      "drift": "Full drift stops at the existing Console golden mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "Shared document-budget/allocator-registry metadata, construction/growth peaks, oversized required active-scene admission, whole-scene external ownership and schematic/document aggregation remain unfinished. No full MEM-WORLD-CPU/HISTORY, S4/S5 or issue closure.",
+      "Exact Datum header/Arc measurements require the installed production allocator. Other callers retain public-capacity reporting; allocator-internal slack and native mappings remain separate RSS observations. Capacity and allocation-scope views overlap and must not be summed.",
+      "Remaining resource implementation and S5 native/backend/fault/fairness/endurance/independent qualification remain. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype, numerical cap or specification amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json"
   }
 }
