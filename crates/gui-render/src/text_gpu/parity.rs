@@ -189,7 +189,7 @@ fn owned_draw_matches_installed_text_renderer() {
                             .map(|r| r.bytes)
                             .sum::<u64>()
                     );
-                    draw.flush_uploads(&queue);
+                    draw.flush_uploads(&device, &queue);
                     if text == "😀🌍" {
                         assert!(
                             atlas
@@ -235,7 +235,7 @@ fn owned_draw_matches_installed_text_renderer() {
                             .map(|r| r.bytes)
                             .sum::<u64>()
                     );
-                    draw.flush_uploads(&queue);
+                    draw.flush_uploads(&device, &queue);
                     assert_eq!(draw.upload_bytes, 0, "unchanged instances must not upload");
                     assert_eq!(
                         atlas.uploads, uploads,

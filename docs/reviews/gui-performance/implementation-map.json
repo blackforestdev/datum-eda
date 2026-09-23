@@ -16834,6 +16834,11 @@
           "work": "s4_atlas_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json",
           "status": "Glyph atlas staging migrated to exact padded-capacity admission and submission retirement; remaining producers, scratch, cold chunks and original qualification stay open."
+        },
+        {
+          "work": "s4_mixed_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json",
+          "status": "Uniform and glyph-instance uploads join shared explicit staging; remaining producers, scratch, cold chunks and original qualification stay open."
         }
       ]
     },
@@ -16960,6 +16965,11 @@
           "work": "s4_atlas_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json",
           "status": "Glyph atlas staging migrated to exact padded-capacity admission and submission retirement; remaining producers, scratch, cold chunks and original qualification stay open."
+        },
+        {
+          "work": "s4_mixed_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json",
+          "status": "Uniform and glyph-instance uploads join shared explicit staging; remaining producers, scratch, cold chunks and original qualification stay open."
         }
       ]
     },
@@ -17111,6 +17121,11 @@
           "work": "s4_atlas_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json",
           "status": "Glyph atlas staging migrated to exact padded-capacity admission and submission retirement; remaining producers, scratch, cold chunks and original qualification stay open."
+        },
+        {
+          "work": "s4_mixed_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json",
+          "status": "Uniform and glyph-instance uploads join shared explicit staging; remaining producers, scratch, cold chunks and original qualification stay open."
         }
       ]
     },
@@ -32304,5 +32319,38 @@
       "No dependency, vendor, license, prototype, font, visual-layout or numerical-budget change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-staging/result.json"
+  },
+  "s4_mixed_staging_work": {
+    "status": "Default uniform and workspace/overlay glyph-instance uploads now share explicitly admitted staging with glyph textures; complete resource qualification remains open",
+    "base_commit": "8c9f1f0a",
+    "production_consumers": [
+      "Main and auxiliary renderer screen uniforms and live-surface scene uniforms",
+      "Workspace and overlay text instance buffers",
+      "Existing shared glyph-atlas upload batch and frame submission"
+    ],
+    "retired_paths": [
+      "Opaque queue.write_buffer uploads for uniforms and glyph instances",
+      "Independent consumption of those producer plans before complete staging admission",
+      "The obsolete queue-only dirty-range wrapper used by glyph instances"
+    ],
+    "behavior": [
+      "Extend the shared mapped batch with validated aligned buffer ranges. Pack exact source spans directly after padded texture rows, copy to their original destination offsets, and charge one total API capacity to host16 MiB/process-staging64 MiB/GPU512 MiB admission before allocation.",
+      "Borrow producer payloads without an extra CPU payload copy. Collect all affected producers before admission, then consume pending uniforms, glyph instances and glyph pixels only after successful staging creation. Refusal preserves their plans for cancellation/retry.",
+      "Use the existing frame submission and completion hold. Preserve per-word uniform updates, existing per-vertex glyph span policy, source upload counters, warm-zero uploads, allocation reuse, painter ordering and unchanged gaps."
+    ],
+    "proof": {
+      "renderer": "308 renderer tests pass, 11 diagnostic/visual cases filtered. Mixed actual-GPU test covers sparse buffer copies after padded texture rows, untouched words, all three admission failures/rollback and completion release. New default-frame test verifies failed staging admission preserves pending uniform data, successful retry consumes it, and the next warm flush creates no batch. Existing glyph, uniform, workspace/dialog pixel tests pass.",
+      "lint": "Visual all-targets renderer/app Clippy -D warnings, source health2245, dependency authority and governance checks pass. Initial Clippy requested is_multiple_of instead of equivalent modulo alignment checks; the style-only correction preserves tested behavior and the failed lint log.",
+      "build": "Fresh native visual application build passes.",
+      "native": "1680x1050 datum-test/R1 capture exactly matches atlas-staging/native.png. No OS-input or endurance qualification.",
+      "drift": "Full drift stops at the existing console-routine-focused1x mismatch:3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding checks pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "World/screen/terminal-placement vertices and terminal image pixels still use opaque queue staging. CPU pending payload/metadata/scratch and diagnostic query/readback accounting remain unfinished.",
+      "Oversized cold batch continuation still requires bounded chunks with correct coordinator/submission accounting. This slice does not add hidden submissions or synchronous wait loops; admission fails rather than omitting required content. No complete MEM-STAGING predicate closure.",
+      "Glyph instance spans retain internal unchanged words; full exact changed-byte transfer remains open. No new throughput, full native/backend/fault/resource qualification or S4/S5 closure.",
+      "No dependency, vendor, license, prototype, font, layout or numerical-budget change. Preserve GEFN and nonblocking resize CPU disposition."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json"
   }
 }

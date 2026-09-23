@@ -245,3 +245,77 @@ fn screen_streams_and_uniforms_share_one_host_limit() {
     drop(renderer);
     assert_eq!(budget.used(), 0);
 }
+
+#[test]
+#[ignore = "requires local GPU; staging refusal must preserve producer updates"]
+fn frame_staging_refusal_preserves_uniform_plan_until_retry() {
+    let mut renderer = hardware_renderer(960, 720);
+    let budget = renderer.renderer.atlas.staging_budget.clone();
+    renderer.renderer.uniform_buffer.sync(
+        &renderer.queue,
+        crate::gpu_data::ScreenUniform {
+            resolution: [960.0, 720.0],
+            _pad: [0.0, 0.0],
+        },
+    );
+    let expected = {
+        let mut pending = Vec::new();
+        renderer
+            .renderer
+            .uniform_buffer
+            .append_uploads(&mut pending);
+        pending
+            .iter()
+            .map(|upload| upload.bytes.len())
+            .sum::<usize>()
+    };
+    assert!(expected > 0);
+    let filler = budget.reserve(16 * 1024 * 1024).unwrap();
+    assert!(
+        renderer
+            .renderer
+            .flush_frame_uploads(&renderer.device, &renderer.queue)
+            .is_err()
+    );
+    {
+        let mut pending = Vec::new();
+        renderer
+            .renderer
+            .uniform_buffer
+            .append_uploads(&mut pending);
+        assert_eq!(
+            pending
+                .iter()
+                .map(|upload| upload.bytes.len())
+                .sum::<usize>(),
+            expected
+        );
+    }
+    drop(filler);
+    let mut batch = renderer
+        .renderer
+        .flush_frame_uploads(&renderer.device, &renderer.queue)
+        .unwrap()
+        .unwrap();
+    assert_eq!(budget.used(), expected as u64);
+    let mut pending = Vec::new();
+    renderer
+        .renderer
+        .uniform_buffer
+        .append_uploads(&mut pending);
+    assert!(pending.is_empty());
+    renderer.queue.submit([batch.command()]);
+    batch.hold(&renderer.queue);
+    renderer
+        .device
+        .poll(wgpu::PollType::wait_indefinitely())
+        .unwrap();
+    assert_eq!(budget.used(), 0);
+    assert!(
+        renderer
+            .renderer
+            .flush_frame_uploads(&renderer.device, &renderer.queue)
+            .unwrap()
+            .is_none()
+    );
+}

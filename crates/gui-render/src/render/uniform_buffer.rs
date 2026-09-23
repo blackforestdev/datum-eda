@@ -71,18 +71,40 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
         self.pending = None;
     }
 
-    pub(crate) fn flush_uploads(&mut self, queue: &wgpu::Queue) {
-        if let Some(value) = self.pending.take() {
+    pub(crate) fn append_uploads<'a>(
+        &'a self,
+        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+    ) {
+        if let Some(value) = &self.pending {
             write_changed_ranges(
                 self.value.as_ref().map(bytemuck::bytes_of),
-                bytemuck::bytes_of(&value),
-                |offset, data| queue.write_buffer(&self.buffer, offset as u64, data),
+                bytemuck::bytes_of(value),
+                |offset, bytes| {
+                    out.push(crate::text_gpu::upload::BufferUpload {
+                        buffer: &self.buffer,
+                        offset: offset as u64,
+                        bytes,
+                    })
+                },
             );
+        }
+    }
+
+    pub(crate) fn finish_uploads(&mut self) {
+        if let Some(value) = self.pending.take() {
             self.value = Some(value);
         }
     }
 
-    /// Planned bytes; queue writes occur only in flush_uploads before submission.
+    #[cfg(all(test, feature = "visual"))]
+    pub(crate) fn flush_uploads(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+        let mut uploads = Vec::new();
+        self.append_uploads(&mut uploads);
+        crate::text_gpu::upload::submit_buffers_for_test(device, queue, &uploads);
+        self.finish_uploads();
+    }
+
+    /// Planned bytes; explicit staging copies occur only at successful frame submission.
     pub(crate) fn sync(&mut self, _queue: &wgpu::Queue, value: T) -> usize {
         let uploaded = write_changed_ranges(
             self.value.as_ref().map(bytemuck::bytes_of),
@@ -155,12 +177,6 @@ impl crate::Renderer {
             binding.buffer.cancel_uploads();
         }
     }
-    pub(crate) fn flush_uniform_uploads(&mut self, queue: &wgpu::Queue) {
-        self.uniform_buffer.flush_uploads(queue);
-        for binding in &mut self.surface_scene_uniforms {
-            binding.buffer.flush_uploads(queue);
-        }
-    }
     pub(crate) fn uniform_submission_refs(&self) -> impl Iterator<Item = SubmissionRef> + '_ {
         [
             self.uniform_buffer.submission_ref(),
@@ -179,10 +195,10 @@ impl crate::Renderer {
 // Uniforms are small fixed records (16-byte screen and 64-byte camera), unlike
 // large vertex streams. Coalesce adjacent dirty words without transferring
 // internal clean gaps; queue offsets and sizes obey COPY_BUFFER_ALIGNMENT.
-fn write_changed_ranges(
+fn write_changed_ranges<'a>(
     old: Option<&[u8]>,
-    new: &[u8],
-    mut write: impl FnMut(usize, &[u8]),
+    new: &'a [u8],
+    mut write: impl FnMut(usize, &'a [u8]),
 ) -> usize {
     let word = wgpu::COPY_BUFFER_ALIGNMENT as usize;
     assert_eq!(new.len() % word, 0);
@@ -258,13 +274,13 @@ mod tests {
         );
         owner.cancel_uploads();
         assert_eq!(owner.sync(&queue, [1_u32; 4]), 0);
-        owner.flush_uploads(&queue);
+        owner.flush_uploads(&device, &queue);
         assert_eq!(
             read(owner.buffer()),
             bytemuck::cast_slice::<u32, u8>(&[1; 4])
         );
         assert_eq!(owner.sync(&queue, [1, 2, 1, 3]), 8);
-        owner.flush_uploads(&queue);
+        owner.flush_uploads(&device, &queue);
         assert_eq!(
             read(owner.buffer()),
             bytemuck::cast_slice::<u32, u8>(&[1, 2, 1, 3])

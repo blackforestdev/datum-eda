@@ -56,11 +56,24 @@ impl Renderer {
         device: &wgpu::Device,
         queue: &wgpu::Queue,
     ) -> anyhow::Result<Option<crate::text_gpu::upload::Batch>> {
-        let atlas_upload = self.atlas.flush_uploads(device)?;
+        let mut buffers = Vec::new();
+        self.uniform_buffer.append_uploads(&mut buffers);
+        for binding in &self.surface_scene_uniforms {
+            binding.buffer.append_uploads(&mut buffers);
+        }
+        let text_bytes = self.text_renderer.append_uploads(&mut buffers);
+        let overlay_bytes = self.menu_overlay_text_renderer.append_uploads(&mut buffers);
+        // Admit and encode the complete mixed batch before consuming any producer.
+        // Failure retains every pending update for cancellation/retry.
+        let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;
+        self.uniform_buffer.finish_uploads();
+        for binding in &mut self.surface_scene_uniforms {
+            binding.buffer.finish_uploads();
+        }
+        self.text_renderer.finish_uploads(text_bytes);
+        self.menu_overlay_text_renderer
+            .finish_uploads(overlay_bytes);
         self.flush_vertex_uploads(queue);
-        self.flush_uniform_uploads(queue);
-        self.text_renderer.flush_uploads(queue);
-        self.menu_overlay_text_renderer.flush_uploads(queue);
         Ok(atlas_upload)
     }
 

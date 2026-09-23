@@ -2,7 +2,7 @@ use super::*;
 
 #[test]
 #[ignore = "requires local GPU; explicit staging admission and completion"]
-fn padded_texture_staging_is_charged_until_completion_and_preserves_pixels() {
+fn mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_gaps() {
     let instance = wgpu::Instance::default();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
@@ -21,7 +21,25 @@ fn padded_texture_staging_is_charged_until_completion_and_preserves_pixels() {
         view_formats: &[],
     });
     let owner = Owner::new();
-    let host = Budget::new(512);
+    let host = Budget::new(520);
+    let target = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("mixed-buffer-proof"),
+        size: 16,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let buffers = [
+        BufferUpload {
+            buffer: &target,
+            offset: 4,
+            bytes: &[9, 0, 0, 0],
+        },
+        BufferUpload {
+            buffer: &target,
+            offset: 12,
+            bytes: &[10, 0, 0, 0],
+        },
+    ];
     let upload = [TextureUpload {
         texture: &texture,
         origin: [0, 0],
@@ -29,21 +47,21 @@ fn padded_texture_staging_is_charged_until_completion_and_preserves_pixels() {
         stride: 3,
         pixels: &[1, 2, 3, 4, 5, 6],
     }];
-    let mut batch = textures(&device, &owner, 1, &host, &upload)
+    let mut pending = batch(&device, &owner, 1, &host, &upload, &buffers)
         .unwrap()
         .unwrap();
     assert_eq!(
         host.used(),
-        512,
-        "count padded API capacity, not six source bytes"
+        520,
+        "count padded texture rows plus exact buffer range bytes"
     );
-    assert!(textures(&device, &owner, 2, &host, &upload).is_err());
+    assert!(batch(&device, &owner, 2, &host, &upload, &buffers).is_err());
     assert_eq!(
         owner.records().len(),
         1,
         "refuse before another API allocation"
     );
-    drop(batch);
+    drop(pending);
     assert_eq!(host.used(), 0, "unsubmitted cancellation releases staging");
     assert!(owner.records().is_empty());
     // Each later reservation failure rolls back earlier admission atomically.
@@ -57,17 +75,17 @@ fn padded_texture_staging_is_charged_until_completion_and_preserves_pixels() {
         } * 1024
             * 1024;
         let filler = budget.reserve(limit - budget.used()).unwrap();
-        assert!(textures(&device, &owner, 2, &host, &upload).is_err());
+        assert!(batch(&device, &owner, 2, &host, &upload, &buffers).is_err());
         assert_eq!(host.used(), 0);
         assert!(owner.records().is_empty());
         drop(filler);
     }
-    batch = textures(&device, &owner, 3, &host, &upload)
+    pending = batch(&device, &owner, 3, &host, &upload, &buffers)
         .unwrap()
         .unwrap();
     let readback = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
-        size: 512,
+        size: 528,
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
         mapped_at_creation: false,
     });
@@ -88,10 +106,11 @@ fn padded_texture_staging_is_charged_until_completion_and_preserves_pixels() {
             depth_or_array_layers: 1,
         },
     );
-    queue.submit([batch.command(), encoder.finish()]);
+    encoder.copy_buffer_to_buffer(&target, 0, &readback, 512, 16);
+    queue.submit([pending.command(), encoder.finish()]);
     // The batch remains charged even when its encoded command has moved to the queue.
-    assert_eq!(host.used(), 512);
-    batch.hold(&queue);
+    assert_eq!(host.used(), 520);
+    pending.hold(&queue);
     let (tx, rx) = std::sync::mpsc::channel();
     readback
         .slice(..)
@@ -101,6 +120,10 @@ fn padded_texture_staging_is_charged_until_completion_and_preserves_pixels() {
     let bytes = readback.slice(..).get_mapped_range();
     assert_eq!(&bytes[..3], &[1, 2, 3]);
     assert_eq!(&bytes[256..259], &[4, 5, 6]);
+    assert_eq!(
+        &bytes[512..528],
+        &[0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0]
+    );
     assert_eq!(host.used(), 0);
     assert!(owner.records().is_empty());
 }
