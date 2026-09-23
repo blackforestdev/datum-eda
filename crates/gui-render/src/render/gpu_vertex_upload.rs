@@ -73,43 +73,43 @@ impl Renderer {
         schematic_world: Option<&RetainedScene>,
         schematic_underlay: &[Vertex],
         schematic_overlay: &[Vertex],
-    ) {
+    ) -> anyhow::Result<()> {
         self.panel_gpu
-            .sync(device, queue, "datum-gui-render-panel-vertex-buffer", panel);
+            .sync(device, queue, "datum-gui-render-panel-vertex-buffer", panel)?;
         self.viewport_underlay_gpu.sync(
             device,
             queue,
             "datum-gui-render-viewport-underlay-vertex-buffer",
             viewport_underlay,
-        );
+        )?;
         self.viewport_overlay_gpu.sync(
             device,
             queue,
             "datum-gui-render-viewport-overlay-vertex-buffer",
             viewport_overlay,
-        );
+        )?;
         self.board_interaction_gpu.sync(
             device,
             queue,
             "datum-gui-render-board-interaction-vertex-buffer",
             board_interaction,
-        );
-        self.console_gpu.upload(device, queue, console_overlay);
+        )?;
+        self.console_gpu.upload(device, queue, console_overlay)?;
         self.menu_overlay_gpu.sync(
             device,
             queue,
             "datum-gui-render-menu-overlay-vertex-buffer",
             menu_overlay,
-        );
+        )?;
         self.world_vertices_gpu
-            .sync(device, queue, "datum-world-vertices", world);
+            .sync(device, queue, "datum-world-vertices", world)?;
         if let Some(scene) = schematic_world {
             self.schematic_world_vertices_gpu.sync(
                 device,
                 queue,
                 "datum-schematic-world-vertices",
                 &scene.world_vertices,
-            );
+            )?;
         } else {
             self.schematic_world_vertices_gpu.clear();
             self.schematic_world_strokes_gpu.clear();
@@ -119,12 +119,13 @@ impl Renderer {
             queue,
             "datum-gui-render-schematic-underlay-vertex-buffer",
             schematic_underlay,
-        );
+        )?;
         self.schematic_overlay_gpu.sync(
             device,
             queue,
             "datum-gui-render-schematic-overlay-vertex-buffer",
             schematic_overlay,
-        );
+        )?;
+        Ok(())
     }
 }

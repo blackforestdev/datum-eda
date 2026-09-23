@@ -3872,6 +3872,11 @@
           "work": "s4_uniform_lifetime_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
           "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_gpu_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-admission/result.json",
+          "status": "Partial: shared preallocation admission for migrated default GPU resources; staging/query/readback coverage, subcaps and full qualification remain open."
         }
       ]
     },
@@ -16988,6 +16993,11 @@
           "work": "s4_uniform_lifetime_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json",
           "status": "Partial: default uniform binding/allocation and submission lifetime migrated; full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_gpu_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-admission/result.json",
+          "status": "Partial: shared preallocation admission for migrated default GPU resources; staging/query/readback coverage, subcaps and full qualification remain open."
         }
       ]
     },
@@ -31915,5 +31925,37 @@
       "No dependency, vendor, license, prototype, initial uniform values, shader/layout, budget or nonblocking resize amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/uniform-lifetime/result.json"
+  },
+  "s4_gpu_admission_work": {
+    "status": "Default migrated GPU resources reserve shared capacity before creation; complete MEM-GPU-TOTAL and S4 remain open",
+    "base_commit": "31c24d86",
+    "production_consumers": [
+      "Retained world and screen/control/terminal vertex buffers",
+      "Screen, pane and fallback uniforms for shared native renderers",
+      "Datum glyph atlas pages and glyph instance buffers",
+      "Terminal graphic textures",
+      "Native MSAA surface attachments"
+    ],
+    "retired_paths": [
+      "Unreserved creation of the migrated buffers and textures",
+      "Infallible renderer/stream constructors that could not return admission refusal"
+    ],
+    "behavior": [
+      "Reuse the existing checked atomic reservation and RAII lifetime owner for a shared 512 MiB process pool. Reserve before API creation; hold permits through cached bundles and submission retirement, counting each tracked allocation once.",
+      "Atlas pages acquire both the existing 128 MiB atlas process permit and the shared GPU permit; failed second admission rolls back the first. Allocation refusal preserves an existing vertex allocation and permits retry after capacity returns.",
+      "Propagate admission errors through full/overlay preparation and renderer initialization/recovery to existing native Result paths. Preserve deferred uploads and warm reuse."
+    ],
+    "proof": {
+      "renderer": "295 renderer tests pass, including serial actual-GPU refusal/retry/retirement, reservation rollback, and existing pixel/reuse/cancellation tests; 11 measurement/cost/visual-runner cases filtered.",
+      "lint": "Visual all-targets gui-render/gui-app Clippy -D warnings passes. Source health checks 2240 files; dependency authority and Cargo resource policy pass.",
+      "native": "Fresh visual application build and 1680x1050 datum-test/R1 capture exit 0. Inspected image; decoded RGBA exactly equals the prior uniform-lifetime capture.",
+      "drift": "Full drift stops at the existing Console routine-focused 1x golden mismatch: 3778 pixels (0.384318%). Earlier checks pass; later gates unrun. Failure retained; no golden update or full-drift acceptance."
+    },
+    "limits": [
+      "Staging and diagnostic query/readback buffers are not yet migrated; this is not complete 512 MiB application GPU admission or MEM-GPU-TOTAL acceptance.",
+      "Per-host/document/resource subcaps, complete allocation incidence/release reasons, generation limits, exact transfer predicates and S5 qualification remain open. Required content is not silently omitted on refusal; rendering returns an error.",
+      "No dependency, vendor, license, prototype, numerical budget or resize-policy change. No performance or global adoption claim."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-admission/result.json"
   }
 }

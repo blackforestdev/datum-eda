@@ -155,7 +155,7 @@ impl Runtime {
             &queue,
             config.format,
             select_msaa_samples(&adapter, config.format),
-        );
+        )?;
         let measurements =
             native_gpu_measurements::Host::new(&mut renderer, &device, &queue, &self.window, None)?;
         anyhow::ensure!(

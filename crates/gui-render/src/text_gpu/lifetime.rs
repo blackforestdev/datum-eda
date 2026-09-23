@@ -66,6 +66,7 @@ impl Owner {
         }))
     }
 
+    #[cfg(test)]
     pub(crate) fn track<T>(
         &self,
         resource: T,
@@ -73,16 +74,16 @@ impl Owner {
         generation: u64,
         kind: Kind,
     ) -> Tracked<T> {
-        self.track_with_permit(resource, bytes, generation, kind, None)
+        self.track_with_permits(resource, bytes, generation, kind, Vec::new())
     }
 
-    pub(super) fn track_with_permit<T>(
+    pub(crate) fn track_with_permits<T>(
         &self,
         resource: T,
         bytes: u64,
         generation: u64,
         kind: Kind,
-        permit: Option<super::budget::Permit>,
+        permit: Vec<super::budget::Permit>,
     ) -> Tracked<T> {
         let identity = Arc::new(Identity {
             record: Record {
@@ -105,7 +106,7 @@ impl Owner {
         process.push(Arc::downgrade(&identity));
         Tracked(Arc::new(Allocation {
             resource,
-            _permit: permit,
+            _permits: permit,
             identity,
         }))
     }
@@ -153,6 +154,12 @@ impl crate::Renderer {
         records(&PROCESS_ALLOCATIONS)
     }
 
+    /// Reserved migrated GPU capacity, including pending creation and retirement.
+    /// Query/readback allocations, upload staging and driver residency remain separate.
+    pub fn gpu_process_reserved_bytes() -> u64 {
+        super::budget::gpu_process().used()
+    }
+
     /// Texture bytes reserved or allocated, including retiring submissions.
     /// This is API capacity, not physical driver residency or upload staging.
     pub fn text_atlas_process_bytes() -> u64 {
@@ -164,7 +171,7 @@ impl crate::Renderer {
 // still holds the API object. Submission references own this SAME allocation.
 struct Allocation<T> {
     resource: T,
-    _permit: Option<super::budget::Permit>,
+    _permits: Vec<super::budget::Permit>,
     identity: Arc<Identity>,
 }
 
@@ -217,12 +224,12 @@ mod tests {
     fn texture_reservation_survives_owner_and_every_submission_hold() {
         let budget = super::super::budget::Budget::new(64);
         let owner = Owner::new();
-        let texture = owner.track_with_permit(
+        let texture = owner.track_with_permits(
             vec![0_u8; 64],
             64,
             1,
             Kind::Texture,
-            Some(budget.reserve(64).unwrap()),
+            vec![budget.reserve(64).unwrap()],
         );
         let id = texture.id();
         let first = texture.submission_ref();

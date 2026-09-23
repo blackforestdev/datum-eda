@@ -128,7 +128,7 @@ impl GlobalPreferencesWindowSurface {
             gpu.queue,
             format,
             select_msaa_samples(gpu.adapter, format),
-        );
+        )?;
         let measurements = native_gpu_measurements::Host::new(
             &mut renderer,
             gpu.device,

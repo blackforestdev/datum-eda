@@ -162,7 +162,7 @@ mod tests {
             view_formats: &[],
         });
         let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut renderer = Renderer::new(&device, &queue, format, 4);
+        let mut renderer = Renderer::new(&device, &queue, format, 4).unwrap();
         let mut state = board_fixture_state();
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
         let mut camera = CameraState::fit_to_bounds(&state.scene.bounds);

@@ -175,7 +175,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         prepared: &[PreparedTerminalGraphic],
         surface_width: u32,
         surface_height: u32,
-    ) {
+    ) -> anyhow::Result<()> {
         let mut visible = 0;
         let live_keys = prepared.iter().map(texture_key).collect::<BTreeSet<_>>();
         self.textures.retain(|entry| live_keys.contains(&entry.key));
@@ -202,7 +202,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                     &self.texture_layout,
                     graphic,
                     key,
-                ));
+                )?);
             }
             let clip = (clip_x, clip_y, clip_right - clip_x, clip_bottom - clip_y);
             let foreground = placement.z_index() >= 0;
@@ -223,10 +223,11 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                 queue,
                 "datum-terminal-graphic-vertices",
                 &graphic_vertices(graphic),
-            );
+            )?;
             visible += 1;
         }
         self.draws.truncate(visible);
+        Ok(())
     }
 
     #[cfg(all(test, feature = "visual"))]
@@ -360,9 +361,9 @@ impl super::Renderer {
         prepared: &super::PreparedScene,
         width: u32,
         height: u32,
-    ) {
+    ) -> anyhow::Result<()> {
         self.terminal_graphics
-            .sync(device, queue, prepared.terminal_graphics(), width, height);
+            .sync(device, queue, prepared.terminal_graphics(), width, height)
     }
 
     pub(super) fn encode_terminal_graphics(

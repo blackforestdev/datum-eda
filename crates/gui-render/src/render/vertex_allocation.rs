@@ -25,7 +25,7 @@ impl VertexAllocation {
         device: &wgpu::Device,
         label: &str,
         bytes: &[u8],
-    ) -> bool {
+    ) -> anyhow::Result<bool> {
         debug_assert!(
             !bytes.is_empty(),
             "empty streams drop their allocation owner"
@@ -36,26 +36,70 @@ impl VertexAllocation {
             .as_ref()
             .is_some_and(|buffer| buffer.size() >= live && buffer.size() <= live.saturating_mul(4))
         {
-            return false;
+            return Ok(false);
         }
         let mut usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
         if cfg!(test) {
             usage |= wgpu::BufferUsages::COPY_SRC;
         }
+        let capacity = live.next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
+        let permit = crate::text_gpu::budget::gpu_process().reserve(capacity)?;
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
-            size: live.next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT),
+            size: capacity,
             usage,
             mapped_at_creation: false,
         });
         self.generation += 1;
         let bytes = buffer.size();
-        self.buffer = Some(self.owner.get_or_insert_with(Owner::new).track(
-            buffer,
-            bytes,
-            self.generation,
-            Kind::Vertex,
-        ));
-        true
+        self.buffer = Some(
+            self.owner
+                .get_or_insert_with(Owner::new)
+                .track_with_permits(buffer, bytes, self.generation, Kind::Vertex, vec![permit]),
+        );
+        Ok(true)
+    }
+}
+
+#[cfg(all(test, feature = "visual"))]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[ignore = "requires local GPU and serial execution: exercises process admission"]
+    fn refusal_preserves_allocation_and_retirement_keeps_reservation() {
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, _queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let budget = crate::text_gpu::budget::gpu_process();
+        let baseline = budget.used();
+        let mut allocation = VertexAllocation::default();
+        allocation
+            .replace_if_needed(&device, "admission", &[0; 16])
+            .unwrap();
+        let held = allocation.submission_ref().unwrap();
+        let original = allocation.owner.as_ref().unwrap().records();
+        let filler = budget.reserve(512 * 1024 * 1024 - budget.used()).unwrap();
+        assert!(
+            allocation
+                .replace_if_needed(&device, "refused", &[0; 64])
+                .is_err()
+        );
+        assert_eq!(allocation.owner.as_ref().unwrap().records(), original);
+        assert_eq!(allocation.buffer().unwrap().size(), 16);
+        assert_eq!(budget.used(), 512 * 1024 * 1024);
+        drop(filler);
+        allocation
+            .replace_if_needed(&device, "retry", &[0; 64])
+            .unwrap();
+        assert_eq!(budget.used(), baseline + 80);
+        let records = allocation.owner.as_ref().unwrap().records();
+        assert_eq!(records.len(), 2);
+        assert!(records.iter().any(|r| r.id == original[0].id && r.retiring));
+        drop(held);
+        assert_eq!(budget.used(), baseline + 64);
+        drop(allocation);
+        assert_eq!(budget.used(), baseline);
     }
 }

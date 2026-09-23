@@ -11,35 +11,41 @@ pub(crate) struct UniformBuffer<T> {
 }
 
 impl<T: bytemuck::Pod> UniformBuffer<T> {
-    pub(crate) fn new(device: &wgpu::Device, label: &str, value: T) -> Self {
-        Self {
+    pub(crate) fn new(device: &wgpu::Device, label: &str, value: T) -> anyhow::Result<Self> {
+        let permit = reserve::<T>()?;
+        Ok(Self {
             buffer: tracked(
                 device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                     label: Some(label),
                     contents: bytemuck::bytes_of(&value),
                     usage: uniform_usage(),
                 }),
+                permit,
             ),
             value: Some(value),
             pending: None,
             #[cfg(test)]
             last_upload_bytes: std::mem::size_of::<T>(),
-        }
+        })
     }
 
-    pub(crate) fn empty(device: &wgpu::Device, label: &str) -> Self {
-        Self {
-            buffer: tracked(device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some(label),
-                size: std::mem::size_of::<T>() as u64,
-                usage: uniform_usage(),
-                mapped_at_creation: false,
-            })),
+    pub(crate) fn empty(device: &wgpu::Device, label: &str) -> anyhow::Result<Self> {
+        let permit = reserve::<T>()?;
+        Ok(Self {
+            buffer: tracked(
+                device.create_buffer(&wgpu::BufferDescriptor {
+                    label: Some(label),
+                    size: std::mem::size_of::<T>() as u64,
+                    usage: uniform_usage(),
+                    mapped_at_creation: false,
+                }),
+                permit,
+            ),
             value: None,
             pending: None,
             #[cfg(test)]
             last_upload_bytes: 0,
-        }
+        })
     }
 
     pub(crate) fn buffer(&self) -> &wgpu::Buffer {
@@ -90,9 +96,14 @@ fn uniform_usage() -> wgpu::BufferUsages {
     }
 }
 
-fn tracked(buffer: wgpu::Buffer) -> Tracked<wgpu::Buffer> {
+fn reserve<T>() -> anyhow::Result<crate::text_gpu::budget::Permit> {
+    crate::text_gpu::budget::gpu_process()
+        .reserve((std::mem::size_of::<T>() as u64).next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT))
+}
+
+fn tracked(buffer: wgpu::Buffer, permit: crate::text_gpu::budget::Permit) -> Tracked<wgpu::Buffer> {
     let bytes = buffer.size();
-    Owner::new().track(buffer, bytes, 1, Kind::Uniform)
+    Owner::new().track_with_permits(buffer, bytes, 1, Kind::Uniform, vec![permit])
 }
 
 /// Keep bindings and their allocation together; drop binding references first.
@@ -106,10 +117,10 @@ impl<T: bytemuck::Pod> UniformBinding<T> {
         layout: &wgpu::BindGroupLayout,
         label: &str,
         value: Option<T>,
-    ) -> Self {
+    ) -> anyhow::Result<Self> {
         let buffer = match value {
-            Some(value) => UniformBuffer::new(device, label, value),
-            None => UniformBuffer::empty(device, label),
+            Some(value) => UniformBuffer::new(device, label, value)?,
+            None => UniformBuffer::empty(device, label)?,
         };
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
@@ -119,7 +130,7 @@ impl<T: bytemuck::Pod> UniformBinding<T> {
                 resource: buffer.buffer().as_entire_binding(),
             }],
         });
-        Self { bind_group, buffer }
+        Ok(Self { bind_group, buffer })
     }
 }
 
@@ -218,7 +229,7 @@ mod tests {
             target.unmap();
             data
         };
-        let mut owner = UniformBuffer::new(&device, "uniform", [1_u32; 4]);
+        let mut owner = UniformBuffer::new(&device, "uniform", [1_u32; 4]).unwrap();
         let id = owner.buffer.id();
         assert_eq!(owner.sync(&queue, [2_u32; 4]), 16);
         assert_eq!(

@@ -87,9 +87,12 @@ impl SurfaceAttachments {
         })
     }
 
-    fn ensure(&mut self, device: &wgpu::Device, key: AttachmentKey) -> &wgpu::TextureView {
+    fn ensure(
+        &mut self,
+        device: &wgpu::Device,
+        key: AttachmentKey,
+    ) -> anyhow::Result<&wgpu::TextureView> {
         self.ensure_guarded(device, key, || true)
-            .expect("unconditional attachment preparation")
     }
 
     fn ensure_guarded(
@@ -109,6 +112,10 @@ impl SurfaceAttachments {
                 .as_ref()
                 .is_none_or(|current| current.key != key)
         {
+            let bytes = key.payload_bytes().ok_or_else(|| {
+                anyhow::anyhow!("surface attachment extent or format cannot be accounted")
+            })?;
+            let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("datum-gui-render-msaa"),
                 size: wgpu::Extent3d {
@@ -131,15 +138,13 @@ impl SurfaceAttachments {
             let replacement = SurfaceAttachment {
                 key,
                 allocation: self.allocations,
-                view: Arc::new(
-                    self.owner.track(
-                        texture.create_view(&wgpu::TextureViewDescriptor::default()),
-                        key.payload_bytes()
-                            .expect("render attachment has a sized format"),
-                        self.allocations,
-                        Kind::Attachment,
-                    ),
-                ),
+                view: Arc::new(self.owner.track_with_permits(
+                    texture.create_view(&wgpu::TextureViewDescriptor::default()),
+                    bytes,
+                    self.allocations,
+                    Kind::Attachment,
+                    vec![permit],
+                )),
             };
             // Backend error callbacks may report allocation/validation failure
             // during creation. Keep the old reference until this check passes;
@@ -192,7 +197,7 @@ impl Renderer {
         device: &wgpu::Device,
         width: u32,
         height: u32,
-    ) -> &wgpu::TextureView {
+    ) -> anyhow::Result<&wgpu::TextureView> {
         self.surface_attachments.ensure(
             device,
             AttachmentKey::new(width, height, self.msaa_format, self.msaa_samples),
@@ -239,7 +244,7 @@ mod tests {
         let mut owner = SurfaceAttachments::default();
         let old_key = AttachmentKey::new(32, 64, wgpu::TextureFormat::Rgba8Unorm, 4);
         let new_key = AttachmentKey::new(64, 32, old_key.format, old_key.samples);
-        owner.ensure(&device, old_key);
+        owner.ensure(&device, old_key).unwrap();
         let first = owner.snapshot().unwrap();
         assert!(owner.ensure_guarded(&device, new_key, || false).is_err());
         assert_eq!(owner.snapshot(), Some(first));
@@ -260,7 +265,7 @@ mod tests {
             assert_eq!(retained.extent, first.extent);
             assert_eq!(retained.owner, first.owner);
             assert_eq!(retained.allocations_created, u64::from(fail_at));
-            owner.ensure(&device, old_key);
+            owner.ensure(&device, old_key).unwrap();
             assert_eq!(owner.snapshot(), Some(retained));
         }
         owner.ensure_guarded(&device, new_key, || true).unwrap();
@@ -281,7 +286,7 @@ mod tests {
         let mut owner = SurfaceAttachments::default();
         let observer = owner.owner.observer();
         let key = AttachmentKey::new(32, 64, wgpu::TextureFormat::Rgba8Unorm, 4);
-        let view = owner.ensure(&device, key);
+        let view = owner.ensure(&device, key).unwrap();
         let mut encoder = device.create_command_encoder(&Default::default());
         {
             let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -305,7 +310,9 @@ mod tests {
         let submitted = owner.submission_ref().unwrap();
         queue.submit([encoder.finish()]);
         crate::text_gpu::hold_until_done(&queue, vec![submitted]);
-        owner.ensure(&device, AttachmentKey::new(64, 32, key.format, 4));
+        owner
+            .ensure(&device, AttachmentKey::new(64, 32, key.format, 4))
+            .unwrap();
         let records = observer.allocations();
         assert_eq!(records.len(), 2);
         assert_eq!(
@@ -351,20 +358,24 @@ mod tests {
             pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())).unwrap();
         let mut owner = SurfaceAttachments::default();
         let key = AttachmentKey::new(32, 64, wgpu::TextureFormat::Rgba8Unorm, 4);
-        owner.ensure(&device, key);
+        owner.ensure(&device, key).unwrap();
         let first = owner.snapshot().unwrap();
         for _ in 0..20 {
-            owner.ensure(&device, key);
+            owner.ensure(&device, key).unwrap();
         }
         assert_eq!(owner.snapshot(), Some(first));
         // Equal payload size is not equal extent identity.
-        owner.ensure(&device, AttachmentKey::new(64, 32, key.format, 4));
+        owner
+            .ensure(&device, AttachmentKey::new(64, 32, key.format, 4))
+            .unwrap();
         let second = owner.snapshot().unwrap();
         assert_eq!(second.payload_bytes, first.payload_bytes);
         assert_eq!(second.allocations_created, 2);
         assert_ne!(second.allocation, first.allocation);
         owner.force_replacement = true;
-        owner.ensure(&device, AttachmentKey::new(64, 32, key.format, 4));
+        owner
+            .ensure(&device, AttachmentKey::new(64, 32, key.format, 4))
+            .unwrap();
         let negative = owner.snapshot().unwrap();
         assert_ne!(negative.allocation, second.allocation);
         assert_eq!(negative.allocations_created, 3);

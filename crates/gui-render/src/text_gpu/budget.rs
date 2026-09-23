@@ -4,7 +4,7 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 
-pub(super) struct Budget {
+pub(crate) struct Budget {
     limit: u64,
     used: AtomicU64,
 }
@@ -23,7 +23,12 @@ impl Budget {
             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |used| {
                 used.checked_add(bytes).filter(|next| *next <= self.limit)
             })
-            .map_err(|_| anyhow::anyhow!("process glyph atlas texture budget exhausted"))?;
+            .map_err(|_| {
+                anyhow::anyhow!(
+                    "GPU resource budget exhausted (requested {bytes} bytes; limit {})",
+                    self.limit
+                )
+            })?;
         Ok(Permit {
             budget: self.clone(),
             bytes,
@@ -31,7 +36,7 @@ impl Budget {
     }
 }
 
-pub(super) struct Permit {
+pub(crate) struct Permit {
     budget: Arc<Budget>,
     bytes: u64,
 }
@@ -48,9 +53,31 @@ pub(super) fn process() -> Arc<Budget> {
         .clone()
 }
 
+/// Shared admission for migrated application GPU allocations, not driver residency.
+pub(crate) fn gpu_process() -> Arc<Budget> {
+    static BUDGET: OnceLock<Arc<Budget>> = OnceLock::new();
+    BUDGET
+        .get_or_init(|| Budget::new(512 * 1024 * 1024))
+        .clone()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn failed_second_reservation_rolls_back_first() {
+        let atlas = Budget::new(32);
+        let gpu = Budget::new(8);
+        let attempt = || -> anyhow::Result<Vec<Permit>> {
+            let first = atlas.reserve(16)?;
+            let second = gpu.reserve(16)?;
+            Ok(vec![first, second])
+        };
+        assert!(attempt().is_err());
+        assert_eq!(atlas.used(), 0);
+        assert_eq!(gpu.used(), 0);
+    }
+
     #[test]
     fn concurrent_admission_cannot_overbook_or_release_early() {
         let budget = Budget::new(64);

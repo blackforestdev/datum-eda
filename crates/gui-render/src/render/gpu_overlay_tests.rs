@@ -46,7 +46,7 @@ fn hardware_renderer_with_atlas_limit(
         ..Default::default()
     }))
     .unwrap();
-    let renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, DEFAULT_MSAA_SAMPLES);
+    let renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, DEFAULT_MSAA_SAMPLES).unwrap();
     let usage = renderer.text_cpu_usage();
     assert!(usage.allocator_installed);
     assert!(
@@ -614,7 +614,8 @@ fn renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels() {
         &renderer.queue,
         OUTPUT_FORMAT,
         DEFAULT_MSAA_SAMPLES,
-    );
+    )
+    .unwrap();
     assert_eq!(
         renderer.renderer.control_meshes.builds, 0,
         "renderer replacement starts without old control retention"

@@ -114,7 +114,7 @@ fn run_probe(alternate: bool) {
         ..Default::default()
     }))
     .unwrap();
-    let mut renderer = Renderer::new(&device, &queue, format, samples);
+    let mut renderer = Renderer::new(&device, &queue, format, samples).unwrap();
     let state = datum_gui_protocol::load_fixture_workspace_state();
     let extents = if alternate {
         vec![(1280, 800), (1288, 808)]
@@ -166,7 +166,7 @@ fn run_probe(alternate: bool) {
             cases
                 .iter()
                 .map(|(w, h, ..)| {
-                    renderer.ensure_msaa(&device, *w, *h);
+                    renderer.ensure_msaa(&device, *w, *h).unwrap();
                     renderer
                         .surface_attachments
                         .current

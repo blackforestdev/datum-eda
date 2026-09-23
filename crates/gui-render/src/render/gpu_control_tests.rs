@@ -78,7 +78,8 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
             &renderer.queue,
             OUTPUT_FORMAT,
             DEFAULT_MSAA_SAMPLES,
-        );
+        )
+        .unwrap();
         assert_eq!(renderer.renderer.control_meshes.builds, 0);
         let reset =
             renderer
@@ -124,7 +125,8 @@ fn new_project_long_name_paints_only_inside_its_field() {
         &renderer.queue,
         OUTPUT_FORMAT,
         DEFAULT_MSAA_SAMPLES,
-    );
+    )
+    .unwrap();
     let fresh = renderer
         .renderer
         .prepare_native_new_project(&dialog, 760, 750, 1.0);

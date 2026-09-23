@@ -56,11 +56,11 @@ impl Renderer {
             queue,
             "datum-menu-overlay-vertex-buffer",
             prepared.menu_overlay_vertices(),
-        );
+        )?;
         let has_text = prepared.has_overlay_text();
         let (text_stats, _) =
             self.prepare_frame_text(device, queue, prepared, width, height, true)?;
-        let msaa_view = self.ensure_msaa(device, width, height).clone();
+        let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-dialog-encoder"),
         });

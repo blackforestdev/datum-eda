@@ -18,7 +18,9 @@ impl CachedTerminalGraphicTexture {
         layout: &wgpu::BindGroupLayout,
         graphic: &PreparedTerminalGraphic,
         key: TerminalGraphicTextureKey,
-    ) -> CachedTerminalGraphicTexture {
+    ) -> anyhow::Result<CachedTerminalGraphicTexture> {
+        let bytes = u64::from(key.width) * u64::from(key.height) * 4;
+        let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("datum-terminal-graphic-texture"),
             size: wgpu::Extent3d {
@@ -54,18 +56,19 @@ impl CachedTerminalGraphicTexture {
                 },
             ],
         });
-        CachedTerminalGraphicTexture {
+        Ok(CachedTerminalGraphicTexture {
             key,
             bind_group,
-            texture: Owner::new().track(
+            texture: Owner::new().track_with_permits(
                 texture,
                 u64::from(key.width) * u64::from(key.height) * 4,
                 1,
                 Kind::TerminalTexture,
+                vec![permit],
             ),
             source: graphic.graphic.clone(),
             pending: true,
-        }
+        })
     }
 
     pub(super) fn submission_ref(&self) -> SubmissionRef {

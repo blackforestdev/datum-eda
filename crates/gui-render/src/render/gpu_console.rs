@@ -25,13 +25,14 @@ impl ConsoleGpuResources {
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         vertices: &[Vertex],
-    ) {
+    ) -> anyhow::Result<()> {
         self.vertices.sync(
             device,
             queue,
             "datum-gui-render-console-overlay-vertex-buffer",
             vertices,
-        );
+        )?;
+        Ok(())
     }
 
     pub(super) fn draw<'pass>(

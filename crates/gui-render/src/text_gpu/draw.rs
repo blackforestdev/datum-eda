@@ -177,7 +177,8 @@ impl Draw {
             required > buffer.size() || buffer.size() > required.saturating_mul(4)
         }) {
             let capacity = required.next_power_of_two();
-            self.instances = Some(atlas.owner.track(
+            let permit = super::budget::gpu_process().reserve(capacity)?;
+            self.instances = Some(atlas.owner.track_with_permits(
                 device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some("datum-glyph-instances"),
                     size: capacity,
@@ -187,6 +188,7 @@ impl Draw {
                 capacity,
                 atlas.generation,
                 Kind::Instances,
+                vec![permit],
             ));
             self.snapshot = Vec::new();
         }

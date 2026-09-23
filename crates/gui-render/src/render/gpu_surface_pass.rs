@@ -49,7 +49,7 @@ impl Renderer {
         prepared: &PreparedScene,
         width: u32,
         height: u32,
-    ) {
+    ) -> anyhow::Result<()> {
         self.surface_scene_uniforms
             .truncate(prepared.surface_passes().len());
         while self.surface_scene_uniforms.len() < prepared.surface_passes().len() {
@@ -59,7 +59,7 @@ impl Renderer {
                     &self.scene_bind_group_layout,
                     "datum-surface-scene-bind-group",
                     None,
-                ));
+                )?);
         }
         for (surface, binding) in prepared
             .surface_passes()
@@ -83,6 +83,7 @@ impl Renderer {
                 },
             );
         }
+        Ok(())
     }
 
     pub(crate) fn draw_surface_world_passes<'a>(

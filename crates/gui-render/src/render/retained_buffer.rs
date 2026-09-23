@@ -58,21 +58,21 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
         _queue: &wgpu::Queue,
         label: &str,
         source: &SharedGeometry<T>,
-    ) -> usize {
+    ) -> anyhow::Result<usize> {
         if source.is_empty() {
             self.clear();
-            return 0;
+            return Ok(0);
         }
         if self.allocation.buffer().is_some()
             && self.source.as_ref().is_some_and(|old| old.ptr_eq(source))
         {
-            return 0;
+            return Ok(0);
         }
         let bytes = bytemuck::cast_slice(source.as_ref());
-        self.allocation.replace_if_needed(device, label, bytes);
+        self.allocation.replace_if_needed(device, label, bytes)?;
         self.pending = true;
         self.source = Some(source.clone());
-        bytes.len()
+        Ok(bytes.len())
     }
 }
 
@@ -116,19 +116,35 @@ mod tests {
         let mut retained = RetainedBuffer::default();
         let source: SharedGeometry<u32> = vec![1, 2, 3, 4].into();
         let weak = source.downgrade();
-        assert_eq!(retained.sync(&device, &queue, "proof", &source), 16);
+        assert_eq!(
+            retained.sync(&device, &queue, "proof", &source).unwrap(),
+            16
+        );
         let buffer = retained.buffer().unwrap().clone();
         assert_eq!(read(&device, &queue, &buffer, 16), vec![0; 16]);
         retained.cancel_uploads();
-        assert_eq!(retained.sync(&device, &queue, "retry", &source), 16);
-        assert_eq!(retained.sync(&device, &queue, "proof", &source.clone()), 0);
+        assert_eq!(
+            retained.sync(&device, &queue, "retry", &source).unwrap(),
+            16
+        );
+        assert_eq!(
+            retained
+                .sync(&device, &queue, "proof", &source.clone())
+                .unwrap(),
+            0
+        );
         drop(source);
         assert!(
             weak.upgrade().is_some(),
             "upload owner prevents address reuse"
         );
         let replacement: SharedGeometry<u32> = vec![5, 6, 7, 8].into();
-        assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 16);
+        assert_eq!(
+            retained
+                .sync(&device, &queue, "proof", &replacement)
+                .unwrap(),
+            16
+        );
         assert!(
             weak.upgrade().is_none(),
             "old CPU source released on replacement"
@@ -143,26 +159,37 @@ mod tests {
             read(&device, &queue, &buffer, 16),
             bytemuck::cast_slice::<u32, u8>(replacement.as_ref())
         );
-        assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 0);
+        assert_eq!(
+            retained
+                .sync(&device, &queue, "proof", &replacement)
+                .unwrap(),
+            0
+        );
         let large: SharedGeometry<u32> = vec![42; 64].into();
-        assert_eq!(retained.sync(&device, &queue, "proof", &large), 256);
+        assert_eq!(
+            retained.sync(&device, &queue, "proof", &large).unwrap(),
+            256
+        );
         let peak = retained.buffer().unwrap().clone();
         let quarter: SharedGeometry<u32> = vec![43; 16].into();
-        assert_eq!(retained.sync(&device, &queue, "proof", &quarter), 64);
+        assert_eq!(
+            retained.sync(&device, &queue, "proof", &quarter).unwrap(),
+            64
+        );
         assert_eq!(
             retained.buffer(),
             Some(&peak),
             "reuse at four-times boundary"
         );
         let small: SharedGeometry<u32> = vec![44; 15].into();
-        assert_eq!(retained.sync(&device, &queue, "proof", &small), 60);
+        assert_eq!(retained.sync(&device, &queue, "proof", &small).unwrap(), 60);
         assert_eq!(
             retained.buffer().unwrap().size(),
             60,
             "release historical peak below quarter occupancy"
         );
         assert_ne!(retained.buffer(), Some(&peak));
-        assert_eq!(retained.sync(&device, &queue, "proof", &small), 0);
+        assert_eq!(retained.sync(&device, &queue, "proof", &small).unwrap(), 0);
         retained.flush_uploads(&queue);
         assert_eq!(
             read(&device, &queue, retained.buffer().unwrap(), 60),
@@ -176,10 +203,15 @@ mod tests {
         drop(replacement);
         assert!(weak.upgrade().is_none());
         let empty: SharedGeometry<u32> = Vec::new().into();
-        assert_eq!(retained.sync(&device, &queue, "proof", &empty), 0);
+        assert_eq!(retained.sync(&device, &queue, "proof", &empty).unwrap(), 0);
         assert!(retained.buffer().is_none());
         let replacement: SharedGeometry<u32> = vec![9, 10, 11, 12].into();
-        assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 16);
+        assert_eq!(
+            retained
+                .sync(&device, &queue, "proof", &replacement)
+                .unwrap(),
+            16
+        );
         assert_ne!(
             retained.buffer(),
             Some(&buffer),
