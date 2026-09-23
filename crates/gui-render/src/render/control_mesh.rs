@@ -42,6 +42,17 @@ pub(crate) struct ControlMeshCache {
 }
 
 impl ControlMeshCache {
+    pub(crate) fn usage(&self) -> crate::ControlMeshUsage {
+        crate::ControlMeshUsage {
+            entries: self.entries.len(),
+            entry_capacity: self.entries.capacity(),
+            key_capacity_bytes: self.entries.capacity() * std::mem::size_of::<Key>(),
+            entry_storage_bytes: capacity_bytes::<Entry>(self.entries.capacity()),
+            mesh_storage_bytes: self.payload_bytes,
+            total_bytes: self.retained_cpu_bytes(),
+        }
+    }
+
     pub(crate) fn retained_cpu_bytes(&self) -> usize {
         std::mem::size_of::<Self>()
             + capacity_bytes::<Entry>(self.entries.capacity())
@@ -85,7 +96,19 @@ impl ControlMeshCache {
             return false;
         }
         if self.entries.len() < MAX_ENTRIES && self.entries.len() == self.entries.capacity() {
-            self.entries.reserve(1);
+            let capacity = (self.entries.capacity() * 2).clamp(4, MAX_ENTRIES);
+            // A growing ring may allocate the replacement before releasing its
+            // old storage. Evict payload first, charging both tables during that
+            // transition, without preallocating the maximum entry allowance.
+            let replacement = capacity_bytes::<Entry>(capacity);
+            while self.retained_cpu_bytes() + replacement > MAX_CPU_BYTES {
+                let old = self
+                    .entries
+                    .pop_back()
+                    .expect("growth needs payload eviction");
+                self.payload_bytes -= capacity_bytes::<[(f32, f32); 4]>(old.mesh.len());
+            }
+            self.entries.reserve_exact(capacity - self.entries.len());
         }
         while self.retained_cpu_bytes() > MAX_CPU_BYTES {
             let old = self

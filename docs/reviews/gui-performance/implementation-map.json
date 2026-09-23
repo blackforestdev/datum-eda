@@ -15911,20 +15911,24 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for retained control entry/CPU/GPU ownership and admission; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "256 mesh entries/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Retained control implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_control_retention_completion"
       },
       "s4_implementation_progress": [
         {
           "work": "s4_control_heap_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/control-heap/result.json",
           "status": "Default retained control CPU admission includes actual Datum allocation overhead for entries and boxed meshes. Transient/frame/output/GPU accounting and full qualification remain open."
+        },
+        {
+          "work": "s4_control_retention_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/control-retention/result.json",
+          "status": "Retained control entry/CPU/GPU implementation complete at S4; original S5 qualification remains unqualified"
         }
       ]
     },
@@ -16017,14 +16021,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for retained control entry/CPU/GPU ownership and admission; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "4MiB control mesh CPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Retained control implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_control_retention_completion"
       },
       "s4_retained_cpu_progress": "Shared production ControlMeshCache now bounds retained owner+entry capacity+boxed payload to4MiB with256entries. See s4_control_retained_cpu_work. Transient construction, prepared output, GPU/in-flight and complete accounting remain open; no full row pass.",
       "s4_implementation_progress": [
@@ -16032,6 +16035,11 @@
           "work": "s4_control_heap_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/control-heap/result.json",
           "status": "Default retained control CPU admission includes actual Datum allocation overhead for entries and boxed meshes. Transient/frame/output/GPU accounting and full qualification remain open."
+        },
+        {
+          "work": "s4_control_retention_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/control-retention/result.json",
+          "status": "Retained control entry/CPU/GPU implementation complete at S4; original S5 qualification remains unqualified"
         }
       ]
     },
@@ -16124,20 +16132,24 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4 for retained control entry/CPU/GPU ownership and admission; full original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "4MiB control mesh GPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Retained control implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_control_retention_completion"
       },
       "s4_implementation_progress": [
         {
           "work": "s4_control_gpu_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/control-gpu/result.json",
           "status": "Bounded default control-bearing GPU retention; complete mesh accounting and S5 qualification remain open"
+        },
+        {
+          "work": "s4_control_retention_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/control-retention/result.json",
+          "status": "Retained control entry/CPU/GPU implementation complete at S4; original S5 qualification remains unqualified"
         }
       ]
     },
@@ -31642,17 +31654,20 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 21,
+    "rows_with_recorded_implementation_gaps": 18,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 6,
+    "rows_with_implementation_completed_at_s4": 9,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
       "MEM-WIDTH-PAYLOAD",
       "MEM-ATLAS-LOCAL",
       "MEM-ATLAS-TOTAL",
-      "MEM-SCREEN-GPU"
+      "MEM-SCREEN-GPU",
+      "MEM-MESH-ENTRIES",
+      "MEM-MESH-CPU",
+      "MEM-MESH-GPU"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -33288,5 +33303,39 @@
       "No complete REUSE-SCREEN/MEM-01/ACC-01, S4/S5 or issue acceptance. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendoring, prototype, numerical specification cap or licensing change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/upload-totals/result.json"
+  },
+  "s4_control_retention_completion": {
+    "status": "Retained control entry/CPU/GPU implementation complete at S4; original S5 qualification remains unqualified",
+    "base_commit": "399dac81",
+    "production_consumers": [
+      "Runtime::build_terminal_prepared_scene -> Renderer::prepare_workspace_with_terminal_renderer -> ControlPainter -> panel/menu buffers",
+      "Shared native dialog host -> Renderer::prepare_native_preferences_scrolled / prepare_native_new_project_scrolled -> renderer-owned ControlMeshCache and menu-overlay buffer",
+      "Full-frame/dialog submission hooks and Renderer::recreate_for_device"
+    ],
+    "retired_paths": [
+      "Entry-table growth before evicting payload near the 4 MiB CPU ceiling",
+      "Incomplete public control usage view that exposed total bytes/builds without retained entry/key capacity"
+    ],
+    "behavior": [
+      "Preflight coexistence of old and replacement entry rings before growing, evicting LRU mesh payload first. Grow the ring incrementally, not to the maximum by default. Preserve 256 entries, complete 4 MiB retained CPU ownership and uncached oversized painting.",
+      "Expose entries, capacity, key capacity, complete entry storage, mesh storage and total owner cost. Key capacity is a subset of entry storage and is not summed twice. Existing total includes inline cache owner plus actual boxed/ring capacities and Datum headers.",
+      "Reconcile existing 2918179d shared 4 MiB panel/menu GPU retention: whole mixed-buffer capacities conservatively charged once, retained/retiring permits survive submission references and device replacement; uncached required content remains under hard screen/process admission and retires at completion."
+    ],
+    "implementation_determination": {
+      "MEM-MESH-ENTRIES": "The sole retained CPU cache inserts only after count admission and LRU eviction. Each renderer owns its cache; consumer borrows cannot escape with retained entries. Count/capacity are directly observable. Oversized meshes paint without insertion.",
+      "MEM-MESH-CPU": "Keys, ring capacity, mesh boxes, allocator headers and inline cache owner are included. Payload evicts before construction and table growth. Borrowed consume finishes before cache mutation; frame-output copies and transient oversized construction are not retained cache allocations. Those remain governed by their separate accounting/RSS obligations.",
+      "MEM-MESH-GPU": "Panel/menu control-bearing streams share the 4 MiB retention allowance and hard 16 MiB screen/512 MiB process budgets. Charging all mixed geometry is conservative. Tracked allocation identity/permits account shared submission references once and preserve retiring/device-replaced capacity. Uncached CTL-02 frames still paint; hard admission errors never silently drop controls."
+    },
+    "proof": {
+      "renderer": "333 renderer tests pass, 11 diagnostic/visual cases filtered. Final-source focused control-mesh tests additionally pass, including actual allocation reconciliation and growth peak proof. Existing real GPU full-cache/oversized readback, retirement, replacement, warm retry and native-dialog pixel tests pass in the renderer suite.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2269, dependency and governance checks pass. Initial compile missed the public type re-export; fixed and failed log preserved. Initial growth peak assertion incorrectly included an uncached oversized mesh in retained scope; separate transient attribution corrects the test boundary, with failure preserved.",
+      "reuse": "Reuse prior control-heap and control-gpu receipts and current unchanged source coverage; no repeated native benchmark campaign. Full drift not rerun; Console golden discrepancy remains open."
+    },
+    "limits": [
+      "This determination closes only the implementation obligations for the three retained-control rows. Their original S5 tests, acceptance rules, statuses, native/RSS/negative-control/endurance and aggregate qualification remain unchanged and unqualified.",
+      "Transient CPU frame output, construction and other owner metadata accounting remain open under broader resource rows. Per-mesh GPU attribution is not necessary for this conservative whole-buffer cap; finer consumer classification and complete working-set qualification remain open.",
+      "S4 as a whole and the implementation issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendoring, licensing, prototype, numerical specification cap or sequencing amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/control-retention/result.json"
   }
 }

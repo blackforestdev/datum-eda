@@ -1,0 +1,74 @@
+{
+  "status": "Retained control entry/CPU/GPU implementation complete at S4; original S5 qualification remains unqualified",
+  "base_commit": "399dac81",
+  "production_consumers": [
+    "Runtime::build_terminal_prepared_scene -> Renderer::prepare_workspace_with_terminal_renderer -> ControlPainter -> panel/menu buffers",
+    "Shared native dialog host -> Renderer::prepare_native_preferences_scrolled / prepare_native_new_project_scrolled -> renderer-owned ControlMeshCache and menu-overlay buffer",
+    "Full-frame/dialog submission hooks and Renderer::recreate_for_device"
+  ],
+  "retired_paths": [
+    "Entry-table growth before evicting payload near the 4 MiB CPU ceiling",
+    "Incomplete public control usage view that exposed total bytes/builds without retained entry/key capacity"
+  ],
+  "behavior": [
+    "Preflight coexistence of old and replacement entry rings before growing, evicting LRU mesh payload first. Grow the ring incrementally, not to the maximum by default. Preserve 256 entries, complete 4 MiB retained CPU ownership and uncached oversized painting.",
+    "Expose entries, capacity, key capacity, complete entry storage, mesh storage and total owner cost. Key capacity is a subset of entry storage and is not summed twice. Existing total includes inline cache owner plus actual boxed/ring capacities and Datum headers.",
+    "Reconcile existing 2918179d shared 4 MiB panel/menu GPU retention: whole mixed-buffer capacities conservatively charged once, retained/retiring permits survive submission references and device replacement; uncached required content remains under hard screen/process admission and retires at completion."
+  ],
+  "implementation_determination": {
+    "MEM-MESH-ENTRIES": "The sole retained CPU cache inserts only after count admission and LRU eviction. Each renderer owns its cache; consumer borrows cannot escape with retained entries. Count/capacity are directly observable. Oversized meshes paint without insertion.",
+    "MEM-MESH-CPU": "Keys, ring capacity, mesh boxes, allocator headers and inline cache owner are included. Payload evicts before construction and table growth. Borrowed consume finishes before cache mutation; frame-output copies and transient oversized construction are not retained cache allocations. Those remain governed by their separate accounting/RSS obligations.",
+    "MEM-MESH-GPU": "Panel/menu control-bearing streams share the 4 MiB retention allowance and hard 16 MiB screen/512 MiB process budgets. Charging all mixed geometry is conservative. Tracked allocation identity/permits account shared submission references once and preserve retiring/device-replaced capacity. Uncached CTL-02 frames still paint; hard admission errors never silently drop controls."
+  },
+  "proof": {
+    "renderer": "333 renderer tests pass, 11 diagnostic/visual cases filtered. Final-source focused control-mesh tests additionally pass, including actual allocation reconciliation and growth peak proof. Existing real GPU full-cache/oversized readback, retirement, replacement, warm retry and native-dialog pixel tests pass in the renderer suite.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2269, dependency and governance checks pass. Initial compile missed the public type re-export; fixed and failed log preserved. Initial growth peak assertion incorrectly included an uncached oversized mesh in retained scope; separate transient attribution corrects the test boundary, with failure preserved.",
+    "reuse": "Reuse prior control-heap and control-gpu receipts and current unchanged source coverage; no repeated native benchmark campaign. Full drift not rerun; Console golden discrepancy remains open."
+  },
+  "limits": [
+    "This determination closes only the implementation obligations for the three retained-control rows. Their original S5 tests, acceptance rules, statuses, native/RSS/negative-control/endurance and aggregate qualification remain unchanged and unqualified.",
+    "Transient CPU frame output, construction and other owner metadata accounting remain open under broader resource rows. Per-mesh GPU attribution is not necessary for this conservative whole-buffer cap; finer consumer classification and complete working-set qualification remain open.",
+    "S4 as a whole and the implementation issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendoring, licensing, prototype, numerical specification cap or sequencing amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/control-retention/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-retention/tests.log.gz",
+      "uncompressed_sha256": "2dcf45fd970f6baf72636b33787c2c2e43dafca5101487617113f1534f727d90"
+    },
+    "growth": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-retention/growth.log.gz",
+      "uncompressed_sha256": "0bcc2a69fbc9040103794f755eb485cd1d55ac16c19c02f73b3977ce5945a69a"
+    },
+    "compile-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-retention/compile-error.log.gz",
+      "uncompressed_sha256": "0fce026cc94afbbf4b19f13c4938fef1b22884d4a655fd0dc40b9c7b9550eb48"
+    },
+    "growth-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-retention/growth-error.log.gz",
+      "uncompressed_sha256": "6a675263c951e5aa7dd448c27751dbbcb3f56faa21b643a2c7313a9db27e0edc"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-retention/clippy.log.gz",
+      "uncompressed_sha256": "32681cffa8a8c03749ff719fe380f61f51f547238de7cb22043935d0175ffe90"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/control-retention/build.log.gz",
+      "uncompressed_sha256": "2b9daab52bc3825436e22018daf6853a8fd655ae58640fd3b9fd831911eedab0"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/control_mesh.rs": "12343b4e268257475bcf2b923ea5b7f0e4d2ace3d45b0effc781728014897bec",
+    "crates/gui-render/src/render/control_mesh_tests.rs": "87b32a1d4fc288c652134af3e360acb140f45844d4a970e1c19570076925fc29",
+    "crates/gui-render/src/render/renderer_state.rs": "1557db407b2a81a84ffd89e2045fa11b9d19e913b5bfd2e7b2cd48d61bbbd0b1",
+    "crates/gui-render/src/render/gpu.rs": "51eb479bac7748b1bf9e10e410b36bab4e40b86e88dab8f38b9e809205bfefb0",
+    "crates/gui-render/src/render/gpu_init.rs": "7e9f6dbaf129db0f92954dbc6be25416efa714866817cd76456073fb29644d7f",
+    "crates/gui-render/src/render/gpu_text.rs": "3626638abd085586fdb088a822e4be3d697f45d7a34d9d6fbd00fe7987783ce8",
+    "crates/gui-render/src/render/screen_buffer.rs": "ff9f564ac21a52a6092047b09afe9d76e24f106674bfae1a3105aaf762015f89",
+    "crates/gui-render/src/render/vertex_allocation.rs": "fd5bc31e611bd84dc636071e200d4c9f893bed93066d2521212e93a3a3e750a0",
+    "crates/gui-render/src/render/frame_preparation.rs": "2e488840235a86bb84ac823f07c4d613177202277f8818b7c2c42603561886c4",
+    "crates/gui-render/src/render/preferences_scene.rs": "dfc8725010122f34b86f13c633dfa5896490d47a3810ffedb942d483c37f5c93",
+    "crates/gui-render/src/render/new_project_scene.rs": "0e6458132693d6812c0334e5300145c4e53a0b1312654d254bc117acedbfe6e3",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "dc2143076e2e0600ec9c4fb4d5f87e00f0ad6ea6c2baed094cf4a59f33c39fa3"
+  }
+}

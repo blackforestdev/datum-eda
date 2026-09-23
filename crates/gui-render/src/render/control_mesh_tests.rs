@@ -244,25 +244,30 @@ fn metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit() {
 
 #[test]
 fn entry_growth_evicts_payload_even_when_the_new_mesh_bypasses_retention() {
-    let mut cache = ControlMeshCache {
-        entries: VecDeque::with_capacity(1),
-        ..Default::default()
-    };
-    let count = (MAX_CPU_BYTES
-        - cache.retained_cpu_bytes()
-        - crate::cpu_alloc::heap::tracking_bytes::<[(f32, f32); 4]>(1))
-        / std::mem::size_of::<[(f32, f32); 4]>();
-    let mesh = || vec![[(0.0, 0.0); 4]; count].into_boxed_slice();
-    cache.with_mesh(key(1), count, mesh, |_| {});
-    assert_eq!(cache.entries.len(), 1);
-    assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
-    let mut painted = false;
-    cache.with_mesh(key(2), count, mesh, |_| painted = true);
-    assert!(painted);
-    assert!(cache.entries.capacity() > 1);
-    assert!(cache.entries.is_empty());
-    assert_eq!(cache.payload_bytes, 0);
-    assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
+    let scope = crate::cpu_alloc::Scope::new("control-entry-growth");
+    let bypass = crate::cpu_alloc::Scope::new("control-uncached-transient");
+    scope.with(|| {
+        let mut cache = ControlMeshCache {
+            entries: VecDeque::with_capacity(1),
+            ..Default::default()
+        };
+        let count = (MAX_CPU_BYTES
+            - cache.retained_cpu_bytes()
+            - crate::cpu_alloc::heap::tracking_bytes::<[(f32, f32); 4]>(1))
+            / std::mem::size_of::<[(f32, f32); 4]>();
+        let mesh = || vec![[(0.0, 0.0); 4]; count].into_boxed_slice();
+        cache.with_mesh(key(1), count, mesh, |_| {});
+        assert_eq!(cache.entries.len(), 1);
+        assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
+        let mut painted = false;
+        cache.with_mesh(key(2), count, || bypass.with(mesh), |_| painted = true);
+        assert!(painted);
+        assert!(cache.entries.capacity() > 1);
+        assert!(cache.entries.is_empty());
+        assert_eq!(cache.payload_bytes, 0);
+        assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
+    });
+    assert!(scope.usage().peak_payload_bytes <= MAX_CPU_BYTES as u64);
 }
 
 #[test]
@@ -283,6 +288,16 @@ fn complete_retained_cost_matches_actual_allocations_through_growth_and_eviction
             cache.retained_cpu_bytes() - std::mem::size_of::<ControlMeshCache>(),
             (usage.payload_bytes + usage.tracking_bytes) as usize
         );
+        let reported = cache.usage();
+        assert_eq!(reported.entries, cache.entries.len());
+        assert_eq!(
+            reported.total_bytes,
+            std::mem::size_of::<ControlMeshCache>()
+                + reported.entry_storage_bytes
+                + reported.mesh_storage_bytes
+        );
+        assert!(reported.key_capacity_bytes <= reported.entry_storage_bytes);
+        assert!(reported.entry_capacity <= MAX_ENTRIES);
         assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
         assert!(cache.build_live_bytes <= MAX_CPU_BYTES);
     }
