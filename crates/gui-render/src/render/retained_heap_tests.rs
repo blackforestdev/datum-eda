@@ -67,3 +67,69 @@ fn complete_scene_owned_capacities_match_allocator_and_weak_release() {
     drop(second);
     assert_eq!(live(), 0);
 }
+
+#[test]
+fn document_keeps_weak_only_allocations_charged_until_last_observer_releases() {
+    use super::retained_scene_owner::document_cpu;
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "weak-document-lifetime".into();
+    let scene = RetainedScene::from_workspace(&state, 960, 720);
+    let observer = scene.geometry_observer();
+    let second = scene.geometry_observer();
+    let before = observer.document_cpu_payload_bytes();
+    drop(scene);
+    assert!(!observer.is_live());
+    let weak_bytes = observer.document_cpu_payload_bytes();
+    assert!(weak_bytes > observer.heap_bytes_excluding([]));
+    assert!(weak_bytes < before);
+    // Reopening this document must share the still-live accounting identity.
+    let reopened = RetainedScene::from_workspace(&state, 960, 720);
+    assert!(second.shares_document_with(&reopened.geometry_observer()));
+    drop(reopened);
+    drop(observer);
+    assert!(second.document_cpu_payload_bytes() >= weak_bytes);
+    assert!(
+        document_cpu::gpu_usage()
+            .iter()
+            .any(|usage| usage.scene_id == state.scene.scene_id)
+    );
+    drop(second);
+    assert!(
+        !document_cpu::gpu_usage()
+            .iter()
+            .any(|usage| usage.scene_id == state.scene.scene_id)
+    );
+}
+
+#[test]
+fn history_key_and_replacement_storage_share_atomic_admission_and_separate_release() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "history-storage-reservation".into();
+    let scene = RetainedScene::from_workspace(&state, 960, 720);
+    let observer = scene.geometry_observer();
+    let baseline = observer.document_cpu_payload_bytes();
+    let remaining = retained_scene_owner::document_cpu::DOCUMENT_LIMIT - baseline;
+    let (entry, storage) = observer
+        .try_charge_document_history_storage(32, remaining - 32)
+        .unwrap();
+    assert!(observer.try_charge_document_history_storage(1, 1).is_none());
+    assert!(
+        observer
+            .try_charge_document_history_storage(usize::MAX, 1)
+            .is_none()
+    );
+    drop(entry);
+    assert_eq!(observer.document_history_entries(), 0);
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        baseline + remaining - 32
+    );
+    let (entry, next_storage) = observer
+        .try_charge_document_history_storage(16, 16)
+        .unwrap();
+    drop(storage);
+    assert_eq!(observer.document_cpu_payload_bytes(), baseline + 32);
+    drop(entry);
+    drop(next_storage);
+    assert_eq!(observer.document_cpu_payload_bytes(), baseline);
+}

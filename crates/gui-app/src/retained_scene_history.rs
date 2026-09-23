@@ -171,18 +171,26 @@ impl RetainedSceneHistory {
             && observer.heap_bytes_excluding(self.covered_geometry().chain(&self.retired_geometry))
                 != 0
         {
-            let previous_capacity = self.retired_geometry.capacity();
-            self.retired_geometry.push(observer);
-            if self.retired_geometry.capacity() != previous_capacity {
-                let bytes =
-                    capacity_bytes::<RetainedGeometryObserver>(self.retired_geometry.capacity());
-                self.retired_storage = Some(
-                    self.retired_geometry
-                        .last()
-                        .expect("retired observer")
-                        .charge_document_metadata(bytes),
-                );
+            if self.retired_geometry.len() == self.retired_geometry.capacity() {
+                let capacity = self.retired_geometry.capacity().saturating_mul(2).max(1);
+                let bytes = capacity_bytes::<RetainedGeometryObserver>(capacity);
+                let Some(storage) = observer.try_charge_document_storage(bytes) else {
+                    self.construction_error =
+                        Some("retained observer storage exceeds document CPU budget".into());
+                    return;
+                };
+                if self
+                    .retired_geometry
+                    .try_reserve_exact(capacity - self.retired_geometry.len())
+                    .is_err()
+                {
+                    self.construction_error =
+                        Some("retained observer storage allocation failed".into());
+                    return;
+                }
+                self.retired_storage = Some(storage);
             }
+            self.retired_geometry.push(observer);
         }
     }
 
@@ -363,9 +371,11 @@ impl RetainedSceneHistory {
             self.clear();
             return;
         }
-        // Reserve the shared entry slot before allocating/publishing history.
-        // A competing owner can consume the last slot after the preflight query.
-        let Some(document_metadata) = geometry.try_charge_document_history(metadata_bytes) else {
+        // Reserve the shared slot, key and replacement vector atomically. Another
+        // history owner can consume headroom after the preflight query above.
+        let Some((document_metadata, storage)) =
+            geometry.try_charge_document_history_storage(metadata_bytes, self.entry_growth_bytes())
+        else {
             self.active_geometry = None;
             drop(scene);
             self.observe_retired(geometry);
@@ -373,12 +383,18 @@ impl RetainedSceneHistory {
         };
         if self.entries.len() == self.entries.capacity() {
             let capacity = self.entry_growth_capacity();
-            self.entries.reserve_exact(capacity - self.entries.len());
-            // Admission above includes the old allocation plus this replacement.
-            // Keep the allocating document identity until the buffer is released.
-            self.entry_storage = Some(
-                geometry.charge_document_metadata(capacity_bytes::<Entry>(self.entries.capacity())),
-            );
+            if self
+                .entries
+                .try_reserve_exact(capacity - self.entries.len())
+                .is_err()
+            {
+                self.active_geometry = None;
+                drop(scene);
+                self.observe_retired(geometry);
+                return;
+            }
+            // Replacing the charge releases old storage only after replacement.
+            self.entry_storage = storage;
         }
         self.heap_bytes += bytes;
         self.active_geometry = None;
