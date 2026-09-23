@@ -97,6 +97,8 @@ impl RetainedScene {
             // current tool's selection eligibility.
             let mut world_hit_regions = Vec::new();
             coordinate_hit::push_schematic_hit_regions(&mut world_hit_regions, schematic_scene);
+            let world_hit_index =
+                Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
             Ok(Some(
                 Self {
                     surface_size_independent: Self::scene_is_surface_size_independent(
@@ -111,8 +113,7 @@ impl RetainedScene {
                         &schematic_scene.scene_id,
                     ),
                     draw_commands: draw_commands.into(),
-                    world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions)
-                        .into(),
+                    world_hit_index: world_hit_index.into(),
                 }
                 .registered_cpu(),
             ))

@@ -216,6 +216,7 @@ impl RetainedScene {
             world_vertices.len(),
             world_hit_regions.len()
         ));
+        let world_hit_index = Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
         Ok(Self {
             surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
             world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
@@ -227,7 +228,7 @@ impl RetainedScene {
                 &state.scene.scene_id,
             ),
             draw_commands: draw_commands.into(),
-            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions).into(),
+            world_hit_index: world_hit_index.into(),
         }
         .registered_cpu())
         })

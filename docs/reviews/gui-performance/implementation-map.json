@@ -15118,6 +15118,11 @@
           "work": "s4_vertex_allocation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/result.json",
           "status": "Admitted retained vertex buffers allocate fallibly before expansion"
+        },
+        {
+          "work": "s4_hit_index_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/result.json",
+          "status": "Shared hit index reserves exact tree capacity and retained constructors admit its storage before allocation"
         }
       ]
     },
@@ -15261,6 +15266,11 @@
           "work": "s4_vertex_allocation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/result.json",
           "status": "Admitted retained vertex buffers allocate fallibly before expansion"
+        },
+        {
+          "work": "s4_hit_index_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/result.json",
+          "status": "Shared hit index reserves exact tree capacity and retained constructors admit its storage before allocation"
         }
       ]
     },
@@ -34499,5 +34509,32 @@
       "Twelve implementation gaps and original S5 qualification remain open. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/result.json"
+  },
+  "s4_hit_index_admission_work": {
+    "status": "Shared hit index reserves exact tree capacity and retained constructors admit its storage before allocation",
+    "base_commit": "419711c7",
+    "production_consumers": [
+      "Shared SpatialHitIndex constructors and their existing viewport consumers",
+      "Board and companion retained hit-index construction through native and capture paths"
+    ],
+    "retired_paths": [
+      "Incremental hit-tree node-vector growth during recursive construction",
+      "Retained constructors built the hit index without admitting its order/node allocations"
+    ],
+    "behavior": [
+      "Compute exact balanced-tree node count from region count in logarithmic time, with the existing eight-region leaf rule shared by planning and building. Expose checked allocation layouts without exposing the private node type. Reserve ordering and node storage exactly and fallibly before construction. Both retained constructors include those allocations with existing document ownership and live constructor staging before building the index. Retain topmost-hit ordering, query budget, shape semantics and compatibility constructor boundaries."
+    ],
+    "proof": {
+      "viewport": "48 viewport tests pass, including exact planned versus built node capacities at leaf/level boundaries, overflow-layout refusal, topmost-hit preservation and the existing 100000-region bounded-query case.",
+      "renderer": "361 renderer tests pass, 11 filtered. Real checked-in board hit-index test checks one-byte admission refusal, dropped staging on failure, exact allocator-inclusive retained bytes on success and release to zero. Existing constructor, GPU, painter and hit correctness tests pass.",
+      "app": "394 app tests pass, 16 ignored.",
+      "lint_build": "Strict renderer/app all-targets Clippy with app visual feature, fresh visual app build and source health2280/dependency/governance/format checks pass.",
+      "scope": "No new native OS-input/backend/scale/endurance or broad drift qualification; original S5 obligations remain."
+    },
+    "limits": [
+      "This admits index ordering/node arrays, not earlier hit-region/shape production or later shared-owner/index metadata allocations. Other construction growth, scope bookkeeping, complete staging/concurrent admission and external weak-container ownership remain open.",
+      "Twelve implementation gaps and original S5 qualification remain required. No full CPU/history predicate closure, dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/result.json"
   }
 }
