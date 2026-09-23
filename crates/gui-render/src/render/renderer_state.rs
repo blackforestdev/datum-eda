@@ -9,6 +9,18 @@ pub use crate::text_gpu::{
     Record as TextGpuAllocation,
 };
 
+/// Retained control CPU ownership. Key capacity is a subset of entry storage;
+/// do not add it again. Total also includes the inline cache owner itself.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ControlMeshUsage {
+    pub entries: usize,
+    pub entry_capacity: usize,
+    pub key_capacity_bytes: usize,
+    pub entry_storage_bytes: usize,
+    pub mesh_storage_bytes: usize,
+    pub total_bytes: usize,
+}
+
 pub struct Renderer {
     pub(super) cold_world: gpu_vertex_upload::ColdWorldUploads,
     pub(super) control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
@@ -104,6 +116,10 @@ impl Renderer {
     /// Uncached frame allocations are counted by the screen/process budgets instead.
     pub fn control_mesh_retained_gpu_bytes(&self) -> u64 {
         self.control_gpu_budget.used()
+    }
+
+    pub fn control_mesh_usage(&self) -> ControlMeshUsage {
+        self.control_meshes.usage()
     }
 
     /// Retained CPU cache storage, including entry capacity and mesh payload.
