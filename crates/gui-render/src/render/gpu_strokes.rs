@@ -75,6 +75,23 @@ pub(crate) fn push_world_stroke_path(
     );
 }
 
+pub(crate) fn push_world_stroke_loop(
+    out: &mut impl Output<WorldStrokeInstance>,
+    path: &[PointNm],
+    color: [f32; 3],
+    nominal_nm: i64,
+    min_px: f32,
+) {
+    push_world_stroke_path(out, path, color, nominal_nm, min_px);
+    if let (Some(first), Some(last)) = (path.first(), path.last())
+        && first != last
+    {
+        out.push(WorldStrokeInstance::segment(
+            *last, *first, color, nominal_nm, min_px,
+        ));
+    }
+}
+
 pub(crate) fn push_board_graphic_semantic_stroke(
     out: &mut impl Output<super::Quad>,
     strokes: &mut impl Output<WorldStrokeInstance>,
@@ -87,15 +104,14 @@ pub(crate) fn push_board_graphic_semantic_stroke(
             return;
         }
     }
-    let path = if graphic.primitive_kind == "polygon" {
-        super::close_path(&graphic.path)
-    } else {
-        graphic.path.clone()
-    };
     let (nominal_nm, min_px) =
         super::semantic_graphic_kind(&graphic.object_id, &graphic.layer_id, graphic.width_nm)
             .nominal_and_floor();
-    push_world_stroke_path(strokes, &path, color, nominal_nm, min_px);
+    if graphic.primitive_kind == "polygon" {
+        push_world_stroke_loop(strokes, &graphic.path, color, nominal_nm, min_px);
+    } else {
+        push_world_stroke_path(strokes, &graphic.path, color, nominal_nm, min_px);
+    }
 }
 
 pub(crate) const WORLD_STROKE_SHADER: &str = r#"

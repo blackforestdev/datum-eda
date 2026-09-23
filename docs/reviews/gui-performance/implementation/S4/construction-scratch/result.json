@@ -1,0 +1,62 @@
+{
+  "status": "Shared world polygon scratch and command strings admitted before allocation; repeated scanline sorting storage and path clones retired",
+  "base_commit": "7814b582",
+  "production_consumers": [
+    "Default retained board and schematic polygon fills, including text contour fills and holes",
+    "Shared retained command merging across all geometry batches",
+    "Zone outlines and board graphic semantic strokes"
+  ],
+  "retired_paths": [
+    "Unadmitted world-polygon contour/edge/height/active-span storage",
+    "New span vector and stable-sort allocation per scanline band",
+    "Layer-name allocation before checking whether a command merges",
+    "Copied closed zone paths and copied board graphic stroke paths"
+  ],
+  "behavior": [
+    "Typed retained output admits exact requested temporary capacities through the existing document/construction boundary. Allocation errors propagate to failed scene finalization; ordinary screen output preserves its prior allocation behavior. Contours and scanline arrays are pre-sized from point/edge bounds. Span storage is reused across bands. In-place sorting carries explicit original-order tie breakers, preserving the previous stable ordering without its heap scratch.",
+    "Command inputs borrow layer names. Adjacent matching commands merge before allocation; a new command admits its owned UTF-8 bytes before copying. Zone and board graphic outlines emit the final closing segment directly from borrowed paths. No changed geometry, visibility, material, painter or authority rules."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 379 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 30.55s",
+    "checks": "Strict visual renderer/app all-target Clippy and fresh GUI build pass. New differential test compares concave, crossing, duplicate-point and hole polygons against the preceding first-party stable-sort implementation and checks rejected scratch produces no scene output. Existing real-board emission differential, board/schematic refusal/retry, renderer pixel/painter/lifetime proofs pass. No app or broad native campaign rerun.",
+    "failure": "Preserve initial compilation with two remaining owned layer-name call sites; corrected to borrowed names before final proof."
+  },
+  "limits": [
+    "Complete construction peak accounting still requires other component/pad/path/text-mesh lookup and selection-preview temporaries, constructor concurrency and weak-observer ownership reconciliation. This does not close MEM-WORLD/STAGING/AC-05 or S4; ten recorded implementation gaps and full original S5 qualification remain.",
+    "No dependencies, vendoring, licenses, prototypes, numerical caps, sequencing or authority change. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/construction-scratch/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-scratch/renderer.log.gz",
+      "uncompressed_sha256": "791e2fd19b2778db8fd3ca30b194481440f162a3edfe51091a8c3176e5ba4873"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-scratch/clippy.log.gz",
+      "uncompressed_sha256": "a815c96bde3d3ece75729c37b3b83fdd8f5641c8c87f39ff84154fbd189e5317"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-scratch/build.log.gz",
+      "uncompressed_sha256": "48ad22202f85b301a941fb141619a5de320d381f09dfa3e57278d2ba509df00d"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-scratch/check.log.gz",
+      "uncompressed_sha256": "fe963b83edfe1ac934e30e63ef14505cdc75265e931b34ca2ec8ff4086f9c6ca"
+    },
+    "check2": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-scratch/check2.log.gz",
+      "uncompressed_sha256": "2f61aca9a165b8c9528791f9416acbe93f0c966fc5df256f49dc37d1e8d4d778"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/geometry_output.rs": "a05d320ef140a266321e284f9e60c6dca98060188e4d29cb3f0eeb8cc8995b3e",
+    "crates/gui-render/src/lib.rs": "c4b2cfc2f7c1814f07b311137983f879465c8bd8ab7ddea8dcfa4c24ff692486",
+    "crates/gui-render/src/render/geometry.rs": "d518bcbd0d10047d1552b40fe1de676dd64c104e770e3c9f5169c8aff70dbd2c",
+    "crates/gui-render/src/render/gpu_strokes.rs": "9a44f58116a609de97208f08e04084061fc3ca77ea830645d393e3ae25fb591e",
+    "crates/gui-render/src/render/retained.rs": "7f94bcf508fcc354cf24631ae4d7abe5f27f5b7e2f5b2fadb25ad108e2447249",
+    "crates/gui-render/src/render/retained_board_graphics.rs": "1b332feb02ec42d070fdcb1d73963afb910675de5385818cc1e2fd664eab631f",
+    "crates/gui-render/src/render/scene_retained_access.rs": "ed0291fd8c2799e88f57e22147985db2ab6e398d49186177fe04f6582c19f7cf",
+    "crates/gui-render/src/render/world_polygon.rs": "a584e8423b35769580f5dfbbb610693b6266c0ec1c2260dc9c91aa0946660ad0",
+    "crates/gui-render/src/render/world_polygon_tests.rs": "9b63890f5d63e2ae55a66e58c967ffb8ad66c395ff8a0055482ac7b4c7faf0c8"
+  }
+}

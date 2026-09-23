@@ -2,7 +2,7 @@ use super::*;
 
 pub(crate) fn finish_retained_draw_commands(
     commands: &mut impl Output<RetainedDrawCommand>,
-    layer_id: Option<String>,
+    layer_id: Option<&str>,
     quad_start: usize,
     quad_end: usize,
     stroke_start: usize,
@@ -11,50 +11,53 @@ pub(crate) fn finish_retained_draw_commands(
     if quad_end > quad_start {
         append_retained_draw_command(
             commands,
-            RetainedDrawCommand::Quads {
-                layer_id: layer_id.clone(),
-                range: (quad_start * 6) as u32..(quad_end * 6) as u32,
-            },
+            layer_id,
+            (quad_start * 6) as u32..(quad_end * 6) as u32,
+            false,
         );
     }
     if stroke_end > stroke_start {
         append_retained_draw_command(
             commands,
-            RetainedDrawCommand::Strokes {
-                layer_id,
-                range: stroke_start as u32..stroke_end as u32,
-            },
+            layer_id,
+            stroke_start as u32..stroke_end as u32,
+            true,
         );
     }
 }
 
 fn append_retained_draw_command(
     commands: &mut impl Output<RetainedDrawCommand>,
-    command: RetainedDrawCommand,
+    layer: Option<&str>,
+    range: std::ops::Range<u32>,
+    stroke: bool,
 ) {
-    let merged = match (commands.last_mut(), &command) {
-        (
-            Some(RetainedDrawCommand::Quads {
-                layer_id: previous_layer,
-                range: previous,
-            }),
-            RetainedDrawCommand::Quads { layer_id, range },
-        )
-        | (
-            Some(RetainedDrawCommand::Strokes {
-                layer_id: previous_layer,
-                range: previous,
-            }),
-            RetainedDrawCommand::Strokes { layer_id, range },
-        ) if previous_layer == layer_id && previous.end == range.start => {
-            previous.end = range.end;
-            true
-        }
-        _ => false,
+    let previous = match commands.last_mut() {
+        Some(RetainedDrawCommand::Quads { layer_id, range }) if !stroke => Some((layer_id, range)),
+        Some(RetainedDrawCommand::Strokes { layer_id, range }) if stroke => Some((layer_id, range)),
+        _ => None,
     };
-    if !merged {
-        commands.push(command);
+    if let Some((previous_layer, previous_range)) = previous
+        && previous_layer.as_deref() == layer
+        && previous_range.end == range.start
+    {
+        previous_range.end = range.end;
+        return;
     }
+    let layer_id = if let Some(layer) = layer {
+        let Some(mut bytes) = commands.scratch::<u8>(layer.len()) else {
+            return;
+        };
+        bytes.extend_from_slice(layer.as_bytes());
+        Some(String::from_utf8(bytes).expect("copied layer UTF-8"))
+    } else {
+        None
+    };
+    commands.push(if stroke {
+        RetainedDrawCommand::Strokes { layer_id, range }
+    } else {
+        RetainedDrawCommand::Quads { layer_id, range }
+    });
 }
 
 /// Preserve painter order with one admitted key/index allocation. Computing layer

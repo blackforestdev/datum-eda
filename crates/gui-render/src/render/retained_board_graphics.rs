@@ -45,7 +45,7 @@ pub(super) fn push_retained_board_graphic_batches(
             }
             scene_retained_access::finish_retained_draw_commands(
                 draw_commands,
-                Some(gfx.layer_id.clone()),
+                Some(gfx.layer_id.as_str()),
                 quad_start,
                 out.len(),
                 command_stroke_start,
@@ -67,7 +67,7 @@ pub(super) fn push_retained_board_graphic_batches(
             );
             scene_retained_access::finish_retained_draw_commands(
                 draw_commands,
-                Some(outline.layer_id.clone()),
+                Some(outline.layer_id.as_str()),
                 out.len(),
                 out.len(),
                 command_stroke_start,
@@ -114,7 +114,7 @@ pub(super) fn push_retained_board_text_geometry_batches(
             );
             scene_retained_access::finish_retained_draw_commands(
                 draw_commands,
-                Some(text_geometry.layer_id.clone()),
+                Some(text_geometry.layer_id.as_str()),
                 quad_start,
                 out.len(),
                 0,
