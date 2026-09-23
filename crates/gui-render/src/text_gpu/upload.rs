@@ -142,22 +142,22 @@ pub(crate) fn batch_with_scatter(
     }
     let host = host_budget.reserve(capacity)?;
     let process = super::budget::staging_process().reserve(capacity)?;
-    let gpu = super::budget::gpu_process().reserve(capacity)?;
+    let mut reservation = super::budget::GpuReservation::new(capacity, vec![host, process])?;
     let direct_bytes = capacity - sparse_bytes * 2;
     let mut allocations = Vec::new();
-    let buffer = owner.track_with_permits(
+    let mapped_reservation = reservation.split(direct_bytes + sparse_bytes)?;
+    let buffer = owner.track_reserved(
         device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("datum-texture-upload-staging"),
             size: direct_bytes + sparse_bytes,
             usage: wgpu::BufferUsages::MAP_WRITE | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: true,
         }),
-        direct_bytes + sparse_bytes,
         generation,
         Kind::Staging,
-        // Aggregate reservations are held on the mapped owner. Batch keeps all
-        // storage owners alive until the same completion boundary.
-        vec![host, process, gpu],
+        // Every allocation shares the admitted batch lifetime, independently
+        // of the order in which mapped and scatter owners are retired.
+        mapped_reservation,
     );
     {
         let mut mapped = buffer.slice(..).get_mapped_range_mut();
@@ -246,17 +246,17 @@ pub(crate) fn batch_with_scatter(
     if let Some(scatter) = scatter {
         for group in groups.iter().filter(|g| g.sparse) {
             let bytes = group.packet_bytes();
-            let packet = owner.track_with_permits(
+            let packet_reservation = reservation.split(bytes)?;
+            let packet = owner.track_reserved(
                 device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some("datum-scatter-packet"),
                     size: bytes,
                     usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
                     mapped_at_creation: false,
                 }),
-                bytes,
                 generation,
                 Kind::Staging,
-                Vec::new(),
+                packet_reservation,
             );
             encoder.copy_buffer_to_buffer(&buffer, offset, &packet, 0, bytes);
             scatter.encode(device, &mut encoder, &packet, group.uploads[0].buffer);

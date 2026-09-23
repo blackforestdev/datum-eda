@@ -62,6 +62,43 @@ impl Drop for Permit {
     }
 }
 
+/// Proof that a tracked allocation reserved process GPU capacity before creation.
+/// A split reservation holds the entire batch until its final allocation retires;
+/// no packet can outlive the mapped owner's reservation and become uncharged.
+pub(crate) struct GpuReservation {
+    bytes: u64,
+    permits: Vec<Permit>,
+    shared: Option<Arc<Vec<Permit>>>,
+}
+impl GpuReservation {
+    pub fn new(bytes: u64, mut permits: Vec<Permit>) -> anyhow::Result<Self> {
+        permits.push(gpu_process().reserve(bytes)?);
+        Ok(Self {
+            bytes,
+            permits,
+            shared: None,
+        })
+    }
+    pub fn bytes(&self) -> u64 {
+        self.bytes
+    }
+    pub fn split(&mut self, bytes: u64) -> anyhow::Result<Self> {
+        anyhow::ensure!(
+            bytes <= self.bytes,
+            "GPU reservation split exceeds admitted capacity"
+        );
+        let shared = self
+            .shared
+            .get_or_insert_with(|| Arc::new(std::mem::take(&mut self.permits)));
+        self.bytes -= bytes;
+        Ok(Self {
+            bytes,
+            permits: Vec::new(),
+            shared: Some(shared.clone()),
+        })
+    }
+}
+
 pub(super) fn process() -> Arc<Budget> {
     static BUDGET: OnceLock<Arc<Budget>> = OnceLock::new();
     BUDGET

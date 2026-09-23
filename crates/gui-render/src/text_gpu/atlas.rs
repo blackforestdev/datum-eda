@@ -340,7 +340,8 @@ impl Atlas {
                 };
                 let local_permit = self.local_budget.reserve(bytes)?;
                 let permit = self.texture_budget.reserve(bytes)?;
-                let gpu_permit = super::budget::gpu_process().reserve(bytes)?;
+                let reservation =
+                    super::budget::GpuReservation::new(bytes, vec![local_permit, permit])?;
                 let texture = device.create_texture(&wgpu::TextureDescriptor {
                     label: Some("datum-glyph-page"),
                     size: wgpu::Extent3d {
@@ -377,13 +378,7 @@ impl Atlas {
                 self.pages.push(Page {
                     texture: self
                         .owner
-                        .track_with_permits(
-                            texture,
-                            bytes,
-                            self.generation,
-                            Kind::Texture,
-                            vec![local_permit, permit, gpu_permit],
-                        )
+                        .track_reserved(texture, self.generation, Kind::Texture, reservation)
                         .with_shared_permit(generation_permit),
                     bind_group,
                     extent,

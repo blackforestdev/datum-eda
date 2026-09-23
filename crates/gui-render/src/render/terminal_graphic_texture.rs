@@ -48,7 +48,8 @@ impl CachedTerminalGraphicTexture {
             anyhow::anyhow!("terminal texture has two live GPU allocations; wait for retirement")
         })?;
         let terminal_permit = crate::text_gpu::budget::terminal_process().reserve(bytes)?;
-        let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
+        let reservation =
+            crate::text_gpu::budget::GpuReservation::new(bytes, vec![generation, terminal_permit])?;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("datum-terminal-graphic-texture"),
             size: wgpu::Extent3d {
@@ -87,15 +88,14 @@ impl CachedTerminalGraphicTexture {
         Ok(CachedTerminalGraphicTexture {
             key,
             bind_group,
-            texture: Owner::new().track_with_permits(
+            texture: Owner::new().track_reserved(
                 TerminalTexture {
                     texture,
                     _source: graphic.graphic.clone(),
                 },
-                bytes,
                 1,
                 Kind::TerminalTexture,
-                vec![generation, terminal_permit, permit],
+                reservation,
             ),
             source: graphic.graphic.clone(),
             pending: true,

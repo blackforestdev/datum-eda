@@ -17310,6 +17310,11 @@
           "work": "s4_glyph_metadata_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/result.json",
           "status": "Pending glyph upload metadata admitted with pixel/GPU staging; complete staging and atlas CPU accounting remain open"
+        },
+        {
+          "work": "s4_gpu_reservation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json",
+          "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open"
         }
       ]
     },
@@ -17486,6 +17491,11 @@
           "work": "s4_glyph_metadata_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-metadata/result.json",
           "status": "Pending glyph upload metadata admitted with pixel/GPU staging; complete staging and atlas CPU accounting remain open"
+        },
+        {
+          "work": "s4_gpu_reservation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json",
+          "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open"
         }
       ]
     },
@@ -17672,6 +17682,11 @@
           "work": "s4_capture_gpu_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/capture-gpu/result.json",
           "status": "Shared visual capture allocations now obey process GPU admission and tracked completion lifetimes; full resource acceptance remains open"
+        },
+        {
+          "work": "s4_gpu_reservation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json",
+          "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open"
         }
       ]
     },
@@ -34745,5 +34760,36 @@
       "Remaining implementation inventory becomes16 complete,11 recorded gaps,23 with no new defect asserted. Private text/resource construction and other owners remain unfinished. No dependency, prototype, numerical cap, sequencing or resize disposition change; existing Console golden failure remains open."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/width-completion/result.json"
+  },
+  "s4_gpu_reservation_work": {
+    "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open",
+    "base_commit": "fea8121f",
+    "production_consumers": [
+      "Retained world, screen/control, terminal and overlay vertex allocation through VertexAllocation",
+      "All fixed and pane uniform buffers",
+      "Text atlas pages and glyph instances",
+      "Native MSAA attachments and terminal image textures",
+      "Mapped upload buffers and sparse scatter packets",
+      "Feature-gated capture target/readback and opt-in timestamp query/resolve/readback resources"
+    ],
+    "retired_paths": [
+      "Owner::track_with_permits accepting arbitrary permit vectors without requiring global admission",
+      "Sparse packet tracking with an empty permit vector, relying on the mapped buffer to retain its aggregate reservation"
+    ],
+    "behavior": [
+      "Owner::track_reserved requires a GpuReservation, whose constructor reserves global GPU capacity before API creation. Existing generation and local/process subcaps remain attached. Record capacity derives from the reservation instead of an independent byte argument.",
+      "Splitting a batch reservation assigns capacity to each allocation while sharing its permits. The entire admitted batch remains charged until the final participating allocation/submission retires, regardless of mapped-buffer retirement order. Refused oversized splits leave admitted capacity unchanged."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 368 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.49s",
+      "checks": "Strict visual renderer/app all-target Clippy and fresh visual application build pass. Full renderer run includes existing actual GPU mixed staging, sparse scatter readback, text/atlas, vertex, uniform, capture and query resource tests, plus the new split-reservation retirement-order test. Application tests were not rerun for this renderer-only migration.",
+      "inventory": "Reviewed direct create_buffer/create_buffer_init/create_texture/create_query_set sites in gui-render; production owners listed above all use the typed reservation path. Remaining hits are test/probe fixtures. The two gui-app direct buffer creation sites are inside cfg(test) modules."
+    },
+    "limits": [
+      "Batch charging is conservative: retired siblings remain reserved until the last participant retires. Individual live records report their own capacity; reserved capacity can exceed live capacity.",
+      "This strengthens admission and lifetime ownership; it does not prove complete ACC-01 requested payload/reference incidence/release-reason reporting, CPU tracking metadata, construction/staging peaks or full MEM-GPU-TOTAL qualification. No predicate closure or inventory-count change.",
+      "Query accounting remains logical timestamp capacity; backend-private storage, driver residency and swapchain ownership remain separate. All carried S5 qualification, the existing Console golden failure, GEFN and nonblocking resize disposition remain unchanged. No dependency, prototype, numerical cap or sequencing change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json"
   }
 }

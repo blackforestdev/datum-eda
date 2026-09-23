@@ -108,7 +108,6 @@ impl VertexAllocation {
         for budget in &self.budgets {
             permits.push(budget.reserve(capacity)?);
         }
-        permits.push(crate::text_gpu::budget::gpu_process().reserve(capacity)?);
         // Retention refusal bypasses the cache, never the hard frame budgets.
         let mut uncached = false;
         if let Some(budget) = &self.retention_budget {
@@ -117,6 +116,7 @@ impl VertexAllocation {
                 Err(_) => uncached = true,
             }
         }
+        let reservation = crate::text_gpu::budget::GpuReservation::new(capacity, permits)?;
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: capacity,
@@ -125,12 +125,12 @@ impl VertexAllocation {
         });
         self.uncached = uncached;
         self.generation += 1;
-        let bytes = buffer.size();
-        self.buffer = Some(
-            self.owner
-                .get_or_insert_with(Owner::new)
-                .track_with_permits(buffer, bytes, self.generation, Kind::Vertex, permits),
-        );
+        self.buffer = Some(self.owner.get_or_insert_with(Owner::new).track_reserved(
+            buffer,
+            self.generation,
+            Kind::Vertex,
+            reservation,
+        ));
         Ok(true)
     }
 }
