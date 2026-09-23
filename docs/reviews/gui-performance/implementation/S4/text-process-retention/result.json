@@ -1,0 +1,67 @@
+{
+  "status": "Default process inventory and aggregate post-frame public text retention implemented; full live/private accounting remains open",
+  "base_commit": "5e88847a",
+  "production_consumers": [
+    "Every TextBufferCache created by Renderer on Main, Global, Project and New hosts, including full/overlay preparation and submission paths",
+    "Renderer::text_cache_process_usage and local text_cache_key_usage owner_id"
+  ],
+  "retired_paths": [
+    "Renderer-local8MiB cap as the only shaped-payload admission boundary",
+    "Unenumerated public CPU text ownership across renderer lifetimes"
+  ],
+  "behavior": [
+    "A stable owner ID registers inline cache storage at creation and publishes changed public key/metadata/shared-shape/layout capacities after preparation and generation retirement. Warm unchanged revisions skip publication and post-frame recount.",
+    "Post-submit admission serializes across render threads: available process capacity is32MiB minus every other owner, including preparing owners, with the existing8MiB local ceiling. Trim only the completing cache, preserving all current-frame visible content and other owners.",
+    "Preparing payload may exceed retained ceilings and remains explicitly visible in the inventory. If irreducible owner storage cannot fit, record retention_overflow rather than pretending zero ownership or changing required content.",
+    "Drop the registry identity after cache storage fields release. Registry storage and allocator/Arc/private scratch remain outside the public payload totals."
+  ],
+  "proof": {
+    "unit": "247 renderer unit tests passed, including five real caches retaining over32MiB of allocated key capacity before submission, aggregate retirement, local/report equality and complete owner removal after close; pure allowance test includes active other owners.",
+    "gpu": "14 production GPU regressions passed with the final owner-ID API, including full/dialog parity, scrolling and pressure/reindex/retry.",
+    "build": "Fresh datum-gui build and renderer all-targets visual-feature Clippy with -D warnings passed.",
+    "policy": "Source health2234files, dependency authority, terminal convergence, traceability, spec governance/parity and project state passed. Initial root module wiring exceeded existing ceiling by2 lines; corrected ownership nesting without changing ceilings. No roadmap-state change; unchanged full drift/native/endurance not rerun. Known Console golden failure remains unqualified."
+  },
+  "limits": [
+    "Active frame/construction peaks and failed/unsubmitted preparation are reported but not admitted/chunked by this post-submit boundary. Full local/process cap compliance remains unqualified.",
+    "Private FontSystem/ShapeBuffer/raster scratch, Arc/allocator and registry bookkeeping, complete per-allocation CPU lifetime/release records and host incidence qualification remain unfinished.",
+    "retention_overflow reports an unsuccessful admission when other active owners or irreducible storage leave no room. It is not a successful cap result; no full tier acceptance follows.",
+    "No native/endurance/global adoption, full MEM-SHAPED, S4 or S5 acceptance. No dependency, vendor, prototype, font, numerical budget or resize amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
+  "logs": {
+    "unit": {
+      "path": "unit.log.gz",
+      "uncompressed_sha256": "08692cf6d0a7c7bb359cda71198b386a7f6765bb810c748d555af7c0e864a553"
+    },
+    "unit-final": {
+      "path": "unit-final.log.gz",
+      "uncompressed_sha256": "7e5dcbd6ba74385afcea014b5a09bac2058e0e99ea03d3efdf38594ce1ad5a17"
+    },
+    "all-unit": {
+      "path": "all-unit.log.gz",
+      "uncompressed_sha256": "2f265a1ca3ad6a34751b7dca401679215ca7d1d9fe87fef9706a3a4a1af7f8ad"
+    },
+    "gpu": {
+      "path": "gpu.log.gz",
+      "uncompressed_sha256": "17b82f04f2f4a9b9538192ca28bad5f2e7c963e1fab9332717c1268879b9a3c3"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "818df78a78a7357083e11bc7d2432d745e3b10b27e0f37413859ce2a485fdcec"
+    },
+    "build": {
+      "path": "build.log.gz",
+      "uncompressed_sha256": "41daf0082bf953f0bef3119e2bc2cec4a83d0234239aa771ce9d34eefc9199d5"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_cache_budget.rs": "b3bc69fda51c490f684010f8faceb066842ead6e16b7f286a1448cd21f5e9aa2"
+  },
+  "application_sha256": "f029c08d04928488c92dbb232d5a6d7a911ed118093356ee9ac618ac3c5cfeba",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual gpu_overlay_tests -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --all-targets --features visual -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline -p datum-gui-app --bin datum-gui"
+  ]
+}

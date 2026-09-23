@@ -619,3 +619,44 @@ fn finished_frame_applies_eight_mib_ceiling_to_owned_capacity() {
     assert_eq!(cache.entries.capacity(), 0);
     assert_eq!(cache.lookup.capacity(), 0);
 }
+
+#[test]
+fn process_retention_counts_multiple_live_caches_and_releases_closed_owners() {
+    let mut fonts = crate::load_datum_fonts();
+    let mut caches: Vec<_> = (0..5).map(|_| TextBufferCache::default()).collect();
+    let ids: Vec<_> = caches.iter().map(|cache| cache.owner.id()).collect();
+    for cache in &mut caches {
+        cache.begin_frame(Profile::Workspace);
+        cache.indices(&mut fonts, &[run()], 1280, 800);
+        cache.entries[0].key.text.reserve(7 * 1024 * 1024);
+        cache.revision += 1;
+        cache.publish_usage();
+    }
+    let ours = || {
+        crate::Renderer::text_cache_process_usage()
+            .into_iter()
+            .filter(|owner| ids.contains(&owner.owner_id))
+            .collect::<Vec<_>>()
+    };
+    assert!(ours().iter().map(|owner| owner.bytes).sum::<usize>() > 32 * 1024 * 1024);
+    assert!(ours().iter().all(|owner| owner.preparing));
+    for cache in &mut caches {
+        cache.finish_frame();
+    }
+    assert!(ours().iter().map(|owner| owner.bytes).sum::<usize>() <= 32 * 1024 * 1024);
+    assert!(
+        ours()
+            .iter()
+            .all(|owner| !owner.preparing && !owner.retention_overflow)
+    );
+    assert!(caches.iter().any(|cache| cache.entries.is_empty()));
+    for (cache, owner) in caches.iter().zip(ids.iter()) {
+        let report = ours()
+            .into_iter()
+            .find(|record| record.owner_id == *owner)
+            .unwrap();
+        assert_eq!(report.bytes, cache.retained_payload_bytes());
+    }
+    drop(caches);
+    assert!(ours().is_empty());
+}

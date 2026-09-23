@@ -1,5 +1,6 @@
 //! Renderer-owned resources shared by full-scene and auxiliary rendering.
 use super::*;
+pub use crate::text_buffer_cache::budget::TextCacheOwnerUsage;
 use crate::text_gpu::{Atlas as TextAtlas, Draw as TextRenderer};
 pub use crate::text_gpu::{
     Kind as TextGpuAllocationKind, Observer as TextGpuAllocationObserver,
@@ -65,6 +66,7 @@ pub struct WidthMeasurementCacheUsage {
 /// Excludes Arc/allocator bookkeeping, font/scratch internals and GPU resources.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct TextCacheKeyUsage {
+    pub owner_id: u64,
     pub entries: usize,
     pub key_text_bytes: usize,
     pub entry_storage_bytes: usize,
@@ -80,12 +82,6 @@ impl Renderer {
 
     pub fn text_gpu_allocations(&self) -> Vec<TextGpuAllocation> {
         self.atlas.owner.records()
-    }
-
-    /// Overlay limits apply after its post-submission trim; workspace retention
-    /// follows its own profile. This is not complete shaped-text accounting.
-    pub fn text_cache_key_usage(&self) -> TextCacheKeyUsage {
-        self.text_buffers.key_usage()
     }
 
     /// Enumerate all live measurement caches, including caches on other threads.

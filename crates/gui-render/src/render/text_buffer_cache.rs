@@ -1,5 +1,7 @@
 //! Shared shaped-buffer ownership and bounded workspace/dialog retention.
 use super::*;
+#[path = "text_cache_budget.rs"]
+pub(crate) mod budget;
 use crate::text_gpu::Area;
 use crate::text_layout::TextLayout;
 use glyphon::cosmic_text::ShapeBuffer;
@@ -131,8 +133,8 @@ fn retain_overlay_buffers<T>(
     reordered || entries.len() != old_len
 }
 
-#[derive(Default)]
 pub(crate) struct TextBufferCache {
+    published_revision: u64,
     entries: Vec<CachedTextBuffer>,
     layout_scratch: ShapeBuffer,
     // Sorted shaping fingerprint + entry index. This owns no text or shaping
@@ -145,6 +147,27 @@ pub(crate) struct TextBufferCache {
     pub(crate) shape_reuses: usize,
     #[cfg(test)]
     pub(crate) key_comparisons: usize,
+    // Drop the registry owner after all CPU cache storage has been released.
+    owner: budget::Owner,
+}
+
+impl Default for TextBufferCache {
+    fn default() -> Self {
+        Self {
+            owner: budget::Owner::new(std::mem::size_of::<Self>()),
+            published_revision: 0,
+            entries: Vec::new(),
+            layout_scratch: ShapeBuffer::default(),
+            lookup: Vec::new(),
+            frame: 0,
+            revision: 0,
+            retained_revision: None,
+            #[cfg(test)]
+            shape_reuses: 0,
+            #[cfg(test)]
+            key_comparisons: 0,
+        }
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -213,6 +236,7 @@ impl TextBufferCache {
             shapes.extend(entry.buffer.shape_allocations());
         }
         crate::TextCacheKeyUsage {
+            owner_id: self.owner.id(),
             shaped_payload_bytes: layout_bytes + shapes.values().sum::<usize>(),
             entries: self.entries.len(),
             key_text_bytes: self
@@ -230,6 +254,13 @@ impl TextBufferCache {
                         entry.key.rich_spans.capacity() * std::mem::size_of::<TextBufferSpanKey>()
                     })
                     .sum::<usize>(),
+        }
+    }
+
+    fn publish_usage(&mut self) {
+        if self.published_revision != self.revision {
+            self.owner.publish(self.retained_payload_bytes());
+            self.published_revision = self.revision;
         }
     }
 
@@ -255,6 +286,7 @@ impl TextBufferCache {
                 self.rebuild_lookup();
             }
         }
+        self.publish_usage();
     }
 
     /// Called after glyph preparation/submission, when no text-area borrow is
@@ -274,12 +306,16 @@ impl TextBufferCache {
     }
 
     /// Bound reusable CPU text after submission has consumed every layout run.
-    /// Current preparation, private shaping scratch and process totals are separate.
+    /// Current preparation and private shaping scratch are separate.
     pub(crate) fn finish_frame(&mut self) {
         if self.retained_revision == Some(self.revision) {
             return;
         }
-        self.trim_payload_to(8 * 1024 * 1024);
+        budget::settle(self.owner.id(), |limit| {
+            self.trim_payload_to(limit);
+            self.retained_payload_bytes()
+        });
+        self.published_revision = self.revision;
         self.retained_revision = Some(self.revision);
     }
 
@@ -356,6 +392,7 @@ impl TextBufferCache {
             }
             indices.push(index);
         }
+        self.publish_usage();
         (indices, stats)
     }
 
