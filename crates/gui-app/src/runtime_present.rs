@@ -96,14 +96,8 @@ impl Runtime {
         // P2.2a: resolve the companion schematic world buffer lazily (cleared on
         // every scene/frame invalidation, so this stays fresh). `None` when the
         // workspace has no companion schematic / Schematic pane — second pass off.
-        if self.schematic_retained_scene.is_none() {
-            self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-            );
-        }
+        self.ensure_schematic_retained_scene();
+        self.schematic_scene_accounting.check_render_budget()?;
         let retained = self
             .retained_scene
             .as_ref()

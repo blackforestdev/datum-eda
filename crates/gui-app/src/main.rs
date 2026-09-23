@@ -277,14 +277,8 @@ impl Runtime {
             self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
         }
         self.retained_scene_cache.check_render_budget()?;
-        if self.schematic_retained_scene.is_none() {
-            self.schematic_retained_scene = RetainedScene::from_workspace_schematic_for_surface(
-                self.session.workspace(),
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-            );
-        }
+        self.ensure_schematic_retained_scene();
+        self.schematic_scene_accounting.check_render_budget()?;
         let retained = self
             .retained_scene
             .as_ref()

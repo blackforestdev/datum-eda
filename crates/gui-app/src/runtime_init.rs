@@ -111,6 +111,7 @@ impl Runtime {
             terminal_accessibility:
                 terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge::default(),
             schematic_retained_scene: None,
+            schematic_scene_accounting: RetainedSceneHistory::default(),
             scene_dirty: true,
             terminal_sessions,
             terminal_launch_context,

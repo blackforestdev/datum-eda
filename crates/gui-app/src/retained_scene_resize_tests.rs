@@ -75,3 +75,39 @@ fn dependent_scene_retires_active_and_history_charges_for_reconstruction() {
     assert!(history.active_geometry.is_none());
     assert_eq!(history.accounted_bytes(), 0);
 }
+
+#[test]
+fn companion_schematic_uses_active_and_retiring_cpu_ownership() {
+    let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad/simple-demo.kicad_sch");
+    let schematic = datum_gui_protocol::load_kicad_schematic_workspace_state(&path).unwrap();
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.schematic_scene = Some(schematic.scene);
+    let scene = RetainedScene::from_workspace_schematic_for_surface(&state, 960, 720, 1.0).unwrap();
+    let payload = scene.heap_payload_bytes().unwrap();
+    let pinned = scene.clone();
+    let pinned_geometry = pinned.geometry_observer().heap_bytes_excluding([]);
+    let reusable = scene.can_reuse_for_surface_resize();
+    let mut owner = RetainedSceneHistory::default();
+    owner.limit_for_active(&scene);
+    assert_eq!(owner.accounted_bytes(), payload);
+    owner.check_render_budget().unwrap();
+    let mut active = Some(scene);
+    owner.invalidate_surface_size(&mut active);
+    assert_eq!(active.is_some(), reusable);
+    assert!(owner.accounted_bytes() >= pinned_geometry);
+    drop(active.take());
+    owner.clear();
+    assert_eq!(owner.active_bytes, 0);
+    assert!(
+        owner.entries.is_empty(),
+        "companion has no revision-history cache"
+    );
+    assert!(owner.accounted_bytes() >= pinned_geometry);
+    owner.budget = 1;
+    assert!(owner.check_render_budget().is_err());
+    drop(pinned);
+    owner.clear();
+    assert_eq!(owner.accounted_bytes(), 0);
+    owner.check_render_budget().unwrap();
+}
