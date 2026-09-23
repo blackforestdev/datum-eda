@@ -141,3 +141,59 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
         );
     }
 }
+
+#[test]
+#[ignore = "requires local GPU and serial process-wide cache admission"]
+fn text_cache_pressure_refuses_before_glyphs_and_retries_current_frame() {
+    for overlay_only in [true, false] {
+        let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+        let mut prepared =
+            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        if !overlay_only {
+            prepared.text_runs = vec![prepared.menu_overlay_text_runs[0].clone()];
+        }
+        let mut renderer = hardware_renderer(960, 720);
+        let target = renderer.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("text-admission-proof"),
+            size: wgpu::Extent3d {
+                width: 960,
+                height: 720,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: OUTPUT_FORMAT,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let view = target.create_view(&Default::default());
+        let filler = crate::text_buffer_cache::budget::Owner::new(32 * 1024 * 1024);
+        let error = renderer
+            .renderer
+            .render_with_submission(
+                &renderer.device,
+                &renderer.queue,
+                &view,
+                &prepared,
+                &RetainedScene::empty(),
+                None,
+                960,
+                720,
+                &mut |_| panic!("over-budget frame submitted"),
+            )
+            .unwrap_err();
+        assert!(
+            error
+                .to_string()
+                .contains("required text layout exceeds CPU cache admission")
+        );
+        assert_eq!(renderer.renderer.text_preparation.overlay_prepares, 0);
+        assert_eq!(renderer.renderer.text_preparation.workspace_prepares, 0);
+        assert_eq!(renderer.renderer.text_atlas_reserved_bytes(), 0);
+        drop(filler);
+        let pixels = capture(&mut renderer, &prepared);
+        let mut fresh = hardware_renderer(960, 720);
+        assert!(pixels == capture(&mut fresh, &prepared));
+    }
+}

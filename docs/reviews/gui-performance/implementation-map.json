@@ -15211,7 +15211,14 @@
       "s4_private_text_heap_progress": {
         "implementation": "Default native executable scoped Rust allocation ownership for font construction, text preparation and measurements. Private font/shape/raster lifetime conformance and production GPU bridge verified.",
         "remaining": "Original full accounting/admission and qualification remain; overlapping logical/allocation views must not be summed. No predicate closure."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_text_frame_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
+          "status": "Default current-frame public payload admission precedes glyph preparation, evicts only unused history and preserves required text/refusal semantics. Full allocation-time/private/scratch accounting and qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-SHAPED-TOTAL",
@@ -15337,7 +15344,14 @@
       "s4_private_text_heap_progress": {
         "implementation": "Default native executable scoped Rust allocation ownership for font construction, text preparation and measurements. Private font/shape/raster lifetime conformance and production GPU bridge verified.",
         "remaining": "Original full accounting/admission and qualification remain; overlapping logical/allocation views must not be summed. No predicate closure."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_text_frame_admission_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
+          "status": "Default current-frame public payload admission precedes glyph preparation, evicts only unused history and preserves required text/refusal semantics. Full allocation-time/private/scratch accounting and qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-LABEL-ENTRIES",
@@ -32628,5 +32642,36 @@
       "No dependency, vendor, license, prototype, layout, font, protocol, numeric admission-cap or ordinary rendering selection change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/query-resources/result.json"
+  },
+  "s4_text_frame_admission_work": {
+    "status": "Default current-frame public text payload admission precedes glyph preparation; full allocation/scratch accounting remains unfinished",
+    "base_commit": "3c43ca0b",
+    "production_consumers": [
+      "Shared TextBufferCache for workspace, terminal and overlay text",
+      "Renderer full-scene and dialog text preparation used by Main/Global/Project/New"
+    ],
+    "retired_paths": [
+      "Relying solely on post-submission trimming to enforce public retained text payload limits",
+      "Allowing required over-budget current text to proceed to glyph preparation before reporting refusal"
+    ],
+    "behavior": [
+      "Admit current layouts under the existing serialized8 MiB renderer/32 MiB process retained-public-payload limits. Other owners, including preparing owners, remain charged. No numerical cap change.",
+      "On pressure, evict entries unused by the current frame before admission; remap workspace and overlay index vectors together and advance the cache revision before any text-area borrow. Never remove a required current text run to make the check pass.",
+      "If required public payload still cannot fit, record overflow and return a descriptive preparation error. Current content remains available for retry when pressure clears; no current glyph preparation or partial text presentation follows that refusal. Authoritative text/model content is unchanged.",
+      "Reuse the published byte total for revision-controlled admission on warm frames; retain exact payload traversal for retention checks and public diagnostics. Finish-frame clears preparing state even when the unchanged revision needs no retention work."
+    ],
+    "proof": {
+      "renderer": "316 renderer tests pass;10 diagnostic/visual cases filtered. New serial admission tests cover history eviction/index remapping, exact totals after eviction, current-content refusal/retry and warm preparing-state retirement.",
+      "production": "Actual-GPU test drives both full-scene and dialog render_with_submission under process pressure. Refusal precedes glyph preparation/atlas allocation and submission for those fixtures; retry after pressure release exactly matches fresh-render pixels. Existing capacity, glyph continuation, text pressure/recovery, pixel parity and resource tests pass.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2255, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+      "drift": "Final full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance.",
+      "development": "Initial narrow filter selected zero tests and is not proof. Initial full suite passed; subsequent warm-total optimization exposed the unchanged capacity-growth regression test. Fixed by keeping exact retention accounting and caching only revision-controlled admission. Final suite passes; zero-test and failed/intermediate logs retained."
+    },
+    "limits": [
+      "Admission occurs after CPU layout construction and uses the existing public owned-capacity boundary. Transient shaping peaks, private ShapeBuffer/font/raster scratch and Arc/allocator metadata accounting remain unfinished. Refused preparation can retain current CPU content for retry; this is not an allocation-time memory ceiling. No full MEM-SHAPED-LOCAL/TOTAL or MEM-STAGING closure.",
+      "Complete world/history/resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance/resource qualification remain. No new native input/latency campaign, no S4/S5 or issue closure.",
+      "No dependency, vendoring, license, prototype, layout/font authority, production protocol or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json"
   }
 }

@@ -1,5 +1,7 @@
 //! Shared shaped-buffer ownership and bounded workspace/dialog retention.
 use super::*;
+#[path = "text_cache_admission.rs"]
+mod admission;
 #[path = "text_cache_budget.rs"]
 pub(crate) mod budget;
 use crate::text_gpu::Area;
@@ -135,6 +137,7 @@ fn retain_overlay_buffers<T>(
 
 pub(crate) struct TextBufferCache {
     published_revision: u64,
+    published_bytes: usize,
     entries: Vec<CachedTextBuffer>,
     layout_scratch: ShapeBuffer,
     // Sorted shaping fingerprint + entry index. This owns no text or shaping
@@ -156,6 +159,7 @@ impl Default for TextBufferCache {
         Self {
             owner: budget::Owner::new(std::mem::size_of::<Self>()),
             published_revision: 0,
+            published_bytes: std::mem::size_of::<Self>(),
             entries: Vec::new(),
             layout_scratch: ShapeBuffer::default(),
             lookup: Vec::new(),
@@ -259,7 +263,8 @@ impl TextBufferCache {
 
     fn publish_usage(&mut self) {
         if self.published_revision != self.revision {
-            self.owner.publish(self.retained_payload_bytes());
+            self.published_bytes = self.retained_payload_bytes();
+            self.owner.publish(self.published_bytes);
             self.published_revision = self.revision;
         }
     }
@@ -309,11 +314,13 @@ impl TextBufferCache {
     /// Current preparation and private shaping scratch are separate.
     pub(crate) fn finish_frame(&mut self) {
         if self.retained_revision == Some(self.revision) {
+            budget::submitted(self.owner.id());
             return;
         }
         budget::settle(self.owner.id(), |limit| {
             self.trim_payload_to(limit);
-            self.retained_payload_bytes()
+            self.published_bytes = self.retained_payload_bytes();
+            self.published_bytes
         });
         self.published_revision = self.revision;
         self.retained_revision = Some(self.revision);

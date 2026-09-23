@@ -1,0 +1,73 @@
+{
+  "status": "Default current-frame public text payload admission precedes glyph preparation; full allocation/scratch accounting remains unfinished",
+  "base_commit": "3c43ca0b",
+  "production_consumers": [
+    "Shared TextBufferCache for workspace, terminal and overlay text",
+    "Renderer full-scene and dialog text preparation used by Main/Global/Project/New"
+  ],
+  "retired_paths": [
+    "Relying solely on post-submission trimming to enforce public retained text payload limits",
+    "Allowing required over-budget current text to proceed to glyph preparation before reporting refusal"
+  ],
+  "behavior": [
+    "Admit current layouts under the existing serialized8 MiB renderer/32 MiB process retained-public-payload limits. Other owners, including preparing owners, remain charged. No numerical cap change.",
+    "On pressure, evict entries unused by the current frame before admission; remap workspace and overlay index vectors together and advance the cache revision before any text-area borrow. Never remove a required current text run to make the check pass.",
+    "If required public payload still cannot fit, record overflow and return a descriptive preparation error. Current content remains available for retry when pressure clears; no current glyph preparation or partial text presentation follows that refusal. Authoritative text/model content is unchanged.",
+    "Reuse the published byte total for revision-controlled admission on warm frames; retain exact payload traversal for retention checks and public diagnostics. Finish-frame clears preparing state even when the unchanged revision needs no retention work."
+  ],
+  "proof": {
+    "renderer": "316 renderer tests pass;10 diagnostic/visual cases filtered. New serial admission tests cover history eviction/index remapping, exact totals after eviction, current-content refusal/retry and warm preparing-state retirement.",
+    "production": "Actual-GPU test drives both full-scene and dialog render_with_submission under process pressure. Refusal precedes glyph preparation/atlas allocation and submission for those fixtures; retry after pressure release exactly matches fresh-render pixels. Existing capacity, glyph continuation, text pressure/recovery, pixel parity and resource tests pass.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2255, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+    "drift": "Final full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance.",
+    "development": "Initial narrow filter selected zero tests and is not proof. Initial full suite passed; subsequent warm-total optimization exposed the unchanged capacity-growth regression test. Fixed by keeping exact retention accounting and caching only revision-controlled admission. Final suite passes; zero-test and failed/intermediate logs retained."
+  },
+  "limits": [
+    "Admission occurs after CPU layout construction and uses the existing public owned-capacity boundary. Transient shaping peaks, private ShapeBuffer/font/raster scratch and Arc/allocator metadata accounting remain unfinished. Refused preparation can retain current CPU content for retry; this is not an allocation-time memory ceiling. No full MEM-SHAPED-LOCAL/TOTAL or MEM-STAGING closure.",
+    "Complete world/history/resource implementation, cold multi-submission timing and native/backend/fault/fairness/endurance/resource qualification remain. No new native input/latency campaign, no S4/S5 or issue closure.",
+    "No dependency, vendoring, license, prototype, layout/font authority, production protocol or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
+  "logs": {
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/focused.log.gz",
+      "uncompressed_sha256": "ac8918da1a19970a95e101d9cb65519f6eb4eeeb51cb9b52f33c52822acf3954"
+    },
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/initial-tests.log.gz",
+      "uncompressed_sha256": "7e8462cb360e8c9defbf6d61485f7e61ddd792d122b0441a54f67fcd369a0a37"
+    },
+    "initial-drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/initial-drift.log.gz",
+      "uncompressed_sha256": "72fc8380a4fa75d8b2b15e41b54a6fe246cc200db0ae9b96d134b1114fa913ea"
+    },
+    "cache-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/cache-tests.log.gz",
+      "uncompressed_sha256": "41b8e9997b9513d5e99ac6724ab3cc9b9a6c53626ba6b5bf69a0879470b1290d"
+    },
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/tests.log.gz",
+      "uncompressed_sha256": "8fb74c1d06a836590fdff4fef50f09c159990ae42acc71266004b6bc6d77467b"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/clippy.log.gz",
+      "uncompressed_sha256": "57ff18ca04399513dbf99bfec0a7b3b676c5435cbb7474c48e8e39069958f791"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/build.log.gz",
+      "uncompressed_sha256": "13af6e14e807040bf237af71743cde92539b3b0873ff83b0ddec8042659d8c09"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission/drift.log.gz",
+      "uncompressed_sha256": "629e406a458698e5058f9bafd64483e1801dc780d3fa75cac62cf07434f1004b"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "5989b32423640c6ee723ff1dd7f6b2c0322a38887695732831aa2faff49383b5",
+    "crates/gui-render/src/render/gpu_text.rs": "f1756e10cf0e21166a3d3c69bb60a27b3e92c92af849a82438e926e01c7240e7",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "7a13be6e4d112f67d87023938dc50c391716b91f42d5932b107069ab6fc22877",
+    "crates/gui-render/src/render/text_cache_budget.rs": "47520603d97f55588846e399b30f1719512665cb590f268f46e50190838f7e3c",
+    "crates/gui-render/src/render/text_cache_admission.rs": "4bb5f1bc768d289b9480d45bbe60d5eb8cba3cb36bb49d2d9c51424ade8f7d9f",
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "68c9229722c6f7e5a7f17b3a5a6ce62f6d19447e56ca77476d7c8d074956cf9b"
+  }
+}

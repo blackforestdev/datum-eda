@@ -153,13 +153,13 @@ impl Renderer {
         if has_workspace_text || has_overlay_text {
             self.text_resolution = [width, height];
         }
-        let (workspace, stats) = if !has_workspace_text {
+        let (mut workspace, stats) = if !has_workspace_text {
             (Vec::new(), TextBufferCacheStats::default())
         } else {
             self.text_buffers
                 .indices(&mut self.font_system, &prepared.text_runs, width, height)
         };
-        let (overlay, overlay_stats) = if !has_overlay_text {
+        let (mut overlay, overlay_stats) = if !has_overlay_text {
             (Vec::new(), TextBufferCacheStats::default())
         } else {
             self.text_buffers.indices(
@@ -169,6 +169,8 @@ impl Renderer {
                 height,
             )
         };
+        self.text_buffers
+            .admit_frame(&mut [&mut workspace, &mut overlay])?;
         // Preserve workspace diagnostic semantics; dialog-only frames report
         // their actual text owner instead of an empty workspace statistic.
         let stats = if overlay_only { overlay_stats } else { stats };
