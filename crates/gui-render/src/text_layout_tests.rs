@@ -78,3 +78,41 @@ fn owned_layout_matches_buffer_for_plain_rich_and_extent_changes() {
         }
     }
 }
+
+#[test]
+fn shape_container_cost_measures_arc_and_allocator_overhead_without_double_counting() {
+    let expected = shape_container_bytes();
+    let scope = crate::cpu_alloc::Scope::new("shape-container-proof");
+    let shape = scope.with(|| {
+        Arc::new(ShapeLine {
+            rtl: false,
+            spans: Vec::new(),
+            metrics_opt: None,
+        })
+    });
+    assert_eq!(
+        expected as u64,
+        scope.usage().payload_bytes + scope.usage().tracking_bytes
+    );
+    assert!(expected > std::mem::size_of::<ShapeLine>());
+    let mut layout = TextLayout::default();
+    layout.shapes.push(shape.clone());
+    let mut other = TextLayout::default();
+    other.shapes.push(shape);
+    let unique: std::collections::BTreeMap<_, _> = layout
+        .shape_allocations()
+        .chain(other.shape_allocations())
+        .collect();
+    assert_eq!(unique.len(), 1);
+    assert_eq!(unique.values().sum::<usize>(), expected);
+    drop(layout);
+    assert_eq!(
+        scope.usage().payload_bytes + scope.usage().tracking_bytes,
+        expected as u64
+    );
+    drop(other);
+    assert_eq!(
+        scope.usage().payload_bytes + scope.usage().tracking_bytes,
+        0
+    );
+}

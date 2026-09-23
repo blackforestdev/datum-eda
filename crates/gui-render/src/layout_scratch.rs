@@ -42,13 +42,16 @@ impl LayoutScratch {
 
     /// Call only after output containers have been consumed into cache rows.
     /// Every retained output glyph vector is public and counted by that cache;
-    /// subtract it once to isolate otherwise-private ShapeBuffer allocations.
-    pub(crate) fn private_bytes(&self, output_bytes: usize) -> Option<u64> {
+    /// subtract its payload and tracking bytes to isolate private ShapeBuffer storage.
+    pub(crate) fn private_bytes(
+        &self,
+        output_bytes: usize,
+        output_tracking_bytes: usize,
+    ) -> Option<u64> {
         let usage = self.scope.usage();
         usage.allocator_installed.then(|| {
-            usage
-                .payload_bytes
-                .checked_sub(output_bytes as u64)
+            (usage.payload_bytes + usage.tracking_bytes)
+                .checked_sub((output_bytes + output_tracking_bytes) as u64)
                 .expect("layout outputs must belong to this scratch scope")
         })
     }
@@ -56,9 +59,10 @@ impl LayoutScratch {
     pub(crate) fn admit(
         &mut self,
         output_bytes: usize,
+        output_tracking_bytes: usize,
         host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
     ) {
-        let Some(bytes) = self.private_bytes(output_bytes) else {
+        let Some(bytes) = self.private_bytes(output_bytes, output_tracking_bytes) else {
             return;
         };
         if self.permits.is_some()
@@ -122,17 +126,21 @@ mod tests {
         let mut layout =
             crate::text_layout::TextLayout::new(&mut fonts, &mut scratch, &run, (200, 300));
         let output = layout.layout_glyph_bytes();
+        let output_tracking = layout.layout_glyph_tracking_bytes();
         assert!(output > 0);
         let private = scratch
-            .private_bytes(output)
+            .private_bytes(output, output_tracking)
             .expect("test allocator installed");
         assert!(private > 0);
-        assert_eq!(scratch.scope.usage().payload_bytes, private + output as u64);
+        assert_eq!(
+            scratch.scope.usage().payload_bytes + scratch.scope.usage().tracking_bytes,
+            private + (output + output_tracking) as u64
+        );
         let host = crate::text_gpu::budget::Budget::new(private);
-        scratch.admit(output, &host);
+        scratch.admit(output, output_tracking, &host);
         assert_eq!(host.used(), private);
         assert_eq!(scratch.reserved_bytes(), private);
-        scratch.admit(output, &host);
+        scratch.admit(output, output_tracking, &host);
         assert_eq!(
             host.used(),
             private,
@@ -143,9 +151,13 @@ mod tests {
             .map(|r| format!("{:?}", r.glyphs))
             .collect();
         // Refuse retention, not the already constructed required layout.
-        scratch.admit(output, &crate::text_gpu::budget::Budget::new(private - 1));
+        scratch.admit(
+            output,
+            output_tracking,
+            &crate::text_gpu::budget::Budget::new(private - 1),
+        );
         assert_eq!(host.used(), 0);
-        assert_eq!(scratch.private_bytes(output), Some(0));
+        assert_eq!(scratch.private_bytes(output, output_tracking), Some(0));
         assert_eq!(scratch.scope.usage().payload_bytes, output as u64);
         let after: Vec<_> = layout
             .layout_runs()
@@ -159,8 +171,11 @@ mod tests {
             .collect();
         assert_eq!(before, after);
         drop(layout);
-        let private = scratch.private_bytes(0).unwrap();
-        assert_eq!(scratch.scope.usage().payload_bytes, private);
+        let private = scratch.private_bytes(0, 0).unwrap();
+        assert_eq!(
+            scratch.scope.usage().payload_bytes + scratch.scope.usage().tracking_bytes,
+            private
+        );
         scratch.clear();
         assert_eq!(scratch.scope.usage().payload_bytes, 0);
     }

@@ -21,7 +21,7 @@ impl Atlas {
     pub(crate) fn pending_cpu_bytes(&self) -> u64 {
         self.pending_uploads
             .iter()
-            .map(|p| p.pixels.capacity() as u64)
+            .map(|p| crate::cpu_alloc::heap::capacity_bytes::<u8>(p.pixels.capacity()) as u64)
             .sum()
     }
 

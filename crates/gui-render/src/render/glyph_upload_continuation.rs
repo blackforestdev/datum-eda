@@ -78,7 +78,7 @@ impl Renderer {
 }
 
 impl Renderer {
-    /// Retained raster pixel capacities, also included in staging/scratch usage.
+    /// Retained raster pixel capacities and Datum headers, also in staging/scratch usage.
     pub fn pending_glyph_pixel_bytes(&self) -> u64 {
         self.atlas.pending_cpu_bytes()
     }

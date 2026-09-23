@@ -1,4 +1,4 @@
-//! Process ownership and post-frame admission for public text-cache payloads.
+//! Process ownership and admission for owned text-cache capacities.
 use std::collections::BTreeMap;
 use std::sync::{
     Mutex,
@@ -9,7 +9,7 @@ const PROCESS_LIMIT: usize = 32 * 1024 * 1024;
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
 static OWNERS: Mutex<BTreeMap<u64, TextCacheOwnerUsage>> = Mutex::new(BTreeMap::new());
 
-/// Public retained capacities only: private shaping/raster scratch is separate.
+/// Public retained capacities plus measured Arc/Datum headers; private scratch is separate.
 #[derive(Clone, Copy, Debug)]
 pub struct TextCacheOwnerUsage {
     pub owner_id: u64,
@@ -111,7 +111,7 @@ pub(crate) fn submitted(id: u64) {
 }
 
 impl crate::Renderer {
-    /// Enumerate public CPU text capacities for every live renderer cache.
+    /// Enumerate CPU text capacities and accounted headers for every live renderer cache.
     /// Preparing owners may exceed retention caps; this is not scratch accounting.
     pub fn text_cache_process_usage() -> Vec<TextCacheOwnerUsage> {
         OWNERS
