@@ -162,6 +162,21 @@ impl SurfaceTransaction {
         renderer: &datum_gui_render::Renderer,
         frame: &NativeSurfaceFrame,
     ) {
+        // Observe before the attachment check: a failed preparation or an
+        // upload-only continuation may not have an attachment yet.
+        super::append_gui_verbose_diagnostic_line(|| {
+            let (queue_epoch, _, _) = self.queue_owner.snapshot();
+            format!(
+                "native upload frame window={:?} host={} queue_epoch={} surface_generation={} acquisition={} submission={} receipt={:?}",
+                self.window,
+                self.queue_host,
+                queue_epoch,
+                self.configuration_generation,
+                self.texture_active.acquired.get(),
+                frame.lease.submission_receipt.unwrap_or(0),
+                renderer.last_upload_frame()
+            )
+        });
         let Some(attachment) = renderer.surface_attachment_snapshot() else {
             return;
         };

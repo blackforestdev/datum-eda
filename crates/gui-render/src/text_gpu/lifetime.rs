@@ -39,7 +39,7 @@ struct Identity {
 struct State {
     id: u64,
     allocations: Mutex<Vec<Weak<Identity>>>,
-    uploads: Mutex<super::upload_totals::UploadTotals>,
+    uploads: Mutex<super::upload_totals::Accounting>,
 }
 
 /// Retain observation across renderer close without retaining GPU resources.
@@ -48,7 +48,12 @@ pub struct Observer(Owner);
 
 impl Observer {
     pub fn submitted_upload_totals(&self) -> super::upload_totals::UploadTotals {
-        *self.0.0.uploads.lock().unwrap_or_else(|e| e.into_inner())
+        self.0
+            .0
+            .uploads
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .total
     }
 
     pub fn allocations(&self) -> Vec<Record> {
@@ -60,12 +65,36 @@ impl Observer {
 pub(crate) struct Owner(Arc<State>);
 
 impl Owner {
+    pub(crate) fn begin_upload_frame(&self) {
+        self.0
+            .uploads
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .begin(self.id());
+    }
+
+    pub(crate) fn finish_upload_frame(&self, rendered: Option<bool>) {
+        self.0
+            .uploads
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .finish(rendered);
+    }
+
+    pub(crate) fn last_upload_frame(&self) -> Option<super::upload_totals::UploadFrame> {
+        self.0
+            .uploads
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .latest()
+    }
+
     pub(crate) fn record_upload(&self, totals: super::upload_totals::UploadTotals) {
         self.0
             .uploads
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .add(totals);
+            .record(totals);
     }
 
     pub fn id(&self) -> u64 {

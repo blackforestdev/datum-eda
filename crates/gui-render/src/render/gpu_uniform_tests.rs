@@ -39,7 +39,15 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
                     binding.buffer.last_upload_bytes > 0 && binding.buffer.last_upload_bytes < 64
                 })
         );
+        let changed_upload = renderer.renderer.last_upload_frame().unwrap();
+        assert_eq!(changed_upload.rendered, Some(true));
+        assert!(changed_upload.totals.buffer_payload_bytes > 0);
         assert!(changed == capture_retained(&mut renderer, &prepared, &retained));
+        let warm_upload = renderer.renderer.last_upload_frame().unwrap();
+        assert_eq!(warm_upload.owner, changed_upload.owner);
+        assert_eq!(warm_upload.attempt, changed_upload.attempt + 1);
+        assert_eq!(warm_upload.rendered, Some(true));
+        assert_eq!(warm_upload.totals, crate::UploadTotals::default());
         assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 0);
         assert!(
             renderer

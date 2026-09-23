@@ -60,6 +60,10 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
             .unwrap();
         assert!(!first, "oversized cold atlas must yield before drawing");
         assert_eq!(submissions, 1);
+        let upload = renderer.renderer.last_upload_frame().unwrap();
+        assert_eq!(upload.rendered, Some(false));
+        assert_eq!(upload.totals.batches, 1);
+        assert!(upload.totals.texture_source_bytes > 0);
         assert!(
             renderer.renderer.atlas.has_pending_uploads(),
             "fixture must exceed one chunk"
@@ -107,6 +111,11 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
                 )
                 .is_err()
         );
+        let refused = renderer.renderer.last_upload_frame().unwrap();
+        assert_eq!(refused.owner, upload.owner);
+        assert_eq!(refused.attempt, upload.attempt + 1);
+        assert_eq!(refused.rendered, None);
+        assert_eq!(refused.totals, crate::UploadTotals::default());
         assert_eq!(renderer.renderer.atlas.pending_staging_bytes(), pending);
         drop(filler);
         // A color-only change during upload must affect the eventual current frame,

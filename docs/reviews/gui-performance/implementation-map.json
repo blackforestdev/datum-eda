@@ -19729,6 +19729,11 @@
           "work": "s4_range_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json",
           "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open"
+        },
+        {
+          "work": "s4_upload_frame_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/upload-frames/result.json",
+          "status": "Shared submitted upload totals attributed to render attempts and native surface receipts; finer pane attribution and full qualification remain open"
         }
       ]
     },
@@ -35073,5 +35078,33 @@
       "No latency/global performance acceptance. Original failed evidence, Console golden failure, GEFN and nonblocking resize preserved. No numerical cap, prototype or sequencing amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json"
+  },
+  "s4_upload_frame_work": {
+    "status": "Shared submitted upload totals attributed to render attempts and native surface receipts; finer pane attribution and full qualification remain open",
+    "base_commit": "07db6e04",
+    "production_consumers": [
+      "Default Renderer::render_with_submission used by main and shared auxiliary native hosts",
+      "Renderer::render offscreen/capture path",
+      "SurfaceTransaction::observe_attachment shared native observation boundary"
+    ],
+    "retired_paths": [
+      "Cumulative-only observation of shared render uploads without attempt outcome or native receipt association"
+    ],
+    "behavior": [
+      "Keep one fixed-size latest receipt per allocation owner: unique owner/attempt pair, submitted totals and render result. Begin before shared rendering and finish on success, upload-only yield or error. Record only actual submitted batches, preserving cumulative totals and excluding cancelled plans. No unbounded receipt history or new allocation per frame.",
+      "The same attempt encompasses world, glyph and terminal upload continuations through the existing common Batch::hold boundary. Offscreen rendering uses the same entry. Warm frames publish explicit zero totals; rendered=true indicates submission, not compositor presentation.",
+      "Native verbose observation associates the receipt with window/host, queue epoch, surface generation, acquisition and submission before attachment availability checks, retaining error/yield visibility. Formatting remains opt-in. All native adapters already use this shared observation point."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 373 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.21s",
+      "checks": "373 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh GUI build passed. Existing actual GPU tests extended for changed/warm receipt totals and both full/overlay continuation/refusal outcome and owner/attempt identity. No new native input campaign or application test rerun.",
+      "coverage": "Production entry-to-submission proof covers warm zero transfer, changed geometry/uniforms, glyph continuation and budget refusal. Existing suite retains readback parity, mixed texture/buffer padding and exact scatter counters."
+    },
+    "limits": [
+      "No full REUSE-SCREEN/ACC acceptance or GPI-S4/S5 closure. Receipt totals are per host/render attempt, not a division of a shared batch among individual pane consumers. Native runtime qualification and complete resource accounting remain due.",
+      "Latest receipt observation is bounded and must be archived before the next attempt for historical analysis. Upload-only attempts do not establish a displayed frame or GPU completion. Private text/cap and remaining allocation metadata obligations are unchanged.",
+      "No dependency/license/prototype/cap/sequencing change. Preserve historical failures, known Console golden failure, GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/upload-frames/result.json"
   }
 }

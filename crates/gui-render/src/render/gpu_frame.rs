@@ -50,6 +50,7 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        self.atlas.owner.begin_upload_frame();
         let result = self.render_submission_inner(
             device,
             queue,
@@ -61,6 +62,9 @@ impl Renderer {
             height,
             on_submitted,
         );
+        self.atlas
+            .owner
+            .finish_upload_frame(result.as_ref().ok().copied());
         if result.is_err() && !self.text_preparation.is_continuing() {
             // No layout borrow survives an error. Failed frames must obey the
             // same label retention caps as submitted full/dialog frames. Do not
