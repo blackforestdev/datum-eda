@@ -273,8 +273,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             format,
             msaa_samples,
         );
-        let mut font_system = FontSystem::new();
-        load_datum_fonts(&mut font_system);
+        let font_system = load_datum_fonts();
         let swash_cache = SwashCache::new();
         let cache = Cache::new(device);
         let viewport = Viewport::new(device, &cache);

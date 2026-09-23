@@ -69,8 +69,7 @@ fn borrowed_lookup_preserves_the_complete_existing_key() {
 
 #[test]
 fn real_shaped_cache_reuses_placement_changes_and_retires_old_workspace_rows() {
-    let mut fonts = FontSystem::new();
-    load_datum_fonts(&mut fonts);
+    let mut fonts = load_datum_fonts();
     let mut cache = TextBufferCache::default();
     let original = run();
     cache.begin_frame(Profile::Workspace);
@@ -113,8 +112,7 @@ fn real_shaped_cache_reuses_placement_changes_and_retires_old_workspace_rows() {
 
 #[test]
 fn real_overlay_cache_bounds_churn_and_rebuilds_evicted_labels() {
-    let mut fonts = FontSystem::new();
-    load_datum_fonts(&mut fonts);
+    let mut fonts = load_datum_fonts();
     let mut cache = TextBufferCache::default();
     let mut label = run();
     for index in 0..160 {
@@ -263,8 +261,7 @@ fn animated_agent_text_cache_retains_only_two_visible_generations() {
 
 #[test]
 fn extent_changes_relayout_cached_shaping_with_fresh_buffer_parity() {
-    let mut fonts = FontSystem::new();
-    load_datum_fonts(&mut fonts);
+    let mut fonts = load_datum_fonts();
     let mut cache = TextBufferCache::default();
     let mut label = run();
     label.text = "Text across several wrap widths: µm and Ω".into();
@@ -325,8 +322,7 @@ fn extent_changes_relayout_cached_shaping_with_fresh_buffer_parity() {
 
 #[test]
 fn indexed_lookup_checks_collisions_and_tracks_retirement() {
-    let mut fonts = FontSystem::new();
-    load_datum_fonts(&mut fonts);
+    let mut fonts = load_datum_fonts();
     let mut cache = TextBufferCache::default();
     let runs: Vec<_> = (0..640)
         .map(|index| TextRun {
@@ -395,8 +391,7 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
 
 #[test]
 fn relayout_moves_unused_entries_but_preserves_current_frame_layouts() {
-    let mut fonts = FontSystem::new();
-    load_datum_fonts(&mut fonts);
+    let mut fonts = load_datum_fonts();
     let signature = |buffer: &Buffer| {
         buffer
             .layout_runs()
@@ -467,8 +462,7 @@ fn explicit_layout_extent_survives_visibility_changes() {
 
 #[test]
 fn overlay_key_budget_charges_allocated_plain_and_rich_text_capacity() {
-    let mut fonts = FontSystem::new();
-    load_datum_fonts(&mut fonts);
+    let mut fonts = load_datum_fonts();
     for rich in [false, true] {
         let mut cache = TextBufferCache::default();
         let mut label = run();
