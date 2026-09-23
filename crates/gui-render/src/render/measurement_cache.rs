@@ -10,7 +10,7 @@ use std::sync::{
 const MAX_MEASUREMENTS: usize = 256;
 const MAX_MEASUREMENT_TEXT_BYTES: usize = 64 * 1024;
 const MAX_OWNED_BYTES: usize = 128 * 1024;
-type Entry = (Box<str>, u32, TextFace, MeasurementKind, f32);
+type Entry = (String, u32, TextFace, MeasurementKind, f32);
 
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
 static OWNERS: Mutex<Vec<WidthMeasurementCacheUsage>> = Mutex::new(Vec::new());
@@ -112,7 +112,7 @@ impl MeasurementCache {
                 *bits == size.to_bits()
                     && *font == face
                     && *cached_kind == kind
-                    && label.as_ref() == text
+                    && label.as_str() == text
             })
         {
             let entry = self.entries.remove(index).expect("matched entry exists");
@@ -130,8 +130,9 @@ impl MeasurementCache {
         if text.len() <= MAX_MEASUREMENT_TEXT_BYTES {
             if self.entries.len() < MAX_MEASUREMENTS
                 && self.entries.len() == self.entries.capacity()
+                && self.entries.try_reserve(1).is_err()
             {
-                self.entries.reserve(1);
+                return width;
             }
             while self.entries.len() >= MAX_MEASUREMENTS
                 || self.text_bytes + text.len() > MAX_MEASUREMENT_TEXT_BYTES
@@ -139,12 +140,23 @@ impl MeasurementCache {
             {
                 let old = self.entries.pop_back().expect("bounded cache has entries");
                 self.text_bytes -= old.0.len();
-                self.text_heap_bytes -= capacity_bytes::<u8>(old.0.len());
+                self.text_heap_bytes -= capacity_bytes::<u8>(old.0.capacity());
             }
-            self.text_bytes += text.len();
-            self.text_heap_bytes += capacity_bytes::<u8>(text.len());
-            self.entries
-                .push_front((text.into(), size.to_bits(), face, kind, width));
+            // Retention is optional after measurement. Avoid an infallible
+            // boxed-string conversion/shrink and account actual key capacity.
+            let mut key = String::new();
+            if key.try_reserve_exact(text.len()).is_ok() {
+                key.push_str(text);
+                let key_bytes = capacity_bytes::<u8>(key.capacity());
+                if self.retained_bytes().saturating_add(key_bytes) <= MAX_OWNED_BYTES {
+                    self.text_bytes += key.len();
+                    self.text_heap_bytes += key_bytes;
+                    self.entries
+                        .push_front((key, size.to_bits(), face, kind, width));
+                }
+            }
+            // Eviction or deque growth may have changed ownership even if the
+            // optional key allocation failed. Always publish that final state.
             self.publish_usage();
         }
         width
@@ -162,6 +174,8 @@ mod tests {
             ("Project Preferences", 13.0, TextFace::Ui),
             ("Project Preferences", 14.0, TextFace::Ui),
             ("Project Preferences", 13.0, TextFace::UiStrong),
+            ("Project Preferences", 13.0, TextFace::UiMedium),
+            ("Project Preferences", 13.0, TextFace::Terminal),
             ("Global Preferences", 13.0, TextFace::Ui),
             ("Units · µm", 13.0, TextFace::Mono),
         ] {
@@ -175,7 +189,7 @@ mod tests {
                 actual.to_bits()
             );
         }
-        assert_eq!(cache.entries.len(), 5);
+        assert_eq!(cache.entries.len(), 7);
     }
 
     #[test]
@@ -200,7 +214,7 @@ mod tests {
         );
         let large = "x".repeat(MAX_MEASUREMENT_TEXT_BYTES + 1);
         cache.measure(&large, 13.0, TextFace::Ui, || 1.0);
-        assert!(!cache.entries.iter().any(|entry| entry.0.as_ref() == large));
+        assert!(!cache.entries.iter().any(|entry| entry.0.as_str() == large));
         for n in 0..20 {
             cache.measure(
                 &format!("{n}{}", "x".repeat(8000)),
