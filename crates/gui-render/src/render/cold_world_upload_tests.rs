@@ -81,6 +81,7 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
                     - renderer.screen_upload_snapshot_bytes()
                     - renderer.glyph_upload_storage_bytes()
                     - renderer.atlas_page_metadata_bytes()
+                    - renderer.atlas_lookup_metadata_bytes()
                     <= CHUNK_BYTES as u64
                         + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
             );
@@ -94,6 +95,7 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
                 + renderer.screen_upload_snapshot_bytes()
                 + renderer.glyph_upload_storage_bytes()
                 + renderer.atlas_page_metadata_bytes()
+                + renderer.atlas_lookup_metadata_bytes()
         );
     }
     assert_eq!(submissions, 3);

@@ -2,6 +2,10 @@
 use super::*;
 
 impl Atlas {
+    pub(crate) fn lookup_metadata_bytes(&self) -> u64 {
+        self.glyphs.allocated_bytes()
+    }
+
     pub(crate) fn pending_metadata_bytes(&self) -> u64 {
         self.pending_uploads.allocated_bytes()
     }

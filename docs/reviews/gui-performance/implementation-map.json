@@ -17345,6 +17345,11 @@
           "work": "s4_atlas_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-storage/result.json",
           "status": "Atlas page/pending records and continuation references use shared admission; glyph lookup and private text accounting remain open"
+        },
+        {
+          "work": "s4_glyph_lookup_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json",
+          "status": "Atlas glyph lookup bucket capacity admitted before rasterization; private text accounting remains open"
         }
       ]
     },
@@ -17556,6 +17561,11 @@
           "work": "s4_atlas_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-storage/result.json",
           "status": "Atlas page/pending records and continuation references use shared admission; glyph lookup and private text accounting remain open"
+        },
+        {
+          "work": "s4_glyph_lookup_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json",
+          "status": "Atlas glyph lookup bucket capacity admitted before rasterization; private text accounting remains open"
         }
       ]
     },
@@ -35036,5 +35046,32 @@
       "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-storage/result.json"
+  },
+  "s4_glyph_lookup_work": {
+    "status": "Atlas glyph lookup bucket capacity admitted before rasterization; private text accounting remains open",
+    "base_commit": "eeb1444a",
+    "production_consumers": [
+      "Shared Atlas used by workspace and overlay text in default native and offscreen renderers"
+    ],
+    "retired_paths": [
+      "Unbudgeted HashMap glyph lookup allocation and growth"
+    ],
+    "behavior": [
+      "Datum-owned open-addressed lookup uses standard-library RandomState, exact CacheKey comparison and cached hashes for rehashing. No dependency addition or third-party source modification. Cached misses and glyph locations retain their existing semantics.",
+      "Bucket storage uses shared StagingVec under existing host16MiB/process64MiB staging limits. Old/new growth overlap is reserved before allocation and before rasterization; refusal preserves the old table. Pending upload work can drain before retry. Repack retains charged reusable buckets; reset/drop releases them.",
+      "atlas_lookup_metadata_bytes reports allocated bucket capacity and Datum allocator headers, including empty slots. GPU transfer limits and painter order remain unchanged."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 373 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 29.32s",
+      "focused": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 383 filtered out; finished in 0.32s",
+      "checks": "Full renderer run passed373 tests,11 filtered before the final collision and process-budget assertions. Final focused test passed; strict visual renderer/app all-target Clippy and fresh GUI build passed. Application tests were not rerun.",
+      "coverage": "Known-capacity, old/new overlap refusal, exact key/miss/value lookup, collision probing, update, repack reuse, release and process budget checks. Full renderer includes actual GPU text/atlas/current-content continuation and staging-resource oracles.",
+      "failed_attempt": "The isolated focused test initially measured9264 versus9224 bytes because first-use staging_process initialized its shared40-byte budget object inside the bucket-only scope. Full-suite initialization order hid this test attribution error. Initialize shared infrastructure outside the bucket scope and check process usage separately; preserve original failure. No production counter offset or tolerance was added."
+    },
+    "limits": [
+      "No full MEM-STAGING/ACC-02, S4/S5 or issue closure. Private font/raster/shaping/layout construction peaks, global observation metadata, large-work admission/continuation and original qualification remain unfinished. Inventory unchanged:16 implemented,11 recorded gaps,23 with no new defect asserted.",
+      "No latency/global performance acceptance. Original failed evidence, Console golden failure, GEFN and nonblocking resize preserved. No numerical cap, prototype or sequencing amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json"
   }
 }

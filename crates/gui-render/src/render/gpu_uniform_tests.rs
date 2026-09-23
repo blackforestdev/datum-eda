@@ -337,6 +337,7 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
             + renderer.renderer.screen_upload_snapshot_bytes()
             + renderer.renderer.glyph_upload_storage_bytes()
             + renderer.renderer.atlas_page_metadata_bytes()
+            + renderer.renderer.atlas_lookup_metadata_bytes()
     );
     let mut pending = Vec::new();
     renderer
@@ -357,6 +358,7 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
             + renderer.renderer.screen_upload_snapshot_bytes()
             + renderer.renderer.glyph_upload_storage_bytes()
             + renderer.renderer.atlas_page_metadata_bytes()
+            + renderer.renderer.atlas_lookup_metadata_bytes()
     );
     assert!(
         renderer

@@ -174,6 +174,7 @@ fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_uploa
         cpu + atlas.pending_cpu_bytes()
             + atlas.pending_metadata_bytes()
             + atlas.page_metadata_bytes()
+            + atlas.lookup_metadata_bytes()
     );
     let pressure = atlas
         .staging_budget
@@ -228,6 +229,9 @@ fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_uploa
     drop(draw);
     assert_eq!(
         atlas.staging_budget.used(),
-        atlas.pending_cpu_bytes() + atlas.pending_metadata_bytes() + atlas.page_metadata_bytes()
+        atlas.pending_cpu_bytes()
+            + atlas.pending_metadata_bytes()
+            + atlas.page_metadata_bytes()
+            + atlas.lookup_metadata_bytes()
     );
 }

@@ -3,7 +3,6 @@
 //! Shared by workspace and overlay drawing. Full PM045 accounting also requires
 //! CPU/font scratch, aggregate staging and cross-host qualification.
 use super::staging_vec::StagingVec;
-use std::collections::HashMap;
 
 use glyphon::{CacheKey, FontSystem, SwashCache, SwashContent};
 
@@ -12,6 +11,8 @@ use super::lifetime::{Kind, Owner, SubmissionRef, Tracked};
 mod chunks;
 #[path = "atlas/cpu_images.rs"]
 mod cpu_images;
+#[path = "atlas/glyph_map.rs"]
+mod glyph_map;
 #[path = "atlas/pending_metadata.rs"]
 mod pending_metadata;
 pub(crate) use cpu_images::UploadRequired;
@@ -87,7 +88,7 @@ pub(crate) struct Atlas {
     pub generation: u64,
     pub(super) uploads: Uploads,
     scatter: super::sparse_upload::Scatter,
-    glyphs: HashMap<CacheKey, Option<GlyphLocation>>,
+    glyphs: glyph_map::GlyphMap,
     pending_uploads: StagingVec<PendingUpload>,
     pending_copy_bytes: u64,
     local_budget: std::sync::Arc<super::budget::Budget>,
@@ -127,7 +128,7 @@ impl Atlas {
             generation: 1,
             uploads: Uploads::default(),
             scatter: super::sparse_upload::Scatter::default(),
-            glyphs: HashMap::new(),
+            glyphs: glyph_map::GlyphMap::default(),
             pending_uploads: Default::default(),
             pending_copy_bytes: 0,
             local_budget: super::budget::Budget::new(RETAINED_LIMIT),
@@ -268,7 +269,7 @@ impl Atlas {
     /// A CPU reset alone is not GPU release, and these bytes must remain charged.
     #[cfg(all(test, feature = "visual"))]
     pub(super) fn reset(&mut self) -> StagingVec<Page> {
-        self.glyphs = HashMap::new();
+        self.glyphs = glyph_map::GlyphMap::default();
         self.pending_uploads.clear();
         self.release_empty_pending_metadata();
         self.pending_copy_bytes = 0;
@@ -293,6 +294,10 @@ impl Atlas {
         }
         if self.pending_staging_bytes() >= cpu_images::CHUNK_BYTES {
             return Err(UploadRequired.into());
+        }
+        match self.glyphs.reserve_one(&self.staging_budget) {
+            Err(_) if self.has_pending_uploads() => return Err(UploadRequired.into()),
+            result => result?,
         }
         self.uploads.rasterizations += 1;
         let Some(image) = raster.get_image_uncached(fonts, key) else {

@@ -72,6 +72,7 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
                 - renderer.renderer.screen_upload_snapshot_bytes()
                 - renderer.renderer.glyph_upload_storage_bytes()
                 - renderer.renderer.atlas_page_metadata_bytes()
+                - renderer.renderer.atlas_lookup_metadata_bytes()
                 - renderer.renderer.pending_glyph_metadata_bytes()
                 <= 4 * 1024 * 1024
         );
@@ -139,6 +140,7 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
                     + renderer.renderer.screen_upload_snapshot_bytes()
                     + renderer.renderer.glyph_upload_storage_bytes()
                     + renderer.renderer.atlas_page_metadata_bytes()
+                    + renderer.renderer.atlas_lookup_metadata_bytes()
                     + renderer.renderer.pending_glyph_metadata_bytes()
             );
             if complete {
