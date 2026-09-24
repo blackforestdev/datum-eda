@@ -1,0 +1,65 @@
+{
+  "status": "Default shared text shaping reserves nested public output and Arc capacity before construction; private scratch construction remains unfinished",
+  "base_commit": "21b847d61c8f0577040cc1cc1e10734f04452958",
+  "production_consumers": [
+    "TextLayout cold paragraph preparation for shared workspace, terminal, overlay, Global/Project Preferences and New Project text"
+  ],
+  "retired_paths": [
+    "Default nested ShapeLine output and shared Arc creation before shaped-payload admission"
+  ],
+  "behavior": [
+    "Datum computes a conservative public-output bound from input length and installed Basic-shaper growth rules, then atomically reserves existing8MiB renderer/32MiB process capacity before entering the shaper. Printable ASCII uses a tighter bound for its single bidi span and indivisible alphanumeric runs. No dependency implementation is copied or modified.",
+    "The bound covers fresh span/word/glyph vector capacity and tracking headers plus the measured shared Arc container. Basic shaping emits at most one glyph per scalar and partitions input into words/spans. Vec growth is bounded by twice requested length with a four-element minimum; generic input uses four times(bytes+1) for each summed capacity. ASCII span reservation uses max(bytes+1,4); word capacity max(2*word_bound,4); glyph capacity at most2*bytes+4*word_bound. Per-slot tracking headers conservatively cover nested allocations.",
+    "After construction the lease shrinks to measured retained capacity before Arc allocation. Sharing adds no payload reservation. Publication transfers bytes to the existing retained owner and releases construction handles before any lock-held retirement. Abandonment releases the output and reservation. The existing one pressure retry evicts history, remaps indices and preserves required source input.",
+    "Convergence checks now follow admitted_indices, TextLayout::with_input and the extracted font owner; generation ordering, rich-span attributes and the single shared shaper remain required. Eleven guard regression tests pass."
+  ],
+  "proof": [
+    "Renderer run402passed/1failed/11filtered: production pixel, warm reuse, history pressure and resource tests pass; the sole failure was a new oversized fixture now below the corrected ASCII bound. Increasing only that fixture from32KiB to128KiB yields5/5 final font/admission tests. Strict visual renderer/app all-target Clippy passes.",
+    "Tests verify ASCII/Unicode/rich output capacity bounds, refusal before font-owner allocation peaks change, exact construction retention through Arc sharing, atomic retained publication and abandoned-output release. Existing large-history eviction/remapping and cross-owner cap tests pass in the renderer run.",
+    "Source health2309files, dependency authority, Cargo resource policy and convergence checks pass. Fresh offline visual app build is recorded in the build log."
+  ],
+  "failed_attempts": [
+    "First broad run was terminated after a retirement deadlock: an already-published shape still held a construction handle whose drop reacquired the owner registry lock. Publication now clears that handle before retirement; the second broad run completes.",
+    "First bound overestimated ASCII enough to reject the existing17KiB history fixture. Its corrected single-span/alphanumeric bound admits that fixture while preserving conservative admission. Second-run oversized test32KiB no longer exceeded the bound; only its fixture grew to128KiB and the final focused run passes."
+  ],
+  "limitations": [
+    "The bound is specific to the pinned Basic shaper and Rust Vec growth. A dependency/toolchain change requires re-review; the runtime capacity assertion detects unexpected changes but is not a substitute for pre-call proof. Conservative bounds may refuse input whose final compact output would fit; refusal follows the existing explicit failure path, never silent omission or reduced AA.",
+    "Private font/raster/bidi/attribute synchronous construction admission remains unfinished. This does not bound all library allocations, establish complete MEM/ACC acceptance, or close any of the six compound remaining S4 predicates. Existing21implemented/6gaps/23no-new-defect inventory remains.",
+    "No dependency, vendor, license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize, all S5 qualification and historical failures. Owner/Copilot engine edits excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/shape-output-admission/result.json",
+  "logs": {
+    "renderer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shape-output-admission/renderer-initial.log.gz",
+      "uncompressed_sha256": "5155e2ec7a250ac2cfc9388a539f46c1241dfa08a6e09bd0ff44b8ff23e287d2"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shape-output-admission/renderer.log.gz",
+      "uncompressed_sha256": "db99704b44230a275d67803f271025fa64a6156d538456926f2c3719a321cb34"
+    },
+    "font-final": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shape-output-admission/font-final.log.gz",
+      "uncompressed_sha256": "2e3958f710c80ded77732bb7e302467952fd4639fd02acc27bb7b789ab5f505b"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shape-output-admission/clippy.log.gz",
+      "uncompressed_sha256": "7a1a1da486660c0d9a5837d1894d40bc917cacfbe38ddc0a6ae1026ff2366d93"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/shape-output-admission/build.log.gz",
+      "uncompressed_sha256": "042b7069fee20d655a315d6634467fd5e772fcec22af1bf98fe16eb9ab44efa0"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/font_owner.rs": "cf8ebd147ba0e808bfe915620359373c261ed30ddde292c0d66241d0e63e45da",
+    "crates/gui-render/src/font_shape_admission.rs": "a9c0b8882a173bbb8f38cef2515a29899df2cb491a3a91347220af82d6690e18",
+    "crates/gui-render/src/text_layout.rs": "7fb12031595139ab385b988e938cb638026546a99d24ac87eb5206718c21055a",
+    "crates/gui-render/src/render/text_cache_budget.rs": "ac988db9cea279e318015df906bcf4a0152ae5867d64b03dc03c1bf8d3336c41",
+    "scripts/check_gui_agent_terminal_convergence.py": "9e159f685104e70ebe8076878a877daf02d4aa73b48c09b96aefc01b20ada9c2",
+    "scripts/test_gui_agent_terminal_convergence.py": "5373232ab2b90feae481656e927ca46e48ed54bb604f108d6cba0e2623d18580"
+  },
+  "reviewed_dependency_source": {
+    "cosmic-text-0.15.0/src/shape.rs": "615110123ec7e3ab29d0dc17de8c717cab1c8ac3b02f4024fe82b54f16ddd191"
+  },
+  "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)"
+}
