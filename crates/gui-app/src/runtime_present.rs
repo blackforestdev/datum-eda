@@ -17,25 +17,28 @@ impl Runtime {
         self.retained_scene_cache.retry_construction();
         self.schematic_scene_accounting.retry_construction();
         let render_started = std::time::Instant::now();
-        let acquire_started = std::time::Instant::now();
-        append_gui_verbose_diagnostic_line(|| {
-            format!("render begin {}x{}", self.config.width, self.config.height)
-        });
-        append_gui_verbose_diagnostic_line(|| "render acquire begin");
-        let Some(mut frame) = self.surface_transaction.acquire(
+        if !self.surface_transaction.begin_frame(
             &self.surface,
             &self.device,
             &self.config,
             &self.device_health,
-        )?
-        else {
+        )? {
             return Ok(false);
-        };
+        }
         let probe = gui_runtime_support::phase_probe::Probe::start("prepare");
-        let acquire_elapsed = acquire_started.elapsed();
-        append_gui_verbose_diagnostic_line(|| "render acquire end");
-        let view = frame.view();
         if gui_runtime_support::native_frame_probe::clear_only() {
+            let acquire_started = std::time::Instant::now();
+            let Some(mut frame) = self.surface_transaction.acquire(
+                &self.surface,
+                &self.device,
+                &self.config,
+                &self.device_health,
+            )?
+            else {
+                return Ok(false);
+            };
+            let acquire_elapsed = acquire_started.elapsed();
+            let view = frame.view();
             let submission = gui_runtime_support::native_frame_probe::submit_clear(
                 &self.device,
                 &self.queue,
@@ -57,15 +60,12 @@ impl Runtime {
             });
             return Ok(true);
         }
-        if self.renderer.prepare_surface_attachment(
+        self.renderer.prepare_surface_attachment(
             &self.device,
             self.config.width,
             self.config.height,
             || !self.device_health.failed(),
-        )? {
-            self.surface_transaction
-                .observe_attachment(&self.renderer, &frame);
-        }
+        )?;
         let scene_started = std::time::Instant::now();
         let retained_was_cached = self.retained_scene.is_some();
         let prepared_was_cached = self.prepared_scene.is_some();
@@ -114,26 +114,32 @@ impl Runtime {
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "renderer render begin");
-        let rendered = self.renderer.render_with_submission(
+        use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
+        let mut target = NativeRenderTarget::new(
+            &mut self.surface_transaction,
+            &self.surface,
             &self.device,
             &self.queue,
-            &view,
+            &self.config,
+            &self.device_health,
+        );
+        let rendered = self.renderer.render_with_acquisition(
+            &self.device,
+            &self.queue,
             prepared,
             retained,
             schematic_retained,
             self.config.width,
             self.config.height,
-            &mut |submission| {
-                self.surface_transaction
-                    .submitted(&mut frame, &self.queue, submission)
-            },
+            &mut target,
+            &mut NativeRenderTarget::acquire,
+            &mut NativeRenderTarget::submitted,
         );
-        self.surface_transaction
-            .observe_attachment(&self.renderer, &frame);
+        let (frame, acquire_elapsed) = target.finish(&self.renderer);
         if !rendered? {
-            self.surface_transaction.defer_upload_continuation();
             return Ok(false);
         }
+        let frame = frame.context("rendered native frame must own an acquisition")?;
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(|| {
             format!("renderer render end {}ms", renderer_elapsed.as_millis())

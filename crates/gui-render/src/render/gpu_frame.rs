@@ -1,5 +1,7 @@
 //! Full-frame GPU encoding and submission; resource lifetime lives on Renderer.
 use super::*;
+#[path = "gpu_frame_target.rs"]
+pub(crate) mod target;
 
 impl Renderer {
     #[allow(clippy::too_many_arguments)]
@@ -15,7 +17,7 @@ impl Renderer {
         height: u32,
     ) -> anyhow::Result<()> {
         // Synchronous convenience for offscreen/capture clients. Native hosts use
-        // render_with_submission and yield to the coordinator between chunks.
+        // render_with_acquisition and yield to the coordinator between chunks.
         loop {
             if self.render_with_submission(
                 device,
@@ -34,9 +36,9 @@ impl Renderer {
         }
     }
 
-    /// Native hosts observe the actual frame submission before any fallible
-    /// post-submit measurement collection or presentation can discard the frame.
-    /// False means an upload-only submission: retain damage and retry after completion.
+    /// Offscreen callers already own their target and observe every submission.
+    /// Native hosts must use render_with_acquisition to avoid acquiring swapchain
+    /// images for upload-only turns. False retains pending damage in either path.
     #[allow(clippy::too_many_arguments)]
     pub fn render_with_submission(
         &mut self,
@@ -50,56 +52,43 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
-        self.frame_consumers = prepared.consumer_incidence();
-        let _resource_scope = self.resource_host.enter_for(self.frame_consumers.all());
-        self.atlas.owner.begin_upload_frame();
-        let result = self.render_submission_inner(
+        self.render_with_acquisition(
             device,
             queue,
-            target,
             prepared,
             retained,
             schematic_retained,
             width,
             height,
-            on_submitted,
-        );
-        self.atlas
-            .owner
-            .finish_upload_frame(result.as_ref().ok().copied());
-        if result.is_err() && !self.text_preparation.is_continuing() {
-            // No layout borrow survives an error. Failed frames must obey the
-            // same label retention caps as submitted full/dialog frames. Do not
-            // trim pending continuations, including temporarily refused copies:
-            // their current layouts and already copied glyph pages remain reusable.
-            self.text_buffers.finish_frame();
-            self.text_preparation.cancel();
-            self.text_renderer.cancel_preparation();
-            self.menu_overlay_text_renderer.cancel_preparation();
-        }
-        result
+            &mut (),
+            &mut |_| Ok(Some(target.clone())),
+            &mut |_, submission| on_submitted(submission),
+        )
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn render_submission_inner(
+    pub(super) fn render_submission_inner(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
-        target: &wgpu::TextureView,
+        target: &mut dyn target::Target,
         prepared: &PreparedScene,
         retained: &RetainedScene,
         schematic_retained: Option<&RetainedScene>,
         width: u32,
         height: u32,
-        on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
-        if self.resume_glyph_upload(device, queue, on_submitted)? {
+        if self.resume_glyph_upload(device, queue, &mut |submission| {
+            target.submitted(submission)
+        })? {
             return Ok(false);
         }
         if self.cold_world.active
             && self.world_upload_sources_match(prepared, retained, schematic_retained)
         {
-            self.submit_world_upload_chunk(device, queue, on_submitted)?;
+            self.submit_world_upload_chunk(device, queue, &mut |submission| {
+                target.submitted(submission)
+            })?;
             return Ok(false);
         }
         self.cold_world.active = false;
@@ -111,15 +100,7 @@ impl Renderer {
         self.cancel_vertex_uploads();
         self.cancel_uniform_uploads();
         if prepared.is_overlay_only() {
-            return self.render_overlay_only(
-                device,
-                queue,
-                target,
-                prepared,
-                width,
-                height,
-                on_submitted,
-            );
+            return self.render_overlay_only(device, queue, target, prepared, width, height);
         }
         let render_started = std::time::Instant::now();
         let panel_vertices = prepared.panel_vertices();
@@ -181,21 +162,29 @@ impl Renderer {
             )?;
         }
         if self.pending_world_upload_bytes() != 0 {
-            self.submit_world_upload_chunk(device, queue, on_submitted)?;
+            self.submit_world_upload_chunk(device, queue, &mut |submission| {
+                target.submitted(submission)
+            })?;
             return Ok(false);
         }
         self.sync_terminal_graphics(device, queue, prepared, width, height)?;
-        if self.submit_terminal_upload_chunk(device, queue, on_submitted)? {
+        if self.submit_terminal_upload_chunk(device, queue, &mut |submission| {
+            target.submitted(submission)
+        })? {
             return Ok(false);
         }
         let upload_elapsed = upload_started.elapsed();
         let text_prepare_started = std::time::Instant::now();
+        let on_submitted = &mut |submission| target.submitted(submission);
         let Some((text_cache_stats, skipped_text_prepare)) =
             self.prepare_text_uploads(device, queue, prepared, width, height, false, on_submitted)?
         else {
             return Ok(false);
         };
         let text_prepare_elapsed = text_prepare_started.elapsed();
+        let Some(view) = target.acquire()? else {
+            return Ok(false);
+        };
         let mut measurement = self.begin_gpu_measurement()?;
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
@@ -209,7 +198,7 @@ impl Renderer {
                 label: Some("datum-gui-render-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: Some(target),
+                    resolve_target: Some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
@@ -410,7 +399,7 @@ impl Renderer {
         self.encode_terminal_graphics(
             &mut encoder,
             &msaa_view,
-            target,
+            &view,
             false,
             measurement.as_mut(),
         )?;
@@ -423,7 +412,7 @@ impl Renderer {
                 label: Some("datum-gui-text-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: Some(target),
+                    resolve_target: Some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Load,
@@ -441,13 +430,7 @@ impl Renderer {
         }
         let text_encode_elapsed = text_encode_started.elapsed();
 
-        self.encode_terminal_graphics(
-            &mut encoder,
-            &msaa_view,
-            target,
-            true,
-            measurement.as_mut(),
-        )?;
+        self.encode_terminal_graphics(&mut encoder, &msaa_view, &view, true, measurement.as_mut())?;
 
         // Composite the menu card and its text after the main text pass.
         if !menu_overlay_vertices.is_empty() {
@@ -459,7 +442,7 @@ impl Renderer {
                     label: Some("datum-gui-menu-overlay-pass"),
                     color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                         view: &msaa_view,
-                        resolve_target: Some(target),
+                        resolve_target: Some(&view),
                         depth_slice: None,
                         ops: wgpu::Operations {
                             load: wgpu::LoadOp::Load,
@@ -497,7 +480,7 @@ impl Renderer {
                         label: Some("datum-gui-menu-overlay-text-pass"),
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                             view: &msaa_view,
-                            resolve_target: Some(target),
+                            resolve_target: Some(&view),
                             depth_slice: None,
                             ops: wgpu::Operations {
                                 load: wgpu::LoadOp::Load,
@@ -537,7 +520,7 @@ impl Renderer {
         if let Some(batch) = uploads {
             batch.hold(queue);
         }
-        on_submitted(submission);
+        target.submitted(submission);
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(queue, measurement)?;
         let submit_elapsed = submit_started.elapsed();

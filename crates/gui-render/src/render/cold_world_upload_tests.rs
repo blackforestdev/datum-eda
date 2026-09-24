@@ -287,3 +287,81 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
     rx.recv().unwrap().unwrap();
     assert_eq!(&*readback.slice(..).get_mapped_range(), expected);
 }
+
+#[test]
+#[ignore = "requires local Vulkan GPU; more upload turns than swapchain images"]
+fn cold_startup_acquires_once_after_more_than_four_upload_submissions() {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+        backends: wgpu::Backends::VULKAN,
+        ..Default::default()
+    });
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let format = wgpu::TextureFormat::Rgba8UnormSrgb;
+    let mut renderer = Renderer::new(&device, &queue, format, 4).unwrap();
+    let state = crate::gpu_surface_pass::board_fixture_state();
+    let mut retained = RetainedScene::from_workspace(&state, 960, 720);
+    let mut vertices = retained.world_vertices.to_vec();
+    vertices.resize(1_100_000, vertices[0]);
+    retained.world_vertices = SharedGeometry::for_document(vertices, "late-acquire-proof");
+    let prepared = PreparedScene::from_workspace_for_surface(
+        &state,
+        64,
+        64,
+        1.0,
+        crate::CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    let texture = device.create_texture(&wgpu::TextureDescriptor {
+        label: Some("late-acquire-proof"),
+        size: wgpu::Extent3d {
+            width: 960,
+            height: 720,
+            depth_or_array_layers: 1,
+        },
+        mip_level_count: 1,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+        view_formats: &[],
+    });
+    let mut counts = (0usize, 0usize);
+    let mut rendered = false;
+    for _ in 0..16 {
+        let before = counts.1;
+        rendered = renderer
+            .render_with_acquisition(
+                &device,
+                &queue,
+                &prepared,
+                &retained,
+                None,
+                960,
+                720,
+                &mut counts,
+                &mut |counts| {
+                    counts.0 += 1;
+                    anyhow::ensure!(
+                        counts.0 <= 4,
+                        "swapchain exhausted by discarded upload frames"
+                    );
+                    Ok(Some(texture.create_view(&Default::default())))
+                },
+                &mut |counts, _| counts.1 += 1,
+            )
+            .unwrap();
+        assert_eq!(counts.1, before + 1, "one submission per admitted turn");
+        assert_eq!(counts.0, usize::from(rendered), "uploads must not acquire");
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        if rendered {
+            break;
+        }
+    }
+    assert!(rendered);
+    assert!(
+        counts.1 > 5,
+        "must exceed both three- and four-image swapchains"
+    );
+    assert_eq!(counts.0, 1);
+}

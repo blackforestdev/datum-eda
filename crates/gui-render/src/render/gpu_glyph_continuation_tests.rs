@@ -44,22 +44,28 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
         });
         let view = target.create_view(&Default::default());
         let mut submissions = 0;
+        let mut acquisitions = 0;
         let first = renderer
             .renderer
-            .render_with_submission(
+            .render_with_acquisition(
                 &renderer.device,
                 &renderer.queue,
-                &view,
                 &prepared,
                 &retained,
                 None,
                 960,
                 720,
-                &mut |_| submissions += 1,
+                &mut acquisitions,
+                &mut |acquisitions| {
+                    *acquisitions += 1;
+                    Ok(Some(view.clone()))
+                },
+                &mut |_, _| submissions += 1,
             )
             .unwrap();
         assert!(!first, "oversized cold atlas must yield before drawing");
         assert_eq!(submissions, 1);
+        assert_eq!(acquisitions, 0);
         let upload = renderer.renderer.last_upload_frame().unwrap();
         assert_eq!(upload.rendered, Some(false));
         assert_eq!(upload.totals.batches, 1);
@@ -101,16 +107,17 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
         assert!(
             renderer
                 .renderer
-                .render_with_submission(
+                .render_with_acquisition(
                     &renderer.device,
                     &renderer.queue,
-                    &view,
                     &prepared,
                     &retained,
                     None,
                     960,
                     720,
-                    &mut |_| panic!("refused copy submitted")
+                    &mut (),
+                    &mut |_| panic!("refused upload acquired a swapchain image"),
+                    &mut |_, _| panic!("refused copy submitted")
                 )
                 .is_err()
         );
@@ -128,16 +135,20 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
         for _ in 0..8 {
             complete = renderer
                 .renderer
-                .render_with_submission(
+                .render_with_acquisition(
                     &renderer.device,
                     &renderer.queue,
-                    &view,
                     &prepared,
                     &retained,
                     None,
                     960,
                     720,
-                    &mut |_| submissions += 1,
+                    &mut acquisitions,
+                    &mut |acquisitions| {
+                        *acquisitions += 1;
+                        Ok(Some(view.clone()))
+                    },
+                    &mut |_, _| submissions += 1,
                 )
                 .unwrap();
             renderer
@@ -158,6 +169,7 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
                     + renderer.renderer.atlas_lookup_metadata_bytes()
                     + renderer.renderer.pending_glyph_metadata_bytes()
             );
+            assert_eq!(acquisitions, usize::from(complete));
             if complete {
                 break;
             }

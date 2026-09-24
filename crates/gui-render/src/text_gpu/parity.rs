@@ -258,14 +258,18 @@ fn owned_draw_matches_installed_text_renderer() {
                         "unchanged preparation must reuse its instance allocation"
                     );
                     let differing = actual
-                        .chunks_exact(4)
-                        .zip(expected.chunks_exact(4))
+                        .as_chunks::<4>()
+                        .0
+                        .iter()
+                        .zip(expected.as_chunks::<4>().0.iter())
                         .filter(|(a, b)| a != b)
                         .count();
                     if differing != 0 {
                         for (name, bytes) in [("actual", &actual), ("expected", &expected)] {
                             let colored: Vec<_> = bytes
-                                .chunks_exact(4)
+                                .as_chunks::<4>()
+                                .0
+                                .iter()
                                 .enumerate()
                                 .filter(|(_, p)| *p != &bytes[..4])
                                 .map(|(i, _)| (i % 256, i / 256))
@@ -280,8 +284,10 @@ fn owned_draw_matches_installed_text_renderer() {
                             );
                         }
                         for (index, (a, b)) in actual
-                            .chunks_exact(4)
-                            .zip(expected.chunks_exact(4))
+                            .as_chunks::<4>()
+                            .0
+                            .iter()
+                            .zip(expected.as_chunks::<4>().0.iter())
                             .enumerate()
                             .filter(|(_, (a, b))| a != b)
                             .take(12)
