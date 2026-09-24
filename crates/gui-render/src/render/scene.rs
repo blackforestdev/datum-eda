@@ -4,6 +4,7 @@ mod board_hit_construction;
 mod hit_construction;
 #[path = "prepared_scene_access.rs"]
 mod prepared_scene_access;
+pub use prepared_scene_access::PreparedScene;
 #[path = "scene_console.rs"]
 mod scene_console;
 #[path = "schematic_retained.rs"]
@@ -58,7 +59,7 @@ fn render_phase1_shell_chrome(
     layout: &ShellLayout,
     panel_quads: &mut global_preferences_primitives::ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
-) {
+) -> crate::resource_consumers::Consumers {
     // Menu bar carries only a bottom hairline (Design Book .menubar
     // border-bottom), never a boxed 4-sided outline.
     panel_quads.push(Quad::from_rect(
@@ -99,7 +100,7 @@ fn render_phase1_shell_chrome(
     }
     shell_identity::render_shell_identity(state, layout, panel_quads, text_runs);
 
-    render_viewport_panes(
+    let panes = render_viewport_panes(
         layout,
         &state.ui.layout,
         state.schematic_scene.is_some(),
@@ -107,6 +108,7 @@ fn render_phase1_shell_chrome(
         text_runs,
     );
     status_bar::render_status_bar(state, layout, panel_quads, text_runs);
+    panes
 }
 
 // Workspace pane-chrome rendering (viewport panes, per-pane headers, and

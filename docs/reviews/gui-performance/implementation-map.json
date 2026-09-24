@@ -20186,14 +20186,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete shared-resource consumer incidence for logical panes. Common uploads now carry destination IDs/generations, cumulative source/transfer totals and latest renderer owner/attempt contributions that join native frame receipts. Exact screen snapshots and bounded receipt metadata are implemented; original S5 qualification and uncached CTL-02 transfer disposition remain unchanged."
-        ],
+        "implementation_due": "Implemented at S4: exact screen snapshots, bounded upload receipts and production shared-resource consumer incidence. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "Only exact dirty ranges plus documented alignment uploaded",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "REUSE-SCREEN implementation complete; original acceptance rule and qualification remain unqualified.",
+        "s4_implementation_evidence": "s4_upload_frame_work.consumer_completion"
       },
       "s4_implementation_progress": [
         {
@@ -20245,6 +20244,11 @@
           "work": "s4_allocation_state_work.renderer_origin_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-host/result.json",
           "status": "Default GPU allocations retain renderer-origin identity linked to native window/queue receipts"
+        },
+        {
+          "work": "s4_upload_frame_work.consumer_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/result.json",
+          "status": "Production shared-resource consumer incidence implemented; REUSE-SCREEN implementation complete, original S5 qualification retained"
         }
       ]
     },
@@ -32581,10 +32585,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 7,
+    "rows_with_recorded_implementation_gaps": 6,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 20,
+    "rows_with_implementation_completed_at_s4": 21,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -32605,7 +32609,8 @@
       "MEM-GPU-TOTAL",
       "MEM-WORLD-CPU",
       "MEM-WORLD-HISTORY",
-      "MEM-REPLACEMENT"
+      "MEM-REPLACEMENT",
+      "REUSE-SCREEN"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -35762,7 +35767,7 @@
     "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-lookup/result.json"
   },
   "s4_upload_frame_work": {
-    "status": "Shared submitted upload totals attributed to render attempts and native surface receipts; finer pane attribution and full qualification remain open",
+    "status": "Production shared-resource consumer incidence implemented; REUSE-SCREEN implementation complete, original S5 qualification retained",
     "base_commit": "07db6e04",
     "production_consumers": [
       "Default Renderer::render_with_submission used by main and shared auxiliary native hosts",
@@ -35867,6 +35872,113 @@
         "Owner/Copilot product_tests.rs changes are excluded."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json"
+    },
+    "consumer_completion": {
+      "status": "Production shared-resource consumer incidence implemented; REUSE-SCREEN implementation complete, original S5 qualification retained",
+      "base_commit": "fe01c647e742b15610554a882edbbb5a6b286d02",
+      "production_consumers": [
+        "Default Main shell, Board/Schematic/Revision pane chrome and world streams, Layers/Navigator/Inspector, menus, Console, Terminal and terminal overlays",
+        "Default shared Global Preferences, Project Preferences and New Project native renderer adapters",
+        "Shared screen/world/uniform/text/atlas/terminal resource owners, retained references and common submitted upload receipts"
+      ],
+      "retired_paths": [
+        "Unattributed shared logical-consumer streams at production composition and submission",
+        "Host-only upload receipts lacking logical-consumer incidence",
+        "Reference reporting that could not preserve a prior consumer set after resource reuse"
+      ],
+      "behavior": [
+        "Composition records actual producer classes for shared streams; native adapters explicitly select the actual dialog class. Fixed bitsets carry incidence to allocation identity, renderer attempt and submitted destination contribution. Shared capacity and upload bytes count once, never once per consumer.",
+        "Prepared/submitted references capture their consumer set and release independent fixed counters on drop. Retagging a reusable resource preserves older references and upload receipts. Existing world allocation/PaneId/surface associations remain available alongside class incidence.",
+        "Atlas pages report the producer union of their shared text streams, not exclusive per-glyph byte shares. Observation fields are sampled atomics, not a global transaction. Warm reuse preserves zero uploads. Opt-in timing allocations use the same incidence owner.",
+        "PreparedScene storage moves beside its existing access owner; actual root logical size falls from6604 to6557. The stale6855 ledger is ratcheted to6557, with no source-health exception."
+      ],
+      "proof": [
+        "400 selected serial renderer tests passed before final pane-header provenance adjustment; all4 consumer-filter tests passed after that adjustment. Actual GPU workspace and real Global/Project/New dialog painters reconcile resource and receipt classes, warm pixels and zero uploads. Lifetime proof covers retagging, concurrent old/new holds and release without multiplying capacity.",
+        "Final strict visual renderer/app all-target Clippy passed. Final offline application build result recorded in build log. Source health2308files, dependency authority and unchanged-route traceability passed before evidence update.",
+        "Final fresh offline GUI build passed. Source-health regression13/13 and HEAD-relative structural check passed. Required drift run passed workspace formatting/Clippy and preceding governance gates, then stopped on two existing text-convergence source-marker failures (indices/TextLayout::new). Replacing modified Rust source reads with HEAD reproduces both failures. Remaining drift gates unrun; no complete battery pass claimed."
+      ],
+      "failed_attempts": "Initial compile used unsupported borrowed StagingVec iteration; fixed to iter(). Initial renderer run399passed/1failed because test expected closed menu panel geometry; actual closed menu contributes text only. Corrected test explicitly distinguishes both streams. Original logs retained.",
+      "limitations": [
+        "No all-consumer native, negative-control, endurance or original REUSE-SCREEN acceptance claim. S4 remains active and S5 qualification remains pending.",
+        "Six compound implementation gaps remain: AC-05,HP08-03,MEM-SHAPED-LOCAL,MEM-SHAPED-TOTAL,MEM-STAGING-LOCAL,MEM-STAGING-TOTAL. Synchronous shape/font/raster/bidi/attribute construction peaks still require bounded admission; existing accounting and post-call eviction do not establish it.",
+        "No dependency, vendor, license, prototype, numerical cap or sequencing change. Preserve GEFN, nonblocking resize and historical failures. Owner/Copilot engine test edits excluded."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/result.json",
+      "logs": {
+        "check-initial": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/check-initial.log.gz",
+          "uncompressed_sha256": "6f25641df620870b44de93bb2650debd0cfb622e2270516f70945a3d778522e4"
+        },
+        "renderer-initial": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/renderer-initial.log.gz",
+          "uncompressed_sha256": "cb0548235ee5b02f567fb8d1787bc01e4076b26e4570a3b6b62379685fd68d8f"
+        },
+        "renderer": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/renderer.log.gz",
+          "uncompressed_sha256": "df59ad01c86c9b16c5d15bc4338a87fbf51c95e089698b2cb3ba5aadf3603a79"
+        },
+        "consumer-final": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/consumer-final.log.gz",
+          "uncompressed_sha256": "9d1c547adf9e0c63954b264484286801f52437afd61152d2b7eba72316742828"
+        },
+        "clippy": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/clippy.log.gz",
+          "uncompressed_sha256": "f1010832849852c2f5eff1016d9180c082c2d494d08b826c10ec7f6eb447fca4"
+        },
+        "build": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/build.log.gz",
+          "uncompressed_sha256": "c27aea638bb894b037b7df6d224f0b5d85b944c2603944ffcbe10d4f7d7119e0"
+        },
+        "drift": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/drift.log.gz",
+          "uncompressed_sha256": "d513931c3c15911225031f83e8d6c72bf54b720e56334628275a456fb96e23bd"
+        },
+        "convergence-head": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/convergence-head.log.gz",
+          "uncompressed_sha256": "38023fa9f67974d5adc26524bd5b8886d601504fee96d8976332d8ca126e871e"
+        },
+        "source-health": {
+          "path": "docs/reviews/gui-performance/implementation/S4/consumer-incidence/source-health.log.gz",
+          "uncompressed_sha256": "e33926eb17e3d946086211c294c6dcdba947b2d2cc14b996372099d5de1bf8a5"
+        }
+      },
+      "source_sha256": {
+        "crates/gui-app/src/global_preferences_window.rs": "5bc0c735135d11749bfadea7135d023b10ba1ed0b31b4988b4ef47a24b1b96ee",
+        "crates/gui-render/src/render/cold_world_upload.rs": "421d62956845ed47e53f4a847ed2db9509a086433220225d109b7a2dc89e47c2",
+        "crates/gui-render/src/render/frame_preparation.rs": "acea23ea9706b851710a8450b153ce776f2feac9a030d68c96199e37970ae841",
+        "crates/gui-render/src/render/glyph_upload_continuation.rs": "1719bcbd4c18c4e73217f6c032c9aface0ebeacb2c27968f0acf98e8e39a4f2c",
+        "crates/gui-render/src/render/gpu.rs": "9018c5368ff65c527d9519c430f0b9d084ef68a02f4b0598d054439684aa9fc4",
+        "crates/gui-render/src/render/gpu_frame.rs": "9aaaf3ff278505f9b573e29027d3a56fe6091b1f01c7c3f97ad81b04921933a7",
+        "crates/gui-render/src/render/gpu_init.rs": "143dce73c3ae03c267289dfae1732b67dcf090528607ae26176b047800431dbf",
+        "crates/gui-render/src/render/gpu_measurements.rs": "626e2ac432b497f7e34253565d96e0c623d82457d979ae1697206f66f94d5676",
+        "crates/gui-render/src/render/gpu_overlay_tests.rs": "8ecf6816ac355d5ef7c0db5ac464b962504bd46f10a2ee2b6aa8fa7a9a308552",
+        "crates/gui-render/src/render/gpu_surface.rs": "ca6a0792d95d3608790a921b0f8e78f93564b11db2d2cab8dc7d187abb6dcbf0",
+        "crates/gui-render/src/render/gpu_surface_pass.rs": "25e06fbdd7e24ac7702ac76379d88f1686dc93eaab0eb37ba40c9abea27c1191",
+        "crates/gui-render/src/render/gpu_text.rs": "21d2f0f53c0982257d9fcfdcd7c4f1d24e4a2c58c14f70efb88c46d0a9490155",
+        "crates/gui-render/src/render/new_project_scene.rs": "77b2009d1475fff2185e3382c7d3a1a69d5fbfa729956a19eaf65ef67fb7c8e4",
+        "crates/gui-render/src/render/pane_chrome.rs": "0956e69087bae2a75151947eead08960b42190da967252c9d8ec00b32f37480d",
+        "crates/gui-render/src/render/preferences_scene.rs": "ffcbe7af988d8faf453e1bd5db8fdbc650bb09b46931e0558fec7d2a896e587c",
+        "crates/gui-render/src/render/prepared_scene_access.rs": "5a4003b96f95e697ce0f1352a77e58dc1e319f12c9ca8d613b1b8ad6f0659bef",
+        "crates/gui-render/src/render/renderer_state.rs": "a262ad0e75a2ec2f43db43aad1f7d08ea48830462dba97608b7587d7cf864423",
+        "crates/gui-render/src/render/retained_buffer.rs": "fde56f570a770eb9aae83932426cfa75b892ec22d7fd93da75725a8668d6e01a",
+        "crates/gui-render/src/render/scene.rs": "85ff74b45163c39691dec635c0c62189da3914c52cf3cefaf7cd715b6b61cacf",
+        "crates/gui-render/src/render/screen_buffer.rs": "b14f3d90fb737b15d788ac8fab5e0650aa25d3edd2f7e2704a82e37f11d73d82",
+        "crates/gui-render/src/render/terminal_graphic_texture.rs": "107f8ecde7b0359d36f4b862fabf3be237f1ed62bc98b7bfbd5483852d60b58c",
+        "crates/gui-render/src/render/terminal_graphics.rs": "8efaf5a683fc227d51878e3cbf5c4c4c7567bd129f5f01c53b8910593d66e9c8",
+        "crates/gui-render/src/render/terminal_upload.rs": "4515b8baeb2ffe2e819e7d1e1b208ae012c89f86c510fdd557e9902052b4426c",
+        "crates/gui-render/src/render/types.rs": "039161c26e7d3c2eaf33b9f7fe8cd696b27fbee0ebb9e3c97357214caf9ab1a1",
+        "crates/gui-render/src/render/uniform_buffer.rs": "9fb720a573246d273a015ff8a9b246442070e4093cc07f7b2ff167c83de06430",
+        "crates/gui-render/src/render/vertex_allocation.rs": "1f24453f0c896925d4195a7a7b5794b0f50f4705657f50c94961308260b23484",
+        "crates/gui-render/src/text_gpu/allocation_host.rs": "4ff9074b9e10b6fa191a41044da9cdbbfa87b1f95bd0c41e3d00e03b6fe0e910",
+        "crates/gui-render/src/text_gpu/atlas.rs": "4b1f0152a0360519ddad2cd2c9a433a045d8593171375ba62e2d75e67da09ccb",
+        "crates/gui-render/src/text_gpu/draw.rs": "816a4135b339e4933f2f0e3d0ff650f1c0ece5088f98db2f9653b7728e61df4e",
+        "crates/gui-render/src/text_gpu/lifetime.rs": "edc7f7d1318ce74707bc29fc7ce516b06ea7dadb13b6ca4aed8ec7eb1230e662",
+        "crates/gui-render/src/text_gpu/lifetime_state.rs": "5b4a05b5fdc291b11c97a78eab4e7c1ed635123eb4500bd033316690d49fe481",
+        "crates/gui-render/src/text_gpu/lifetime_tests.rs": "9db6d81bd4abe4486cb487c4205e4debd79ad574ea75cf9097186c8ebbd3b2ac",
+        "crates/gui-render/src/text_gpu/upload_totals.rs": "3cb10e029022f803c4967549e15fe1484f266e01b219ce253dfeaec75dc3865d",
+        "crates/gui-render/src/render/resource_consumers.rs": "0128bb6b96c3478729448efd747bcaf624481d278fcb56f2c989e71fe3fbbad7",
+        "crates/gui-render/src/render/gpu_consumer_tests.rs": "8f5d0cdc7aad2f986bea441682a15c298d5c9a2c4c2a26699403e9ea88c944d9"
+      }
     }
   },
   "s4_text_owner_reconciliation": {

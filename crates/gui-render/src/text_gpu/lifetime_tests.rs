@@ -1,4 +1,43 @@
 use super::*;
+use crate::resource_consumers::Consumer;
+
+#[test]
+fn shared_consumer_incidence_survives_retagging_until_each_reference_releases() {
+    let owner = Owner::new();
+    let allocation = owner.track((), 64, 1, Kind::Vertex);
+    let first = Consumers::from(Consumer::Main).union(Consumer::Menu.into());
+    allocation.set_consumers(first);
+    let prepared = allocation.prepared_ref();
+    let submitted = allocation.submission_ref();
+    let receipt = allocation.upload_target().receipt(4, 4);
+    allocation.set_consumers(Consumer::Global.into());
+    let next = allocation.submission_ref();
+    receipt.commit(Some((owner.id(), 1)));
+    let record = owner.records()[0];
+    assert_eq!(record.bytes, 64, "incidence never multiplies capacity");
+    assert_eq!(record.consumers, Consumer::Global.into());
+    assert_eq!(record.prepared_consumers, first);
+    assert_eq!(
+        record.submitted_consumers,
+        first.union(Consumer::Global.into())
+    );
+    assert_eq!(
+        record.last_upload.unwrap().consumers,
+        first,
+        "receipt captures the consumers of that upload, not a later frame"
+    );
+    drop(submitted);
+    assert_eq!(
+        owner.records()[0].submitted_consumers,
+        Consumer::Global.into()
+    );
+    drop(next);
+    assert_eq!(owner.records()[0].submitted_consumers, Consumers::default());
+    drop(allocation);
+    assert_eq!(owner.records()[0].prepared_consumers, first);
+    drop(prepared);
+    assert!(owner.records().is_empty());
+}
 impl Owner {
     pub(crate) fn track<T>(
         &self,

@@ -25,7 +25,9 @@ pub(super) fn render_viewport_panes(
     has_schematic_scene: bool,
     panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
-) {
+) -> crate::resource_consumers::Consumers {
+    use crate::resource_consumers::{Consumer, Consumers};
+    let mut consumers = Consumers::default();
     let panes = layout.viewport_panes(workspace);
     // The leaf that hosts the live board scene (focus-independent). Its canvas gets
     // the substrate + world PCB; any other board leaf is an inactive placeholder.
@@ -42,6 +44,11 @@ pub(super) fn render_viewport_panes(
     // Focus is the single source of truth: it drives the per-pane header chrome
     // here and (context-follows-focus) which document the side panels read.
     for leaf in &panes.panes {
+        consumers.insert(match leaf.content {
+            datum_gui_protocol::PaneContent::Board => Consumer::Board,
+            datum_gui_protocol::PaneContent::Schematic => Consumer::Schematic,
+            datum_gui_protocol::PaneContent::Revision(_) => Consumer::Revision,
+        });
         let focused = leaf.id == panes.focused;
         let is_scene_leaf = Some(leaf.id) == scene_leaf_id;
         let title = match leaf.content {
@@ -137,6 +144,7 @@ pub(super) fn render_viewport_panes(
     for divider in &panes.dividers {
         panel_quads.push(Quad::from_rect(divider.rect, PANEL_CARD_BORDER));
     }
+    consumers
 }
 
 /// Paint a non-live pane's placeholder canvas: a VIEWPORT_BG fill beneath the

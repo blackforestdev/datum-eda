@@ -69,6 +69,7 @@ impl Renderer {
         device: &wgpu::Device,
         _queue: &wgpu::Queue,
     ) -> anyhow::Result<Option<crate::text_gpu::upload::Batch>> {
+        self.publish_resource_consumers();
         let (buffers, text_bytes, overlay_bytes) = frame_buffers!(self);
         // Admit and encode the complete mixed batch before consuming any producer.
         // Failure retains every pending update for cancellation/retry.

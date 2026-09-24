@@ -74,6 +74,12 @@ impl VertexAllocation {
         self.buffer.as_ref().map(Tracked::upload_target)
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        if let Some(buffer) = &self.buffer {
+            buffer.set_consumers(consumers);
+        }
+    }
+
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.buffer.as_deref()
     }

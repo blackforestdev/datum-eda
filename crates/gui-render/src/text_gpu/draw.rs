@@ -308,6 +308,12 @@ impl Draw {
                 .map_or(0, StagingVec::allocated_bytes)
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        if let Some(buffer) = &self.instances {
+            buffer.set_consumers(consumers);
+        }
+    }
+
     pub fn submission_ref(&self) -> Option<SubmissionRef> {
         self.instances.as_ref().map(Tracked::submission_ref)
     }

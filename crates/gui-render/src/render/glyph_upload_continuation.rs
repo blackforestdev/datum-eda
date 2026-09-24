@@ -66,6 +66,7 @@ impl Renderer {
         }
         self.release_text_scratch_for(self.atlas.chunk_staging_bytes(CHUNK_BYTES)?);
 
+        self.publish_resource_consumers();
         let submission = self.atlas.submit_chunk(device, queue, CHUNK_BYTES)?;
         on_submitted(submission);
         if let Some(measurements) = &mut self.measurements {

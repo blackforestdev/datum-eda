@@ -660,6 +660,9 @@ mod control_tests;
 #[path = "gpu_uniform_tests.rs"]
 mod uniform_tests;
 
+#[path = "gpu_consumer_tests.rs"]
+mod consumer_tests;
+
 #[test]
 #[ignore = "requires local GPU; bounded overlay signature proof"]
 fn oversized_overlay_signature_bypasses_reuse_without_omitting_text() {

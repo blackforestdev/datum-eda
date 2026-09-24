@@ -104,6 +104,10 @@ impl ScreenBuffer {
         self.pending.allocated_bytes()
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        self.allocation.set_consumers(consumers);
+    }
+
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.allocation.buffer()
     }

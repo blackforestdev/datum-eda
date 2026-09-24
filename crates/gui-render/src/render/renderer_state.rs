@@ -2,6 +2,8 @@
 use super::*;
 #[path = "../cpu_alloc.rs"]
 pub mod cpu_alloc;
+#[path = "resource_consumers.rs"]
+pub mod resource_consumers;
 pub use crate::text_buffer_cache::budget::TextCacheOwnerUsage;
 use crate::text_gpu::{Atlas as TextAtlas, Draw as TextRenderer};
 pub use crate::text_gpu::{
@@ -22,6 +24,7 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
+    pub(super) frame_consumers: resource_consumers::FrameConsumers,
     pub(super) resource_host: crate::text_gpu::allocation_host::Host,
     pub(super) cold_world: gpu_vertex_upload::ColdWorldUploads,
     pub(super) control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,

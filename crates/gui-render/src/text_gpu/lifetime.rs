@@ -1,4 +1,5 @@
 //! Allocation identities and explicit submission holds for the shared GPU owners.
+use crate::resource_consumers::Consumers;
 use std::ops::Deref;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, Weak};
@@ -40,6 +41,11 @@ pub struct Record {
     /// Renderer instance that created this resource. None means creation outside
     /// a renderer (for example a standalone capture target), never inferred ownership.
     pub renderer_id: Option<u64>,
+    /// Producers sharing the currently owned stream; not exclusive byte shares.
+    pub consumers: Consumers,
+    /// Producer sets held by surviving prepared and submission references.
+    pub prepared_consumers: Consumers,
+    pub submitted_consumers: Consumers,
     pub generation: u64,
     /// Allocated API capacity; never inferred from upload traffic.
     pub bytes: u64,
@@ -167,6 +173,9 @@ impl Owner {
                 id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
                 owner: self.0.id,
                 renderer_id: super::allocation_host::current(),
+                consumers: Default::default(),
+                prepared_consumers: Default::default(),
+                submitted_consumers: Default::default(),
                 generation,
                 bytes: reservation.bytes(),
                 requested_bytes: reservation.bytes(),
@@ -217,6 +226,15 @@ fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
             let uploads = identity.uploads.lock().unwrap_or_else(|e| e.into_inner());
             let reason = identity.metadata.reason();
             records.push(Record {
+                consumers: Consumers::from_bits(
+                    identity.metadata.consumers.load(Ordering::Acquire),
+                ),
+                prepared_consumers: identity
+                    .metadata
+                    .referenced_consumers(ReferenceKind::Prepared),
+                submitted_consumers: identity
+                    .metadata
+                    .referenced_consumers(ReferenceKind::Submission),
                 retiring: reason.is_some(),
                 retirement_reason: reason,
                 requested_bytes: identity.metadata.payload.load(Ordering::Acquire),
@@ -347,6 +365,7 @@ pub(crate) struct SubmittedUpload {
     identity: Arc<Identity>,
     source: u64,
     transfer: u64,
+    consumers: Consumers,
 }
 impl UploadTarget<'_> {
     pub fn receipt(self, source: u64, transfer: u64) -> SubmittedUpload {
@@ -354,6 +373,7 @@ impl UploadTarget<'_> {
             identity: self.0.clone(),
             source,
             transfer,
+            consumers: Consumers::from_bits(self.0.metadata.consumers.load(Ordering::Acquire)),
         }
     }
 }
@@ -363,11 +383,18 @@ impl SubmittedUpload {
             .uploads
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .record(attempt, self.source, self.transfer);
+            .record_consumers(attempt, self.source, self.transfer, self.consumers);
     }
 }
 
 impl<T> Tracked<T> {
+    pub(crate) fn set_consumers(&self, consumers: Consumers) {
+        self.0
+            .identity
+            .metadata
+            .consumers
+            .store(consumers.bits(), Ordering::Release);
+    }
     pub(crate) fn upload_target(&self) -> UploadTarget<'_> {
         UploadTarget(&self.0.identity)
     }
@@ -375,6 +402,17 @@ impl<T> Tracked<T> {
     /// A queue completion callback now owns this handle instead of the producer.
     pub(crate) fn mark_retiring(&self) {
         if self.0.identity.metadata.retire(RetirementReason::Submitted) {
+            let consumers =
+                Consumers::from_bits(self.0.identity.metadata.consumers.load(Ordering::Acquire));
+            self.0
+                .identity
+                .metadata
+                .retiring_consumers
+                .store(consumers.bits(), Ordering::Release);
+            self.0
+                .identity
+                .metadata
+                .retain_consumers(ReferenceKind::Submission, consumers);
             self.0
                 .identity
                 .metadata
@@ -427,7 +465,11 @@ impl<T: Send + Sync + 'static> Tracked<T> {
             .metadata
             .counter(kind)
             .fetch_add(1, Ordering::AcqRel);
+        let consumers =
+            Consumers::from_bits(self.0.identity.metadata.consumers.load(Ordering::Acquire));
+        self.0.identity.metadata.retain_consumers(kind, consumers);
         SubmissionRef {
+            consumers,
             allocation_id: self.0.identity.record.id,
             kind,
             resource: self.0.clone(),
@@ -451,6 +493,16 @@ impl<T> Deref for Tracked<T> {
 impl<T> Drop for Tracked<T> {
     fn drop(&mut self) {
         if self.0.identity.metadata.reason() == Some(RetirementReason::Submitted) {
+            self.0.identity.metadata.release_consumers(
+                ReferenceKind::Submission,
+                Consumers::from_bits(
+                    self.0
+                        .identity
+                        .metadata
+                        .retiring_consumers
+                        .load(Ordering::Acquire),
+                ),
+            );
             self.0
                 .identity
                 .metadata
@@ -462,6 +514,7 @@ impl<T> Drop for Tracked<T> {
 }
 
 pub(crate) struct SubmissionRef {
+    consumers: Consumers,
     pub(crate) allocation_id: u64,
     kind: ReferenceKind,
     resource: Arc<dyn ResourceIdentity>,
@@ -469,6 +522,10 @@ pub(crate) struct SubmissionRef {
 
 impl Drop for SubmissionRef {
     fn drop(&mut self) {
+        self.resource
+            .identity()
+            .metadata
+            .release_consumers(self.kind, self.consumers);
         self.resource
             .identity()
             .metadata

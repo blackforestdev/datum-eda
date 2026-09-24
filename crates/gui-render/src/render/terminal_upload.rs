@@ -93,6 +93,7 @@ impl crate::Renderer {
         queue: &wgpu::Queue,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        self.publish_resource_consumers();
         let capacity = self.terminal_graphics.upload_plan().entries;
         self.release_text_scratch_for(
             CHUNK_BYTES as u64 + TerminalGraphicsRenderer::upload_metadata_bytes(capacity)?,

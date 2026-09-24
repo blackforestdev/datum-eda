@@ -45,7 +45,10 @@ impl Renderer {
             scroll,
             reveal_focus,
         );
-        PreparedScene::from_dialog_parts(layout, quads, text, hits, scale, (width, height))
+        let mut prepared =
+            PreparedScene::from_dialog_parts(layout, quads, text, hits, scale, (width, height));
+        prepared.set_native_consumer(crate::resource_consumers::Consumer::New);
+        prepared
     }
 }
 

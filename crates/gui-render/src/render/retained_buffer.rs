@@ -55,6 +55,10 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
         self.allocation.prepared_ref()
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        self.allocation.set_consumers(consumers);
+    }
+
     pub(crate) fn submission_ref(&self) -> Option<crate::text_gpu::lifetime::SubmissionRef> {
         self.allocation.submission_ref()
     }

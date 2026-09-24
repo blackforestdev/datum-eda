@@ -7,7 +7,8 @@ use std::{
 };
 
 static NEXT_HOST: AtomicU64 = AtomicU64::new(1);
-thread_local! { static CURRENT: Cell<Option<u64>> = const { Cell::new(None) }; }
+thread_local! { static CURRENT: Cell<Option<u64>> = const { Cell::new(None) };
+static CONSUMERS: Cell<u16> = const { Cell::new(0) }; }
 
 pub(crate) struct Host(u64);
 impl Host {
@@ -22,7 +23,11 @@ impl Host {
         self.0
     }
     pub fn enter(&self) -> Guard {
+        self.enter_for(Default::default())
+    }
+    pub fn enter_for(&self, consumers: crate::resource_consumers::Consumers) -> Guard {
         Guard {
+            consumers: CONSUMERS.replace(consumers.bits()),
             previous: CURRENT.replace(Some(self.0)),
             _thread: PhantomData,
         }
@@ -31,13 +36,18 @@ impl Host {
 pub(crate) fn current() -> Option<u64> {
     CURRENT.get()
 }
+pub(crate) fn consumers() -> crate::resource_consumers::Consumers {
+    crate::resource_consumers::Consumers::from_bits(CONSUMERS.get())
+}
 pub(crate) struct Guard {
+    consumers: u16,
     previous: Option<u64>,
     _thread: PhantomData<Rc<()>>,
 }
 impl Drop for Guard {
     fn drop(&mut self) {
         CURRENT.set(self.previous);
+        CONSUMERS.set(self.consumers);
     }
 }
 

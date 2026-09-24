@@ -51,6 +51,8 @@ impl crate::Renderer {
 /// bounded to the latest attempt; callers archive receipts when needed.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct UploadFrame {
+    /// Prepared producers; upload-only/error attempts do not establish presentation.
+    pub consumers: crate::resource_consumers::Consumers,
     pub owner: u64,
     pub attempt: u64,
     pub rendered: Option<bool>,
@@ -61,6 +63,8 @@ pub struct UploadFrame {
 /// Match owner/attempt to UploadFrame; a different key means zero for that frame.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct AllocationUploadFrame {
+    /// Captured shared-stream incidence. Count this allocation's bytes once.
+    pub consumers: crate::resource_consumers::Consumers,
     pub owner: u64,
     pub attempt: u64,
     pub source_bytes: u64,
@@ -74,7 +78,17 @@ pub(super) struct AllocationUploads {
     pub latest: Option<AllocationUploadFrame>,
 }
 impl AllocationUploads {
+    #[cfg(test)]
     pub fn record(&mut self, attempt: Option<(u64, u64)>, source: u64, transfer: u64) {
+        self.record_consumers(attempt, source, transfer, Default::default());
+    }
+    pub fn record_consumers(
+        &mut self,
+        attempt: Option<(u64, u64)>,
+        source: u64,
+        transfer: u64,
+        consumers: crate::resource_consumers::Consumers,
+    ) {
         self.source_bytes = self.source_bytes.saturating_add(source);
         self.transfer_bytes = self.transfer_bytes.saturating_add(transfer);
         if let Some((owner, attempt)) = attempt {
@@ -83,6 +97,7 @@ impl AllocationUploads {
                 .is_some_and(|last| last.owner == owner && last.attempt == attempt)
             {
                 self.latest = Some(AllocationUploadFrame {
+                    consumers: Default::default(),
                     owner,
                     attempt,
                     source_bytes: 0,
@@ -93,6 +108,7 @@ impl AllocationUploads {
                 .latest
                 .as_mut()
                 .expect("initialized allocation attempt");
+            last.consumers = last.consumers.union(consumers);
             last.source_bytes = last.source_bytes.saturating_add(source);
             last.transfer_bytes = last.transfer_bytes.saturating_add(transfer);
         }
@@ -115,6 +131,7 @@ impl Accounting {
                 .expect("upload attempt exhausted")
         });
         self.latest = Some(UploadFrame {
+            consumers: super::allocation_host::consumers(),
             owner,
             attempt,
             rendered: None,
@@ -176,6 +193,7 @@ mod tests {
         assert_eq!(
             uploads.latest.unwrap(),
             AllocationUploadFrame {
+                consumers: Default::default(),
                 owner: 2,
                 attempt: 2,
                 source_bytes: 5,
