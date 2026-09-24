@@ -1,0 +1,62 @@
+{
+  "status": "Proposed bounded dependency-patch trial; not a ratified dependency exception or evidence of S4 completion",
+  "reviewed_head": "3bdfd7a9c4807115051a6597a35011734cb585d4",
+  "owner_direction": "Owner supports bounded modifications subject to existing budgets, scope and licensing safeguards. Exact package exception remains to be recorded under PM029 before any vendoring or dependency mutation.",
+  "purpose": "Resolve private font selection/loading/cache and raster construction admission under AC-05, HP08-03, MEM-STAGING-LOCAL and MEM-STAGING-TOTAL.",
+  "finding": "Glyphon reexports the relevant types. A glyphon-only modification cannot control the observed FontSystem, Swash ScaleContext or Zeno AdaptiveStorage growth. Accounting accessors alone cannot enforce construction-time ceilings.",
+  "proposed_packages": [
+    {
+      "package": "cosmic-text-0.15.0",
+      "license_option": "MIT",
+      "license_sha256": "95557bafe728379e206f3b6d4aceeaa054d271c71d722411a6222e2dec01138c",
+      "inspected_source_sha256": {
+        "src/font/system.rs": "e8705234177bfb1084d9c9aa06a4ea625a6d82281d5b8f1bb3c7c91f1e4b7bb8",
+        "src/font/mod.rs": "35dcd14b7e26601e082bd9352bc47b055744d7945fe846d928dfd6ae368d16f0",
+        "src/swash.rs": "955a684430853c736c2e8f8e8c364a2a8217238232d222d0dd064e201ad4803d"
+      }
+    },
+    {
+      "package": "swash-0.2.7",
+      "license_option": "MIT",
+      "license_sha256": "122dadfc2eb4de0f4bafcd9eb4e7502cfe338a7965ebd1d18708cc5050f43f76",
+      "inspected_source_sha256": {
+        "src/scale/mod.rs": "105a8f1df5778c96777421eb95020b5e48e3ceadc406d7e13ed1d9bb1edaec6a",
+        "src/scale/outline.rs": "3e94e5c07bb0f38d696efc6835bcbd6ed5b075dab586ce6e60e848ce2a53842c"
+      }
+    },
+    {
+      "package": "zeno-0.3.3",
+      "license_option": "MIT",
+      "license_sha256": "34dff8202d63e6df022f4f0ce88dab24f254c35ee0d5958b74dcf74d9eae21cc",
+      "inspected_source_sha256": {
+        "src/raster.rs": "2c9dbf11c217e3c84c703d5d7b4d5fa5dee31f57a6d06bd942edc086be91fe26",
+        "src/scratch.rs": "9dcc2d0c07aa30ff4da04ef910743f5f2cff03e582aa4177a511c0dc0f1b9443"
+      }
+    }
+  ],
+  "excluded_changes": [
+    "No glyphon patch: existing reexports suffice for inherent methods on the underlying types.",
+    "No package version upgrades, new transitive dependencies, network build steps or changes to other third-party packages.",
+    "No resource-cap increase, scope reduction, text omission, raster-quality reduction, terminal-emulator change, backend-default change or resize investigation."
+  ],
+  "patch_contract": [
+    "Add an opt-in fallible font preparation path that admits cache growth and construction overlap before mutation and propagates budget refusal distinctly from a missing font. Preserve original font identity, fallback and shaping output.",
+    "Add an opt-in fallible raster path that admits outline, hinting, raster scratch and output growth before allocation. Propagate refusal through cosmic-text to Datum without silently substituting missing glyphs.",
+    "Budget permits must cover retained storage until release and temporary old/new overlap. Existing Datum host/process owners supply authority; do not create competing independent caps.",
+    "Keep existing entry points for compatibility; Datum production consumers must use the bounded path. Merely adding unused APIs is not completion.",
+    "Treat nested allocation paths in unmodified libraries as unresolved until a justified pre-call bound covers them. A measured peak, arbitrary reservation, post-call eviction, allocator abort or unwind is not the required safe admission mechanism."
+  ],
+  "licensing_boundary": {
+    "selected_option_proposed": "MIT for each specifically named package; preserve complete package license files and applicable copyright notices in sources and distribution notices.",
+    "reference": "https://opensource.org/license/mit",
+    "limits": "Package-level MIT offers do not establish clearance for every transitive dependency, embedded font or other asset. No change to existing license policy and no whole-project legal assurance."
+  },
+  "go_no_go": {
+    "first_integrated_proof": "One font preparation plus raster path must refuse before exceeding the existing host/process budget, retain source text, retry successfully after capacity is released, and preserve glyph pixels. Cover cold construction and existing-cache growth with concurrent-owner reservations.",
+    "stop_boundary": "If correct admission requires modifying another package, bypassing existing budgets, a broad algorithm replacement or unsafe allocation-failure recovery, do not expand the exception or integrate a partial bounded path. Report the concrete additional boundary.",
+    "known_risk": "Font::new calls HarfRust ShaperData/ShaperInstance construction; Swash uses Skrifa outline/hinting internals. This review does not establish bounds for those calls. The proposed trial is not a promise that three patches suffice.",
+    "completion": "Only after the integrated proof succeeds, migrate all existing shared text consumers, retire competing unbounded production entry points, run affected renderer/app and native proof, and review all S4 implementation obligations. Original full qualification remains S5."
+  },
+  "authority_required": "An explicit numbered owner decision naming these versions, accepted MIT obligations and this stop boundary, with PM029 DA-007 same-change records, before modified third-party source or Cargo overrides enter the repository.",
+  "work_performed": "Read-only local source and license inspection; no copied or modified dependency source, downloads, Cargo changes, production edits or new benchmarks."
+}

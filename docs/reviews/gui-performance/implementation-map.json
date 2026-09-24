@@ -32955,6 +32955,13 @@
       "gpu_progress": "Default Atlas/Draw migration recorded in s4_owned_text_gpu_work. Existing Buffer/FontSystem remain shaping owners; all full accounting/cap requirements still apply.",
       "current_draw_bridge": "Datum Draw consumes owned TextLayout layout-run iterators. Production retained Buffer/BufferLine caches are retired; public ShapeLine/LayoutLine payloads are directly owned and counted. FontSystem/ShapeBuffer/ScaleContext scratch and complete caps remain unfinished.",
       "private_heap_progress": "Native executable now uses Datum scoped System allocation ownership; see s4_private_text_heap_work. Private synchronous Rust allocation lifetimes are observable without dependency edits. Exclusive resource classification, complete caps and overhead/native qualification remain unfinished."
+    },
+    "bounded_dependency_patch_proposal": {
+      "status": "Pending exact package/obligation decision; no dependency changes or predicate closure",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/dependency-patch-review/result.json",
+      "scope": "cosmic-text 0.15.0, swash 0.2.7 and zeno 0.3.3; proposed MIT option; glyphon unchanged",
+      "limit": "Integrated safe admission/refusal/retry proof before default adoption; no expansion to additional packages or original budgets. Nested HarfRust/Skrifa construction remains a feasibility risk.",
+      "owner_direction": "Owner supports bounded modification; this packet supplies the exact proposed package and license scope for PM029 review."
     }
   },
   "s4_shared_geometry_work": {
