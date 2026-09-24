@@ -525,7 +525,7 @@ impl Schematic {
                 position: entry.position,
             }));
         }
-        entries.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+        entries.sort_by_key(|a| a.uuid);
         entries
     }
 
@@ -540,7 +540,7 @@ impl Schematic {
                 position: marker.position,
             }));
         }
-        noconnects.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+        noconnects.sort_by_key(|a| a.uuid);
         noconnects
     }
 

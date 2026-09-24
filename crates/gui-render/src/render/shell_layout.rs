@@ -179,10 +179,10 @@ fn solve_shell_layout_with_taffy(
                     width: length(width),
                     height: length(height),
                 },
-                grid_template_columns: vec![length(left_width), fr(1.0), length(right_width)],
+                grid_template_columns: vec![length(left_width), fr(1.0_f32), length(right_width)],
                 grid_template_rows: vec![
                     length(menu_height),
-                    fr(1.0),
+                    fr(1.0_f32),
                     length(bottom_height),
                     length(status_height),
                 ],

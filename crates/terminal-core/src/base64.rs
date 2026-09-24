@@ -42,7 +42,7 @@ pub(crate) fn decode_base64_with_work(
     }
 
     let mut output = Vec::with_capacity(decoded);
-    for (group, quartet) in input.chunks_exact(4).enumerate() {
+    for (group, quartet) in input.as_chunks::<4>().0.iter().enumerate() {
         let offset = group * 4;
         let final_group = group + 1 == groups;
         let a = value(quartet[0], offset)?;

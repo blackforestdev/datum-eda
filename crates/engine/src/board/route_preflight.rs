@@ -225,7 +225,7 @@ fn tracks_for_net(board: &Board, net_uuid: Uuid) -> Vec<Track> {
         .filter(|track| track.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    tracks.sort_by_key(|a| a.uuid);
     tracks
 }
 
@@ -236,7 +236,7 @@ fn vias_for_net(board: &Board, net_uuid: Uuid) -> Vec<Via> {
         .filter(|via| via.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    vias.sort_by_key(|a| a.uuid);
     vias
 }
 
@@ -247,7 +247,7 @@ fn zones_for_net(board: &Board, net_uuid: Uuid) -> Vec<Zone> {
         .filter(|zone| zone.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    zones.sort_by_key(|a| a.uuid);
     zones
 }
 
@@ -353,7 +353,7 @@ fn foreign_obstacles(board: &Board, target_net_uuid: Uuid) -> Vec<RoutePreflight
         .filter(|track| track.net != target_net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    tracks.sort_by_key(|a| a.uuid);
     for track in tracks {
         let net_name = board.nets.get(&track.net).map(|net| net.name.clone());
         obstacles.push(RoutePreflightObstacle {
@@ -372,7 +372,7 @@ fn foreign_obstacles(board: &Board, target_net_uuid: Uuid) -> Vec<RoutePreflight
         .filter(|via| via.net != target_net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    vias.sort_by_key(|a| a.uuid);
     for via in vias {
         let net_name = board.nets.get(&via.net).map(|net| net.name.clone());
         obstacles.push(RoutePreflightObstacle {
@@ -394,7 +394,7 @@ fn foreign_obstacles(board: &Board, target_net_uuid: Uuid) -> Vec<RoutePreflight
         .filter(|zone| zone.net != target_net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    zones.sort_by_key(|a| a.uuid);
     for zone in zones {
         let net_name = board.nets.get(&zone.net).map(|net| net.name.clone());
         obstacles.push(RoutePreflightObstacle {

@@ -5,9 +5,6 @@
     "crates/cli/src/command_plan.rs": {
       "reason": "rustfmt reflow exceeds pre_test_lines ceiling 749 (formatted: 750)"
     },
-    "crates/cli/src/commands/board/routing_net.rs": {
-      "reason": "rustfmt reflow exceeds pre_test_lines ceiling 926 (formatted: 928)"
-    },
     "crates/cli/src/commands/project/validate.rs": {
       "reason": "rustfmt reflow exceeds pre_test_lines ceiling 1035 (formatted: 1041)"
     },

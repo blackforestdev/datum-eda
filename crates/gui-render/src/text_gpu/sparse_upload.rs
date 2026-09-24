@@ -47,7 +47,7 @@ impl Group<'_> {
     pub fn fill(&self, packet: &mut [u8]) {
         let mut cursor = 0;
         for upload in self.uploads {
-            for (index, word) in upload.bytes.chunks_exact(4).enumerate() {
+            for (index, word) in upload.bytes.as_chunks::<4>().0.iter().enumerate() {
                 let destination = (upload.offset / 4 + index as u64) as u32;
                 packet[cursor..cursor + 4].copy_from_slice(&destination.to_le_bytes());
                 packet[cursor + 4..cursor + 8].copy_from_slice(word);

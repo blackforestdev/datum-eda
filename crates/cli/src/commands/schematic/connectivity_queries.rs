@@ -235,7 +235,7 @@ pub(crate) fn query_native_project_bus_entries(root: &Path) -> Result<Vec<BusEnt
             }
         }
     }
-    entries.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    entries.sort_by_key(|a| a.uuid);
     Ok(entries)
 }
 
@@ -274,6 +274,6 @@ pub(crate) fn query_native_project_noconnects(root: &Path) -> Result<Vec<NoConne
             }
         }
     }
-    noconnects.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    noconnects.sort_by_key(|a| a.uuid);
     Ok(noconnects)
 }

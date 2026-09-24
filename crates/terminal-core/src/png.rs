@@ -125,10 +125,7 @@ pub fn decode_png(input: &[u8], limits: CodecLimits) -> Result<PngImage, CodecEr
                         reason: "PLTE length is invalid",
                     });
                 }
-                let entries: Vec<[u8; 3]> = data
-                    .chunks_exact(3)
-                    .map(|entry| [entry[0], entry[1], entry[2]])
-                    .collect();
+                let entries: Vec<[u8; 3]> = data.as_chunks::<3>().0.to_vec();
                 if value.color_type == 3 && entries.len() > (1usize << value.bit_depth) {
                     return Err(CodecError::InvalidPng {
                         reason: "palette has more entries than the indexed bit depth permits",

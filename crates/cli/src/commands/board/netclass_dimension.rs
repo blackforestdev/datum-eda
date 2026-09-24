@@ -47,7 +47,7 @@ pub(crate) fn query_native_project_board_dimensions(root: &Path) -> Result<Vec<D
         .into_iter()
         .map(|value| serde_json::from_value(value).context("failed to parse board dimension"))
         .collect::<Result<Vec<Dimension>>>()?;
-    dimensions.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    dimensions.sort_by_key(|a| a.uuid);
     Ok(dimensions)
 }
 

@@ -359,8 +359,10 @@ impl GpuMeasurements {
                         .slice(..pending.passes.len() as u64 * 16)
                         .get_mapped_range();
                     let raw: Vec<u64> = view
-                        .chunks_exact(8)
-                        .map(|v| u64::from_ne_bytes(v.try_into().expect("eight bytes")))
+                        .as_chunks::<8>()
+                        .0
+                        .iter()
+                        .map(|v| u64::from_ne_bytes(*v))
                         .collect();
                     drop(view);
                     slot.readback.unmap();
@@ -435,7 +437,7 @@ fn decode(names: &[&'static str], ticks: &[u64], period: f64) -> anyhow::Result<
         "missing GPU timestamp pairs"
     );
     let mut passes = Vec::with_capacity(names.len());
-    for (name, pair) in names.iter().zip(ticks.chunks_exact(2)) {
+    for (name, pair) in names.iter().zip(ticks.as_chunks::<2>().0.iter()) {
         let delta = pair[1]
             .checked_sub(pair[0])
             .ok_or_else(|| anyhow::anyhow!("reversed/wrapped GPU timestamp pair"))?;

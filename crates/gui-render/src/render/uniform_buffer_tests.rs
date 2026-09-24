@@ -84,8 +84,8 @@ fn uniform_ranges_transfer_only_dirty_aligned_words() {
         let bytes = write_changed_ranges(Some(&old), &new, |offset, data| {
             assert_eq!(offset % 4, 0);
             assert_eq!(data.len() % 4, 0);
-            for word in data.chunks_exact(4) {
-                assert_ne!(word, [0; 4]);
+            for word in data.as_chunks::<4>().0.iter() {
+                assert_ne!(*word, [0; 4]);
             }
             result[offset..offset + data.len()].copy_from_slice(data);
             writes += 1;

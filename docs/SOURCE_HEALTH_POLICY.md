@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 89 legacy source entries remain. UNIT-I03B moved
+Current debt inventory: 87 legacy source entries remain. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
@@ -222,3 +222,15 @@ renderer interaction tests cover the ownership migration.
 The same slice moves board graphic/text command batching into the normal
 `render/retained_board_graphics.rs` owner so formatted retained code also stays
 within the normal budget. The extracted 125-line owner preserves batch behavior.
+
+Rust 1.98 lint repair (`dat-rust198-lint-pin-p44o`) extracts check-profile
+selection/coverage, routing queries, Gerber copper context, projected polygon
+scanlines and board-text geometry into normal modules. Physical line counts fall
+from 812 to 507 for `check/run_view.rs`, 926 to 857 for `board/routing_net.rs`,
+701 to 593 for `gerber/layers.rs`, 772 to 666 for `render/draw_primitives.rs`,
+and 962 to 907 for `render/geometry.rs`. Check views, Gerber layers and draw
+primitives leave the debt ledger. Routing retains an exact 857-line ceiling;
+geometry retains its measured 840-line production ceiling, and renderer include
+expansion falls from 6,557 to 6,396. Earlier higher production ceilings are
+reconciled downward to measured counts. Routing is now rustfmt-clean and its
+formatting exemption is removed. Normal budgets and PM022 requirements remain.

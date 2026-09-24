@@ -251,10 +251,7 @@ fn serve_socket(path: &Path) -> Result<()> {
     let mut preferences = PreferencesDaemonState::open_installed()?;
 
     for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => handle_client_with_preferences(&mut engine, &mut preferences, stream)?,
-            Err(err) => return Err(err.into()),
-        }
+        handle_client_with_preferences(&mut engine, &mut preferences, stream?)?;
     }
 
     Ok(())

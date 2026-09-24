@@ -196,7 +196,7 @@ impl TerminalCore {
         fields: Vec<&[u8]>,
         update: &mut CoreUpdate,
     ) -> Result<(), CoreError> {
-        for pair in fields.chunks_exact(2) {
+        for pair in fields.as_chunks::<2>().0.iter() {
             let Some(index) = parse_usize(pair[0]).and_then(|value| u8::try_from(value).ok())
             else {
                 continue;

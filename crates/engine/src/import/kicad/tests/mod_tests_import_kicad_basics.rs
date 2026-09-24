@@ -127,7 +127,7 @@ fn imports_kicad_board_pads_for_unrouted_computation() {
     assert_eq!(airwires[0].to.component, "R2");
 
     let mut pads: Vec<_> = board.pads.values().collect();
-    pads.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    pads.sort_by_key(|a| a.uuid);
     assert_eq!(pads[0].shape, crate::board::PadShape::Rect);
     assert_eq!(pads[0].width, 1_000_000);
     assert_eq!(pads[0].height, 1_000_000);
