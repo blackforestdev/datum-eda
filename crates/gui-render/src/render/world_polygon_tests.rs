@@ -118,7 +118,7 @@ fn reference_scanline(out: &mut impl Output<Quad>, contours: &[Vec<PointNm>], co
             spans.push((edge.x_at(y_mid), edge.x_at(y0), edge.x_at(y1)));
         }
         spans.sort_by(|a, b| a.0.total_cmp(&b.0));
-        for pair in spans.chunks_exact(2) {
+        for pair in spans.as_chunks::<2>().0.iter() {
             let left = pair[0];
             let right = pair[1];
             if right.0 - left.0 <= EPS {

@@ -298,13 +298,13 @@ mod tests {
         let first = fonts
             .shape("Cache pressure preserves these glyphs", &attrs)
             .unwrap();
-        let glyphs = format!("{:?}", &*first);
+        let glyphs = format!("{:?}", *first);
         assert!(fonts.reserved_bytes() > 0);
         assert_eq!(host.used(), fonts.reserved_bytes());
         let filler = host.reserve(host.available()).unwrap();
         fonts.release_for(1);
         assert_eq!(fonts.reserved_bytes(), 0);
-        assert_eq!(format!("{:?}", &*first), glyphs);
+        assert_eq!(format!("{:?}", *first), glyphs);
         assert_eq!(
             fonts
                 .fonts
@@ -320,11 +320,11 @@ mod tests {
         let second = fonts
             .shape("Cache pressure preserves these glyphs", &attrs)
             .unwrap();
-        assert_eq!(format!("{:?}", &*second), glyphs);
+        assert_eq!(format!("{:?}", *second), glyphs);
         assert!(fonts.reserved_bytes() > 0);
         drop(fonts);
         assert_eq!(host.used(), 0);
-        assert_eq!(format!("{:?}", &*first), glyphs);
+        assert_eq!(format!("{:?}", *first), glyphs);
         let mut refused = Fonts::new(crate::text_gpu::budget::Budget::new(0));
         assert!(
             refused

@@ -39,7 +39,7 @@ mod tests {
         let mut fonts = Fonts::new(host.clone());
         let attrs = glyphon::AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));
         let text = "mixed אבג (123) \u{2067}ع\u{2069}";
-        let expected = format!("{:?}", &*fonts.shape(text, &attrs).unwrap());
+        let expected = format!("{:?}", *fonts.shape(text, &attrs).unwrap());
         fonts.release_for(host.available() + 1);
         let before = fonts.usage().allocation;
         let held = host.reserve(host.available()).unwrap();
@@ -51,7 +51,7 @@ mod tests {
         assert_eq!(fonts.usage().returned_shape_bytes, 0);
         drop(held);
         let actual = fonts.shape(text, &attrs).unwrap();
-        assert_eq!(format!("{:?}", &*actual), expected);
+        assert_eq!(format!("{:?}", *actual), expected);
         assert_eq!(host.used(), fonts.reserved_bytes());
     }
 

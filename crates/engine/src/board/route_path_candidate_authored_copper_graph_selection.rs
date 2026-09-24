@@ -46,7 +46,7 @@ pub(super) fn candidate_authored_copper_graph_objects(
         .filter(|track| track.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    tracks.sort_by_key(|a| a.uuid);
 
     let mut vias = board
         .vias
@@ -54,7 +54,7 @@ pub(super) fn candidate_authored_copper_graph_objects(
         .filter(|via| via.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    vias.sort_by_key(|a| a.uuid);
 
     (tracks, vias)
 }

@@ -23,7 +23,9 @@ fn base64_limits(decoded: usize, work: usize) -> Base64Limits {
 fn hex(value: &str) -> Vec<u8> {
     value
         .as_bytes()
-        .chunks_exact(2)
+        .as_chunks::<2>()
+        .0
+        .iter()
         .map(|pair| {
             let digit = |byte| match byte {
                 b'0'..=b'9' => byte - b'0',
@@ -315,7 +317,7 @@ fn png_all_filters_reconstruct_truecolor_rows_exactly() {
     .unwrap();
     let expected: Vec<Rgba8> = raw_rows
         .iter()
-        .flat_map(|row| row.chunks_exact(3))
+        .flat_map(|row| row.as_chunks::<3>().0.iter())
         .map(|pixel| Rgba8 {
             red: pixel[0],
             green: pixel[1],

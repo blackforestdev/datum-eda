@@ -247,7 +247,7 @@ fn push_world_polygon_fill_scanline_contours(
         // Original emission order breaks ties exactly as the stable sort did,
         // without allocating sorting scratch for every band.
         spans.sort_unstable_by(|a, b| a.0.total_cmp(&b.0).then_with(|| a.3.cmp(&b.3)));
-        for pair in spans.chunks_exact(2) {
+        for pair in spans.as_chunks::<2>().0.iter() {
             let left = pair[0];
             let right = pair[1];
             if right.0 - left.0 <= EPS {

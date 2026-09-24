@@ -131,7 +131,7 @@ fn candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_bala
         .filter(|track| track.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    tracks.sort_by_key(|a| a.uuid);
 
     let mut vias = board
         .vias
@@ -139,7 +139,7 @@ fn candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_bala
         .filter(|via| via.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    vias.sort_by_key(|a| a.uuid);
 
     let mut zones = board
         .zones
@@ -147,7 +147,7 @@ fn candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_bala
         .filter(|zone| zone.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    zones.sort_by_key(|a| a.uuid);
 
     (tracks, vias, zones)
 }

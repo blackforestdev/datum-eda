@@ -84,10 +84,12 @@ pub(super) fn rounded_rect_points(rect: RectPx, radius: f32) -> Vec<(f32, f32)> 
             (angle.cos(), angle.sin())
         })
     });
-    for ((center_x, center_y, _), arc) in corners
-        .into_iter()
-        .zip(directions.chunks_exact(ROUNDED_RECT_CORNER_SEGMENTS + 1))
-    {
+    for ((center_x, center_y, _), arc) in corners.into_iter().zip(
+        directions
+            .as_chunks::<{ ROUNDED_RECT_CORNER_SEGMENTS + 1 }>()
+            .0
+            .iter(),
+    ) {
         for &(cos, sin) in arc {
             points.push((center_x + radius * cos, center_y + radius * sin));
         }

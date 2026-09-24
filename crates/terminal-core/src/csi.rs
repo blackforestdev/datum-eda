@@ -187,7 +187,7 @@ impl TerminalCore {
         self.apply_screen(
             ScreenAction::EraseDisplay {
                 mode,
-                selective: sequence.private_markers == [b'?'],
+                selective: sequence.private_markers == b"?",
             },
             update,
         )
@@ -207,7 +207,7 @@ impl TerminalCore {
         self.apply_screen(
             ScreenAction::EraseLine {
                 mode,
-                selective: sequence.private_markers == [b'?'],
+                selective: sequence.private_markers == b"?",
             },
             update,
         )
@@ -296,7 +296,7 @@ impl TerminalCore {
             let Some(mode) = parameter.subparameters.first().copied().flatten() else {
                 continue;
             };
-            if sequence.private_markers == [b'?'] {
+            if sequence.private_markers == b"?" {
                 self.set_private_mode(mode, enabled, update)?;
             } else {
                 self.set_standard_mode(mode, enabled, update)?;
@@ -450,7 +450,7 @@ impl TerminalCore {
         sequence: &CsiSequence,
         update: &mut CoreUpdate,
     ) -> Result<(), CoreError> {
-        let private = sequence.private_markers == [b'?'];
+        let private = sequence.private_markers == b"?";
         match value(sequence, 0).unwrap_or(0) {
             5 if !private => {
                 self.push_reply(ReplyKind::DeviceStatus, b"\x1b[0n".to_vec(), update)?
@@ -490,7 +490,7 @@ impl TerminalCore {
         update: &mut CoreUpdate,
     ) -> Result<(), CoreError> {
         let mode = value(sequence, 0).unwrap_or(0);
-        let private = sequence.private_markers == [b'?'];
+        let private = sequence.private_markers == b"?";
         let status = self
             .mode_status(mode, private)
             .map_or(0, |set| if set { 1 } else { 2 });

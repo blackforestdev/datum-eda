@@ -21,7 +21,7 @@ pub(super) fn candidate_vias_for_net(board: &Board, net_uuid: Uuid) -> Vec<Via> 
         .filter(|via| via.net == net_uuid)
         .cloned()
         .collect::<Vec<_>>();
-    candidate_vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    candidate_vias.sort_by_key(|a| a.uuid);
     candidate_vias
 }
 

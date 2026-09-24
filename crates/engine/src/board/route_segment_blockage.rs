@@ -61,7 +61,7 @@ pub(super) fn analyze_route_segment(
         .filter(|track| track.net != target_net_uuid && track.layer == layer)
         .cloned()
         .collect::<Vec<_>>();
-    foreign_tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    foreign_tracks.sort_by_key(|a| a.uuid);
     for track in foreign_tracks {
         if segment_intersects_segment(from, to, track.from, track.to) {
             let net_name = board.nets.get(&track.net).map(|net| net.name.clone());
@@ -96,7 +96,7 @@ pub(super) fn analyze_route_segment(
         })
         .cloned()
         .collect::<Vec<_>>();
-    foreign_vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    foreign_vias.sort_by_key(|a| a.uuid);
     for via in foreign_vias {
         if point_to_segment_distance_nm(via.position, from, to) <= via.diameter / 2 {
             let net_name = board.nets.get(&via.net).map(|net| net.name.clone());
@@ -129,7 +129,7 @@ pub(super) fn analyze_route_segment(
         .filter(|zone| zone.net != target_net_uuid && zone.layer == layer)
         .cloned()
         .collect::<Vec<_>>();
-    foreign_zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    foreign_zones.sort_by_key(|a| a.uuid);
     for zone in foreign_zones {
         if segment_intersects_polygon(from, to, &zone.polygon) {
             let net_name = board.nets.get(&zone.net).map(|net| net.name.clone());

@@ -9,8 +9,8 @@ pub(crate) fn append_production_projection_log_entries(
     log: &mut Vec<OutputJobLogEntry>,
     production_projections: &[ArtifactProductionProjection],
 ) {
-    let mut sequence = log.last().map(|entry| entry.sequence + 1).unwrap_or(1);
-    for projection in production_projections {
+    let first_sequence = log.last().map(|entry| entry.sequence + 1).unwrap_or(1);
+    for (sequence, projection) in (first_sequence..).zip(production_projections) {
         log.push(OutputJobLogEntry {
             sequence,
             level: OutputJobLogLevel::Info,
@@ -22,7 +22,6 @@ pub(crate) fn append_production_projection_log_entries(
                 projection.sha256
             ),
         });
-        sequence += 1;
     }
 }
 

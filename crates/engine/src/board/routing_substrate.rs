@@ -115,13 +115,13 @@ impl Board {
         });
 
         let mut tracks = self.tracks.values().cloned().collect::<Vec<_>>();
-        tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+        tracks.sort_by_key(|a| a.uuid);
 
         let mut vias = self.vias.values().cloned().collect::<Vec<_>>();
-        vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+        vias.sort_by_key(|a| a.uuid);
 
         let mut zones = self.zones.values().cloned().collect::<Vec<_>>();
-        zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+        zones.sort_by_key(|a| a.uuid);
 
         let mut nets = self.nets.values().cloned().collect::<Vec<_>>();
         nets.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));

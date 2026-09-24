@@ -415,7 +415,9 @@ fn diagnostic_evidence_marks_endpoints_only_over_proposed_copper() {
     );
     let focus_markers = prepared
         .viewport_overlay_vertices()
-        .chunks_exact(6)
+        .as_chunks::<6>()
+        .0
+        .iter()
         .filter(|quad| {
             if quad[0].color != DIAGNOSTIC_FOCUS {
                 return false;

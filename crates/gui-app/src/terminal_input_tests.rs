@@ -63,7 +63,7 @@ fn shift_navigation_controls_terminal_scrollback() {
 
 #[test]
 fn cursor_key_sequences_use_csi_ss3_and_xterm_modifier_params() {
-    for final_byte in [b'A', b'B', b'C', b'D', b'H', b'F'] {
+    for final_byte in *b"ABCDHF" {
         assert_eq!(
             cursor_key_sequence(false, final_byte),
             vec![b'\x1b', b'[', final_byte]
@@ -73,7 +73,7 @@ fn cursor_key_sequences_use_csi_ss3_and_xterm_modifier_params() {
             vec![b'\x1b', b'O', final_byte]
         );
     }
-    for final_byte in [b'D', b'H'] {
+    for final_byte in *b"DH" {
         let expected = format!("\x1b[1;5{}", final_byte as char).into_bytes();
         assert_eq!(
             arrow_key_sequence(false, ModifiersState::CONTROL, final_byte),
