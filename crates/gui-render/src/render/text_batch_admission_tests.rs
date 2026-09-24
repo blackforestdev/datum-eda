@@ -9,7 +9,7 @@ impl Source for CountingFonts {
     fn release_for(&mut self, bytes: u64) {
         self.inner.release_for(bytes);
     }
-    fn shape(&mut self, text: &str, attrs: &glyphon::AttrsList) -> Shape {
+    fn shape(&mut self, text: &str, attrs: &glyphon::AttrsList) -> anyhow::Result<Shape> {
         self.shapes += 1;
         self.inner.shape(text, attrs)
     }
