@@ -32,5 +32,28 @@
     "libghostty-vt",
     "portable-pty",
     "portable_pty"
-  ]
+  ],
+  "approved_source_patches": {
+    "cosmic-text": {
+      "version": "0.15.0",
+      "path": "third_party/cosmic-text",
+      "license": "MIT",
+      "license_sha256": "95557bafe728379e206f3b6d4aceeaa054d271c71d722411a6222e2dec01138c",
+      "decision": "docs/decisions/PRODUCT_MECHANICS_046_BOUNDED_TEXT_DEPENDENCY_PATCHES.md"
+    },
+    "swash": {
+      "version": "0.2.7",
+      "path": "third_party/swash",
+      "license": "MIT",
+      "license_sha256": "122dadfc2eb4de0f4bafcd9eb4e7502cfe338a7965ebd1d18708cc5050f43f76",
+      "decision": "docs/decisions/PRODUCT_MECHANICS_046_BOUNDED_TEXT_DEPENDENCY_PATCHES.md"
+    },
+    "zeno": {
+      "version": "0.3.3",
+      "path": "third_party/zeno",
+      "license": "MIT",
+      "license_sha256": "34dff8202d63e6df022f4f0ce88dab24f254c35ee0d5958b74dcf74d9eae21cc",
+      "decision": "docs/decisions/PRODUCT_MECHANICS_046_BOUNDED_TEXT_DEPENDENCY_PATCHES.md"
+    }
+  }
 }
