@@ -1,6 +1,8 @@
 //! Mutable renderer font ownership, separate from shared catalog and returned shapes.
 #[path = "font_shape_admission.rs"]
 mod admission;
+#[path = "font_bidi_scratch.rs"]
+mod bidi_scratch;
 use crate::cpu_alloc::{Scope, heap::capacity_bytes};
 use glyphon::{AttrsList, CacheKey, FontSystem, ShapeLine, Shaping, SwashCache, SwashImage};
 use std::sync::{
@@ -78,7 +80,7 @@ pub(super) fn shape_container_bytes() -> usize {
 
 pub(crate) trait Source {
     fn release_for(&mut self, _bytes: u64) {}
-    fn shape(&mut self, text: &str, attrs: &AttrsList) -> Shape;
+    fn shape(&mut self, text: &str, attrs: &AttrsList) -> anyhow::Result<Shape>;
     fn shape_admitted(
         &mut self,
         text: &str,
@@ -95,8 +97,14 @@ pub(crate) trait Source {
     ) -> Option<SwashImage>;
 }
 impl Source for FontSystem {
-    fn shape(&mut self, text: &str, attrs: &AttrsList) -> Shape {
-        Shape::untracked(ShapeLine::new(self, text, attrs, Shaping::Basic, 8))
+    fn shape(&mut self, text: &str, attrs: &AttrsList) -> anyhow::Result<Shape> {
+        Ok(Shape::untracked(ShapeLine::new(
+            self,
+            text,
+            attrs,
+            Shaping::Basic,
+            8,
+        )))
     }
     fn raster(
         &mut self,
@@ -204,7 +212,10 @@ impl Source for Fonts {
         }
     }
 
-    fn shape(&mut self, text: &str, attrs: &AttrsList) -> Shape {
+    fn shape(&mut self, text: &str, attrs: &AttrsList) -> anyhow::Result<Shape> {
+        let scratch_bytes = bidi_scratch::required(text)?;
+        self.release_for(scratch_bytes);
+        let scratch = bidi_scratch::reserve(scratch_bytes, &self.host)?;
         let line = self.scope.with(|| {
             ShapeLine::new(
                 self.fonts.as_mut().expect("font owner initialized"),
@@ -225,8 +236,9 @@ impl Source for Fonts {
                 outputs: self.outputs.clone(),
             }),
         };
+        drop(scratch);
         self.admit_caches();
-        shape
+        Ok(shape)
     }
     fn raster(
         &mut self,
@@ -283,7 +295,9 @@ mod tests {
         };
         let original_ids = ids();
         let attrs = AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));
-        let first = fonts.shape("Cache pressure preserves these glyphs", &attrs);
+        let first = fonts
+            .shape("Cache pressure preserves these glyphs", &attrs)
+            .unwrap();
         let glyphs = format!("{:?}", &*first);
         assert!(fonts.reserved_bytes() > 0);
         assert_eq!(host.used(), fonts.reserved_bytes());
@@ -303,28 +317,30 @@ mod tests {
             original_ids
         );
         drop(filler);
-        let second = fonts.shape("Cache pressure preserves these glyphs", &attrs);
+        let second = fonts
+            .shape("Cache pressure preserves these glyphs", &attrs)
+            .unwrap();
         assert_eq!(format!("{:?}", &*second), glyphs);
         assert!(fonts.reserved_bytes() > 0);
         drop(fonts);
         assert_eq!(host.used(), 0);
         assert_eq!(format!("{:?}", &*first), glyphs);
         let mut refused = Fonts::new(crate::text_gpu::budget::Budget::new(0));
-        let required = refused.shape("Cache pressure preserves these glyphs", &attrs);
-        assert_eq!(format!("{:?}", &*required), glyphs);
-        assert_eq!(
-            refused.reserved_bytes(),
-            0,
-            "retain output while refusing optional caches"
+        assert!(
+            refused
+                .shape("Cache pressure preserves these glyphs", &attrs)
+                .is_err()
         );
+        assert_eq!(refused.reserved_bytes(), 0);
+        assert_eq!(refused.usage().returned_shape_bytes, 0);
     }
 
     #[test]
     fn font_private_storage_and_shared_shape_lifetimes_are_disjoint() {
         let mut fonts = Fonts::new(crate::text_gpu::budget::Budget::new(16 * 1024 * 1024));
         let attrs = AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));
-        let first = Arc::new(fonts.shape("Shared shaped text", &attrs));
-        let second = Arc::new(fonts.shape("Another paragraph", &attrs));
+        let first = Arc::new(fonts.shape("Shared shaped text", &attrs).unwrap());
+        let second = Arc::new(fonts.shape("Another paragraph", &attrs).unwrap());
         let shared = first.clone();
         let expected = first.payload_bytes() + second.payload_bytes();
         let usage = fonts.usage();

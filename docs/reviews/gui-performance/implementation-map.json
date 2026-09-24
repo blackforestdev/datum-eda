@@ -15606,7 +15606,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete private font loading/cache, visible-paragraph bidi/shaping and raster synchronous construction admission. Public shaping/Arc output, keys, metadata and layout rows/glyphs have pre-call admission and publication. Paragraph discovery is allocation-free; attribute construction is admitted and observed through existing host scratch. Preserve original ceilings, required-content behavior and full S5 qualification."
+          "Complete private font selection/loading/cache and raster synchronous construction admission. Public shaping/Arc output, keys, metadata, rows/glyphs, attributes and visible-paragraph bidi scratch now have pre-call admission. Paragraph discovery and retirement inventory allocate no temporary storage. Preserve original ceilings, required-content behavior and full S5 qualification."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15709,6 +15709,11 @@
           "work": "s4_text_owner_reconciliation.input_preparation",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-construction/result.json",
           "status": "Default text input preparation uses borrowed paragraphs and pre-admitted, observed attribute scratch"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.bidi_construction",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/bidi-construction/result.json",
+          "status": "Default font shaping admits bidi scratch before analysis and propagates refusal without constructing partial text"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15815,7 +15820,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete private font loading/cache, visible-paragraph bidi/shaping and raster synchronous construction admission. Public shaping/Arc output, keys, metadata and layout rows/glyphs have pre-call admission and publication. Paragraph discovery is allocation-free; attribute construction is admitted and observed through existing host scratch. Preserve original ceilings, required-content behavior and full S5 qualification."
+          "Complete private font selection/loading/cache and raster synchronous construction admission. Public shaping/Arc output, keys, metadata, rows/glyphs, attributes and visible-paragraph bidi scratch now have pre-call admission. Paragraph discovery and retirement inventory allocate no temporary storage. Preserve original ceilings, required-content behavior and full S5 qualification."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15918,6 +15923,11 @@
           "work": "s4_text_owner_reconciliation.input_preparation",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-construction/result.json",
           "status": "Default text input preparation uses borrowed paragraphs and pre-admitted, observed attribute scratch"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.bidi_construction",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/bidi-construction/result.json",
+          "status": "Default font shaping admits bidi scratch before analysis and propagates refusal without constructing partial text"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17565,7 +17575,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete private font loading/cache, visible-paragraph bidi/shaping and raster synchronous construction admission. Public shaping/Arc output, keys, metadata and layout rows/glyphs have pre-call admission and publication. Paragraph discovery is allocation-free; attribute construction is admitted and observed through existing host scratch. Preserve original ceilings, required-content behavior and full S5 qualification."
+          "Complete private font selection/loading/cache and raster synchronous construction admission. Public shaping/Arc output, keys, metadata, rows/glyphs, attributes and visible-paragraph bidi scratch now have pre-call admission. Paragraph discovery and retirement inventory allocate no temporary storage. Preserve original ceilings, required-content behavior and full S5 qualification."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -17772,6 +17782,11 @@
           "work": "s4_text_owner_reconciliation.input_preparation",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-construction/result.json",
           "status": "Default text input preparation uses borrowed paragraphs and pre-admitted, observed attribute scratch"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.bidi_construction",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/bidi-construction/result.json",
+          "status": "Default font shaping admits bidi scratch before analysis and propagates refusal without constructing partial text"
         }
       ]
     },
@@ -17866,7 +17881,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete private font loading/cache, visible-paragraph bidi/shaping and raster synchronous construction admission. Public shaping/Arc output, keys, metadata and layout rows/glyphs have pre-call admission and publication. Paragraph discovery is allocation-free; attribute construction is admitted and observed through existing host scratch. Preserve original ceilings, required-content behavior and full S5 qualification."
+          "Complete private font selection/loading/cache and raster synchronous construction admission. Public shaping/Arc output, keys, metadata, rows/glyphs, attributes and visible-paragraph bidi scratch now have pre-call admission. Paragraph discovery and retirement inventory allocate no temporary storage. Preserve original ceilings, required-content behavior and full S5 qualification."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -18073,6 +18088,11 @@
           "work": "s4_text_owner_reconciliation.input_preparation",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-construction/result.json",
           "status": "Default text input preparation uses borrowed paragraphs and pre-admitted, observed attribute scratch"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.bidi_construction",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/bidi-construction/result.json",
+          "status": "Default font shaping admits bidi scratch before analysis and propagates refusal without constructing partial text"
         }
       ]
     },
@@ -36130,7 +36150,7 @@
       "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json"
     },
     "construction_route_review": {
-      "status": "Datum streaming row construction admission implemented; private shaping/font/raster construction and full cap qualification remain pending",
+      "status": "Datum row/input/public-shape and bidi construction admission implemented; private font selection/loading/cache and raster construction remain pending",
       "base_commit": "53ba2716",
       "installed_api_evidence": {
         "package": "cosmic-text 0.15.0 already installed through glyphon 0.10.0",
@@ -36144,14 +36164,13 @@
       },
       "next_production_component": {
         "owner": "crates/gui-render/src/font_owner.rs, text_layout.rs and text_gpu/raster.rs",
-        "change": "Resolve remaining synchronous shaping/font/raster and bidi/attribute construction admission using the owner-selected Datum-owned route and existing dependencies. Retained capacities and post-call eviction are already measured but do not cap a call before allocation. Complete logical-consumer incidence before S4 exit. Temporary inventory/sort allocation is retired; same-alignment metadata shrinking is reconciled to the existing Rust-owned capacity versus allocator/RSS boundary.",
+        "change": "Complete remaining private font selection/loading/cache and raster construction admission. Datum row/key/metadata/public-shape output, attribute construction and bidi scratch are admitted; paragraph discovery and retirement inventory allocate no temporary storage. Logical-consumer incidence is implemented. Preserve all original caps and full qualification.",
         "authority": "Existing GPI-S4 execution and full-accounting Datum-owned route; no third-party modification or new dependency authority.",
         "proof": "Affected production refusal/retry, bounded output and installed-renderer fidelity checks, followed by the complete S4 implementation determination. Full native/endurance qualification remains S5."
       },
       "remaining_boundaries": [
-        "Datum row output and scratch, key copying and metadata growth now have pre-construction admission. Compound MEM-SHAPED/MEM-STAGING requirements remain incomplete because library shaping/font/raster and other listed temporary paths do not yet have the same guarantees.",
-        "Replacing layout output construction alone will not close the infallible shaping/font/raster peaks or cross-owner construction overlap. Those remain S4 implementation obligations; original S5 qualification is unchanged.",
-        "The dependency boundary prevents modifying installed third-party sources or adding a direct/transitive dependency without exact owner ratification. The selected row-producer route uses existing public data and needs neither."
+        "Private font selection/loading/cache construction and raster scratch/output peaks remain S4 implementation obligations; observation and post-call eviction do not establish pre-call admission.",
+        "Completed Datum input/layout/public-shape/bidi admission does not close these remaining private calls or establish combined resource/native qualification. Original S5 qualification and the owner-only dependency boundary remain unchanged."
       ]
     },
     "streaming_layout": {
@@ -36358,6 +36377,69 @@
         "src/char_data/tables.rs": "8cbe4b6a4fc690e76107d4654047d3f0d8988b870fc3234f76dc265ad2e2a9ca",
         "rangemap-1.7.1/src/map.rs": "342bc3a62e5a41886e5a08dd0ebc0f3075b919d8ab27a09d91d5dd13e63653e4",
         "alloc/collections/btree/node.rs": "2200ca0a4fe38592c314dc7f5f40bbb160e06b6f9e4abd1eb5bc40701540ab25"
+      },
+      "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)"
+    },
+    "bidi_construction": {
+      "status": "Default font shaping admits bidi scratch before analysis and propagates refusal without constructing partial text",
+      "base_commit": "c3da721039b3c0441fe7084a62c05eeb61cce77f",
+      "production_consumers": [
+        "Datum Fonts::shape through shared TextLayout for workspace, Terminal, native dialogs and overlays"
+      ],
+      "retired_paths": [
+        "Default infallible Source::shape boundary that could not reject private bidi construction",
+        "Bidi analysis before host/process scratch reservation"
+      ],
+      "behavior": [
+        "Make the shared shaping boundary fallible. Reserve input-sized bidi scratch under existing16MiB host/64MiB process caps before ShapeLine construction. Retire reusable font caches on pressure through the existing identity-preserving path; refusal reaches existing source-preserving frame failure/retry.",
+        "Release the temporary bidi reservation before admitting retained font-cache growth, so dead scratch does not displace reusable cache capacity. Public shape-output reservation and atomic retained publication remain separate. Existing font allocation scopes continue observing actual allocations.",
+        "Zero-scratch hosts now explicitly refuse required shaping rather than constructing glyphs and merely refusing optional retention afterward. This is cap enforcement, not silent content omission or a changed numerical budget."
+      ],
+      "bound_review": {
+        "implementation": "Pinned unicode-bidi0.3.18 UTF-8 BidiInfo::new plus cosmic-text0.15.0 ShapeLine adjusted-level cloning; existing Basic shaping only.",
+        "ascii": "Pure-LTR ASCII avoids explicit/implicit run resolution.128bytes/input-byte plus32KiB covers paragraph records/flags, byte classes, processing-class clone, levels and adjusted-level clone, growth minima and allocation headers.",
+        "general": "2048bytes/input-byte plus32KiB. Input-sized families: original classes; paragraph records; paragraph flags; initial isolate indices; processing classes; levels; explicit level runs; provisional sequence container; isolate sequence stack; nested run payloads; final isolating sequence container; weak ET indices; weak BN indices; bracket pairs; adjusted-level clone. Each element is at most32bytes; summed nested capacities are bounded by4input units per byte. Sixteen such families conservatively cover these15 plus nested allocation headers. Explicit status depth and bracket matching stacks are bounded and fit fixed headroom. Run payloads move between containers without duplication.",
+        "boundary": "Font selection/loading/cache construction, shaped glyph outputs and rasterization are not included in this bidi-only bound. Public output already has its own preflight. Conservative bounds may refuse input whose final compact output would fit. Toolchain/dependency changes require review; no third-party fields are accessed or sources copied/modified."
+      },
+      "proof": [
+        "407 selected serial renderer tests passed,0failed,11diagnostic/golden-runner exclusions. All7focused font/admission tests pass. Actual production GPU parity, warm reuse, history eviction, cross-owner caps and lifetime tests are included.",
+        "Production Fonts test saturates host capacity, confirms refusal before shaping increases allocation peak or returns output, releases pressure and compares exact mixed-direction glyphs with the prior result. Both ASCII/complex reservation profiles release permits and refuse overbooking. Existing zero-budget expectation now requires preconstruction failure, reflecting the stronger default boundary.",
+        "Source health2312files, dependency authority, Cargo resource policy, convergence guard and11guard regression tests pass. Final strict visual renderer/app Clippy and fresh visual GUI build are recorded in their logs."
+      ],
+      "limitations": [
+        "Font selection/loading/cache and raster construction peaks remain unresolved under the six compound S4 predicates. Bidi admission does not complete full private text accounting/caps, S4 or S5. Existing21implemented/6gaps/23no-new-defect inventory and all original S5 qualification remain.",
+        "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize, historical failures and owner/Copilot engine-test edits."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/bidi-construction/result.json",
+      "logs": {
+        "font": {
+          "path": "docs/reviews/gui-performance/implementation/S4/bidi-construction/font.log.gz",
+          "uncompressed_sha256": "dcd6b0d16ad3a5bff4c7e70eb8b430eea906e2464b93821b2234b36ddce56917"
+        },
+        "renderer": {
+          "path": "docs/reviews/gui-performance/implementation/S4/bidi-construction/renderer.log.gz",
+          "uncompressed_sha256": "ca6261d3a7ae42c62de928945ba4f58b56dc0603cc44deffc6bdb1e2944b32df"
+        },
+        "clippy": {
+          "path": "docs/reviews/gui-performance/implementation/S4/bidi-construction/clippy.log.gz",
+          "uncompressed_sha256": "19700837892f1e7a635ce6b0bbf23627e6b01980c990fa6484d94c91f98191f7"
+        },
+        "build": {
+          "path": "docs/reviews/gui-performance/implementation/S4/bidi-construction/build.log.gz",
+          "uncompressed_sha256": "5a63008a6885a50ae254b0ff4655622a08acf2858f11e319f2b32757c07f29e4"
+        }
+      },
+      "source_sha256": {
+        "crates/gui-render/src/font_owner.rs": "50152c6a75f9d42707291ff39823275a457128329e4d9147df8f4c36c4c9b258",
+        "crates/gui-render/src/font_bidi_scratch.rs": "64bd769398eef2e21bfd3e9baf9d4a9a3ea86e1cb1a28573875004f091711b03",
+        "crates/gui-render/src/font_shape_admission.rs": "cd2e0042a1e3406216391941165626a9c22c798c83585a50578c9ea81a590ac0",
+        "crates/gui-render/src/render/text_batch_admission_tests.rs": "c03986316fbad5fb9c4b283e214d05d01cb62922019c97bddb7b4df66ac3c518"
+      },
+      "reviewed_dependency_sources": {
+        "unicode-bidi-0.3.18/src/lib.rs": "8a611ccb9d56c176f8428edc14b1e6fc1fbe8ed22bc72118fb987e6a29638197",
+        "unicode-bidi-0.3.18/src/explicit.rs": "86c3c55bf2cc90aab1411aac6cf05de505ca74e44a76fe829572dd7dc4dd2aa3",
+        "unicode-bidi-0.3.18/src/implicit.rs": "8d5b003464aee3f333785c6170a884945251f39601e4ea658e669a2ad575d588",
+        "unicode-bidi-0.3.18/src/prepare.rs": "aeb8b88cfb2d2e6b74473f5903205dd3683d57abcc8801de7b9fdea6a432a0fe"
       },
       "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)"
     }

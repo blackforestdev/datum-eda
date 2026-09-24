@@ -74,7 +74,7 @@ pub(super) fn shape(
 ) -> anyhow::Result<Arc<Shape>> {
     let maximum = bound(text)?;
     let mut reservation = owner.map(|owner| owner.reserve(maximum)).transpose()?;
-    let mut result = fonts.shape(text, attrs);
+    let mut result = fonts.shape(text, attrs)?;
     let actual = result
         .payload_bytes()
         .checked_add(super::shape_container_bytes())
