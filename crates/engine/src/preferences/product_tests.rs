@@ -56,7 +56,7 @@ fn product_catalog_and_active_only_search_have_exact_inventory() {
     let PreferenceQueryResultV1::Describe(describe) =
         service.query(PreferenceQueryV1::Describe).unwrap()
     else {
-        panic!("expected Describe result")
+        std::panic::panic_any("expected Describe result")
     };
     assert_eq!(
         describe
@@ -74,7 +74,7 @@ fn product_catalog_and_active_only_search_have_exact_inventory() {
         })
         .unwrap()
     else {
-        panic!("expected Search result")
+        std::panic::panic_any("expected Search result")
     };
     assert_eq!(alias.matches.len(), 1);
     assert_eq!(
@@ -92,7 +92,7 @@ fn product_catalog_and_active_only_search_have_exact_inventory() {
         })
         .unwrap()
     else {
-        panic!("expected Search result")
+        std::panic::panic_any("expected Search result")
     };
     assert!(reserved.matches.is_empty());
     let refusal = service
@@ -143,7 +143,7 @@ fn factory_seed_preview_never_creates_or_reads_a_repository() {
         })
         .unwrap()
     else {
-        panic!("expected seed preview")
+        std::panic::panic_any("expected seed preview")
     };
     assert_eq!(
         preview.profile.as_object().map(|value| value.len()),
