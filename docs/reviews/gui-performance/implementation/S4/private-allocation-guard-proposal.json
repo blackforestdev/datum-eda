@@ -1,0 +1,60 @@
+{
+  "status": "Pending owner review; not applied and no requirements satisfied",
+  "reviewed_head": "d843bf7212c2cf66742d286c015f982dc72beddb",
+  "purpose": "Resolve the distinction between full resource accounting and hard pre-call prevention for opaque text-library construction without another dependency fork or broad renderer rewrite.",
+  "authority": "Existing full-accounting requirements and S4 execution stay controlling until the owner explicitly approves and the numbered decision, specifications and Frontier are reconciled together. This is an acceptance-mechanism change, not a sequencing-only clarification.",
+  "tradeoff": "Allows a private library call to transiently exceed the budget before Datum can reject its result. This deliberately weakens prevention; it retains measured budget acceptance, full accounting and explicit tier failure. It does not provide an OOM recovery guarantee.",
+  "unchanged": [
+    "All original numerical memory ceilings and simultaneous subcaps.",
+    "All Datum-controlled pre-allocation admission and bounded uploads.",
+    "All required content, pixels, GEFN improvements and nonblocking resize exclusions.",
+    "S4 must implement and verify the guard before S5. S5 must pass complete original in-scope qualification; no overrun waived.",
+    "No new, modified or vendored dependencies. Existing registry dependencies remain."
+  ],
+  "changes": [
+    {
+      "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+      "clause": "MEM-02, immediately after the memory-limit table",
+      "operation": "insert",
+      "proposed_text": "Private text-library construction exception: allocations performed internally by the existing font selection/loading/cache and glyph rasterization calls may use monitored construction rather than pre-call capacity admission. This includes raster output until ownership transfers to Datum. It does not cover Datum-controlled allocations, permit new dependencies, or change any numerical local, aggregate, RSS or GPU bound. Full instantaneous live and peak accounting, including allocation overhead and concurrent host incidence, remains required. All applicable subcaps apply together. A construction-time overrun is a recorded tier failure, not successful admission or a passing memory result. This exception does not guarantee preventing a transient overrun or recovering from process-level allocation failure inside an opaque call."
+    },
+    {
+      "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+      "clause": "ACC-02, immediately after existing paragraph",
+      "operation": "insert",
+      "proposed_text": "For the MEM-02 private text construction exception, a shared Datum call guard records initial/live/peak/final owned bytes and exact concurrent host/process incidence over the entire call. It must distinguish retained input/output from transient scratch without double counting shared allocations. After the call, before publishing newly prepared resources or submitting their GPU work, a detected local or aggregate overrun fails preparation, releases newly derived work as appropriate, and preserves authoritative text and pending damage for explicit retry. Do not continue a rejected batch, silently omit content, turn allocation failure into empty output, or report an overrun as compliant. Positive and deliberately over-budget negative controls must verify the accounting and failure path. A before/after live-byte snapshot or lifetime high-water alone is insufficient to recover an individual call peak."
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md",
+      "clause": "GP-045-05, admission prerequisite sentence",
+      "operation": "replace",
+      "existing_text": "Full admission and accounting remain prerequisites\nto runtime tier/budget qualification and S5 completion.",
+      "proposed_text": "Admission for Datum-controlled allocations, the MEM-02 private text call guard, and complete accounting remain prerequisites\nto runtime tier/budget qualification and S5 completion. The private text exception permits monitored construction, not a claim of pre-allocation prevention."
+    },
+    {
+      "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+      "clause": "S4 table / GPI-S4, added clarification",
+      "operation": "insert_after_GPI-S4",
+      "proposed_text": "For private font selection/loading/cache and raster construction only, the S4 implementation prerequisite is the shared MEM-02/ACC-02 call guard, correct simultaneous local/process accounting, and default production refusal/release/retry integration with affected positive/negative proof. A hard pre-call bound on these opaque internal allocations is no longer required. Every other unfinished S2/S4 implementation predicate remains due before S5. This change supplies no completion evidence by itself."
+    },
+    {
+      "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+      "clause": "S5 table / GPI-S5, added qualification clarification",
+      "operation": "insert_after_GPI-S5",
+      "proposed_text": "Qualification must demonstrate that private text construction actually stays within the unchanged numerical memory limits for every admitted configuration and required workload, including cold load, cache churn, simultaneous hosts and recovery. Any observed overrun, missing instantaneous/peak accounting or required content that cannot fit fails the tier; the guard detecting it does not satisfy qualification. S4 guard implementation is neither a memory-budget pass nor protection against every possible opaque allocation."
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation-map.json",
+      "clause": "MEM-STAGING-LOCAL/TOTAL s2_exit_disposition.unfinished_implementation; AC-05/HP08-03 corresponding private construction scope",
+      "operation": "replace_only_private_construction_requirement",
+      "proposed_text": "Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
+    }
+  ],
+  "implementation_if_approved": [
+    "Add one shared call guard for default Fonts and Raster owners, observing allocation-inclusive instantaneous and peak host/process ownership across concurrent calls.",
+    "Integrate typed failure before prepared-resource publication and GPU submission; preserve authoritative source, existing displayed content and pending damage.",
+    "Verify refusal/retry, overlapping owners, transient peaks and normal glyph fidelity in one integrated renderer/app slice, then perform the S4 exit review. Full native/endurance and independent replay remain S5."
+  ],
+  "evidence_limit": "The public outline API still calls FontSystem::get_font and builds/scales an outline before returning; it does not eliminate opaque construction. No safe construction bound or runtime allocation-limit implementation was established by the retired PM046 trial. No theoretical impossibility is asserted.",
+  "decision_response": "Approve the exact private text construction amendment, or retain hard pre-call enforcement. Approval changes no milestone status by itself."
+}
