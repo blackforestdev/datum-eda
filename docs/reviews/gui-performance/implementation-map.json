@@ -4009,6 +4009,11 @@
           "work": "s4_text_owner_reconciliation.construction_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
           "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.retirement_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
+          "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
         }
       ]
     },
@@ -5454,6 +5459,11 @@
           "work": "s4_text_owner_reconciliation.construction_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
           "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.retirement_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
+          "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
         }
       ]
     },
@@ -15596,7 +15606,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete pre-construction admission for nested synchronous library shaping output and its shared Arc container, and metadata compaction/retirement overlap. Datum-owned key copies, cache entry/index growth, row/glyph output and concurrent construction reservations now have admission before allocation with atomic retained publication. Private font/raster/bidi/attribute scratch remains disjoint and incomplete. Original ceilings and required-content behavior remain binding; post-call admission is not peak compliance."
+          "Complete pre-construction admission for nested synchronous library shaping output and its shared Arc container. Datum-owned keys, metadata growth, row/glyph output and concurrent construction reservations already have admission and atomic retained publication; retirement/inventory now allocates no temporary heap storage. Same-alignment metadata shrinking reduces one owned allocation, with native allocator movement remaining separate RSS. Private font/raster/bidi/attribute construction remains unfinished. Original ceilings and required-content behavior remain binding."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15684,6 +15694,11 @@
           "work": "s4_text_owner_reconciliation.construction_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
           "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.retirement_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
+          "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15790,7 +15805,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete pre-construction admission for nested synchronous library shaping output and its shared Arc container, and metadata compaction/retirement overlap. Datum-owned key copies, cache entry/index growth, row/glyph output and concurrent construction reservations now have admission before allocation with atomic retained publication. Private font/raster/bidi/attribute scratch remains disjoint and incomplete. Original ceilings and required-content behavior remain binding; post-call admission is not peak compliance."
+          "Complete pre-construction admission for nested synchronous library shaping output and its shared Arc container. Datum-owned keys, metadata growth, row/glyph output and concurrent construction reservations already have admission and atomic retained publication; retirement/inventory now allocates no temporary heap storage. Same-alignment metadata shrinking reduces one owned allocation, with native allocator movement remaining separate RSS. Private font/raster/bidi/attribute construction remains unfinished. Original ceilings and required-content behavior remain binding."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15878,6 +15893,11 @@
           "work": "s4_text_owner_reconciliation.construction_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
           "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.retirement_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
+          "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17717,6 +17737,11 @@
           "work": "s4_text_owner_reconciliation.construction_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
           "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.retirement_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
+          "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
         }
       ]
     },
@@ -18003,6 +18028,11 @@
           "work": "s4_text_owner_reconciliation.construction_admission",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
           "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.retirement_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
+          "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
         }
       ]
     },
@@ -35962,7 +35992,7 @@
       },
       "next_production_component": {
         "owner": "crates/gui-render/src/font_owner.rs, text_layout.rs and text_gpu/raster.rs",
-        "change": "Resolve remaining synchronous shaping/font/raster and bidi/attribute construction admission using the owner-selected Datum-owned route and existing dependencies. Retained capacities and post-call eviction are already measured but do not cap a call before allocation. Finish metadata retirement overlap and logical-consumer incidence before S4 exit.",
+        "change": "Resolve remaining synchronous shaping/font/raster and bidi/attribute construction admission using the owner-selected Datum-owned route and existing dependencies. Retained capacities and post-call eviction are already measured but do not cap a call before allocation. Complete logical-consumer incidence before S4 exit. Temporary inventory/sort allocation is retired; same-alignment metadata shrinking is reconciled to the existing Rust-owned capacity versus allocator/RSS boundary.",
         "authority": "Existing GPI-S4 execution and full-accounting Datum-owned route; no third-party modification or new dependency authority.",
         "proof": "Affected production refusal/retry, bounded output and installed-renderer fidelity checks, followed by the complete S4 implementation determination. Full native/endurance qualification remains S5."
       },
@@ -36022,6 +36052,30 @@
         "No dependency, vendoring, prototype, numerical-budget or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition, historical failed receipts and the unrelated owner/Copilot engine test edit."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json"
+    },
+    "retirement_completion": {
+      "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary",
+      "production_consumers": [
+        "TextBufferCache key_usage, finish_frame and overlay/history retirement shared by workspace, terminal and native dialog/overlay text"
+      ],
+      "retired_paths": [
+        "Temporary BTreeMap allocated by every complete shaped-payload inventory",
+        "Allocating stable sorts during workspace/overlay cache retirement"
+      ],
+      "behavior": [
+        "Two-pass shared-shape accounting uses an embedded visitation bit and a per-cache observation mutex, preserving exact shared allocation counts without a temporary map or quadratic address search. Shape sharing remains within one cache and its extent variants; concurrent read-only reports are serialized.",
+        "In-place unstable sorting retains newest generations without allocating scratch. Equal-age cache entries have no presentation-order authority; required current layouts and existing retention limits remain unchanged. Shape-container allocation accounting moves to its font owner without changing the measured Arc/header boundary."
+      ],
+      "proof": [
+        "397 selected serial renderer tests passed, including text/renderer parity, extent reuse and retention. After the accounting-helper relocation and equivalent lint correction, both whole-owner heap tests pass on final sources; strict visual renderer all-target Clippy passes.",
+        "New whole-retirement test constructs 160 shared extents, retains the newest generation under the 128-label cap and observes zero temporary allocation peak through finish_frame and key_usage. Exact totals match an independent address inventory and remain correct across concurrent reports."
+      ],
+      "boundary_correction": "The previous map treated metadata compaction as possible old/new owned-buffer overlap. Pinned Rust 1.93.1 Vec::into_boxed_slice calls shrink_to_fit; RawVec keeps element alignment; Global::shrink calls realloc for equal alignment. Datum Allocator::realloc keeps one ownership header and reduces requested bytes. Allocator-internal relocation/slack remains the already separate RSS boundary. This is not an accounting waiver or a new cap exception. Existing exact compaction/refusal tests remain in the passing renderer suite.",
+      "limitations": [
+        "Synchronous library shaping/font/raster and bidi/attribute construction admission remains unfinished, as does full logical-consumer incidence. No compound MEM/ACC predicate, S4 exit or S5 entry is claimed.",
+        "No dependency/vendor/license, prototype, budget or sequencing change. GEFN, nonblocking resize, existing qualification and owner/Copilot engine edits remain unchanged."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json"
     }
   },
   "s4_text_preparation_work": {

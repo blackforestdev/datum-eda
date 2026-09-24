@@ -3,12 +3,13 @@ use crate::cpu_alloc::{Scope, heap::capacity_bytes};
 use glyphon::{AttrsList, CacheKey, FontSystem, ShapeLine, Shaping, SwashCache, SwashImage};
 use std::sync::{
     Arc,
-    atomic::{AtomicU64, Ordering},
+    atomic::{AtomicBool, AtomicU64, Ordering},
 };
 
 pub(crate) struct Shape {
     line: ShapeLine,
     _lease: Option<Lease>,
+    pub(super) accounted: AtomicBool,
 }
 struct Lease {
     bytes: u64,
@@ -27,7 +28,11 @@ impl std::ops::Deref for Shape {
 }
 impl Shape {
     pub fn untracked(line: ShapeLine) -> Self {
-        Self { line, _lease: None }
+        Self {
+            line,
+            _lease: None,
+            accounted: AtomicBool::new(false),
+        }
     }
     pub fn payload_bytes(&self) -> usize {
         payload_bytes(&self.line)
@@ -47,6 +52,21 @@ fn payload_bytes(line: &ShapeLine) -> usize {
                         .sum::<usize>()
             })
             .sum::<usize>()
+}
+
+pub(super) fn shape_container_bytes() -> usize {
+    if !crate::cpu_alloc::installed() {
+        // External consumers without Datum's allocator retain public-size reporting.
+        return std::mem::size_of::<Shape>();
+    }
+    static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+    *BYTES.get_or_init(|| {
+        crate::cpu_alloc::heap::arc_bytes(Shape::untracked(ShapeLine {
+            rtl: false,
+            spans: Vec::new(),
+            metrics_opt: None,
+        }))
+    })
 }
 
 pub(crate) trait Source {
@@ -183,6 +203,7 @@ impl Source for Fonts {
         self.outputs.fetch_add(bytes, Ordering::AcqRel);
         let shape = Shape {
             line,
+            accounted: AtomicBool::new(false),
             _lease: Some(Lease {
                 bytes,
                 outputs: self.outputs.clone(),

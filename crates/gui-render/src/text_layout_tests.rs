@@ -1,5 +1,6 @@
 use super::*;
 use crate::text_color;
+use glyphon::ShapeLine;
 use glyphon::Shaping;
 use glyphon::{Buffer, Metrics};
 
@@ -92,7 +93,7 @@ fn owned_layout_matches_buffer_for_plain_rich_and_extent_changes() {
 
 #[test]
 fn shape_container_cost_measures_arc_and_allocator_overhead_without_double_counting() {
-    let expected = shape_container_bytes();
+    let expected = fonts::shape_container_bytes();
     let scope = crate::cpu_alloc::Scope::new("shape-container-proof");
     let shape = scope.with(|| {
         Arc::new(fonts::Shape::untracked(ShapeLine {

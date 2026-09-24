@@ -1,0 +1,58 @@
+{
+  "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary",
+  "production_consumers": [
+    "TextBufferCache key_usage, finish_frame and overlay/history retirement shared by workspace, terminal and native dialog/overlay text"
+  ],
+  "retired_paths": [
+    "Temporary BTreeMap allocated by every complete shaped-payload inventory",
+    "Allocating stable sorts during workspace/overlay cache retirement"
+  ],
+  "behavior": [
+    "Two-pass shared-shape accounting uses an embedded visitation bit and a per-cache observation mutex, preserving exact shared allocation counts without a temporary map or quadratic address search. Shape sharing remains within one cache and its extent variants; concurrent read-only reports are serialized.",
+    "In-place unstable sorting retains newest generations without allocating scratch. Equal-age cache entries have no presentation-order authority; required current layouts and existing retention limits remain unchanged. Shape-container allocation accounting moves to its font owner without changing the measured Arc/header boundary."
+  ],
+  "proof": [
+    "397 selected serial renderer tests passed, including text/renderer parity, extent reuse and retention. After the accounting-helper relocation and equivalent lint correction, both whole-owner heap tests pass on final sources; strict visual renderer all-target Clippy passes.",
+    "New whole-retirement test constructs 160 shared extents, retains the newest generation under the 128-label cap and observes zero temporary allocation peak through finish_frame and key_usage. Exact totals match an independent address inventory and remain correct across concurrent reports."
+  ],
+  "boundary_correction": "The previous map treated metadata compaction as possible old/new owned-buffer overlap. Pinned Rust 1.93.1 Vec::into_boxed_slice calls shrink_to_fit; RawVec keeps element alignment; Global::shrink calls realloc for equal alignment. Datum Allocator::realloc keeps one ownership header and reduces requested bytes. Allocator-internal relocation/slack remains the already separate RSS boundary. This is not an accounting waiver or a new cap exception. Existing exact compaction/refusal tests remain in the passing renderer suite.",
+  "limitations": [
+    "Synchronous library shaping/font/raster and bidi/attribute construction admission remains unfinished, as does full logical-consumer incidence. No compound MEM/ACC predicate, S4 exit or S5 entry is claimed.",
+    "No dependency/vendor/license, prototype, budget or sequencing change. GEFN, nonblocking resize, existing qualification and owner/Copilot engine edits remain unchanged."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
+  "base_commit": "a46be81bc484bbe906b9a665deb412877f0a73d2",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-retirement/renderer.log.gz",
+      "uncompressed_sha256": "1c5af379e4d6fd15e4b6aed3764eab5a62ffd1f91fcfea8f05432a80b11f3f36"
+    },
+    "clippy-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-retirement/clippy-initial.log.gz",
+      "uncompressed_sha256": "3b0baa3bba6878e91c1f633a045b902ecebd73153fa4e720fb4b4d6c41e61f00"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-retirement/clippy.log.gz",
+      "uncompressed_sha256": "a0d16bff0eddaf5e971c89f0af3525e961de9a23395ab43c314033e9dadf21fa"
+    },
+    "final-heap": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-retirement/final-heap.log.gz",
+      "uncompressed_sha256": "e1ff17ac137a8b5d72638b6e643b6e7ca61bc558e9473bc4f76b04adc32354eb"
+    }
+  },
+  "failed_attempts": "Initial source-health check required moving Arc-container accounting to the existing font owner; test-only imports stay in their test module. No ceiling or policy change. Initial Clippy requested filter/map instead of bool-then filter_map; equivalent final code passes.",
+  "pinned_shrink_sources": {
+    "alloc.rs": "cd8a5946b4c44338c451d1bb4c47e3109ea08ae7e3c58397e0879e4fe099572b",
+    "raw_vec/mod.rs": "7f94665b803a970d83f99d3a451a92af6b210baaa8c9685b1f50d265c836f38b",
+    "vec/mod.rs": "98ed44ed3e17e41c6048b2057cdf44443ddb5f7462fbf9c48e7e62fc7ace286e"
+  },
+  "toolchain": "rustc 1.93.1 (01f6ddf75 2026-02-11)",
+  "source_sha256": {
+    "crates/gui-render/src/font_owner.rs": "6e97297a2cb184d9d863e396a4bc195b84636a3c4114445b2c8532fd196be7af",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "89affe1c2964ae4e0f4c69b36587fd5bbde82da291a12c830120d72be198574d",
+    "crates/gui-render/src/render/text_buffer_heap_tests.rs": "799b4c05a6c4444743e2fb7358cb8eebc7435dba818380b3e70e4d122ffe57d1",
+    "crates/gui-render/src/render/text_cache_retention.rs": "715b9f92cc59f762281ff778e4c8809e2263acfcada5afbe8650494c9aed9210",
+    "crates/gui-render/src/text_layout.rs": "ee7ed28f785a65ddb19794193511b351c0a690f08ed97541556a57bd18756e87",
+    "crates/gui-render/src/text_layout_tests.rs": "4ebb8ce2ca765f3736892c4ad6735a15513fe063c19b695a19c7feafafdf7550"
+  }
+}

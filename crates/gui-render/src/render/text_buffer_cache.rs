@@ -109,6 +109,7 @@ fn key_text_bytes(key: &TextBufferKey) -> usize {
 }
 
 pub(crate) struct TextBufferCache {
+    shape_accounting: std::sync::Mutex<()>,
     published_revision: u64,
     published_bytes: usize,
     entries: Vec<CachedTextBuffer>,
@@ -136,6 +137,7 @@ pub(crate) struct TextBufferCache {
 impl Default for TextBufferCache {
     fn default() -> Self {
         Self {
+            shape_accounting: std::sync::Mutex::new(()),
             owner: budget::Owner::new(std::mem::size_of::<Self>()),
             published_revision: 0,
             published_bytes: std::mem::size_of::<Self>(),
@@ -218,15 +220,23 @@ fn run_fingerprint(run: &TextRun) -> u64 {
 
 impl TextBufferCache {
     pub(crate) fn key_usage(&self) -> crate::TextCacheKeyUsage {
-        let mut shapes = std::collections::BTreeMap::new();
+        let _accounting = self
+            .shape_accounting
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
         let mut layout_bytes = 0;
         for entry in &self.entries {
             layout_bytes += entry.buffer.layout_storage_bytes();
-            shapes.extend(entry.buffer.shape_allocations());
+            entry.buffer.reset_shape_accounting();
         }
+        let shape_bytes: usize = self
+            .entries
+            .iter()
+            .map(|entry| entry.buffer.uncounted_shape_bytes())
+            .sum();
         crate::TextCacheKeyUsage {
             owner_id: self.owner.id(),
-            shaped_payload_bytes: layout_bytes + shapes.values().sum::<usize>(),
+            shaped_payload_bytes: layout_bytes + shape_bytes,
             entries: self.entries.len(),
             label_entries: self
                 .entries
@@ -308,7 +318,8 @@ impl TextBufferCache {
         }
         // Pressure is uncommon. Newest generations survive first; halving avoids
         // a quadratic full-payload recount for a large obsolete text generation.
-        self.entries.sort_by_key(|entry| entry.last_used_frame);
+        self.entries
+            .sort_unstable_by_key(|entry| entry.last_used_frame);
         while !self.entries.is_empty() && self.retained_payload_bytes() > limit {
             let retire = self.entries.len().div_ceil(2);
             self.entries.drain(..retire);
