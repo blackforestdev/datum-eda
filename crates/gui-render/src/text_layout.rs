@@ -10,10 +10,13 @@ pub(crate) mod fonts;
 
 use crate::cpu_alloc::heap::capacity_bytes;
 use crate::{TextRun, text_attrs};
-use glyphon::cosmic_text::{BidiParagraphs, LineIter};
+use glyphon::cosmic_text::LineIter;
+#[path = "text_input.rs"]
+mod input;
+use input::{Attributes, Paragraphs};
 #[path = "layout_scratch.rs"]
 pub(crate) mod scratch;
-use glyphon::{AttrsList, LayoutLine, LayoutRun, Style, Weight};
+use glyphon::{LayoutLine, LayoutRun};
 use scratch::LayoutScratch;
 #[path = "layout_rows.rs"]
 mod streaming_rows;
@@ -188,7 +191,8 @@ impl TextLayout {
         if self.complete {
             return Ok(());
         }
-        let mut process = |text: &str, attributes: AttrsList| -> anyhow::Result<bool> {
+        let input_scope = scratch.construction_scope();
+        let mut process = |text: &str, attributes: Attributes| -> anyhow::Result<bool> {
             let index = self.shapes.len();
             self.shapes.push(
                 fonts.shape_admitted(text, &attributes, admission.owner)?,
@@ -203,14 +207,15 @@ impl TextLayout {
                 .chain(trailing.then_some(""))
                 .skip(cached)
             {
-                if !process(paragraph, AttrsList::new(attrs))? {
+                let attributes = input_scope.with(|| Attributes::new(attrs, 0, admission.host))?;
+                if !process(paragraph, attributes)? {
                     return Ok(());
                 }
             }
         } else {
             // Borrow the caller's admitted concatenation. Iterate paragraphs and
             // source spans directly instead of building two temporary vectors.
-            let mut paragraphs = BidiParagraphs::new(rich_text).peekable();
+            let mut paragraphs = Paragraphs::new(rich_text).peekable();
             let empty = paragraphs.peek().is_none();
             for paragraph in paragraphs.chain(empty.then_some("")).skip(cached) {
                 let start = if paragraph.is_empty() {
@@ -219,27 +224,8 @@ impl TextLayout {
                     paragraph.as_ptr() as usize - rich_text.as_ptr() as usize
                 };
                 let end = start + paragraph.len();
-                let mut attributes = AttrsList::new(attrs);
-                let mut offset = 0;
-                for (index, span) in run.rich_spans.iter().enumerate() {
-                    let span_end = offset + span.text.len();
-                    let left = offset.max(start);
-                    let right = span_end.min(end);
-                    if left < right {
-                        let mut style = attrs.clone().metadata(index + 1);
-                        if span.bold {
-                            style = style.weight(Weight::BOLD);
-                        }
-                        if span.italic {
-                            style = style.style(Style::Italic);
-                        }
-                        attributes.add_span(left - start..right - start, &style);
-                    }
-                    offset = span_end;
-                    if offset >= end {
-                        break;
-                    }
-                }
+                let attributes = input_scope
+                    .with(|| Attributes::rich(run, start, end, attrs, admission.host))?;
                 if !process(paragraph, attributes)? {
                     return Ok(());
                 }

@@ -508,6 +508,7 @@ def main() -> int:
         + TEXT_BUFFER_CACHE.with_name("text_cache_retention.rs").read_text()
         + TEXT_BUFFER_CACHE.with_name("text_cache_prepare.rs").read_text()
         + (TEXT_BUFFER_CACHE.parent.parent / "font_owner.rs").read_text()
+        + (TEXT_BUFFER_CACHE.parent.parent / "text_input.rs").read_text()
         + TEXT_BUFFER_CACHE.with_name("text_buffer_cache_tests.rs").read_text()
         + (TEXT_BUFFER_CACHE.parent.parent / "text_layout.rs").read_text()
     )

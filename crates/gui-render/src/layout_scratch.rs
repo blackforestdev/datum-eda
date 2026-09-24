@@ -21,6 +21,11 @@ impl Default for LayoutScratch {
 }
 
 impl LayoutScratch {
+    /// Attribute construction shares this host's existing scratch ownership.
+    pub(super) fn construction_scope(&self) -> crate::cpu_alloc::Scope {
+        self.scope.clone()
+    }
+
     /// Stop at the first row rejected by the visible-extent consumer. Neither
     /// later row boundaries nor their output glyph storage are constructed.
     pub(super) fn for_each_row(

@@ -1,0 +1,67 @@
+{
+  "status": "Default text input preparation uses borrowed paragraphs and pre-admitted, observed attribute scratch",
+  "base_commit": "88d73609de8b3514654345e049e37aba9fa29729",
+  "production_consumers": [
+    "Shared TextLayout plain/rich preparation for workspace, Terminal, overlays and native Global/Project Preferences/New Project"
+  ],
+  "retired_paths": [
+    "Document-wide BidiParagraphs allocation before visible rich-text preparation",
+    "Unadmitted default/span attribute-map construction"
+  ],
+  "behavior": [
+    "Datum Paragraphs borrows input and preserves the installed ASCII newline profile and Unicode B-class separator behavior. Hidden paragraphs no longer allocate a paragraph table or full-input bidi buffers. Visible-paragraph shaping and bidi resolution still use the existing font owner.",
+    "Attributes reserves both16MiB-host and64MiB-process scratch capacity before creating defaults or adding disjoint style ranges. One conservative bound covers tree nodes, family strings, feature vectors and insertion temporaries. Storage drops before its permits. Existing layout scratch scopes observe actual construction allocations and lifetime without introducing another registry.",
+    "Attribute assembly now belongs to the text input owner. Plain/rich paragraph geometry, style metadata and live paint remain unchanged. Existing convergence guard reads this owning module and retains its rich-span and generation checks."
+  ],
+  "bound_review": [
+    "Pinned Rust BTreeMap nodes contain11key/value slots and12edges;16 generous slots plus256bytes cover metadata/alignment/tracking. At most2nodes per disjoint insertion plus1root bounds tree construction. This route inserts nonoverlapping source spans with unique paint metadata, not arbitrary overlapping range edits.",
+    "Default/span family and feature copies reserve4*(span_count+4)*(family_bytes+feature_bytes+128), including temporary style/range copies and allocation headers. Public type sizes and checked arithmetic determine the bound; no private dependency layout is inspected. Conservative reservations may refuse before compact final capacity would exceed the cap; the existing explicit failure path preserves source text."
+  ],
+  "proof": [
+    "405 selected serial renderer tests pass;11 diagnostic/golden-runner cases excluded. Covers real GPU text/pixel parity, rich paint, warm reuse, atlas pressure, large history, construction caps and lifetimes.",
+    "After moving attribute allocations into the existing scratch observation scope, all13 text-layout/font/input tests pass on final sources.605 separator/context combinations match installed BidiParagraphs with zero paragraph allocations; a10000-paragraph Unicode input consumes only the requested prefix without allocation.",
+    "Attribute construction at0/1/11/12/127/511spans stays below its admitted bound and releases storage/permits; zero-cap refusal leaves no attribute owner. Existing complete text-layout oracle preserves plain/rich geometry across widths/heights. Convergence guard and11regression tests pass. Source health2311files, dependency authority and Cargo resource policy pass. Final Clippy/build logs record their outcomes."
+  ],
+  "failed_attempts": [
+    "Initial source-health check rejected a356-line inline-tail measure after adding attribute assembly to text_layout.rs. Move the cohesive assembly into text_input.rs; final source health passes without a ceiling change or exemption. No failed renderer run in this slice."
+  ],
+  "limitations": [
+    "Private font loading/cache growth, visible-paragraph bidi/shaping internals and raster construction still need pre-call admission. Complete MEM/ACC implementation and S4 exit are not established.21implemented/6gaps/23no-new-defect inventory remains; all original S5 qualification remains due.",
+    "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize, historical failed receipts and owner/Copilot engine-test edits. No broad benchmark or native input campaign."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-construction/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-input-construction/renderer.log.gz",
+      "uncompressed_sha256": "b5bdd0ee97ca147885ac10c937251bdcba11904aac91a58e9e7adb27bc0e616a"
+    },
+    "final-text": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-input-construction/final-text.log.gz",
+      "uncompressed_sha256": "8bb94041d36992f68cbeb8dc7eab11bb0518cad7b2e34b559c96b568018c5789"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-input-construction/clippy.log.gz",
+      "uncompressed_sha256": "dbae6d76550307f2db0c95af3ad7da565ee4444388299a6ab40efc7b76a7966a"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-input-construction/build.log.gz",
+      "uncompressed_sha256": "699046fcccceb2e3bf4dcba7dade342d94fe84375451ee82c6922390d3640569"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/text_input.rs": "1d23898b022bfcb85f6a442981846ceda06d3178f2ae909dd391d1881b1760d0",
+    "crates/gui-render/src/text_input_tests.rs": "9d655e54106863260592268f90528d2440d0828c3a54ccc5fdb8960a5c3c3edb",
+    "crates/gui-render/src/text_layout.rs": "4d5db91782a2dcb44194e59572354c3a2f7177129f80e10fd1808334ef4d8970",
+    "crates/gui-render/src/text_layout_tests.rs": "9de269f119cd110d6410da17424ea177efee3cedaa5546b3f6a733e708186fcd",
+    "crates/gui-render/src/layout_scratch.rs": "a20c95601c5a2c630776cd6efd9dbc459d00d4b7780bc7b3b4576215abb995b2",
+    "scripts/check_gui_agent_terminal_convergence.py": "01845f47a717c365140d865d4f545aad793a0c67208c414af6922a09daa14090"
+  },
+  "reviewed_sources": {
+    "cosmic-text-0.15.0/src/bidi_para.rs": "a81f78e45237d2622e70d01869e4691f748d633f1f8a766d81009d2cedc195f3",
+    "cosmic-text-0.15.0/src/attrs.rs": "49d1de956488eb3f8cd82dbd118d3489566bc31678d9aba313a4026849268c91",
+    "src/char_data/tables.rs": "8cbe4b6a4fc690e76107d4654047d3f0d8988b870fc3234f76dc265ad2e2a9ca",
+    "rangemap-1.7.1/src/map.rs": "342bc3a62e5a41886e5a08dd0ebc0f3075b919d8ab27a09d91d5dd13e63653e4",
+    "alloc/collections/btree/node.rs": "2200ca0a4fe38592c314dc7f5f40bbb160e06b6f9e4abd1eb5bc40701540ab25"
+  },
+  "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)"
+}
