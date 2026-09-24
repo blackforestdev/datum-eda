@@ -4,50 +4,10 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import subprocess
 import sys
-import tomllib
 from pathlib import Path
-
-
-def check_source_patches(root: Path, policy: dict) -> list[str]:
-    """Keep the PM046 exception closed over package, path, version and notices."""
-    failures: list[str] = []
-    approved = policy.get("approved_source_patches", {})
-    manifest = tomllib.loads((root / "Cargo.toml").read_text())
-    for registry, patches in manifest.get("patch", {}).items():
-        for name, patch in patches.items():
-            rule = approved.get(name)
-            if registry != "crates-io" or rule is None or patch != {"path": rule["path"]}:
-                failures.append(f"unratified Cargo patch: {registry}/{name}")
-    if manifest.get("replace"):
-        failures.append("unratified Cargo replacement table")
-    source_root = root / "third_party"
-    if source_root.exists():
-        allowed_paths = {rule["path"] for rule in approved.values()}
-        for path in source_root.iterdir():
-            if str(path.relative_to(root)) not in allowed_paths:
-                failures.append(f"unratified third-party source path: {path.relative_to(root)}")
-    for name, rule in approved.items():
-        if not (root / rule["decision"]).is_file():
-            failures.append(f"missing numbered patch authority for {name}")
-        path = root / rule["path"]
-        if not path.exists():
-            continue  # Authority may precede source introduction.
-        try:
-            package = tomllib.loads((path / "Cargo.toml").read_text())["package"]
-            if package["name"] != name or package["version"] != rule["version"]:
-                failures.append(f"unratified patched package identity: {name}")
-            if rule["license"] != "MIT" or "MIT" not in package["license"].split(" OR "):
-                failures.append(f"patched package lacks the approved MIT option: {name}")
-            actual = hashlib.sha256((path / "LICENSE-MIT").read_bytes()).hexdigest()
-            if actual != rule["license_sha256"]:
-                failures.append(f"modified or missing approved MIT notice: {name}")
-        except (OSError, KeyError, tomllib.TOMLDecodeError) as error:
-            failures.append(f"invalid approved source package {name}: {error}")
-    return failures
 
 
 def cargo_external_dependencies(root: Path) -> set[str]:
@@ -72,7 +32,6 @@ def check(root: Path) -> list[str]:
     failures: list[str] = []
     policy_path = root / "specs/third_party_dependency_policy.json"
     policy = json.loads(policy_path.read_text(encoding="utf-8"))
-    failures.extend(check_source_patches(root, policy))
     allowed = set(policy["inherited_direct_external_dependencies"])
     actual = cargo_external_dependencies(root)
     additions = sorted(actual - allowed)

@@ -1,6 +1,8 @@
 # Product Mechanics 046: Bounded text dependency patches
 
-Status: ratified by the owner on 2026-09-24.
+Status: historical. Ratified on 2026-09-24; the bounded trial subsequently
+stopped without an integrated implementation. Source-patch authority is retired
+under the owner's full-cleanup instruction. No active dependency exception remains.
 Issue and Frontier: `dat-gui-performance-implementation-vkq`, GPI-S4.
 
 ## Owner decision
@@ -60,3 +62,13 @@ implementation predicates and the complete S4 exit review still precede S5.
 All original S5 qualification, GEFN preservation and nonblocking resize
 exclusions remain. No terminal implementation, UI styling or backend policy
 change is authorized by this exception.
+
+## Trial disposition
+
+The feasibility review did not establish safe construction admission across the
+unmodified HarfRust/Skrifa calls. No resource guarantee or S4 completion follows.
+All trial source copies, overrides, trial-only enforcement and build artifacts
+are removed; the preexisting registry text dependencies remain. Details and
+restored-build proof are recorded in
+`docs/reviews/gui-performance/implementation/S4/dependency-patch-review/disposition.json`.
+Reopening or expanding this exception requires a new owner decision.
