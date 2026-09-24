@@ -2,7 +2,7 @@ use super::*;
 use crate::text_color;
 use glyphon::ShapeLine;
 use glyphon::Shaping;
-use glyphon::{Buffer, Metrics};
+use glyphon::{Buffer, Metrics, Style, Weight};
 
 #[test]
 fn owned_layout_matches_buffer_for_plain_rich_and_extent_changes() {
