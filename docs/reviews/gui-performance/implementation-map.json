@@ -32964,6 +32964,12 @@
       "owner_direction": "Owner required complete cleanup after an unsuccessful trial. No active package exception remains; preexisting registry dependencies preserved.",
       "decision": "docs/decisions/PRODUCT_MECHANICS_046_BOUNDED_TEXT_DEPENDENCY_PATCHES.md",
       "disposition": "docs/reviews/gui-performance/implementation/S4/dependency-patch-review/disposition.json"
+    },
+    "private_allocation_guard_proposal": {
+      "status": "Pending owner decision; no active requirement or milestone changes",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/private-allocation-guard-proposal.json",
+      "tradeoff": "Full accounting and numerical budget qualification preserved; opaque font/raster pre-call prevention replaced by monitored construction and post-call rejection before publication/submission. Transient overshoot and library allocation-failure risk explicitly remain.",
+      "implementation": "No guard implementation yet. The four existing gaps and S5 remain open."
     }
   },
   "s4_shared_geometry_work": {
