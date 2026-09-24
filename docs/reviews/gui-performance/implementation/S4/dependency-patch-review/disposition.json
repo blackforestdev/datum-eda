@@ -1,0 +1,23 @@
+{
+  "status": "Bounded three-package feasibility trial stopped; no integrated admission implementation was produced",
+  "reason": "The reviewed Font::new and HintingCache paths still enter private allocating HarfRust and Skrifa constructors without a quota argument. No justified pre-call bound was established. The three-package scope is therefore not established as a solution; expanding packages or developing a broader replacement is outside this trial. This is not a proof that an analytic bound or a larger implementation is impossible.",
+  "scope": "Only three approved runtime source copies and local Cargo overrides were introduced. Runtime Rust sources were unchanged from registry; upstream development fixtures and development dependencies were omitted. No fallible budget APIs or default bounded-path adoption were implemented.",
+  "source_sha256": {
+    "harfrust-0.3.2/src/hb/face.rs": "fad6574f1b81f6d88eb1f88ac6f19a92f54dfff036e958f6a38b4dbf008214eb",
+    "harfrust-0.3.2/src/hb/ot/mod.rs": "e9cdc4f19543843b140d3beeb3e2c6d5c84fef4c5de4cb71e8800723184f19ca",
+    "skrifa-0.40.0/src/outline/hint.rs": "9f9d24f642826672662dd83b2ae33e49ce6866f49779c1896e31cd03eeef3450",
+    "skrifa-0.40.0/src/outline/glyf/hint/instance.rs": "99dd4ee9ec9546bf4f68603f303921a280a2f5a44165a540a3105d81672b1d79"
+  },
+  "baseline_check": "cargo check --offline --locked -p datum-gui-app passed via guarded interactive runner. No runtime native qualification or resource guarantee follows.",
+  "resolution": "Original lock package versions and dependency edges preserved; only the three approved source locations changed. Initial resolver consolidation was rejected and corrected before the successful check. All-platform offline metadata lacked cached android-activity; no download performed.",
+  "cleanup": {
+    "status": "Complete",
+    "removed": "All three local source trees, root Cargo overrides, trial source-health exemptions/helper/tests, active package exception and trial-only dependency gate logic. No new dependency sources entered Git history.",
+    "restoration": "Cargo.toml/Cargo.lock and source-health code/manifest match pre-trial HEAD. Dependency gate/tests, dependency policy, licensing inventory and implementation contract match 85d99f31 byte-for-byte. Existing registry dependencies retained.",
+    "artifacts": "Observed no cargo/rustc processes before guarded package-scoped clean of cosmic-text, swash, zeno, glyphon, datum-gui-render and datum-gui-app. Cargo reported 3227 files / 5.3 GiB removed; Cargo warned package version qualifiers are ignored, so cleaning applied to all cached versions of those packages. No shared-target sweep.",
+    "scan": "No trial-path references in debug dependency/fingerprint metadata after cleaning; no PM046/trial-path/helper references in Cargo manifests, crates, scripts or active dependency/source-health policy. Temporary trial metadata outputs removed.",
+    "rebuild": "Guarded proof cargo build --offline --locked -p datum-gui-app --bin datum-gui passed from registry dependencies; restored-build.log.gz. No native QA replay claimed.",
+    "checks": "Dependency authority, 2 policy tests, source health including --base-ref HEAD, evidence traceability, spec governance, project-state and diff checks passed."
+  },
+  "owner_direction": "Owner requires full removal and cleanup if the dependencies do not solve the bounded trial, retaining only required historical audit records and preexisting registry dependencies."
+}

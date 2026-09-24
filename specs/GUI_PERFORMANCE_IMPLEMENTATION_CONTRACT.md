@@ -369,11 +369,3 @@ All 20 S3 qualification rows retain their original partial statuses and are
 required at S5. All 50 carried S2 implementation predicates remain due at S4.
 No full HP-row, resource-budget, global adoption, product or resize acceptance
 follows. The overall implementation issue remains open.
-
-## Bounded dependency modification authority at S4
-
-PM046 records the owner's 2026-09-24 approval of the exact three-package MIT
-patch trial in commit `85d99f31`. It permits only cosmic-text 0.15.0, swash
-0.2.7 and zeno 0.3.3 modifications within that decision's scope and stop boundary.
-It does not satisfy any implementation predicate or change S4/S5 prerequisites,
-resource limits, rendering fidelity or qualification.
