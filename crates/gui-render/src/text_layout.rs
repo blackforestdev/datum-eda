@@ -13,7 +13,7 @@ use crate::{TextRun, text_attrs};
 use glyphon::cosmic_text::{BidiParagraphs, LineIter};
 #[path = "layout_scratch.rs"]
 pub(crate) mod scratch;
-use glyphon::{AttrsList, LayoutLine, LayoutRun, ShapeLine, Style, Weight};
+use glyphon::{AttrsList, LayoutLine, LayoutRun, Style, Weight};
 use scratch::LayoutScratch;
 #[path = "layout_rows.rs"]
 mod streaming_rows;
@@ -358,9 +358,31 @@ impl TextLayout {
     /// scratch and allocator-internal slack remain separate.
     pub fn shape_allocations(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
         self.shapes.iter().map(|shape| {
-            let bytes = shape_container_bytes() + shape.payload_bytes();
+            let bytes = fonts::shape_container_bytes() + shape.payload_bytes();
             (Arc::as_ptr(shape) as usize, bytes)
         })
+    }
+
+    /// Shape sharing is confined to extent variants in one TextBufferCache.
+    /// The cache serializes this two-pass traversal, including read-only reports.
+    pub fn reset_shape_accounting(&self) {
+        for shape in self.shapes.iter() {
+            shape
+                .accounted
+                .store(false, std::sync::atomic::Ordering::Relaxed);
+        }
+    }
+
+    pub fn uncounted_shape_bytes(&self) -> usize {
+        self.shapes
+            .iter()
+            .filter(|shape| {
+                !shape
+                    .accounted
+                    .swap(true, std::sync::atomic::Ordering::Relaxed)
+            })
+            .map(|shape| fonts::shape_container_bytes() + shape.payload_bytes())
+            .sum()
     }
 
     #[cfg(test)]
@@ -396,18 +418,3 @@ impl<'a> Iterator for Runs<'a> {
 #[cfg(test)]
 #[path = "text_layout_tests.rs"]
 mod tests;
-
-fn shape_container_bytes() -> usize {
-    if !crate::cpu_alloc::installed() {
-        // External consumers without Datum's allocator retain public-size reporting.
-        return std::mem::size_of::<fonts::Shape>();
-    }
-    static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
-    *BYTES.get_or_init(|| {
-        crate::cpu_alloc::heap::arc_bytes(fonts::Shape::untracked(ShapeLine {
-            rtl: false,
-            spans: Vec::new(),
-            metrics_opt: None,
-        }))
-    })
-}

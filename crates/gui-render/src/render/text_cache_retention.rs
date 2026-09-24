@@ -135,7 +135,7 @@ impl TextBufferCache {
             .any(|pair| pair[0].last_overlay_frame < pair[1].last_overlay_frame);
         if changed {
             self.entries
-                .sort_by_key(|entry| std::cmp::Reverse(entry.last_overlay_frame));
+                .sort_unstable_by_key(|entry| std::cmp::Reverse(entry.last_overlay_frame));
         }
         let (mut count, mut bytes) = (0, 0);
         let frame = self.frame;
