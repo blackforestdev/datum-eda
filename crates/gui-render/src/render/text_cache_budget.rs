@@ -24,6 +24,69 @@ impl Registry {
             self.0.push(usage);
         }
     }
+    fn register(&mut self, bytes: usize) -> anyhow::Result<Owner> {
+        anyhow::ensure!(bytes <= LOCAL_LIMIT, "text owner exceeds local capacity");
+        let live = self
+            .0
+            .iter()
+            .try_fold(bytes, |total, owner| {
+                total
+                    .checked_add(owner.bytes)?
+                    .checked_add(owner.constructing_bytes)
+            })
+            .ok_or_else(|| anyhow::anyhow!("text owner capacity overflow"))?;
+        let existing = self.bytes();
+        anyhow::ensure!(
+            live.saturating_add(existing) <= PROCESS_LIMIT,
+            "text owner exceeds process capacity"
+        );
+        if self.0.len() == self.0.capacity() {
+            let needed = self
+                .0
+                .len()
+                .checked_add(1)
+                .ok_or_else(|| anyhow::anyhow!("text owner count overflow"))?;
+            let preferred = self.0.capacity().saturating_mul(2).max(4).max(needed);
+            let mut capacity = preferred;
+            let replacement_bytes = loop {
+                let amount =
+                    crate::text_gpu::staging_vec::StagingVec::<TextCacheOwnerUsage>::capacity_bytes(
+                        capacity,
+                    )? as usize;
+                if live.saturating_add(existing).saturating_add(amount) <= PROCESS_LIMIT {
+                    break amount;
+                }
+                anyhow::ensure!(
+                    capacity != needed,
+                    "text registry replacement exceeds process capacity"
+                );
+                capacity = needed;
+            };
+            // The registry lock serializes this reservation with every other
+            // owner admission. Charge both buffers until the old one is dropped.
+            let mut replacement = Vec::new();
+            replacement.try_reserve_exact(capacity)?;
+            anyhow::ensure!(
+                crate::cpu_alloc::heap::capacity_bytes::<TextCacheOwnerUsage>(
+                    replacement.capacity()
+                ) == replacement_bytes,
+                "text registry capacity differs from admission"
+            );
+            replacement.extend_from_slice(&self.0);
+            self.0 = replacement;
+        }
+        let owner = Owner(NEXT_OWNER.fetch_add(1, Ordering::Relaxed));
+        self.0.push(TextCacheOwnerUsage {
+            owner_id: owner.0,
+            bytes,
+            constructing_bytes: 0,
+            epoch: 0,
+            preparing: true,
+            retention_overflow: false,
+        });
+        Ok(owner)
+    }
+
     fn remove(&mut self, id: u64) {
         self.0.retain(|owner| owner.owner_id != id);
         // Removing an owner must not allocate outside admission. Preserve the
@@ -50,10 +113,11 @@ pub struct TextCacheOwnerUsage {
 
 pub(crate) struct Owner(u64);
 impl Owner {
-    pub fn new(bytes: usize) -> Self {
-        let owner = Self(NEXT_OWNER.fetch_add(1, Ordering::Relaxed));
-        owner.publish(bytes);
-        owner
+    pub fn try_new(bytes: usize) -> anyhow::Result<Self> {
+        OWNERS
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .register(bytes)
     }
     pub fn reserve(&self, bytes: usize) -> anyhow::Result<Construction> {
         let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
@@ -253,7 +317,7 @@ fn set_preparing(id: u64, preparing: bool) {
 
 impl crate::Renderer {
     /// Enumerate CPU text capacities and accounted headers for every live renderer cache.
-    /// Preparing owners may exceed retention caps; this is not scratch accounting.
+    /// Includes in-progress reservations; this is not scratch accounting.
     /// Add text_cache_registry_bytes once for total process ownership.
     pub fn text_cache_process_usage() -> Vec<TextCacheOwnerUsage> {
         OWNERS.lock().unwrap_or_else(|e| e.into_inner()).0.clone()
@@ -273,6 +337,15 @@ impl crate::Renderer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    impl Owner {
+        /// Test fixtures can synthesize full/overfull owners without allocating payload.
+        pub fn new(bytes: usize) -> Self {
+            let owner = Self(NEXT_OWNER.fetch_add(1, Ordering::Relaxed));
+            owner.publish(bytes);
+            owner
+        }
+    }
+
     #[test]
     #[ignore = "requires serial process-wide text admission"]
     fn construction_is_admitted_across_owners_and_transfers_once_on_publication() {
@@ -309,6 +382,69 @@ mod tests {
         let replacement = owner.reserve(600).unwrap();
         drop((second, replacement));
         assert_eq!(inspect().constructing_bytes, 0);
+    }
+
+    #[test]
+    #[ignore = "requires serial process-wide text admission"]
+    fn owner_creation_admits_registry_overlap_and_refuses_without_mutation() {
+        let filler = Owner::new(0);
+        let mut slots = Vec::new();
+        loop {
+            let full = {
+                let owners = OWNERS.lock().unwrap();
+                owners.0.len() == owners.0.capacity()
+            };
+            if full {
+                break;
+            }
+            slots.push(Owner::new(0));
+        }
+        let (len, capacity, registry, others) = {
+            let owners = OWNERS.lock().unwrap();
+            (
+                owners.0.len(),
+                owners.0.capacity(),
+                owners.bytes(),
+                owners
+                    .0
+                    .iter()
+                    .filter(|o| o.owner_id != filler.id())
+                    .map(|o| o.bytes + o.constructing_bytes)
+                    .sum::<usize>(),
+            )
+        };
+        let incoming = 128;
+        filler.publish(PROCESS_LIMIT - registry - others - incoming);
+        assert!(Owner::try_new(LOCAL_LIMIT + 1).is_err());
+        assert!(Owner::try_new(incoming).is_err());
+        {
+            let owners = OWNERS.lock().unwrap();
+            assert_eq!(
+                (owners.0.len(), owners.0.capacity(), owners.bytes()),
+                (len, capacity, registry)
+            );
+        }
+        let replacement = crate::cpu_alloc::heap::capacity_bytes::<TextCacheOwnerUsage>(len + 1);
+        filler.publish(PROCESS_LIMIT - registry - others - incoming - replacement);
+        let admitted = Owner::try_new(incoming).unwrap();
+        {
+            let owners = OWNERS.lock().unwrap();
+            assert_eq!(
+                owners.0.capacity(),
+                len + 1,
+                "tight headroom uses exact growth"
+            );
+            assert!(
+                owners.bytes()
+                    + owners
+                        .0
+                        .iter()
+                        .map(|o| o.bytes + o.constructing_bytes)
+                        .sum::<usize>()
+                    <= PROCESS_LIMIT
+            );
+        }
+        drop((admitted, slots, filler));
     }
 
     #[test]

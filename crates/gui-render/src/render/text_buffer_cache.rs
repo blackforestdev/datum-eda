@@ -134,11 +134,23 @@ pub(crate) struct TextBufferCache {
     owner: budget::Owner,
 }
 
+#[cfg(test)]
 impl Default for TextBufferCache {
     fn default() -> Self {
+        Self::from_owner(budget::Owner::new(std::mem::size_of::<Self>()))
+    }
+}
+
+impl TextBufferCache {
+    pub(crate) fn new() -> anyhow::Result<Self> {
+        Ok(Self::from_owner(budget::Owner::try_new(
+            std::mem::size_of::<Self>(),
+        )?))
+    }
+    fn from_owner(owner: budget::Owner) -> Self {
         Self {
             shape_accounting: std::sync::Mutex::new(()),
-            owner: budget::Owner::new(std::mem::size_of::<Self>()),
+            owner,
             published_revision: 0,
             published_bytes: std::mem::size_of::<Self>(),
             entries: Vec::new(),

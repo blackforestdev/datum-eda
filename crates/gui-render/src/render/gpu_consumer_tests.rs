@@ -121,3 +121,34 @@ fn dialog_producers_reach_upload_receipts_without_workspace_consumer_leakage() {
         assert!(!menu.consumers.contains(Consumer::Board));
     }
 }
+
+#[test]
+#[ignore = "requires local GPU and serial process-wide text admission"]
+fn renderer_creation_refuses_text_pressure_and_recovers_after_release() {
+    let host = hardware_renderer(64, 64);
+    let filler = crate::text_buffer_cache::budget::Owner::new(0);
+    let owners = Renderer::text_cache_process_usage();
+    let existing: usize = owners.iter().map(|o| o.bytes + o.constructing_bytes).sum();
+    filler.publish(32 * 1024 * 1024 - Renderer::text_cache_registry_bytes() - existing);
+    assert!(
+        Renderer::new(
+            &host.device,
+            &host.queue,
+            OUTPUT_FORMAT,
+            DEFAULT_MSAA_SAMPLES
+        )
+        .is_err()
+    );
+    assert_eq!(Renderer::text_cache_process_usage().len(), owners.len());
+    drop(filler);
+    let replacement = Renderer::new(
+        &host.device,
+        &host.queue,
+        OUTPUT_FORMAT,
+        DEFAULT_MSAA_SAMPLES,
+    )
+    .unwrap();
+    assert_eq!(Renderer::text_cache_process_usage().len(), owners.len());
+    drop(replacement);
+    assert_eq!(Renderer::text_cache_process_usage().len(), owners.len() - 1);
+}

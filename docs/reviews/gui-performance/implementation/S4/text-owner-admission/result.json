@@ -1,0 +1,62 @@
+{
+  "status": "Default renderer text-owner admission implemented; shaped-payload implementation complete, original qualification remains open",
+  "base_commit": "9cdca16c2f498e380de49ed525cc49d1e90c9a3f",
+  "production_consumers": [
+    "Every Renderer::new and same-host device recreation; shared workspace, terminal, native dialog and overlay text caches"
+  ],
+  "retired_paths": [
+    "Infallible production text-owner registration",
+    "Process registry growth without old/new overlap admission"
+  ],
+  "behavior": [
+    "Admit initial shaped-owner capacity before GPU resource creation. Hold the shared registry lock through checked aggregate admission, fallible exact allocation and publication. Charge old/new registry overlap; fall back from geometric growth to exact growth under pressure. Refusal does not register an owner.",
+    "Retain synthetic unchecked constructors only inside cfg(test) for deliberate full/overfull negative controls. Required production text remains source-preserving and fallible; no content is silently omitted."
+  ],
+  "implementation_determination": {
+    "completed": [
+      "MEM-SHAPED-LOCAL",
+      "MEM-SHAPED-TOTAL"
+    ],
+    "basis": "MEM-02 defines shaped payload as keys, glyph/layout vectors and owned capacities. Default admitted_indices enables construction admission for both workspace and overlay profiles. Existing checked key copies, entry/index replacement, nested public shape/Arc reservation, visible row/glyph admission, shared-shape deduplication, atomic publication and retirement cover that ownership. This change closes initial-owner and registry-growth admission.",
+    "remaining": "Private font selection/loading/cache and raster construction remain implementation obligations under AC-05, HP08-03 and MEM-STAGING-LOCAL/TOTAL. Separating shaped payload from scratch matches MEM-02 and the existing world/GPU implementation determinations; it does not relax aggregate/subcap qualification. All original 50 carried S2 qualification obligations remain at S5. S4 stays active."
+  },
+  "proof": [
+    "409 serial renderer tests passed, 0 failed, 11 diagnostic/golden-runner exclusions. Includes actual GPU constructor refusal/retry, production text pixel parity and warm reuse.",
+    "Final 4 budget tests passed after relocating the synthetic test constructor into the existing test module. Registry pressure test proves refusal leaves capacity/count unchanged and tight headroom admits exact replacement including overlap.",
+    "Strict renderer/app visual all-target Clippy passed. Source health, dependency authority, Cargo resource policy and convergence checks passed.",
+    "Fresh visual GUI application build passed; specification parity/governance and evidence traceability passed. No full drift/native/endurance acceptance is claimed."
+  ],
+  "limitations": [
+    "No full resource/native/endurance acceptance, S4 closure or S5 entry. No dependency, license, vendor, prototype, numerical-cap or sequencing changes. Preserve GEFN, nonblocking resize and historical failed evidence.",
+    "Initial test compilation failed on an incorrect module path in the added GPU test; corrected before the passing suite. A subsequent focused filter selected zero tests; corrected filter ran all four budget tests."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "9db47ebf0577f3040702ad8da04b8749f700c172f5542260cd9cc6bee26516a9",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "5f006240ec634afd3a9ce9a1ed8a0516c308355bbd745fea04266cd5ba298dfd",
+    "crates/gui-render/src/render/text_cache_budget.rs": "26997d2136be60abf0cec480103fa89abfb6ebc72d14ea05e091a535d2741cc8",
+    "crates/gui-render/src/render/gpu_consumer_tests.rs": "b7fad83c21e6d9d9a70612e591c5870d718e45499ad67af6d4d38561ea6f62fd"
+  },
+  "logs": {
+    "initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-owner-admission/initial.log.gz",
+      "uncompressed_sha256": "2f0d6ab2550c5b7bc2956fcf1e7ef1c83edb33c74ba098dfc1040d87d937252a"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-owner-admission/renderer.log.gz",
+      "uncompressed_sha256": "5120c6cf15bac4048d1e2286884b7c2590d731f8cc03781f43101bc9509a4ca0"
+    },
+    "final": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-owner-admission/final.log.gz",
+      "uncompressed_sha256": "17c56ca0654cb2609e5f9da5ab93b5ac91ae9f3b397e4b8e69ad548bc49af46e"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-owner-admission/clippy.log.gz",
+      "uncompressed_sha256": "d1c78930cc9ddcb72dfbd1ce13e2b0f37985aa21ba5db63593d34ebd5305a93f"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-owner-admission/build.log.gz",
+      "uncompressed_sha256": "849d84cd1880bb7c3b30340d9398720dd51e1cf87bdfc723132e59c52bf4dce5"
+    }
+  },
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-owner-admission/result.json"
+}
