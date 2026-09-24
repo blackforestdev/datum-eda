@@ -1,0 +1,493 @@
+{
+  "status": "Vulkan startup swapchain exhaustion repaired in shared default native rendering",
+  "issue": "dat-startup-swapchain-exhaustion-kkvf",
+  "base_commit": "43068cab967ac2c01cd1fbd363e5ec00b780140f",
+  "toolchain": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+  "production_consumers": [
+    "Main Runtime",
+    "Global Preferences native window",
+    "Project Preferences native window",
+    "New Project native window"
+  ],
+  "retired_paths": [
+    "Main and owned-window eager swapchain acquisition before upload continuations",
+    "Native upload submissions requiring a surface-frame lease"
+  ],
+  "implementation": [
+    "Renderer::render_with_acquisition invokes a late target callback only after world, terminal and glyph upload-only exits. The existing offscreen render_with_submission adapter shares that implementation and supplies its already-owned target.",
+    "NativeRenderTarget owns acquisition and submission callbacks for both product adapters. Upload turns receive normal queue completion receipts and defer recovery through the existing queue policy without acquiring or presenting. Full frames retain acquisition/submission generation validation and the sole present boundary.",
+    "Existing begin_frame queue/configuration/drawability admission still precedes preparation. Every upload turn yields to the coordinator; pending redraw damage and prepared hit publication remain presentation-dependent. Attachment/font/upload observations include upload-only attempts with acquisition zero.",
+    "Apply the seven remaining Rust1.98 chunks_exact lints in visual parity/upload tests and screenshot BGRA conversion. No backend policy, dependencies, numerical budgets or UI styling changed."
+  ],
+  "verification": {
+    "renderer": "Initial serial renderer run: 409 passed, one new regression failed because its 64x64 target was smaller than the workspace fixture scissor. Corrected the fixture to960x720; the regression then passed, requiring more than four upload submissions with zero acquisitions until the one final drawing acquisition. Existing glyph-continuation test now asserts lazy acquisition for both overlay-only and full renderer paths, including refused uploads.",
+    "app": "395 passed,0failed,16explicitly ignored. Native surface/queue/coordinator coverage included; separate compatibility/native-input ignored tests were not claimed.",
+    "compiler": "Strict all-target renderer/app Clippy with visual features passed. Strict default-feature app all-target Clippy also passed, independently checking the owner-reported unused-adapter warnings. Fresh visual GUI binary built on Rust1.98.",
+    "native": {
+      "wayland": {
+        "mode": "wayland",
+        "pid": 3407344,
+        "command": [
+          "target/debug/datum-gui",
+          "--board",
+          "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+          "--visual-test",
+          "--window-visual-test",
+          "--screenshot-out",
+          "/tmp/datum-late-target-wayland.png",
+          "--exit-after-screenshot"
+        ],
+        "success": true,
+        "exit_code": 0,
+        "elapsed_seconds": 21.23,
+        "identity": [
+          "[SystemTime { tv_sec: 1790232255, tv_nsec: 953673332 }] surface identity window=WindowId(94440587231136) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "presented_hosts": [
+          1
+        ],
+        "first_present_by_host": {
+          "1": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1344,
+              806
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 6,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 5,
+            "host": 1,
+            "last_frame_submission_receipt": 6,
+            "last_present_receipt": 6,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 6 })",
+            "window": "WindowId(94440587231136)"
+          }
+        },
+        "upload_turns_before_first_present": 5,
+        "capture": {
+          "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/wayland.png",
+          "sha256": "ad7f21c2569a5188076b674fbc37c60776eb5bf74adc0e62b5d9a0a7552cd3c3"
+        }
+      },
+      "x11": {
+        "mode": "x11",
+        "pid": 3407797,
+        "command": [
+          "target/debug/datum-gui",
+          "--board",
+          "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+          "--visual-test",
+          "--window-visual-test",
+          "--screenshot-out",
+          "/tmp/datum-late-target-x11.png",
+          "--exit-after-screenshot"
+        ],
+        "success": true,
+        "exit_code": 0,
+        "elapsed_seconds": 18.43,
+        "identity": [
+          "[SystemTime { tv_sec: 1790232297, tv_nsec: 976059255 }] surface identity window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "presented_hosts": [
+          1
+        ],
+        "first_present_by_host": {
+          "1": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1333,
+              800
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 6,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 5,
+            "host": 1,
+            "last_frame_submission_receipt": 6,
+            "last_present_receipt": 6,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 6 })",
+            "window": "WindowId(31457284)"
+          }
+        },
+        "upload_turns_before_first_present": 5,
+        "capture": {
+          "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/x11.png",
+          "sha256": "8d993647b10ea54cd3d5bcb0179939d23e7676f564291f312bd41c59b47d4ecb"
+        }
+      },
+      "global": {
+        "mode": "global",
+        "pid": 3409484,
+        "command": [
+          "target/debug/datum-gui",
+          "--board",
+          "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+          "--open-global-preferences"
+        ],
+        "success": true,
+        "elapsed_seconds": 16.02,
+        "identity": [
+          "[SystemTime { tv_sec: 1790232466, tv_nsec: 513331300 }] surface identity window=WindowId(94044622858704) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790232466, tv_nsec: 822808054 }] surface identity window=WindowId(94044627834288) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "presented_hosts": [
+          1,
+          2
+        ],
+        "first_present_by_host": {
+          "1": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1344,
+              806
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 8,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 7,
+            "host": 1,
+            "last_frame_submission_receipt": 8,
+            "last_present_receipt": 8,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 8 })",
+            "window": "WindowId(94044622858704)"
+          },
+          "2": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1008,
+              756
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 1,
+            "host": 2,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(94044627834288)"
+          }
+        },
+        "upload_turns_before_first_present": 1
+      },
+      "project": {
+        "mode": "project",
+        "pid": 3409606,
+        "command": [
+          "target/debug/datum-gui",
+          "--board",
+          "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+          "--open-project-preferences"
+        ],
+        "success": true,
+        "elapsed_seconds": 17.02,
+        "identity": [
+          "[SystemTime { tv_sec: 1790232482, tv_nsec: 484782141 }] surface identity window=WindowId(94472575425760) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790232483, tv_nsec: 776233173 }] surface identity window=WindowId(94472602089968) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "presented_hosts": [
+          1,
+          2
+        ],
+        "first_present_by_host": {
+          "1": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1344,
+              806
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 8,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 7,
+            "host": 1,
+            "last_frame_submission_receipt": 8,
+            "last_present_receipt": 8,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 8 })",
+            "window": "WindowId(94472575425760)"
+          },
+          "2": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1008,
+              756
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 1,
+            "host": 2,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(94472602089968)"
+          }
+        },
+        "upload_turns_before_first_present": 1
+      },
+      "new": {
+        "mode": "new",
+        "pid": 3409795,
+        "command": [
+          "target/debug/datum-gui",
+          "--board",
+          "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+          "--open-new-project"
+        ],
+        "success": true,
+        "elapsed_seconds": 15.82,
+        "identity": [
+          "[SystemTime { tv_sec: 1790232499, tv_nsec: 384850105 }] surface identity window=WindowId(94218806629600) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790232499, tv_nsec: 666719094 }] surface identity window=WindowId(94218814068560) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "presented_hosts": [
+          1,
+          2
+        ],
+        "first_present_by_host": {
+          "1": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1344,
+              806
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 8,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 7,
+            "host": 1,
+            "last_frame_submission_receipt": 8,
+            "last_present_receipt": 8,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 8 })",
+            "window": "WindowId(94218806629600)"
+          },
+          "2": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              798,
+              756
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 1,
+            "host": 2,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(94218814068560)"
+          }
+        },
+        "upload_turns_before_first_present": 1
+      },
+      "owned": {
+        "mode": "owned",
+        "pid": 3408363,
+        "command": [
+          "target/debug/datum-gui",
+          "--board",
+          "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+          "--open-global-preferences",
+          "--open-project-preferences",
+          "--open-new-project"
+        ],
+        "success": false,
+        "elapsed_seconds": 90.12,
+        "identity": [
+          "[SystemTime { tv_sec: 1790232363, tv_nsec: 335209758 }] surface identity window=WindowId(94647872883024) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790232364, tv_nsec: 600835504 }] surface identity window=WindowId(94647874136832) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "presented_hosts": [
+          1,
+          2
+        ],
+        "first_present_by_host": {
+          "1": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1344,
+              806
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 8,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 7,
+            "host": 1,
+            "last_frame_submission_receipt": 8,
+            "last_present_receipt": 8,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 8 })",
+            "window": "WindowId(94647872883024)"
+          },
+          "2": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              798,
+              756
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 1,
+            "host": 2,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(94647874136832)"
+          }
+        },
+        "upload_turns_before_first_present": 1
+      }
+    },
+    "gates": "Source health, dependency authority, convergence guard plus11regression tests, Cargo resource policy, specification governance/parity and evidence traceability checked. No full drift/S5 qualification claim."
+  },
+  "limitations": [
+    "S4 remains open with its four existing accounting/scratch implementation gaps. No S5 entry, full resource qualification, global performance acceptance or resize closure.",
+    "The failure was reproduced in acquisition/continuation paths unchanged by the earlier lint repair. These receipts establish the repair, not that the Rust upgrade caused the defect.",
+    "Wayland/X11 PNGs are renderer captures taken after successful native presentation, not compositor screenshots or full visual qualification. Inspected both for the expected rendered DOA2526 board.",
+    "An initial native harness incorrectly expected four simultaneous windows from mutually replacing startup-dialog flags. It timed out with two successfully presenting hosts and zero discards; separate Global/Project/New trials each passed. No native input was scripted."
+  ],
+  "logs": {
+    "renderer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/renderer-initial.log.gz",
+      "uncompressed_sha256": "c99f8be740656436456ca4eef5a935d6c8b7b61a13cafeffaa87e34609660e04"
+    },
+    "regression": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/regression.log.gz",
+      "uncompressed_sha256": "c852a03d1727192d596e095f4615fd2f1ae99fc228fac2cedefd6dd3f39b3eba"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/app.log.gz",
+      "uncompressed_sha256": "dbba4f04be41573772eb80cddf5a3b36e94bdbe4a19fad6b03b12b53892fb33c"
+    },
+    "clippy-visual": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/clippy-visual.log.gz",
+      "uncompressed_sha256": "b1916327ef659a10cd2fac25b145417dbe29ff8b36313baa69ec850bd4925b17"
+    },
+    "clippy-default": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/clippy-default.log.gz",
+      "uncompressed_sha256": "ca211b83cf4e0e62368e57accf4b0db76e5eb8542423b3a260cdacb3df77022c"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/build.log.gz",
+      "uncompressed_sha256": "df04876613ea2b207972b59375125e2dcbfa97a7cf968d4c1bb8fdeeb83f9d1a"
+    },
+    "before-wayland": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/before-wayland.log.gz",
+      "uncompressed_sha256": "64d5df803a476afbdeb4e40b8e6b8eaddc2afcb9955f7b8f3b35e4d329a50d53"
+    },
+    "before-x11": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/before-x11.log.gz",
+      "uncompressed_sha256": "8743fbc96a8d991c239b5c904b368aac9176e7fac43422fbfeeba1dcea507471"
+    },
+    "wayland": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/wayland.log.gz",
+      "uncompressed_sha256": "5618c0b1531d3940d8fc7ad9f9c97bfc656d0ca2adad9e0c3f8ac71ccfc5ec18"
+    },
+    "x11": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/x11.log.gz",
+      "uncompressed_sha256": "1e08f3f88de5c91a09e4a5e08a5e92b8f31b39153d64b06727cc04b3ebfefbd0"
+    },
+    "global": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/global.log.gz",
+      "uncompressed_sha256": "03aaed0631ea26b7ec33892ee0c3cdd216540ebde9e8b7cd98c51600a62d9be4"
+    },
+    "project": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/project.log.gz",
+      "uncompressed_sha256": "64dd2102d77527ee28174594ed4f6de562be883d6327d47411390ad16f6cbfee"
+    },
+    "new": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/new.log.gz",
+      "uncompressed_sha256": "599ad8cfde9ebb057c6a8f8f2d0547747dc9b081c18619ff1ab3a6a4b69851c2"
+    },
+    "owned": {
+      "path": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/owned.log.gz",
+      "uncompressed_sha256": "4577645126a1470deaee2fe39b71de38e9fa793da3705c0914b8c5ecff795495"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "e93cd253bd466f401cd6f2b15a05f07802afe119cd6bcbe0559d347aefba7d47",
+    "crates/gui-app/src/gui_runtime_support.rs": "9655ebb70849922611a4cf2c2391ed414a77d5e3242c99e0f68b7e4b9c40ea54",
+    "crates/gui-app/src/native_surface_transaction.rs": "44a4a0bfedc4d160d865e1979aea9642f3e16f0c1b5aa57fa50b5bc336e37754",
+    "crates/gui-app/src/runtime_present.rs": "c95ca1fc937d2385993b007d12abfffbaa52deba44a58e6d7e8af2b8c0c8f3e8",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "5e3f82021076c1f1d638b7800a37543e9dc5b2460b4707f2fab1dd92e557f00a",
+    "crates/gui-render/src/render/gpu_frame.rs": "4c986bb8308391ba39d23d9bde96fa5fea7966d7f9beb9d02a809bab3a8ceca0",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "271abc47b6b4274302df8b4ef4411d54e3ebcf09dc908b6d98fc13d5bc074c86",
+    "crates/gui-render/src/render/gpu_overlay.rs": "3bab1692b507f16d9db3ee712b1aaec2e0a708fd397ca81abac9e982fb4372bc",
+    "crates/gui-render/src/text_gpu/parity.rs": "f0333923bb8f83ce262869db9cf4b3de31e3288a666fab42a27c80cf3279b62f",
+    "crates/gui-render/src/text_gpu/sparse_upload_tests.rs": "66aaac4534e741d3a11476c716dda1f32ad9b75f8a19e6fdaef6a03fa822ee38",
+    "crates/gui-app/src/native_render_target.rs": "33e990e3c337f920b88ecc2a4697346398cbc0885b3ab9ba341b8a54f3f57f75",
+    "crates/gui-render/src/render/gpu_frame_target.rs": "14c6843535f3047464bca5dece9d25c404585d37453d50736a30ea0d94bb3679"
+  },
+  "evidence": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/result.json"
+}

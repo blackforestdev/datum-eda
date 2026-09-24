@@ -30,11 +30,10 @@ impl Renderer {
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
-        target: &wgpu::TextureView,
+        target: &mut dyn gpu_frame::target::Target,
         prepared: &PreparedScene,
         width: u32,
         height: u32,
-        on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
         let started = std::env::var_os("DATUM_TRACE_TIMING")
             .is_some()
@@ -61,9 +60,13 @@ impl Renderer {
             prepared.menu_overlay_vertices(),
         )?;
         let has_text = prepared.has_overlay_text();
+        let on_submitted = &mut |submission| target.submitted(submission);
         let Some((text_stats, _)) =
             self.prepare_text_uploads(device, queue, prepared, width, height, true, on_submitted)?
         else {
+            return Ok(false);
+        };
+        let Some(view) = target.acquire()? else {
             return Ok(false);
         };
         let mut measurement = self.begin_gpu_measurement()?;
@@ -76,7 +79,7 @@ impl Renderer {
                 label: Some("datum-dialog-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: Some(target),
+                    resolve_target: Some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
@@ -122,7 +125,7 @@ impl Renderer {
         if let Some(batch) = uploads {
             batch.hold(queue);
         }
-        on_submitted(submission);
+        target.submitted(submission);
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(queue, measurement)?;
         if let Some(started) = started {

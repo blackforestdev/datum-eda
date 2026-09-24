@@ -36799,5 +36799,39 @@
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/resource-host/result.json"
     }
+  },
+  "s4_startup_acquisition_work": {
+    "status": "Vulkan startup swapchain exhaustion repaired in shared default native rendering",
+    "issue": "dat-startup-swapchain-exhaustion-kkvf",
+    "base_commit": "43068cab967ac2c01cd1fbd363e5ec00b780140f",
+    "toolchain": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+    "production_consumers": [
+      "Main Runtime",
+      "Global Preferences native window",
+      "Project Preferences native window",
+      "New Project native window"
+    ],
+    "retired_paths": [
+      "Main and owned-window eager swapchain acquisition before upload continuations",
+      "Native upload submissions requiring a surface-frame lease"
+    ],
+    "implementation": [
+      "Renderer::render_with_acquisition invokes a late target callback only after world, terminal and glyph upload-only exits. The existing offscreen render_with_submission adapter shares that implementation and supplies its already-owned target.",
+      "NativeRenderTarget owns acquisition and submission callbacks for both product adapters. Upload turns receive normal queue completion receipts and defer recovery through the existing queue policy without acquiring or presenting. Full frames retain acquisition/submission generation validation and the sole present boundary.",
+      "Existing begin_frame queue/configuration/drawability admission still precedes preparation. Every upload turn yields to the coordinator; pending redraw damage and prepared hit publication remain presentation-dependent. Attachment/font/upload observations include upload-only attempts with acquisition zero.",
+      "Apply the seven remaining Rust1.98 chunks_exact lints in visual parity/upload tests and screenshot BGRA conversion. No backend policy, dependencies, numerical budgets or UI styling changed."
+    ],
+    "limitations": [
+      "S4 remains open with its four existing accounting/scratch implementation gaps. No S5 entry, full resource qualification, global performance acceptance or resize closure.",
+      "The failure was reproduced in acquisition/continuation paths unchanged by the earlier lint repair. These receipts establish the repair, not that the Rust upgrade caused the defect.",
+      "Wayland/X11 PNGs are renderer captures taken after successful native presentation, not compositor screenshots or full visual qualification. Inspected both for the expected rendered DOA2526 board.",
+      "An initial native harness incorrectly expected four simultaneous windows from mutually replacing startup-dialog flags. It timed out with two successfully presenting hosts and zero discards; separate Global/Project/New trials each passed. No native input was scripted."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/startup-acquisition/result.json",
+    "proof": [
+      "More-than-four-upload Vulkan regression passes with exactly one final acquisition. Existing409renderer tests passed; initial new-test target-size failure and corrected focused result preserved in receipt.",
+      "395app tests passed,16explicitly ignored. Strict default and visual all-target Clippy and fresh visual build pass on Rust1.98.",
+      "DOA2526 Vulkan Wayland/X11: five upload-only turns, one acquisition, one first presentation, zero discards. Separate Global/Project/New native startup trials also present with zero discards. Exact host/queue ledgers, commands, screenshots and failed all-dialog-flags harness attempt preserved in receipt."
+    ]
   }
 }

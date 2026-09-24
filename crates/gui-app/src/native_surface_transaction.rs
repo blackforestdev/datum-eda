@@ -2,6 +2,9 @@
 //! GPU completion is a resource-ownership signal, not compositor display proof.
 use super::native_recovery::{AcquisitionFailure, RecoveryHandle, RetryReason};
 use std::{cell::Cell, rc::Rc, time::Instant};
+#[path = "native_render_target.rs"]
+mod render_target;
+pub(crate) use render_target::NativeRenderTarget;
 
 pub(crate) struct SurfaceTransaction {
     window: winit::window::WindowId,
@@ -19,7 +22,8 @@ pub(crate) struct SurfaceTransaction {
 }
 
 /// Presentation ownership is deliberately separate from GPU completion. Dropping
-/// an unpresented frame releases acquisition; it does not retire application damage.
+/// an unpresented frame releases its Rust lease, not application damage. Backends
+/// may retain an unpresented swapchain image; upload continuations never acquire one.
 pub(crate) struct NativeSurfaceFrame {
     // Field order drops the backend texture before releasing the acquisition lease.
     texture: Option<wgpu::SurfaceTexture>,
@@ -160,10 +164,17 @@ impl SurfaceTransaction {
     pub(crate) fn observe_attachment(
         &self,
         renderer: &datum_gui_render::Renderer,
-        frame: &NativeSurfaceFrame,
+        frame: Option<&NativeSurfaceFrame>,
+        upload_submitted: bool,
     ) {
-        // Observe before the attachment check: a failed preparation or an
-        // upload-only continuation may not have an attachment yet.
+        let submission = frame
+            .and_then(|frame| frame.lease.submission_receipt)
+            .unwrap_or(if upload_submitted { self.in_flight } else { 0 });
+        let acquisition = if frame.is_some() {
+            self.texture_active.acquired.get()
+        } else {
+            0
+        };
         super::append_gui_verbose_diagnostic_line(|| {
             let (queue_epoch, _, _) = self.queue_owner.snapshot();
             format!(
@@ -173,8 +184,8 @@ impl SurfaceTransaction {
                 renderer.resource_owner_id(),
                 queue_epoch,
                 self.configuration_generation,
-                self.texture_active.acquired.get(),
-                frame.lease.submission_receipt.unwrap_or(0),
+                acquisition,
+                submission,
                 renderer.last_upload_frame()
             )
         });
@@ -188,17 +199,19 @@ impl SurfaceTransaction {
         let Some(attachment) = renderer.surface_attachment_snapshot() else {
             return;
         };
-        assert!(
-            frame
-                .lease
-                .belongs_to(&self.texture_active, self.configuration_generation)
-        );
+        if let Some(frame) = frame {
+            assert!(
+                frame
+                    .lease
+                    .belongs_to(&self.texture_active, self.configuration_generation)
+            );
+        }
         self.queue_owner.observe_attachment(
             self.queue_host,
             attachment.owner,
             attachment.allocation,
             attachment.payload_bytes,
-            frame.lease.submission_receipt.unwrap_or(0),
+            submission,
         );
         if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_none() {
             return;
@@ -442,6 +455,15 @@ impl SurfaceTransaction {
         self.last_submission = Some(submission);
         frame.lease.submitted(self.in_flight);
         self.trace_lifecycle("submit");
+    }
+
+    /// Upload chunks have queue ownership but no swapchain acquisition lease.
+    fn submitted_upload(&mut self, queue: &wgpu::Queue, submission: wgpu::SubmissionIndex) {
+        assert!(!self.texture_active.active.get());
+        self.in_flight = self.queue_owner.submitted(queue);
+        self.last_submission = Some(submission);
+        self.trace_lifecycle("submit_upload");
+        self.defer_upload_continuation();
     }
 
     /// Upload-only work owns a normal submission receipt but cannot retire damage.

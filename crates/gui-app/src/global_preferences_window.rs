@@ -313,24 +313,20 @@ impl GlobalPreferencesWindowSurface {
         if runtime.device_health.failed() {
             return Ok(false);
         }
-        let Some(mut frame) = self.surface_transaction.acquire(
+        if !self.surface_transaction.begin_frame(
             &self.surface,
             &runtime.device,
             &self.config,
             &runtime.device_health,
-        )?
-        else {
+        )? {
             return Ok(false);
-        };
-        if self.renderer.prepare_surface_attachment(
+        }
+        self.renderer.prepare_surface_attachment(
             &runtime.device,
             self.config.width,
             self.config.height,
             || !runtime.device_health.failed(),
-        )? {
-            self.surface_transaction
-                .observe_attachment(&self.renderer, &frame);
-        }
+        )?;
         if self.prepared.is_none() {
             if new_project {
                 let dialog = &runtime.workspace().ui.new_project;
@@ -422,11 +418,18 @@ impl GlobalPreferencesWindowSurface {
                 )
             });
         }
-        let view = frame.view();
-        let rendered = self.renderer.render_with_submission(
+        use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
+        let mut target = NativeRenderTarget::new(
+            &mut self.surface_transaction,
+            &self.surface,
             &runtime.device,
             &runtime.queue,
-            &view,
+            &self.config,
+            &runtime.device_health,
+        );
+        let rendered = self.renderer.render_with_acquisition(
+            &runtime.device,
+            &runtime.queue,
             self.prepared
                 .as_ref()
                 .context("Global Preferences prepared scene must exist")?,
@@ -434,17 +437,15 @@ impl GlobalPreferencesWindowSurface {
             None,
             self.config.width,
             self.config.height,
-            &mut |submission| {
-                self.surface_transaction
-                    .submitted(&mut frame, &runtime.queue, submission)
-            },
+            &mut target,
+            &mut NativeRenderTarget::acquire,
+            &mut NativeRenderTarget::submitted,
         );
-        self.surface_transaction
-            .observe_attachment(&self.renderer, &frame);
+        let (frame, _) = target.finish(&self.renderer);
         if !rendered? {
-            self.surface_transaction.defer_upload_continuation();
             return Ok(false);
         }
+        let frame = frame.context("rendered owned frame must own an acquisition")?;
         if runtime.device_health.failed() {
             return Ok(false);
         }

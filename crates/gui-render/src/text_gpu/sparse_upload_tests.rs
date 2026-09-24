@@ -137,7 +137,7 @@ fn sparse_packets_preserve_clean_words_and_retire_complete_capacity() {
     rx.recv().unwrap().unwrap();
     let mapped = readback.slice(..).get_mapped_range();
     assert_eq!(&mapped[target.size() as usize..], &value);
-    for vertex in mapped[..target.size() as usize].chunks_exact(20) {
+    for vertex in mapped[..target.size() as usize].as_chunks::<20>().0 {
         assert_eq!(&vertex[..4], &value);
         assert_eq!(&vertex[4..], &[0x35; 16]);
     }
