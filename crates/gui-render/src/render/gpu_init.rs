@@ -67,6 +67,7 @@ impl Renderer {
         control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
         previous: Option<&Self>,
     ) -> anyhow::Result<Self> {
+        let text_buffers = text_buffer_cache::TextBufferCache::new()?;
         let resource_host = crate::text_gpu::allocation_host::Host::new();
         let _resource_scope = resource_host.enter();
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -423,7 +424,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             atlas,
             text_renderer,
             menu_overlay_text_renderer,
-            text_buffers: Default::default(),
+            text_buffers,
             control_meshes: Default::default(),
             cold_world: Default::default(),
             text_preparation: Default::default(),
