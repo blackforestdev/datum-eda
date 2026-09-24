@@ -6,6 +6,7 @@ mod renderer_state;
 pub use renderer_state::{
     ControlMeshUsage, Renderer, TextCacheKeyUsage, TextCacheOwnerUsage, TextGpuAllocation,
     TextGpuAllocationKind, TextGpuAllocationObserver, WidthMeasurementCacheUsage, cpu_alloc,
+    resource_consumers,
 };
 #[path = "gpu_measurements.rs"]
 mod gpu_measurements;

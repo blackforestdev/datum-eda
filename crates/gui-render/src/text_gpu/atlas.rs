@@ -218,6 +218,12 @@ impl Atlas {
         }
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        for page in self.pages.iter() {
+            page.texture.set_consumers(consumers);
+        }
+    }
+
     pub fn submission_refs(&self) -> Vec<SubmissionRef> {
         self.pages
             .iter()

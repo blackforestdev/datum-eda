@@ -1,5 +1,5 @@
 //! Bounded allocation lifecycle accounting; no resource/event history is retained.
-use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU16, AtomicU64, Ordering};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u8)]
@@ -30,6 +30,10 @@ pub struct ReleasedAllocations {
 }
 
 pub(super) struct Metadata {
+    pub consumers: AtomicU16,
+    pub retiring_consumers: AtomicU16,
+    prepared_consumers: [AtomicU64; 14],
+    submitted_consumers: [AtomicU64; 14],
     pub payload: AtomicU64,
     pub released: AtomicBool,
     reason: AtomicU8,
@@ -39,6 +43,10 @@ pub(super) struct Metadata {
 impl Metadata {
     pub fn new(payload: u64) -> Self {
         Self {
+            retiring_consumers: AtomicU16::new(0),
+            consumers: AtomicU16::new(super::super::allocation_host::consumers().bits()),
+            prepared_consumers: std::array::from_fn(|_| AtomicU64::new(0)),
+            submitted_consumers: std::array::from_fn(|_| AtomicU64::new(0)),
             payload: AtomicU64::new(payload),
             released: AtomicBool::new(false),
             reason: AtomicU8::new(0),
@@ -81,4 +89,43 @@ pub(super) fn released_snapshot(
         RetirementReason::Submitted,
     ]
     .map(|reason| (reason, totals[reason as usize - 1]))
+}
+
+impl Metadata {
+    fn incidence(&self, kind: ReferenceKind) -> &[AtomicU64; 14] {
+        match kind {
+            ReferenceKind::Prepared => &self.prepared_consumers,
+            ReferenceKind::Submission => &self.submitted_consumers,
+        }
+    }
+    pub fn retain_consumers(
+        &self,
+        kind: ReferenceKind,
+        consumers: crate::resource_consumers::Consumers,
+    ) {
+        for consumer in consumers.iter() {
+            self.incidence(kind)[consumer as usize].fetch_add(1, Ordering::AcqRel);
+        }
+    }
+    pub fn release_consumers(
+        &self,
+        kind: ReferenceKind,
+        consumers: crate::resource_consumers::Consumers,
+    ) {
+        for consumer in consumers.iter() {
+            self.incidence(kind)[consumer as usize].fetch_sub(1, Ordering::AcqRel);
+        }
+    }
+    pub fn referenced_consumers(
+        &self,
+        kind: ReferenceKind,
+    ) -> crate::resource_consumers::Consumers {
+        let mut result = crate::resource_consumers::Consumers::default();
+        for consumer in crate::resource_consumers::Consumer::ALL {
+            if self.incidence(kind)[consumer as usize].load(Ordering::Acquire) > 0 {
+                result.insert(consumer);
+            }
+        }
+        result
+    }
 }

@@ -50,7 +50,8 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
-        let _resource_scope = self.resource_host.enter();
+        self.frame_consumers = prepared.consumer_incidence();
+        let _resource_scope = self.resource_host.enter_for(self.frame_consumers.all());
         self.atlas.owner.begin_upload_frame();
         let result = self.render_submission_inner(
             device,
@@ -198,6 +199,7 @@ impl Renderer {
         let mut measurement = self.begin_gpu_measurement()?;
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
+        self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),

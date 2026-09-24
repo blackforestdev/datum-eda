@@ -215,6 +215,10 @@ impl GpuMeasurements {
             .checked_add(1)
             .ok_or_else(|| anyhow::anyhow!("GPU measurement frame ID exhausted"))?;
         let submission = next_submission_id()?;
+        let consumers = crate::text_gpu::allocation_host::consumers();
+        slot.queries.set_consumers(consumers);
+        slot.resolve.set_consumers(consumers);
+        slot.readback.set_consumers(consumers);
         let signal = Arc::new(AtomicU8::new(ENCODING));
         slot.pending = Some(Pending {
             frame: self.next_frame,

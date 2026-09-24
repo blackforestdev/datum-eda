@@ -701,13 +701,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 6855
+        "expanded_lines": 6557
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Shared shell solve and bounded cache ownership extracted from textual layout into render/shell_layout.rs. App-only cache retired; remaining include debt retains exact downward ceiling. Uniform allocation/binding ownership consolidated in uniform_buffer; obsolete root DeviceExt import removed, expanded ceiling7152. RetainedScene immutable metadata and weak lifetime accounting extracted to retained_scene_owner.rs; expanded ceiling ratchets7152 to7146. PM045 board hit construction and shared allocation-free component bounds extracted into normal modules; exact ceiling ratcheted. Remaining debt preserved."
+      "note": "Shared shell solve and bounded cache ownership extracted from textual layout into render/shell_layout.rs. App-only cache retired; remaining include debt retains exact downward ceiling. Uniform allocation/binding ownership consolidated in uniform_buffer; obsolete root DeviceExt import removed, expanded ceiling7152. RetainedScene immutable metadata and weak lifetime accounting extracted to retained_scene_owner.rs; expanded ceiling ratchets7152 to7146. PM045 board hit construction and shared allocation-free component bounds extracted into normal modules; exact ceiling ratcheted. Remaining debt preserved. PM045 consumer provenance moves PreparedScene storage beside its existing access owner. Actual expanded source falls 6604 to 6557; stale 6855 ceiling reconciled downward. Existing include debt remains."
     },
     "crates/gui-render/src/render/draw_primitives.rs": {
       "kind": "rust-production",

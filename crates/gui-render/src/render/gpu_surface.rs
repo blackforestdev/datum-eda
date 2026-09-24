@@ -79,6 +79,12 @@ impl SurfaceAttachments {
         Self::with_generations(self.generations.clone())
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        if let Some(attachment) = &self.current {
+            attachment.view.set_consumers(consumers);
+        }
+    }
+
     pub(super) fn submission_ref(&self) -> Option<SubmissionRef> {
         self.current
             .as_ref()

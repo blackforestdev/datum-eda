@@ -325,6 +325,15 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        for draw in &self.draws {
+            draw.vertices.set_consumers(consumers);
+        }
+        for texture in &self.textures {
+            texture.set_consumers(consumers);
+        }
+    }
+
     pub(super) fn submission_refs(
         &self,
     ) -> impl Iterator<Item = crate::text_gpu::lifetime::SubmissionRef> + '_ {

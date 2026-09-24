@@ -405,6 +405,15 @@ impl GlobalPreferencesWindowSurface {
                     reveal_row,
                 ));
             }
+            if let Some(prepared) = &mut self.prepared {
+                prepared.set_native_consumer(if new_project {
+                    datum_gui_render::resource_consumers::Consumer::New
+                } else if project_preferences {
+                    datum_gui_render::resource_consumers::Consumer::Project
+                } else {
+                    datum_gui_render::resource_consumers::Consumer::Global
+                });
+            }
             append_gui_verbose_diagnostic_line(|| {
                 format!(
                     "native control_meshes window={:?} builds={}",

@@ -1,5 +1,6 @@
 //! CPU frame composition with explicit renderer-owned control preparation.
 use super::*;
+use crate::resource_consumers::{Consumer, FrameConsumers, Stream};
 
 impl PreparedScene {
     #[allow(clippy::too_many_arguments)]
@@ -43,6 +44,7 @@ impl PreparedScene {
         global_preferences_native_window: bool,
         controls: &mut crate::global_preferences_primitives::ControlMeshCache,
     ) -> Self {
+        let mut consumers = FrameConsumers::default();
         let scale = scale_factor.max(0.01);
         let layout = ShellLayout::for_surface(width, height, scale, dock_height_for_state(state));
         let mut panel_quads = Vec::new();
@@ -86,7 +88,16 @@ impl PreparedScene {
         panel_quads.push(Quad::from_rect(layout.status_bar, PANEL_BG));
         viewport_underlay_quads.push(Quad::from_rect(layout.viewport, VIEWPORT_BG));
 
-        render_phase1_shell_chrome(
+        consumers.note(Stream::Panel, Consumer::Main, 0, panel_quads.len());
+        consumers.note(
+            Stream::Underlay,
+            Consumer::Main,
+            0,
+            viewport_underlay_quads.len(),
+        );
+        let before_panel_quads = panel_quads.len();
+        let before_text_runs = text_runs.len();
+        let pane_consumers = render_phase1_shell_chrome(
             state,
             &layout,
             &mut crate::global_preferences_primitives::ControlPainter::new(
@@ -96,6 +107,24 @@ impl PreparedScene {
             ),
             &mut text_runs,
         );
+        consumers.note(
+            Stream::Panel,
+            Consumer::Main,
+            before_panel_quads,
+            panel_quads.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Main,
+            before_text_runs,
+            text_runs.len(),
+        );
+        let before_panel_quads = panel_quads.len();
+        let before_text_runs = text_runs.len();
+        consumers.include(Stream::Panel, pane_consumers);
+        consumers.include(Stream::Text, pane_consumers);
+        let before_menu_overlay_quads = menu_overlay_quads.len();
+        let before_menu_overlay_text_runs = menu_overlay_text_runs.len();
         menu_chrome::render_menu_bar(
             state,
             &layout,
@@ -105,6 +134,32 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
+        consumers.note(
+            Stream::Panel,
+            Consumer::Menu,
+            before_panel_quads,
+            panel_quads.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Menu,
+            before_text_runs,
+            text_runs.len(),
+        );
+        consumers.note(
+            Stream::Overlay,
+            Consumer::Menu,
+            before_menu_overlay_quads,
+            menu_overlay_quads.len(),
+        );
+        consumers.note(
+            Stream::OverlayText,
+            Consumer::Menu,
+            before_menu_overlay_text_runs,
+            menu_overlay_text_runs.len(),
+        );
+        let before_panel_quads = panel_quads.len();
+        let before_text_runs = text_runs.len();
         side_panels::render_side_panels(
             state,
             &layout,
@@ -112,6 +167,44 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
+        consumers.note(
+            Stream::Panel,
+            Consumer::Navigator,
+            before_panel_quads,
+            panel_quads.len(),
+        );
+        consumers.note(
+            Stream::Panel,
+            Consumer::Layers,
+            before_panel_quads,
+            panel_quads.len(),
+        );
+        consumers.note(
+            Stream::Panel,
+            Consumer::Inspector,
+            before_panel_quads,
+            panel_quads.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Navigator,
+            before_text_runs,
+            text_runs.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Layers,
+            before_text_runs,
+            text_runs.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Inspector,
+            before_text_runs,
+            text_runs.len(),
+        );
+        let before_panel_quads = panel_quads.len();
+        let before_text_runs = text_runs.len();
         bottom_dock::render_bottom_tabs(
             state,
             (!terminal_panes.is_empty()).then_some(bottom_dock::TerminalRenderInput {
@@ -123,7 +216,28 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
+        consumers.note(
+            Stream::Panel,
+            Consumer::Terminal,
+            before_panel_quads,
+            panel_quads.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Terminal,
+            before_text_runs,
+            text_runs.len(),
+        );
+        let before_terminal_graphics = terminal_graphics.len();
         terminal_scene::prepare_graphics(state, &layout, terminal_panes, &mut terminal_graphics);
+        consumers.note(
+            Stream::TerminalGraphics,
+            Consumer::TerminalOverlay,
+            before_terminal_graphics,
+            terminal_graphics.len(),
+        );
+        let before_menu_overlay_quads = menu_overlay_quads.len();
+        let before_menu_overlay_text_runs = menu_overlay_text_runs.len();
         terminal_clipboard_menu::render_terminal_clipboard_menu(
             state,
             &layout,
@@ -131,7 +245,22 @@ impl PreparedScene {
             &mut menu_overlay_text_runs,
             &mut hit_regions,
         );
+        consumers.note(
+            Stream::Overlay,
+            Consumer::TerminalOverlay,
+            before_menu_overlay_quads,
+            menu_overlay_quads.len(),
+        );
+        consumers.note(
+            Stream::OverlayText,
+            Consumer::TerminalOverlay,
+            before_menu_overlay_text_runs,
+            menu_overlay_text_runs.len(),
+        );
         if board_scene_active {
+            let before_underlay = viewport_underlay_quads.len();
+            let before_overlay = viewport_overlay_quads.len();
+            let before_text = text_runs.len();
             render_scene(
                 state,
                 scene_viewport,
@@ -141,6 +270,19 @@ impl PreparedScene {
                 &mut text_runs,
                 &mut hit_regions,
             );
+            consumers.note(
+                Stream::Underlay,
+                Consumer::Board,
+                before_underlay,
+                viewport_underlay_quads.len(),
+            );
+            consumers.note(
+                Stream::ViewportOverlay,
+                Consumer::Board,
+                before_overlay,
+                viewport_overlay_quads.len(),
+            );
+            consumers.note(Stream::Text, Consumer::Board, before_text, text_runs.len());
             let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let board_projection = Projection::new(board_field, &state.scene.bounds, camera);
             interaction_overlay::push_pane_interaction(
@@ -154,6 +296,8 @@ impl PreparedScene {
         }
         for pane in layout.viewport_panes(&state.ui.layout).panes {
             if let datum_gui_protocol::PaneContent::Revision(revision_pane) = pane.content {
+                let before_overlay = viewport_overlay_quads.len();
+                let before_text = text_runs.len();
                 revision_workspace::render_pane(
                     state,
                     revision_pane,
@@ -162,10 +306,37 @@ impl PreparedScene {
                     &mut text_runs,
                     &mut hit_regions,
                 );
+                consumers.note(
+                    Stream::ViewportOverlay,
+                    Consumer::Revision,
+                    before_overlay,
+                    viewport_overlay_quads.len(),
+                );
+                consumers.note(
+                    Stream::Text,
+                    Consumer::Revision,
+                    before_text,
+                    text_runs.len(),
+                );
             }
         }
+        let before_console_text = text_runs.len();
         let (console_overlay_vertices, console_overlay_layout) =
             scene_console::prepare(state, &layout, scale, &mut text_runs, &mut hit_regions);
+        consumers.note(
+            Stream::Console,
+            Consumer::Console,
+            0,
+            console_overlay_vertices.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Console,
+            before_console_text,
+            text_runs.len(),
+        );
+        let before_panel_quads = panel_quads.len();
+        let before_text_runs = text_runs.len();
         marking_menu::render_marking_menu(
             state,
             &layout,
@@ -173,8 +344,28 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
+        consumers.note(
+            Stream::Panel,
+            Consumer::Menu,
+            before_panel_quads,
+            panel_quads.len(),
+        );
+        consumers.note(
+            Stream::Text,
+            Consumer::Menu,
+            before_text_runs,
+            text_runs.len(),
+        );
         // Application-modal preferences must be appended after every workspace
         // hit region so reverse-order hit testing cannot reach the obscured UI.
+        let before_menu_overlay_quads = menu_overlay_quads.len();
+        let before_menu_overlay_text_runs = menu_overlay_text_runs.len();
+        let modal_consumer = if state.ui.global_preferences.open && global_preferences_native_window
+        {
+            Consumer::Global
+        } else {
+            Consumer::New
+        };
         global_preferences_dialog::render_global_preferences_dialog(
             state,
             &layout,
@@ -184,6 +375,18 @@ impl PreparedScene {
             &mut menu_overlay_quads,
             &mut menu_overlay_text_runs,
             &mut hit_regions,
+        );
+        consumers.note(
+            Stream::Overlay,
+            modal_consumer,
+            before_menu_overlay_quads,
+            menu_overlay_quads.len(),
+        );
+        consumers.note(
+            Stream::OverlayText,
+            modal_consumer,
+            before_menu_overlay_text_runs,
+            menu_overlay_text_runs.len(),
         );
         if (scale - 1.0).abs() > f32::EPSILON {
             scale_text_run_sizes(&mut text_runs, scale);
@@ -246,7 +449,50 @@ impl PreparedScene {
         let surface_passes =
             coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera);
 
+        consumers.note(
+            Stream::BoardInteraction,
+            Consumer::Board,
+            0,
+            board_interaction_vertices.len(),
+        );
+        consumers.note(
+            Stream::BoardWorld,
+            Consumer::Board,
+            0,
+            visible_draw_commands.len(),
+        );
+        consumers.note(
+            Stream::SchematicUnderlay,
+            Consumer::Schematic,
+            0,
+            schematic_underlay_vertices.len(),
+        );
+        consumers.note(
+            Stream::SchematicOverlay,
+            Consumer::Schematic,
+            0,
+            schematic_overlay_vertices.len(),
+        );
+        consumers.note(
+            Stream::SchematicWorld,
+            Consumer::Schematic,
+            0,
+            usize::from(schematic_scene_viewport.is_some()),
+        );
+        consumers.note(
+            Stream::Grid,
+            Consumer::Board,
+            0,
+            usize::from(board_scene_active),
+        );
+        consumers.note(
+            Stream::Grid,
+            Consumer::Schematic,
+            0,
+            usize::from(schematic_scene_viewport.is_some()),
+        );
         Self {
+            consumers,
             layout,
             hit_regions,
             scene_viewport,

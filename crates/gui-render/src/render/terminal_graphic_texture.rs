@@ -103,6 +103,10 @@ impl CachedTerminalGraphicTexture {
         })
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        self.texture.set_consumers(consumers);
+    }
+
     pub(super) fn submission_ref(&self) -> SubmissionRef {
         self.texture.submission_ref()
     }

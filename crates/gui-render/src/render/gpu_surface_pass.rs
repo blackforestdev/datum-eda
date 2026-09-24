@@ -73,6 +73,13 @@ impl Renderer {
             .iter()
             .zip(&mut self.surface_scene_uniforms)
         {
+            binding.buffer.set_consumers(
+                match surface.surface {
+                    SceneSurface::Board => crate::resource_consumers::Consumer::Board,
+                    SceneSurface::Schematic => crate::resource_consumers::Consumer::Schematic,
+                }
+                .into(),
+            );
             let field = inset_rect(surface.scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let projection = Projection::new(field, &surface.bounds, surface.camera);
             binding.buffer.sync(

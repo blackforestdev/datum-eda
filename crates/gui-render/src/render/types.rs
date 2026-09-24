@@ -133,56 +133,6 @@ pub struct PreparedSurfacePass {
     pub grid_lod_previous: datum_gui_viewport::GridLodState,
     pub grid_lod_resolved: datum_gui_viewport::GridLodState,
 }
-#[derive(Debug, Clone, PartialEq)]
-pub struct PreparedScene {
-    pub layout: ShellLayout,
-    pub hit_regions: Vec<HitRegion>,
-    pub scene_viewport: RectPx,
-    surface_passes: Vec<PreparedSurfacePass>,
-    board_pane_id: datum_gui_protocol::PaneId,
-    scene_bounds: datum_gui_protocol::SceneBounds,
-    camera: CameraState,
-    panel_vertices: Vec<Vertex>,
-    menu_overlay_vertices: Vec<Vertex>,
-    menu_overlay_text_runs: Vec<TextRun>,
-    viewport_underlay_vertices: Vec<Vertex>,
-    viewport_overlay_vertices: Vec<Vertex>,
-    board_interaction_vertices: Vec<Vertex>,
-    console_overlay_vertices: Vec<Vertex>,
-    console_overlay_layout: Option<ConsoleOverlayLayout>,
-    visible_draw_commands: Vec<RetainedDrawCommand>,
-    text_runs: Vec<TextRun>,
-    terminal_graphics: Vec<PreparedTerminalGraphic>,
-    // P2.2a bounded second-scene descriptor: the STATIC companion schematic pass.
-    // `Some` only when the layout has a Schematic pane AND the workspace carries a
-    // projected `schematic_scene`; gates the additive second world GPU pass. The
-    // camera is a fixed fit-to-schematic-bounds (no interactive pan/zoom on pane B
-    // this slice). Ranges for that pass are derived in gpu.rs from the threaded
-    // schematic RetainedScene (render() has no `state`), so they are not stored
-    // here — the schematic renders all of its batches (its layers are always
-    // visible, not board-layer-toggle governed).
-    schematic_scene_viewport: Option<RectPx>,
-    schematic_pane_id: Option<datum_gui_protocol::PaneId>,
-    schematic_bounds: datum_gui_protocol::SceneBounds,
-    schematic_camera: CameraState,
-    // S4 (HoverEngine): the immediate screen-space interaction overlays are class-A
-    // `ScreenConstant` chrome — driven by live hover, so they are empty in the
-    // offscreen visual-test capture, keeping the board frame byte-identical. Board
-    // hover folds straight into `viewport_overlay_vertices` at construction; the
-    // schematic hover rides `schematic_underlay_vertices`, rebuilt when the warm
-    // schematic camera is applied (`set_schematic_camera`) — hence the hovered
-    // symbol's world bbox is retained here to re-project it against that camera.
-    schematic_hover_bounds_nm: Option<datum_gui_protocol::RectNm>,
-    // S4 cursor crosshair (decision 023 UVT-005): the live cursor in device-pixel
-    // SCREEN space and the user-selected style, retained so `set_schematic_camera`
-    // (which has no `state`) can rebuild the schematic underlay crosshair against
-    // the warm camera. `None` cursor in the offscreen capture keeps the frame
-    // byte-identical; both the board and schematic panes read these.
-    crosshair_cursor_screen: Option<(f32, f32)>,
-    crosshair_style: datum_gui_protocol::CrosshairStyle,
-    schematic_underlay_vertices: Vec<Vertex>,
-    schematic_overlay_vertices: Vec<Vertex>,
-}
 /// Inspectable placement proof for the one visible focused-pane Console strip.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ConsoleOverlayLayout {

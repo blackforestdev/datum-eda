@@ -151,6 +151,9 @@ impl PreparedScene {
         };
         let camera = CameraState::fit_to_bounds(&bounds);
         Self {
+            consumers: crate::resource_consumers::FrameConsumers::dialog(
+                crate::resource_consumers::Consumer::Global,
+            ),
             scene_viewport: layout.viewport,
             layout,
             hit_regions: hits,

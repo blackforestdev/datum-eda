@@ -76,6 +76,10 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
         })
     }
 
+    pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+        self.buffer.set_consumers(consumers);
+    }
+
     pub(crate) fn buffer(&self) -> &wgpu::Buffer {
         &self.buffer
     }

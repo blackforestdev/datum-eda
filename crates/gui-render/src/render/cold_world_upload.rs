@@ -68,6 +68,7 @@ impl Renderer {
         queue: &wgpu::Queue,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
+        self.publish_resource_consumers();
         let descriptor_bytes = crate::text_gpu::staging_vec::StagingVec::<
             crate::text_gpu::upload::BufferUpload<'_>,
         >::capacity_bytes(4)?;
