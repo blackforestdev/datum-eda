@@ -1,4 +1,6 @@
 //! Mutable renderer font ownership, separate from shared catalog and returned shapes.
+#[path = "font_shape_admission.rs"]
+mod admission;
 use crate::cpu_alloc::{Scope, heap::capacity_bytes};
 use glyphon::{AttrsList, CacheKey, FontSystem, ShapeLine, Shaping, SwashCache, SwashImage};
 use std::sync::{
@@ -10,6 +12,7 @@ pub(crate) struct Shape {
     line: ShapeLine,
     _lease: Option<Lease>,
     pub(super) accounted: AtomicBool,
+    construction: std::sync::Mutex<Option<crate::text_buffer_cache::budget::Construction>>,
 }
 struct Lease {
     bytes: u64,
@@ -32,7 +35,11 @@ impl Shape {
             line,
             _lease: None,
             accounted: AtomicBool::new(false),
+            construction: std::sync::Mutex::new(None),
         }
+    }
+    pub(super) fn published(&self) {
+        *self.construction.lock().unwrap_or_else(|e| e.into_inner()) = None;
     }
     pub fn payload_bytes(&self) -> usize {
         payload_bytes(&self.line)
@@ -72,6 +79,14 @@ pub(super) fn shape_container_bytes() -> usize {
 pub(crate) trait Source {
     fn release_for(&mut self, _bytes: u64) {}
     fn shape(&mut self, text: &str, attrs: &AttrsList) -> Shape;
+    fn shape_admitted(
+        &mut self,
+        text: &str,
+        attrs: &AttrsList,
+        owner: Option<&crate::text_buffer_cache::budget::Owner>,
+    ) -> anyhow::Result<Arc<Shape>> {
+        admission::shape(self, text, attrs, owner)
+    }
     fn raster(
         &mut self,
         cache: &mut SwashCache,
@@ -204,6 +219,7 @@ impl Source for Fonts {
         let shape = Shape {
             line,
             accounted: AtomicBool::new(false),
+            construction: std::sync::Mutex::new(None),
             _lease: Some(Lease {
                 bytes,
                 outputs: self.outputs.clone(),

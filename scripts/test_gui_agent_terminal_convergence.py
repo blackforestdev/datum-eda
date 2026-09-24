@@ -296,15 +296,15 @@ if run.face != TextFace::Terminal { run.size *= scale; }
         cache = """
 fn begin_frame() { retain_recent_text_buffers(); entry.last_used_frame = 1; }
 fn animated_agent_text_cache_retains_only_two_visible_generations() {}
-fn ensure_text_buffer() { TextLayout::new(); }
-fn layout() { run.rich_spans; attributes.add_span(); ShapeLine::new(); }
+fn ensure_text_buffer() { TextLayout::with_input(); }
+fn layout() { run.rich_spans; attributes.add_span(); shape_admitted(); ShapeLine::new(); }
 """
         render_gpu = """
 self.prepare_text_uploads(device, queue, prepared, width, height, false, on_submitted);
 self.prepare_text_uploads(device, queue, prepared, width, height, true, on_submitted);
 self.prepare_frame_text(device, queue, prepared, width, height, overlay);
 self.text_buffers.begin_frame(profile);
-self.text_buffers.indices();
+self.text_buffers.admitted_indices();
 """
         bottom_dock = """
 TERMINAL_FONT_SIZE_PX: f32 = 12.0;

@@ -230,7 +230,7 @@ def check_agent_tui_runtime(
         if marker not in text_cache:
             failures.append(f"terminal text-cache bound is missing {marker}")
     begin_at = render_gpu.find("self.text_buffers.begin_frame(")
-    lookup = re.search(r"self\.text_buffers\s*\.indices\(", render_gpu)
+    lookup = re.search(r"self\.text_buffers\s*\.admitted_indices\(", render_gpu)
     lookup_at = lookup.start() if lookup else -1
     if render_gpu.count("self.text_buffers.begin_frame(") != 1:
         failures.append("renderer must begin exactly one text-cache generation per frame")
@@ -245,7 +245,7 @@ def check_agent_tui_runtime(
         if marker not in terminal_core_render:
             failures.append(f"TerminalCore renderer is missing {marker}")
     if not all(marker in text_cache for marker in (
-        "TextLayout::new", "run.rich_spans", "attributes.add_span", "ShapeLine::new",
+        "TextLayout::with_input", "run.rich_spans", "attributes.add_span", "shape_admitted", "ShapeLine::new",
     )):
         failures.append("terminal styled rows must use one rich-text shaping buffer")
     for marker in (
@@ -506,6 +506,8 @@ def main() -> int:
     text_buffer_cache = (
         TEXT_BUFFER_CACHE.read_text()
         + TEXT_BUFFER_CACHE.with_name("text_cache_retention.rs").read_text()
+        + TEXT_BUFFER_CACHE.with_name("text_cache_prepare.rs").read_text()
+        + (TEXT_BUFFER_CACHE.parent.parent / "font_owner.rs").read_text()
         + TEXT_BUFFER_CACHE.with_name("text_buffer_cache_tests.rs").read_text()
         + (TEXT_BUFFER_CACHE.parent.parent / "text_layout.rs").read_text()
     )

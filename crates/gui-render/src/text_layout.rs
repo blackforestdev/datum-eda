@@ -190,8 +190,10 @@ impl TextLayout {
         }
         let mut process = |text: &str, attributes: AttrsList| -> anyhow::Result<bool> {
             let index = self.shapes.len();
-            self.shapes
-                .push(Arc::new(fonts.shape(text, &attributes)), admission.owner)?;
+            self.shapes.push(
+                fonts.shape_admitted(text, &attributes, admission.owner)?,
+                admission.owner,
+            )?;
             self.append_layout(scratch, run, extent, index, &mut top, admission)
         };
         if run.rich_spans.is_empty() {
@@ -311,6 +313,9 @@ impl TextLayout {
 
     /// The cache has published these exact capacities under its retained owner.
     pub fn published(&mut self) {
+        for shape in self.shapes.iter() {
+            shape.published();
+        }
         for row in self.rows.iter_mut() {
             row.construction = None;
         }

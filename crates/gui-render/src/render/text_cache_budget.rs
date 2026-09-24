@@ -140,6 +140,21 @@ pub(crate) struct Construction {
     epoch: u64,
     bytes: usize,
 }
+impl Construction {
+    /// Release conservative construction headroom after measuring actual capacity.
+    /// Publication still transfers the remaining lease atomically to retained usage.
+    pub(crate) fn shrink_to(&mut self, bytes: usize) {
+        assert!(bytes <= self.bytes, "construction exceeded admitted bound");
+        let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(owner) = owners.0.iter_mut().find(|o| o.owner_id == self.owner)
+            && owner.epoch == self.epoch
+        {
+            owner.constructing_bytes -= self.bytes - bytes;
+        }
+        self.bytes = bytes;
+    }
+}
+
 impl Drop for Construction {
     fn drop(&mut self) {
         let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
