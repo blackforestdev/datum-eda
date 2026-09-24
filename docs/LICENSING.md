@@ -119,3 +119,14 @@ Commercial distribution requirement:
 - include MIT/Apache/BSD copyright and license text for shipped dependencies
 - keep solver/framework dependencies out of engine/protocol contracts unless
   explicitly ratified
+
+## PM046 bounded source-patch inventory
+
+The owner approved cosmic-text 0.15.0, swash 0.2.7 and zeno 0.3.3 under
+their MIT options solely for the bounded S4 trial in
+`docs/decisions/PRODUCT_MECHANICS_046_BOUNDED_TEXT_DEPENDENCY_PATCHES.md`.
+Preserve original license files and applicable copyright/permission notices in
+sources and shipped distributions. Record source provenance and local changes.
+The exact MIT license hashes are in `specs/third_party_dependency_policy.json`.
+This does not approve any additional package or upgrade, select the Apache
+option, or establish whole-project licensing clearance. Glyphon is unchanged.

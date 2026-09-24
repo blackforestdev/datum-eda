@@ -32957,11 +32957,12 @@
       "private_heap_progress": "Native executable now uses Datum scoped System allocation ownership; see s4_private_text_heap_work. Private synchronous Rust allocation lifetimes are observable without dependency edits. Exclusive resource classification, complete caps and overhead/native qualification remain unfinished."
     },
     "bounded_dependency_patch_proposal": {
-      "status": "Pending exact package/obligation decision; no dependency changes or predicate closure",
+      "status": "Owner approved exact proposal on 2026-09-24; PM046 records bounded trial authority, no predicate closure",
       "evidence": "docs/reviews/gui-performance/implementation/S4/dependency-patch-review/result.json",
       "scope": "cosmic-text 0.15.0, swash 0.2.7 and zeno 0.3.3; proposed MIT option; glyphon unchanged",
       "limit": "Integrated safe admission/refusal/retry proof before default adoption; no expansion to additional packages or original budgets. Nested HarfRust/Skrifa construction remains a feasibility risk.",
-      "owner_direction": "Owner supports bounded modification; this packet supplies the exact proposed package and license scope for PM029 review."
+      "owner_direction": "Owner supports bounded modification; this packet supplies the exact proposed package and license scope for PM029 review.",
+      "decision": "docs/decisions/PRODUCT_MECHANICS_046_BOUNDED_TEXT_DEPENDENCY_PATCHES.md"
     }
   },
   "s4_shared_geometry_work": {
