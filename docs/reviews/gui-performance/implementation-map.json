@@ -37121,7 +37121,7 @@
     ]
   },
   "s5_chrome_scale_work": {
-    "status": "Default menu/status/pane/sidebar and terminal dock scale migrations implemented; narrow-layout defects and S5 qualification open",
+    "status": "Default chrome scale migrations and bounded narrow-layout repairs implemented; full visual/golden and S5 qualification remain open",
     "production_consumers": [
       "Main menu titles, dropdowns and submenu paint/hits",
       "Shell brand/project identity strip",
@@ -37148,7 +37148,7 @@
       "default_app_build": "Fresh offline locked datum-gui build passed19.54s."
     },
     "limits": [
-      "Terminal dock and pane/side-panel scale migrations implemented in followups. Narrow Inspector/placeholder and clipboard-menu internals remain open before whole-workspace HiDPI acceptance.",
+      "Pane/sidebar/terminal/menu migrations and narrow Inspector/placeholder/Layers repairs implemented in followups; full Console visual/golden reconciliation remains failed and unqualified.",
       "Existing Console goldens remain unchanged and failed; no full S5/native/backend/scale/resource/endurance or independent qualification claim.",
       "No dependency, Cargo, license, prototype, cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
@@ -37212,6 +37212,35 @@
       ],
       "issue": "dat-workspace-hidpi-chrome-6fm4",
       "evidence": "docs/reviews/gui-performance/implementation/S5/terminal-chrome-scale/result.json"
+    },
+    "narrow_layout_followup": {
+      "status": "Bounded narrow-layout repair complete; visual qualification remains failed against old goldens",
+      "production_consumers": [
+        "Inspector identity/kind/selected-pill title band",
+        "Non-live pane placeholder text",
+        "Project/Layers layout and sidebar clipping",
+        "Terminal clipboard menu paint/text/hit geometry"
+      ],
+      "retired_paths": [
+        "Fixed330px Project allocation starving Layers on short logical surfaces",
+        "Sidebar headings painting beyond the sidebar into dock/status chrome",
+        "Inspector title-band wrapping across its divider or selected pill",
+        "Centered oversized placeholder starting outside its pane",
+        "Display-scaled clipboard glyphs with unscaled menu geometry and anchors"
+      ],
+      "verification": {
+        "renderer": "351 passed,0 failed,83 ignored after production edits;4 composed scale regressions passed after adding actual1280x768@2x Layers retention test",
+        "clippy": "Strict renderer/app visual all-target -D warnings passed",
+        "build": "Fresh default datum-gui build passed20.22s",
+        "visual": "All10 Console fixture/scale combinations rendered and compared. All still fail old goldens; exact counts in matrix.json. Inspected1x routine, narrow refusal and final2x candidate. Layers controls now remain inside sidebar; placeholder is readable and Inspector rows remain within their band. No golden blessed."
+      },
+      "limits": [
+        "This is not full static/OS-input/backend/resource/endurance or independent S5 acceptance. Full Console/golden authority reconciliation remains pending; narrow refusal message content requires disposition before visual acceptance.",
+        "Clipped Inspector identity rows preserve source text but can truncate visible text at narrow widths. Default panel geometry remains unchanged where sufficient space exists.",
+        "No dependency, license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+      ],
+      "issue": "dat-workspace-hidpi-chrome-6fm4",
+      "evidence": "docs/reviews/gui-performance/implementation/S5/narrow-layout/result.json"
     }
   }
 }

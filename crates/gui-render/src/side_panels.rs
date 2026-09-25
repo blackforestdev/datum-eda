@@ -17,13 +17,30 @@ pub(super) fn render_side_panels(
 ) -> anyhow::Result<()> {
     let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    render_side_panels_logical(
-        state,
-        &scale.logical_layout(layout.clone()),
+    let logical = scale.logical_layout(layout.clone());
+    render_side_panels_logical(state, &logical, panel_quads, text_runs, hit_regions)?;
+    // Collapsed panels must not draw headings or own clicks over dock/status
+    // chrome. Preserve unconstrained text layout while adding the visible clip.
+    for run in &mut text_runs[starts.1..] {
+        if run.clip_bounds.is_none() && run.layout_size.is_none() {
+            run.layout_size = Some((
+                estimated_text_run_width_px(&run.text, run.size, run.face),
+                run.size * 1.55 + 6.0,
+            ));
+        }
+    }
+    crate::hit_clipping::clip_content(
         panel_quads,
         text_runs,
         hit_regions,
-    )?;
+        starts.0,
+        starts.1,
+        starts.2,
+        RectPx {
+            width: logical.right_sidebar.x + logical.right_sidebar.width - logical.left_sidebar.x,
+            ..logical.left_sidebar
+        },
+    );
     scale.quads(&mut panel_quads[starts.0..]);
     scale.text_geometry(&mut text_runs[starts.1..]);
     scale.hits(&mut hit_regions[starts.2..]);

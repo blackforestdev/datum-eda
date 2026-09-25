@@ -191,7 +191,7 @@ fn render_pane_placeholder(
     panel_quads.push(Quad::from_rect(canvas, VIEWPORT_BG));
     let cap_size = design_tokens::typography::DATA_SIZE;
     let cap_w = estimated_text_run_width_px(caption, cap_size, TextFace::Mono) - 16.0;
-    let cap_x = pane.scene.x + (pane.scene.width - cap_w) * 0.5;
+    let cap_x = (pane.scene.x + (pane.scene.width - cap_w) * 0.5).max(canvas.x + 12.0);
     let cap_y = pane.scene.y + (pane.scene.height - cap_size) * 0.5;
     draw_text(
         caption,
@@ -202,6 +202,12 @@ fn render_pane_placeholder(
         TextFace::Mono,
         text_runs,
     );
+    if let Some(run) = text_runs.last_mut() {
+        run.layout_size = Some((
+            (canvas.x + canvas.width - 12.0 - cap_x).max(1.0),
+            (canvas.y + canvas.height - cap_y).max(1.0),
+        ));
+    }
     crate::hit_clipping::clip_content(
         panel_quads,
         text_runs,

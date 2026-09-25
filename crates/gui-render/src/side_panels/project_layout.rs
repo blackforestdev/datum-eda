@@ -55,6 +55,12 @@ enum ProjectPanelNode {
     Spacer,
 }
 
+pub(super) fn project_panel_height(available: f32, preferred: f32) -> f32 {
+    preferred
+        .min((available - 200.0).max(80.0))
+        .min(available.max(0.0))
+}
+
 fn solve(key: LayoutKey) -> Option<ProjectPanelLayout> {
     record_solve();
     let left = key.left;
@@ -126,11 +132,12 @@ fn solve(key: LayoutKey) -> Option<ProjectPanelLayout> {
         .ok()?;
     taffy.compute_layout(root, Size::MAX_CONTENT).ok()?;
     let root_layout = taffy.layout(root).ok()?;
-    // Q1-A-amended makes the complete Design/Publish/Revision taxonomy
-    // permanently visible. Reserve its real height so Revision rows never draw
-    // through the sibling LAYERS panel.
-    let project_height =
-        (UI_CARD_CONTENT_TOP + root_layout.size.height + UI_CARD_CONTENT_BOTTOM).max(330.0);
+    // Preserve the normal Project allocation, but release its unused space on
+    // short surfaces so Layers controls remain reachable below the identity.
+    let project_height = project_panel_height(
+        left.height,
+        (UI_CARD_CONTENT_TOP + root_layout.size.height + UI_CARD_CONTENT_BOTTOM).max(330.0),
+    );
     let filters_y = card_y + project_height + UI_CARD_MARGIN;
 
     let rect_for = |kind: ProjectPanelNode| -> Option<RectPx> {
