@@ -87,6 +87,12 @@ pub(super) fn render_datum_console(
                 text_clip,
                 text_runs,
             );
+            // PM033 requires truncation before wrapping in the collapsed strip.
+            // Keep the natural line extent independent from its visible clip;
+            // expanded history owns wrapping and the complete record.
+            if let Some(run) = text_runs.last_mut() {
+                run.layout_size = Some((natural_text_width + 16.0, row_height));
+            }
             hit_regions.push(HitRegion {
                 target: HitTarget::ConsoleHistoryToggle,
                 rect: strip,

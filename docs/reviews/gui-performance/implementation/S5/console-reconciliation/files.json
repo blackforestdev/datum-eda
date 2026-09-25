@@ -1,0 +1,62 @@
+[
+  {
+    "fixture_case": "history-expanded-1_00",
+    "golden": "crates/gui-render/testdata/golden/console/history-expanded.golden.png",
+    "previous_sha256": "d11839d230d9778b7b55007ca4e013ac1234dc1685c312d2aec1a1b60464db1d",
+    "reviewed_sha256": "fb2b34ecd404349810b7b786551caa7b53ad780417a6e1de6c91aed78061dd71"
+  },
+  {
+    "fixture_case": "refusal-narrow-1_00",
+    "golden": "crates/gui-render/testdata/golden/console/refusal-narrow.golden.png",
+    "previous_sha256": "a715ee0b7de158974006f0b610ac01142cc1a2b042b2e9b63bb789c7237b2ca1",
+    "reviewed_sha256": "7d36b4587af4c49df80690161dc08922c6cb4f202f7a51323af507f623595358"
+  },
+  {
+    "fixture_case": "routine-focused-1_00",
+    "golden": "crates/gui-render/testdata/golden/console/routine-focused.golden.png",
+    "previous_sha256": "5a8dcb192e68cd057b3889d247858dd3eb126686318b3fa62c0b9ac3950abf99",
+    "reviewed_sha256": "a5e1fb684a0a7d14bf015eb471309982eb13064489c61c9fb9bd1cf1910166e1"
+  },
+  {
+    "fixture_case": "routine-maximized-1_00",
+    "golden": "crates/gui-render/testdata/golden/console/routine-maximized.golden.png",
+    "previous_sha256": "2d865cd3dd3d792f7d5aba5012867b3a768359d0bf3fa88abee20ac467d68fef",
+    "reviewed_sha256": "c647cbdc92c4839fe3e31912fa852e22f0c9eeabc39423147754bbc01992d19a"
+  },
+  {
+    "fixture_case": "routine-scale-matrix-1_00",
+    "golden": "crates/gui-render/testdata/golden/console/routine-scale-matrix.scale-1_00.golden.png",
+    "previous_sha256": "5a8dcb192e68cd057b3889d247858dd3eb126686318b3fa62c0b9ac3950abf99",
+    "reviewed_sha256": "a5e1fb684a0a7d14bf015eb471309982eb13064489c61c9fb9bd1cf1910166e1"
+  },
+  {
+    "fixture_case": "routine-scale-matrix-1_25",
+    "golden": "crates/gui-render/testdata/golden/console/routine-scale-matrix.scale-1_25.golden.png",
+    "previous_sha256": "b6f550a751a907db498b837fdd4fc721d6ea4c2db5ff1c77792cbac32c5de9a0",
+    "reviewed_sha256": "e32beff0b9de7f98a5ae633603580201462b9ee027e456fe6642182342d3e109"
+  },
+  {
+    "fixture_case": "routine-scale-matrix-1_50",
+    "golden": "crates/gui-render/testdata/golden/console/routine-scale-matrix.scale-1_50.golden.png",
+    "previous_sha256": "5c8edf864f528c5248904c450cd51537ff2f968a1d599cb9560ded1905f2a5f5",
+    "reviewed_sha256": "ae23c11c9fdd304faeed92257bbe5755e8ef58d34c34234fd6c35f14948b0d35"
+  },
+  {
+    "fixture_case": "routine-scale-matrix-2_00",
+    "golden": "crates/gui-render/testdata/golden/console/routine-scale-matrix.scale-2_00.golden.png",
+    "previous_sha256": "989a98ab41c525435434ef26d696a9810cac6f8e3341c276ada4ea8b5a919b8a",
+    "reviewed_sha256": "cc76a1412c7bbfa48bff3cb4038875e4e7ce63e4bf36fc27fad1d9d7461e65e1"
+  },
+  {
+    "fixture_case": "routine-unfocused-1_00",
+    "golden": "crates/gui-render/testdata/golden/console/routine-unfocused.golden.png",
+    "previous_sha256": "22f75796bc4e8f9ce55035d9d3cb6532af11c4dd230c8b35eb473fdf103e0e02",
+    "reviewed_sha256": "14be4f836c5c3ddaeb0abbb33039c0bc36f279ac2e38d50a6c9db8e168300715"
+  },
+  {
+    "fixture_case": "tool-terminal-open-1_00",
+    "golden": "crates/gui-render/testdata/golden/console/tool-terminal-open.golden.png",
+    "previous_sha256": "7732407e80393ffc5ebeba5688b19716f718b0c2e11fa9dbe3f7ac9f60f9ef56",
+    "reviewed_sha256": "7f287226c7128b4b7ce9234c472db0597761e8a4b92b5c62d929441a98043c3d"
+  }
+]
