@@ -506,6 +506,9 @@ impl ApplicationHandler for App {
         }
         self.poll_resize_smoke_start();
         self.request_restored_native_frames();
+        if let Err(err) = app_shell::private_text_measurements::poll() {
+            fatal_gui_error(event_loop, "private text observation incomplete", err);
+        }
         event_loop.set_control_flow(self.frames.take_control_flow());
     }
 }

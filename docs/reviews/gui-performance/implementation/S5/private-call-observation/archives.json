@@ -1,0 +1,42 @@
+[
+  {
+    "file": "on.tar.gz",
+    "raw_files": 14,
+    "raw_bytes": 8166903
+  },
+  {
+    "file": "off.tar.gz",
+    "raw_files": 15,
+    "raw_bytes": 540838
+  },
+  {
+    "file": "baseline-off.tar.gz",
+    "raw_files": 16,
+    "raw_bytes": 541305
+  },
+  {
+    "file": "overflow.tar.gz",
+    "raw_files": 5,
+    "raw_bytes": 5292
+  },
+  {
+    "file": "existing.tar.gz",
+    "raw_files": 5,
+    "raw_bytes": 1844
+  },
+  {
+    "file": "off-replay.tar.gz",
+    "raw_files": 13,
+    "raw_bytes": 540295
+  },
+  {
+    "file": "campaign.tar.gz",
+    "raw_files": 10,
+    "raw_bytes": 5387
+  },
+  {
+    "file": "proof.tar.gz",
+    "raw_files": 11,
+    "raw_bytes": 109015
+  }
+]

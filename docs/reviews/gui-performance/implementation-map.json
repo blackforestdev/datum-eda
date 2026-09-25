@@ -3867,7 +3867,7 @@
         "crates/gui-render/src/render/text_buffer_cache.rs"
       ],
       "test": {
-        "status": "Partial allocation evidence: native attachment drain and GUI resolver cache ownership. Resolver input/model/key capacities and tracking overhead share a16MiB local retention ceiling; pressure eviction and final release tested. Full ACC-01/02, native/driver memory and simultaneous aggregate/peak accounting remain unqualified.",
+        "status": "Partial PM047 observation:6373native private calls retain complete begin/end and per-call transient/concurrent-occupancy reports, with loss/abandonment/sequence controls. Full allocation identity/reference/release accounting, shared measurement-host incidence and all resource qualification remain open.",
         "id": "proof_ac_05",
         "positive": "Create/share/replace/evict/retire allocations and uploads",
         "negative_control": "Count buffer capacity reuse as zero upload",
@@ -4105,6 +4105,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_private_call_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial allocation evidence: native attachment drain and GUI resolver cache ownership. Resolver input/model/key capacities and tracking overhead share a16MiB local retention ceiling; pressure eviction and final release tested. Full ACC-01/02, native/driver memory and simultaneous aggregate/peak accounting remain unqualified.",
+        "status": "Partial PM047 observation:6373native private calls retain complete begin/end and per-call transient/concurrent-occupancy reports, with loss/abandonment/sequence controls. Full allocation identity/reference/release accounting, shared measurement-host incidence and all resource qualification remain open.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
       }
     },
     {
@@ -4149,7 +4155,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Predeclared six-run order completed with rejected NVIDIA startup and earlier method failures retained. Three descriptive on/off pairs show material observer overhead; no formal seven-pair confidence or overhead subtraction.",
+        "status": "Bounded private-call trace native on/off and overflow/file-collision controls retained. Initial disabled final-close timeout preserved with successful baseline and declared replay; no calibrated overhead/statistical claim or full qualification.",
         "id": "proof_ac_06",
         "positive": "Same workload trace-on/off and rejected trials",
         "negative_control": "Discard high-cost or contaminated trial after seeing result",
@@ -4221,6 +4227,12 @@
         "previous_test_status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
         "status": "Predeclared six-run order completed with rejected NVIDIA startup and earlier method failures retained. Three descriptive on/off pairs show material observer overhead; no formal seven-pair confidence or overhead subtraction.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
+      },
+      "s5_private_call_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Predeclared six-run order completed with rejected NVIDIA startup and earlier method failures retained. Three descriptive on/off pairs show material observer overhead; no formal seven-pair confidence or overhead subtraction.",
+        "status": "Bounded private-call trace native on/off and overflow/file-collision controls retained. Initial disabled final-close timeout preserved with successful baseline and declared replay; no calibrated overhead/statistical claim or full qualification.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
       }
     },
     {
@@ -17893,7 +17905,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial resolver allocation scope observes cold payload peak34353470bytes including retained inputs/output plus transient work. This is not a scratch-only peak or a16MiB staging pass. Complete phase/lifetime partition, other owners and simultaneous local qualification remain required.",
+        "status": "Native private-call report delivery added without changing16MiB host admission. Bounded observed calls stay within reported limits and actual GPU overrun refusal still passes. Full transient/staging/metadata/RSS/native/negative qualification remains open.",
         "id": "proof_mem_staging_local",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -18149,6 +18161,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_private_call_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial resolver allocation scope observes cold payload peak34353470bytes including retained inputs/output plus transient work. This is not a scratch-only peak or a16MiB staging pass. Complete phase/lifetime partition, other owners and simultaneous local qualification remain required.",
+        "status": "Native private-call report delivery added without changing16MiB host admission. Bounded observed calls stay within reported limits and actual GPU overrun refusal still passes. Full transient/staging/metadata/RSS/native/negative qualification remains open.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
       }
     },
     {
@@ -18212,7 +18230,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial resolver Rust heap attribution only; whole-process simultaneous scratch including other owners and tracking overhead remains unqualified under unchanged64MiB aggregate ceiling.",
+        "status": "Native call events retain existing simultaneous process peaks; concurrent-owner conformance rejects process overrun.64MiB authority unchanged. No complete aggregate/simultaneous native/resource or endurance qualification.",
         "id": "proof_mem_staging_total",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -18468,6 +18486,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_private_call_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial resolver Rust heap attribution only; whole-process simultaneous scratch including other owners and tracking overhead remains unqualified under unchanged64MiB aggregate ceiling.",
+        "status": "Native call events retain existing simultaneous process peaks; concurrent-owner conformance rejects process overrun.64MiB authority unchanged. No complete aggregate/simultaneous native/resource or endurance qualification.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
       }
     },
     {
@@ -37816,5 +37840,18 @@
     "candidate_binary_sha256": "1b971604b76d5be59437f8fe0617ece593b1011dcbe8d62002f45d69f3879cf7",
     "remaining": "All original225rules and S1/50S2/20S3 qualification remain authoritative. Complete negative controls, native input/focus/static per-consumer/backend/scale, accounting/private peaks, cold, endurance, owner UX and distinct-reviewer actual replay required. NVIDIA whole-duty limitation and prior individual CPU excesses remain; current native correction does not requalify historical candidates.",
     "boundaries": "Approved GUI correction only. No dependency/license/backend/AA-quality/prototype/model/journal/engine/terminal state change. S0-S4/GEFN and all nonblocking resize, temporal, T2 and unadmitted schematic exclusions preserved."
+  },
+  "s5_private_call_observation": {
+    "status": "Bounded private-call delivery implemented and native-tested; GPI-S5 incomplete",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json",
+    "candidate_binary_sha256": "33768ae1dd742d19ad0ee12494fac9f563c4a7aa81419aa0a9304af60f7e5ae5",
+    "limits": [
+      "Only private-call delivery is demonstrated; no global resource or numerical-cap qualification.66 shared/thread text-measurement calls retain explicit null renderer origin; complete host/ref incidence remains to reconcile.",
+      "Buffer API capacity1703936bytes each for this run; drain can temporarily hold two. Allocation headers, JSON/IO scratch, OS RSS and driver/native mappings are separate; no complete observer-overhead calibration.",
+      "All225 original requirements, S1/50S2/20S3 qualification, resource event/concurrent peak/subcap proof, native/backend/scale/negative controls, cold,endurance,owner UX and distinct-reviewer actual replay remain.",
+      "Preserve existing Board/Revision golden failures, menuCSV/bootstrap drift, prior CPU/GPU limits and missing NVIDIA counters. No broad golden/drift rerun or new acceptance."
+    ],
+    "boundaries": "No admission budget/failure-path, model/journal, dependency/license/backend/AA/prototype/terminal-state change. Preserve S0-S4, GEFN, PM029/PM047 and every nonblocking resize/temporal/T2/unadmitted schematic exclusion."
   }
 }

@@ -4,9 +4,13 @@ use super::{Scope, with_current};
 use crate::text_gpu::budget::{Budget, Permit};
 use std::sync::{Arc, Mutex};
 
+#[path = "private_text_observation.rs"]
+pub mod observation;
+
 static LEDGER: Mutex<Ledger> = Mutex::new(Ledger {
     next: 1,
     calls: Slots::new(),
+    observer: None,
 });
 
 #[derive(Clone, Copy, Debug, Default)]
@@ -50,6 +54,8 @@ struct Entry {
     host: Arc<Budget>,
     process: Arc<Budget>,
     report: Report,
+    renderer_id: Option<u64>,
+    owner_label: &'static str,
 }
 // Fixed process coordination storage: no allocation from inside allocator hooks.
 // Native hosts need at most a font/raster pair plus catalog construction each.
@@ -105,8 +111,15 @@ pub fn registry_metadata_bytes() -> usize {
 pub(crate) struct Ledger {
     next: u64,
     calls: Slots,
+    observer: Option<observation::Buffer>,
 }
 impl Ledger {
+    fn observe(&mut self, event: observation::Event) {
+        if let Some(observer) = &mut self.observer {
+            observer.push(event);
+        }
+    }
+
     pub(crate) fn used(&self, budget: &Budget) -> u64 {
         let mut bytes = budget.used();
         for call in self.calls.iter() {
@@ -195,6 +208,8 @@ impl Call {
                 credit,
                 host,
                 process,
+                renderer_id: crate::text_gpu::allocation_host::current(),
+                owner_label: usage.label,
                 report: Report {
                     call_id: id,
                     owner_id: usage.owner_id,
@@ -210,6 +225,11 @@ impl Call {
             let process = ledger.used(&ledger.calls[index].process);
             ledger.calls[index].report.host_initial_bytes = host;
             ledger.calls[index].report.process_initial_bytes = process;
+            ledger.observe(observation::Event::new(
+                &ledger.calls[index],
+                observation::Phase::Begin,
+                None,
+            ));
             Some(Self { id: Some(id) })
         })
         .ok_or_else(|| anyhow::anyhow!("private text call concurrency capacity exhausted"))
@@ -231,7 +251,7 @@ impl Call {
                 .iter()
                 .position(|c| c.id == id)
                 .expect("registered text call");
-            let call = ledger.calls.remove(index);
+            let mut call = ledger.calls.remove(index);
             for pair in [&mut old, &mut temporary].into_iter().flatten() {
                 for permit in pair {
                     permit.release_in_transaction();
@@ -241,6 +261,12 @@ impl Call {
             let process = ledger.used(&call.process).saturating_add(retained);
             let mut report = call.report;
             report.exceeded |= host > call.host.limit() || process > call.process.limit();
+            call.report = report;
+            ledger.observe(observation::Event::new(
+                &call,
+                observation::Phase::Finished,
+                Some(retained),
+            ));
             if report.exceeded {
                 return (Err(Overrun(report)), call);
             }
@@ -265,7 +291,13 @@ impl Drop for Call {
                     .iter()
                     .position(|call| call.id == id)
                     .expect("registered text call");
-                ledger.calls.remove(index)
+                let call = ledger.calls.remove(index);
+                ledger.observe(observation::Event::new(
+                    &call,
+                    observation::Phase::Abandoned,
+                    None,
+                ));
+                call
             });
         }
     }
