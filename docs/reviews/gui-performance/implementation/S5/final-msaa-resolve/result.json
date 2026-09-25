@@ -1,0 +1,74 @@
+{
+  "status": "Bounded final MSAA resolve correction proved; GPI-S5 incomplete",
+  "qualification_pass": false,
+  "baseline": "e4c8edf9",
+  "candidate_source": {
+    "crates/gui-render/src/render/gpu_frame.rs": "98c7a75730490c7bfaf6d9ed6bb43c03f006b3280a4d92023e4490c81f2f7137",
+    "crates/gui-render/src/render/terminal_graphics.rs": "f8c175238da2e0c6c2a4f450a5f6c341fa2f98e69d930ddc4dd12bfd50052b0e",
+    "crates/gui-render/src/render/gpu_pass_tests.rs": "04e1bb9a2865b18d78931907e740d9f67870ed34c029f9c266cc7b72aef880a9"
+  },
+  "binary_sha256": {
+    "baseline": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+    "candidate": "1b971604b76d5be59437f8fe0617ece593b1011dcbe8d62002f45d69f3879cf7"
+  },
+  "selection": "Prior three traced window trials attributed most frame time to Main scene/text/menu passes. Source audit found each pass resolved the entire MSAA attachment although no intermediate resolved image was read.",
+  "change": "General frame resolves only in its last active scene, terminal background, text, terminal foreground, menu card or menu text pass. Shared terminal layer predicate controls both presence and final selection. All passes retain MSAA Store and later Load; initial Clear, physical painter order,8xMSAA, pipelines, atlas/resource lifetimes and one-pass auxiliary dialog route remain unchanged.",
+  "resolve_count": "Source-derived exactly one per completed general frame instead of one per active physical pass; runtime timestamp sequences retain scene/text for closed Main and scene/text/menu-background/menu-text for View menu. This is not an independent hardware API trace or complete PASS-01 qualification.",
+  "proof": {
+    "renderer_unit": "352passed,84ignored; serial visual-feature lib tests",
+    "serial_gpu": "33passed, including dialog/general parity, fractional geometry/text, graphics/lifetime/admission/atlas/contribution and new terminal final-stage equality",
+    "negative": "Omit final terminal foreground resolve: new test fails at invisible later menu pixel equality. Restore exact candidate: focused test passes1/1. Raw failed image values preserved compressed.",
+    "clippy": "Strict renderer+app all-targets with visual feature passes",
+    "release": "Guarded offline release build passes",
+    "native": "All six predeclared runs complete normally;60 menu cycles with focus restored and no warm timestamp incompletes. Actual menu/closed PNG comparison AE0 against baseline1 for all remaining runs. Exact F-DOA normalized board hash unchanged.",
+    "goldens": "Candidate and baseline both3pass/2fail. Console, artboards, multiscale pass. Board datum-test1x and Revision shell each fail4049pixels (0.411886%); all six generated image/diff/report artifacts are byte-identical across baseline/candidate. Early abort does not qualify other Board/Revision fixtures. No golden updated.",
+    "intake": "dat-board-revision-golden-drift-jn2k"
+  },
+  "observations": {
+    "menu_mean_ms": {
+      "baseline": [
+        15.74796714725647,
+        17.692800539941405,
+        15.156608795876313
+      ],
+      "candidate": [
+        8.245083584953308,
+        8.396900256253051,
+        9.362375285717011
+      ]
+    },
+    "closed_mean_ms": {
+      "baseline": [
+        10.26025031311798,
+        10.030125306095123,
+        9.588041959270477
+      ],
+      "candidate": [
+        7.838216905870056,
+        8.006608577675628,
+        7.765066903637695
+      ]
+    },
+    "interpretation": "Descriptive paired timestamp observations support retaining the correction; not formal seven-pair significance, uninstrumented performance, PM045 absolute budget or total GPU duty acceptance. Native workload is a bounded menu replay, not complete W-WINDOWS."
+  },
+  "remaining": "All original225rules and S1/50S2/20S3 qualification remain authoritative. Complete negative controls, native input/focus/static per-consumer/backend/scale, accounting/private peaks, cold, endurance, owner UX and distinct-reviewer actual replay required. NVIDIA whole-duty limitation and prior individual CPU excesses remain; current native correction does not requalify historical candidates.",
+  "boundaries": "Approved GUI correction only. No dependency/license/backend/AA-quality/prototype/model/journal/engine/terminal state change. S0-S4/GEFN and all nonblocking resize, temporal, T2 and unadmitted schematic exclusions preserved.",
+  "archives": [
+    {
+      "path": "native.tar.gz",
+      "files": 39,
+      "bytes": 1694722
+    },
+    {
+      "path": "golden-comparison.tar.gz",
+      "files": 13,
+      "bytes": 812181
+    },
+    {
+      "path": "proof-logs.tar.gz",
+      "files": 12,
+      "bytes": 20134783
+    }
+  ],
+  "visual_review": "Viewed candidate Revision actual/diff and matched baseline/candidate native View-menu captures. Baseline golden drift is concentrated in old Navigator text and logo region; this observation does not authorize changing visual truth."
+}

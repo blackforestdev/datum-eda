@@ -347,16 +347,20 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             )
     }
 
+    pub(super) fn has_layer(&self, foreground: bool) -> bool {
+        self.draws.iter().any(|draw| draw.foreground == foreground)
+    }
+
     pub(super) fn encode_layer(
         &self,
         encoder: &mut wgpu::CommandEncoder,
         msaa_view: &wgpu::TextureView,
-        target: &wgpu::TextureView,
+        target: Option<&wgpu::TextureView>,
         screen_bind_group: &wgpu::BindGroup,
         foreground: bool,
         measurement: Option<&mut super::gpu_measurements::FrameQueries>,
     ) -> anyhow::Result<()> {
-        if !self.draws.iter().any(|draw| draw.foreground == foreground) {
+        if !self.has_layer(foreground) {
             return Ok(());
         }
         let label = if foreground {
@@ -368,7 +372,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             label: Some(label),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                 view: msaa_view,
-                resolve_target: Some(target),
+                resolve_target: target,
                 depth_slice: None,
                 ops: wgpu::Operations {
                     load: wgpu::LoadOp::Load,
@@ -445,7 +449,7 @@ impl super::Renderer {
         &self,
         encoder: &mut wgpu::CommandEncoder,
         msaa_view: &wgpu::TextureView,
-        target: &wgpu::TextureView,
+        target: Option<&wgpu::TextureView>,
         foreground: bool,
         measurement: Option<&mut super::gpu_measurements::FrameQueries>,
     ) -> anyhow::Result<()> {
