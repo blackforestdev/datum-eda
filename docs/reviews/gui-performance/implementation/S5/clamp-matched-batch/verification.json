@@ -1,0 +1,17 @@
+{
+  "qualification_pass": false,
+  "native": "Pilot and all9 fixed matched launches normal device-live drained exit0. Every outward interval AE0; all nine matched runs before/after/reversal images exact against pilot. Physical display1.05 restored.",
+  "structural": "Four verbose runs including pilot each have1800 received events per bound, one positive inward event, one separately logged cleanup event. Active no redraw/prepare/upload/presentation; tail no logged native work. Median native interarrival~16.67ms, worst21.512928ms. No cross-clock/physical presentation inference.",
+  "quiet_cpu": "Candidate min/max bound duty per trial1.540/1.498,1.520/1.491,1.517/1.442percent, ALL above1percent. Baseline also above ceiling. Quiet input counts and semantic acknowledgements are not observed; zero log counts mean unobserved, not absent delivery. No CPU/action acceptance.",
+  "archives": "12 archives270 raw members individually SHA256/length verified;8 first-party tools. Prior method/harness failure remains separately committed.",
+  "route": "45 retained source/consumer hashes verified before bounded AC02/AC06 evidence addition; original225 rules/statuses/recipes/history unchanged.",
+  "checks": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "parity": "PASS20inventories",
+    "dependency": "PASS",
+    "cargo_resource": "PASS",
+    "project_status": "PASS59frontieritems"
+  },
+  "rust": "No product source changes; unchanged Rust suites not repeated."
+}
