@@ -1,0 +1,41 @@
+{
+  "events": 12746,
+  "calls": 6373,
+  "owner_labels": {
+    "shared-font-catalog": 1,
+    "renderer-fonts-and-shapes": 3363,
+    "text-measurement": 66,
+    "raster-scratch-and-pixels": 2943
+  },
+  "cpu_owner_count": 25,
+  "renderer_origins": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "calls_without_renderer_origin": 66,
+  "reported_peak_maxima": {
+    "peak_bytes": 1759831,
+    "host_peak_bytes": 1759831,
+    "process_peak_bytes": 1759831
+  },
+  "buffer_capacity_bytes": 1703936,
+  "complete_private_call_delivery": true,
+  "observed_calls_within_reported_limits": true,
+  "qualification_pass": false,
+  "negative_controls": {
+    "missing_begin": "rejected",
+    "missing_finish": "rejected",
+    "missing_end": "rejected",
+    "duplicate_sequence": "rejected",
+    "false_cap_pass": "rejected"
+  },
+  "limits": "Complete bounded private-call delivery only.66 text-measurement calls have explicit null renderer origin; shared/per-thread ownership must be reconciled separately. No whole-resource/driver/RSS or observer-overhead, backend/scale,endurance,independent qualification."
+}

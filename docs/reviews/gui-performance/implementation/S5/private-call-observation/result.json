@@ -1,0 +1,143 @@
+{
+  "status": "Bounded private-call delivery implemented and native-tested; GPI-S5 incomplete",
+  "qualification_pass": false,
+  "base_commit": "f8d86440",
+  "candidate_binary_sha256": "33768ae1dd742d19ad0ee12494fac9f563c4a7aa81419aa0a9304af60f7e5ae5",
+  "candidate_source_sha256": {
+    "crates/gui-render/src/private_text_call.rs": "fdb63d7d342b1c95e30481ca7d17ddd2bf36cb974a5d90a17b1f7e52d50b3a7e",
+    "crates/gui-render/src/private_text_observation.rs": "0b188b84cddfc3144a94ca1443c944677a6d637fb90ec716d7a165e181f8c00b",
+    "crates/gui-render/src/private_text_observation_tests.rs": "1d3fab02659caa6eddd5c779fc3d6c30a0b726e9ec6153a1db09cd2f7702d214",
+    "crates/gui-app/src/native_private_text_measurements.rs": "da04c8a2aa42a717fb4aced6dd2517fc378f040b710fcab8cd375bc87cc0e3c7",
+    "crates/gui-app/src/app_shell.rs": "a0d8c8f55fe277467da1018660f13c93fb3ecd8ce6b108f6f9fb3cc2b1d63ff6",
+    "crates/gui-app/src/app_native_events.rs": "168a00f383c7c1dee506f1ecf1f8c3dfcfff86754694735824c773ab4cff3b4a"
+  },
+  "problem": "PM047 computed initial/final/peak reports, but current native font logging retained only the last call and omitted complete raster/private-call delivery. Per-call and simultaneous-host evidence cannot be reconstructed from lifetime high-water or last-call snapshots.",
+  "implementation": "Opt-in observer records begin/finished/abandoned events under existing admission lock, with monotonic sequence/time, call/CPU-owner identity, renderer origin where present, scope label, exclusions/credits, requested retained bytes and full existing report. No allocation occurs when pushing: storage is reserved before enabling and bounded by1..65536events. Overflow preserves old entries and cumulative loss. Drain never resets totals; unique observer IDs reject stale consumers. First call ID exposes missing startup history. Allocation of observer vectors is outside tracked scopes and the admission lock.",
+  "native": "DATUM_PRIVATE_TEXT_TRACE selects a new file; DATUM_PRIVATE_TEXT_TRACE_CAPACITY optionally sets the bound(default8192). Native App enables before renderer creation, drains only on existing about-to-wait turns when events are pending, and finishes after App teardown. No timer/redraw is added. Missing startup, abandoned calls or dropped events fail delivery; existing files are never overwritten. No tracing/storage/file output is enabled by default. Native-only route; offscreen CLI path not claimed covered.",
+  "proof": {
+    "renderer": "352passed86ignored",
+    "observer": "2explicit serial process-observer tests pass: real transient peak/freed scratch, fresh-call vs lifetime high-water, overlapping owners/process peak, start/stop/stale-ID rejection, abandoned call and sticky overflow",
+    "app": "400passed17ignored; separate visual shell test remains ignored",
+    "gpu": "Existing production_overrun_stops_preparation_before_retry_or_publication passes: typed refusal preserves source, does not trigger atlas retry/publication, succeeds after pressure retires",
+    "clippy": "Strict renderer/app all-targets visual Clippy passes",
+    "release": "Guarded offline release passes",
+    "native_trace": "Nine actual GLOBAL/PROJECT/NEW open/Escape-close cycles match unchanged host PNGs, restore focus and exit normally through bounded shutdown handoff.6373calls/12746events reconcile from first call1 through final empty active set; no dropped events or observed reported overrun.",
+    "native_controls": "Disabled replay and existing pre-observer baseline both complete9same cycles normally without trace output. Capacity1 overflows and exits1 with incomplete batch/no passing end. Existing output file is rejected with exit1 and exact contents preserved. All owned cgroups removed.",
+    "consumer_negatives": "Missing begin, missing finish, missing end, duplicate sequence and falsely passing excess-cap report are all rejected by derived evidence reconciliation."
+  },
+  "unresolved_attempt": {
+    "issue": "dat-native-final-close-observation-xbb7",
+    "detail": "Initial disabled control completed9pixel/focus cycles but WM_DELETE_WINDOW request was not logged and final observer connection timed out after10s. Owned cleanup killed the still-live root. Baseline and one declared candidate replay succeeded; cause unresolved, not a reproduced observer regression. Original failure remains rejected, never resampled into a qualification pass."
+  },
+  "observations": {
+    "events": 12746,
+    "calls": 6373,
+    "owner_labels": {
+      "shared-font-catalog": 1,
+      "renderer-fonts-and-shapes": 3363,
+      "text-measurement": 66,
+      "raster-scratch-and-pixels": 2943
+    },
+    "cpu_owner_count": 25,
+    "renderer_origins": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "calls_without_renderer_origin": 66,
+    "reported_peak_maxima": {
+      "peak_bytes": 1759831,
+      "host_peak_bytes": 1759831,
+      "process_peak_bytes": 1759831
+    },
+    "buffer_capacity_bytes": 1703936,
+    "complete_private_call_delivery": true,
+    "observed_calls_within_reported_limits": true,
+    "qualification_pass": false,
+    "negative_controls": {
+      "missing_begin": "rejected",
+      "missing_finish": "rejected",
+      "missing_end": "rejected",
+      "duplicate_sequence": "rejected",
+      "false_cap_pass": "rejected"
+    },
+    "limits": "Complete bounded private-call delivery only.66 text-measurement calls have explicit null renderer origin; shared/per-thread ownership must be reconciled separately. No whole-resource/driver/RSS or observer-overhead, backend/scale,endurance,independent qualification."
+  },
+  "limits": [
+    "Only private-call delivery is demonstrated; no global resource or numerical-cap qualification.66 shared/thread text-measurement calls retain explicit null renderer origin; complete host/ref incidence remains to reconcile.",
+    "Buffer API capacity1703936bytes each for this run; drain can temporarily hold two. Allocation headers, JSON/IO scratch, OS RSS and driver/native mappings are separate; no complete observer-overhead calibration.",
+    "All225 original requirements, S1/50S2/20S3 qualification, resource event/concurrent peak/subcap proof, native/backend/scale/negative controls, cold,endurance,owner UX and distinct-reviewer actual replay remain.",
+    "Preserve existing Board/Revision golden failures, menuCSV/bootstrap drift, prior CPU/GPU limits and missing NVIDIA counters. No broad golden/drift rerun or new acceptance."
+  ],
+  "boundaries": "No admission budget/failure-path, model/journal, dependency/license/backend/AA/prototype/terminal-state change. Preserve S0-S4, GEFN, PM029/PM047 and every nonblocking resize/temporal/T2/unadmitted schematic exclusion.",
+  "archives": [
+    {
+      "file": "on.tar.gz",
+      "raw_files": 14,
+      "raw_bytes": 8166903
+    },
+    {
+      "file": "off.tar.gz",
+      "raw_files": 15,
+      "raw_bytes": 540838
+    },
+    {
+      "file": "baseline-off.tar.gz",
+      "raw_files": 16,
+      "raw_bytes": 541305
+    },
+    {
+      "file": "overflow.tar.gz",
+      "raw_files": 5,
+      "raw_bytes": 5292
+    },
+    {
+      "file": "existing.tar.gz",
+      "raw_files": 5,
+      "raw_bytes": 1844
+    },
+    {
+      "file": "off-replay.tar.gz",
+      "raw_files": 13,
+      "raw_bytes": 540295
+    },
+    {
+      "file": "campaign.tar.gz",
+      "raw_files": 10,
+      "raw_bytes": 5387
+    },
+    {
+      "file": "proof.tar.gz",
+      "raw_files": 11,
+      "raw_bytes": 109015
+    }
+  ],
+  "comment_clarification": {
+    "path": "crates/gui-app/src/native_private_text_measurements.rs",
+    "compiled_source_sha256": "da04c8a2aa42a717fb4aced6dd2517fc378f040b710fcab8cd375bc87cc0e3c7",
+    "landed_source_sha256": "c93939a0e530ad140fbdcc171656839c4cb2ddc63ee805146909c81d2e4e8864",
+    "exact_comment_replacement": [
+      "Disabled runs add no observer storage,",
+      "Disabled runs allocate no event buffers,"
+    ],
+    "reason": "Disabled mode allocates no event buffer, but fixed ledger/observer bookkeeping exists and remains separately counted. Only this same-line comment changes after the tested build; executable code and all test source remain identical."
+  },
+  "fixture_archive_check": {
+    "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+    "scope": "Final identity check on existing native fixture; this bounded observer test supplies no new performance workload admission."
+  },
+  "process_supervisor": {
+    "source": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/tools/pm045_fd_trace.c",
+    "mode": "off: no ptrace/seccomp; own child enters isolated cgroup before GUI exec",
+    "binary_sha256": "b82cc7c17755be32b0f1a67bbd5875a3c7affe5dc47c8d941ecfa0dc9a6961b3",
+    "command": "cc -O2 -Wall -Wextra -Werror -o /tmp/pm045_fd_trace /tmp/pm045_fd_trace.c",
+    "boundary": "Existing first-party helper; no package/dependency adoption."
+  }
+}
