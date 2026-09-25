@@ -1412,7 +1412,8 @@
         "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/pane-close/native/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/pane-rebind/receipt.json",
-        "docs/reviews/gui-performance/implementation/S5/pane-native-sequence/review.json"
+        "docs/reviews/gui-performance/implementation/S5/pane-native-sequence/review.json",
+        "docs/reviews/gui-performance/implementation/S5/pane-resource-sequence/review.json"
       ],
       "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
       "s5_native_pane_sequence": {
@@ -1425,6 +1426,18 @@
           "Complete resource/no-leak and numerical CPU/GPU/latency proof",
           "Resolved schematic fixture admission, T2 and all pinned resize/temporal exclusions remain unqualified",
           "Endurance and owner UX acceptance"
+        ]
+      },
+      "s5_pane_resource_observation": {
+        "status": "partial native allocation-lifetime evidence; S5 qualification remains open",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pane-resource-sequence/review.json",
+        "boundaries": [
+          "Tracked GPU peak38,556,720bytes is registration accounting, not exact API-live peak, driver residency or complete PM047 memory accounting.",
+          "GUI RSS snapshots include observers and omit cooperating engine total; overlapping counters must not be summed.",
+          "No private-text per-call peak, observer overhead admission, full no-leak or60minute endurance acceptance.",
+          "No camera hidden-store/document-replacement negative qualification; visiblecamera receipts and final allocator release are narrower.",
+          "Three-trial/relative statistics, numerical caps, otherbackend-scales, distinctreviewer and ownerUX remain open.",
+          "S0-S4/GEFN and dependency authority unchanged; all pinned resize/temporal/T2/unadmittedschematic exclusions preserved."
         ]
       }
     },
@@ -38171,5 +38184,10 @@
       "Resolved schematic fixture admission, T2 and all pinned resize/temporal exclusions remain unqualified",
       "Endurance and owner UX acceptance"
     ]
+  },
+  "s5_pane_resource_observation": {
+    "status": "partial native allocation-lifetime evidence; S5 qualification remains open",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/pane-resource-sequence/review.json"
   }
 }
