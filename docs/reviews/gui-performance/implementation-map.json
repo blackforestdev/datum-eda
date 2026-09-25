@@ -3658,6 +3658,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/stroke-vertex-color/result.json",
         "status": "Stroke color relocation candidate not adopted: exact pixels preserved, native improvement not demonstrated; S5 remains incomplete"
+      },
+      "s5_clamp_native_diagnostic": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-native-diagnostic/result.json",
+        "status": "Clamp diagnostic only: input rate and single-reversal recipe not satisfied; S5 remains incomplete"
       }
     },
     {
@@ -4378,6 +4383,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/stroke-vertex-color/result.json",
         "status": "Stroke color relocation candidate not adopted: exact pixels preserved, native improvement not demonstrated; S5 remains incomplete"
+      },
+      "s5_clamp_native_diagnostic": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-native-diagnostic/result.json",
+        "status": "Clamp diagnostic only: input rate and single-reversal recipe not satisfied; S5 remains incomplete"
       }
     },
     {
