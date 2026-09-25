@@ -3,7 +3,7 @@ use super::{
     TEXT_MUTED, TEXT_PRIMARY, TextFace, TextRun, draw_text, push_rect_border,
 };
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState, TerminalLinkKind};
-use datum_gui_viewport::terminal_screen_geometry_with_scale;
+use datum_gui_viewport::terminal_screen_geometry_with_chrome_scale;
 
 const MENU_WIDTH_PX: f32 = 216.0;
 const ITEM_HEIGHT_PX: f32 = 30.0;
@@ -22,9 +22,10 @@ pub(super) fn render_terminal_clipboard_menu(
     if state.ui.active_dock_tab != Some(DockTab::Terminal) {
         return;
     }
-    let screen: RectPx = terminal_screen_geometry_with_scale(
+    let screen: RectPx = terminal_screen_geometry_with_chrome_scale(
         layout.bottom_strip.into(),
         state.ui.terminal.font_scale_millis,
+        crate::text_presentation::chrome_scale::Scale::for_layout(layout).factor(),
     )
     .screen
     .into();
@@ -150,9 +151,10 @@ mod tests {
         let mut layout = ShellLayout::for_window(1280, 800, Some(260));
         layout.bottom_strip.width = 160.0;
         layout.bottom_strip.height = 110.0;
-        let screen: RectPx = terminal_screen_geometry_with_scale(
+        let screen: RectPx = terminal_screen_geometry_with_chrome_scale(
             layout.bottom_strip.into(),
             state.ui.terminal.font_scale_millis,
+            crate::text_presentation::chrome_scale::Scale::for_layout(&layout).factor(),
         )
         .screen
         .into();
@@ -198,9 +200,10 @@ mod tests {
             }),
         });
         let layout = ShellLayout::for_window(1280, 800, Some(260));
-        let screen: RectPx = terminal_screen_geometry_with_scale(
+        let screen: RectPx = terminal_screen_geometry_with_chrome_scale(
             layout.bottom_strip.into(),
             state.ui.terminal.font_scale_millis,
+            crate::text_presentation::chrome_scale::Scale::for_layout(&layout).factor(),
         )
         .screen
         .into();

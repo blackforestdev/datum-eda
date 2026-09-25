@@ -44,6 +44,7 @@ pub(super) fn centered_text_top(rect: RectPx, size: f32) -> f32 {
 pub(super) fn render_terminal_tab_strip(
     state: &ReviewWorkspaceState,
     strip: RectPx,
+    display_scale: f32,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
@@ -207,7 +208,7 @@ pub(super) fn render_terminal_tab_strip(
                 ));
             }
             let ghost = RectPx {
-                x: (drag.pointer_x - drag.grab_offset_x)
+                x: ((drag.pointer_x - drag.grab_offset_x) / display_scale)
                     .clamp(tab_origin_x, (trailing_x - tab_width).max(tab_origin_x)),
                 y: tab_y - 3.0,
                 width: tab_width,

@@ -1,6 +1,6 @@
 use datum_gui_protocol::{DockTab, ReviewWorkspaceState};
 use datum_gui_viewport::{
-    TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry, terminal_screen_geometry_with_scale,
+    TERMINAL_CELL_WIDTH_PX, TerminalScreenGeometry, terminal_screen_geometry_with_chrome_scale,
     terminal_split_dividers, terminal_split_geometries,
 };
 
@@ -50,13 +50,28 @@ pub(super) fn render_bottom_tabs(
         },
         PANEL_CARD_BORDER,
     ));
-    render_terminal_tab_strip(state, strip, panel_quads, text_runs, hit_regions);
+    let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
+    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
+    render_terminal_tab_strip(
+        state,
+        scale.logical_layout(layout.clone()).bottom_strip,
+        scale.factor(),
+        panel_quads,
+        text_runs,
+        hit_regions,
+    );
+    scale.quads(&mut panel_quads[starts.0..]);
+    scale.text_geometry(&mut text_runs[starts.1..]);
+    scale.hits(&mut hit_regions[starts.2..]);
 
     let Some(active_tab) = state.ui.active_dock_tab else {
         return;
     };
-    let root_geometry =
-        terminal_screen_geometry_with_scale(strip.into(), state.ui.terminal.font_scale_millis);
+    let root_geometry = terminal_screen_geometry_with_chrome_scale(
+        strip.into(),
+        state.ui.terminal.font_scale_millis,
+        scale.factor(),
+    );
     let handle_rect = RectPx {
         height: 6.0,
         ..strip
@@ -202,9 +217,10 @@ mod tests {
                     for font_scale in [750, 1000, 2000] {
                         state.ui.terminal.font_scale_millis = font_scale;
                         let shell = ShellLayout::for_surface(width, 800, scale, Some(dock_height));
-                        let geometry = terminal_screen_geometry_with_scale(
+                        let geometry = terminal_screen_geometry_with_chrome_scale(
                             shell.bottom_strip.into(),
                             font_scale,
+                            scale,
                         );
                         let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
                         render_bottom_tabs(&state, None, &shell, &mut quads, &mut text, &mut hits);

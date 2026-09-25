@@ -8,6 +8,9 @@ impl Scale {
     pub fn for_layout(layout: &ShellLayout) -> Self {
         Self(layout.top_menu_bar.height / (design_tokens::spacing::SP_07 + 1.0))
     }
+    pub fn factor(self) -> f32 {
+        self.0
+    }
     pub fn logical_layout(self, layout: ShellLayout) -> ShellLayout {
         layout.scale_by(1.0 / self.0)
     }
@@ -139,7 +142,10 @@ mod tests {
             for original in &baseline.hit_regions {
                 if !matches!(
                     original.target,
-                    HitTarget::ToggleLayer(_) | HitTarget::LayerScrollRegion
+                    HitTarget::ToggleLayer(_)
+                        | HitTarget::LayerScrollRegion
+                        | HitTarget::TerminalTab
+                        | HitTarget::TerminalSessionNew
                 ) {
                     continue;
                 }

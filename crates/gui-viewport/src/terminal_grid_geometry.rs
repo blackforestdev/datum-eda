@@ -131,7 +131,7 @@ impl TerminalScreenGeometry {
 /// The cell rectangle consumes the full lane interior. The returned
 /// `columns`/`rows` are the one authority for renderer and PTY alike.
 pub fn terminal_screen_geometry(bottom_strip: ScreenRectPx) -> TerminalScreenGeometry {
-    terminal_screen_geometry_with_metrics(bottom_strip, TerminalCellMetrics::DEFAULT)
+    terminal_screen_geometry_with_metrics(bottom_strip, TerminalCellMetrics::DEFAULT, 1.0)
 }
 
 pub fn terminal_screen_geometry_with_scale(
@@ -141,18 +141,35 @@ pub fn terminal_screen_geometry_with_scale(
     terminal_screen_geometry_with_metrics(
         bottom_strip,
         TerminalCellMetrics::from_scale_millis(scale_millis),
+        1.0,
+    )
+}
+
+/// Display scaling applies to dock chrome, independently of terminal font zoom.
+/// Both painting and PTY sizing must use this geometry on a scaled host.
+pub fn terminal_screen_geometry_with_chrome_scale(
+    bottom_strip: ScreenRectPx,
+    font_scale_millis: u16,
+    chrome_scale: f32,
+) -> TerminalScreenGeometry {
+    terminal_screen_geometry_with_metrics(
+        bottom_strip,
+        TerminalCellMetrics::from_scale_millis(font_scale_millis),
+        chrome_scale,
     )
 }
 
 fn terminal_screen_geometry_with_metrics(
     bottom_strip: ScreenRectPx,
     metrics: TerminalCellMetrics,
+    chrome_scale: f32,
 ) -> TerminalScreenGeometry {
     let content = ScreenRectPx {
-        x: bottom_strip.x + DOCK_CONTENT_INSET_X,
-        y: bottom_strip.y + DOCK_CONTENT_TOP,
-        width: (bottom_strip.width - 2.0 * DOCK_CONTENT_INSET_X).max(0.0),
-        height: (bottom_strip.height - DOCK_CONTENT_TOP - DOCK_CONTENT_BOTTOM).max(0.0),
+        x: bottom_strip.x + DOCK_CONTENT_INSET_X * chrome_scale,
+        y: bottom_strip.y + DOCK_CONTENT_TOP * chrome_scale,
+        width: (bottom_strip.width - 2.0 * DOCK_CONTENT_INSET_X * chrome_scale).max(0.0),
+        height: (bottom_strip.height - (DOCK_CONTENT_TOP + DOCK_CONTENT_BOTTOM) * chrome_scale)
+            .max(0.0),
     };
     let inner = ScreenRectPx {
         x: content.x + LANE_PAD_X,
@@ -380,6 +397,22 @@ mod tests {
             screen.y + screen.height,
             content.y + content.height
         );
+    }
+
+    #[test]
+    fn display_scale_reserves_chrome_without_changing_terminal_cells() {
+        for scale in [1.0, 1.25, 1.5, 2.0] {
+            let bounds = strip(1280.0, 400.0);
+            let geometry = terminal_screen_geometry_with_chrome_scale(bounds, 1000, scale);
+            assert_eq!(geometry.metrics, TerminalCellMetrics::DEFAULT);
+            assert_eq!(geometry.content.y, bounds.y + 44.0 * scale);
+            assert_screen_within_content(&geometry);
+            assert_eq!(
+                geometry.cell_at(geometry.screen.x + 1.0, geometry.screen.y + 1.0),
+                Some((0, 0))
+            );
+            assert!(geometry.cell_at(bounds.x + 20.0, bounds.y + 20.0).is_none());
+        }
     }
 
     #[test]
