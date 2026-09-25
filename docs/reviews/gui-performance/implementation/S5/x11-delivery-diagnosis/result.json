@@ -1,0 +1,223 @@
+{
+  "status": "Delayed X11 close observed after quiet diagnostic timeout; exact root cause unresolved",
+  "qualification_pass": false,
+  "candidate_commit": "8fc1cdb7",
+  "binary_sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+  "issue": "dat-native-final-close-observation-xbb7",
+  "runs": [
+    {
+      "variant": "v1",
+      "index": 1,
+      "cycles": 4,
+      "returncode": 1,
+      "error": "AssertionError('native endpoint timeout')",
+      "root_exit": 137,
+      "audit_events": 737,
+      "observed_close_filter_results": [],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v2",
+      "index": 1,
+      "cycles": 9,
+      "returncode": 0,
+      "error": null,
+      "root_exit": 0,
+      "audit_events": 3688,
+      "observed_close_filter_results": [
+        0
+      ],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v2",
+      "index": 2,
+      "cycles": 9,
+      "returncode": 0,
+      "error": null,
+      "root_exit": 0,
+      "audit_events": 3700,
+      "observed_close_filter_results": [
+        0
+      ],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v2",
+      "index": 3,
+      "cycles": 9,
+      "returncode": 0,
+      "error": null,
+      "root_exit": 0,
+      "audit_events": 3594,
+      "observed_close_filter_results": [
+        0
+      ],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v2",
+      "index": 4,
+      "cycles": 9,
+      "returncode": 0,
+      "error": null,
+      "root_exit": 0,
+      "audit_events": 3852,
+      "observed_close_filter_results": [
+        0
+      ],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v2",
+      "index": 5,
+      "cycles": 9,
+      "returncode": 0,
+      "error": null,
+      "root_exit": 0,
+      "audit_events": 3662,
+      "observed_close_filter_results": [
+        0
+      ],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v2",
+      "index": 6,
+      "cycles": 9,
+      "returncode": 0,
+      "error": null,
+      "root_exit": 0,
+      "audit_events": 4218,
+      "observed_close_filter_results": [
+        0
+      ],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v3",
+      "index": 1,
+      "cycles": 9,
+      "returncode": 0,
+      "error": null,
+      "root_exit": 0,
+      "audit_events": 3,
+      "observed_close_filter_results": [],
+      "after_wake_receipt": null,
+      "after_wake_exit": null
+    },
+    {
+      "variant": "v3",
+      "index": 2,
+      "cycles": 9,
+      "returncode": 1,
+      "error": "TimeoutError('timed out')",
+      "root_exit": 0,
+      "audit_events": 3,
+      "observed_close_filter_results": [],
+      "after_wake_receipt": {
+        "phase": "drained_device_live",
+        "pid": 370939,
+        "device_epoch": 1
+      },
+      "after_wake_exit": 0,
+      "queue_memory": [
+        {
+          "display": "0x557dd76ca4d0",
+          "events": [],
+          "qlen": 0
+        },
+        {
+          "display": "0x557dd7d5dac0",
+          "events": [],
+          "qlen": 0
+        },
+        {
+          "display": "0x557dd82d38c0",
+          "events": [
+            {
+              "type": 1853114678,
+              "window": 139781563762998,
+              "message_type": 4294967297,
+              "data0": 8589934595
+            }
+          ],
+          "qlen": 1863857344,
+          "error": "MemoryError('Cannot access memory at address 0x10000000a')"
+        }
+      ]
+    }
+  ],
+  "archives": [
+    {
+      "file": "v1-1.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "v1-campaign.tar.gz",
+      "members": 3
+    },
+    {
+      "file": "v2-1.tar.gz",
+      "members": 14
+    },
+    {
+      "file": "v2-2.tar.gz",
+      "members": 15
+    },
+    {
+      "file": "v2-3.tar.gz",
+      "members": 15
+    },
+    {
+      "file": "v2-4.tar.gz",
+      "members": 14
+    },
+    {
+      "file": "v2-5.tar.gz",
+      "members": 14
+    },
+    {
+      "file": "v2-6.tar.gz",
+      "members": 15
+    },
+    {
+      "file": "v2-campaign.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "v3-1.tar.gz",
+      "members": 14
+    },
+    {
+      "file": "v3-2.tar.gz",
+      "members": 19
+    },
+    {
+      "file": "v3-campaign.tar.gz",
+      "members": 4
+    },
+    {
+      "file": "observer-proof.tar.gz",
+      "members": 6
+    }
+  ],
+  "method": "First-party GNU loader audit helper observes existing system Xlib calls in owned diagnostic processes only. No product linking, dependency change or third-party source edits. V1 records XOpenDisplay,XPending and ClientMessage retrieval/filter; own-window control confirms recording a WM_DELETE_WINDOW and filter false. Native V1 stops after four completed cycles on missing dialog-open endpoint. V2 extends retrieval/filter logging to all event types and arms debugger queue capture for opening failures; six nine-cycle runs all close normally. V3 binds only XOpenDisplay at startup, leaving event functions unwrapped; maximum three runs declared, second reproduces close timeout after nine cycles and stops campaign.",
+  "failure_evidence": "V3 second run waits10seconds without close request. Gdb reads display queue fields using offsets compiled from installed Xlib headers and captures16thread stacks, without calling inferior functions. First two display qlen values are0; third previously opened display has invalid values and a MemoryError, so it is not usable live-queue evidence. Main thread again waits in polling/calloop/winit. Following debugger detach and one unrelated pointer motion, original CloseRequested and cursor300,350 arrive in the same event-loop turn, device-live shutdown receipt completes and root exits0. The original timeout remains a failed trial, not a successful close.",
+  "inference_limits": [
+    "The primary Xlib queue was empty at capture; pending state in lower XCB/socket/input-method layers was not inspected. Do not claim a proven Xlib queued-event or lost-wakeup root cause.",
+    "Debugger stop/resume and pointer motion can both wake execution; receipt after the combined diagnostic phase does not isolate which caused delivery. No resend of WM_DELETE_WINDOW occurred.",
+    "V2 six observed close messages all returned false from XFilterEvent, proving ordinary filter passage only for those runs. V1 opening failure lacks all-key tracing and cannot be assigned to the same cause.",
+    "Loader auditing and per-event I/O perturb timing. V3 removes per-event wrappers but still changes startup. No timing,performance,normal shutdown,backend or S5 acceptance follows.",
+    "One recorded display pointer was stale/invalid. No fabricated queue data or raw memory error is accepted as proof; all raw output retained."
+  ],
+  "next_boundary": "Investigate lower event-queue readiness/IME/server delivery with the delayed-message evidence before any workaround. Do not introduce periodic idle polling, modify third-party libraries, change backend policy or waive failed trials without the applicable authority and proof.",
+  "preserved": "S0-S4,GEFN,PM045/PM047 caps,dependency authority,all adoption obligations and nonblocking resize/temporal/T2/schematic exclusions. No production source changed."
+}
