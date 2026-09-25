@@ -34,6 +34,7 @@ use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriori
 use crate::global_preferences_projection::control_value_projection;
 
 pub(super) struct ProjectPreferencesCoordinator {
+    read_cache: eda_engine::substrate::ProjectReadCache,
     registry: DescriptorRegistry,
     surface: PreferenceSurfaceCatalog,
     project_root: Option<PathBuf>,
@@ -48,6 +49,7 @@ impl ProjectPreferencesCoordinator {
         let surface = gp_f05_surface_catalog(&registry)
             .expect("the governed Preferences surface catalog must construct");
         Self {
+            read_cache: Default::default(),
             registry,
             surface,
             project_root: None,
@@ -165,7 +167,7 @@ impl ProjectPreferencesCoordinator {
         root: &Path,
         dialog: &mut GlobalPreferencesDialogState,
     ) -> Result<()> {
-        let mut model = ProjectResolver::new(root).resolve()?;
+        let mut model = self.read_cache.resolve(root)?;
         if model.project.project_display_units.is_none() {
             let PreFeatureProjectUnitsMigration::Create { profile, receipt } =
                 migrate_pre_feature_project_units(None)
@@ -183,8 +185,10 @@ impl ProjectPreferencesCoordinator {
                 profile,
                 &receipt,
             )?;
-            commit_prepared(&mut model, root, prepared)?;
-            model = ProjectResolver::new(root).resolve()?;
+            // Migration still uses the canonical commit path on an owned model.
+            // The next read observes its new bytes and rebuilds the snapshot.
+            commit_prepared(std::sync::Arc::make_mut(&mut model), root, prepared)?;
+            model = self.read_cache.resolve(root)?;
         }
         self.publish_model(root, &model, dialog)
     }

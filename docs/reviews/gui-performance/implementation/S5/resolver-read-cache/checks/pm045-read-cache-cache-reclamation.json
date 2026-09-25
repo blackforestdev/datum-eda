@@ -1,0 +1,29 @@
+{
+  "reason": "40GiB resource guard stopped migration proof after first group; reclaim four identified inactive engine incremental caches under shared guard lock. Proof workloads disable incremental state. Compiled artifacts and sources retained.",
+  "observed_cargo_rustc_processes": [],
+  "removed": [
+    {
+      "path": "target/debug/incremental/eda_engine-0k721awpyqpvw",
+      "mtime_ns": 1790343272162573804,
+      "du": "1586548736\ttarget/debug/incremental/eda_engine-0k721awpyqpvw"
+    },
+    {
+      "path": "target/debug/incremental/eda_engine-2d0x9emapc7h4",
+      "mtime_ns": 1790197663268003574,
+      "du": "1412825088\ttarget/debug/incremental/eda_engine-2d0x9emapc7h4"
+    },
+    {
+      "path": "target/debug/incremental/eda_engine-2pkypimy1onwp",
+      "mtime_ns": 1790316631650232866,
+      "du": "1379897344\ttarget/debug/incremental/eda_engine-2pkypimy1onwp"
+    },
+    {
+      "path": "target/debug/incremental/eda_engine-22cqn29xite7s",
+      "mtime_ns": 1790205122246560164,
+      "du": "1292042240\ttarget/debug/incremental/eda_engine-22cqn29xite7s"
+    }
+  ],
+  "target_before": "43385241600\ttarget",
+  "target_after": "37767536640\ttarget",
+  "time_unix": 1790343886.696141
+}

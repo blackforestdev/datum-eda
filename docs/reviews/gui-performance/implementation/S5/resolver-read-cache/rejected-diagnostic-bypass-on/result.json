@@ -1,0 +1,851 @@
+{
+  "candidate": "38827f8931dbb6c44774bc13ac758f43d52088bc",
+  "binary_sha256": "5b8b8657f1d50720e320be0faf4f7e7664189548b96c6191a4ed36e8977a90b5",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--project-root",
+    "/tmp/pm045-admission-hqugp169/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "backend": "x11 on Xwayland",
+  "cycles": [
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 79.99999999999996,
+        "wall_ms": 250.31449389643967
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 19.32231499813497
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 7,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 6,
+        "host": 2,
+        "last_frame_submission_receipt": 7,
+        "last_present_receipt": 7,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 7 })",
+        "window": "WindowId(31457302)"
+      },
+      "drop": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 7,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 7,
+        "host": 2,
+        "last_frame_submission_receipt": 7,
+        "last_present_receipt": 7,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 7 })",
+        "window": "WindowId(31457302)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 8,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 1,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 2,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "162796 kB",
+        "VmRSS": "162796 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 69.99999999999996,
+        "wall_ms": 241.21413612738252
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 22.23098394460976
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 13,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 12,
+        "host": 3,
+        "last_frame_submission_receipt": 13,
+        "last_present_receipt": 13,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 13 })",
+        "window": "WindowId(31457320)"
+      },
+      "drop": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 14,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 14,
+        "host": 3,
+        "last_frame_submission_receipt": 14,
+        "last_present_receipt": 14,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 14 })",
+        "window": "WindowId(31457320)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 15,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 2,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 3,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "162820 kB",
+        "VmRSS": "162820 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 70.00000000000006,
+        "wall_ms": 244.83350617811084
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 22.589140105992556
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 20,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 19,
+        "host": 4,
+        "last_frame_submission_receipt": 20,
+        "last_present_receipt": 20,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 20 })",
+        "window": "WindowId(31457338)"
+      },
+      "drop": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 21,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 21,
+        "host": 4,
+        "last_frame_submission_receipt": 21,
+        "last_present_receipt": 21,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 21 })",
+        "window": "WindowId(31457338)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 22,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 3,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 4,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "162844 kB",
+        "VmRSS": "162844 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 260.0,
+        "wall_ms": 444.43809194490314
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 20.856483140960336
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 29,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 28,
+        "host": 5,
+        "last_frame_submission_receipt": 29,
+        "last_present_receipt": 29,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 29 })",
+        "window": "WindowId(31457356)"
+      },
+      "drop": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 29,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 29,
+        "host": 5,
+        "last_frame_submission_receipt": 29,
+        "last_present_receipt": 29,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 29 })",
+        "window": "WindowId(31457356)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 30,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 4,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 5,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "177492 kB",
+        "VmRSS": "177492 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 270.0,
+        "wall_ms": 443.4345387853682
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 20.894770976155996
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 36,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 35,
+        "host": 6,
+        "last_frame_submission_receipt": 36,
+        "last_present_receipt": 36,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 36 })",
+        "window": "WindowId(31457374)"
+      },
+      "drop": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 36,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 36,
+        "host": 6,
+        "last_frame_submission_receipt": 36,
+        "last_present_receipt": 36,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 36 })",
+        "window": "WindowId(31457374)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 37,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 5,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 6,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "177508 kB",
+        "VmRSS": "177508 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 219.99999999999997,
+        "wall_ms": 415.8205708954483
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 47.26794711314142
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 43,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 42,
+        "host": 7,
+        "last_frame_submission_receipt": 43,
+        "last_present_receipt": 43,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 43 })",
+        "window": "WindowId(31457392)"
+      },
+      "drop": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          960,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 43,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 43,
+        "host": 7,
+        "last_frame_submission_receipt": 43,
+        "last_present_receipt": 43,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 43 })",
+        "window": "WindowId(31457392)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 44,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 6,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 7,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "177528 kB",
+        "VmRSS": "177528 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 169.24066888168454
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 21.408363012596965
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          760,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 47,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 46,
+        "host": 8,
+        "last_frame_submission_receipt": 47,
+        "last_present_receipt": 47,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 47 })",
+        "window": "WindowId(31457410)"
+      },
+      "drop": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          760,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 47,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 47,
+        "host": 8,
+        "last_frame_submission_receipt": 47,
+        "last_present_receipt": 47,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 47 })",
+        "window": "WindowId(31457410)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 48,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 7,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 8,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "177532 kB",
+        "VmRSS": "177532 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 39.999999999999815,
+        "wall_ms": 198.02291900850832
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 23.327192990109324
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          760,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 51,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 50,
+        "host": 9,
+        "last_frame_submission_receipt": 51,
+        "last_present_receipt": 51,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 51 })",
+        "window": "WindowId(31457428)"
+      },
+      "drop": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          760,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 51,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 51,
+        "host": 9,
+        "last_frame_submission_receipt": 51,
+        "last_present_receipt": 51,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 51 })",
+        "window": "WindowId(31457428)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 52,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 8,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 9,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "177532 kB",
+        "VmRSS": "177532 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 203.34238396026194
+      },
+      "close": {
+        "cpu_ms": 20.000000000000018,
+        "wall_ms": 49.27541594952345
+      },
+      "present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          760,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 55,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 54,
+        "host": 10,
+        "last_frame_submission_receipt": 55,
+        "last_present_receipt": 55,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 55 })",
+        "window": "WindowId(31457446)"
+      },
+      "drop": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          760,
+          720
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 56,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 56,
+        "host": 10,
+        "last_frame_submission_receipt": 56,
+        "last_present_receipt": 56,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "wgpu_submission": "Some(SubmissionIndex { index: 56 })",
+        "window": "WindowId(31457446)"
+      },
+      "attachment_after_close": {
+        "attachments": {
+          "allocations": [
+            {
+              "allocation": 1,
+              "host": 1,
+              "last_submission": 57,
+              "owner": 8,
+              "payload_bytes": 32768000,
+              "release_reason": null
+            }
+          ],
+          "completed_retirements": 9,
+          "current_payload_bytes": 32768000,
+          "device_loss_confirmed": false,
+          "device_loss_retirements": 0,
+          "observed_allocations": 10,
+          "peak_payload_bytes": 54886400,
+          "retiring_payload_bytes": 0,
+          "unknown_payload_allocations": 0
+        },
+        "queue_epoch": 1
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "177536 kB",
+        "VmRSS": "177536 kB"
+      }
+    }
+  ],
+  "limits": [
+    "Partial W-WINDOWS: CPU and attachment ownership; GPU duty/timing and complete memory accounting not sampled.",
+    "No endurance or independent replay acceptance.",
+    "Verbose diagnostics enabled: presentation/ownership evidence, not resource acceptance."
+  ],
+  "source_state": "Uncommitted bounded resolver correction on recorded HEAD",
+  "source_sha256": {
+    "crates/engine/src/substrate/mod.rs": "fae77791ac075b58005361453ff306172d349d0d758ee400901fdd904a7fccd4",
+    "crates/engine/src/substrate/tests.rs": "00852b0735e48d34b8725e1c8af438364083a08e927e8a0c177c6f85f301f13b",
+    "crates/engine/src/substrate/project_read_cache.rs": "af224750b7d187a0c737ea774c589e1232cf0ae21014ee653cb9588cf0d648a9",
+    "crates/engine/src/substrate/tests/project_read_cache.rs": "fa54d8bc141cd43ae71b40e5cfa9c2b611ad3d7631f263deb585c0af75fa2134",
+    "crates/gui-app/src/project_preferences_runtime.rs": "5fe1237277c8aa3766040e9eb7687cafcc0eddbab2c4d363e2a1daf143c0ddd5",
+    "crates/gui-app/src/project_preferences_runtime_tests.rs": "66f9a7ea12f1eef9dfcf9105c9bc1e1525a983027b6423a892af5137b3d6a15a"
+  },
+  "initial": {
+    "acquire_attempts": 1,
+    "acquired": 1,
+    "active": 0,
+    "configuration_generation": 1,
+    "configure_attempts": 1,
+    "configured_extent": [
+      1280,
+      800
+    ],
+    "discarded": 0,
+    "frame_submission_receipts_issued": 2,
+    "frame_submissions": 1,
+    "gpu_completed_through_receipt": 1,
+    "host": 1,
+    "last_frame_submission_receipt": 2,
+    "last_present_receipt": 2,
+    "presented": 1,
+    "queue_epoch": 1,
+    "reason": "present",
+    "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+    "window": "WindowId(31457284)"
+  },
+  "identity": [
+    "[SystemTime { tv_sec: 1790342701, tv_nsec: 310362163 }] surface identity window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+  ],
+  "rss_initial": {
+    "VmHWM": "162584 kB",
+    "VmRSS": "162584 kB"
+  },
+  "passed_native_cycles": true,
+  "rss_final": {
+    "VmHWM": "177536 kB",
+    "VmRSS": "177536 kB"
+  },
+  "cleanup": "Owned process terminated; final application teardown not qualified."
+}

@@ -1,0 +1,127 @@
+START GUI render conformance tests
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=37.6 GiB target_free=164.6 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 37.6 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.44s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 5 tests
+test text_identity_tests::conformance_medium_type_tiers_resolve_to_medium_weight ... ok
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb]: parsed KiCad board skeleton into canonical nets, packages, tracks, vias, zones, and stackup; full geometry and rule import is not implemented yet
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+test visual::visual_runner::tests::conformance_golden_camera_frames_board_fit_to_bounds ... ok
+test render_contract_tests::conformance_pane_header_tools_and_binding_chips_render ... ok
+test render_contract_tests::conformance_region_token_bindings_follow_design_book ... ok
+test menu_chrome::tests::conformance_menu_title_width_padding_is_uniform_and_tight ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 430 filtered out; finished in 0.59s
+
+END GUI render conformance tests 0
+START shell visual parity (single-pane interim golden)
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=37.6 GiB target_free=164.6 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 37.6 GiB used; soft limit 20.0 GiB
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+GUI-VISUAL-PARITY fixture guard OK: real datum-test board with layers F.Cu, B.Cu, F.SilkS, Edge.Cuts; not the known-good demo. (split LAYOUT renders; schematic-content U1/STM32 guards deferred — pane B is a placeholder.)
+GUI-VISUAL-PARITY capture: /usr/bin/python3 /home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py --workload proof -- cargo run -q -p datum-gui-app --bin datum-gui --features visual -- --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb --select R1 --visual-test --screenshot-out /tmp/tmp2z2k3gtu/datum-shell.capture.png --window-size 1680x1050 --exit-after-screenshot
+GUI-VISUAL-PARITY diff: 5641/1764000 px differ (0.320%), max channel delta 212, mean channel delta 0.2914; tolerance 0.50% @ per-pixel 8, mean 1.5
+GUI-VISUAL-PARITY OK: app matches the committed split-view first-slice interim shell golden (NOT prototype parity — pane B is a placeholder; the full board-editor.html composition is gated on later Phase-2 slices).
+END shell visual parity (single-pane interim golden) 0
+GUI icon asset gate passed (11 custom EDA glyphs).
+GUI-REFERENCE-CAPTURE OK: board-editor.png committed (1920x953 browser capture of the prototype), no *.PENDING shadow.
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.334s
+
+OK
+Source health governance passed (2344 source files checked).
+menu_model gate passed: 193 entries (117 verb-backed, 29 gui-local, 41 not-built/worklist, 6 submenu-ref, 0 empty); all verb references valid; icons: 9 eda-existing / 34 eda-to-author / 62 tabler-mapped, all declared in icon_set.json; 24 shortcuts, no conflicts.
+OUT OF SYNC: docs/gui/menu_model.json != build(docs/gui/menu_model.csv). Run: python3 scripts/menu_model_csv.py build
+REMAINDER_FAILURE status=1 command=python3 scripts/menu_model_csv.py check
+ERC/connectivity parity OK (10 pin types, 10 ERC codes, 6 connectivity diagnostics)
+check_pcb_layout_tool_matrix: 13 logical PCB buckets covered; align/distribute is a single mode-parameterized tool
+Private-writer guard failed:
+  - crates/cli/src/commands/project/roots.rs: missing expected project bootstrap pattern `bootstrap_native_project(`
+Migrated authoring paths must commit typed OperationBatch entries instead of mutating authored JSON directly; generated evidence manifests must use substrate persistence helpers; GUI board-text edits must route through terminal-prefilled journaled CLI commands; forward-annotation review state must remain confined to its explicit sidecar; project bootstrap and route-strategy fixture writes must stay within their classified bootstrap/generated boundaries; generated export writers must stay within exact-count file-output surfaces.
+REMAINDER_FAILURE status=1 command=python3 scripts/check_schematic_private_writers.py
+Daemon write-parity drift gate passed (4 fenced arms).
+MCP public taxonomy check passed (351 public, 538 registered, 187 hidden compatibility).
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.050s
+
+OK
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.083s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.008s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.039s
+
+OK
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.026s
+
+OK
+Agent workflow parity: PASS
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=39.6 GiB target_free=162.6 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 39.6 GiB used; soft limit 20.0 GiB
+datum-verb-catalog --check: /home/bfadmin/Documents/datum-eda/crates/verb-registry/../../mcp-server/datum_tool_catalog.json matches the verb registry
+
+[PG] PG-IDENTITY-SUBSTRATE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=39.6 GiB target_free=162.6 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 39.6 GiB used; soft limit 20.0 GiB
+   Compiling serde v1.0.228
+   Compiling thiserror v2.0.18
+   Compiling clap v4.6.0
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+   Compiling datum-eda-cli v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 04s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 11 tests
+test main_tests::main_tests_project_imports::project_import_kicad_footprint_reuses_journal_recovered_import_map ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_footprint_uses_resolver_materialized_pool_refs ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_board_reuses_journal_recovered_import_map ... ok
+test main_tests::main_tests_project_imports_lifecycle::project_import_kicad_board_marks_absent_source_entries_missing ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_footprint_persists_pool_and_import_map ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_board_persists_board_objects_and_import_map ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_reuses_journal_recovered_import_map ... ok
+test main_tests::main_tests_project_imports_eagle::project_import_eagle_library_marks_absent_source_entries_missing ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_marks_absent_source_entries_missing ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_persists_symbols_and_import_map ... ok
+test main_tests::main_tests_project_imports_eagle::project_import_eagle_library_persists_pool_objects_and_import_map ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 887 filtered out; finished in 0.49s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-IDENTITY-SUBSTRATE:SCHEMATIC
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=40.4 GiB target_free=161.8 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 40.4 GiB used; soft limit 20.0 GiB
+Cargo resource guard refused execution: Cargo target exceeds hard limit: 40.4 GiB used; limit 40.0 GiB
+REMAINDER_FAILURE status=75 command=bash scripts/run_migration_proof_gates.sh
+CLI module coverage passed (545 source files, all present in dep-info).
+.....................................s.............................s..................................................................ssssssssssssssssss....................ss.................................ssssss................................................................................................................sssssssssssssssss.........................................................................
+----------------------------------------------------------------------
+Ran 415 tests in 13.290s
+
+OK (skipped=45)

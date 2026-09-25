@@ -1,0 +1,372 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.003s
+
+OK
+Cargo resource policy: PASS
+== rustfmt: workspace formatting gate ==
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+OK
+rustfmt gate passed for workspace (3 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).
+== clippy: workspace lint gate (-D warnings) ==
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=33.4 GiB target_free=168.8 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 33.4 GiB used; soft limit 20.0 GiB
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking eda-test-harness v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/test-harness)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-eda-cli v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/cli)
+    Checking eda-engine-daemon v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine-daemon)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 14s
+Progress coverage audit passed.
+.............................................
+----------------------------------------------------------------------
+Ran 45 tests in 0.976s
+
+OK
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.126s
+
+OK
+Project status check passed (59 frontier items).
+Spec parity check passed (20 inventories).
+Alignment audit passed.
+Spec governance gate passed (315 specs classified: 243 governed, 50 doctrine, 6 pending, 16 historical).
+Project Preferences tripwire satisfied: drawing without a spec is allowed.
+Evidence traceability gate passed (28 routes, 124 research/prototype artifacts).
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK
+dependency authority: PASS
+Resolver raw-load guard passed (0 allowlisted call sites).
+Global Preferences boundary gate passed (5 product-service adapters; 3 engine mutation files).
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.003s
+
+OK
+GUI agent/terminal convergence guard passed.
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+Terminal shell metadata boundary passed.
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+OK
+terminal split boundary: PASS
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.184s
+
+OK
+terminal transport boundary: PASS
+.....................
+----------------------------------------------------------------------
+Ran 21 tests in 0.319s
+
+OK
+Datum TerminalCore boundary check passed.
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.041s
+
+OK
+terminal core adapter boundary: PASS
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.005s
+
+OK
+terminal compatibility matrix passed (13 real programs; 5 Datum-authored standards domains).
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.069s
+
+OK
+terminal core renderer boundary: PASS
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.001s
+
+OK
+Terminal native-interaction boundary passed
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.028s
+
+OK
+Datum TerminalCore Kitty boundary check passed.
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.027s
+
+OK
+Datum TerminalCore snapshot boundary check passed.
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.007s
+
+OK
+Datum TerminalCore proof gate passed.
+   Compiling datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+     Running unittests src/lib.rs (target/debug/deps/datum_terminal_core-3097ce4e19418698)
+
+running 4 tests
+test proof_tests::hostile_streams_exhaust_limits_then_reset_to_bounded_initial_state ... ok
+test proof_tests::normative_corpus_matches_expected_state_and_every_chunk_partition ... ok
+test proof_tests::repeated_generations_remain_within_history_graphics_and_snapshot_resources ... ok
+test proof_tests::seeded_generational_mutation_replays_and_shrinks_deterministically ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 131 filtered out; finished in 0.05s
+
+{"actions": 5033984, "elapsed_ns": 2059213844, "errors": 0, "events": 0, "history_rows": 4096, "mib_per_second": 3.885, "payload_bytes": 8388608, "replies": 0, "schema": "datum-terminal-core-proof-v1", "snapshot_rows": 4136}
+GUI design token gate passed (35 mirrored color tokens, 7 type tokens, 16 spacing/radius tokens, 29 prototype vars, PM-038 Revision recovery boundary, 12 contrast checks, copper/chrome literal consumption verified).
+Datum Console boundary passed: typed consequence-only state, consumer-only renderer, and terminal/progress/finding routes remain separated.
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.2 GiB target_free=168.1 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.2 GiB used; soft limit 20.0 GiB
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 28s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-89f6505f70927b20)
+
+running 8 tests
+test console_accessibility::tests::ordinary_refusal_is_polite_and_severity_is_redundant_in_text ... ok
+test console_accessibility::tests::high_priority_requires_an_explicit_critical_consequence ... ok
+test global_preferences_window::native_dialog_hit_tests::native_shared_device_hosts_preserve_hidden_terminal_and_console_work ... ignored, requires X11/Vulkan, isolated config and DATUM_NATIVE_TEST_BOARD; run serially
+test console_feedback::tests::history_controls_never_take_keyboard_focus ... ok
+test terminal_accessibility_platform::events::tests::console_announcement_uses_application_root_and_priority_payload ... ok
+test console_feedback::tests::publication_is_typed_and_cannot_mutate_terminal_state ... ok
+test terminal_accessibility_bridge::tests::console_announces_without_a_terminal_snapshot ... ok
+test console_feedback::tests::terminal_progress_and_findings_producers_stay_outside_console ... ok
+
+test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 405 filtered out; finished in 0.00s
+
+     Running tests/visual_shell.rs (target/debug/deps/visual_shell-ec286a3bff236aad)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_protocol-547bdcbb35d249c6)
+
+running 8 tests
+test console_feedback::tests::history_filters_and_scroll_are_consumer_state_only ... ok
+test console_feedback::tests::inspection_pauses_and_resumes_remaining_echo_lifetime ... ok
+test console_feedback::tests::refusal_is_persistent_typed_output ... ok
+test console_feedback::tests::prompts_refusals_and_never_preference_ignore_echo_deadline ... ok
+test console_feedback::tests::records_are_typed_sequenced_and_bounded ... ok
+test console_feedback::tests::transient_echo_fades_but_remains_recoverable_in_history ... ok
+test console_feedback::tests::journal_history_excludes_launch_baseline_and_reports_exact_omission ... ok
+test console_feedback::tests::gui_action_feedback_cannot_mutate_terminal_projection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 114 filtered out; finished in 0.00s
+
+     Running tests/check_runs.rs (target/debug/deps/check_runs-8455d0da5fb46f5e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/output_jobs.rs (target/debug/deps/output_jobs-300f760001141e39)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/terminal_command_catalog.rs (target/debug/deps/terminal_command_catalog-92b74ea61dac7253)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/terminal_lane.rs (target/debug/deps/terminal_lane-12a593c3e5c622ce)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=35.0 GiB target_free=167.2 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 35.0 GiB used; soft limit 20.0 GiB
+   Compiling num-traits v0.2.19
+   Compiling arrayvec v0.7.6
+   Compiling syn v2.0.117
+   Compiling smallvec v1.15.1
+   Compiling crossbeam-utils v0.8.21
+   Compiling rayon-core v1.13.0
+   Compiling either v1.15.0
+   Compiling ttf-parser v0.25.1
+   Compiling gpu-descriptor-types v0.2.0
+   Compiling parking_lot_core v0.9.12
+   Compiling spirv v0.3.0+sdk-1.3.268.0
+   Compiling stable_deref_trait v1.2.1
+   Compiling as-slice v0.2.1
+   Compiling gpu-descriptor v0.3.2
+   Compiling paste v1.0.15
+   Compiling parking_lot v0.12.5
+   Compiling built v0.8.0
+   Compiling av-scenechange v0.14.1
+   Compiling crossbeam-epoch v0.9.18
+   Compiling aligned v0.4.3
+   Compiling euclid v0.22.14
+   Compiling crossbeam-deque v0.8.6
+   Compiling num-integer v0.1.46
+   Compiling ordered-float v4.6.0
+   Compiling rav1e v0.8.1
+   Compiling core2 v0.4.0
+   Compiling nom v8.0.0
+   Compiling num-bigint v0.4.6
+   Compiling pastey v0.1.1
+   Compiling quick-error v2.0.1
+   Compiling y4m v0.8.0
+   Compiling lyon_geom v1.0.19
+   Compiling rayon v1.11.0
+   Compiling bitstream-io v4.9.0
+   Compiling lyon_path v1.0.19
+   Compiling num-rational v0.4.2
+   Compiling lyon_tessellation v1.0.20
+   Compiling itertools v0.14.0
+   Compiling simd_helpers v0.1.0
+   Compiling noop_proc_macro v0.3.0
+   Compiling imgref v1.12.0
+   Compiling new_debug_unreachable v1.0.6
+   Compiling zune-core v0.5.1
+   Compiling weezl v0.1.12
+   Compiling loop9 v0.1.5
+   Compiling fontdb v0.23.0
+   Compiling zune-jpeg v0.5.15
+   Compiling avif-serialize v0.8.8
+   Compiling zune-inflate v0.2.54
+   Compiling rgb v0.8.52
+   Compiling maybe-rayon v0.1.1
+   Compiling lebe v0.5.3
+   Compiling smol_str v0.2.2
+   Compiling bit_field v0.10.3
+   Compiling color_quant v1.1.0
+   Compiling etagere v0.2.15
+   Compiling gif v0.14.1
+   Compiling image-webp v0.2.4
+   Compiling moxcms v0.8.1
+   Compiling png v0.18.1
+   Compiling taffy v0.11.0
+   Compiling zerocopy-derive v0.8.47
+   Compiling bytemuck_derive v1.10.2
+   Compiling thiserror-impl v2.0.18
+   Compiling profiling-procmacros v1.0.17
+   Compiling profiling v1.0.17
+   Compiling equator-macro v0.4.2
+   Compiling serde_derive v1.0.228
+   Compiling arg_enum_proc_macro v0.3.4
+   Compiling bytemuck v1.25.0
+   Compiling thiserror v2.0.18
+   Compiling gpu-allocator v0.28.0
+   Compiling equator v0.4.2
+   Compiling font-types v0.10.1
+   Compiling zerocopy v0.8.47
+   Compiling aligned-vec v0.6.4
+   Compiling font-types v0.11.1
+   Compiling wgpu-types v28.0.0
+   Compiling v_frame v0.3.9
+   Compiling read-fonts v0.35.0
+   Compiling read-fonts v0.37.0
+   Compiling av1-grain v0.2.5
+   Compiling fax_derive v0.2.0
+   Compiling num-derive v0.4.2
+   Compiling fax v0.2.6
+   Compiling qoi v0.4.1
+   Compiling serde v1.0.228
+   Compiling datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+   Compiling half v2.7.1
+   Compiling ahash v0.8.12
+   Compiling hashbrown v0.14.5
+   Compiling naga v28.0.0
+   Compiling tiff v0.11.3
+   Compiling exr v1.74.0
+   Compiling hashlink v0.9.1
+   Compiling rusqlite v0.32.1
+   Compiling skrifa v0.40.0
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling skrifa v0.37.0
+   Compiling harfrust v0.3.2
+   Compiling swash v0.2.7
+   Compiling ravif v0.13.0
+   Compiling cosmic-text v0.15.0
+   Compiling image v0.25.10
+   Compiling wgpu-hal v28.0.1
+   Compiling wgpu-core-deps-windows-linux-android v28.0.0
+   Compiling wgpu-core v28.0.1
+   Compiling wgpu v28.0.0
+   Compiling glyphon v0.10.0
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 01s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 9 tests
+test datum_console::tests::maximized_terminal_open_and_narrow_layouts_preserve_body_anchor ... ok
+test datum_console::tests::narrow_console_history_clips_controls_to_panel_and_pane ... ok
+test datum_console::tests::history_renders_without_a_visible_feedback_strip ... ok
+test datum_console::tests::refusal_has_textual_semantics_and_empty_state_emits_nothing ... ok
+test datum_console::tests::overlay_follows_exactly_one_focused_pane_across_scale_matrix ... ok
+test datum_console::history_layout::tests::wrapping_counts_newlines_and_long_words_and_bounds_oversized_records ... ok
+test datum_console::history_layout::tests::wrapped_refusals_have_disjoint_complete_clips_at_narrow_and_scaled_sizes ... ok
+test datum_console::tests::expanded_history_distinguishes_feedback_from_ordinal_journal_truth ... ok
+test datum_console::tests::prepared_scene_threads_console_geometry_and_clipped_text ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 426 filtered out; finished in 2.30s
+
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=37.0 GiB target_free=165.2 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 37.0 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.90s
+     Running tests/visual_goldens.rs (target/debug/deps/visual_goldens-7165af384ea526bc)
+
+running 1 test
+test console_visual_goldens_match ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 14.28s
+
+GUI design token gate passed (35 mirrored color tokens, 7 type tokens, 16 spacing/radius tokens, 29 prototype vars, PM-038 Revision recovery boundary, 12 contrast checks, copper/chrome literal consumption verified).
+menu_model gate passed: 193 entries (117 verb-backed, 29 gui-local, 41 not-built/worklist, 6 submenu-ref, 0 empty); all verb references valid; icons: 9 eda-existing / 34 eda-to-author / 62 tabler-mapped, all declared in icon_set.json; 24 shortcuts, no conflicts.
+OUT OF SYNC: docs/gui/menu_model.json != build(docs/gui/menu_model.csv). Run: python3 scripts/menu_model_csv.py build
+GUI-CONFORMANCE output-only Datum Console boundary: /usr/bin/python3 scripts/check_datum_console_boundary.py
+GUI-CONFORMANCE Console typed state and producer routing tests: /usr/bin/python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-protocol -p datum-gui-app console_
+GUI-CONFORMANCE Console render behavior tests: /usr/bin/python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render datum_console --lib --features visual
+GUI-CONFORMANCE Console exact visual goldens: /usr/bin/python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --test visual_goldens --features visual console_visual_goldens_match -- --nocapture
+GUI-CONFORMANCE token/value/prototype parity: /usr/bin/python3 scripts/check_gui_design_tokens.py
+GUI-CONFORMANCE menu model manifest: /usr/bin/python3 scripts/check_menu_model.py
+GUI-CONFORMANCE menu model csv parity: /usr/bin/python3 scripts/menu_model_csv.py check
+Traceback (most recent call last):
+  File "/home/bfadmin/Documents/datum-eda/scripts/check_gui_conformance.py", line 128, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/bfadmin/Documents/datum-eda/scripts/check_gui_conformance.py", line 122, in main
+    subprocess.run(command, cwd=ROOT, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/usr/bin/python3', 'scripts/menu_model_csv.py', 'check']' returned non-zero exit status 1.

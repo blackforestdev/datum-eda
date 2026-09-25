@@ -151,6 +151,16 @@ fn project_surface_migrates_edits_resets_and_refuses_stale_writes() {
         project_display_units(&after_stale).unwrap().drill.unit,
         LengthUnitChoice::Explicit(LengthUnit::Inch)
     );
+    // Reopening after an external commit must refresh the cached read, while
+    // the stale-write refusal above still occurs before any attempted mutation.
+    coordinator.load_or_migrate(&root, &mut dialog).unwrap();
+    assert_eq!(
+        coordinator.expected_revision.as_ref(),
+        Some(&after_stale.model_revision)
+    );
+    let expected_dialog = dialog.clone();
+    coordinator.load_or_migrate(&root, &mut dialog).unwrap();
+    assert_eq!(dialog, expected_dialog);
     assert_eq!(
         std::fs::read(root.join("board/board.json")).unwrap(),
         board_before

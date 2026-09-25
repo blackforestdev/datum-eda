@@ -1,0 +1,456 @@
+--- a/crates/engine/src/substrate/mod.rs
++++ b/crates/engine/src/substrate/mod.rs
+@@ -45,6 +45,7 @@
+ mod pool_journal_ops;
+ mod production_journal_ops;
+ mod project_manifest_journal_ops;
++mod project_read_cache;
+ mod project_resolver;
+ mod proposal;
+ mod proposal_journal_ops;
+@@ -101,6 +102,7 @@
+ };
+ pub use operation::{Operation, SchematicMarkerKind};
+ use operation_application::apply_operation;
++pub use project_read_cache::ProjectReadCache;
+ pub use proposal::*;
+ pub use relationship::{RELATIONSHIP_SHARD_SCHEMA_VERSION, RelationshipShard};
+ pub use rules_journal_ops::validate_native_project_rule_payload;
+--- a/crates/engine/src/substrate/tests.rs
++++ b/crates/engine/src/substrate/tests.rs
+@@ -32,6 +32,7 @@
+ mod production_replay;
+ mod production_schema;
+ mod production_writer_migration;
++mod project_read_cache;
+ mod proposal;
+ mod proposal_replay;
+ mod proposal_schema;
+--- /dev/null
++++ b/crates/engine/src/substrate/project_read_cache.rs
+@@ -0,0 +1,210 @@
++//! One caller-owned read snapshot. Reuse proves identical complete local input
++//! bytes; metadata supplements content hashing and never replaces validation.
++use super::{DesignModel, EngineError, ProjectResolver};
++use sha2::{Digest, Sha256};
++use std::io::Read;
++use std::path::{Component, Path, PathBuf};
++use std::sync::Arc;
++
++#[derive(Default)]
++pub struct ProjectReadCache {
++    entry: Option<Entry>,
++}
++
++struct Entry {
++    root: PathBuf,
++    fingerprint: [u8; 32],
++    model: Arc<DesignModel>,
++}
++
++impl ProjectReadCache {
++    /// Reads remain authoritative through ProjectResolver. Unsupported trees,
++    /// diagnostics and pending recovery bypass reuse, not validation. The cache
++    /// retains at most one model and has no global project registry.
++    pub fn resolve(&mut self, root: &Path) -> Result<Arc<DesignModel>, EngineError> {
++        let before = fingerprint(root);
++        if let Some(entry) = &self.entry
++            && entry.root == root
++            && before == Some(entry.fingerprint)
++        {
++            return Ok(entry.model.clone());
++        }
++        // Release the old snapshot before potentially expensive reconstruction.
++        self.entry = None;
++        let model = Arc::new(ProjectResolver::new(root).resolve()?);
++        if let Some(before) = before
++            && model.diagnostics.is_empty()
++            && model
++                .source_shards
++                .iter()
++                .all(|shard| shard.path.strip_prefix(root).is_ok_and(local_relative))
++            && fingerprint(root) == Some(before)
++        {
++            self.entry = Some(Entry {
++                root: root.to_owned(),
++                fingerprint: before,
++                model: model.clone(),
++            });
++        }
++        Ok(model)
++    }
++}
++
++fn local_relative(path: &Path) -> bool {
++    !path.as_os_str().is_empty()
++        && path
++            .components()
++            .all(|part| matches!(part, Component::Normal(_)))
++}
++
++// These bound optional fingerprint work, not project admission or resource
++// acceptance. Exceeding either bound falls back to the ordinary full resolver.
++const MAX_ENTRIES: usize = 4096;
++const MAX_BYTES: u64 = 32 * 1024 * 1024;
++
++fn fingerprint(root: &Path) -> Option<[u8; 32]> {
++    // A symlink target or a recovery lease can change without local file bytes
++    // changing. Do not memoize either case, including symlinked ancestors.
++    for ancestor in root.ancestors().filter(|p| !p.as_os_str().is_empty()) {
++        if std::fs::symlink_metadata(ancestor)
++            .ok()?
++            .file_type()
++            .is_symlink()
++        {
++            return None;
++        }
++    }
++    if root.join(".datum/revision/write.lock").exists() {
++        return None;
++    }
++    let stages = root.join(".datum/revision/v1/stage");
++    match std::fs::read_dir(&stages) {
++        Ok(mut entries) => {
++            if entries.next().is_some() {
++                return None;
++            }
++        }
++        Err(error) if error.kind() != std::io::ErrorKind::NotFound => return None,
++        _ => {}
++    }
++    // Declared external/missing roots must not become invisible dependencies.
++    // Other discovered source paths are checked again on the resolved model.
++    let manifest_path = root.join("project.json");
++    let metadata = std::fs::symlink_metadata(&manifest_path).ok()?;
++    if !metadata.is_file() || metadata.len() > MAX_BYTES {
++        return None;
++    }
++    let mut manifest_bytes = Vec::new();
++    std::fs::File::open(manifest_path)
++        .ok()?
++        .take(MAX_BYTES + 1)
++        .read_to_end(&mut manifest_bytes)
++        .ok()?;
++    if manifest_bytes.len() as u64 > MAX_BYTES {
++        return None;
++    }
++    let manifest: serde_json::Value = serde_json::from_slice(&manifest_bytes).ok()?;
++    for key in ["board", "schematic", "rules"] {
++        if !local_relative(Path::new(manifest.get(key)?.as_str()?)) {
++            return None;
++        }
++    }
++    if let Some(pools) = manifest.get("pools") {
++        for pool in pools.as_array()? {
++            if !local_relative(Path::new(pool.get("path")?.as_str()?)) {
++                return None;
++            }
++        }
++    }
++    let mut scan = Scan {
++        hash: Sha256::new(),
++        entries: 0,
++        bytes: 0,
++    };
++    scan.metadata(&std::fs::symlink_metadata(root).ok()?)?;
++    scan.directory(root, root, 0)?;
++    Some(scan.hash.finalize().into())
++}
++
++struct Scan {
++    hash: Sha256,
++    entries: usize,
++    bytes: u64,
++}
++
++impl Scan {
++    // File identity/change time also detects a rewrite-and-restore between the
++    // scans around resolution. Content hashing remains required on every hit;
++    // timestamps alone never establish freshness. Unsupported platforms bypass.
++    fn metadata(&mut self, metadata: &std::fs::Metadata) -> Option<()> {
++        #[cfg(unix)]
++        {
++            use std::os::unix::fs::MetadataExt;
++            self.hash.update(metadata.dev().to_le_bytes());
++            self.hash.update(metadata.ino().to_le_bytes());
++            self.hash.update(metadata.ctime().to_le_bytes());
++            self.hash.update(metadata.ctime_nsec().to_le_bytes());
++            self.hash.update(metadata.mode().to_le_bytes());
++            Some(())
++        }
++        #[cfg(not(unix))]
++        {
++            let _ = metadata;
++            None
++        }
++    }
++
++    fn directory(&mut self, root: &Path, path: &Path, depth: usize) -> Option<()> {
++        if depth > 32 {
++            return None;
++        }
++        let mut entries = Vec::new();
++        for entry in std::fs::read_dir(path).ok()? {
++            self.entries += 1;
++            if self.entries > MAX_ENTRIES {
++                return None;
++            }
++            entries.push(entry.ok()?.path());
++        }
++        entries.sort();
++        for path in entries {
++            let metadata = std::fs::symlink_metadata(&path).ok()?;
++            self.metadata(&metadata)?;
++            let relative = path.strip_prefix(root).ok()?.as_os_str().as_encoded_bytes();
++            self.hash.update((relative.len() as u64).to_le_bytes());
++            self.hash.update(relative);
++            if metadata.is_dir() {
++                self.hash.update(b"directory");
++                self.directory(root, &path, depth + 1)?;
++            } else if metadata.is_file() {
++                self.hash.update(b"file");
++                self.hash.update(metadata.len().to_le_bytes());
++                self.bytes = self.bytes.checked_add(metadata.len())?;
++                if self.bytes > MAX_BYTES {
++                    return None;
++                }
++                let mut file = std::fs::File::open(&path).ok()?;
++                let mut buffer = [0; 16 * 1024];
++                let mut read = 0u64;
++                loop {
++                    let n = file.read(&mut buffer).ok()?;
++                    if n == 0 {
++                        break;
++                    }
++                    read = read.checked_add(n as u64)?;
++                    if read > metadata.len() {
++                        return None;
++                    }
++                    self.hash.update(&buffer[..n]);
++                }
++                if read != metadata.len() {
++                    return None;
++                }
++            } else {
++                // Symlinks, sockets, devices and pipes are not stable local input.
++                return None;
++            }
++        }
++        Some(())
++    }
++}
+--- /dev/null
++++ b/crates/engine/src/substrate/tests/project_read_cache.rs
+@@ -0,0 +1,153 @@
++use super::*;
++use std::sync::Arc;
++
++struct Fixture(PathBuf);
++impl Fixture {
++    fn new() -> Self {
++        let root = temp_project_root("read-cache");
++        write_minimal_project(&root, Uuid::new_v4(), Uuid::new_v4());
++        Self(root)
++    }
++}
++impl Drop for Fixture {
++    fn drop(&mut self) {
++        let _ = std::fs::remove_dir_all(&self.0);
++    }
++}
++
++#[test]
++fn project_read_cache_reuses_only_identical_content_not_mtime_or_length() {
++    let fixture = Fixture::new();
++    let root = &fixture.0;
++    let mut cache = ProjectReadCache::default();
++    let first = cache.resolve(root).unwrap();
++    assert!(first.diagnostics.is_empty(), "{:?}", first.diagnostics);
++    assert_eq!(*first, ProjectResolver::new(root).resolve().unwrap());
++    assert!(Arc::ptr_eq(&first, &cache.resolve(root).unwrap()));
++
++    let path = root.join("project.json");
++    let metadata = std::fs::metadata(&path).unwrap();
++    let original = std::fs::read_to_string(&path).unwrap();
++    let changed = original.replace("resolver-test", "external-edit");
++    assert_eq!(changed.len(), original.len());
++    std::fs::write(&path, changed).unwrap();
++    std::fs::File::options()
++        .write(true)
++        .open(path)
++        .unwrap()
++        .set_times(std::fs::FileTimes::new().set_modified(metadata.modified().unwrap()))
++        .unwrap();
++    let second = cache.resolve(root).unwrap();
++    assert!(!Arc::ptr_eq(&first, &second));
++    assert_eq!(second.project.name, "external-edit");
++    assert_eq!(*second, ProjectResolver::new(root).resolve().unwrap());
++    assert!(Arc::ptr_eq(&second, &cache.resolve(root).unwrap()));
++}
++
++#[test]
++fn project_read_cache_preserves_added_removed_and_corrupt_input_diagnostics() {
++    let fixture = Fixture::new();
++    let root = &fixture.0;
++    let mut cache = ProjectReadCache::default();
++    let first = cache.resolve(root).unwrap();
++    let path = root.join(".datum/journal/transactions.jsonl");
++    std::fs::create_dir_all(path.parent().unwrap()).unwrap();
++    std::fs::write(&path, "not a transaction\n").unwrap();
++    let corrupt = cache.resolve(root).unwrap();
++    assert!(!Arc::ptr_eq(&first, &corrupt));
++    assert_eq!(*corrupt, ProjectResolver::new(root).resolve().unwrap());
++    assert!(
++        corrupt
++            .diagnostics
++            .iter()
++            .any(|d| d.code == "journal_parse_error")
++    );
++    assert!(!Arc::ptr_eq(&corrupt, &cache.resolve(root).unwrap()));
++    std::fs::remove_file(path).unwrap();
++    let repaired = cache.resolve(root).unwrap();
++    assert_eq!(*repaired, ProjectResolver::new(root).resolve().unwrap());
++    assert!(repaired.diagnostics.is_empty());
++    std::fs::remove_file(root.join("board/board.json")).unwrap();
++    assert_eq!(
++        *cache.resolve(root).unwrap(),
++        ProjectResolver::new(root).resolve().unwrap()
++    );
++    std::fs::write(root.join("project.json"), "{").unwrap();
++    assert!(cache.resolve(root).is_err());
++}
++
++#[test]
++fn project_read_cache_bypasses_external_pools_symlinks_and_pending_recovery() {
++    let fixture = Fixture::new();
++    let root = &fixture.0;
++    let mut cache = ProjectReadCache::default();
++    let assert_bypass = |cache: &mut ProjectReadCache| {
++        let a = cache.resolve(root).unwrap();
++        let b = cache.resolve(root).unwrap();
++        assert!(!Arc::ptr_eq(&a, &b));
++        assert_eq!(*b, ProjectResolver::new(root).resolve().unwrap());
++    };
++    let link = root.join("unrelated-link");
++    std::os::unix::fs::symlink(root.join("board/board.json"), &link).unwrap();
++    assert_bypass(&mut cache);
++    std::fs::remove_file(link).unwrap();
++    let stage = root.join(".datum/revision/v1/stage/incomplete");
++    std::fs::create_dir_all(&stage).unwrap();
++    assert_bypass(&mut cache);
++    std::fs::remove_dir(stage).unwrap();
++    let lock = root.join(".datum/revision/write.lock");
++    std::fs::write(&lock, "pending").unwrap();
++    assert_bypass(&mut cache);
++    std::fs::remove_file(lock).unwrap();
++    let path = root.join("project.json");
++    let mut manifest: serde_json::Value =
++        serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
++    manifest["pools"] = serde_json::json!([{"path": "../external-pool"}]);
++    write_json(&path, manifest);
++    assert_bypass(&mut cache);
++}
++
++#[test]
++fn project_read_cache_switches_roots_and_revalidates_journal_cursor() {
++    let first = Fixture::new();
++    let second = Fixture::new();
++    let mut cache = ProjectReadCache::default();
++    let a = cache.resolve(&first.0).unwrap();
++    let b = cache.resolve(&second.0).unwrap();
++    assert_ne!(a.project.project_id, b.project.project_id);
++    assert_eq!(*b, ProjectResolver::new(&second.0).resolve().unwrap());
++    let a2 = cache.resolve(&first.0).unwrap();
++    assert!(!Arc::ptr_eq(&a, &a2));
++    let path = first.0.join(".datum/journal/cursor.json");
++    write_json(&path, serde_json::json!({"applied_transaction_count": 99}));
++    let changed = cache.resolve(&first.0).unwrap();
++    assert!(!Arc::ptr_eq(&a2, &changed));
++    assert_eq!(*changed, ProjectResolver::new(&first.0).resolve().unwrap());
++}
++
++#[test]
++fn project_read_cache_invalidates_replaced_identical_bytes_and_releases_old_model() {
++    let fixture = Fixture::new();
++    let root = &fixture.0;
++    let mut cache = ProjectReadCache::default();
++    let first = cache.resolve(root).unwrap();
++    let old = Arc::downgrade(&first);
++    let path = root.join("project.json");
++    let metadata = std::fs::metadata(&path).unwrap();
++    let original = std::fs::read(&path).unwrap();
++    let replacement = root.join("replacement.json");
++    std::fs::write(&replacement, original).unwrap();
++    std::fs::File::options()
++        .write(true)
++        .open(&replacement)
++        .unwrap()
++        .set_times(std::fs::FileTimes::new().set_modified(metadata.modified().unwrap()))
++        .unwrap();
++    std::fs::rename(replacement, path).unwrap();
++    let second = cache.resolve(root).unwrap();
++    assert!(!Arc::ptr_eq(&first, &second));
++    assert_eq!(*first, *second);
++    drop(first);
++    assert!(old.upgrade().is_none());
++    assert!(Arc::ptr_eq(&second, &cache.resolve(root).unwrap()));
++}
+--- a/crates/gui-app/src/project_preferences_runtime.rs
++++ b/crates/gui-app/src/project_preferences_runtime.rs
+@@ -34,6 +34,7 @@
+ use crate::global_preferences_projection::control_value_projection;
+ 
+ pub(super) struct ProjectPreferencesCoordinator {
++    read_cache: eda_engine::substrate::ProjectReadCache,
+     registry: DescriptorRegistry,
+     surface: PreferenceSurfaceCatalog,
+     project_root: Option<PathBuf>,
+@@ -48,6 +49,7 @@
+         let surface = gp_f05_surface_catalog(&registry)
+             .expect("the governed Preferences surface catalog must construct");
+         Self {
++            read_cache: Default::default(),
+             registry,
+             surface,
+             project_root: None,
+@@ -165,7 +167,7 @@
+         root: &Path,
+         dialog: &mut GlobalPreferencesDialogState,
+     ) -> Result<()> {
+-        let mut model = ProjectResolver::new(root).resolve()?;
++        let mut model = self.read_cache.resolve(root)?;
+         if model.project.project_display_units.is_none() {
+             let PreFeatureProjectUnitsMigration::Create { profile, receipt } =
+                 migrate_pre_feature_project_units(None)
+@@ -183,8 +185,10 @@
+                 profile,
+                 &receipt,
+             )?;
+-            commit_prepared(&mut model, root, prepared)?;
+-            model = ProjectResolver::new(root).resolve()?;
++            // Migration still uses the canonical commit path on an owned model.
++            // The next read observes its new bytes and rebuilds the snapshot.
++            commit_prepared(std::sync::Arc::make_mut(&mut model), root, prepared)?;
++            model = self.read_cache.resolve(root)?;
+         }
+         self.publish_model(root, &model, dialog)
+     }
+--- a/crates/gui-app/src/project_preferences_runtime_tests.rs
++++ b/crates/gui-app/src/project_preferences_runtime_tests.rs
+@@ -151,6 +151,16 @@
+         project_display_units(&after_stale).unwrap().drill.unit,
+         LengthUnitChoice::Explicit(LengthUnit::Inch)
+     );
++    // Reopening after an external commit must refresh the cached read, while
++    // the stale-write refusal above still occurs before any attempted mutation.
++    coordinator.load_or_migrate(&root, &mut dialog).unwrap();
++    assert_eq!(
++        coordinator.expected_revision.as_ref(),
++        Some(&after_stale.model_revision)
++    );
++    let expected_dialog = dialog.clone();
++    coordinator.load_or_migrate(&root, &mut dialog).unwrap();
++    assert_eq!(dialog, expected_dialog);
+     assert_eq!(
+         std::fs::read(root.join("board/board.json")).unwrap(),
+         board_before
