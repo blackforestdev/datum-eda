@@ -1,0 +1,318 @@
+{
+  "qualification_pass": false,
+  "runs": [
+    {
+      "role": "baseline",
+      "trial": 1,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-heqe6_vg",
+      "returncode": 0,
+      "cpu_ms": 4389.858,
+      "elapsed_seconds": 30.105089374,
+      "cpu_percent": 14.581780327784921,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403227,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.991000000000298,
+      "gpu_frame_span_ms": {
+        "count": 1277,
+        "min": 5.702666840698242,
+        "p50": 7.937750242240906,
+        "p95": 9.797416965660096,
+        "p99": 12.060167034713745,
+        "max": 12.654667052856444
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1277,
+          "min": 4.233083462516785,
+          "p50": 6.05608351815033,
+          "p95": 7.858166906478882,
+          "p99": 10.192500311050415,
+          "max": 10.709166993484496
+        },
+        "text": {
+          "count": 1277,
+          "min": 1.4061667095794679,
+          "p50": 1.8509167231521606,
+          "p95": 1.9301667255706787,
+          "p99": 3.4758334394073485,
+          "max": 5.9511668482818605
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-lb2l5_ur",
+      "returncode": 0,
+      "cpu_ms": 4538.11,
+      "elapsed_seconds": 30.102724235,
+      "cpu_percent": 15.075412991105983,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403503,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.7170000000001906,
+      "gpu_frame_span_ms": {
+        "count": 1277,
+        "min": 6.3675835276565556,
+        "p50": 7.965666909759522,
+        "p95": 9.90600030230713,
+        "p99": 12.089833702285766,
+        "max": 12.85966705911255
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1277,
+          "min": 4.786500146072387,
+          "p50": 6.072166851974488,
+          "p95": 7.863500239974975,
+          "p99": 10.208666978210449,
+          "max": 10.98325033518219
+        },
+        "text": {
+          "count": 1277,
+          "min": 1.4166667098999024,
+          "p50": 1.8525000565338134,
+          "p95": 3.086666760864258,
+          "p99": 3.758083448020935,
+          "max": 6.024166850509643
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-a4t2spw0",
+      "returncode": 0,
+      "cpu_ms": 4436.182,
+      "elapsed_seconds": 30.07304111,
+      "cpu_percent": 14.751358147563147,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403764,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.9089999999994944,
+      "gpu_frame_span_ms": {
+        "count": 1273,
+        "min": 6.417500195846557,
+        "p50": 7.977833576797486,
+        "p95": 9.933416969810485,
+        "p99": 12.095833702468871,
+        "max": 12.23683370677185
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1273,
+          "min": 4.893833482681274,
+          "p50": 6.075750185417175,
+          "p95": 8.002166910873413,
+          "p99": 10.20983364491272,
+          "max": 10.355666982696533
+        },
+        "text": {
+          "count": 1273,
+          "min": 1.4794167118148804,
+          "p50": 1.852416723197937,
+          "p95": 3.1570834296798704,
+          "p99": 3.675916778846741,
+          "max": 6.028333517303467
+        }
+      }
+    },
+    {
+      "role": "baseline",
+      "trial": 2,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-ckv0uwma",
+      "returncode": 0,
+      "cpu_ms": 4458.904,
+      "elapsed_seconds": 30.104769749,
+      "cpu_percent": 14.811287504193961,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403986,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.7259999999996722,
+      "gpu_frame_span_ms": {
+        "count": 1275,
+        "min": 6.5650002003479,
+        "p50": 7.93766690890503,
+        "p95": 9.75391696433258,
+        "p99": 12.064250368171692,
+        "max": 12.176917038276672
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1275,
+          "min": 4.965916818214416,
+          "p50": 6.058000184875488,
+          "p95": 7.826750238853455,
+          "p99": 10.082500307693481,
+          "max": 10.28600031390381
+        },
+        "text": {
+          "count": 1275,
+          "min": 1.567916714515686,
+          "p50": 1.852750056541443,
+          "p95": 1.9782500603713988,
+          "p99": 3.603000109954834,
+          "max": 6.068000185180664
+        }
+      }
+    },
+    {
+      "role": "baseline",
+      "trial": 3,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-zp7qpi2c",
+      "returncode": 0,
+      "cpu_ms": 4522.756,
+      "elapsed_seconds": 30.099095873,
+      "cpu_percent": 15.026218791033784,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 404285,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.9049999999998235,
+      "gpu_frame_span_ms": {
+        "count": 1276,
+        "min": 6.211833522903443,
+        "p50": 7.958500242874146,
+        "p95": 9.758083631126404,
+        "p99": 12.109333702880859,
+        "max": 13.478083744651794
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1276,
+          "min": 4.7156668105773925,
+          "p50": 6.068750185203553,
+          "p95": 7.859500239852905,
+          "p99": 10.229750312187194,
+          "max": 11.69233369015503
+        },
+        "text": {
+          "count": 1276,
+          "min": 1.4111667097320557,
+          "p50": 1.8523333898620606,
+          "p95": 1.98741672731781,
+          "p99": 3.588083442832947,
+          "max": 6.031833517410278
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 3,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-m12312hi",
+      "returncode": 0,
+      "cpu_ms": 4487.956,
+      "elapsed_seconds": 30.102302219,
+      "cpu_percent": 14.909012497945383,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 404567,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.9210000000002836,
+      "gpu_frame_span_ms": {
+        "count": 1275,
+        "min": 6.017916850318909,
+        "p50": 7.96075024294281,
+        "p95": 9.923250302833557,
+        "p99": 12.024583700294494,
+        "max": 12.479750380851746
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1275,
+          "min": 4.562583472572327,
+          "p50": 6.070166851913452,
+          "p95": 7.990833577194214,
+          "p99": 10.066333640533447,
+          "max": 10.504083653892517
+        },
+        "text": {
+          "count": 1275,
+          "min": 1.404583376197815,
+          "p50": 1.852750056541443,
+          "p95": 2.27100006930542,
+          "p99": 3.6063334433898926,
+          "max": 6.048583517921448
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Three matched trial pairs; no seven-pair STAT relative acceptance.",
+    "All runs quiet withGPUtimestampsON; CPUincludesobserveroverhead and isnotquietCPUqualification. No per-frame forbiddenwork/shellsolve/worldupload orreceivedinputcounter coverage.",
+    "Existing3600scheduledintegerXTestcalls quantizeto1280physicalpositionchanges;120distinctsemantic-actions/s unqualified.",
+    "GPUrecords include measured active interval and5sectail;tail samples reported,not dropped. Nativeendpoints AE0 prove finalpixels/focusonly,notphysicalpresentationlatency/continuouspath/hits/ownerUX.",
+    "OnlyX11onXwaylandphysical60Hz1x oneMainleaf,hiddenterminal; no Wayland/otherdisplay-scale/multihost/endurance/resource/independentreviewer acceptance."
+  ]
+}

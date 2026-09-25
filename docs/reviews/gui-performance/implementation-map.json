@@ -3653,6 +3653,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-observer-attribution/result.json",
         "status": "Pointer observer overhead and thread attribution recorded; quiet CPU limit still fails; S5 incomplete"
+      },
+      "s5_stroke_vertex_color": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/stroke-vertex-color/result.json",
+        "status": "Stroke color relocation candidate not adopted: exact pixels preserved, native improvement not demonstrated; S5 remains incomplete"
       }
     },
     {
@@ -4368,6 +4373,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-observer-attribution/result.json",
         "status": "Pointer observer overhead and thread attribution recorded; quiet CPU limit still fails; S5 incomplete"
+      },
+      "s5_stroke_vertex_color": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/stroke-vertex-color/result.json",
+        "status": "Stroke color relocation candidate not adopted: exact pixels preserved, native improvement not demonstrated; S5 remains incomplete"
       }
     },
     {
