@@ -32,6 +32,7 @@ mod private_writer_migration;
 mod production_replay;
 mod production_schema;
 mod production_writer_migration;
+mod project_read_cache;
 mod proposal;
 mod proposal_replay;
 mod proposal_schema;

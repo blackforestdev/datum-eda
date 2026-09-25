@@ -1,0 +1,276 @@
+{
+  "contract": "project_resolver_debug_v1",
+  "project_id": "33009598-86e9-4b9d-b0b2-a797e047a90b",
+  "project_name": "DOA2526 Datum Workspace",
+  "model_revision": "85cedb2c7477f4bd6932e135128bd485f0837d819e8fa9ce6cc703086271fbe8",
+  "source_shards": [
+    {
+      "kind": "ProjectManifest",
+      "taxon": null,
+      "shard_id": "2f2e3e8c-090a-57d7-b287-c3eb0f6ec93e",
+      "path": "project.json",
+      "authority": "AuthoredDesign",
+      "dirty_state": "Clean",
+      "schema_version": 1,
+      "content_hash": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c"
+    },
+    {
+      "kind": "SchematicRoot",
+      "taxon": null,
+      "shard_id": "d6d17c54-531c-5698-bc8f-6c85ba09c85b",
+      "path": "schematic/schematic.json",
+      "authority": "AuthoredDesign",
+      "dirty_state": "Clean",
+      "schema_version": 1,
+      "content_hash": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530"
+    },
+    {
+      "kind": "BoardRoot",
+      "taxon": null,
+      "shard_id": "577eca33-838f-5c28-b281-7a0ba7a73f97",
+      "path": "board/board.json",
+      "authority": "AuthoredDesign",
+      "dirty_state": "Clean",
+      "schema_version": 1,
+      "content_hash": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532"
+    },
+    {
+      "kind": "RulesRoot",
+      "taxon": null,
+      "shard_id": "51f0bd82-81cd-5ad0-bd1f-24bfd559ccaa",
+      "path": "rules/rules.json",
+      "authority": "AuthoredDesign",
+      "dirty_state": "Clean",
+      "schema_version": 1,
+      "content_hash": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693"
+    },
+    {
+      "kind": "ImportMap",
+      "taxon": "ImportMap",
+      "shard_id": "eb9c90ee-a1df-5308-8354-c1519078454e",
+      "path": ".datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json",
+      "authority": "SidecarMetadata",
+      "dirty_state": "Clean",
+      "schema_version": 1,
+      "content_hash": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7"
+    },
+    {
+      "kind": "CheckRun",
+      "taxon": "CheckRun",
+      "shard_id": "a78d35c1-de4b-5b17-8245-91740b5d20ab",
+      "path": ".datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json",
+      "authority": "GeneratedEvidence",
+      "dirty_state": "Clean",
+      "schema_version": 1,
+      "content_hash": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca"
+    }
+  ],
+  "object_count": 362,
+  "component_instance_count": 0,
+  "relationship_count": 0,
+  "relationship_status_count": 0,
+  "variant_count": 0,
+  "variant_population_count": 0,
+  "zone_fill_count": 20,
+  "output_job_count": 0,
+  "check_run_count": 1,
+  "proposal_count": 0,
+  "import_map_count": 332,
+  "diagnostics": [
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package +In1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package +Supply1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package -In1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package -Supply1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package C1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package C2 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package C3 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package C4 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package D1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package D2 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package D3 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package D4 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package GND1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Out1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q2 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q3 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q4 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q5 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q6 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q7 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q8 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package Q9 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R1 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R10 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R11 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R12 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R13 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R14 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R15 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R16 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R2 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R3 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R4 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R6 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R7 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R8 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package R9 / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    },
+    {
+      "code": "component_instance_unmatched_package",
+      "message": "board package REF** / part 00000000-0000-0000-0000-000000000000 has no matching schematic component",
+      "path": null
+    }
+  ]
+}

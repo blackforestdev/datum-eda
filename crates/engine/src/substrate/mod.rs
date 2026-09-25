@@ -45,6 +45,7 @@ mod operation_application_schematic_waiver;
 mod pool_journal_ops;
 mod production_journal_ops;
 mod project_manifest_journal_ops;
+mod project_read_cache;
 mod project_resolver;
 mod proposal;
 mod proposal_journal_ops;
@@ -101,6 +102,7 @@ use journal::{
 };
 pub use operation::{Operation, SchematicMarkerKind};
 use operation_application::apply_operation;
+pub use project_read_cache::ProjectReadCache;
 pub use proposal::*;
 pub use relationship::{RELATIONSHIP_SHARD_SCHEMA_VERSION, RelationshipShard};
 pub use rules_journal_ops::validate_native_project_rule_payload;
