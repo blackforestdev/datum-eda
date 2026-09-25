@@ -53,12 +53,16 @@ mod tests {
     use crate::*;
 
     fn scene(scale: f32, width: u32) -> PreparedScene {
+        scene_for_size(scale, width, (800.0 * scale) as u32)
+    }
+
+    fn scene_for_size(scale: f32, width: u32, height: u32) -> PreparedScene {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         state.ui.active_menu = Some("File".into());
         PreparedScene::from_workspace_with_terminal_renderer(
             &state,
             width,
-            (800.0 * scale) as u32,
+            height,
             scale,
             CameraState::fit_to_bounds(&state.scene.bounds),
             &RetainedScene::empty(),
@@ -175,6 +179,31 @@ mod tests {
                 assert!((actual.size / scale - original.size).abs() < 0.02);
             }
         }
+    }
+
+    #[test]
+    fn short_scaled_sidebar_keeps_layers_controls_above_dock() {
+        let prepared = scene_for_size(2.0, 1280, 768);
+        for target in [
+            HitTarget::ToggleShowAuthored,
+            HitTarget::ToggleShowProposed,
+            HitTarget::ToggleShowUnrouted,
+            HitTarget::ToggleDimUnrelated,
+        ] {
+            let hit = prepared
+                .hit_regions
+                .iter()
+                .find(|hit| hit.target == target)
+                .expect("short sidebar retains each filter control");
+            assert!(hit.rect.y + hit.rect.height <= prepared.layout.bottom_strip.y);
+            assert!(hit.rect.height > 0.0);
+        }
+        assert!(
+            prepared
+                .hit_regions
+                .iter()
+                .any(|hit| matches!(hit.target, HitTarget::ToggleLayer(_)))
+        );
     }
 
     #[test]

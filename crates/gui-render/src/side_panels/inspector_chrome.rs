@@ -15,6 +15,8 @@ pub(super) fn push_inspector_title_band(
     text_runs: &mut Vec<TextRun>,
 ) -> anyhow::Result<()> {
     let band_top = rect.y + 34.0;
+    let text_start = text_runs.len();
+    let mut identity_right = rect.x + rect.width - 12.0;
     draw_text(
         identity,
         rect.x + 12.0,
@@ -45,6 +47,7 @@ pub(super) fn push_inspector_title_band(
             width: text_w + pad_x * 2.0,
             height: 16.0,
         };
+        identity_right = pill.x - 8.0;
         push_rect_border(panel_quads, pill, TEXT_ACCENT, 1.0);
         draw_text(
             label,
@@ -55,6 +58,22 @@ pub(super) fn push_inspector_title_band(
             TextFace::UiMedium,
             text_runs,
         );
+    }
+    // Identity chrome is a fixed two-row band. Shape each row at its natural
+    // width and clip to that row, so narrow panels cannot wrap through the divider.
+    for (index, run) in text_runs[text_start..].iter_mut().enumerate() {
+        let natural_width = measured_text_run_width_px(&run.text, run.size, run.face)? + 2.0;
+        run.layout_size = Some((natural_width, 32.0));
+        run.clip_bounds = Some(RectPx {
+            x: rect.x + 12.0,
+            y: run.y,
+            width: if index == 0 {
+                (identity_right - rect.x - 12.0).max(0.0)
+            } else {
+                (rect.width - 24.0).max(0.0)
+            },
+            height: (rect.y + 66.0 - run.y).max(0.0),
+        });
     }
     push_section_divider(
         panel_quads,

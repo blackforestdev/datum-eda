@@ -66,17 +66,18 @@ fn fallback_right_panel_layout(state: &ReviewWorkspaceState, right: RectPx) -> R
 }
 
 fn fallback_project_panel_layout(state: &ReviewWorkspaceState, left: RectPx) -> ProjectPanelLayout {
+    let project_height = project_layout::project_panel_height(left.height, 330.0);
     let project_rect = RectPx {
         x: left.x + UI_CARD_MARGIN,
         y: left.y + UI_CARD_MARGIN,
         width: left.width - UI_CARD_MARGIN * 2.0,
-        height: 330.0,
+        height: project_height,
     };
     let filters_rect = RectPx {
         x: left.x + UI_CARD_MARGIN,
-        y: left.y + 330.0,
+        y: left.y + project_height,
         width: left.width - UI_CARD_MARGIN * 2.0,
-        height: (left.height - 340.0).max(100.0),
+        height: (left.height - project_height).max(0.0),
     };
     let content_x = project_rect.x + UI_CARD_PADDING_X;
     let content_width = (project_rect.width - UI_CARD_PADDING_X * 2.0).max(1.0);

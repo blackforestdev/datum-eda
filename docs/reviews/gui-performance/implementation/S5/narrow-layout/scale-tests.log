@@ -1,0 +1,14 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=37.5 GiB target_free=165.9 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 37.5 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.87s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 4 tests
+test text_presentation::chrome_scale::tests::composed_panels_and_panes_share_scaled_paint_and_input_bounds ... ok
+test text_presentation::chrome_scale::tests::composed_scaled_menus_keep_glyphs_and_clicks_inside_the_same_titles ... ok
+test text_presentation::chrome_scale::tests::composed_scaled_status_segments_do_not_overlap_at_supported_width ... ok
+test text_presentation::chrome_scale::tests::short_scaled_sidebar_keeps_layers_controls_above_dock ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 431 filtered out; finished in 0.45s
+

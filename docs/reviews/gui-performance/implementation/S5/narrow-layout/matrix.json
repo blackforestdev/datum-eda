@@ -1,0 +1,52 @@
+[
+  {
+    "case": "history-expanded-1_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-history-expanded scale 1 failed: 8171 differing pixels (0.831197%)"
+  },
+  {
+    "case": "refusal-narrow-1_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-refusal-narrow scale 1 failed: 10013 differing pixels (1.738368%)"
+  },
+  {
+    "case": "routine-focused-1_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-routine-focused scale 1 failed: 4049 differing pixels (0.411886%)"
+  },
+  {
+    "case": "routine-maximized-1_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-routine-maximized scale 1 failed: 4049 differing pixels (0.411886%)"
+  },
+  {
+    "case": "routine-scale-matrix-1_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-routine-scale-matrix scale 1 failed: 4049 differing pixels (0.411886%)"
+  },
+  {
+    "case": "routine-scale-matrix-1_25",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-routine-scale-matrix scale 1.25 failed: 142764 differing pixels (14.522705%)"
+  },
+  {
+    "case": "routine-scale-matrix-1_50",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-routine-scale-matrix scale 1.5 failed: 96077 differing pixels (9.773458%)"
+  },
+  {
+    "case": "routine-scale-matrix-2_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-routine-scale-matrix scale 2 failed: 117175 differing pixels (11.919657%)"
+  },
+  {
+    "case": "routine-unfocused-1_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-routine-unfocused scale 1 failed: 20151 differing pixels (2.049866%)"
+  },
+  {
+    "case": "tool-terminal-open-1_00",
+    "exit_code": 1,
+    "result": "Error: visual fixture console-tool-terminal-open scale 1 failed: 20151 differing pixels (2.049866%)"
+  }
+]

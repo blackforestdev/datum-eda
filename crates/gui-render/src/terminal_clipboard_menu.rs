@@ -29,6 +29,8 @@ pub(super) fn render_terminal_clipboard_menu(
     )
     .screen
     .into();
+    let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
+    let screen = screen.scale_by(1.0 / scale.factor());
     let quad_start = overlay_quads.len();
     let text_start = overlay_text.len();
     let hit_start = hit_regions.len();
@@ -65,11 +67,11 @@ pub(super) fn render_terminal_clipboard_menu(
         ));
     }
     let menu_height = ITEM_HEIGHT_PX * items.len() as f32;
-    let x = menu.anchor_x.clamp(
+    let x = (menu.anchor_x / scale.factor()).clamp(
         screen.x + MENU_MARGIN_PX,
         (screen.x + screen.width - MENU_WIDTH_PX - MENU_MARGIN_PX).max(screen.x + MENU_MARGIN_PX),
     );
-    let y = menu.anchor_y.clamp(
+    let y = (menu.anchor_y / scale.factor()).clamp(
         screen.y + MENU_MARGIN_PX,
         (screen.y + screen.height - menu_height - MENU_MARGIN_PX).max(screen.y + MENU_MARGIN_PX),
     );
@@ -133,6 +135,9 @@ pub(super) fn render_terminal_clipboard_menu(
         hit_start,
         screen,
     );
+    scale.quads(&mut overlay_quads[quad_start..]);
+    scale.text_geometry(&mut overlay_text[text_start..]);
+    scale.hits(&mut hit_regions[hit_start..]);
 }
 
 #[cfg(test)]
