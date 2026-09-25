@@ -1,0 +1,12 @@
+{
+  "evidence_traceability": "PASS28routes124artifacts",
+  "spec_governance": "PASS315",
+  "spec_parity": "PASS20",
+  "dependency_authority": "PASS",
+  "cargo_resource_policy": "PASS",
+  "project_status": "PASS59",
+  "archive_integrity": "99rawfile length/SHA256checksPASS",
+  "runtime_change": false,
+  "Rust_proof": "Not repeated; unchanged d34ae602 release pinned by SHA256",
+  "qualification_pass": false
+}

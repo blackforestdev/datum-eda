@@ -1,0 +1,106 @@
+{
+  "status": "Missing final close not reproduced in six bounded diagnostic runs; cause unresolved",
+  "qualification_pass": false,
+  "issue": "dat-native-final-close-observation-xbb7",
+  "candidate_commit": "d34ae602",
+  "candidate_binary_sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+  "runs": [
+    {
+      "index": 1,
+      "cycles": 9,
+      "normal_exit": 0,
+      "close_timeout": false,
+      "extra_pixel_attempts": 1,
+      "property_receipt": "WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, _NET_WM_PING\n_NET_WM_PID(CARDINAL) = 358193\n"
+    },
+    {
+      "index": 2,
+      "cycles": 9,
+      "normal_exit": 0,
+      "close_timeout": false,
+      "extra_pixel_attempts": 1,
+      "property_receipt": "WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, _NET_WM_PING\n_NET_WM_PID(CARDINAL) = 358582\n"
+    },
+    {
+      "index": 3,
+      "cycles": 9,
+      "normal_exit": 0,
+      "close_timeout": false,
+      "extra_pixel_attempts": 2,
+      "property_receipt": "WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, _NET_WM_PING\n_NET_WM_PID(CARDINAL) = 358987\n"
+    },
+    {
+      "index": 4,
+      "cycles": 9,
+      "normal_exit": 0,
+      "close_timeout": false,
+      "extra_pixel_attempts": 2,
+      "property_receipt": "WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, _NET_WM_PING\n_NET_WM_PID(CARDINAL) = 359420\n"
+    },
+    {
+      "index": 5,
+      "cycles": 9,
+      "normal_exit": 0,
+      "close_timeout": false,
+      "extra_pixel_attempts": 0,
+      "property_receipt": "WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, _NET_WM_PING\n_NET_WM_PID(CARDINAL) = 359821\n"
+    },
+    {
+      "index": 6,
+      "cycles": 9,
+      "normal_exit": 0,
+      "close_timeout": false,
+      "extra_pixel_attempts": 1,
+      "property_receipt": "WM_PROTOCOLS(ATOM): protocols  WM_DELETE_WINDOW, _NET_WM_PING\n_NET_WM_PID(CARDINAL) = 360181\n"
+    }
+  ],
+  "archives": [
+    {
+      "file": "run-1.tar.gz",
+      "members": 15
+    },
+    {
+      "file": "run-2.tar.gz",
+      "members": 15
+    },
+    {
+      "file": "run-3.tar.gz",
+      "members": 16
+    },
+    {
+      "file": "run-4.tar.gz",
+      "members": 16
+    },
+    {
+      "file": "run-5.tar.gz",
+      "members": 14
+    },
+    {
+      "file": "run-6.tar.gz",
+      "members": 15
+    },
+    {
+      "file": "campaign.tar.gz",
+      "members": 8
+    }
+  ],
+  "question": "Prior private-call control and resource-snapshot off control completed auxiliary cycles but never logged a close request or connected shutdown handoff within10seconds. Distinguish blocked event loop from lost delivery without treating forced cleanup as success.",
+  "method": "Predeclare maximum6runs of9auxiliary cycles; stop on first failure. Reuse exact release,fixture,native pixel endpoints,focus and normal-drain receipt. Before sending the original WM_DELETE_WINDOW helper, capture WM_PROTOCOLS and _NET_WM_PID. On failure only, capture /proc thread wait/syscall/status then gdb thread stacks; send one unrelated pointer event and record any delayed receipt separately from failed trial. No failure occurred, so stack/wake paths were never exercised or validated.",
+  "audit": {
+    "winit_source_sha256": "eefe47e789dae7cd56f3579eb292935d6237c886d486688ed2649b2aa6a76237",
+    "winit_version": "0.30.13",
+    "findings": [
+      "Installed winit event_processor.rs::client_message compares the first data atom to wm_delete_window and emits CloseRequested without checking message timestamp. This rules out the proposed timestamp check in that handler, not event loss elsewhere.",
+      "winit filters non-key X events through XFilterEvent before dispatch; no evidence shows filtering caused these failures.",
+      "Datum consume_cancelled_release handles mouse releases; close is preserved in rendering-failure and modal filters and dispatched to request_controlled_close. Native verbose logging precedes those filters.",
+      "XSendEvent helper uses existing system Xlib ABI and WM_PROTOCOLS/WM_DELETE_WINDOW. A successful sender return is not evidence that the target application processed the event."
+    ]
+  },
+  "limits": [
+    "Six normal closes do not explain or replace the two prior failed closes. Issue remains open; no S5 shutdown or performance acceptance.",
+    "Property query adds a round trip before close, and nine cycles differ from the latest93-cycle failed run; timing and workload perturbation limit inference. Do not infer baseline/candidate regression or repaired delivery.",
+    "No gdb attachment occurred, no trace or system settings changed, no third-party source/dependency was modified, and no production code change was justified.",
+    "Do not continue retrying this diagnostic unchanged. Retain the armed failure snapshot for the next independently required native workload, removing unrelated pre-close work if preserving original timing."
+  ],
+  "tool_archive_note": "Archived diagnostic removes one trailing space after empty receipt assignment; no executable difference from run script. Native binary unchanged."
+}
