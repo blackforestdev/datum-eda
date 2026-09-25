@@ -3543,7 +3543,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial method conformance: three controlled fork/thread cases retain exited-child CPU in an isolated cgroup and agree with final wait4 usage within1.656ms. Native command-boundary probe records cgroup totals plus direct GUI CPU clocks/PID start-time. Separate cooperating-engine/process identities, possible external services, full workload admission and normal final drain remain unqualified.",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
         "id": "proof_ac_02",
         "positive": "Observe GUI+engine CPU across child exits and bounded drain",
         "negative_control": "Drop child CPU or shorten denominator",
@@ -3600,6 +3600,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "Partial GUI process CPU observations only; all-thread /proc ticks have10ms resolution. Complete cooperating-process lifecycle/exit/drain accounting and validated action endpoints remain missing; no CPU acceptance."
+      },
+      "s5_final_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial method conformance: three controlled fork/thread cases retain exited-child CPU in an isolated cgroup and agree with final wait4 usage within1.656ms. Native command-boundary probe records cgroup totals plus direct GUI CPU clocks/PID start-time. Separate cooperating-engine/process identities, possible external services, full workload admission and normal final drain remain unqualified.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
       }
     },
     {
@@ -3644,7 +3650,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
         "id": "proof_ac_03",
         "positive": "Conform bounded GPU timestamp ring under pressure/map error/epoch changes",
         "negative_control": "Return zero on missing query or block on readback",
@@ -3704,7 +3710,13 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/query-resources/result.json",
           "status": "Existing opt-in query/resolve/readback resources now use shared global admission and completion retention; query bytes are logical API capacity. Full accounting, cold timing and qualification remain open."
         }
-      ]
+      ],
+      "s5_final_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
+      }
     },
     {
       "id": "AC-04",
@@ -4119,7 +4131,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Bounded method probe only: preserve rejected OR-combined window selector and its pixel mismatches. Corrected selector requires owned PID plus exact title and excludes Main. No calibrated readback/observer overhead, fixed-seven-pair relative inference or full qualification.",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
         "id": "proof_ac_06",
         "positive": "Same workload trace-on/off and rejected trials",
         "negative_control": "Discard high-cost or contaminated trial after seeing result",
@@ -4179,6 +4191,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "Partial investigative on/off runs and failed attempts retained. Setting verbose=0 was rejected because presence enables logging; incomplete JSON-line reader and initial warning-bypass candidates remain archived. No fixed-seven-pair relative inference or calibrated observer-overhead claim."
+      },
+      "s5_final_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Bounded method probe only: preserve rejected OR-combined window selector and its pixel mismatches. Corrected selector requires owned PID plus exact title and excludes Main. No calibrated readback/observer overhead, fixed-seven-pair relative inference or full qualification.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
       }
     },
     {
@@ -14195,7 +14213,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
         "id": "proof_bud_windows_gpu_duty",
         "positive": "WINDOWS: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14208,6 +14226,12 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_final_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
+        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
       }
     },
     {
@@ -37641,5 +37665,13 @@
       "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/SHA256SUMS"
     ],
     "boundaries": "No runtime, dependency/license, numerical cap, prototype, GEFN/S0-S4 or resize-scope change. No independent review/replay, formal relative speedup or S5 acceptance."
+  },
+  "s5_final_observation": {
+    "status": "Bounded final-observation endpoint implemented and native-tested; GPI-S5 incomplete",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
+    "source": "crates/gui-app/src/native_measurement_shutdown.rs",
+    "boundaries": "S0-S4/GEFN rendering, dependency/license authority, product model and persistence, all numerical limits, and nonblocking resize/temporal exclusions preserved.",
+    "remaining": "Earlier client lifecycle hooks/coverage and observer calibration; complete all-host/trial/backend/scale/resource/negative/endurance qualification; distinct reviewer actual replay and native owner UX. No budget or independent acceptance."
   }
 }

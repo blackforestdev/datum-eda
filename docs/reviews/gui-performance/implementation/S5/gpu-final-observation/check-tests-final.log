@@ -1,0 +1,20 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=23.0 GiB target_free=179.1 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 23.0 GiB used; soft limit 20.0 GiB
+    Blocking waiting for file lock on build directory
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.73s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-89f6505f70927b20)
+
+running 3 tests
+test native_gpu_measurements::shutdown::tests::final_receipt_precedes_release_and_requires_acknowledgement ... ok
+test native_gpu_measurements::shutdown::tests::lost_invalid_and_unresponsive_observers_fail ... ok
+test native_gpu_measurements::shutdown::tests::observer_connect_is_explicit_and_missing_endpoint_fails ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 414 filtered out; finished in 0.03s
+
+     Running tests/visual_shell.rs (target/debug/deps/visual_shell-ec286a3bff236aad)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

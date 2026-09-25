@@ -4,6 +4,9 @@ use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Instant;
 
+#[path = "native_measurement_shutdown.rs"]
+mod shutdown;
+
 fn enabled() -> Result<bool> {
     match std::env::var("DATUM_GPU_MEASUREMENTS").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("0") => Ok(false),

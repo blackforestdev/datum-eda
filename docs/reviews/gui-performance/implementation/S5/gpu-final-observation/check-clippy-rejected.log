@@ -1,0 +1,36 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=24.3 GiB target_free=177.8 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 24.3 GiB used; soft limit 20.0 GiB
+    Checking getrandom v0.3.4
+    Checking bit-vec v0.8.0
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking ahash v0.8.12
+    Checking bit-set v0.8.0
+    Checking naga v28.0.0
+    Checking hashbrown v0.14.5
+    Checking winit v0.30.13
+    Checking hashlink v0.9.1
+    Checking rusqlite v0.32.1
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking wgpu-hal v28.0.1
+    Checking wgpu-core-deps-windows-linux-android v28.0.0
+    Checking wgpu-core v28.0.1
+    Checking wgpu v28.0.0
+    Checking glyphon v0.10.0
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error: can be more succinctly written as a byte str
+   --> crates/gui-app/src/native_measurement_shutdown.rs:105:20
+    |
+105 |     ensure!(ack == [b'!'], "invalid final measurement acknowledgement");
+    |                    ^^^^^^ help: try: `*b"!"`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#byte_char_slices
+    = note: `-D clippy::byte-char-slices` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::byte_char_slices)]`
+
+error: could not compile `datum-gui-app` (bin "datum-gui") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `datum-gui-app` (bin "datum-gui" test) due to 1 previous error

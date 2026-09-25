@@ -1,0 +1,5 @@
+{
+  "result": "failed",
+  "failure": "assert all(not s[\"errors\"] for s in raw[:3]); self-observer fdinfo directory closed before entries read",
+  "provenance": "Recorded from original tool failure; original raw result was not written by driver"
+}

@@ -1,0 +1,47 @@
+datum-gui diagnostic log pid=268434 start=SystemTime { tv_sec: 1790349199, tv_nsec: 391410915 }
+[SystemTime { tv_sec: 1790349199, tv_nsec: 391619317 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: "default", custom_name: "custom", program: None, args: [], environment: [], environment_remove: [], cwd: "active", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: "propose", unattended_tools: [] }, demo_known_good: false, board_file: None, schematic_file: None, artifact_path: None, project_root: Some("/tmp/pm045-admission-hqugp169/project"), select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: Some("single"), open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: "1280x800", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: Some(1.0), interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }
+[SystemTime { tv_sec: 1790349199, tv_nsec: 402289411 }] resumed event
+[SystemTime { tv_sec: 1790349199, tv_nsec: 402314886 }] launch state load begin
+[SystemTime { tv_sec: 1790349199, tv_nsec: 402342654 }] request resolve begin
+[SystemTime { tv_sec: 1790349199, tv_nsec: 402362612 }] request resolve end project_root=/tmp/pm045-admission-hqugp169/project board_file=None
+[SystemTime { tv_sec: 1790349199, tv_nsec: 402381911 }] workspace load begin
+[SystemTime { tv_sec: 1790349200, tv_nsec: 930538361 }] workspace load end
+[SystemTime { tv_sec: 1790349200, tv_nsec: 930563352 }] camera fit begin
+[SystemTime { tv_sec: 1790349200, tv_nsec: 930578134 }] camera fit end
+[SystemTime { tv_sec: 1790349200, tv_nsec: 930725272 }] terminal spawn begin
+[SystemTime { tv_sec: 1790349200, tv_nsec: 938878549 }] terminal spawn end
+[SystemTime { tv_sec: 1790349200, tv_nsec: 938915856 }] launch state load end
+[SystemTime { tv_sec: 1790349200, tv_nsec: 942365701 }] window created
+[SystemTime { tv_sec: 1790349200, tv_nsec: 942408386 }] runtime creation begin
+[SystemTime { tv_sec: 1790349200, tv_nsec: 943659424 }] wgpu instance create begin
+[SystemTime { tv_sec: 1790349201, tv_nsec: 60305832 }] wgpu request adapter begin
+[SystemTime { tv_sec: 1790349201, tv_nsec: 69249829 }] surface identity window=WindowId(33554436) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790349201, tv_nsec: 69270969 }] wgpu request device begin
+[SystemTime { tv_sec: 1790349201, tv_nsec: 96257412 }] wgpu request device end
+[SystemTime { tv_sec: 1790349201, tv_nsec: 96613420 }] initial surface configuration requested 1280x800 format=Bgra8UnormSrgb present=Fifo msaa=8
+[SystemTime { tv_sec: 1790349201, tv_nsec: 96630967 }] renderer init begin
+[SystemTime { tv_sec: 1790349201, tv_nsec: 217369029 }] gpu_measurement_host host=1 epoch=1 window=WindowId(33554436) timestamp_period_ns=83.333336
+[SystemTime { tv_sec: 1790349201, tv_nsec: 217388927 }] renderer init end
+[SystemTime { tv_sec: 1790349201, tv_nsec: 218845055 }] runtime creation end
+[SystemTime { tv_sec: 1790349201, tv_nsec: 219005019 }] window visible
+[SystemTime { tv_sec: 1790349201, tv_nsec: 219274586 }] surface configure begin
+[SystemTime { tv_sec: 1790349201, tv_nsec: 222745861 }] surface configure end
+[SystemTime { tv_sec: 1790349201, tv_nsec: 222788492 }] native queue configured host=1 configurations=1 submitted=0 completed=0
+gpu_measurement_incomplete {"device_epoch":1,"frame":1,"host":1,"reason":"cold_upload_multisubmission_timestamps_unqualified","status":"incomplete","submission":1}
+gpu_measurement_incomplete {"device_epoch":1,"frame":1,"host":1,"reason":"cold_upload_multisubmission_timestamps_unqualified","status":"incomplete","submission":2}
+gpu_measurement {"device_epoch":1,"frame":2,"frame_span_ns":13743417.086082458,"host":1,"own_pass_sum_ns":13694167.084579468,"passes_ns":[["scene",8274583.585853577],["text",1816833.3887786865],["menu-background",1838416.722770691],["menu-text",1764333.3871765137]],"raw_ticks":[11783535595,11783634890,11783635093,11783656895,11783657091,11783679152,11783679344,11783700516],"submission":3,"timestamp_period_ns":83.33333587646484}
+gpu_measurement {"device_epoch":1,"frame":3,"frame_span_ns":20281750.61894989,"host":1,"own_pass_sum_ns":20240917.284370422,"passes_ns":[["scene",14529917.110084534],["text",1508916.712715149],["menu-background",2639000.0805358887],["menu-text",1563083.381034851]],"raw_ticks":[11783983084,11784157443,11784157613,11784175720,11784175879,11784207547,11784207708,11784226465],"submission":4,"timestamp_period_ns":83.33333587646484}
+gpu_measurement {"device_epoch":1,"frame":4,"frame_span_ns":9981166.9712677,"host":1,"own_pass_sum_ns":9947916.97025299,"passes_ns":[["scene",5320083.495689392],["text",1229666.7041931152],["menu-background",2111833.397781372],["menu-text",1286333.3725891113]],"raw_ticks":[11784281715,11784345556,11784345688,11784360444,11784360575,11784385917,11784386053,11784401489],"submission":5,"timestamp_period_ns":83.33333587646484}
+gpu_measurement {"device_epoch":1,"frame":5,"frame_span_ns":6042833.517745972,"host":1,"own_pass_sum_ns":6021750.183769226,"passes_ns":[["scene",3772250.115119934],["text",762916.6899490356],["menu-background",760833.356552124],["menu-text",725750.0221481323]],"raw_ticks":[11784471366,11784516633,11784516717,11784525872,11784525959,11784535089,11784535171,11784543880],"submission":6,"timestamp_period_ns":83.33333587646484}
+gpu_measurement {"device_epoch":1,"frame":6,"frame_span_ns":4675750.142692566,"host":1,"own_pass_sum_ns":4656916.808784485,"passes_ns":[["scene",2676583.4150161743],["text",670416.6871261597],["menu-background",663166.6869049072],["menu-text",646750.0197372437]],"raw_ticks":[11784591754,11784623873,11784623948,11784631993,11784632072,11784640030,11784640102,11784647863],"submission":7,"timestamp_period_ns":83.33333587646484}
+gpu_measurement {"device_epoch":1,"frame":7,"frame_span_ns":4679750.142814636,"host":1,"own_pass_sum_ns":4660250.142219543,"passes_ns":[["scene",2585833.412246704],["text",713750.0217819214],["menu-background",687500.020980835],["menu-text",673166.687210083]],"raw_ticks":[11784764918,11784795948,11784796029,11784804594,11784804671,11784812921,11784812997,11784821075],"submission":8,"timestamp_period_ns":83.33333587646484}
+[SystemTime { tv_sec: 1790349206, tv_nsec: 910975055 }] surface identity window=WindowId(33554454) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790349206, tv_nsec: 915409331 }] gpu_measurement_host host=2 epoch=1 window=WindowId(33554454) timestamp_period_ns=83.333336
+gpu_measurement {"device_epoch":1,"frame":8,"frame_span_ns":9657416.961387634,"host":1,"own_pass_sum_ns":9641250.2942276,"passes_ns":[["scene",7582833.564743042],["text",2058416.729484558]],"raw_ticks":[11790176460,11790267454,11790267648,11790292349],"submission":9,"timestamp_period_ns":83.33333587646484}
+[SystemTime { tv_sec: 1790349206, tv_nsec: 937529680 }] surface configure begin
+[SystemTime { tv_sec: 1790349206, tv_nsec: 966316863 }] surface configure end
+[SystemTime { tv_sec: 1790349206, tv_nsec: 966348364 }] native queue configured host=2 configurations=2 submitted=9 completed=9
+gpu_measurement {"device_epoch":1,"frame":1,"frame_span_ns":2305250.070350647,"host":2,"own_pass_sum_ns":2305250.070350647,"passes_ns":[["dialog",2305250.070350647]],"raw_ticks":[11790930434,11790958097],"submission":10,"timestamp_period_ns":83.33333587646484}
+gpu_measurement {"device_epoch":1,"frame":9,"frame_span_ns":13368500.407974243,"host":1,"own_pass_sum_ns":13353000.40750122,"passes_ns":[["scene",9270750.282920837],["text",4082250.1245803833]],"raw_ticks":[11796356626,11796467875,11796468061,11796517048],"submission":11,"timestamp_period_ns":83.33333587646484}
+[SystemTime { tv_sec: 1790349207, tv_nsec: 464229870 }] close requested
+gpu_measurement {"device_epoch":1,"frame":10,"frame_span_ns":8896666.938171387,"host":1,"own_pass_sum_ns":8881666.937713623,"passes_ns":[["scene",7089083.549674988],["text",1792583.3880386353]],"raw_ticks":[11796795822,11796880891,11796881071,11796902582],"submission":12,"timestamp_period_ns":83.33333587646484}

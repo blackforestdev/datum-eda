@@ -1,0 +1,256 @@
+{
+  "scope": "Real fd/client identity and deliberate accounting negatives; no GPU work, native performance or full lifetime qualification",
+  "raw": [
+    {
+      "begin_ns": 1082579880132097,
+      "processes": [
+        {
+          "pid": 254529,
+          "start_ticks": 110438480
+        }
+      ],
+      "descriptors": [
+        {
+          "process": {
+            "pid": 254529,
+            "start_ticks": 110438480
+          },
+          "fd": 3,
+          "device_node": [
+            226,
+            128
+          ],
+          "device": [
+            "i915",
+            "0000:00:02.0"
+          ],
+          "client_id": "156551",
+          "engines_ns": {
+            "drm-engine-render": 0,
+            "drm-engine-copy": 0,
+            "drm-engine-video": 0,
+            "drm-engine-video-enhance": 0
+          },
+          "raw": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t608\ndrm-driver:\ti915\ndrm-client-id:\t156551\ndrm-pdev:\t0000:00:02.0\ndrm-total-system0:\t0\ndrm-shared-system0:\t0\ndrm-active-system0:\t0\ndrm-resident-system0:\t0\ndrm-purgeable-system0:\t0\ndrm-total-stolen-system0:\t0\ndrm-shared-stolen-system0:\t0\ndrm-active-stolen-system0:\t0\ndrm-resident-stolen-system0:\t0\ndrm-purgeable-stolen-system0:\t0\ndrm-engine-render:\t0 ns\ndrm-engine-copy:\t0 ns\ndrm-engine-video:\t0 ns\ndrm-engine-video-enhance:\t0 ns\n"
+        }
+      ],
+      "errors": [],
+      "end_ns": 1082579880488478
+    },
+    {
+      "begin_ns": 1082579880494806,
+      "processes": [
+        {
+          "pid": 254529,
+          "start_ticks": 110438480
+        }
+      ],
+      "descriptors": [
+        {
+          "process": {
+            "pid": 254529,
+            "start_ticks": 110438480
+          },
+          "fd": 3,
+          "device_node": [
+            226,
+            128
+          ],
+          "device": [
+            "i915",
+            "0000:00:02.0"
+          ],
+          "client_id": "156551",
+          "engines_ns": {
+            "drm-engine-render": 0,
+            "drm-engine-copy": 0,
+            "drm-engine-video": 0,
+            "drm-engine-video-enhance": 0
+          },
+          "raw": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t608\ndrm-driver:\ti915\ndrm-client-id:\t156551\ndrm-pdev:\t0000:00:02.0\ndrm-total-system0:\t0\ndrm-shared-system0:\t0\ndrm-active-system0:\t0\ndrm-resident-system0:\t0\ndrm-purgeable-system0:\t0\ndrm-total-stolen-system0:\t0\ndrm-shared-stolen-system0:\t0\ndrm-active-stolen-system0:\t0\ndrm-resident-stolen-system0:\t0\ndrm-purgeable-stolen-system0:\t0\ndrm-engine-render:\t0 ns\ndrm-engine-copy:\t0 ns\ndrm-engine-video:\t0 ns\ndrm-engine-video-enhance:\t0 ns\n"
+        },
+        {
+          "process": {
+            "pid": 254529,
+            "start_ticks": 110438480
+          },
+          "fd": 4,
+          "device_node": [
+            226,
+            128
+          ],
+          "device": [
+            "i915",
+            "0000:00:02.0"
+          ],
+          "client_id": "156551",
+          "engines_ns": {
+            "drm-engine-render": 0,
+            "drm-engine-copy": 0,
+            "drm-engine-video": 0,
+            "drm-engine-video-enhance": 0
+          },
+          "raw": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t608\ndrm-driver:\ti915\ndrm-client-id:\t156551\ndrm-pdev:\t0000:00:02.0\ndrm-total-system0:\t0\ndrm-shared-system0:\t0\ndrm-active-system0:\t0\ndrm-resident-system0:\t0\ndrm-purgeable-system0:\t0\ndrm-total-stolen-system0:\t0\ndrm-shared-stolen-system0:\t0\ndrm-active-stolen-system0:\t0\ndrm-resident-stolen-system0:\t0\ndrm-purgeable-stolen-system0:\t0\ndrm-engine-render:\t0 ns\ndrm-engine-copy:\t0 ns\ndrm-engine-video:\t0 ns\ndrm-engine-video-enhance:\t0 ns\n"
+        }
+      ],
+      "errors": [],
+      "end_ns": 1082579880966455
+    },
+    {
+      "begin_ns": 1082579880990515,
+      "processes": [
+        {
+          "pid": 254529,
+          "start_ticks": 110438480
+        }
+      ],
+      "descriptors": [
+        {
+          "process": {
+            "pid": 254529,
+            "start_ticks": 110438480
+          },
+          "fd": 3,
+          "device_node": [
+            226,
+            128
+          ],
+          "device": [
+            "i915",
+            "0000:00:02.0"
+          ],
+          "client_id": "156551",
+          "engines_ns": {
+            "drm-engine-render": 0,
+            "drm-engine-copy": 0,
+            "drm-engine-video": 0,
+            "drm-engine-video-enhance": 0
+          },
+          "raw": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t608\ndrm-driver:\ti915\ndrm-client-id:\t156551\ndrm-pdev:\t0000:00:02.0\ndrm-total-system0:\t0\ndrm-shared-system0:\t0\ndrm-active-system0:\t0\ndrm-resident-system0:\t0\ndrm-purgeable-system0:\t0\ndrm-total-stolen-system0:\t0\ndrm-shared-stolen-system0:\t0\ndrm-active-stolen-system0:\t0\ndrm-resident-stolen-system0:\t0\ndrm-purgeable-stolen-system0:\t0\ndrm-engine-render:\t0 ns\ndrm-engine-copy:\t0 ns\ndrm-engine-video:\t0 ns\ndrm-engine-video-enhance:\t0 ns\n"
+        }
+      ],
+      "errors": [],
+      "end_ns": 1082579881407333
+    },
+    {
+      "begin_ns": 1082579881479980,
+      "processes": [
+        {
+          "pid": 254529,
+          "start_ticks": 110438480
+        }
+      ],
+      "descriptors": [],
+      "errors": [],
+      "end_ns": 1082579881686294
+    }
+  ],
+  "lost_final": {
+    "observed_continuity_complete": false,
+    "failures": [
+      {
+        "client": [
+          "i915",
+          "0000:00:02.0",
+          "156551"
+        ],
+        "epoch": 1,
+        "error": "client disappeared without final lifecycle receipt"
+      }
+    ],
+    "engine_delta_ns": null,
+    "client_epochs": [
+      {
+        "device": [
+          "i915",
+          "0000:00:02.0"
+        ],
+        "client_id": "156551",
+        "epoch": 1
+      }
+    ],
+    "coverage": "Observed clients only. Unobserved short lifetimes require production lifecycle hooks; not complete ACC-03."
+  },
+  "synthetic_nonzero_dedup": {
+    "observed_continuity_complete": true,
+    "failures": [],
+    "engine_delta_ns": {
+      "drm-engine-render": 300,
+      "drm-engine-copy": 0,
+      "drm-engine-video": 0,
+      "drm-engine-video-enhance": 0
+    },
+    "client_epochs": [
+      {
+        "device": [
+          "i915",
+          "0000:00:02.0"
+        ],
+        "client_id": "156551",
+        "epoch": 1
+      }
+    ],
+    "coverage": "Observed clients only. Unobserved short lifetimes require production lifecycle hooks; not complete ACC-03."
+  },
+  "synthetic_reset": {
+    "observed_continuity_complete": false,
+    "failures": [
+      {
+        "client": [
+          "i915",
+          "0000:00:02.0",
+          "156551"
+        ],
+        "error": "engine set changed or cumulative counter reset"
+      }
+    ],
+    "engine_delta_ns": null,
+    "client_epochs": [
+      {
+        "device": [
+          "i915",
+          "0000:00:02.0"
+        ],
+        "client_id": "156551",
+        "epoch": 1
+      }
+    ],
+    "coverage": "Observed clients only. Unobserved short lifetimes require production lifecycle hooks; not complete ACC-03."
+  },
+  "reappeared_epoch": {
+    "observed_continuity_complete": false,
+    "failures": [
+      {
+        "client": [
+          "i915",
+          "0000:00:02.0",
+          "156551"
+        ],
+        "epoch": 1,
+        "error": "client disappeared without final lifecycle receipt"
+      },
+      {
+        "client": [
+          "i915",
+          "0000:00:02.0",
+          "156551"
+        ],
+        "epoch": 2,
+        "error": "client identity reappeared; epoch cannot be bridged"
+      }
+    ],
+    "engine_delta_ns": null,
+    "client_epochs": [
+      {
+        "device": [
+          "i915",
+          "0000:00:02.0"
+        ],
+        "client_id": "156551",
+        "epoch": 2
+      }
+    ],
+    "coverage": "Observed clients only. Unobserved short lifetimes require production lifecycle hooks; not complete ACC-03."
+  },
+  "result": "pass"
+}
