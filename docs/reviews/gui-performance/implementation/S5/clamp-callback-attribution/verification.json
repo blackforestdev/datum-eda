@@ -1,0 +1,18 @@
+{
+  "qualification_pass": false,
+  "build": "Guarded offline release passed for diagnostic candidate4dd3ea79; initial /tmp reserve refusal and exact archive-verified118087773-byte cleanup retained.",
+  "native": "Normal device-live drained exit0; six endpoint comparisons AE0; display restored.1800wheel/3600modifier callbacks per bound; no overlapping or crossing scope intervals.",
+  "measurement": "Callbacks137.163710/135.953658ms of507.326/513.124ms familyCPU. No normal-mode cap, formal overhead or specific external hotspot inference. Clock/record overhead and other threads remain in total.",
+  "restoration": "Original main.rs/app_native_events.rs hashes verified after restoration; temporary module removed; productiond077binary restored; diagnostic source and binary identity separately retained. No product changes adopted.",
+  "archives": "3 archives43members SHA256/length verified;6 first-party tools.",
+  "route": "45 reviewed hashes verified before AC02/AC06 addition;225 original rules/statuses/recipes/history preserved.",
+  "checks": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "parity": "PASS20inventories",
+    "dependency": "PASS",
+    "cargo_resource": "PASS",
+    "project_status": "PASS59frontieritems"
+  },
+  "limits": "Broad unit/GPU proof suites not run for unadopted diagnostic; no claim they validate it. All S5 acceptance gaps retained."
+}
