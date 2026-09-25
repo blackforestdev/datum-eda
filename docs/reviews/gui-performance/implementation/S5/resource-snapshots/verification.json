@@ -1,0 +1,12 @@
+{
+  "source_health": "PASS2419files",
+  "evidence_traceability": "PASS28routes124artifacts",
+  "spec_governance": "PASS315specs",
+  "spec_parity": "PASS20inventories",
+  "dependency_authority": "PASS",
+  "cargo_resource_policy": "PASS",
+  "project_status": "PASS59frontieritems",
+  "archive_integrity": "266rawfiles verified against member SHA256 and length; failed off trial included",
+  "candidate": "Exact14source hashes and binary pinned before run and verified before archive; no runtime change after proof",
+  "scope": "Resource delivery evidence only; one completed on trial, off final-close failure, two expected native failures. Four remaining positive trials not run; no replay padding or S5 acceptance."
+}

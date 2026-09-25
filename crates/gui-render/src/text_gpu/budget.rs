@@ -4,8 +4,11 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 
+static NEXT_BUDGET: AtomicU64 = AtomicU64::new(1);
+
 #[derive(Debug)]
 pub(crate) struct Budget {
+    id: u64,
     limit: u64,
     used: AtomicU64,
     peak: AtomicU64,
@@ -13,6 +16,9 @@ pub(crate) struct Budget {
 impl Budget {
     pub fn new(limit: u64) -> Arc<Self> {
         Arc::new(Self {
+            id: NEXT_BUDGET
+                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+                .expect("budget identity exhausted"),
             limit,
             used: AtomicU64::new(0),
             peak: AtomicU64::new(0),
@@ -25,11 +31,15 @@ impl Budget {
         static BYTES: OnceLock<usize> = OnceLock::new();
         *BYTES.get_or_init(|| {
             crate::cpu_alloc::heap::arc_bytes(Self {
+                id: 0,
                 limit: 0,
                 used: AtomicU64::new(0),
                 peak: AtomicU64::new(0),
             })
         })
+    }
+    pub(crate) fn id(&self) -> u64 {
+        self.id
     }
     pub(crate) fn limit(&self) -> u64 {
         self.limit

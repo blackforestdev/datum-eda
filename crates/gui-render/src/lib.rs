@@ -37,6 +37,8 @@ mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
 mod new_project_dialog;
+#[path = "render/resource_observation.rs"]
+pub mod resource_observation;
 mod revision_workspace;
 mod side_panels;
 mod terminal_clipboard_menu;

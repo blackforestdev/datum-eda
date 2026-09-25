@@ -9,6 +9,7 @@ use std::sync::{Arc, Mutex, Weak};
 pub(crate) const DOCUMENT_LIMIT: usize = 64 * 1024 * 1024;
 const DOCUMENT_HISTORY_LIMIT: usize = 6;
 struct Document {
+    budget_id: u64,
     scene_id: String,
     identity: Weak<Budget>,
     scenes: Vec<RetainedGeometryObserver>,
@@ -50,6 +51,10 @@ impl Registry {
         scenes: Vec<RetainedGeometryObserver>,
     ) {
         self.head = Some(Box::new(Document {
+            budget_id: identity
+                .upgrade()
+                .expect("document registration has a live budget")
+                .id(),
             scene_id,
             identity,
             scenes,
@@ -113,6 +118,8 @@ pub(crate) fn gpu_usage() -> Vec<crate::gpu_data::DocumentGpuUsage> {
         if let Some(budget) = document.identity.upgrade() {
             result.push(crate::gpu_data::DocumentGpuUsage {
                 scene_id: document.scene_id.clone(),
+                budget_id: budget.id(),
+                lifetime_peak_reserved_bytes: budget.peak(),
                 reserved_bytes: budget.used(),
                 limit_bytes: DOCUMENT_LIMIT as u64,
             });
@@ -120,6 +127,27 @@ pub(crate) fn gpu_usage() -> Vec<crate::gpu_data::DocumentGpuUsage> {
         cursor = document.next.as_deref();
     }
     result.sort_unstable_by(|a, b| a.scene_id.cmp(&b.scene_id));
+    result
+}
+
+pub(crate) fn cpu_usage() -> Vec<crate::resource_observation::DocumentCpuUsage> {
+    let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
+    prune(&mut documents);
+    let mut result = Vec::new();
+    let mut cursor = documents.head.as_deref();
+    while let Some(document) = cursor {
+        result.push(crate::resource_observation::DocumentCpuUsage {
+            scene_id: document.scene_id.clone(),
+            budget_id: document.budget_id,
+            retained_bytes: document_bytes(document),
+            history_entries: document.history_entries,
+            limit_bytes: DOCUMENT_LIMIT,
+        });
+        cursor = document.next.as_deref();
+    }
+    result.sort_unstable_by(|a, b| {
+        (a.scene_id.as_str(), a.budget_id).cmp(&(b.scene_id.as_str(), b.budget_id))
+    });
     result
 }
 

@@ -256,6 +256,10 @@ impl Atlas {
         self.local_budget = super::budget::Budget::new(bytes);
     }
 
+    pub(crate) fn texture_reservation_budget(&self) -> std::sync::Arc<super::budget::Budget> {
+        self.local_budget.clone()
+    }
+
     pub fn reserved_texture_bytes(&self) -> u64 {
         self.local_budget.used()
     }
