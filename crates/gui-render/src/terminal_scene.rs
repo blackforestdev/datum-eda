@@ -93,9 +93,10 @@ pub(super) fn prepare_graphics(
     if panes.is_empty() {
         return;
     }
-    let root_geometry = datum_gui_viewport::terminal_screen_geometry_with_scale(
+    let root_geometry = datum_gui_viewport::terminal_screen_geometry_with_chrome_scale(
         layout.bottom_strip.into(),
         state.ui.terminal.font_scale_millis,
+        crate::text_presentation::chrome_scale::Scale::for_layout(layout).factor(),
     );
     let geometries = state
         .ui

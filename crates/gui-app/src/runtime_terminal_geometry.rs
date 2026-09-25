@@ -72,9 +72,10 @@ impl Runtime {
     pub(super) fn terminal_screen_geometry(&self) -> datum_gui_viewport::TerminalScreenGeometry {
         let layout =
             self.shell_layout_for_dock(Some(self.workspace().ui.effective_dock_height_px()));
-        datum_gui_viewport::terminal_screen_geometry_with_scale(
+        datum_gui_viewport::terminal_screen_geometry_with_chrome_scale(
             layout.bottom_strip.into(),
             self.workspace().ui.terminal.font_scale_millis,
+            self.scale_factor,
         )
     }
 

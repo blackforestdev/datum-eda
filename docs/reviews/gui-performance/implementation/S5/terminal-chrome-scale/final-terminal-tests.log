@@ -1,0 +1,62 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=35.2 GiB target_free=168.2 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 35.2 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.66s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 52 tests
+test bottom_dock::terminal_block_elements::tests::claude_mascot_blocks_use_cell_exact_geometry_and_leave_text_advance ... ok
+test bottom_dock::tests::rendered_dock_content_uses_shared_terminal_geometry ... ok
+test datum_console::tests::maximized_terminal_open_and_narrow_layouts_preserve_body_anchor ... ok
+test layout_invariant_tests::maximized_terminal_fills_the_workspace_between_global_chrome ... ok
+test shell_layout::tests::alternating_shell_and_terminal_queries_stay_warm_and_eviction_is_bounded ... ok
+test terminal_clipboard_menu::tests::detected_paths_are_copyable_but_never_offer_desktop_open ... ok
+test terminal_clipboard_menu::tests::generic_terminal_menu_exposes_compact_profile_and_theme_controls ... ok
+test terminal_clipboard_menu::tests::terminal_context_menu_is_clamped_and_exposes_copy_paste_actions ... ok
+test terminal_clipboard_menu::tests::undersized_terminal_menu_clips_paint_text_and_actions_to_screen ... ok
+test terminal_core_render::tests::all_search_matches_are_highlighted_and_active_match_invalidates_retained_rows ... ok
+test terminal_core_render::tests::cursor_uses_core_row_column_shape_and_palette_without_lane_projection ... ok
+test terminal_core_render::tests::ime_preedit_is_rendered_at_the_core_cursor_without_entering_cells ... ok
+test terminal_core_render::tests::immutable_core_snapshot_drives_complete_style_and_fixed_cluster_geometry ... ok
+test terminal_core_render::tests::partial_terminal_viewport_clips_cached_and_cold_cell_paint ... ok
+test terminal_core_render::tests::retained_rows_rebuild_only_for_declared_damage_or_geometry_change ... ok
+test terminal_core_render::tests::scaled_geometry_drives_glyph_cursor_and_clip_dimensions_together ... ok
+test terminal_core_render::tests::sixel_snapshot_produces_clipped_gpu_image_placement ... ok
+test terminal_core_render::tests::split_panes_retain_independent_rows_geometry_and_hit_identity ... ok
+test terminal_core_render::tests::themes_change_only_fallback_colors_and_invalidate_retained_rows ... ok
+test terminal_dock_contract_tests::dock_exposes_terminal_tab_only ... ok
+test terminal_dock_contract_tests::terminal_dock_does_not_render_output_lane_findings ... ok
+test terminal_dock_contract_tests::terminal_dock_omits_persistent_header_and_routine_diagnostics ... ok
+test terminal_dock_contract_tests::terminal_dock_renders_exact_global_shutdown_survivor_identity ... ok
+test terminal_dock_contract_tests::terminal_hit_ownership_tests::editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras ... ok
+test terminal_dock_contract_tests::terminal_hit_ownership_tests::rectangle_intersection_requires_positive_visible_area ... ok
+test terminal_dock_contract_tests::terminal_hit_ownership_tests::status_projection_reads_the_shared_application_focus_authority ... ok
+test terminal_dock_contract_tests::terminal_lane_renders_no_activity_summary_rows ... ok
+test terminal_dock_contract_tests::terminal_screen_rect_is_the_dedicated_content_hit_target ... ok
+test terminal_dock_contract_tests::terminal_top_boundary_is_the_visible_resize_cursor_target ... ok
+test terminal_font_tests::prompt_style_boundaries_do_not_restart_glyph_positioning ... ok
+test terminal_font_tests::terminal_cell_advance_combines_smaller_ink_with_explicit_spacing ... ok
+test terminal_font_tests::terminal_face_shapes_box_drawing_and_powerline_without_notdef ... ok
+test terminal_font_tests::terminal_font_advance_matches_shared_logical_cell_width ... ok
+test terminal_font_tests::terminal_rich_span_colors_invalidate_paint_but_preserve_shaping ... ok
+test terminal_graphics::texture::tests::multi_chunk_odd_width_upload_matches_decoded_pixels ... ignored, requires local GPU; borrowed terminal upload row boundaries
+test terminal_graphics::texture::upload::tests::borrowed_chunks_preserve_channels_and_cover_odd_rows_and_wide_tails ... ok
+test terminal_session_chrome::tests::close_and_shutdown_states_expose_only_the_ratified_actions ... ok
+test terminal_tab_strip_tests::active_terminal_search_replaces_the_routine_hint_with_query_chrome ... ok
+test terminal_tab_strip_tests::dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker ... ok
+test terminal_tab_strip_tests::guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text ... ok
+test terminal_tab_strip_tests::http_link_confirmation_replaces_routine_hint_with_explicit_actions ... ok
+test terminal_tab_strip_tests::inactive_tabs_use_non_color_output_and_bell_attention_markers ... ok
+test terminal_tab_strip_tests::new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last ... ok
+test terminal_tab_strip_tests::osc52_confirmation_names_the_destination_and_requires_copy_or_cancel ... ok
+test terminal_tab_strip_tests::terminal_tab_chrome_cannot_paint_or_hit_outside_its_header_row ... ok
+test tests::terminal_dock_does_not_surface_artifact_file_summaries ... ok
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_admission_includes_quads_and_holds_capacity_until_retirement ... ignored, requires local GPU and serial execution: terminal process admission
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels ... ignored, requires local GPU; terminal graphics resource and pixel proof
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content ... ignored, requires local GPU; terminal pixel continuation and replacement
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_quad_slots_preserve_submission_limits_after_close_and_recovery ... ignored, requires local GPU; terminal quad close and recovery generations
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_texture_generations_survive_close_reopen_and_recovery ... ignored, requires local GPU; immutable terminal texture recovery admission
+test visual::visual_capture::tests::offscreen_terminal_sixel_uses_the_production_texture_pipeline ... ignored, requires a working local wgpu adapter; explicit DTC-P23 visual proof
+
+test result: ok. 45 passed; 0 failed; 7 ignored; 0 measured; 382 filtered out; finished in 2.22s
+

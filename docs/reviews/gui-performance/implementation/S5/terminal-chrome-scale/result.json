@@ -1,0 +1,30 @@
+{
+  "status": "Terminal dock chrome and shared content geometry migrated; S5 qualification incomplete",
+  "production_consumers": [
+    "Terminal tabs, close/new actions, drag ghost, lifecycle/search/link/clipboard confirmation strip",
+    "Native PTY resize and terminal cell hit testing",
+    "Terminal raster/graphics placement and clipboard-menu screen bounds"
+  ],
+  "retired_paths": [
+    "Scaled terminal tab glyphs with unscaled paint and hit rectangles",
+    "Default native rendering and PTY sizing using unscaled44px dock header at all display scales"
+  ],
+  "behavior": [
+    "Use shared Scale for tab-strip logical geometry, text origins/clips and hits. Convert physical drag pointer and grab offset back to logical space before positioning the ghost.",
+    "One shared viewport function scales dock chrome independently of terminal font zoom. Renderer, PTY/cell input, image placement and clipboard bounds use it. Cell width/height/font metrics remain governed by terminal zoom.",
+    "Existing1x convenience geometry APIs delegate to the same implementation; default native hosts use explicit display scale."
+  ],
+  "verification": {
+    "renderer_viewport": "351 renderer tests passed,83 ignored;49 viewport tests passed. Includes composed terminal tab/new-action scale bounds and shared dock content test across display/font scales.",
+    "app": "396 passed,0 failed,17 ignored after all geometry consumers migrated",
+    "clippy": "Strict renderer/app/viewport all-target visual -D warnings passed",
+    "app_build": "Fresh offline locked datum-gui build passed9.98s",
+    "visual": "Inspected final2x actual: terminal title, new action and shortcut hint no longer collide. Old golden comparison fails123465pixels/12.559509%; no golden changed.",
+    "final_terminal_tests": "test result: ok. 45 passed; 0 failed; 7 ignored; 0 measured; 382 filtered out; finished in 2.22s"
+  },
+  "limits": [
+    "Narrow Inspector subtitle, pane placeholder presentation and clipboard-menu internal scale still need review; full HiDPI acceptance is not established.",
+    "Desktop input/backend/resource/endurance and distinct-reviewer qualification remain S5. No dependency, licensing, prototype, numerical-cap or sequencing changes; preserve GEFN and nonblocking resize."
+  ],
+  "issue": "dat-workspace-hidpi-chrome-6fm4"
+}

@@ -21,7 +21,7 @@ fn terminal_tab_chrome_cannot_paint_or_hit_outside_its_header_row() {
             let mut text = Vec::new();
             let mut hits = Vec::new();
             crate::terminal_tab_strip::render_terminal_tab_strip(
-                &state, strip, &mut quads, &mut text, &mut hits,
+                &state, strip, 1.0, &mut quads, &mut text, &mut hits,
             );
             if width >= 480.0 {
                 assert!(!quads.is_empty() && !text.is_empty() && !hits.is_empty());
@@ -212,7 +212,7 @@ fn dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker() {
     let mut hits = Vec::new();
 
     crate::terminal_tab_strip::render_terminal_tab_strip(
-        &state, strip, &mut quads, &mut text, &mut hits,
+        &state, strip, 1.0, &mut quads, &mut text, &mut hits,
     );
 
     let shell_one = text
@@ -357,7 +357,7 @@ fn active_terminal_search_replaces_the_routine_hint_with_query_chrome() {
     let mut hits = Vec::new();
 
     crate::terminal_tab_strip::render_terminal_tab_strip(
-        &state, strip, &mut quads, &mut text, &mut hits,
+        &state, strip, 1.0, &mut quads, &mut text, &mut hits,
     );
 
     assert!(text.iter().any(|run| run.text.contains("Find: needle")));
@@ -385,6 +385,7 @@ fn http_link_confirmation_replaces_routine_hint_with_explicit_actions() {
     crate::terminal_tab_strip::render_terminal_tab_strip(
         &state,
         layout.bottom_strip,
+        1.0,
         &mut quads,
         &mut text,
         &mut hits,
@@ -427,6 +428,7 @@ fn osc52_confirmation_names_the_destination_and_requires_copy_or_cancel() {
     crate::terminal_tab_strip::render_terminal_tab_strip(
         &state,
         layout.bottom_strip,
+        1.0,
         &mut quads,
         &mut text,
         &mut hits,
