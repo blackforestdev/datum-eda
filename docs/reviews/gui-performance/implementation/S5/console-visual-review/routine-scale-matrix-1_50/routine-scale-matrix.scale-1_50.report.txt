@@ -1,0 +1,6 @@
+policy: exact
+passed: false
+size: 1280x768
+differing_pixels: 6802
+differing_pct: 0.691935
+max_channel_delta: 162

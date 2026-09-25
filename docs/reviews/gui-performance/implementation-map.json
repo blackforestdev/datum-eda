@@ -37103,5 +37103,21 @@
       "GEFN improvements and nonblocking resize/temporal/T2/resolved-schematic exclusions preserved. No dependency/vendor/license/prototype/numerical-cap change."
     ],
     "decision": "Complete GPI-S4 implementation and select GPI-S5 qualification. Overall issue and goal remain in progress."
+  },
+  "s5_console_visual_review": {
+    "status": "S5 visual qualification failed; no baseline update or acceptance",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/console-visual-review/result.json",
+    "cases": 10,
+    "production_finding": "Production diagnosis: ShellLayout scales physical rectangles; menu_chrome measures14px brand/title and fixed pixel padding before frame_preparation scales TextRun sizes. Native and offscreen use this shared preparation. Geometry, text metrics and hit bounds need coherent scale ownership; simply dropping text scale would hide the defect and violate intended HiDPI sizing.",
+    "issues": [
+      "dat-console-revision-golden-hrak",
+      "dat-workspace-hidpi-chrome-6fm4"
+    ],
+    "next_implementation": "Correct shared workspace chrome scale ownership, preserving1x and terminal device-pixel metrics. Then review actual scaled output and reconcile only justified goldens under existing visual authority.",
+    "limits": [
+      "Tenfailed fixture/scale checks are not native input/static acceptance. No golden/prototype/Cargo/dependency changed.",
+      "diff-regions.json uses legacy1x regions for comparison; its nonzero outside counts at higher scales are findings, not ignored masks.",
+      "No blanket rebless or altered tolerance. Complete S5 remains open; preserve resize/temporal exclusions."
+    ]
   }
 }
