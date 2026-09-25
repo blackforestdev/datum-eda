@@ -1,0 +1,197 @@
+{
+  "status": "S4 implementation exit satisfied; full S5 qualification remains unqualified",
+  "production_commit": "48d99c50",
+  "reviewed_head": "10129f9c371fba1f7404622863862ab0d2995af5",
+  "authority": "Existing amended PM045 S4 table/GPI-S4 and ratified PM047; no new amendment",
+  "components": [
+    {
+      "requirement": "PTY byte/state preservation, hidden-render suppression and fair service",
+      "owners": [
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-app/src/terminal_core_adapter.rs",
+        "crates/gui-app/src/terminal_session_render.rs"
+      ],
+      "map_evidence": [
+        "s1_terminal_round_work",
+        "s1_active_host_fairness_work",
+        "s4_terminal_projection_borrow_work"
+      ],
+      "current_proof": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+      "finding": "Closed dock bypasses render snapshots while PTY/model processing continues; failed visible preparation restores consumed damage. Consolidated actual-native test retains hidden output/damage then reopens and presents. Existing fair scheduler/round tests pass in the app suite."
+    },
+    {
+      "requirement": "Serial shared-device multiwindow lifecycle; separate concurrent multi-device failure",
+      "owners": [
+        "crates/gui-app/src/native_dialog_hit_tests.rs",
+        "crates/gui-app/src/global_preferences_window.rs"
+      ],
+      "map_evidence": [
+        "s4_private_construction_guard_work.completion_migration"
+      ],
+      "current_proof": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+      "finding": "Actual X11/Vulkan Main plus Global, Project and New hosts present serially using one device; each owned host closes and Main resumes. This is bounded native implementation evidence, not desktop input, displayed pixels, backend/scale qualification or a fix for dat-gpu-test-concurrency-6dt."
+    },
+    {
+      "requirement": "All-host recovery and retained generation bounds",
+      "owners": [
+        "crates/gui-app/src/native_device_recovery.rs",
+        "crates/gui-render/src/text_gpu/slot_generations.rs",
+        "crates/gui-render/src/render/terminal_texture_generations.rs"
+      ],
+      "map_evidence": [
+        "s1_atomic_device_staging_work",
+        "s4_replacement_completion"
+      ],
+      "finding": "Device replacement stages all hosts before publication, failure preserves prior state, and shared generation budgets survive resource replacement/close/recovery. Existing actual-native staged-failure receipts and GPU replacement evidence remain applicable to unchanged ownership; final app regression suite preserves recovery/queue tests. Complete fault/resource/time qualification remains S5."
+    },
+    {
+      "requirement": "AC-05 / HP08-03 capacities, shared/live/retiring ownership and exact upload accounting",
+      "owners": [
+        "crates/gui-render/src/text_gpu/lifetime.rs",
+        "crates/gui-render/src/text_gpu/lifetime_state.rs",
+        "crates/gui-render/src/render/resource_consumers.rs",
+        "crates/gui-render/src/text_gpu/allocation_host.rs"
+      ],
+      "map_evidence": [
+        "s4_allocation_state_work",
+        "s4_allocation_state_work.renderer_origin_followup",
+        "s4_upload_frame_work.consumer_completion",
+        "s4_upload_frame_work.frame_correlation_followup",
+        "s4_construction_admission_work.lifetime_completion",
+        "s4_text_owner_reconciliation.owner_admission_completion"
+      ],
+      "finding": "Stable allocation/generation and renderer identities distinguish requested extent/capacity, prepared/submitted references, consumer incidence, retirement and final release. Common submitted destination counters join host/attempt receipts; shared bytes count once. Existing document, control, shaped-text and scalar-cache owners cover retained CPU capacities. PM047 constructor/measurement completion supplies the final private allocation boundary. Observed snapshots and API bytes are not physical driver residency or a process-wide atomic snapshot."
+    },
+    {
+      "requirement": "MEM-STAGING-LOCAL / MEM-STAGING-TOTAL including private construction",
+      "owners": [
+        "crates/gui-render/src/private_text_call.rs",
+        "crates/gui-render/src/cpu_alloc.rs",
+        "crates/gui-render/src/font_owner.rs",
+        "crates/gui-render/src/render/font_catalog.rs",
+        "crates/gui-render/src/render/measurement_owner.rs",
+        "crates/gui-render/src/render/glyph_preparation.rs"
+      ],
+      "map_evidence": [
+        "s4_private_construction_guard_work",
+        "s4_private_construction_guard_work.completion_migration",
+        "s4_producer_plan_work",
+        "s4_range_storage_work",
+        "s4_staging_plan_work"
+      ],
+      "current_proof": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+      "finding": "Default mutation, raster, cold catalog/font creation, cache reconstruction and measurement use synchronous allocation-event windows with simultaneous host/process admission and per-call peaks. Existing reservations remain a floor. Retained catalog/database/output inputs are separated from new scratch. The guard refuses before scene/hit publication or GPU submission, releases derived cache work and preserves source/damage for retry. Datum-controlled staging remains pre-admitted under unchanged16/64MiB ceilings. Fixed call slots and reported Scope/registry storage complete guard bookkeeping; no dependency-layout introspection."
+    },
+    {
+      "requirement": "Exact changed-range transfers and shaping/layout dependency implementation",
+      "owners": [
+        "crates/gui-render/src/render/text_buffer_cache.rs",
+        "crates/gui-render/src/render/measurement_cache.rs",
+        "crates/gui-render/src/render/text_metrics.rs"
+      ],
+      "map_evidence": [
+        "s4_upload_frame_work.consumer_completion",
+        "s4_text_dependency_completion",
+        "s4_inspector_width_completion",
+        "s4_width_completion_work"
+      ],
+      "finding": "Previously closed implementation predicates remain supported by existing readback, warm-zero transfer, identity and dependency evidence. Final measurement migration preserves actual library layout; guarded retry returns identical scenes and cached failures cannot become layout values."
+    }
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/runtime_terminal_render.rs": "5103b6958c9a381fd0dacac2c14c7f527326416eb77dce1137cec363ed78be38",
+    "crates/gui-app/src/terminal_core_adapter.rs": "ab775455c2504af8e98af045186586ebd57648bf23e86315f8edbc0e9d94281c",
+    "crates/gui-app/src/terminal_session_render.rs": "14cf2250822f3ea7c911b062483fda0e093e2db42433942e9977ae1212e10ddb",
+    "crates/gui-app/src/native_dialog_hit_tests.rs": "0d99b23b4dbaaab26f38c9c8db111f72ef0c2da116a099d7f3381336f4644084",
+    "crates/gui-app/src/global_preferences_window.rs": "b2d5aedcc458041e1fb26511b71933d308613f1e3b79dd0fc7cad5a67b50c950",
+    "crates/gui-app/src/native_device_recovery.rs": "b1cf04930825560600e121d82d40885c210879e8ad9eb7a6e28be1c5f2613fb3",
+    "crates/gui-render/src/text_gpu/slot_generations.rs": "a1b292cbca1c8f82d9218c705303b14d82383a3162012e280ec7753a0205a9b6",
+    "crates/gui-render/src/render/terminal_texture_generations.rs": "a009f7a401f756df1dbbaffd1b48c2d25814c70eb3dd540f257f70c0688eeea7",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "edc7f7d1318ce74707bc29fc7ce516b06ea7dadb13b6ca4aed8ec7eb1230e662",
+    "crates/gui-render/src/text_gpu/lifetime_state.rs": "5b4a05b5fdc291b11c97a78eab4e7c1ed635123eb4500bd033316690d49fe481",
+    "crates/gui-render/src/render/resource_consumers.rs": "0128bb6b96c3478729448efd747bcaf624481d278fcb56f2c989e71fe3fbbad7",
+    "crates/gui-render/src/text_gpu/allocation_host.rs": "4ff9074b9e10b6fa191a41044da9cdbbfa87b1f95bd0c41e3d00e03b6fe0e910",
+    "crates/gui-render/src/private_text_call.rs": "b228dfc6cfa029702e73b2e58175ac70cf6b2f47e217fbf88f62a0f211d9cefd",
+    "crates/gui-render/src/cpu_alloc.rs": "f29abb79450266f85df732eb9f9f5cfb04705bfeb90759d23791d13165d9f8cc",
+    "crates/gui-render/src/font_owner.rs": "c3719e300f67488634bb172289d10e54c4c3f9fbbb074e10ff6f3bc11e1affc3",
+    "crates/gui-render/src/render/font_catalog.rs": "0cb0213ff53ff937bbe6683a40a4d27338d49394f835dc61cfae8b9cd5bce9d8",
+    "crates/gui-render/src/render/measurement_owner.rs": "f0eed36b13293951cecf509e04a1cfbd6546814198528b7a35cf75816e9e0e20",
+    "crates/gui-render/src/render/glyph_preparation.rs": "46e0aa6e7fb73ee7e7a6c7d56b461a5c6cfa2d96d5a9c0160ca70d972a6b6cae",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "458d4adebd71c06f48d3dfd8b1b437683a7cdaecb40a2c7d429a52c7af25759e",
+    "crates/gui-render/src/render/measurement_cache.rs": "7cbe71947dbe951e2a181e649d65a4f50774f2659201fe1dda1cb94a9bacb65d",
+    "crates/gui-render/src/render/text_metrics.rs": "72fc75280a17e62de4888cb0233daae009aa20c556fdefd603bf902658a73d76"
+  },
+  "carried_implementation": {
+    "reviewed_rows": 50,
+    "previously_implemented": 23,
+    "completed_by_this_review": [
+      "AC-05",
+      "HP08-03",
+      "MEM-STAGING-LOCAL",
+      "MEM-STAGING-TOTAL"
+    ],
+    "no_new_implementation_defect_asserted": 23,
+    "remaining_recorded_implementation_gaps": 0
+  },
+  "qualification_preserved": {
+    "AC-05": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
+    "HP01-01": "Zero extra solves after warmup; cached and uncached hit geometry identical",
+    "HP02-01": "Each changed key resolves correct geometry",
+    "HP02-02": "Zero extra warm solves in supported set; bounded churn outside it",
+    "HP03-01": "One parse per process owner lifetime; zero closed menu preparation",
+    "HP03-02": "Availability current, other instance independent",
+    "HP04-01": "Exact identity/aliases preserved with zero candidate-string allocation/copy",
+    "HP06-01": "Zero eligible world re-encoding; current uniform/scissor",
+    "HP06-02": "Affected encoding rebuilds and exact pixels remain correct",
+    "HP07-01": "Painter/layer/primitive/triangle order exact; native pixel parity and draw counts",
+    "HP08-01": "Zero world upload bytes",
+    "HP08-02": "Correct new triangle and stroke bytes uploaded; no false identity",
+    "HP08-03": "CPU/GPU lifetime and final resource content correct within budgets",
+    "HP15-01": "Warm zero shaping; miss correct changed key; uncached width parity",
+    "HP15-02": "Bounded key and payload memory; oversized bypass and ownership release",
+    "HP17-01": "No missing/stale text; atlas generation correctly invalidates signature",
+    "HP17-02": "Existing bounded two-generation policy or independently proven equivalent",
+    "MEM-WORLD-CPU": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-WORLD-HISTORY": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-SHAPED-LOCAL": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-SHAPED-TOTAL": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-LABEL-ENTRIES": "128 shaped buffers per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-LABEL-KEYS": "32KiB label key text per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-WIDTH-ENTRIES": "256 width entries/thread with all owner threads enumerated; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-WIDTH-KEYS": "64KiB width key text/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-WIDTH-PAYLOAD": "128KiB total owned width payload/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-MESH-ENTRIES": "256 mesh entries/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-MESH-CPU": "4MiB control mesh CPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-MESH-GPU": "4MiB control mesh GPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-WORLD-GPU": "64MiB GPU world/encoded-resource capacities per document; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-SCREEN-GPU": "16MiB host-local screen buffers; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-REPLACEMENT": "one old plus one new live cold replacement generation; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-ATLAS-LOCAL": "32MiB atlas/renderer actual format/mips/extent; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-ATLAS-TOTAL": "128MiB aggregate atlas; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-STAGING-LOCAL": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-STAGING-TOTAL": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+    "MEM-GPU-TOTAL": "512MiB all application GPU allocations including attachments and shared resources counted once; aggregate and every subcap apply together; required content cannot be omitted.",
+    "REUSE-SCREEN": "Only exact dirty ranges plus documented alignment uploaded",
+    "REUSE-WORLD-ALLOC": "Zero new world-buffer allocations",
+    "REUSE-TEXT-KEY": "Shaping changes exactly when semantic shaping key changes",
+    "REUSE-TEXT-LAYOUT": "Layout correct; unchanged shaping reused; GPU placement/atlas/target current",
+    "REUSE-CONTROL-KEY": "Correct changed mesh, translated/scissored unchanged mesh reused",
+    "PASS-GEOMETRY": "Geometry contributions and clear/load/store dependencies correctly represented once",
+    "PASS-BACKGROUND": "Background pass active only with contributing graphics, before main text",
+    "PASS-TEXT": "Contributing text rendered after geometry/background; no unjustified empty stage",
+    "PASS-FOREGROUND": "Foreground active only for admitted graphics above text",
+    "PASS-MENU-CARD": "Card occludes underlying geometry AND text in proper overlay order",
+    "PASS-MENU-TEXT": "Menu text above card only when card and contributing text active",
+    "PASS-COUNTS": "Initial graph2+B+F+M+MT maximum6; remove noncontributing stages absent documented dependency; every retained extra stage names resource/ordering reason",
+    "PASS-RESOLVE": "Exact load/store/resolve compatibility, existing sample quality and atlas lifetime; no painter/fractional-pixel change"
+  },
+  "failures_and_limits": [
+    "Console routine-focused 1x golden remains failed:3778pixels/0.384318%, identical to existing S4 public-shaping-measurement/owned-text-layout receipts, dat-console-revision-golden-hrak. No golden blessed or changed. Full drift is not green; subsequent gates were not run.",
+    "Historical failed native attempts and partial qualification remain in their original records. No inference of complete backend/scale/native OS-input/static/resource/performance/endurance acceptance.",
+    "Serial shared-device native proof does not resolve concurrent multi-device dat-gpu-test-concurrency-6dt.",
+    "PM047 permits monitored transient overshoot, not process OOM recovery or numerical cap compliance. An overrun fails S5 qualification.",
+    "All50S2 and20S3 carried qualification rows, all S1 obligations, prescribed negatives,60minute/200cycle/20recovery and distinct-reviewer replay remain S5.",
+    "GEFN improvements and nonblocking resize/temporal/T2/resolved-schematic exclusions preserved. No dependency/vendor/license/prototype/numerical-cap change."
+  ],
+  "decision": "Complete GPI-S4 implementation and select GPI-S5 qualification. Overall issue and goal remain in progress."
+}
