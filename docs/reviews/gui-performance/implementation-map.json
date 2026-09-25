@@ -3678,6 +3678,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-callback-attribution/result.json",
         "status": "Direct callback diagnostic retained; no runtime optimization adopted"
+      },
+      "s5_controls_method_pilot": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-method-pilot/result.json",
+        "status": "Preferences control method pilot retained; automatic close focus return failed; full qualification remains open"
       }
     },
     {
@@ -4418,6 +4423,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-callback-attribution/result.json",
         "status": "Direct callback diagnostic retained; no runtime optimization adopted"
+      },
+      "s5_controls_method_pilot": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-method-pilot/result.json",
+        "status": "Preferences control method pilot retained; automatic close focus return failed; full qualification remains open"
       }
     },
     {
@@ -8441,7 +8451,12 @@
         "proof": "Same test binary passes both native backends:12 Wayland host/profile closes with10 scrollbar focus-cancel/fresh-control cases, and12 X11 closes with9 scrollbar cases. Global/Project/New all enter production native event routing on real native surfaces. Source-policy13 tests and workspace Clippy pass. No production source/release change.",
         "limits": "WindowEvents are supplied directly using a real ActiveEventLoop, not OS-generated input. Wayland2x requested1400x1080 (Preferences) and1240x1240 (New) were constrained to heights1050; assert renderer configuration equals accepted extent and retain unavailable requested-size rows as unqualified. Visual scale override does not prove monitor transitions. Initial exact-size assertion failure retained. No new negative replay, screenshots, timing/resource/OS delivery or complete HP21/S3 acceptance. Existing X11 missing-cancellation negative remains earlier evidence. Production releasebcbe537b unchanged; no dependency/license/prototype/resource-deadline/resize change."
       },
-      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row.",
+      "s5_controls_method_pilot": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-method-pilot/result.json",
+        "status": "Preferences control method pilot retained; automatic close focus return failed; full qualification remains open"
+      }
     },
     {
       "id": "HP21-02",

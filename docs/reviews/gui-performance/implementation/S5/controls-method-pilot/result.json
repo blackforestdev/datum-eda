@@ -1,0 +1,78 @@
+{
+  "status": "Preferences control method pilot retained; automatic close focus return failed; full qualification remains open",
+  "qualification_pass": false,
+  "candidate_commit": "6879f217",
+  "production_binary_sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+  "archives": [
+    {
+      "file": "campaign-v1.tar.gz",
+      "original_path": "/tmp/pm045-controls-campaign-dggmrpnm",
+      "members": 6
+    },
+    {
+      "file": "native-v1-1.tar.gz",
+      "original_path": "/tmp/pm045-controls-native-vqk3iu58",
+      "members": 15
+    },
+    {
+      "file": "campaign-v2.tar.gz",
+      "original_path": "/tmp/pm045-controls-campaign-r_pji_1k",
+      "members": 6
+    },
+    {
+      "file": "native-v2-1.tar.gz",
+      "original_path": "/tmp/pm045-controls-native-tqwuvn59",
+      "members": 10
+    },
+    {
+      "file": "campaign-v3.tar.gz",
+      "original_path": "/tmp/pm045-controls-campaign-skt9h5e4",
+      "members": 6
+    },
+    {
+      "file": "native-v3-1.tar.gz",
+      "original_path": "/tmp/pm045-controls-native-stv9hwhc",
+      "members": 32
+    },
+    {
+      "file": "campaign-v4.tar.gz",
+      "original_path": "/tmp/pm045-controls-campaign-a7fhaisg",
+      "members": 6
+    },
+    {
+      "file": "native-v4-1.tar.gz",
+      "original_path": "/tmp/pm045-controls-native-b6c4f94j",
+      "members": 45
+    },
+    {
+      "file": "campaign-v5.tar.gz",
+      "original_path": "/tmp/pm045-controls-campaign-efqab64f",
+      "members": 7
+    },
+    {
+      "file": "native-v5-1.tar.gz",
+      "original_path": "/tmp/pm045-controls-native-e2ggawqj",
+      "members": 43
+    },
+    {
+      "file": "native-v5-2.tar.gz",
+      "original_path": "/tmp/pm045-controls-native-m2q2pihj",
+      "members": 43
+    }
+  ],
+  "environment": "X11 on Xwayland, Intel P630 Vulkan, physical1920x1080 at60Hz and1x temporarily; all five campaigns restored prior1.05 scale. Preferences960x720; Main1280x800, pinned native F-DOA, single leaf, hidden terminal. Verbose native logs enabled; GPU timestamps/private/kernel/resource tracing disabled.",
+  "method": "Five evolving harness pilots, six total native launches; not qualification resampling. Final fixed order PROJECT then GLOBAL, one cycle each using existing seeded Preferences CLI launch. Persistent XTest input and server synchronization; native key/button receipts, compositor captures for each endpoint. Cancelled release is consumed before verbose logging, so only its server receipt is asserted. No product source edits.",
+  "observations": "Both final hosts complete17 recorded actions, normal device-live drained exit0. Inspected last-row Angle precision focus/reveal, expanded explanation, precision search with four results and clear. Independent prior-image thumb bounds confirm25/75percent grabs. Press/release exact AE0, drag and track page change pixels; post-focus-loss pointer motion AE0. This does not prove exact numerical scroll offset, every intermediate bound, absence of all clipped-control activations or continuous presentation.",
+  "failures": [
+    "V1 thumb detector confused notification border with scrollbar; forced cleanup.",
+    "V2 expected Return instead of native Enter receipt; forced cleanup.",
+    "V3 completed Global controls but Main menu handoff did not open Project; forced cleanup. Native key receipts do not establish menu handling.",
+    "V4 seeded Global completed controls but automatic focus return timed out; forced cleanup.",
+    "V5 both seeded hosts closed, but focus returned to owned helper33554433 rather than Main12582916. Explicit Main activation was cleanup only. dat-preferences-focus-return-46ek remains open; cause unproven."
+  ],
+  "capture_limit": "Window readbacks precede compositor captures and sometimes disagree (last-name and search in both final hosts). They are not synchronized and cannot establish precise capture/display cause or physical latency. Earlier raw declaration calls this stale capture; this report deliberately bounds that wording. Scratch thumb-scan images are overwritten; independent checks use named pre-action images.",
+  "cpu_limit": "Per-action cgroup CPU includes verbose/input wait activity; capture follows each measurement and may induce later activity. Three Tabs and nine typed characters are compound input, not single semantic actions. No CPU cap or observer overhead acceptance.",
+  "metadata_limit": "Inherited declaration baseline hash and input_driver_sha256 describe unused wheel diagnostic machinery; actual controls are inline in retained native drivers. No baseline comparison or wheel workload occurred. Archive top-level files include failures, screenshots, logs, declarations and process ledgers; disposable cache directories are omitted.",
+  "remaining": "30 cycles per Preferences host, complete no-click-through/transition bounds oracle, required negative/config/consumer coverage, backend/scale matrix, resource/temporal/GPU/full cap qualification, endurance, distinct-reviewer replay and owner UX remain. Automatic close focus failure is separate intake, not a roadmap reassignment.",
+  "boundaries": "Preserve225 original adoption rules/statuses/recipes/history, S0-S4, GEFN, dependency/license authority and nonblocking resize/temporal/T2/unadmitted schematic exclusions. No production optimization, dependency, prototype or acceptance change."
+}

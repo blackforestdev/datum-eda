@@ -1,0 +1,1910 @@
+{
+  "qualification_pass": false,
+  "runs": [
+    {
+      "generation": 1,
+      "role": "candidate",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-controls-native-vqk3iu58",
+      "returncode": 1,
+      "error": "AssertionError([100, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622])",
+      "normal_exit_code": null,
+      "controls": [
+        {
+          "host": "GLOBAL",
+          "window": 12582934,
+          "actions": [
+            {
+              "name": "search-focus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 5.663000000000196,
+              "start_ns": 1103890992506111,
+              "end_ns": 1103891403407342,
+              "start_log_offset": 91613,
+              "end_log_offset": 97927,
+              "capture": "GLOBAL-search-focus.png"
+            },
+            {
+              "name": "last-name",
+              "input": [
+                "key",
+                "--delay",
+                90,
+                "shift+Tab",
+                "shift+Tab",
+                "shift+Tab"
+              ],
+              "cpu_ms": 17.482,
+              "start_ns": 1103891536187025,
+              "end_ns": 1103892393974300,
+              "start_log_offset": 97927,
+              "end_log_offset": 117408,
+              "capture": "GLOBAL-last-name.png"
+            },
+            {
+              "name": "expanded",
+              "input": [
+                "key",
+                "Return"
+              ],
+              "cpu_ms": 3.0289999999999484,
+              "start_ns": 1103892528353718,
+              "end_ns": 1103892845250057,
+              "start_log_offset": 117408,
+              "end_log_offset": 123286,
+              "capture": "GLOBAL-expanded.png"
+            },
+            {
+              "name": "collapsed",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.2769999999998625,
+              "start_ns": 1103892983726267,
+              "end_ns": 1103893300215943,
+              "start_log_offset": 123286,
+              "end_log_offset": 129168,
+              "capture": "GLOBAL-collapsed.png"
+            },
+            {
+              "name": "search-refocus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 2.7040000000000397,
+              "start_ns": 1103893438618822,
+              "end_ns": 1103893844081350,
+              "start_log_offset": 129168,
+              "end_log_offset": 135382,
+              "capture": "GLOBAL-search-refocus.png"
+            },
+            {
+              "name": "search",
+              "input": [
+                "type",
+                "--delay",
+                30,
+                "precision"
+              ],
+              "cpu_ms": 29.888000000000137,
+              "start_ns": 1103893951485362,
+              "end_ns": 1103894402544708,
+              "start_log_offset": 135382,
+              "end_log_offset": 188345,
+              "capture": "GLOBAL-search.png"
+            },
+            {
+              "name": "search-cleared",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.566999999999986,
+              "start_ns": 1103894512173799,
+              "end_ns": 1103894828424229,
+              "start_log_offset": 188345,
+              "end_log_offset": 194240,
+              "capture": "GLOBAL-search-cleared.png"
+            }
+          ]
+        }
+      ],
+      "process_ledger": [
+        "{\"kind\":\"root\",\"pid\":425288,\"observer_pid\":425287,\"tracing\":false,\"monotonic_ns\":1103888105971797}",
+        "{\"kind\":\"observer_end\",\"root_exit\":143,\"tracing\":false}"
+      ]
+    },
+    {
+      "generation": 2,
+      "role": "candidate",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-controls-native-tqwuvn59",
+      "returncode": 1,
+      "error": "AssertionError('native readiness/closure timed out')",
+      "normal_exit_code": null,
+      "controls": [
+        {
+          "host": "GLOBAL",
+          "window": 12582934,
+          "actions": [
+            {
+              "name": "search-focus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 5.523999999999862,
+              "start_ns": 1104047158280574,
+              "end_ns": 1104047470340398,
+              "start_log_offset": 85154,
+              "end_log_offset": 91468,
+              "capture": "GLOBAL-search-focus.png"
+            },
+            {
+              "name": "last-name",
+              "input": [
+                "key",
+                "--delay",
+                90,
+                "shift+Tab",
+                "shift+Tab",
+                "shift+Tab"
+              ],
+              "cpu_ms": 13.978000000000046,
+              "start_ns": 1104047603404925,
+              "end_ns": 1104048176174720,
+              "start_log_offset": 91468,
+              "end_log_offset": 110929,
+              "capture": "GLOBAL-last-name.png"
+            }
+          ]
+        }
+      ],
+      "process_ledger": [
+        "{\"kind\":\"root\",\"pid\":425938,\"observer_pid\":425937,\"tracing\":false,\"monotonic_ns\":1104044090350560}",
+        "{\"kind\":\"observer_end\",\"root_exit\":143,\"tracing\":false}"
+      ]
+    },
+    {
+      "generation": 3,
+      "role": "candidate",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-controls-native-stv9hwhc",
+      "returncode": 1,
+      "error": "AssertionError('native readiness/closure timed out')",
+      "normal_exit_code": null,
+      "controls": [
+        {
+          "host": "GLOBAL",
+          "window": 12582934,
+          "actions": [
+            {
+              "name": "search-focus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 5.433999999999939,
+              "start_ns": 1104170081940682,
+              "end_ns": 1104170418929133,
+              "start_log_offset": 92564,
+              "end_log_offset": 98878,
+              "capture": "GLOBAL-search-focus.png"
+            },
+            {
+              "name": "last-name",
+              "input": [
+                "key",
+                "--delay",
+                90,
+                "shift+Tab",
+                "shift+Tab",
+                "shift+Tab"
+              ],
+              "cpu_ms": 8.578000000000197,
+              "start_ns": 1104170571031424,
+              "end_ns": 1104171143188458,
+              "start_log_offset": 98878,
+              "end_log_offset": 118357,
+              "capture": "GLOBAL-last-name.png"
+            },
+            {
+              "name": "expanded",
+              "input": [
+                "key",
+                "Return"
+              ],
+              "cpu_ms": 2.946000000000115,
+              "start_ns": 1104171939285498,
+              "end_ns": 1104172270867192,
+              "start_log_offset": 118357,
+              "end_log_offset": 124235,
+              "capture": "GLOBAL-expanded.png"
+            },
+            {
+              "name": "collapsed",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.3409999999999265,
+              "start_ns": 1104172968770357,
+              "end_ns": 1104173300379628,
+              "start_log_offset": 124235,
+              "end_log_offset": 130118,
+              "capture": "GLOBAL-collapsed.png"
+            },
+            {
+              "name": "search-refocus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 2.1879999999998567,
+              "start_ns": 1104173438201634,
+              "end_ns": 1104173742039552,
+              "start_log_offset": 130118,
+              "end_log_offset": 136332,
+              "capture": "GLOBAL-search-refocus.png"
+            },
+            {
+              "name": "search",
+              "input": [
+                "type",
+                "--delay",
+                30,
+                "precision"
+              ],
+              "cpu_ms": 33.54499999999994,
+              "start_ns": 1104173871724618,
+              "end_ns": 1104174445754617,
+              "start_log_offset": 136332,
+              "end_log_offset": 189295,
+              "capture": "GLOBAL-search.png"
+            },
+            {
+              "name": "search-cleared",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.7880000000000127,
+              "start_ns": 1104175147049603,
+              "end_ns": 1104175478683210,
+              "start_log_offset": 189295,
+              "end_log_offset": 195190,
+              "capture": "GLOBAL-search-cleared.png"
+            },
+            {
+              "name": "grab-0.25",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                954,
+                266,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.4060000000001285,
+              "start_ns": 1104176332151795,
+              "end_ns": 1104176636318796,
+              "start_log_offset": 195190,
+              "end_log_offset": 195670,
+              "capture": "GLOBAL-grab-0.25.png"
+            },
+            {
+              "name": "grab-0.25-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                954,
+                286
+              ],
+              "cpu_ms": 1.9940000000000513,
+              "start_ns": 1104176744131564,
+              "end_ns": 1104177047740784,
+              "start_log_offset": 195670,
+              "end_log_offset": 201271,
+              "capture": "GLOBAL-grab-0.25-drag.png"
+            },
+            {
+              "name": "grab-0.25-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.4329999999999057,
+              "start_ns": 1104177177917225,
+              "end_ns": 1104177479358010,
+              "start_log_offset": 201271,
+              "end_log_offset": 201637,
+              "capture": "GLOBAL-grab-0.25-release.png"
+            },
+            {
+              "name": "grab-0.75",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                954,
+                524,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.42800000000009497,
+              "start_ns": 1104177712941490,
+              "end_ns": 1104178017505332,
+              "start_log_offset": 201637,
+              "end_log_offset": 202117,
+              "capture": "GLOBAL-grab-0.75.png"
+            },
+            {
+              "name": "grab-0.75-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                954,
+                504
+              ],
+              "cpu_ms": 2.6800000000000157,
+              "start_ns": 1104178149099760,
+              "end_ns": 1104178453219665,
+              "start_log_offset": 202117,
+              "end_log_offset": 207718,
+              "capture": "GLOBAL-grab-0.75-drag.png"
+            },
+            {
+              "name": "grab-0.75-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.3540000000001875,
+              "start_ns": 1104178583872578,
+              "end_ns": 1104178885451534,
+              "start_log_offset": 207718,
+              "end_log_offset": 208084,
+              "capture": "GLOBAL-grab-0.75-release.png"
+            },
+            {
+              "name": "track-page",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                954,
+                635,
+                "click",
+                1
+              ],
+              "cpu_ms": 2.917999999999976,
+              "start_ns": 1104179120374910,
+              "end_ns": 1104179425242943,
+              "start_log_offset": 208084,
+              "end_log_offset": 214416,
+              "capture": "GLOBAL-track-page.png"
+            },
+            {
+              "name": "cancel-grab",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                954,
+                482,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.336000000000114,
+              "start_ns": 1104179668064927,
+              "end_ns": 1104179972317475,
+              "start_log_offset": 214416,
+              "end_log_offset": 214896,
+              "capture": "GLOBAL-cancel-grab.png"
+            },
+            {
+              "name": "cancel-after-motion",
+              "input": [
+                "mousemove",
+                "--window",
+                12582934,
+                954,
+                502
+              ],
+              "cpu_ms": 0.3149999999998432,
+              "start_ns": 1104181148485886,
+              "end_ns": 1104181453651136,
+              "start_log_offset": 215466,
+              "end_log_offset": 215581,
+              "capture": "GLOBAL-cancel-after-motion.png"
+            },
+            {
+              "name": "cancel-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.3349999999999742,
+              "start_ns": 1104182229709037,
+              "end_ns": 1104182530927505,
+              "start_log_offset": 215581,
+              "end_log_offset": 215833,
+              "capture": "GLOBAL-cancel-release.png"
+            }
+          ],
+          "compositor_captures": [
+            {
+              "name": "last-name",
+              "path": "GLOBAL-last-name-compositor.png",
+              "size": [
+                960,
+                720
+              ],
+              "stderr": ""
+            },
+            {
+              "name": "expanded",
+              "path": "GLOBAL-expanded-compositor.png",
+              "size": [
+                960,
+                720
+              ],
+              "stderr": ""
+            },
+            {
+              "name": "search",
+              "path": "GLOBAL-search-compositor.png",
+              "size": [
+                960,
+                720
+              ],
+              "stderr": ""
+            },
+            {
+              "name": "search-cleared",
+              "path": "GLOBAL-search-cleared-compositor.png",
+              "size": [
+                960,
+                720
+              ],
+              "stderr": ""
+            },
+            {
+              "name": "cancel-before-motion",
+              "path": "GLOBAL-cancel-before-motion-compositor.png",
+              "size": [
+                960,
+                720
+              ],
+              "stderr": ""
+            },
+            {
+              "name": "cancel-after-motion",
+              "path": "GLOBAL-cancel-after-motion-compositor.png",
+              "size": [
+                960,
+                720
+              ],
+              "stderr": ""
+            }
+          ],
+          "cancelled_drag_AE": "0",
+          "closed": true
+        }
+      ],
+      "process_ledger": [
+        "{\"kind\":\"root\",\"pid\":426528,\"observer_pid\":426527,\"tracing\":false,\"monotonic_ns\":1104167187289181}",
+        "{\"kind\":\"observer_end\",\"root_exit\":143,\"tracing\":false}"
+      ]
+    },
+    {
+      "generation": 4,
+      "role": "GLOBAL",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-controls-native-b6c4f94j",
+      "returncode": 1,
+      "error": "AssertionError('native readiness/closure timed out')",
+      "normal_exit_code": null,
+      "controls": [
+        {
+          "host": "GLOBAL",
+          "window": 12582917,
+          "actions": [
+            {
+              "name": "search-focus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 8.166000000000118,
+              "start_ns": 1104332234623393,
+              "end_ns": 1104332539650341,
+              "start_log_offset": 31598,
+              "end_log_offset": 37893,
+              "capture": "GLOBAL-search-focus.png"
+            },
+            {
+              "name": "last-name",
+              "input": [
+                "key",
+                "--delay",
+                90,
+                "shift+Tab",
+                "shift+Tab",
+                "shift+Tab"
+              ],
+              "cpu_ms": 13.55100000000009,
+              "start_ns": 1104333293379681,
+              "end_ns": 1104333866156647,
+              "start_log_offset": 37893,
+              "end_log_offset": 57315,
+              "capture": "GLOBAL-last-name.png"
+            },
+            {
+              "name": "expanded",
+              "input": [
+                "key",
+                "Return"
+              ],
+              "cpu_ms": 3.1319999999999126,
+              "start_ns": 1104334583692278,
+              "end_ns": 1104334915408084,
+              "start_log_offset": 57315,
+              "end_log_offset": 63172,
+              "capture": "GLOBAL-expanded.png"
+            },
+            {
+              "name": "collapsed",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.162999999999915,
+              "start_ns": 1104335648457216,
+              "end_ns": 1104335980047120,
+              "start_log_offset": 63172,
+              "end_log_offset": 69045,
+              "capture": "GLOBAL-collapsed.png"
+            },
+            {
+              "name": "search-refocus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 2.499000000000029,
+              "start_ns": 1104336707650142,
+              "end_ns": 1104337012140469,
+              "start_log_offset": 69045,
+              "end_log_offset": 75243,
+              "capture": "GLOBAL-search-refocus.png"
+            },
+            {
+              "name": "search",
+              "input": [
+                "type",
+                "--delay",
+                30,
+                "precision"
+              ],
+              "cpu_ms": 36.581999999999894,
+              "start_ns": 1104337792085910,
+              "end_ns": 1104338366345771,
+              "start_log_offset": 75243,
+              "end_log_offset": 128129,
+              "capture": "GLOBAL-search.png"
+            },
+            {
+              "name": "search-cleared",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.493999999999996,
+              "start_ns": 1104339066355695,
+              "end_ns": 1104339397393902,
+              "start_log_offset": 128129,
+              "end_log_offset": 134020,
+              "capture": "GLOBAL-search-cleared.png"
+            },
+            {
+              "name": "grab-0.25",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                266,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.3309999999998592,
+              "start_ns": 1104340839341769,
+              "end_ns": 1104341144258440,
+              "start_log_offset": 134020,
+              "end_log_offset": 134496,
+              "capture": "GLOBAL-grab-0.25.png"
+            },
+            {
+              "name": "grab-0.25-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                286
+              ],
+              "cpu_ms": 2.2329999999999295,
+              "start_ns": 1104341885090961,
+              "end_ns": 1104342189698391,
+              "start_log_offset": 134496,
+              "end_log_offset": 140093,
+              "capture": "GLOBAL-grab-0.25-drag.png"
+            },
+            {
+              "name": "grab-0.25-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.3249999999999087,
+              "start_ns": 1104342930827563,
+              "end_ns": 1104343232356598,
+              "start_log_offset": 140093,
+              "end_log_offset": 140459,
+              "capture": "GLOBAL-grab-0.25-release.png"
+            },
+            {
+              "name": "grab-0.75",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                524,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.4690000000000527,
+              "start_ns": 1104344669126876,
+              "end_ns": 1104344974037450,
+              "start_log_offset": 140459,
+              "end_log_offset": 140939,
+              "capture": "GLOBAL-grab-0.75.png"
+            },
+            {
+              "name": "grab-0.75-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                504
+              ],
+              "cpu_ms": 2.1240000000000148,
+              "start_ns": 1104345700887305,
+              "end_ns": 1104346004865079,
+              "start_log_offset": 140939,
+              "end_log_offset": 146536,
+              "capture": "GLOBAL-grab-0.75-drag.png"
+            },
+            {
+              "name": "grab-0.75-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.45399999999995444,
+              "start_ns": 1104346703672200,
+              "end_ns": 1104347004958740,
+              "start_log_offset": 146536,
+              "end_log_offset": 146902,
+              "capture": "GLOBAL-grab-0.75-release.png"
+            },
+            {
+              "name": "track-page",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                635,
+                "click",
+                1
+              ],
+              "cpu_ms": 4.009000000000151,
+              "start_ns": 1104348512647231,
+              "end_ns": 1104348820621282,
+              "start_log_offset": 146902,
+              "end_log_offset": 153230,
+              "capture": "GLOBAL-track-page.png"
+            },
+            {
+              "name": "cancel-grab",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                482,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.3609999999998337,
+              "start_ns": 1104350249042378,
+              "end_ns": 1104350553943872,
+              "start_log_offset": 153230,
+              "end_log_offset": 153710,
+              "capture": "GLOBAL-cancel-grab.png"
+            },
+            {
+              "name": "cancel-after-motion",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                502
+              ],
+              "cpu_ms": 0.2329999999999277,
+              "start_ns": 1104352273522810,
+              "end_ns": 1104352577308278,
+              "start_log_offset": 154280,
+              "end_log_offset": 154395,
+              "capture": "GLOBAL-cancel-after-motion.png"
+            },
+            {
+              "name": "cancel-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.26599999999987745,
+              "start_ns": 1104353366691829,
+              "end_ns": 1104353667885062,
+              "start_log_offset": 154395,
+              "end_log_offset": 154647,
+              "capture": "GLOBAL-cancel-release.png"
+            }
+          ],
+          "compositor_captures": [
+            {
+              "name": "search-focus",
+              "path": "GLOBAL-search-focus.png",
+              "window_readback": "GLOBAL-search-focus-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "last-name",
+              "path": "GLOBAL-last-name.png",
+              "window_readback": "GLOBAL-last-name-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "expanded",
+              "path": "GLOBAL-expanded.png",
+              "window_readback": "GLOBAL-expanded-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "collapsed",
+              "path": "GLOBAL-collapsed.png",
+              "window_readback": "GLOBAL-collapsed-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search-refocus",
+              "path": "GLOBAL-search-refocus.png",
+              "window_readback": "GLOBAL-search-refocus-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search",
+              "path": "GLOBAL-search.png",
+              "window_readback": "GLOBAL-search-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search-cleared",
+              "path": "GLOBAL-search-cleared.png",
+              "window_readback": "GLOBAL-search-cleared-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25",
+              "path": "GLOBAL-grab-0.25.png",
+              "window_readback": "GLOBAL-grab-0.25-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25-drag",
+              "path": "GLOBAL-grab-0.25-drag.png",
+              "window_readback": "GLOBAL-grab-0.25-drag-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25-release",
+              "path": "GLOBAL-grab-0.25-release.png",
+              "window_readback": "GLOBAL-grab-0.25-release-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75",
+              "path": "GLOBAL-grab-0.75.png",
+              "window_readback": "GLOBAL-grab-0.75-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75-drag",
+              "path": "GLOBAL-grab-0.75-drag.png",
+              "window_readback": "GLOBAL-grab-0.75-drag-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75-release",
+              "path": "GLOBAL-grab-0.75-release.png",
+              "window_readback": "GLOBAL-grab-0.75-release-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "track-page",
+              "path": "GLOBAL-track-page.png",
+              "window_readback": "GLOBAL-track-page-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-grab",
+              "path": "GLOBAL-cancel-grab.png",
+              "window_readback": "GLOBAL-cancel-grab-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-before-motion",
+              "path": "GLOBAL-cancel-before-motion.png",
+              "window_readback": "GLOBAL-cancel-before-motion-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-after-motion",
+              "path": "GLOBAL-cancel-after-motion.png",
+              "window_readback": "GLOBAL-cancel-after-motion-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-release",
+              "path": "GLOBAL-cancel-release.png",
+              "window_readback": "GLOBAL-cancel-release-window.png",
+              "stderr": ""
+            }
+          ],
+          "cancelled_drag_AE": "0"
+        }
+      ],
+      "process_ledger": [
+        "{\"kind\":\"root\",\"pid\":427745,\"observer_pid\":427744,\"tracing\":false,\"monotonic_ns\":1104329602610988}",
+        "{\"kind\":\"observer_end\",\"root_exit\":143,\"tracing\":false}"
+      ]
+    },
+    {
+      "generation": 5,
+      "role": "PROJECT",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-controls-native-e2ggawqj",
+      "returncode": 0,
+      "error": null,
+      "normal_exit_code": 0,
+      "controls": [
+        {
+          "host": "PROJECT",
+          "window": 12582917,
+          "actions": [
+            {
+              "name": "search-focus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 8.344999999999825,
+              "start_ns": 1104497700448193,
+              "end_ns": 1104498030719533,
+              "start_log_offset": 26039,
+              "end_log_offset": 32443,
+              "capture": "PROJECT-search-focus.png"
+            },
+            {
+              "name": "last-name",
+              "input": [
+                "key",
+                "--delay",
+                90,
+                "shift+Tab",
+                "shift+Tab",
+                "shift+Tab"
+              ],
+              "cpu_ms": 12.201000000000128,
+              "start_ns": 1104498777711225,
+              "end_ns": 1104499350649346,
+              "start_log_offset": 32443,
+              "end_log_offset": 51834,
+              "capture": "PROJECT-last-name.png"
+            },
+            {
+              "name": "expanded",
+              "input": [
+                "key",
+                "Return"
+              ],
+              "cpu_ms": 2.730999999999817,
+              "start_ns": 1104500107316113,
+              "end_ns": 1104500438841842,
+              "start_log_offset": 51834,
+              "end_log_offset": 57685,
+              "capture": "PROJECT-expanded.png"
+            },
+            {
+              "name": "collapsed",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.00599999999973,
+              "start_ns": 1104501151239491,
+              "end_ns": 1104501482631778,
+              "start_log_offset": 57685,
+              "end_log_offset": 63542,
+              "capture": "PROJECT-collapsed.png"
+            },
+            {
+              "name": "search-refocus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 2.890999999999977,
+              "start_ns": 1104502221868641,
+              "end_ns": 1104502525863519,
+              "start_log_offset": 63542,
+              "end_log_offset": 69731,
+              "capture": "PROJECT-search-refocus.png"
+            },
+            {
+              "name": "search",
+              "input": [
+                "type",
+                "--delay",
+                30,
+                "precision"
+              ],
+              "cpu_ms": 36.15499999999994,
+              "start_ns": 1104503253926486,
+              "end_ns": 1104503828470736,
+              "start_log_offset": 69731,
+              "end_log_offset": 122659,
+              "capture": "PROJECT-search.png"
+            },
+            {
+              "name": "search-cleared",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.6159999999997297,
+              "start_ns": 1104504533807788,
+              "end_ns": 1104504865751195,
+              "start_log_offset": 122659,
+              "end_log_offset": 128552,
+              "capture": "PROJECT-search-cleared.png"
+            },
+            {
+              "name": "grab-0.25",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                240,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.42699999999973315,
+              "start_ns": 1104506343192817,
+              "end_ns": 1104506648122703,
+              "start_log_offset": 128552,
+              "end_log_offset": 129032,
+              "capture": "PROJECT-grab-0.25.png"
+            },
+            {
+              "name": "grab-0.25-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                260
+              ],
+              "cpu_ms": 1.914999999999889,
+              "start_ns": 1104507368179895,
+              "end_ns": 1104507671932544,
+              "start_log_offset": 129032,
+              "end_log_offset": 134628,
+              "capture": "PROJECT-grab-0.25-drag.png"
+            },
+            {
+              "name": "grab-0.25-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.328000000000106,
+              "start_ns": 1104508401878057,
+              "end_ns": 1104508703207004,
+              "start_log_offset": 134628,
+              "end_log_offset": 134994,
+              "capture": "PROJECT-grab-0.25-release.png"
+            },
+            {
+              "name": "grab-0.75",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                538,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.3690000000000637,
+              "start_ns": 1104510129040275,
+              "end_ns": 1104510433131534,
+              "start_log_offset": 134994,
+              "end_log_offset": 135474,
+              "capture": "PROJECT-grab-0.75.png"
+            },
+            {
+              "name": "grab-0.75-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                518
+              ],
+              "cpu_ms": 2.0689999999996544,
+              "start_ns": 1104511130547930,
+              "end_ns": 1104511434761171,
+              "start_log_offset": 135474,
+              "end_log_offset": 141071,
+              "capture": "PROJECT-grab-0.75-drag.png"
+            },
+            {
+              "name": "grab-0.75-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.3869999999999152,
+              "start_ns": 1104512165379461,
+              "end_ns": 1104512466598644,
+              "start_log_offset": 141071,
+              "end_log_offset": 141437,
+              "capture": "PROJECT-grab-0.75-release.png"
+            },
+            {
+              "name": "track-page",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                670,
+                "click",
+                1
+              ],
+              "cpu_ms": 2.917999999999754,
+              "start_ns": 1104513884618277,
+              "end_ns": 1104514214778960,
+              "start_log_offset": 141437,
+              "end_log_offset": 147766,
+              "capture": "PROJECT-track-page.png"
+            },
+            {
+              "name": "cancel-grab",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                441,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.3260000000002705,
+              "start_ns": 1104515704836529,
+              "end_ns": 1104516009169814,
+              "start_log_offset": 147766,
+              "end_log_offset": 148246,
+              "capture": "PROJECT-cancel-grab.png"
+            },
+            {
+              "name": "cancel-after-motion",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                461
+              ],
+              "cpu_ms": 0.21700000000013375,
+              "start_ns": 1104517893683840,
+              "end_ns": 1104518199365162,
+              "start_log_offset": 148813,
+              "end_log_offset": 148928,
+              "capture": "PROJECT-cancel-after-motion.png"
+            },
+            {
+              "name": "cancel-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.3370000000000317,
+              "start_ns": 1104519073507774,
+              "end_ns": 1104519374412083,
+              "start_log_offset": 148928,
+              "end_log_offset": 149180,
+              "capture": "PROJECT-cancel-release.png"
+            }
+          ],
+          "compositor_captures": [
+            {
+              "name": "search-focus",
+              "path": "PROJECT-search-focus.png",
+              "window_readback": "PROJECT-search-focus-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "last-name",
+              "path": "PROJECT-last-name.png",
+              "window_readback": "PROJECT-last-name-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "expanded",
+              "path": "PROJECT-expanded.png",
+              "window_readback": "PROJECT-expanded-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "collapsed",
+              "path": "PROJECT-collapsed.png",
+              "window_readback": "PROJECT-collapsed-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search-refocus",
+              "path": "PROJECT-search-refocus.png",
+              "window_readback": "PROJECT-search-refocus-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search",
+              "path": "PROJECT-search.png",
+              "window_readback": "PROJECT-search-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search-cleared",
+              "path": "PROJECT-search-cleared.png",
+              "window_readback": "PROJECT-search-cleared-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "PROJECT-thumb-scan.png",
+              "window_readback": "PROJECT-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25",
+              "path": "PROJECT-grab-0.25.png",
+              "window_readback": "PROJECT-grab-0.25-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25-drag",
+              "path": "PROJECT-grab-0.25-drag.png",
+              "window_readback": "PROJECT-grab-0.25-drag-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25-release",
+              "path": "PROJECT-grab-0.25-release.png",
+              "window_readback": "PROJECT-grab-0.25-release-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "PROJECT-thumb-scan.png",
+              "window_readback": "PROJECT-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75",
+              "path": "PROJECT-grab-0.75.png",
+              "window_readback": "PROJECT-grab-0.75-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75-drag",
+              "path": "PROJECT-grab-0.75-drag.png",
+              "window_readback": "PROJECT-grab-0.75-drag-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75-release",
+              "path": "PROJECT-grab-0.75-release.png",
+              "window_readback": "PROJECT-grab-0.75-release-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "PROJECT-thumb-scan.png",
+              "window_readback": "PROJECT-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "track-page",
+              "path": "PROJECT-track-page.png",
+              "window_readback": "PROJECT-track-page-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "PROJECT-thumb-scan.png",
+              "window_readback": "PROJECT-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-grab",
+              "path": "PROJECT-cancel-grab.png",
+              "window_readback": "PROJECT-cancel-grab-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-before-motion",
+              "path": "PROJECT-cancel-before-motion.png",
+              "window_readback": "PROJECT-cancel-before-motion-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-after-motion",
+              "path": "PROJECT-cancel-after-motion.png",
+              "window_readback": "PROJECT-cancel-after-motion-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-release",
+              "path": "PROJECT-cancel-release.png",
+              "window_readback": "PROJECT-cancel-release-window.png",
+              "stderr": ""
+            }
+          ],
+          "cancelled_drag_AE": "0",
+          "automatic_focus_after_close": 33554433,
+          "automatic_focus_restored": false,
+          "cleanup_manual_focus_required": true,
+          "closed": true
+        }
+      ],
+      "process_ledger": [
+        "{\"kind\":\"root\",\"pid\":429294,\"observer_pid\":429293,\"tracing\":false,\"monotonic_ns\":1104495230865695}",
+        "{\"kind\":\"observer_end\",\"root_exit\":0,\"tracing\":false}"
+      ],
+      "checks": {
+        "grab-0.25": {
+          "thumb_bounds": [
+            100,
+            658
+          ],
+          "fraction": 0.25,
+          "grab_y": 240,
+          "press_AE": 0,
+          "drag_AE": 106355,
+          "release_AE": 0
+        },
+        "grab-0.75": {
+          "thumb_bounds": [
+            120,
+            678
+          ],
+          "fraction": 0.75,
+          "grab_y": 538,
+          "press_AE": 0,
+          "drag_AE": 106355,
+          "release_AE": 0
+        },
+        "track_page_AE": 94942,
+        "cancel_AE": 0,
+        "capture_pairs": {
+          "search-focus": 0,
+          "last-name": 0,
+          "expanded": 0,
+          "collapsed": 0,
+          "search-refocus": 0,
+          "search": 92444,
+          "search-cleared": 0,
+          "grab-0.25": 0,
+          "grab-0.25-drag": 0,
+          "grab-0.25-release": 0,
+          "grab-0.75": 0,
+          "grab-0.75-drag": 0,
+          "grab-0.75-release": 0,
+          "track-page": 0,
+          "cancel-grab": 0,
+          "cancel-after-motion": 0,
+          "cancel-release": 0
+        }
+      }
+    },
+    {
+      "generation": 5,
+      "role": "GLOBAL",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-controls-native-m2q2pihj",
+      "returncode": 0,
+      "error": null,
+      "normal_exit_code": 0,
+      "controls": [
+        {
+          "host": "GLOBAL",
+          "window": 12582917,
+          "actions": [
+            {
+              "name": "search-focus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 21.864000000000104,
+              "start_ns": 1104523924790280,
+              "end_ns": 1104524236519440,
+              "start_log_offset": 31845,
+              "end_log_offset": 38140,
+              "capture": "GLOBAL-search-focus.png"
+            },
+            {
+              "name": "last-name",
+              "input": [
+                "key",
+                "--delay",
+                90,
+                "shift+Tab",
+                "shift+Tab",
+                "shift+Tab"
+              ],
+              "cpu_ms": 13.487000000000027,
+              "start_ns": 1104524959742083,
+              "end_ns": 1104525532774615,
+              "start_log_offset": 38140,
+              "end_log_offset": 57562,
+              "capture": "GLOBAL-last-name.png"
+            },
+            {
+              "name": "expanded",
+              "input": [
+                "key",
+                "Return"
+              ],
+              "cpu_ms": 3.354999999999997,
+              "start_ns": 1104526285412773,
+              "end_ns": 1104526616947138,
+              "start_log_offset": 57562,
+              "end_log_offset": 63419,
+              "capture": "GLOBAL-expanded.png"
+            },
+            {
+              "name": "collapsed",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.16700000000003,
+              "start_ns": 1104527368784466,
+              "end_ns": 1104527700330327,
+              "start_log_offset": 63419,
+              "end_log_offset": 69292,
+              "capture": "GLOBAL-collapsed.png"
+            },
+            {
+              "name": "search-refocus",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                400,
+                70,
+                "click",
+                1
+              ],
+              "cpu_ms": 2.719000000000138,
+              "start_ns": 1104528414107433,
+              "end_ns": 1104528718093558,
+              "start_log_offset": 69292,
+              "end_log_offset": 75490,
+              "capture": "GLOBAL-search-refocus.png"
+            },
+            {
+              "name": "search",
+              "input": [
+                "type",
+                "--delay",
+                30,
+                "precision"
+              ],
+              "cpu_ms": 35.91999999999995,
+              "start_ns": 1104529452834832,
+              "end_ns": 1104530027340749,
+              "start_log_offset": 75490,
+              "end_log_offset": 128416,
+              "capture": "GLOBAL-search.png"
+            },
+            {
+              "name": "search-cleared",
+              "input": [
+                "key",
+                "Escape"
+              ],
+              "cpu_ms": 2.810999999999897,
+              "start_ns": 1104530747133817,
+              "end_ns": 1104531078597285,
+              "start_log_offset": 128416,
+              "end_log_offset": 134307,
+              "capture": "GLOBAL-search-cleared.png"
+            },
+            {
+              "name": "grab-0.25",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                266,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.38399999999993994,
+              "start_ns": 1104532550067647,
+              "end_ns": 1104532855163517,
+              "start_log_offset": 134307,
+              "end_log_offset": 134787,
+              "capture": "GLOBAL-grab-0.25.png"
+            },
+            {
+              "name": "grab-0.25-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                286
+              ],
+              "cpu_ms": 2.790999999999988,
+              "start_ns": 1104533585462644,
+              "end_ns": 1104533892252780,
+              "start_log_offset": 134787,
+              "end_log_offset": 140384,
+              "capture": "GLOBAL-grab-0.25-drag.png"
+            },
+            {
+              "name": "grab-0.25-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.3949999999999232,
+              "start_ns": 1104534634053458,
+              "end_ns": 1104534935390925,
+              "start_log_offset": 140384,
+              "end_log_offset": 140750,
+              "capture": "GLOBAL-grab-0.25-release.png"
+            },
+            {
+              "name": "grab-0.75",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                524,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.5380000000001495,
+              "start_ns": 1104536416217530,
+              "end_ns": 1104536721285070,
+              "start_log_offset": 140750,
+              "end_log_offset": 141230,
+              "capture": "GLOBAL-grab-0.75.png"
+            },
+            {
+              "name": "grab-0.75-drag",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                504
+              ],
+              "cpu_ms": 2.267000000000019,
+              "start_ns": 1104537464147659,
+              "end_ns": 1104537768742978,
+              "start_log_offset": 141230,
+              "end_log_offset": 146827,
+              "capture": "GLOBAL-grab-0.75-drag.png"
+            },
+            {
+              "name": "grab-0.75-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.28900000000020576,
+              "start_ns": 1104538489314442,
+              "end_ns": 1104538790573891,
+              "start_log_offset": 146827,
+              "end_log_offset": 147193,
+              "capture": "GLOBAL-grab-0.75-release.png"
+            },
+            {
+              "name": "track-page",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                635,
+                "click",
+                1
+              ],
+              "cpu_ms": 3.4289999999999043,
+              "start_ns": 1104540258603106,
+              "end_ns": 1104540565750453,
+              "start_log_offset": 147193,
+              "end_log_offset": 153521,
+              "capture": "GLOBAL-track-page.png"
+            },
+            {
+              "name": "cancel-grab",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                482,
+                "mousedown",
+                1
+              ],
+              "cpu_ms": 0.36599999999986643,
+              "start_ns": 1104542011965969,
+              "end_ns": 1104542316282779,
+              "start_log_offset": 153521,
+              "end_log_offset": 154001,
+              "capture": "GLOBAL-cancel-grab.png"
+            },
+            {
+              "name": "cancel-after-motion",
+              "input": [
+                "mousemove",
+                "--window",
+                12582917,
+                954,
+                502
+              ],
+              "cpu_ms": 0.32199999999993345,
+              "start_ns": 1104544185618654,
+              "end_ns": 1104544489956239,
+              "start_log_offset": 154571,
+              "end_log_offset": 154686,
+              "capture": "GLOBAL-cancel-after-motion.png"
+            },
+            {
+              "name": "cancel-release",
+              "input": [
+                "mouseup",
+                1
+              ],
+              "cpu_ms": 0.25300000000005873,
+              "start_ns": 1104545292653170,
+              "end_ns": 1104545593802509,
+              "start_log_offset": 154686,
+              "end_log_offset": 154938,
+              "capture": "GLOBAL-cancel-release.png"
+            }
+          ],
+          "compositor_captures": [
+            {
+              "name": "search-focus",
+              "path": "GLOBAL-search-focus.png",
+              "window_readback": "GLOBAL-search-focus-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "last-name",
+              "path": "GLOBAL-last-name.png",
+              "window_readback": "GLOBAL-last-name-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "expanded",
+              "path": "GLOBAL-expanded.png",
+              "window_readback": "GLOBAL-expanded-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "collapsed",
+              "path": "GLOBAL-collapsed.png",
+              "window_readback": "GLOBAL-collapsed-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search-refocus",
+              "path": "GLOBAL-search-refocus.png",
+              "window_readback": "GLOBAL-search-refocus-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search",
+              "path": "GLOBAL-search.png",
+              "window_readback": "GLOBAL-search-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "search-cleared",
+              "path": "GLOBAL-search-cleared.png",
+              "window_readback": "GLOBAL-search-cleared-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25",
+              "path": "GLOBAL-grab-0.25.png",
+              "window_readback": "GLOBAL-grab-0.25-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25-drag",
+              "path": "GLOBAL-grab-0.25-drag.png",
+              "window_readback": "GLOBAL-grab-0.25-drag-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.25-release",
+              "path": "GLOBAL-grab-0.25-release.png",
+              "window_readback": "GLOBAL-grab-0.25-release-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75",
+              "path": "GLOBAL-grab-0.75.png",
+              "window_readback": "GLOBAL-grab-0.75-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75-drag",
+              "path": "GLOBAL-grab-0.75-drag.png",
+              "window_readback": "GLOBAL-grab-0.75-drag-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "grab-0.75-release",
+              "path": "GLOBAL-grab-0.75-release.png",
+              "window_readback": "GLOBAL-grab-0.75-release-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "track-page",
+              "path": "GLOBAL-track-page.png",
+              "window_readback": "GLOBAL-track-page-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "thumb-scan",
+              "path": "GLOBAL-thumb-scan.png",
+              "window_readback": "GLOBAL-thumb-scan-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-grab",
+              "path": "GLOBAL-cancel-grab.png",
+              "window_readback": "GLOBAL-cancel-grab-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-before-motion",
+              "path": "GLOBAL-cancel-before-motion.png",
+              "window_readback": "GLOBAL-cancel-before-motion-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-after-motion",
+              "path": "GLOBAL-cancel-after-motion.png",
+              "window_readback": "GLOBAL-cancel-after-motion-window.png",
+              "stderr": ""
+            },
+            {
+              "name": "cancel-release",
+              "path": "GLOBAL-cancel-release.png",
+              "window_readback": "GLOBAL-cancel-release-window.png",
+              "stderr": ""
+            }
+          ],
+          "cancelled_drag_AE": "0",
+          "automatic_focus_after_close": 33554433,
+          "automatic_focus_restored": false,
+          "cleanup_manual_focus_required": true,
+          "closed": true
+        }
+      ],
+      "process_ledger": [
+        "{\"kind\":\"root\",\"pid\":430038,\"observer_pid\":430037,\"tracing\":false,\"monotonic_ns\":1104521288258981}",
+        "{\"kind\":\"observer_end\",\"root_exit\":0,\"tracing\":false}"
+      ],
+      "checks": {
+        "grab-0.25": {
+          "thumb_bounds": [
+            147,
+            623
+          ],
+          "fraction": 0.25,
+          "grab_y": 266,
+          "press_AE": 0,
+          "drag_AE": 104999,
+          "release_AE": 0
+        },
+        "grab-0.75": {
+          "thumb_bounds": [
+            168,
+            643
+          ],
+          "fraction": 0.75,
+          "grab_y": 524,
+          "press_AE": 0,
+          "drag_AE": 104999,
+          "release_AE": 0
+        },
+        "track_page_AE": 108099,
+        "cancel_AE": 0,
+        "capture_pairs": {
+          "search-focus": 0,
+          "last-name": 108402,
+          "expanded": 0,
+          "collapsed": 0,
+          "search-refocus": 0,
+          "search": 83375,
+          "search-cleared": 0,
+          "grab-0.25": 0,
+          "grab-0.25-drag": 0,
+          "grab-0.25-release": 0,
+          "grab-0.75": 0,
+          "grab-0.75-drag": 0,
+          "grab-0.75-release": 0,
+          "track-page": 0,
+          "cancel-grab": 0,
+          "cancel-after-motion": 0,
+          "cancel-release": 0
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Method pilots, not30-cycle qualification, numerical caps or continuous presentation proof. All four failures retained.",
+    "Window readbacks and later compositor captures can disagree; they are not synchronized. This proves a capture/observation limitation, not its precise cause or physical latency.",
+    "Thumb-scan scratch image was overwritten on each scan; durable named pre-action captures are used for independent grab-fraction checks.",
+    "Automatic focus return failed in both final seeded hosts; manual Main activation was cleanup only. No focus restoration/complete teardown qualification. Compound input CPU not normalized into fabricated semantic-action costs."
+  ]
+}
