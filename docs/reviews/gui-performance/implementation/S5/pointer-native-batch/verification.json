@@ -1,0 +1,17 @@
+{
+  "checks": {
+    "evidence_traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "spec_parity": "PASS20inventories",
+    "dependency_authority": "PASS",
+    "cargo_resource_policy": "PASS",
+    "project_status": "PASS59frontieritems"
+  },
+  "invocation_correction": "project_status.py validate rejected unknown subcommand(exit2); proper project_status.py check passed. No failed qualification trial replaced.",
+  "archives": "Eight archives;62rawmembers each SHA256/length verified after creation.",
+  "route_review": "All45previously reviewed source/consumer hashes matched before boundedAC02/AC06pointer update; original225rows/statuses/recipes/scopes/history preserved by deep equality.",
+  "normalized_fixture_sha256_after": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "rust_tests": "Not repeated: no product/Rust source or compiled binary changed.",
+  "pixel_check": "All seven final PNGs compare AE0 against first baseline; candidate3 screenshot inspected. Relative endpoint proof only,not ownerUX/hit-state/temporal acceptance.",
+  "qualification_pass": false
+}

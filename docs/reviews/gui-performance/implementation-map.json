@@ -3636,6 +3636,18 @@
           "X11/VulkanIntelP630 physical60Hz1x,oneleaf,hiddenterminal only; Wayland/scales/otherconsumerconfigurations and fullresource/GPU/method/endurance/reviewer acceptance remain.",
           "All20normal closes here do not resolve previous intermittent delayed close; diagnosticfailurecapture was not exercised in this batch. No resampling or replacedtrials."
         ]
+      },
+      "s5_pointer_native_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
+        "status": "Bounded X11 pointer observation complete; CPU/GPU limits exceeded and120distinct-actions/s requirement not qualified",
+        "limits": [
+          "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. This does not prove120 distinct delivered semantic actions/second.",
+          "Per-event CPU denominators use actual received events or changed positions, never3600 scheduled calls or frames. No independent semantic-consumption acknowledgments exist in this trace.",
+          "Verbose native logging enabled equally in every run; overhead not subtracted or independently qualified. Family CPU includes kernel/descendants; residual against GUI clock includes sampling skew and is not exclusive engine attribution.",
+          "Endpoint pixel equality is relative to first baseline, not owner UX acceptance or physical presentation latency. No hit-state oracle, calibrated temporal/crosshair path proof, shell-solve counter or per-origin upload trace. Aggregate upload totals do not alone prove no world upload.",
+          "Five-second quiet tail does not alone establish250ms return-to-idle. No whole-driver GPU duty or NVIDIA counters, no negative controls, no formal seven-pair STAT, no Wayland/other-scale/endurance/independent-review acceptance."
+        ]
       }
     },
     {
@@ -4333,6 +4345,18 @@
           "First-use order Global,Project,New fixed in each process after Main; not all host-order permutations or simultaneous configurations. Warm50ms/20ms limits not applied to cold/first-use distribution.",
           "X11/VulkanIntelP630 physical60Hz1x,oneleaf,hiddenterminal only; Wayland/scales/otherconsumerconfigurations and fullresource/GPU/method/endurance/reviewer acceptance remain.",
           "All20normal closes here do not resolve previous intermittent delayed close; diagnosticfailurecapture was not exercised in this batch. No resampling or replacedtrials."
+        ]
+      },
+      "s5_pointer_native_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
+        "status": "Bounded X11 pointer observation complete; CPU/GPU limits exceeded and120distinct-actions/s requirement not qualified",
+        "limits": [
+          "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. This does not prove120 distinct delivered semantic actions/second.",
+          "Per-event CPU denominators use actual received events or changed positions, never3600 scheduled calls or frames. No independent semantic-consumption acknowledgments exist in this trace.",
+          "Verbose native logging enabled equally in every run; overhead not subtracted or independently qualified. Family CPU includes kernel/descendants; residual against GUI clock includes sampling skew and is not exclusive engine attribution.",
+          "Endpoint pixel equality is relative to first baseline, not owner UX acceptance or physical presentation latency. No hit-state oracle, calibrated temporal/crosshair path proof, shell-solve counter or per-origin upload trace. Aggregate upload totals do not alone prove no world upload.",
+          "Five-second quiet tail does not alone establish250ms return-to-idle. No whole-driver GPU duty or NVIDIA counters, no negative controls, no formal seven-pair STAT, no Wayland/other-scale/endurance/independent-review acceptance."
         ]
       }
     },

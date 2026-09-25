@@ -1,0 +1,113 @@
+{
+  "status": "Bounded X11 pointer observation complete; CPU/GPU limits exceeded and120distinct-actions/s requirement not qualified",
+  "qualification_pass": false,
+  "candidate_commit": "43d468e9",
+  "binary_sha256": {
+    "baseline": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+    "candidate": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "4a674d84df4100e1c9d783a37a5307e0682184d78771844325bad25a7b9ee321",
+    "crates/gui-app/src/app_shell.rs": "12ca9ebbfced332289d366c3df63c6cd1b9082b579ea938667314ac5cc42e43c",
+    "crates/gui-app/src/native_resource_measurements.rs": "dbad92f74f212672b5d5e275a05dd85b0f24b681ecbb7318415fddadc38c3f9e",
+    "crates/gui-render/src/lib.rs": "8dfabc5ed68d28b8e7f0a35a3191e66f3561b780da7bdf82360a98c4cc12657f",
+    "crates/gui-render/src/render/document_cpu.rs": "5f5278c468392916ffac67d959b526357e6c3e4d46c1cdb603028d676f505435",
+    "crates/gui-render/src/render/document_gpu_budget.rs": "33361519e4edc03a69cf44e1c1878bb44c5a768b2b888912031d2eaa51a4b8a0",
+    "crates/gui-render/src/render/frame_preparation.rs": "7e11b033858c3d83f3dbac74a24e5bce034c945b30a9eb7ab87520104b15e369",
+    "crates/gui-render/src/render/measurement_owner.rs": "b05043e8f8c1373ff2e47b199d6c358c8ed3f6e2d65caf40d91b03eba145b334",
+    "crates/gui-render/src/render/new_project_scene.rs": "132cebd33d24cbb4c7de030b10b677905f41982f531180124fa850bad45e659d",
+    "crates/gui-render/src/render/preferences_scene.rs": "9602c3eff3c7bdb60aa1905b1d3b7fd715c2e5ed4ccc5942785f788af327cee9",
+    "crates/gui-render/src/render/resource_observation.rs": "65398f46b451a6b9990cba2d856e7e1b81fd3c5cedea9b7543566f0db35caddd",
+    "crates/gui-render/src/render/resource_observation_tests.rs": "95b9d518946b8da8199c8fb07d9744dd65c1608585dcc3ee5f4fc15d8b037a04",
+    "crates/gui-render/src/text_gpu/atlas.rs": "28ca596935869a415e3f9ec228953f297533a14292ba45a299c53276466263ae",
+    "crates/gui-render/src/text_gpu/budget.rs": "92676c620d44ff3fe9bee2bdd6d37b2e6dd805f74443c5840395b799b19d4c8c"
+  },
+  "order": [
+    [
+      "baseline",
+      1,
+      0
+    ],
+    [
+      "candidate",
+      1,
+      0
+    ],
+    [
+      "candidate",
+      2,
+      0
+    ],
+    [
+      "baseline",
+      2,
+      0
+    ],
+    [
+      "baseline",
+      3,
+      0
+    ],
+    [
+      "candidate",
+      3,
+      0
+    ],
+    [
+      "candidate",
+      1,
+      1
+    ]
+  ],
+  "counts": {
+    "plain_runs": 6,
+    "separate_gpu_diagnostic_runs": 1,
+    "normal_drained_exits": 7,
+    "scheduled_calls_per_run": 3600,
+    "changed_and_received_positions_per_run": 1280
+  },
+  "method": "Three independent warm trials per binary in predeclared alternating order,then one separate candidate timestamp diagnostic. Physical1920x1080@60Hz scale1,X11onXwayland,VulkanIntelP630,one Main leaf1280x800,hidden terminal. Five-second warmup,30second400x240rectangle,four7.5secondedges,five-second still tail. Existing family cgroup CPU includes kernel and engine descendants. No loader audit/ptrace/resource or private/GPU allocation traces during measurements. Native verbose log enabled equally. Original display1.05 restored. No failures replaced or trials discarded.",
+  "observations": "All1280 changed physical positions received in order with final300,150. All seven final images pixel-equal and focus correct; screenshot inspected. Zero retained/prepared scene build-begin log entries; aggregate buffer payloads24,216,240,720bytes,not owner-attributed. All seven five-second tails have zero native log lines. Three candidate CPU duties18.130%,13.482%,18.801%,all above10%; received-event costs4.264,3.168,4.421ms exceed0.833ms. Separate GPUdiagnostic1273active frame spans p95=9.726083630ms,p99=11.998833700ms exceed4/8ms. No formal baseline-relative inference or actual negative-control qualification.",
+  "limits": [
+    "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. This does not prove120 distinct delivered semantic actions/second.",
+    "Per-event CPU denominators use actual received events or changed positions, never3600 scheduled calls or frames. No independent semantic-consumption acknowledgments exist in this trace.",
+    "Verbose native logging enabled equally in every run; overhead not subtracted or independently qualified. Family CPU includes kernel/descendants; residual against GUI clock includes sampling skew and is not exclusive engine attribution.",
+    "Endpoint pixel equality is relative to first baseline, not owner UX acceptance or physical presentation latency. No hit-state oracle, calibrated temporal/crosshair path proof, shell-solve counter or per-origin upload trace. Aggregate upload totals do not alone prove no world upload.",
+    "Five-second quiet tail does not alone establish250ms return-to-idle. No whole-driver GPU duty or NVIDIA counters, no negative controls, no formal seven-pair STAT, no Wayland/other-scale/endurance/independent-review acceptance."
+  ],
+  "archives": [
+    {
+      "file": "baseline-1-gpu0.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "candidate-1-gpu0.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "candidate-2-gpu0.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "baseline-2-gpu0.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "baseline-3-gpu0.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "candidate-3-gpu0.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "candidate-1-gpu1.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "campaign.tar.gz",
+      "members": 13
+    }
+  ],
+  "boundaries": "No product/dependency/license/backend-policy/renderquality/admission change. Preserve S0-S4,GEFN,225adoptioncontracts,nonblockingresize/temporal/T2/schematicexclusions. Prior delayed-close failures remain unresolved. No numerical-cap/fullperformance/endurance/independent/ownerUX acceptance."
+}

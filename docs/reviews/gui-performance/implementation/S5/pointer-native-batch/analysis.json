@@ -1,0 +1,417 @@
+{
+  "qualification_pass": false,
+  "runs": [
+    {
+      "role": "baseline",
+      "trial": 1,
+      "gpu_diagnostic": false,
+      "path": "/tmp/pm045-pointer-native-emp4nxo2",
+      "returncode": 0,
+      "normal_exit_code": 0,
+      "error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 381095,
+        "device_epoch": 1
+      },
+      "scheduled_events": 3600,
+      "physical_position_changes": 1280,
+      "quantized_noop_events": 2320,
+      "received_cursor_events": 1280,
+      "undelivered_changed_positions": [],
+      "final_position": [
+        300.0,
+        150.0
+      ],
+      "cpu_ms": 5896.188,
+      "gui_cpu_ms": 5896.187471,
+      "family_minus_gui_ms": 0.0005289999999149586,
+      "elapsed_seconds": 30.098178811,
+      "cpu_percent": 19.58984972820055,
+      "cpu_ms_per_received_event": 4.606396875,
+      "cpu_ms_per_changed_position": 4.606396875,
+      "cpu_10_percent_exceeded": true,
+      "cpu_0833_ms_per_received_exceeded": true,
+      "tail_cpu_ms": 1.930999999999905,
+      "tail_log_lines": 0,
+      "lifecycle_reason_counts": {
+        "present": 1276,
+        "submit": 1276,
+        "wait_queue": 117
+      },
+      "retained_scene_build_begins": 0,
+      "prepared_scene_build_begins": 0,
+      "aggregate_buffer_upload_payload_values": [
+        24,
+        216,
+        240,
+        720
+      ],
+      "final_pixel_AE_against_first_baseline": "0",
+      "schedule_lateness_ms": {
+        "p95": 0.252225,
+        "p99": 0.33419,
+        "max": 1.784649
+      },
+      "gpu_incomplete": [],
+      "whole_run_gpu_sample_count": 0
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "gpu_diagnostic": false,
+      "path": "/tmp/pm045-pointer-native-wrrdt21h",
+      "returncode": 0,
+      "normal_exit_code": 0,
+      "error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 381311,
+        "device_epoch": 1
+      },
+      "scheduled_events": 3600,
+      "physical_position_changes": 1280,
+      "quantized_noop_events": 2320,
+      "received_cursor_events": 1280,
+      "undelivered_changed_positions": [],
+      "final_position": [
+        300.0,
+        150.0
+      ],
+      "cpu_ms": 5457.529,
+      "gui_cpu_ms": 5457.52914,
+      "family_minus_gui_ms": -0.00013999999919178663,
+      "elapsed_seconds": 30.101645486,
+      "cpu_percent": 18.130334444800525,
+      "cpu_ms_per_received_event": 4.2636945312500005,
+      "cpu_ms_per_changed_position": 4.2636945312500005,
+      "cpu_10_percent_exceeded": true,
+      "cpu_0833_ms_per_received_exceeded": true,
+      "tail_cpu_ms": 1.9840000000002078,
+      "tail_log_lines": 0,
+      "lifecycle_reason_counts": {
+        "present": 1277,
+        "submit": 1277,
+        "wait_queue": 67
+      },
+      "retained_scene_build_begins": 0,
+      "prepared_scene_build_begins": 0,
+      "aggregate_buffer_upload_payload_values": [
+        24,
+        216,
+        240,
+        720
+      ],
+      "final_pixel_AE_against_first_baseline": "0",
+      "schedule_lateness_ms": {
+        "p95": 0.273351,
+        "p99": 0.318828,
+        "max": 1.495013
+      },
+      "gpu_incomplete": [],
+      "whole_run_gpu_sample_count": 0
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "gpu_diagnostic": false,
+      "path": "/tmp/pm045-pointer-native-lticuiut",
+      "returncode": 0,
+      "normal_exit_code": 0,
+      "error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 381511,
+        "device_epoch": 1
+      },
+      "scheduled_events": 3600,
+      "physical_position_changes": 1280,
+      "quantized_noop_events": 2320,
+      "received_cursor_events": 1280,
+      "undelivered_changed_positions": [],
+      "final_position": [
+        300.0,
+        150.0
+      ],
+      "cpu_ms": 4055.143,
+      "gui_cpu_ms": 4055.143727,
+      "family_minus_gui_ms": -0.0007270000000971777,
+      "elapsed_seconds": 30.077427074,
+      "cpu_percent": 13.482346711449297,
+      "cpu_ms_per_received_event": 3.16808046875,
+      "cpu_ms_per_changed_position": 3.16808046875,
+      "cpu_10_percent_exceeded": true,
+      "cpu_0833_ms_per_received_exceeded": true,
+      "tail_cpu_ms": 1.7449999999996635,
+      "tail_log_lines": 0,
+      "lifecycle_reason_counts": {
+        "present": 1277,
+        "submit": 1277,
+        "wait_queue": 53
+      },
+      "retained_scene_build_begins": 0,
+      "prepared_scene_build_begins": 0,
+      "aggregate_buffer_upload_payload_values": [
+        24,
+        216,
+        240,
+        720
+      ],
+      "final_pixel_AE_against_first_baseline": "0",
+      "schedule_lateness_ms": {
+        "p95": 0.202226,
+        "p99": 0.305681,
+        "max": 0.565714
+      },
+      "gpu_incomplete": [],
+      "whole_run_gpu_sample_count": 0
+    },
+    {
+      "role": "baseline",
+      "trial": 2,
+      "gpu_diagnostic": false,
+      "path": "/tmp/pm045-pointer-native-5jqai9yb",
+      "returncode": 0,
+      "normal_exit_code": 0,
+      "error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 381750,
+        "device_epoch": 1
+      },
+      "scheduled_events": 3600,
+      "physical_position_changes": 1280,
+      "quantized_noop_events": 2320,
+      "received_cursor_events": 1280,
+      "undelivered_changed_positions": [],
+      "final_position": [
+        300.0,
+        150.0
+      ],
+      "cpu_ms": 5774.914,
+      "gui_cpu_ms": 5774.913509,
+      "family_minus_gui_ms": 0.0004909999997835257,
+      "elapsed_seconds": 30.101913582,
+      "cpu_percent": 19.184541156390857,
+      "cpu_ms_per_received_event": 4.5116515625,
+      "cpu_ms_per_changed_position": 4.5116515625,
+      "cpu_10_percent_exceeded": true,
+      "cpu_0833_ms_per_received_exceeded": true,
+      "tail_cpu_ms": 1.942999999999806,
+      "tail_log_lines": 0,
+      "lifecycle_reason_counts": {
+        "present": 1276,
+        "submit": 1276,
+        "wait_queue": 127
+      },
+      "retained_scene_build_begins": 0,
+      "prepared_scene_build_begins": 0,
+      "aggregate_buffer_upload_payload_values": [
+        24,
+        216,
+        240,
+        720
+      ],
+      "final_pixel_AE_against_first_baseline": "0",
+      "schedule_lateness_ms": {
+        "p95": 0.253651,
+        "p99": 0.324865,
+        "max": 1.536571
+      },
+      "gpu_incomplete": [],
+      "whole_run_gpu_sample_count": 0
+    },
+    {
+      "role": "baseline",
+      "trial": 3,
+      "gpu_diagnostic": false,
+      "path": "/tmp/pm045-pointer-native-5zyqn06b",
+      "returncode": 0,
+      "normal_exit_code": 0,
+      "error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 381983,
+        "device_epoch": 1
+      },
+      "scheduled_events": 3600,
+      "physical_position_changes": 1280,
+      "quantized_noop_events": 2320,
+      "received_cursor_events": 1280,
+      "undelivered_changed_positions": [],
+      "final_position": [
+        300.0,
+        150.0
+      ],
+      "cpu_ms": 5736.977,
+      "gui_cpu_ms": 5736.976407,
+      "family_minus_gui_ms": 0.0005929999997533741,
+      "elapsed_seconds": 30.115875545,
+      "cpu_percent": 19.04967694340364,
+      "cpu_ms_per_received_event": 4.4820132812499995,
+      "cpu_ms_per_changed_position": 4.4820132812499995,
+      "cpu_10_percent_exceeded": true,
+      "cpu_0833_ms_per_received_exceeded": true,
+      "tail_cpu_ms": 1.9520000000001758,
+      "tail_log_lines": 0,
+      "lifecycle_reason_counts": {
+        "present": 1276,
+        "submit": 1276,
+        "wait_queue": 90
+      },
+      "retained_scene_build_begins": 0,
+      "prepared_scene_build_begins": 0,
+      "aggregate_buffer_upload_payload_values": [
+        24,
+        216,
+        240,
+        720
+      ],
+      "final_pixel_AE_against_first_baseline": "0",
+      "schedule_lateness_ms": {
+        "p95": 0.272579,
+        "p99": 0.340041,
+        "max": 2.929838
+      },
+      "gpu_incomplete": [],
+      "whole_run_gpu_sample_count": 0
+    },
+    {
+      "role": "candidate",
+      "trial": 3,
+      "gpu_diagnostic": false,
+      "path": "/tmp/pm045-pointer-native-o636oj0u",
+      "returncode": 0,
+      "normal_exit_code": 0,
+      "error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 382147,
+        "device_epoch": 1
+      },
+      "scheduled_events": 3600,
+      "physical_position_changes": 1280,
+      "quantized_noop_events": 2320,
+      "received_cursor_events": 1280,
+      "undelivered_changed_positions": [],
+      "final_position": [
+        300.0,
+        150.0
+      ],
+      "cpu_ms": 5659.475,
+      "gui_cpu_ms": 5659.47546,
+      "family_minus_gui_ms": -0.000459999999293359,
+      "elapsed_seconds": 30.102567432,
+      "cpu_percent": 18.80063889163087,
+      "cpu_ms_per_received_event": 4.42146484375,
+      "cpu_ms_per_changed_position": 4.42146484375,
+      "cpu_10_percent_exceeded": true,
+      "cpu_0833_ms_per_received_exceeded": true,
+      "tail_cpu_ms": 1.714999999999911,
+      "tail_log_lines": 0,
+      "lifecycle_reason_counts": {
+        "present": 1275,
+        "submit": 1275,
+        "wait_queue": 55
+      },
+      "retained_scene_build_begins": 0,
+      "prepared_scene_build_begins": 0,
+      "aggregate_buffer_upload_payload_values": [
+        24,
+        216,
+        240,
+        720
+      ],
+      "final_pixel_AE_against_first_baseline": "0",
+      "schedule_lateness_ms": {
+        "p95": 0.265941,
+        "p99": 0.325398,
+        "max": 1.529944
+      },
+      "gpu_incomplete": [],
+      "whole_run_gpu_sample_count": 0
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "gpu_diagnostic": true,
+      "path": "/tmp/pm045-pointer-native-95ob0ykd",
+      "returncode": 0,
+      "normal_exit_code": 0,
+      "error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 382367,
+        "device_epoch": 1
+      },
+      "scheduled_events": 3600,
+      "physical_position_changes": 1280,
+      "quantized_noop_events": 2320,
+      "received_cursor_events": 1280,
+      "undelivered_changed_positions": [],
+      "final_position": [
+        300.0,
+        150.0
+      ],
+      "cpu_ms": 6050.832,
+      "gui_cpu_ms": 6050.831218,
+      "family_minus_gui_ms": 0.0007820000000720029,
+      "elapsed_seconds": 30.102619159,
+      "cpu_percent": 20.100682827762974,
+      "cpu_ms_per_received_event": 4.7272125,
+      "cpu_ms_per_changed_position": 4.7272125,
+      "cpu_10_percent_exceeded": true,
+      "cpu_0833_ms_per_received_exceeded": true,
+      "tail_cpu_ms": 1.72000000000061,
+      "tail_log_lines": 0,
+      "lifecycle_reason_counts": {
+        "present": 1273,
+        "submit": 1273,
+        "wait_queue": 63
+      },
+      "retained_scene_build_begins": 0,
+      "prepared_scene_build_begins": 0,
+      "aggregate_buffer_upload_payload_values": [
+        24,
+        216,
+        240,
+        720
+      ],
+      "final_pixel_AE_against_first_baseline": "0",
+      "schedule_lateness_ms": {
+        "p95": 0.257954,
+        "p99": 0.321597,
+        "max": 1.578615
+      },
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "active_gpu_span_ms": {
+        "count": 1273,
+        "p95": 9.72608363014984,
+        "p99": 11.998833699508667,
+        "max": 12.237583706794739,
+        "sum": 10834.770497317611
+      },
+      "active_gpu_pass_ms": {
+        "scene": {
+          "p95": 7.82991690561676,
+          "p99": 9.996333638397218
+        },
+        "text": {
+          "p95": 2.061250062904358,
+          "p99": 3.4970834400558473
+        }
+      },
+      "whole_run_gpu_sample_count": 1274
+    }
+  ],
+  "limits": [
+    "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. This does not prove120 distinct delivered semantic actions/second.",
+    "Per-event CPU denominators use actual received events or changed positions, never3600 scheduled calls or frames. No independent semantic-consumption acknowledgments exist in this trace.",
+    "Verbose native logging enabled equally in every run; overhead not subtracted or independently qualified. Family CPU includes kernel/descendants; residual against GUI clock includes sampling skew and is not exclusive engine attribution.",
+    "Endpoint pixel equality is relative to first baseline, not owner UX acceptance or physical presentation latency. No hit-state oracle, calibrated temporal/crosshair path proof, shell-solve counter or per-origin upload trace. Aggregate upload totals do not alone prove no world upload.",
+    "Five-second quiet tail does not alone establish250ms return-to-idle. No whole-driver GPU duty or NVIDIA counters, no negative controls, no formal seven-pair STAT, no Wayland/other-scale/endurance/independent-review acceptance."
+  ]
+}
