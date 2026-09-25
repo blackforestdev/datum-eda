@@ -1,0 +1,37 @@
+[
+  {
+    "fixture": "crates/gui-render/testdata/golden/console/history-expanded.fixture.toml",
+    "exit_code": 0,
+    "output": "VISUAL-CHECK: fixture=console-history-expanded scale=1.00 passed=true differing_pixels=0 differing_pct=0.000000\n"
+  },
+  {
+    "fixture": "crates/gui-render/testdata/golden/console/refusal-narrow.fixture.toml",
+    "exit_code": 0,
+    "output": "VISUAL-CHECK: fixture=console-refusal-narrow scale=1.00 passed=true differing_pixels=0 differing_pct=0.000000\n"
+  },
+  {
+    "fixture": "crates/gui-render/testdata/golden/console/routine-focused.fixture.toml",
+    "exit_code": 0,
+    "output": "VISUAL-CHECK: fixture=console-routine-focused scale=1.00 passed=true differing_pixels=0 differing_pct=0.000000\n"
+  },
+  {
+    "fixture": "crates/gui-render/testdata/golden/console/routine-maximized.fixture.toml",
+    "exit_code": 0,
+    "output": "VISUAL-CHECK: fixture=console-routine-maximized scale=1.00 passed=true differing_pixels=0 differing_pct=0.000000\n"
+  },
+  {
+    "fixture": "crates/gui-render/testdata/golden/console/routine-scale-matrix.fixture.toml",
+    "exit_code": 0,
+    "output": "VISUAL-CHECK: fixture=console-routine-scale-matrix scale=1.00 passed=true differing_pixels=0 differing_pct=0.000000\nVISUAL-CHECK: fixture=console-routine-scale-matrix scale=1.25 passed=true differing_pixels=0 differing_pct=0.000000\nVISUAL-CHECK: fixture=console-routine-scale-matrix scale=1.50 passed=true differing_pixels=0 differing_pct=0.000000\nVISUAL-CHECK: fixture=console-routine-scale-matrix scale=2.00 passed=true differing_pixels=0 differing_pct=0.000000\n"
+  },
+  {
+    "fixture": "crates/gui-render/testdata/golden/console/routine-unfocused.fixture.toml",
+    "exit_code": 0,
+    "output": "VISUAL-CHECK: fixture=console-routine-unfocused scale=1.00 passed=true differing_pixels=0 differing_pct=0.000000\n"
+  },
+  {
+    "fixture": "crates/gui-render/testdata/golden/console/tool-terminal-open.fixture.toml",
+    "exit_code": 0,
+    "output": "VISUAL-CHECK: fixture=console-tool-terminal-open scale=1.00 passed=true differing_pixels=0 differing_pct=0.000000\n"
+  }
+]

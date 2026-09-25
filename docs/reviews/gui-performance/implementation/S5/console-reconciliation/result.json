@@ -1,0 +1,27 @@
+{
+  "status": "Console static reference reconciliation complete; broader S5 qualification pending",
+  "authority": [
+    "PM033 collapsed Console truncates before wrapping; deliberately opened history preserves complete records",
+    "PM038 clauses1/2 forbid permanent unmanaged Revision navigation and fictional production records",
+    "DATUM_GUI_VISUAL_REGRESSION_HARNESS.md rebless policy: engineering change with explicit fixture/reason footer; no prototype edit"
+  ],
+  "production_change": "Collapsed Console sets its natural single-line shaping extent independently from the visible text clip. Expanded history retains its wrapped-row implementation.",
+  "rebless_reason": "All ten references shared obsolete unmanaged Revision navigation. Scale references additionally froze overlapping menu/status/pane/sidebar/terminal geometry repaired in04b07bc6/62a24c1c/aa99c6d4/2beeffce. Update only this named Console corpus after inspecting every candidate; routine-scale1x is byte-identical to inspected routine-focused1x. History keeps complete separate journal rows; narrow refusal now truncates into message text rather than wrapping the message away.",
+  "verification": {
+    "console_tests": "9 passed,0 failed",
+    "goldens": "Seven manifests,ten scale cases rerun against updated references; all exact comparisons0 differing pixels",
+    "software": "VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json; CPU llvmpipe LLVM19.1.7,Mesa25.0.7-2+deb13u1. Existing offscreen harness requests fallback adapter first. No dependency or environment download.",
+    "visual_review": "Inspected focused/maximized/unfocused/tool/history/narrow refusal and1/1.25/1.5/2x output. Readable scale geometry, visible Layers controls, correct focused-pane overlay and bounded history. Source prototype previously rendered/inspected remains unchanged.",
+    "drift": "Workspace Clippy, project state/parity/alignment, terminal boundaries/proof, Console state/producer/render tests and exact Console integration golden gate pass. Full run stops at known dat-menu-csv-roundtrip-etp: CSV build omits nested Preferences submenus and requires_project. Subsequent conformance/native/reference and remaining drift gates were not run. No menu inventory regenerated."
+  },
+  "limits": [
+    "This exact static corpus is not native OS-input, cross-backend, resource, endurance, temporal or distinct-reviewer qualification. S5 remains active.",
+    "Prior failed receipts remain historical evidence. No broader screenshot baseline or HTML prototype changed.",
+    "No dependency/license/numerical-cap/sequencing changes; preserve GEFN and nonblocking resize."
+  ],
+  "issues": [
+    "dat-console-revision-golden-hrak",
+    "dat-workspace-hidpi-chrome-6fm4",
+    "dat-gui-performance-implementation-vkq"
+  ]
+}

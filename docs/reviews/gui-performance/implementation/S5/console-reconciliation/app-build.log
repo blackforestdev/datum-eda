@@ -1,0 +1,3 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=37.5 GiB target_free=165.9 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 37.5 GiB used; soft limit 20.0 GiB
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.47s

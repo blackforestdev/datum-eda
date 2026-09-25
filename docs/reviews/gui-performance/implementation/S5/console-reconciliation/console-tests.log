@@ -1,0 +1,19 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=37.5 GiB target_free=165.9 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 37.5 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.54s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 9 tests
+test datum_console::history_layout::tests::wrapped_refusals_have_disjoint_complete_clips_at_narrow_and_scaled_sizes ... ok
+test datum_console::history_layout::tests::wrapping_counts_newlines_and_long_words_and_bounds_oversized_records ... ok
+test datum_console::tests::expanded_history_distinguishes_feedback_from_ordinal_journal_truth ... ok
+test datum_console::tests::history_renders_without_a_visible_feedback_strip ... ok
+test datum_console::tests::maximized_terminal_open_and_narrow_layouts_preserve_body_anchor ... ok
+test datum_console::tests::narrow_console_history_clips_controls_to_panel_and_pane ... ok
+test datum_console::tests::overlay_follows_exactly_one_focused_pane_across_scale_matrix ... ok
+test datum_console::tests::prepared_scene_threads_console_geometry_and_clipped_text ... ok
+test datum_console::tests::refusal_has_textual_semantics_and_empty_state_emits_nothing ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 426 filtered out; finished in 1.81s
+
