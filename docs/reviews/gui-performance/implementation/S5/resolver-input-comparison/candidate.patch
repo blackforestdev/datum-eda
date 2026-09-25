@@ -1,0 +1,233 @@
+diff --git a/crates/engine/src/substrate/project_read_cache.rs b/crates/engine/src/substrate/project_read_cache.rs
+index 17eb0378..057b7ef9 100644
+--- a/crates/engine/src/substrate/project_read_cache.rs
++++ b/crates/engine/src/substrate/project_read_cache.rs
+@@ -1,7 +1,6 @@
+ //! One caller-owned read snapshot. Reuse proves identical complete local input
+-//! bytes; metadata supplements content hashing and never replaces validation.
++//! bytes; metadata supplements byte comparison and never replaces validation.
+ use super::{DesignModel, EngineError, ProjectResolver};
+-use sha2::{Digest, Sha256};
+ use std::io::Read;
+ use std::path::{Component, Path, PathBuf};
+ use std::sync::Arc;
+@@ -13,7 +12,7 @@ pub struct ProjectReadCache {
+ 
+ struct Entry {
+     root: PathBuf,
+-    fingerprint: [u8; 32],
++    input: Vec<u8>,
+     model: Arc<DesignModel>,
+ }
+ 
+@@ -22,18 +21,18 @@ impl ProjectReadCache {
+     /// transient diagnostics and pending recovery bypass reuse, not validation. The cache
+     /// retains at most one model and has no global project registry.
+     pub fn resolve(&mut self, root: &Path) -> Result<Arc<DesignModel>, EngineError> {
+-        let before = fingerprint(root);
+         if let Some(entry) = &self.entry
+             && entry.root == root
+-            && before == Some(entry.fingerprint)
++            && unchanged(root, &entry.input)
+         {
+             return Ok(entry.model.clone());
+         }
+         // Release the old snapshot before potentially expensive reconstruction.
+         self.entry = None;
++        let before = capture(root);
+         let model = Arc::new(ProjectResolver::new(root).resolve()?);
+         if let Some(before) = before
+-            // These join diagnostics derive only from the hashed model inputs.
++            // These join diagnostics derive only from the compared model inputs.
+             // Preserve them verbatim; all IO, integrity and unknown diagnostics
+             // still force full resolution on every read.
+             && model.diagnostics.iter().all(|diagnostic| {
+@@ -48,11 +47,11 @@ impl ProjectReadCache {
+                 .source_shards
+                 .iter()
+                 .all(|shard| shard.path.strip_prefix(root).is_ok_and(local_relative))
+-            && fingerprint(root) == Some(before)
++            && unchanged(root, &before)
+         {
+             self.entry = Some(Entry {
+                 root: root.to_owned(),
+-                fingerprint: before,
++                input: before,
+                 model: model.clone(),
+             });
+         }
+@@ -67,12 +66,67 @@ fn local_relative(path: &Path) -> bool {
+             .all(|part| matches!(part, Component::Normal(_)))
+ }
+ 
+-// These bound optional fingerprint work, not project admission or resource
++// These bound optional input scanning/retention, not project admission or resource
+ // acceptance. Exceeding either bound falls back to the ordinary full resolver.
+ const MAX_ENTRIES: usize = 4096;
+ const MAX_BYTES: u64 = 32 * 1024 * 1024;
++const MAX_RETAINED_INPUT: usize = 8 * 1024 * 1024;
+ 
+-fn fingerprint(root: &Path) -> Option<[u8; 32]> {
++fn capture(root: &Path) -> Option<Vec<u8>> {
++    let mut input = Input::Capture(Vec::new());
++    scan(root, &mut input)?;
++    let Input::Capture(bytes) = input else {
++        unreachable!()
++    };
++    Some(bytes)
++}
++
++fn unchanged(root: &Path, expected: &[u8]) -> bool {
++    let mut input = Input::Compare {
++        expected,
++        position: 0,
++    };
++    scan(root, &mut input).is_some()
++        && matches!(input, Input::Compare { position, .. } if position == expected.len())
++}
++
++// Capture and warm comparison use exactly the same encoding. Warm reads retain
++// no second input copy and compare every byte, without probabilistic hash reuse.
++enum Input<'a> {
++    Capture(Vec<u8>),
++    Compare { expected: &'a [u8], position: usize },
++}
++
++impl Input<'_> {
++    fn append(&mut self, bytes: &[u8]) -> Option<()> {
++        match self {
++            Self::Capture(captured) => {
++                let end = captured.len().checked_add(bytes.len())?;
++                if end > MAX_RETAINED_INPUT {
++                    return None;
++                }
++                if end > captured.capacity() {
++                    let capacity = end.checked_next_power_of_two()?.min(MAX_RETAINED_INPUT);
++                    captured.try_reserve_exact(capacity - captured.len()).ok()?;
++                    if captured.capacity() > MAX_RETAINED_INPUT {
++                        return None;
++                    }
++                }
++                captured.extend_from_slice(bytes);
++            }
++            Self::Compare { expected, position } => {
++                let end = position.checked_add(bytes.len())?;
++                if expected.get(*position..end)? != bytes {
++                    return None;
++                }
++                *position = end;
++            }
++        }
++        Some(())
++    }
++}
++
++fn scan(root: &Path, input: &mut Input<'_>) -> Option<()> {
+     // A symlink target or a recovery lease can change without local file bytes
+     // changing. Do not memoize either case, including symlinked ancestors.
+     for ancestor in root.ancestors().filter(|p| !p.as_os_str().is_empty()) {
+@@ -127,34 +181,34 @@ fn fingerprint(root: &Path) -> Option<[u8; 32]> {
+         }
+     }
+     let mut scan = Scan {
+-        hash: Sha256::new(),
++        input,
+         entries: 0,
+         bytes: 0,
+     };
+     scan.metadata(&std::fs::symlink_metadata(root).ok()?)?;
+     scan.directory(root, root, 0)?;
+-    Some(scan.hash.finalize().into())
++    Some(())
+ }
+ 
+-struct Scan {
+-    hash: Sha256,
++struct Scan<'a, 'b> {
++    input: &'a mut Input<'b>,
+     entries: usize,
+     bytes: u64,
+ }
+ 
+-impl Scan {
++impl Scan<'_, '_> {
+     // File identity/change time also detects a rewrite-and-restore between the
+-    // scans around resolution. Content hashing remains required on every hit;
++    // scans around resolution. Content comparison remains required on every hit;
+     // timestamps alone never establish freshness. Unsupported platforms bypass.
+     fn metadata(&mut self, metadata: &std::fs::Metadata) -> Option<()> {
+         #[cfg(unix)]
+         {
+             use std::os::unix::fs::MetadataExt;
+-            self.hash.update(metadata.dev().to_le_bytes());
+-            self.hash.update(metadata.ino().to_le_bytes());
+-            self.hash.update(metadata.ctime().to_le_bytes());
+-            self.hash.update(metadata.ctime_nsec().to_le_bytes());
+-            self.hash.update(metadata.mode().to_le_bytes());
++            self.input.append(&metadata.dev().to_le_bytes())?;
++            self.input.append(&metadata.ino().to_le_bytes())?;
++            self.input.append(&metadata.ctime().to_le_bytes())?;
++            self.input.append(&metadata.ctime_nsec().to_le_bytes())?;
++            self.input.append(&metadata.mode().to_le_bytes())?;
+             Some(())
+         }
+         #[cfg(not(unix))]
+@@ -181,14 +235,14 @@ impl Scan {
+             let metadata = std::fs::symlink_metadata(&path).ok()?;
+             self.metadata(&metadata)?;
+             let relative = path.strip_prefix(root).ok()?.as_os_str().as_encoded_bytes();
+-            self.hash.update((relative.len() as u64).to_le_bytes());
+-            self.hash.update(relative);
++            self.input.append(&(relative.len() as u64).to_le_bytes())?;
++            self.input.append(relative)?;
+             if metadata.is_dir() {
+-                self.hash.update(b"directory");
++                self.input.append(b"directory")?;
+                 self.directory(root, &path, depth + 1)?;
+             } else if metadata.is_file() {
+-                self.hash.update(b"file");
+-                self.hash.update(metadata.len().to_le_bytes());
++                self.input.append(b"file")?;
++                self.input.append(&metadata.len().to_le_bytes())?;
+                 self.bytes = self.bytes.checked_add(metadata.len())?;
+                 if self.bytes > MAX_BYTES {
+                     return None;
+@@ -205,7 +259,7 @@ impl Scan {
+                     if read > metadata.len() {
+                         return None;
+                     }
+-                    self.hash.update(&buffer[..n]);
++                    self.input.append(&buffer[..n])?;
+                 }
+                 if read != metadata.len() {
+                     return None;
+diff --git a/crates/engine/src/substrate/tests/project_read_cache.rs b/crates/engine/src/substrate/tests/project_read_cache.rs
+index d740da39..57418fa3 100644
+--- a/crates/engine/src/substrate/tests/project_read_cache.rs
++++ b/crates/engine/src/substrate/tests/project_read_cache.rs
+@@ -193,3 +193,25 @@ fn project_read_cache_preserves_join_diagnostics_and_validated_journal_reuse() {
+     assert_eq!(changed.journal.len(), 1);
+     assert!(Arc::ptr_eq(&changed, &cache.resolve(root).unwrap()));
+ }
++
++#[test]
++fn project_read_cache_bypasses_input_retention_overflow_without_rejecting_project() {
++    let fixture = Fixture::new();
++    let root = &fixture.0;
++    let mut cache = ProjectReadCache::default();
++    let first = cache.resolve(root).unwrap();
++    let extra = root.join("large-unrelated-input");
++    std::fs::File::create(&extra)
++        .unwrap()
++        .set_len(8 * 1024 * 1024)
++        .unwrap();
++    let a = cache.resolve(root).unwrap();
++    let b = cache.resolve(root).unwrap();
++    assert!(!Arc::ptr_eq(&first, &a));
++    assert!(!Arc::ptr_eq(&a, &b));
++    assert_eq!(*a, *b);
++    assert_eq!(*a, ProjectResolver::new(root).resolve().unwrap());
++    std::fs::remove_file(extra).unwrap();
++    let small = cache.resolve(root).unwrap();
++    assert!(Arc::ptr_eq(&small, &cache.resolve(root).unwrap()));
++}
