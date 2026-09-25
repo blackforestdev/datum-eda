@@ -26,6 +26,40 @@ pub(super) fn render_menu_bar(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> anyhow::Result<()> {
+    let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
+    let starts = (
+        panel_quads.len(),
+        menu_overlay_quads.len(),
+        menu_overlay_text_runs.len(),
+        text_runs.len(),
+        hit_regions.len(),
+    );
+    render_menu_bar_logical(
+        state,
+        &scale.logical_layout(layout.clone()),
+        panel_quads,
+        menu_overlay_quads,
+        menu_overlay_text_runs,
+        text_runs,
+        hit_regions,
+    )?;
+    scale.quads(&mut panel_quads[starts.0..]);
+    scale.quads(&mut menu_overlay_quads[starts.1..]);
+    scale.text_geometry(&mut menu_overlay_text_runs[starts.2..]);
+    scale.text_geometry(&mut text_runs[starts.3..]);
+    scale.hits(&mut hit_regions[starts.4..]);
+    Ok(())
+}
+
+fn render_menu_bar_logical(
+    state: &ReviewWorkspaceState,
+    layout: &ShellLayout,
+    panel_quads: &mut Vec<Quad>,
+    menu_overlay_quads: &mut Vec<Quad>,
+    menu_overlay_text_runs: &mut Vec<TextRun>,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) -> anyhow::Result<()> {
     let title_starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     let model = match menu_model() {
         Ok(model) => model,
@@ -396,6 +430,20 @@ fn find_menu_item(menu_name: &str, label: &str) -> Option<GuiMenuItem> {
         .and_then(|model| model.menubar.iter().find(|menu| menu.menu == menu_name))
         .and_then(|menu| menu.items.iter().find(|item| item.label == label))
         .cloned()
+}
+
+pub(super) fn menu_titles_end_x(layout: &ShellLayout) -> anyhow::Result<f32> {
+    let brand = ["Datum", "\u{00B7}", "EDA"]
+        .iter()
+        .map(|text| measured_text_run_width_px(text, 14.0, TextFace::UiStrong))
+        .sum::<anyhow::Result<f32>>()?;
+    let mut x = layout.top_menu_bar.x + 2.0 * design_tokens::spacing::SP_04 + brand;
+    if let Ok(model) = menu_model() {
+        for menu in &model.menubar {
+            x += menu_title_width(&menu.menu)? + design_tokens::spacing::SP_01;
+        }
+    }
+    Ok(x)
 }
 
 fn menu_title_width(label: &str) -> anyhow::Result<f32> {

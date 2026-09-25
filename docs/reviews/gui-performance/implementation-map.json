@@ -37119,5 +37119,40 @@
       "diff-regions.json uses legacy1x regions for comparison; its nonzero outside counts at higher scales are findings, not ignored masks.",
       "No blanket rebless or altered tolerance. Complete S5 remains open; preserve resize/temporal exclusions."
     ]
+  },
+  "s5_chrome_scale_work": {
+    "status": "Default menu/identity/status scale migration implemented; remaining workspace chrome and S5 qualification open",
+    "production_consumers": [
+      "Main menu titles, dropdowns and submenu paint/hits",
+      "Shell brand/project identity strip",
+      "Segmented status bar",
+      "Native and offscreen composed workspace preparation"
+    ],
+    "retired_paths": [
+      "Scaled glyphs paired with unscaled menu geometry and hit bounds",
+      "Menu hit regions beneath later appended ordinary workspace controls",
+      "Decorative identity/version text overlapping operational chrome at constrained widths"
+    ],
+    "behavior": [
+      "Lay out migrated chrome in logical pixels then convert quad positions, text origins/clip/layout extents and hits through one shared Scale owner. Final frame assembly scales glyph sizes exactly once. Terminal device-pixel text is unchanged.",
+      "Brand positioning uses the same actual shaped metrics as menu anchoring. Decorative identity yields when menu titles need its space. Status decoration yields to available revision/check context.",
+      "Move ordinary menu hit regions above workspace/Console regions in place before later modal/marking consumers. No extra per-frame vector or snapshot allocation.",
+      "Shell composition extracted into its own normal Rust module to keep error propagation and ownership explicit."
+    ],
+    "verification": {
+      "renderer": "350 passed,0 failed,83 ignored; includes composed1/1.25/1.5/2x title glyph containment, menu click resolution and status non-overlap tests",
+      "focused_menu": "13 passed before final composed-scale/priority tests",
+      "clippy": "Strict renderer/app visual all-target -D warnings passed",
+      "visual": "Inspected rendered board prototype and actual1280x768@2x output. Menu/status overlap corrected; remaining sidebar/pane/terminal chrome defects visible. Existing golden comparison still fails and is not blessed.",
+      "checks": "Source health2330files and terminal convergence/core-renderer gates passed",
+      "default_app_build": "Fresh offline locked datum-gui build passed19.54s."
+    },
+    "limits": [
+      "Remaining side-panel/pane-header/terminal-chrome scaling requires the same coordinate review before whole-workspace HiDPI acceptance.",
+      "Existing Console goldens remain unchanged and failed; no full S5/native/backend/scale/resource/endurance or independent qualification claim.",
+      "No dependency, Cargo, license, prototype, cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "issue": "dat-workspace-hidpi-chrome-6fm4",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/chrome-scale/result.json"
   }
 }

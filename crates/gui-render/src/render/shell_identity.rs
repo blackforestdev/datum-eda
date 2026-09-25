@@ -7,7 +7,26 @@ pub(super) fn render_shell_identity(
     layout: &ShellLayout,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
-) {
+) -> anyhow::Result<()> {
+    let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
+    let starts = (panel_quads.len(), text_runs.len());
+    render_shell_identity_logical(
+        state,
+        &scale.logical_layout(layout.clone()),
+        panel_quads,
+        text_runs,
+    )?;
+    scale.quads(&mut panel_quads[starts.0..]);
+    scale.text_geometry(&mut text_runs[starts.1..]);
+    Ok(())
+}
+
+pub(super) fn render_shell_identity_logical(
+    state: &ReviewWorkspaceState,
+    layout: &ShellLayout,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) -> anyhow::Result<()> {
     let starts = (panel_quads.len(), text_runs.len());
     // Brand wordmark: three runs on one baseline — "Datum" / accent middot /
     // "EDA" — advancing x by each measured run width so the middot is truly
@@ -29,7 +48,7 @@ pub(super) fn render_shell_identity(
             TextFace::UiStrong,
             text_runs,
         );
-        brand_x += estimated_text_run_width_px(run, brand_size, TextFace::UiStrong) - 16.0;
+        brand_x += measured_text_run_width_px(run, brand_size, TextFace::UiStrong)?;
     }
     // Rev pill: "{project} · rev {short-revision}" in a SURFACE_01 quad with a
     // BORDER_SUBTLE border, right-aligned to the menubar right edge.
@@ -63,18 +82,21 @@ pub(super) fn render_shell_identity(
         width: pill_w,
         height: pill_h,
     };
-    panel_quads.push(Quad::from_rect(pill_rect, PANEL_BG));
-    push_rect_border(panel_quads, pill_rect, PANEL_CARD_BORDER, 1.0);
-    draw_text(
-        &rev_label,
-        pill_x + pill_pad_x,
-        pill_y + pill_pad_y,
-        design_tokens::typography::DATA_SIZE,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-
+    // Project identity is already present in the sidebar; the decorative pill
+    // yields when the menu titles need the available strip width.
+    if pill_x >= menu_chrome::menu_titles_end_x(layout)? + design_tokens::spacing::SP_03 {
+        panel_quads.push(Quad::from_rect(pill_rect, PANEL_BG));
+        push_rect_border(panel_quads, pill_rect, PANEL_CARD_BORDER, 1.0);
+        draw_text(
+            &rev_label,
+            pill_x + pill_pad_x,
+            pill_y + pill_pad_y,
+            design_tokens::typography::DATA_SIZE,
+            TEXT_MUTED,
+            TextFace::Mono,
+            text_runs,
+        );
+    }
     hit_clipping::clip_content(
         panel_quads,
         text_runs,
@@ -84,6 +106,7 @@ pub(super) fn render_shell_identity(
         0,
         layout.top_menu_bar,
     );
+    Ok(())
 }
 
 #[cfg(test)]
@@ -98,7 +121,7 @@ mod shell_identity_tests {
             let layout = ShellLayout::for_surface(width, 800, 1.0, None);
             let mut quads = Vec::new();
             let mut text = Vec::new();
-            render_shell_identity(&state, &layout, &mut quads, &mut text);
+            render_shell_identity(&state, &layout, &mut quads, &mut text).unwrap();
             let bounds = layout.top_menu_bar;
             for quad in &quads {
                 assert!(quad.points.iter().all(|&(x, y)| bounds.contains(x, y)));
