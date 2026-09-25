@@ -1,0 +1,16 @@
+[
+  {
+    "file": "rejected-receipt-oracle.tar.xz",
+    "sha256": "5cd56e20c9515410e7b62bd264ddb2688dcc3ccfaae58d4b092225b4dd5cdaeb",
+    "members": 8,
+    "original_path": "/tmp/pm045-panes-native-774564bv",
+    "raw_bytes": 209330
+  },
+  {
+    "file": "candidate-sequence.tar.xz",
+    "sha256": "0de952903c8e0cdb89a967773157f36d7d90eafb6cf99994d308697ea9f31777",
+    "members": 10,
+    "original_path": "/tmp/pm045-panes-native-45e37ela",
+    "raw_bytes": 6163549
+  }
+]

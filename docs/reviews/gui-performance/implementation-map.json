@@ -1411,9 +1411,22 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/pane-close/native/receipt.json",
-        "docs/reviews/gui-performance/implementation/S1/pane-rebind/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/pane-rebind/receipt.json",
+        "docs/reviews/gui-performance/implementation/S5/pane-native-sequence/review.json"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s5_native_pane_sequence": {
+        "status": "partial; qualification remains open",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pane-native-sequence/review.json",
+        "boundaries": [
+          "Three-trial native configuration coverage and distinct reviewer replay",
+          "Wayland and supported physical scale rows",
+          "Prescribed mutation negatives, hidden-store retirement and document replacement",
+          "Complete resource/no-leak and numerical CPU/GPU/latency proof",
+          "Resolved schematic fixture admission, T2 and all pinned resize/temporal exclusions remain unqualified",
+          "Endurance and owner UX acceptance"
+        ]
+      }
     },
     {
       "id": "SH-12",
@@ -38145,5 +38158,18 @@
       "All carried S1/S2/S3 obligations, cold starts,60-minute/tier endurance,200cycles/20recoveries, distinct-reviewer replay and owner native UX remain required. Existing numerical excesses and golden/menu/bootstrap/final-close failures remain evidence."
     ],
     "boundaries": "S0-S4,GEFN,8xAA,painter order,dependency/license authority,all admission limits,engine/model semantics and nonblocking resize/temporal/T2/schematic exclusions unchanged."
+  },
+  "s5_native_pane_sequence": {
+    "status": "partial native structural evidence; no S5 acceptance",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/pane-native-sequence/review.json",
+    "limits": [
+      "Three-trial native configuration coverage and distinct reviewer replay",
+      "Wayland and supported physical scale rows",
+      "Prescribed mutation negatives, hidden-store retirement and document replacement",
+      "Complete resource/no-leak and numerical CPU/GPU/latency proof",
+      "Resolved schematic fixture admission, T2 and all pinned resize/temporal exclusions remain unqualified",
+      "Endurance and owner UX acceptance"
+    ]
   }
 }
