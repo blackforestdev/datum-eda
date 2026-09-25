@@ -171,9 +171,13 @@ record remains history, not a competing live contract.
 
 **GPI-S4.** Finish terminal fairness/hidden work and all-host recovery/resource adoption; preserve separate concurrent multi-device failure. Complete the unfinished S2 implementation predicates carried by the S2/S4 tables before advancing to S5.
 
+For private font selection/loading/cache and raster construction only, the S4 implementation prerequisite is the shared MEM-02/ACC-02 call guard, correct simultaneous local/process accounting, and default production refusal/release/retry integration with affected positive/negative proof. A hard pre-call bound on these opaque internal allocations is no longer required. Every other unfinished S2/S4 implementation predicate remains due before S5. This change supplies no completion evidence by itself.
+
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5 -->
 
 **GPI-S5.** Run complete in-scope adoption/native UX/endurance and independent performance replay; publish all excluded scope without claiming resize closure.
+
+Qualification must demonstrate that private text construction actually stays within the unchanged numerical memory limits for every admitted configuration and required workload, including cold load, cache churn, simultaneous hosts and recovery. Any observed overrun, missing instantaneous/peak accounting or required content that cannot fit fails the tier; the guard detecting it does not satisfy qualification. S4 guard implementation is neither a memory-budget pass nor protection against every possible opaque allocation.
 
 ## Owner amendment: resize investigation is nonblocking
 

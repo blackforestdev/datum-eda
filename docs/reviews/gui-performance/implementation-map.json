@@ -3840,7 +3840,8 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
+          "Private construction scope: Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
@@ -5407,7 +5408,8 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
+          "Private construction scope: Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "CPU/GPU lifetime and final resource content correct within budgets",
@@ -17583,7 +17585,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete private font selection/loading/cache and raster synchronous construction admission. Public shaping/Arc output, keys, metadata, rows/glyphs, attributes and visible-paragraph bidi scratch now have pre-call admission. Paragraph discovery and retirement inventory allocate no temporary storage. Preserve original ceilings, required-content behavior and full S5 qualification."
+          "Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -17889,7 +17891,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete private font selection/loading/cache and raster synchronous construction admission. Public shaping/Arc output, keys, metadata, rows/glyphs, attributes and visible-paragraph bidi scratch now have pre-call admission. Paragraph discovery and retirement inventory allocate no temporary storage. Preserve original ceilings, required-content behavior and full S5 qualification."
+          "Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -32966,10 +32968,12 @@
       "disposition": "docs/reviews/gui-performance/implementation/S4/dependency-patch-review/disposition.json"
     },
     "private_allocation_guard_proposal": {
-      "status": "Pending owner decision; no active requirement or milestone changes",
+      "status": "Owner approved exact amendment; applied under PM047. Implementation and qualification remain open.",
       "evidence": "docs/reviews/gui-performance/implementation/S4/private-allocation-guard-proposal.json",
       "tradeoff": "Full accounting and numerical budget qualification preserved; opaque font/raster pre-call prevention replaced by monitored construction and post-call rejection before publication/submission. Transient overshoot and library allocation-failure risk explicitly remain.",
-      "implementation": "No guard implementation yet. The four existing gaps and S5 remain open."
+      "implementation": "No guard implementation yet. The four existing gaps and S5 remain open.",
+      "decision": "docs/decisions/PRODUCT_MECHANICS_047_PRIVATE_TEXT_CONSTRUCTION_GUARD.md",
+      "owner_response": "I approve your recomendation"
     }
   },
   "s4_shared_geometry_work": {
