@@ -1,0 +1,186 @@
+{
+  "status": "partial native allocation-lifetime evidence; S5 qualification remains open",
+  "frontier_step": "GPI-S5",
+  "candidate_commit": "e41d7bf5c3a0fc872a89cbdae9377cb4020a2b86",
+  "binary_sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+  "normalized_model_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "scope": "Pinned F-DOA Board and existing complementary Schematic placeholders, X11/Xwayland Intel P630 Vulkan, physical1x60Hz client1280x800. Placeholder content never qualifies a resolved schematic.",
+  "purpose": "Additional resource observation of established native pane sequence, not an unchanged structural rerun or performance resampling. Existing production diagnostics only; no product changes.",
+  "recipe": "five second warmup, 60 actions at 500ms start intervals: split vertical, focus next, close focused, focus next; initial/final Board plus unadmitted Schematic placeholder leaves; five second tail",
+  "observers": "20ms minimum opportunistic resource snapshots on existing event turns; no new timer/redraw. Full tracked GPU allocation event delivery. Verbose/action-state traces remain enabled.",
+  "result": {
+    "allocation_events": 25040,
+    "registrations": 606,
+    "releases": 606,
+    "batches_reconciled": 406,
+    "tracked_capacity_peak_bytes": 38556720,
+    "scope": "Application tracked allocation events; API registration follows creation. Not driver residency or complete memory total.",
+    "uniform_peak_bytes": 272,
+    "uniform_lifetimes": [
+      {
+        "id": 2,
+        "owner": 1,
+        "bytes": 16,
+        "registered_elapsed_ns": 1849173207,
+        "released_elapsed_ns": 43529575705,
+        "lifetime_ms": 41680.402498,
+        "final_consumers": [
+          "MAIN",
+          "BOARD",
+          "SCHEMATIC",
+          "LAYERS",
+          "NAV",
+          "INSPECTOR",
+          "MENU",
+          "CONSOLE",
+          "TERMINAL"
+        ]
+      },
+      {
+        "id": 4,
+        "owner": 3,
+        "bytes": 64,
+        "registered_elapsed_ns": 1849268551,
+        "released_elapsed_ns": 43529580286,
+        "lifetime_ms": 41680.311735,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 6,
+        "owner": 5,
+        "bytes": 64,
+        "registered_elapsed_ns": 1849276268,
+        "released_elapsed_ns": 43529636408,
+        "lifetime_ms": 41680.36014,
+        "final_consumers": []
+      },
+      {
+        "id": 11,
+        "owner": 10,
+        "bytes": 64,
+        "registered_elapsed_ns": 2032425572,
+        "released_elapsed_ns": 43529627678,
+        "lifetime_ms": 41497.202106,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 75,
+        "owner": 74,
+        "bytes": 64,
+        "registered_elapsed_ns": 10016106537,
+        "released_elapsed_ns": 11019626130,
+        "lifetime_ms": 1003.519593,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 157,
+        "owner": 156,
+        "bytes": 64,
+        "registered_elapsed_ns": 14014072708,
+        "released_elapsed_ns": 15021475997,
+        "lifetime_ms": 1007.403289,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 235,
+        "owner": 234,
+        "bytes": 64,
+        "registered_elapsed_ns": 18001483920,
+        "released_elapsed_ns": 19020064261,
+        "lifetime_ms": 1018.580341,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 313,
+        "owner": 312,
+        "bytes": 64,
+        "registered_elapsed_ns": 21994447789,
+        "released_elapsed_ns": 23019965801,
+        "lifetime_ms": 1025.518012,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 395,
+        "owner": 394,
+        "bytes": 64,
+        "registered_elapsed_ns": 26004668459,
+        "released_elapsed_ns": 27005336462,
+        "lifetime_ms": 1000.668003,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 474,
+        "owner": 473,
+        "bytes": 64,
+        "registered_elapsed_ns": 30021275025,
+        "released_elapsed_ns": 31020172329,
+        "lifetime_ms": 998.897304,
+        "final_consumers": [
+          "BOARD"
+        ]
+      },
+      {
+        "id": 553,
+        "owner": 552,
+        "bytes": 64,
+        "registered_elapsed_ns": 34018772374,
+        "released_elapsed_ns": 35015304771,
+        "lifetime_ms": 996.532397,
+        "final_consumers": [
+          "BOARD"
+        ]
+      }
+    ],
+    "resource_snapshots": 341,
+    "document_cpu_retained_values": [
+      3089535
+    ],
+    "document_gpu_reserved_values": [
+      2883216
+    ],
+    "gui_rss_sample_min_bytes": 144617472,
+    "gui_rss_sample_max_bytes": 165965824,
+    "gui_rss_final_bytes": 144617472,
+    "memory_limit": "GUI sampled RSS only, includes observer overhead; no summed engine/process-private/driver accounting or full no-leak/endurance proof. Document/cache/reservation/scoped views overlap.",
+    "final_tracked_capacity_bytes": 0,
+    "final_documents_cpu_gpu_empty": true,
+    "unreleased_hosts": 0,
+    "qualification_pass": false,
+    "native_actions": 60,
+    "native_enter_presses": 60,
+    "native_down_presses": 630,
+    "workload_seconds": 30.000096653,
+    "endpoint_board_interior_rgb_ae": 0,
+    "endpoint_board_crop": [
+      227,
+      65,
+      981,
+      384
+    ]
+  },
+  "interpretation": "All406 allocation batches reconcile against25,040 ordered events;606 registrations have606 releases. Seven additional64-byte Board-tagged uniforms live aboutone second each and release before processclose; aggregateUniform highwater272bytes. This is consistent with transient secondBoard leaves from complementary splitting; the ledger lacks a directPaneId join, so it does not independently identify each uniform with a specificPaneId. Single document CPUretention3,089,535 and GPUreservation2,883,216 remain stable in sampled views, finaldocument lists empty and host reservations released.",
+  "visual_review": "Endpoint Board interior comparison exact within the declared crop; native state oracles retain cameras and expected focus. Initial/final fullimages preserved; no fullimage equality or physical latency claim.",
+  "boundaries": [
+    "Tracked GPU peak38,556,720bytes is registration accounting, not exact API-live peak, driver residency or complete PM047 memory accounting.",
+    "GUI RSS snapshots include observers and omit cooperating engine total; overlapping counters must not be summed.",
+    "No private-text per-call peak, observer overhead admission, full no-leak or60minute endurance acceptance.",
+    "No camera hidden-store/document-replacement negative qualification; visiblecamera receipts and final allocator release are narrower.",
+    "Three-trial/relative statistics, numerical caps, otherbackend-scales, distinctreviewer and ownerUX remain open.",
+    "S0-S4/GEFN and dependency authority unchanged; all pinned resize/temporal/T2/unadmittedschematic exclusions preserved."
+  ],
+  "qualification_pass": false
+}
