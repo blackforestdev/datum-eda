@@ -3867,7 +3867,7 @@
         "crates/gui-render/src/render/text_buffer_cache.rs"
       ],
       "test": {
-        "status": "Native measurement adapters now enter their existing renderer-origin scope; the four-host production preparation/refusal/retry test proves attribution and scope restoration. Prior GPU event delivery remains intact. Native replay of this correction and complete CPU-cache/shared incidence, subcap, driver/RSS and adoption qualification remain open.",
+        "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
         "id": "proof_ac_05",
         "positive": "Create/share/replace/evict/retire allocations and uploads",
         "negative_control": "Count buffer capacity reuse as zero upload",
@@ -4123,6 +4123,12 @@
         "previous_test_status": "Partial GPU resource observation: bounded native registration/reference/retirement/upload/release history and conservative pre-creation reservation peaks added; existing owners remain authoritative. Conformance and complete native delivery do not establish full CPU/GPU/driver/RSS/subcap or adoption qualification.",
         "status": "Native measurement adapters now enter their existing renderer-origin scope; the four-host production preparation/refusal/retry test proves attribution and scope restoration. Prior GPU event delivery remains intact. Native replay of this correction and complete CPU-cache/shared incidence, subcap, driver/RSS and adoption qualification remain open.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/measurement-origin/result.json"
+      },
+      "s5_resource_snapshot_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Native measurement adapters now enter their existing renderer-origin scope; the four-host production preparation/refusal/retry test proves attribution and scope restoration. Prior GPU event delivery remains intact. Native replay of this correction and complete CPU-cache/shared incidence, subcap, driver/RSS and adoption qualification remain open.",
+        "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json"
       }
     },
     {
@@ -4167,7 +4173,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Bounded GPU trace on/off, simultaneous private-call trace, forced overflow, existing-file rejection and corrupt evidence controls retained. Observer overhead and required formal statistical trials remain unqualified.",
+        "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
         "id": "proof_ac_06",
         "positive": "Same workload trace-on/off and rejected trials",
         "negative_control": "Discard high-cost or contaminated trial after seeing result",
@@ -4251,6 +4257,12 @@
         "previous_test_status": "Bounded private-call trace native on/off and overflow/file-collision controls retained. Initial disabled final-close timeout preserved with successful baseline and declared replay; no calibrated overhead/statistical claim or full qualification.",
         "status": "Bounded GPU trace on/off, simultaneous private-call trace, forced overflow, existing-file rejection and corrupt evidence controls retained. Observer overhead and required formal statistical trials remain unqualified.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json"
+      },
+      "s5_resource_snapshot_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Bounded GPU trace on/off, simultaneous private-call trace, forced overflow, existing-file rejection and corrupt evidence controls retained. Observer overhead and required formal statistical trials remain unqualified.",
+        "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json"
       }
     },
     {
@@ -18573,7 +18585,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "GPU capacity history and process reservation lifetime peak are now delivered through normal native teardown. Stable allocation IDs count shared capacity once.512MiB authority unchanged; this bounded conformance workload does not qualify all application allocations, driver residency, simultaneous subcaps, recovery or endurance.",
+        "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
         "id": "proof_mem_gpu_total",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -18719,6 +18731,12 @@
         "previous_test_status": "planned; not executed",
         "status": "GPU capacity history and process reservation lifetime peak are now delivered through normal native teardown. Stable allocation IDs count shared capacity once.512MiB authority unchanged; this bounded conformance workload does not qualify all application allocations, driver residency, simultaneous subcaps, recovery or endurance.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json"
+      },
+      "s5_resource_snapshot_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "GPU capacity history and process reservation lifetime peak are now delivered through normal native teardown. Stable allocation IDs count shared capacity once.512MiB authority unchanged; this bounded conformance workload does not qualify all application allocations, driver residency, simultaneous subcaps, recovery or endurance.",
+        "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json"
       }
     },
     {
@@ -37901,5 +37919,16 @@
       "The focused production-adapter test establishes this correction only; no global numerical-cap, workload or GPI-S5 acceptance."
     ],
     "boundaries": "Preserve S0-S4, GEFN, PM045/PM047 numerical/admission authority, PM029 dependency/license boundaries and all nonblocking resize/temporal/T2/unadmitted schematic exclusions. No rendering, model/journal or prototype changes."
+  },
+  "s5_resource_snapshots": {
+    "status": "Native resource snapshots delivered; GPI-S5 remains incomplete",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json",
+    "limits": [
+      "Planned three on/off pairs stopped after first off final-close timeout. Only first on has normal drained exit; off completed93cycles but was terminated143. No paired inference or observer-overhead qualification; remaining positive trials were not run or substituted. No whole-GPU duty counters or calibrated physical presentation measurement in this batch. Preserve unsupported NVIDIA counter boundary.",
+      "Resource point samples and reservation peaks do not prove every transient CPU/resource cap, concurrent workload, recovery, backend/scale or adoption predicate. GUI RSS excludes cooperating engine RSS; CPU cgroup includes descendants.",
+      "All carried S1/S2/S3 obligations, cold starts,60-minute/tier endurance,200cycles/20recoveries, distinct-reviewer replay and owner native UX remain required. Existing numerical excesses and golden/menu/bootstrap/final-close failures remain evidence."
+    ],
+    "boundaries": "S0-S4,GEFN,8xAA,painter order,dependency/license authority,all admission limits,engine/model semantics and nonblocking resize/temporal/T2/schematic exclusions unchanged."
   }
 }

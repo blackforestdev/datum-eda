@@ -7,6 +7,8 @@ use std::sync::Arc;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct DocumentGpuUsage {
     pub scene_id: String,
+    pub budget_id: u64,
+    pub lifetime_peak_reserved_bytes: u64,
     pub reserved_bytes: u64,
     pub limit_bytes: u64,
 }
