@@ -1,0 +1,365 @@
+{
+  "qualification_pass": false,
+  "complete_planned_order": false,
+  "trials": [
+    {
+      "role": "baseline",
+      "trial": 1,
+      "host": "MAIN",
+      "elapsed_s": 60.001282471,
+      "cpu_duty_percent": 0.03990081380605694,
+      "cgroup_cpu_usec": 23941,
+      "gui_cpu_ns": 23940377,
+      "cooperating_descendants_cpu_residual_ns": 623,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "362343",
+        "362395"
+      ],
+      "end_members": [
+        "362343",
+        "362395"
+      ]
+    },
+    {
+      "role": "baseline",
+      "trial": 1,
+      "host": "GLOBAL",
+      "elapsed_s": 60.001321482,
+      "cpu_duty_percent": 0.039637460330160613,
+      "cgroup_cpu_usec": 23783,
+      "gui_cpu_ns": 23783030,
+      "cooperating_descendants_cpu_residual_ns": -30,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "362343",
+        "362395"
+      ],
+      "end_members": [
+        "362343",
+        "362395"
+      ]
+    },
+    {
+      "role": "baseline",
+      "trial": 1,
+      "host": "PROJECT",
+      "elapsed_s": 60.001407586,
+      "cpu_duty_percent": 0.039467407437163655,
+      "cgroup_cpu_usec": 23681,
+      "gui_cpu_ns": 23680982,
+      "cooperating_descendants_cpu_residual_ns": 18,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "362343",
+        "362395"
+      ],
+      "end_members": [
+        "362343",
+        "362395"
+      ]
+    },
+    {
+      "role": "baseline",
+      "trial": 1,
+      "host": "NEW",
+      "elapsed_s": 60.001153977,
+      "cpu_duty_percent": 0.04027589204244903,
+      "cgroup_cpu_usec": 24166,
+      "gui_cpu_ns": 24166653,
+      "cooperating_descendants_cpu_residual_ns": -653,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "362343",
+        "362395"
+      ],
+      "end_members": [
+        "362343",
+        "362395"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "host": "MAIN",
+      "elapsed_s": 60.001251907,
+      "cpu_duty_percent": 0.0380325397799538,
+      "cgroup_cpu_usec": 22820,
+      "gui_cpu_ns": 22820438,
+      "cooperating_descendants_cpu_residual_ns": -438,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "363606",
+        "363667"
+      ],
+      "end_members": [
+        "363606",
+        "363667"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "host": "GLOBAL",
+      "elapsed_s": 60.00118439,
+      "cpu_duty_percent": 0.0399875439858799,
+      "cgroup_cpu_usec": 23993,
+      "gui_cpu_ns": 23992451,
+      "cooperating_descendants_cpu_residual_ns": 549,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "363606",
+        "363667"
+      ],
+      "end_members": [
+        "363606",
+        "363667"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "host": "PROJECT",
+      "elapsed_s": 60.001156476,
+      "cpu_duty_percent": 0.03967256866044096,
+      "cgroup_cpu_usec": 23804,
+      "gui_cpu_ns": 23803822,
+      "cooperating_descendants_cpu_residual_ns": 178,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "363606",
+        "363667"
+      ],
+      "end_members": [
+        "363606",
+        "363667"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "host": "NEW",
+      "elapsed_s": 60.001484687,
+      "cpu_duty_percent": 0.039999010233158265,
+      "cgroup_cpu_usec": 24000,
+      "gui_cpu_ns": 23999882,
+      "cooperating_descendants_cpu_residual_ns": 118,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": true,
+      "start_members": [
+        "363606",
+        "363667"
+      ],
+      "end_members": [
+        "363606",
+        "363667"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "host": "MAIN",
+      "elapsed_s": 60.001388044,
+      "cpu_duty_percent": 0.038999097792271877,
+      "cgroup_cpu_usec": 23400,
+      "gui_cpu_ns": 23400164,
+      "cooperating_descendants_cpu_residual_ns": -164,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": false,
+      "start_members": [
+        "364517",
+        "364573"
+      ],
+      "end_members": [
+        "364517",
+        "364573"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "host": "GLOBAL",
+      "elapsed_s": 60.001155493,
+      "cpu_duty_percent": 0.039814233248869756,
+      "cgroup_cpu_usec": 23889,
+      "gui_cpu_ns": 23888743,
+      "cooperating_descendants_cpu_residual_ns": 257,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": false,
+      "start_members": [
+        "364517",
+        "364573"
+      ],
+      "end_members": [
+        "364517",
+        "364573"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "host": "PROJECT",
+      "elapsed_s": 60.001238124,
+      "cpu_duty_percent": 0.039504184815344345,
+      "cgroup_cpu_usec": 23703,
+      "gui_cpu_ns": 23702988,
+      "cooperating_descendants_cpu_residual_ns": 12,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": false,
+      "start_members": [
+        "364517",
+        "364573"
+      ],
+      "end_members": [
+        "364517",
+        "364573"
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "host": "NEW",
+      "elapsed_s": 60.001159784,
+      "cpu_duty_percent": 0.039377572175363605,
+      "cgroup_cpu_usec": 23627,
+      "gui_cpu_ns": 23627001,
+      "cooperating_descendants_cpu_residual_ns": -1,
+      "counter_boundary": "Cgroup includes kernel/all descendants and exits. GUI clock sampled separately; residual is not exclusive engine attribution and includes sampling skew. No clamping.",
+      "presentations": 0,
+      "submission_receipts": 0,
+      "redraw_requests": 0,
+      "timed_log_lines": 0,
+      "pixels_difference": "0",
+      "violations": [],
+      "normal_drained_exit": false,
+      "start_members": [
+        "364517",
+        "364573"
+      ],
+      "end_members": [
+        "364517",
+        "364573"
+      ]
+    }
+  ],
+  "failed_runs": [
+    {
+      "role": "candidate",
+      "trial": 2,
+      "path": "/tmp/pm045-idle-native-_hz7p637",
+      "returncode": 1
+    }
+  ],
+  "runtime_identity": [
+    {
+      "role": "baseline",
+      "trial": 1,
+      "surface_identity": [
+        "window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457302) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457320) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457338) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "surface_identity": [
+        "window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457302) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457320) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457338) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ]
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "surface_identity": [
+        "window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457302) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457320) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "window=WindowId(31457338) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ]
+    }
+  ],
+  "normalized_fixture_sha256_after": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "limits": [
+    "No wholeGPUdriver-client counters: existing opaque NVIDIA handles remain a missing method boundary. Zero application log receipts cannot replace required wholeGPU duty.",
+    "X11 actual60Hz1x single-leaf hidden-terminal only. Wayland,other supported scales,otherleaf configurations and visibleterminal remain.",
+    "Planned three pairs stopped after candidate2 final-close timeout; only first pair completed normally. Remaining three launches not run. No required three-trial or seven-pair inference. No software perpetual-redraw negative run performed; no complete SH04 or S5 acceptance.",
+    "CPU family total captures descendants via cgroup; separate GUI clock residual is not dedicated engine lifetime accounting. Endpoint images do not establish continuous displayed temporal qualification."
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "status": "Bounded W-IDLE four-host X11 evidence; full SH04/S5 qualification remains incomplete",
+  "qualification_pass": false,
+  "candidate_commit": "9644ea5d4b6815135e5397ee816c0b762f446ada",
+  "binary_sha256": {
+    "baseline": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+    "candidate": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "4a674d84df4100e1c9d783a37a5307e0682184d78771844325bad25a7b9ee321",
+    "crates/gui-app/src/app_shell.rs": "12ca9ebbfced332289d366c3df63c6cd1b9082b579ea938667314ac5cc42e43c",
+    "crates/gui-app/src/native_resource_measurements.rs": "dbad92f74f212672b5d5e275a05dd85b0f24b681ecbb7318415fddadc38c3f9e",
+    "crates/gui-render/src/lib.rs": "8dfabc5ed68d28b8e7f0a35a3191e66f3561b780da7bdf82360a98c4cc12657f",
+    "crates/gui-render/src/render/document_cpu.rs": "5f5278c468392916ffac67d959b526357e6c3e4d46c1cdb603028d676f505435",
+    "crates/gui-render/src/render/document_gpu_budget.rs": "33361519e4edc03a69cf44e1c1878bb44c5a768b2b888912031d2eaa51a4b8a0",
+    "crates/gui-render/src/render/frame_preparation.rs": "7e11b033858c3d83f3dbac74a24e5bce034c945b30a9eb7ab87520104b15e369",
+    "crates/gui-render/src/render/measurement_owner.rs": "b05043e8f8c1373ff2e47b199d6c358c8ed3f6e2d65caf40d91b03eba145b334",
+    "crates/gui-render/src/render/new_project_scene.rs": "132cebd33d24cbb4c7de030b10b677905f41982f531180124fa850bad45e659d",
+    "crates/gui-render/src/render/preferences_scene.rs": "9602c3eff3c7bdb60aa1905b1d3b7fd715c2e5ed4ccc5942785f788af327cee9",
+    "crates/gui-render/src/render/resource_observation.rs": "65398f46b451a6b9990cba2d856e7e1b81fd3c5cedea9b7543566f0db35caddd",
+    "crates/gui-render/src/render/resource_observation_tests.rs": "95b9d518946b8da8199c8fb07d9744dd65c1608585dcc3ee5f4fc15d8b037a04",
+    "crates/gui-render/src/text_gpu/atlas.rs": "28ca596935869a415e3f9ec228953f297533a14292ba45a299c53276466263ae",
+    "crates/gui-render/src/text_gpu/budget.rs": "92676c620d44ff3fe9bee2bdd6d37b2e6dd805f74443c5840395b799b19d4c8c"
+  },
+  "baseline_provenance": "47eefbc1 release c425 retained at final-msaa-resolve baseline; same release visual-profile build provenance in existing evidence",
+  "order": [
+    [
+      "baseline",
+      1
+    ],
+    [
+      "candidate",
+      1
+    ],
+    [
+      "candidate",
+      2
+    ],
+    [
+      "baseline",
+      2
+    ],
+    [
+      "baseline",
+      3
+    ],
+    [
+      "candidate",
+      3
+    ]
+  ],
+  "completed_planned_order": false,
+  "failed_runs": [
+    {
+      "role": "candidate",
+      "trial": 2,
+      "path": "/tmp/pm045-idle-native-_hz7p637",
+      "returncode": 1
+    }
+  ],
+  "trial_count": 12,
+  "violations": [],
+  "method": "Three declared baseline/candidate pairs, each independently launches exact F-DOA one-leaf1280x800 at X11 physical60Hz1x. Main then actual Global/Project/New hosts each settle5seconds, record preimage, idle60seconds with no input, record total cgroup CPU/GUI clock and existing verbose log byte interval, then compare endpoint pixels. Terminal dock hidden. No tracing event buffers, GPU timestamps or ptrace during timed intervals. All normal shutdowns require device-live final drained receipt; on timeout retain thread/gdb diagnostic before owned cleanup. No pre-close property query. Failed trials are never replaced.",
+  "failure": "Candidate2 completed four60-second intervals then final-close socket timed out. Main thread /proc wchan do_epoll_wait and gdb stack polling::Poller -> calloop -> winit event loop, not GPU teardown, at diagnostic capture. Last native queue receipt24completed24; no CloseRequested log. Cleanup root143. Event delivery remains unresolved under dat-native-final-close-observation-xbb7; no lost-wakeup cause proven. Planned remaining three launches were not run or substituted.",
+  "accounting": "Cgroup microsecond CPU usage includes GUI/cooperating descendants/kernel/exit accounting. Direct GUI process CPU clock is separate; residual includes all other processes and boundary skew, not exclusive engine identity. Existing native lifecycle submission/presentation records cover application receipts, not whole GPU driver client duty. Captures are outside timed CPU interval. Terminal process remains alive with hidden dock; no disabled modality or animation policy change.",
+  "display": "kscreen physical1920x1080@60Hz,scale1during batch; original1.05 restored in controller finally. Exact before/during/after records archived. No renderer quality/backend-policy change.",
+  "limits": [
+    "No wholeGPUdriver-client counters: existing opaque NVIDIA handles remain a missing method boundary. Zero application log receipts cannot replace required wholeGPU duty.",
+    "X11 actual60Hz1x single-leaf hidden-terminal only. Wayland,other supported scales,otherleaf configurations and visibleterminal remain.",
+    "Planned three pairs stopped after candidate2 final-close timeout; only first pair completed normally. Remaining three launches not run. No required three-trial or seven-pair inference. No software perpetual-redraw negative run performed; no complete SH04 or S5 acceptance.",
+    "CPU family total captures descendants via cgroup; separate GUI clock residual is not dedicated engine lifetime accounting. Endpoint images do not establish continuous displayed temporal qualification."
+  ],
+  "archives": [
+    {
+      "file": "baseline-1.tar.gz",
+      "members": 20
+    },
+    {
+      "file": "candidate-1.tar.gz",
+      "members": 19
+    },
+    {
+      "file": "candidate-2.tar.gz",
+      "members": 21
+    },
+    {
+      "file": "campaign.tar.gz",
+      "members": 9
+    }
+  ],
+  "boundaries": "Preserve S0-S4,GEFN,all225adoption contracts,PM045/PM047 caps,dependency authority and nonblocking resize/temporal/T2/schematic exclusions. No new dependencies,production code,full memory/endurance/owner UX/independent acceptance."
+}
