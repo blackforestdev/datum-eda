@@ -18,7 +18,7 @@ impl Source for CountingFonts {
         cache: &mut glyphon::SwashCache,
         scope: &crate::cpu_alloc::Scope,
         key: glyphon::CacheKey,
-    ) -> Option<glyphon::SwashImage> {
+    ) -> anyhow::Result<Option<glyphon::SwashImage>> {
         self.inner.raster(cache, scope, key)
     }
 }

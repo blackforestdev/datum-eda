@@ -11,7 +11,7 @@ use std::sync::{
 };
 
 pub(crate) struct Shape {
-    line: ShapeLine,
+    line: Option<ShapeLine>,
     _lease: Option<Lease>,
     pub(super) accounted: AtomicBool,
     construction: std::sync::Mutex<Option<crate::text_buffer_cache::budget::Construction>>,
@@ -19,22 +19,31 @@ pub(crate) struct Shape {
 struct Lease {
     bytes: u64,
     outputs: Arc<AtomicU64>,
+    lifetimes: Arc<std::sync::Mutex<()>>,
 }
-impl Drop for Lease {
+impl Drop for Shape {
     fn drop(&mut self) {
-        self.outputs.fetch_sub(self.bytes, Ordering::AcqRel);
+        let _lock = self
+            ._lease
+            .as_ref()
+            .map(|lease| lease.lifetimes.lock().unwrap_or_else(|e| e.into_inner()));
+        // Retiring returned output is one operation relative to call windows.
+        drop(self.line.take());
+        if let Some(lease) = &self._lease {
+            lease.outputs.fetch_sub(lease.bytes, Ordering::AcqRel);
+        }
     }
 }
 impl std::ops::Deref for Shape {
     type Target = ShapeLine;
     fn deref(&self) -> &ShapeLine {
-        &self.line
+        self.line.as_ref().expect("live shape owns its line")
     }
 }
 impl Shape {
     pub fn untracked(line: ShapeLine) -> Self {
         Self {
-            line,
+            line: Some(line),
             _lease: None,
             accounted: AtomicBool::new(false),
             construction: std::sync::Mutex::new(None),
@@ -44,7 +53,7 @@ impl Shape {
         *self.construction.lock().unwrap_or_else(|e| e.into_inner()) = None;
     }
     pub fn payload_bytes(&self) -> usize {
-        payload_bytes(&self.line)
+        payload_bytes(self)
     }
 }
 fn payload_bytes(line: &ShapeLine) -> usize {
@@ -94,7 +103,7 @@ pub(crate) trait Source {
         cache: &mut SwashCache,
         scope: &Scope,
         key: CacheKey,
-    ) -> Option<SwashImage>;
+    ) -> anyhow::Result<Option<SwashImage>>;
 }
 impl Source for FontSystem {
     fn shape(&mut self, text: &str, attrs: &AttrsList) -> anyhow::Result<Shape> {
@@ -111,9 +120,11 @@ impl Source for FontSystem {
         cache: &mut SwashCache,
         scope: &Scope,
         key: CacheKey,
-    ) -> Option<SwashImage> {
-        self.get_font(key.font_id, key.font_weight)?;
-        scope.with(|| cache.get_image_uncached(self, key))
+    ) -> anyhow::Result<Option<SwashImage>> {
+        if self.get_font(key.font_id, key.font_weight).is_none() {
+            return Ok(None);
+        }
+        Ok(scope.with(|| cache.get_image_uncached(self, key)))
     }
 }
 
@@ -125,6 +136,8 @@ pub(crate) struct Fonts {
     charged: u64,
     scope: Scope,
     outputs: Arc<AtomicU64>,
+    lifetimes: Arc<std::sync::Mutex<()>>,
+    last_call: Option<crate::cpu_alloc::calls::Report>,
 }
 impl Fonts {
     pub fn new(host: Arc<crate::text_gpu::budget::Budget>) -> Self {
@@ -140,6 +153,8 @@ impl Fonts {
             charged: 0,
             scope,
             outputs: Arc::new(AtomicU64::new(0)),
+            lifetimes: Arc::new(std::sync::Mutex::new(())),
+            last_call: None,
         }
     }
     pub fn reserved_bytes(&self) -> u64 {
@@ -147,6 +162,8 @@ impl Fonts {
     }
 
     fn clear_caches(&mut self) {
+        let lifetimes = self.lifetimes.clone();
+        let _lock = lifetimes.lock().unwrap_or_else(|e| e.into_inner());
         let fonts = self.fonts.take().expect("font owner initialized");
         // Preserve the exact immutable database IDs, locale and family defaults.
         // Consume the old caches before constructing replacements; returned shapes
@@ -161,27 +178,40 @@ impl Fonts {
         self.baseline = self.usage().private_bytes.unwrap_or(0);
     }
 
-    fn admit_caches(&mut self) {
-        let Some(private) = self.usage().private_bytes else {
-            return;
-        };
-        let bytes = private.saturating_sub(self.baseline);
-        if bytes == self.charged {
-            return;
-        }
-        self.permits = None;
-        let reserve = || -> anyhow::Result<_> {
-            Ok([
-                self.host.reserve(bytes)?,
-                crate::text_gpu::budget::staging_process().reserve(bytes)?,
-            ])
-        };
-        match reserve() {
-            Ok(permits) => {
+    fn call(&self, temporary: u64) -> crate::cpu_alloc::calls::Call {
+        crate::cpu_alloc::calls::Call::begin(
+            &self.scope,
+            self.host.clone(),
+            crate::text_gpu::budget::staging_process(),
+            self.baseline + self.outputs.load(Ordering::Acquire),
+            self.charged + temporary,
+        )
+    }
+
+    fn finish_call(
+        &mut self,
+        call: crate::cpu_alloc::calls::Call,
+        temporary: Option<[crate::text_gpu::budget::Permit; 2]>,
+    ) -> anyhow::Result<()> {
+        let bytes = self
+            .usage()
+            .private_bytes
+            .unwrap_or(0)
+            .saturating_sub(self.baseline);
+        match call.finish(bytes, self.permits.take(), temporary) {
+            Ok((permits, report)) => {
+                self.last_call = Some(report);
                 self.permits = Some(permits);
                 self.charged = bytes;
+                Ok(())
             }
-            Err(_) => self.clear_caches(),
+            Err(error) => {
+                self.last_call = error
+                    .downcast_ref::<crate::cpu_alloc::calls::Overrun>()
+                    .map(|e| e.0);
+                self.charged = 0;
+                Err(error)
+            }
         }
     }
 
@@ -199,6 +229,7 @@ impl Fonts {
             private_bytes,
             fixed_font_bytes: private_bytes.map(|bytes| bytes.min(self.baseline)),
             cache_reserved_bytes: self.charged,
+            last_call: self.last_call,
         }
     }
 }
@@ -216,6 +247,9 @@ impl Source for Fonts {
         let scratch_bytes = bidi_scratch::required(text)?;
         self.release_for(scratch_bytes);
         let scratch = bidi_scratch::reserve(scratch_bytes, &self.host)?;
+        let lifetimes = self.lifetimes.clone();
+        let lock = lifetimes.lock().unwrap_or_else(|e| e.into_inner());
+        let call = self.call(scratch_bytes);
         let line = self.scope.with(|| {
             ShapeLine::new(
                 self.fonts.as_mut().expect("font owner initialized"),
@@ -228,16 +262,22 @@ impl Source for Fonts {
         let bytes = payload_bytes(&line) as u64;
         self.outputs.fetch_add(bytes, Ordering::AcqRel);
         let shape = Shape {
-            line,
+            line: Some(line),
             accounted: AtomicBool::new(false),
             construction: std::sync::Mutex::new(None),
             _lease: Some(Lease {
                 bytes,
                 outputs: self.outputs.clone(),
+                lifetimes: self.lifetimes.clone(),
             }),
         };
-        drop(scratch);
-        self.admit_caches();
+        let result = self.finish_call(call, Some(scratch));
+        drop(lock);
+        if let Err(error) = result {
+            drop(shape);
+            self.clear_caches();
+            return Err(error);
+        }
         Ok(shape)
     }
     fn raster(
@@ -245,18 +285,28 @@ impl Source for Fonts {
         cache: &mut SwashCache,
         scope: &Scope,
         key: CacheKey,
-    ) -> Option<SwashImage> {
-        self.scope.with(|| {
+    ) -> anyhow::Result<Option<SwashImage>> {
+        let lifetimes = self.lifetimes.clone();
+        let lock = lifetimes.lock().unwrap_or_else(|e| e.into_inner());
+        let call = self.call(0);
+        let loaded = self.scope.with(|| {
             self.fonts
                 .as_mut()
                 .expect("font owner initialized")
                 .get_font(key.font_id, key.font_weight)
-        })?;
-        let image = scope.with(|| {
-            cache.get_image_uncached(self.fonts.as_mut().expect("font owner initialized"), key)
         });
-        self.admit_caches();
-        image
+        let image = loaded.and_then(|_| {
+            scope.with(|| {
+                cache.get_image_uncached(self.fonts.as_mut().expect("font owner initialized"), key)
+            })
+        });
+        let result = self.finish_call(call, None);
+        drop(lock);
+        if let Err(error) = result {
+            self.clear_caches();
+            return Err(error);
+        }
+        Ok(image)
     }
 }
 
@@ -272,6 +322,7 @@ pub struct Usage {
     /// evictable cache growth, and still included in private_bytes/RSS reporting.
     pub fixed_font_bytes: Option<u64>,
     pub cache_reserved_bytes: u64,
+    pub last_call: Option<crate::cpu_alloc::calls::Report>,
 }
 impl crate::Renderer {
     pub fn font_cpu_usage(&self) -> Usage {

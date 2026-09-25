@@ -1,6 +1,8 @@
 //! Scoped Rust-heap ownership for library allocations with private capacities.
 //! Native malloc/mappings and allocator-internal slack remain separate from Rust
 //! requested layout bytes. No dependency layout or private field is inspected.
+#[path = "private_text_call.rs"]
+pub mod calls;
 #[path = "heap_accounting.rs"]
 pub mod heap;
 use std::alloc::{GlobalAlloc, Layout, System};
@@ -167,11 +169,14 @@ unsafe impl GlobalAlloc for Allocator {
             System.dealloc(base, combined);
             if !owner.is_null() {
                 let owner = Arc::from_raw(owner);
-                owner
-                    .payload
-                    .fetch_sub(layout.size() as u64, Ordering::AcqRel);
-                owner.overhead.fetch_sub(offset as u64, Ordering::AcqRel);
-                owner.allocations.fetch_sub(1, Ordering::AcqRel);
+                calls::transaction(|ledger| {
+                    owner
+                        .payload
+                        .fetch_sub(layout.size() as u64, Ordering::AcqRel);
+                    owner.overhead.fetch_sub(offset as u64, Ordering::AcqRel);
+                    owner.allocations.fetch_sub(1, Ordering::AcqRel);
+                    ledger.allocation(owner.id, 0, (layout.size() + offset) as u64);
+                });
             }
         }
     }
@@ -196,13 +201,16 @@ unsafe impl GlobalAlloc for Allocator {
                 return resized;
             }
             if !owner.is_null() {
-                if new_size >= layout.size() {
-                    (*owner).add_payload(new_size - layout.size());
-                } else {
-                    (*owner)
-                        .payload
-                        .fetch_sub((layout.size() - new_size) as u64, Ordering::AcqRel);
-                }
+                calls::transaction(|ledger| {
+                    if new_size >= layout.size() {
+                        (*owner).add_payload(new_size - layout.size());
+                    } else {
+                        (*owner)
+                            .payload
+                            .fetch_sub((layout.size() - new_size) as u64, Ordering::AcqRel);
+                    }
+                    ledger.allocation((*owner).id, new_size as u64, layout.size() as u64);
+                });
             }
             resized.add(offset)
         }
@@ -229,9 +237,12 @@ unsafe fn allocate(layout: Layout, zeroed: bool) -> *mut u8 {
         let owner = CURRENT.try_with(Cell::get).unwrap_or(ptr::null());
         if !owner.is_null() {
             Arc::increment_strong_count(owner);
-            (*owner).add_payload(layout.size());
-            (*owner).overhead.fetch_add(offset as u64, Ordering::AcqRel);
-            (*owner).allocations.fetch_add(1, Ordering::AcqRel);
+            calls::transaction(|ledger| {
+                (*owner).add_payload(layout.size());
+                (*owner).overhead.fetch_add(offset as u64, Ordering::AcqRel);
+                (*owner).allocations.fetch_add(1, Ordering::AcqRel);
+                ledger.allocation((*owner).id, (layout.size() + offset) as u64, 0);
+            });
         }
         base.cast::<Header>().write(Header { owner });
         base.add(offset)

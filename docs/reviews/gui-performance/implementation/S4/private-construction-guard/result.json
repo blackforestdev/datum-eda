@@ -1,0 +1,61 @@
+{
+  "status": "Default mutation/raster guard implemented; complete PM047 coverage and S4 exit remain open",
+  "base_commit": "7a49980f",
+  "authority": "PRODUCT_MECHANICS_047_PRIVATE_TEXT_CONSTRUCTION_GUARD",
+  "production_consumers": [
+    "Default Renderer Fonts shaping and font acquisition for shared TextLayout workspace and overlay consumers",
+    "Shared Raster and Atlas glyph preparation, including native main/owned windows and offscreen rendering",
+    "Shared prepare_frame_text failure routing before native image acquisition or frame submission"
+  ],
+  "retired_paths": [
+    "Post-call font-cache admission that silently cleared caches and returned the new shape/image",
+    "Post-call raster-cache refusal that still returned the new pixels",
+    "Atlas-owned second pixel reservation after the private call; Pixels now carry their permits through upload retirement",
+    "Automatic atlas trim/retry for a private construction overrun; the rejected preparation now returns its typed error"
+  ],
+  "behavior": [
+    "Allocation-event call windows record initial/final/peak scoped payload plus tracking headers. Lifetime high-water is not used as an individual call peak. Call/owner IDs and last font/raster reports are exposed.",
+    "Budget reservations and scope deltas share a synchronization boundary. Simultaneous host/process admission includes every active call; existing pre-call reservations remain a floor and cannot be lent to concurrent admissions. Admission occupancy is distinct from the call's actual owned-byte counters.",
+    "Call completion atomically transfers old cache/temporary reservations to retained ownership. Raster pixels retain their own permits until copied/dropped; cache retirement leaves existing pixels and shapes valid.",
+    "Output destruction is synchronized with the owning call window, so another thread cannot invalidate the fixed returned-output exclusion while private construction is running.",
+    "An overrun releases rejected derived output and remains distinguishable from a missing glyph. Generic atlas retry does not swallow it. Required source and pending state remain available for a later attempt. With no headroom and existing pending uploads, yield before starting the next opaque call."
+  ],
+  "proof": {
+    "renderer": "345 passed; 0 failed; 82 ignored (visual feature, default test selection, serial)",
+    "app": "395 passed; 0 failed; 16 ignored (default app suite, serial)",
+    "production_gpu": "Real 512px glyph exceeds deliberately restricted headroom; typed overrun stops the default preparation path without atlas retry/publication, retains source and succeeds after pressure retires. 1 passed.",
+    "bounded_gpu": "Vulkan cold startup with more than four upload submissions reaches one acquisition; pending pixel/copy pressure and retirement case passes. These are bounded GPU tests, not native desktop or S5 acceptance.",
+    "clippy": "Strict renderer/app visual all-target Clippy passed.",
+    "build": "Fresh offline locked default datum-gui application build passed (21.16s).",
+    "attempts": "Preserve the initial bidi-preflight test refusal (the fixture did not reach private construction), corrected test-module privacy access, Clippy item-order/err-expect corrections, and one unsupported feature-name command. No failed attempt is counted as passing proof."
+  },
+  "limits": [
+    "Initial FontSystem/shared catalog construction, cache-reconstruction construction and the independent measurement owner are not yet covered by this call guard.",
+    "Complete guard/lifetime-coordination bookkeeping admission/accounting and the four compound S4 predicates remain open; constructor-owned baseline is still separate from monitored mutation scratch.",
+    "No new or modified dependencies, Cargo edits, vendoring, visual-authority changes or numerical-cap changes. The existing registry text stack remains.",
+    "Private calls can transiently exceed budgets; no process OOM recovery guarantee. Held-capacity admission totals are not physical RSS. Allocator-internal slack/native mappings remain separate.",
+    "Allocation-event synchronization overhead, complete native/resource/endurance and independent replay remain unqualified at S5; no performance improvement or global adoption claim. Preserve GEFN and nonblocking resize."
+  ],
+  "logs": [
+    "renderer.log.gz",
+    "app.log.gz",
+    "production-refusal.log.gz",
+    "vulkan-startup.log.gz",
+    "pixel-retirement.log.gz",
+    "clippy.log.gz",
+    "build.log.gz"
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/cpu_alloc.rs": "7c77f4cc35ca109127faaee461d113b9546f089f61077345a287ffab58aace23",
+    "crates/gui-render/src/private_text_call.rs": "24a90f7f2fe75cd2b08cad619add81c63320f49ba06077c6eca75d0e694b40b9",
+    "crates/gui-render/src/private_text_call_tests.rs": "e2ef54a9359f7d7d0a4fdb5938915c4cb4652ccafca0231ff25065546cf9fb84",
+    "crates/gui-render/src/font_owner.rs": "d4d52d822b1100bb1e10601577c662a373717b94b232ecf7ba5105d6fbd9294f",
+    "crates/gui-render/src/text_gpu/raster.rs": "a252dba8be330a09e7577ea3b28dd979aa9beb495f5fc0567056a8ff94a67d66",
+    "crates/gui-render/src/text_gpu/budget.rs": "0976f1974ee2ebd70ba5d642336922b58ff36ae0324edb02a33df7be36a5c7e4",
+    "crates/gui-render/src/text_gpu/atlas.rs": "84bd6a22a9cd8721ae361f76d61fcbca6b9baf0cd1d6c9f4ce8fb1f0daaf4996",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images.rs": "dc535a3f951a006b4cbad99d2d48e3e2247f339a3a4312356203dc4e2ad6de04",
+    "crates/gui-render/src/render/gpu_text.rs": "51f3df156d10e3b91f8df5e3bedbf3339ba864789907018b2cbada7a815ad39f",
+    "crates/gui-render/src/render/private_text_guard_tests.rs": "6c687d4f2a2b3c979cdbe3a5bd6a66e6b671f69d3e279f5f244aab4de870af29",
+    "crates/gui-render/src/render/text_batch_admission_tests.rs": "b125eeb64fc02892bce9f47894a2e16c4b261a2e69c77eef718447ca37899f48"
+  }
+}

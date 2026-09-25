@@ -25,21 +25,16 @@ impl Atlas {
             .sum()
     }
 
-    pub(super) fn reserve_cpu_image(
-        &self,
-        bytes: u64,
-        padded: u64,
-    ) -> anyhow::Result<[super::super::budget::Permit; 2]> {
+    pub(super) fn reserve_copy_headroom(&self, padded: u64) -> anyhow::Result<()> {
         let reserve = || -> anyhow::Result<_> {
             let process = super::super::budget::staging_process();
-            let cpu = [self.staging_budget.reserve(bytes)?, process.reserve(bytes)?];
             // A retained image must leave room for its first bounded GPU copy.
             // These are preflight reservations; actual copies reserve atomically
             // again at submission and preserve pending pixels on refusal.
             let copy = (self.pending_staging_bytes() + padded).min(CHUNK_BYTES);
             let _host_copy = self.staging_budget.reserve(copy)?;
             let _process_copy = process.reserve(copy)?;
-            Ok(cpu)
+            Ok(())
         };
         match reserve() {
             Err(_) if self.has_pending_uploads() => Err(UploadRequired.into()),
