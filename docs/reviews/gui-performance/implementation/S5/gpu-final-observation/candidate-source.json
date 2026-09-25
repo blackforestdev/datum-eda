@@ -1,0 +1,24 @@
+{
+  "base": "4d7cdd09dfc0fbff296cec5b790fc127ad7d845a",
+  "source_sha256": {
+    "crates/gui-app/src/app_shell.rs": "a5bb505352134b9fb8622d4c3fabba8e310f41a182b399cd53d54c9befed65e5",
+    "crates/gui-app/src/native_gpu_measurements.rs": "f616cd9393f566c97d63f4f5e1d3be8217bd51ba0bed2908ce1471b99c4fbbbe",
+    "crates/gui-app/src/native_measurement_shutdown.rs": "49fd5232b731fd7c0c5d1af491b3246489002cff8656b8324c9bef5e664ed88c"
+  },
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+  "build_command": [
+    "python3",
+    "scripts/run_cargo_guarded.py",
+    "--workload",
+    "proof",
+    "--",
+    "cargo",
+    "build",
+    "--release",
+    "-p",
+    "datum-gui-app"
+  ],
+  "dependency_change": "None; existing libc APIs only; no Cargo manifest/lock edits",
+  "qualification_pass": false,
+  "binary_sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447"
+}

@@ -1,0 +1,59 @@
+{
+  "status": "Bounded final-observation endpoint implemented and native-tested; GPI-S5 incomplete",
+  "qualification_pass": false,
+  "base_commit": "4d7cdd09",
+  "native_binary_sha256": "7fbf1c42d73ed2b359385b28c8efe5944e71a182b0ff016d0f40f450311c2c25",
+  "native_source": "candidate-prelint.json and candidate-prelint.patch; final source only changes [b'!'] to equivalent *b\"!\" for strict Clippy",
+  "implementation": "DATUM_MEASUREMENT_SHUTDOWN_SOCKET opts into a final observer handoff after the native event loop and controlled terminal shutdown. The live shared device drains submitted work with a2second bound, timestamp readbacks must be complete, then a local socket receipt holds device ownership until one-byte acknowledgement. Nonblocking local connect and bounded read/write fail closed. No flag means ordinary teardown without this drain/handoff.",
+  "scope_limit": "Final shared-device endpoint only. No complete earlier GPU client start/end or subprocess GPU coverage; this is not ACC-03 or a duty/budget pass.",
+  "conformance": {
+    "real": "Actual i915 duplicate descriptors share one client. Existing polling ledger deduplicates and deliberately rejects missing final values.",
+    "synthetic": "Nonzero duplicated counters count once; reset and reappearing identity fail and advance local observation epoch.",
+    "failed_observer": "Initial self-scan lost its own directory fd; corrected scan retains the directory iterator. Failed attempt preserved."
+  },
+  "native": {
+    "fixture": "Exact admitted normalized F-DOA board33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+    "host": "PROJECT one cold open/close, X11/Xwayland Vulkan1x",
+    "rendering": "Actual Project window pixels exactly match unchanged88130b98 reference; screenshot visually inspected.",
+    "close_request": "Standard WM_PROTOCOLS / WM_DELETE_WINDOW enters native CloseRequested; no internal model handler invoked.",
+    "positive": {
+      "receipt": {
+        "phase": "drained_device_live",
+        "pid": 268434,
+        "device_epoch": 1
+      },
+      "exit_code": 0,
+      "final_live_descriptors": 7,
+      "final_deduplicated_clients": 4,
+      "final_snapshot_errors": [],
+      "observed_tail_ms": 29.784867,
+      "observed_tail_group_cpu_ms": 19.49899999999971
+    },
+    "negative": {
+      "receipt": {
+        "phase": "drained_device_live",
+        "pid": 268605,
+        "device_epoch": 1
+      },
+      "exit_code": 1,
+      "result": "Disconnect without acknowledgement fails with final measurement acknowledgement missing; no window cycles."
+    },
+    "measurement_limits": "Tail observations are descriptive; CPU/DRM snapshots are bracketed, not atomic. Observer overhead remains unqualified. Earlier descriptor/process races invalidate cumulative GPU totals. Native logical device epoch and observer DRM client lifecycle epochs are distinct identities."
+  },
+  "retained_failures": [
+    "Initial integrated GPU probe incorrectly rejected cold-start exclusions outside the action window and also lost unknown descriptors. Its GPU total stays incomplete.",
+    "Ctrl+Q did not deliver a close request; observer timed out.",
+    "Alt+F4 did not deliver a close request in this Xwayland session; observer timed out.",
+    "Strict Clippy rejected a byte-character array style; equivalent byte-string spelling fixes it."
+  ],
+  "remaining": "Earlier client lifecycle hooks/coverage and observer calibration; complete all-host/trial/backend/scale/resource/negative/endurance qualification; distinct reviewer actual replay and native owner UX. No budget or independent acceptance.",
+  "boundaries": "S0-S4/GEFN rendering, dependency/license authority, product model and persistence, all numerical limits, and nonblocking resize/temporal exclusions preserved.",
+  "final_binary_sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+  "checks": {
+    "app_tests": "400passed,17ignored; separate visual-shell1ignored",
+    "focused_after_lint_fix": "3passed",
+    "strict_app_all_target_clippy": "pass",
+    "guarded_release": "pass; all commands serialized",
+    "limits": "Full broad drift not repeated for opt-in endpoint. Previously recorded menuCSV and bootstrap-marker failures remain unresolved; no suite-wide green claim."
+  }
+}

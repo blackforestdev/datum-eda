@@ -26,6 +26,8 @@ pub(super) struct App {
 impl App {
     pub(super) fn run(mut self, event_loop: EventLoop<()>) -> Result<()> {
         let result = event_loop.run_app(&mut self).context("failed to run app");
+        // Opt-in observer handoff must happen before any live device is dropped.
+        let result = result.and_then(|()| self.finish_measurement_observation());
         // Observe ownership only for existing verbose native proof. This weak
         // handle cannot keep the window alive during runtime/surface teardown.
         let window = std::env::var_os("DATUM_GUI_VERBOSE_LOG")
