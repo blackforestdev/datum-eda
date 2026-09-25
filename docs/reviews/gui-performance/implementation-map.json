@@ -4263,6 +4263,17 @@
         "previous_test_status": "Bounded GPU trace on/off, simultaneous private-call trace, forced overflow, existing-file rejection and corrupt evidence controls retained. Observer overhead and required formal statistical trials remain unqualified.",
         "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json"
+      },
+      "s5_final_close_diagnosis": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-close-diagnosis/result.json",
+        "status": "Missing final close not reproduced in six bounded diagnostic runs; cause unresolved",
+        "limits": [
+          "Six normal closes do not explain or replace the two prior failed closes. Issue remains open; no S5 shutdown or performance acceptance.",
+          "Property query adds a round trip before close, and nine cycles differ from the latest93-cycle failed run; timing and workload perturbation limit inference. Do not infer baseline/candidate regression or repaired delivery.",
+          "No gdb attachment occurred, no trace or system settings changed, no third-party source/dependency was modified, and no production code change was justified.",
+          "Do not continue retrying this diagnostic unchanged. Retain the armed failure snapshot for the next independently required native workload, removing unrelated pre-close work if preserving original timing."
+        ]
       }
     },
     {
