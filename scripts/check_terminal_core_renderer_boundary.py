@@ -52,7 +52,7 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in graphics:
             failures.append(f"GPU texture owner is not wired: {marker}")
-    gpu = re.sub(r"\s+", "", read(root, GPU))
+    gpu = re.sub(r"\s+", "", read(root, GPU)).replace(",)", ")")
     scene = read(root, SCENE)
     tests = read(root, TESTS)
     visual = read(root, VISUAL)
@@ -116,8 +116,8 @@ def check(root: Path) -> list[str]:
         "crate::text_gpu::upload::TextureUpload {",
         "GraphicAnchorResolution::History",
         "GraphicAnchorResolution::Screen",
-        "encode_terminal_graphics(&mutencoder,&msaa_view,target,false,measurement.as_mut(),)",
-        "encode_terminal_graphics(&mutencoder,&msaa_view,target,true,measurement.as_mut(),)",
+        "encode_terminal_graphics(&mutencoder,&msaa_view,&view,false,measurement.as_mut())",
+        "encode_terminal_graphics(&mutencoder,&msaa_view,&view,true,measurement.as_mut())",
     ):
         corpus = core + graphics + texture + gpu
         if marker not in corpus:
@@ -126,16 +126,21 @@ def check(root: Path) -> list[str]:
     # Check the default native continuation and shared copy path in their owners.
     for path, markers in (
         (GRAPHICS, ('#[path = "terminal_upload.rs"]', 'mod upload;')),
-        (GPU, ('self.submit_terminal_upload_chunk(device, queue, on_submitted)?',)),
+        (GPU, ('self.submit_terminal_upload_chunk(device, queue, &mut |submission| {',
+               'target.submitted(submission)', 'target.acquire()?')),
         (UPLOAD, ('texture.append_chunk(', 'crate::text_gpu::upload::batch(',
                   'queue.submit([batch.command()])', 'batch.hold(queue)',
-                  'on_submitted(submission)', 'texture.consume_chunk(count)')),
+                  'on_submitted(submission)', 'self.textures[index].consume_chunk(count)')),
         (STAGING, ('encoder.copy_buffer_to_texture(',)),
     ):
         source = read(root, path)
         for marker in markers:
             if marker not in source:
                 failures.append(f"terminal explicit upload path lacks {marker} in {path}")
+    upload_call = gpu.find("self.submit_terminal_upload_chunk(")
+    acquire = gpu.find("target.acquire()?")
+    if upload_call >= 0 and acquire >= 0 and acquire < upload_call:
+        failures.append("terminal upload continuation must precede surface acquisition")
     if "queue.write_texture(" in graphics + texture + read(root, UPLOAD):
         failures.append("terminal image path bypasses explicit staging")
 
