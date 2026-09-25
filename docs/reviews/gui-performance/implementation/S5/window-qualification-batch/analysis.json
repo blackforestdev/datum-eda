@@ -1,0 +1,1217 @@
+{
+  "status": "Bounded X11/Vulkan1x window-cycle evidence; S5 remains incomplete",
+  "qualification_pass": false,
+  "candidate": "47eefbc1c1c6d99ef5a2504d8fc4b7fbabe0a743",
+  "binary_sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+  "trial_results": [
+    {
+      "mode": "plain",
+      "trial": 1,
+      "path": "/tmp/pm045-window-batch-ascac88s",
+      "hosts": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 28.88616666666661,
+            "min": 19.981000000000027,
+            "max": 40.2499999999999,
+            "p95": 38.1870000000002,
+            "p99": 40.2499999999999
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.030900000000038,
+            "min": 4.470000000000418,
+            "max": 6.008000000000013,
+            "p95": 5.980000000000096,
+            "p99": 6.008000000000013
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 281.21412966866046,
+            "min": 230.89057207107544,
+            "max": 474.81044894084334,
+            "p95": 468.7332541216165,
+            "p99": 474.81044894084334
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 28.887866666666667,
+            "min": 19.981,
+            "max": 40.25,
+            "p95": 38.187,
+            "p99": 40.25
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 37.69849999999996,
+            "min": 26.825000000000543,
+            "max": 52.61199999999988,
+            "p95": 48.59899999999939,
+            "p99": 52.61199999999988
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.132100000000062,
+            "min": 4.461000000000048,
+            "max": 5.866000000000149,
+            "p95": 5.827000000000027,
+            "p99": 5.866000000000149
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 300.9537089228009,
+            "min": 247.74869810789824,
+            "max": 452.53059989772737,
+            "p95": 441.1853179335594,
+            "p99": 452.53059989772737
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 1,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 37.698933333333336,
+            "min": 26.825,
+            "max": 52.612,
+            "p95": 48.599,
+            "p99": 52.612
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 32.85733333333344,
+            "min": 19.8160000000005,
+            "max": 41.03600000000007,
+            "p95": 39.6150000000004,
+            "p99": 41.03600000000007
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.148666666666675,
+            "min": 4.617000000000537,
+            "max": 6.375999999999493,
+            "p95": 5.920999999999843,
+            "p99": 6.375999999999493
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 263.97654893031967,
+            "min": 210.40847501717508,
+            "max": 402.49995212070644,
+            "p95": 396.75045595504344,
+            "p99": 402.49995212070644
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 32.85836666666667,
+            "min": 19.816,
+            "max": 41.036,
+            "p95": 39.63,
+            "p99": 41.036
+          }
+        }
+      },
+      "drain": {
+        "begin_ns": 1085966370936441,
+        "end_ns": 1085966397308981,
+        "cpu_ms": 20.71099999999948,
+        "boundary": "Controlled terminal shutdown and bounded shared GPU queue drain; final counters while device live"
+      },
+      "normal_exit_code": 0,
+      "opaque_gpu_counter_qualification": false,
+      "whole_window": {
+        "start_cpu_sample": {
+          "monotonic_ns": 1085910599604804,
+          "group": {
+            "usage_usec": 2451673,
+            "user_usec": 1989244,
+            "system_usec": 462429,
+            "nice_usec": 0,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 1434553094,
+          "gui_pid": 276613,
+          "gui_start_ticks": 110770109,
+          "members": [
+            "276613",
+            "276677"
+          ],
+          "drm_sample": 551
+        },
+        "end_cpu_sample": {
+          "monotonic_ns": 1085966394162712,
+          "group": {
+            "usage_usec": 7084465,
+            "user_usec": 5468498,
+            "system_usec": 1615967,
+            "nice_usec": 0,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 6064062234,
+          "gui_pid": 276613,
+          "gui_start_ticks": 110770109,
+          "members": [
+            "276613"
+          ],
+          "drm_sample": 3045
+        },
+        "group_cpu_ms": 4632.792,
+        "elapsed_ms": 55794.557908,
+        "boundary_limit": "Counter observations are bracketed, not atomic; capture/observer overhead and shutdown semantic work remain explicit."
+      }
+    },
+    {
+      "mode": "kernel",
+      "trial": 1,
+      "path": "/tmp/pm045-window-batch-0r2wb7ny",
+      "hosts": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 31.583866666666644,
+            "min": 22.535999999999667,
+            "max": 42.58600000000001,
+            "p95": 39.66100000000017,
+            "p99": 42.58600000000001
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.278233333333349,
+            "min": 2.461999999999964,
+            "max": 8.922000000000097,
+            "p95": 6.209999999999383,
+            "p99": 8.922000000000097
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 317.98437472898513,
+            "min": 225.62701208516955,
+            "max": 460.7106598559767,
+            "p95": 444.73255099728703,
+            "p99": 460.7106598559767
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 31.584333333333333,
+            "min": 22.536,
+            "max": 42.586,
+            "p95": 39.661,
+            "p99": 42.586
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 43.90013333333327,
+            "min": 35.42500000000004,
+            "max": 50.73500000000042,
+            "p95": 49.03700000000022,
+            "p99": 50.73500000000042
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.302133333333359,
+            "min": 4.705000000000403,
+            "max": 6.009999999999849,
+            "p95": 5.71900000000003,
+            "p99": 6.009999999999849
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 336.1549005766089,
+            "min": 277.50474493950605,
+            "max": 495.0251809787005,
+            "p95": 480.63718201592565,
+            "p99": 495.0251809787005
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 1,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 43.90153333333333,
+            "min": 35.425,
+            "max": 50.735,
+            "p95": 49.055,
+            "p99": 50.735
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 33.65836666666654,
+            "min": 24.763999999999342,
+            "max": 45.554999999999346,
+            "p95": 42.97800000000063,
+            "p99": 45.554999999999346
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.260366666666716,
+            "min": 4.48399999999971,
+            "max": 6.292000000000186,
+            "p95": 6.057000000000201,
+            "p99": 6.292000000000186
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 294.37147746793926,
+            "min": 218.11707387678325,
+            "max": 411.64512909017503,
+            "p95": 391.4322459604591,
+            "p99": 411.64512909017503
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 33.6601,
+            "min": 24.764,
+            "max": 45.555,
+            "p95": 43.003,
+            "p99": 45.555
+          }
+        }
+      },
+      "drain": {
+        "begin_ns": 1086280961530465,
+        "end_ns": 1086281069811817,
+        "cpu_ms": 37.85599999999967,
+        "boundary": "Controlled terminal shutdown and bounded shared GPU queue drain; final counters while device live"
+      },
+      "normal_exit_code": 0,
+      "opaque_gpu_counter_qualification": false,
+      "whole_window": {
+        "start_cpu_sample": {
+          "monotonic_ns": 1086221961878746,
+          "group": {
+            "usage_usec": 3016461,
+            "user_usec": 2194857,
+            "system_usec": 821604,
+            "nice_usec": 0,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 1924385579,
+          "gui_pid": 280298,
+          "gui_start_ticks": 110801071,
+          "members": [
+            "280298",
+            "280367"
+          ],
+          "drm_sample": 619
+        },
+        "end_cpu_sample": {
+          "monotonic_ns": 1086281065987735,
+          "group": {
+            "usage_usec": 8240503,
+            "user_usec": 5713102,
+            "system_usec": 2527401,
+            "nice_usec": 0,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 7147595444,
+          "gui_pid": 280298,
+          "gui_start_ticks": 110801071,
+          "members": [
+            "280298"
+          ],
+          "drm_sample": 3233
+        },
+        "group_cpu_ms": 5224.042,
+        "elapsed_ms": 59104.108989,
+        "boundary_limit": "Counter observations are bracketed, not atomic; capture/observer overhead and shutdown semantic work remain explicit."
+      },
+      "supported_client_continuity": true,
+      "supported_clients": 196,
+      "ledger_failures": [
+        {
+          "unsupported_gpu_observations": 2012,
+          "devices": [
+            "/dev/dri/renderD129",
+            "/dev/nvidia-modeset",
+            "/dev/nvidia0",
+            "/dev/nvidiactl"
+          ]
+        }
+      ],
+      "opaque_in_warm_window": {
+        "records": 1840,
+        "paths": [
+          "/dev/dri/renderD129",
+          "/dev/nvidia-modeset",
+          "/dev/nvidia0",
+          "/dev/nvidiactl"
+        ]
+      },
+      "gpu_span_ms": {
+        "n": 570,
+        "mean": 10.410885113036628,
+        "min": 1.5520833806991576,
+        "max": 26.44391747367096,
+        "p95": 17.569917202857972,
+        "p99": 24.193834071670533
+      },
+      "main_gpu_span_ms": {
+        "n": 478,
+        "mean": 11.918614206126113,
+        "min": 4.779333479187012,
+        "max": 26.44391747367096,
+        "p95": 18.943000578094484,
+        "p99": 24.245667406585692
+      },
+      "aux_gpu_span_ms": {
+        "n": 92,
+        "mean": 2.577249172854299,
+        "min": 1.5520833806991576,
+        "max": 5.736750175071716,
+        "p95": 5.341166829666138,
+        "p99": 5.736750175071716
+      },
+      "gpu_budget_qualification": "Unavailable: opaque GPU clients plus unqualified observer overhead. Raw timestamp excess retained; not an uninstrumented baseline claim."
+    },
+    {
+      "mode": "kernel",
+      "trial": 2,
+      "path": "/tmp/pm045-window-batch-5cxbd0ad",
+      "hosts": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 31.867566666666658,
+            "min": 23.44999999999997,
+            "max": 38.87800000000041,
+            "p95": 38.37899999999994,
+            "p99": 38.87800000000041
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.218366666666663,
+            "min": 3.433999999999937,
+            "max": 6.549000000000138,
+            "p95": 5.936000000000163,
+            "p99": 6.549000000000138
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 324.24236447550356,
+            "min": 241.55803699977696,
+            "max": 492.87540814839303,
+            "p95": 456.00027800537646,
+            "p99": 492.87540814839303
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 31.8695,
+            "min": 23.45,
+            "max": 38.878,
+            "p95": 38.379,
+            "p99": 38.878
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 45.53613333333339,
+            "min": 35.192999999999586,
+            "max": 55.906999999999485,
+            "p95": 53.56000000000005,
+            "p99": 55.906999999999485
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.74299999999992,
+            "min": 4.980999999999902,
+            "max": 10.803000000000118,
+            "p95": 6.108000000000224,
+            "p99": 10.803000000000118
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 368.3064974068354,
+            "min": 290.3735381551087,
+            "max": 524.4357869960368,
+            "p95": 509.48928389698267,
+            "p99": 524.4357869960368
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 5,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 45.53783333333333,
+            "min": 35.193,
+            "max": 55.907,
+            "p95": 53.56,
+            "p99": 55.907
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 34.843466666666835,
+            "min": 24.358999999999575,
+            "max": 43.57599999999984,
+            "p95": 42.85800000000073,
+            "p99": 43.57599999999984
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.46679999999992,
+            "min": 4.531000000000063,
+            "max": 9.58199999999998,
+            "p95": 6.300999999999668,
+            "p99": 9.58199999999998
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 274.6015682661285,
+            "min": 214.90720589645207,
+            "max": 476.1715268250555,
+            "p95": 390.8989180345088,
+            "p99": 476.1715268250555
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 34.8446,
+            "min": 24.359,
+            "max": 43.576,
+            "p95": 42.858,
+            "p99": 43.576
+          }
+        }
+      },
+      "drain": {
+        "begin_ns": 1086357591640265,
+        "end_ns": 1086357702869792,
+        "cpu_ms": 39.343999999999824,
+        "boundary": "Controlled terminal shutdown and bounded shared GPU queue drain; final counters while device live"
+      },
+      "normal_exit_code": 0,
+      "opaque_gpu_counter_qualification": false,
+      "whole_window": {
+        "start_cpu_sample": {
+          "monotonic_ns": 1086297956594532,
+          "group": {
+            "usage_usec": 2693381,
+            "user_usec": 2119566,
+            "system_usec": 573815,
+            "nice_usec": 4000,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 1635685440,
+          "gui_pid": 283588,
+          "gui_start_ticks": 110808744,
+          "members": [
+            "283588",
+            "283654"
+          ],
+          "drm_sample": 598
+        },
+        "end_cpu_sample": {
+          "monotonic_ns": 1086357697825141,
+          "group": {
+            "usage_usec": 7967989,
+            "user_usec": 5615800,
+            "system_usec": 2352188,
+            "nice_usec": 4000,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 6909490775,
+          "gui_pid": 283588,
+          "gui_start_ticks": 110808744,
+          "members": [
+            "283588"
+          ],
+          "drm_sample": 3261
+        },
+        "group_cpu_ms": 5274.608,
+        "elapsed_ms": 59741.230609,
+        "boundary_limit": "Counter observations are bracketed, not atomic; capture/observer overhead and shutdown semantic work remain explicit."
+      },
+      "supported_client_continuity": true,
+      "supported_clients": 196,
+      "ledger_failures": [
+        {
+          "unsupported_gpu_observations": 2012,
+          "devices": [
+            "/dev/dri/renderD129",
+            "/dev/nvidia-modeset",
+            "/dev/nvidia0",
+            "/dev/nvidiactl"
+          ]
+        }
+      ],
+      "opaque_in_warm_window": {
+        "records": 1840,
+        "paths": [
+          "/dev/dri/renderD129",
+          "/dev/nvidia-modeset",
+          "/dev/nvidia0",
+          "/dev/nvidiactl"
+        ]
+      },
+      "gpu_span_ms": {
+        "n": 572,
+        "mean": 10.618804956927333,
+        "min": 1.5870000484313964,
+        "max": 26.874500820144654,
+        "p95": 19.39825059198761,
+        "p99": 24.152667403747557
+      },
+      "main_gpu_span_ms": {
+        "n": 479,
+        "mean": 12.125511852295942,
+        "min": 4.765833478775025,
+        "max": 26.874500820144654,
+        "p95": 20.18200061590576,
+        "p99": 24.337084076042174
+      },
+      "aux_gpu_span_ms": {
+        "n": 93,
+        "mean": 2.8584543883083713,
+        "min": 1.5870000484313964,
+        "max": 13.256083737876892,
+        "p95": 5.13483349003601,
+        "p99": 13.256083737876892
+      },
+      "gpu_budget_qualification": "Unavailable: opaque GPU clients plus unqualified observer overhead. Raw timestamp excess retained; not an uninstrumented baseline claim."
+    },
+    {
+      "mode": "plain",
+      "trial": 2,
+      "path": "/tmp/pm045-window-batch-9_2rj284",
+      "hosts": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 26.423400000000008,
+            "min": 19.455999999999918,
+            "max": 38.263999999999854,
+            "p95": 37.75800000000018,
+            "p99": 38.263999999999854
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 4.981833333333337,
+            "min": 4.387000000000363,
+            "max": 5.977999999999817,
+            "p95": 5.663999999999891,
+            "p99": 5.977999999999817
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 266.85396095272154,
+            "min": 228.80094405263662,
+            "max": 487.2100749053061,
+            "p95": 415.1194889564067,
+            "p99": 487.2100749053061
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 26.4239,
+            "min": 19.456,
+            "max": 38.264,
+            "p95": 37.758,
+            "p99": 38.264
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 38.99043333333333,
+            "min": 27.836000000000638,
+            "max": 48.947999999999325,
+            "p95": 48.651999999999695,
+            "p99": 48.947999999999325
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.1583666666666845,
+            "min": 4.430999999999408,
+            "max": 5.8440000000006265,
+            "p95": 5.758000000000152,
+            "p99": 5.8440000000006265
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 290.6330163513,
+            "min": 244.43728104233742,
+            "max": 493.6871840618551,
+            "p95": 418.2923890184611,
+            "p99": 493.6871840618551
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 38.9923,
+            "min": 27.836,
+            "max": 48.948,
+            "p95": 48.662,
+            "p99": 48.948
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 30.38203333333322,
+            "min": 21.942000000000128,
+            "max": 42.27299999999978,
+            "p95": 40.19499999999976,
+            "p99": 42.27299999999978
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.135866666666781,
+            "min": 4.376999999999853,
+            "max": 5.838999999999928,
+            "p95": 5.74200000000058,
+            "p99": 5.838999999999928
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 269.9434510276963,
+            "min": 209.0098219923675,
+            "max": 413.29602897167206,
+            "p95": 401.2740380130708,
+            "p99": 413.29602897167206
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 30.3826,
+            "min": 21.942,
+            "max": 42.273,
+            "p95": 40.195,
+            "p99": 42.273
+          }
+        }
+      },
+      "drain": {
+        "begin_ns": 1086428714905192,
+        "end_ns": 1086428744692534,
+        "cpu_ms": 22.510000000000474,
+        "boundary": "Controlled terminal shutdown and bounded shared GPU queue drain; final counters while device live"
+      },
+      "normal_exit_code": 0,
+      "opaque_gpu_counter_qualification": false,
+      "whole_window": {
+        "start_cpu_sample": {
+          "monotonic_ns": 1086373480461616,
+          "group": {
+            "usage_usec": 2429002,
+            "user_usec": 2012024,
+            "system_usec": 416978,
+            "nice_usec": 4000,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 1399072200,
+          "gui_pid": 286829,
+          "gui_start_ticks": 110816413,
+          "members": [
+            "286829",
+            "286889"
+          ],
+          "drm_sample": 548
+        },
+        "end_cpu_sample": {
+          "monotonic_ns": 1086428740592578,
+          "group": {
+            "usage_usec": 6877664,
+            "user_usec": 5365729,
+            "system_usec": 1511935,
+            "nice_usec": 4000,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 5844491920,
+          "gui_pid": 286829,
+          "gui_start_ticks": 110816413,
+          "members": [
+            "286829"
+          ],
+          "drm_sample": 3036
+        },
+        "group_cpu_ms": 4448.662,
+        "elapsed_ms": 55260.130962,
+        "boundary_limit": "Counter observations are bracketed, not atomic; capture/observer overhead and shutdown semantic work remain explicit."
+      }
+    },
+    {
+      "mode": "plain",
+      "trial": 3,
+      "path": "/tmp/pm045-window-batch-8pc_agjm",
+      "hosts": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 28.2332666666667,
+            "min": 22.850000000000037,
+            "max": 35.73000000000004,
+            "p95": 34.52499999999992,
+            "p99": 35.73000000000004
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.05573333333329,
+            "min": 4.442000000000057,
+            "max": 7.947000000000148,
+            "p95": 5.888999999999811,
+            "p99": 7.947000000000148
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 284.55985606027144,
+            "min": 232.01080108992755,
+            "max": 438.71155590750277,
+            "p95": 434.2483680229634,
+            "p99": 438.71155590750277
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 28.233266666666665,
+            "min": 22.85,
+            "max": 35.73,
+            "p95": 34.525,
+            "p99": 35.73
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 38.2612333333333,
+            "min": 27.827000000000268,
+            "max": 54.46300000000015,
+            "p95": 52.29600000000012,
+            "p99": 54.46300000000015
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.129633333333479,
+            "min": 4.610000000000447,
+            "max": 5.777999999999839,
+            "p95": 5.686000000000746,
+            "p99": 5.777999999999839
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 292.7409838962679,
+            "min": 250.60517387464643,
+            "max": 480.78647698275745,
+            "p95": 448.81602679379284,
+            "p99": 480.78647698275745
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 2,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 38.26123333333333,
+            "min": 27.827,
+            "max": 54.463,
+            "p95": 52.296,
+            "p99": 54.463
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 31.147399999999987,
+            "min": 21.630000000000038,
+            "max": 40.94800000000021,
+            "p95": 40.455000000000574,
+            "p99": 40.94800000000021
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.000999999999974,
+            "min": 4.4919999999999405,
+            "max": 5.688000000000137,
+            "p95": 5.637000000000114,
+            "p99": 5.688000000000137
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 259.3310735421255,
+            "min": 207.15233404189348,
+            "max": 388.9303379692137,
+            "p95": 377.01659509912133,
+            "p99": 388.9303379692137
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 31.147933333333334,
+            "min": 21.63,
+            "max": 40.948,
+            "p95": 40.455,
+            "p99": 40.948
+          }
+        }
+      },
+      "drain": {
+        "begin_ns": 1086499568223397,
+        "end_ns": 1086499602928427,
+        "cpu_ms": 18.959000000000614,
+        "boundary": "Controlled terminal shutdown and bounded shared GPU queue drain; final counters while device live"
+      },
+      "normal_exit_code": 0,
+      "opaque_gpu_counter_qualification": false,
+      "whole_window": {
+        "start_cpu_sample": {
+          "monotonic_ns": 1086444168350170,
+          "group": {
+            "usage_usec": 2370493,
+            "user_usec": 1966463,
+            "system_usec": 404030,
+            "nice_usec": 4000,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 1325196838,
+          "gui_pid": 289848,
+          "gui_start_ticks": 110823503,
+          "members": [
+            "289848",
+            "289911"
+          ],
+          "drm_sample": 537
+        },
+        "end_cpu_sample": {
+          "monotonic_ns": 1086499600103702,
+          "group": {
+            "usage_usec": 6861697,
+            "user_usec": 5330104,
+            "system_usec": 1531592,
+            "nice_usec": 4000,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 5813054920,
+          "gui_pid": 289848,
+          "gui_start_ticks": 110823503,
+          "members": [
+            "289848"
+          ],
+          "drm_sample": 3043
+        },
+        "group_cpu_ms": 4491.204,
+        "elapsed_ms": 55431.753532,
+        "boundary_limit": "Counter observations are bracketed, not atomic; capture/observer overhead and shutdown semantic work remain explicit."
+      }
+    },
+    {
+      "mode": "kernel",
+      "trial": 3,
+      "path": "/tmp/pm045-window-batch-mh8a7vt2",
+      "hosts": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 31.215466666666696,
+            "min": 23.737999999999815,
+            "max": 41.530999999999985,
+            "p95": 38.605000000000004,
+            "p99": 41.530999999999985
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.535666666666635,
+            "min": 4.691000000000223,
+            "max": 6.5710000000001045,
+            "p95": 6.5029999999999255,
+            "p99": 6.5710000000001045
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 343.51982600831735,
+            "min": 236.1598110292107,
+            "max": 468.70433795265853,
+            "p95": 463.92635093070567,
+            "p99": 468.70433795265853
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 31.215466666666668,
+            "min": 23.738,
+            "max": 41.531,
+            "p95": 38.605,
+            "p99": 41.531
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 47.03493333333336,
+            "min": 38.99100000000022,
+            "max": 57.2910000000002,
+            "p95": 54.80800000000041,
+            "p99": 57.2910000000002
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.327166666666698,
+            "min": 3.257999999999761,
+            "max": 6.073000000000661,
+            "p95": 5.996999999999808,
+            "p99": 6.073000000000661
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 353.2940430023397,
+            "min": 308.40417998842895,
+            "max": 503.4519671462476,
+            "p95": 489.0656790230423,
+            "p99": 503.4519671462476
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 8,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 47.03666666666667,
+            "min": 38.991,
+            "max": 57.291,
+            "p95": 54.808,
+            "p99": 57.291
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 30,
+            "mean": 32.54846666666659,
+            "min": 23.920999999999637,
+            "max": 43.49199999999964,
+            "p95": 40.93699999999956,
+            "p99": 43.49199999999964
+          },
+          "close_cpu_ms": {
+            "n": 30,
+            "mean": 5.36053333333338,
+            "min": 4.755999999999538,
+            "max": 6.097000000000463,
+            "p95": 5.968000000000195,
+            "p99": 6.097000000000463
+          },
+          "open_observed_wall_ms": {
+            "n": 30,
+            "mean": 310.4633788034941,
+            "min": 228.0273400247097,
+            "max": 423.4224702231586,
+            "p95": 398.4386620577425,
+            "p99": 423.4224702231586
+          },
+          "observed_mean_within_cpu_numbers": true,
+          "opens_above50ms": 0,
+          "open_through_close_start_cpu_ms": {
+            "n": 30,
+            "mean": 32.54846666666667,
+            "min": 23.921,
+            "max": 43.492,
+            "p95": 40.937,
+            "p99": 43.492
+          }
+        }
+      },
+      "drain": {
+        "begin_ns": 1086576690996410,
+        "end_ns": 1086576796202608,
+        "cpu_ms": 35.821000000000325,
+        "boundary": "Controlled terminal shutdown and bounded shared GPU queue drain; final counters while device live"
+      },
+      "normal_exit_code": 0,
+      "opaque_gpu_counter_qualification": false,
+      "whole_window": {
+        "start_cpu_sample": {
+          "monotonic_ns": 1086515983705585,
+          "group": {
+            "usage_usec": 2721439,
+            "user_usec": 2150423,
+            "system_usec": 571016,
+            "nice_usec": 0,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 1643548347,
+          "gui_pid": 292839,
+          "gui_start_ticks": 110830580,
+          "members": [
+            "292839",
+            "292904"
+          ],
+          "drm_sample": 584
+        },
+        "end_cpu_sample": {
+          "monotonic_ns": 1086576791930950,
+          "group": {
+            "usage_usec": 7916329,
+            "user_usec": 5664971,
+            "system_usec": 2251358,
+            "nice_usec": 0,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "throttled_usec": 0,
+            "nr_bursts": 0,
+            "burst_usec": 0
+          },
+          "gui_cpu_ns": 6837628899,
+          "gui_pid": 292839,
+          "gui_start_ticks": 110830580,
+          "members": [
+            "292839"
+          ],
+          "drm_sample": 3298
+        },
+        "group_cpu_ms": 5194.89,
+        "elapsed_ms": 60808.225365,
+        "boundary_limit": "Counter observations are bracketed, not atomic; capture/observer overhead and shutdown semantic work remain explicit."
+      },
+      "supported_client_continuity": true,
+      "supported_clients": 196,
+      "ledger_failures": [
+        {
+          "unsupported_gpu_observations": 2012,
+          "devices": [
+            "/dev/dri/renderD129",
+            "/dev/nvidia-modeset",
+            "/dev/nvidia0",
+            "/dev/nvidiactl"
+          ]
+        }
+      ],
+      "opaque_in_warm_window": {
+        "records": 1840,
+        "paths": [
+          "/dev/dri/renderD129",
+          "/dev/nvidia-modeset",
+          "/dev/nvidia0",
+          "/dev/nvidiactl"
+        ]
+      },
+      "gpu_span_ms": {
+        "n": 571,
+        "mean": 10.539434501439525,
+        "min": 1.5348333801727294,
+        "max": 28.281084196403505,
+        "p95": 20.72841729924774,
+        "p99": 24.575167416641236
+      },
+      "main_gpu_span_ms": {
+        "n": 475,
+        "mean": 12.161838967641087,
+        "min": 4.808083480064392,
+        "max": 28.281084196403505,
+        "p95": 21.290083983055116,
+        "p99": 24.71883408769226
+      },
+      "aux_gpu_span_ms": {
+        "n": 96,
+        "mean": 2.5119124030463698,
+        "min": 1.5348333801727294,
+        "max": 5.279750161125183,
+        "p95": 4.783000145965576,
+        "p99": 5.279750161125183
+      },
+      "gpu_budget_qualification": "Unavailable: opaque GPU clients plus unqualified observer overhead. Raw timestamp excess retained; not an uninstrumented baseline claim."
+    }
+  ],
+  "failed_attempts": [
+    {
+      "mode": "kernel",
+      "trial": 1,
+      "begin_ns": 1085967204335522,
+      "end_ns": 1085969556782516,
+      "returncode": 1,
+      "path": "/tmp/pm045-window-batch-246ktuve",
+      "error": "AssertionError(('process exited', 124))"
+    }
+  ],
+  "comparison": "Three descriptive paired mode trials only; no formal seven-pair inference or overhead subtraction. Resource mode uses no ptrace/timestamp diagnostics.",
+  "scope": "One pinned F-DOA model and one native backend/scale profile. No full admission/observer uncertainty/scale/endurance/independent or temporal acceptance.",
+  "descriptive_mode_comparisons": [
+    {
+      "trial": 1,
+      "open_cpu_ratios": {
+        "GLOBAL": 1.0933907233566253,
+        "PROJECT": 1.1645061032490236,
+        "NEW": 1.0243791340339983
+      },
+      "whole_window_elapsed_ratio": 1.0593167363465292
+    },
+    {
+      "trial": 2,
+      "open_cpu_ratios": {
+        "GLOBAL": 1.206035811692161,
+        "PROJECT": 1.1678796422712254,
+        "NEW": 1.1468444618036415
+      },
+      "whole_window_elapsed_ratio": 1.0810910066442196
+    },
+    {
+      "trial": 3,
+      "open_cpu_ratios": {
+        "GLOBAL": 1.1056271679508094,
+        "PROJECT": 1.2293104334500473,
+        "NEW": 1.0449818176369972
+      },
+      "whole_window_elapsed_ratio": 1.0969926349145032
+    }
+  ]
+}

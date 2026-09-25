@@ -1,0 +1,10 @@
+{
+  "cc": "cc (Debian 14.2.0-19) 14.2.0",
+  "kernel": "Linux 6.12.107+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.107-1 (2026-08-29) x86_64",
+  "compile": [
+    "cc -shared -fPIC -O2 -Wall -Wextra -Werror -o /tmp/pm045_fd_lifecycle.so /tmp/pm045_fd_lifecycle.c -ldl",
+    "cc -O2 -Wall -Wextra -Werror -o /tmp/pm045_fd_fixture /tmp/pm045_fd_fixture.c",
+    "cc -O2 -Wall -Wextra -Werror -o /tmp/pm045_fd_trace /tmp/pm045_fd_trace.c"
+  ],
+  "dependency_boundary": "First-party diagnostic source using existing installed libc/Linux ABI/cc and system Xlib already used by native tooling. No dependency fetched, vendored, added or linked into Datum; no package/backend/driver/accounting setting changed. Compiled diagnostic executables are not committed."
+}
