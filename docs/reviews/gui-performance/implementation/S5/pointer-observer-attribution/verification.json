@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "spec_parity": "PASS20inventories",
+    "dependency_authority": "PASS",
+    "cargo_resource_policy": "PASS",
+    "project_status": "PASS59frontieritems"
+  },
+  "archives": "12archives104rawmembers individually SHA256/length verified; disposableXDGcache/config omitted;no thirdpartycode/binary archive.",
+  "route": "45previously reviewed hashes checked; AC02/AC06partialpointers only;225originalrules/statuses/recipes/scopes/history preserved bydeepcomparison.",
+  "native": "All8ownedapplicationruns normal device-live-drained exits0 and endpointAE0;all3campaigns restoredscale1.05. Diagnosticobservers/inputlimitations prevent fullqualification.",
+  "rust_proof": "Notrepeated:no product source or compiled binary changes.",
+  "installed_tools": "GNUgprofng2.44 (existing OS diagnostic,not productdependency),systemcc/Xlib/Xi/GDB/proc. No dependencies fetched or vendored.",
+  "qualification_pass": false
+}

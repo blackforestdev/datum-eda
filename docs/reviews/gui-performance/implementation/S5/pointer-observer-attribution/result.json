@@ -1,0 +1,119 @@
+{
+  "status": "Pointer observer overhead and thread attribution recorded; quiet CPU limit still fails; S5 incomplete",
+  "qualification_pass": false,
+  "candidate_commit": "71e35681",
+  "candidate_binary_sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "4a674d84df4100e1c9d783a37a5307e0682184d78771844325bad25a7b9ee321",
+    "crates/gui-app/src/app_shell.rs": "12ca9ebbfced332289d366c3df63c6cd1b9082b579ea938667314ac5cc42e43c",
+    "crates/gui-app/src/native_resource_measurements.rs": "dbad92f74f212672b5d5e275a05dd85b0f24b681ecbb7318415fddadc38c3f9e",
+    "crates/gui-render/src/lib.rs": "8dfabc5ed68d28b8e7f0a35a3191e66f3561b780da7bdf82360a98c4cc12657f",
+    "crates/gui-render/src/render/document_cpu.rs": "5f5278c468392916ffac67d959b526357e6c3e4d46c1cdb603028d676f505435",
+    "crates/gui-render/src/render/document_gpu_budget.rs": "33361519e4edc03a69cf44e1c1878bb44c5a768b2b888912031d2eaa51a4b8a0",
+    "crates/gui-render/src/render/frame_preparation.rs": "7e11b033858c3d83f3dbac74a24e5bce034c945b30a9eb7ab87520104b15e369",
+    "crates/gui-render/src/render/measurement_owner.rs": "b05043e8f8c1373ff2e47b199d6c358c8ed3f6e2d65caf40d91b03eba145b334",
+    "crates/gui-render/src/render/new_project_scene.rs": "132cebd33d24cbb4c7de030b10b677905f41982f531180124fa850bad45e659d",
+    "crates/gui-render/src/render/preferences_scene.rs": "9602c3eff3c7bdb60aa1905b1d3b7fd715c2e5ed4ccc5942785f788af327cee9",
+    "crates/gui-render/src/render/resource_observation.rs": "65398f46b451a6b9990cba2d856e7e1b81fd3c5cedea9b7543566f0db35caddd",
+    "crates/gui-render/src/render/resource_observation_tests.rs": "95b9d518946b8da8199c8fb07d9744dd65c1608585dcc3ee5f4fc15d8b037a04",
+    "crates/gui-render/src/text_gpu/atlas.rs": "28ca596935869a415e3f9ec228953f297533a14292ba45a299c53276466263ae",
+    "crates/gui-render/src/text_gpu/budget.rs": "92676c620d44ff3fe9bee2bdd6d37b2e6dd805f74443c5840395b799b19d4c8c"
+  },
+  "normal_drained_exits": 8,
+  "archives": [
+    {
+      "file": "threads-campaign.tar.gz",
+      "members": 6
+    },
+    {
+      "file": "threads-candidate-1.tar.gz",
+      "members": 11
+    },
+    {
+      "file": "logging-campaign.tar.gz",
+      "members": 12
+    },
+    {
+      "file": "logging-verbose-1.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "logging-quiet-1.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "logging-quiet-2.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "logging-verbose-2.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "logging-verbose-3.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "logging-quiet-3.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "profile-campaign.tar.gz",
+      "members": 6
+    },
+    {
+      "file": "profile-quiet-1.tar.gz",
+      "members": 20
+    },
+    {
+      "file": "fractional-probe.tar.gz",
+      "members": 1
+    }
+  ],
+  "method": "One100ms/proc thread observer with single15sGDBpause,then three alternating verbose/quiet pairs,then separate installedGNU gprofng2.44 clock profile. Every app run uses same native pinned FDOA,oneleaf1280x800,hiddenterminal,X11onXwayland,physical1920x1080@60Hz1x; original1.05 restored aftereachcampaign. All finalimages AE0 against71e35681baseline reference,focus preserved; no failures replaced. Loggingpairs use exactsame warm pixel oracle before5swarmup. Neither GDBnorprofiler enters loggingpairs.",
+  "logging": {
+    "quiet_cpu_percent": [
+      12.923534847700504,
+      12.624254720165226,
+      11.951321874840612
+    ],
+    "verbose_cpu_percent": [
+      18.78646715399956,
+      18.802823926373023,
+      18.968519785838893
+    ],
+    "descriptive_pairs": [
+      {
+        "trial": 1,
+        "verbose_minus_quiet_cpu_ms": 1759.9960000000005,
+        "increase_relative_to_quiet_percent": 45.245346017140854
+      },
+      {
+        "trial": 2,
+        "verbose_minus_quiet_cpu_ms": 1860.1830000000004,
+        "increase_relative_to_quiet_percent": 48.954348508039324
+      },
+      {
+        "trial": 3,
+        "verbose_minus_quiet_cpu_ms": 2114.561,
+        "increase_relative_to_quiet_percent": 58.77617333537171
+      }
+    ],
+    "finding": "Allquietruns exceed10%CPU;verbose mode adds45.25-58.78% relative CPU inmatchedpairs. No estimatedoverhead subtraction,formalrelativeclaim or fullquietpathqualification."
+  },
+  "per_thread": "294samples over30.907620188s,10ms tickresolution,16stableobservedthreads.5280msCPU:4920msmain,360mstwoVulkanWSIthreads;otherthreads0tickdelta. Main93.18% ofsampledCPU,notexclusiveapplicationcode;samplingmaymissshort-livedthreads. GDBpause655.885467ms;onesnapshot maininpoll_console_lifetime/SystemTime::now is not a hotspotproof.",
+  "profile": "InstalledGNUgprofng -p hi (997us) -F off -a off -y SIGUSR2,activewindow30.101771429s,normaldrain. Capturedreported0.995CPU seconds versus independentfamily4.09118s. Headerwarns SIGPROFblocking ignored,intervaltimer997->0,variablefrequency,NVIDIAsegmentoverlap. Timerwarningrecordedatendingpause,causenotassumed. Weightcalibration/coverageunproven; Vulkan/eventloop samples are diagnostic leads only,notquantitativecostauthority or basisforproductionchange. No thirdparty binary/source archived orproductlink/dependencychanged.",
+  "fractional_input": "SeparatefirstpartyownwindowXI2probe afterloggingbatch:12quarterpixelXIWarpPointerrequests yielded12XI_Motioneventswithintegertruncation(y40.25->40,x20.25/20.5/20.75->20). XInput2warp doesnotestablishfractionalsemanticactions onthisXwaylandserver. ExistingXTestquantizationlimitation remains; no contractwaiver.",
+  "limits": [
+    "Three matched mode pairs are descriptive overhead evidence,not seven-pair formal STAT inference. Do not subtract an estimated overhead from a qualification result.",
+    "Quiet runs preserve warm/final pixel and focus checks plus family CPU and shutdown receipt; received events,per-frame counters and GPUtimestamps are absent,so output/path equivalence is not completely observed.",
+    "Both modes use the quantized XTest stream3600calls1280changes;neither establishes120distinctsemantic-actions/s.",
+    "Main-thread CPU includes application/backend/driver/logging. The separate GDBsample is perturbed,not performancequalification.",
+    "Repeated /proc reads and one stop-the-process GDBsnapshot perturb the measured workload; not qualification or unbiased stack profiling.",
+    "Same thread IDs/start ticks observed throughout; snapshots cannot exclude threads born and exited entirely between samples. Tick deltas have10ms resolution per counter.",
+    "One stack in poll_console_lifetime/SystemTime::now does not establish that function as a hot spot.",
+    "Main-thread CPU includes application/backend/driver calls and logging; thread attribution is not exclusive subsystem attribution."
+  ],
+  "boundaries": "No product/runtime/renderquality/AA/backend/admission/dependency/license changes. Preserve225contracts/statuses,S0-S4,GEFN,allnonblockingresize/temporal/T2/schematicexclusions,priorfailures,fullmethod/resource/endurance/backendscale/distinctreviewer/ownerUXrequirements.",
+  "archive_boundary": "Retain raw top-level run records and profiler experimentdata; omit disposable XDG cache/config payloads. Profiler -a off archives no sharedlibraries or binaries."
+}

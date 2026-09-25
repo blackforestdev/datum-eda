@@ -1,0 +1,132 @@
+{
+  "diagnostic_only": true,
+  "samples": 294,
+  "elapsed_seconds": 30.907620188,
+  "thread_tick_ms": 10.0,
+  "threads": [
+    {
+      "tid": 384742,
+      "name": "datum-gui",
+      "start_ticks": 111976908,
+      "user_ms": 3090.0,
+      "system_ms": 1830.0
+    },
+    {
+      "tid": 384803,
+      "name": "datum-gui",
+      "start_ticks": 111977055,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384804,
+      "name": "datum-gui",
+      "start_ticks": 111977055,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384805,
+      "name": "datum-gui",
+      "start_ticks": 111977055,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384806,
+      "name": "datum-gui",
+      "start_ticks": 111977055,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384812,
+      "name": "datum-g:disk$0",
+      "start_ticks": 111977065,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384813,
+      "name": "datum-gui:sh0",
+      "start_ticks": 111977065,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384815,
+      "name": "datum-:traceq0",
+      "start_ticks": 111977066,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384816,
+      "name": "datum-gu:gdrv0",
+      "start_ticks": 111977066,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384817,
+      "name": "datum-g:disk$0",
+      "start_ticks": 111977066,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384818,
+      "name": "datum-:traceq0",
+      "start_ticks": 111977067,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384823,
+      "name": "datum-gui",
+      "start_ticks": 111977081,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384824,
+      "name": "datum-terminal-",
+      "start_ticks": 111977081,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    },
+    {
+      "tid": 384825,
+      "name": "WSI swapchain q",
+      "start_ticks": 111977082,
+      "user_ms": 60.0,
+      "system_ms": 60.0
+    },
+    {
+      "tid": 384826,
+      "name": "WSI swapchain e",
+      "start_ticks": 111977082,
+      "user_ms": 90.0,
+      "system_ms": 150.0
+    },
+    {
+      "tid": 384836,
+      "name": "datum-atspi",
+      "start_ticks": 111977085,
+      "user_ms": 0.0,
+      "system_ms": 0.0
+    }
+  ],
+  "total_sampled_gui_thread_cpu_ms": 5280.0,
+  "debugger": {
+    "begin_ns": 1097986013822799,
+    "end_ns": 1097986669708265,
+    "returncode": 0
+  },
+  "limits": [
+    "Repeated /proc reads and one stop-the-process GDBsnapshot perturb the measured workload; not qualification or unbiased stack profiling.",
+    "Same thread IDs/start ticks observed throughout; snapshots cannot exclude threads born and exited entirely between samples. Tick deltas have10ms resolution per counter.",
+    "One stack in poll_console_lifetime/SystemTime::now does not establish that function as a hot spot.",
+    "Main-thread CPU includes application/backend/driver calls and logging; thread attribution is not exclusive subsystem attribution."
+  ]
+}
