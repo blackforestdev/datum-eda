@@ -1,0 +1,19 @@
+{
+  "status": "Shared X11 transient ownership corrects observed native focus restoration; full S5 qualification remains open",
+  "qualification_pass": false,
+  "source_base": "26303ce7",
+  "production_binary_sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+  "source_sha256": {
+    "crates/gui-app/src/owned_window_policy.rs": "ee3691316e2813588af8b2dfd13b417e80641539da34d7e489b3d871d45f9075",
+    "crates/gui-app/src/owned_window_policy/x11.rs": "d49b77c4cc188846a8c4434dd9127e3513c52b73f3c3e8ecf501930fd5beade2"
+  },
+  "problem": "Shared close already requested Main focus, but owned-window policy established parent relationship only for Wayland. Both seeded Preferences hosts returned to an external helper after focus-loss/return/close in26303ce7 controls evidence.",
+  "selection": "On unchanged d077 binary, installing only WM_TRANSIENT_FOR via test-owned Xlib connection restored automatic Main focus in both Preferences full17-action pilots. Normal exit0 and cancellationAE0 retained. This supports a bounded native ownership correction, not a dependency change.",
+  "change": "Shared ownership helper sets WM_TRANSIENT_FOR for all three X11 auxiliary hosts before show. Uses live Winit Xlib handles on the same display and RTLD_NOLOAD symbols from already-loaded libX11.so.6. No additional package, feature, linked library or new connection. Existing Wayland parent behavior, focus-redirection fallback, rendering and engine mutation paths unchanged. No global always-on-top or embedded child behavior.",
+  "native": "One candidate, fixed PROJECT/GLOBAL/NEW negative then positive. Removing only parent hint makes each close fail automatic Main focus; production hint restores Main in each. All six compositor captures AE0 against prior static references; all six normal device-live drained exit0. Negative manual Main activation is cleanup only. Both campaigns restored physical display1.05 after1x testing. New Project remained uncreated; normalized model hash unchanged.",
+  "environment": "X11 on Xwayland, Intel P630 Vulkan,1920x1080 at60Hz physical1x; Main1280x800, Preferences960x720, New760x720; pinned nativeFDOA, hidden terminal, verbose logging. Native input through WM activation and synthetic WM_DELETE; no temporal/cap acceptance.",
+  "metadata_limit": "Raw harnesses retain inherited historical diagnostic context and unused baseline/wheel-driver metadata. Actual workload is exactly declared controls-parent experiment or focus-only six-case experiment; no wheel or baseline-performance comparison. Archives omit disposable caches.",
+  "verification": "See verification.json for completed build, regression, native compatibility and governance outcomes.",
+  "remaining": "No W-CONTROLS/W-WINDOWS30cycle, complete native/backend/scale/resource/temporal cap, endurance, distinct-reviewer or owner UX acceptance. Current evidence corrects one defect; prior numerical and delivery failures remain.",
+  "boundaries": "225 original rules/statuses/recipes/history, S0-S4, GEFN, PM029 dependency/license authority and nonblocking resize/temporal/T2/schematic exclusions preserved. dat-preferences-focus-return-46ek advances with the bounded correction; no full S5 closure."
+}

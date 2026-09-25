@@ -1,0 +1,98 @@
+[
+  {
+    "phase": "diagnostic",
+    "host": "PROJECT",
+    "case": "external-parent-hint",
+    "normal_exit": 0,
+    "focus_restored": true,
+    "static_AE": null,
+    "main_window": 12582916,
+    "observed_focus": 12582916,
+    "hint": {
+      "owned": 12582917,
+      "owner": 12582916,
+      "property": "WM_TRANSIENT_FOR(WINDOW): window id # 0xc00004\n"
+    }
+  },
+  {
+    "phase": "diagnostic",
+    "host": "GLOBAL",
+    "case": "external-parent-hint",
+    "normal_exit": 0,
+    "focus_restored": true,
+    "static_AE": null,
+    "main_window": 29360132,
+    "observed_focus": 29360132,
+    "hint": {
+      "owned": 29360133,
+      "owner": 29360132,
+      "property": "WM_TRANSIENT_FOR(WINDOW): window id # 0x1c00004\n"
+    }
+  },
+  {
+    "phase": "production",
+    "host": "PROJECT",
+    "case": "negative",
+    "normal_exit": 0,
+    "focus_restored": false,
+    "static_AE": "0",
+    "main_window": 29360132,
+    "observed_focus": 33554433,
+    "hint": "WM_TRANSIENT_FOR:  not found.\n"
+  },
+  {
+    "phase": "production",
+    "host": "PROJECT",
+    "case": "positive",
+    "normal_exit": 0,
+    "focus_restored": true,
+    "static_AE": "0",
+    "main_window": 12582916,
+    "observed_focus": 12582916,
+    "hint": "WM_TRANSIENT_FOR(WINDOW): window id # 0xc00004\n"
+  },
+  {
+    "phase": "production",
+    "host": "GLOBAL",
+    "case": "negative",
+    "normal_exit": 0,
+    "focus_restored": false,
+    "static_AE": "0",
+    "main_window": 12582916,
+    "observed_focus": 33554433,
+    "hint": "WM_TRANSIENT_FOR:  not found.\n"
+  },
+  {
+    "phase": "production",
+    "host": "GLOBAL",
+    "case": "positive",
+    "normal_exit": 0,
+    "focus_restored": true,
+    "static_AE": "0",
+    "main_window": 12582916,
+    "observed_focus": 12582916,
+    "hint": "WM_TRANSIENT_FOR(WINDOW): window id # 0xc00004\n"
+  },
+  {
+    "phase": "production",
+    "host": "NEW",
+    "case": "negative",
+    "normal_exit": 0,
+    "focus_restored": false,
+    "static_AE": "0",
+    "main_window": 12582916,
+    "observed_focus": 33554433,
+    "hint": "WM_TRANSIENT_FOR:  not found.\n"
+  },
+  {
+    "phase": "production",
+    "host": "NEW",
+    "case": "positive",
+    "normal_exit": 0,
+    "focus_restored": true,
+    "static_AE": "0",
+    "main_window": 12582916,
+    "observed_focus": 12582916,
+    "hint": "WM_TRANSIENT_FOR(WINDOW): window id # 0xc00004\n"
+  }
+]

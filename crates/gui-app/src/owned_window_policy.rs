@@ -20,8 +20,15 @@ use winit::platform::wayland::WindowExtWayland;
 #[cfg(target_os = "linux")]
 const XDG_TOPLEVEL_SET_PARENT: u32 = 1;
 
+#[cfg(target_os = "linux")]
+mod x11;
+
 /// Establish the compositor-level parent/child relationship for an owned
 /// settings window.
+///
+/// X11 uses WM_TRANSIENT_FOR on Winit's existing Xlib connection. This keeps
+/// the settings window a separate toplevel while allowing the window manager
+/// to restore the owner when it closes.
 ///
 /// Winit exposes each Wayland `xdg_toplevel` but does not wrap
 /// `xdg_toplevel.set_parent`. Datum uses that exposed platform object and the
@@ -33,6 +40,8 @@ pub(super) fn establish_native_owner(owner: &Window, owned: &Window) -> Result<(
     if let (Some(owner), Some(owned)) = (owner.xdg_toplevel(), owned.xdg_toplevel()) {
         wayland::set_xdg_toplevel_parent(owned.as_ptr(), owner.as_ptr())?;
     }
+    #[cfg(target_os = "linux")]
+    x11::establish_owner(owner, owned)?;
     Ok(())
 }
 
