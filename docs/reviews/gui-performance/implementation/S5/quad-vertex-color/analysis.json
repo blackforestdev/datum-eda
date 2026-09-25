@@ -1,0 +1,318 @@
+{
+  "qualification_pass": false,
+  "runs": [
+    {
+      "role": "baseline",
+      "trial": 1,
+      "gpu": 1,
+      "path": "/tmp/pm045-quad-native-4rymtbmr",
+      "returncode": 0,
+      "cpu_ms": 4383.952,
+      "elapsed_seconds": 30.103600344,
+      "cpu_percent": 14.562882678163685,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 505800,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.843000000000039,
+      "gpu_frame_span_ms": {
+        "count": 1277,
+        "min": 5.9745001823272705,
+        "p50": 7.983416910301209,
+        "p95": 10.133666975921631,
+        "p99": 12.01150036656189,
+        "max": 12.145500370651245
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1277,
+          "min": 4.556083472373962,
+          "p50": 6.053583518074036,
+          "p95": 7.980416910209656,
+          "p99": 10.100500308242799,
+          "max": 10.354250315986633
+        },
+        "text": {
+          "count": 1277,
+          "min": 1.4054167095565795,
+          "p50": 1.8530000565490723,
+          "p95": 3.2115834313430787,
+          "p99": 4.412083467979431,
+          "max": 6.012500183486939
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "gpu": 1,
+      "path": "/tmp/pm045-quad-native-5bwobkdd",
+      "returncode": 0,
+      "cpu_ms": 4399.17,
+      "elapsed_seconds": 30.098539844,
+      "cpu_percent": 14.615891743588861,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 506067,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.8890000000002516,
+      "gpu_frame_span_ms": {
+        "count": 1274,
+        "min": 6.100333519500732,
+        "p50": 7.936500242202759,
+        "p95": 9.886583635047913,
+        "p99": 11.816500360610961,
+        "max": 12.079750368644714
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1274,
+          "min": 4.62450014112854,
+          "p50": 6.046666851196289,
+          "p95": 7.969250243202209,
+          "p99": 9.716750296531677,
+          "max": 10.292666980773927
+        },
+        "text": {
+          "count": 1274,
+          "min": 1.4597500445480347,
+          "p50": 1.8525000565338134,
+          "p95": 2.162916732673645,
+          "p99": 3.515666773956299,
+          "max": 5.987916849403382
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "gpu": 1,
+      "path": "/tmp/pm045-quad-native-zwrnllpu",
+      "returncode": 0,
+      "cpu_ms": 4457.131,
+      "elapsed_seconds": 30.100228303,
+      "cpu_percent": 14.807631872864471,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 506276,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.8580000000003594,
+      "gpu_frame_span_ms": {
+        "count": 1274,
+        "min": 5.9704168488693234,
+        "p50": 7.95650024281311,
+        "p95": 9.932750303123473,
+        "p99": 11.925500363937378,
+        "max": 12.265333707641602
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1274,
+          "min": 4.553500138961792,
+          "p50": 6.0530001847229,
+          "p95": 7.9646669097290035,
+          "p99": 10.046250306587218,
+          "max": 10.218583645179748
+        },
+        "text": {
+          "count": 1274,
+          "min": 1.4039167095108032,
+          "p50": 1.8532500565567016,
+          "p95": 2.1049167309036254,
+          "p99": 3.747500114364624,
+          "max": 6.025250183876038
+        }
+      }
+    },
+    {
+      "role": "baseline",
+      "trial": 2,
+      "gpu": 1,
+      "path": "/tmp/pm045-quad-native-bvb8bk0h",
+      "returncode": 0,
+      "cpu_ms": 4513.527,
+      "elapsed_seconds": 30.103381212,
+      "cpu_percent": 14.993422061840647,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 506524,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 2.0180000000005194,
+      "gpu_frame_span_ms": {
+        "count": 1275,
+        "min": 6.142666854125976,
+        "p50": 7.987583577095032,
+        "p95": 9.914750302574157,
+        "p99": 11.9580003649292,
+        "max": 12.262750374229432
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1275,
+          "min": 4.6790001427917485,
+          "p50": 6.065750185112,
+          "p95": 7.979750243522644,
+          "p99": 10.007250305397033,
+          "max": 10.444083652061462
+        },
+        "text": {
+          "count": 1275,
+          "min": 1.4510833776168823,
+          "p50": 1.8530000565490723,
+          "p95": 3.2064167645187376,
+          "p99": 3.621833443862915,
+          "max": 5.984000182617187
+        }
+      }
+    },
+    {
+      "role": "baseline",
+      "trial": 3,
+      "gpu": 1,
+      "path": "/tmp/pm045-quad-native-l5985305",
+      "returncode": 0,
+      "cpu_ms": 4458.152,
+      "elapsed_seconds": 30.100296926,
+      "cpu_percent": 14.8109901073738,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 506756,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.8009999999994974,
+      "gpu_frame_span_ms": {
+        "count": 1275,
+        "min": 5.956416848442077,
+        "p50": 8.142416915153504,
+        "p95": 9.90600030230713,
+        "p99": 11.84316702809143,
+        "max": 13.194500402664184
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1275,
+          "min": 4.544750138694763,
+          "p50": 6.08366685232544,
+          "p95": 7.978583576820373,
+          "p99": 9.984583638038636,
+          "max": 11.31350034526062
+        },
+        "text": {
+          "count": 1275,
+          "min": 1.3983333760070802,
+          "p50": 1.8526667232055665,
+          "p95": 3.117916761817932,
+          "p99": 3.7492501144180297,
+          "max": 5.992250182868958
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 3,
+      "gpu": 1,
+      "path": "/tmp/pm045-quad-native-qc9loglk",
+      "returncode": 0,
+      "cpu_ms": 4460.401,
+      "elapsed_seconds": 30.102926453,
+      "cpu_percent": 14.817167383922188,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 507005,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.834999999999809,
+      "gpu_frame_span_ms": {
+        "count": 1279,
+        "min": 6.1875001888275145,
+        "p50": 8.073250246376038,
+        "p95": 9.933416969810485,
+        "p99": 12.018417033439636,
+        "max": 12.273667041229247
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1279,
+          "min": 4.7181668106536865,
+          "p50": 6.0690001852111815,
+          "p95": 7.986083577049255,
+          "p99": 10.147083642997742,
+          "max": 10.25766697970581
+        },
+        "text": {
+          "count": 1279,
+          "min": 1.4054167095565795,
+          "p50": 1.85258338986969,
+          "p95": 3.2040000977783203,
+          "p99": 4.215916795326233,
+          "max": 6.1365001872711185
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Three matched trial pairs; no seven-pair STAT relative acceptance.",
+    "All runs quiet withGPUtimestampsON; CPUincludesobserveroverhead and isnotquietCPUqualification. No per-frame forbiddenwork/shellsolve/worldupload orreceivedinputcounter coverage.",
+    "Existing3600scheduledintegerXTestcalls quantizeto1280physicalpositionchanges;120distinctsemantic-actions/s unqualified.",
+    "GPUrecords include measured active interval and5sectail;tail samples reported,not dropped. Nativeendpoints AE0 prove finalpixels/focusonly,notphysicalpresentationlatency/continuouspath/hits/ownerUX.",
+    "OnlyX11onXwaylandphysical60Hz1x oneMainleaf,hiddenterminal; no Wayland/otherdisplay-scale/multihost/endurance/resource/independentreviewer acceptance."
+  ]
+}

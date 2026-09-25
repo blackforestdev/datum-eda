@@ -1,0 +1,24 @@
+{
+  "status": "Candidate not adopted; native improvement not demonstrated",
+  "qualification_pass": false,
+  "baseline_commit": "57066c97",
+  "binaries": {
+    "baseline": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+    "candidate": "d014e1aa94fe7f09c61d4c46237fb3563d47a74c55b3abb82692e259d21d89a5"
+  },
+  "experiment": "Move screen and filled-world constant-quad sRGB conversion from fragment to vertex shader, using flat color varying. Distinct from earlier rejected stroke-only experiment. Same vertex layout, 8xMSAA, painter order, passes, allocations and dependencies.",
+  "correctness": "Initial test-only pipeline trial and subsequent candidate-production-pipeline comparison each passed9pinnedFDOA scale/zoom cases with exact RGBA equality plus9wrong-world-color negative controls on IntelP630/Vulkan8xMSAA. No numerical performance acceptance from isolated timestamp samples.",
+  "native": "Six fixed-order quiet GPU-timestamp-on X11/1x runs completed normaldevice-live drain0, all finalreadbacks AE0. No selective replacement. Candidate frame p95 values9.8866/9.9328/9.9334ms overlap baseline10.1337/9.9148/9.9060ms; scene p95 remains about7.96..7.99ms and CPU dutyabout14.6..15.0percent. Threepairs do not establish formalcomparative improvement orcap acceptance.",
+  "method_limits": [
+    "Three matched trial pairs; no seven-pair STAT relative acceptance.",
+    "All runs quiet withGPUtimestampsON; CPUincludesobserveroverhead and isnotquietCPUqualification. No per-frame forbiddenwork/shellsolve/worldupload orreceivedinputcounter coverage.",
+    "Existing3600scheduledintegerXTestcalls quantizeto1280physicalpositionchanges;120distinctsemantic-actions/s unqualified.",
+    "GPUrecords include measured active interval and5sectail;tail samples reported,not dropped. Nativeendpoints AE0 prove finalpixels/focusonly,notphysicalpresentationlatency/continuouspath/hits/ownerUX.",
+    "OnlyX11onXwaylandphysical60Hz1x oneMainleaf,hiddenterminal; no Wayland/otherdisplay-scale/multihost/endurance/resource/independentreviewer acceptance."
+  ],
+  "restoration": "All changed production/test files restored exactly; temporary testmodule/frozenWGSL removed fromlive source. Originalb8release binary restored. Rejected d014candidate retained separately at target/pm045-quad-candidate/datum-gui, currentcandidate sources archived.",
+  "proof_limits": "Only candidate-specific ignoredpixeltest and guardedrelease build ran. Broader unit/GPU/Clippy and prepared supplementaldialog/threshold test were deliberately not run after nativebenefit was not demonstrated. Initial test-only sourcehashes retained but that intermediate testsource was overwritten; final production-candidate tested sources are archived exactly. Prepared extra-test is unexecuted, not evidence.",
+  "resource_cleanup": "Initial Cargo preflight refused when tmp reserve was19,529,728bytes below6GiB. Removed only1392SHA/length/archive-verified copies from already durableControls30Project/Global packet, totaling150,920,047bytes. Receipt retained; sharedCargo target untouched.",
+  "next_boundary": "Do not repeat this unchanged shader experiment. Remaining GPU cost is not explained by moving constant-quad or stroke color conversion alone; no new cause established. Preserve retained-rendering improvements and existingcaps.",
+  "preserved": "All225adoption predicates/statuses/scopes/history and authorityindexes remain unchanged; S0-S4/GEFN, PM029 dependencies, resize/temporal/T2/unadmittedschematic exclusions preserved."
+}
