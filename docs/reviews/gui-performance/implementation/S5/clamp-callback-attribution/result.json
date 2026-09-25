@@ -1,0 +1,104 @@
+{
+  "status": "Direct callback diagnostic retained; no runtime optimization adopted",
+  "qualification_pass": false,
+  "candidate_commit": "e1fce918",
+  "production_binary_sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+  "diagnostic_binary_sha256": "4dd3ea79b6875e789462fe4ba7566629e603f6b0c30923c689f5f007bebe6801",
+  "compiled_sources": {
+    "crates/gui-app/src/main.rs": "776d4809ec690b8b4adb8827623c30f5526d0ea2210fbc49ea3f3ef8b3f5b2c9",
+    "crates/gui-app/src/app_native_events.rs": "42feb3df481bbed4abab5c7c379cc1368db8ffe93f580c942f7a535c777d1e3f",
+    "crates/gui-app/src/pm045_cpu_probe.rs": "bb15f06370d2128e1ce736e123fb6ef4989719c8ab73cf6842d7f089d5a419a3",
+    "target/release/datum-gui": "4dd3ea79b6875e789462fe4ba7566629e603f6b0c30923c689f5f007bebe6801"
+  },
+  "archives": [
+    {
+      "file": "native.tar.gz",
+      "members": 27
+    },
+    {
+      "file": "campaign.tar.gz",
+      "members": 6
+    },
+    {
+      "file": "proof.tar.gz",
+      "members": 10
+    }
+  ],
+  "method": "Temporary existing-libc CLOCK_THREAD_CPUTIME_ID scopes around ApplicationHandler::window_event and about_to_wait. Wheel/modifier/other-window tags separate event classes. Bounded65536-row thread-local buffer allocates once; shutdown writes JSON. Monotonic boundaries permit selection of fully enclosed active-window callbacks. No periodic sampling, symbol hints or per-event disk writes. Record push and part of clock overhead are outside scopes but remain in total application CPU.",
+  "observations": {
+    "rows": 17183,
+    "overlaps": 0,
+    "windows": [
+      {
+        "bound": "minimum",
+        "family_cpu_ms": 507.32599999999974,
+        "callback_cpu_ms": 137.16371000000004,
+        "callback_fraction_of_family": 0.27036601711719904,
+        "by_callback": {
+          "modifiers": {
+            "calls": 3600,
+            "cpu_ms": 44.816131000000034,
+            "wall_ms": 61.14069499999991
+          },
+          "wheel": {
+            "calls": 1800,
+            "cpu_ms": 35.045514000000004,
+            "wall_ms": 42.08177900000003
+          },
+          "about_to_wait": {
+            "calls": 2191,
+            "cpu_ms": 57.302064999999985,
+            "wall_ms": 64.99392899999994
+          }
+        },
+        "crossing": [],
+        "endpoint_AE": "0",
+        "pilot_endpoint_comparisons": {
+          "before": "0",
+          "after": "0",
+          "reversal": "0"
+        }
+      },
+      {
+        "bound": "maximum",
+        "family_cpu_ms": 513.1239999999999,
+        "callback_cpu_ms": 135.9536579999998,
+        "callback_fraction_of_family": 0.2649528340128309,
+        "by_callback": {
+          "modifiers": {
+            "calls": 3600,
+            "cpu_ms": 43.37647599999997,
+            "wall_ms": 60.16131300000003
+          },
+          "wheel": {
+            "calls": 1800,
+            "cpu_ms": 34.389588999999916,
+            "wall_ms": 41.019604999999906
+          },
+          "about_to_wait": {
+            "calls": 2258,
+            "cpu_ms": 58.18759299999992,
+            "wall_ms": 67.27721199999978
+          }
+        },
+        "crossing": [],
+        "endpoint_AE": "0",
+        "pilot_endpoint_comparisons": {
+          "before": "0",
+          "after": "0",
+          "reversal": "0"
+        }
+      }
+    ],
+    "limits": [
+      "Instrumented candidate, not normal-mode acceptance. Main-thread callback CPU includes callees invoked synchronously from these callbacks; other threads and event-loop work outside callbacks are not included.",
+      "Scope clock/read/record overhead remains in family CPU; record push is outside scoped duration. No overhead subtraction or synthetic hotspot inference.",
+      "Only callbacks fully within the family CPU interval are summed; crossing boundaries are reported separately."
+    ]
+  },
+  "native": "Both bounds preserve all six before/after/reversal images against the corrected pilot; normal device-live drained exit0 and display restored. Scope intervals do not overlap; no callbacks cross active-window boundaries. Each bound records1800 wheel and3600 modifier callbacks. Minimum2191 and maximum2258 about-to-wait callbacks.",
+  "outcome": "Callbacks sum137.163710ms of507.326ms family CPU (27.04%) at minimum and135.953658ms of513.124ms (26.50%) at maximum. Wheel callbacks account35.045514/34.389589ms. These are instrumented observations, not normal-mode cap or formal overhead inference. The remaining CPU includes work outside these callbacks, other threads and measurement overhead; no specific dependency or kernel function is blamed. Camera math alone is not justified as the dominant correction.",
+  "restoration": "Both original application sources restored byte-for-byte, temporary module removed, production native binary restored to d0777db0. Diagnostic source bytes and binary identity retained, with diagnostic binary separately preserved under target/pm045-callback-candidate. No instrumentation or optimization lands in product code.",
+  "proof": "Guarded offline release build passed after initial guard refusal. Cleanup removed118087773bytes only after exact comparison to committed archive members; receipt and refusal retained. No broad unit/GPU suites repeated for unadopted diagnostic instrumentation. No claim those suites validate this experiment.",
+  "boundaries": "No product dependency, license, rendering or behavior change adopted. Preserve225 original adoption rules/statuses, S0-S4, GEFN and nonblocking resize/temporal/T2/schematic exclusions. Quiet clamp failure and full resource/GPU/temporal/backend-scale/endurance/independent-review/owner UX gaps remain."
+}

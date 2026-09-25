@@ -3673,6 +3673,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-cpu-timer-diagnostic/result.json",
         "status": "Native CPU timer attribution incomplete; no runtime correction justified"
+      },
+      "s5_clamp_callback_attribution": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-callback-attribution/result.json",
+        "status": "Direct callback diagnostic retained; no runtime optimization adopted"
       }
     },
     {
@@ -4408,6 +4413,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-cpu-timer-diagnostic/result.json",
         "status": "Native CPU timer attribution incomplete; no runtime correction justified"
+      },
+      "s5_clamp_callback_attribution": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-callback-attribution/result.json",
+        "status": "Direct callback diagnostic retained; no runtime optimization adopted"
       }
     },
     {

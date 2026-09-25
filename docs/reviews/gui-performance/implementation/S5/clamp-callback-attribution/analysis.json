@@ -1,0 +1,71 @@
+{
+  "rows": 17183,
+  "overlaps": 0,
+  "windows": [
+    {
+      "bound": "minimum",
+      "family_cpu_ms": 507.32599999999974,
+      "callback_cpu_ms": 137.16371000000004,
+      "callback_fraction_of_family": 0.27036601711719904,
+      "by_callback": {
+        "modifiers": {
+          "calls": 3600,
+          "cpu_ms": 44.816131000000034,
+          "wall_ms": 61.14069499999991
+        },
+        "wheel": {
+          "calls": 1800,
+          "cpu_ms": 35.045514000000004,
+          "wall_ms": 42.08177900000003
+        },
+        "about_to_wait": {
+          "calls": 2191,
+          "cpu_ms": 57.302064999999985,
+          "wall_ms": 64.99392899999994
+        }
+      },
+      "crossing": [],
+      "endpoint_AE": "0",
+      "pilot_endpoint_comparisons": {
+        "before": "0",
+        "after": "0",
+        "reversal": "0"
+      }
+    },
+    {
+      "bound": "maximum",
+      "family_cpu_ms": 513.1239999999999,
+      "callback_cpu_ms": 135.9536579999998,
+      "callback_fraction_of_family": 0.2649528340128309,
+      "by_callback": {
+        "modifiers": {
+          "calls": 3600,
+          "cpu_ms": 43.37647599999997,
+          "wall_ms": 60.16131300000003
+        },
+        "wheel": {
+          "calls": 1800,
+          "cpu_ms": 34.389588999999916,
+          "wall_ms": 41.019604999999906
+        },
+        "about_to_wait": {
+          "calls": 2258,
+          "cpu_ms": 58.18759299999992,
+          "wall_ms": 67.27721199999978
+        }
+      },
+      "crossing": [],
+      "endpoint_AE": "0",
+      "pilot_endpoint_comparisons": {
+        "before": "0",
+        "after": "0",
+        "reversal": "0"
+      }
+    }
+  ],
+  "limits": [
+    "Instrumented candidate, not normal-mode acceptance. Main-thread callback CPU includes callees invoked synchronously from these callbacks; other threads and event-loop work outside callbacks are not included.",
+    "Scope clock/read/record overhead remains in family CPU; record push is outside scoped duration. No overhead subtraction or synthetic hotspot inference.",
+    "Only callbacks fully within the family CPU interval are summed; crossing boundaries are reported separately."
+  ]
+}
