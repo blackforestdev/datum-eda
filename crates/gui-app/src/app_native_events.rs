@@ -506,6 +506,9 @@ impl ApplicationHandler for App {
         }
         self.poll_resize_smoke_start();
         self.request_restored_native_frames();
+        if let Err(err) = app_shell::gpu_allocation_measurements::poll() {
+            fatal_gui_error(event_loop, "GPU allocation observation incomplete", err);
+        }
         if let Err(err) = app_shell::private_text_measurements::poll() {
             fatal_gui_error(event_loop, "private text observation incomplete", err);
         }

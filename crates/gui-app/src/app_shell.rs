@@ -1,4 +1,6 @@
 use super::*;
+#[path = "native_gpu_allocation_measurements.rs"]
+pub(super) mod gpu_allocation_measurements;
 #[path = "native_private_text_measurements.rs"]
 pub(super) mod private_text_measurements;
 
@@ -28,6 +30,7 @@ pub(super) struct App {
 impl App {
     pub(super) fn run(mut self, event_loop: EventLoop<()>) -> Result<()> {
         private_text_measurements::start()?;
+        gpu_allocation_measurements::start()?;
         let result = event_loop.run_app(&mut self).context("failed to run app");
         // Opt-in observer handoff must happen before any live device is dropped.
         let result = result.and_then(|()| self.finish_measurement_observation());
@@ -43,7 +46,8 @@ impl App {
             ));
         }
         let observation = private_text_measurements::finish(result.is_ok());
-        result.and(observation)
+        let gpu_observation = gpu_allocation_measurements::finish(result.is_ok());
+        result.and(observation).and(gpu_observation)
     }
 
     pub(super) fn request_controlled_close(&mut self, event_loop: &ActiveEventLoop) {

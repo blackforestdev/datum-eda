@@ -1,0 +1,157 @@
+{
+  "events": 6961,
+  "allocations": 184,
+  "owners": 66,
+  "renderer_origins": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "unattributed_renderer_origin_present": false,
+  "kinds": {
+    "Uniform": 31,
+    "Attachment": 10,
+    "Vertex": 30,
+    "Staging": 91,
+    "Texture": 10,
+    "Instances": 12
+  },
+  "release_reasons": {
+    "Submitted": 91,
+    "Replaced": 8,
+    "Cleared": 9,
+    "OwnerDropped": 76
+  },
+  "transitions": {
+    "Registered": 184,
+    "Requested": 166,
+    "Consumers": 1847,
+    "SubmissionReference": 688,
+    "SubmittedUpload": 2906,
+    "Retired": 108,
+    "ReferenceReleased": 875,
+    "Released": 184,
+    "PreparedReference": 3
+  },
+  "tracked_registration_peak_bytes": 60619400,
+  "buffer_capacity_bytes_each": 1572864,
+  "maximum_serial_drain_buffers": 2,
+  "final_reservation_lifetime_peaks": {
+    "atlas_process": 2097152,
+    "gpu_process": 60619400,
+    "staging_process": 2967416,
+    "terminal_process": 0
+  },
+  "scope": "Delivery and internal reconciliation only. Registration/release callbacks are not exact API creation/drop instants; reservation peaks bound admitted capacity. Driver/RSS, local subcaps, observer overhead, workload and endurance qualification remain separate.",
+  "negative_controls": {
+    "missing-registration": "rejected",
+    "missing-release": "rejected",
+    "duplicate-sequence": "rejected",
+    "missing-end": "rejected",
+    "false-capacity": "rejected",
+    "false-reservation-cap": "rejected"
+  },
+  "native_origin_incidence": {
+    "1": [
+      [
+        1,
+        1
+      ]
+    ],
+    "2": [
+      [
+        2,
+        1
+      ]
+    ],
+    "3": [
+      [
+        3,
+        1
+      ]
+    ],
+    "4": [
+      [
+        4,
+        1
+      ]
+    ],
+    "5": [
+      [
+        5,
+        1
+      ]
+    ],
+    "6": [
+      [
+        6,
+        1
+      ]
+    ],
+    "7": [
+      [
+        7,
+        1
+      ]
+    ],
+    "8": [
+      [
+        8,
+        1
+      ]
+    ],
+    "9": [
+      [
+        9,
+        1
+      ]
+    ],
+    "10": [
+      [
+        10,
+        1
+      ]
+    ]
+  },
+  "origins_missing_native_upload_mapping": [],
+  "simultaneous_private_trace": {
+    "events": 12746,
+    "calls": 6373,
+    "owner_labels": {
+      "shared-font-catalog": 1,
+      "renderer-fonts-and-shapes": 3363,
+      "text-measurement": 66,
+      "raster-scratch-and-pixels": 2943
+    },
+    "cpu_owner_count": 25,
+    "renderer_origins": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "calls_without_renderer_origin": 66,
+    "reported_peak_maxima": {
+      "peak_bytes": 1759839,
+      "host_peak_bytes": 1759839,
+      "process_peak_bytes": 1759839
+    },
+    "buffer_capacity_bytes": 1703936,
+    "complete_private_call_delivery": true,
+    "observed_calls_within_reported_limits": true,
+    "qualification_pass": false
+  }
+}

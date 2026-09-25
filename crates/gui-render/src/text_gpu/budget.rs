@@ -8,12 +8,14 @@ use std::sync::{
 pub(crate) struct Budget {
     limit: u64,
     used: AtomicU64,
+    peak: AtomicU64,
 }
 impl Budget {
     pub fn new(limit: u64) -> Arc<Self> {
         Arc::new(Self {
             limit,
             used: AtomicU64::new(0),
+            peak: AtomicU64::new(0),
         })
     }
     pub(crate) fn cpu_allocation_bytes() -> usize {
@@ -25,6 +27,7 @@ impl Budget {
             crate::cpu_alloc::heap::arc_bytes(Self {
                 limit: 0,
                 used: AtomicU64::new(0),
+                peak: AtomicU64::new(0),
             })
         })
     }
@@ -33,6 +36,9 @@ impl Budget {
     }
     pub fn used(&self) -> u64 {
         self.used.load(Ordering::Acquire)
+    }
+    pub fn peak(&self) -> u64 {
+        self.peak.load(Ordering::Acquire)
     }
     pub fn available(&self) -> u64 {
         crate::cpu_alloc::calls::transaction(|ledger| self.limit.saturating_sub(ledger.used(self)))
@@ -64,7 +70,8 @@ pub(crate) struct Permit {
 impl Permit {
     // Caller holds the shared reservation/observation lock.
     pub(crate) fn admitted(budget: Arc<Budget>, bytes: u64) -> Self {
-        budget.used.fetch_add(bytes, Ordering::AcqRel);
+        let next = budget.used.fetch_add(bytes, Ordering::AcqRel) + bytes;
+        budget.peak.fetch_max(next, Ordering::AcqRel);
         Self { budget, bytes }
     }
     pub(crate) fn release_in_transaction(&mut self) {

@@ -3867,7 +3867,7 @@
         "crates/gui-render/src/render/text_buffer_cache.rs"
       ],
       "test": {
-        "status": "Partial PM047 observation:6373native private calls retain complete begin/end and per-call transient/concurrent-occupancy reports, with loss/abandonment/sequence controls. Full allocation identity/reference/release accounting, shared measurement-host incidence and all resource qualification remain open.",
+        "status": "Partial GPU resource observation: bounded native registration/reference/retirement/upload/release history and conservative pre-creation reservation peaks added; existing owners remain authoritative. Conformance and complete native delivery do not establish full CPU/GPU/driver/RSS/subcap or adoption qualification.",
         "id": "proof_ac_05",
         "positive": "Create/share/replace/evict/retire allocations and uploads",
         "negative_control": "Count buffer capacity reuse as zero upload",
@@ -4111,6 +4111,12 @@
         "previous_test_status": "Partial allocation evidence: native attachment drain and GUI resolver cache ownership. Resolver input/model/key capacities and tracking overhead share a16MiB local retention ceiling; pressure eviction and final release tested. Full ACC-01/02, native/driver memory and simultaneous aggregate/peak accounting remain unqualified.",
         "status": "Partial PM047 observation:6373native private calls retain complete begin/end and per-call transient/concurrent-occupancy reports, with loss/abandonment/sequence controls. Full allocation identity/reference/release accounting, shared measurement-host incidence and all resource qualification remain open.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
+      },
+      "s5_gpu_allocation_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial PM047 observation:6373native private calls retain complete begin/end and per-call transient/concurrent-occupancy reports, with loss/abandonment/sequence controls. Full allocation identity/reference/release accounting, shared measurement-host incidence and all resource qualification remain open.",
+        "status": "Partial GPU resource observation: bounded native registration/reference/retirement/upload/release history and conservative pre-creation reservation peaks added; existing owners remain authoritative. Conformance and complete native delivery do not establish full CPU/GPU/driver/RSS/subcap or adoption qualification.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json"
       }
     },
     {
@@ -4155,7 +4161,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Bounded private-call trace native on/off and overflow/file-collision controls retained. Initial disabled final-close timeout preserved with successful baseline and declared replay; no calibrated overhead/statistical claim or full qualification.",
+        "status": "Bounded GPU trace on/off, simultaneous private-call trace, forced overflow, existing-file rejection and corrupt evidence controls retained. Observer overhead and required formal statistical trials remain unqualified.",
         "id": "proof_ac_06",
         "positive": "Same workload trace-on/off and rejected trials",
         "negative_control": "Discard high-cost or contaminated trial after seeing result",
@@ -4233,6 +4239,12 @@
         "previous_test_status": "Predeclared six-run order completed with rejected NVIDIA startup and earlier method failures retained. Three descriptive on/off pairs show material observer overhead; no formal seven-pair confidence or overhead subtraction.",
         "status": "Bounded private-call trace native on/off and overflow/file-collision controls retained. Initial disabled final-close timeout preserved with successful baseline and declared replay; no calibrated overhead/statistical claim or full qualification.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
+      },
+      "s5_gpu_allocation_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Bounded private-call trace native on/off and overflow/file-collision controls retained. Initial disabled final-close timeout preserved with successful baseline and declared replay; no calibrated overhead/statistical claim or full qualification.",
+        "status": "Bounded GPU trace on/off, simultaneous private-call trace, forced overflow, existing-file rejection and corrupt evidence controls retained. Observer overhead and required formal statistical trials remain unqualified.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json"
       }
     },
     {
@@ -18555,7 +18567,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "GPU capacity history and process reservation lifetime peak are now delivered through normal native teardown. Stable allocation IDs count shared capacity once.512MiB authority unchanged; this bounded conformance workload does not qualify all application allocations, driver residency, simultaneous subcaps, recovery or endurance.",
         "id": "proof_mem_gpu_total",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -18695,7 +18707,13 @@
       ],
       "s4_resolved_implementation_obligations": [
         "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-      ]
+      ],
+      "s5_gpu_allocation_observation_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "status": "GPU capacity history and process reservation lifetime peak are now delivered through normal native teardown. Stable allocation IDs count shared capacity once.512MiB authority unchanged; this bounded conformance workload does not qualify all application allocations, driver residency, simultaneous subcaps, recovery or endurance.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json"
+      }
     },
     {
       "id": "MEM-ATTACHMENTS",
@@ -37853,5 +37871,18 @@
       "Preserve existing Board/Revision golden failures, menuCSV/bootstrap drift, prior CPU/GPU limits and missing NVIDIA counters. No broad golden/drift rerun or new acceptance."
     ],
     "boundaries": "No admission budget/failure-path, model/journal, dependency/license/backend/AA/prototype/terminal-state change. Preserve S0-S4, GEFN, PM029/PM047 and every nonblocking resize/temporal/T2/unadmitted schematic exclusion."
+  },
+  "s5_gpu_allocation_observation": {
+    "status": "Bounded GPU allocation history delivered and reconciled; GPI-S5 incomplete",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json",
+    "candidate_binary_sha256": "e130394644d7232dede79e279834009f4cfb70aaae5a21e76aa452adaa6a1577",
+    "limits": [
+      "Allocation delivery is one qualification prerequisite, not completion of ACC/MEM or S5. CPU cache/per-thread and host-local subcap observation, simultaneous peaks and admission/refusal controls, native/backend/scale/cold and all carried adoption predicates remain.",
+      "Event vectors can occupy two buffers during serial draining. Their API capacities are reported; headers, JSON/I/O scratch, process RSS and driver mappings remain separately accounted. Trace overhead and formal paired statistics are not qualified.",
+      "Preserve prior CPU limit excesses, opaque NVIDIA client counters, Board/Revision golden drift, menuCSV/bootstrap drift and unresolved earlier native final-close attempt. No broad golden/drift or numerical campaign repeated.",
+      "Full60minute endurance,200window cycles,20recoveries per admitted tier, owner native UX and distinct-reviewer actual replay are still required."
+    ],
+    "boundaries": "No limits, admission/refusal policy, dependency/license, backend/AA/painter-order, model/journal, prototype or terminal-state changes. Preserve completed S0-S4, GEFN and all nonblocking resize/temporal/T2/unadmitted schematic exclusions."
   }
 }

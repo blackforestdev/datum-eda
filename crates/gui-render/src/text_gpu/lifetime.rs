@@ -7,6 +7,9 @@ use std::sync::{Arc, Mutex, Weak};
 #[path = "lifetime_state.rs"]
 mod state;
 use state::{Metadata, ReferenceKind};
+#[path = "lifetime_observation.rs"]
+pub mod observation;
+use observation::{Transition, change};
 pub use state::{ReleasedAllocations, RetirementReason};
 
 static PROCESS_ALLOCATIONS: Mutex<Vec<Weak<Identity>>> = Mutex::new(Vec::new());
@@ -70,6 +73,29 @@ struct Identity {
     metadata: Metadata,
     owner: Arc<State>,
     uploads: Mutex<super::upload_totals::AllocationUploads>,
+}
+
+impl Identity {
+    fn snapshot(&self) -> Record {
+        let uploads = self.uploads.lock().unwrap_or_else(|e| e.into_inner());
+        let reason = self.metadata.reason();
+        Record {
+            consumers: Consumers::from_bits(self.metadata.consumers.load(Ordering::Acquire)),
+            prepared_consumers: self.metadata.referenced_consumers(ReferenceKind::Prepared),
+            submitted_consumers: self
+                .metadata
+                .referenced_consumers(ReferenceKind::Submission),
+            retiring: reason.is_some(),
+            retirement_reason: reason,
+            requested_bytes: self.metadata.payload.load(Ordering::Acquire),
+            prepared_references: self.metadata.prepared.load(Ordering::Acquire),
+            submission_references: self.metadata.submitted.load(Ordering::Acquire),
+            submitted_source_bytes: uploads.source_bytes,
+            submitted_transfer_bytes: uploads.transfer_bytes,
+            last_upload: uploads.latest,
+            ..self.record
+        }
+    }
 }
 
 struct State {
@@ -200,6 +226,7 @@ impl Owner {
             .unwrap_or_else(|e| e.into_inner());
         process.retain(|entry| entry.strong_count() != 0);
         process.push(Arc::downgrade(&identity));
+        change(&identity, Transition::Registered, || ());
         Tracked(Arc::new(Allocation {
             resource,
             _reservation: reservation,
@@ -223,28 +250,7 @@ fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
         if let Some(identity) = entry.upgrade()
             && !identity.metadata.released.load(Ordering::Acquire)
         {
-            let uploads = identity.uploads.lock().unwrap_or_else(|e| e.into_inner());
-            let reason = identity.metadata.reason();
-            records.push(Record {
-                consumers: Consumers::from_bits(
-                    identity.metadata.consumers.load(Ordering::Acquire),
-                ),
-                prepared_consumers: identity
-                    .metadata
-                    .referenced_consumers(ReferenceKind::Prepared),
-                submitted_consumers: identity
-                    .metadata
-                    .referenced_consumers(ReferenceKind::Submission),
-                retiring: reason.is_some(),
-                retirement_reason: reason,
-                requested_bytes: identity.metadata.payload.load(Ordering::Acquire),
-                prepared_references: identity.metadata.prepared.load(Ordering::Acquire),
-                submission_references: identity.metadata.submitted.load(Ordering::Acquire),
-                submitted_source_bytes: uploads.source_bytes,
-                submitted_transfer_bytes: uploads.transfer_bytes,
-                last_upload: uploads.latest,
-                ..identity.record
-            });
+            records.push(identity.snapshot());
             true
         } else {
             false
@@ -333,7 +339,9 @@ struct Allocation<T> {
 struct FinalRelease(Arc<Identity>);
 impl Drop for FinalRelease {
     fn drop(&mut self) {
-        self.0.metadata.released.store(true, Ordering::Release);
+        change(&self.0, Transition::Released, || {
+            self.0.metadata.released.store(true, Ordering::Release);
+        });
         let reason = self
             .0
             .metadata
@@ -379,21 +387,25 @@ impl UploadTarget<'_> {
 }
 impl SubmittedUpload {
     pub fn commit(self, attempt: Option<(u64, u64)>) {
-        self.identity
-            .uploads
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .record_consumers(attempt, self.source, self.transfer, self.consumers);
+        change(&self.identity, Transition::SubmittedUpload, || {
+            self.identity
+                .uploads
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .record_consumers(attempt, self.source, self.transfer, self.consumers);
+        })
     }
 }
 
 impl<T> Tracked<T> {
     pub(crate) fn set_consumers(&self, consumers: Consumers) {
-        self.0
-            .identity
-            .metadata
-            .consumers
-            .store(consumers.bits(), Ordering::Release);
+        change(&self.0.identity, Transition::Consumers, || {
+            self.0
+                .identity
+                .metadata
+                .consumers
+                .store(consumers.bits(), Ordering::Release);
+        })
     }
     pub(crate) fn upload_target(&self) -> UploadTarget<'_> {
         UploadTarget(&self.0.identity)
@@ -401,40 +413,47 @@ impl<T> Tracked<T> {
 
     /// A queue completion callback now owns this handle instead of the producer.
     pub(crate) fn mark_retiring(&self) {
-        if self.0.identity.metadata.retire(RetirementReason::Submitted) {
-            let consumers =
-                Consumers::from_bits(self.0.identity.metadata.consumers.load(Ordering::Acquire));
-            self.0
-                .identity
-                .metadata
-                .retiring_consumers
-                .store(consumers.bits(), Ordering::Release);
-            self.0
-                .identity
-                .metadata
-                .retain_consumers(ReferenceKind::Submission, consumers);
-            self.0
-                .identity
-                .metadata
-                .submitted
-                .fetch_add(1, Ordering::AcqRel);
-        }
+        change(&self.0.identity, Transition::Retired, || {
+            if self.0.identity.metadata.retire(RetirementReason::Submitted) {
+                let consumers = Consumers::from_bits(
+                    self.0.identity.metadata.consumers.load(Ordering::Acquire),
+                );
+                self.0
+                    .identity
+                    .metadata
+                    .retiring_consumers
+                    .store(consumers.bits(), Ordering::Release);
+                self.0
+                    .identity
+                    .metadata
+                    .retain_consumers(ReferenceKind::Submission, consumers);
+                self.0
+                    .identity
+                    .metadata
+                    .submitted
+                    .fetch_add(1, Ordering::AcqRel);
+            }
+        })
     }
 
     pub(crate) fn retire(&self, reason: RetirementReason) {
-        self.0.identity.metadata.retire(reason);
+        change(&self.0.identity, Transition::Retired, || {
+            self.0.identity.metadata.retire(reason);
+        })
     }
 
     pub(crate) fn set_requested_bytes(&self, bytes: u64) {
-        assert!(
-            bytes <= self.0.identity.record.bytes,
-            "payload exceeds GPU capacity"
-        );
-        self.0
-            .identity
-            .metadata
-            .payload
-            .store(bytes, Ordering::Release);
+        change(&self.0.identity, Transition::Requested, || {
+            assert!(
+                bytes <= self.0.identity.record.bytes,
+                "payload exceeds GPU capacity"
+            );
+            self.0
+                .identity
+                .metadata
+                .payload
+                .store(bytes, Ordering::Release);
+        })
     }
 
     pub(crate) fn with_shared_permit(mut self, permit: Arc<super::budget::Permit>) -> Self {
@@ -460,21 +479,28 @@ impl<T: Send + Sync> ResourceIdentity for Allocation<T> {
 }
 impl<T: Send + Sync + 'static> Tracked<T> {
     fn reference(&self, kind: ReferenceKind) -> SubmissionRef {
-        self.0
-            .identity
-            .metadata
-            .counter(kind)
-            .fetch_add(1, Ordering::AcqRel);
-        let consumers =
-            Consumers::from_bits(self.0.identity.metadata.consumers.load(Ordering::Acquire));
-        self.0.identity.metadata.retain_consumers(kind, consumers);
-        SubmissionRef {
-            consumers,
-            allocation_id: self.0.identity.record.id,
-            kind,
-            resource: self.0.clone(),
-        }
+        let transition = match kind {
+            ReferenceKind::Prepared => Transition::PreparedReference,
+            ReferenceKind::Submission => Transition::SubmissionReference,
+        };
+        change(&self.0.identity, transition, || {
+            self.0
+                .identity
+                .metadata
+                .counter(kind)
+                .fetch_add(1, Ordering::AcqRel);
+            let consumers =
+                Consumers::from_bits(self.0.identity.metadata.consumers.load(Ordering::Acquire));
+            self.0.identity.metadata.retain_consumers(kind, consumers);
+            SubmissionRef {
+                consumers,
+                allocation_id: self.0.identity.record.id,
+                kind,
+                resource: self.0.clone(),
+            }
+        })
     }
+
     pub fn submission_ref(&self) -> SubmissionRef {
         self.reference(ReferenceKind::Submission)
     }
@@ -492,24 +518,29 @@ impl<T> Deref for Tracked<T> {
 
 impl<T> Drop for Tracked<T> {
     fn drop(&mut self) {
-        if self.0.identity.metadata.reason() == Some(RetirementReason::Submitted) {
-            self.0.identity.metadata.release_consumers(
-                ReferenceKind::Submission,
-                Consumers::from_bits(
-                    self.0
-                        .identity
-                        .metadata
-                        .retiring_consumers
-                        .load(Ordering::Acquire),
-                ),
-            );
+        change(&self.0.identity, Transition::ReferenceReleased, || {
+            if self.0.identity.metadata.reason() == Some(RetirementReason::Submitted) {
+                self.0.identity.metadata.release_consumers(
+                    ReferenceKind::Submission,
+                    Consumers::from_bits(
+                        self.0
+                            .identity
+                            .metadata
+                            .retiring_consumers
+                            .load(Ordering::Acquire),
+                    ),
+                );
+                self.0
+                    .identity
+                    .metadata
+                    .submitted
+                    .fetch_sub(1, Ordering::AcqRel);
+            }
             self.0
                 .identity
                 .metadata
-                .submitted
-                .fetch_sub(1, Ordering::AcqRel);
-        }
-        self.retire(RetirementReason::OwnerDropped);
+                .retire(RetirementReason::OwnerDropped);
+        });
     }
 }
 
@@ -522,15 +553,21 @@ pub(crate) struct SubmissionRef {
 
 impl Drop for SubmissionRef {
     fn drop(&mut self) {
-        self.resource
-            .identity()
-            .metadata
-            .release_consumers(self.kind, self.consumers);
-        self.resource
-            .identity()
-            .metadata
-            .counter(self.kind)
-            .fetch_sub(1, Ordering::AcqRel);
+        change(
+            self.resource.identity(),
+            Transition::ReferenceReleased,
+            || {
+                self.resource
+                    .identity()
+                    .metadata
+                    .release_consumers(self.kind, self.consumers);
+                self.resource
+                    .identity()
+                    .metadata
+                    .counter(self.kind)
+                    .fetch_sub(1, Ordering::AcqRel);
+            },
+        );
     }
 }
 
