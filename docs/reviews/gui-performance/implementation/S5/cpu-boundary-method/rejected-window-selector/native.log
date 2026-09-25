@@ -1,0 +1,32 @@
+datum-gui diagnostic log pid=251991 start=SystemTime { tv_sec: 1790347417, tv_nsec: 782975020 }
+[SystemTime { tv_sec: 1790347417, tv_nsec: 783185606 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: "default", custom_name: "custom", program: None, args: [], environment: [], environment_remove: [], cwd: "active", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: "propose", unattended_tools: [] }, demo_known_good: false, board_file: None, schematic_file: None, artifact_path: None, project_root: Some("/tmp/pm045-admission-hqugp169/project"), select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: Some("single"), open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: "1280x800", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: Some(1.0), interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }
+[SystemTime { tv_sec: 1790347417, tv_nsec: 812153909 }] resumed event
+[SystemTime { tv_sec: 1790347417, tv_nsec: 812208143 }] launch state load begin
+[SystemTime { tv_sec: 1790347417, tv_nsec: 812269417 }] request resolve begin
+[SystemTime { tv_sec: 1790347417, tv_nsec: 812311714 }] request resolve end project_root=/tmp/pm045-admission-hqugp169/project board_file=None
+[SystemTime { tv_sec: 1790347417, tv_nsec: 812352222 }] workspace load begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 266238742 }] workspace load end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 266262773 }] camera fit begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 266277950 }] camera fit end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 266417816 }] terminal spawn begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 273393930 }] terminal spawn end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 273431045 }] launch state load end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 277906744 }] window created
+[SystemTime { tv_sec: 1790347419, tv_nsec: 277962662 }] runtime creation begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 278887269 }] wgpu instance create begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 392165656 }] wgpu request adapter begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 401761447 }] surface identity window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790347419, tv_nsec: 401788458 }] wgpu request device begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 429236528 }] wgpu request device end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 429425931 }] initial surface configuration requested 1280x800 format=Bgra8UnormSrgb present=Fifo msaa=8
+[SystemTime { tv_sec: 1790347419, tv_nsec: 429484341 }] renderer init begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 553056167 }] renderer init end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 554318719 }] runtime creation end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 554490804 }] window visible
+[SystemTime { tv_sec: 1790347419, tv_nsec: 554640332 }] surface configure begin
+[SystemTime { tv_sec: 1790347419, tv_nsec: 557046648 }] surface configure end
+[SystemTime { tv_sec: 1790347419, tv_nsec: 557071933 }] native queue configured host=1 configurations=1 submitted=0 completed=0
+[SystemTime { tv_sec: 1790347425, tv_nsec: 266066458 }] surface identity window=WindowId(31457302) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790347425, tv_nsec: 314215685 }] surface configure begin
+[SystemTime { tv_sec: 1790347425, tv_nsec: 367716951 }] surface configure end
+[SystemTime { tv_sec: 1790347425, tv_nsec: 367748496 }] native queue configured host=2 configurations=2 submitted=8 completed=8

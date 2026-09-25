@@ -1,0 +1,257 @@
+{
+  "purpose": "CPU observer conformance only; not GUI or PM045 row qualification",
+  "kernel": {
+    "system": "Linux",
+    "node": "debian3520",
+    "release": "6.12.107+deb13-amd64",
+    "version": "#1 SMP PREEMPT_DYNAMIC Debian 6.12.107-1 (2026-08-29)",
+    "machine": "x86_64",
+    "processor": ""
+  },
+  "observer_pid": 251699,
+  "clock_ticks_per_second": 100,
+  "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/datum-pm045-conformance-bc9a2c1cc7a845b5b194f1d5cb5dd21c",
+  "cases": [
+    {
+      "attempt": 1,
+      "root_pid": 251702,
+      "window_monotonic_ns": [
+        1081926517119348,
+        1081926626150934
+      ],
+      "before": {
+        "usage_usec": 0,
+        "user_usec": 0,
+        "system_usec": 0,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "after": {
+        "usage_usec": 162171,
+        "user_usec": 103956,
+        "system_usec": 58215,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "settled_after_empty_50ms": {
+        "usage_usec": 162171,
+        "user_usec": 103956,
+        "system_usec": 58215,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "fixture": {
+        "parent": {
+          "pid": 251702,
+          "start_ticks": 110373151
+        },
+        "parent_pre_exit": {
+          "user_seconds": 0.053065,
+          "system_seconds": 0.012244999999999999
+        },
+        "children_exit": [
+          {
+            "pid": 251703,
+            "status": 0,
+            "user_seconds": 0.012998,
+            "system_seconds": 0.012998
+          },
+          {
+            "pid": 251704,
+            "status": 0,
+            "user_seconds": 0.032945999999999996,
+            "system_seconds": 0.032945999999999996
+          }
+        ],
+        "process_cpu_ns": 65319858
+      },
+      "root_wait4": {
+        "user_seconds": 0.104683,
+        "system_seconds": 0.058531
+      },
+      "group_cpu_us": 162171,
+      "wait4_cpu_us": 163214,
+      "parent_pre_exit_us": 65310,
+      "child_exit_us": 91888,
+      "absolute_group_wait4_delta_us": 1043,
+      "negative_live_only_endpoint_us": 0,
+      "negative_dropped_child_gap_us": 96861
+    },
+    {
+      "attempt": 2,
+      "root_pid": 251707,
+      "window_monotonic_ns": [
+        1081926718575748,
+        1081926843419117
+      ],
+      "before": {
+        "usage_usec": 162171,
+        "user_usec": 103956,
+        "system_usec": 58215,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "after": {
+        "usage_usec": 342917,
+        "user_usec": 217460,
+        "system_usec": 125457,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "settled_after_empty_50ms": {
+        "usage_usec": 342917,
+        "user_usec": 217460,
+        "system_usec": 125457,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "fixture": {
+        "parent": {
+          "pid": 251707,
+          "start_ticks": 110373171
+        },
+        "parent_pre_exit": {
+          "user_seconds": 0.051206999999999996,
+          "system_seconds": 0.034138
+        },
+        "children_exit": [
+          {
+            "pid": 251708,
+            "status": 0,
+            "user_seconds": 0.017373,
+            "system_seconds": 0.008686
+          },
+          {
+            "pid": 251709,
+            "status": 0,
+            "user_seconds": 0.041173,
+            "system_seconds": 0.024704
+          }
+        ],
+        "process_cpu_ns": 85353713
+      },
+      "root_wait4": {
+        "user_seconds": 0.114327,
+        "system_seconds": 0.067716
+      },
+      "group_cpu_us": 180746,
+      "wait4_cpu_us": 182043,
+      "parent_pre_exit_us": 85345,
+      "child_exit_us": 91936,
+      "absolute_group_wait4_delta_us": 1297,
+      "negative_live_only_endpoint_us": 0,
+      "negative_dropped_child_gap_us": 95401
+    },
+    {
+      "attempt": 3,
+      "root_pid": 251712,
+      "window_monotonic_ns": [
+        1081926926473054,
+        1081927047634741
+      ],
+      "before": {
+        "usage_usec": 342917,
+        "user_usec": 217460,
+        "system_usec": 125457,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "after": {
+        "usage_usec": 523305,
+        "user_usec": 313159,
+        "system_usec": 210146,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "settled_after_empty_50ms": {
+        "usage_usec": 523305,
+        "user_usec": 313159,
+        "system_usec": 210146,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "fixture": {
+        "parent": {
+          "pid": 251712,
+          "start_ticks": 110373193
+        },
+        "parent_pre_exit": {
+          "user_seconds": 0.042904,
+          "system_seconds": 0.042904
+        },
+        "children_exit": [
+          {
+            "pid": 251713,
+            "status": 0,
+            "user_seconds": 0.014839999999999999,
+            "system_seconds": 0.01113
+          },
+          {
+            "pid": 251714,
+            "status": 0,
+            "user_seconds": 0.037107999999999995,
+            "system_seconds": 0.028862
+          }
+        ],
+        "process_cpu_ns": 85817579
+      },
+      "root_wait4": {
+        "user_seconds": 0.095041,
+        "system_seconds": 0.087003
+      },
+      "group_cpu_us": 180388,
+      "wait4_cpu_us": 182044,
+      "parent_pre_exit_us": 85808,
+      "child_exit_us": 91940,
+      "absolute_group_wait4_delta_us": 1656,
+      "negative_live_only_endpoint_us": 0,
+      "negative_dropped_child_gap_us": 94580
+    }
+  ],
+  "result": "All3 controlled process/thread/short-lived-child cases pass; live-only and omitted-child negatives fail conservation.",
+  "limits": [
+    "Cgroup hierarchy covers only members; externally delegated cooperating services require separate admission/accounting.",
+    "This does not observe GPU client lifetime or validate CPU action/readiness boundaries.",
+    "Conformance5ms tolerance is not GUI measurement uncertainty or budget relaxation; quantify action-window agreement and observer overhead separately.",
+    "No GUI performance or independent replay acceptance."
+  ],
+  "remaining_members": "",
+  "cleanup": "Owned empty cgroup removed",
+  "source_sha256": "fe695cf1177bd0df1ffa209b3933f025adff78338e1c2ab176afe3ea29fc05d1"
+}

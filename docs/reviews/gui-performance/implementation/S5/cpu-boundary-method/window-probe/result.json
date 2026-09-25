@@ -1,0 +1,427 @@
+{
+  "candidate": "7aba405a5eed79e8203cae12514693fe64584a27",
+  "binary_sha256": "5134fc68c06b73f974c0a65e04aa54c2ac5634596c920bc487b1d10be5902516",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--project-root",
+    "/tmp/pm045-admission-hqugp169/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "backend": "x11 on Xwayland",
+  "cycles": [
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 297.0440000000001,
+        "wall_ms": 671.7108120210469,
+        "pixel_observations": [
+          {
+            "monotonic_ns": 1082094092383663,
+            "capture": "/tmp/pm045-cgroup-window-yz5azhv4/PROJECT-1-0.png",
+            "pixel_difference": "691200",
+            "returncode": 1
+          },
+          {
+            "monotonic_ns": 1082094297732429,
+            "capture": "/tmp/pm045-cgroup-window-yz5azhv4/PROJECT-1-1.png",
+            "pixel_difference": "0",
+            "returncode": 0
+          }
+        ]
+      },
+      "close": {
+        "cpu_ms": 6.101000000000134,
+        "wall_ms": 32.36460103653371
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "182620 kB",
+        "VmRSS": "182620 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 49.84300000000008,
+        "wall_ms": 271.71202818863094,
+        "pixel_observations": [
+          {
+            "monotonic_ns": 1082095041849493,
+            "capture": "/tmp/pm045-cgroup-window-yz5azhv4/PROJECT-2-0.png",
+            "pixel_difference": "0",
+            "returncode": 0
+          }
+        ]
+      },
+      "close": {
+        "cpu_ms": 5.317999999999934,
+        "wall_ms": 23.369329050183296
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "182652 kB",
+        "VmRSS": "182652 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 28.254999999999697,
+        "wall_ms": 423.6944089643657,
+        "pixel_observations": [
+          {
+            "monotonic_ns": 1082095603564635,
+            "capture": "/tmp/pm045-cgroup-window-yz5azhv4/PROJECT-3-0.png",
+            "pixel_difference": "691200",
+            "returncode": 1
+          },
+          {
+            "monotonic_ns": 1082095815600629,
+            "capture": "/tmp/pm045-cgroup-window-yz5azhv4/PROJECT-3-1.png",
+            "pixel_difference": "0",
+            "returncode": 0
+          }
+        ]
+      },
+      "close": {
+        "cpu_ms": 4.698000000000313,
+        "wall_ms": 23.59981695190072
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "182656 kB",
+        "VmRSS": "182656 kB"
+      }
+    }
+  ],
+  "limits": [
+    "Method probe only:3Project cycles, first cold; not required30cycles/3trials.",
+    "Cgroup CPU includes in-process engine and all inherited children; external services remain unadmitted.",
+    "Window readback shows expected static content, not physical display/latency or complete input proof.",
+    "No GPU client/execution, observer-overhead, endurance or independent qualification."
+  ],
+  "source_state": "Clean production88130b98; later HEAD is evidence-only reconciliation",
+  "source_sha256": {
+    "crates/engine/src/substrate/mod.rs": "fae77791ac075b58005361453ff306172d349d0d758ee400901fdd904a7fccd4",
+    "crates/engine/src/substrate/tests.rs": "00852b0735e48d34b8725e1c8af438364083a08e927e8a0c177c6f85f301f13b",
+    "crates/engine/src/substrate/project_read_cache.rs": "2920c19b935078863214cdb6f2bb77bee29613705b8f567d31454ffdad124435",
+    "crates/engine/src/substrate/tests/project_read_cache.rs": "b48c548fe27406c2f466fd72d08fc554feef477ab1f3f01e3cd97efcdb031d58",
+    "crates/gui-app/src/project_preferences_runtime.rs": "bb7aa1d9e8903f619cc7241b5e13eac755ef0bf6fb7b0329a139a48992e60520",
+    "crates/gui-app/src/project_preferences_runtime_tests.rs": "66f9a7ea12f1eef9dfcf9105c9bc1e1525a983027b6423a892af5137b3d6a15a",
+    "crates/gui-app/src/project_preferences_read_cache.rs": "ac4a2d06e77ad42f9bd1ff317a76cd9ff4d9d7ca111676a8045fb82f6a8919cc",
+    "crates/gui-app/src/project_preferences_read_cache_tests.rs": "5e54892cb94ab3653bdfbe7badc9aac621ec7312f4d95533139d44bd1fd17d72"
+  },
+  "cpu_observer": {
+    "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/datum-pm045-window-cede00adc75d4b46ac24246f95c6b8e6",
+    "before_spawn": {
+      "usage_usec": 0,
+      "user_usec": 0,
+      "system_usec": 0,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "samples": [
+      {
+        "monotonic_ns": 1082093628588861,
+        "group": {
+          "usage_usec": 1883762,
+          "user_usec": 1568472,
+          "system_usec": 315290,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 893771712,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082094300686162,
+        "group": {
+          "usage_usec": 2180806,
+          "user_usec": 1829320,
+          "system_usec": 351485,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1190814887,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082094411929307,
+        "group": {
+          "usage_usec": 2180819,
+          "user_usec": 1829332,
+          "system_usec": 351487,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1190828529,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082094444308562,
+        "group": {
+          "usage_usec": 2186920,
+          "user_usec": 1835094,
+          "system_usec": 351826,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1196908149,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082094772707985,
+        "group": {
+          "usage_usec": 2210096,
+          "user_usec": 1854402,
+          "system_usec": 355693,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1220083691,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082095044689836,
+        "group": {
+          "usage_usec": 2259939,
+          "user_usec": 1884613,
+          "system_usec": 375325,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1269926407,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082095044944816,
+        "group": {
+          "usage_usec": 2259939,
+          "user_usec": 1884613,
+          "system_usec": 375325,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1269926407,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082095068323090,
+        "group": {
+          "usage_usec": 2265257,
+          "user_usec": 1889712,
+          "system_usec": 375545,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1275208125,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082095395521001,
+        "group": {
+          "usage_usec": 2288028,
+          "user_usec": 1904693,
+          "system_usec": 383334,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1297979065,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082095819246333,
+        "group": {
+          "usage_usec": 2316283,
+          "user_usec": 1930905,
+          "system_usec": 385378,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1326234209,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082095819680665,
+        "group": {
+          "usage_usec": 2316283,
+          "user_usec": 1930905,
+          "system_usec": 385378,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1326234209,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      },
+      {
+        "monotonic_ns": 1082095843221123,
+        "group": {
+          "usage_usec": 2320981,
+          "user_usec": 1934821,
+          "system_usec": 386159,
+          "nice_usec": 0,
+          "nr_periods": 0,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "gui_cpu_ns": 1330863315,
+        "gui_pid": 252522,
+        "gui_start_ticks": 110389148,
+        "members": [
+          "252522",
+          "252580"
+        ]
+      }
+    ],
+    "after_root_exit": {
+      "usage_usec": 2341056,
+      "user_usec": 1934821,
+      "system_usec": 406235,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "remaining_before_cleanup": "",
+    "after_cleanup": {
+      "usage_usec": 2341056,
+      "user_usec": 1934821,
+      "system_usec": 406235,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    }
+  },
+  "main_window": 33554436,
+  "rss_initial": {
+    "VmHWM": "161756 kB",
+    "VmRSS": "161756 kB"
+  },
+  "passed_native_cycles": true,
+  "rss_final": {
+    "VmHWM": "182656 kB",
+    "VmRSS": "182656 kB"
+  },
+  "cleanup": "Owned process/group terminated; forced final shutdown not normal-drain qualification."
+}
