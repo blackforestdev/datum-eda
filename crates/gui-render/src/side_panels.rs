@@ -15,6 +15,28 @@ pub(super) fn render_side_panels(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> anyhow::Result<()> {
+    let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
+    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
+    render_side_panels_logical(
+        state,
+        &scale.logical_layout(layout.clone()),
+        panel_quads,
+        text_runs,
+        hit_regions,
+    )?;
+    scale.quads(&mut panel_quads[starts.0..]);
+    scale.text_geometry(&mut text_runs[starts.1..]);
+    scale.hits(&mut hit_regions[starts.2..]);
+    Ok(())
+}
+
+fn render_side_panels_logical(
+    state: &ReviewWorkspaceState,
+    layout: &ShellLayout,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) -> anyhow::Result<()> {
     let left = layout.left_sidebar;
     let right = layout.right_sidebar;
 
