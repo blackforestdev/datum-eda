@@ -1,0 +1,23 @@
+{
+  "qualification_pass": false,
+  "disposition": "Candidate not adopted; original source restored exactly (git diff --exit-code) and original d0777db0 runtime restored. Candidate972adccf is separately retained under target/pm045-stroke-candidate for inspection. No runtime change lands.",
+  "candidate_checks": {
+    "unit": "353 passed,90 ignored",
+    "gpu": "34 passed",
+    "native_FDOA_reference": "1 passed covering9 scale/zoom combinations plus9 wrong-color controls",
+    "strict_renderer_clippy": "PASS",
+    "guarded_offline_release": "PASS",
+    "source_health": "PASS2471"
+  },
+  "final_governance": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "parity": "PASS20inventories",
+    "dependency": "PASS",
+    "cargo_policy": "PASS",
+    "project_status": "PASS59frontieritems"
+  },
+  "archives": "Eight archives,81 raw members individually SHA256/length verified. Includes final candidate4source bytes, exact source hashes, six native runs, declaration/analysis, all failure/proof logs and cleanup receipt. Not every intermediate speculative test source was saved; no assertion that those source versions are fully archived.",
+  "route_review": "45 retained reviewed source/consumer hashes verified before adding only AC02/AC06 evidence pointers. All225 original rules/statuses/recipes/scopes/history compared unchanged.",
+  "native": "All six fixed-order runs ended normally after device-live drain; all final images AE0. Physical1x restored to1.05. Quantized input, quiet missing-workcounts, observer overhead and missing full methods/backends/scales/resources/endurance/reviewer/UX prevent acceptance."
+}

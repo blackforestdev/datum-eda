@@ -1,0 +1,371 @@
+{
+  "status": "Stroke color relocation candidate not adopted: exact pixels preserved, native improvement not demonstrated; S5 remains incomplete",
+  "qualification_pass": false,
+  "baseline_commit": "6b9037b2",
+  "binary_sha256": {
+    "baseline": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+    "candidate": "972adccf30a7c022f1934ec443d57b387dc076f34342e2302a66802cc4df8cbf"
+  },
+  "final_source_sha256": {
+    "crates/gui-render/src/render/gpu_strokes.rs": "cba004a7599b1ea34db1b60c60717c0ccd1ed44488f5b0a482b5486afb906c1d",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "e5d05448c0f662dfa2dc14311c3a887ef02d6ec6cde24a7a3e46594ceb738fcd",
+    "crates/gui-render/src/render/gpu_stroke_color_candidate_tests.rs": "29813f0e58100288c1135038404864fafd21bbfac76c27da6a1be82c5e72c460",
+    "crates/gui-render/testdata/stroke-color-before.wgsl": "0ce8ddda27ff8659747c8295d555e4ad7ad912168bac86261f23d93e34ae51da"
+  },
+  "experiment_not_adopted": true,
+  "runtime_change": "Experimental candidate only; original shader restored after evaluation. Per-instance stroke color is constant. Convert sRGB to linear in the vertex shader and use a flat color varying instead of repeating conversion in the sample-shaded fragment shader. Capsule discard, sample_index, sample count, geometry, painter order, passes, resource ownership and dependency boundaries are unchanged. General world shaders are unchanged.",
+  "correctness": "Experimental candidate renderer compared against the frozen pre-change WGSL at 8x MSAA on Intel P630 Vulkan. Nine builtin board configurations use dark/threshold/saturated colors; nine pinned native F-DOA configurations preserve authored colors and2382stroke instances. Each fixture spans scales1/1.5/2 and zoom0.65/1/1.7 with a camera offset. All18 comparisons have zero differing RGBA pixels. A black-stroke injection changes output in each case, proving the oracle observes these strokes. These offscreen configurations are not native display/backend qualification.",
+  "rust_proof": "353 renderer unit tests passed,90 ignored. All34 selected GPU regression tests passed, including the builtin reference comparison; separate final native F-DOA reference test passed. Strict renderer all-target visual Clippy, source health2471 and guarded offline release build passed. No app/engine source changes, so unchanged app/engine suites were not repeated.",
+  "failed_attempts": "Initial Cargo guard refused /tmp reserve; cleanup removed151336212bytes only after verifying exact copies in committed evidence archives. Initial speculative GPU test enabled timestamps before a cold multi-submission upload and failed with cold_upload_multisubmission_timestamps_unqualified; corrected experiment warms retained geometry before enabling timestamps. All logs retained. Initial test source hashes survive but not every intermediate test source version; final production-positive/negative proof sources are archived exactly.",
+  "native_observations": [
+    {
+      "role": "baseline",
+      "trial": 1,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-heqe6_vg",
+      "returncode": 0,
+      "cpu_ms": 4389.858,
+      "elapsed_seconds": 30.105089374,
+      "cpu_percent": 14.581780327784921,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403227,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.991000000000298,
+      "gpu_frame_span_ms": {
+        "count": 1277,
+        "min": 5.702666840698242,
+        "p50": 7.937750242240906,
+        "p95": 9.797416965660096,
+        "p99": 12.060167034713745,
+        "max": 12.654667052856444
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1277,
+          "min": 4.233083462516785,
+          "p50": 6.05608351815033,
+          "p95": 7.858166906478882,
+          "p99": 10.192500311050415,
+          "max": 10.709166993484496
+        },
+        "text": {
+          "count": 1277,
+          "min": 1.4061667095794679,
+          "p50": 1.8509167231521606,
+          "p95": 1.9301667255706787,
+          "p99": 3.4758334394073485,
+          "max": 5.9511668482818605
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-lb2l5_ur",
+      "returncode": 0,
+      "cpu_ms": 4538.11,
+      "elapsed_seconds": 30.102724235,
+      "cpu_percent": 15.075412991105983,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403503,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.7170000000001906,
+      "gpu_frame_span_ms": {
+        "count": 1277,
+        "min": 6.3675835276565556,
+        "p50": 7.965666909759522,
+        "p95": 9.90600030230713,
+        "p99": 12.089833702285766,
+        "max": 12.85966705911255
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1277,
+          "min": 4.786500146072387,
+          "p50": 6.072166851974488,
+          "p95": 7.863500239974975,
+          "p99": 10.208666978210449,
+          "max": 10.98325033518219
+        },
+        "text": {
+          "count": 1277,
+          "min": 1.4166667098999024,
+          "p50": 1.8525000565338134,
+          "p95": 3.086666760864258,
+          "p99": 3.758083448020935,
+          "max": 6.024166850509643
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-a4t2spw0",
+      "returncode": 0,
+      "cpu_ms": 4436.182,
+      "elapsed_seconds": 30.07304111,
+      "cpu_percent": 14.751358147563147,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403764,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.9089999999994944,
+      "gpu_frame_span_ms": {
+        "count": 1273,
+        "min": 6.417500195846557,
+        "p50": 7.977833576797486,
+        "p95": 9.933416969810485,
+        "p99": 12.095833702468871,
+        "max": 12.23683370677185
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1273,
+          "min": 4.893833482681274,
+          "p50": 6.075750185417175,
+          "p95": 8.002166910873413,
+          "p99": 10.20983364491272,
+          "max": 10.355666982696533
+        },
+        "text": {
+          "count": 1273,
+          "min": 1.4794167118148804,
+          "p50": 1.852416723197937,
+          "p95": 3.1570834296798704,
+          "p99": 3.675916778846741,
+          "max": 6.028333517303467
+        }
+      }
+    },
+    {
+      "role": "baseline",
+      "trial": 2,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-ckv0uwma",
+      "returncode": 0,
+      "cpu_ms": 4458.904,
+      "elapsed_seconds": 30.104769749,
+      "cpu_percent": 14.811287504193961,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 403986,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.7259999999996722,
+      "gpu_frame_span_ms": {
+        "count": 1275,
+        "min": 6.5650002003479,
+        "p50": 7.93766690890503,
+        "p95": 9.75391696433258,
+        "p99": 12.064250368171692,
+        "max": 12.176917038276672
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1275,
+          "min": 4.965916818214416,
+          "p50": 6.058000184875488,
+          "p95": 7.826750238853455,
+          "p99": 10.082500307693481,
+          "max": 10.28600031390381
+        },
+        "text": {
+          "count": 1275,
+          "min": 1.567916714515686,
+          "p50": 1.852750056541443,
+          "p95": 1.9782500603713988,
+          "p99": 3.603000109954834,
+          "max": 6.068000185180664
+        }
+      }
+    },
+    {
+      "role": "baseline",
+      "trial": 3,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-zp7qpi2c",
+      "returncode": 0,
+      "cpu_ms": 4522.756,
+      "elapsed_seconds": 30.099095873,
+      "cpu_percent": 15.026218791033784,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 404285,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.9049999999998235,
+      "gpu_frame_span_ms": {
+        "count": 1276,
+        "min": 6.211833522903443,
+        "p50": 7.958500242874146,
+        "p95": 9.758083631126404,
+        "p99": 12.109333702880859,
+        "max": 13.478083744651794
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1276,
+          "min": 4.7156668105773925,
+          "p50": 6.068750185203553,
+          "p95": 7.859500239852905,
+          "p99": 10.229750312187194,
+          "max": 11.69233369015503
+        },
+        "text": {
+          "count": 1276,
+          "min": 1.4111667097320557,
+          "p50": 1.8523333898620606,
+          "p95": 1.98741672731781,
+          "p99": 3.588083442832947,
+          "max": 6.031833517410278
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "trial": 3,
+      "gpu": 1,
+      "path": "/tmp/pm045-stroke-native-m12312hi",
+      "returncode": 0,
+      "cpu_ms": 4487.956,
+      "elapsed_seconds": 30.102302219,
+      "cpu_percent": 14.909012497945383,
+      "final_pixel_AE": "0",
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 404567,
+        "device_epoch": 1
+      },
+      "error": null,
+      "gpu_incomplete": [
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":1}",
+        "gpu_measurement_incomplete {\"device_epoch\":1,\"frame\":1,\"host\":1,\"reason\":\"cold_upload_multisubmission_timestamps_unqualified\",\"status\":\"incomplete\",\"submission\":2}"
+      ],
+      "action_gpu_incomplete": [],
+      "tail_gpu_samples": 0,
+      "tail_cpu_ms": 1.9210000000002836,
+      "gpu_frame_span_ms": {
+        "count": 1275,
+        "min": 6.017916850318909,
+        "p50": 7.96075024294281,
+        "p95": 9.923250302833557,
+        "p99": 12.024583700294494,
+        "max": 12.479750380851746
+      },
+      "gpu_pass_ms": {
+        "scene": {
+          "count": 1275,
+          "min": 4.562583472572327,
+          "p50": 6.070166851913452,
+          "p95": 7.990833577194214,
+          "p99": 10.066333640533447,
+          "max": 10.504083653892517
+        },
+        "text": {
+          "count": 1275,
+          "min": 1.404583376197815,
+          "p50": 1.852750056541443,
+          "p95": 2.27100006930542,
+          "p99": 3.6063334433898926,
+          "max": 6.048583517921448
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Three matched trial pairs; no seven-pair STAT relative acceptance.",
+    "All runs quiet withGPUtimestampsON; CPUincludesobserveroverhead and isnotquietCPUqualification. No per-frame forbiddenwork/shellsolve/worldupload orreceivedinputcounter coverage.",
+    "Existing3600scheduledintegerXTestcalls quantizeto1280physicalpositionchanges;120distinctsemantic-actions/s unqualified.",
+    "GPUrecords include measured active interval and5sectail;tail samples reported,not dropped. Nativeendpoints AE0 prove finalpixels/focusonly,notphysicalpresentationlatency/continuouspath/hits/ownerUX.",
+    "OnlyX11onXwaylandphysical60Hz1x oneMainleaf,hiddenterminal; no Wayland/otherdisplay-scale/multihost/endurance/resource/independentreviewer acceptance."
+  ],
+  "archives": [
+    {
+      "file": "baseline-1.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "candidate-1.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "candidate-2.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "baseline-2.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "baseline-3.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "candidate-3.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "campaign.tar.gz",
+      "members": 12
+    },
+    {
+      "file": "proof.tar.gz",
+      "members": 21
+    }
+  ],
+  "disposition": "All six native runs exited normally with exact final pixels. Baseline GPU p95 values9.797/9.754/9.758ms versus candidate9.906/9.933/9.923ms provide no demonstrated practical benefit. No formal regression or relative-equivalence inference is claimed from three pairs. Candidate is not landed; original shader and native binary are restored. Correctness alone is insufficient reason to adopt this performance patch.",
+  "boundaries": "No full performance, numerical cap, resource, method, endurance, independent-review or owner UX acceptance. Preserve all225 adoption rules/statuses, S0-S4 implementation exits, GEFN and nonblocking resize/temporal/T2/schematic exclusions; prior failures remain visible. No new dependency or license obligation. Experimental single-frame timings are not a formal speedup claim."
+}
