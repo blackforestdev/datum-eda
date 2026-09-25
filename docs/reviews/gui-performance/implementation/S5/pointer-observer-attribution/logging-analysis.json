@@ -1,0 +1,137 @@
+{
+  "qualification_pass": false,
+  "diagnostic_only": true,
+  "runs": [
+    {
+      "role": "verbose",
+      "trial": 1,
+      "path": "/tmp/pm045-pointer-log-overhead-elrxeos9",
+      "cpu_ms": 5649.89,
+      "elapsed_seconds": 30.074254801,
+      "cpu_percent": 18.78646715399956,
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 385375,
+        "device_epoch": 1
+      },
+      "error": null,
+      "native_log_bytes": 7537263,
+      "final_pixel_AE": "0",
+      "received_event_count": 1280
+    },
+    {
+      "role": "quiet",
+      "trial": 1,
+      "path": "/tmp/pm045-pointer-log-overhead-2bli7jiu",
+      "cpu_ms": 3889.894,
+      "elapsed_seconds": 30.09930368,
+      "cpu_percent": 12.923534847700504,
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 385612,
+        "device_epoch": 1
+      },
+      "error": null,
+      "native_log_bytes": 3666,
+      "final_pixel_AE": "0",
+      "received_event_count": null
+    },
+    {
+      "role": "quiet",
+      "trial": 2,
+      "path": "/tmp/pm045-pointer-log-overhead-67opzs1t",
+      "cpu_ms": 3799.832,
+      "elapsed_seconds": 30.099456041,
+      "cpu_percent": 12.624254720165226,
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 385910,
+        "device_epoch": 1
+      },
+      "error": null,
+      "native_log_bytes": 3665,
+      "final_pixel_AE": "0",
+      "received_event_count": null
+    },
+    {
+      "role": "verbose",
+      "trial": 2,
+      "path": "/tmp/pm045-pointer-log-overhead-jn5z70ag",
+      "cpu_ms": 5660.015,
+      "elapsed_seconds": 30.101941188,
+      "cpu_percent": 18.802823926373023,
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 386158,
+        "device_epoch": 1
+      },
+      "error": null,
+      "native_log_bytes": 7527765,
+      "final_pixel_AE": "0",
+      "received_event_count": 1280
+    },
+    {
+      "role": "verbose",
+      "trial": 3,
+      "path": "/tmp/pm045-pointer-log-overhead-l4t63sk7",
+      "cpu_ms": 5712.211,
+      "elapsed_seconds": 30.114163174,
+      "cpu_percent": 18.968519785838893,
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 386434,
+        "device_epoch": 1
+      },
+      "error": null,
+      "native_log_bytes": 7511242,
+      "final_pixel_AE": "0",
+      "received_event_count": 1280
+    },
+    {
+      "role": "quiet",
+      "trial": 3,
+      "path": "/tmp/pm045-pointer-log-overhead-srkike0p",
+      "cpu_ms": 3597.65,
+      "elapsed_seconds": 30.102527885,
+      "cpu_percent": 11.951321874840612,
+      "normal_exit_code": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 386681,
+        "device_epoch": 1
+      },
+      "error": null,
+      "native_log_bytes": 3665,
+      "final_pixel_AE": "0",
+      "received_event_count": null
+    }
+  ],
+  "descriptive_pairs": [
+    {
+      "trial": 1,
+      "verbose_minus_quiet_cpu_ms": 1759.9960000000005,
+      "increase_relative_to_quiet_percent": 45.245346017140854
+    },
+    {
+      "trial": 2,
+      "verbose_minus_quiet_cpu_ms": 1860.1830000000004,
+      "increase_relative_to_quiet_percent": 48.954348508039324
+    },
+    {
+      "trial": 3,
+      "verbose_minus_quiet_cpu_ms": 2114.561,
+      "increase_relative_to_quiet_percent": 58.77617333537171
+    }
+  ],
+  "limits": [
+    "Three matched mode pairs are descriptive overhead evidence,not seven-pair formal STAT inference. Do not subtract an estimated overhead from a qualification result.",
+    "Quiet runs preserve warm/final pixel and focus checks plus family CPU and shutdown receipt; received events,per-frame counters and GPUtimestamps are absent,so output/path equivalence is not completely observed.",
+    "Both modes use the quantized XTest stream3600calls1280changes;neither establishes120distinctsemantic-actions/s.",
+    "Main-thread CPU includes application/backend/driver/logging. The separate GDBsample is perturbed,not performancequalification."
+  ]
+}
