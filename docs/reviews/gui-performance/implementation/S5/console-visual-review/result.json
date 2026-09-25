@@ -1,0 +1,98 @@
+{
+  "status": "S5 visual qualification failed; no baseline update or acceptance",
+  "candidate_commit": "a75da7c5",
+  "cases": [
+    {
+      "fixture": "history-expanded",
+      "scale": 1.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/history-expanded-1_00",
+      "golden_sha256": "d11839d230d9778b7b55007ca4e013ac1234dc1685c312d2aec1a1b60464db1d"
+    },
+    {
+      "fixture": "refusal-narrow",
+      "scale": 1.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/refusal-narrow-1_00",
+      "golden_sha256": "a715ee0b7de158974006f0b610ac01142cc1a2b042b2e9b63bb789c7237b2ca1"
+    },
+    {
+      "fixture": "routine-focused",
+      "scale": 1.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/routine-focused-1_00",
+      "golden_sha256": "5a8dcb192e68cd057b3889d247858dd3eb126686318b3fa62c0b9ac3950abf99"
+    },
+    {
+      "fixture": "routine-maximized",
+      "scale": 1.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/routine-maximized-1_00",
+      "golden_sha256": "2d865cd3dd3d792f7d5aba5012867b3a768359d0bf3fa88abee20ac467d68fef"
+    },
+    {
+      "fixture": "routine-scale-matrix",
+      "scale": 1.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/routine-scale-matrix-1_00",
+      "golden_sha256": "5a8dcb192e68cd057b3889d247858dd3eb126686318b3fa62c0b9ac3950abf99"
+    },
+    {
+      "fixture": "routine-scale-matrix",
+      "scale": 1.25,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/routine-scale-matrix-1_25",
+      "golden_sha256": "b6f550a751a907db498b837fdd4fc721d6ea4c2db5ff1c77792cbac32c5de9a0"
+    },
+    {
+      "fixture": "routine-scale-matrix",
+      "scale": 1.5,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/routine-scale-matrix-1_50",
+      "golden_sha256": "5c8edf864f528c5248904c450cd51537ff2f968a1d599cb9560ded1905f2a5f5"
+    },
+    {
+      "fixture": "routine-scale-matrix",
+      "scale": 2.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/routine-scale-matrix-2_00",
+      "golden_sha256": "989a98ab41c525435434ef26d696a9810cac6f8e3341c276ada4ea8b5a919b8a"
+    },
+    {
+      "fixture": "routine-unfocused",
+      "scale": 1.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/routine-unfocused-1_00",
+      "golden_sha256": "22f75796bc4e8f9ce55035d9d3cb6532af11c4dd230c8b35eb473fdf103e0e02"
+    },
+    {
+      "fixture": "tool-terminal-open",
+      "scale": 1.0,
+      "exit_code": 1,
+      "artifacts": "docs/reviews/gui-performance/implementation/S5/console-visual-review/tool-terminal-open-1_00",
+      "golden_sha256": "7732407e80393ffc5ebeba5688b19716f718b0c2e11fa9dbe3f7ac9f60f9ef56"
+    }
+  ],
+  "authority": [
+    "PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE",
+    "PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE",
+    "docs/gui/prototypes/command-feedback-study.html rendered at1680x4400 and DOM/CSS inspected",
+    "docs/gui/DATUM_GUI_VISUAL_REGRESSION_HARNESS.md Rebless Policy"
+  ],
+  "findings": [
+    "At1x, all seven fixtures retain the known3778pixel Navigator difference. The current absence of fictional/unmanaged Revision navigation matches PM038; restoring the old golden content would violate that decision.",
+    "History-expanded adds4122changed pixels from measured wrapped-row spacing; terminal-open/unfocused add1032dock-footer pixels from viewport-bounded tab height. Current images were compared to their existing goldens and rendered Console visual study.",
+    "All four declared scale rows were rendered separately without stopping at the first mismatch. At1.25/1.5/2.0, differences include scaled clipping/wrapping beyond the old Navigator region. Both current and old2x screenshots visibly overlap menu/status text; matching those goldens would not prove usable scaled native UX.",
+    "Production diagnosis: ShellLayout scales physical rectangles; menu_chrome measures14px brand/title and fixed pixel padding before frame_preparation scales TextRun sizes. Native and offscreen use this shared preparation. Geometry, text metrics and hit bounds need coherent scale ownership; simply dropping text scale would hide the defect and violate intended HiDPI sizing."
+  ],
+  "issues": [
+    "dat-console-revision-golden-hrak",
+    "dat-workspace-hidpi-chrome-6fm4"
+  ],
+  "next_implementation": "Correct shared workspace chrome scale ownership, preserving1x and terminal device-pixel metrics. Then review actual scaled output and reconcile only justified goldens under existing visual authority.",
+  "limitations": [
+    "Tenfailed fixture/scale checks are not native input/static acceptance. No golden/prototype/Cargo/dependency changed.",
+    "diff-regions.json uses legacy1x regions for comparison; its nonzero outside counts at higher scales are findings, not ignored masks.",
+    "No blanket rebless or altered tolerance. Complete S5 remains open; preserve resize/temporal exclusions."
+  ]
+}
