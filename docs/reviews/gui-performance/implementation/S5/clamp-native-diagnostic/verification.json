@@ -1,0 +1,16 @@
+{
+  "qualification_pass": false,
+  "native": "All6 applications normal drained exit0; all12 clamp intervals AE0 and no logged frame/preparation/upload. Both inward events produce changed pixels. First baseline harness post-exit KeyError retained. Display1.05 restored after both campaigns.",
+  "method": "3600 native events from1800 pairs; positive2 events. Not60/s/single reversal qualification. Verbose CPU overhead not removed; no numeric cap acceptance.",
+  "archives": "8 archives138 raw members SHA256/length verified",
+  "route": "45 unchanged reviewed hashes verified before bounded AC02/AC06 additions; original225 rules/statuses/recipes/history preserved.",
+  "checks": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "parity": "PASS20inventories",
+    "dependency": "PASS",
+    "cargo_resource": "PASS",
+    "project_status": "PASS59frontieritems"
+  },
+  "rust": "No product source changes; unchanged Rust suites not repeated."
+}
