@@ -1,0 +1,65 @@
+[
+  {
+    "file": "campaign-original.tar.xz",
+    "original_path": "/tmp/pm045-controls-30-campaign-c8fwtqnc",
+    "members": 7,
+    "raw_bytes": 32970,
+    "tar_sha256": "4aca10efc847e20ceef7089d1c3d52ac5af26252421bd6d3e1e6a4824ab8b779",
+    "gzip_bytes": 4695,
+    "archive_bytes": 4152
+  },
+  {
+    "file": "project-30.tar.xz",
+    "original_path": "/tmp/pm045-controls-30-native-nwazawem",
+    "members": 696,
+    "raw_bytes": 76406912,
+    "tar_sha256": "1563311b5d9f22bb130c0d084dfc409b240516b7129f5ba292879cd39e79db7e",
+    "gzip_bytes": 67860511,
+    "archive_bytes": 789216
+  },
+  {
+    "file": "global-oracle-failure.tar.xz",
+    "original_path": "/tmp/pm045-controls-30-native-drs0aho1",
+    "members": 32,
+    "raw_bytes": 2843112,
+    "tar_sha256": "64e47b01503ac18501a228ca5427af865b04ac4edd1247a17335f74782d8566e",
+    "gzip_bytes": 2443137,
+    "archive_bytes": 753028
+  },
+  {
+    "file": "references.tar.xz",
+    "original_path": "/tmp/pm045-controls-30-references",
+    "members": 39,
+    "raw_bytes": 3890081,
+    "tar_sha256": "63752680a894768436cc5a6f73daf1c2823326d8a2ea916d3ed512e3ecd41114",
+    "gzip_bytes": 3659935,
+    "archive_bytes": 1215696
+  },
+  {
+    "file": "campaign-followup.tar.xz",
+    "original_path": "/tmp/pm045-controls-followup-campaign-sq39z7ji",
+    "members": 7,
+    "raw_bytes": 35085,
+    "tar_sha256": "de3c5e152d914ce7f3289e0e3bf3e6e0d924ed67df6cc6241f515506d05af14a",
+    "gzip_bytes": 4838,
+    "archive_bytes": 4276
+  },
+  {
+    "file": "global-30.tar.xz",
+    "original_path": "/tmp/pm045-controls-30-v2-native-tz5eh4hc",
+    "members": 696,
+    "raw_bytes": 74513135,
+    "tar_sha256": "463096244e20a40a2de74acf38a9cd60794b6a093129827e609d6b1759e3dcfd",
+    "gzip_bytes": 65723156,
+    "archive_bytes": 922652
+  },
+  {
+    "file": "project-overlap.tar.xz",
+    "original_path": "/tmp/pm045-controls-clip-native-ez9zcg5x",
+    "members": 39,
+    "raw_bytes": 3897847,
+    "tar_sha256": "2adca94db371cc46316254a0a9c789d2009d70bdbf8dfb836670cafee40f8ac1",
+    "gzip_bytes": 3424640,
+    "archive_bytes": 379348
+  }
+]

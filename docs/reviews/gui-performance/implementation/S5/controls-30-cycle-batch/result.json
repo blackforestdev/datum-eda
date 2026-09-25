@@ -1,0 +1,27 @@
+{
+  "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open",
+  "qualification_pass": false,
+  "workload_sequence_completed": true,
+  "candidate_commit": "34473400",
+  "production_binary_sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+  "environment": "X11 on Xwayland, Intel P630 Vulkan, physical1920x1080 at60Hz/1x. Native initial Resized receipts record Main1280x800 and Preferences960x720 before warmup. Five-second warmup perhost. Pinned nativeFDOA, singleleaf, hidden terminal, default Units, isolated config. Both controllers restore physical1.05.",
+  "schedule": "Project30cycles in one seeded window, then first Global attempt stopped on cycle2 method mismatch. Preserve completed Project; corrected Global30cycles in one new seeded window. Eachcycle17 recorded actions: Searchfocus, lastnamefocus/reveal, expand, collapse, Searchrefocus, search, clear,25/75percent thumbgrab/drag/release, trackpage, focuslosscancel/motion/release. Extra pinned probes separately classified.",
+  "observations": {
+    "per_host": {
+      "cycles": 30,
+      "recorded_actions": 510,
+      "live_image_checks": 540,
+      "received_drag_cancel_motions": 90
+    },
+    "total_required_sequence_actions": 1020,
+    "native_oracles": "Both hosts: nearest-pixel25/75percent grabs independently derived from painted thumb; press/release RGB-AE0, drag and page change pixels, cancelled delivered motion RGB-AE0. All180 drag/cancel motion receipts found in exact action log windows. Native key/button receipt checks and compositor state comparisons retain actual focus/reveal/search/expansion results. Automatic Mainfocus restored and normal device-live drained exit0 for Project30,Global30 and Projectoverlap supplement.",
+    "clip_probes": "OriginalProject30 probes at900,7 establish inertheader only. Separate30Projectprobes at900,70 plus30Globalprobes there deliver press/release with unchanged fullclient image and no choice activation. No completed Projectsequence rerun.",
+    "clip_geometry": "Eight86px Units rows:688px content. Atbottomreveal firstrowtop32. Its SingleChoice y46..76,width>=58 endingat931 after11pxscrollbar reserve;900,70 lies inside it and pinnedSearch54..89. Control is wholly above viewport100(Project)/148(Globalwithnotice). Source/image derivation, not native numerical-state telemetry."
+  },
+  "oracle_correction": "Global retains a48px announcement after first expansion. Original cycle2last-name differs from initial no-notice reference (bbox210,100,960,245) but matches the previously retained collapsed-state reference exactly AE0. Corrected cycle1 uses original initial reference; later cycles use existing collapsed reference, same bottom-focused label and notice. No new golden or reference image generated; all reference bytes remain from26303ce7. Corrected Global uses no notice mask. Only Searchfocus uses pinnedsearch crop210,42,960,100 because priorcycle scrolloffset legitimately differs; every other accepted action/probe comparison uses fullclient RGB.",
+  "failures": "OriginalGlobal attempt completed1cycle then failedmethodcomparison oncycle2. Raw input/images/logs/GDB/forcedcleanup retained. It is not counted as qualification or selectively replaced numerical data. All successful runs retain their original results.",
+  "measurement_limit": "Verbose receipts and per-action compositor capture are structural instrumentation. CgroupCPU covers compound input plus wait, not calibrated single semantic action costs; no CPU/GPU/resource or overhead pass and no relative inference. Endpoint images do not prove physical latency or native numerical scroll state. Toolchain metadata recorded after workload start; kscreen-doctor --version unsupported result retained, installed package version separately recorded.",
+  "metadata_limit": "Native harnesses retain unused historical cold/wheel/pair context in raw headers; exact declarations, executed code and input ledgers define this controls-only workload. First-party process observer identity recorded in toolchain; no third-party code adoption. Archives omit disposable caches. Clip analyzer was executed as inlinePython and its equivalent source retained for replay.",
+  "remaining": "Other native backend/physicalscale profiles, all prescribed production negative/consumer coverage, complete numeric/resource/temporal caps, endurance, distinct-reviewer replay and ownerUX remain. This packet does not pass original HP/AC rows globally.",
+  "boundaries": "No production source/build/golden/prototype/dependency/license changes. Preserve225 original rules/statuses/recipes/history, S0-S4, GEFN and nonblocking resize/temporal/T2/unadmitted schematic exclusions. Normalized fixture hash and production source/binary hashes unchanged."
+}
