@@ -3838,20 +3838,18 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
-          "Private construction scope: Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
-        ],
+        "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "status": "Implementation complete; original acceptance-rule qualification remains unqualified at S5.",
         "private_guard_progress": {
           "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
-          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "remaining": "Full original qualification at S5; no recorded S4 implementation gap.",
           "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
-        }
+        },
+        "s4_implementation_evidence": "s4_readiness"
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
@@ -5411,20 +5409,18 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
-          "Private construction scope: Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
-        ],
+        "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "CPU/GPU lifetime and final resource content correct within budgets",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "status": "Implementation complete; original acceptance-rule qualification remains unqualified at S5.",
         "private_guard_progress": {
           "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
-          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "remaining": "Full original qualification at S5; no recorded S4 implementation gap.",
           "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
-        }
+        },
+        "s4_implementation_evidence": "s4_readiness"
       },
       "s4_implementation_progress": [
         {
@@ -5547,6 +5543,10 @@
           "Native windows were hidden; no displayed-pixel or desktop-input claim.",
           "Serial shared-device success does not resolve dat-gpu-test-concurrency-6dt concurrent multi-device crash."
         ]
+      },
+      "s4_implementation_exit": {
+        "status": "Default implementation and bounded affected proof complete; full original qualification remains S5",
+        "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json"
       }
     },
     {
@@ -5617,6 +5617,10 @@
           "Native windows were hidden; no displayed-pixel or desktop-input claim.",
           "Serial shared-device success does not resolve dat-gpu-test-concurrency-6dt concurrent multi-device crash."
         ]
+      },
+      "s4_implementation_exit": {
+        "status": "Default implementation and bounded affected proof complete; full original qualification remains S5",
+        "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json"
       }
     },
     {
@@ -9225,6 +9229,10 @@
           "Native windows were hidden; no displayed-pixel or desktop-input claim.",
           "Serial shared-device success does not resolve dat-gpu-test-concurrency-6dt concurrent multi-device crash."
         ]
+      },
+      "s4_implementation_exit": {
+        "status": "Default implementation and bounded affected proof complete; full original qualification remains S5",
+        "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json"
       }
     },
     {
@@ -17620,19 +17628,18 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
-        ],
+        "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "status": "Implementation complete; original acceptance-rule qualification remains unqualified at S5.",
         "private_guard_progress": {
           "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
-          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "remaining": "Full original qualification at S5; no recorded S4 implementation gap.",
           "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
-        }
+        },
+        "s4_implementation_evidence": "s4_readiness"
       },
       "s4_implementation_progress": [
         {
@@ -17931,19 +17938,18 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Implement the shared monitored private font/raster construction guard required by amended MEM-02/ACC-02, including exact instantaneous/peak host/process accounting, refusal before publication/submission, derived-work release and source-preserving retry. Preserve pre-call admission for Datum-controlled allocations and all original numerical limits. Keep the four predicates open until implementation and affected proof land; all original qualification remains due at S5."
-        ],
+        "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "status": "Implementation complete; original acceptance-rule qualification remains unqualified at S5.",
         "private_guard_progress": {
           "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
-          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "remaining": "Full original qualification at S5; no recorded S4 implementation gap.",
           "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
-        }
+        },
+        "s4_implementation_evidence": "s4_readiness"
       },
       "s4_implementation_progress": [
         {
@@ -32702,10 +32708,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 4,
+    "rows_with_recorded_implementation_gaps": 0,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 23,
+    "rows_with_implementation_completed_at_s4": 27,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -32729,7 +32735,11 @@
       "MEM-REPLACEMENT",
       "REUSE-SCREEN",
       "MEM-SHAPED-LOCAL",
-      "MEM-SHAPED-TOTAL"
+      "MEM-SHAPED-TOTAL",
+      "AC-05",
+      "HP08-03",
+      "MEM-STAGING-LOCAL",
+      "MEM-STAGING-TOTAL"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -36901,7 +36911,7 @@
     ]
   },
   "s4_private_construction_guard_work": {
-    "status": "Default mutation/raster guard implemented; complete PM047 coverage and S4 exit remain open",
+    "status": "Default PM047 guard coverage implemented; S4 exit reconciled in s4_readiness; full qualification remains S5",
     "base_commit": "7a49980f",
     "authority": "PRODUCT_MECHANICS_047_PRIVATE_TEXT_CONSTRUCTION_GUARD",
     "production_consumers": [
@@ -36984,5 +36994,114 @@
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
     }
+  },
+  "s4_readiness": {
+    "status": "S4 implementation exit satisfied; full S5 qualification remains unqualified",
+    "production_commit": "48d99c50",
+    "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json",
+    "components": [
+      {
+        "requirement": "PTY byte/state preservation, hidden-render suppression and fair service",
+        "owners": [
+          "crates/gui-app/src/runtime_terminal_render.rs",
+          "crates/gui-app/src/terminal_core_adapter.rs",
+          "crates/gui-app/src/terminal_session_render.rs"
+        ],
+        "map_evidence": [
+          "s1_terminal_round_work",
+          "s1_active_host_fairness_work",
+          "s4_terminal_projection_borrow_work"
+        ],
+        "current_proof": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+        "finding": "Closed dock bypasses render snapshots while PTY/model processing continues; failed visible preparation restores consumed damage. Consolidated actual-native test retains hidden output/damage then reopens and presents. Existing fair scheduler/round tests pass in the app suite."
+      },
+      {
+        "requirement": "Serial shared-device multiwindow lifecycle; separate concurrent multi-device failure",
+        "owners": [
+          "crates/gui-app/src/native_dialog_hit_tests.rs",
+          "crates/gui-app/src/global_preferences_window.rs"
+        ],
+        "map_evidence": [
+          "s4_private_construction_guard_work.completion_migration"
+        ],
+        "current_proof": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+        "finding": "Actual X11/Vulkan Main plus Global, Project and New hosts present serially using one device; each owned host closes and Main resumes. This is bounded native implementation evidence, not desktop input, displayed pixels, backend/scale qualification or a fix for dat-gpu-test-concurrency-6dt."
+      },
+      {
+        "requirement": "All-host recovery and retained generation bounds",
+        "owners": [
+          "crates/gui-app/src/native_device_recovery.rs",
+          "crates/gui-render/src/text_gpu/slot_generations.rs",
+          "crates/gui-render/src/render/terminal_texture_generations.rs"
+        ],
+        "map_evidence": [
+          "s1_atomic_device_staging_work",
+          "s4_replacement_completion"
+        ],
+        "finding": "Device replacement stages all hosts before publication, failure preserves prior state, and shared generation budgets survive resource replacement/close/recovery. Existing actual-native staged-failure receipts and GPU replacement evidence remain applicable to unchanged ownership; final app regression suite preserves recovery/queue tests. Complete fault/resource/time qualification remains S5."
+      },
+      {
+        "requirement": "AC-05 / HP08-03 capacities, shared/live/retiring ownership and exact upload accounting",
+        "owners": [
+          "crates/gui-render/src/text_gpu/lifetime.rs",
+          "crates/gui-render/src/text_gpu/lifetime_state.rs",
+          "crates/gui-render/src/render/resource_consumers.rs",
+          "crates/gui-render/src/text_gpu/allocation_host.rs"
+        ],
+        "map_evidence": [
+          "s4_allocation_state_work",
+          "s4_allocation_state_work.renderer_origin_followup",
+          "s4_upload_frame_work.consumer_completion",
+          "s4_upload_frame_work.frame_correlation_followup",
+          "s4_construction_admission_work.lifetime_completion",
+          "s4_text_owner_reconciliation.owner_admission_completion"
+        ],
+        "finding": "Stable allocation/generation and renderer identities distinguish requested extent/capacity, prepared/submitted references, consumer incidence, retirement and final release. Common submitted destination counters join host/attempt receipts; shared bytes count once. Existing document, control, shaped-text and scalar-cache owners cover retained CPU capacities. PM047 constructor/measurement completion supplies the final private allocation boundary. Observed snapshots and API bytes are not physical driver residency or a process-wide atomic snapshot."
+      },
+      {
+        "requirement": "MEM-STAGING-LOCAL / MEM-STAGING-TOTAL including private construction",
+        "owners": [
+          "crates/gui-render/src/private_text_call.rs",
+          "crates/gui-render/src/cpu_alloc.rs",
+          "crates/gui-render/src/font_owner.rs",
+          "crates/gui-render/src/render/font_catalog.rs",
+          "crates/gui-render/src/render/measurement_owner.rs",
+          "crates/gui-render/src/render/glyph_preparation.rs"
+        ],
+        "map_evidence": [
+          "s4_private_construction_guard_work",
+          "s4_private_construction_guard_work.completion_migration",
+          "s4_producer_plan_work",
+          "s4_range_storage_work",
+          "s4_staging_plan_work"
+        ],
+        "current_proof": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+        "finding": "Default mutation, raster, cold catalog/font creation, cache reconstruction and measurement use synchronous allocation-event windows with simultaneous host/process admission and per-call peaks. Existing reservations remain a floor. Retained catalog/database/output inputs are separated from new scratch. The guard refuses before scene/hit publication or GPU submission, releases derived cache work and preserves source/damage for retry. Datum-controlled staging remains pre-admitted under unchanged16/64MiB ceilings. Fixed call slots and reported Scope/registry storage complete guard bookkeeping; no dependency-layout introspection."
+      },
+      {
+        "requirement": "Exact changed-range transfers and shaping/layout dependency implementation",
+        "owners": [
+          "crates/gui-render/src/render/text_buffer_cache.rs",
+          "crates/gui-render/src/render/measurement_cache.rs",
+          "crates/gui-render/src/render/text_metrics.rs"
+        ],
+        "map_evidence": [
+          "s4_upload_frame_work.consumer_completion",
+          "s4_text_dependency_completion",
+          "s4_inspector_width_completion",
+          "s4_width_completion_work"
+        ],
+        "finding": "Previously closed implementation predicates remain supported by existing readback, warm-zero transfer, identity and dependency evidence. Final measurement migration preserves actual library layout; guarded retry returns identical scenes and cached failures cannot become layout values."
+      }
+    ],
+    "qualification_boundary": [
+      "Console routine-focused 1x golden remains failed:3778pixels/0.384318%, identical to existing S4 public-shaping-measurement/owned-text-layout receipts, dat-console-revision-golden-hrak. No golden blessed or changed. Full drift is not green; subsequent gates were not run.",
+      "Historical failed native attempts and partial qualification remain in their original records. No inference of complete backend/scale/native OS-input/static/resource/performance/endurance acceptance.",
+      "Serial shared-device native proof does not resolve concurrent multi-device dat-gpu-test-concurrency-6dt.",
+      "PM047 permits monitored transient overshoot, not process OOM recovery or numerical cap compliance. An overrun fails S5 qualification.",
+      "All50S2 and20S3 carried qualification rows, all S1 obligations, prescribed negatives,60minute/200cycle/20recovery and distinct-reviewer replay remain S5.",
+      "GEFN improvements and nonblocking resize/temporal/T2/resolved-schematic exclusions preserved. No dependency/vendor/license/prototype/numerical-cap change."
+    ],
+    "decision": "Complete GPI-S4 implementation and select GPI-S5 qualification. Overall issue and goal remain in progress."
   }
 }

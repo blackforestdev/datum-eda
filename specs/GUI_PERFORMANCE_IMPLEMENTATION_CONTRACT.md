@@ -373,3 +373,28 @@ All 20 S3 qualification rows retain their original partial statuses and are
 required at S5. All 50 carried S2 implementation predicates remain due at S4.
 No full HP-row, resource-budget, global adoption, product or resize acceptance
 follows. The overall implementation issue remains open.
+
+## S4 implementation exit
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-IMPLEMENTED -->
+
+The existing adoption map's `s4_readiness` and
+`implementation/S4/readiness/result.json` reconcile the complete S4 implementation
+exit against production commit `48d99c50` and preserved component evidence.
+Default private font/catalog/reconstruction/measurement and raster call guards,
+fallible native scene publication, source/damage-preserving retry, complete
+resource ownership, hidden-work/fairness, generation bounds and shared-device
+native lifecycle satisfy the implementation prerequisites. All 50 carried S2
+rows have no remaining recorded implementation gap: 27 implementation predicates
+completed at S4 and 23 without a newly asserted implementation defect.
+
+GPI-S4 is complete for implementation; GPI-S5 is selected for qualification.
+This is an exit determination under the existing contract, not an amendment.
+All original S1 obligations, 50 S2 qualification rows and 20 S3 qualification
+rows retain their acceptance rules and failed/partial evidence. The known Console
+routine-focused 1x golden discrepancy remains failed at 3,778 pixels; no golden
+is blessed and full drift is not claimed green. Native input/static/backend/scale,
+resource ceilings, endurance and distinct-reviewer replay remain required at S5.
+Serial shared-device proof does not close the concurrent multi-device issue.
+PM047 overshoot/OOM limits and all nonblocking resize exclusions remain unchanged.
+The implementation issue and overall goal remain open.
