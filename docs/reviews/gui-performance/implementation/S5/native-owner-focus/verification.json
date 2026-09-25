@@ -1,0 +1,23 @@
+{
+  "qualification_pass": false,
+  "release": "Guarded offline release build passed in6m20s; candidateb8c1fa1b. Initial reserve refusal retained in session record; cleanup receipt in proof archive.",
+  "app_tests": "400passed,17ignored,0failed;13.65s. Two reserve refusals retained before successful run.",
+  "clippy": "Guarded datum-gui-app all-targets offline -Dwarnings passed.",
+  "wayland": "Existing native-entry test1passed,416filtered;12host/profile closes acrossGlobal/Project/New,18.72s. Events supplied directly, not OS input. At2x compositor constrained requested heights1080/1240 to1050; larger requested extents remain unqualified. Initialwrong-filter0tests run retained, not counted as proof.",
+  "native_x11": "Three missing-hint negatives fail Main focus; three production positives restore it. All6 staticAE0 and normaldevice-live drainedexit0. Two earlier unchanged-binary external-hint controls pilots each17actions, normal0, focusrestored andcancelAE0.",
+  "archives": {
+    "count": 11,
+    "members": 152,
+    "verification": "SHA256 and byte length checked; five first-party tools retained."
+  },
+  "cleanup": "Only exact bytes compared to committed archives removed:40585043bytes originalclamp top-level files;201217178bytes oldwindow batch logs/results/kernel ledgers. Shared target untouched.",
+  "checks": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "parity": "PASS20inventories",
+    "source_health": "PASS2526files",
+    "dependency_authority": "PASS",
+    "cargo_resource": "PASS"
+  },
+  "limits": "No complete W-CONTROLS/W-WINDOWS or numerical, resource, temporal, backend-scale, endurance, distinct-reviewer or owner UX acceptance.225 original map predicates/statuses/history preserved."
+}

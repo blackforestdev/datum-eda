@@ -1,0 +1,57 @@
+[
+  {
+    "file": "diagnostic-campaign.tar.gz",
+    "original_path": "/tmp/pm045-controls-owner-campaign-uym_3pf2",
+    "members": 7
+  },
+  {
+    "file": "diagnostic-native-1.tar.gz",
+    "original_path": "/tmp/pm045-controls-owner-native-mih1cxok",
+    "members": 43
+  },
+  {
+    "file": "diagnostic-native-2.tar.gz",
+    "original_path": "/tmp/pm045-controls-owner-native-mjf1d9r3",
+    "members": 43
+  },
+  {
+    "file": "production-campaign.tar.gz",
+    "original_path": "/tmp/pm045-focus-campaign-zaw4cz7n",
+    "members": 11
+  },
+  {
+    "file": "production-native-1.tar.gz",
+    "original_path": "/tmp/pm045-focus-native-jwmmdaj4",
+    "members": 6
+  },
+  {
+    "file": "production-native-2.tar.gz",
+    "original_path": "/tmp/pm045-focus-native-jh3xnxpu",
+    "members": 6
+  },
+  {
+    "file": "production-native-3.tar.gz",
+    "original_path": "/tmp/pm045-focus-native-p4riryyo",
+    "members": 6
+  },
+  {
+    "file": "production-native-4.tar.gz",
+    "original_path": "/tmp/pm045-focus-native-egkb_z4w",
+    "members": 6
+  },
+  {
+    "file": "production-native-5.tar.gz",
+    "original_path": "/tmp/pm045-focus-native-fc22ixs2",
+    "members": 6
+  },
+  {
+    "file": "production-native-6.tar.gz",
+    "original_path": "/tmp/pm045-focus-native-66fmimw1",
+    "members": 6
+  },
+  {
+    "file": "proof.tar.gz",
+    "original_path": "/tmp/pm045-owner-proof",
+    "members": 12
+  }
+]

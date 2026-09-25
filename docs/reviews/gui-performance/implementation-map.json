@@ -1300,7 +1300,12 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/SH-10/result.json"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s5_native_owner_focus": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/result.json",
+        "status": "Shared X11 transient ownership corrects observed native focus restoration; full S5 qualification remains open"
+      }
     },
     {
       "id": "SH-11",
@@ -3683,6 +3688,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/controls-method-pilot/result.json",
         "status": "Preferences control method pilot retained; automatic close focus return failed; full qualification remains open"
+      },
+      "s5_native_owner_focus": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/result.json",
+        "status": "Shared X11 transient ownership corrects observed native focus restoration; full S5 qualification remains open"
       }
     },
     {
@@ -4428,6 +4438,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/controls-method-pilot/result.json",
         "status": "Preferences control method pilot retained; automatic close focus return failed; full qualification remains open"
+      },
+      "s5_native_owner_focus": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/result.json",
+        "status": "Shared X11 transient ownership corrects observed native focus restoration; full S5 qualification remains open"
       }
     },
     {
