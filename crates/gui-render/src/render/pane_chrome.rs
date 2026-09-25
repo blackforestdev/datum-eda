@@ -26,6 +26,27 @@ pub(super) fn render_viewport_panes(
     panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) -> crate::resource_consumers::Consumers {
+    let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
+    let starts = (panel_quads.len(), text_runs.len());
+    let consumers = render_viewport_panes_logical(
+        &scale.logical_layout(layout.clone()),
+        workspace,
+        has_schematic_scene,
+        panel_quads,
+        text_runs,
+    );
+    scale.quads(&mut panel_quads[starts.0..]);
+    scale.text_geometry(&mut text_runs[starts.1..]);
+    consumers
+}
+
+fn render_viewport_panes_logical(
+    layout: &ShellLayout,
+    workspace: &datum_gui_protocol::WorkspaceLayout,
+    has_schematic_scene: bool,
+    panel_quads: &mut ControlPainter<'_>,
+    text_runs: &mut Vec<TextRun>,
+) -> crate::resource_consumers::Consumers {
     use crate::resource_consumers::{Consumer, Consumers};
     let mut consumers = Consumers::default();
     let panes = layout.viewport_panes(workspace);
@@ -284,6 +305,14 @@ fn render_pane_header(
         },
         text_runs,
     );
+    // A narrow pane clips its single-line title; it must not wrap into the
+    // canvas below the header. Shaping extent and visible clip are independent.
+    if let Some(run) = text_runs.last_mut() {
+        run.layout_size = Some((
+            estimated_text_run_width_px(title, run.size, run.face),
+            header.height,
+        ));
+    }
     // Tool cluster after the measured pane-title width. Buttons render on the
     // interactive SURFACE_02; the focused pane's active tool gets the accent
     // tint + accent border. On the unfocused pane the whole cluster is dimmed

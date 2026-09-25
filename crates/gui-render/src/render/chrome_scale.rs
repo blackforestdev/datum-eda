@@ -111,6 +111,67 @@ mod tests {
     }
 
     #[test]
+    fn composed_panels_and_panes_share_scaled_paint_and_input_bounds() {
+        let baseline = scene(1.0, 1280);
+        let workspace = datum_gui_protocol::load_fixture_workspace_state().ui.layout;
+        let original_panes = baseline.layout.viewport_panes(&workspace);
+        for scale in [1.25, 1.5, 2.0] {
+            let prepared = scene(scale, (1280.0 * scale) as u32);
+            let assert_rect = |actual: RectPx, logical: RectPx| {
+                for (a, b) in [
+                    (actual.x, logical.x),
+                    (actual.y, logical.y),
+                    (actual.width, logical.width),
+                    (actual.height, logical.height),
+                ] {
+                    assert!(
+                        (a / scale - b).abs() < 0.02,
+                        "scale {scale}: {actual:?} / {logical:?}"
+                    );
+                }
+            };
+            let panes = prepared.layout.viewport_panes(&workspace);
+            for (actual, original) in panes.panes.iter().zip(&original_panes.panes) {
+                assert_rect(actual.rect.header, original.rect.header);
+                assert_rect(actual.rect.scene, original.rect.scene);
+            }
+            let mut checked = 0;
+            for original in &baseline.hit_regions {
+                if !matches!(
+                    original.target,
+                    HitTarget::ToggleLayer(_) | HitTarget::LayerScrollRegion
+                ) {
+                    continue;
+                }
+                let actual = prepared
+                    .hit_regions
+                    .iter()
+                    .find(|h| h.target == original.target)
+                    .unwrap();
+                assert_rect(actual.rect, original.rect);
+                checked += 1;
+            }
+            assert!(checked > 0, "must exercise production Layers geometry");
+            for original in baseline
+                .text_runs
+                .iter()
+                .filter(|run| baseline.layout.right_sidebar.contains(run.x, run.y))
+            {
+                let actual = prepared
+                    .text_runs
+                    .iter()
+                    .find(|run| {
+                        run.text == original.text
+                            && (run.x / scale - original.x).abs() < 0.02
+                            && (run.y / scale - original.y).abs() < 0.02
+                    })
+                    .unwrap_or_else(|| panic!("unscaled panel text: {}", original.text));
+                assert!((actual.size / scale - original.size).abs() < 0.02);
+            }
+        }
+    }
+
+    #[test]
     fn composed_scaled_status_segments_do_not_overlap_at_supported_width() {
         for scale in [1.0, 1.25, 1.5, 2.0] {
             let prepared = scene(scale, 1280);

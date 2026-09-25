@@ -169,7 +169,7 @@ pub struct LeafPane {
 /// context-follows-focus) the Inspector/Layers side panels
 /// (docs/gui/DATUM_GUI_DESIGN_SPEC.md → Workspace & Mode Model). Generalizes the
 /// former fixed two-pane slice to N leaves, nested H/V splits, and zoom, still as
-/// a pure post-split derived AFTER the taffy/fallback solve and AFTER `scale_by`.
+/// a logical post-split converted to physical bounds after the shell solve.
 ///
 /// The single-live-scene architecture is preserved: `focused_scene()` names the
 /// one canvas the retained world buffer, gpu scissor/uniform, and hit-testing all
@@ -405,86 +405,5 @@ fn leaf_pane_content(
     }
 }
 
-impl ShellLayout {
-    /// Tile the resolved central `viewport` per the `WorkspaceLayout` tree into
-    /// the set of leaf panes plus divider gutters. A pure post-split derived
-    /// AFTER the taffy/fallback solve and AFTER `scale_by`, so the world scene,
-    /// gpu scissor, and hit-testing all follow the FOCUSED leaf with no further
-    /// edits. If `layout.zoomed == Some(id)`, that leaf fills the whole viewport
-    /// and no others/dividers are emitted (transient maximize; the tree is
-    /// untouched). The DEFAULT tree (vertical Board|Schematic at 0.5, Board
-    /// focused) reproduces the former fixed two-pane split pixel-for-pixel.
-    pub fn viewport_panes(&self, layout: &datum_gui_protocol::WorkspaceLayout) -> ViewportPanes {
-        let mut panes = Vec::new();
-        let mut dividers = Vec::new();
-        if let Some(zoomed) = layout.zoomed {
-            // Maximize: the zoomed leaf fills the viewport; no siblings, no
-            // dividers. The tree is never mutated — this is transient view state.
-            let content = leaf_pane_content(&layout.root, zoomed)
-                .unwrap_or(datum_gui_protocol::PaneContent::Board);
-            panes.push(LeafPane {
-                id: zoomed,
-                content,
-                rect: PaneRect::from_frame(self.viewport),
-            });
-        } else {
-            tile_pane_node(
-                &layout.root,
-                self.viewport,
-                &mut panes,
-                &mut dividers,
-                &mut Vec::new(),
-            );
-        }
-        ViewportPanes {
-            panes,
-            dividers,
-            focused: layout.focused,
-        }
-    }
-
-    pub fn scene_viewport(&self, layout: &datum_gui_protocol::WorkspaceLayout) -> RectPx {
-        // The world board scene renders into the BOARD leaf's canvas — the one that
-        // owns the live PCB — NOT merely whichever leaf is focused. Returning that
-        // scene rect means RetainedScene's reference_projection, gpu.rs
-        // scissor/uniform, and `world_point_at_screen` all follow the board pane, so
-        // the PCB stays visible in its pane while another pane (e.g. Schematic) is
-        // focused. Falls back to the focused rect only when no board leaf exists
-        // (nothing renders there — the board scene is gated off in that case).
-        let panes = self.viewport_panes(layout);
-        panes
-            .scene_leaf()
-            .map(|leaf| leaf.rect.scene)
-            .unwrap_or_else(|| panes.focused_scene())
-    }
-
-    /// The Schematic leaf's scene canvas rect, if a Schematic pane exists — the
-    /// static SECOND world scene's viewport for the P2.2a multi-scene GPU pass.
-    /// Unlike `scene_viewport` (which follows the single live BOARD leaf and is
-    /// focus-independent), this is simply the first Schematic leaf in walk order:
-    /// the companion schematic scene projects into it additively, alongside the
-    /// board. `None` when the layout has no Schematic pane (e.g. an all-Board
-    /// split), in which case the second GPU pass is gated off and the pane keeps
-    /// its "Schematic (coming)" placeholder.
-    pub fn schematic_scene_viewport(
-        &self,
-        layout: &datum_gui_protocol::WorkspaceLayout,
-    ) -> Option<RectPx> {
-        self.viewport_panes(layout)
-            .panes
-            .iter()
-            .find(|leaf| leaf.content == datum_gui_protocol::PaneContent::Schematic)
-            .map(|leaf| leaf.rect.scene)
-    }
-
-    pub(crate) fn scale_by(self, scale: f32) -> Self {
-        Self {
-            top_menu_bar: self.top_menu_bar.scale_by(scale),
-            viewport: self.viewport.scale_by(scale),
-            left_sidebar: self.left_sidebar.scale_by(scale),
-            right_sidebar: self.right_sidebar.scale_by(scale),
-            bottom_strip: self.bottom_strip.scale_by(scale),
-            status_bar: self.status_bar.scale_by(scale),
-        }
-    }
-}
+#[path = "pane_layout.rs"]
+mod pane_layout;

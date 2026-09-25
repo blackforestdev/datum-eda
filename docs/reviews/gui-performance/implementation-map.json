@@ -37148,11 +37148,39 @@
       "default_app_build": "Fresh offline locked datum-gui build passed19.54s."
     },
     "limits": [
-      "Remaining side-panel/pane-header/terminal-chrome scaling requires the same coordinate review before whole-workspace HiDPI acceptance.",
+      "Pane/side-panel scaling implemented in followup; terminal chrome and narrow-layout text presentation remain open before whole-workspace HiDPI acceptance.",
       "Existing Console goldens remain unchanged and failed; no full S5/native/backend/scale/resource/endurance or independent qualification claim.",
       "No dependency, Cargo, license, prototype, cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "issue": "dat-workspace-hidpi-chrome-6fm4",
-    "evidence": "docs/reviews/gui-performance/implementation/S5/chrome-scale/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S5/chrome-scale/result.json",
+    "pane_panel_followup": {
+      "status": "Pane and side-panel scale migration implemented; S5 qualification incomplete",
+      "production_consumers": [
+        "Main workspace Project/Filters/Inspector painting and hit regions",
+        "Layers scroll viewport and toggle targets consumed by native input",
+        "Shared pane headers, scene bounds and divider drag geometry",
+        "Native and offscreen workspace composition"
+      ],
+      "retired_paths": [
+        "Physical pane bounds tiled with unscaled header/gutter constants",
+        "Side-panel glyph scaling without matching logical layout and hit conversion",
+        "Narrow pane titles wrapping into the canvas"
+      ],
+      "implementation": "Shared Scale converts new panel/pane geometry, clips and text origins once; final frame assembly scales glyph sizes. Shared viewport_panes tiles logical bounds then returns physical pane/header/scene/divider bounds for render and input. No terminal cell metric changes.",
+      "verification": {
+        "renderer": "351 passed;0 failed;83 ignored, serial visual-feature library suite",
+        "scale_regression": "Composed Layers click/scroll rectangles, Inspector text, pane headers/scenes match at1/1.25/1.5/2x; existing menu/status checks pass",
+        "clippy": "Strict renderer/app visual all-target -D warnings passed",
+        "render": "Fresh2x render inspected: pane titles remain single-line and panel geometry/text scale together. Comparison against old golden fails117120pixels/11.914062%; golden not changed.",
+        "default_app_build": "Fresh offline locked datum-gui build passed."
+      },
+      "limitations": [
+        "Terminal chrome remains unmigrated. Narrow Inspector subtitle wrapping and narrow placeholder presentation remain visible issues. This slice does not establish complete workspace HiDPI acceptance.",
+        "All native/backend/resource/endurance and distinct-reviewer S5 obligations remain. No new specification amendment, dependency, licensing, prototype, numerical cap or resize scope change."
+      ],
+      "issue": "dat-workspace-hidpi-chrome-6fm4",
+      "evidence": "docs/reviews/gui-performance/implementation/S5/pane-panel-scale/result.json"
+    }
   }
 }
