@@ -1,0 +1,35 @@
+[
+  {
+    "name": "GUI render conformance tests",
+    "command": [
+      "/usr/bin/python3",
+      "scripts/run_cargo_guarded.py",
+      "--workload",
+      "proof",
+      "--",
+      "cargo",
+      "test",
+      "-p",
+      "datum-gui-render",
+      "conformance_",
+      "--lib",
+      "--features",
+      "visual",
+      "--",
+      "--nocapture"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "shell visual parity (single-pane interim golden)",
+    "command": [
+      "/usr/bin/python3",
+      "scripts/check_gui_visual_parity.py"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "Remaining drift commands after failed conformance aggregate",
+    "returncode": 1
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "GLOBAL": {
+    "candidate": "/tmp/pm045-cache-owner-on-9lv0c6pp/GLOBAL.png",
+    "previous": "/tmp/pm045-read-cache-on-ob20cjal/GLOBAL.png",
+    "candidate_sha256": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "previous_sha256": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "byte_equal": true
+  },
+  "PROJECT": {
+    "candidate": "/tmp/pm045-cache-owner-on-9lv0c6pp/PROJECT.png",
+    "previous": "/tmp/pm045-read-cache-on-ob20cjal/PROJECT.png",
+    "candidate_sha256": "24669a3841dfd1ae596f281736d6455064a9a3d2cc191409dcbc3c768dbb5270",
+    "previous_sha256": "24669a3841dfd1ae596f281736d6455064a9a3d2cc191409dcbc3c768dbb5270",
+    "byte_equal": true
+  },
+  "NEW": {
+    "candidate": "/tmp/pm045-cache-owner-on-9lv0c6pp/NEW.png",
+    "previous": "/tmp/pm045-read-cache-on-ob20cjal/NEW.png",
+    "candidate_sha256": "8d2b4ff93675f04cbb736fe085cea46cdedd261f68300283b7b15b1b7d2e1ee1",
+    "previous_sha256": "8d2b4ff93675f04cbb736fe085cea46cdedd261f68300283b7b15b1b7d2e1ee1",
+    "byte_equal": true
+  }
+}
