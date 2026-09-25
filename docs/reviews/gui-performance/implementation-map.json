@@ -3693,6 +3693,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/result.json",
         "status": "Shared X11 transient ownership corrects observed native focus restoration; full S5 qualification remains open"
+      },
+      "s5_controls_30_cycle_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
       }
     },
     {
@@ -4443,6 +4448,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/result.json",
         "status": "Shared X11 transient ownership corrects observed native focus restoration; full S5 qualification remains open"
+      },
+      "s5_controls_30_cycle_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
       }
     },
     {
@@ -8276,7 +8286,12 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
       },
-      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row.",
+      "s5_controls_30_cycle_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
+      }
     },
     {
       "id": "HP21-01",
@@ -8471,6 +8486,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/controls-method-pilot/result.json",
         "status": "Preferences control method pilot retained; automatic close focus return failed; full qualification remains open"
+      },
+      "s5_controls_30_cycle_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
       }
     },
     {
@@ -8854,7 +8874,12 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json",
         "limits": "Structural retirement and actual-rendered-geometry regression, not numerical CPU/resource or complete native pixel/HP/S3 qualification. Very narrow test extents are deterministic geometry cases, not supported native window-size acceptance. No dependency/license/prototype/budget/deadline or resize-qualification change."
       },
-      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row.",
+      "s5_controls_30_cycle_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
+      }
     },
     {
       "id": "HP22-02",
@@ -9197,7 +9222,12 @@
         "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
         "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
       },
-      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S3 bounded exit. Existing acceptance_rule, partial test.status and remaining_actions stay required; S3 readiness does not pass this row.",
+      "s5_controls_30_cycle_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
+      }
     },
     {
       "id": "HP23-02",

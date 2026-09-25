@@ -1,0 +1,26 @@
+{
+  "qualification_pass": false,
+  "sequence": "PROJECT and GLOBAL each30cycles/510actions/540liveimagechecks; total180delivereddrag/cancelmotionreceipts independentlyverified. Nativeinitialresize records actual extents before5secondwarmups.",
+  "controls": "Independent painted-thumb25/75percent coordinate checks, press/releaseRGB-AE0, changeddrag/page pixels, receivedcancelmotionRGB-AE0. OriginalProjectheaderprobes are nothiddencontrolproof; supplementaryProject30 andGlobal30 actualhiddencontrol/Search overlapclicks haveunchangedfullimages andnativebuttonreceipts.",
+  "focus_teardown": "BothfullsequencesandsupplementrestoreMainfocus andnormaldevice-live drainedexit0. Bothcontrollersrestoredpriorphysicaldisplay1.05.",
+  "failure": "Globaloriginalcycle2comparatorfailure retained, notqualifying. ActualimageAE0 againstexistingcollapsedreference; correctedmapping usespriorreferencebytes, no newgolden/mask. Projectcompletedsequence preserved.",
+  "fixture_source": "Currentproductionb8c1fa1b and declaredsourcesunchanged; normalizedFDOAboardSHA33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed verified.",
+  "archives": {
+    "count": 7,
+    "members": 1516,
+    "bytes": 4068368,
+    "proof": "Everyoriginalmember SHA256/lengthverified. Losslessgzip-to-xz repack preserves identicaluncompressedtar SHA256 (recordedperarchive), reducing repository storage from~137MiBto~4MiB.8exactfirstpartytools retained; disposablecache directories omitted."
+  },
+  "checks": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "parity": "PASS20inventories",
+    "dependency_authority": "PASS",
+    "cargo_resource": "PASS",
+    "source_health": "PASS2534files",
+    "project_status": "PASS59frontieritems",
+    "diff": "PASS"
+  },
+  "route": "45reviewedsource/consumerhashes verified before6partialpointer additions; all225originalrules/statuses/scopes/recipes/inverseindexes/historypreserved.",
+  "limits": "No productionchanges ornewRustbuild/tests. Otherbackend/physicalscale, completeprescribednegative/consumer coverage, CPU/GPU/private/resource/temporalqualification,endurance,independentreplay andownerUX remain. Allnonblockingresize/temporal/T2/schematic exclusions unchanged."
+}

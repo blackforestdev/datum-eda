@@ -1,0 +1,58 @@
+{
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "pillow": "11.1.0",
+  "recorded_at": "after native workload start; not a new dependency admission",
+  "commands": {
+    "spectacle --version": {
+      "returncode": 0,
+      "stdout": "spectacle 6.3.5\n",
+      "stderr": "QThreadStorage: Thread 0x563491a0df60 exited after QThreadStorage 9 destroyed\nQThreadStorage: Thread 0x563491a0df60 exited after QThreadStorage 5 destroyed\nQThreadStorage: Thread 0x563491a0df60 exited after QThreadStorage 4 destroyed\n"
+    },
+    "xdotool version": {
+      "returncode": 0,
+      "stdout": "xdotool version 3.20160805.1\n",
+      "stderr": ""
+    },
+    "kscreen-doctor --version": {
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "kscreen-doctor: Unknown option 'version'.\n"
+    }
+  },
+  "first_party_observer": {
+    "/tmp/pm045_fd_trace": {
+      "sha256": "b82cc7c17755be32b0f1a67bbd5875a3c7affe5dc47c8d941ecfa0dc9a6961b3",
+      "bytes": 26536
+    },
+    "/tmp/pm045_fd_trace.c": {
+      "sha256": "3c55b351823c40aad87bc5990f08660c1cfe4d3ae6439936faa7d0cbf72eeaf2",
+      "bytes": 15293
+    },
+    "/tmp/pm045_wm_close.py": {
+      "sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+      "bytes": 1357
+    }
+  },
+  "installed_packages": {
+    "kscreen": {
+      "version": "4:6.3.6-1",
+      "returncode": 0,
+      "stderr": ""
+    },
+    "kwin-wayland": {
+      "version": "4:6.3.6-1",
+      "returncode": 0,
+      "stderr": ""
+    },
+    "libx11-6": {
+      "version": "2:1.8.12-1",
+      "returncode": 0,
+      "stderr": ""
+    },
+    "libxtst6": {
+      "version": "2:1.2.5-1",
+      "returncode": 0,
+      "stderr": ""
+    }
+  }
+}
