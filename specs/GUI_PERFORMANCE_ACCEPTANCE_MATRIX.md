@@ -208,6 +208,8 @@ not a preallocation target. T2 needs separate numbers after fixture admission.
 | Upload staging / scratch | 16 MiB per host, 64 MiB aggregate | One outstanding frame per host; retire after completion; oversized cold work must use bounded chunks |
 | All application-owned GPU allocations | 512 MiB peak for T1, including attachments, buffers, atlases and staging | Shared allocations counted once; driver swapchain/residency reported separately, never assumed included |
 
+Private text-library construction exception: allocations performed internally by the existing font selection/loading/cache and glyph rasterization calls may use monitored construction rather than pre-call capacity admission. This includes raster output until ownership transfers to Datum. It does not cover Datum-controlled allocations, permit new dependencies, or change any numerical local, aggregate, RSS or GPU bound. Full instantaneous live and peak accounting, including allocation overhead and concurrent host incidence, remains required. All applicable subcaps apply together. A construction-time overrun is a recorded tier failure, not successful admission or a passing memory result. This exception does not guarantee preventing a transient overrun or recovering from process-level allocation failure inside an opaque call.
+
 Surface attachment bytes use actual physical width×height×format bytes×sample
 count, multiplied by all simultaneously retained generations; one current plus
 one retiring generation per host maximum. At 1536x960, 8x RGBA8 is 45 MiB per
@@ -431,6 +433,8 @@ resource; known-byte totals must reconcile and never go negative. Zero unchanged
 upload and allocation assertions use explicit production counters plus a negative
 control that deliberately repeats the upload/allocation. RSS alone cannot pass
 those assertions. No full-system allocator hook is required to count owned caches.
+
+For the MEM-02 private text construction exception, a shared Datum call guard records initial/live/peak/final owned bytes and exact concurrent host/process incidence over the entire call. It must distinguish retained input/output from transient scratch without double counting shared allocations. After the call, before publishing newly prepared resources or submitting their GPU work, a detected local or aggregate overrun fails preparation, releases newly derived work as appropriate, and preserves authoritative text and pending damage for explicit retry. Do not continue a rejected batch, silently omit content, turn allocation failure into empty output, or report an overrun as compliant. Positive and deliberately over-budget negative controls must verify the accounting and failure path. A before/after live-byte snapshot or lifetime high-water alone is insufficient to recover an individual call peak.
 
 **ACC-03.** OS observation keys processes by PID plus start-time and DRM clients
 by device identity plus client ID plus lifecycle epoch. Shared/duplicated fds are
