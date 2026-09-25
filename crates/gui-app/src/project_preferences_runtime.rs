@@ -33,8 +33,11 @@ use crate::Runtime;
 use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
 use crate::global_preferences_projection::control_value_projection;
 
+#[path = "project_preferences_read_cache.rs"]
+mod read_cache;
+
 pub(super) struct ProjectPreferencesCoordinator {
-    read_cache: eda_engine::substrate::ProjectReadCache,
+    read_cache: read_cache::ReadCache,
     registry: DescriptorRegistry,
     surface: PreferenceSurfaceCatalog,
     project_root: Option<PathBuf>,

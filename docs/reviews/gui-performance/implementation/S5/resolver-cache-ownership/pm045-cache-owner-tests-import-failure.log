@@ -1,0 +1,20 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.5 GiB target_free=167.7 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.5 GiB used; soft limit 20.0 GiB
+    Blocking waiting for file lock on build directory
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error[E0603]: enum `EngineError` is private
+ --> crates/gui-app/src/project_preferences_read_cache.rs:4:42
+  |
+4 | use eda_engine::substrate::{DesignModel, EngineError, ProjectReadCache};
+  |                                          ^^^^^^^^^^^ private enum
+  |
+note: the enum `EngineError` is defined here
+ --> crates/engine/src/substrate/mod.rs:8:5
+  |
+8 | use crate::error::EngineError;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0603`.
+error: could not compile `datum-gui-app` (bin "datum-gui") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `datum-gui-app` (bin "datum-gui" test) due to 1 previous error
