@@ -4296,6 +4296,18 @@
           "Planned three pairs stopped after candidate2 final-close timeout; only first pair completed normally. Remaining three launches not run. No required three-trial or seven-pair inference. No software perpetual-redraw negative run performed; no complete SH04 or S5 acceptance.",
           "CPU family total captures descendants via cgroup; separate GUI clock residual is not dedicated engine lifetime accounting. Endpoint images do not establish continuous displayed temporal qualification."
         ]
+      },
+      "s5_x11_delivery_diagnosis": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/x11-delivery-diagnosis/result.json",
+        "status": "Delayed X11 close observed after quiet diagnostic timeout; exact root cause unresolved",
+        "limits": [
+          "The primary Xlib queue was empty at capture; pending state in lower XCB/socket/input-method layers was not inspected. Do not claim a proven Xlib queued-event or lost-wakeup root cause.",
+          "Debugger stop/resume and pointer motion can both wake execution; receipt after the combined diagnostic phase does not isolate which caused delivery. No resend of WM_DELETE_WINDOW occurred.",
+          "V2 six observed close messages all returned false from XFilterEvent, proving ordinary filter passage only for those runs. V1 opening failure lacks all-key tracing and cannot be assigned to the same cause.",
+          "Loader auditing and per-event I/O perturb timing. V3 removes per-event wrappers but still changes startup. No timing,performance,normal shutdown,backend or S5 acceptance follows.",
+          "One recorded display pointer was stale/invalid. No fabricated queue data or raw memory error is accepted as proof; all raw output retained."
+        ]
       }
     },
     {

@@ -1,0 +1,21 @@
+{
+  "evidence_traceability": "PASS28routes124artifacts",
+  "spec_governance": "PASS315",
+  "spec_parity": "PASS20",
+  "dependency_authority": "PASS",
+  "cargo_resource_policy": "PASS",
+  "project_status": "PASS59",
+  "archive_integrity": "150rawmemberslength/SHA256verified",
+  "runtime_change": false,
+  "Rust_proof": "Not repeated; unchanged pinned d0777db0release",
+  "helper_compilation": "cc -shared -fPIC -O2 -Wall -Wextra -Werror for audit variants; cc -O2 -Wall -Wextra -Werror for installed-header offset probe and system-Xlib control. All pass.",
+  "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+  "system_libraries": "libc6:amd64\t2.41-12+deb13u4\nlibx11-6:amd64\t2:1.8.12-1\nlibx11-dev:amd64\t2:1.8.12-1\n",
+  "header_sha256": {
+    "/usr/include/X11/Xlib.h": "7430c535c4e2b0a31d002d5f9d8f21c6b9f7232e9aad2e297662b90c2591f64d",
+    "/usr/include/X11/Xlibint.h": "a43a3031ec6ae9da153c061fabe3b816a97785f0fd372a06ac92e78f7a56cb86",
+    "/usr/include/link.h": "3f4a50ed5b3f29fffd7d92ba996ea846cd9d4b78a3a1ccb00ef351f331501cb6"
+  },
+  "control": "Own-window WM_DELETE appears as open,pending,check,filter-before,filter-afterfalse; no rejected-message negative control claimed",
+  "qualification_pass": false
+}
