@@ -138,6 +138,12 @@ fn with_current<T>(owner: *const State, work: impl FnOnce() -> T) -> T {
     work()
 }
 
+/// Keep diagnostic storage outside the measured payload scope. Its capacity and
+/// allocator overhead still belong to the separately reported observer footprint.
+pub(crate) fn observation_storage<T>(work: impl FnOnce() -> T) -> T {
+    with_current(ptr::null(), work)
+}
+
 pub fn installed() -> bool {
     INSTALLED.load(Ordering::Acquire)
 }
