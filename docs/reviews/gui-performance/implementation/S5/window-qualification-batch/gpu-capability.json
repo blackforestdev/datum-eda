@@ -1,0 +1,34 @@
+{
+  "nvidia_smi": "Quadro M620, 535.274.02, Disabled, 4000\n",
+  "drm_nodes": [
+    {
+      "path": "/dev/dri/card0",
+      "major": 226,
+      "minor": 0,
+      "driver": "/sys/bus/pci/drivers/i915",
+      "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t609\ndrm-driver:\ti915\ndrm-client-id:\t157872\ndrm-pdev:\t0000:00:02.0\ndrm-total-system0:\t0\ndrm-shared-system0:\t0\ndrm-active-system0:\t0\ndrm-resident-system0:\t0\ndrm-purgeable-system0:\t0\ndrm-total-stolen-system0:\t0\ndrm-shared-stolen-system0:\t0\ndrm-active-stolen-system0:\t0\ndrm-resident-stolen-system0:\t0\ndrm-purgeable-stolen-system0:\t0\ndrm-engine-render:\t0 ns\ndrm-engine-copy:\t0 ns\ndrm-engine-video:\t0 ns\ndrm-engine-video-enhance:\t0 ns\n"
+    },
+    {
+      "path": "/dev/dri/card1",
+      "major": 226,
+      "minor": 1,
+      "driver": "/sys/bus/pci/drivers/nvidia",
+      "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t674\n"
+    },
+    {
+      "path": "/dev/dri/renderD128",
+      "major": 226,
+      "minor": 128,
+      "driver": "/sys/bus/pci/drivers/i915",
+      "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t608\ndrm-driver:\ti915\ndrm-client-id:\t157874\ndrm-pdev:\t0000:00:02.0\ndrm-total-system0:\t0\ndrm-shared-system0:\t0\ndrm-active-system0:\t0\ndrm-resident-system0:\t0\ndrm-purgeable-system0:\t0\ndrm-total-stolen-system0:\t0\ndrm-shared-stolen-system0:\t0\ndrm-active-stolen-system0:\t0\ndrm-resident-stolen-system0:\t0\ndrm-purgeable-stolen-system0:\t0\ndrm-engine-render:\t0 ns\ndrm-engine-copy:\t0 ns\ndrm-engine-video:\t0 ns\ndrm-engine-video-enhance:\t0 ns\n"
+    },
+    {
+      "path": "/dev/dri/renderD129",
+      "major": 226,
+      "minor": 129,
+      "driver": "/sys/bus/pci/drivers/nvidia",
+      "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t26\nino:\t673\n"
+    }
+  ],
+  "changes": "Read-only capability query; no accounting/driver/backend setting changed."
+}

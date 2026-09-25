@@ -1,0 +1,18 @@
+{
+  "status": "Passed bounded evidence/governance checks; not S5 acceptance",
+  "raw_archive_files_verified": 749,
+  "original_map_requirements_preserved": 225,
+  "commands": {
+    "python3 scripts/check_evidence_traceability.py": "PASS28routes124artifacts",
+    "python3 scripts/check_spec_governance.py": "PASS315specs",
+    "python3 scripts/check_spec_parity.py": "PASS20inventories",
+    "python3 scripts/check_source_health.py": "PASS2390sourcefiles",
+    "python3 scripts/check_cargo_resource_policy.py": "PASS",
+    "python3 scripts/check_dependency_authority.py": "PASS",
+    "python3 scripts/project_status.py check": "PASS59items",
+    "python3 scripts/check_rustfmt.py --staged": "PASS"
+  },
+  "rust": "No product Rust source changed in this evidence slice; prior pinned-candidate checks retained, no redundant Cargo rerun.",
+  "full_drift": "Not rerun; known unrelated menu CSV and bootstrap marker failures remain open.",
+  "raw_log_preservation": "Initial staged whitespace check flagged two terminal blank lines in controller logs. Exact unchanged bytes moved to controller-logs.tar.gz and compared to originals before removing duplicate loose copies; embedded hashes retained."
+}

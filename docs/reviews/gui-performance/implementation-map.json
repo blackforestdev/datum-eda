@@ -3543,7 +3543,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Six normal native shutdown/drain runs retain cgroup total CPU including exited children and direct GUI clocks. NVIDIA client counters remain unsupported; complete accounting and calibrated action uncertainty are unqualified.",
         "id": "proof_ac_02",
         "positive": "Observe GUI+engine CPU across child exits and bounded drain",
         "negative_control": "Drop child CPU or shorten denominator",
@@ -3606,6 +3606,12 @@
         "previous_test_status": "Partial method conformance: three controlled fork/thread cases retain exited-child CPU in an isolated cgroup and agree with final wait4 usage within1.656ms. Native command-boundary probe records cgroup totals plus direct GUI CPU clocks/PID start-time. Separate cooperating-engine/process identities, possible external services, full workload admission and normal final drain remain unqualified.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
         "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Six normal native shutdown/drain runs retain cgroup total CPU including exited children and direct GUI clocks. NVIDIA client counters remain unsupported; complete accounting and calibrated action uncertainty are unqualified.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -3650,7 +3656,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Three traced native trials retain570/572/571 warm timestamp spans, with no warm missing observations reported. Required complete ring pressure/error/epoch/cold and observer qualification remain open; no GPU acceptance.",
         "id": "proof_ac_03",
         "positive": "Conform bounded GPU timestamp ring under pressure/map error/epoch changes",
         "negative_control": "Return zero on missing query or block on readback",
@@ -3716,6 +3722,12 @@
         "previous_test_status": "planned; not executed",
         "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
         "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Three traced native trials retain570/572/571 warm timestamp spans, with no warm missing observations reported. Required complete ring pressure/error/epoch/cold and observer qualification remain open; no GPU acceptance.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -4131,7 +4143,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Predeclared six-run order completed with rejected NVIDIA startup and earlier method failures retained. Three descriptive on/off pairs show material observer overhead; no formal seven-pair confidence or overhead subtraction.",
         "id": "proof_ac_06",
         "positive": "Same workload trace-on/off and rejected trials",
         "negative_control": "Discard high-cost or contaminated trial after seeing result",
@@ -4197,6 +4209,12 @@
         "previous_test_status": "Bounded method probe only: preserve rejected OR-combined window selector and its pixel mismatches. Corrected selector requires owned PID plus exact title and excludes Main. No calibrated readback/observer overhead, fixed-seven-pair relative inference or full qualification.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
         "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Predeclared six-run order completed with rejected NVIDIA startup and earlier method failures retained. Three descriptive on/off pairs show material observer overhead; no formal seven-pair confidence or overhead subtraction.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -4241,7 +4259,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial three-cycle Project native menu/Return/Escape sequence: preparation menu keys occur before CPU start; expected window pixels observed before open endpoint, close requires window destruction and focus return. First cold and two warm actions only; complete scheduled/received/saturation/per-consumer qualification remains open.",
+        "status": "540 warm native menu/Return/Escape cycles across GLOBAL/PROJECT/NEW and two modes complete with focus restored. This does not qualify full semantic schedule, saturation or other workloads.",
         "id": "proof_ac_07",
         "positive": "Input schedule saturates without changing legitimate semantics",
         "negative_control": "Drop tiny deltas or freeze content",
@@ -4296,6 +4314,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "Partial native menu/key open/Escape-close/focus sequences for GLOBAL/PROJECT/NEW; this is not complete scheduled semantic-input or saturation/final-state coverage."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial three-cycle Project native menu/Return/Escape sequence: preparation menu keys occur before CPU start; expected window pixels observed before open endpoint, close requires window destruction and focus return. First cold and two warm actions only; complete scheduled/received/saturation/per-consumer qualification remains open.",
+        "status": "540 warm native menu/Return/Escape cycles across GLOBAL/PROJECT/NEW and two modes complete with focus restored. This does not qualify full semantic schedule, saturation or other workloads.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -4339,7 +4363,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial Project static readiness check compares actual window readback with the unchanged prior88130b98 Project PNG. Three successful opens require exact matching pixels, while wrong-Main selection is rejected. No physical displayed-frame/latency, full native UX/IME/accessibility/backend/scale acceptance.",
+        "status": "All540 warm plus18 first-use native opens match unchanged88130b98 host PNGs. Physical display timing and full UX/IME/accessibility/backend/scale acceptance remain open.",
         "id": "proof_ac_08",
         "positive": "Static native captures and production hit/focus/IME/accessibility action matrix",
         "negative_control": "Suppress partially clipped input or remove focus ring",
@@ -4392,6 +4416,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "Partial current X11/Vulkan1x dialog static/lifecycle proof: three captures byte-identical to prior candidate; focus returns after close. Complete consumer/keyboard/IME/accessibility/backend/scale and owner UX qualification remains required."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial Project static readiness check compares actual window readback with the unchanged prior88130b98 Project PNG. Three successful opens require exact matching pixels, while wrong-Main selection is rejected. No physical displayed-frame/latency, full native UX/IME/accessibility/backend/scale acceptance.",
+        "status": "All540 warm plus18 first-use native opens match unchanged88130b98 host PNGs. Physical display timing and full UX/IME/accessibility/backend/scale acceptance remain open.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -14059,7 +14089,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Three-cycle CPU boundary method probe is executed; full valid actual-cycle trial and common process/client drain accounting remain missing. No duty or absolute-budget qualification.",
+        "status": "Three trials per mode retain whole action-plus-normal-drain group CPU. Full observer uncertainty/external-service and backend/scale qualification remain open; no duty acceptance.",
         "id": "proof_bud_windows_cpu_duty",
         "positive": "WINDOWS: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14090,6 +14120,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "Investigative process CPU/action observations archived; complete same-window process/client lifetime accounting and qualified trials remain missing. Report-only duty row is not passed by omission."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Three-cycle CPU boundary method probe is executed; full valid actual-cycle trial and common process/client drain accounting remain missing. No duty or absolute-budget qualification.",
+        "status": "Three trials per mode retain whole action-plus-normal-drain group CPU. Full observer uncertainty/external-service and backend/scale qualification remain open; no duty acceptance.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -14136,7 +14172,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Unqualified, with improved action boundary: unchanged88130b98 release, diagnostics absent, Project cold297.044ms and two warm49.843ms/28.255ms cgroup CPU. Menu preparation excluded and expected window pixels required. These two warm observations do not establish all30cycles/three independent trials, calibrated observer overhead or full lifecycle qualification. Earlier~70ms mixed-menu observations cannot justify another renderer optimization by themselves;50ms threshold unchanged.",
+        "status": "Three plain trials per host have mean opens below50ms; Project means37.698/38.990/38.261ms, maxima52.612/48.948/54.463ms. Individual excesses preserved; no unqualified budget acceptance.",
         "id": "proof_bud_windows_open_cpu",
         "positive": "W-WINDOWS warm open transitions; isolate CPU window without padding idle.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14167,6 +14203,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "Unqualified. Pre-retention-owner candidate has observed warm Project50-80ms,median70ms in one30-cycle sequence, with other hosts also exceeding50ms in some observations. These windows include preparatory menu input and end at mapping/focus, so are neither exact command cost nor definitive lower bounds. Current88130b98 has diagnostic-on lifecycle proof only; complete valid W-WINDOWS trials still required. Threshold unchanged."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Unqualified, with improved action boundary: unchanged88130b98 release, diagnostics absent, Project cold297.044ms and two warm49.843ms/28.255ms cgroup CPU. Menu preparation excluded and expected window pixels required. These two warm observations do not establish all30cycles/three independent trials, calibrated observer overhead or full lifecycle qualification. Earlier~70ms mixed-menu observations cannot justify another renderer optimization by themselves;50ms threshold unchanged.",
+        "status": "Three plain trials per host have mean opens below50ms; Project means37.698/38.990/38.261ms, maxima52.612/48.948/54.463ms. Individual excesses preserved; no unqualified budget acceptance.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -14213,7 +14255,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Kernel observer reconciles196 supported i915 clients per trial, including ephemeral clients missed by polling. NVIDIA GPU handles lack supported counters; whole GPU duty remains null, not zero or supported-only subtotal.",
         "id": "proof_bud_windows_gpu_duty",
         "positive": "WINDOWS: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14232,6 +14274,12 @@
         "previous_test_status": "planned; not executed",
         "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
         "status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
+        "status": "Kernel observer reconciles196 supported i915 clients per trial, including ephemeral clients missed by polling. NVIDIA GPU handles lack supported counters; whole GPU duty remains null, not zero or supported-only subtotal.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -14278,7 +14326,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Traced warm GPU-span p95 is17.570/19.398/20.728ms across three trials. Material observer overhead and complete method qualification unresolved; no untraced budget pass.",
         "id": "proof_bud_windows_gpu_p95",
         "positive": "WINDOWS: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P95 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14291,6 +14339,12 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "status": "Traced warm GPU-span p95 is17.570/19.398/20.728ms across three trials. Material observer overhead and complete method qualification unresolved; no untraced budget pass.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -14337,7 +14391,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Traced warm GPU-span p99 is24.194/24.153/24.575ms across three trials. Preserve diagnostic excess; no untraced budget pass or numerical relaxation.",
         "id": "proof_bud_windows_gpu_p99",
         "positive": "WINDOWS: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P99 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14350,6 +14404,12 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "status": "Traced warm GPU-span p99 is24.194/24.153/24.575ms across three trials. Preserve diagnostic excess; no untraced budget pass or numerical relaxation.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -21119,7 +21179,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Unqualified: three Project Escape/destruction/focus transitions observe6.101ms/5.318ms/4.698ms group CPU. No complete GPU/client normal-drain or required trial/host coverage;20ms threshold unchanged.",
+        "status": "Three plain trials per host have mean closes4.982\u20135.158ms, below20ms; native window destruction and Main focus checked. Full uncertainty/resource/backend/scale qualification remains open.",
         "id": "proof_bud_windows_close_cpu",
         "positive": "W-WINDOWS warm close transitions; lifetime counters captured before exit.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -21150,6 +21210,12 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "Unqualified. Existing cycles observe Escape/focus or owner-drop/attachment drain, without complete process/client final counters and validated bounded-drain endpoints. No20ms close-budget acceptance."
+      },
+      "s5_window_qualification_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Unqualified: three Project Escape/destruction/focus transitions observe6.101ms/5.318ms/4.698ms group CPU. No complete GPU/client normal-drain or required trial/host coverage;20ms threshold unchanged.",
+        "status": "Three plain trials per host have mean closes4.982\u20135.158ms, below20ms; native window destruction and Main focus checked. Full uncertainty/resource/backend/scale qualification remains open.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
       }
     },
     {
@@ -37673,5 +37739,14 @@
     "source": "crates/gui-app/src/native_measurement_shutdown.rs",
     "boundaries": "S0-S4/GEFN rendering, dependency/license authority, product model and persistence, all numerical limits, and nonblocking resize/temporal exclusions preserved.",
     "remaining": "Earlier client lifecycle hooks/coverage and observer calibration; complete all-host/trial/backend/scale/resource/negative/endurance qualification; distinct reviewer actual replay and native owner UX. No budget or independent acceptance."
+  },
+  "s5_window_qualification_batch": {
+    "status": "Partial native window qualification and observer conformance; GPI-S5 incomplete",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json",
+    "candidate": "47eefbc1c1c6d99ef5a2504d8fc4b7fbabe0a743",
+    "binary_sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+    "boundaries": "S0-S4, GEFN,225 original rules/recipes/indexes, PM029/PM047, model/journal authority and all nonblocking resize/temporal/T2/unadmitted schematic exclusions preserved. No dependency addition, package install, prototype change or approval expansion.",
+    "remaining": "Complete carried S1/50S2/20S3 native, backend/scale, resource/instantaneous/private allocation, negative controls, cold, endurance and distinct-reviewer actual replay plus owner UX. Current archive is not an alternate adoption checklist."
   }
 }

@@ -1,0 +1,169 @@
+{
+  "status": "Partial native window qualification and observer conformance; GPI-S5 incomplete",
+  "qualification_pass": false,
+  "candidate": "47eefbc1c1c6d99ef5a2504d8fc4b7fbabe0a743",
+  "binary_sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+  "fixture": {
+    "source_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+    "counts": {
+      "packages": 39,
+      "pads": 81,
+      "tracks": 148,
+      "vias": 46,
+      "zones": 20,
+      "nets": 24,
+      "layers": 24
+    },
+    "normalization": "Remove only root UUID, sorted compact JSON without trailing newline; preserve object identities and array order. Unchanged after campaign."
+  },
+  "campaign": {
+    "backend": "X11/Xwayland, default instance selecting Vulkan, 1x, 1280x800",
+    "successful_runs": 6,
+    "warm_cycles": 540,
+    "first_use_cycles": 18,
+    "hosts": [
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "trials_per_mode": 3,
+    "warm_cycles_per_host_per_trial": 30,
+    "order": "plain1,kernel1,kernel2,plain2,plain3,kernel3",
+    "failure": "First kernel1 aborted at unsupported NVIDIA descriptor before cycles. Declared continuation retains completed plain1 and only resumes pending runs; no numerical resampling.",
+    "input": "Native menus/keys, preparation settled before Return CPU boundary; Escape closes and restores Main focus.",
+    "readiness": "Actual owned-PID/exact-title window pixels match unchanged prior88130b98 PNGs in all completed cycles. Static readback does not prove physical presentation timing.",
+    "final": "WM_DELETE_WINDOW native CloseRequested, controlled terminal shutdown, shared queue drain and live-device observer acknowledgement; six normal exits0. All seven owned cgroups removed.",
+    "cold_limit": "One first-use cycle per host/run is not the required separate ten-start cold campaign."
+  },
+  "cpu": {
+    "accounting": "GUI and inherited child cgroup CPU includes kernel and exited child work; observer/image tools outside group. Direct GUI CPU clock and PID/start identity retained.",
+    "plain_project_mean_open_ms": [
+      37.69849999999996,
+      38.99043333333333,
+      38.2612333333333
+    ],
+    "plain_project_max_open_ms": [
+      52.61199999999988,
+      48.947999999999325,
+      54.46300000000015
+    ],
+    "disposition": "All plain host mean opens <50ms and mean closes <20ms. Individual Project opens exceed50ms in trials1/3. No unqualified budget pass; non-atomic snapshots/readback overhead and full admission remain unresolved."
+  },
+  "gpu": {
+    "supported_i915_clients_per_kernel_run": 196,
+    "supported_client_continuity_complete": true,
+    "whole_gpu_duty": null,
+    "reason": "NVIDIA renderD129/nvidia0/nvidiactl/nvidia-modeset handles expose no supported per-client engine counters. Each kernel trial retains2012 opaque observations including1840 during warm+drain. No invented zero or extrapolation.",
+    "warm_timestamp_spans": [
+      {
+        "trial": 1,
+        "all": {
+          "n": 570,
+          "mean": 10.410885113036628,
+          "min": 1.5520833806991576,
+          "max": 26.44391747367096,
+          "p95": 17.569917202857972,
+          "p99": 24.193834071670533
+        },
+        "main": {
+          "n": 478,
+          "mean": 11.918614206126113,
+          "min": 4.779333479187012,
+          "max": 26.44391747367096,
+          "p95": 18.943000578094484,
+          "p99": 24.245667406585692
+        },
+        "aux": {
+          "n": 92,
+          "mean": 2.577249172854299,
+          "min": 1.5520833806991576,
+          "max": 5.736750175071716,
+          "p95": 5.341166829666138,
+          "p99": 5.736750175071716
+        }
+      },
+      {
+        "trial": 2,
+        "all": {
+          "n": 572,
+          "mean": 10.618804956927333,
+          "min": 1.5870000484313964,
+          "max": 26.874500820144654,
+          "p95": 19.39825059198761,
+          "p99": 24.152667403747557
+        },
+        "main": {
+          "n": 479,
+          "mean": 12.125511852295942,
+          "min": 4.765833478775025,
+          "max": 26.874500820144654,
+          "p95": 20.18200061590576,
+          "p99": 24.337084076042174
+        },
+        "aux": {
+          "n": 93,
+          "mean": 2.8584543883083713,
+          "min": 1.5870000484313964,
+          "max": 13.256083737876892,
+          "p95": 5.13483349003601,
+          "p99": 13.256083737876892
+        }
+      },
+      {
+        "trial": 3,
+        "all": {
+          "n": 571,
+          "mean": 10.539434501439525,
+          "min": 1.5348333801727294,
+          "max": 28.281084196403505,
+          "p95": 20.72841729924774,
+          "p99": 24.575167416641236
+        },
+        "main": {
+          "n": 475,
+          "mean": 12.161838967641087,
+          "min": 4.808083480064392,
+          "max": 28.281084196403505,
+          "p95": 21.290083983055116,
+          "p99": 24.71883408769226
+        },
+        "aux": {
+          "n": 96,
+          "mean": 2.5119124030463698,
+          "min": 1.5348333801727294,
+          "max": 5.279750161125183,
+          "p95": 4.783000145965576,
+          "p99": 5.279750161125183
+        }
+      }
+    ],
+    "disposition": "Diagnostic traced spans, not untraced GPU budget acceptance. Cold multi-submission incomplete observations preserved separately. No driver accounting/backend setting changed."
+  },
+  "observer": {
+    "rejected": "Libc interposer misses direct openat/close syscalls (zero receipts for actual client); rejected for complete coverage.",
+    "kernel": "First-party owned-child seccomp/ptrace collector observes direct syscall descriptor creation/retirement, aliases, SCM_RIGHTS and fork/exec/exit identity. Ledger deduplicates client/PCI/epoch and checks result-correlated bindings and monotonic counters.",
+    "conformance": "Three real fixture forms (libc aliases, direct syscalls, SCM_RIGHTS/rangeclose/fork/exec) pass. Missing final, missing birth, counter reset, missing observer end and injected opaque GPU records withhold complete numeric totals.",
+    "limits": "Pinned x86_64 workload only; io_uring, DRM leases, untraced clone, x32 and unsupported architecture rejected. Bounded descriptor/thread/control-message storage. General signal/group-stop or privileged-exec behavior not qualified.",
+    "overhead": "Three descriptive on/off pairs show material overhead, not required seven-pair confidence or a subtractable correction. Both modes retain polling/readback cost.",
+    "rejected_development": "Initial C compilation failed misleading-indentation warnings before correction (initial source retained; original stderr was tool output, not archived log). Pilot native process exited0 but driver failed missing returncode; preserved as rejected report. Earlier ledger schema parse failure corrected to explicit missing-argument rejection; old pilot not qualified."
+  },
+  "next_attribution": "Main scene/text/menu passes dominate traced GPU spans; audit repeated full MSAA resolves in gpu_frame.rs before any bounded correction. No backend policy, antialiasing quality, rendering or production source change in this archive.",
+  "remaining": "Complete carried S1/50S2/20S3 native, backend/scale, resource/instantaneous/private allocation, negative controls, cold, endurance and distinct-reviewer actual replay plus owner UX. Current archive is not an alternate adoption checklist.",
+  "boundaries": "S0-S4, GEFN,225 original rules/recipes/indexes, PM029/PM047, model/journal authority and all nonblocking resize/temporal/T2/unadmitted schematic exclusions preserved. No dependency addition, package install, prototype change or approval expansion.",
+  "raw_evidence": {
+    "archives": 15,
+    "verified_files": 749,
+    "inventory": "archives.json",
+    "per_archive_hashes": "MANIFEST.json",
+    "analysis": "analysis.json",
+    "capability": "gpu-capability.json",
+    "tools": "tools/"
+  },
+  "references": [
+    "https://www.kernel.org/doc/html/latest/userspace-api/seccomp_filter.html",
+    "https://man7.org/linux/man-pages/man2/ptrace.2.html",
+    "https://man7.org/linux/man-pages/man2/recvmsg.2.html",
+    "https://docs.kernel.org/gpu/drm-uapi.html"
+  ]
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/plain-1.tar.gz",
+    "raw_files": 110,
+    "raw_bytes": 29012070,
+    "archive_bytes": 5141195
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-1-rejected-startup.tar.gz",
+    "raw_files": 4,
+    "raw_bytes": 725355,
+    "archive_bytes": 56900
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-1.tar.gz",
+    "raw_files": 122,
+    "raw_bytes": 48596598,
+    "archive_bytes": 6401214
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-2.tar.gz",
+    "raw_files": 123,
+    "raw_bytes": 49172701,
+    "archive_bytes": 6449315
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/plain-2.tar.gz",
+    "raw_files": 108,
+    "raw_bytes": 29041254,
+    "archive_bytes": 5217205
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/plain-3.tar.gz",
+    "raw_files": 108,
+    "raw_bytes": 29023701,
+    "archive_bytes": 5140041
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-3.tar.gz",
+    "raw_files": 129,
+    "raw_bytes": 49959923,
+    "archive_bytes": 6448875
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/libc-conformance-rejected.tar.gz",
+    "raw_files": 4,
+    "raw_bytes": 18006,
+    "archive_bytes": 1416
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-first-controls.tar.gz",
+    "raw_files": 4,
+    "raw_bytes": 45302,
+    "archive_bytes": 3925
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-extended-controls.tar.gz",
+    "raw_files": 6,
+    "raw_bytes": 58200,
+    "archive_bytes": 4752
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-classification-controls.tar.gz",
+    "raw_files": 6,
+    "raw_bytes": 84788,
+    "archive_bytes": 6611
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/ledger-negative-controls.tar.gz",
+    "raw_files": 5,
+    "raw_bytes": 318410,
+    "archive_bytes": 18099
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/opaque-negative-control.tar.gz",
+    "raw_files": 2,
+    "raw_bytes": 7380,
+    "archive_bytes": 1826
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/kernel-pilot-rejected-report.tar.gz",
+    "raw_files": 7,
+    "raw_bytes": 5257249,
+    "archive_bytes": 408031
+  },
+  {
+    "path": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/campaign.tar.gz",
+    "raw_files": 11,
+    "raw_bytes": 43791,
+    "archive_bytes": 8820
+  }
+]
