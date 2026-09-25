@@ -1,0 +1,34 @@
+{
+  "status": "Native CPU timer attribution incomplete; no runtime correction justified",
+  "qualification_pass": false,
+  "candidate_commit": "40859274",
+  "binary_sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+  "archives": [
+    {
+      "file": "calibration-v1.tar.gz",
+      "members": 5
+    },
+    {
+      "file": "calibration-v2.tar.gz",
+      "members": 4
+    },
+    {
+      "file": "native.tar.gz",
+      "members": 31
+    },
+    {
+      "file": "campaign.tar.gz",
+      "members": 7
+    },
+    {
+      "file": "first-party-proof.tar.gz",
+      "members": 7
+    }
+  ],
+  "method": "First-party Linux x86_64 diagnostic shared object loaded only into the exact GUI executable. CLOCK_THREAD_CPUTIME_ID timer targets main-thread SIGRTMIN+8; explicit main-thread control SIGRTMIN+9 toggles two bounded windows. Signals must be default/unblocked before installation. Fixed65536-entry buffer stores interrupted PC, CPU timestamp and overrun; no stack unwinding or allocation/stdio in handlers. No product code, dependency, feature or license changes. Uses existing OS libc/compiler only.",
+  "calibration": "Initial1ms timer gives~4ms actual delivery and reported overruns. Revised4ms synthetic known CPU loop:142 delivered,0 overruns,all142 PCs in exact45-byte work function; expiration CPU ratio99.37%. Blocking sample signal for50ms gives11 overruns and141/142 known-work PCs. Negative control exposes missing distinct samples rather than fabricating hotspot counts. Synthetic calibration does not establish native overhead or accuracy.",
+  "native": "Both clamp bounds preserve before/after/reversal pixels against the corrected pilot, normal drained exit0, display restored. Total family CPU454.698/466.863ms; main-thread sampling-windowCPU443.811244/455.526957ms. Different scopes and boundaries are explicit; do not substitute one denominator for another.",
+  "coverage": "Minimum76 delivered samples and34 overruns:delivered-period/main-CPU ratio68.50%. Maximum106 delivered and7 overruns:93.08%. Overruns are not expanded into repeated PCs or hotspot weights. No buffer overflow. No complete main-thread cost attribution, whole-process profile, seven-pair overhead study or cap claim.",
+  "observations": "Delivered PCs frequently resolve to polling::Poller::wait_impl and X11/libc functions. No call stacks, and interrupted syscall return sites may differ from kernel work. Function labels are unverified addr2line hints, not validated function ranges. In particular libc0x9a72e lies outside sem_trywait0x9a6d0+0x2c; no semaphore hotspot claim. Raw maps/PCs, original unqualified labels and corrected hint labels with exact module hashes are retained. Counts cannot establish authoritative function costs, so no optimization is adopted.",
+  "boundaries": "Preserve all225 adoption rules/statuses, S0-S4 implementation, GEFN, dependency authority and nonblocking resize/temporal/T2/schematic exclusions. Existing quiet clamp CPU failure remains; all missing GPU/resource/temporal/backend-scale/endurance/distinct-reviewer/owner UX qualification remains."
+}
