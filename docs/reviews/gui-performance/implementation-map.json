@@ -3623,6 +3623,19 @@
         "previous_test_status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
         "status": "Six normal native shutdown/drain runs retain cgroup total CPU including exited children and direct GUI clocks. NVIDIA client counters remain unsupported; complete accounting and calibrated action uncertainty are unqualified.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
+      },
+      "s5_cold_first_use_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/cold-first-use-batch/result.json",
+        "status": "Ten cold-process/first-use starts per binary recorded for X11 60Hz1x; S5 remains incomplete",
+        "limits": [
+          "Fresh processes/private XDG directories; operating-system page cache not flushed. No cold-machine claim.",
+          "Main endpoint is exact prior static window readback after native presentation; wall includes polling/capture overhead and is not calibrated physical display latency.",
+          "Wholefamily CPU includes cooperating startup/engine work through cgroup; dedicated engine CPU/RSS attribution remains separate work. Parent test launcher CPU is outside application group.",
+          "First-use order Global,Project,New fixed in each process after Main; not all host-order permutations or simultaneous configurations. Warm50ms/20ms limits not applied to cold/first-use distribution.",
+          "X11/VulkanIntelP630 physical60Hz1x,oneleaf,hiddenterminal only; Wayland/scales/otherconsumerconfigurations and fullresource/GPU/method/endurance/reviewer acceptance remain.",
+          "All20normal closes here do not resolve previous intermittent delayed close; diagnosticfailurecapture was not exercised in this batch. No resampling or replacedtrials."
+        ]
       }
     },
     {
@@ -4307,6 +4320,19 @@
           "V2 six observed close messages all returned false from XFilterEvent, proving ordinary filter passage only for those runs. V1 opening failure lacks all-key tracing and cannot be assigned to the same cause.",
           "Loader auditing and per-event I/O perturb timing. V3 removes per-event wrappers but still changes startup. No timing,performance,normal shutdown,backend or S5 acceptance follows.",
           "One recorded display pointer was stale/invalid. No fabricated queue data or raw memory error is accepted as proof; all raw output retained."
+        ]
+      },
+      "s5_cold_first_use_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/cold-first-use-batch/result.json",
+        "status": "Ten cold-process/first-use starts per binary recorded for X11 60Hz1x; S5 remains incomplete",
+        "limits": [
+          "Fresh processes/private XDG directories; operating-system page cache not flushed. No cold-machine claim.",
+          "Main endpoint is exact prior static window readback after native presentation; wall includes polling/capture overhead and is not calibrated physical display latency.",
+          "Wholefamily CPU includes cooperating startup/engine work through cgroup; dedicated engine CPU/RSS attribution remains separate work. Parent test launcher CPU is outside application group.",
+          "First-use order Global,Project,New fixed in each process after Main; not all host-order permutations or simultaneous configurations. Warm50ms/20ms limits not applied to cold/first-use distribution.",
+          "X11/VulkanIntelP630 physical60Hz1x,oneleaf,hiddenterminal only; Wayland/scales/otherconsumerconfigurations and fullresource/GPU/method/endurance/reviewer acceptance remain.",
+          "All20normal closes here do not resolve previous intermittent delayed close; diagnosticfailurecapture was not exercised in this batch. No resampling or replacedtrials."
         ]
       }
     },
