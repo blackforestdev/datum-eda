@@ -1,0 +1,6 @@
+project_root: /tmp/pm045-admission-hqugp169/project
+project_id: 33009598-86e9-4b9d-b0b2-a797e047a90b
+request_id: 3e3131c3-2ca0-4c5e-af7a-d5826463f304
+genesis_request_digest: sha256:b4f5e77ffb91ff87edf1867e90448b770bf3c54bd4b855435cd1a7b5683756c9
+units_source: Global { generation: Some(GenerationRef { repository_id: "e1f151a8-4234-4828-a9ef-45f281f7c732", generation: 27, parent_generation: Some(26), canonical_manifest_digest: "sha256:e152a509b0c118b97fc24f2ce70feb54af2bd204b2c23b2191081ec67fb01b5e", committed_order: 27, writer_instance: "datum-gui-2816734", format_version: 1, canonicalization_version: 1 }), defaults_profile_id: None }
+units_seed_items: 8

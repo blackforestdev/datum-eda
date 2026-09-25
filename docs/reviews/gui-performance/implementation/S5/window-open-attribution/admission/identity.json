@@ -1,0 +1,16 @@
+{
+  "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "normalization": "Root uuid omitted; JSON sorted keys, compact separators, UTF-8, no trailing newline. All other identity/order/content retained.",
+  "source_path": "/tmp/datum-gui-candidate-boundary-v3/DOA2526.kicad_pcb",
+  "source_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "counts": {
+    "packages": 39,
+    "pads": 81,
+    "tracks": 148,
+    "vias": 46,
+    "zones": 20,
+    "nets": 24
+  },
+  "previous_window_trial_model_hash": "d7d428f561d2ce39ff09bd8c902ad260bd93faa0b3755838a32a3497337269c2",
+  "previous_trial_disposition": "Different imported object identities from different source path; investigative only."
+}

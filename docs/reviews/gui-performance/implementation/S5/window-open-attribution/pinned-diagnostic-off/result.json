@@ -1,0 +1,1653 @@
+{
+  "candidate": "f83cad644af68195a90209dbfec3be9fa8096d27",
+  "binary_sha256": "386babb1f1a13938a9336ecf34f79caf0a54d6a08520206b53bbb6f37445a1b9",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--project-root",
+    "/tmp/pm045-admission-hqugp169/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "backend": "x11 on Xwayland",
+  "cycles": [
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 59.99999999999994,
+        "wall_ms": 234.33890100568533
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 30.73182888329029
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158516 kB",
+        "VmRSS": "158516 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 208.4496719762683
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 33.30571996048093
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158596 kB",
+        "VmRSS": "158596 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 69.99999999999996,
+        "wall_ms": 226.55698703601956
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 26.564778992906213
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158616 kB",
+        "VmRSS": "158616 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 4,
+      "open": {
+        "cpu_ms": 70.00000000000006,
+        "wall_ms": 233.31532115116715
+      },
+      "close": {
+        "cpu_ms": 19.999999999999908,
+        "wall_ms": 43.591988971456885
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158636 kB",
+        "VmRSS": "158636 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 5,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 224.20139517635107
+      },
+      "close": {
+        "cpu_ms": 20.000000000000018,
+        "wall_ms": 60.874006943777204
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158648 kB",
+        "VmRSS": "158648 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 6,
+      "open": {
+        "cpu_ms": 40.000000000000036,
+        "wall_ms": 220.45970801264048
+      },
+      "close": {
+        "cpu_ms": 20.000000000000018,
+        "wall_ms": 47.09609714336693
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158656 kB",
+        "VmRSS": "158656 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 7,
+      "open": {
+        "cpu_ms": 49.99999999999982,
+        "wall_ms": 236.14844609983265
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 25.138506200164557
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158660 kB",
+        "VmRSS": "158660 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 8,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 217.47564082033932
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 35.2748918812722
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158660 kB",
+        "VmRSS": "158660 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 9,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 203.0804140958935
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 41.36690218001604
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158660 kB",
+        "VmRSS": "158660 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 10,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 227.14581596665084
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 30.371373984962702
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158664 kB",
+        "VmRSS": "158664 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 11,
+      "open": {
+        "cpu_ms": 59.99999999999983,
+        "wall_ms": 235.03733100369573
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 26.3200628105551
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158664 kB",
+        "VmRSS": "158664 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 12,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 224.64373498223722
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 26.85053087770939
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158664 kB",
+        "VmRSS": "158664 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 13,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 204.6517829876393
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 36.174308974295855
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158676 kB",
+        "VmRSS": "158676 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 14,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 236.66727193631232
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 27.939161052927375
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158668 kB",
+        "VmRSS": "158668 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 15,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 219.60873692296445
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 26.445604162290692
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158668 kB",
+        "VmRSS": "158668 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 16,
+      "open": {
+        "cpu_ms": 30.00000000000003,
+        "wall_ms": 199.50165902264416
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 26.602581841871142
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158696 kB",
+        "VmRSS": "158696 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 17,
+      "open": {
+        "cpu_ms": 70.00000000000006,
+        "wall_ms": 222.2454990260303
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 25.33895894885063
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 18,
+      "open": {
+        "cpu_ms": 30.00000000000003,
+        "wall_ms": 200.88475313968956
+      },
+      "close": {
+        "cpu_ms": 20.000000000000018,
+        "wall_ms": 41.42634593881667
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 19,
+      "open": {
+        "cpu_ms": 70.00000000000006,
+        "wall_ms": 267.8578949999064
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 39.585270220413804
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 20,
+      "open": {
+        "cpu_ms": 59.99999999999983,
+        "wall_ms": 237.41229018196464
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 27.56610419601202
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 21,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 213.23293610475957
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 37.90263505652547
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 22,
+      "open": {
+        "cpu_ms": 49.99999999999982,
+        "wall_ms": 224.5045080780983
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 28.38748204521835
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 23,
+      "open": {
+        "cpu_ms": 49.99999999999982,
+        "wall_ms": 232.18466201797128
+      },
+      "close": {
+        "cpu_ms": 10.000000000000231,
+        "wall_ms": 25.237401947379112
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 24,
+      "open": {
+        "cpu_ms": 29.999999999999805,
+        "wall_ms": 193.5154388193041
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 29.0209639351815
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 25,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 233.52853604592383
+      },
+      "close": {
+        "cpu_ms": 10.000000000000231,
+        "wall_ms": 25.25421418249607
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 26,
+      "open": {
+        "cpu_ms": 49.99999999999982,
+        "wall_ms": 213.49562797695398
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 35.3558340575546
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 27,
+      "open": {
+        "cpu_ms": 49.99999999999982,
+        "wall_ms": 219.55116209574044
+      },
+      "close": {
+        "cpu_ms": 10.000000000000231,
+        "wall_ms": 39.585262071341276
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158700 kB",
+        "VmRSS": "158700 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 28,
+      "open": {
+        "cpu_ms": 49.99999999999982,
+        "wall_ms": 229.75703817792237
+      },
+      "close": {
+        "cpu_ms": 10.000000000000231,
+        "wall_ms": 27.43265894241631
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 29,
+      "open": {
+        "cpu_ms": 49.99999999999982,
+        "wall_ms": 218.77365792170167
+      },
+      "close": {
+        "cpu_ms": 10.000000000000231,
+        "wall_ms": 30.31994611956179
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 30,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 218.44780095852911
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 35.61015287414193
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "158672 kB",
+        "VmRSS": "158672 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 240.00000000000023,
+        "wall_ms": 415.1785699650645
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 38.32491394132376
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "177968 kB",
+        "VmRSS": "177968 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 229.99999999999997,
+        "wall_ms": 408.710126997903
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 25.637482991442084
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178008 kB",
+        "VmRSS": "178008 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 209.99999999999997,
+        "wall_ms": 405.3264851681888
+      },
+      "close": {
+        "cpu_ms": 10.000000000000231,
+        "wall_ms": 25.955364108085632
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178016 kB",
+        "VmRSS": "178016 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 4,
+      "open": {
+        "cpu_ms": 219.99999999999974,
+        "wall_ms": 406.1261781025678
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 30.631103087216616
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178020 kB",
+        "VmRSS": "178020 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 5,
+      "open": {
+        "cpu_ms": 229.99999999999997,
+        "wall_ms": 409.92509690113366
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 27.305855182930827
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178036 kB",
+        "VmRSS": "178036 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 6,
+      "open": {
+        "cpu_ms": 220.0000000000002,
+        "wall_ms": 408.59292284585536
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 25.310483993962407
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178028 kB",
+        "VmRSS": "178028 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 7,
+      "open": {
+        "cpu_ms": 229.99999999999997,
+        "wall_ms": 409.60652311332524
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 26.16201201453805
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178028 kB",
+        "VmRSS": "178028 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 8,
+      "open": {
+        "cpu_ms": 219.99999999999974,
+        "wall_ms": 407.47331688180566
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 27.979281032457948
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178028 kB",
+        "VmRSS": "178028 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 9,
+      "open": {
+        "cpu_ms": 220.00000000000063,
+        "wall_ms": 405.05161113105714
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 29.23670900054276
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178032 kB",
+        "VmRSS": "178032 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 10,
+      "open": {
+        "cpu_ms": 229.99999999999955,
+        "wall_ms": 408.4704949054867
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 24.810197995975614
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178032 kB",
+        "VmRSS": "178032 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 11,
+      "open": {
+        "cpu_ms": 240.00000000000023,
+        "wall_ms": 433.4984228480607
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 28.358789859339595
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178032 kB",
+        "VmRSS": "178032 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 12,
+      "open": {
+        "cpu_ms": 230.00000000000043,
+        "wall_ms": 405.4766099434346
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 28.587518958374858
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178036 kB",
+        "VmRSS": "178036 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 13,
+      "open": {
+        "cpu_ms": 200.00000000000017,
+        "wall_ms": 386.73915597610176
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 26.917008915916085
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178048 kB",
+        "VmRSS": "178048 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 14,
+      "open": {
+        "cpu_ms": 219.99999999999974,
+        "wall_ms": 407.0754770655185
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 27.994910953566432
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178040 kB",
+        "VmRSS": "178040 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 15,
+      "open": {
+        "cpu_ms": 230.00000000000043,
+        "wall_ms": 411.2980819772929
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 26.85008617118001
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178040 kB",
+        "VmRSS": "178040 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 16,
+      "open": {
+        "cpu_ms": 240.00000000000023,
+        "wall_ms": 410.5016819667071
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 26.931494008749723
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178648 kB",
+        "VmRSS": "178648 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 17,
+      "open": {
+        "cpu_ms": 219.99999999999974,
+        "wall_ms": 406.267553800717
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 28.12241786159575
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178648 kB",
+        "VmRSS": "178648 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 18,
+      "open": {
+        "cpu_ms": 209.99999999999997,
+        "wall_ms": 378.4795431420207
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 28.091039042919874
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178716 kB",
+        "VmRSS": "178716 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 19,
+      "open": {
+        "cpu_ms": 220.00000000000063,
+        "wall_ms": 406.71343193389475
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 29.00127600878477
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "178712 kB",
+        "VmRSS": "178712 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 20,
+      "open": {
+        "cpu_ms": 209.99999999999997,
+        "wall_ms": 378.2697671558708
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 38.813588907942176
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179108 kB",
+        "VmRSS": "179108 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 21,
+      "open": {
+        "cpu_ms": 200.00000000000017,
+        "wall_ms": 390.2808439452201
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 24.857911048457026
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179120 kB",
+        "VmRSS": "179120 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 22,
+      "open": {
+        "cpu_ms": 209.99999999999997,
+        "wall_ms": 406.40895813703537
+      },
+      "close": {
+        "cpu_ms": 20.000000000000462,
+        "wall_ms": 29.049690114334226
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179108 kB",
+        "VmRSS": "179108 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 23,
+      "open": {
+        "cpu_ms": 209.99999999999997,
+        "wall_ms": 410.8175409492105
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 31.44088201224804
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179108 kB",
+        "VmRSS": "179108 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 24,
+      "open": {
+        "cpu_ms": 220.00000000000063,
+        "wall_ms": 413.9677200000733
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 29.08636606298387
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179108 kB",
+        "VmRSS": "179108 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 25,
+      "open": {
+        "cpu_ms": 269.99999999999955,
+        "wall_ms": 435.7108750846237
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 26.826789136976004
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179108 kB",
+        "VmRSS": "179108 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 26,
+      "open": {
+        "cpu_ms": 220.00000000000063,
+        "wall_ms": 407.618670957163
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 26.92591305822134
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179108 kB",
+        "VmRSS": "179108 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 27,
+      "open": {
+        "cpu_ms": 229.99999999999864,
+        "wall_ms": 406.58467705361545
+      },
+      "close": {
+        "cpu_ms": 10.000000000001563,
+        "wall_ms": 25.616687024012208
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179120 kB",
+        "VmRSS": "179120 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 28,
+      "open": {
+        "cpu_ms": 209.9999999999991,
+        "wall_ms": 409.79366609826684
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 25.189013918861747
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179108 kB",
+        "VmRSS": "179108 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 29,
+      "open": {
+        "cpu_ms": 230.00000000000043,
+        "wall_ms": 407.92185394093394
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 35.348396049812436
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178144 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 30,
+      "open": {
+        "cpu_ms": 230.00000000000043,
+        "wall_ms": 404.9444340635091
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 26.27080585807562
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178712 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 39.99999999999915,
+        "wall_ms": 171.52468510903418
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 36.78855090402067
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178792 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 162.3225579969585
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 34.426721977069974
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178780 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 49.999999999998934,
+        "wall_ms": 187.7041021361947
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 45.47052108682692
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178780 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 4,
+      "open": {
+        "cpu_ms": 40.000000000000924,
+        "wall_ms": 185.85152504965663
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 61.527500161901116
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 5,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 188.96570801734924
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 54.45244302973151
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 6,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 211.05539705604315
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 44.24900095909834
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 7,
+      "open": {
+        "cpu_ms": 49.999999999998934,
+        "wall_ms": 181.96046212688088
+      },
+      "close": {
+        "cpu_ms": 20.00000000000135,
+        "wall_ms": 81.82610594667494
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 8,
+      "open": {
+        "cpu_ms": 49.999999999998934,
+        "wall_ms": 197.76120805181563
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 51.03827710263431
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 9,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 201.68572012335062
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 58.09081206098199
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 10,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 186.28635513596237
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 59.550197795033455
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 11,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 200.68849017843604
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 43.88826503418386
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 12,
+      "open": {
+        "cpu_ms": 59.99999999999872,
+        "wall_ms": 199.3056379724294
+      },
+      "close": {
+        "cpu_ms": 10.000000000001563,
+        "wall_ms": 47.563677886500955
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 13,
+      "open": {
+        "cpu_ms": 49.999999999998934,
+        "wall_ms": 187.21874989569187
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 51.41705088317394
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 14,
+      "open": {
+        "cpu_ms": 70.00000000000028,
+        "wall_ms": 234.28529291413724
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 52.63965297490358
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 15,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 190.85905980318785
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 63.76493698917329
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 16,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 214.3524989951402
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 47.20264486968517
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 17,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 186.70798791572452
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 58.894364861771464
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 18,
+      "open": {
+        "cpu_ms": 49.999999999998934,
+        "wall_ms": 193.50832793861628
+      },
+      "close": {
+        "cpu_ms": 10.000000000001563,
+        "wall_ms": 55.265157017856836
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 19,
+      "open": {
+        "cpu_ms": 39.99999999999915,
+        "wall_ms": 198.9597650244832
+      },
+      "close": {
+        "cpu_ms": 29.99999999999936,
+        "wall_ms": 55.03132799640298
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 20,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 190.82801998592913
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 60.852202819660306
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 21,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 191.50746194645762
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 46.248875092715025
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 22,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 192.73014389909804
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 47.827049158513546
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 23,
+      "open": {
+        "cpu_ms": 49.999999999998934,
+        "wall_ms": 193.17908002994955
+      },
+      "close": {
+        "cpu_ms": 10.000000000001563,
+        "wall_ms": 56.59565282985568
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 24,
+      "open": {
+        "cpu_ms": 59.99999999999872,
+        "wall_ms": 201.29733020439744
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 48.12701209448278
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 25,
+      "open": {
+        "cpu_ms": 50.00000000000071,
+        "wall_ms": 175.25088810361922
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 68.68259888142347
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 26,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 228.7164379376918
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 45.81699310801923
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 27,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 208.00119009800255
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 50.32914713956416
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 28,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 197.67229282297194
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 52.714779041707516
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 29,
+      "open": {
+        "cpu_ms": 59.99999999999872,
+        "wall_ms": 198.54348595254123
+      },
+      "close": {
+        "cpu_ms": 19.999999999999574,
+        "wall_ms": 55.153789930045605
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 30,
+      "open": {
+        "cpu_ms": 60.0000000000005,
+        "wall_ms": 209.7616468090564
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 52.729903953149915
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "179076 kB",
+        "VmRSS": "178784 kB"
+      }
+    }
+  ],
+  "limits": [
+    "Diagnostics off: process CPU and native window/focus only; engine, GPU, live allocations and full timing not qualified.",
+    "No endurance or independent replay acceptance."
+  ],
+  "rss_initial": {
+    "VmHWM": "158444 kB",
+    "VmRSS": "158444 kB"
+  },
+  "main_window": 33554436,
+  "passed_native_cycles": true,
+  "rss_final": {
+    "VmHWM": "179076 kB",
+    "VmRSS": "178784 kB"
+  },
+  "cleanup": "Owned process terminated; final application teardown not qualified."
+}

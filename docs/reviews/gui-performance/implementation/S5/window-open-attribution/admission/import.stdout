@@ -1,0 +1,14 @@
+{
+  "contract": "native_project_kicad_board_import_v1",
+  "project_id": "33009598-86e9-4b9d-b0b2-a797e047a90b",
+  "source_path": "/tmp/datum-gui-candidate-boundary-v3/DOA2526.kicad_pcb",
+  "import_map_path": "/tmp/pm045-admission-hqugp169/project/.datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json",
+  "imported_package_count": 39,
+  "imported_pad_count": 81,
+  "imported_track_count": 148,
+  "imported_via_count": 46,
+  "imported_zone_count": 20,
+  "import_map_entry_count": 332,
+  "created_object_count": 358,
+  "reused_existing_identity_count": 0
+}
