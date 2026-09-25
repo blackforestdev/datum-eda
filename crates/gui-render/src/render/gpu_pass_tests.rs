@@ -125,3 +125,78 @@ fn empty_workspace_text_omits_preparation_and_pass_without_pixel_change() {
     );
     assert_eq!(renderer.renderer.text_preparation.overlay_prepares, 1);
 }
+
+#[test]
+#[ignore = "requires local GPU; terminal final resolve and invisible later pass parity"]
+fn terminal_last_layer_matches_invisible_later_passes() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 220;
+    let snapshot = super::super::tests::sixel_snapshot(true);
+    let retained = RetainedScene::from_workspace(&state, 960, 720);
+    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+    let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+        &state,
+        960,
+        720,
+        1.0,
+        camera,
+        &retained,
+        Some(&snapshot),
+    )
+    .unwrap();
+    let mut invisible = prepared.text_runs[0].clone();
+    invisible.x = -1000.0;
+    invisible.y = -1000.0;
+    invisible.clip_bounds = Some(crate::RectPx {
+        x: -1000.0,
+        y: -1000.0,
+        width: 10.0,
+        height: 10.0,
+    });
+    let mut renderer = hardware_renderer(960, 720);
+    for foreground in [false, true] {
+        let mut terminal = prepared.clone();
+        terminal.text_runs.clear();
+        terminal.menu_overlay_text_runs.clear();
+        terminal.menu_overlay_vertices.clear();
+        terminal
+            .terminal_graphics
+            .retain(|g| (g.graphic.placement().z_index() >= 0) == foreground);
+        assert!(!terminal.terminal_graphics.is_empty());
+        let expected = capture_retained(&mut renderer, &terminal, &retained);
+        let mut absent = terminal.clone();
+        absent.terminal_graphics.clear();
+        assert_ne!(
+            expected,
+            capture_retained(&mut renderer, &absent, &retained),
+            "the terminal layer must contribute visible pixels"
+        );
+        terminal.text_runs = vec![invisible.clone()];
+        assert_eq!(
+            expected,
+            capture_retained(&mut renderer, &terminal, &retained),
+            "adding invisible text must preserve terminal samples"
+        );
+        terminal.menu_overlay_vertices =
+            crate::gpu_data::quads_to_vertices(&[crate::Quad::from_rect(
+                crate::RectPx {
+                    x: -100.0,
+                    y: -100.0,
+                    width: 10.0,
+                    height: 10.0,
+                },
+                [1.0, 0.0, 1.0],
+            )]);
+        for text in [false, true] {
+            if text {
+                terminal.menu_overlay_text_runs = vec![invisible.clone()];
+            }
+            assert_eq!(
+                expected,
+                capture_retained(&mut renderer, &terminal, &retained),
+                "invisible later menu passes must preserve terminal samples"
+            );
+        }
+    }
+}

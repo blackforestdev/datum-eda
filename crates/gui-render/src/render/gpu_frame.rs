@@ -190,6 +190,24 @@ impl Renderer {
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
+        // Every layer loads the same preserved MSAA samples. Nothing reads the
+        // resolved target until submission, so only the last active layer needs
+        // to resolve it. Keep physical passes and painter order unchanged.
+        let final_resolve = if !menu_overlay_vertices.is_empty() {
+            if prepared.has_overlay_text() {
+                ResolvePass::MenuText
+            } else {
+                ResolvePass::MenuBackground
+            }
+        } else if self.terminal_graphics.has_layer(true) {
+            ResolvePass::TerminalForeground
+        } else if prepared.has_workspace_text() {
+            ResolvePass::Text
+        } else if self.terminal_graphics.has_layer(false) {
+            ResolvePass::TerminalBackground
+        } else {
+            ResolvePass::Scene
+        };
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
         });
@@ -198,7 +216,7 @@ impl Renderer {
                 label: Some("datum-gui-render-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: Some(&view),
+                    resolve_target: (final_resolve == ResolvePass::Scene).then_some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
@@ -399,20 +417,20 @@ impl Renderer {
         self.encode_terminal_graphics(
             &mut encoder,
             &msaa_view,
-            &view,
+            (final_resolve == ResolvePass::TerminalBackground).then_some(&view),
             false,
             measurement.as_mut(),
         )?;
         let encode_elapsed = encode_started.elapsed();
         let text_encode_started = std::time::Instant::now();
-        // Geometry already clears/resolves the target. An empty text stage has
-        // no load/store dependency and must not add another pass/resolve.
+        // Empty text does not introduce a physical pass; the preceding or
+        // following active layer owns the single final resolve.
         if prepared.has_workspace_text() {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("datum-gui-text-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: Some(&view),
+                    resolve_target: (final_resolve == ResolvePass::Text).then_some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Load,
@@ -430,7 +448,13 @@ impl Renderer {
         }
         let text_encode_elapsed = text_encode_started.elapsed();
 
-        self.encode_terminal_graphics(&mut encoder, &msaa_view, &view, true, measurement.as_mut())?;
+        self.encode_terminal_graphics(
+            &mut encoder,
+            &msaa_view,
+            (final_resolve == ResolvePass::TerminalForeground).then_some(&view),
+            true,
+            measurement.as_mut(),
+        )?;
 
         // Composite the menu card and its text after the main text pass.
         if !menu_overlay_vertices.is_empty() {
@@ -442,7 +466,8 @@ impl Renderer {
                     label: Some("datum-gui-menu-overlay-pass"),
                     color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                         view: &msaa_view,
-                        resolve_target: Some(&view),
+                        resolve_target: (final_resolve == ResolvePass::MenuBackground)
+                            .then_some(&view),
                         depth_slice: None,
                         ops: wgpu::Operations {
                             load: wgpu::LoadOp::Load,
@@ -480,7 +505,8 @@ impl Renderer {
                         label: Some("datum-gui-menu-overlay-text-pass"),
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                             view: &msaa_view,
-                            resolve_target: Some(&view),
+                            resolve_target: (final_resolve == ResolvePass::MenuText)
+                                .then_some(&view),
                             depth_slice: None,
                             ops: wgpu::Operations {
                                 load: wgpu::LoadOp::Load,
@@ -547,4 +573,14 @@ impl Renderer {
         }
         Ok(true)
     }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ResolvePass {
+    Scene,
+    TerminalBackground,
+    Text,
+    TerminalForeground,
+    MenuBackground,
+    MenuText,
 }

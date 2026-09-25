@@ -1,0 +1,17 @@
+[
+  {
+    "path": "native.tar.gz",
+    "files": 39,
+    "bytes": 1694722
+  },
+  {
+    "path": "golden-comparison.tar.gz",
+    "files": 13,
+    "bytes": 812181
+  },
+  {
+    "path": "proof-logs.tar.gz",
+    "files": 12,
+    "bytes": 20134783
+  }
+]

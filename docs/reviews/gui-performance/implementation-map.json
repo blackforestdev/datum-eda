@@ -3656,7 +3656,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Three traced native trials retain570/572/571 warm timestamp spans, with no warm missing observations reported. Required complete ring pressure/error/epoch/cold and observer qualification remain open; no GPU acceptance.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_ac_03",
         "positive": "Conform bounded GPU timestamp ring under pressure/map error/epoch changes",
         "negative_control": "Return zero on missing query or block on readback",
@@ -3728,6 +3728,12 @@
         "previous_test_status": "Shared-device controlled shutdown now has opt-in bounded drain and observer handoff; native normal acknowledgement and disconnected-observer negative tested. Final seven descriptors deduplicate to four live clients. Earlier client/descriptor races still withhold GPU totals; full method and workload qualification remain open.",
         "status": "Three traced native trials retain570/572/571 warm timestamp spans, with no warm missing observations reported. Required complete ring pressure/error/epoch/cold and observer qualification remain open; no GPU acceptance.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Three traced native trials retain570/572/571 warm timestamp spans, with no warm missing observations reported. Required complete ring pressure/error/epoch/cold and observer qualification remain open; no GPU acceptance.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -4363,7 +4369,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "All540 warm plus18 first-use native opens match unchanged88130b98 host PNGs. Physical display timing and full UX/IME/accessibility/backend/scale acceptance remain open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_ac_08",
         "positive": "Static native captures and production hit/focus/IME/accessibility action matrix",
         "negative_control": "Suppress partially clipped input or remove focus ring",
@@ -4422,6 +4428,12 @@
         "previous_test_status": "Partial Project static readiness check compares actual window readback with the unchanged prior88130b98 Project PNG. Three successful opens require exact matching pixels, while wrong-Main selection is rejected. No physical displayed-frame/latency, full native UX/IME/accessibility/backend/scale acceptance.",
         "status": "All540 warm plus18 first-use native opens match unchanged88130b98 host PNGs. Physical display timing and full UX/IME/accessibility/backend/scale acceptance remain open.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "All540 warm plus18 first-use native opens match unchanged88130b98 host PNGs. Physical display timing and full UX/IME/accessibility/backend/scale acceptance remain open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21276,7 +21288,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_geometry",
         "positive": "Main geometry pass for panel/grid/world/interaction/console",
         "negative_control": "Remove geometry clear or duplicate contributing geometry pass",
@@ -21294,6 +21306,12 @@
         "unfinished_qualification": "Geometry contributions and clear/load/store dependencies correctly represented once",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21354,7 +21372,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_background",
         "positive": "Admit terminal background graphics then remove them",
         "negative_control": "Draw background above text or leave empty pass",
@@ -21372,6 +21390,12 @@
         "unfinished_qualification": "Background pass active only with contributing graphics, before main text",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21432,7 +21456,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_text",
         "positive": "Main text present/absent and applicable load/store",
         "negative_control": "Keep empty text pass without dependency or omit required text",
@@ -21453,6 +21477,12 @@
         "unfinished_qualification": "Contributing text rendered after geometry/background; no unjustified empty stage",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21513,7 +21543,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_foreground",
         "positive": "Terminal foreground graphics present/absent",
         "negative_control": "Draw foreground below text or retain empty graphics pass",
@@ -21531,6 +21561,12 @@
         "unfinished_qualification": "Foreground active only for admitted graphics above text",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21591,7 +21627,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_menu_card",
         "positive": "Menu card present/absent over underlying text",
         "negative_control": "Draw menu card before main text",
@@ -21609,6 +21645,12 @@
         "unfinished_qualification": "Card occludes underlying geometry AND text in proper overlay order",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21669,7 +21711,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open. Further bounded production adoption: unchanged overlay glyph preparation reused with 128-record signature cap; no-op trim preserves cache revision. GPU warm/scroll/parity, retry/reindex/atlas pressure and oversized bypass regressions pass. Full qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_menu_text",
         "positive": "Menu card/text combinations",
         "negative_control": "Render text behind card or invent empty resolve",
@@ -21691,6 +21733,12 @@
         "unfinished_qualification": "Menu text above card only when card and contributing text active",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open. Further bounded production adoption: unchanged overlay glyph preparation reused with 128-record signature cap; no-op trim preserves cache revision. GPU warm/scroll/parity, retry/reindex/atlas pressure and oversized bypass regressions pass. Full qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21751,7 +21799,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_counts",
         "positive": "Exercise every reachable B/F/M/MT activation combination",
         "negative_control": "Insert duplicate same-output pass or MSAA resolve",
@@ -21772,6 +21820,12 @@
         "unfinished_qualification": "Initial graph2+B+F+M+MT maximum6; remove noncontributing stages absent documented dependency; every retained extra stage names resource/ordering reason",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     },
     {
@@ -21832,7 +21886,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
         "id": "proof_pass_resolve",
         "positive": "Merge/defer compatible stages under native pixel comparison",
         "negative_control": "Resolve incompatible extent/sample format or alter AA",
@@ -21853,6 +21907,12 @@
         "unfinished_qualification": "Exact load/store/resolve compatibility, existing sample quality and atlas lifetime; no painter/fractional-pixel change",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s5_final_resolve_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
+        "status": "Partial S5 final-resolve correction: same contributing physical pass/painter order and8xMSAA, exactly one final resolve by source selection.33 serial GPU tests and missing-final-resolve negative/restored positive pass. Six native menu trials preserve exact pixels; bounded diagnostic GPU spans improve. Complete original per-row/backend/scale/negative qualification remains open. Board/Revision golden failures are byte-identical in baseline/candidate and tracked separately; no golden or requirement blessed.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json"
       }
     }
   ],
@@ -37748,5 +37808,13 @@
     "binary_sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
     "boundaries": "S0-S4, GEFN,225 original rules/recipes/indexes, PM029/PM047, model/journal authority and all nonblocking resize/temporal/T2/unadmitted schematic exclusions preserved. No dependency addition, package install, prototype change or approval expansion.",
     "remaining": "Complete carried S1/50S2/20S3 native, backend/scale, resource/instantaneous/private allocation, negative controls, cold, endurance and distinct-reviewer actual replay plus owner UX. Current archive is not an alternate adoption checklist."
+  },
+  "s5_final_resolve_work": {
+    "status": "Bounded final MSAA resolve correction proved; GPI-S5 incomplete",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json",
+    "candidate_binary_sha256": "1b971604b76d5be59437f8fe0617ece593b1011dcbe8d62002f45d69f3879cf7",
+    "remaining": "All original225rules and S1/50S2/20S3 qualification remain authoritative. Complete negative controls, native input/focus/static per-consumer/backend/scale, accounting/private peaks, cold, endurance, owner UX and distinct-reviewer actual replay required. NVIDIA whole-duty limitation and prior individual CPU excesses remain; current native correction does not requalify historical candidates.",
+    "boundaries": "Approved GUI correction only. No dependency/license/backend/AA-quality/prototype/model/journal/engine/terminal state change. S0-S4/GEFN and all nonblocking resize, temporal, T2 and unadmitted schematic exclusions preserved."
   }
 }
