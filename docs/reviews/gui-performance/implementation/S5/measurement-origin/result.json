@@ -1,0 +1,28 @@
+{
+  "status": "Native production preparation adapters retain renderer-origin scope; native qualification remains open",
+  "qualification_pass": false,
+  "base_commit": "337a5a09",
+  "problem": "The retained native trace contains66completed text-measurement calls with null renderer origin. Main, preferences and New Project adapters borrowed the correct renderer measurement owner and budget, but did not enter the existing resource-host scope while constructing layout. Call tracing therefore could not identify their renderer.",
+  "change": "Enter each renderer resource_host for synchronous workspace, preferences(Global/Project) and New Project preparation. Existing RAII scope restores prior origin on return/refusal; no new owner, cache, budget, dependency or mutation path. Existing measurement owner, source text, geometry, cache keys and refusal/retry behavior are unchanged.",
+  "proof": {
+    "baseline": "Archived337a5a09 native on-run private.jsonl has66null completed measurement origins; raw bytes unchanged. This is the observed missing attribution, not a newly executed baseline campaign.",
+    "production_adapters": "Existing real-GPU shared-device preparation test extended with bounded private-call observation. All four native adapters refuse under host pressure, retry without lost content, release scratch and prepare an equal scene, then release host reservations. All observed text-measurement calls have origins; observed origin set equals the four actual renderer IDs; final caller origin restored; zero dropped events.1explicit ignored test passes.",
+    "clippy": "Guarded offline renderer all-targets visual Clippy passes with -D warnings.",
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --lib default_native_preparation_adapters_refuse_host_pressure_and_retry --offline -- --ignored --test-threads=1",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy -p datum-gui-render --all-targets --features visual --offline -- -D warnings"
+    ]
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/frame_preparation.rs": "7e11b033858c3d83f3dbac74a24e5bce034c945b30a9eb7ab87520104b15e369",
+    "crates/gui-render/src/render/preferences_scene.rs": "9602c3eff3c7bdb60aa1905b1d3b7fd715c2e5ed4ccc5942785f788af327cee9",
+    "crates/gui-render/src/render/new_project_scene.rs": "132cebd33d24cbb4c7de030b10b677905f41982f531180124fa850bad45e659d",
+    "crates/gui-render/src/render/measurement_owner.rs": "b05043e8f8c1373ff2e47b199d6c358c8ed3f6e2d65caf40d91b03eba145b334"
+  },
+  "limits": [
+    "No new release build or native opening campaign. The existing release binary and preceding native evidence remain the337a5a09 candidate; do not describe them as proving this correction. Include the corrected source in the next combined native resource qualification run.",
+    "Renderer origin is attribution of the current call, not exclusive ownership of shared font/catalog or thread measurement-cache storage. CPU-cache/ref incidence, local and simultaneous subcaps, driver/RSS/overhead, all adoption/backend/scale/cold/endurance and distinct-reviewer native replay remain required.",
+    "The focused production-adapter test establishes this correction only; no global numerical-cap, workload or GPI-S5 acceptance."
+  ],
+  "boundaries": "Preserve S0-S4, GEFN, PM045/PM047 numerical/admission authority, PM029 dependency/license boundaries and all nonblocking resize/temporal/T2/unadmitted schematic exclusions. No rendering, model/journal or prototype changes."
+}

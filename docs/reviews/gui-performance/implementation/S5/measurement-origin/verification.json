@@ -1,0 +1,37 @@
+{
+  "scope": "Focused native production-adapter attribution correction only; native replay remains pending",
+  "checks": [
+    {
+      "command": "python3 scripts/check_source_health.py",
+      "exit_code": 0,
+      "output": "Source health governance passed (2416 source files checked).\n"
+    },
+    {
+      "command": "python3 scripts/check_spec_governance.py",
+      "exit_code": 0,
+      "output": "Spec governance gate passed (315 specs classified: 243 governed, 50 doctrine, 6 pending, 16 historical).\n"
+    },
+    {
+      "command": "python3 scripts/check_spec_parity.py",
+      "exit_code": 0,
+      "output": "Spec parity check passed (20 inventories).\n"
+    },
+    {
+      "command": "python3 scripts/check_evidence_traceability.py",
+      "exit_code": 0,
+      "output": "Evidence traceability gate passed (28 routes, 124 research/prototype artifacts).\n"
+    },
+    {
+      "command": "python3 scripts/project_status.py check",
+      "exit_code": 0,
+      "output": "Project status check passed (59 frontier items).\n"
+    },
+    {
+      "command": "python3 scripts/check_dependency_authority.py",
+      "exit_code": 0,
+      "output": "dependency authority: PASS\n"
+    }
+  ],
+  "rust_proof": "proof.tar.gz preserves successful focused GPU test and strict renderer Clippy logs",
+  "staged_checks": "Commit gate records staged formatting and whitespace results"
+}
