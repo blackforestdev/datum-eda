@@ -1,0 +1,18 @@
+{
+  "qualification_pass": false,
+  "compile": "Both first-party C source generations and sampler compiled with gcc -Wall -Wextra -Werror -O2 -g; sampler shared/PIC with existing libc timer API. Not product dependencies.",
+  "calibration": "Initial1ms coarse delivery retained;4ms142 known-loop PCs and0 overruns; blocked-signal negative11 overruns. No synthetic-to-native accuracy or formal overhead inference.",
+  "native": "Normal drained exit0, all six before/after/reversal image comparisons exact against pilot, display restored. Main-thread sample loss34/7 overruns prevents reliable cost attribution.",
+  "symbols": "Function hints explicitly unverified. libc0x9a72e lies outside exported sem_trywait0x9a6d0+0x2c; original labels, nm table and corrected hint analysis retained. No semaphore hotspot claim.",
+  "archives": "5 archives,54 members individually SHA256/length verified;11 first-party tools.",
+  "route": "45 reviewed hashes retained; only AC02/AC06 evidence references added,225 original rows/statuses/history unchanged.",
+  "checks": {
+    "traceability": "PASS28routes124artifacts",
+    "spec_governance": "PASS315specs",
+    "parity": "PASS20inventories",
+    "dependency": "PASS",
+    "cargo_resource": "PASS",
+    "project_status": "PASS59frontieritems"
+  },
+  "rust": "No product source changes; unchanged Rust proof not repeated."
+}

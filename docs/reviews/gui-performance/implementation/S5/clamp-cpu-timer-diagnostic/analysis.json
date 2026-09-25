@@ -1,0 +1,1016 @@
+{
+  "windows": [
+    {
+      "bound": "minimum",
+      "samples": 76,
+      "dropped": 0,
+      "cpu_ns": 443811244,
+      "begin_monotonic_ns": 1102515220609728,
+      "end_monotonic_ns": 1102545276705446,
+      "period_ns": 4000000,
+      "tid": 418493,
+      "overruns": 34,
+      "max_overrun": 5,
+      "observed_sample_cpu_ratio": 0.6849758858295172,
+      "expiration_cpu_ratio": 0.9914124663321959,
+      "module_counts": {
+        "/usr/lib/x86_64-linux-gnu/libc.so.6": 17,
+        "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0": 2,
+        "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0": 3,
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui": 51,
+        "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0": 3
+      },
+      "resolved": [
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f08c",
+          "runtime_pc": "0x557022bca08c",
+          "samples": 17,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x9a72e",
+          "runtime_pc": "0x7f2e69ee672e",
+          "samples": 14,
+          "function_hint": "sem_trywait",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f197",
+          "runtime_pc": "0x557022bca197",
+          "samples": 6,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f1bd",
+          "runtime_pc": "0x557022bca1bd",
+          "samples": 4,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x95ba3",
+          "runtime_pc": "0x7f2e69ee1ba3",
+          "samples": 2,
+          "function_hint": "pthread_mutex_lock",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0",
+          "object_address": "0xe3f2",
+          "runtime_pc": "0x7f2e69c813f2",
+          "samples": 2,
+          "function_hint": "XextFindDisplay",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x9a01f1",
+          "runtime_pc": "0x557022adb1f1",
+          "samples": 2,
+          "function_hint": "<winit::platform_impl::linux::common::xkb::state::XkbState>::update_modifiers",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f0ae",
+          "runtime_pc": "0x557022bca0ae",
+          "samples": 2,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x8f3e7",
+          "runtime_pc": "0x7f2e69edb3e7",
+          "samples": 1,
+          "function_hint": "__libc_alloca_cutoff",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x1fb98",
+          "runtime_pc": "0x7f2e69cf3b98",
+          "samples": 1,
+          "function_hint": "XCheckIfEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x1df20",
+          "runtime_pc": "0x7f2e69cf1f20",
+          "samples": 1,
+          "function_hint": "??",
+          "function_range_verified": false,
+          "location": "??:0"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x32890",
+          "runtime_pc": "0x7f2e69d06890",
+          "samples": 1,
+          "function_hint": "XUnlockDisplay",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8b5487",
+          "runtime_pc": "0x5570229f0487",
+          "samples": 1,
+          "function_hint": "<calloop::loop_logic::EventLoop<winit::platform_impl::linux::x11::EventLoopState>>::dispatch::<core::option::Option<core::time::Duration>>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.11:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x788003",
+          "runtime_pc": "0x5570228c3003",
+          "samples": 1,
+          "function_hint": "<core::cell::RefCell<calloop::sources::DispatcherInner<calloop::sources::generic::Generic<std::os::fd::owned::BorrowedFd>, <winit::platform_impl::linux::x11::EventLoop<()>>::new::{closure#0}>> as calloop::sources::EventDispatcher<winit::platform_impl::linux::x11::EventLoopState>>::process_events",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.03:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f08f",
+          "runtime_pc": "0x557022bca08f",
+          "samples": 1,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x815160",
+          "runtime_pc": "0x557022950160",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::x11::event_processor::EventProcessor>::update_mods_from_xinput2_event::<(), &mut &mut <winit::platform_impl::linux::x11::EventLoop<()>>::drain_events<&mut &mut <winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.06:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x96ad40",
+          "runtime_pc": "0x557022aa5d40",
+          "samples": 1,
+          "function_hint": "__rustc::__rust_no_alloc_shim_is_unstable_v2",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x74dfc0",
+          "runtime_pc": "0x557022888fc0",
+          "samples": 1,
+          "function_hint": "<datum_gui::app_shell::App>::sync_surface_drawability",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.02:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8c11e0",
+          "runtime_pc": "0x5570229fc1e0",
+          "samples": 1,
+          "function_hint": "__rustc::__rust_alloc",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.11:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x119a303",
+          "runtime_pc": "0x5570232d5303",
+          "samples": 1,
+          "function_hint": "<datum_gui_viewport::camera::CameraEngine>::zoom_about_screen_point",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x9687a2",
+          "runtime_pc": "0x557022aa37a2",
+          "samples": 1,
+          "function_hint": "<&mut <winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0} as core::ops::function::FnMut<(winit::event::Event<()>, &winit::event_loop::ActiveEventLoop)>>::call_mut",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.15:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x9e99a4",
+          "runtime_pc": "0x557022b249a4",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::x11::event_processor::EventProcessor>::window_target",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x9e99a0",
+          "runtime_pc": "0x557022b249a0",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::x11::event_processor::EventProcessor>::window_target",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8eabe1",
+          "runtime_pc": "0x557022a25be1",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::x11::EventLoop<()>>::has_pending",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.12:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x75dbf0",
+          "runtime_pc": "0x557022898bf0",
+          "samples": 1,
+          "function_hint": "<datum_gui::app_shell::App as winit::application::ApplicationHandler>::window_event",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.02:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x787ee0",
+          "runtime_pc": "0x5570228c2ee0",
+          "samples": 1,
+          "function_hint": "<core::cell::RefCell<calloop::sources::DispatcherInner<calloop::sources::generic::Generic<std::os::fd::owned::BorrowedFd>, <winit::platform_impl::linux::x11::EventLoop<()>>::new::{closure#0}>> as calloop::sources::EventDispatcher<winit::platform_impl::linux::x11::EventLoopState>>::process_events",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.03:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8dd68c",
+          "runtime_pc": "0x557022a1868c",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::EventLoop<()>>::run::<<winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.12:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f305",
+          "runtime_pc": "0x557022bca305",
+          "samples": 1,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8ee45",
+          "runtime_pc": "0x557022bc9e45",
+          "samples": 1,
+          "function_hint": "<polling::Poller>::wait",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8a3e00",
+          "runtime_pc": "0x5570229dee00",
+          "samples": 1,
+          "function_hint": "<std::sync::mpmc::Receiver<winit::platform_impl::linux::x11::ime::ImeRequest>>::try_recv",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.10:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8b508e",
+          "runtime_pc": "0x5570229f008e",
+          "samples": 1,
+          "function_hint": "<calloop::loop_logic::EventLoop<winit::platform_impl::linux::x11::EventLoopState>>::dispatch::<core::option::Option<core::time::Duration>>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.11:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8cda1",
+          "runtime_pc": "0x557022bc7da1",
+          "samples": 1,
+          "function_hint": "<core::iter::adapters::map::Map<core::iter::adapters::filter::Filter<core::iter::adapters::map::Map<core::slice::iter::Iter<rustix::event::epoll::Event>, <polling::epoll::Events>::iter::{closure#0}>, <polling::Events>::iter::{closure#0}>, <calloop::sys::Poll>::poll::{closure#0}> as core::iter::traits::iterator::Iterator>::try_fold::<(), <core::iter::adapters::GenericShunt<core::iter::adapters::map::Map<core::iter::adapters::filter::Filter<core::iter::adapters::map::Map<core::slice::iter::Iter<rustix::event::epoll::Event>, <polling::epoll::Events>::iter::{closure#0}>, <polling::Events>::iter::{closure#0}>, <calloop::sys::Poll>::poll::{closure#0}>, core::result::Result<core::convert::Infallible, core::io::error::Error>> as core::iter::traits::iterator::Iterator>::try_fold<(), core::iter::traits::iterator::Iterator::try_for_each::call<calloop::sys::PollEvent, core::ops::control_flow::ControlFlow<calloop::sys::PollEvent>, core::ops::control_flow::ControlFlow<calloop::sys::PollEvent>::Break>::{closure#0}, core::ops::control_flow::ControlFlow<calloop::sys::PollEvent>>::{closure#0}, core::ops::control_flow::ControlFlow<core::ops::control_flow::ControlFlow<calloop::sys::PollEvent>>>",
+          "function_range_verified": false,
+          "location": "calloop.58b16c60253b019c-cgu.2:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+          "object_address": "0xf8a4",
+          "runtime_pc": "0x7f2e69cb88a4",
+          "samples": 1,
+          "function_hint": "xcb_wait_for_special_event",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+          "object_address": "0xfeb0",
+          "runtime_pc": "0x7f2e69cb8eb0",
+          "samples": 1,
+          "function_hint": "xcb_poll_for_event",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+          "object_address": "0xf35c",
+          "runtime_pc": "0x7f2e69cb835c",
+          "samples": 1,
+          "function_hint": "xcb_wait_for_special_event",
+          "function_range_verified": false,
+          "location": "??:?"
+        }
+      ],
+      "unknown": [],
+      "module_sha256": {
+        "/usr/lib/x86_64-linux-gnu/libc.so.6": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+        "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0": "74cef58f0855cbbe23fce87566249f717e5c8ebeceee09efee393616a9b17697",
+        "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0": "b03e563b316b8b53c7988f0ee91d6656cc425538e00947a8b14482d179e80099",
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+        "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0": "a1cde2cec9b7b8b38e4cca450c55c63651efb80a2458d76964b56b763043f533"
+      },
+      "limit": "Main thread program counters only, no stacks; samples after interrupted syscalls can reflect return sites rather than kernel cost. Overruns never multiplied into hotspot counts. Function labels are unverified addr2line hints; stripped-library nearest symbols may lie outside the actual function range. Example libc0x9a72e is beyond sem_trywait0x9a6d0+0x2c and must not be attributed to sem_trywait. Native overhead and other-thread coverage remain unqualified."
+    },
+    {
+      "bound": "maximum",
+      "samples": 106,
+      "dropped": 0,
+      "cpu_ns": 455526957,
+      "begin_monotonic_ns": 1102557454423056,
+      "end_monotonic_ns": 1102587506822241,
+      "period_ns": 4000000,
+      "tid": 418493,
+      "overruns": 7,
+      "max_overrun": 1,
+      "observed_sample_cpu_ratio": 0.9307901398248095,
+      "expiration_cpu_ratio": 0.9922574132094668,
+      "module_counts": {
+        "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0": 2,
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui": 33,
+        "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0": 15,
+        "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0": 4,
+        "/usr/lib/x86_64-linux-gnu/libc.so.6": 44,
+        "[vdso]": 3,
+        "/usr/lib/x86_64-linux-gnu/libxkbcommon.so.0.0.0": 3,
+        "/usr/lib/x86_64-linux-gnu/libXi.so.6.1.0": 2
+      },
+      "resolved": [
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x9a72e",
+          "runtime_pc": "0x7f2e69ee672e",
+          "samples": 25,
+          "function_hint": "sem_trywait",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f08c",
+          "runtime_pc": "0x557022bca08c",
+          "samples": 5,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x43090",
+          "runtime_pc": "0x7f2e69e8f090",
+          "samples": 3,
+          "function_hint": "getenv",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0xa2949",
+          "runtime_pc": "0x7f2e69eee949",
+          "samples": 3,
+          "function_hint": "malloc",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x9e99a4",
+          "runtime_pc": "0x557022b249a4",
+          "samples": 2,
+          "function_hint": "<winit::platform_impl::linux::x11::event_processor::EventProcessor>::window_target",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0xa2927",
+          "runtime_pc": "0x7f2e69eee927",
+          "samples": 2,
+          "function_hint": "malloc",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x163280",
+          "runtime_pc": "0x7f2e69faf280",
+          "samples": 2,
+          "function_hint": "_dl_mcount_wrapper",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x95ba0",
+          "runtime_pc": "0x7f2e69ee1ba0",
+          "samples": 2,
+          "function_hint": "pthread_mutex_lock",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0",
+          "object_address": "0xe3e0",
+          "runtime_pc": "0x7f2e69c813e0",
+          "samples": 1,
+          "function_hint": "XextFindDisplay",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0",
+          "object_address": "0xe3e4",
+          "runtime_pc": "0x7f2e69c813e4",
+          "samples": 1,
+          "function_hint": "XextFindDisplay",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8a5e51",
+          "runtime_pc": "0x5570229e0e51",
+          "samples": 1,
+          "function_hint": "<std::sync::mpmc::Receiver<()>>::try_recv",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.10:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x751bce",
+          "runtime_pc": "0x55702288cbce",
+          "samples": 1,
+          "function_hint": "<winit::window::Window>::id",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.02:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8a4525",
+          "runtime_pc": "0x5570229df525",
+          "samples": 1,
+          "function_hint": "<std::sync::mpmc::Receiver<winit::platform_impl::linux::x11::ime::ImeRequest>>::try_recv",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.10:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f1bd",
+          "runtime_pc": "0x557022bca1bd",
+          "samples": 1,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8f197",
+          "runtime_pc": "0x557022bca197",
+          "samples": 1,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x1bbee60",
+          "runtime_pc": "0x557023cf9e60",
+          "samples": 1,
+          "function_hint": "<std::time::Instant>::saturating_duration_since",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xa8efb4",
+          "runtime_pc": "0x557022bc9fb4",
+          "samples": 1,
+          "function_hint": "<polling::Poller>::wait_impl",
+          "function_range_verified": false,
+          "location": "polling.f3e0d25a088d9307-cgu.0:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8dd4e2",
+          "runtime_pc": "0x557022a184e2",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::EventLoop<()>>::run::<<winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.12:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x711270",
+          "runtime_pc": "0x55702284c270",
+          "samples": 1,
+          "function_hint": "<alloc::vec::Vec<usize> as alloc::vec::spec_from_iter_nested::SpecFromIterNested<usize, core::iter::adapters::map::Map<core::iter::adapters::filter::Filter<core::iter::adapters::enumerate::Enumerate<core::slice::iter::Iter<datum_gui::terminal_session::TerminalSessionSlot>>, <datum_gui::terminal_session::TerminalSessionRegistry>::remove_presented_closed::{closure#0}>, <datum_gui::terminal_session::TerminalSessionRegistry>::remove_presented_closed::{closure#1}>>>::from_iter",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.00:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8801ce",
+          "runtime_pc": "0x5570229bb1ce",
+          "samples": 1,
+          "function_hint": "<datum_gui::runtime_state::Runtime>::terminal_mouse_reporting_active",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.09:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0xbd9400",
+          "runtime_pc": "0x557022d14400",
+          "samples": 1,
+          "function_hint": "<alloc::raw_vec::RawVecInner>::finish_grow",
+          "function_range_verified": false,
+          "location": "datum_gui_render.14ed08ae4a077a20-cgu.14:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x75dbdf",
+          "runtime_pc": "0x557022898bdf",
+          "samples": 1,
+          "function_hint": "<datum_gui::app_shell::App as winit::application::ApplicationHandler>::window_event",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.02:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8a53d0",
+          "runtime_pc": "0x5570229e03d0",
+          "samples": 1,
+          "function_hint": "<std::sync::mpmc::Receiver<(u64, winit::platform_impl::linux::x11::ime::ImeEvent)>>::try_recv",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.10:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8b521d",
+          "runtime_pc": "0x5570229f021d",
+          "samples": 1,
+          "function_hint": "<calloop::loop_logic::EventLoop<winit::platform_impl::linux::x11::EventLoopState>>::dispatch::<core::option::Option<core::time::Duration>>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.11:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x7619c8",
+          "runtime_pc": "0x55702289c9c8",
+          "samples": 1,
+          "function_hint": "<datum_gui::app_shell::App as winit::application::ApplicationHandler>::about_to_wait",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.02:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8a0960",
+          "runtime_pc": "0x5570229db960",
+          "samples": 1,
+          "function_hint": "<datum_gui::terminal_transport::session_handle::TerminalTransportSession>::session_closed",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.10:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x810aa1",
+          "runtime_pc": "0x55702294baa1",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::x11::event_processor::EventProcessor>::xinput2_button_input::<(), &mut &mut <winit::platform_impl::linux::x11::EventLoop<()>>::drain_events<&mut &mut <winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.06:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x808870",
+          "runtime_pc": "0x557022943870",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::x11::event_processor::EventProcessor>::process_xevent::<(), &mut <winit::platform_impl::linux::x11::EventLoop<()>>::drain_events<&mut &mut <winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.06:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x77a940",
+          "runtime_pc": "0x5570228b5940",
+          "samples": 1,
+          "function_hint": "<datum_gui::native_frame_coordinator::NativeFrameCoordinator>::consume_cancelled_release",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.03:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x77a9a3",
+          "runtime_pc": "0x5570228b59a3",
+          "samples": 1,
+          "function_hint": "<datum_gui::native_frame_coordinator::NativeFrameCoordinator>::consume_cancelled_release",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.03:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x810b41",
+          "runtime_pc": "0x55702294bb41",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::x11::event_processor::EventProcessor>::xinput2_button_input::<(), &mut &mut <winit::platform_impl::linux::x11::EventLoop<()>>::drain_events<&mut &mut <winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.06:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x92b064",
+          "runtime_pc": "0x557022a66064",
+          "samples": 1,
+          "function_hint": "<datum_gui::terminal_session::TerminalSessionRegistry>::drain_all",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.14:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8a3e00",
+          "runtime_pc": "0x5570229dee00",
+          "samples": 1,
+          "function_hint": "<std::sync::mpmc::Receiver<winit::platform_impl::linux::x11::ime::ImeRequest>>::try_recv",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.10:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x761000",
+          "runtime_pc": "0x55702289c000",
+          "samples": 1,
+          "function_hint": "<datum_gui::app_shell::App as winit::application::ApplicationHandler>::about_to_wait",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.02:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8dcfa9",
+          "runtime_pc": "0x557022a17fa9",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::EventLoop<()>>::run::<<winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.12:?"
+        },
+        {
+          "module": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "object_address": "0x8dcf90",
+          "runtime_pc": "0x557022a17f90",
+          "samples": 1,
+          "function_hint": "<winit::platform_impl::linux::EventLoop<()>>::run::<<winit::event_loop::EventLoop<()>>::run_app<datum_gui::app_shell::App>::{closure#0}>",
+          "function_range_verified": false,
+          "location": "datum_gui.d442df7037d994c1-cgu.12:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x9da94",
+          "runtime_pc": "0x7f2e69d71a94",
+          "samples": 1,
+          "function_hint": "XkbUseExtension",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x259e3",
+          "runtime_pc": "0x7f2e69cf99e3",
+          "samples": 1,
+          "function_hint": "XFilterEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x2599a",
+          "runtime_pc": "0x7f2e69cf999a",
+          "samples": 1,
+          "function_hint": "XFilterEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x9daf5",
+          "runtime_pc": "0x7f2e69d71af5",
+          "samples": 1,
+          "function_hint": "XkbUseExtension",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x45e42",
+          "runtime_pc": "0x7f2e69d19e42",
+          "samples": 1,
+          "function_hint": "_XEventsQueued",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x488ba",
+          "runtime_pc": "0x7f2e69d1c8ba",
+          "samples": 1,
+          "function_hint": "_XStoreEventCookie",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x3291f",
+          "runtime_pc": "0x7f2e69d0691f",
+          "samples": 1,
+          "function_hint": "XUnlockDisplay",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x1fc1b",
+          "runtime_pc": "0x7f2e69cf3c1b",
+          "samples": 1,
+          "function_hint": "XCheckIfEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x1cc00",
+          "runtime_pc": "0x7f2e69cf0c00",
+          "samples": 1,
+          "function_hint": "??",
+          "function_range_verified": false,
+          "location": "??:0"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x25a68",
+          "runtime_pc": "0x7f2e69cf9a68",
+          "samples": 1,
+          "function_hint": "XFilterEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x45df0",
+          "runtime_pc": "0x7f2e69d19df0",
+          "samples": 1,
+          "function_hint": "_XEventsQueued",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x9dac3",
+          "runtime_pc": "0x7f2e69d71ac3",
+          "samples": 1,
+          "function_hint": "XkbUseExtension",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x25a47",
+          "runtime_pc": "0x7f2e69cf9a47",
+          "samples": 1,
+          "function_hint": "XFilterEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x45586",
+          "runtime_pc": "0x7f2e69d19586",
+          "samples": 1,
+          "function_hint": "_XFreeX11XCBStructure",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+          "object_address": "0x454b6",
+          "runtime_pc": "0x7f2e69d194b6",
+          "samples": 1,
+          "function_hint": "_XFreeX11XCBStructure",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+          "object_address": "0xf75e",
+          "runtime_pc": "0x7f2e69cb875e",
+          "samples": 1,
+          "function_hint": "xcb_wait_for_special_event",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+          "object_address": "0xc8d4",
+          "runtime_pc": "0x7f2e69cb58d4",
+          "samples": 1,
+          "function_hint": "xcb_connection_has_error",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+          "object_address": "0xf357",
+          "runtime_pc": "0x7f2e69cb8357",
+          "samples": 1,
+          "function_hint": "xcb_wait_for_special_event",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+          "object_address": "0xfde2",
+          "runtime_pc": "0x7f2e69cb8de2",
+          "samples": 1,
+          "function_hint": "xcb_poll_for_reply64",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0xa3127",
+          "runtime_pc": "0x7f2e69eef127",
+          "samples": 1,
+          "function_hint": "__libc_free",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x162880",
+          "runtime_pc": "0x7f2e69fae880",
+          "samples": 1,
+          "function_hint": "_dl_mcount_wrapper",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0xa3ba7",
+          "runtime_pc": "0x7f2e69eefba7",
+          "samples": 1,
+          "function_hint": "__libc_calloc",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0x95ba3",
+          "runtime_pc": "0x7f2e69ee1ba3",
+          "samples": 1,
+          "function_hint": "pthread_mutex_lock",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0xdbc00",
+          "runtime_pc": "0x7f2e69f27c00",
+          "samples": 1,
+          "function_hint": "clock_gettime",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0xa3005",
+          "runtime_pc": "0x7f2e69eef005",
+          "samples": 1,
+          "function_hint": "__libc_free",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "object_address": "0xdbc0e",
+          "runtime_pc": "0x7f2e69f27c0e",
+          "samples": 1,
+          "function_hint": "clock_gettime",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxkbcommon.so.0.0.0",
+          "object_address": "0x21bb0",
+          "runtime_pc": "0x7f2e69bc4bb0",
+          "samples": 1,
+          "function_hint": "xkb_state_update_mask",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxkbcommon.so.0.0.0",
+          "object_address": "0x21bd3",
+          "runtime_pc": "0x7f2e69bc4bd3",
+          "samples": 1,
+          "function_hint": "xkb_state_update_mask",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libxkbcommon.so.0.0.0",
+          "object_address": "0x20fbc",
+          "runtime_pc": "0x7f2e69bc3fbc",
+          "samples": 1,
+          "function_hint": "xkb_keymap_key_repeats",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libXi.so.6.1.0",
+          "object_address": "0xa4d5",
+          "runtime_pc": "0x7f2e69c924d5",
+          "samples": 1,
+          "function_hint": "_XiGetDevicePresenceNotifyEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        },
+        {
+          "module": "/usr/lib/x86_64-linux-gnu/libXi.so.6.1.0",
+          "object_address": "0xa53a",
+          "runtime_pc": "0x7f2e69c9253a",
+          "samples": 1,
+          "function_hint": "_XiGetDevicePresenceNotifyEvent",
+          "function_range_verified": false,
+          "location": "??:?"
+        }
+      ],
+      "unknown": [
+        {
+          "pc": 139837326834713,
+          "count": 2,
+          "reason": "non-file mapping",
+          "mapping": [
+            139837326831616,
+            139837326839808,
+            0,
+            "[vdso]",
+            "r-xp"
+          ]
+        },
+        {
+          "pc": 139837326834814,
+          "count": 1,
+          "reason": "non-file mapping",
+          "mapping": [
+            139837326831616,
+            139837326839808,
+            0,
+            "[vdso]",
+            "r-xp"
+          ]
+        }
+      ],
+      "module_sha256": {
+        "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0": "74cef58f0855cbbe23fce87566249f717e5c8ebeceee09efee393616a9b17697",
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3",
+        "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0": "b03e563b316b8b53c7988f0ee91d6656cc425538e00947a8b14482d179e80099",
+        "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0": "a1cde2cec9b7b8b38e4cca450c55c63651efb80a2458d76964b56b763043f533",
+        "/usr/lib/x86_64-linux-gnu/libc.so.6": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+        "/usr/lib/x86_64-linux-gnu/libxkbcommon.so.0.0.0": "9f26c41577e0e036cbf42352e85b13db6bce953fb730555b4fc7de5362dc93bb",
+        "/usr/lib/x86_64-linux-gnu/libXi.so.6.1.0": "8ca60a4e6a90bba494e601e03e792b2d440cced9985deca64431abbd78613adb"
+      },
+      "limit": "Main thread program counters only, no stacks; samples after interrupted syscalls can reflect return sites rather than kernel cost. Overruns never multiplied into hotspot counts. Function labels are unverified addr2line hints; stripped-library nearest symbols may lie outside the actual function range. Example libc0x9a72e is beyond sem_trywait0x9a6d0+0x2c and must not be attributed to sem_trywait. Native overhead and other-thread coverage remain unqualified."
+    }
+  ]
+}

@@ -3668,6 +3668,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
         "status": "Corrected clamp input; quiet CPU ceiling not met; S5 remains incomplete"
+      },
+      "s5_clamp_cpu_timer_diagnostic": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-cpu-timer-diagnostic/result.json",
+        "status": "Native CPU timer attribution incomplete; no runtime correction justified"
       }
     },
     {
@@ -4398,6 +4403,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
         "status": "Corrected clamp input; quiet CPU ceiling not met; S5 remains incomplete"
+      },
+      "s5_clamp_cpu_timer_diagnostic": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-cpu-timer-diagnostic/result.json",
+        "status": "Native CPU timer attribution incomplete; no runtime correction justified"
       }
     },
     {
