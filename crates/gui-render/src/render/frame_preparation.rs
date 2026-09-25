@@ -556,6 +556,7 @@ impl Renderer {
         terminal_cache: Option<&mut crate::TerminalRenderCache>,
         native_dialog: bool,
     ) -> anyhow::Result<PreparedScene> {
+        let _host = self.resource_host.enter();
         crate::text_metrics::measurement_owner::with_owner(&mut self.measurement_fonts, || {
             Ok({
                 PreparedScene::from_workspace_with_controls(

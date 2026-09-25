@@ -3867,7 +3867,7 @@
         "crates/gui-render/src/render/text_buffer_cache.rs"
       ],
       "test": {
-        "status": "Partial GPU resource observation: bounded native registration/reference/retirement/upload/release history and conservative pre-creation reservation peaks added; existing owners remain authoritative. Conformance and complete native delivery do not establish full CPU/GPU/driver/RSS/subcap or adoption qualification.",
+        "status": "Native measurement adapters now enter their existing renderer-origin scope; the four-host production preparation/refusal/retry test proves attribution and scope restoration. Prior GPU event delivery remains intact. Native replay of this correction and complete CPU-cache/shared incidence, subcap, driver/RSS and adoption qualification remain open.",
         "id": "proof_ac_05",
         "positive": "Create/share/replace/evict/retire allocations and uploads",
         "negative_control": "Count buffer capacity reuse as zero upload",
@@ -4117,6 +4117,12 @@
         "previous_test_status": "Partial PM047 observation:6373native private calls retain complete begin/end and per-call transient/concurrent-occupancy reports, with loss/abandonment/sequence controls. Full allocation identity/reference/release accounting, shared measurement-host incidence and all resource qualification remain open.",
         "status": "Partial GPU resource observation: bounded native registration/reference/retirement/upload/release history and conservative pre-creation reservation peaks added; existing owners remain authoritative. Conformance and complete native delivery do not establish full CPU/GPU/driver/RSS/subcap or adoption qualification.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json"
+      },
+      "s5_measurement_origin_progress": {
+        "qualification_pass": false,
+        "previous_test_status": "Partial GPU resource observation: bounded native registration/reference/retirement/upload/release history and conservative pre-creation reservation peaks added; existing owners remain authoritative. Conformance and complete native delivery do not establish full CPU/GPU/driver/RSS/subcap or adoption qualification.",
+        "status": "Native measurement adapters now enter their existing renderer-origin scope; the four-host production preparation/refusal/retry test proves attribution and scope restoration. Prior GPU event delivery remains intact. Native replay of this correction and complete CPU-cache/shared incidence, subcap, driver/RSS and adoption qualification remain open.",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/measurement-origin/result.json"
       }
     },
     {
@@ -37884,5 +37890,16 @@
       "Full60minute endurance,200window cycles,20recoveries per admitted tier, owner native UX and distinct-reviewer actual replay are still required."
     ],
     "boundaries": "No limits, admission/refusal policy, dependency/license, backend/AA/painter-order, model/journal, prototype or terminal-state changes. Preserve completed S0-S4, GEFN and all nonblocking resize/temporal/T2/unadmitted schematic exclusions."
+  },
+  "s5_measurement_origin": {
+    "status": "Native production preparation adapters retain renderer-origin scope; native qualification remains open",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/measurement-origin/result.json",
+    "limits": [
+      "No new release build or native opening campaign. The existing release binary and preceding native evidence remain the337a5a09 candidate; do not describe them as proving this correction. Include the corrected source in the next combined native resource qualification run.",
+      "Renderer origin is attribution of the current call, not exclusive ownership of shared font/catalog or thread measurement-cache storage. CPU-cache/ref incidence, local and simultaneous subcaps, driver/RSS/overhead, all adoption/backend/scale/cold/endurance and distinct-reviewer native replay remain required.",
+      "The focused production-adapter test establishes this correction only; no global numerical-cap, workload or GPI-S5 acceptance."
+    ],
+    "boundaries": "Preserve S0-S4, GEFN, PM045/PM047 numerical/admission authority, PM029 dependency/license boundaries and all nonblocking resize/temporal/T2/unadmitted schematic exclusions. No rendering, model/journal or prototype changes."
   }
 }

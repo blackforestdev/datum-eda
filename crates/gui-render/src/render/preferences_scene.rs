@@ -202,6 +202,7 @@ impl Renderer {
         scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
         reveal_row: Option<usize>,
     ) -> anyhow::Result<PreparedScene> {
+        let _host = self.resource_host.enter();
         let mut pending_scroll = scroll.clone();
         let prepared =
             crate::text_metrics::measurement_owner::with_owner(&mut self.measurement_fonts, || {

@@ -91,6 +91,9 @@ mod tests {
     #[test]
     #[ignore = "requires local GPU; shared-device native preparation adapters"]
     fn default_native_preparation_adapters_refuse_host_pressure_and_retry() {
+        use crate::cpu_alloc::calls::observation;
+        let trace = observation::start(8192).unwrap();
+        let mut origins = std::collections::BTreeSet::new();
         let instance = wgpu::Instance::default();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
         let (device, queue) =
@@ -99,6 +102,7 @@ mod tests {
             let mut renderer =
                 crate::Renderer::new(&device, &queue, wgpu::TextureFormat::Rgba8UnormSrgb, 4)
                     .unwrap();
+            origins.insert(renderer.resource_owner_id());
             let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
             state.ui.project_preferences = state.ui.global_preferences.clone();
             state.ui.project_preferences.title = "Project Preferences".into();
@@ -168,6 +172,27 @@ mod tests {
             drop(renderer);
             assert_eq!(host.used(), 0);
         }
+        let calls = observation::stop(trace).unwrap();
+        assert_eq!(calls.dropped_events, 0);
+        let measured_origins: std::collections::BTreeSet<_> = calls
+            .events
+            .iter()
+            .filter(|event| event.owner_label == "text-measurement")
+            .map(|event| {
+                event
+                    .renderer_id
+                    .expect("native measurement has its renderer origin")
+            })
+            .collect();
+        assert_eq!(
+            measured_origins, origins,
+            "all four native adapters retain host attribution"
+        );
+        assert_eq!(
+            crate::text_gpu::allocation_host::current(),
+            None,
+            "preparation restores the calling scope"
+        );
     }
 
     #[test]
