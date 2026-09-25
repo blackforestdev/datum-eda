@@ -1,0 +1,303 @@
+{
+  "candidate": "f83cad644af68195a90209dbfec3be9fa8096d27",
+  "binary_sha256": "386babb1f1a13938a9336ecf34f79caf0a54d6a08520206b53bbb6f37445a1b9",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "backend": "x11 on Xwayland",
+  "cycles": [
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 39.99999999999992,
+        "wall_ms": 241.3945549633354
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 33.61720801331103
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "160420 kB",
+        "VmRSS": "160420 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 227.50537400133908
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 25.56412387639284
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "160460 kB",
+        "VmRSS": "160460 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 49.999999999999936,
+        "wall_ms": 213.43429991975427
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 31.893675914034247
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "160476 kB",
+        "VmRSS": "160476 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 4,
+      "open": {
+        "cpu_ms": 60.00000000000006,
+        "wall_ms": 218.23811996728182
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 37.503363098949194
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "160468 kB",
+        "VmRSS": "160468 kB"
+      }
+    },
+    {
+      "host": "GLOBAL",
+      "title": "Global Preferences \u2014 Datum",
+      "cycle": 5,
+      "open": {
+        "cpu_ms": 50.00000000000004,
+        "wall_ms": 220.99889512173831
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 33.81653712131083
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "160468 kB",
+        "VmRSS": "160468 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 189.99999999999994,
+        "wall_ms": 371.2669648230076
+      },
+      "close": {
+        "cpu_ms": 20.000000000000018,
+        "wall_ms": 27.19984296709299
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176580 kB",
+        "VmRSS": "176580 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 209.99999999999997,
+        "wall_ms": 401.4851001556963
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 25.655203964561224
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176604 kB",
+        "VmRSS": "176604 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 219.99999999999997,
+        "wall_ms": 410.2451370563358
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 25.28284816071391
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176616 kB",
+        "VmRSS": "176616 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 4,
+      "open": {
+        "cpu_ms": 199.99999999999994,
+        "wall_ms": 387.2773360926658
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 36.446266109123826
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176628 kB",
+        "VmRSS": "176628 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 5,
+      "open": {
+        "cpu_ms": 210.0000000000002,
+        "wall_ms": 402.2332460153848
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 26.40404994599521
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176628 kB",
+        "VmRSS": "176628 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 30.00000000000025,
+        "wall_ms": 164.02535792440176
+      },
+      "close": {
+        "cpu_ms": 20.000000000000018,
+        "wall_ms": 42.27854614146054
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176692 kB",
+        "VmRSS": "176692 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 39.99999999999959,
+        "wall_ms": 188.5203649289906
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 24.11671495065093
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176696 kB",
+        "VmRSS": "176696 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 30.00000000000025,
+        "wall_ms": 171.28616594709456
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 35.418472019955516
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176700 kB",
+        "VmRSS": "176700 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 4,
+      "open": {
+        "cpu_ms": 40.000000000000036,
+        "wall_ms": 163.97688910365105
+      },
+      "close": {
+        "cpu_ms": 9.999999999999787,
+        "wall_ms": 34.006350208073854
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176712 kB",
+        "VmRSS": "176712 kB"
+      }
+    },
+    {
+      "host": "NEW",
+      "title": "New Project \u2014 Datum",
+      "cycle": 5,
+      "open": {
+        "cpu_ms": 40.000000000000036,
+        "wall_ms": 180.95874111168087
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 27.782117947936058
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "176700 kB",
+        "VmRSS": "176700 kB"
+      }
+    }
+  ],
+  "limits": [
+    "Diagnostics off: process CPU and native window/focus only; engine, GPU, live allocations and full timing not qualified.",
+    "No endurance or independent replay acceptance."
+  ],
+  "rss_initial": {
+    "VmHWM": "160232 kB",
+    "VmRSS": "160232 kB"
+  },
+  "main_window": 33554436,
+  "passed_native_cycles": true,
+  "rss_final": {
+    "VmHWM": "176700 kB",
+    "VmRSS": "176700 kB"
+  },
+  "cleanup": "Owned process terminated; final application teardown not qualified."
+}
