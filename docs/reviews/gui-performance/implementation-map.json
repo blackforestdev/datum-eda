@@ -632,7 +632,18 @@
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s5_idle_host_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/idle-host-batch/result.json",
+        "status": "Bounded W-IDLE four-host X11 evidence; full SH04/S5 qualification remains incomplete",
+        "limits": [
+          "No wholeGPUdriver-client counters: existing opaque NVIDIA handles remain a missing method boundary. Zero application log receipts cannot replace required wholeGPU duty.",
+          "X11 actual60Hz1x single-leaf hidden-terminal only. Wayland,other supported scales,otherleaf configurations and visibleterminal remain.",
+          "Planned three pairs stopped after candidate2 final-close timeout; only first pair completed normally. Remaining three launches not run. No required three-trial or seven-pair inference. No software perpetual-redraw negative run performed; no complete SH04 or S5 acceptance.",
+          "CPU family total captures descendants via cgroup; separate GUI clock residual is not dedicated engine lifetime accounting. Endpoint images do not establish continuous displayed temporal qualification."
+        ]
+      }
     },
     {
       "id": "SH-05",
@@ -4273,6 +4284,17 @@
           "Property query adds a round trip before close, and nine cycles differ from the latest93-cycle failed run; timing and workload perturbation limit inference. Do not infer baseline/candidate regression or repaired delivery.",
           "No gdb attachment occurred, no trace or system settings changed, no third-party source/dependency was modified, and no production code change was justified.",
           "Do not continue retrying this diagnostic unchanged. Retain the armed failure snapshot for the next independently required native workload, removing unrelated pre-close work if preserving original timing."
+        ]
+      },
+      "s5_idle_host_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/idle-host-batch/result.json",
+        "status": "Bounded W-IDLE four-host X11 evidence; full SH04/S5 qualification remains incomplete",
+        "limits": [
+          "No wholeGPUdriver-client counters: existing opaque NVIDIA handles remain a missing method boundary. Zero application log receipts cannot replace required wholeGPU duty.",
+          "X11 actual60Hz1x single-leaf hidden-terminal only. Wayland,other supported scales,otherleaf configurations and visibleterminal remain.",
+          "Planned three pairs stopped after candidate2 final-close timeout; only first pair completed normally. Remaining three launches not run. No required three-trial or seven-pair inference. No software perpetual-redraw negative run performed; no complete SH04 or S5 acceptance.",
+          "CPU family total captures descendants via cgroup; separate GUI clock residual is not dedicated engine lifetime accounting. Endpoint images do not establish continuous displayed temporal qualification."
         ]
       }
     },
