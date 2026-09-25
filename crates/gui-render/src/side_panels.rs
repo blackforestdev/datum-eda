@@ -4,8 +4,9 @@ mod inspector_dispatch;
 mod layer_scroll;
 mod panel_chrome;
 include!("side_panels/layout.rs");
+mod inspector_chrome;
+mod render_inspector;
 mod render_project_filters;
-include!("side_panels/render_inspector.rs");
 include!("side_panels/helpers.rs");
 pub(super) fn render_side_panels(
     state: &ReviewWorkspaceState,
@@ -13,7 +14,7 @@ pub(super) fn render_side_panels(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<()> {
     let left = layout.left_sidebar;
     let right = layout.right_sidebar;
 
@@ -48,5 +49,7 @@ pub(super) fn render_side_panels(
         panel_quads,
         text_runs,
         hit_regions,
-    );
+    )?;
+
+    Ok(())
 }

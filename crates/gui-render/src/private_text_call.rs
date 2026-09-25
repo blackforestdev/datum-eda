@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex};
 
 static LEDGER: Mutex<Ledger> = Mutex::new(Ledger {
     next: 1,
-    calls: Vec::new(),
+    calls: Slots::new(),
 });
 
 #[derive(Clone, Copy, Debug, Default)]
@@ -51,19 +51,70 @@ struct Entry {
     process: Arc<Budget>,
     report: Report,
 }
+// Fixed process coordination storage: no allocation from inside allocator hooks.
+// Native hosts need at most a font/raster pair plus catalog construction each.
+const MAX_CALLS: usize = 64;
+struct Slots {
+    entries: [Option<Entry>; MAX_CALLS],
+    len: usize,
+}
+impl Slots {
+    const fn new() -> Self {
+        Self {
+            entries: [const { None }; MAX_CALLS],
+            len: 0,
+        }
+    }
+    fn len(&self) -> usize {
+        self.len
+    }
+    fn iter(&self) -> impl Iterator<Item = &Entry> {
+        self.entries[..self.len].iter().flatten()
+    }
+    fn iter_mut(&mut self) -> impl Iterator<Item = &mut Entry> {
+        self.entries[..self.len].iter_mut().flatten()
+    }
+    fn push(&mut self, entry: Entry) {
+        self.entries[self.len] = Some(entry);
+        self.len += 1;
+    }
+    fn remove(&mut self, index: usize) -> Entry {
+        let entry = self.entries[index].take().expect("active call");
+        self.len -= 1;
+        if index != self.len {
+            self.entries[index] = self.entries[self.len].take();
+        }
+        entry
+    }
+}
+impl std::ops::Index<usize> for Slots {
+    type Output = Entry;
+    fn index(&self, index: usize) -> &Entry {
+        self.entries[index].as_ref().expect("active call")
+    }
+}
+impl std::ops::IndexMut<usize> for Slots {
+    fn index_mut(&mut self, index: usize) -> &mut Entry {
+        self.entries[index].as_mut().expect("active call")
+    }
+}
+pub fn registry_metadata_bytes() -> usize {
+    std::mem::size_of::<Mutex<Ledger>>()
+}
+
 pub(crate) struct Ledger {
     next: u64,
-    calls: Vec<Entry>,
+    calls: Slots,
 }
 impl Ledger {
     pub(crate) fn used(&self, budget: &Budget) -> u64 {
         let mut bytes = budget.used();
-        for call in &self.calls {
+        for call in self.calls.iter() {
             if std::ptr::eq(budget, &*call.host) || std::ptr::eq(budget, &*call.process) {
                 bytes = bytes.saturating_sub(call.credit);
             }
         }
-        for call in &self.calls {
+        for call in self.calls.iter() {
             if std::ptr::eq(budget, &*call.host) || std::ptr::eq(budget, &*call.process) {
                 // A private call may exceed its reservations, but cannot lend
                 // still-owned pre-call capacity to concurrent admissions.
@@ -91,7 +142,7 @@ impl Ledger {
         }
     }
     pub(super) fn allocation(&mut self, owner: u64, added: u64, removed: u64) {
-        for call in &mut self.calls {
+        for call in self.calls.iter_mut() {
             if call.owner == owner {
                 call.live = call.live + added - removed;
             }
@@ -122,8 +173,11 @@ impl Call {
         process: Arc<Budget>,
         excluded: u64,
         credit: u64,
-    ) -> Self {
+    ) -> anyhow::Result<Self> {
         transaction(|ledger| {
+            if ledger.calls.len() == MAX_CALLS {
+                return None;
+            }
             let usage = scope.usage();
             assert!(
                 !ledger.calls.iter().any(|c| c.owner == usage.owner_id),
@@ -156,8 +210,9 @@ impl Call {
             let process = ledger.used(&ledger.calls[index].process);
             ledger.calls[index].report.host_initial_bytes = host;
             ledger.calls[index].report.process_initial_bytes = process;
-            Self { id: Some(id) }
+            Some(Self { id: Some(id) })
         })
+        .ok_or_else(|| anyhow::anyhow!("private text call concurrency capacity exhausted"))
     }
 
     /// Atomically transfer monitored construction to ordinary retained permits.

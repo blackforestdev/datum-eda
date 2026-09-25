@@ -64,7 +64,8 @@ mod tests {
                         &mut quads,
                         &mut text,
                         &mut hits,
-                    );
+                    )
+                    .unwrap();
                 } else {
                     super::super::render_preferences_dialog(
                         &state.ui.global_preferences,
@@ -74,7 +75,8 @@ mod tests {
                         &mut quads,
                         &mut text,
                         &mut hits,
-                    );
+                    )
+                    .unwrap();
                 }
                 (quads, text, hits)
             };

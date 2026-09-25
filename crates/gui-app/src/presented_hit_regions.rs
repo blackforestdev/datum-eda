@@ -47,7 +47,8 @@ mod tests {
         state.ui.active_menu = Some("File".to_owned());
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
         let camera = CameraState::fit_to_bounds(&state.scene.bounds);
-        let mut prepared = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+        let mut prepared =
+            PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         let regions = prepared.hit_regions.clone();
         let samples: Vec<_> = regions
             .iter()
@@ -73,7 +74,8 @@ mod tests {
         hits.present(&mut prepared);
         hits.mark_pending();
         state.ui.active_menu = None;
-        let mut replacement = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+        let mut replacement =
+            PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         // Preparation or a failed frame cannot publish a menu dismissal.
         for (x, y, expected) in samples {
             assert_eq!(hits.hit_test(x, y).cloned(), expected);

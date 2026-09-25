@@ -145,35 +145,37 @@ pub(super) fn draw_header_chip(
     y: f32,
     quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
-) -> RectPx {
-    let rect = RectPx {
-        x,
-        y,
-        width: measured_text_run_width_px(
+) -> anyhow::Result<RectPx> {
+    Ok({
+        let rect = RectPx {
+            x,
+            y,
+            width: measured_text_run_width_px(
+                label,
+                design_tokens::typography::MICRO_SIZE,
+                TextFace::Mono,
+            )? + 14.0,
+            height: 20.0,
+        };
+        push_rounded_rect_with_border(
+            quads,
+            rect,
+            design_tokens::chrome::SURFACE_01,
+            design_tokens::chrome::BORDER_STRONG,
+            1.0,
+            design_tokens::radius::SM,
+        );
+        draw_text(
             label,
+            rect.x + 7.0,
+            rect.y + 5.0,
             design_tokens::typography::MICRO_SIZE,
+            TEXT_MUTED,
             TextFace::Mono,
-        ) + 14.0,
-        height: 20.0,
-    };
-    push_rounded_rect_with_border(
-        quads,
-        rect,
-        design_tokens::chrome::SURFACE_01,
-        design_tokens::chrome::BORDER_STRONG,
-        1.0,
-        design_tokens::radius::SM,
-    );
-    draw_text(
-        label,
-        rect.x + 7.0,
-        rect.y + 5.0,
-        design_tokens::typography::MICRO_SIZE,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text,
-    );
-    rect
+            text,
+        );
+        rect
+    })
 }
 
 pub(super) fn draw_search_icon(x: f32, y: f32, quads: &mut ControlPainter<'_>) {
@@ -381,99 +383,101 @@ pub(super) fn draw_preference_control(
     available: bool,
     quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
-) -> RectPx {
-    use datum_gui_protocol::GlobalPreferenceControlUi;
+) -> anyhow::Result<RectPx> {
+    Ok({
+        use datum_gui_protocol::GlobalPreferenceControlUi;
 
-    match control {
-        GlobalPreferenceControlUi::Boolean {
-            value,
-            off_label,
-            on_label,
-        } => {
-            let width = if available { 78.0 } else { 138.0 };
-            let rect = RectPx {
-                x: right - width,
-                y,
-                width,
-                height: 28.0,
-            };
-            draw_boolean_control(
-                *value,
-                if *value { on_label } else { off_label },
-                rect,
-                focused,
-                available,
-                quads,
-                text,
-            );
-            rect
+        match control {
+            GlobalPreferenceControlUi::Boolean {
+                value,
+                off_label,
+                on_label,
+            } => {
+                let width = if available { 78.0 } else { 138.0 };
+                let rect = RectPx {
+                    x: right - width,
+                    y,
+                    width,
+                    height: 28.0,
+                };
+                draw_boolean_control(
+                    *value,
+                    if *value { on_label } else { off_label },
+                    rect,
+                    focused,
+                    available,
+                    quads,
+                    text,
+                );
+                rect
+            }
+            GlobalPreferenceControlUi::SingleChoice { value, choices } => {
+                let label = choices
+                    .iter()
+                    .find(|(candidate, _)| candidate == value)
+                    .map(|(_, label)| label.as_str())
+                    .unwrap_or(value);
+                let measured_label = if available {
+                    std::borrow::Cow::Borrowed(label)
+                } else {
+                    std::borrow::Cow::Owned(format!("{label} · unavailable"))
+                };
+                let width = (measured_text_run_width_px(
+                    &measured_label,
+                    design_tokens::typography::CAPTION_SIZE,
+                    TextFace::Ui,
+                )? + 34.0)
+                    .max(58.0);
+                let rect = RectPx {
+                    x: right - width,
+                    y,
+                    width,
+                    height: 30.0,
+                };
+                draw_choice_control(label, rect, focused, available, quads, text);
+                rect
+            }
+            GlobalPreferenceControlUi::Integer { value, suffix, .. } => {
+                let rect = control_rect(right, y, 112.0);
+                draw_choice_control(
+                    &format!("{value}{suffix}"),
+                    rect,
+                    focused,
+                    available,
+                    quads,
+                    text,
+                );
+                rect
+            }
+            GlobalPreferenceControlUi::Identity { value, placeholder } => {
+                let rect = control_rect(right, y, 178.0);
+                draw_choice_control(
+                    value.as_deref().unwrap_or(placeholder),
+                    rect,
+                    focused,
+                    available,
+                    quads,
+                    text,
+                );
+                rect
+            }
+            GlobalPreferenceControlUi::Structured {
+                value_summary,
+                action_label,
+            } => {
+                let rect = control_rect(right, y, 178.0);
+                button(
+                    &format!("{value_summary} · {action_label}"),
+                    rect,
+                    focused,
+                    available,
+                    quads,
+                    text,
+                );
+                rect
+            }
         }
-        GlobalPreferenceControlUi::SingleChoice { value, choices } => {
-            let label = choices
-                .iter()
-                .find(|(candidate, _)| candidate == value)
-                .map(|(_, label)| label.as_str())
-                .unwrap_or(value);
-            let measured_label = if available {
-                std::borrow::Cow::Borrowed(label)
-            } else {
-                std::borrow::Cow::Owned(format!("{label} · unavailable"))
-            };
-            let width = (measured_text_run_width_px(
-                &measured_label,
-                design_tokens::typography::CAPTION_SIZE,
-                TextFace::Ui,
-            ) + 34.0)
-                .max(58.0);
-            let rect = RectPx {
-                x: right - width,
-                y,
-                width,
-                height: 30.0,
-            };
-            draw_choice_control(label, rect, focused, available, quads, text);
-            rect
-        }
-        GlobalPreferenceControlUi::Integer { value, suffix, .. } => {
-            let rect = control_rect(right, y, 112.0);
-            draw_choice_control(
-                &format!("{value}{suffix}"),
-                rect,
-                focused,
-                available,
-                quads,
-                text,
-            );
-            rect
-        }
-        GlobalPreferenceControlUi::Identity { value, placeholder } => {
-            let rect = control_rect(right, y, 178.0);
-            draw_choice_control(
-                value.as_deref().unwrap_or(placeholder),
-                rect,
-                focused,
-                available,
-                quads,
-                text,
-            );
-            rect
-        }
-        GlobalPreferenceControlUi::Structured {
-            value_summary,
-            action_label,
-        } => {
-            let rect = control_rect(right, y, 178.0);
-            button(
-                &format!("{value_summary} · {action_label}"),
-                rect,
-                focused,
-                available,
-                quads,
-                text,
-            );
-            rect
-        }
-    }
+    })
 }
 
 fn control_rect(right: f32, y: f32, width: f32) -> RectPx {

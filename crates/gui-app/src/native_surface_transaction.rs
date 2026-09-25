@@ -191,9 +191,11 @@ impl SurfaceTransaction {
         });
         super::append_gui_verbose_diagnostic_line(|| {
             format!(
-                "native font ownership window={:?} usage={:?}",
+                "native font ownership window={:?} usage={:?} measurement={:?} process_registry_bytes={:?}",
                 self.window,
-                renderer.font_cpu_usage()
+                renderer.font_cpu_usage(),
+                renderer.measurement_cpu_usage(),
+                datum_gui_render::cpu_alloc::registry_metadata_bytes()
             )
         });
         let Some(attachment) = renderer.surface_attachment_snapshot() else {

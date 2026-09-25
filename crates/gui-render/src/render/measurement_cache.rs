@@ -87,6 +87,7 @@ impl MeasurementCache {
         owner.retained_bytes = self.retained_bytes();
     }
 
+    #[cfg(test)]
     pub(super) fn measure(
         &mut self,
         text: &str,
@@ -97,6 +98,7 @@ impl MeasurementCache {
         self.measure_kind(text, size, face, MeasurementKind::Width, miss)
     }
 
+    #[cfg(test)]
     pub(super) fn measure_kind(
         &mut self,
         text: &str,
@@ -105,6 +107,18 @@ impl MeasurementCache {
         kind: MeasurementKind,
         miss: impl FnOnce() -> f32,
     ) -> f32 {
+        self.try_measure_kind(text, size, face, kind, || Ok(miss()))
+            .expect("infallible measurement")
+    }
+
+    pub(super) fn try_measure_kind(
+        &mut self,
+        text: &str,
+        size: f32,
+        face: TextFace,
+        kind: MeasurementKind,
+        miss: impl FnOnce() -> anyhow::Result<f32>,
+    ) -> anyhow::Result<f32> {
         if let Some(index) = self
             .entries
             .iter()
@@ -118,13 +132,13 @@ impl MeasurementCache {
             let entry = self.entries.remove(index).expect("matched entry exists");
             let width = entry.4;
             self.entries.push_front(entry);
-            return width;
+            return Ok(width);
         }
         #[cfg(test)]
         {
             self.misses += 1;
         }
-        let width = miss();
+        let width = miss()?;
         // Arbitrary user text must not turn scalar measurement reuse into an
         // unbounded string history. Oversized strings are measured but not held.
         if text.len() <= MAX_MEASUREMENT_TEXT_BYTES {
@@ -132,7 +146,7 @@ impl MeasurementCache {
                 && self.entries.len() == self.entries.capacity()
                 && self.entries.try_reserve(1).is_err()
             {
-                return width;
+                return Ok(width);
             }
             while self.entries.len() >= MAX_MEASUREMENTS
                 || self.text_bytes + text.len() > MAX_MEASUREMENT_TEXT_BYTES
@@ -159,7 +173,7 @@ impl MeasurementCache {
             // optional key allocation failed. Always publish that final state.
             self.publish_usage();
         }
-        width
+        Ok(width)
     }
 }
 
@@ -167,6 +181,42 @@ impl MeasurementCache {
 mod tests {
     use super::super::measure_uncached;
     use super::*;
+    #[test]
+    fn rejected_measurement_is_not_cached_as_a_layout_value() {
+        let mut cache = MeasurementCache::default();
+        assert!(
+            cache
+                .try_measure_kind(
+                    "retry",
+                    13.0,
+                    TextFace::Ui,
+                    MeasurementKind::Width,
+                    || anyhow::bail!("construction refused")
+                )
+                .is_err()
+        );
+        assert!(cache.entries.is_empty());
+        assert_eq!(
+            cache
+                .try_measure_kind("retry", 13.0, TextFace::Ui, MeasurementKind::Width, || Ok(
+                    42.0
+                ))
+                .unwrap(),
+            42.0
+        );
+        assert_eq!(
+            cache
+                .try_measure_kind(
+                    "retry",
+                    13.0,
+                    TextFace::Ui,
+                    MeasurementKind::Width,
+                    || panic!("accepted measurement should be cached")
+                )
+                .unwrap(),
+            42.0
+        );
+    }
     #[test]
     fn exact_measurements_reuse_only_identical_font_size_and_text() {
         let mut cache = MeasurementCache::default();
@@ -179,7 +229,7 @@ mod tests {
             ("Global Preferences", 13.0, TextFace::Ui),
             ("Units · µm", 13.0, TextFace::Mono),
         ] {
-            let actual = measure_uncached(text, size, face);
+            let actual = measure_uncached(text, size, face).unwrap();
             let first = cache.measure(text, size, face, || actual);
             assert_eq!(first.to_bits(), actual.to_bits());
             assert_eq!(
@@ -236,7 +286,7 @@ mod tests {
             let barrier = barrier.clone();
             let send = send.clone();
             threads.push(std::thread::spawn(move || {
-                super::super::measured_text_run_width_px(text, 13.0, TextFace::Ui);
+                super::super::measured_text_run_width_px(text, 13.0, TextFace::Ui).unwrap();
                 let thread = std::thread::current().id();
                 send.send((thread, text.len())).unwrap();
                 barrier.wait();

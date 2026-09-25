@@ -18,119 +18,123 @@ pub(super) fn render_datum_console(
     quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> Option<ConsoleOverlayLayout> {
-    let starts = (quads.len(), text_runs.len(), hit_regions.len());
-    let record = state.ui.console.visible_latest();
-    if record.is_none() && !state.ui.console.history_expanded() {
-        return None;
-    }
-    let panes = shell.viewport_panes(&state.ui.layout);
-    let focused = panes.focused_pane();
-    let body = focused.rect.body();
-
-    let left = 12.0 * scale;
-    let bottom = 10.0 * scale;
-    let pad_x = 12.0 * scale;
-    let pad_y = 5.0 * scale;
-    let row_height = 16.0 * scale;
-    let strip_height = row_height + pad_y * 2.0;
-    let max_width = body.width * MAX_PANE_WIDTH_FRACTION;
-    if body.width < 96.0 * scale || body.height < strip_height + bottom {
-        return None;
-    }
-    let (strip, text_clip) = if let Some(record) = record {
-        if max_width <= pad_x * 2.0 {
-            return None;
+) -> anyhow::Result<Option<ConsoleOverlayLayout>> {
+    Ok({
+        let starts = (quads.len(), text_runs.len(), hit_regions.len());
+        let record = state.ui.console.visible_latest();
+        if record.is_none() && !state.ui.console.history_expanded() {
+            return Ok(None);
         }
-        let (glyph, semantic_prefix, text_color) = presentation(record.category, record.severity);
-        let visible_text = match glyph {
-            Some(glyph) => format!("{glyph} {semantic_prefix}{}", record.message),
-            None => format!("  {semantic_prefix}{}", record.message),
-        };
-        let natural_text_width =
-            estimated_text_run_width_px(&visible_text, TEXT_SIZE * scale, TextFace::Mono) - 16.0;
-        let strip_width = (natural_text_width + pad_x * 2.0)
-            .min(max_width)
-            .max((pad_x * 2.0 + 1.0).min(max_width));
-        let strip = RectPx {
-            x: body.x + left,
-            y: body.y + body.height - bottom - strip_height,
-            width: strip_width,
-            height: strip_height,
-        };
-        let text_clip = RectPx {
-            x: strip.x + pad_x,
-            y: strip.y + pad_y,
-            width: (strip.width - pad_x * 2.0).max(1.0),
-            height: row_height,
-        };
+        let panes = shell.viewport_panes(&state.ui.layout);
+        let focused = panes.focused_pane();
+        let body = focused.rect.body();
 
-        push_card(quads, strip, record.severity, scale);
-        if record.category == ConsoleFeedbackCategory::ToolPrompt {
-            push_tool_diamond(
-                quads,
-                text_clip.x + 4.5 * scale,
-                text_clip.y + row_height * 0.5,
-                scale,
+        let left = 12.0 * scale;
+        let bottom = 10.0 * scale;
+        let pad_x = 12.0 * scale;
+        let pad_y = 5.0 * scale;
+        let row_height = 16.0 * scale;
+        let strip_height = row_height + pad_y * 2.0;
+        let max_width = body.width * MAX_PANE_WIDTH_FRACTION;
+        if body.width < 96.0 * scale || body.height < strip_height + bottom {
+            return Ok(None);
+        }
+        let (strip, text_clip) = if let Some(record) = record {
+            if max_width <= pad_x * 2.0 {
+                return Ok(None);
+            }
+            let (glyph, semantic_prefix, text_color) =
+                presentation(record.category, record.severity);
+            let visible_text = match glyph {
+                Some(glyph) => format!("{glyph} {semantic_prefix}{}", record.message),
+                None => format!("  {semantic_prefix}{}", record.message),
+            };
+            let natural_text_width =
+                estimated_text_run_width_px(&visible_text, TEXT_SIZE * scale, TextFace::Mono)
+                    - 16.0;
+            let strip_width = (natural_text_width + pad_x * 2.0)
+                .min(max_width)
+                .max((pad_x * 2.0 + 1.0).min(max_width));
+            let strip = RectPx {
+                x: body.x + left,
+                y: body.y + body.height - bottom - strip_height,
+                width: strip_width,
+                height: strip_height,
+            };
+            let text_clip = RectPx {
+                x: strip.x + pad_x,
+                y: strip.y + pad_y,
+                width: (strip.width - pad_x * 2.0).max(1.0),
+                height: row_height,
+            };
+
+            push_card(quads, strip, record.severity, scale);
+            if record.category == ConsoleFeedbackCategory::ToolPrompt {
+                push_tool_diamond(
+                    quads,
+                    text_clip.x + 4.5 * scale,
+                    text_clip.y + row_height * 0.5,
+                    scale,
+                );
+            }
+            draw_text_clipped(
+                &visible_text,
+                text_clip.x,
+                text_clip.y,
+                TEXT_SIZE,
+                text_color,
+                TextFace::Mono,
+                text_clip,
+                text_runs,
             );
-        }
-        draw_text_clipped(
-            &visible_text,
-            text_clip.x,
-            text_clip.y,
-            TEXT_SIZE,
-            text_color,
-            TextFace::Mono,
-            text_clip,
-            text_runs,
-        );
-        hit_regions.push(HitRegion {
-            target: HitTarget::ConsoleHistoryToggle,
-            rect: strip,
-        });
-        (strip, text_clip)
-    } else {
-        // History has its own permanent View-menu affordance. A zero-height
-        // anchor lets the panel occupy the same place after the strip fades,
-        // without resurrecting a synthetic feedback record or fake strip.
-        let anchor = RectPx {
-            x: body.x + left,
-            y: body.y + body.height - bottom,
-            width: 0.0,
-            height: 0.0,
+            hit_regions.push(HitRegion {
+                target: HitTarget::ConsoleHistoryToggle,
+                rect: strip,
+            });
+            (strip, text_clip)
+        } else {
+            // History has its own permanent View-menu affordance. A zero-height
+            // anchor lets the panel occupy the same place after the strip fades,
+            // without resurrecting a synthetic feedback record or fake strip.
+            let anchor = RectPx {
+                x: body.x + left,
+                y: body.y + body.height - bottom,
+                width: 0.0,
+                height: 0.0,
+            };
+            (anchor, anchor)
         };
-        (anchor, anchor)
-    };
 
-    let history_panel = if state.ui.console.history_expanded() {
-        Some(render_history(
-            state,
-            body,
-            strip,
-            scale,
+        let history_panel = if state.ui.console.history_expanded() {
+            Some(render_history(
+                state,
+                body,
+                strip,
+                scale,
+                quads,
+                text_runs,
+                hit_regions,
+            )?)
+        } else {
+            None
+        };
+
+        crate::hit_clipping::clip_content(
             quads,
             text_runs,
             hit_regions,
-        ))
-    } else {
-        None
-    };
-
-    crate::hit_clipping::clip_content(
-        quads,
-        text_runs,
-        hit_regions,
-        starts.0,
-        starts.1,
-        starts.2,
-        body,
-    );
-    Some(ConsoleOverlayLayout {
-        pane_id: focused.id,
-        pane_body: body,
-        strip,
-        text_clip,
-        history_panel,
+            starts.0,
+            starts.1,
+            starts.2,
+            body,
+        );
+        Some(ConsoleOverlayLayout {
+            pane_id: focused.id,
+            pane_body: body,
+            strip,
+            text_clip,
+            history_panel,
+        })
     })
 }
 
@@ -143,126 +147,128 @@ fn render_history(
     quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> RectPx {
-    let starts = (quads.len(), text_runs.len(), hit_regions.len());
-    let gap = 6.0 * scale;
-    let width = (520.0 * scale).min((body.width - 24.0 * scale).max(1.0));
-    let max_height = 170.0 * scale;
-    let available = (strip.y - body.y - gap).max(1.0);
-    let height = max_height.min(available);
-    let panel = RectPx {
-        x: strip.x,
-        y: strip.y - gap - height,
-        width,
-        height,
-    };
-    quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
-    let header_h = 26.0 * scale;
-    let header = RectPx {
-        height: header_h,
-        ..panel
-    };
-    quads.push(Quad::from_rect(header, design_tokens::chrome::SURFACE_02));
-    push_border(quads, panel, design_tokens::chrome::BORDER_STRONG, scale);
-    let chip_w = 48.0 * scale;
-    let chip_gap = 5.0 * scale;
-    let mut chip_x = panel.x + panel.width - 11.0 * scale - chip_w * 3.0 - chip_gap * 2.0;
-    draw_text_clipped(
-        "SESSION HISTORY",
-        panel.x + 11.0 * scale,
-        panel.y + 6.0 * scale,
-        10.5,
-        design_tokens::chrome::TEXT_SECONDARY,
-        TextFace::UiStrong,
-        RectPx {
-            width: (chip_x - panel.x - chip_gap).max(0.0),
-            ..header
-        },
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::ConsoleHistoryToggle,
-        rect: header,
-    });
-
-    let chips = [
-        (ConsoleHistoryFilter::All, "all"),
-        (ConsoleHistoryFilter::Operations, "ops"),
-        (ConsoleHistoryFilter::Errors, "errors"),
-    ];
-    for (filter, label) in chips {
-        let chip = RectPx {
-            x: chip_x,
-            y: panel.y + 5.0 * scale,
-            width: chip_w,
-            height: 16.0 * scale,
+) -> anyhow::Result<RectPx> {
+    Ok({
+        let starts = (quads.len(), text_runs.len(), hit_regions.len());
+        let gap = 6.0 * scale;
+        let width = (520.0 * scale).min((body.width - 24.0 * scale).max(1.0));
+        let max_height = 170.0 * scale;
+        let available = (strip.y - body.y - gap).max(1.0);
+        let height = max_height.min(available);
+        let panel = RectPx {
+            x: strip.x,
+            y: strip.y - gap - height,
+            width,
+            height,
         };
-        let selected = state.ui.console.history_filter() == filter;
-        push_border(
-            quads,
-            chip,
-            if selected {
-                design_tokens::chrome::ACCENT
-            } else {
-                design_tokens::chrome::BORDER_SUBTLE
-            },
-            scale,
-        );
+        quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
+        let header_h = 26.0 * scale;
+        let header = RectPx {
+            height: header_h,
+            ..panel
+        };
+        quads.push(Quad::from_rect(header, design_tokens::chrome::SURFACE_02));
+        push_border(quads, panel, design_tokens::chrome::BORDER_STRONG, scale);
+        let chip_w = 48.0 * scale;
+        let chip_gap = 5.0 * scale;
+        let mut chip_x = panel.x + panel.width - 11.0 * scale - chip_w * 3.0 - chip_gap * 2.0;
         draw_text_clipped(
-            label,
-            chip.x + 6.0 * scale,
-            chip.y + 1.0 * scale,
-            9.5,
-            if selected {
-                design_tokens::chrome::ACCENT
-            } else {
-                design_tokens::chrome::TEXT_MUTED
+            "SESSION HISTORY",
+            panel.x + 11.0 * scale,
+            panel.y + 6.0 * scale,
+            10.5,
+            design_tokens::chrome::TEXT_SECONDARY,
+            TextFace::UiStrong,
+            RectPx {
+                width: (chip_x - panel.x - chip_gap).max(0.0),
+                ..header
             },
-            TextFace::Mono,
-            chip,
             text_runs,
         );
         hit_regions.push(HitRegion {
-            target: HitTarget::ConsoleHistoryFilter(filter),
-            rect: chip,
+            target: HitTarget::ConsoleHistoryToggle,
+            rect: header,
         });
-        chip_x += chip_w + chip_gap;
-    }
 
-    let rows_clip = RectPx {
-        x: panel.x + 1.0 * scale,
-        y: panel.y + header_h,
-        width: panel.width - 2.0 * scale,
-        height: panel.height - header_h - 1.0 * scale,
-    };
-    let rows = history_rows(state);
-    let scroll = state.ui.console.history_scroll_offset();
-    let end = rows
-        .len()
-        .saturating_sub(scroll.min(rows.len().saturating_sub(1)));
-    for (index, clip) in history_layout::visible_rows(&rows[..end], rows_clip, scale) {
-        let row = &rows[index];
-        draw_text_clipped(
-            &row.text,
-            clip.x,
-            clip.y,
-            11.5,
-            row.color,
-            TextFace::Mono,
-            clip,
+        let chips = [
+            (ConsoleHistoryFilter::All, "all"),
+            (ConsoleHistoryFilter::Operations, "ops"),
+            (ConsoleHistoryFilter::Errors, "errors"),
+        ];
+        for (filter, label) in chips {
+            let chip = RectPx {
+                x: chip_x,
+                y: panel.y + 5.0 * scale,
+                width: chip_w,
+                height: 16.0 * scale,
+            };
+            let selected = state.ui.console.history_filter() == filter;
+            push_border(
+                quads,
+                chip,
+                if selected {
+                    design_tokens::chrome::ACCENT
+                } else {
+                    design_tokens::chrome::BORDER_SUBTLE
+                },
+                scale,
+            );
+            draw_text_clipped(
+                label,
+                chip.x + 6.0 * scale,
+                chip.y + 1.0 * scale,
+                9.5,
+                if selected {
+                    design_tokens::chrome::ACCENT
+                } else {
+                    design_tokens::chrome::TEXT_MUTED
+                },
+                TextFace::Mono,
+                chip,
+                text_runs,
+            );
+            hit_regions.push(HitRegion {
+                target: HitTarget::ConsoleHistoryFilter(filter),
+                rect: chip,
+            });
+            chip_x += chip_w + chip_gap;
+        }
+
+        let rows_clip = RectPx {
+            x: panel.x + 1.0 * scale,
+            y: panel.y + header_h,
+            width: panel.width - 2.0 * scale,
+            height: panel.height - header_h - 1.0 * scale,
+        };
+        let rows = history_rows(state);
+        let scroll = state.ui.console.history_scroll_offset();
+        let end = rows
+            .len()
+            .saturating_sub(scroll.min(rows.len().saturating_sub(1)));
+        for (index, clip) in history_layout::visible_rows(&rows[..end], rows_clip, scale)? {
+            let row = &rows[index];
+            draw_text_clipped(
+                &row.text,
+                clip.x,
+                clip.y,
+                11.5,
+                row.color,
+                TextFace::Mono,
+                clip,
+                text_runs,
+            );
+        }
+        crate::hit_clipping::clip_content(
+            quads,
             text_runs,
+            hit_regions,
+            starts.0,
+            starts.1,
+            starts.2,
+            panel,
         );
-    }
-    crate::hit_clipping::clip_content(
-        quads,
-        text_runs,
-        hit_regions,
-        starts.0,
-        starts.1,
-        starts.2,
-        panel,
-    );
-    panel
+        panel
+    })
 }
 
 struct HistoryRow {
@@ -507,8 +513,9 @@ mod tests {
         let mut quads = Vec::new();
         let mut text = Vec::new();
         let mut hits = Vec::new();
-        let layout =
-            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits).unwrap();
+        let layout = render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits)
+            .unwrap()
+            .unwrap();
         let panel = layout.history_panel.unwrap();
         assert!(panel.width < 200.0, "exercise crowded filter chips");
         assert!(!quads.is_empty() && !text.is_empty() && !hits.is_empty());
@@ -557,6 +564,7 @@ mod tests {
                     &mut text,
                     &mut Vec::new(),
                 )
+                .unwrap()
                 .expect("visible record renders");
 
                 assert_eq!(layout.pane_id, focused);
@@ -584,6 +592,7 @@ mod tests {
         let mut text = Vec::new();
         let layout =
             render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut Vec::new())
+                .unwrap()
                 .unwrap();
 
         assert_eq!(shell, shell_before, "Console reserves no shell geometry");
@@ -617,6 +626,7 @@ mod tests {
                 &mut Vec::new(),
                 &mut Vec::new(),
             )
+            .unwrap()
             .is_none()
         );
 
@@ -642,6 +652,7 @@ mod tests {
         let mut hits = Vec::new();
 
         let layout = render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits)
+            .unwrap()
             .expect("expanded history owns presentation independently of the transient strip");
 
         assert_eq!(layout.strip.height, 0.0);
@@ -666,7 +677,8 @@ mod tests {
             800,
             super::super::CameraState::fit_to_bounds(&state.scene.bounds),
             &retained,
-        );
+        )
+        .unwrap();
 
         let layout = prepared
             .console_overlay_layout()
@@ -705,8 +717,9 @@ mod tests {
         let mut quads = Vec::new();
         let mut text = Vec::new();
         let mut hits = Vec::new();
-        let layout =
-            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits).unwrap();
+        let layout = render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits)
+            .unwrap()
+            .unwrap();
 
         assert!(layout.history_panel.is_some());
         assert!(text.iter().any(|run| run.text.contains("gui")));
@@ -736,7 +749,7 @@ mod tests {
             quads.clear();
             text.clear();
             hits.clear();
-            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits);
+            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits).unwrap();
             assert!(
                 text.iter().any(|run| run.text == rows[0].text),
                 "oversized stored scroll must keep the oldest filtered record visible"

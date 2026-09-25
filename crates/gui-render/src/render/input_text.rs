@@ -18,10 +18,10 @@ pub(crate) fn paint_input_text(
     layout: InputTextLayout,
     quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
-) {
+) -> anyhow::Result<()> {
     let bounds = layout.bounds;
     if bounds.width <= 0.0 || bounds.height <= 0.0 {
-        return;
+        return Ok(());
     }
     let input_x = bounds.x + layout.left;
     let empty = value.is_empty();
@@ -57,7 +57,7 @@ pub(crate) fn paint_input_text(
                     value,
                     design_tokens::typography::BODY_SIZE,
                     TextFace::Ui,
-                )
+                )?
                 + layout.caret_trailing)
                 .min(bounds.x + bounds.width - layout.right)
         };
@@ -71,6 +71,8 @@ pub(crate) fn paint_input_text(
             quads.push(Quad::from_rect(visible, TEXT_PRIMARY));
         }
     }
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -105,7 +107,8 @@ mod tests {
                     },
                     &mut ControlPainter::new(&mut quads, &mut cache, 1.0),
                     &mut text,
-                );
+                )
+                .unwrap();
                 assert_eq!(text[0].text, value);
                 assert!(text[0].clip_bounds.unwrap().width <= bounds.width);
                 assert_eq!(

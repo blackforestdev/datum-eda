@@ -102,7 +102,8 @@ fn shell_and_hit_regions_hold_layout_invariants_across_scale_matrix() {
             scale,
             CameraState::fit_to_bounds(&state.scene.bounds),
             &retained,
-        );
+        )
+        .unwrap();
         let panels = [
             prepared.layout.top_menu_bar,
             prepared.layout.left_sidebar,

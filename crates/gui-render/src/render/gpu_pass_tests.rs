@@ -7,7 +7,8 @@ fn empty_workspace_text_omits_preparation_and_pass_without_pixel_change() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut renderer = hardware_renderer_with_features(960, 720, wgpu::Features::TIMESTAMP_QUERY);
     let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut invisible = prepared.menu_overlay_text_runs[0].clone();
     invisible.x = -1000.0;
     invisible.y = -1000.0;

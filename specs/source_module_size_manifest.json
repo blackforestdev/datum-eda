@@ -679,18 +679,18 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 6396
+        "expanded_lines": 6244
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Shared shell solve and bounded cache ownership extracted from textual layout into render/shell_layout.rs. App-only cache retired; remaining include debt retains exact downward ceiling. Uniform allocation/binding ownership consolidated in uniform_buffer; obsolete root DeviceExt import removed, expanded ceiling7152. RetainedScene immutable metadata and weak lifetime accounting extracted to retained_scene_owner.rs; expanded ceiling ratchets7152 to7146. PM045 board hit construction and shared allocation-free component bounds extracted into normal modules; exact ceiling ratcheted. Remaining debt preserved. PM045 consumer provenance moves PreparedScene storage beside its existing access owner. Actual expanded source falls 6604 to 6557; stale 6855 ceiling reconciled downward. Existing include debt remains."
+      "note": "Fallible shared text preparation moves display text helpers and scene-layout verification into normal owning modules; remaining legacy ownership retains an exact downward ceiling."
     },
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 840
+        "pre_test_lines": 795
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -712,35 +712,13 @@
     "crates/gui-render/src/render/tests.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 1070
+        "file_lines": 960
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Text identity and signature tests extracted into a normal test module; remaining test debt ratcheted downward."
-    },
-    "crates/gui-render/src/side_panels.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "expanded_lines": 1011
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Project, Layers and Inspector solve ownership extracted into dedicated normal modules using shared bounded layout cache policy. Remaining Inspector composition include debt retains exact downward ceiling."
-    },
-    "crates/gui-render/src/side_panels/render_inspector.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 785
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Fallible shared text preparation moves display text helpers and scene-layout verification into normal owning modules; remaining legacy ownership retains an exact downward ceiling."
     },
     "crates/test-harness/src/bin/m3_sidecar_roundtrip_fidelity.rs": {
       "kind": "rust-production",

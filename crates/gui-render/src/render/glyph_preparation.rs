@@ -45,11 +45,15 @@ pub(super) fn release_scratch(
     layouts: &mut TextBufferCache,
     raster: &mut crate::text_gpu::raster::Raster,
     fonts: &mut crate::text_layout::fonts::Fonts,
+    measurement: &mut Option<crate::text_metrics::measurement_owner::Owner>,
     host: &std::sync::Arc<crate::text_gpu::budget::Budget>,
     bytes: u64,
 ) {
     use crate::text_layout::fonts::Source;
     layouts.release_layout_scratch_for(bytes, host);
     raster.release_for(bytes, host);
+    if let Some(measurement) = measurement {
+        measurement.release_for(bytes);
+    }
     fonts.release_for(bytes);
 }

@@ -1,0 +1,117 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.004s
+
+OK
+Cargo resource policy: PASS
+== rustfmt: workspace formatting gate ==
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+OK
+rustfmt gate passed for workspace (3 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).
+== clippy: workspace lint gate (-D warnings) ==
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.9 GiB target_free=171.5 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 31.9 GiB used; soft limit 20.0 GiB
+    Checking arrayvec v0.7.6
+   Compiling syn v2.0.117
+   Compiling getrandom v0.3.4
+    Checking num-traits v0.2.19
+    Checking bit-vec v0.8.0
+    Checking profiling v1.0.17
+    Checking fastrand v2.3.0
+    Checking wait-timeout v0.2.1
+    Checking fnv v1.0.7
+    Checking quick-error v1.2.3
+    Checking regex-syntax v0.8.10
+    Checking taffy v0.11.0
+    Checking tempfile v3.27.0
+    Checking bit-set v0.8.0
+    Checking unarray v0.1.4
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking rusty-fork v0.3.1
+    Checking rand_core v0.9.5
+    Checking rand_xorshift v0.4.0
+    Checking rand v0.9.2
+    Checking euclid v0.22.14
+    Checking ordered-float v4.6.0
+    Checking moxcms v0.8.1
+    Checking lyon_geom v1.0.19
+    Checking etagere v0.2.15
+    Checking lyon_path v1.0.19
+    Checking lyon_tessellation v1.0.20
+   Compiling zerocopy-derive v0.8.47
+   Compiling thiserror-impl v2.0.18
+   Compiling serde_derive v1.0.228
+   Compiling bytemuck_derive v1.10.2
+   Compiling thiserror-impl v1.0.69
+   Compiling clap_derive v4.6.0
+    Checking thiserror v2.0.18
+    Checking bytemuck v1.25.0
+    Checking gpu-allocator v0.28.0
+    Checking thiserror v1.0.69
+    Checking calloop v0.13.0
+    Checking font-types v0.11.1
+    Checking zerocopy v0.8.47
+    Checking font-types v0.10.1
+    Checking wgpu-types v28.0.0
+    Checking tiny-skia-path v0.11.4
+    Checking calloop-wayland-source v0.3.0
+    Checking read-fonts v0.37.0
+    Checking read-fonts v0.35.0
+    Checking clap v4.6.0
+    Checking smithay-client-toolkit v0.19.2
+    Checking image v0.25.10
+    Checking tiny-skia v0.11.4
+    Checking sctk-adwaita v0.10.1
+    Checking serde v1.0.228
+    Checking arboard v3.6.1
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking ahash v0.8.12
+    Checking half v2.7.1
+    Checking ppv-lite86 v0.2.21
+    Checking hashbrown v0.14.5
+    Checking winit v0.30.13
+    Checking naga v28.0.0
+    Checking rand_chacha v0.9.0
+    Checking proptest v1.11.0
+    Checking hashlink v0.9.1
+    Checking skrifa v0.40.0
+    Checking skrifa v0.37.0
+    Checking harfrust v0.3.2
+    Checking rusqlite v0.32.1
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking swash v0.2.7
+    Checking cosmic-text v0.15.0
+    Checking wgpu-hal v28.0.1
+    Checking wgpu-core-deps-windows-linux-android v28.0.0
+    Checking wgpu-core v28.0.1
+    Checking wgpu v28.0.0
+    Checking glyphon v0.10.0
+    Checking eda-test-harness v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/test-harness)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-eda-cli v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/cli)
+    Checking eda-engine-daemon v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine-daemon)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+error[E0433]: cannot find module or crate `pollster` in this scope
+  --> crates/gui-render/src/render/measurement_owner.rs:94:23
+   |
+94 |         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+   |                       ^^^^^^^^ use of unresolved module or unlinked crate `pollster`
+   |
+   = help: if you wanted to use a crate named `pollster`, use `cargo add pollster` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `pollster` in this scope
+  --> crates/gui-render/src/render/measurement_owner.rs:96:13
+   |
+96 |             pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+   |             ^^^^^^^^ use of unresolved module or unlinked crate `pollster`
+   |
+   = help: if you wanted to use a crate named `pollster`, use `cargo add pollster` to add it to your `Cargo.toml`
+
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `datum-gui-render` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

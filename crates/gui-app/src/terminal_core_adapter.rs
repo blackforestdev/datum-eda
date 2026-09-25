@@ -332,7 +332,7 @@ impl TerminalCoreSessionAdapter {
         Ok(())
     }
 
-    fn merge_render_damage(&mut self, entries: &[Damage]) {
+    pub(crate) fn merge_render_damage(&mut self, entries: &[Damage]) {
         for &entry in entries {
             if self.pending_render_damage.contains(&Damage::Full) {
                 return;

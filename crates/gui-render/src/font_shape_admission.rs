@@ -166,7 +166,7 @@ mod tests {
     fn oversized_shape_is_refused_before_the_font_owner_allocates() {
         let owner = Owner::new(0);
         let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
-        let mut fonts = super::super::Fonts::new(host);
+        let mut fonts = super::super::Fonts::new(host).unwrap();
         let before = fonts.usage();
         let text = "x".repeat(128 * 1024);
         let attrs = AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));

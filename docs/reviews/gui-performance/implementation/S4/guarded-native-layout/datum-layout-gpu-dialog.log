@@ -1,0 +1,9 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=32.1 GiB target_free=171.3 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 32.1 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 1 test
+test visual::visual_capture::gpu_overlay_tests::renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 430 filtered out; finished in 0.81s

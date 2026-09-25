@@ -1,0 +1,57 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.004s
+
+OK
+Cargo resource policy: PASS
+== rustfmt: workspace formatting gate ==
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+OK
+rustfmt gate passed for workspace (3 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).
+== clippy: workspace lint gate (-D warnings) ==
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=32.1 GiB target_free=171.3 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 32.1 GiB used; soft limit 20.0 GiB
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.24s
+Progress coverage audit passed.
+.............................................
+----------------------------------------------------------------------
+Ran 45 tests in 1.023s
+
+OK
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.130s
+
+OK
+Project status check passed (59 frontier items).
+Spec parity check passed (20 inventories).
+Alignment audit passed.
+Spec governance gate passed (315 specs classified: 243 governed, 50 doctrine, 6 pending, 16 historical).
+Project Preferences tripwire satisfied: drawing without a spec is allowed.
+Evidence traceability gate passed (28 routes, 124 research/prototype artifacts).
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.009s
+
+OK
+dependency authority: PASS
+Resolver raw-load guard passed (0 allowlisted call sites).
+Global Preferences boundary gate passed (5 product-service adapters; 3 engine mutation files).
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.004s
+
+OK
+GUI agent/terminal convergence guard failed:
+  - terminal glyph face is missing JetBrainsMono-Regular.ttf
+  - HiDPI text scaling must preserve the terminal device-pixel grid

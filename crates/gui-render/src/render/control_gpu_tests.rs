@@ -8,7 +8,8 @@ fn rounded_control_fans_match_scanline_pixels() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut renderer = hardware_renderer(960, 720);
     let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     prepared.menu_overlay_text_runs.clear();
     let mut cache = ControlMeshCache::default();
     for dpi in [1.0, 1.5, 2.0] {

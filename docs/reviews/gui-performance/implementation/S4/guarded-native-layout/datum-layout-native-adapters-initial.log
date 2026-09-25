@@ -1,0 +1,24 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=32.1 GiB target_free=171.3 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 32.1 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.14s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 1 test
+test text_metrics::measurement_owner::tests::default_native_preparation_adapters_refuse_host_pressure_and_retry ... FAILED
+
+failures:
+
+---- text_metrics::measurement_owner::tests::default_native_preparation_adapters_refuse_host_pressure_and_retry stdout ----
+
+thread 'text_metrics::measurement_owner::tests::default_native_preparation_adapters_refuse_host_pressure_and_retry' (3984719) panicked at crates/gui-render/src/render/measurement_owner.rs:114:13:
+consumer 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    text_metrics::measurement_owner::tests::default_native_preparation_adapters_refuse_host_pressure_and_retry
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 430 filtered out; finished in 0.80s
+
+error: test failed, to rerun pass `-p datum-gui-render --lib`

@@ -84,7 +84,7 @@ fn editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras() {
             zoom,
             ..fit
         };
-        let prepared = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+        let prepared = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         let scene_viewport = prepared.scene_viewport;
         for region in &prepared.hit_regions {
             if matches!(

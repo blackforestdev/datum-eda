@@ -57,7 +57,8 @@ fn terminal_dock_omits_persistent_header_and_routine_diagnostics() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     for diagnostic in [
         "PROJECT TERMINAL",
@@ -149,7 +150,8 @@ fn terminal_screen_rect_is_the_dedicated_content_hit_target() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     let shell = ShellLayout::for_window(1280, 800, Some(260));
     let geometry = datum_gui_viewport::terminal_screen_geometry(shell.bottom_strip.into());
@@ -187,7 +189,8 @@ fn terminal_top_boundary_is_the_visible_resize_cursor_target() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let shell = ShellLayout::for_window(1280, 800, Some(260));
     let handle = prepared
         .hit_regions
@@ -225,7 +228,8 @@ fn terminal_lane_renders_no_activity_summary_rows() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     assert!(
         !prepared
@@ -280,7 +284,8 @@ fn terminal_dock_does_not_render_output_lane_findings() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     assert!(
         !prepared
@@ -304,7 +309,8 @@ fn dock_exposes_terminal_tab_only() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     // The tab uses the session's own (lower/mixed-case) name, not an uppercased
     // constant; the fixture terminal has no title, so it reads "terminal".
@@ -338,7 +344,8 @@ fn terminal_dock_renders_exact_global_shutdown_survivor_identity() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     assert!(
         prepared

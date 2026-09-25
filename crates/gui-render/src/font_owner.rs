@@ -5,10 +5,7 @@ mod admission;
 mod bidi_scratch;
 use crate::cpu_alloc::{Scope, heap::capacity_bytes};
 use glyphon::{AttrsList, CacheKey, FontSystem, ShapeLine, Shaping, SwashCache, SwashImage};
-use std::sync::{
-    Arc,
-    atomic::{AtomicBool, AtomicU64, Ordering},
-};
+use std::sync::{Arc, atomic::AtomicBool};
 
 pub(crate) struct Shape {
     line: Option<ShapeLine>,
@@ -18,19 +15,18 @@ pub(crate) struct Shape {
 }
 struct Lease {
     bytes: u64,
-    outputs: Arc<AtomicU64>,
-    lifetimes: Arc<std::sync::Mutex<()>>,
+    scope: Scope,
 }
 impl Drop for Shape {
     fn drop(&mut self) {
         let _lock = self
             ._lease
             .as_ref()
-            .map(|lease| lease.lifetimes.lock().unwrap_or_else(|e| e.into_inner()));
+            .map(|lease| lease.scope.output_lifetimes());
         // Retiring returned output is one operation relative to call windows.
         drop(self.line.take());
         if let Some(lease) = &self._lease {
-            lease.outputs.fetch_sub(lease.bytes, Ordering::AcqRel);
+            lease.scope.remove_output(lease.bytes);
         }
     }
 }
@@ -105,85 +101,110 @@ pub(crate) trait Source {
         key: CacheKey,
     ) -> anyhow::Result<Option<SwashImage>>;
 }
-impl Source for FontSystem {
-    fn shape(&mut self, text: &str, attrs: &AttrsList) -> anyhow::Result<Shape> {
-        Ok(Shape::untracked(ShapeLine::new(
-            self,
-            text,
-            attrs,
-            Shaping::Basic,
-            8,
-        )))
-    }
-    fn raster(
-        &mut self,
-        cache: &mut SwashCache,
-        scope: &Scope,
-        key: CacheKey,
-    ) -> anyhow::Result<Option<SwashImage>> {
-        if self.get_font(key.font_id, key.font_weight).is_none() {
-            return Ok(None);
-        }
-        Ok(scope.with(|| cache.get_image_uncached(self, key)))
-    }
-}
 
 pub(crate) struct Fonts {
     fonts: Option<FontSystem>,
+    dormant: Option<(String, glyphon::fontdb::Database)>,
     host: Arc<crate::text_gpu::budget::Budget>,
     permits: Option<[crate::text_gpu::budget::Permit; 2]>,
     baseline: u64,
     charged: u64,
     scope: Scope,
-    outputs: Arc<AtomicU64>,
-    lifetimes: Arc<std::sync::Mutex<()>>,
     last_call: Option<crate::cpu_alloc::calls::Report>,
 }
 impl Fonts {
-    pub fn new(host: Arc<crate::text_gpu::budget::Budget>) -> Self {
-        let scope = Scope::new("renderer-fonts-and-shapes");
+    pub fn new(host: Arc<crate::text_gpu::budget::Budget>) -> anyhow::Result<Self> {
+        Self::with_label(host, "renderer-fonts-and-shapes")
+    }
+    pub(crate) fn measurement(host: Arc<crate::text_gpu::budget::Budget>) -> anyhow::Result<Self> {
+        Self::with_label(host, "text-measurement")
+    }
+    fn with_label(
+        host: Arc<crate::text_gpu::budget::Budget>,
+        label: &'static str,
+    ) -> anyhow::Result<Self> {
+        let scope = Scope::new(label);
         // load_datum_fonts assigns catalog initialization to its own shared scope.
-        let fonts = scope.with(crate::load_datum_fonts);
+        let call = crate::cpu_alloc::calls::Call::begin(
+            &scope,
+            host.clone(),
+            crate::text_gpu::budget::staging_process(),
+            0,
+            0,
+        )?;
+        let fonts = scope.with(|| crate::try_load_datum_fonts(&host))?;
+        let (_, report) = call.finish(0, None, None)?;
         let usage = scope.usage();
-        Self {
+        Ok(Self {
             fonts: Some(fonts),
+            dormant: None,
             host,
             permits: None,
             baseline: usage.payload_bytes + usage.tracking_bytes,
             charged: 0,
             scope,
-            outputs: Arc::new(AtomicU64::new(0)),
-            lifetimes: Arc::new(std::sync::Mutex::new(())),
-            last_call: None,
-        }
+            last_call: Some(report),
+        })
     }
     pub fn reserved_bytes(&self) -> u64 {
         self.charged
     }
 
     fn clear_caches(&mut self) {
-        let lifetimes = self.lifetimes.clone();
-        let _lock = lifetimes.lock().unwrap_or_else(|e| e.into_inner());
-        let fonts = self.fonts.take().expect("font owner initialized");
-        // Preserve the exact immutable database IDs, locale and family defaults.
-        // Consume the old caches before constructing replacements; returned shapes
-        // own their data independently and stay valid across this operation.
-        let (locale, db) = fonts.into_locale_and_db();
+        let lifetimes = self.scope.clone();
+        let _lock = lifetimes.output_lifetimes();
+        if let Some(fonts) = self.fonts.take() {
+            // Keep immutable IDs/locale; defer rebuilding until a guarded call.
+            self.dormant = Some(fonts.into_locale_and_db());
+        }
         self.permits = None;
         self.charged = 0;
-        self.fonts = Some(
-            self.scope
-                .with(|| FontSystem::new_with_locale_and_db(locale, db)),
-        );
         self.baseline = self.usage().private_bytes.unwrap_or(0);
     }
 
-    fn call(&self, temporary: u64) -> crate::cpu_alloc::calls::Call {
+    fn ensure_fonts(&mut self) -> anyhow::Result<()> {
+        if self.fonts.is_some() {
+            return Ok(());
+        }
+        let scope = self.scope.clone();
+        let _lock = scope.output_lifetimes();
+        let call = crate::cpu_alloc::calls::Call::begin(
+            &scope,
+            self.host.clone(),
+            crate::text_gpu::budget::staging_process(),
+            // Retained database and returned shapes are inputs, not new scratch.
+            self.baseline + scope.output_bytes(),
+            0,
+        )?;
+        let (locale, db) = self
+            .dormant
+            .take()
+            .expect("font database retained for retry");
+        let fonts = scope.with(|| FontSystem::new_with_locale_and_db(locale, db));
+        match call.finish(0, None, None) {
+            Ok((_, report)) => {
+                self.fonts = Some(fonts);
+                self.last_call = Some(report);
+            }
+            Err(error) => {
+                self.last_call = error
+                    .downcast_ref::<crate::cpu_alloc::calls::Overrun>()
+                    .map(|e| e.0);
+                self.dormant = Some(fonts.into_locale_and_db());
+                self.baseline = self.usage().private_bytes.unwrap_or(0);
+                return Err(error);
+            }
+        }
+        self.baseline = self.usage().private_bytes.unwrap_or(0);
+        Ok(())
+    }
+
+    fn call(&self, temporary: u64) -> anyhow::Result<crate::cpu_alloc::calls::Call> {
         crate::cpu_alloc::calls::Call::begin(
             &self.scope,
             self.host.clone(),
             crate::text_gpu::budget::staging_process(),
-            self.baseline + self.outputs.load(Ordering::Acquire),
+            self.baseline + self.scope.output_bytes(),
             self.charged + temporary,
         )
     }
@@ -215,9 +236,43 @@ impl Fonts {
         }
     }
 
+    /// Layout measurements share the renderer's guarded font/cache ownership.
+    /// Only scalars escape; all shaping and layout scratch dies inside the call.
+    pub(crate) fn measure(
+        &mut self,
+        text: &str,
+        attrs: &glyphon::Attrs<'_>,
+        size: f32,
+        width: Option<f32>,
+    ) -> anyhow::Result<(f32, usize)> {
+        let scratch_bytes = bidi_scratch::required(text)?;
+        self.release_for(scratch_bytes);
+        let scratch = bidi_scratch::reserve(scratch_bytes, &self.host)?;
+        self.ensure_fonts()?;
+        let scope = self.scope.clone();
+        let lock = scope.output_lifetimes();
+        let call = self.call(scratch_bytes)?;
+        let measured = scope.with(|| {
+            crate::text_metrics::text_shape::measure(
+                self.fonts.as_mut().expect("font owner initialized"),
+                text,
+                attrs,
+                size,
+                width,
+            )
+        });
+        let result = self.finish_call(call, Some(scratch));
+        drop(lock);
+        if let Err(error) = result {
+            self.clear_caches();
+            return Err(error);
+        }
+        Ok(measured)
+    }
+
     pub fn usage(&self) -> Usage {
         let allocation = self.scope.usage();
-        let returned_shape_bytes = self.outputs.load(Ordering::Acquire);
+        let returned_shape_bytes = self.scope.output_bytes();
         let private_bytes = allocation.allocator_installed.then(|| {
             (allocation.payload_bytes + allocation.tracking_bytes)
                 .checked_sub(returned_shape_bytes)
@@ -247,9 +302,10 @@ impl Source for Fonts {
         let scratch_bytes = bidi_scratch::required(text)?;
         self.release_for(scratch_bytes);
         let scratch = bidi_scratch::reserve(scratch_bytes, &self.host)?;
-        let lifetimes = self.lifetimes.clone();
-        let lock = lifetimes.lock().unwrap_or_else(|e| e.into_inner());
-        let call = self.call(scratch_bytes);
+        self.ensure_fonts()?;
+        let lifetimes = self.scope.clone();
+        let lock = lifetimes.output_lifetimes();
+        let call = self.call(scratch_bytes)?;
         let line = self.scope.with(|| {
             ShapeLine::new(
                 self.fonts.as_mut().expect("font owner initialized"),
@@ -260,15 +316,14 @@ impl Source for Fonts {
             )
         });
         let bytes = payload_bytes(&line) as u64;
-        self.outputs.fetch_add(bytes, Ordering::AcqRel);
+        self.scope.add_output(bytes);
         let shape = Shape {
             line: Some(line),
             accounted: AtomicBool::new(false),
             construction: std::sync::Mutex::new(None),
             _lease: Some(Lease {
                 bytes,
-                outputs: self.outputs.clone(),
-                lifetimes: self.lifetimes.clone(),
+                scope: self.scope.clone(),
             }),
         };
         let result = self.finish_call(call, Some(scratch));
@@ -286,9 +341,10 @@ impl Source for Fonts {
         scope: &Scope,
         key: CacheKey,
     ) -> anyhow::Result<Option<SwashImage>> {
-        let lifetimes = self.lifetimes.clone();
-        let lock = lifetimes.lock().unwrap_or_else(|e| e.into_inner());
-        let call = self.call(0);
+        self.ensure_fonts()?;
+        let lifetimes = self.scope.clone();
+        let lock = lifetimes.output_lifetimes();
+        let call = self.call(0)?;
         let loaded = self.scope.with(|| {
             self.fonts
                 .as_mut()
@@ -333,10 +389,72 @@ impl crate::Renderer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    impl Source for FontSystem {
+        fn shape(&mut self, text: &str, attrs: &AttrsList) -> anyhow::Result<Shape> {
+            Ok(Shape::untracked(ShapeLine::new(
+                self,
+                text,
+                attrs,
+                Shaping::Basic,
+                8,
+            )))
+        }
+        fn raster(
+            &mut self,
+            cache: &mut SwashCache,
+            scope: &Scope,
+            key: CacheKey,
+        ) -> anyhow::Result<Option<SwashImage>> {
+            if self.get_font(key.font_id, key.font_weight).is_none() {
+                return Ok(None);
+            }
+            Ok(scope.with(|| cache.get_image_uncached(self, key)))
+        }
+    }
+    #[test]
+    fn measurement_overrun_releases_private_work_and_retries_exact_layout() {
+        let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+        let mut fonts = Fonts::measurement(host.clone()).unwrap();
+        let text = "A measured label with Latin glyphs";
+        let attrs = crate::text_attrs(crate::TextFace::Ui);
+        fonts.measure(text, &attrs, 13.0, Some(100.0)).unwrap();
+        fonts.clear_caches();
+        let held = host
+            .reserve(host.available() - bidi_scratch::required(text).unwrap())
+            .unwrap();
+        let error = fonts.measure(text, &attrs, 13.0, Some(100.0)).unwrap_err();
+        assert!(error.is::<crate::cpu_alloc::calls::Overrun>(), "{error:#}");
+        assert_eq!(
+            error
+                .downcast_ref::<crate::cpu_alloc::calls::Overrun>()
+                .unwrap()
+                .0
+                .initial_bytes,
+            0,
+            "retained database input must not be charged as construction scratch"
+        );
+        assert_eq!(fonts.reserved_bytes(), 0);
+        assert!(fonts.fonts.is_none());
+        assert!(fonts.dormant.is_some());
+        drop(held);
+        let actual = fonts.measure(text, &attrs, 13.0, Some(100.0)).unwrap();
+        let expected = crate::text_metrics::text_shape::measure(
+            &mut crate::load_datum_fonts(),
+            text,
+            &attrs,
+            13.0,
+            Some(100.0),
+        );
+        assert_eq!(actual, expected);
+        assert!(!fonts.usage().last_call.unwrap().exceeded);
+        drop(fonts);
+        assert_eq!(host.used(), 0);
+    }
+
     #[test]
     fn cache_pressure_preserves_font_identity_and_returned_shapes() {
         let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
-        let mut fonts = Fonts::new(host.clone());
+        let mut fonts = Fonts::new(host.clone()).unwrap();
         let ids = || {
             crate::load_datum_fonts()
                 .db()
@@ -358,10 +476,10 @@ mod tests {
         assert_eq!(format!("{:?}", *first), glyphs);
         assert_eq!(
             fonts
-                .fonts
+                .dormant
                 .as_ref()
                 .unwrap()
-                .db()
+                .1
                 .faces()
                 .map(|f| f.id)
                 .collect::<Vec<_>>(),
@@ -376,19 +494,12 @@ mod tests {
         drop(fonts);
         assert_eq!(host.used(), 0);
         assert_eq!(format!("{:?}", *first), glyphs);
-        let mut refused = Fonts::new(crate::text_gpu::budget::Budget::new(0));
-        assert!(
-            refused
-                .shape("Cache pressure preserves these glyphs", &attrs)
-                .is_err()
-        );
-        assert_eq!(refused.reserved_bytes(), 0);
-        assert_eq!(refused.usage().returned_shape_bytes, 0);
+        assert!(Fonts::new(crate::text_gpu::budget::Budget::new(0)).is_err());
     }
 
     #[test]
     fn font_private_storage_and_shared_shape_lifetimes_are_disjoint() {
-        let mut fonts = Fonts::new(crate::text_gpu::budget::Budget::new(16 * 1024 * 1024));
+        let mut fonts = Fonts::new(crate::text_gpu::budget::Budget::new(16 * 1024 * 1024)).unwrap();
         let attrs = AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));
         let first = Arc::new(fonts.shape("Shared shaped text", &attrs).unwrap());
         let second = Arc::new(fonts.shape("Another paragraph", &attrs).unwrap());

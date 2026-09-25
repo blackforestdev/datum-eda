@@ -367,7 +367,7 @@ mod tests {
         let camera = crate::CameraState::fit_to_bounds(&state.scene.bounds);
         for _ in 0..3 {
             let prepared =
-                crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+                crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
             let input =
                 ShellLayout::for_surface(1280, 800, 1.0, crate::dock_height_for_state(&state));
             assert_eq!(prepared.layout, input);

@@ -26,7 +26,7 @@ pub(super) fn render_global_preferences_dialog(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<()> {
     let dialog = &state.ui.global_preferences;
     if !dialog.open || !native_window {
         new_project_dialog::render_new_project_dialog(
@@ -38,11 +38,13 @@ pub(super) fn render_global_preferences_dialog(
             quads,
             text,
             hits,
-        );
-        return;
+        )?;
+        return Ok(());
     }
 
-    render_preferences_dialog(dialog, layout, controls, scale, quads, text, hits);
+    render_preferences_dialog(dialog, layout, controls, scale, quads, text, hits)?;
+
+    Ok(())
 }
 
 /// Render the shared Project/Global dialog directly, without a workspace scene.
@@ -54,7 +56,7 @@ pub(super) fn render_preferences_dialog(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<()> {
     let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
     let mut painter = ControlPainter::new(quads, controls, scale);
     render_preferences_dialog_scrolled(
@@ -65,7 +67,9 @@ pub(super) fn render_preferences_dialog(
         hits,
         &mut scroll,
         Some(dialog.scroll_row),
-    );
+    )?;
+
+    Ok(())
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -77,9 +81,9 @@ fn render_preferences_dialog_scrolled(
     hits: &mut Vec<HitRegion>,
     scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
     reveal_row: Option<usize>,
-) {
+) -> anyhow::Result<()> {
     if !dialog.open {
-        return;
+        return Ok(());
     }
 
     let scale = quads.scale_factor();
@@ -145,27 +149,27 @@ fn render_preferences_dialog_scrolled(
         &dialog.title,
         design_tokens::typography::BODY_SIZE,
         TextFace::UiStrong,
-    );
+    )?;
     let scope = draw_header_chip(
         &dialog.scope,
         title_x + title_width + 18.0,
         header.y + 11.0,
         quads,
         text,
-    );
+    )?;
     draw_header_chip(
         "saves immediately",
         scope.x + scope.width + 8.0,
         header.y + 11.0,
         quads,
         text,
-    );
+    )?;
     let modality = "input-modal";
     let modality_width = measured_text_run_width_px(
         modality,
         design_tokens::typography::MICRO_SIZE,
         TextFace::Mono,
-    );
+    )?;
     draw_text(
         modality,
         header.x + header.width - modality_width - 14.0,
@@ -320,7 +324,7 @@ fn render_preferences_dialog_scrolled(
         },
         quads,
         text,
-    );
+    )?;
     hits.push(HitRegion {
         target: HitTarget::GlobalPreferencesSearch,
         rect: search,
@@ -381,8 +385,10 @@ fn render_preferences_dialog_scrolled(
         hits,
         scroll,
         reveal_row,
-    );
+    )?;
     dialog_coordinates::scale_output(quads, text, hits, starts, scale);
+
+    Ok(())
 }
 
 fn focus_is(

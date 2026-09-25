@@ -9,7 +9,8 @@ fn label_color(state: &ReviewWorkspaceState, label: &str) -> [f32; 3] {
         768,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     assert!(
         prepared.hit_regions.iter().any(|region| {
             matches!(&region.target, HitTarget::MenuItem { label: row, .. } if row == label)

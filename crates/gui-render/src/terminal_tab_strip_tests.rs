@@ -112,7 +112,8 @@ fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let strip = ShellLayout::for_window(1280, 800, Some(260)).bottom_strip;
     let top_tabs = prepared
         .hit_regions
@@ -266,7 +267,8 @@ fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text(
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let geometry = datum_gui_viewport::terminal_screen_geometry(
         ShellLayout::for_window(1280, 800, Some(260))
             .bottom_strip

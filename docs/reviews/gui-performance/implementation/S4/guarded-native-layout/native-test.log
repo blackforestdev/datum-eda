@@ -1,0 +1,13 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.5 GiB target_free=171.9 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 31.5 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.71s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-89f6505f70927b20)
+
+running 1 test
+test global_preferences_window::native_dialog_hit_tests::native_shared_device_hosts_preserve_hidden_terminal_and_console_work ... S4 serial native shared-device host GLOBAL: presented, closed, Main resumed
+S4 serial native shared-device host PROJECT: presented, closed, Main resumed
+S4 serial native shared-device host NEW: presented, closed, Main resumed
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 412 filtered out; finished in 15.13s

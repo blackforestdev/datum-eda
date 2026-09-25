@@ -4,7 +4,7 @@ use glyphon::{Attrs, AttrsList, FontSystem, ShapeLine, Shaping, Wrap};
 /// Measure one paragraph at a time. Input text stays borrowed; completed public
 /// shape/layout vectors are dropped before advancing to the next paragraph.
 /// This avoids retaining opaque BufferLine text/attribute/cache allocations.
-pub(super) fn measure(
+pub(crate) fn measure(
     fonts: &mut FontSystem,
     text: &str,
     attrs: &Attrs<'_>,

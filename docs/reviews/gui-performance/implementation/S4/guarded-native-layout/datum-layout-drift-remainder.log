@@ -1,0 +1,46 @@
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+Terminal shell metadata boundary passed.
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK
+terminal split boundary: PASS
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.169s
+
+OK
+terminal transport boundary: PASS
+.....................
+----------------------------------------------------------------------
+Ran 21 tests in 0.356s
+
+OK
+Datum TerminalCore boundary check passed.
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.036s
+
+OK
+terminal core adapter boundary: PASS
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.006s
+
+OK
+terminal compatibility matrix passed (13 real programs; 5 Datum-authored standards domains).
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.063s
+
+OK
+terminal core renderer boundary: FAIL
+- GPU image path lacks marker: encode_terminal_graphics(&mutencoder,&msaa_view,target,false,measurement.as_mut(),)
+- GPU image path lacks marker: encode_terminal_graphics(&mutencoder,&msaa_view,target,true,measurement.as_mut(),)
+- terminal explicit upload path lacks self.submit_terminal_upload_chunk(device, queue, on_submitted)? in crates/gui-render/src/render/gpu_frame.rs
+- terminal explicit upload path lacks texture.consume_chunk(count) in crates/gui-render/src/render/terminal_upload.rs

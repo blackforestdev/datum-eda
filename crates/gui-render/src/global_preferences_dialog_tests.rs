@@ -90,6 +90,7 @@ fn prepared(
         None,
         true,
     )
+    .unwrap()
 }
 
 #[test]
@@ -102,7 +103,8 @@ fn main_workspace_never_draws_the_native_preferences_window_or_backdrop() {
         760,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     assert!(!prepared.hit_regions.iter().any(|region| matches!(
         region.target,
         HitTarget::GlobalPreferencesModal

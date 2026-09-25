@@ -7,7 +7,7 @@ fn released_transient_peak_rejects_without_using_lifetime_high_water() {
     let process = Budget::new(1024);
     // An old lifetime high-water must not contaminate the next call.
     drop(scope.with(|| vec![0_u8; 2048]));
-    let call = Call::begin(&scope, host.clone(), process.clone(), 0, 0);
+    let call = Call::begin(&scope, host.clone(), process.clone(), 0, 0).unwrap();
     let payload = scope.with(|| vec![0_u8; 128]);
     let exact = scope.usage().payload_bytes + scope.usage().tracking_bytes;
     let (permits, report) = call.finish(exact, None, None).unwrap();
@@ -15,7 +15,7 @@ fn released_transient_peak_rejects_without_using_lifetime_high_water() {
     assert_eq!(host.used(), exact);
     drop(payload);
     drop(permits);
-    let call = Call::begin(&scope, host.clone(), process.clone(), 0, 0);
+    let call = Call::begin(&scope, host.clone(), process.clone(), 0, 0).unwrap();
     drop(scope.with(|| vec![0_u8; 600]));
     let error = call.finish(0, None, None).err().unwrap();
     let report = error.downcast_ref::<Overrun>().unwrap().0;
@@ -37,7 +37,7 @@ fn concurrent_hosts_observe_simultaneous_process_peak_and_rollback() {
             std::thread::spawn(move || {
                 let scope = Scope::new("private-call-concurrent");
                 let host = Budget::new(1000);
-                let call = Call::begin(&scope, host.clone(), process, 0, 0);
+                let call = Call::begin(&scope, host.clone(), process, 0, 0).unwrap();
                 let payload = scope.with(|| vec![0_u8; 600]);
                 barrier.wait();
                 barrier.wait();
@@ -74,7 +74,7 @@ fn cache_and_scratch_credits_transfer_without_double_counting() {
         process.reserve(exact).unwrap(),
     ];
     let scratch = [host.reserve(500).unwrap(), process.reserve(500).unwrap()];
-    let call = Call::begin(&scope, host.clone(), process.clone(), 0, exact + 500);
+    let call = Call::begin(&scope, host.clone(), process.clone(), 0, exact + 500).unwrap();
     assert_eq!(host.available(), 1024 - exact - 500);
     drop(scope.with(|| vec![0_u8; 300]));
     let (permits, report) = call.finish(exact, Some(old), Some(scratch)).unwrap();
@@ -95,7 +95,7 @@ fn cache_and_scratch_credits_transfer_without_double_counting() {
 fn default_font_loading_overrun_preserves_shapes_and_retries_identically() {
     use crate::text_layout::fonts::{Fonts, Source};
     let host = Budget::new(16 * 1024 * 1024);
-    let mut fonts = Fonts::new(host.clone());
+    let mut fonts = Fonts::new(host.clone()).unwrap();
     let attrs = glyphon::AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));
     let text = "Preserve source and glyphs through private construction refusal";
     let expected = fonts.shape(text, &attrs).unwrap();
@@ -183,7 +183,7 @@ fn failed_font_call_never_turns_into_an_absent_raster_glyph() {
             .is_some()
     );
     assert_eq!(host.used(), 0);
-    let mut fonts = Fonts::new(host.clone());
+    let mut fonts = Fonts::new(host.clone()).unwrap();
     let (_, actual) = raster.image(&mut fonts, key, &host).unwrap().unwrap();
     let (_, expected) = crate::text_gpu::raster::Raster::new()
         .image(&mut catalog, key, &host)

@@ -18,7 +18,8 @@ fn terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels() {
         camera,
         &retained,
         Some(&snapshot),
-    );
+    )
+    .unwrap();
     assert!(prepared.terminal_graphics.len() >= 2);
     let mut renderer = hardware_renderer(960, 720);
     renderer
@@ -141,7 +142,8 @@ fn terminal_admission_includes_quads_and_holds_capacity_until_retirement() {
         camera,
         &retained,
         Some(&snapshot),
-    );
+    )
+    .unwrap();
     prepared.terminal_graphics.truncate(1);
     let placement = prepared.terminal_graphics[0].graphic.placement();
     let bytes = u64::from(placement.width()) * u64::from(placement.height()) * 4;
@@ -198,7 +200,8 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
         camera,
         &retained,
         Some(&snapshot),
-    );
+    )
+    .unwrap();
     assert_eq!(prepared.terminal_graphics.len(), 1);
     let mut renderer = hardware_renderer(960, 720);
     // Warm unrelated resources before introducing the cold terminal image.
@@ -358,7 +361,8 @@ fn terminal_quad_slots_preserve_submission_limits_after_close_and_recovery() {
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
         Some(&snapshot),
-    );
+    )
+    .unwrap();
     assert!(!prepared.terminal_graphics.is_empty());
     let mut clipped = prepared.terminal_graphics.clone();
     for graphic in &mut clipped {
@@ -428,7 +432,8 @@ fn terminal_texture_generations_survive_close_reopen_and_recovery() {
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
         Some(&snapshot),
-    );
+    )
+    .unwrap();
     assert!(!prepared.terminal_graphics.is_empty());
     let mut host = hardware_renderer(960, 720);
     let baseline = Renderer::terminal_graphics_gpu_reserved_bytes();

@@ -18,7 +18,6 @@ use eda_engine::ir::geometry::{LayerId, Point};
 use geometry_output::Output;
 #[path = "render/world_primitives.rs"]
 mod world_primitives;
-use glyphon::{Attrs, Color, Family, FontSystem, SwashCache, TextBounds, Weight};
 #[cfg(test)]
 use std::collections::BTreeMap;
 use std::ops::Range;

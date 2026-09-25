@@ -143,6 +143,21 @@ impl TerminalSessionRegistry {
             .unwrap_or(0)
     }
 
+    pub(crate) fn restore_render_damage(
+        &mut self,
+        panes: Vec<(String, Vec<datum_terminal_core::Damage>)>,
+    ) {
+        for (session_id, damage) in panes {
+            if let Some(slot) = self
+                .sessions
+                .iter_mut()
+                .find(|slot| slot.session.session_id() == session_id)
+            {
+                slot.core.merge_render_damage(&damage);
+            }
+        }
+    }
+
     pub(crate) fn take_active_tab_render_states<'a>(
         &'a mut self,
         active_lane: &'a TerminalLaneState,

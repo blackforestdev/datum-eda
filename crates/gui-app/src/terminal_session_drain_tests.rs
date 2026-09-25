@@ -535,3 +535,25 @@ fn render_panes_borrow_matching_active_and_parked_lane_projections() {
             .is_empty()
     );
 }
+
+#[test]
+fn refused_scene_restores_consumed_terminal_damage_for_retry() {
+    let mut registry = synthetic_registry(1);
+    let lane = TerminalLaneState::default();
+    let panes = registry.take_active_tab_render_states(&lane).unwrap();
+    assert!(!panes[0].damage.is_empty());
+    let expected = panes[0].damage.clone();
+    let damage = panes
+        .into_iter()
+        .map(|pane| (pane.session_id, pane.damage))
+        .collect();
+    registry.restore_render_damage(damage);
+    let retry = registry.take_active_tab_render_states(&lane).unwrap();
+    assert_eq!(retry[0].damage, expected);
+    drop(retry);
+    assert!(
+        registry.take_active_tab_render_states(&lane).unwrap()[0]
+            .damage
+            .is_empty()
+    );
+}

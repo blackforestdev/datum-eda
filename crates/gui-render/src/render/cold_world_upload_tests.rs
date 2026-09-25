@@ -40,7 +40,8 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
         1.0,
         crate::CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let texture = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("cold-world-proof-target"),
         size: wgpu::Extent3d {
@@ -311,7 +312,8 @@ fn cold_startup_acquires_once_after_more_than_four_upload_submissions() {
         1.0,
         crate::CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let texture = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("late-acquire-proof"),
         size: wgpu::Extent3d {

@@ -220,7 +220,8 @@ fn conformance_region_token_bindings_follow_design_book() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let has_panel_vertex = |rect: RectPx, color: [f32; 3]| {
         prepared
             .panel_vertices()
@@ -242,7 +243,8 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let labels = prepared
         .text_runs
         .iter()
@@ -319,7 +321,8 @@ fn non_scene_board_pane_shows_inactive_caption() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let labels = prepared
         .text_runs
         .iter()
@@ -345,7 +348,8 @@ fn focus_frame_belongs_to_the_focused_leaf_only() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let panes = prepared.layout.viewport_panes(&state.ui.layout);
     // The accent pane frame is emitted as panel vertices inset 1px inside the
     // focused leaf; an accent quad must fall inside its frame and inside no
@@ -412,7 +416,8 @@ fn diagnostic_evidence_marks_endpoints_only_over_proposed_copper() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let focus_markers = prepared
         .viewport_overlay_vertices()
         .as_chunks::<6>()
@@ -458,7 +463,8 @@ fn scene_underlay_has_no_decorative_gold_edge_frame() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let inner_field = board_surface_color(BoardSurfaceRole::InnerField);
     let decorative_edge = mix_color(design_tokens::content::EDGE, inner_field, 0.18);
 
@@ -504,7 +510,8 @@ fn board_scene_stays_in_board_pane_regardless_of_focus() {
         800,
         CameraState::fit_to_bounds(&board_state.scene.bounds),
         &retained_b,
-    );
+    )
+    .unwrap();
     assert!(
         prepared_b
             .viewport_underlay_vertices()
@@ -539,7 +546,8 @@ fn board_scene_stays_in_board_pane_regardless_of_focus() {
         800,
         CameraState::fit_to_bounds(&schem_state.scene.bounds),
         &retained_s,
-    );
+    )
+    .unwrap();
 
     // (1) The scene viewport does not move when focus shifts to the Schematic pane:
     // it stays bound to the board pane's rect (so the PCB neither migrates into the
@@ -592,7 +600,8 @@ fn narrow_pane_header_does_not_bleed_into_neighbor() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let panes = prepared.layout.viewport_panes(&state.ui.layout);
     let board = panes.panes[0].rect;
     let schem = panes.panes[1].rect;
@@ -610,7 +619,8 @@ fn narrow_pane_header_does_not_bleed_into_neighbor() {
         if !in_header_band || !starts_in_board {
             continue;
         }
-        let natural_right = run.x + measured_text_run_width_px(&run.text, run.size, run.face);
+        let natural_right =
+            run.x + measured_text_run_width_px(&run.text, run.size, run.face).unwrap();
         let effective_right = match run.clip_bounds {
             Some(cb) => natural_right.min(cb.x + cb.width),
             None => natural_right,

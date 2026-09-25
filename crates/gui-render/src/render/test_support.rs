@@ -49,6 +49,7 @@ fn panel_vertices_without_artifact_preview(mut state: ReviewWorkspaceState) -> u
         CameraState::fit_to_bounds(&state.scene.bounds),
         &RetainedScene::from_workspace(&state, 1280, 800),
     )
+    .unwrap()
     .panel_vertices()
     .len()
 }
@@ -99,7 +100,8 @@ fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bo
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &RetainedScene::from_workspace(&state, 1280, 800),
-    );
+    )
+    .unwrap();
     let text = prepared
         .text_runs
         .iter()
@@ -108,4 +110,3 @@ fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bo
     text.iter().any(|value| value.contains("TABLE 2 ROWS"))
         && text.iter().any(|value| value.contains("R1 | 10k"))
 }
-

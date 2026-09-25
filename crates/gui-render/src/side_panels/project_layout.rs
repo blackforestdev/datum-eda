@@ -269,7 +269,8 @@ mod tests {
         let retained = crate::RetainedScene::from_workspace(&state, 1280, 800);
         let camera = crate::CameraState::fit_to_bounds(&state.scene.bounds);
         for _ in 0..3 {
-            let _ = crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+            let _ =
+                crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         }
         assert_eq!(
             SOLVES.with(|count| count.get()),
@@ -278,7 +279,8 @@ mod tests {
         );
         // Text changes are paint dependencies, not row-height dependencies.
         state.scene.project_name = "Renamed project".to_owned();
-        let prepared = crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+        let prepared =
+            crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         assert!(
             prepared
                 .text_runs

@@ -8,7 +8,8 @@ fn rich_color_changes_reuse_shapes_and_update_each_area() {
     let mut renderer = hardware_renderer(960, 720);
     let mut fresh = hardware_renderer(960, 720);
     let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut label = prepared.menu_overlay_text_runs[0].clone();
     label.x = 30.0;
     label.y = 30.0;
@@ -76,7 +77,8 @@ fn rich_color_changes_reuse_shapes_and_update_each_area() {
 fn atlas_repack_reprepares_workspace_and_overlay_without_reshaping() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     prepared.text_runs = vec![prepared.menu_overlay_text_runs[0].clone()];
     let mut renderer = hardware_renderer(960, 720);
     let original = capture(&mut renderer, &prepared);

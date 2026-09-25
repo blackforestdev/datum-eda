@@ -28,13 +28,14 @@ impl Source for CountingFonts {
 fn overlay_pressure_stops_at_first_excess_layout_and_invalidates_workspace_indices() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut run = prepared.menu_overlay_text_runs[0].clone();
     run.text = "current workspace label".into();
     run.rich_spans.clear();
     let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
     let mut fonts = CountingFonts {
-        inner: Fonts::new(host.clone()),
+        inner: Fonts::new(host.clone()).unwrap(),
         shapes: 0,
     };
     let mut cache = TextBufferCache::default();
@@ -157,7 +158,8 @@ fn overlay_pressure_stops_at_first_excess_layout_and_invalidates_workspace_indic
 fn overlay_admission_evicts_history_and_remaps_the_earlier_workspace_group() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut current = prepared.menu_overlay_text_runs[0].clone();
     current.text = "workspace survives".into();
     current.rich_spans.clear();
@@ -166,7 +168,7 @@ fn overlay_admission_evicts_history_and_remaps_the_earlier_workspace_group() {
     let mut overlay = current.clone();
     overlay.text = "new overlay".into();
     let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
-    let mut fonts = Fonts::new(host.clone());
+    let mut fonts = Fonts::new(host.clone()).unwrap();
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Overlay);
     cache
@@ -228,13 +230,14 @@ fn overlay_admission_evicts_history_and_remaps_the_earlier_workspace_group() {
 fn interrupted_relayout_cannot_be_reused_as_a_complete_layout() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut run = prepared.menu_overlay_text_runs[0].clone();
     run.text = "Required text survives an interrupted extent change".into();
     run.rich_spans.clear();
     run.layout_size = Some((300.0, 200.0));
     let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
-    let mut fonts = Fonts::new(host.clone());
+    let mut fonts = Fonts::new(host.clone()).unwrap();
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Workspace);
     let (indices, _) = cache

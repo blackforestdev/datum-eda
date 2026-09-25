@@ -3848,9 +3848,9 @@
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved.",
         "private_guard_progress": {
-          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
-          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
-          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+          "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
+          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
         }
       },
       "observed_artifacts": [
@@ -5421,9 +5421,9 @@
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved.",
         "private_guard_progress": {
-          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
-          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
-          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+          "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
+          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
         }
       },
       "s4_implementation_progress": [
@@ -5538,7 +5538,16 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
           "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
         }
-      ]
+      ],
+      "s4_bounded_native_evidence": {
+        "artifact": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+        "scope": "1 passed: actual X11/Vulkan shared-device Main/Global/Project/New presentation lifecycle; hidden PTY data and damage preserved, Console history reopened, PTY shut down",
+        "limits": [
+          "No complete S5 backend/scale/OS-input/static/endurance/resource or distinct-reviewer qualification.",
+          "Native windows were hidden; no displayed-pixel or desktop-input claim.",
+          "Serial shared-device success does not resolve dat-gpu-test-concurrency-6dt concurrent multi-device crash."
+        ]
+      }
     },
     {
       "id": "HP09-02",
@@ -5599,7 +5608,16 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
           "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
         }
-      ]
+      ],
+      "s4_bounded_native_evidence": {
+        "artifact": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+        "scope": "1 passed: actual X11/Vulkan shared-device Main/Global/Project/New presentation lifecycle; hidden PTY data and damage preserved, Console history reopened, PTY shut down",
+        "limits": [
+          "No complete S5 backend/scale/OS-input/static/endurance/resource or distinct-reviewer qualification.",
+          "Native windows were hidden; no displayed-pixel or desktop-input claim.",
+          "Serial shared-device success does not resolve dat-gpu-test-concurrency-6dt concurrent multi-device crash."
+        ]
+      }
     },
     {
       "id": "HP10-01",
@@ -9198,6 +9216,15 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s4_bounded_native_evidence": {
+        "artifact": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json",
+        "scope": "1 passed: actual X11/Vulkan shared-device Main/Global/Project/New presentation lifecycle; hidden PTY data and damage preserved, Console history reopened, PTY shut down",
+        "limits": [
+          "No complete S5 backend/scale/OS-input/static/endurance/resource or distinct-reviewer qualification.",
+          "Native windows were hidden; no displayed-pixel or desktop-input claim.",
+          "Serial shared-device success does not resolve dat-gpu-test-concurrency-6dt concurrent multi-device crash."
+        ]
       }
     },
     {
@@ -17602,9 +17629,9 @@
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved.",
         "private_guard_progress": {
-          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
-          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
-          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+          "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
+          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
         }
       },
       "s4_implementation_progress": [
@@ -17913,9 +17940,9 @@
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved.",
         "private_guard_progress": {
-          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
-          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
-          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+          "implemented": "Default mutation/raster plus cold catalog, font-owner construction/reconstruction, host-owned measurement, fallible native scene publication, pressure eviction and allocator bookkeeping.",
+          "remaining": "Compound predicate exit reconciliation against existing accounting/recovery evidence; full original qualification remains S5.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
         }
       },
       "s4_implementation_progress": [
@@ -36911,6 +36938,51 @@
       "Private calls can transiently exceed budgets; no process OOM recovery guarantee. Held-capacity admission totals are not physical RSS. Allocator-internal slack/native mappings remain separate.",
       "Allocation-event synchronization overhead, complete native/resource/endurance and independent replay remain unqualified at S5; no performance improvement or global adoption claim. Preserve GEFN and nonblocking resize."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json",
+    "completion_migration": {
+      "status": "Default production migration verified; compound S4 exit reconciliation remains separate",
+      "production_consumers": [
+        "Main workspace including Inspector, menus, terminal and Console",
+        "Global Preferences",
+        "Project Preferences",
+        "New Project",
+        "Offscreen scene preparation"
+      ],
+      "retired_paths": [
+        "Unmonitored shared catalog and FontSystem construction",
+        "Independent global measurement FontSystem outside native host staging ownership",
+        "Infallible scene preparation that cannot propagate text refusal",
+        "Eager unguarded FontSystem reconstruction during cache release",
+        "Heap-allocated private call ledger and separate output-coordination Arcs"
+      ],
+      "behavior": [
+        "Cold catalog, per-owner fonts, reconstruction and scalar measurement use allocation-event private call guards. Catalog publishes only after success.",
+        "Native renderer measurement owners use the existing host and process staging budgets. Pressure releases measurement caches before retry.",
+        "Measurement/layout failure propagates before prepared scene and hit publication; scroll state commits only on success. Main restores consumed terminal damage on refused preparation.",
+        "Retained catalog/database/shape input is distinguished from new construction scratch. Scope Arc/header and weak registry capacity are reported once; fixed call slots require no allocator-hook allocation."
+      ],
+      "verification": {
+        "renderer": "348 passed, 0 failed, 83 ignored; before final measurement-pressure integration",
+        "app": "396 passed, 0 failed, 16 ignored; before new ignored native lifecycle test",
+        "final_native_adapters": "1 passed: four native preparation adapters refuse full host pressure, retry, release measurement cache, rebuild identical scenes and release host reservations",
+        "gpu_regressions": "Cold startup, real private overrun and dialog pixel parity each passed; earlier than final measurement-pressure integration",
+        "fresh_default_build": "Passed with production pressure integration",
+        "native": "1 passed: actual X11/Vulkan shared-device Main/Global/Project/New presentation lifecycle; hidden PTY data and damage preserved, Console history reopened, PTY shut down",
+        "native_negative": "Deliberate extra render snapshot consumes pending damage; observation restores it before production continuation",
+        "clippy": "Final offline locked renderer/app visual all-target Clippy passed with -D warnings.",
+        "default_workspace_clippy": "Passed after GPU test visual-feature gating; workspace all-target -D warnings.",
+        "convergence": "11 checker tests and production gate passed after including extracted font_catalog/text_presentation owners; original forbidden-behavior checks unchanged.",
+        "drift": "Workspace Clippy, alignment, project-state, parity, dependency and preceding terminal gates passed. Full battery stopped at terminal-core-renderer marker failures in unchanged gpu_frame.rs/terminal_upload.rs and unchanged checker; not claimed green."
+      },
+      "limitations": [
+        "No complete S5 backend/scale/OS-input/static/endurance/resource or distinct-reviewer qualification.",
+        "Native windows were hidden; no displayed-pixel or desktop-input claim.",
+        "Serial shared-device success does not resolve dat-gpu-test-concurrency-6dt concurrent multi-device crash.",
+        "Private allocation overshoot and process OOM remain PM047 limitations; detection is not memory-budget qualification.",
+        "No new or modified dependency, vendoring, Cargo, prototype or numerical-cap change. Preserve GEFN and nonblocking resize exclusions.",
+        "Full drift battery remains red on existing terminal-core-renderer source markers from earlier upload-before-acquire work; affected files/checker match HEAD byte-for-byte."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json"
+    }
   }
 }

@@ -26,7 +26,8 @@ fn menu_dropdown_composites_into_menu_overlay_under_its_title() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     // Bug B: overlay sink is non-empty when a menu is active.
     let overlay = prepared.menu_overlay_vertices();
@@ -109,7 +110,8 @@ fn menu_overlay_is_empty_when_no_menu_open() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     assert!(
         prepared.menu_overlay_vertices().is_empty(),
         "no menu open -> no menu-overlay quads (default parity capture untouched)"
@@ -141,7 +143,8 @@ fn menu_dropdown_fits_its_content_no_spill() {
         1050,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let card_right = prepared
         .menu_overlay_vertices()
         .iter()
@@ -152,7 +155,7 @@ fn menu_dropdown_fits_its_content_no_spill() {
         "an open menu must emit an overlay card"
     );
     for run in prepared.menu_overlay_text_runs() {
-        let right_edge = run.x + measured_text_run_width_px(&run.text, run.size, run.face);
+        let right_edge = run.x + measured_text_run_width_px(&run.text, run.size, run.face).unwrap();
         assert!(
             right_edge <= card_right + 0.5,
             "menu text '{}' right edge {right_edge:.1} spills past the card right {card_right:.1}",
@@ -174,7 +177,8 @@ fn nested_preferences_submenu_is_pointer_targeted_and_edge_safe() {
         720,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let global = prepared
         .hit_regions
         .iter()
