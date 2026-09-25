@@ -1,0 +1,17 @@
+import json,statistics,hashlib
+from pathlib import Path
+p=Path('/tmp/pm045-cold-campaign-2vqh5lhp');r=json.loads((p/'result.json').read_text());assert len(r['runs'])==20 and r['display_restored'];result={'qualification_pass':False,'runs':[],'distributions':{}}
+for run in r['runs']:
+ d=Path(run['path']);n=json.loads((d/'result.json').read_text());assert run['returncode']==0 and n['normal_exit_code']==0 and len(n['cycles'])==3 and not n.get('error')
+ cold=n['cold_main'];assert cold['pixel_attempts'][-1]['returncode']==0
+ assert [x['host'] for x in n['cycles']]==['GLOBAL','PROJECT','NEW'];assert all(x['focus_restored'] and x['open']['pixel_observations'][-1]['returncode']==0 for x in n['cycles'])
+ row={'role':run['role'],'trial':run['trial'],'cold_main_cpu_ms':cold['cpu_seconds_since_group_before_spawn']*1000,'cold_main_readback_wall_ms':(cold['ready_ns']-cold['launch_ns'])/1e6,'main_extra_image_attempts':len(cold['pixel_attempts'])-1,'normal_exit':0,'first_use':{x['host']:{'open_cpu_ms':x['open']['cpu_ms'],'open_readback_wall_ms':x['open']['wall_ms'],'close_cpu_ms':x['close']['cpu_ms'],'extra_image_attempts':len(x['open']['pixel_observations'])-1} for x in n['cycles']}}
+ result['runs'].append(row)
+def dist(values):return {'n':len(values),'values':values,'minimum':min(values),'median':statistics.median(values),'maximum':max(values),'mean':statistics.mean(values)}
+for role in ('baseline','candidate'):
+ data=[x for x in result['runs'] if x['role']==role];assert len(data)==10
+ result['distributions'][role]={key:dist([x[key] for x in data]) for key in ('cold_main_cpu_ms','cold_main_readback_wall_ms')}
+ result['distributions'][role]['first_use']={host:{key:dist([x['first_use'][host][key] for x in data]) for key in ('open_cpu_ms','open_readback_wall_ms','close_cpu_ms')} for host in ('GLOBAL','PROJECT','NEW')}
+model=json.loads(Path('/tmp/pm045-admission-hqugp169/project/board/board.json').read_text());model.pop('uuid',None);h=hashlib.sha256(json.dumps(model,sort_keys=True,separators=(',',':')).encode()).hexdigest();assert h=='33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed';result['normalized_fixture_sha256_after']=h
+result['limits']=['Fresh processes/private XDG directories; operating-system page cache not flushed. No cold-machine claim.','Main endpoint is exact prior static window readback after native presentation; wall includes polling/capture overhead and is not calibrated physical display latency.','Wholefamily CPU includes cooperating startup/engine work through cgroup; dedicated engine CPU/RSS attribution remains separate work. Parent test launcher CPU is outside application group.','First-use order Global,Project,New fixed in each process after Main; not all host-order permutations or simultaneous configurations. Warm50ms/20ms limits not applied to cold/first-use distribution.','X11/VulkanIntelP630 physical60Hz1x,oneleaf,hiddenterminal only; Wayland/scales/otherconsumerconfigurations and fullresource/GPU/method/endurance/reviewer acceptance remain.','All20normal closes here do not resolve previous intermittent delayed close; diagnosticfailurecapture was not exercised in this batch. No resampling or replacedtrials.']
+(p/'analysis.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({role:{key:{k:v for k,v in value.items() if k!='values'} for key,value in distros.items() if key!='first_use'} for role,distros in result['distributions'].items()},indent=2))

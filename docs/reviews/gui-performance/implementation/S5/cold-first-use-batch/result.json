@@ -1,0 +1,658 @@
+{
+  "status": "Ten cold-process/first-use starts per binary recorded for X11 60Hz1x; S5 remains incomplete",
+  "qualification_pass": false,
+  "candidate_commit": "2cc635cd",
+  "binary_sha256": {
+    "baseline": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+    "candidate": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3"
+  },
+  "engine_binary_sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "4a674d84df4100e1c9d783a37a5307e0682184d78771844325bad25a7b9ee321",
+    "crates/gui-app/src/app_shell.rs": "12ca9ebbfced332289d366c3df63c6cd1b9082b579ea938667314ac5cc42e43c",
+    "crates/gui-app/src/native_resource_measurements.rs": "dbad92f74f212672b5d5e275a05dd85b0f24b681ecbb7318415fddadc38c3f9e",
+    "crates/gui-render/src/lib.rs": "8dfabc5ed68d28b8e7f0a35a3191e66f3561b780da7bdf82360a98c4cc12657f",
+    "crates/gui-render/src/render/document_cpu.rs": "5f5278c468392916ffac67d959b526357e6c3e4d46c1cdb603028d676f505435",
+    "crates/gui-render/src/render/document_gpu_budget.rs": "33361519e4edc03a69cf44e1c1878bb44c5a768b2b888912031d2eaa51a4b8a0",
+    "crates/gui-render/src/render/frame_preparation.rs": "7e11b033858c3d83f3dbac74a24e5bce034c945b30a9eb7ab87520104b15e369",
+    "crates/gui-render/src/render/measurement_owner.rs": "b05043e8f8c1373ff2e47b199d6c358c8ed3f6e2d65caf40d91b03eba145b334",
+    "crates/gui-render/src/render/new_project_scene.rs": "132cebd33d24cbb4c7de030b10b677905f41982f531180124fa850bad45e659d",
+    "crates/gui-render/src/render/preferences_scene.rs": "9602c3eff3c7bdb60aa1905b1d3b7fd715c2e5ed4ccc5942785f788af327cee9",
+    "crates/gui-render/src/render/resource_observation.rs": "65398f46b451a6b9990cba2d856e7e1b81fd3c5cedea9b7543566f0db35caddd",
+    "crates/gui-render/src/render/resource_observation_tests.rs": "95b9d518946b8da8199c8fb07d9744dd65c1608585dcc3ee5f4fc15d8b037a04",
+    "crates/gui-render/src/text_gpu/atlas.rs": "28ca596935869a415e3f9ec228953f297533a14292ba45a299c53276466263ae",
+    "crates/gui-render/src/text_gpu/budget.rs": "92676c620d44ff3fe9bee2bdd6d37b2e6dd805f74443c5840395b799b19d4c8c"
+  },
+  "main_reference_sha256": "685dc0eb0a888de8c5cd4d93e5e14b0d32a71c99279d8893daf8041464c8d676",
+  "normalized_fixture_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "order": [
+    [
+      "baseline",
+      1
+    ],
+    [
+      "candidate",
+      1
+    ],
+    [
+      "candidate",
+      2
+    ],
+    [
+      "baseline",
+      2
+    ],
+    [
+      "baseline",
+      3
+    ],
+    [
+      "candidate",
+      3
+    ],
+    [
+      "candidate",
+      4
+    ],
+    [
+      "baseline",
+      4
+    ],
+    [
+      "baseline",
+      5
+    ],
+    [
+      "candidate",
+      5
+    ],
+    [
+      "candidate",
+      6
+    ],
+    [
+      "baseline",
+      6
+    ],
+    [
+      "baseline",
+      7
+    ],
+    [
+      "candidate",
+      7
+    ],
+    [
+      "candidate",
+      8
+    ],
+    [
+      "baseline",
+      8
+    ],
+    [
+      "baseline",
+      9
+    ],
+    [
+      "candidate",
+      9
+    ],
+    [
+      "candidate",
+      10
+    ],
+    [
+      "baseline",
+      10
+    ]
+  ],
+  "counts": {
+    "baseline_starts": 10,
+    "candidate_starts": 10,
+    "auxiliary_first_use_cycles": 60,
+    "normal_drained_exits": 20
+  },
+  "method": "MET01 fresh process and empty private XDG config/cache for each launch, alternating baseline/candidate pair order. Main readiness requires native presentation and exact previously pinned static Main readback. Application-family cgroup CPU includes engine/startup/resolution without subtraction. Each process then opens/closes Global,Project,New once,with exact host endpoint pixels and restored Main focus. No loader auditing,event traces,timestamps or ptrace during measurements; on failure only, descriptor/kernel receive-queue and debugger snapshots are armed. No cold failures or replacement trials occurred.",
+  "descriptor_diagnostic": "Before cold workload, three declared quiet startup-only display/FD diagnostic runs each completed9cycles and normal shutdown. ConnectionFD was recorded, but no timeout occurred, so added fdinfo/socket-queue failure capture remains unexercised. These runs do not resolve the existing delayed-close issue. All raw side evidence retained; loader audit absent from cold workload.",
+  "display": "Physical1920x1080@60Hz scale1 during cold batch; original scale1.05 restored and before/during/after records retained. X11/VulkanIntelP630 with actual driver identities in every native log.",
+  "distributions": {
+    "baseline": {
+      "cold_main_cpu_ms": {
+        "n": 10,
+        "values": [
+          1781.879,
+          1840.2240000000002,
+          1938.087,
+          1870.898,
+          1881.221,
+          1905.977,
+          1854.564,
+          1845.123,
+          1921.1119999999999,
+          1934.3619999999999
+        ],
+        "minimum": 1781.879,
+        "median": 1876.0594999999998,
+        "maximum": 1938.087,
+        "mean": 1877.3447
+      },
+      "cold_main_readback_wall_ms": {
+        "n": 10,
+        "values": [
+          2139.553113,
+          2162.721265,
+          2242.847628,
+          2190.223977,
+          2181.669506,
+          2234.679715,
+          2177.931888,
+          2170.147269,
+          2219.913384,
+          2270.035267
+        ],
+        "minimum": 2139.553113,
+        "median": 2185.9467415,
+        "maximum": 2270.035267,
+        "mean": 2198.9723012
+      },
+      "first_use": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 10,
+            "values": [
+              28.548000000000016,
+              40.6740000000001,
+              38.453000000000074,
+              35.08599999999995,
+              28.914000000000108,
+              38.03299999999999,
+              42.96699999999998,
+              39.349000000000075,
+              31.949000000000005,
+              36.1959999999999
+            ],
+            "minimum": 28.548000000000016,
+            "median": 37.11449999999994,
+            "maximum": 42.96699999999998,
+            "mean": 36.01690000000002
+          },
+          "open_readback_wall_ms": {
+            "n": 10,
+            "values": [
+              397.1485609654337,
+              291.5740089956671,
+              266.3454639259726,
+              272.16314896941185,
+              402.6559910271317,
+              261.4523700904101,
+              279.5574318151921,
+              439.50967700220644,
+              430.9890700969845,
+              418.08132198639214
+            ],
+            "minimum": 261.4523700904101,
+            "median": 344.3612849805504,
+            "maximum": 439.50967700220644,
+            "mean": 345.9477044874802
+          },
+          "close_cpu_ms": {
+            "n": 10,
+            "values": [
+              7.280000000000175,
+              6.7550000000000665,
+              7.296999999999887,
+              6.718000000000002,
+              7.068999999999992,
+              7.3350000000000914,
+              7.025999999999977,
+              7.308000000000092,
+              7.61899999999982,
+              6.9590000000001595
+            ],
+            "minimum": 6.718000000000002,
+            "median": 7.174500000000084,
+            "maximum": 7.61899999999982,
+            "mean": 7.136600000000026
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 10,
+            "values": [
+              295.15000000000026,
+              295.8680000000002,
+              293.07300000000015,
+              291.4840000000001,
+              279.77399999999994,
+              296.0500000000001,
+              277.18299999999994,
+              297.40500000000014,
+              299.52500000000003,
+              292.7399999999998
+            ],
+            "minimum": 277.18299999999994,
+            "median": 294.1115000000002,
+            "maximum": 299.52500000000003,
+            "mean": 291.82520000000005
+          },
+          "open_readback_wall_ms": {
+            "n": 10,
+            "values": [
+              519.7332738898695,
+              508.9960137847811,
+              515.5868758447468,
+              513.7163819745183,
+              511.1979180946946,
+              513.8901700265706,
+              486.90412612631917,
+              532.1851838380098,
+              526.0160900652409,
+              520.0805941130966
+            ],
+            "minimum": 486.90412612631917,
+            "median": 514.7385229356587,
+            "maximum": 532.1851838380098,
+            "mean": 514.8306627757847
+          },
+          "close_cpu_ms": {
+            "n": 10,
+            "values": [
+              7.26799999999983,
+              6.767999999999663,
+              6.5230000000000565,
+              6.3329999999997,
+              6.784999999999819,
+              7.305999999999813,
+              7.1270000000001055,
+              6.440000000000001,
+              7.076000000000082,
+              6.477000000000288
+            ],
+            "minimum": 6.3329999999997,
+            "median": 6.776499999999741,
+            "maximum": 7.305999999999813,
+            "mean": 6.810299999999936
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 10,
+            "values": [
+              35.57899999999981,
+              46.11900000000002,
+              39.03699999999999,
+              43.44500000000018,
+              40.129999999999995,
+              24.743999999999655,
+              36.45599999999982,
+              40.04600000000025,
+              36.84300000000018,
+              38.4730000000002
+            ],
+            "minimum": 24.743999999999655,
+            "median": 38.755000000000095,
+            "maximum": 46.11900000000002,
+            "mean": 38.08720000000001
+          },
+          "open_readback_wall_ms": {
+            "n": 10,
+            "values": [
+              261.1694938968867,
+              221.4469180908054,
+              235.97718286328018,
+              225.36761010996997,
+              244.055608054623,
+              194.09765908494592,
+              386.49553107097745,
+              255.83079806528986,
+              377.06543295644224,
+              236.34254490025342
+            ],
+            "minimum": 194.09765908494592,
+            "median": 240.1990764774382,
+            "maximum": 386.49553107097745,
+            "mean": 263.7848779093474
+          },
+          "close_cpu_ms": {
+            "n": 10,
+            "values": [
+              7.245999999999864,
+              6.521999999999917,
+              6.577000000000055,
+              6.6630000000000855,
+              7.048000000000165,
+              6.597000000000186,
+              7.226000000000177,
+              7.376999999999967,
+              6.635999999999864,
+              6.793999999999745
+            ],
+            "minimum": 6.521999999999917,
+            "median": 6.728499999999915,
+            "maximum": 7.376999999999967,
+            "mean": 6.8686000000000025
+          }
+        }
+      }
+    },
+    "candidate": {
+      "cold_main_cpu_ms": {
+        "n": 10,
+        "values": [
+          1833.187,
+          1848.215,
+          1857.416,
+          1877.28,
+          1874.042,
+          1864.5510000000002,
+          1919.095,
+          1837.578,
+          1953.53,
+          1893.125
+        ],
+        "minimum": 1833.187,
+        "median": 1869.2965,
+        "maximum": 1953.53,
+        "mean": 1875.8019
+      },
+      "cold_main_readback_wall_ms": {
+        "n": 10,
+        "values": [
+          2145.762172,
+          2154.682375,
+          2151.621157,
+          2178.520984,
+          2189.861875,
+          2164.545749,
+          2237.46211,
+          2186.150707,
+          2277.172954,
+          2203.577427
+        ],
+        "minimum": 2145.762172,
+        "median": 2182.3358455,
+        "maximum": 2277.172954,
+        "mean": 2188.935751
+      },
+      "first_use": {
+        "GLOBAL": {
+          "open_cpu_ms": {
+            "n": 10,
+            "values": [
+              40.65300000000005,
+              38.93100000000005,
+              39.47499999999992,
+              37.78700000000001,
+              34.415000000000084,
+              38.16900000000012,
+              20.310000000000052,
+              37.800000000000054,
+              35.199999999999896,
+              35.777999999999864
+            ],
+            "minimum": 20.310000000000052,
+            "median": 37.79350000000004,
+            "maximum": 40.65300000000005,
+            "mean": 35.85180000000001
+          },
+          "open_readback_wall_ms": {
+            "n": 10,
+            "values": [
+              261.3682739902288,
+              267.2711310442537,
+              439.89404616877437,
+              438.23902192525566,
+              473.4212888870388,
+              427.0267121028155,
+              404.95253587141633,
+              439.14294079877436,
+              427.8303880710155,
+              397.9902588762343
+            ],
+            "minimum": 261.3682739902288,
+            "median": 427.4285500869155,
+            "maximum": 473.4212888870388,
+            "mean": 397.71365977358073
+          },
+          "close_cpu_ms": {
+            "n": 10,
+            "values": [
+              6.567999999999907,
+              6.639999999999979,
+              6.668000000000118,
+              7.638000000000034,
+              6.7790000000000905,
+              7.0669999999999344,
+              6.96399999999997,
+              7.168000000000063,
+              6.737999999999911,
+              6.372000000000044
+            ],
+            "minimum": 6.372000000000044,
+            "median": 6.758500000000001,
+            "maximum": 7.638000000000034,
+            "mean": 6.860200000000005
+          }
+        },
+        "PROJECT": {
+          "open_cpu_ms": {
+            "n": 10,
+            "values": [
+              285.641,
+              297.9470000000002,
+              285.2269999999999,
+              332.0500000000002,
+              281.91600000000005,
+              303.8669999999999,
+              285.81999999999994,
+              294.00899999999996,
+              287.579,
+              296.40500000000003
+            ],
+            "minimum": 281.91600000000005,
+            "median": 290.794,
+            "maximum": 332.0500000000002,
+            "mean": 295.0461
+          },
+          "open_readback_wall_ms": {
+            "n": 10,
+            "values": [
+              509.25950007513165,
+              512.4084760900587,
+              518.0771739687771,
+              565.4223770834506,
+              503.36983101442456,
+              525.0392649322748,
+              502.81511014327407,
+              515.389024047181,
+              503.9957598783076,
+              528.6034340970218
+            ],
+            "minimum": 502.81511014327407,
+            "median": 513.8987500686198,
+            "maximum": 565.4223770834506,
+            "mean": 518.4379951329902
+          },
+          "close_cpu_ms": {
+            "n": 10,
+            "values": [
+              7.438000000000056,
+              6.26900000000008,
+              6.704000000000043,
+              7.022000000000084,
+              7.041999999999771,
+              6.772000000000222,
+              7.474999999999898,
+              6.854000000000138,
+              6.8389999999998174,
+              6.339000000000095
+            ],
+            "minimum": 6.26900000000008,
+            "median": 6.846499999999978,
+            "maximum": 7.474999999999898,
+            "mean": 6.87540000000002
+          }
+        },
+        "NEW": {
+          "open_cpu_ms": {
+            "n": 10,
+            "values": [
+              43.2870000000003,
+              39.31299999999993,
+              29.079999999999995,
+              40.86900000000027,
+              37.61800000000015,
+              42.618000000000045,
+              42.24300000000003,
+              42.103,
+              38.886999999999894,
+              40.34899999999997
+            ],
+            "minimum": 29.079999999999995,
+            "median": 40.60900000000012,
+            "maximum": 43.2870000000003,
+            "mean": 39.63670000000006
+          },
+          "open_readback_wall_ms": {
+            "n": 10,
+            "values": [
+              241.0284630022943,
+              217.5177678000182,
+              204.8797057941556,
+              241.70355196110904,
+              379.3358891271055,
+              240.87661691009998,
+              379.09917905926704,
+              218.23042910546064,
+              370.2685460448265,
+              236.40563897788525
+            ],
+            "minimum": 204.8797057941556,
+            "median": 240.95253995619714,
+            "maximum": 379.3358891271055,
+            "mean": 272.9345787782222
+          },
+          "close_cpu_ms": {
+            "n": 10,
+            "values": [
+              6.7949999999998845,
+              7.413000000000114,
+              7.289999999999797,
+              6.663999999999781,
+              7.071999999999967,
+              6.772999999999918,
+              7.063999999999737,
+              6.961999999999691,
+              6.622000000000128,
+              6.494
+            ],
+            "minimum": 6.494,
+            "median": 6.878499999999788,
+            "maximum": 7.413000000000114,
+            "mean": 6.914899999999902
+          }
+        }
+      }
+    }
+  },
+  "limits": [
+    "Fresh processes/private XDG directories; operating-system page cache not flushed. No cold-machine claim.",
+    "Main endpoint is exact prior static window readback after native presentation; wall includes polling/capture overhead and is not calibrated physical display latency.",
+    "Wholefamily CPU includes cooperating startup/engine work through cgroup; dedicated engine CPU/RSS attribution remains separate work. Parent test launcher CPU is outside application group.",
+    "First-use order Global,Project,New fixed in each process after Main; not all host-order permutations or simultaneous configurations. Warm50ms/20ms limits not applied to cold/first-use distribution.",
+    "X11/VulkanIntelP630 physical60Hz1x,oneleaf,hiddenterminal only; Wayland/scales/otherconsumerconfigurations and fullresource/GPU/method/endurance/reviewer acceptance remain.",
+    "All20normal closes here do not resolve previous intermittent delayed close; diagnosticfailurecapture was not exercised in this batch. No resampling or replacedtrials."
+  ],
+  "archives": [
+    {
+      "file": "baseline-1.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "candidate-1.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "candidate-2.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "baseline-2.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "baseline-3.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "candidate-3.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "candidate-4.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "baseline-4.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "baseline-5.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "candidate-5.tar.gz",
+      "members": 10
+    },
+    {
+      "file": "candidate-6.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "baseline-6.tar.gz",
+      "members": 8
+    },
+    {
+      "file": "baseline-7.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "candidate-7.tar.gz",
+      "members": 10
+    },
+    {
+      "file": "candidate-8.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "baseline-8.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "baseline-9.tar.gz",
+      "members": 10
+    },
+    {
+      "file": "candidate-9.tar.gz",
+      "members": 10
+    },
+    {
+      "file": "candidate-10.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "baseline-10.tar.gz",
+      "members": 9
+    },
+    {
+      "file": "campaign.tar.gz",
+      "members": 26
+    },
+    {
+      "file": "descriptor-diagnostic.tar.gz",
+      "members": 50
+    }
+  ],
+  "boundaries": "No product,dependency/license,backend-policy,renderquality or admission-cap change. Preserve S0-S4,GEFN,225adoption contracts and all nonblocking resize/temporal/T2/schematic exclusions; no warm-cap/fullperformance/endurance/independent/ownerUX acceptance."
+}

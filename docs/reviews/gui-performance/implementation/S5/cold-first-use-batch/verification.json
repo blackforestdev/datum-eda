@@ -1,0 +1,14 @@
+{
+  "evidence_traceability": "PASS28routes124artifacts",
+  "spec_governance": "PASS315",
+  "spec_parity": "PASS20",
+  "dependency_authority": "PASS",
+  "cargo_resource_policy": "PASS",
+  "project_status": "PASS59",
+  "archive_integrity": "254rawmemberslength/SHA256verified",
+  "runtime_change": false,
+  "Rust_proof": "Not repeated; exact unchanged binaries pinned",
+  "native": "20coldprocessstarts+60first-usecyclesall exactendpoints/focus/normaldrain;3descriptor-diagnosticrunsnormalbutfailurecaptureunexercised",
+  "display_restored": "Original1920x1080@60scale1.05 retained in display-after",
+  "qualification_pass": false
+}
