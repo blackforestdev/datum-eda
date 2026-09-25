@@ -3724,6 +3724,14 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
         "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
+      ],
+      "s5_quad_color_experiment": {
+        "status": "Candidate not adopted; native improvement not demonstrated",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
       }
     },
     {
@@ -4479,6 +4487,14 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
         "status": "Both Preferences hosts complete30cycle controls sequence on pinned X11/1x candidate; full S5 qualification remains open"
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
+      ],
+      "s5_quad_color_experiment": {
+        "status": "Candidate not adopted; native improvement not demonstrated",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
       }
     },
     {
@@ -38189,5 +38205,10 @@
     "status": "partial native allocation-lifetime evidence; S5 qualification remains open",
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/pane-resource-sequence/review.json"
+  },
+  "s5_quad_color_experiment": {
+    "status": "Candidate not adopted; native improvement not demonstrated",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
   }
 }

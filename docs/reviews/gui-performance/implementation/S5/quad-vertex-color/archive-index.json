@@ -1,0 +1,58 @@
+[
+  {
+    "file": "campaign.tar.xz",
+    "original_path": "/tmp/pm045-quad-campaign-echcy9pn",
+    "sha256": "5b068f609c8b38a868bd2e9476d45dd81c94081593b25adfab57b55084abaf6f",
+    "members": 12,
+    "raw_bytes": 21460
+  },
+  {
+    "file": "proof.tar.xz",
+    "original_path": "/tmp/pm045-quad-proof-package",
+    "sha256": "2c8ba88b440bd6632a4f7ceb990c0cc08b5cfe1d51bb1804a1bf0c91c2a60c0a",
+    "members": 17,
+    "raw_bytes": 549567
+  },
+  {
+    "file": "baseline-1.tar.xz",
+    "original_path": "/tmp/pm045-quad-native-4rymtbmr",
+    "sha256": "c93350bcc502697e6bf7440b055a9f1bdf5a55479b268b87ba3c1de2b6e4a3d5",
+    "members": 110,
+    "raw_bytes": 3909783
+  },
+  {
+    "file": "candidate-1.tar.xz",
+    "original_path": "/tmp/pm045-quad-native-5bwobkdd",
+    "sha256": "2e6607fc71ac9eb281f246ca1f22b2f10f872e037c1887db521bb61165128531",
+    "members": 110,
+    "raw_bytes": 3905253
+  },
+  {
+    "file": "candidate-2.tar.xz",
+    "original_path": "/tmp/pm045-quad-native-zwrnllpu",
+    "sha256": "3b5979c782ee8d4ce70e35afe871d618784eaf31e866c0b6086e537bbb7d3047",
+    "members": 110,
+    "raw_bytes": 3905146
+  },
+  {
+    "file": "baseline-2.tar.xz",
+    "original_path": "/tmp/pm045-quad-native-bvb8bk0h",
+    "sha256": "888463db17da9bd320059d1ba4c7cdb2379105e5142d9a1efb2c318516f6820b",
+    "members": 110,
+    "raw_bytes": 3906565
+  },
+  {
+    "file": "baseline-3.tar.xz",
+    "original_path": "/tmp/pm045-quad-native-l5985305",
+    "sha256": "70fae35ec3e7a25eb54a61a0a08c8fbe96076e8864b9e33463a6a4fc4a6f52f7",
+    "members": 110,
+    "raw_bytes": 3906680
+  },
+  {
+    "file": "candidate-3.tar.xz",
+    "original_path": "/tmp/pm045-quad-native-qc9loglk",
+    "sha256": "8081119c74dd678cf7d53c61e26bdfb6729ad7a0b6619d776e28473db5b31ae4",
+    "members": 110,
+    "raw_bytes": 3906588
+  }
+]
