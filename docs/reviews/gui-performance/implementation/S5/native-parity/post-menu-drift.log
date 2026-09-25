@@ -1,0 +1,5 @@
+ERC/connectivity parity OK (10 pin types, 10 ERC codes, 6 connectivity diagnostics)
+check_pcb_layout_tool_matrix: 13 logical PCB buckets covered; align/distribute is a single mode-parameterized tool
+Private-writer guard failed:
+  - crates/cli/src/commands/project/roots.rs: missing expected project bootstrap pattern `bootstrap_native_project(`
+Migrated authoring paths must commit typed OperationBatch entries instead of mutating authored JSON directly; generated evidence manifests must use substrate persistence helpers; GUI board-text edits must route through terminal-prefilled journaled CLI commands; forward-annotation review state must remain confined to its explicit sidecar; project bootstrap and route-strategy fixture writes must stay within their classified bootstrap/generated boundaries; generated export writers must stay within exact-count file-output surfaces.

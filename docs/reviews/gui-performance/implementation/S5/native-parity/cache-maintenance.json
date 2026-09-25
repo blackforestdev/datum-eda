@@ -1,0 +1,54 @@
+{
+  "idle_check": "No cargo or rustc process; resource lock held",
+  "removed": [
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui-02584nacwhaxj",
+      "allocated_bytes": 37933056
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui-1bu8tyc2nyn80",
+      "allocated_bytes": 76558336
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui-2n0hpcme6epnv",
+      "allocated_bytes": 269295616
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui-32ul7izrr00pa",
+      "allocated_bytes": 263987200
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui-3bfektflwbemp",
+      "allocated_bytes": 101806080
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui_render-0b3esogy77mms",
+      "allocated_bytes": 88403968
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui_render-0rxv0q9nnqkdp",
+      "allocated_bytes": 24477696
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui_render-0ykcb8dz0xdvh",
+      "allocated_bytes": 322662400
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui_render-24ved24skggkg",
+      "allocated_bytes": 82567168
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui_render-25r1y889ndgh1",
+      "allocated_bytes": 76062720
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui_render-3d7bm0vxkx9w5",
+      "allocated_bytes": 77094912
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/incremental/datum_gui_render-3ne5jnz6ifb6a",
+      "allocated_bytes": 263073792
+    }
+  ],
+  "freed_bytes": 1683922944
+}

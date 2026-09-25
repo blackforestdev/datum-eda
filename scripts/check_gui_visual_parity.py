@@ -168,6 +168,11 @@ def guard_intended_fixture() -> None:
 
 def capture(out_path: Path) -> None:
     command = [
+        sys.executable,
+        str(ROOT / "scripts/run_cargo_guarded.py"),
+        "--workload",
+        "proof",
+        "--",
         "cargo",
         "run",
         "-q",

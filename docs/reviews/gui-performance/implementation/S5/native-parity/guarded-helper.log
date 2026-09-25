@@ -1,0 +1,7 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=28.7 GiB target_free=174.1 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 28.7 GiB used; soft limit 20.0 GiB
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+GUI-VISUAL-PARITY fixture guard OK: real datum-test board with layers F.Cu, B.Cu, F.SilkS, Edge.Cuts; not the known-good demo. (split LAYOUT renders; schematic-content U1/STM32 guards deferred — pane B is a placeholder.)
+GUI-VISUAL-PARITY capture: /usr/bin/python3 /home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py --workload proof -- cargo run -q -p datum-gui-app --bin datum-gui --features visual -- --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb --select R1 --visual-test --screenshot-out /tmp/tmpmb502m0i/datum-shell.capture.png --window-size 1680x1050 --exit-after-screenshot
+GUI-VISUAL-PARITY diff: 5641/1764000 px differ (0.320%), max channel delta 212, mean channel delta 0.2914; tolerance 0.50% @ per-pixel 8, mean 1.5
+GUI-VISUAL-PARITY OK: app matches the committed split-view first-slice interim shell golden (NOT prototype parity — pane B is a placeholder; the full board-editor.html composition is gated on later Phase-2 slices).

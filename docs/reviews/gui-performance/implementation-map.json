@@ -37270,5 +37270,23 @@
       "dat-gui-performance-implementation-vkq"
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S5/console-reconciliation/result.json"
+  },
+  "s5_native_shell_parity": {
+    "status": "Canonical native shell parity passes; full S5 and drift qualification incomplete",
+    "production_candidate": "95287f56",
+    "helper_change": "Native visual-parity Cargo invocation now uses run_cargo_guarded.py proof serialization, preflight and incremental policy. Bless/threshold/fixture behavior unchanged.",
+    "verification": {
+      "native": "Initial and corrected guarded helper both pass:5641/1764000pixels differ(0.320%),mean channel delta0.2914; limits0.5% and1.5. Canonical actual datum-test/R1 selection1680x1050 capture inspected; shell golden unchanged.",
+      "reference_icons": "Committed board-editor browser reference accepted by existing reference gate;11 custom icon gate passes. This is not full prototype/native parity.",
+      "source_policy": "13 source-health policy tests pass;2331 source files check passes. Cargo resource policy check passes.",
+      "independent_drift": "ERC/connectivity parity and13 PCB tool buckets pass. Private-writer gate fails missing bootstrap_native_project( pattern in CLI roots; dat-bootstrap-guard-drift-5s8n records investigation without claiming unsafe writes. Known dat-menu-csv-roundtrip-etp remains failed; later drift/migration gates unrun.",
+      "cache": "The initial old helper bypassed the guard and target reached41GiB above40GiB cap. Corrected guard refused until maintenance. At verified Cargo/rustc idle, under resource lock, removed only12 datum_gui/ datum_gui_render incremental directories(1.57GiB measured); no source/dependency or binary removal. Guarded rerun passes."
+    },
+    "limits": [
+      "Native screenshot parity is one fixture/size/backend run; it does not establish OS-input, cross-backend/scale, resource/endurance or independent performance acceptance.",
+      "Full drift remains failed at separately tracked menu and bootstrap guards; no governing boundary or golden weakened.",
+      "No dependency, license, prototype, numerical-cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S5/native-parity/result.json"
   }
 }
