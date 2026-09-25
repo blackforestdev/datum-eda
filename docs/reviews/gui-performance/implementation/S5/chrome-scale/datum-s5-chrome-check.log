@@ -1,0 +1,85 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.5 GiB target_free=168.9 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.5 GiB used; soft limit 20.0 GiB
+    Blocking waiting for file lock on build directory
+    Checking bitflags v2.11.0
+    Checking once_cell v1.21.4
+    Checking num-traits v0.2.19
+    Checking smallvec v1.15.1
+    Checking bytemuck v1.25.0
+    Checking ttf-parser v0.25.1
+    Checking smol_str v0.2.2
+    Checking gpu-descriptor-types v0.2.0
+    Checking spirv v0.3.0+sdk-1.3.268.0
+    Checking ahash v0.8.12
+    Checking parking_lot_core v0.9.12
+    Checking gpu-descriptor v0.3.2
+    Checking font-types v0.10.1
+    Checking font-types v0.11.1
+    Checking hashbrown v0.14.5
+    Checking wgpu-types v28.0.0
+    Checking parking_lot v0.12.5
+    Checking read-fonts v0.35.0
+    Checking read-fonts v0.37.0
+    Checking euclid v0.22.14
+    Checking half v2.7.1
+    Checking ordered-float v4.6.0
+    Checking hashlink v0.9.1
+    Checking rusqlite v0.32.1
+    Checking naga v28.0.0
+    Checking lyon_geom v1.0.19
+    Checking etagere v0.2.15
+    Checking fontdb v0.23.0
+    Checking lyon_path v1.0.19
+    Checking lyon_tessellation v1.0.20
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking harfrust v0.3.2
+    Checking skrifa v0.37.0
+    Checking skrifa v0.40.0
+    Checking swash v0.2.7
+    Checking wgpu-hal v28.0.1
+    Checking cosmic-text v0.15.0
+    Checking wgpu-core-deps-windows-linux-android v28.0.0
+    Checking wgpu-core v28.0.1
+    Checking wgpu v28.0.0
+    Checking glyphon v0.10.0
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+error[E0507]: cannot move out of `*layout` which is behind a shared reference
+  --> crates/gui-render/src/menu_chrome.rs:39:31
+   |
+39 |         &scale.logical_layout(*layout),
+   |                               ^^^^^^^ move occurs because `*layout` has type `ShellLayout`, which does not implement the `Copy` trait
+   |
+help: consider cloning the value if the performance cost is acceptable
+   |
+39 -         &scale.logical_layout(*layout),
+39 +         &scale.logical_layout(layout.clone()),
+   |
+
+error[E0507]: cannot move out of `*layout` which is behind a shared reference
+  --> crates/gui-render/src/render/shell_identity.rs:15:31
+   |
+15 |         &scale.logical_layout(*layout),
+   |                               ^^^^^^^ move occurs because `*layout` has type `ShellLayout`, which does not implement the `Copy` trait
+   |
+help: consider cloning the value if the performance cost is acceptable
+   |
+15 -         &scale.logical_layout(*layout),
+15 +         &scale.logical_layout(layout.clone()),
+   |
+
+error[E0507]: cannot move out of `*layout` which is behind a shared reference
+  --> crates/gui-render/src/render/status_bar.rs:41:31
+   |
+41 |         &scale.logical_layout(*layout),
+   |                               ^^^^^^^ move occurs because `*layout` has type `ShellLayout`, which does not implement the `Copy` trait
+   |
+help: consider cloning the value if the performance cost is acceptable
+   |
+41 -         &scale.logical_layout(*layout),
+41 +         &scale.logical_layout(layout.clone()),
+   |
+
+For more information about this error, try `rustc --explain E0507`.
+error: could not compile `datum-gui-render` (lib) due to 3 previous errors

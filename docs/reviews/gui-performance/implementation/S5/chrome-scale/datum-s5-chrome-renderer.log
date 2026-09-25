@@ -1,0 +1,442 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=35.0 GiB target_free=168.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 35.0 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.19s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 433 tests
+test board_hit_construction::tests::real_board_hit_preflight_matches_owned_bytes_and_hidden_scene_allocates_nothing ... ok
+test board_text_mesh_tests::board_text_mesh_bad_indices_skip_bad_triangles_without_panic ... ok
+test board_text_mesh_tests::board_text_mesh_missing_asset_does_not_fall_back_to_legacy_fragments ... ok
+test board_text_mesh_tests::board_text_mesh_path_bypasses_legacy_fill_fragments ... ok
+test bottom_dock::terminal_block_elements::tests::claude_mascot_blocks_use_cell_exact_geometry_and_leave_text_advance ... ok
+test bottom_dock::tests::closed_dock_has_no_content_or_resize_hits ... ok
+test bottom_dock::tests::rendered_dock_content_uses_shared_terminal_geometry ... ok
+test bottom_dock::tests::split_divider_renders_one_path_stable_resize_target_in_its_gutter ... ok
+test capture_resource::tests::capture_allocations_refuse_before_creation_and_remain_charged_until_release ... ignored, requires local GPU and serial process admission
+test coordinate_hit::coordinate_hit_duplicate_tests::duplicate_board_leaves_build_independent_surface_passes ... ok
+test coordinate_hit::coordinate_hit_duplicate_tests::duplicate_schematic_leaves_project_through_their_own_cameras ... ok
+test coordinate_hit::coordinate_hit_tests::board_hover_ring_lands_in_the_board_overlay ... ok
+test coordinate_hit::coordinate_hit_tests::hit_test_at_symbol_location_returns_its_identity ... ok
+test coordinate_hit::coordinate_hit_tests::interaction_refresh_preserves_retained_and_static_scene_work ... ok
+test coordinate_hit::coordinate_hit_tests::schematic_cursor_over_symbol_resolves_symbol_identity ... ok
+test coordinate_hit::coordinate_hit_tests::schematic_hit_storage_is_admitted_before_cloning_and_matches_allocator ... ok
+test coordinate_hit::coordinate_hit_tests::schematic_hover_ring_lands_in_the_schematic_underlay ... ok
+test coordinate_hit::coordinate_hit_tests::schematic_scene_emits_symbol_hit_regions ... ok
+test coordinate_hit::coordinate_hit_tests::screen_point_resolves_to_the_containing_panes_surface ... ok
+test datum_console::history_layout::tests::wrapped_refusals_have_disjoint_complete_clips_at_narrow_and_scaled_sizes ... ok
+test datum_console::history_layout::tests::wrapping_counts_newlines_and_long_words_and_bounds_oversized_records ... ok
+test datum_console::tests::expanded_history_distinguishes_feedback_from_ordinal_journal_truth ... ok
+test datum_console::tests::history_renders_without_a_visible_feedback_strip ... ok
+test datum_console::tests::maximized_terminal_open_and_narrow_layouts_preserve_body_anchor ... ok
+test datum_console::tests::narrow_console_history_clips_controls_to_panel_and_pane ... ok
+test datum_console::tests::overlay_follows_exactly_one_focused_pane_across_scale_matrix ... ok
+test datum_console::tests::prepared_scene_threads_console_geometry_and_clipped_text ... ok
+test datum_console::tests::refusal_has_textual_semantics_and_empty_state_emits_nothing ... ok
+test geometry_output::tests::retained_emission_preserves_geometry_and_commands_and_refuses_before_growth ... ok
+test global_preferences_dialog::dialog_coordinates::tests::dialog_controls_text_and_hits_share_dpi_transform ... ok
+test global_preferences_dialog::preferences_scene::tests::continuous_scroll_clips_rows_and_hits_with_stable_content_bounds ... ok
+test global_preferences_dialog::preferences_scene::tests::fitting_content_does_not_scroll_past_its_end ... ok
+test global_preferences_dialog::preferences_scene::tests::focused_explanation_close_is_revealed_even_when_its_row_is_taller_than_viewport ... ok
+test global_preferences_dialog::preferences_scene::tests::native_dialog_profiles_share_exact_physical_surface_bounds ... ok
+test global_preferences_dialog::preferences_scene::tests::native_preferences_match_legacy_dialog_without_preparing_workspace ... ok
+test global_preferences_dialog_tests::canonical_descriptions_render_without_ellipsis ... ok
+test global_preferences_dialog_tests::dialog_renders_exact_three_canonical_controls_and_blocks_workspace_hits ... ok
+test global_preferences_dialog_tests::focused_search_draws_one_text_caret_for_empty_and_nonempty_queries ... ok
+test global_preferences_dialog_tests::high_contrast_mode_keeps_word_and_shape_state_cues ... ok
+test global_preferences_dialog_tests::main_workspace_never_draws_the_native_preferences_window_or_backdrop ... ok
+test global_preferences_dialog_tests::narrow_dialog_keeps_every_preference_hit_inside_the_window ... ok
+test global_preferences_dialog_tests::preserved_unreadable_rows_keep_values_but_have_no_control_targets ... ok
+test global_preferences_dialog_tests::reduced_motion_changes_no_information_or_keyboard_target ... ok
+test global_preferences_dialog_tests::search_field_uses_the_protected_six_pixel_rounded_outline ... ok
+test global_preferences_primitives::control_mesh::tests::complete_retained_cost_matches_actual_allocations_through_growth_and_eviction ... ok
+test global_preferences_primitives::control_mesh::tests::control_mesh_keys_bounds_and_lru_are_complete ... ok
+test global_preferences_primitives::control_mesh::tests::convex_ellipse_retains_the_existing_perimeter_fan ... ok
+test global_preferences_primitives::control_mesh::tests::ellipse_meshes_preserve_uncached_vertices_and_reuse_across_placement_and_color ... ok
+test global_preferences_primitives::control_mesh::tests::entry_growth_evicts_payload_even_when_the_new_mesh_bypasses_retention ... ok
+test global_preferences_primitives::control_mesh::tests::metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit ... ok
+test global_preferences_primitives::control_mesh::tests::placement_and_color_reuse_control_mesh_but_geometry_and_dpi_miss ... ok
+test global_preferences_primitives::input_text::tests::narrow_input_bounds_text_and_caret_without_changing_display_text ... ok
+test global_preferences_primitives::label_bounds_tests::long_control_labels_preserve_choice_affordance_and_button_bounds ... ok
+test gpu_data::document_gpu_budget::tests::allocation_permit_keeps_document_identity_after_cpu_owner_closes ... ok
+test gpu_data::quad_allocation_tests::fallible_expansion_uses_one_exact_allocation_and_preserves_winding_color ... ok
+test gpu_data::quad_allocation_tests::impossible_capacity_is_refused_without_publishing_vertices ... ok
+test gpu_data::retained_buffer::generation_tests::renderer_recreation_preserves_all_four_world_stream_limits ... ignored, requires local GPU; renderer recovery allocation continuity
+test gpu_data::retained_buffer::generation_tests::two_live_allocations_survive_clear_and_document_switch_until_retirement ... ignored, requires local GPU; run serially with visual feature
+test gpu_data::retained_buffer::tests::document_buffers_share_admission_and_switch_owners_atomically ... ignored, requires local GPU; document admission across streams and retirement
+test gpu_data::retained_buffer::tests::retained_gpu_buffer_reuses_uploads_but_replaces_equal_sized_content ... ignored, requires local GPU; run serially with visual feature
+test gpu_data::screen_buffer::tests::cancelled_uploads_rebuild_and_retired_vertices_remain_observable ... ignored, requires local GPU; run serially with visual feature
+test gpu_data::screen_buffer::tests::changed_ranges_match_independent_word_oracle ... ok
+test gpu_data::screen_buffer::tests::empty_stream_preserves_its_admission_budget ... ignored, requires local GPU; screen subcap preservation across empty streams
+test gpu_data::screen_buffer::tests::range_growth_refusal_preserves_submitted_bytes_and_retries_after_release ... ignored, requires local GPU; range admission must preserve the submitted baseline
+test gpu_data::screen_buffer::tests::repeated_preparation_queues_each_final_range_once ... ignored, requires local GPU; pending upload supersession and cancellation
+test gpu_data::screen_buffer::tests::reverted_preparations_emit_no_upload_and_cancellation_keeps_submitted_bytes ... ignored, requires local GPU; submitted baseline, reverts and snapshot reuse
+test gpu_data::screen_buffer::tests::screen_upload_reuses_exact_content_and_bounds_retention ... ignored, requires local GPU; run serially with visual feature
+test gpu_data::screen_buffer::tests::snapshot_refusal_preserves_baseline_and_retries_without_partial_transfer ... ignored, requires local GPU; snapshot admission must preserve pending and submitted data
+test gpu_data::screen_buffer::tests::two_generations_survive_clear_and_device_replacement ... ignored, requires local GPU; run serially with visual feature
+test gpu_data::shared_geometry::tests::adoption_preserves_payload_address_and_weak_observation_does_not_pin_elements ... ok
+test gpu_data::uniform_buffer::tests::cancelled_uniform_updates_leave_submitted_bytes_and_retirement_intact ... ignored, requires local GPU; deferred uniform and lifetime readback
+test gpu_data::uniform_buffer::tests::fixed_uniform_recovery_preserves_submission_generations ... ignored, requires local GPU; fixed uniform recovery generations
+test gpu_data::uniform_buffer::tests::pane_uniform_slots_preserve_retiring_generations_across_reopen_and_recovery ... ignored, requires local GPU; pane uniform close and recovery continuity
+test gpu_data::uniform_buffer::tests::uniform_ranges_transfer_only_dirty_aligned_words ... ok
+test gpu_data::vertex_allocation::tests::refusal_preserves_allocation_and_retirement_keeps_reservation ... ignored, requires local GPU and serial execution: exercises process admission
+test gpu_measurements::resources::tests::query_resources_rollback_admission_and_survive_frame_and_submission_owners ... ignored, requires local timestamp GPU; shared measurement resource admission and retirement
+test gpu_measurements::tests::active_deadline_pauses_without_resetting_progress ... ok
+test gpu_measurements::tests::invalid_or_missing_measurements_are_never_zero_samples ... ok
+test gpu_measurements::tests::measured_pass_sum_excludes_gap_and_preserves_empty_pass ... ok
+test gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls ... ignored, requires real timestamp-capable GPU; explicit conformance run
+test gpu_overlay::gpu_text::private_guard_tests::production_overrun_stops_preparation_before_retry_or_publication ... ignored, requires local GPU; production overrun must not become atlas retry
+test gpu_strokes::tests::retained_stroke_uses_live_scale_and_px_floor ... ok
+test gpu_strokes::tests::round_caps_reject_square_corners_and_cover_shared_endpoints ... ok
+test gpu_strokes::tests::world_stroke_shader_contains_analytic_capsule_rejection ... ok
+test gpu_surface::attachment_cost_probe::alternating_extent_msaa_reuse_vs_replacement ... ignored, manual changing-extent allocation isolation; not native resize acceptance
+test gpu_surface::attachment_cost_probe::fixed_extent_msaa_reuse_vs_replacement ... ignored, manual optimized GPU cost isolation; not a resource or temporal acceptance test
+test gpu_surface::tests::actual_attachment_reuse_replacement_and_negative_control_have_stable_ids ... ok
+test gpu_surface::tests::attachment_identity_uses_physical_extent_format_and_sample_count ... ok
+test gpu_surface::tests::attachment_retirement_reconciles_submission_completion_and_close ... ok
+test gpu_surface::tests::reported_replacement_failure_keeps_old_attachment_and_allows_fresh_retry ... ok
+test gpu_surface::tests::third_attachment_generation_waits_for_retirement_even_after_recovery ... ok
+test gpu_surface_pass::tests::contiguous_draws_share_submission_without_reordering_layers ... ok
+test gpu_surface_pass::tests::gaps_overlaps_backwards_ranges_and_primitive_switches_stay_ordered ... ok
+test gpu_surface_pass::tests::incomplete_triangle_lists_and_empty_draws_are_not_joined ... ok
+test gpu_surface_pass::tests::real_board_fixture_preserves_exact_draw_sequence_with_layer_filtering ... ok
+test gpu_surface_pass::world_bundles::tests::world_bundle_reuse_and_invalidation_on_real_gpu ... ignored, requires local GPU; run explicitly with the visual feature
+test gpu_vertex_upload::cold_world::tests::cold_startup_acquires_once_after_more_than_four_upload_submissions ... ignored, requires local Vulkan GPU; more upload turns than swapchain images
+test gpu_vertex_upload::cold_world::tests::cold_world_yields_without_presenting_partial_data_and_restarts_changed_sources ... ignored, requires local GPU; bounded world continuation and source replacement
+test grid_tests::resolving_grid_lod_never_rebuilds_retained_geometry ... ok
+test grid_tests::schematic_grid_emits_square_underlay_geometry ... ok
+test grid_tests::schematic_grid_weight_is_screen_constant_across_zoom ... ok
+test hit_clipping::tests::clipped_triangle_encoding_emits_only_visible_area ... ok
+test hit_clipping::tests::descendant_text_and_hits_intersect_both_axes_without_touching_chrome ... ok
+test hit_clipping::tests::four_edge_clip_preserves_triangle_area_and_pinned_content ... ok
+test hit_clipping::tests::rectangular_suffix_clips_in_place_and_preserves_visible_encoding ... ok
+test hit_clipping::tests::suffix_clipping_preserves_order_after_consecutive_removals ... ok
+test interaction_overlay::interaction_overlay_tests::crosshair_flows_into_the_schematic_overlay_only ... ok
+test interaction_overlay::interaction_overlay_tests::cursor_outside_viewport_draws_no_crosshair ... ok
+test interaction_overlay::interaction_overlay_tests::default_crosshair_style_is_full_viewport ... ok
+test interaction_overlay::interaction_overlay_tests::full_viewport_crosshair_spans_the_pane ... ok
+test interaction_overlay::interaction_overlay_tests::hover_bounds_emit_a_hover_ring_only ... ok
+test interaction_overlay::interaction_overlay_tests::local_crosshair_is_a_small_cross_at_the_cursor ... ok
+test interaction_overlay::interaction_overlay_tests::no_inputs_emit_nothing ... ok
+test interaction_overlay::interaction_overlay_tests::none_style_emits_no_crosshair ... ok
+test interaction_overlay::interaction_overlay_tests::switching_style_switches_modes ... ok
+test layout_invariant_tests::default_board_and_loaded_schematic_scene_centers_are_editor_targets ... ok
+test layout_invariant_tests::dividers_carry_split_paths_and_are_grabbable ... ok
+test layout_invariant_tests::leaf_at_maps_points_for_click_to_focus ... ok
+test layout_invariant_tests::maximized_terminal_fills_the_workspace_between_global_chrome ... ok
+test layout_invariant_tests::shell_and_hit_regions_hold_layout_invariants_across_scale_matrix ... ok
+test layout_invariant_tests::viewport_tiling_holds_pane_tree_invariants_across_scale_matrix ... ok
+test lib_extra_tests::component_polygon_graphic_adds_fill_and_outline ... ok
+test lib_extra_tests::debug_datum_test_q1_q2_component_geometry ... ok
+test lib_extra_tests::derived_mask_pad_expands_by_clearance ... ok
+test lib_extra_tests::derived_paste_pad_applies_ratio_and_clearance ... ok
+test lib_extra_tests::derived_process_pad_uses_pad_level_overrides_not_board_globals ... ok
+test lib_extra_tests::general_polygon_fill_preserves_concave_notch ... ok
+test lib_extra_tests::general_polygon_fill_preserves_hole ... ok
+test lib_extra_tests::inferred_component_body_geometry_handles_quarter_turn_parts ... ok
+test lib_extra_tests::layer_appearance_distinguishes_top_and_bottom_copper ... ok
+test lib_extra_tests::render_stage_orders_layer_type_then_side ... ok
+test lib_extra_tests::rotated_rect_pad_produces_non_axis_aligned_geometry ... ok
+test lib_extra_tests::roundrect_ratio_changes_corner_radius ... ok
+test marking_menu::tests::constrained_marking_preview_and_error_share_visible_bounds ... ok
+test menu_chrome::action_readiness_tests::rendered_fit_readiness_tracks_context_and_missing_rows_stay_inspectable ... ok
+test menu_chrome::menu_overlay_contract_tests::menu_dropdown_composites_into_menu_overlay_under_its_title ... ok
+test menu_chrome::menu_overlay_contract_tests::menu_dropdown_fits_its_content_no_spill ... ok
+test menu_chrome::menu_overlay_contract_tests::menu_overlay_is_empty_when_no_menu_open ... ok
+test menu_chrome::menu_overlay_contract_tests::nested_preferences_submenu_is_pointer_targeted_and_edge_safe ... ok
+test menu_chrome::tests::conformance_menu_title_width_padding_is_uniform_and_tight ... ok
+test menu_chrome::tests::long_menu_in_small_window_shares_paint_text_and_hit_bounds ... ok
+test menu_chrome::tests::menu_model_is_available_to_renderer ... ok
+test new_project_dialog::scene::tests::constrained_form_reveals_footer_and_returns_to_name_at_each_scale ... ok
+test new_project_dialog::tests::complete_form_has_exact_two_sources_and_one_create_action ... ok
+test new_project_dialog::tests::long_summary_text_uses_the_summary_group_ancestor ... ok
+test new_project_dialog::tests::refusal_keeps_factory_available_and_exposes_retry ... ok
+test pane_chrome::tests::constrained_pane_headers_clip_all_paint_without_clipping_the_focus_frame ... ok
+test pane_chrome::tests::placeholder_captions_stay_in_their_own_canvas ... ok
+test pane_chrome::tests::production_pane_headers_reuse_the_shared_focus_indicator ... ok
+test render_contract_tests::board_scene_stays_in_board_pane_regardless_of_focus ... ok
+test render_contract_tests::conformance_pane_header_tools_and_binding_chips_render ... ok
+test render_contract_tests::conformance_region_token_bindings_follow_design_book ... ok
+test render_contract_tests::copper_layer_appearance_is_material_first ... ok
+test render_contract_tests::diagnostic_evidence_marks_endpoints_only_over_proposed_copper ... ok
+test render_contract_tests::dimmed_copper_stays_legible_against_board_field ... ok
+test render_contract_tests::focus_frame_belongs_to_the_focused_leaf_only ... ok
+test render_contract_tests::narrow_pane_header_does_not_bleed_into_neighbor ... ok
+test render_contract_tests::non_scene_board_pane_shows_inactive_caption ... ok
+test render_contract_tests::render_stack_policy_follows_declared_contract ... ok
+test render_contract_tests::render_stage_declaration_order_is_the_only_priority_encoding ... ok
+test render_contract_tests::scene_underlay_has_no_decorative_gold_edge_frame ... ok
+test renderer_state::cpu_alloc::calls::tests::cache_and_scratch_credits_transfer_without_double_counting ... ok
+test renderer_state::cpu_alloc::calls::tests::concurrent_hosts_observe_simultaneous_process_peak_and_rollback ... ok
+test renderer_state::cpu_alloc::calls::tests::default_font_loading_overrun_preserves_shapes_and_retries_identically ... ok
+test renderer_state::cpu_alloc::calls::tests::failed_font_call_never_turns_into_an_absent_raster_glyph ... ok
+test renderer_state::cpu_alloc::calls::tests::released_transient_peak_rejects_without_using_lifetime_high_water ... ok
+test renderer_state::cpu_alloc::heap::tests::requested_capacity_matches_allocator_for_alignment_growth_and_empty_storage ... ok
+test renderer_state::cpu_alloc::tests::allocations_keep_observation_alive_after_scope_owner_closes ... ok
+test renderer_state::cpu_alloc::tests::large_alignment_zeroing_and_reallocation_preserve_payload ... ok
+test renderer_state::cpu_alloc::tests::nested_scope_and_panicking_work_restore_attribution ... ok
+test renderer_state::cpu_alloc::tests::private_font_shape_and_raster_allocations_retire_with_their_owners ... ok
+test renderer_state::cpu_alloc::tests::sharing_and_equal_size_replacement_count_allocations_once ... ok
+test renderer_state::cpu_alloc::tests::vector_capacity_growth_shrink_and_cross_thread_release_reconcile ... ok
+test retained_draw_order_tests::retained_commands_interleave_strokes_with_their_semantic_layers ... ok
+test retained_draw_order_tests::retained_resize_classifies_schematic_independently ... ok
+test retained_draw_order_tests::retained_resize_rejects_scale_dependent_mechanical_dashes ... ok
+test retained_draw_order_tests::retained_resize_rejects_scale_dependent_unrouted_geometry ... ok
+test retained_draw_order_tests::retained_resize_reuse_matches_fresh_geometry_in_both_axes ... ok
+test retained_scene_owner::document_cpu::tests::board_and_companion_constructors_refuse_budget_and_allow_retry ... ok
+test retained_scene_owner::document_cpu::tests::concurrent_history_admission_cannot_exceed_six_or_release_early ... ok
+test retained_scene_owner::document_cpu::tests::constructor_gate_covers_work_and_unwinds_without_poisoning_future_builds ... ok
+test retained_scene_owner::document_cpu::tests::document_payload_aggregates_distinct_scenes_deduplicates_clones_and_releases ... ok
+test retained_scene_owner::document_cpu::tests::history_byte_admission_is_atomic_and_releases_for_retry ... ok
+test retained_scene_owner::document_cpu::tests::production_document_payload_and_identity_match_live_allocator_bytes ... ok
+test retained_scene_owner::document_cpu::tests::pruning_reuses_charged_capacity_without_allocating_and_releases_empty_storage ... ok
+test retained_scene_owner::document_cpu::tests::publication_refusal_preserves_registry_and_retry_registers_unique_metadata ... ok
+test retained_scene_owner::document_cpu::tests::real_hit_index_admission_includes_staging_and_matches_allocator ... ok
+test retained_scene_owner::document_cpu::tests::registry_records_match_allocator_and_release_independently ... ok
+test retained_scene_owner::document_cpu::tests::shared_owner_refusal_allocates_no_owners_and_preserves_staging ... ok
+test retained_scene_owner::document_cpu::tests::vertex_expansion_admission_includes_live_owners_staging_and_requested_capacity ... ok
+test revision_pane_tests::every_revision_panel_text_quad_and_hit_is_clipped_to_its_pane ... ok
+test revision_pane_tests::revision_pane_keeps_design_surfaces_board_hits_and_witness_summary_live ... ok
+test revision_pane_tests::shell_layout_reserves_bottom_dock_and_viewport ... ok
+test revision_pane_tests::unmanaged_default_workspace_has_no_revision_presentation_or_hits ... ok
+test scene_layout_tests::prepared_scene_uses_surface_scale_for_layout_and_text ... ok
+test scene_layout_tests::shell_layout_is_solved_by_taffy_grid_contract ... ok
+test scene_layout_tests::shell_layout_solves_logical_pixels_then_scales_to_surface_pixels ... ok
+test scene_retained_access::heap_tests::complete_scene_owned_capacities_match_allocator_and_weak_release ... ok
+test scene_retained_access::heap_tests::document_keeps_weak_only_allocations_charged_until_last_observer_releases ... ok
+test scene_retained_access::heap_tests::history_key_and_replacement_storage_share_atomic_admission_and_separate_release ... ok
+test scene_retained_access::retained_storage_tests::admitted_command_order_matches_stable_sort_and_refusal_preserves_input ... ok
+test scene_retained_access::retained_storage_tests::cloned_retained_scene_shares_immutable_stroke_storage ... ok
+test scene_retained_access::retained_storage_tests::geometry_observers_deduplicate_individual_allocations_and_follow_release ... ok
+test scene_retained_access::retained_storage_tests::retained_payload_accounts_geometry_and_refuses_unknown_targets ... ok
+test scene_retained_access::retained_storage_tests::retained_revisions_share_one_document_gpu_budget_for_vertices_and_strokes ... ok
+test selection_relation::tests::component_object_and_legacy_alias_select_the_same_component ... ok
+test selection_relation::tests::empty_and_unmatched_selections_do_not_select_a_component ... ok
+test shell_identity::shell_identity_tests::brand_and_long_revision_stay_inside_the_menu_strip ... ok
+test shell_layout::tests::alternating_shell_and_terminal_queries_stay_warm_and_eviction_is_bounded ... ok
+test shell_layout::tests::every_geometry_input_selects_correct_layout ... ok
+test shell_layout::tests::public_cached_path_matches_uncached_geometry_across_scales_and_docks ... ok
+test shell_layout::tests::repeated_pointer_queries_solve_only_once ... ok
+test shell_layout::tests::retained_preparation_frame_preparation_and_input_queries_share_one_solve ... ok
+test side_panels::filters_layout::tests::actual_frame_reuses_layer_geometry_but_updates_labels ... ok
+test side_panels::filters_layout::tests::cached_geometry_matches_fresh_and_reuses_row_storage ... ok
+test side_panels::inspector_dispatch::tests::active_inspector_profiles_keep_content_inside_the_panel ... ok
+test side_panels::inspector_dispatch::tests::selected_inspector_uses_measured_width_and_stays_warm ... ignored, requires local GPU; inspector width adoption and rendered review
+test side_panels::inspector_layout::tests::actual_inspector_preparation_reuses_layout_and_updates_values ... ok
+test side_panels::inspector_layout::tests::inspector_keys_preserve_fresh_geometry_across_profiles ... ok
+test side_panels::project_layout::tests::actual_frame_preparation_reuses_project_geometry ... ok
+test side_panels::project_layout::tests::geometry_keys_match_fresh_solver_and_two_entries_stay_bounded ... ok
+test side_panels::render_project_filters::tests::project_and_discrete_layers_inherit_separate_panel_bounds ... ok
+test status_bar::tests::actual_status_segments_share_strip_bounds_at_constrained_extents ... ok
+test stroke_policy::tests::active_schematic_consumers_select_their_governed_policy ... ok
+test stroke_policy::tests::authored_widths_scale_with_live_zoom_and_floor_in_device_pixels ... ok
+test stroke_policy::tests::board_graphic_defaults_are_class_c_and_imported_width_wins ... ok
+test stroke_policy::tests::every_governed_authored_stroke_has_exactly_one_non_chrome_class ... ok
+test stroke_policy::tests::per_object_copper_preserves_authored_width_and_provenance ... ok
+test terminal_clipboard_menu::tests::detected_paths_are_copyable_but_never_offer_desktop_open ... ok
+test terminal_clipboard_menu::tests::generic_terminal_menu_exposes_compact_profile_and_theme_controls ... ok
+test terminal_clipboard_menu::tests::terminal_context_menu_is_clamped_and_exposes_copy_paste_actions ... ok
+test terminal_clipboard_menu::tests::undersized_terminal_menu_clips_paint_text_and_actions_to_screen ... ok
+test terminal_core_render::tests::all_search_matches_are_highlighted_and_active_match_invalidates_retained_rows ... ok
+test terminal_core_render::tests::cursor_uses_core_row_column_shape_and_palette_without_lane_projection ... ok
+test terminal_core_render::tests::ime_preedit_is_rendered_at_the_core_cursor_without_entering_cells ... ok
+test terminal_core_render::tests::immutable_core_snapshot_drives_complete_style_and_fixed_cluster_geometry ... ok
+test terminal_core_render::tests::partial_terminal_viewport_clips_cached_and_cold_cell_paint ... ok
+test terminal_core_render::tests::retained_rows_rebuild_only_for_declared_damage_or_geometry_change ... ok
+test terminal_core_render::tests::scaled_geometry_drives_glyph_cursor_and_clip_dimensions_together ... ok
+test terminal_core_render::tests::sixel_snapshot_produces_clipped_gpu_image_placement ... ok
+test terminal_core_render::tests::split_panes_retain_independent_rows_geometry_and_hit_identity ... ok
+test terminal_core_render::tests::themes_change_only_fallback_colors_and_invalidate_retained_rows ... ok
+test terminal_dock_contract_tests::dock_exposes_terminal_tab_only ... ok
+test terminal_dock_contract_tests::terminal_dock_does_not_render_output_lane_findings ... ok
+test terminal_dock_contract_tests::terminal_dock_omits_persistent_header_and_routine_diagnostics ... ok
+test terminal_dock_contract_tests::terminal_dock_renders_exact_global_shutdown_survivor_identity ... ok
+test terminal_dock_contract_tests::terminal_hit_ownership_tests::editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras ... ok
+test terminal_dock_contract_tests::terminal_hit_ownership_tests::rectangle_intersection_requires_positive_visible_area ... ok
+test terminal_dock_contract_tests::terminal_hit_ownership_tests::status_projection_reads_the_shared_application_focus_authority ... ok
+test terminal_dock_contract_tests::terminal_lane_renders_no_activity_summary_rows ... ok
+test terminal_dock_contract_tests::terminal_screen_rect_is_the_dedicated_content_hit_target ... ok
+test terminal_dock_contract_tests::terminal_top_boundary_is_the_visible_resize_cursor_target ... ok
+test terminal_font_tests::prompt_style_boundaries_do_not_restart_glyph_positioning ... ok
+test terminal_font_tests::terminal_cell_advance_combines_smaller_ink_with_explicit_spacing ... ok
+test terminal_font_tests::terminal_face_shapes_box_drawing_and_powerline_without_notdef ... ok
+test terminal_font_tests::terminal_font_advance_matches_shared_logical_cell_width ... ok
+test terminal_font_tests::terminal_rich_span_colors_invalidate_paint_but_preserve_shaping ... ok
+test terminal_graphics::texture::tests::multi_chunk_odd_width_upload_matches_decoded_pixels ... ignored, requires local GPU; borrowed terminal upload row boundaries
+test terminal_graphics::texture::upload::tests::borrowed_chunks_preserve_channels_and_cover_odd_rows_and_wide_tails ... ok
+test terminal_session_chrome::tests::close_and_shutdown_states_expose_only_the_ratified_actions ... ok
+test terminal_tab_strip_tests::active_terminal_search_replaces_the_routine_hint_with_query_chrome ... ok
+test terminal_tab_strip_tests::dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker ... ok
+test terminal_tab_strip_tests::guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text ... ok
+test terminal_tab_strip_tests::http_link_confirmation_replaces_routine_hint_with_explicit_actions ... ok
+test terminal_tab_strip_tests::inactive_tabs_use_non_color_output_and_bell_attention_markers ... ok
+test terminal_tab_strip_tests::new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last ... ok
+test terminal_tab_strip_tests::osc52_confirmation_names_the_destination_and_requires_copy_or_cancel ... ok
+test terminal_tab_strip_tests::terminal_tab_chrome_cannot_paint_or_hit_outside_its_header_row ... ok
+test tests::authored_component_selection_populates_inspector_reference_and_value ... ok
+test tests::authoring_tool_buttons_are_not_rendered_in_read_only_phase_one ... ok
+test tests::board_outline_hit_region_selects_assembled_outline ... ok
+test tests::board_text_inspector_does_not_emit_edit_hit_regions_in_phase_one ... ok
+test tests::hit_regions_include_review_rows_and_overlay_targets ... ok
+test tests::hit_testing_prefers_overlay_over_underlying_authored_geometry ... ok
+test tests::imported_board_text_counts_as_component_detail_text ... ok
+test tests::layers_panel_renders_active_layer_and_toggle_regions ... ok
+test tests::marking_menu_shell_renders_manifest_items_without_command_targets ... ok
+test tests::pane_ops_do_not_re_resolve_the_world_scene ... ok
+test tests::populated_inspector_status_stays_inside_right_column ... ok
+test tests::prepared_scene_preserves_viewport_dominance ... ok
+test tests::project_card_controls_flow_above_filter_controls ... ok
+test tests::proposal_preview_affected_ids_match_scene_source_ids ... ok
+test tests::proposal_preview_render_deltas_become_overlay_primitives ... ok
+test tests::retained_pad_hit_regions_target_pads_for_inspection ... ok
+test tests::roundrect_pad_uses_richer_geometry_than_rect_pad ... ok
+test tests::selected_board_text_numeric_rows_have_step_and_center_edit_zones ... ok
+test tests::terminal_dock_does_not_surface_artifact_file_summaries ... ok
+test text_buffer_cache::admission::tests::admission_compacts_spare_metadata_without_discarding_required_layouts ... ignored, requires serial process-wide cache admission
+test text_buffer_cache::admission::tests::current_layout_admission_evicts_only_history_and_remaps_current_indices ... ignored, requires serial process-wide cache admission
+test text_buffer_cache::admission::tests::local_capacity_refusal_drops_oversized_key_allocation_and_all_index_groups ... ignored, requires serial process-wide cache admission
+test text_buffer_cache::admission::tests::oversized_plain_and_rich_keys_refuse_before_shaping_and_preserve_warm_cache ... ok
+test text_buffer_cache::admission::tests::required_layout_refusal_releases_derived_storage_and_rebuilds_current_content ... ignored, requires serial process-wide cache admission
+test text_buffer_cache::admission::tests::rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage ... ok
+test text_buffer_cache::admission::tests::warm_frames_publish_preparing_without_changing_owned_bytes ... ok
+test text_buffer_cache::budget::tests::admission_counts_other_owners_including_active_frames ... ok
+test text_buffer_cache::budget::tests::construction_is_admitted_across_owners_and_transfers_once_on_publication ... ignored, requires serial process-wide text admission
+test text_buffer_cache::budget::tests::owner_creation_admits_registry_overlap_and_refuses_without_mutation ... ignored, requires serial process-wide text admission
+test text_buffer_cache::budget::tests::registry_reports_actual_heap_through_growth_update_and_close ... ok
+test text_buffer_cache::prepare::tests::interrupted_relayout_cannot_be_reused_as_a_complete_layout ... ignored, requires serial process-wide text admission
+test text_buffer_cache::prepare::tests::overlay_admission_evicts_history_and_remaps_the_earlier_workspace_group ... ignored, requires serial process-wide text admission
+test text_buffer_cache::prepare::tests::overlay_pressure_stops_at_first_excess_layout_and_invalidates_workspace_indices ... ignored, requires serial process-wide text admission
+test text_buffer_cache::retention_tests::composed_label_retention_preserves_workspace_and_shared_layouts ... ok
+test text_buffer_cache::retention_tests::rich_shaping_keys_do_not_retain_or_hash_unused_plain_fallback ... ok
+test text_buffer_cache::tests::animated_agent_text_cache_retains_only_two_visible_generations ... ok
+test text_buffer_cache::tests::borrowed_lookup_preserves_the_complete_existing_key ... ok
+test text_buffer_cache::tests::dialog_cache_retains_scroll_history_with_count_and_text_budgets ... ok
+test text_buffer_cache::tests::explicit_layout_extent_survives_visibility_changes ... ok
+test text_buffer_cache::tests::extent_changes_relayout_cached_shaping_with_fresh_buffer_parity ... ok
+test text_buffer_cache::tests::finished_frame_applies_eight_mib_ceiling_to_owned_capacity ... ok
+test text_buffer_cache::tests::heap_tests::accounting_and_retirement_allocate_no_temporary_storage_for_shared_extents ... ok
+test text_buffer_cache::tests::heap_tests::complete_retained_text_accounting_matches_heap_after_shared_layout_construction ... ok
+test text_buffer_cache::tests::indexed_lookup_checks_collisions_and_tracks_retirement ... ok
+test text_buffer_cache::tests::overlay_key_budget_charges_allocated_plain_and_rich_text_capacity ... ok
+test text_buffer_cache::tests::owned_shape_accounting_deduplicates_extent_variants_and_releases_eviction ... ok
+test text_buffer_cache::tests::process_retention_counts_multiple_live_caches_and_releases_closed_owners ... ok
+test text_buffer_cache::tests::real_overlay_cache_bounds_churn_and_rebuilds_evicted_labels ... ok
+test text_buffer_cache::tests::real_shaped_cache_reuses_placement_changes_and_retires_old_workspace_rows ... ok
+test text_buffer_cache::tests::relayout_moves_unused_entries_but_preserves_current_frame_layouts ... ok
+test text_buffer_cache::tests::retained_payload_pressure_retires_oldest_and_reconstructs_exactly ... ok
+test text_buffer_cache::tests::unchanged_finished_frame_preserves_shaping_and_revision ... ok
+test text_gpu::allocation_host::tests::nested_renderer_scopes_restore_on_error_without_cross_thread_leakage ... ok
+test text_gpu::atlas::cpu_images::tests::pixels_are_charged_until_copied_and_pressure_preserves_pending_content ... ignored, requires local GPU; shared CPU/GPU staging ownership
+test text_gpu::atlas::glyph_map::tests::glyph_lookup_growth_refusal_and_repack_preserve_exact_keys_and_capacity ... ok
+test text_gpu::atlas::tests::atlas_page_generations_count_once_and_survive_every_page_hold ... ignored, requires local GPU; shared atlas page generation ownership
+test text_gpu::atlas::tests::local_atlas_limit_counts_retired_pages_before_replacement ... ignored, requires local GPU; local atlas retirement admission
+test text_gpu::atlas::tests::owned_atlas_process_admission_precedes_allocation_and_waits_for_retirement ... ignored, requires local GPU; run explicitly with the visual feature
+test text_gpu::atlas::tests::owned_atlas_upload_reuse_reset_and_retirement_handoff ... ignored, requires local GPU; run explicitly with the visual feature
+test text_gpu::atlas::tests::shelf_rejection_preserves_previous_and_remaining_space ... ok
+test text_gpu::budget::tests::budget_container_measurement_matches_allocated_capacity_until_last_weak_drop ... ok
+test text_gpu::budget::tests::concurrent_admission_cannot_overbook_or_release_early ... ok
+test text_gpu::budget::tests::failed_second_reservation_rolls_back_first ... ok
+test text_gpu::draw::generation_tests::admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_upload ... ignored, requires local GPU; large glyph snapshot dirty-range reuse
+test text_gpu::draw::generation_tests::instance_generation_limits_survive_empty_preparation_and_device_replacement ... ignored, requires local GPU; glyph instance generation admission
+test text_gpu::lifetime::tests::accounting_receipt_does_not_keep_a_released_gpu_allocation_live ... ok
+test text_gpu::lifetime::tests::directly_submitted_staging_owner_counts_once_until_completion_drop ... ok
+test text_gpu::lifetime::tests::reference_roles_payload_and_final_release_survive_producer_close ... ok
+test text_gpu::lifetime::tests::shared_consumer_incidence_survives_retagging_until_each_reference_releases ... ok
+test text_gpu::lifetime::tests::split_upload_reservation_survives_mapped_owner_and_packet_submissions ... ok
+test text_gpu::lifetime::tests::submitted_allocation_stays_charged_after_cpu_replacement ... ok
+test text_gpu::lifetime::tests::texture_reservation_survives_owner_and_every_submission_hold ... ok
+test text_gpu::parity::owned_draw_matches_installed_text_renderer ... ignored, requires local GPU; run explicitly with the visual feature
+test text_gpu::raster::tests::private_raster_scratch_releases_under_pressure_without_losing_live_pixels ... ok
+test text_gpu::sparse_upload::tests::sparse_encoding_comparison ... ignored, bounded diagnostic only; run optimized explicitly, not qualification
+test text_gpu::sparse_upload::tests::sparse_packets_preserve_clean_words_and_retire_complete_capacity ... ignored, requires local GPU; sparse packet admission, cancellation and readback
+test text_gpu::staging_vec::tests::growth_admits_old_new_overlap_and_reuse_preserves_storage ... ok
+test text_gpu::staging_vec::tests::staging_plan_charges_actual_heap_and_refuses_before_growth ... ok
+test text_gpu::upload::tests::mixed_staging_is_charged_until_completion_and_preserves_texture_and_buffer_gaps ... ignored, requires local GPU; explicit staging admission and completion
+test text_gpu::upload_totals::tests::allocation_uploads_accumulate_chunks_and_distinguish_recovered_attempts ... ok
+test text_identity_tests::conformance_medium_type_tiers_resolve_to_medium_weight ... ok
+test text_identity_tests::text_buffer_key_ignores_position_and_color_but_tracks_content ... ok
+test text_identity_tests::text_prepare_signature_tracks_render_relevant_inputs ... ok
+test text_layout::fonts::admission::tests::construction_reservation_tracks_exact_shared_output_until_publication ... ok
+test text_layout::fonts::admission::tests::oversized_shape_is_refused_before_the_font_owner_allocates ... ok
+test text_layout::fonts::admission::tests::public_output_bound_covers_basic_unicode_and_rich_shape_capacities ... ok
+test text_layout::fonts::bidi_scratch::tests::bidi_pressure_refuses_before_shaping_and_retries_without_changing_glyphs ... ok
+test text_layout::fonts::bidi_scratch::tests::bidi_reservation_covers_both_profiles_and_rolls_back_on_refusal ... ok
+test text_layout::fonts::tests::cache_pressure_preserves_font_identity_and_returned_shapes ... ok
+test text_layout::fonts::tests::font_private_storage_and_shared_shape_lifetimes_are_disjoint ... ok
+test text_layout::fonts::tests::measurement_overrun_releases_private_work_and_retries_exact_layout ... ok
+test text_layout::input::tests::attributes_reserve_before_construction_cover_peaks_and_release_with_storage ... ok
+test text_layout::input::tests::borrowed_paragraphs_match_installed_ascii_and_unicode_boundaries_without_allocation ... ok
+test text_layout::scratch::tests::clipped_prefix_layout_peak_is_independent_of_hidden_paragraph_rows ... ok
+test text_layout::scratch::tests::private_layout_capacity_is_separate_from_outputs_and_evictable ... ok
+test text_layout::streaming_rows::tests::streaming_rows_match_installed_layout ... ok
+test text_layout::tests::live_span_paint_matches_baked_reference_across_text_boundaries ... ok
+test text_layout::tests::owned_layout_matches_buffer_for_plain_rich_and_extent_changes ... ok
+test text_layout::tests::shape_container_cost_measures_arc_and_allocator_overhead_without_double_counting ... ok
+test text_metrics::measurement_cache::heap_tests::width_cache_counts_all_owned_heap_headers_through_eviction_and_release ... ok
+test text_metrics::measurement_cache::tests::exact_measurements_reuse_only_identical_font_size_and_text ... ok
+test text_metrics::measurement_cache::tests::measurement_cache_bounds_changing_labels_and_keeps_recent_hits ... ok
+test text_metrics::measurement_cache::tests::ownership_report_matches_eviction_and_oversize_bypass ... ok
+test text_metrics::measurement_cache::tests::rejected_measurement_is_not_cached_as_a_layout_value ... ok
+test text_metrics::measurement_cache::tests::thread_local_owners_report_exact_retention_and_retire_at_thread_exit ... ok
+test text_metrics::measurement_owner::tests::default_native_preparation_adapters_refuse_host_pressure_and_retry ... ignored, requires local GPU; shared-device native preparation adapters
+test text_metrics::measurement_owner::tests::native_layout_refuses_cold_measurement_and_retries_without_publishing ... ok
+test text_metrics::tests::embedded_font_bytes_are_shared_between_font_systems ... ok
+test text_metrics::tests::shared_font_sources_match_legacy_copy_shaping ... ok
+test text_metrics::tests::wrapped_height_reuses_only_matching_layout_dependencies ... ok
+test text_metrics::text_shape::tests::public_shape_measurements_match_render_buffer_layout ... ok
+test text_presentation::chrome_scale::tests::composed_scaled_menus_keep_glyphs_and_clicks_inside_the_same_titles ... ok
+test text_presentation::chrome_scale::tests::composed_scaled_status_segments_do_not_overlap_at_supported_width ... ok
+test visual::visual_capture::gpu_overlay_tests::consumer_tests::dialog_producers_reach_upload_receipts_without_workspace_consumer_leakage ... ignored, requires local GPU; default native dialog renderer incidence
+test visual::visual_capture::gpu_overlay_tests::consumer_tests::renderer_creation_refuses_text_pressure_and_recovers_after_release ... ignored, requires local GPU and serial process-wide text admission
+test visual::visual_capture::gpu_overlay_tests::consumer_tests::workspace_uploads_preserve_shared_stream_consumers_and_warm_zero_work ... ignored, requires local GPU; production consumer incidence
+test visual::visual_capture::gpu_overlay_tests::control_gpu_tests::rounded_control_fans_match_scanline_pixels ... ignored, requires local GPU; run explicitly with the visual feature
+test visual::visual_capture::gpu_overlay_tests::control_tests::new_project_controls_retain_meshes_and_match_cold_composition ... ignored, requires local GPU; New Project renderer ownership proof
+test visual::visual_capture::gpu_overlay_tests::control_tests::new_project_long_name_paints_only_inside_its_field ... ignored, requires local GPU; bounded production input clipping proof
+test visual::visual_capture::gpu_overlay_tests::dialog_single_pass_matches_general_renderer_pixels ... ignored, requires local GPU; run explicitly with the visual feature
+test visual::visual_capture::gpu_overlay_tests::fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text ... ignored, requires local GPU; run explicitly with the visual feature
+test visual::visual_capture::gpu_overlay_tests::glyph_continuation_tests::oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text ... ignored, requires local GPU; glyph upload continuation and current-state rendering
+test visual::visual_capture::gpu_overlay_tests::glyph_continuation_tests::text_cache_pressure_refuses_before_glyphs_and_retries_current_frame ... ignored, requires local GPU and serial process-wide cache admission
+test visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels ... ignored, requires timestamp-capable hardware; production measurement parity
+test visual::visual_capture::gpu_overlay_tests::overlay_cache_reuse_tests::cached_shape_relayout_matches_fresh_dialog_pixels ... ignored, requires local GPU; run explicitly with the visual feature
+test visual::visual_capture::gpu_overlay_tests::overlay_cache_reuse_tests::oversized_overlay_signature_bypasses_reuse_without_omitting_text ... ignored, requires local GPU; bounded overlay signature proof
+test visual::visual_capture::gpu_overlay_tests::pass_tests::empty_workspace_text_omits_preparation_and_pass_without_pixel_change ... ignored, requires timestamp-capable hardware; production pass contribution proof
+test visual::visual_capture::gpu_overlay_tests::production_dialog_upload_reuses_content_and_matches_evicted_pixels ... ignored, requires local GPU; run explicitly with the visual feature
+test visual::visual_capture::gpu_overlay_tests::renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels ... ignored, requires local GPU; renderer-owned control preparation proof
+test visual::visual_capture::gpu_overlay_tests::shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs ... ignored, requires local GPU; run explicitly with the visual feature
+test visual::visual_capture::gpu_overlay_tests::shared_text_preparation_survives_real_atlas_pressure ... ignored, requires local GPU; run explicitly with the visual feature
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_admission_includes_quads_and_holds_capacity_until_retirement ... ignored, requires local GPU and serial execution: terminal process admission
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels ... ignored, requires local GPU; terminal graphics resource and pixel proof
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content ... ignored, requires local GPU; terminal pixel continuation and replacement
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_quad_slots_preserve_submission_limits_after_close_and_recovery ... ignored, requires local GPU; terminal quad close and recovery generations
+test visual::visual_capture::gpu_overlay_tests::terminal_resource_tests::terminal_texture_generations_survive_close_reopen_and_recovery ... ignored, requires local GPU; immutable terminal texture recovery admission
+test visual::visual_capture::gpu_overlay_tests::text_paint_tests::atlas_repack_reprepares_workspace_and_overlay_without_reshaping ... ignored, requires local GPU; atlas epoch invalidates both prepared text groups
+test visual::visual_capture::gpu_overlay_tests::text_paint_tests::rich_color_changes_reuse_shapes_and_update_each_area ... ignored, requires local GPU; rich paint cache reuse and independent cold pixels
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::composed_workspace_dialog_limits_labels_without_losing_current_content ... ignored, requires local GPU; composed label retention and pixel parity
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::control_retention_bypasses_full_cache_and_retires_after_submission ... ignored, requires local GPU and serial resource admission
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::failed_dialog_releases_excess_labels_and_retry_matches_fresh_pixels ... ignored, requires local GPU; failed dialog retention and recovery
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry ... ignored, requires local GPU; staging refusal must preserve producer updates
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::oversized_control_gpu_buffer_uploads_all_content_without_retention ... ignored, requires local GPU and serial resource admission
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::screen_streams_and_uniforms_share_one_host_limit ... ignored, requires local GPU; shared host-buffer admission and isolation
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::uniform_uploads_stay_warm_and_retire_closed_surface_slots ... ignored, requires local GPU; shared uniform ownership proof
+test visual::visual_capture::tests::align_to_preserves_aligned_rows ... ok
+test visual::visual_capture::tests::offscreen_capture_renders_fixture_workspace ... ignored, requires a working local wgpu adapter; intended for explicit visual harness smoke runs
+test visual::visual_capture::tests::offscreen_terminal_sixel_uses_the_production_texture_pipeline ... ignored, requires a working local wgpu adapter; explicit DTC-P23 visual proof
+test visual::visual_diff::tests::exact_compare_passes_identical_images ... ok
+test visual::visual_diff::tests::tolerance_compare_counts_pixels_over_threshold ... ok
+test visual::visual_manifest::tests::accepts_only_governed_console_scenarios ... ok
+test visual::visual_manifest::tests::parses_checked_in_text_fixture_manifests ... ok
+test visual::visual_manifest::tests::parses_explicit_ui_scale_factors ... ok
+test visual::visual_manifest::tests::parses_imported_kicad_board_fixture_manifest ... ok
+test visual::visual_manifest::tests::parses_minimal_layer_a_manifest ... ok
+test visual::visual_manifest::tests::rejects_exact_policy_with_tolerance ... ok
+test visual::visual_runner::tests::blank_check_rejects_solid_image ... ok
+test visual::visual_runner::tests::clean_artifacts_removes_only_generated_outputs ... ok
+test visual::visual_runner::tests::conformance_golden_camera_frames_board_fit_to_bounds ... ok
+test visual::visual_runner::tests::failed_compare_retains_debug_artifacts ... ok
+test visual::visual_runner::tests::fixture_run_resolves_artifact_paths ... ok
+test visual::visual_runner::tests::manifest_camera_uses_semantic_mm_per_pixel_scale ... ok
+test visual::visual_runner::tests::scaled_artifacts_use_scale_suffixes ... ok
+test visual::visual_runner::tests::text_fixture_visual_goldens_match ... ignored, requires a working local wgpu adapter and checked-in or generated visual goldens
+test world_polygon::tests::polygon_scratch_preserves_holes_crossings_and_tie_order_and_refuses_cleaning ... ok
+
+test result: ok. 350 passed; 0 failed; 83 ignored; 0 measured; 0 filtered out; finished in 7.09s

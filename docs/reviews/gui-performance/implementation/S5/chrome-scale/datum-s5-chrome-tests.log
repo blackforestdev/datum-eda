@@ -1,0 +1,22 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=35.0 GiB target_free=168.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 35.0 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.41s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 13 tests
+test menu_chrome::action_readiness_tests::rendered_fit_readiness_tracks_context_and_missing_rows_stay_inspectable ... ok
+test menu_chrome::menu_overlay_contract_tests::menu_dropdown_composites_into_menu_overlay_under_its_title ... ok
+test menu_chrome::menu_overlay_contract_tests::menu_dropdown_fits_its_content_no_spill ... ok
+test menu_chrome::menu_overlay_contract_tests::menu_overlay_is_empty_when_no_menu_open ... ok
+test menu_chrome::menu_overlay_contract_tests::nested_preferences_submenu_is_pointer_targeted_and_edge_safe ... ok
+test menu_chrome::tests::conformance_menu_title_width_padding_is_uniform_and_tight ... ok
+test menu_chrome::tests::long_menu_in_small_window_shares_paint_text_and_hit_bounds ... ok
+test menu_chrome::tests::menu_model_is_available_to_renderer ... ok
+test shell_identity::shell_identity_tests::brand_and_long_revision_stay_inside_the_menu_strip ... ok
+test terminal_clipboard_menu::tests::generic_terminal_menu_exposes_compact_profile_and_theme_controls ... ok
+test terminal_clipboard_menu::tests::terminal_context_menu_is_clamped_and_exposes_copy_paste_actions ... ok
+test terminal_clipboard_menu::tests::undersized_terminal_menu_clips_paint_text_and_actions_to_screen ... ok
+test tests::marking_menu_shell_renders_manifest_items_without_command_targets ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 418 filtered out; finished in 2.31s

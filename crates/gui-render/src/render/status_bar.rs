@@ -34,6 +34,24 @@ pub(crate) fn render_status_bar(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
+    let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
+    let starts = (panel_quads.len(), text_runs.len());
+    render_status_bar_logical(
+        state,
+        &scale.logical_layout(layout.clone()),
+        panel_quads,
+        text_runs,
+    );
+    scale.quads(&mut panel_quads[starts.0..]);
+    scale.text_geometry(&mut text_runs[starts.1..]);
+}
+
+pub(crate) fn render_status_bar_logical(
+    state: &ReviewWorkspaceState,
+    layout: &ShellLayout,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
     let starts = (panel_quads.len(), text_runs.len());
     let sb = layout.status_bar;
     // Single top-edge hairline (no boxed 4-side border).
@@ -111,19 +129,39 @@ pub(crate) fn render_status_bar(
 
     // Right cluster (right-to-left): version, rev, DRC.
     let version = "Datum EDA \u{2014} design pass";
-    let mut rx = sb.x + sb.width - 13.0 - text_w(version, val_size);
-    draw_text(
-        version,
-        rx,
-        text_y,
-        val_size,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-
     let short_rev: String = state.scene.source_revision.chars().take(6).collect();
-    if !short_rev.is_empty() {
+    let findings = state.supervision.checks.finding_count;
+    let drc = if findings > 0 {
+        format!("DRC {}", findings)
+    } else {
+        String::new()
+    };
+    let revision_width = if short_rev.is_empty() {
+        0.0
+    } else {
+        seg_pad + text_w("rev", lab_size) + gap + text_w(&short_rev, val_size)
+    };
+    let findings_width = if drc.is_empty() {
+        0.0
+    } else {
+        seg_pad + text_w(&drc, val_size)
+    };
+    let mut rx = sb.x + sb.width - 13.0;
+    // Decoration yields to actual document/check status at constrained widths.
+    if rx - text_w(version, val_size) - revision_width - findings_width >= x {
+        rx -= text_w(version, val_size);
+        draw_text(
+            version,
+            rx,
+            text_y,
+            val_size,
+            TEXT_MUTED,
+            TextFace::Mono,
+            text_runs,
+        );
+    }
+
+    if !short_rev.is_empty() && rx - revision_width - findings_width >= x {
         let lw = text_w("rev", lab_size) + gap;
         rx -= seg_pad + lw + text_w(&short_rev, val_size);
         divider(panel_quads, rx - seg_pad * 0.5);
@@ -147,9 +185,7 @@ pub(crate) fn render_status_bar(
         );
     }
 
-    let findings = state.supervision.checks.finding_count;
-    if findings > 0 {
-        let drc = format!("DRC {}", findings);
+    if findings > 0 && rx - findings_width >= x {
         rx -= seg_pad + text_w(&drc, val_size);
         divider(panel_quads, rx - seg_pad * 0.5);
         draw_text(

@@ -1,0 +1,49 @@
+{
+  "status": "Default menu/identity/status scale migration implemented; remaining workspace chrome and S5 qualification open",
+  "base_commit": "db9c3427",
+  "production_consumers": [
+    "Main menu titles, dropdowns and submenu paint/hits",
+    "Shell brand/project identity strip",
+    "Segmented status bar",
+    "Native and offscreen composed workspace preparation"
+  ],
+  "retired_paths": [
+    "Scaled glyphs paired with unscaled menu geometry and hit bounds",
+    "Menu hit regions beneath later appended ordinary workspace controls",
+    "Decorative identity/version text overlapping operational chrome at constrained widths"
+  ],
+  "behavior": [
+    "Lay out migrated chrome in logical pixels then convert quad positions, text origins/clip/layout extents and hits through one shared Scale owner. Final frame assembly scales glyph sizes exactly once. Terminal device-pixel text is unchanged.",
+    "Brand positioning uses the same actual shaped metrics as menu anchoring. Decorative identity yields when menu titles need its space. Status decoration yields to available revision/check context.",
+    "Move ordinary menu hit regions above workspace/Console regions in place before later modal/marking consumers. No extra per-frame vector or snapshot allocation.",
+    "Shell composition extracted into its own normal Rust module to keep error propagation and ownership explicit."
+  ],
+  "verification": {
+    "renderer": "350 passed,0 failed,83 ignored; includes composed1/1.25/1.5/2x title glyph containment, menu click resolution and status non-overlap tests",
+    "focused_menu": "13 passed before final composed-scale/priority tests",
+    "clippy": "Strict renderer/app visual all-target -D warnings passed",
+    "visual": "Inspected rendered board prototype and actual1280x768@2x output. Menu/status overlap corrected; remaining sidebar/pane/terminal chrome defects visible. Existing golden comparison still fails and is not blessed.",
+    "checks": "Source health2330files and terminal convergence/core-renderer gates passed",
+    "default_app_build": "Fresh offline locked datum-gui build passed19.54s."
+  },
+  "attempts": [
+    "Initial check required cloning the six-rectangle ShellLayout rather than moving it through a shared reference; corrected.",
+    "Initial composed menu test exposed File/Export resolving to ToggleShowAuthored beneath it; corrected production hit order, then full renderer suite passed."
+  ],
+  "limits": [
+    "Remaining side-panel/pane-header/terminal-chrome scaling requires the same coordinate review before whole-workspace HiDPI acceptance.",
+    "Existing Console goldens remain unchanged and failed; no full S5/native/backend/scale/resource/endurance or independent qualification claim.",
+    "No dependency, Cargo, license, prototype, cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/menu_chrome.rs": "ac1adb544bf543355e46dd1aebc786a604875ce8b18a1646d75473096bda8508",
+    "crates/gui-render/src/render/frame_preparation.rs": "10b3d9c86c8910866c98474df0b566fb696924335d2e0541a8764e9cdcb9be11",
+    "crates/gui-render/src/render/scene.rs": "4b012e8b74940aa07735c532b9618563bf6bc25e3c5ac13d84941cf51453385c",
+    "crates/gui-render/src/render/shell_identity.rs": "e06335a84f1db8e3a18232ca8324b2c7775b53cac99a67e62b217a60bfec1529",
+    "crates/gui-render/src/render/status_bar.rs": "fb450a686998c272c690bf0fc6512d9e9e757025f8bd4f380acec4bfa42570bc",
+    "crates/gui-render/src/render/text_presentation.rs": "700c66922d255e2a74f63369381a5ea0b225ee2a099d1eaf8cbbbfa131077213",
+    "crates/gui-render/src/render/chrome_scale.rs": "e966a6093cc2f7549b0682ffa74b4b6c937693e2b71244e6290b106a0ca9a2cf",
+    "crates/gui-render/src/render/shell_chrome.rs": "620d0bf95c2227a461dbda15c832a2ee53abc9b901978b80e9c2bcb942b71b54"
+  },
+  "issue": "dat-workspace-hidpi-chrome-6fm4"
+}

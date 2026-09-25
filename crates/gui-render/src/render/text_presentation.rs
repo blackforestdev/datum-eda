@@ -1,4 +1,6 @@
 //! Scalar display truncation, fallback estimates and surface text scaling.
+#[path = "chrome_scale.rs"]
+pub(crate) mod chrome_scale;
 use super::{TextFace, TextRun};
 
 pub(super) fn truncate_text(text: &str, max_chars: usize) -> String {

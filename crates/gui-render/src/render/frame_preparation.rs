@@ -112,7 +112,7 @@ impl PreparedScene {
                     scale,
                 ),
                 &mut text_runs,
-            );
+            )?;
             consumers.note(
                 Stream::Panel,
                 Consumer::Main,
@@ -131,6 +131,7 @@ impl PreparedScene {
             consumers.include(Stream::Text, pane_consumers);
             let before_menu_overlay_quads = menu_overlay_quads.len();
             let before_menu_overlay_text_runs = menu_overlay_text_runs.len();
+            let menu_hit_start = hit_regions.len();
             menu_chrome::render_menu_bar(
                 state,
                 &layout,
@@ -140,6 +141,7 @@ impl PreparedScene {
                 &mut text_runs,
                 &mut hit_regions,
             )?;
+            let menu_hit_count = hit_regions.len() - menu_hit_start;
             consumers.note(
                 Stream::Panel,
                 Consumer::Menu,
@@ -348,6 +350,9 @@ impl PreparedScene {
             );
             let before_panel_quads = panel_quads.len();
             let before_text_runs = text_runs.len();
+            // Menus paint above ordinary workspace/Console content. Their hit
+            // regions must win there too; later modal/marking surfaces stay above.
+            hit_regions[menu_hit_start..].rotate_left(menu_hit_count);
             marking_menu::render_marking_menu(
                 state,
                 &layout,
