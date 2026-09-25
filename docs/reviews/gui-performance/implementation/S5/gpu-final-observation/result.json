@@ -54,6 +54,7 @@
     "focused_after_lint_fix": "3passed",
     "strict_app_all_target_clippy": "pass",
     "guarded_release": "pass; all commands serialized",
-    "limits": "Full broad drift not repeated for opt-in endpoint. Previously recorded menuCSV and bootstrap-marker failures remain unresolved; no suite-wide green claim."
+    "limits": "Full broad drift not repeated for opt-in endpoint. Previously recorded menuCSV and bootstrap-marker failures remain unresolved; no suite-wide green claim.",
+    "diff_check_correction": "Pre-stage git diff --check passed tracked code/map/tracker changes only. The staged check then reported whitespace in preserved raw logs and context lines in exact source patches. Commit4183174a wording saying all diff checks passed was too broad. Raw bytes are deliberately retained; this warning is not a code-format or qualification pass. Staged Rust formatting and file-lane hooks passed."
   }
 }
