@@ -1,0 +1,29 @@
+{
+  "reason": "Proof target38.4GiB near40GiB hard boundary; reclaim four identified old engine incremental caches at confirmed Cargo/rustc idle under shared guard lock before next release/drift compilation. Proof workloads disable incremental; compiled artifacts retained.",
+  "observed_cargo_rustc_processes": [],
+  "removed": [
+    {
+      "path": "target/debug/incremental/eda_engine-1gbrwtcp4fjc0",
+      "mtime_ns": 1790059725640027388,
+      "du": "1286946816\ttarget/debug/incremental/eda_engine-1gbrwtcp4fjc0"
+    },
+    {
+      "path": "target/debug/incremental/eda_engine-2ygqe2343sv55",
+      "mtime_ns": 1790196019457975232,
+      "du": "1281646592\ttarget/debug/incremental/eda_engine-2ygqe2343sv55"
+    },
+    {
+      "path": "target/debug/incremental/eda_engine-19p27a2njpbb5",
+      "mtime_ns": 1790210235300826817,
+      "du": "1281433600\ttarget/debug/incremental/eda_engine-19p27a2njpbb5"
+    },
+    {
+      "path": "target/debug/incremental/eda_engine-0xhp26xy77l8u",
+      "mtime_ns": 1790317597925534420,
+      "du": "920805376\ttarget/debug/incremental/eda_engine-0xhp26xy77l8u"
+    }
+  ],
+  "target_before": "41200123904\ttarget",
+  "target_after": "36429291520\ttarget",
+  "time_unix": 1790344573.4336731
+}

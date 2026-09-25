@@ -1,0 +1,388 @@
+datum-gui diagnostic log pid=233344 start=SystemTime { tv_sec: 1790344744, tv_nsec: 191810620 }
+[SystemTime { tv_sec: 1790344744, tv_nsec: 192006538 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: "default", custom_name: "custom", program: None, args: [], environment: [], environment_remove: [], cwd: "active", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: "propose", unattended_tools: [] }, demo_known_good: false, board_file: None, schematic_file: None, artifact_path: None, project_root: Some("/tmp/pm045-admission-hqugp169/project"), select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: Some("single"), open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: "1280x800", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: Some(1.0), interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }
+[SystemTime { tv_sec: 1790344744, tv_nsec: 203627850 }] resumed event
+[SystemTime { tv_sec: 1790344744, tv_nsec: 203653761 }] launch state load begin
+[SystemTime { tv_sec: 1790344744, tv_nsec: 203681140 }] request resolve begin
+[SystemTime { tv_sec: 1790344744, tv_nsec: 203720905 }] request resolve end project_root=/tmp/pm045-admission-hqugp169/project board_file=None
+[SystemTime { tv_sec: 1790344744, tv_nsec: 203762616 }] workspace load begin
+[SystemTime { tv_sec: 1790344745, tv_nsec: 721027752 }] workspace load end
+[SystemTime { tv_sec: 1790344745, tv_nsec: 721057696 }] camera fit begin
+[SystemTime { tv_sec: 1790344745, tv_nsec: 721075715 }] camera fit end
+[SystemTime { tv_sec: 1790344745, tv_nsec: 721284252 }] terminal spawn begin
+[SystemTime { tv_sec: 1790344745, tv_nsec: 729454464 }] terminal spawn end
+[SystemTime { tv_sec: 1790344745, tv_nsec: 729490546 }] launch state load end
+[SystemTime { tv_sec: 1790344745, tv_nsec: 732936111 }] window created
+[SystemTime { tv_sec: 1790344745, tv_nsec: 732974034 }] runtime creation begin
+[SystemTime { tv_sec: 1790344745, tv_nsec: 733942812 }] wgpu instance create begin
+[SystemTime { tv_sec: 1790344745, tv_nsec: 874368207 }] wgpu request adapter begin
+[SystemTime { tv_sec: 1790344745, tv_nsec: 884167663 }] surface identity window=WindowId(33554436) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344745, tv_nsec: 884188380 }] wgpu request device begin
+[SystemTime { tv_sec: 1790344745, tv_nsec: 910695624 }] wgpu request device end
+[SystemTime { tv_sec: 1790344745, tv_nsec: 910976605 }] initial surface configuration requested 1280x800 format=Bgra8UnormSrgb present=Fifo msaa=8
+[SystemTime { tv_sec: 1790344745, tv_nsec: 910996487 }] renderer init begin
+[SystemTime { tv_sec: 1790344746, tv_nsec: 369385143 }] renderer init end
+[SystemTime { tv_sec: 1790344746, tv_nsec: 370621815 }] runtime creation end
+[SystemTime { tv_sec: 1790344746, tv_nsec: 370748551 }] window visible
+[SystemTime { tv_sec: 1790344746, tv_nsec: 370864803 }] surface configure begin
+[SystemTime { tv_sec: 1790344746, tv_nsec: 373309399 }] surface configure end
+[SystemTime { tv_sec: 1790344746, tv_nsec: 373348308 }] native queue configured host=1 configurations=1 submitted=0 completed=0
+[SystemTime { tv_sec: 1790344751, tv_nsec: 596030948 }] surface identity window=WindowId(33554454) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344751, tv_nsec: 619348516 }] surface configure begin
+[SystemTime { tv_sec: 1790344751, tv_nsec: 646697702 }] surface configure end
+[SystemTime { tv_sec: 1790344751, tv_nsec: 646725288 }] native queue configured host=2 configurations=2 submitted=6 completed=6
+[SystemTime { tv_sec: 1790344751, tv_nsec: 873706364 }] surface identity window=WindowId(33554472) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344751, tv_nsec: 899340483 }] surface configure begin
+[SystemTime { tv_sec: 1790344751, tv_nsec: 908514472 }] surface configure end
+[SystemTime { tv_sec: 1790344751, tv_nsec: 908579266 }] native queue configured host=3 configurations=3 submitted=14 completed=14
+[SystemTime { tv_sec: 1790344752, tv_nsec: 135119256 }] surface identity window=WindowId(33554490) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344752, tv_nsec: 159088565 }] surface configure begin
+[SystemTime { tv_sec: 1790344752, tv_nsec: 167115668 }] surface configure end
+[SystemTime { tv_sec: 1790344752, tv_nsec: 167178614 }] native queue configured host=4 configurations=4 submitted=21 completed=21
+[SystemTime { tv_sec: 1790344752, tv_nsec: 385931935 }] surface identity window=WindowId(33554508) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344752, tv_nsec: 423742003 }] surface configure begin
+[SystemTime { tv_sec: 1790344752, tv_nsec: 439667201 }] surface configure end
+[SystemTime { tv_sec: 1790344752, tv_nsec: 439708063 }] native queue configured host=5 configurations=5 submitted=29 completed=29
+[SystemTime { tv_sec: 1790344752, tv_nsec: 633507311 }] surface identity window=WindowId(33554526) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344752, tv_nsec: 650769148 }] surface configure begin
+[SystemTime { tv_sec: 1790344752, tv_nsec: 658070328 }] surface configure end
+[SystemTime { tv_sec: 1790344752, tv_nsec: 658115802 }] native queue configured host=6 configurations=6 submitted=36 completed=36
+[SystemTime { tv_sec: 1790344752, tv_nsec: 874026637 }] surface identity window=WindowId(33554544) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344752, tv_nsec: 894705043 }] surface configure begin
+[SystemTime { tv_sec: 1790344752, tv_nsec: 899720066 }] surface configure end
+[SystemTime { tv_sec: 1790344752, tv_nsec: 899792042 }] native queue configured host=7 configurations=7 submitted=43 completed=43
+[SystemTime { tv_sec: 1790344753, tv_nsec: 128847686 }] surface identity window=WindowId(33554562) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344753, tv_nsec: 151018508 }] surface configure begin
+[SystemTime { tv_sec: 1790344753, tv_nsec: 155912383 }] surface configure end
+[SystemTime { tv_sec: 1790344753, tv_nsec: 155995590 }] native queue configured host=8 configurations=8 submitted=50 completed=50
+[SystemTime { tv_sec: 1790344753, tv_nsec: 389369617 }] surface identity window=WindowId(33554580) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344753, tv_nsec: 421307252 }] surface configure begin
+[SystemTime { tv_sec: 1790344753, tv_nsec: 427722977 }] surface configure end
+[SystemTime { tv_sec: 1790344753, tv_nsec: 427789841 }] native queue configured host=9 configurations=9 submitted=57 completed=57
+[SystemTime { tv_sec: 1790344753, tv_nsec: 641750976 }] surface identity window=WindowId(33554598) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344753, tv_nsec: 663786612 }] surface configure begin
+[SystemTime { tv_sec: 1790344753, tv_nsec: 673288505 }] surface configure end
+[SystemTime { tv_sec: 1790344753, tv_nsec: 673348114 }] native queue configured host=10 configurations=10 submitted=64 completed=64
+[SystemTime { tv_sec: 1790344753, tv_nsec: 890144609 }] surface identity window=WindowId(33554616) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344753, tv_nsec: 919703150 }] surface configure begin
+[SystemTime { tv_sec: 1790344753, tv_nsec: 925592764 }] surface configure end
+[SystemTime { tv_sec: 1790344753, tv_nsec: 925637238 }] native queue configured host=11 configurations=11 submitted=70 completed=70
+[SystemTime { tv_sec: 1790344754, tv_nsec: 135072740 }] surface identity window=WindowId(33554634) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344754, tv_nsec: 162905708 }] surface configure begin
+[SystemTime { tv_sec: 1790344754, tv_nsec: 171937939 }] surface configure end
+[SystemTime { tv_sec: 1790344754, tv_nsec: 171977935 }] native queue configured host=12 configurations=12 submitted=77 completed=77
+[SystemTime { tv_sec: 1790344754, tv_nsec: 381475026 }] surface identity window=WindowId(33554652) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344754, tv_nsec: 404225284 }] surface configure begin
+[SystemTime { tv_sec: 1790344754, tv_nsec: 408527482 }] surface configure end
+[SystemTime { tv_sec: 1790344754, tv_nsec: 408561387 }] native queue configured host=13 configurations=13 submitted=84 completed=84
+[SystemTime { tv_sec: 1790344754, tv_nsec: 617600649 }] surface identity window=WindowId(33554670) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344754, tv_nsec: 638447261 }] surface configure begin
+[SystemTime { tv_sec: 1790344754, tv_nsec: 647426267 }] surface configure end
+[SystemTime { tv_sec: 1790344754, tv_nsec: 647483077 }] native queue configured host=14 configurations=14 submitted=92 completed=92
+[SystemTime { tv_sec: 1790344754, tv_nsec: 860632434 }] surface identity window=WindowId(33554688) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344754, tv_nsec: 884919494 }] surface configure begin
+[SystemTime { tv_sec: 1790344754, tv_nsec: 888254136 }] surface configure end
+[SystemTime { tv_sec: 1790344754, tv_nsec: 888283646 }] native queue configured host=15 configurations=15 submitted=101 completed=101
+[SystemTime { tv_sec: 1790344755, tv_nsec: 118382994 }] surface identity window=WindowId(33554706) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344755, tv_nsec: 139669630 }] surface configure begin
+[SystemTime { tv_sec: 1790344755, tv_nsec: 146462133 }] surface configure end
+[SystemTime { tv_sec: 1790344755, tv_nsec: 146522916 }] native queue configured host=16 configurations=16 submitted=109 completed=109
+[SystemTime { tv_sec: 1790344755, tv_nsec: 361030999 }] surface identity window=WindowId(33554724) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344755, tv_nsec: 382729530 }] surface configure begin
+[SystemTime { tv_sec: 1790344755, tv_nsec: 391365938 }] surface configure end
+[SystemTime { tv_sec: 1790344755, tv_nsec: 391426456 }] native queue configured host=17 configurations=17 submitted=118 completed=118
+[SystemTime { tv_sec: 1790344755, tv_nsec: 616503666 }] surface identity window=WindowId(33554742) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344755, tv_nsec: 638125128 }] surface configure begin
+[SystemTime { tv_sec: 1790344755, tv_nsec: 647704493 }] surface configure end
+[SystemTime { tv_sec: 1790344755, tv_nsec: 647805845 }] native queue configured host=18 configurations=18 submitted=125 completed=125
+[SystemTime { tv_sec: 1790344755, tv_nsec: 871882409 }] surface identity window=WindowId(33554760) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344755, tv_nsec: 893183296 }] surface configure begin
+[SystemTime { tv_sec: 1790344755, tv_nsec: 901854882 }] surface configure end
+[SystemTime { tv_sec: 1790344755, tv_nsec: 901913471 }] native queue configured host=19 configurations=19 submitted=131 completed=131
+[SystemTime { tv_sec: 1790344756, tv_nsec: 137674018 }] surface identity window=WindowId(33554778) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344756, tv_nsec: 163298554 }] surface configure begin
+[SystemTime { tv_sec: 1790344756, tv_nsec: 170361479 }] surface configure end
+[SystemTime { tv_sec: 1790344756, tv_nsec: 170399415 }] native queue configured host=20 configurations=20 submitted=139 completed=139
+[SystemTime { tv_sec: 1790344756, tv_nsec: 395181064 }] surface identity window=WindowId(33554796) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344756, tv_nsec: 418880970 }] surface configure begin
+[SystemTime { tv_sec: 1790344756, tv_nsec: 424026939 }] surface configure end
+[SystemTime { tv_sec: 1790344756, tv_nsec: 424099418 }] native queue configured host=21 configurations=21 submitted=147 completed=147
+[SystemTime { tv_sec: 1790344756, tv_nsec: 656606264 }] surface identity window=WindowId(33554814) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344756, tv_nsec: 677711710 }] surface configure begin
+[SystemTime { tv_sec: 1790344756, tv_nsec: 686763538 }] surface configure end
+[SystemTime { tv_sec: 1790344756, tv_nsec: 686844415 }] native queue configured host=22 configurations=22 submitted=154 completed=154
+[SystemTime { tv_sec: 1790344756, tv_nsec: 908075059 }] surface identity window=WindowId(33554832) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344756, tv_nsec: 932185948 }] surface configure begin
+[SystemTime { tv_sec: 1790344756, tv_nsec: 939997072 }] surface configure end
+[SystemTime { tv_sec: 1790344756, tv_nsec: 940055514 }] native queue configured host=23 configurations=23 submitted=161 completed=161
+[SystemTime { tv_sec: 1790344757, tv_nsec: 161206868 }] surface identity window=WindowId(33554850) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344757, tv_nsec: 182669560 }] surface configure begin
+[SystemTime { tv_sec: 1790344757, tv_nsec: 186842585 }] surface configure end
+[SystemTime { tv_sec: 1790344757, tv_nsec: 186892639 }] native queue configured host=24 configurations=24 submitted=169 completed=169
+[SystemTime { tv_sec: 1790344757, tv_nsec: 417231414 }] surface identity window=WindowId(33554868) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344757, tv_nsec: 440308594 }] surface configure begin
+[SystemTime { tv_sec: 1790344757, tv_nsec: 446337067 }] surface configure end
+[SystemTime { tv_sec: 1790344757, tv_nsec: 446387353 }] native queue configured host=25 configurations=25 submitted=176 completed=176
+[SystemTime { tv_sec: 1790344757, tv_nsec: 657088923 }] surface identity window=WindowId(33554886) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344757, tv_nsec: 678741316 }] surface configure begin
+[SystemTime { tv_sec: 1790344757, tv_nsec: 686937282 }] surface configure end
+[SystemTime { tv_sec: 1790344757, tv_nsec: 686998451 }] native queue configured host=26 configurations=26 submitted=184 completed=184
+[SystemTime { tv_sec: 1790344757, tv_nsec: 901869000 }] surface identity window=WindowId(33554904) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344757, tv_nsec: 929702344 }] surface configure begin
+[SystemTime { tv_sec: 1790344757, tv_nsec: 936367262 }] surface configure end
+[SystemTime { tv_sec: 1790344757, tv_nsec: 936428267 }] native queue configured host=27 configurations=27 submitted=192 completed=192
+[SystemTime { tv_sec: 1790344758, tv_nsec: 155409914 }] surface identity window=WindowId(33554922) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344758, tv_nsec: 188004456 }] surface configure begin
+[SystemTime { tv_sec: 1790344758, tv_nsec: 193726637 }] surface configure end
+[SystemTime { tv_sec: 1790344758, tv_nsec: 193794166 }] native queue configured host=28 configurations=28 submitted=200 completed=200
+[SystemTime { tv_sec: 1790344758, tv_nsec: 407135763 }] surface identity window=WindowId(33554940) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344758, tv_nsec: 433705208 }] surface configure begin
+[SystemTime { tv_sec: 1790344758, tv_nsec: 441371866 }] surface configure end
+[SystemTime { tv_sec: 1790344758, tv_nsec: 441419117 }] native queue configured host=29 configurations=29 submitted=206 completed=206
+[SystemTime { tv_sec: 1790344758, tv_nsec: 659299680 }] surface identity window=WindowId(33554958) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344758, tv_nsec: 682058744 }] surface configure begin
+[SystemTime { tv_sec: 1790344758, tv_nsec: 691245474 }] surface configure end
+[SystemTime { tv_sec: 1790344758, tv_nsec: 691304937 }] native queue configured host=30 configurations=30 submitted=214 completed=214
+[SystemTime { tv_sec: 1790344758, tv_nsec: 915266571 }] surface identity window=WindowId(33554976) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344758, tv_nsec: 938186001 }] surface configure begin
+[SystemTime { tv_sec: 1790344758, tv_nsec: 946523627 }] surface configure end
+[SystemTime { tv_sec: 1790344758, tv_nsec: 946583976 }] native queue configured host=31 configurations=31 submitted=222 completed=222
+[SystemTime { tv_sec: 1790344759, tv_nsec: 383313750 }] surface identity window=WindowId(33554994) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344759, tv_nsec: 407244049 }] surface configure begin
+[SystemTime { tv_sec: 1790344759, tv_nsec: 410647328 }] surface configure end
+[SystemTime { tv_sec: 1790344759, tv_nsec: 410684359 }] native queue configured host=32 configurations=32 submitted=230 completed=230
+[SystemTime { tv_sec: 1790344759, tv_nsec: 644092781 }] surface identity window=WindowId(33555012) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344759, tv_nsec: 665647587 }] surface configure begin
+[SystemTime { tv_sec: 1790344759, tv_nsec: 670128374 }] surface configure end
+[SystemTime { tv_sec: 1790344759, tv_nsec: 670183721 }] native queue configured host=33 configurations=33 submitted=239 completed=239
+[SystemTime { tv_sec: 1790344759, tv_nsec: 922137984 }] surface identity window=WindowId(33555030) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344759, tv_nsec: 934664995 }] surface configure begin
+[SystemTime { tv_sec: 1790344759, tv_nsec: 938813937 }] surface configure end
+[SystemTime { tv_sec: 1790344759, tv_nsec: 938850180 }] native queue configured host=34 configurations=34 submitted=248 completed=248
+[SystemTime { tv_sec: 1790344760, tv_nsec: 176870567 }] surface identity window=WindowId(33555048) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344760, tv_nsec: 198411208 }] surface configure begin
+[SystemTime { tv_sec: 1790344760, tv_nsec: 204066729 }] surface configure end
+[SystemTime { tv_sec: 1790344760, tv_nsec: 204119945 }] native queue configured host=35 configurations=35 submitted=259 completed=259
+[SystemTime { tv_sec: 1790344760, tv_nsec: 465471141 }] surface identity window=WindowId(33555066) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344760, tv_nsec: 491169761 }] surface configure begin
+[SystemTime { tv_sec: 1790344760, tv_nsec: 500100497 }] surface configure end
+[SystemTime { tv_sec: 1790344760, tv_nsec: 500158640 }] native queue configured host=36 configurations=36 submitted=269 completed=269
+[SystemTime { tv_sec: 1790344760, tv_nsec: 758748621 }] surface identity window=WindowId(33555084) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344760, tv_nsec: 781277132 }] surface configure begin
+[SystemTime { tv_sec: 1790344760, tv_nsec: 785440785 }] surface configure end
+[SystemTime { tv_sec: 1790344760, tv_nsec: 785480918 }] native queue configured host=37 configurations=37 submitted=279 completed=279
+[SystemTime { tv_sec: 1790344761, tv_nsec: 35084300 }] surface identity window=WindowId(33555102) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344761, tv_nsec: 57369244 }] surface configure begin
+[SystemTime { tv_sec: 1790344761, tv_nsec: 62884141 }] surface configure end
+[SystemTime { tv_sec: 1790344761, tv_nsec: 62916976 }] native queue configured host=38 configurations=38 submitted=287 completed=287
+[SystemTime { tv_sec: 1790344761, tv_nsec: 318148642 }] surface identity window=WindowId(33555120) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344761, tv_nsec: 339527074 }] surface configure begin
+[SystemTime { tv_sec: 1790344761, tv_nsec: 342716602 }] surface configure end
+[SystemTime { tv_sec: 1790344761, tv_nsec: 342751982 }] native queue configured host=39 configurations=39 submitted=296 completed=296
+[SystemTime { tv_sec: 1790344761, tv_nsec: 596639132 }] surface identity window=WindowId(33555138) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344761, tv_nsec: 624154264 }] surface configure begin
+[SystemTime { tv_sec: 1790344761, tv_nsec: 631276838 }] surface configure end
+[SystemTime { tv_sec: 1790344761, tv_nsec: 631323034 }] native queue configured host=40 configurations=40 submitted=306 completed=306
+[SystemTime { tv_sec: 1790344761, tv_nsec: 880922297 }] surface identity window=WindowId(33555156) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344761, tv_nsec: 908320187 }] surface configure begin
+[SystemTime { tv_sec: 1790344761, tv_nsec: 916488885 }] surface configure end
+[SystemTime { tv_sec: 1790344761, tv_nsec: 916535605 }] native queue configured host=41 configurations=41 submitted=315 completed=315
+[SystemTime { tv_sec: 1790344762, tv_nsec: 163523474 }] surface identity window=WindowId(33555174) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344762, tv_nsec: 192912989 }] surface configure begin
+[SystemTime { tv_sec: 1790344762, tv_nsec: 204037002 }] surface configure end
+[SystemTime { tv_sec: 1790344762, tv_nsec: 204098424 }] native queue configured host=42 configurations=42 submitted=324 completed=324
+[SystemTime { tv_sec: 1790344762, tv_nsec: 451158270 }] surface identity window=WindowId(33555192) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344762, tv_nsec: 473755704 }] surface configure begin
+[SystemTime { tv_sec: 1790344762, tv_nsec: 479461421 }] surface configure end
+[SystemTime { tv_sec: 1790344762, tv_nsec: 479518532 }] native queue configured host=43 configurations=43 submitted=332 completed=332
+[SystemTime { tv_sec: 1790344762, tv_nsec: 741382399 }] surface identity window=WindowId(33555210) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344762, tv_nsec: 774325361 }] surface configure begin
+[SystemTime { tv_sec: 1790344762, tv_nsec: 779285017 }] surface configure end
+[SystemTime { tv_sec: 1790344762, tv_nsec: 779331117 }] native queue configured host=44 configurations=44 submitted=340 completed=340
+[SystemTime { tv_sec: 1790344763, tv_nsec: 25962453 }] surface identity window=WindowId(33555228) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344763, tv_nsec: 46982660 }] surface configure begin
+[SystemTime { tv_sec: 1790344763, tv_nsec: 54643958 }] surface configure end
+[SystemTime { tv_sec: 1790344763, tv_nsec: 54676887 }] native queue configured host=45 configurations=45 submitted=349 completed=349
+[SystemTime { tv_sec: 1790344763, tv_nsec: 299737883 }] surface identity window=WindowId(33555246) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344763, tv_nsec: 329123197 }] surface configure begin
+[SystemTime { tv_sec: 1790344763, tv_nsec: 331697603 }] surface configure end
+[SystemTime { tv_sec: 1790344763, tv_nsec: 331732097 }] native queue configured host=46 configurations=46 submitted=359 completed=359
+[SystemTime { tv_sec: 1790344763, tv_nsec: 557260918 }] surface identity window=WindowId(33555264) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344763, tv_nsec: 584458155 }] surface configure begin
+[SystemTime { tv_sec: 1790344763, tv_nsec: 587750453 }] surface configure end
+[SystemTime { tv_sec: 1790344763, tv_nsec: 587787329 }] native queue configured host=47 configurations=47 submitted=367 completed=367
+[SystemTime { tv_sec: 1790344763, tv_nsec: 839324404 }] surface identity window=WindowId(33555282) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344763, tv_nsec: 863564963 }] surface configure begin
+[SystemTime { tv_sec: 1790344763, tv_nsec: 870411795 }] surface configure end
+[SystemTime { tv_sec: 1790344763, tv_nsec: 870450175 }] native queue configured host=48 configurations=48 submitted=376 completed=376
+[SystemTime { tv_sec: 1790344764, tv_nsec: 122392707 }] surface identity window=WindowId(33555300) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344764, tv_nsec: 147442667 }] surface configure begin
+[SystemTime { tv_sec: 1790344764, tv_nsec: 152841375 }] surface configure end
+[SystemTime { tv_sec: 1790344764, tv_nsec: 152886938 }] native queue configured host=49 configurations=49 submitted=385 completed=385
+[SystemTime { tv_sec: 1790344764, tv_nsec: 400579590 }] surface identity window=WindowId(33555318) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344764, tv_nsec: 415722617 }] surface configure begin
+[SystemTime { tv_sec: 1790344764, tv_nsec: 421681309 }] surface configure end
+[SystemTime { tv_sec: 1790344764, tv_nsec: 421720812 }] native queue configured host=50 configurations=50 submitted=395 completed=395
+[SystemTime { tv_sec: 1790344764, tv_nsec: 670635247 }] surface identity window=WindowId(33555336) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344764, tv_nsec: 693910839 }] surface configure begin
+[SystemTime { tv_sec: 1790344764, tv_nsec: 700572411 }] surface configure end
+[SystemTime { tv_sec: 1790344764, tv_nsec: 700621196 }] native queue configured host=51 configurations=51 submitted=405 completed=405
+[SystemTime { tv_sec: 1790344764, tv_nsec: 959942110 }] surface identity window=WindowId(33555354) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344764, tv_nsec: 981738171 }] surface configure begin
+[SystemTime { tv_sec: 1790344764, tv_nsec: 985802077 }] surface configure end
+[SystemTime { tv_sec: 1790344764, tv_nsec: 985843301 }] native queue configured host=52 configurations=52 submitted=414 completed=414
+[SystemTime { tv_sec: 1790344765, tv_nsec: 243285948 }] surface identity window=WindowId(33555372) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344765, tv_nsec: 271115453 }] surface configure begin
+[SystemTime { tv_sec: 1790344765, tv_nsec: 278226433 }] surface configure end
+[SystemTime { tv_sec: 1790344765, tv_nsec: 278275059 }] native queue configured host=53 configurations=53 submitted=424 completed=424
+[SystemTime { tv_sec: 1790344765, tv_nsec: 525875181 }] surface identity window=WindowId(33555390) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344765, tv_nsec: 548907261 }] surface configure begin
+[SystemTime { tv_sec: 1790344765, tv_nsec: 553094708 }] surface configure end
+[SystemTime { tv_sec: 1790344765, tv_nsec: 553136161 }] native queue configured host=54 configurations=54 submitted=434 completed=434
+[SystemTime { tv_sec: 1790344765, tv_nsec: 810090690 }] surface identity window=WindowId(33555408) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344765, tv_nsec: 834013864 }] surface configure begin
+[SystemTime { tv_sec: 1790344765, tv_nsec: 844260221 }] surface configure end
+[SystemTime { tv_sec: 1790344765, tv_nsec: 844326072 }] native queue configured host=55 configurations=55 submitted=442 completed=442
+[SystemTime { tv_sec: 1790344766, tv_nsec: 96480609 }] surface identity window=WindowId(33555426) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344766, tv_nsec: 121899635 }] surface configure begin
+[SystemTime { tv_sec: 1790344766, tv_nsec: 130535148 }] surface configure end
+[SystemTime { tv_sec: 1790344766, tv_nsec: 130594289 }] native queue configured host=56 configurations=56 submitted=450 completed=450
+[SystemTime { tv_sec: 1790344766, tv_nsec: 387373007 }] surface identity window=WindowId(33555444) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344766, tv_nsec: 408197312 }] surface configure begin
+[SystemTime { tv_sec: 1790344766, tv_nsec: 414188934 }] surface configure end
+[SystemTime { tv_sec: 1790344766, tv_nsec: 414261145 }] native queue configured host=57 configurations=57 submitted=460 completed=460
+[SystemTime { tv_sec: 1790344766, tv_nsec: 672422734 }] surface identity window=WindowId(33555462) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344766, tv_nsec: 694967437 }] surface configure begin
+[SystemTime { tv_sec: 1790344766, tv_nsec: 698952559 }] surface configure end
+[SystemTime { tv_sec: 1790344766, tv_nsec: 699001101 }] native queue configured host=58 configurations=58 submitted=469 completed=469
+[SystemTime { tv_sec: 1790344766, tv_nsec: 962155474 }] surface identity window=WindowId(33555480) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344766, tv_nsec: 985946068 }] surface configure begin
+[SystemTime { tv_sec: 1790344766, tv_nsec: 993142899 }] surface configure end
+[SystemTime { tv_sec: 1790344766, tv_nsec: 993202522 }] native queue configured host=59 configurations=59 submitted=478 completed=478
+[SystemTime { tv_sec: 1790344767, tv_nsec: 246981523 }] surface identity window=WindowId(33555498) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344767, tv_nsec: 275183063 }] surface configure begin
+[SystemTime { tv_sec: 1790344767, tv_nsec: 282885560 }] surface configure end
+[SystemTime { tv_sec: 1790344767, tv_nsec: 282923387 }] native queue configured host=60 configurations=60 submitted=488 completed=488
+[SystemTime { tv_sec: 1790344767, tv_nsec: 534369049 }] surface identity window=WindowId(33555516) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344767, tv_nsec: 557898826 }] surface configure begin
+[SystemTime { tv_sec: 1790344767, tv_nsec: 565529980 }] surface configure end
+[SystemTime { tv_sec: 1790344767, tv_nsec: 565589296 }] native queue configured host=61 configurations=61 submitted=497 completed=497
+[SystemTime { tv_sec: 1790344767, tv_nsec: 753486698 }] surface identity window=WindowId(33555534) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344767, tv_nsec: 779255566 }] surface configure begin
+[SystemTime { tv_sec: 1790344767, tv_nsec: 786505929 }] surface configure end
+[SystemTime { tv_sec: 1790344767, tv_nsec: 786552734 }] native queue configured host=62 configurations=62 submitted=502 completed=502
+[SystemTime { tv_sec: 1790344767, tv_nsec: 962158827 }] surface identity window=WindowId(33555552) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344767, tv_nsec: 994460551 }] surface configure begin
+[SystemTime { tv_sec: 1790344767, tv_nsec: 999332757 }] surface configure end
+[SystemTime { tv_sec: 1790344767, tv_nsec: 999374103 }] native queue configured host=63 configurations=63 submitted=506 completed=506
+[SystemTime { tv_sec: 1790344768, tv_nsec: 181625385 }] surface identity window=WindowId(33555570) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344768, tv_nsec: 214395980 }] surface configure begin
+[SystemTime { tv_sec: 1790344768, tv_nsec: 218180221 }] surface configure end
+[SystemTime { tv_sec: 1790344768, tv_nsec: 218214045 }] native queue configured host=64 configurations=64 submitted=509 completed=509
+[SystemTime { tv_sec: 1790344768, tv_nsec: 377084059 }] surface identity window=WindowId(33555588) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344768, tv_nsec: 410707041 }] surface configure begin
+[SystemTime { tv_sec: 1790344768, tv_nsec: 415197652 }] surface configure end
+[SystemTime { tv_sec: 1790344768, tv_nsec: 415240042 }] native queue configured host=65 configurations=65 submitted=513 completed=513
+[SystemTime { tv_sec: 1790344768, tv_nsec: 575658431 }] surface identity window=WindowId(33555606) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344768, tv_nsec: 600492621 }] surface configure begin
+[SystemTime { tv_sec: 1790344768, tv_nsec: 605635483 }] surface configure end
+[SystemTime { tv_sec: 1790344768, tv_nsec: 605671968 }] native queue configured host=66 configurations=66 submitted=517 completed=517
+[SystemTime { tv_sec: 1790344768, tv_nsec: 765468960 }] surface identity window=WindowId(33555624) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344768, tv_nsec: 781839717 }] surface configure begin
+[SystemTime { tv_sec: 1790344768, tv_nsec: 788049949 }] surface configure end
+[SystemTime { tv_sec: 1790344768, tv_nsec: 788079300 }] native queue configured host=67 configurations=67 submitted=521 completed=521
+[SystemTime { tv_sec: 1790344768, tv_nsec: 952993778 }] surface identity window=WindowId(33555642) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344768, tv_nsec: 979135337 }] surface configure begin
+[SystemTime { tv_sec: 1790344768, tv_nsec: 981513523 }] surface configure end
+[SystemTime { tv_sec: 1790344768, tv_nsec: 981550828 }] native queue configured host=68 configurations=68 submitted=525 completed=525
+[SystemTime { tv_sec: 1790344769, tv_nsec: 134793439 }] surface identity window=WindowId(33555660) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344769, tv_nsec: 150885627 }] surface configure begin
+[SystemTime { tv_sec: 1790344769, tv_nsec: 161706433 }] surface configure end
+[SystemTime { tv_sec: 1790344769, tv_nsec: 161743428 }] native queue configured host=69 configurations=69 submitted=529 completed=529
+[SystemTime { tv_sec: 1790344769, tv_nsec: 319344045 }] surface identity window=WindowId(33555678) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344769, tv_nsec: 339156550 }] surface configure begin
+[SystemTime { tv_sec: 1790344769, tv_nsec: 342908762 }] surface configure end
+[SystemTime { tv_sec: 1790344769, tv_nsec: 342939024 }] native queue configured host=70 configurations=70 submitted=533 completed=533
+[SystemTime { tv_sec: 1790344769, tv_nsec: 507554752 }] surface identity window=WindowId(33555696) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344769, tv_nsec: 536598852 }] surface configure begin
+[SystemTime { tv_sec: 1790344769, tv_nsec: 543396520 }] surface configure end
+[SystemTime { tv_sec: 1790344769, tv_nsec: 543450451 }] native queue configured host=71 configurations=71 submitted=537 completed=537
+[SystemTime { tv_sec: 1790344769, tv_nsec: 736422014 }] surface identity window=WindowId(33555714) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344769, tv_nsec: 769541630 }] surface configure begin
+[SystemTime { tv_sec: 1790344769, tv_nsec: 782859469 }] surface configure end
+[SystemTime { tv_sec: 1790344769, tv_nsec: 782914106 }] native queue configured host=72 configurations=72 submitted=542 completed=542
+[SystemTime { tv_sec: 1790344769, tv_nsec: 948074625 }] surface identity window=WindowId(33555732) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344769, tv_nsec: 972708197 }] surface configure begin
+[SystemTime { tv_sec: 1790344769, tv_nsec: 978439161 }] surface configure end
+[SystemTime { tv_sec: 1790344769, tv_nsec: 978504598 }] native queue configured host=73 configurations=73 submitted=546 completed=546
+[SystemTime { tv_sec: 1790344770, tv_nsec: 165577778 }] surface identity window=WindowId(33555750) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344770, tv_nsec: 193498743 }] surface configure begin
+[SystemTime { tv_sec: 1790344770, tv_nsec: 202990128 }] surface configure end
+[SystemTime { tv_sec: 1790344770, tv_nsec: 203073163 }] native queue configured host=74 configurations=74 submitted=550 completed=550
+[SystemTime { tv_sec: 1790344770, tv_nsec: 400105584 }] surface identity window=WindowId(33555768) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344770, tv_nsec: 439368531 }] surface configure begin
+[SystemTime { tv_sec: 1790344770, tv_nsec: 447739412 }] surface configure end
+[SystemTime { tv_sec: 1790344770, tv_nsec: 447824063 }] native queue configured host=75 configurations=75 submitted=555 completed=555
+[SystemTime { tv_sec: 1790344770, tv_nsec: 649187435 }] surface identity window=WindowId(33555786) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344770, tv_nsec: 672198293 }] surface configure begin
+[SystemTime { tv_sec: 1790344770, tv_nsec: 674813537 }] surface configure end
+[SystemTime { tv_sec: 1790344770, tv_nsec: 674851691 }] native queue configured host=76 configurations=76 submitted=559 completed=559
+[SystemTime { tv_sec: 1790344770, tv_nsec: 827126113 }] surface identity window=WindowId(33555804) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344770, tv_nsec: 856110958 }] surface configure begin
+[SystemTime { tv_sec: 1790344770, tv_nsec: 862905669 }] surface configure end
+[SystemTime { tv_sec: 1790344770, tv_nsec: 862975901 }] native queue configured host=77 configurations=77 submitted=563 completed=563
+[SystemTime { tv_sec: 1790344771, tv_nsec: 50736159 }] surface identity window=WindowId(33555822) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344771, tv_nsec: 90258272 }] surface configure begin
+[SystemTime { tv_sec: 1790344771, tv_nsec: 102911724 }] surface configure end
+[SystemTime { tv_sec: 1790344771, tv_nsec: 102993107 }] native queue configured host=78 configurations=78 submitted=567 completed=567
+[SystemTime { tv_sec: 1790344771, tv_nsec: 311454235 }] surface identity window=WindowId(33555840) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344771, tv_nsec: 334640735 }] surface configure begin
+[SystemTime { tv_sec: 1790344771, tv_nsec: 343762395 }] surface configure end
+[SystemTime { tv_sec: 1790344771, tv_nsec: 343844868 }] native queue configured host=79 configurations=79 submitted=571 completed=571
+[SystemTime { tv_sec: 1790344771, tv_nsec: 555386319 }] surface identity window=WindowId(33555858) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344771, tv_nsec: 580487902 }] surface configure begin
+[SystemTime { tv_sec: 1790344771, tv_nsec: 589217600 }] surface configure end
+[SystemTime { tv_sec: 1790344771, tv_nsec: 589281729 }] native queue configured host=80 configurations=80 submitted=576 completed=576
+[SystemTime { tv_sec: 1790344771, tv_nsec: 797421549 }] surface identity window=WindowId(33555876) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344771, tv_nsec: 829530486 }] surface configure begin
+[SystemTime { tv_sec: 1790344771, tv_nsec: 837612313 }] surface configure end
+[SystemTime { tv_sec: 1790344771, tv_nsec: 837681369 }] native queue configured host=81 configurations=81 submitted=581 completed=581
+[SystemTime { tv_sec: 1790344772, tv_nsec: 44731032 }] surface identity window=WindowId(33555894) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344772, tv_nsec: 74158466 }] surface configure begin
+[SystemTime { tv_sec: 1790344772, tv_nsec: 83677828 }] surface configure end
+[SystemTime { tv_sec: 1790344772, tv_nsec: 83738979 }] native queue configured host=82 configurations=82 submitted=585 completed=585
+[SystemTime { tv_sec: 1790344772, tv_nsec: 284713553 }] surface identity window=WindowId(33555912) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344772, tv_nsec: 317566613 }] surface configure begin
+[SystemTime { tv_sec: 1790344772, tv_nsec: 335495190 }] surface configure end
+[SystemTime { tv_sec: 1790344772, tv_nsec: 335570229 }] native queue configured host=83 configurations=83 submitted=590 completed=590
+[SystemTime { tv_sec: 1790344772, tv_nsec: 529474470 }] surface identity window=WindowId(33555930) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344772, tv_nsec: 562928611 }] surface configure begin
+[SystemTime { tv_sec: 1790344772, tv_nsec: 572619909 }] surface configure end
+[SystemTime { tv_sec: 1790344772, tv_nsec: 572717590 }] native queue configured host=84 configurations=84 submitted=594 completed=594
+[SystemTime { tv_sec: 1790344772, tv_nsec: 779233560 }] surface identity window=WindowId(33555948) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344772, tv_nsec: 806953552 }] surface configure begin
+[SystemTime { tv_sec: 1790344772, tv_nsec: 815154437 }] surface configure end
+[SystemTime { tv_sec: 1790344772, tv_nsec: 815215307 }] native queue configured host=85 configurations=85 submitted=598 completed=598
+[SystemTime { tv_sec: 1790344773, tv_nsec: 22908687 }] surface identity window=WindowId(33555966) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344773, tv_nsec: 53385153 }] surface configure begin
+[SystemTime { tv_sec: 1790344773, tv_nsec: 63557885 }] surface configure end
+[SystemTime { tv_sec: 1790344773, tv_nsec: 63639906 }] native queue configured host=86 configurations=86 submitted=603 completed=603
+[SystemTime { tv_sec: 1790344773, tv_nsec: 269839387 }] surface identity window=WindowId(33555984) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344773, tv_nsec: 301788487 }] surface configure begin
+[SystemTime { tv_sec: 1790344773, tv_nsec: 312783563 }] surface configure end
+[SystemTime { tv_sec: 1790344773, tv_nsec: 312903089 }] native queue configured host=87 configurations=87 submitted=607 completed=607
+[SystemTime { tv_sec: 1790344773, tv_nsec: 509641838 }] surface identity window=WindowId(33556002) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344773, tv_nsec: 536444009 }] surface configure begin
+[SystemTime { tv_sec: 1790344773, tv_nsec: 543823358 }] surface configure end
+[SystemTime { tv_sec: 1790344773, tv_nsec: 543909761 }] native queue configured host=88 configurations=88 submitted=611 completed=611
+[SystemTime { tv_sec: 1790344773, tv_nsec: 754523629 }] surface identity window=WindowId(33556020) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344773, tv_nsec: 786904933 }] surface configure begin
+[SystemTime { tv_sec: 1790344773, tv_nsec: 795047534 }] surface configure end
+[SystemTime { tv_sec: 1790344773, tv_nsec: 795114407 }] native queue configured host=89 configurations=89 submitted=616 completed=616
+[SystemTime { tv_sec: 1790344774, tv_nsec: 1953721 }] surface identity window=WindowId(33556038) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344774, tv_nsec: 30895049 }] surface configure begin
+[SystemTime { tv_sec: 1790344774, tv_nsec: 40533818 }] surface configure end
+[SystemTime { tv_sec: 1790344774, tv_nsec: 40597894 }] native queue configured host=90 configurations=90 submitted=620 completed=620
+[SystemTime { tv_sec: 1790344774, tv_nsec: 253304804 }] surface identity window=WindowId(33556056) window_backend=x11 gpu_backend=Vulkan adapter="Intel(R) HD Graphics P630 (KBL GT2)" device_type=IntegratedGpu driver="Intel open-source Mesa driver" driver_info="Mesa 25.0.7-2+deb13u1"
+[SystemTime { tv_sec: 1790344774, tv_nsec: 286062192 }] surface configure begin
+[SystemTime { tv_sec: 1790344774, tv_nsec: 292313901 }] surface configure end
+[SystemTime { tv_sec: 1790344774, tv_nsec: 292394042 }] native queue configured host=91 configurations=91 submitted=624 completed=624

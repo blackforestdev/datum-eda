@@ -1,0 +1,123 @@
+{
+  "candidate": "67fc60e33f8238dbd14a45f5cc830b7f48192773",
+  "binary_sha256": "eb7ce23a9f43649cc54879ea80edd6029d898a7324637b0715f41323e2e378de",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--project-root",
+    "/tmp/pm045-admission-hqugp169/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "backend": "x11 on Xwayland",
+  "cycles": [
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 1,
+      "open": {
+        "cpu_ms": 280.0,
+        "wall_ms": 487.2876878362149
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 25.039297994226217
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "174388 kB",
+        "VmRSS": "174388 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 2,
+      "open": {
+        "cpu_ms": 100.00000000000009,
+        "wall_ms": 283.86905300430954
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 27.613025857135653
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "174476 kB",
+        "VmRSS": "174476 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 3,
+      "open": {
+        "cpu_ms": 99.99999999999987,
+        "wall_ms": 282.7153690159321
+      },
+      "close": {
+        "cpu_ms": 0.0,
+        "wall_ms": 27.703611878678203
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "174496 kB",
+        "VmRSS": "174496 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 4,
+      "open": {
+        "cpu_ms": 80.00000000000007,
+        "wall_ms": 264.74499702453613
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 24.9177401419729
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "174524 kB",
+        "VmRSS": "174524 kB"
+      }
+    },
+    {
+      "host": "PROJECT",
+      "title": "Project Preferences \u2014 Datum",
+      "cycle": 5,
+      "open": {
+        "cpu_ms": 80.00000000000007,
+        "wall_ms": 258.3416700363159
+      },
+      "close": {
+        "cpu_ms": 10.000000000000009,
+        "wall_ms": 37.649942794814706
+      },
+      "focus_restored": true,
+      "rss": {
+        "VmHWM": "174512 kB",
+        "VmRSS": "174512 kB"
+      }
+    }
+  ],
+  "limits": [
+    "GDB diagnostic phase attribution, not qualification metrics. Diagnostics off: process CPU and native window/focus only; engine, GPU, live allocations and full timing not qualified.",
+    "No endurance or independent replay acceptance."
+  ],
+  "rss_initial": {
+    "VmHWM": "161256 kB",
+    "VmRSS": "161256 kB"
+  },
+  "main_window": 31457284,
+  "passed_native_cycles": true,
+  "rss_final": {
+    "VmHWM": "174512 kB",
+    "VmRSS": "174512 kB"
+  },
+  "cleanup": "Owned process terminated; final application teardown not qualified."
+}

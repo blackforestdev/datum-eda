@@ -1,0 +1,35 @@
+[New LWP 231741]
+[New LWP 231739]
+[New LWP 231738]
+[New LWP 231737]
+[New LWP 231736]
+[New LWP 231730]
+[New LWP 231729]
+[New LWP 231727]
+[New LWP 231726]
+[New LWP 231725]
+[New LWP 231724]
+[New LWP 231706]
+[New LWP 231705]
+[New LWP 231704]
+[New LWP 231703]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x000055a82a6adc1c in <polling::Poller>::wait_impl ()
+PROFILE_READY
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::fingerprint", "cpu_ms": 60.00000000000006, "wall_ms": 49.56193105317652}
+PROFILE {"phase": "<eda_engine::substrate::ProjectResolver>::resolve", "cpu_ms": 149.99999999999991, "wall_ms": 162.40334091708064}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::fingerprint", "cpu_ms": 30.00000000000003, "wall_ms": 25.143693201243877}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 240.0, "wall_ms": 240.41548394598067}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::fingerprint", "cpu_ms": 50.00000000000004, "wall_ms": 48.81997196935117}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 50.00000000000004, "wall_ms": 50.46822689473629}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::fingerprint", "cpu_ms": 49.99999999999982, "wall_ms": 49.255800899118185}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 49.99999999999982, "wall_ms": 51.21915182098746}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::fingerprint", "cpu_ms": 50.00000000000004, "wall_ms": 50.10739108547568}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 50.00000000000004, "wall_ms": 52.07569501362741}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::fingerprint", "cpu_ms": 50.00000000000004, "wall_ms": 48.6368250567466}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 50.00000000000004, "wall_ms": 50.23505096323788}
+
+Thread 1 "datum-gui" received signal SIGTERM, Terminated.
+0x000055a82a6adc1c in <polling::Poller>::wait_impl ()
+[Inferior 1 (process 231595) detached]

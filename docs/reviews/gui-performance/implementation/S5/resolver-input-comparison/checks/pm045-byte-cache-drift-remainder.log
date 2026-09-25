@@ -1,0 +1,1020 @@
+START GUI render conformance tests
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 5 tests
+test text_identity_tests::conformance_medium_type_tiers_resolve_to_medium_weight ... ok
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb]: parsed KiCad board skeleton into canonical nets, packages, tracks, vias, zones, and stackup; full geometry and rule import is not implemented yet
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+test visual::visual_runner::tests::conformance_golden_camera_frames_board_fit_to_bounds ... ok
+test render_contract_tests::conformance_pane_header_tools_and_binding_chips_render ... ok
+test render_contract_tests::conformance_region_token_bindings_follow_design_book ... ok
+test menu_chrome::tests::conformance_menu_title_width_padding_is_uniform_and_tight ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 430 filtered out; finished in 0.59s
+
+END GUI render conformance tests 0
+START shell visual parity (single-pane interim golden)
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+GUI-VISUAL-PARITY fixture guard OK: real datum-test board with layers F.Cu, B.Cu, F.SilkS, Edge.Cuts; not the known-good demo. (split LAYOUT renders; schematic-content U1/STM32 guards deferred — pane B is a placeholder.)
+GUI-VISUAL-PARITY capture: /usr/bin/python3 /home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py --workload proof -- cargo run -q -p datum-gui-app --bin datum-gui --features visual -- --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb --select R1 --visual-test --screenshot-out /tmp/tmpx6yeksyx/datum-shell.capture.png --window-size 1680x1050 --exit-after-screenshot
+GUI-VISUAL-PARITY diff: 5641/1764000 px differ (0.320%), max channel delta 212, mean channel delta 0.2914; tolerance 0.50% @ per-pixel 8, mean 1.5
+GUI-VISUAL-PARITY OK: app matches the committed split-view first-slice interim shell golden (NOT prototype parity — pane B is a placeholder; the full board-editor.html composition is gated on later Phase-2 slices).
+END shell visual parity (single-pane interim golden) 0
+GUI icon asset gate passed (11 custom EDA glyphs).
+GUI-REFERENCE-CAPTURE OK: board-editor.png committed (1920x953 browser capture of the prototype), no *.PENDING shadow.
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.609s
+
+OK
+Source health governance passed (2351 source files checked).
+menu_model gate passed: 193 entries (117 verb-backed, 29 gui-local, 41 not-built/worklist, 6 submenu-ref, 0 empty); all verb references valid; icons: 9 eda-existing / 34 eda-to-author / 62 tabler-mapped, all declared in icon_set.json; 24 shortcuts, no conflicts.
+OUT OF SYNC: docs/gui/menu_model.json != build(docs/gui/menu_model.csv). Run: python3 scripts/menu_model_csv.py build
+REMAINDER_FAILURE status=1 command=python3 scripts/menu_model_csv.py check
+ERC/connectivity parity OK (10 pin types, 10 ERC codes, 6 connectivity diagnostics)
+check_pcb_layout_tool_matrix: 13 logical PCB buckets covered; align/distribute is a single mode-parameterized tool
+Private-writer guard failed:
+  - crates/cli/src/commands/project/roots.rs: missing expected project bootstrap pattern `bootstrap_native_project(`
+Migrated authoring paths must commit typed OperationBatch entries instead of mutating authored JSON directly; generated evidence manifests must use substrate persistence helpers; GUI board-text edits must route through terminal-prefilled journaled CLI commands; forward-annotation review state must remain confined to its explicit sidecar; project bootstrap and route-strategy fixture writes must stay within their classified bootstrap/generated boundaries; generated export writers must stay within exact-count file-output surfaces.
+REMAINDER_FAILURE status=1 command=python3 scripts/check_schematic_private_writers.py
+Daemon write-parity drift gate passed (4 fenced arms).
+MCP public taxonomy check passed (351 public, 538 registered, 187 hidden compatibility).
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.043s
+
+OK
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.100s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.007s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.041s
+
+OK
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.016s
+
+OK
+Agent workflow parity: PASS
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+datum-verb-catalog --check: /home/bfadmin/Documents/datum-eda/crates/verb-registry/../../mcp-server/datum_tool_catalog.json matches the verb registry
+
+[PG] PG-IDENTITY-SUBSTRATE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling datum-eda-cli v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 01s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 11 tests
+test main_tests::main_tests_project_imports::project_import_kicad_footprint_reuses_journal_recovered_import_map ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_board_reuses_journal_recovered_import_map ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_footprint_uses_resolver_materialized_pool_refs ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_footprint_persists_pool_and_import_map ... ok
+test main_tests::main_tests_project_imports_lifecycle::project_import_kicad_board_marks_absent_source_entries_missing ... ok
+test main_tests::main_tests_project_imports::project_import_kicad_board_persists_board_objects_and_import_map ... ok
+test main_tests::main_tests_project_imports_eagle::project_import_eagle_library_marks_absent_source_entries_missing ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_marks_absent_source_entries_missing ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_persists_symbols_and_import_map ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_reuses_journal_recovered_import_map ... ok
+test main_tests::main_tests_project_imports_eagle::project_import_eagle_library_persists_pool_objects_and_import_map ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 887 filtered out; finished in 0.47s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-IDENTITY-SUBSTRATE:SCHEMATIC
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 3 tests
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_reuses_journal_recovered_import_map ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_marks_absent_source_entries_missing ... ok
+test main_tests::main_tests_project_imports_schematic::project_import_kicad_schematic_persists_symbols_and_import_map ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 895 filtered out; finished in 0.19s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-RESOLVER-RECOVERY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 21 tests
+test main_tests::main_tests_project_source_shard_reporting::project_query_resolve_debug_reports_missing_pool_taxon ... ok
+test main_tests::main_tests_project_source_shard_reporting::project_query_resolve_debug_reports_missing_forward_annotation_review_sidecar ... ok
+test main_tests::main_tests_project_source_shard_reporting::project_query_resolve_debug_reports_missing_generated_evidence_shard ... ok
+test main_tests::main_tests_project_source_shard_reporting::project_query_resolve_debug_reports_missing_production_taxons ... ok
+test main_tests::main_tests_project_source_shard_reporting::project_query_resolve_debug_reports_missing_identity_relationship_taxons ... ok
+test main_tests::main_tests_project_source_shard_root_replay::project_query_resolve_debug_reports_missing_materialized_board_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown::project_query_resolve_debug_reports_unknown_authored_production_shards ... ok
+test main_tests::main_tests_project_source_shard_reporting::project_query_resolve_debug_reports_dirty_materialized_source_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown::project_query_resolve_debug_reports_unknown_pool_symbol_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown::project_query_resolve_debug_reports_unknown_import_map_sidecar ... ok
+test main_tests::main_tests_project_source_shard_unknown_generated::project_query_resolve_debug_reports_unknown_generated_evidence_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown_generated::project_query_resolve_debug_replays_unknown_generated_evidence_across_later_transaction ... ok
+test main_tests::main_tests_project_source_shard_unknown_generated::project_query_resolve_debug_reports_unknown_check_run_generated_evidence_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown_generated::project_query_resolve_debug_reports_unknown_output_job_run_generated_evidence_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown::project_query_resolve_debug_reports_unknown_identity_relationship_shards ... ok
+test main_tests::main_tests_project_source_shard_unknown_generated::project_query_resolve_debug_reports_unknown_artifact_run_generated_evidence_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown_schematic::project_query_resolve_debug_reports_unknown_schematic_definition_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown_schematic::project_query_resolve_debug_reports_unknown_schematic_sheet_shard ... ok
+test main_tests::main_tests_project_source_shard_unknown_sidecar::project_query_resolve_debug_reports_unknown_forward_annotation_review_sidecar ... ok
+test main_tests::main_tests_project_source_shard_unknown_sidecar::project_query_resolve_debug_reports_unknown_proposal_metadata_sidecar ... ok
+test main_tests::main_tests_project_source_shard_unknown_generated::project_query_resolve_debug_reports_unknown_zone_fill_generated_evidence_shard ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 877 filtered out; finished in 0.23s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-SOURCE-SHARD-CONTEXT
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 2 tests
+test main_tests::main_tests_context_source_shards::context_refresh_exposes_unknown_generated_evidence_source_shard ... ok
+test main_tests::main_tests_context_source_shards::context_refresh_exposes_missing_identity_relationship_source_shards ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 896 filtered out; finished in 0.02s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-SOURCE-SHARD-GUI-SUMMARY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 06s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_protocol-f7e57068d3c61b22)
+
+running 3 tests
+test source_shard_status::source_shard_status_accepted_tip_tests::accepted_transaction_tip_reports_resolver_journal_tip ... ok
+test source_shard_status::tests::source_shard_status_counts_missing_forward_annotation_review_sidecar ... ok
+test source_shard_status::tests::source_shard_status_counts_missing_identity_relationship_sidecars ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 119 filtered out; finished in 0.01s
+
+     Running tests/check_runs.rs (target/debug/deps/check_runs-e42979e281e2a15a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/output_jobs.rs (target/debug/deps/output_jobs-a9c9a6a08cb496cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/terminal_command_catalog.rs (target/debug/deps/terminal_command_catalog-c71c4cb49804424b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/terminal_lane.rs (target/debug/deps/terminal_lane-2cd42f02b6b79241)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-COMMIT-ATOMIC+DURABLE-UNDO
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 10 tests
+test substrate::tests::journal_hardening::commit_journaled_rejects_empty_operation_batch_without_disk_mutation ... ok
+test substrate::tests::journal_hardening::commit_journaled_records_inverse_operations_in_reverse_batch_order ... ok
+test substrate::tests::journal_hardening::commit_journaled_refuses_malformed_complete_journal_line ... ok
+test substrate::tests::journal_hardening::append_transaction_journal_rejects_identical_historical_transaction_id ... ok
+test substrate::tests::journal_hardening::commit_journal_undo_preserves_replayed_state_when_promoted_shard_is_stale ... ok
+test substrate::tests::journal_hardening::commit_journal_undo_and_redo_append_compensating_transactions ... ok
+test substrate::tests::journal_hardening::commit_journaled_recovers_torn_trailing_journal_fragment_before_append ... ok
+test substrate::tests::journal_hardening::resolver_reports_invalid_undo_link_and_keeps_valid_prefix ... ok
+test substrate::tests::journal_hardening::resolver_preserves_undo_redo_links_across_reopen ... ok
+test substrate::tests::journal_hardening::normal_commit_after_undo_clears_redo_stack ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 1035 filtered out; finished in 0.09s
+
+
+[PG] PG-REVISION-GUARDS
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 6 tests
+test substrate::tests::journal_revision_guards::commit_rejects_empty_operation_batch_without_mutation ... ok
+test substrate::tests::journal_revision_guards::commit_journaled_rejects_stale_object_revision_guard_without_staging_or_mutation ... ok
+test substrate::tests::journal_revision_guards::commit_journaled_rejects_missing_expected_model_revision_without_staging_or_mutation ... ok
+test substrate::tests::journal_revision_guards::commit_journal_undo_rejects_stale_in_memory_cursor_without_append ... ok
+test substrate::tests::journal_revision_guards::commit_journaled_accepts_matching_object_revision_guard_and_bumps_object_revision ... ok
+test substrate::tests::journal_revision_guards::commit_journal_redo_rejects_stale_in_memory_cursor_without_append ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 1039 filtered out; finished in 0.02s
+
+
+[PG] PG-SHARD-DIFF-ISOLATION
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 1 test
+test main_tests::main_tests_project_relationships::project_query_relationships_and_variants_are_resolver_backed ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 897 filtered out; finished in 0.03s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-COMPONENT-INSTANCE-SUBSTRATE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 22 tests
+test substrate::tests::component_instance::resolver_does_not_derive_component_instance_for_exact_symbol_package_match ... ok
+test substrate::tests::component_instance::resolver_rejects_component_instance_missing_refs ... ok
+test substrate::tests::component_instance::resolver_rejects_component_instance_filename_mismatch ... ok
+test substrate::tests::component_instance::resolver_prefers_persisted_component_instance_over_ambiguous_reference_join ... ok
+test substrate::tests::component_instance::persisted_component_instance_participates_in_model_revision ... ok
+test substrate::tests::component_instance::resolver_reports_unmatched_component_instance_symbol ... ok
+test substrate::tests::component_instance::resolver_reports_ambiguous_component_instance_join ... ok
+test substrate::tests::component_instance_part_ref::resolver_preserves_persisted_component_instance_part_ref ... ok
+test substrate::tests::component_instance_part_ref::resolver_projects_part_ref_from_library_binding ... ok
+test substrate::tests::component_instance::journaled_component_instance_rejects_duplicate_or_wrong_kind_refs ... ok
+test substrate::tests::component_instance_part_ref::resolver_rejects_invalid_component_instance_part_ref ... ok
+test substrate::tests::component_instance_part_ref::resolver_rejects_mismatched_part_ref_and_library_binding ... ok
+test substrate::tests::component_instance_proposal_policy::tool_relationship_direct_commit_requires_proposal ... ok
+test substrate::tests::component_instance_proposal_policy::tool_component_instance_direct_commit_requires_proposal ... ok
+test substrate::tests::component_instance_roles::resolver_preserves_persisted_component_instance_role_metadata ... ok
+test substrate::tests::component_instance_proposal_policy::tool_variant_overlay_direct_commit_requires_proposal ... ok
+test substrate::tests::component_instance_roles::resolver_rejects_invalid_component_instance_role_metadata ... ok
+test substrate::tests::component_instance::journaled_component_instance_accepts_symbol_first_instance_without_board_package ... ok
+test substrate::tests::component_instance_schema::resolver_rejects_unsupported_component_instance_schema_version ... ok
+test substrate::tests::component_instance_schema::resolver_defaults_legacy_component_instance_shard_schema_version ... ok
+test substrate::tests::component_instance_proposal_policy::automated_pool_library_direct_commit_requires_proposal ... ok
+test substrate::tests::component_instance::journaled_component_instance_create_set_delete_undo_redo_and_replay ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 1023 filtered out; finished in 0.08s
+
+
+[PG] PG-COMPONENT-INSTANCE-PROPOSAL-POLICY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 4 tests
+test substrate::tests::component_instance_proposal_policy::tool_relationship_direct_commit_requires_proposal ... ok
+test substrate::tests::component_instance_proposal_policy::tool_component_instance_direct_commit_requires_proposal ... ok
+test substrate::tests::component_instance_proposal_policy::tool_variant_overlay_direct_commit_requires_proposal ... ok
+test substrate::tests::component_instance_proposal_policy::automated_pool_library_direct_commit_requires_proposal ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1041 filtered out; finished in 0.02s
+
+
+[PG] PG-LIBRARY-AUTHORING-SUBSTRATE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 9 tests
+test substrate::tests::pool_library::resolver_discovers_native_pool_library_directories ... ok
+test substrate::tests::pool_library_reject::journaled_pool_library_object_rejects_invalid_footprint_payload ... ok
+test substrate::tests::pool_library::journal_replay_recovers_missing_pool_library_shard ... ok
+test substrate::tests::pool_library_reject::journaled_pool_library_object_rejects_invalid_path_and_identity ... ok
+test substrate::tests::pool_library_reject::journaled_pool_library_object_rejects_invalid_typed_payload ... ok
+test substrate::tests::pool_library::resolver_accepts_authored_native_library_baseline_fixture ... ok
+test substrate::tests::pool_library::journaled_pool_library_symbol_create_is_replayable_and_undoable ... ok
+test substrate::tests::pool_library::journaled_pool_library_symbol_set_bumps_revision_and_is_undoable ... ok
+test substrate::tests::pool_library::journaled_pool_part_model_attach_detach_are_replayable_and_undoable ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 1036 filtered out; finished in 0.04s
+
+
+[PG] PG-LIBRARY-AUTHORING-CLI
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 20 tests
+test main_tests::main_tests_project_pool_library::project_create_pool_padstack_rejects_invalid_aperture_arguments ... ok
+test main_tests::main_tests_project_pool_library::project_pool_library_object_create_rejects_mismatched_payload_uuid ... ok
+test main_tests::main_tests_project_pool_library::project_create_pool_package_rejects_missing_padstack ... ok
+test main_tests::main_tests_project_pool_library::project_pool_library_object_create_rejects_missing_schema_version ... ok
+test main_tests::main_tests_project_pool_library::project_create_pool_padstack_authors_typed_circle_padstack ... ok
+test main_tests::main_tests_project_pool_library::project_create_pool_package_authors_body_only_package ... ok
+test main_tests::main_tests_project_pool_library::project_create_pool_unit_authors_typed_unit_through_journal ... ok
+test main_tests::main_tests_project_pool_library::project_set_pool_part_bindings_updates_default_footprint_and_pin_pad_map ... ok
+test main_tests::main_tests_project_pool_library::project_create_pool_package_authors_typed_package_with_pad ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_entity_rejects_symbol_unit_mismatch ... ok
+test main_tests::main_tests_project_pool_library::project_pool_library_object_create_delete_are_journaled_and_undoable ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_padstack_rejects_invalid_aperture_arguments ... ok
+test main_tests::main_tests_project_pool_library::project_pool_library_object_set_is_journaled_query_visible_and_undoable ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_symbol_rejects_missing_unit ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_library_object_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_padstack_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_entity_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_symbol_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_library_proposals::proposal_create_pool_unit_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_library::project_query_pool_library_objects_reports_resolver_backed_objects ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 878 filtered out; finished in 0.36s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-LIBRARY-AUTHORING-PROPOSALS
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 9 tests
+test main_tests::main_tests_project_pool_package_proposals::proposal_set_pool_package_courtyard_polygon_rejects_too_few_vertices ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_set_pool_package_courtyard_rect_rejects_zero_area ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_create_pool_package_rejects_missing_padstack ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_set_pool_package_pad_rejects_duplicate_pad ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_create_pool_package_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_create_pool_package_authors_body_only_package ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_set_pool_package_pad_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_set_pool_package_courtyard_rect_defers_until_accept_apply ... ok
+test main_tests::main_tests_project_pool_package_proposals::proposal_set_pool_package_courtyard_polygon_defers_until_accept_apply ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 889 filtered out; finished in 0.22s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-PROPOSAL-PARITY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 1 test
+test substrate::tests::proposal::proposal_predicted_transaction_id_matches_preview_and_apply_transaction ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1044 filtered out; finished in 0.02s
+
+
+[PG] PG-PROPOSAL-SCHEMA+REPLAY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 17 tests
+test substrate::tests::proposal::proposal_apply_validation_reports_missing_revision_guard ... ok
+test substrate::tests::proposal::check_source_proposal_apply_validation_reports_missing_evidence ... ok
+test substrate::tests::proposal::resolver_discovers_proposals_without_changing_model_revision ... ok
+test substrate::tests::proposal::check_source_proposal_creation_requires_check_evidence ... ok
+test substrate::tests::proposal::proposal_apply_rejects_non_accepted_or_stale_proposals ... ok
+test substrate::tests::proposal::prebuilt_proposal_metadata_can_be_committed_through_journal ... ok
+test substrate::tests::proposal::resolver_rejects_proposal_filename_mismatch ... ok
+test substrate::tests::proposal_schema::proposal_operations_reject_unsupported_payload_schema_versions ... ok
+test substrate::tests::proposal_schema::resolver_defaults_legacy_proposal_payload_schema_version ... ok
+test substrate::tests::proposal::accepted_proposal_applies_through_journal_and_marks_applied ... ok
+test substrate::tests::proposal::proposal_review_rejects_stale_acceptance ... ok
+test substrate::tests::proposal_schema::resolver_rejects_unsupported_proposal_metadata_schema_version ... ok
+test substrate::tests::proposal::proposal_predicted_transaction_id_matches_preview_and_apply_transaction ... ok
+test substrate::tests::proposal_replay::journal_replay_marks_stale_promoted_proposal_metadata_dirty ... ok
+test substrate::tests::proposal_replay::journal_replay_recovers_missing_proposal_metadata ... ok
+test substrate::tests::proposal_replay::journal_replay_recovers_unreadable_proposal_metadata ... ok
+test substrate::tests::proposal_replay::journal_replay_deleted_proposal_metadata_suppresses_stale_promoted_file ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 1028 filtered out; finished in 0.03s
+
+
+[PG] PG-CHECKRUN-GENERATED-EVIDENCE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 10 tests
+test substrate::tests::check_run_schema::standards_basis_registry_resolves_only_known_v1_basis_ids ... ok
+test substrate::tests::check_run_target_validation::resolver_rejects_check_run_evidence_with_invalid_standards_basis_detail ... ok
+test substrate::tests::check_run_target_validation::resolver_rejects_check_run_evidence_with_invalid_fingerprint ... ok
+test substrate::tests::check_run_target_validation::resolver_rejects_check_run_evidence_with_legacy_null_target ... ok
+test substrate::tests::check_run_schema::check_run_helper_rejects_unsupported_payload_schema_version ... ok
+test substrate::tests::check_run_schema::check_run_helper_rejects_registered_standards_basis_registry_mismatch ... ok
+test substrate::tests::check_run_schema::check_run_helper_accepts_unknown_structurally_valid_standards_basis ... ok
+test substrate::tests::check_run_schema::resolver_defaults_legacy_check_run_payload_schema_version ... ok
+test substrate::tests::check_run_replay::journal_replay_recovers_missing_check_run_generated_evidence ... ok
+test substrate::tests::check_run_replay::journal_replay_deleted_check_run_suppresses_stale_promoted_evidence ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 1035 filtered out; finished in 0.02s
+
+
+[PG] PG-CHECKRUN-CLI-LIFECYCLE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 12 tests
+test main_tests::main_tests_project_check_run::check_run_command_reports_native_check_run ... ok
+test main_tests::main_tests_project_check_run::project_query_check_run_reports_resolver_keyed_persisted_findings ... ok
+test main_tests::main_tests_project_check_run::project_query_check_run_applies_fingerprint_waiver_state ... ok
+test main_tests::main_tests_project_check_run::project_query_check_run_uses_journal_materialized_schematic_state ... ok
+test main_tests::main_tests_project_check_run_drc_lifecycle::project_accept_deviation_commits_journaled_drc_fingerprint_deviation ... ok
+test main_tests::main_tests_project_check_run_history::check_list_and_show_report_persisted_check_run_evidence ... ok
+test main_tests::main_tests_project_check_run::project_waive_finding_commits_journaled_fingerprint_waiver ... ok
+test main_tests::main_tests_project_check_run_history::check_list_reports_latest_profile_history ... ok
+test main_tests::main_tests_project_check_run::project_accept_deviation_commits_journaled_fingerprint_deviation ... ok
+test main_tests::main_tests_project_check_run::check_waive_command_authors_fingerprint_waiver ... ok
+test main_tests::main_tests_project_check_run_drc_lifecycle::project_waive_finding_commits_journaled_drc_fingerprint_waiver ... ok
+test main_tests::main_tests_project_check_run_history::check_show_enriches_persisted_record_with_current_repair_proposal_links ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 886 filtered out; finished in 0.92s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-LIVE-CAM-EQUIVALENCE:GERBER-COPPER
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 1 test
+test main_tests::main_tests_project_gerber_copper_validate::project_validate_gerber_copper_layer_reports_match_and_mismatch ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 897 filtered out; finished in 0.04s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-LIVE-CAM-EQUIVALENCE:EXCELLON-DRILL
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 1 test
+test main_tests::main_tests_project_excellon_drill_export::project_export_excellon_drill_writes_narrow_excellon_from_board_vias ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 897 filtered out; finished in 0.02s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-ZONEFILL-SUBSTRATE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 19 tests
+test substrate::tests::zone_fill::bounded_zone_fill_rejects_foreign_pad_without_clearance_basis ... ok
+test substrate::tests::zone_fill::bounded_zone_fill_cuts_out_multiple_non_overlapping_foreign_pads ... ok
+test substrate::tests::zone_fill::bounded_zone_fill_cuts_out_single_foreign_pad_with_netclass_clearance ... ok
+test substrate::tests::zone_fill::bounded_zone_fill_conservatively_cuts_out_non_orthogonal_foreign_track_bounds ... ok
+test substrate::tests::zone_fill::bounded_zone_fill_conservatively_unions_overlapping_foreign_pad_cutouts ... ok
+test substrate::tests::zone_fill::bounded_zone_fill_cuts_out_single_foreign_orthogonal_track_with_netclass_clearance ... ok
+test substrate::tests::zone_fill::zone_fill_projection_renders_only_filled_evidence ... ok
+test substrate::tests::zone_fill::resolver_derives_native_zones_as_unfilled_zone_fills ... ok
+test substrate::tests::zone_fill::resolver_marks_persisted_zone_fill_stale_when_model_revision_changes ... ok
+test substrate::tests::zone_fill::resolver_accepts_valid_unsupported_zone_fill_generated_evidence ... ok
+test substrate::tests::zone_fill::resolver_rejects_invalid_filled_zone_fill_generated_evidence ... ok
+test substrate::tests::zone_fill::resolver_rejects_self_intersecting_filled_zone_fill_island ... ok
+test substrate::tests::zone_fill::resolver_rejects_nonfilled_zone_fill_with_renderable_islands ... ok
+test substrate::tests::zone_fill::journaled_zone_fill_rejects_mismatched_operation_and_payload_ids ... ok
+test substrate::tests::zone_fill_schema::resolver_accepts_legacy_zone_fill_without_schema_version ... ok
+test substrate::tests::zone_fill_schema::resolver_discovers_versioned_zone_fill_generated_evidence ... ok
+test substrate::tests::zone_fill_schema::resolver_rejects_unsupported_zone_fill_schema_version ... ok
+test substrate::tests::zone_fill_replay::journal_replay_recovers_missing_zone_fill_generated_evidence ... ok
+test substrate::tests::zone_fill_replay::journal_replay_deleted_zone_fill_suppresses_stale_promoted_evidence ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 1026 filtered out; finished in 0.03s
+
+
+[PG] PG-ZONEFILL-CLI-SOLVER
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 9 tests
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_ignores_unresolved_component_pads_outside_zone ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_cuts_out_board_keepout_bounds ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_clips_edge_crossing_foreign_track_clearance_to_zone_bounds ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_conservatively_cuts_out_non_orthogonal_track_bounds ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_cuts_out_single_foreign_orthogonal_track ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_allows_same_net_copper_without_fake_clearance_subtraction ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_rejects_unresolved_component_pad_intersecting_zone ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_cuts_out_multiple_non_overlapping_foreign_pads ... ok
+test main_tests::main_tests_project_board_zone_fill_solver::project_fill_zones_conservatively_unions_overlapping_foreign_pad_clearances ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 889 filtered out; finished in 0.42s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-PANELIZATION-ISOLATION
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 1 test
+test main_tests::main_tests_project_manufacturing_plan_proposals::project_update_panel_projection_as_proposal_defers_mutation_until_apply ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 897 filtered out; finished in 0.11s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-PRODUCTION-SCHEMA+POLICY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 15 tests
+test substrate::tests::production_schema::resolver_defaults_legacy_production_record_payload_schema_versions ... ok
+test substrate::tests::production_schema::production_operations_reject_unsupported_payload_schema_versions ... ok
+test substrate::tests::production_writer_migration::assistant_production_direct_commit_requires_proposal ... ok
+test substrate::tests::production_schema::resolver_rejects_unsupported_artifact_metadata_schema_version ... ok
+test substrate::tests::production_schema::resolver_rejects_unsupported_production_shard_schema_versions ... ok
+test substrate::tests::production_writer_migration::panel_projection_rejects_unknown_board_instance ... ok
+test substrate::tests::production_replay::journal_replay_recovers_missing_production_shards ... ok
+test substrate::tests::production_writer_migration::production_output_job_rejects_missing_manufacturing_plan ... ok
+test substrate::tests::production_writer_migration::resolver_rejects_production_shard_filename_payload_mismatch ... ok
+test substrate::tests::production_writer_migration::assistant_generated_evidence_direct_commit_requires_proposal ... ok
+test substrate::tests::production_replay::journal_replay_marks_stale_promoted_production_shards_dirty ... ok
+test substrate::tests::production_writer_migration::production_records_reject_missing_variant ... ok
+test substrate::tests::production_writer_migration::accepted_assistant_production_proposal_applies_through_commit_gateway ... ok
+test substrate::tests::production_replay::journal_replay_recovers_unreadable_production_shards_as_unknown ... ok
+test substrate::tests::production_writer_migration::journaled_production_records_create_undo_and_redo ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 1030 filtered out; finished in 0.05s
+
+
+[PG] PG-VARIANT-RESOLUTION
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 1 test
+test main_tests::main_tests_project_manufacturing::project_bom_and_pnp_variant_filter_uses_component_instance_population ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 897 filtered out; finished in 0.74s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-ARTIFACT-TRACEABILITY:OUTPUT-GRAPH
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 1 test
+test substrate::tests::artifact_output_oracle::generated_output_artifact_graph_replays_without_model_revision_mutation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1044 filtered out; finished in 0.02s
+
+
+[PG] PG-OUTPUT-JOB-RUN-REPLAY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 2 tests
+test substrate::tests::output_job_run_replay::journal_replay_recovers_missing_output_job_run_generated_evidence ... ok
+test substrate::tests::output_job_run_replay::journal_replay_deleted_output_job_run_suppresses_stale_promoted_evidence ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1043 filtered out; finished in 0.02s
+
+
+[PG] PG-GENERATED-EVIDENCE-COMMIT-SCOPE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 10 tests
+test substrate::tests::generated_evidence_scope::commit_journaled_rejects_output_job_run_with_missing_artifact_without_staging ... ok
+test substrate::tests::generated_evidence_scope_project::commit_journaled_rejects_generated_evidence_for_wrong_project ... ok
+test substrate::tests::generated_evidence_scope::commit_journaled_rejects_output_job_run_with_missing_output_job_without_staging ... ok
+test substrate::tests::generated_evidence_scope::commit_journaled_rejects_duplicate_artifact_run_sequence_without_staging ... ok
+test substrate::tests::generated_evidence_scope::commit_journaled_rejects_duplicate_output_job_run_sequence_without_staging ... ok
+test substrate::tests::generated_evidence_scope::commit_journaled_rejects_artifact_run_with_mismatched_artifact_metadata_without_staging ... ok
+test substrate::tests::generated_evidence_scope::commit_journaled_rejects_artifact_run_with_missing_artifact_without_staging ... ok
+test substrate::tests::generated_evidence_scope_project::commit_journaled_rejects_non_output_generated_evidence_for_wrong_project ... ok
+test substrate::tests::generated_evidence_scope_project::commit_journaled_rejects_stale_generated_evidence_model_revision ... ok
+test substrate::tests::generated_evidence_scope::commit_journaled_rejects_output_job_run_with_mismatched_artifact_metadata_without_staging ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 1035 filtered out; finished in 0.01s
+
+
+[PG] PG-OUTPUT-JOB-CLI-REPLAY
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 4 tests
+test main_tests::main_tests_project_output_job_run_replay::project_run_output_job_drill_run_replays_without_authored_revision_mutation ... ok
+test main_tests::main_tests_project_output_job_run_replay::project_run_output_job_generated_run_replays_without_authored_revision_mutation ... ok
+test main_tests::main_tests_project_output_job_run_replay::project_run_output_job_manufacturing_set_run_replays_without_authored_revision_mutation ... ok
+test main_tests::main_tests_project_output_job_run_replay::project_run_output_job_multi_scope_run_replays_without_authored_revision_mutation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 894 filtered out; finished in 0.18s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-ARTIFACT-TRACEABILITY:MANUFACTURING-PROJECTION
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 1 test
+test main_tests::main_tests_project_manufacturing_projection_parity::manufacturing_export_files_match_manifest_projection ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 897 filtered out; finished in 0.09s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-STANDARDS-REPAIR-PROPOSALS
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 4 tests
+test main_tests::main_tests_project_standards_repair_apply::project_accept_apply_zone_fill_repair_updates_evidence_and_findings ... ok
+test main_tests::main_tests_project_standards_repair_apply::project_accept_apply_standards_repair_proposal_updates_board_and_findings ... ok
+test main_tests::main_tests_project_standards_repair_apply::project_accept_apply_via_geometry_repair_updates_board_and_findings ... ok
+test main_tests::main_tests_project_standards_repair_apply::project_accept_apply_track_geometry_repair_updates_board_and_findings ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 894 filtered out; finished in 1.27s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-STANDARDS-REPAIR-PROPOSALS:CLEARANCE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 2 tests
+test main_tests::main_tests_project_standards_clearance_repairs::project_generate_standards_repair_proposals_links_copper_clearance_findings ... ok
+test main_tests::main_tests_project_standards_clearance_repairs::project_accept_apply_copper_clearance_repair_updates_board_and_findings ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 896 filtered out; finished in 0.29s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-STANDARDS-REPAIR-PROPOSALS:SILK
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 2 tests
+test main_tests::main_tests_project_standards_silk_repairs::project_generate_standards_repair_proposals_links_silk_clearance_findings ... ok
+test main_tests::main_tests_project_standards_silk_repairs::project_accept_apply_silk_clearance_repair_updates_board_and_findings ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 896 filtered out; finished in 0.39s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-STANDARDS-REPAIR-PROPOSALS:PEER-APERTURE
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 2 tests
+test main_tests::main_tests_project_standards_peer_aperture_repairs::project_generate_standards_repair_proposals_links_peer_aperture_findings ... ok
+test main_tests::main_tests_project_standards_peer_aperture_repairs::project_accept_apply_peer_aperture_repair_updates_board_and_findings ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 896 filtered out; finished in 0.65s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-STANDARDS-REPAIR-PROPOSALS:ZONE-FILL
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 3 tests
+test main_tests::main_tests_project_standards_zone_fill_repairs::project_generate_standards_repair_proposals_skips_unsupported_zone_fill ... ok
+test main_tests::main_tests_project_standards_zone_fill_repairs::project_generate_standards_repair_proposals_links_stale_zone_fill_findings ... ok
+test main_tests::main_tests_project_standards_zone_fill_repairs::project_generate_standards_repair_proposals_links_unfilled_zone_fill_findings ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 895 filtered out; finished in 0.26s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-RESOLVER-BACKED-VALIDATION
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/datum_eda-8806a01442a6ca8d)
+
+running 1 test
+test main_tests::main_tests_project_validate_resolver::project_validate_reads_resolver_materialized_authored_shards ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 897 filtered out; finished in 0.07s
+
+     Running tests/mcp_stdio.rs (target/debug/deps/mcp_stdio-14310fc7d4f175be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/verb_registry_roundtrip.rs (target/debug/deps/verb_registry_roundtrip-2b45341a9d5e21cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+[PG] PG-UI-LAYOUT-INVARIANTS
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.7 GiB target_free=167.4 GiB tmp_free=6.6 GiB
+warning: Cargo target exceeds soft limit: 34.7 GiB used; soft limit 20.0 GiB
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 13s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-a9a942f6552ff861)
+
+running 6 tests
+test layout_invariant_tests::maximized_terminal_fills_the_workspace_between_global_chrome ... ok
+test layout_invariant_tests::dividers_carry_split_paths_and_are_grabbable ... ok
+test layout_invariant_tests::leaf_at_maps_points_for_click_to_focus ... ok
+test layout_invariant_tests::viewport_tiling_holds_pane_tree_invariants_across_scale_matrix ... ok
+datum-import warning [/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/simple-demo.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+test layout_invariant_tests::default_board_and_loaded_schematic_scene_centers_are_editor_targets ... ok
+test layout_invariant_tests::shell_and_hit_regions_hold_layout_invariants_across_scale_matrix ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 333 filtered out; finished in 1.89s
+
+     Running tests/selection_ownership.rs (target/debug/deps/selection_ownership-7fa8849dcb053bdc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/visual_goldens.rs (target/debug/deps/visual_goldens-27626273087efb09)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+CLI module coverage passed (545 source files, all present in dep-info).
+.....................................s.............................s..................................................................ssssssssssssssssss....................ss.................................ssssss................................................................................................................sssssssssssssssss.........................................................................
+----------------------------------------------------------------------
+Ran 415 tests in 13.627s
+
+OK (skipped=45)

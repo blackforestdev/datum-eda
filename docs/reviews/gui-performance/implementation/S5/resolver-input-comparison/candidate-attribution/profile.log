@@ -1,0 +1,35 @@
+[New LWP 234852]
+[New LWP 234842]
+[New LWP 234841]
+[New LWP 234840]
+[New LWP 234839]
+[New LWP 234833]
+[New LWP 234832]
+[New LWP 234831]
+[New LWP 234830]
+[New LWP 234829]
+[New LWP 234828]
+[New LWP 234821]
+[New LWP 234820]
+[New LWP 234819]
+[New LWP 234818]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x00005580725b8c7c in <polling::Poller>::wait_impl ()
+PROFILE_READY
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::scan", "cpu_ms": 20.000000000000018, "wall_ms": 14.957509003579617}
+PROFILE {"phase": "<eda_engine::substrate::ProjectResolver>::resolve", "cpu_ms": 210.00000000000009, "wall_ms": 207.7112419065088}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::scan", "cpu_ms": 0.0, "wall_ms": 3.2038528006523848}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 230.00000000000009, "wall_ms": 229.210747173056}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::scan", "cpu_ms": 10.000000000000009, "wall_ms": 8.239882066845894}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 10.000000000000009, "wall_ms": 10.907539865002036}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::scan", "cpu_ms": 0.0, "wall_ms": 8.785974001511931}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 0.0, "wall_ms": 11.313990922644734}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::scan", "cpu_ms": 10.000000000000009, "wall_ms": 8.389529073610902}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 10.000000000000009, "wall_ms": 10.947744827717543}
+PROFILE {"phase": "eda_engine::substrate::project_read_cache::scan", "cpu_ms": 10.000000000000009, "wall_ms": 9.807383175939322}
+PROFILE {"phase": "<eda_engine::substrate::project_read_cache::ProjectReadCache>::resolve", "cpu_ms": 10.000000000000009, "wall_ms": 12.085404014214873}
+
+Thread 1 "datum-gui" received signal SIGTERM, Terminated.
+0x0000558072675daf in datum_gui_render::renderer_state::cpu_alloc::with_current::<(), datum_gui_render::renderer_state::cpu_alloc::calls::transaction<(), <datum_gui_render::text_gpu::budget::Permit as core::ops::drop::Drop>::drop::{closure#0}>::{closure#0}> ()
+[Inferior 1 (process 234750) detached]

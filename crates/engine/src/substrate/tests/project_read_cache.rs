@@ -193,3 +193,25 @@ fn project_read_cache_preserves_join_diagnostics_and_validated_journal_reuse() {
     assert_eq!(changed.journal.len(), 1);
     assert!(Arc::ptr_eq(&changed, &cache.resolve(root).unwrap()));
 }
+
+#[test]
+fn project_read_cache_bypasses_input_retention_overflow_without_rejecting_project() {
+    let fixture = Fixture::new();
+    let root = &fixture.0;
+    let mut cache = ProjectReadCache::default();
+    let first = cache.resolve(root).unwrap();
+    let extra = root.join("large-unrelated-input");
+    std::fs::File::create(&extra)
+        .unwrap()
+        .set_len(8 * 1024 * 1024)
+        .unwrap();
+    let a = cache.resolve(root).unwrap();
+    let b = cache.resolve(root).unwrap();
+    assert!(!Arc::ptr_eq(&first, &a));
+    assert!(!Arc::ptr_eq(&a, &b));
+    assert_eq!(*a, *b);
+    assert_eq!(*a, ProjectResolver::new(root).resolve().unwrap());
+    std::fs::remove_file(extra).unwrap();
+    let small = cache.resolve(root).unwrap();
+    assert!(Arc::ptr_eq(&small, &cache.resolve(root).unwrap()));
+}

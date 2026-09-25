@@ -1,0 +1,17 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=38.4 GiB target_free=163.8 GiB tmp_free=6.7 GiB
+warning: Cargo target exceeds soft limit: 38.4 GiB used; soft limit 20.0 GiB
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 04s
+     Running unittests src/lib.rs (target/debug/deps/eda_engine-5b3bfac123e4e569)
+
+running 7 tests
+test substrate::tests::project_read_cache::project_read_cache_invalidates_replaced_identical_bytes_and_releases_old_model ... ok
+test substrate::tests::project_read_cache::project_read_cache_reuses_only_identical_content_not_mtime_or_length ... ok
+test substrate::tests::project_read_cache::project_read_cache_preserves_added_removed_and_corrupt_input_diagnostics ... ok
+test substrate::tests::project_read_cache::project_read_cache_switches_roots_and_revalidates_journal_cursor ... ok
+test substrate::tests::project_read_cache::project_read_cache_bypasses_external_pools_symlinks_and_pending_recovery ... ok
+test substrate::tests::project_read_cache::project_read_cache_bypasses_input_retention_overflow_without_rejecting_project ... ok
+test substrate::tests::project_read_cache::project_read_cache_preserves_join_diagnostics_and_validated_journal_reuse ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 1038 filtered out; finished in 0.02s
+

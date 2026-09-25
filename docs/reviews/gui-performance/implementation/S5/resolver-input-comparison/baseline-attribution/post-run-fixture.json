@@ -1,0 +1,7 @@
+{
+  "project_root": "/tmp/pm045-admission-hqugp169/project",
+  "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "normalization": "sorted compact JSON with root uuid removed, no newline",
+  "board_mtime_ns": 1790340985745532821,
+  "note": "Post-run fixture verification for diagnostic attribution. Driver used this exact native root; no qualification claim."
+}
