@@ -3543,7 +3543,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial GUI process CPU observations only; all-thread /proc ticks have10ms resolution. Complete cooperating-process lifecycle/exit/drain accounting and validated action endpoints remain missing; no CPU acceptance.",
+        "status": "Partial method conformance: three controlled fork/thread cases retain exited-child CPU in an isolated cgroup and agree with final wait4 usage within1.656ms. Native command-boundary probe records cgroup totals plus direct GUI CPU clocks/PID start-time. Separate cooperating-engine/process identities, possible external services, full workload admission and normal final drain remain unqualified.",
         "id": "proof_ac_02",
         "positive": "Observe GUI+engine CPU across child exits and bounded drain",
         "negative_control": "Drop child CPU or shorten denominator",
@@ -3591,6 +3591,15 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_cpu_boundary_progress": {
+        "status": "Partial method conformance: three controlled fork/thread cases retain exited-child CPU in an isolated cgroup and agree with final wait4 usage within1.656ms. Native command-boundary probe records cgroup totals plus direct GUI CPU clocks/PID start-time. Separate cooperating-engine/process identities, possible external services, full workload admission and normal final drain remain unqualified.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/conformance/result.json",
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "Partial GUI process CPU observations only; all-thread /proc ticks have10ms resolution. Complete cooperating-process lifecycle/exit/drain accounting and validated action endpoints remain missing; no CPU acceptance."
       }
     },
     {
@@ -4110,7 +4119,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial investigative on/off runs and failed attempts retained. Setting verbose=0 was rejected because presence enables logging; incomplete JSON-line reader and initial warning-bypass candidates remain archived. No fixed-seven-pair relative inference or calibrated observer-overhead claim.",
+        "status": "Bounded method probe only: preserve rejected OR-combined window selector and its pixel mismatches. Corrected selector requires owned PID plus exact title and excludes Main. No calibrated readback/observer overhead, fixed-seven-pair relative inference or full qualification.",
         "id": "proof_ac_06",
         "positive": "Same workload trace-on/off and rejected trials",
         "negative_control": "Discard high-cost or contaminated trial after seeing result",
@@ -4161,6 +4170,15 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_cpu_boundary_progress": {
+        "status": "Bounded method probe only: preserve rejected OR-combined window selector and its pixel mismatches. Corrected selector requires owned PID plus exact title and excludes Main. No calibrated readback/observer overhead, fixed-seven-pair relative inference or full qualification.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/rejected-window-selector/result.json",
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "Partial investigative on/off runs and failed attempts retained. Setting verbose=0 was rejected because presence enables logging; incomplete JSON-line reader and initial warning-bypass candidates remain archived. No fixed-seven-pair relative inference or calibrated observer-overhead claim."
       }
     },
     {
@@ -4205,7 +4223,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial native menu/key open/Escape-close/focus sequences for GLOBAL/PROJECT/NEW; this is not complete scheduled semantic-input or saturation/final-state coverage.",
+        "status": "Partial three-cycle Project native menu/Return/Escape sequence: preparation menu keys occur before CPU start; expected window pixels observed before open endpoint, close requires window destruction and focus return. First cold and two warm actions only; complete scheduled/received/saturation/per-consumer qualification remains open.",
         "id": "proof_ac_07",
         "positive": "Input schedule saturates without changing legitimate semantics",
         "negative_control": "Drop tiny deltas or freeze content",
@@ -4252,6 +4270,14 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_cpu_boundary_progress": {
+        "status": "Partial three-cycle Project native menu/Return/Escape sequence: preparation menu keys occur before CPU start; expected window pixels observed before open endpoint, close requires window destruction and focus return. First cold and two warm actions only; complete scheduled/received/saturation/per-consumer qualification remains open.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "Partial native menu/key open/Escape-close/focus sequences for GLOBAL/PROJECT/NEW; this is not complete scheduled semantic-input or saturation/final-state coverage."
       }
     },
     {
@@ -4295,7 +4321,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial current X11/Vulkan1x dialog static/lifecycle proof: three captures byte-identical to prior candidate; focus returns after close. Complete consumer/keyboard/IME/accessibility/backend/scale and owner UX qualification remains required.",
+        "status": "Partial Project static readiness check compares actual window readback with the unchanged prior88130b98 Project PNG. Three successful opens require exact matching pixels, while wrong-Main selection is rejected. No physical displayed-frame/latency, full native UX/IME/accessibility/backend/scale acceptance.",
         "id": "proof_ac_08",
         "positive": "Static native captures and production hit/focus/IME/accessibility action matrix",
         "negative_control": "Suppress partially clipped input or remove focus ring",
@@ -4339,6 +4365,15 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_cpu_boundary_progress": {
+        "status": "Partial Project static readiness check compares actual window readback with the unchanged prior88130b98 Project PNG. Three successful opens require exact matching pixels, while wrong-Main selection is rejected. No physical displayed-frame/latency, full native UX/IME/accessibility/backend/scale acceptance.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json",
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/rejected-window-selector/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "Partial current X11/Vulkan1x dialog static/lifecycle proof: three captures byte-identical to prior candidate; focus returns after close. Complete consumer/keyboard/IME/accessibility/backend/scale and owner UX qualification remains required."
       }
     },
     {
@@ -14006,7 +14041,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Investigative process CPU/action observations archived; complete same-window process/client lifetime accounting and qualified trials remain missing. Report-only duty row is not passed by omission.",
+        "status": "Three-cycle CPU boundary method probe is executed; full valid actual-cycle trial and common process/client drain accounting remain missing. No duty or absolute-budget qualification.",
         "id": "proof_bud_windows_cpu_duty",
         "positive": "WINDOWS: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14029,6 +14064,14 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_cpu_boundary_progress": {
+        "status": "Three-cycle CPU boundary method probe is executed; full valid actual-cycle trial and common process/client drain accounting remain missing. No duty or absolute-budget qualification.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "Investigative process CPU/action observations archived; complete same-window process/client lifetime accounting and qualified trials remain missing. Report-only duty row is not passed by omission."
       }
     },
     {
@@ -14075,7 +14118,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Unqualified. Pre-retention-owner candidate has observed warm Project50-80ms,median70ms in one30-cycle sequence, with other hosts also exceeding50ms in some observations. These windows include preparatory menu input and end at mapping/focus, so are neither exact command cost nor definitive lower bounds. Current88130b98 has diagnostic-on lifecycle proof only; complete valid W-WINDOWS trials still required. Threshold unchanged.",
+        "status": "Unqualified, with improved action boundary: unchanged88130b98 release, diagnostics absent, Project cold297.044ms and two warm49.843ms/28.255ms cgroup CPU. Menu preparation excluded and expected window pixels required. These two warm observations do not establish all30cycles/three independent trials, calibrated observer overhead or full lifecycle qualification. Earlier~70ms mixed-menu observations cannot justify another renderer optimization by themselves;50ms threshold unchanged.",
         "id": "proof_bud_windows_open_cpu",
         "positive": "W-WINDOWS warm open transitions; isolate CPU window without padding idle.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -14098,6 +14141,14 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_cpu_boundary_progress": {
+        "status": "Unqualified, with improved action boundary: unchanged88130b98 release, diagnostics absent, Project cold297.044ms and two warm49.843ms/28.255ms cgroup CPU. Menu preparation excluded and expected window pixels required. These two warm observations do not establish all30cycles/three independent trials, calibrated observer overhead or full lifecycle qualification. Earlier~70ms mixed-menu observations cannot justify another renderer optimization by themselves;50ms threshold unchanged.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "Unqualified. Pre-retention-owner candidate has observed warm Project50-80ms,median70ms in one30-cycle sequence, with other hosts also exceeding50ms in some observations. These windows include preparatory menu input and end at mapping/focus, so are neither exact command cost nor definitive lower bounds. Current88130b98 has diagnostic-on lifecycle proof only; complete valid W-WINDOWS trials still required. Threshold unchanged."
       }
     },
     {
@@ -21044,7 +21095,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Unqualified. Existing cycles observe Escape/focus or owner-drop/attachment drain, without complete process/client final counters and validated bounded-drain endpoints. No20ms close-budget acceptance.",
+        "status": "Unqualified: three Project Escape/destruction/focus transitions observe6.101ms/5.318ms/4.698ms group CPU. No complete GPU/client normal-drain or required trial/host coverage;20ms threshold unchanged.",
         "id": "proof_bud_windows_close_cpu",
         "positive": "W-WINDOWS warm close transitions; lifetime counters captured before exit.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -21067,6 +21118,14 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
+      },
+      "s5_cpu_boundary_progress": {
+        "status": "Unqualified: three Project Escape/destruction/focus transitions observe6.101ms/5.318ms/4.698ms group CPU. No complete GPU/client normal-drain or required trial/host coverage;20ms threshold unchanged.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "Unqualified. Existing cycles observe Escape/focus or owner-drop/attachment drain, without complete process/client final counters and validated bounded-drain endpoints. No20ms close-budget acceptance."
       }
     },
     {
@@ -37536,5 +37595,51 @@
     ],
     "remaining": "Complete method/admission/accounting and exact valid action endpoints before final trials; preserve all S1 obligations,50 S2 and20 S3 qualification rows, prescribed negatives, both native backends/scales,60minute/200cycle/20recovery endurance and distinct-reviewer actual replay. END-01/02 remain unexecuted qualification, not satisfied by short cycles or source review.",
     "preserved": "All225 IDs, acceptance rules, positive/negative recipes, consumer/slice/clause indexes, historical evidence and exclusions unchanged. GEFN/S0-S4 implementation preserved; no dependency/license/prototype/numerical-budget change. Nonblocking resize resource/temporal,T2 and unadmitted schematic exclusions remain unqualified."
+  },
+  "s5_cpu_boundary_method": {
+    "status": "Controlled CPU conservation and bounded native readiness-method progress; no row qualified",
+    "production_commit": "88130b98",
+    "evidence_revision": "7aba405a",
+    "binary_sha256": "5134fc68c06b73f974c0a65e04aa54c2ac5634596c920bc487b1d10be5902516",
+    "method": "Observer creates an empty session-owned cgroup before spawning, moves only its child into it before exec, and reads cumulative user/system/total CPU. Descendants inherit membership; exited-child work remains in group counters. Observer and image tools stay outside. GUI direct process clock and PID/start ticks are recorded alongside group snapshots. No system controller settings changed; empty owned groups removed.",
+    "conformance": {
+      "runs": 3,
+      "group_wait4_absolute_difference_us": [
+        1043,
+        1297,
+        1656
+      ],
+      "declared_test_tolerance_us": 5000,
+      "negative": "Live-only final snapshot is zero after exit and omitting child exit usage loses at least90ms. Both fail conservation. Final group CPU stable after empty50ms tail.",
+      "limit": "The5ms fixture tolerance is neither per-action uncertainty nor a product budget relaxation. Native group/direct clocks are not sampled atomically; externally delegated services need separate accounting."
+    },
+    "native": {
+      "host": "PROJECT",
+      "backend": "X11/Xwayland Vulkan,1x",
+      "cycles": 3,
+      "first_cycle": "cold,297.044ms group CPU",
+      "warm_open_cpu_ms": [
+        49.843,
+        28.255
+      ],
+      "close_cpu_ms": [
+        6.101,
+        5.318,
+        4.698
+      ],
+      "input": "Native menu navigation settles before the Return command starts CPU observation; no workspace handler replay.",
+      "readiness": "Actual owned-dialog window readback must exactly match existing Project PNG; capture attempts2/1/2. This is static observed content, not calibrated physical presentation or latency.",
+      "closure": "Escape then Main focus and missing auxiliary X window; final application terminated after measurement, not normal-drain qualification."
+    },
+    "failed_attempt": "First xdotool search used default OR filter combination and selected Main. Pixel oracle rejected all15captures; no successful cycle or timing accepted. Retain driver/results/images. Corrected --all PID+title match and explicit Main exclusion passed. Driver exit status alone is not acceptance: rejected driver returned0 but result.error and empty cycles are authoritative.",
+    "supersedes": "Earlier map description of88130b98 having only diagnostic-on native runs is historical; this adds a diagnostic-off method probe, not a complete off qualification campaign. Earlier70ms mixed-menu observations remain investigative and are not proof of remaining command-only renderer excess.",
+    "remaining": "Before final W-WINDOWS qualification complete process/engine identity and external-service admission, CPU action/readback observer uncertainty, GPU/client lifetime/execution accounting, bounded normal drain and required all-host/trial coverage. Preserve all carried native/backend/scale/resource/negative/endurance and independent-replay obligations.",
+    "evidence": [
+      "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/conformance/result.json",
+      "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/window-probe/result.json",
+      "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/rejected-window-selector/result.json",
+      "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/SHA256SUMS"
+    ],
+    "boundaries": "No runtime, dependency/license, numerical cap, prototype, GEFN/S0-S4 or resize-scope change. No independent review/replay, formal relative speedup or S5 acceptance."
   }
 }
