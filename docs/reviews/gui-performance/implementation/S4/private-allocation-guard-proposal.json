@@ -1,5 +1,5 @@
 {
-  "status": "Pending owner review; not applied and no requirements satisfied",
+  "status": "Owner approved exact proposal; applied in 7a49980f under PM047. Implementation and qualification remain open.",
   "reviewed_head": "d843bf7212c2cf66742d286c015f982dc72beddb",
   "purpose": "Resolve the distinction between full resource accounting and hard pre-call prevention for opaque text-library construction without another dependency fork or broad renderer rewrite.",
   "authority": "Existing full-accounting requirements and S4 execution stay controlling until the owner explicitly approves and the numbered decision, specifications and Frontier are reconciled together. This is an acceptance-mechanism change, not a sequencing-only clarification.",
@@ -56,5 +56,7 @@
     "Verify refusal/retry, overlapping owners, transient peaks and normal glyph fidelity in one integrated renderer/app slice, then perform the S4 exit review. Full native/endurance and independent replay remain S5."
   ],
   "evidence_limit": "The public outline API still calls FontSystem::get_font and builds/scales an outline before returning; it does not eliminate opaque construction. No safe construction bound or runtime allocation-limit implementation was established by the retired PM046 trial. No theoretical impossibility is asserted.",
-  "decision_response": "Approve the exact private text construction amendment, or retain hard pre-call enforcement. Approval changes no milestone status by itself."
+  "decision_response": "Approve the exact private text construction amendment, or retain hard pre-call enforcement. Approval changes no milestone status by itself.",
+  "owner_response": "I approve your recomendation",
+  "decision": "docs/decisions/PRODUCT_MECHANICS_047_PRIVATE_TEXT_CONSTRUCTION_GUARD.md"
 }

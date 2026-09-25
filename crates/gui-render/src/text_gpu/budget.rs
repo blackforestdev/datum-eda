@@ -28,26 +28,31 @@ impl Budget {
             })
         })
     }
+    pub(crate) fn limit(&self) -> u64 {
+        self.limit
+    }
     pub fn used(&self) -> u64 {
         self.used.load(Ordering::Acquire)
     }
     pub fn available(&self) -> u64 {
-        self.limit.saturating_sub(self.used())
+        crate::cpu_alloc::calls::transaction(|ledger| self.limit.saturating_sub(ledger.used(self)))
     }
     pub fn reserve(self: &Arc<Self>, bytes: u64) -> anyhow::Result<Permit> {
-        self.used
-            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |used| {
-                used.checked_add(bytes).filter(|next| *next <= self.limit)
-            })
-            .map_err(|_| {
-                anyhow::anyhow!(
-                    "GPU resource budget exhausted (requested {bytes} bytes; limit {})",
-                    self.limit
-                )
-            })?;
-        Ok(Permit {
-            budget: self.clone(),
-            bytes,
+        let admitted = crate::cpu_alloc::calls::transaction(|ledger| {
+            if ledger
+                .used(self)
+                .checked_add(bytes)
+                .is_none_or(|next| next > self.limit)
+            {
+                return None;
+            }
+            Some(Permit::admitted(self.clone(), bytes))
+        });
+        admitted.ok_or_else(|| {
+            anyhow::anyhow!(
+                "GPU resource budget exhausted (requested {bytes} bytes; limit {})",
+                self.limit
+            )
         })
     }
 }
@@ -56,9 +61,30 @@ pub(crate) struct Permit {
     budget: Arc<Budget>,
     bytes: u64,
 }
+impl Permit {
+    // Caller holds the shared reservation/observation lock.
+    pub(crate) fn admitted(budget: Arc<Budget>, bytes: u64) -> Self {
+        budget.used.fetch_add(bytes, Ordering::AcqRel);
+        Self { budget, bytes }
+    }
+    pub(crate) fn release_in_transaction(&mut self) {
+        self.budget.used.fetch_sub(self.bytes, Ordering::AcqRel);
+        self.bytes = 0;
+    }
+    pub(crate) fn split(&mut self, bytes: u64) -> Self {
+        assert!(bytes <= self.bytes);
+        self.bytes -= bytes;
+        Self {
+            budget: self.budget.clone(),
+            bytes,
+        }
+    }
+}
 impl Drop for Permit {
     fn drop(&mut self) {
-        self.budget.used.fetch_sub(self.bytes, Ordering::AcqRel);
+        if self.bytes != 0 {
+            crate::cpu_alloc::calls::transaction(|_| self.release_in_transaction());
+        }
     }
 }
 

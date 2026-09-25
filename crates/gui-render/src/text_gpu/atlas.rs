@@ -79,7 +79,6 @@ struct PendingUpload {
     size: [u32; 2],
     stride: u32,
     pixels: super::raster::Pixels,
-    _cpu_permits: [super::budget::Permit; 2],
 }
 
 pub(crate) struct Atlas {
@@ -308,8 +307,14 @@ impl Atlas {
             Err(_) if self.has_pending_uploads() => return Err(UploadRequired.into()),
             result => result?,
         }
+        if self.has_pending_uploads()
+            && (self.staging_budget.available() == 0
+                || super::budget::staging_process().available() == 0)
+        {
+            return Err(UploadRequired.into());
+        }
         self.uploads.rasterizations += 1;
-        let Some((image, pixels)) = raster.image(fonts, key, &self.staging_budget) else {
+        let Some((image, pixels)) = raster.image(fonts, key, &self.staging_budget)? else {
             self.glyphs.insert(key, None);
             return Ok(None);
         };
@@ -335,21 +340,14 @@ impl Atlas {
             raster.clear();
             self.reserve_pending_metadata()?;
         }
-        let image_bytes = crate::cpu_alloc::heap::capacity_bytes::<u8>(pixels.capacity()) as u64;
         raster.release_for(
-            image_bytes + (self.pending_staging_bytes() + padded).min(cpu_images::CHUNK_BYTES),
+            (self.pending_staging_bytes() + padded).min(cpu_images::CHUNK_BYTES),
             &self.staging_budget,
         );
-        let cpu_permits = match self.reserve_cpu_image(
-            crate::cpu_alloc::heap::capacity_bytes::<u8>(pixels.capacity()) as u64,
-            padded,
-        ) {
-            Ok(permits) => permits,
-            Err(error) => {
-                self.release_empty_pending_metadata();
-                return Err(error);
-            }
-        };
+        if let Err(error) = self.reserve_copy_headroom(padded) {
+            self.release_empty_pending_metadata();
+            return Err(error);
+        }
         let mut slot = None;
         for (index, page) in self.pages.iter_mut().enumerate() {
             if page.color == color
@@ -435,7 +433,6 @@ impl Atlas {
             size,
             stride: size[0] * bytes_per_pixel as u32,
             pixels,
-            _cpu_permits: cpu_permits,
         });
         let location = GlyphLocation {
             page: page_index,

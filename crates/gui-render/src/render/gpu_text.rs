@@ -255,7 +255,9 @@ impl Renderer {
             has_overlay_text && !reuse_overlay,
         );
         let retried = if let Err(initial) = first {
-            if initial.is::<crate::text_gpu::UploadRequired>() {
+            if initial.is::<crate::text_gpu::UploadRequired>()
+                || initial.is::<crate::cpu_alloc::calls::Overrun>()
+            {
                 return Err(initial);
             }
             // trim clears atlas residency protection. Re-prepare workspace FIRST
@@ -387,3 +389,7 @@ impl Renderer {
         self.font_system.reserved_bytes()
     }
 }
+
+#[cfg(all(test, feature = "visual"))]
+#[path = "private_text_guard_tests.rs"]
+mod private_guard_tests;

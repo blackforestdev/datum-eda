@@ -3846,7 +3846,12 @@
         "qualification_due": "S5",
         "unfinished_qualification": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "private_guard_progress": {
+          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
+          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+        }
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
@@ -5414,7 +5419,12 @@
         "qualification_due": "S5",
         "unfinished_qualification": "CPU/GPU lifetime and final resource content correct within budgets",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "private_guard_progress": {
+          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
+          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+        }
       },
       "s4_implementation_progress": [
         {
@@ -17590,7 +17600,12 @@
         "qualification_due": "S5",
         "unfinished_qualification": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "private_guard_progress": {
+          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
+          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+        }
       },
       "s4_implementation_progress": [
         {
@@ -17896,7 +17911,12 @@
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Unqualified; original acceptance rule and proof status preserved.",
+        "private_guard_progress": {
+          "implemented": "Default Fonts mutation/acquisition, Raster call windows, concurrent admission, atomic permit transfer and typed refusal before atlas retry/publication.",
+          "remaining": "Initial/shared/measurement/cache-reconstruction calls and complete guard bookkeeping, followed by the compound predicate exit review. No S4/S5 closure.",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
+        }
       },
       "s4_implementation_progress": [
         {
@@ -36852,5 +36872,45 @@
       "395app tests passed,16explicitly ignored. Strict default and visual all-target Clippy and fresh visual build pass on Rust1.98.",
       "DOA2526 Vulkan Wayland/X11: five upload-only turns, one acquisition, one first presentation, zero discards. Separate Global/Project/New native startup trials also present with zero discards. Exact host/queue ledgers, commands, screenshots and failed all-dialog-flags harness attempt preserved in receipt."
     ]
+  },
+  "s4_private_construction_guard_work": {
+    "status": "Default mutation/raster guard implemented; complete PM047 coverage and S4 exit remain open",
+    "base_commit": "7a49980f",
+    "authority": "PRODUCT_MECHANICS_047_PRIVATE_TEXT_CONSTRUCTION_GUARD",
+    "production_consumers": [
+      "Default Renderer Fonts shaping and font acquisition for shared TextLayout workspace and overlay consumers",
+      "Shared Raster and Atlas glyph preparation, including native main/owned windows and offscreen rendering",
+      "Shared prepare_frame_text failure routing before native image acquisition or frame submission"
+    ],
+    "retired_paths": [
+      "Post-call font-cache admission that silently cleared caches and returned the new shape/image",
+      "Post-call raster-cache refusal that still returned the new pixels",
+      "Atlas-owned second pixel reservation after the private call; Pixels now carry their permits through upload retirement",
+      "Automatic atlas trim/retry for a private construction overrun; the rejected preparation now returns its typed error"
+    ],
+    "behavior": [
+      "Allocation-event call windows record initial/final/peak scoped payload plus tracking headers. Lifetime high-water is not used as an individual call peak. Call/owner IDs and last font/raster reports are exposed.",
+      "Budget reservations and scope deltas share a synchronization boundary. Simultaneous host/process admission includes every active call; existing pre-call reservations remain a floor and cannot be lent to concurrent admissions. Admission occupancy is distinct from the call's actual owned-byte counters.",
+      "Call completion atomically transfers old cache/temporary reservations to retained ownership. Raster pixels retain their own permits until copied/dropped; cache retirement leaves existing pixels and shapes valid.",
+      "Output destruction is synchronized with the owning call window, so another thread cannot invalidate the fixed returned-output exclusion while private construction is running.",
+      "An overrun releases rejected derived output and remains distinguishable from a missing glyph. Generic atlas retry does not swallow it. Required source and pending state remain available for a later attempt. With no headroom and existing pending uploads, yield before starting the next opaque call."
+    ],
+    "proof": {
+      "renderer": "345 passed; 0 failed; 82 ignored (visual feature, default test selection, serial)",
+      "app": "395 passed; 0 failed; 16 ignored (default app suite, serial)",
+      "production_gpu": "Real 512px glyph exceeds deliberately restricted headroom; typed overrun stops the default preparation path without atlas retry/publication, retains source and succeeds after pressure retires. 1 passed.",
+      "bounded_gpu": "Vulkan cold startup with more than four upload submissions reaches one acquisition; pending pixel/copy pressure and retirement case passes. These are bounded GPU tests, not native desktop or S5 acceptance.",
+      "clippy": "Strict renderer/app visual all-target Clippy passed.",
+      "build": "Fresh offline locked default datum-gui application build passed (21.16s).",
+      "attempts": "Preserve the initial bidi-preflight test refusal (the fixture did not reach private construction), corrected test-module privacy access, Clippy item-order/err-expect corrections, and one unsupported feature-name command. No failed attempt is counted as passing proof."
+    },
+    "limits": [
+      "Initial FontSystem/shared catalog construction, cache-reconstruction construction and the independent measurement owner are not yet covered by this call guard.",
+      "Complete guard/lifetime-coordination bookkeeping admission/accounting and the four compound S4 predicates remain open; constructor-owned baseline is still separate from monitored mutation scratch.",
+      "No new or modified dependencies, Cargo edits, vendoring, visual-authority changes or numerical-cap changes. The existing registry text stack remains.",
+      "Private calls can transiently exceed budgets; no process OOM recovery guarantee. Held-capacity admission totals are not physical RSS. Allocator-internal slack/native mappings remain separate.",
+      "Allocation-event synchronization overhead, complete native/resource/endurance and independent replay remain unqualified at S5; no performance improvement or global adoption claim. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/private-construction-guard/result.json"
   }
 }
