@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "Ratified specification map; bounded S0 readiness complete; S1 shared native host migration in progress; S2-S5 pending; no full adoption",
+  "status": "Ratified specification map; S0-S4 implementation exits complete under approved amendments and PM047; GPI-S5 in progress. All original in-scope qualification predicates, independent replay and endurance remain required; no full performance or product acceptance.",
   "parent_clause_count": 67,
   "consumers": [
     {
@@ -2212,7 +2212,15 @@
         "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json",
         "docs/reviews/gui-performance/implementation/S1/pending-queue-close/result.json"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Additional partial S5 evidence: nine actual native auxiliary open/close cycles observe owner drop, focus return and attachment drain. This does not cover callback-after-close faults or complete resource/driver memory qualification.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false
+      }
     },
     {
       "id": "LF-08",
@@ -2613,7 +2621,15 @@
         "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Additional partial S5 evidence: native attachment allocations drain after auxiliary closure. Full unchanged-size/generation/MEM qualification remains open.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false
+      }
     },
     {
       "id": "LF-12",
@@ -3431,7 +3447,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial fixture identity verified: frozen source and exact normalized F-DOA native board, with all object IDs/order retained. Earlier path-derived model mismatch is investigative only. Full visible/glyph/configuration admission and remaining backend/scale profiles are unqualified.",
         "id": "proof_ac_01",
         "positive": "Admit pinned F-DOA T0/T1 at declared panes/hosts/DPI",
         "negative_control": "Substitute live fixture or count footprints as glyphs",
@@ -3473,6 +3489,16 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial fixture identity verified: frozen source and exact normalized F-DOA native board, with all object IDs/order retained. Earlier path-derived model mismatch is investigative only. Full visible/glyph/configuration admission and remaining backend/scale profiles are unqualified.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/window-open-attribution/admission/identity.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -3517,7 +3543,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial GUI process CPU observations only; all-thread /proc ticks have10ms resolution. Complete cooperating-process lifecycle/exit/drain accounting and validated action endpoints remain missing; no CPU acceptance.",
         "id": "proof_ac_02",
         "positive": "Observe GUI+engine CPU across child exits and bounded drain",
         "negative_control": "Drop child CPU or shorten denominator",
@@ -3555,6 +3581,16 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial GUI process CPU observations only; all-thread /proc ticks have10ms resolution. Complete cooperating-process lifecycle/exit/drain accounting and validated action endpoints remain missing; no CPU acceptance.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-input-comparison/candidate-off/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -3792,7 +3828,7 @@
         "crates/gui-render/src/render/text_buffer_cache.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial allocation evidence: native attachment drain and GUI resolver cache ownership. Resolver input/model/key capacities and tracking overhead share a16MiB local retention ceiling; pressure eviction and final release tested. Full ACC-01/02, native/driver memory and simultaneous aggregate/peak accounting remain unqualified.",
         "id": "proof_ac_05",
         "positive": "Create/share/replace/evict/retire allocations and uploads",
         "negative_control": "Count buffer capacity reuse as zero upload",
@@ -4019,7 +4055,18 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
           "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
         }
-      ]
+      ],
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial allocation evidence: native attachment drain and GUI resolver cache ownership. Resolver input/model/key capacities and tracking overhead share a16MiB local retention ceiling; pressure eviction and final release tested. Full ACC-01/02, native/driver memory and simultaneous aggregate/peak accounting remain unqualified.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/native.log",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/pm045-cache-owner-tests.log",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
+      }
     },
     {
       "id": "AC-06",
@@ -4063,7 +4110,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial investigative on/off runs and failed attempts retained. Setting verbose=0 was rejected because presence enables logging; incomplete JSON-line reader and initial warning-bypass candidates remain archived. No fixed-seven-pair relative inference or calibrated observer-overhead claim.",
         "id": "proof_ac_06",
         "positive": "Same workload trace-on/off and rejected trials",
         "negative_control": "Discard high-cost or contaminated trial after seeing result",
@@ -4101,6 +4148,19 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial investigative on/off runs and failed attempts retained. Setting verbose=0 was rejected because presence enables logging; incomplete JSON-line reader and initial warning-bypass candidates remain archived. No fixed-seven-pair relative inference or calibrated observer-overhead claim.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/native-window-cycles/invalid-diagnostic-off/result.json",
+          "docs/reviews/gui-performance/implementation/S5/native-window-cycles/log-reader-failure/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-read-cache/rejected-diagnostic-bypass-off/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-input-comparison/candidate-off/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -4145,7 +4205,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial native menu/key open/Escape-close/focus sequences for GLOBAL/PROJECT/NEW; this is not complete scheduled semantic-input or saturation/final-state coverage.",
         "id": "proof_ac_07",
         "positive": "Input schedule saturates without changing legitimate semantics",
         "negative_control": "Drop tiny deltas or freeze content",
@@ -4183,6 +4243,15 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial native menu/key open/Escape-close/focus sequences for GLOBAL/PROJECT/NEW; this is not complete scheduled semantic-input or saturation/final-state coverage.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -4226,7 +4295,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial current X11/Vulkan1x dialog static/lifecycle proof: three captures byte-identical to prior candidate; focus returns after close. Complete consumer/keyboard/IME/accessibility/backend/scale and owner UX qualification remains required.",
         "id": "proof_ac_08",
         "positive": "Static native captures and production hit/focus/IME/accessibility action matrix",
         "negative_control": "Suppress partially clipped input or remove focus ring",
@@ -4260,6 +4329,16 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial current X11/Vulkan1x dialog static/lifecycle proof: three captures byte-identical to prior candidate; focus returns after close. Complete consumer/keyboard/IME/accessibility/backend/scale and owner UX qualification remains required.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/png-comparison.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -13927,7 +14006,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Investigative process CPU/action observations archived; complete same-window process/client lifetime accounting and qualified trials remain missing. Report-only duty row is not passed by omission.",
         "id": "proof_bud_windows_cpu_duty",
         "positive": "WINDOWS: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -13940,6 +14019,16 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Investigative process CPU/action observations archived; complete same-window process/client lifetime accounting and qualified trials remain missing. Report-only duty row is not passed by omission.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-input-comparison/candidate-off/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -13986,7 +14075,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Unqualified. Pre-retention-owner candidate has observed warm Project50-80ms,median70ms in one30-cycle sequence, with other hosts also exceeding50ms in some observations. These windows include preparatory menu input and end at mapping/focus, so are neither exact command cost nor definitive lower bounds. Current88130b98 has diagnostic-on lifecycle proof only; complete valid W-WINDOWS trials still required. Threshold unchanged.",
         "id": "proof_bud_windows_open_cpu",
         "positive": "W-WINDOWS warm open transitions; isolate CPU window without padding idle.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -13999,6 +14088,16 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Unqualified. Pre-retention-owner candidate has observed warm Project50-80ms,median70ms in one30-cycle sequence, with other hosts also exceeding50ms in some observations. These windows include preparatory menu input and end at mapping/focus, so are neither exact command cost nor definitive lower bounds. Current88130b98 has diagnostic-on lifecycle proof only; complete valid W-WINDOWS trials still required. Threshold unchanged.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-input-comparison/candidate-off/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -14699,7 +14798,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial RSS samples: current nine-cycle diagnostic run159584->182128KiB. Not a qualified steady-state trial or complete simultaneous subcap/accounting result.",
         "id": "proof_mem_gui_steady",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -14723,6 +14822,15 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial RSS samples: current nine-cycle diagnostic run159584->182128KiB. Not a qualified steady-state trial or complete simultaneous subcap/accounting result.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -14786,7 +14894,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial process VmHWM/RSS observations only; complete workload/peak/subcap qualification remains required. Resolver scoped cold payload peak34353470bytes is not the entire GUI peak.",
         "id": "proof_mem_gui_peak",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -14810,6 +14918,16 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial process VmHWM/RSS observations only; complete workload/peak/subcap qualification remains required. Resolver scoped cold payload peak34353470bytes is not the entire GUI peak.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/native.log"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -14851,7 +14969,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial per-cycle RSS observations; no accepted64MiB incremental steady-host accounting or complete working-set proof.",
         "id": "proof_mem_host_steady",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -14864,6 +14982,15 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial per-cycle RSS observations; no accepted64MiB incremental steady-host accounting or complete working-set proof.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -14927,7 +15054,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial one-process RSS observations; aggregate peak and all simultaneous subcaps remain unqualified.",
         "id": "proof_mem_gui_combined",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -14951,6 +15078,15 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial one-process RSS observations; aggregate peak and all simultaneous subcaps remain unqualified.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -14992,7 +15128,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial close observations and bounded shared resolver retention. Initial startup RSS is not the required warmed-prior baseline; the16MiB cache ceiling does not prove return within16MiB in5s. Complete close-memory qualification remains open.",
         "id": "proof_mem_close_rss",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -15005,6 +15141,16 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial close observations and bounded shared resolver retention. Initial startup RSS is not the required warmed-prior baseline; the16MiB cache ceiling does not prove return within16MiB in5s. Complete close-memory qualification remains open.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/native.log"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -17600,7 +17746,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial resolver allocation scope observes cold payload peak34353470bytes including retained inputs/output plus transient work. This is not a scratch-only peak or a16MiB staging pass. Complete phase/lifetime partition, other owners and simultaneous local qualification remain required.",
         "id": "proof_mem_staging_local",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -17847,7 +17993,16 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/bidi-construction/result.json",
           "status": "Default font shaping admits bidi scratch before analysis and propagates refusal without constructing partial text"
         }
-      ]
+      ],
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial resolver allocation scope observes cold payload peak34353470bytes including retained inputs/output plus transient work. This is not a scratch-only peak or a16MiB staging pass. Complete phase/lifetime partition, other owners and simultaneous local qualification remain required.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/native.log"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
+      }
     },
     {
       "id": "MEM-STAGING-TOTAL",
@@ -17910,7 +18065,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial resolver Rust heap attribution only; whole-process simultaneous scratch including other owners and tracking overhead remains unqualified under unchanged64MiB aggregate ceiling.",
         "id": "proof_mem_staging_total",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -18157,7 +18312,16 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/bidi-construction/result.json",
           "status": "Default font shaping admits bidi scratch before analysis and propagates refusal without constructing partial text"
         }
-      ]
+      ],
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial resolver Rust heap attribution only; whole-process simultaneous scratch including other owners and tracking overhead remains unqualified under unchanged64MiB aggregate ceiling.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/native.log"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
+      }
     },
     {
       "id": "MEM-GPU-TOTAL",
@@ -18423,7 +18587,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial native nine-cycle receipt proof: each auxiliary close drains its attachment allocations. Complete current/retiring generation, pressure/recovery/scale and exact resource-cap qualification remains open.",
         "id": "proof_mem_attachments",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -18459,7 +18623,16 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-generations/result.json",
           "status": "Per-host two-generation admission now enforced through creation, retirement and recovery. Original full qualification and remaining aggregate accounting stay open."
         }
-      ]
+      ],
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial native nine-cycle receipt proof: each auxiliary close drains its attachment allocations. Complete current/retiring generation, pressure/recovery/scale and exact resource-cap qualification remains open.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
+      }
     },
     {
       "id": "MEM-CLOSED-LIVE",
@@ -18522,7 +18695,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial auxiliary attachment drain and resolver cache eviction/teardown tests. Resolver is one bounded runtime-owned shared cache across dialog closes; current output Arcs remain attributed until final release. Other exclusive resources, driver lifetimes and complete bounded-drain qualification remain open.",
         "id": "proof_mem_closed_live",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -18558,7 +18731,18 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/allocation-state/result.json",
           "status": "Shared GPU owner reports requested extents, prepared/submission references and retirement/final-release causes"
         }
-      ]
+      ],
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Partial auxiliary attachment drain and resolver cache eviction/teardown tests. Resolver is one bounded runtime-owned shared cache across dialog closes; current output Arcs remain attributed until final release. Other exclusive resources, driver lifetimes and complete bounded-drain qualification remain open.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/pm045-cache-owner-tests.log",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/native.log"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
+      }
     },
     {
       "id": "Q-CPU-P95",
@@ -20860,7 +21044,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Unqualified. Existing cycles observe Escape/focus or owner-drop/attachment drain, without complete process/client final counters and validated bounded-drain endpoints. No20ms close-budget acceptance.",
         "id": "proof_bud_windows_close_cpu",
         "positive": "W-WINDOWS warm close transitions; lifetime counters captured before exit.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -20873,6 +21057,16 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_window_resolver_progress": {
+        "production_commit": "88130b98",
+        "status": "Unqualified. Existing cycles observe Escape/focus or owner-drop/attachment drain, without complete process/client final counters and validated bounded-drain endpoints. No20ms close-budget acceptance.",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S5/resolver-input-comparison/candidate-off/result.json",
+          "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/native/result.json"
+        ],
+        "qualification_pass": false,
+        "previous_test_status": "planned; not executed"
       }
     },
     {
@@ -37288,5 +37482,59 @@
       "No dependency, license, prototype, numerical-cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S5/native-parity/result.json"
+  },
+  "s5_window_resolver_reconciliation": {
+    "status": "Bounded production corrections and investigative evidence reconciled; no requirement row fully qualified",
+    "production_commits": [
+      "67fc60e3",
+      "06e3697a",
+      "88130b98"
+    ],
+    "owner_authority": "Owner explicitly approved bounded engine resolver correction; recorded in38827f89. Preserve journal validation, fresh external-change detection, identical model/diagnostics and canonical writes.",
+    "current_binary_sha256": "5134fc68c06b73f974c0a65e04aa54c2ac5634596c920bc487b1d10be5902516",
+    "candidate_binding": "Native report records pre-commit HEAD plus exact source hashes/candidate.patch; all recorded production source hashes independently matched88130b98.",
+    "fixture": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/window-open-attribution/admission/identity.json",
+      "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+      "snapshot": "docs/reviews/gui-performance/implementation/S5/window-open-attribution/admission/native-project.tar.gz",
+      "limits": "Only root uuid omitted; not resolved schematic or larger-project admission."
+    },
+    "resolver_owner": {
+      "owner": "ProjectPreferencesCoordinator GUI wrapper; caller-owned engine cache, no engine-to-GUI dependency",
+      "key": "Exact root and sorted complete local input bytes/inventory plus metadata; unsupported/external/recovery inputs bypass reuse",
+      "entry_cap": 1,
+      "input_capacity_cap_bytes": 8388608,
+      "gui_retention_cap_bytes": 16777216,
+      "eviction": "Input mismatch replaces old snapshot; encoded-input overflow bypasses reuse; GUI total owned payload/tracking/metadata over local cap drops cache without rejecting the resolved output. Runtime drop releases cache; borrowed Arcs release on final drop.",
+      "measurement": {
+        "retained_accounted_bytes": 16193146,
+        "payload_bytes": 15666778,
+        "tracking_bytes": 526208,
+        "allocations": 65776,
+        "cold_scoped_payload_peak_bytes": 34353470
+      },
+      "boundary": "Local implementation retention ceiling, not a new normative MEM allowance. Requested Rust layout excludes malloc slack/native mappings; payload peak is not simultaneous tracking-inclusive aggregate scratch.",
+      "production_entry_points": [
+        "crates/engine/src/substrate/project_read_cache.rs",
+        "crates/gui-app/src/project_preferences_runtime.rs",
+        "crates/gui-app/src/project_preferences_read_cache.rs"
+      ]
+    },
+    "verification": {
+      "focused": "Seven engine freshness/full-model/diagnostic/overflow regressions preserved from06e3697a; five affected Preferences tests pass on88130b98 including forced eviction/reuse/final release. No claim that all engine tests reran on88130b98.",
+      "native": "Nine X11/Vulkan1x cycles across three auxiliary hosts with OS menu/keys, present/drop/focus/attachment drain; all three PNGs exactly match preceding candidate.",
+      "drift": "Full required drift attempted, then only its unexecuted remainder run. Strict workspace Clippy, visual conformance/parity, source health2360, migration groups, CLI545 and MCP415(45skipped) pass. Aggregate remains failed solely at recorded menuCSV and bootstrap-marker guards.",
+      "historical_supersession": "The later drift completion supersedes earlier S5 native-parity note that later migration gates were unrun; preserve original receipt. No golden/threshold/guard changed."
+    },
+    "measurement_correction": "Earlier timer lower-bound wording is too strong: preparatory menu input is included, while mapped/focus endpoints can precede first presentation. Diagnostic present is not displayed readiness. Treat old CPU values as investigative observations, not exact per-command budget proof. Latest retention candidate has no diagnostic-off qualification campaign.",
+    "evidence_indexes": [
+      "docs/reviews/gui-performance/implementation/S5/native-window-cycles/SHA256SUMS",
+      "docs/reviews/gui-performance/implementation/S5/window-open-attribution/SHA256SUMS",
+      "docs/reviews/gui-performance/implementation/S5/resolver-read-cache/SHA256SUMS",
+      "docs/reviews/gui-performance/implementation/S5/resolver-input-comparison/SHA256SUMS",
+      "docs/reviews/gui-performance/implementation/S5/resolver-cache-ownership/SHA256SUMS"
+    ],
+    "remaining": "Complete method/admission/accounting and exact valid action endpoints before final trials; preserve all S1 obligations,50 S2 and20 S3 qualification rows, prescribed negatives, both native backends/scales,60minute/200cycle/20recovery endurance and distinct-reviewer actual replay. END-01/02 remain unexecuted qualification, not satisfied by short cycles or source review.",
+    "preserved": "All225 IDs, acceptance rules, positive/negative recipes, consumer/slice/clause indexes, historical evidence and exclusions unchanged. GEFN/S0-S4 implementation preserved; no dependency/license/prototype/numerical-budget change. Nonblocking resize resource/temporal,T2 and unadmitted schematic exclusions remain unqualified."
   }
 }
