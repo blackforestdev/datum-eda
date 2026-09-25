@@ -36,7 +36,7 @@ mod tests {
     #[test]
     fn bidi_pressure_refuses_before_shaping_and_retries_without_changing_glyphs() {
         let host = Budget::new(16 * 1024 * 1024);
-        let mut fonts = Fonts::new(host.clone());
+        let mut fonts = Fonts::new(host.clone()).unwrap();
         let attrs = glyphon::AttrsList::new(&crate::text_attrs(crate::TextFace::Ui));
         let text = "mixed אבג (123) \u{2067}ع\u{2069}";
         let expected = format!("{:?}", *fonts.shape(text, &attrs).unwrap());

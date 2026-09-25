@@ -18,7 +18,7 @@ fn terminal_screen_target_under_adversarial_board_overlay() -> HitTarget {
     let scene_height = (state.scene.bounds.max_y - state.scene.bounds.min_y).max(1) as f32;
     camera.center_y_nm -= scene_height * 0.75;
     camera.zoom = 4.0;
-    let prepared = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+    let prepared = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
     let screen = prepared
         .hit_regions
         .iter()

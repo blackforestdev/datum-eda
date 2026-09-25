@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 87 legacy source entries remain. UNIT-I03B moved
+Current debt inventory: 85 legacy source entries remain. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
@@ -234,3 +234,13 @@ geometry retains its measured 840-line production ceiling, and renderer include
 expansion falls from 6,557 to 6,396. Earlier higher production ceilings are
 reconciled downward to measured counts. Routing is now rustfmt-clean and its
 formatting exemption is removed. Normal budgets and PM022 requirements remain.
+
+PM045 S4 guarded native layout moves Inspector composition into a normal module
+and its identity/section chrome into `side_panels/inspector_chrome.rs`. Both
+side-panel legacy entries return below normal budgets and leave the ledger.
+Display text helpers move to `render/text_presentation.rs`; scene-layout tests
+move to `render/scene_layout_tests.rs`. Renderer include expansion falls from
+6,396 to 6,244 lines, geometry production from 840 to 795, and the legacy render
+test file from 1,070 to 960. Exact ceilings ratchet downward. Fallible measurement
+and native pressure/retry, renderer/app suites and dialog pixel tests verify the
+new ownership boundaries; no normal budget or exception is increased.

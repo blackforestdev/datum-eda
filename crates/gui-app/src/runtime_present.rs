@@ -75,7 +75,6 @@ impl Runtime {
             append_gui_verbose_diagnostic_line(|| {
                 format!("render scene prepare begin retained_cached={retained_was_cached}")
             });
-            self.scene_dirty = false;
             if self.retained_scene.is_none() {
                 let retained_started = std::time::Instant::now();
                 append_gui_verbose_diagnostic_line(|| "retained scene build begin");
@@ -89,6 +88,7 @@ impl Runtime {
             let prepared_started = std::time::Instant::now();
             append_gui_verbose_diagnostic_line(|| "prepared scene build begin");
             self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
+            self.scene_dirty = false;
             prepared_build_ms = prepared_started.elapsed().as_millis();
             append_gui_verbose_diagnostic_line(|| {
                 format!("prepared scene build end {prepared_build_ms}ms")

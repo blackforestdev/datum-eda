@@ -1,5 +1,6 @@
 use super::*;
 use crate::text_buffer_cache::text_buffer_key;
+use glyphon::Color;
 use glyphon::{Buffer, Metrics, Shaping};
 
 #[test]
@@ -37,7 +38,8 @@ fn terminal_font_advance_matches_shared_logical_cell_width() {
         fixture,
         bottom_dock::TERMINAL_FONT_SIZE_PX,
         TextFace::Terminal,
-    );
+    )
+    .unwrap();
     let logical_width = fixture.chars().count() as f32 * datum_gui_viewport::TERMINAL_CELL_WIDTH_PX;
 
     assert!(

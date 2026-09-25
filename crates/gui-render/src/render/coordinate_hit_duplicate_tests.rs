@@ -22,6 +22,7 @@ fn prepared_for(state: &ReviewWorkspaceState, retained: &RetainedScene) -> Prepa
         CameraState::fit_to_bounds(&state.scene.bounds),
         retained,
     )
+    .unwrap()
 }
 
 #[test]

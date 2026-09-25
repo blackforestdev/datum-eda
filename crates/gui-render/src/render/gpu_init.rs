@@ -352,7 +352,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             ),
         };
         let text_cpu = crate::cpu_alloc::Scope::new("renderer-text");
-        let font_system = crate::text_layout::fonts::Fonts::new(staging_budget.clone());
+        let font_system = crate::text_layout::fonts::Fonts::new(staging_budget.clone())?;
         let swash_cache = crate::text_gpu::raster::Raster::new();
         let atlas = match previous {
             Some(old) => old.atlas.replacement(device),
@@ -417,6 +417,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 screen_budget.clone(),
             )
             .with_staging_budget(staging_budget.clone()),
+            measurement_fonts: Some(crate::text_metrics::measurement_owner::Owner::new(
+                staging_budget.clone(),
+            )),
             font_system,
             text_cpu,
             swash_cache,

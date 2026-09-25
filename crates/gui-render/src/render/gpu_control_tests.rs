@@ -14,10 +14,10 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
     let camera = CameraState::fit_to_bounds(&state.scene.bounds);
     let mut renderer = hardware_renderer(960, 720);
     for scale in [1.0, 1.5] {
-        let cold =
-            renderer
-                .renderer
-                .prepare_native_new_project(&state.ui.new_project, 960, 720, scale);
+        let cold = renderer
+            .renderer
+            .prepare_native_new_project(&state.ui.new_project, 960, 720, scale)
+            .unwrap();
         assert!(
             cold.is_overlay_only(),
             "native New Project must omit every hidden workspace contribution"
@@ -25,18 +25,18 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
         let builds = renderer.renderer.control_meshes.builds;
         assert!(builds > 0, "the production renderer owns generated meshes");
         let baseline = capture_retained(&mut renderer, &cold, &retained);
-        let warm =
-            renderer
-                .renderer
-                .prepare_native_new_project(&state.ui.new_project, 960, 720, scale);
+        let warm = renderer
+            .renderer
+            .prepare_native_new_project(&state.ui.new_project, 960, 720, scale)
+            .unwrap();
         assert_eq!(renderer.renderer.control_meshes.builds, builds);
         assert!(baseline == capture_retained(&mut renderer, &warm, &retained));
         // Live form content must not be retained in position-only meshes.
         state.ui.new_project.project_name.push_str("-edited");
-        let edited =
-            renderer
-                .renderer
-                .prepare_native_new_project(&state.ui.new_project, 960, 720, scale);
+        let edited = renderer
+            .renderer
+            .prepare_native_new_project(&state.ui.new_project, 960, 720, scale)
+            .unwrap();
         assert_eq!(renderer.renderer.control_meshes.builds, builds);
         let mut fresh = PreparedScene::from_workspace_with_terminal_renderer(
             &state,
@@ -48,7 +48,8 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
             &[],
             None,
             true,
-        );
+        )
+        .unwrap();
         let legacy_pixels = capture_retained(&mut renderer, &fresh, &retained);
         let surface = crate::RectPx {
             x: 0.0,
@@ -81,10 +82,10 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
         )
         .unwrap();
         assert_eq!(renderer.renderer.control_meshes.builds, 0);
-        let reset =
-            renderer
-                .renderer
-                .prepare_native_new_project(&state.ui.new_project, 960, 720, scale);
+        let reset = renderer
+            .renderer
+            .prepare_native_new_project(&state.ui.new_project, 960, 720, scale)
+            .unwrap();
         assert!(renderer.renderer.control_meshes.builds > 0);
         assert!(actual == capture_retained(&mut renderer, &reset, &retained));
     }
@@ -100,19 +101,22 @@ fn new_project_long_name_paints_only_inside_its_field() {
     };
     let empty = renderer
         .renderer
-        .prepare_native_new_project(&dialog, 760, 750, 1.0);
+        .prepare_native_new_project(&dialog, 760, 750, 1.0)
+        .unwrap();
     let before = capture(&mut renderer, &empty);
     for count in [1, 2, 3, 79] {
         dialog.project_name = "W".repeat(count);
         let step = renderer
             .renderer
-            .prepare_native_new_project(&dialog, 760, 750, 1.0);
+            .prepare_native_new_project(&dialog, 760, 750, 1.0)
+            .unwrap();
         let _ = capture(&mut renderer, &step);
     }
     dialog.project_name = "W".repeat(90);
     let filled = renderer
         .renderer
-        .prepare_native_new_project(&dialog, 760, 750, 1.0);
+        .prepare_native_new_project(&dialog, 760, 750, 1.0)
+        .unwrap();
     let field = filled
         .hit_regions
         .iter()
@@ -129,7 +133,8 @@ fn new_project_long_name_paints_only_inside_its_field() {
     .unwrap();
     let fresh = renderer
         .renderer
-        .prepare_native_new_project(&dialog, 760, 750, 1.0);
+        .prepare_native_new_project(&dialog, 760, 750, 1.0)
+        .unwrap();
     assert!(
         after == capture(&mut renderer, &fresh),
         "edit sequence must match fresh final state"

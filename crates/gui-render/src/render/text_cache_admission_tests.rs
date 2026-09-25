@@ -6,7 +6,8 @@ fn current_layout_admission_evicts_only_history_and_remaps_current_indices() {
     let mut fonts = crate::load_datum_fonts();
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut cache = TextBufferCache::default();
     let mut runs = prepared.menu_overlay_text_runs[..2].to_vec();
     runs[0].text = "unused old layout".into();
@@ -47,7 +48,8 @@ fn required_layout_refusal_releases_derived_storage_and_rebuilds_current_content
     let mut fonts = crate::load_datum_fonts();
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Overlay);
     let (mut current, _) = cache.indices(&mut fonts, &prepared.menu_overlay_text_runs, 960, 720);
@@ -117,7 +119,8 @@ fn local_capacity_refusal_drops_oversized_key_allocation_and_all_index_groups() 
     let mut fonts = crate::load_datum_fonts();
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Workspace);
     let (mut workspace, _) =
@@ -147,7 +150,8 @@ fn admission_compacts_spare_metadata_without_discarding_required_layouts() {
     let mut fonts = crate::load_datum_fonts();
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Overlay);
     let (mut indices, _) =
@@ -195,7 +199,8 @@ fn warm_frames_publish_preparing_without_changing_owned_bytes() {
     let mut fonts = crate::load_datum_fonts();
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut cache = TextBufferCache::default();
     let owner = cache.owner.id();
     let usage = || {
@@ -229,12 +234,13 @@ fn warm_frames_publish_preparing_without_changing_owned_bytes() {
 fn oversized_plain_and_rich_keys_refuse_before_shaping_and_preserve_warm_cache() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut run = prepared.menu_overlay_text_runs[0].clone();
     run.text = "preserved warm label".into();
     run.rich_spans.clear();
     let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
-    let mut fonts = crate::text_layout::fonts::Fonts::new(host.clone());
+    let mut fonts = crate::text_layout::fonts::Fonts::new(host.clone()).unwrap();
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Overlay);
     let (indices, _) = cache
@@ -314,7 +320,8 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
     use crate::text_gpu::{budget::Budget, staging_vec::StagingVec};
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut run = prepared.menu_overlay_text_runs[0].clone();
     run.layout_size = Some((400.0, 200.0));
     run.rich_spans = vec![
@@ -332,7 +339,7 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
         },
     ];
     let host = Budget::new(16 * 1024 * 1024);
-    let mut fonts = crate::text_layout::fonts::Fonts::new(host.clone());
+    let mut fonts = crate::text_layout::fonts::Fonts::new(host.clone()).unwrap();
     let mut cache = TextBufferCache::default();
     cache.begin_frame(Profile::Overlay);
     let before = fonts.usage().allocation;

@@ -1,5 +1,6 @@
 use super::*;
 use crate::text_buffer_cache::text_buffer_key;
+use glyphon::Weight;
 #[test]
 fn text_buffer_key_ignores_position_and_color_but_tracks_content() {
     let base = TextRun {

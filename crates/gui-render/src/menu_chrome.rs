@@ -25,7 +25,7 @@ pub(super) fn render_menu_bar(
     menu_overlay_text_runs: &mut Vec<TextRun>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<()> {
     let title_starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     let model = match menu_model() {
         Ok(model) => model,
@@ -39,7 +39,7 @@ pub(super) fn render_menu_bar(
                 TextFace::Mono,
                 text_runs,
             );
-            return;
+            return Ok(());
         }
     };
     let icon_set = icon_set().ok();
@@ -52,7 +52,7 @@ pub(super) fn render_menu_bar(
     let brand_width: f32 = ["Datum", "\u{00B7}", "EDA"]
         .iter()
         .map(|run| measured_text_run_width_px(run, 14.0, TextFace::UiStrong))
-        .sum();
+        .sum::<anyhow::Result<f32>>()?;
     let mut x = layout.top_menu_bar.x
         + design_tokens::spacing::SP_04
         + brand_width
@@ -60,7 +60,7 @@ pub(super) fn render_menu_bar(
     let y = layout.top_menu_bar.y + design_tokens::spacing::SP_02;
     let mut active_menu_x: Option<f32> = None;
     for menu in &model.menubar {
-        let width = menu_title_width(&menu.menu);
+        let width = menu_title_width(&menu.menu)?;
         let rect = RectPx {
             x,
             y,
@@ -120,7 +120,7 @@ pub(super) fn render_menu_bar(
             menu_overlay_quads,
             menu_overlay_text_runs,
             hit_regions,
-        );
+        )?;
         if let Some(submenu_id) = state.ui.active_submenu.as_deref()
             && let Some(items) = menu.submenus.get(submenu_id)
             && let Some(parent_index) = menu
@@ -141,9 +141,11 @@ pub(super) fn render_menu_bar(
                 menu_overlay_quads,
                 menu_overlay_text_runs,
                 hit_regions,
-            );
+            )?;
         }
     }
+
+    Ok(())
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -164,20 +166,22 @@ fn render_menu_dropdown(
     // is NOT here (titles live in the bar and are never occluded).
     menu_overlay_text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> RectPx {
-    render_menu_items(
-        &menu.menu,
-        &menu.items,
-        state,
-        focused_index,
-        icon_set,
-        layout,
-        menu_x,
-        layout.top_menu_bar.y + layout.top_menu_bar.height,
-        menu_overlay_quads,
-        menu_overlay_text_runs,
-        hit_regions,
-    )
+) -> anyhow::Result<RectPx> {
+    Ok({
+        render_menu_items(
+            &menu.menu,
+            &menu.items,
+            state,
+            focused_index,
+            icon_set,
+            layout,
+            menu_x,
+            layout.top_menu_bar.y + layout.top_menu_bar.height,
+            menu_overlay_quads,
+            menu_overlay_text_runs,
+            hit_regions,
+        )?
+    })
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -193,151 +197,156 @@ fn render_menu_items(
     menu_overlay_quads: &mut Vec<Quad>,
     menu_overlay_text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> RectPx {
-    let starts = (
-        menu_overlay_quads.len(),
-        menu_overlay_text_runs.len(),
-        hit_regions.len(),
-    );
-    let item_height = design_tokens::spacing::SP_07;
-    // Content-driven card width: the widest item's [icon indent + shaped label +
-    // gap + shaped shortcut + right pad] sets the width, so labels and shortcuts
-    // never spill past the card. The retired fixed 272px width (with a fixed 74px
-    // shortcut reservation) clipped long labels and wide "Ctrl+Shift+…" shortcuts.
-    // Uses the same real shaped measurement as the menu-bar layout, so it is exact
-    // for the proportional Plex Sans Condensed face.
-    const LABEL_INDENT: f32 = design_tokens::spacing::SP_07; // icon gutter before the label
-    const RIGHT_PAD: f32 = design_tokens::spacing::SP_04;
-    const LABEL_SHORTCUT_GAP: f32 = design_tokens::spacing::SP_06;
-    const MIN_WIDTH: f32 = 200.0;
-    let content_width = items
-        .iter()
-        .map(|item| {
-            let label_w = measured_text_run_width_px(
-                &item.label,
-                design_tokens::typography::BODY_SIZE,
-                TextFace::Ui,
-            );
-            let shortcut_w = item.shortcut.as_deref().map_or(0.0, |shortcut| {
-                LABEL_SHORTCUT_GAP
-                    + measured_text_run_width_px(
-                        shortcut,
-                        design_tokens::typography::CAPTION_SIZE,
-                        TextFace::Mono,
-                    )
-            });
-            LABEL_INDENT + label_w + shortcut_w + RIGHT_PAD
-        })
-        .fold(0.0_f32, f32::max);
-    // The row is inset SP_02 from the card on each side; add that back, floor at a
-    // sensible minimum, and never exceed the menu-bar (window) width.
-    let max_card_width =
-        (layout.top_menu_bar.width - design_tokens::spacing::SP_02 * 2.0).max(MIN_WIDTH);
-    let width = (content_width + design_tokens::spacing::SP_02 * 2.0)
-        .max(MIN_WIDTH)
-        .min(max_card_width);
-    let height = item_height * items.len() as f32 + design_tokens::spacing::SP_02 * 2.0;
-    // Clamp so the dropdown stays inside the window right edge under its title.
-    let max_x =
-        (layout.top_menu_bar.x + layout.top_menu_bar.width - width).max(layout.top_menu_bar.x);
-    let rect = RectPx {
-        x: menu_x.min(max_x),
-        y: menu_y,
-        width,
-        height,
-    };
-    menu_overlay_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
-    push_rect_border(menu_overlay_quads, rect, PANEL_CARD_BORDER, 1.0);
-
-    for (index, item) in items.iter().enumerate() {
-        let row = RectPx {
-            x: rect.x + design_tokens::spacing::SP_02,
-            y: rect.y + design_tokens::spacing::SP_02 + index as f32 * item_height,
-            width: rect.width - design_tokens::spacing::SP_02 * 2.0,
-            height: item_height,
-        };
-        let enabled = item.unavailable_reason(state).is_none();
-        let row_color = if focused_index == Some(index) {
-            REVIEW_ROW_ACTIVE_BG
-        } else if enabled {
-            PANEL_CARD_BG
-        } else {
-            PANEL_BG
-        };
-        menu_overlay_quads.push(Quad::from_rect(row, row_color));
-        if focused_index == Some(index) {
-            push_rect_border(menu_overlay_quads, row, TEXT_ACCENT, 1.0);
-        }
-        render_fallback_icon(item, icon_set, row, menu_overlay_text_runs);
-        draw_text(
-            &item.label,
-            row.x + design_tokens::spacing::SP_07,
-            row.y + design_tokens::spacing::SP_03,
-            design_tokens::typography::BODY_SIZE,
-            if enabled { TEXT_PRIMARY } else { TEXT_MUTED },
-            TextFace::Ui,
-            menu_overlay_text_runs,
+) -> anyhow::Result<RectPx> {
+    Ok({
+        let starts = (
+            menu_overlay_quads.len(),
+            menu_overlay_text_runs.len(),
+            hit_regions.len(),
         );
-        if let Some(shortcut) = item.shortcut.as_deref() {
-            // Right-align to the shortcut's own shaped width so it sits inside the
-            // right pad regardless of length (no fixed reservation to overflow).
-            let shortcut_w = measured_text_run_width_px(
-                shortcut,
-                design_tokens::typography::CAPTION_SIZE,
-                TextFace::Mono,
-            );
+        let item_height = design_tokens::spacing::SP_07;
+        // Content-driven card width: the widest item's [icon indent + shaped label +
+        // gap + shaped shortcut + right pad] sets the width, so labels and shortcuts
+        // never spill past the card. The retired fixed 272px width (with a fixed 74px
+        // shortcut reservation) clipped long labels and wide "Ctrl+Shift+…" shortcuts.
+        // Uses the same real shaped measurement as the menu-bar layout, so it is exact
+        // for the proportional Plex Sans Condensed face.
+        const LABEL_INDENT: f32 = design_tokens::spacing::SP_07; // icon gutter before the label
+        const RIGHT_PAD: f32 = design_tokens::spacing::SP_04;
+        const LABEL_SHORTCUT_GAP: f32 = design_tokens::spacing::SP_06;
+        const MIN_WIDTH: f32 = 200.0;
+        let content_width =
+            items
+                .iter()
+                .try_fold(0.0_f32, |widest, item| -> anyhow::Result<f32> {
+                    let label_w = measured_text_run_width_px(
+                        &item.label,
+                        design_tokens::typography::BODY_SIZE,
+                        TextFace::Ui,
+                    )?;
+                    let shortcut_w = item.shortcut.as_deref().map_or(
+                        Ok(0.0),
+                        |shortcut| -> anyhow::Result<f32> {
+                            Ok(LABEL_SHORTCUT_GAP
+                                + measured_text_run_width_px(
+                                    shortcut,
+                                    design_tokens::typography::CAPTION_SIZE,
+                                    TextFace::Mono,
+                                )?)
+                        },
+                    )?;
+                    Ok(widest.max(LABEL_INDENT + label_w + shortcut_w + RIGHT_PAD))
+                })?;
+        // The row is inset SP_02 from the card on each side; add that back, floor at a
+        // sensible minimum, and never exceed the menu-bar (window) width.
+        let max_card_width =
+            (layout.top_menu_bar.width - design_tokens::spacing::SP_02 * 2.0).max(MIN_WIDTH);
+        let width = (content_width + design_tokens::spacing::SP_02 * 2.0)
+            .max(MIN_WIDTH)
+            .min(max_card_width);
+        let height = item_height * items.len() as f32 + design_tokens::spacing::SP_02 * 2.0;
+        // Clamp so the dropdown stays inside the window right edge under its title.
+        let max_x =
+            (layout.top_menu_bar.x + layout.top_menu_bar.width - width).max(layout.top_menu_bar.x);
+        let rect = RectPx {
+            x: menu_x.min(max_x),
+            y: menu_y,
+            width,
+            height,
+        };
+        menu_overlay_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
+        push_rect_border(menu_overlay_quads, rect, PANEL_CARD_BORDER, 1.0);
+
+        for (index, item) in items.iter().enumerate() {
+            let row = RectPx {
+                x: rect.x + design_tokens::spacing::SP_02,
+                y: rect.y + design_tokens::spacing::SP_02 + index as f32 * item_height,
+                width: rect.width - design_tokens::spacing::SP_02 * 2.0,
+                height: item_height,
+            };
+            let enabled = item.unavailable_reason(state).is_none();
+            let row_color = if focused_index == Some(index) {
+                REVIEW_ROW_ACTIVE_BG
+            } else if enabled {
+                PANEL_CARD_BG
+            } else {
+                PANEL_BG
+            };
+            menu_overlay_quads.push(Quad::from_rect(row, row_color));
+            if focused_index == Some(index) {
+                push_rect_border(menu_overlay_quads, row, TEXT_ACCENT, 1.0);
+            }
+            render_fallback_icon(item, icon_set, row, menu_overlay_text_runs);
             draw_text(
-                shortcut,
-                row.x + row.width - RIGHT_PAD - shortcut_w,
+                &item.label,
+                row.x + design_tokens::spacing::SP_07,
                 row.y + design_tokens::spacing::SP_03,
-                design_tokens::typography::CAPTION_SIZE,
-                TEXT_MUTED,
-                TextFace::Mono,
-                menu_overlay_text_runs,
-            );
-        } else if item.submenu.is_some() {
-            draw_text(
-                ">",
-                row.x + row.width - RIGHT_PAD - 8.0,
-                row.y + design_tokens::spacing::SP_03,
-                design_tokens::typography::CAPTION_SIZE,
+                design_tokens::typography::BODY_SIZE,
                 if enabled { TEXT_PRIMARY } else { TEXT_MUTED },
-                TextFace::Mono,
+                TextFace::Ui,
                 menu_overlay_text_runs,
             );
+            if let Some(shortcut) = item.shortcut.as_deref() {
+                // Right-align to the shortcut's own shaped width so it sits inside the
+                // right pad regardless of length (no fixed reservation to overflow).
+                let shortcut_w = measured_text_run_width_px(
+                    shortcut,
+                    design_tokens::typography::CAPTION_SIZE,
+                    TextFace::Mono,
+                )?;
+                draw_text(
+                    shortcut,
+                    row.x + row.width - RIGHT_PAD - shortcut_w,
+                    row.y + design_tokens::spacing::SP_03,
+                    design_tokens::typography::CAPTION_SIZE,
+                    TEXT_MUTED,
+                    TextFace::Mono,
+                    menu_overlay_text_runs,
+                );
+            } else if item.submenu.is_some() {
+                draw_text(
+                    ">",
+                    row.x + row.width - RIGHT_PAD - 8.0,
+                    row.y + design_tokens::spacing::SP_03,
+                    design_tokens::typography::CAPTION_SIZE,
+                    if enabled { TEXT_PRIMARY } else { TEXT_MUTED },
+                    TextFace::Mono,
+                    menu_overlay_text_runs,
+                );
+            }
+            hit_regions.push(HitRegion {
+                target: HitTarget::MenuItem {
+                    menu: menu_name.to_owned(),
+                    label: item.label.clone(),
+                },
+                rect: row,
+            });
         }
-        hit_regions.push(HitRegion {
-            target: HitTarget::MenuItem {
-                menu: menu_name.to_owned(),
-                label: item.label.clone(),
-            },
-            rect: row,
+        let surface = RectPx {
+            x: layout.top_menu_bar.x,
+            y: layout.top_menu_bar.y + layout.top_menu_bar.height,
+            width: layout.top_menu_bar.width,
+            height: (layout.status_bar.y + layout.status_bar.height
+                - layout.top_menu_bar.y
+                - layout.top_menu_bar.height)
+                .max(0.0),
+        };
+        let visible = rect.intersect(surface).unwrap_or(RectPx {
+            width: 0.0,
+            height: 0.0,
+            ..surface
         });
-    }
-    let surface = RectPx {
-        x: layout.top_menu_bar.x,
-        y: layout.top_menu_bar.y + layout.top_menu_bar.height,
-        width: layout.top_menu_bar.width,
-        height: (layout.status_bar.y + layout.status_bar.height
-            - layout.top_menu_bar.y
-            - layout.top_menu_bar.height)
-            .max(0.0),
-    };
-    let visible = rect.intersect(surface).unwrap_or(RectPx {
-        width: 0.0,
-        height: 0.0,
-        ..surface
-    });
-    crate::hit_clipping::clip_content(
-        menu_overlay_quads,
-        menu_overlay_text_runs,
-        hit_regions,
-        starts.0,
-        starts.1,
-        starts.2,
-        visible,
-    );
-    rect
+        crate::hit_clipping::clip_content(
+            menu_overlay_quads,
+            menu_overlay_text_runs,
+            hit_regions,
+            starts.0,
+            starts.1,
+            starts.2,
+            visible,
+        );
+        rect
+    })
 }
 
 fn render_fallback_icon(
@@ -389,15 +398,17 @@ fn find_menu_item(menu_name: &str, label: &str) -> Option<GuiMenuItem> {
         .cloned()
 }
 
-fn menu_title_width(label: &str) -> f32 {
-    // Real shaped glyph-run width plus a CONSTANT symmetric padding. Because the
-    // padding is the same for every label, `menu_title_width - measured_width` is
-    // constant, so the visual gap after each title is identical (uniform rhythm)
-    // and tight. The retired estimate baked a fixed +16 and used a monospace-style
-    // per-char advance on the proportional UI face, so per-label error varied and
-    // gaps looked random.
-    measured_text_run_width_px(label, design_tokens::typography::BODY_SIZE, TextFace::Ui)
-        + MENU_TITLE_PAD * 2.0
+fn menu_title_width(label: &str) -> anyhow::Result<f32> {
+    Ok({
+        // Real shaped glyph-run width plus a CONSTANT symmetric padding. Because the
+        // padding is the same for every label, `menu_title_width - measured_width` is
+        // constant, so the visual gap after each title is identical (uniform rhythm)
+        // and tight. The retired estimate baked a fixed +16 and used a monospace-style
+        // per-char advance on the proportional UI face, so per-label error varied and
+        // gaps looked random.
+        measured_text_run_width_px(label, design_tokens::typography::BODY_SIZE, TextFace::Ui)?
+            + MENU_TITLE_PAD * 2.0
+    })
 }
 
 fn menu_model() -> Result<&'static GuiMenuModel, &'static str> {
@@ -443,7 +454,8 @@ mod tests {
             &mut quads,
             &mut text,
             &mut hits,
-        );
+        )
+        .unwrap();
         let visible = RectPx {
             x: 0.0,
             y: layout.top_menu_bar.height,
@@ -485,12 +497,13 @@ mod tests {
         assert!(model.menubar.len() >= 2, "need multiple titles to compare");
         let expected_pad_sum = MENU_TITLE_PAD * 2.0;
         for menu in &model.menubar {
-            let width = menu_title_width(&menu.menu);
+            let width = menu_title_width(&menu.menu).unwrap();
             let measured = measured_text_run_width_px(
                 &menu.menu,
                 design_tokens::typography::BODY_SIZE,
                 TextFace::Ui,
-            );
+            )
+            .unwrap();
             let pad = width - measured;
             assert!(
                 (pad - expected_pad_sum).abs() < 1e-3,
@@ -511,7 +524,7 @@ mod tests {
             );
         }
         // The gap between adjacent title boxes advances by exactly SP_01.
-        let a = menu_title_width(&model.menubar[0].menu);
+        let a = menu_title_width(&model.menubar[0].menu).unwrap();
         let x0 = 0.0_f32;
         let x1 = x0 + a + design_tokens::spacing::SP_01;
         assert!((x1 - (x0 + a) - design_tokens::spacing::SP_01).abs() < 1e-6);

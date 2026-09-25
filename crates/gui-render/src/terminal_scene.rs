@@ -8,8 +8,12 @@ impl PreparedScene {
         height: u32,
         camera: CameraState,
         retained_scene: &RetainedScene,
-    ) -> Self {
-        Self::from_workspace_for_surface(state, width, height, 1.0, camera, retained_scene)
+    ) -> anyhow::Result<Self> {
+        Ok(
+            {
+                Self::from_workspace_for_surface(state, width, height, 1.0, camera, retained_scene)?
+            },
+        )
     }
 
     pub fn from_workspace_for_surface(
@@ -19,16 +23,18 @@ impl PreparedScene {
         scale_factor: f32,
         camera: CameraState,
         retained_scene: &RetainedScene,
-    ) -> Self {
-        Self::from_workspace_with_terminal_snapshot(
-            state,
-            width,
-            height,
-            scale_factor,
-            camera,
-            retained_scene,
-            None,
-        )
+    ) -> anyhow::Result<Self> {
+        Ok({
+            Self::from_workspace_with_terminal_snapshot(
+                state,
+                width,
+                height,
+                scale_factor,
+                camera,
+                retained_scene,
+                None,
+            )?
+        })
     }
 
     pub fn from_workspace_with_terminal_snapshot(
@@ -39,34 +45,36 @@ impl PreparedScene {
         camera: CameraState,
         retained_scene: &RetainedScene,
         terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>,
-    ) -> Self {
-        let terminal_panes = terminal_snapshot
-            .map(|snapshot| {
-                vec![crate::TerminalPaneRenderState {
-                    session_id: state
-                        .ui
-                        .terminal
-                        .active_session_id
-                        .clone()
-                        .unwrap_or_else(|| "terminal".to_string()),
-                    focused: true,
-                    lane: &state.ui.terminal,
-                    snapshot: snapshot.clone(),
-                    damage: Vec::new(),
-                }]
-            })
-            .unwrap_or_default();
-        Self::from_workspace_with_terminal_renderer(
-            state,
-            width,
-            height,
-            scale_factor,
-            camera,
-            retained_scene,
-            &terminal_panes,
-            None,
-            false,
-        )
+    ) -> anyhow::Result<Self> {
+        Ok({
+            let terminal_panes = terminal_snapshot
+                .map(|snapshot| {
+                    vec![crate::TerminalPaneRenderState {
+                        session_id: state
+                            .ui
+                            .terminal
+                            .active_session_id
+                            .clone()
+                            .unwrap_or_else(|| "terminal".to_string()),
+                        focused: true,
+                        lane: &state.ui.terminal,
+                        snapshot: snapshot.clone(),
+                        damage: Vec::new(),
+                    }]
+                })
+                .unwrap_or_default();
+            Self::from_workspace_with_terminal_renderer(
+                state,
+                width,
+                height,
+                scale_factor,
+                camera,
+                retained_scene,
+                &terminal_panes,
+                None,
+                false,
+            )?
+        })
     }
 }
 

@@ -468,7 +468,8 @@ mod coordinate_hit_tests {
             1.0,
             CameraState::fit_to_bounds(&state.scene.bounds),
             &retained,
-        );
+        )
+        .unwrap();
 
         let schematic_viewport = prepared
             .schematic_scene_viewport
@@ -524,6 +525,7 @@ mod coordinate_hit_tests {
             CameraState::fit_to_bounds(&state.scene.bounds),
             board,
         )
+        .unwrap()
     }
 
     fn count_color(vertices: &[Vertex], color: [f32; 3]) -> usize {

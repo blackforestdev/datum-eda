@@ -16,7 +16,7 @@ pub(super) fn render_rows(
     hits: &mut Vec<HitRegion>,
     scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
     reveal_row: Option<usize>,
-) {
+) -> anyhow::Result<()> {
     let mut total = 0.0;
     let mut section = None;
     let visible: Vec<_> = dialog
@@ -197,7 +197,7 @@ pub(super) fn render_rows(
             row.writable,
             quads,
             text,
-        );
+        )?;
         if row.writable {
             hits.push(HitRegion {
                 target: HitTarget::GlobalPreferencesControl(row.key.clone()),
@@ -357,6 +357,8 @@ pub(super) fn render_rows(
         },
     );
     crate::global_preferences_primitives::paint_scrollbar(scroll, quads);
+
+    Ok(())
 }
 
 /// One row layout fragment supplies both paint/hit bounds and focus reveal.

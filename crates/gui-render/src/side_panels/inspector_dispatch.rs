@@ -1,3 +1,4 @@
+use super::render_inspector::render_inspector_panel;
 use super::*;
 
 pub(super) fn render_active_inspector(
@@ -6,10 +7,10 @@ pub(super) fn render_active_inspector(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<()> {
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     if !revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
-        render_inspector_panel(state, rect, panel_quads, text_runs, hit_regions);
+        render_inspector_panel(state, rect, panel_quads, text_runs, hit_regions)?;
     }
     crate::hit_clipping::clip_content(
         panel_quads,
@@ -20,6 +21,8 @@ pub(super) fn render_active_inspector(
         starts.2,
         rect,
     );
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -48,7 +51,7 @@ mod tests {
             let mut quads = Vec::new();
             let mut text = Vec::new();
             let mut hits = Vec::new();
-            render_active_inspector(&state, rect, &mut quads, &mut text, &mut hits);
+            render_active_inspector(&state, rect, &mut quads, &mut text, &mut hits).unwrap();
             assert!(!text.is_empty());
             for run in text {
                 let clip = run
@@ -79,10 +82,10 @@ mod tests {
         let mut quads = Vec::new();
         let mut text = Vec::new();
         let mut hits = Vec::new();
-        render_active_inspector(&state, rect, &mut quads, &mut text, &mut hits);
+        render_active_inspector(&state, rect, &mut quads, &mut text, &mut hits).unwrap();
         let label = text.iter().find(|run| run.text == "SELECTED").unwrap();
         let actual_right =
-            label.x + measured_text_run_width_px(&label.text, label.size, label.face);
+            label.x + measured_text_run_width_px(&label.text, label.size, label.face).unwrap();
         assert!((actual_right - (rect.x + rect.width - 12.0 - 7.0)).abs() < 0.001);
         let mut renderer =
             crate::visual::visual_capture::OffscreenRenderer::new(1280, 800).unwrap();

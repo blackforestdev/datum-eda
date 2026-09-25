@@ -131,7 +131,8 @@ fn run_probe(alternate: bool) {
             height,
             CameraState::fit_to_bounds(&state.scene.bounds),
             &retained,
-        );
+        )
+        .unwrap();
         let target = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("attachment-probe-target"),
             size: wgpu::Extent3d {

@@ -151,7 +151,7 @@ impl OffscreenRenderer {
                 &[],
                 None,
                 true,
-            )
+            )?
         } else {
             PreparedScene::from_workspace_with_terminal_snapshot(
                 state,
@@ -161,7 +161,7 @@ impl OffscreenRenderer {
                 camera,
                 &retained,
                 terminal_snapshot,
-            )
+            )?
         };
 
         let rendered = self.renderer.render(

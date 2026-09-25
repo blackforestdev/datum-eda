@@ -185,7 +185,8 @@ fn pane_uniform_slots_preserve_retiring_generations_across_reopen_and_recovery()
         1.0,
         crate::CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let mut first = crate::Renderer::new(&device, &queue, format, 1).unwrap();
     first
         .prepare_surface_uniforms(&device, &queue, &prepared, 960, 720)

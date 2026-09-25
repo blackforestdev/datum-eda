@@ -200,6 +200,7 @@ mod tests {
         let mut camera = CameraState::fit_to_bounds(&state.scene.bounds);
         let make_prepared = |state: &ReviewWorkspaceState, camera| {
             PreparedScene::from_workspace_for_surface(state, 1280, 800, 1.0, camera, &retained)
+                .unwrap()
         };
         let mut prepared = make_prepared(&state, camera);
         renderer

@@ -22,16 +22,18 @@ impl PreparedScene {
         width: u32,
         height: u32,
         scale_factor: f32,
-    ) -> Self {
-        let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
-        Self::from_native_preferences_scrolled(
-            dialog,
-            width,
-            height,
-            scale_factor,
-            &mut scroll,
-            Some(dialog.scroll_row),
-        )
+    ) -> anyhow::Result<Self> {
+        Ok({
+            let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+            Self::from_native_preferences_scrolled(
+                dialog,
+                width,
+                height,
+                scale_factor,
+                &mut scroll,
+                Some(dialog.scroll_row),
+            )?
+        })
     }
 
     pub fn from_native_preferences_scrolled(
@@ -41,16 +43,18 @@ impl PreparedScene {
         scale_factor: f32,
         scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
         reveal_row: Option<usize>,
-    ) -> Self {
-        Self::from_native_preferences_cached(
-            dialog,
-            width,
-            height,
-            scale_factor,
-            scroll,
-            reveal_row,
-            &mut ControlMeshCache::default(),
-        )
+    ) -> anyhow::Result<Self> {
+        Ok({
+            Self::from_native_preferences_cached(
+                dialog,
+                width,
+                height,
+                scale_factor,
+                scroll,
+                reveal_row,
+                &mut ControlMeshCache::default(),
+            )?
+        })
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -62,22 +66,24 @@ impl PreparedScene {
         scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
         reveal_row: Option<usize>,
         controls: &mut ControlMeshCache,
-    ) -> Self {
-        let scale = scale_factor.max(0.01);
-        let layout = Self::native_dialog_layout(width, height, scale);
-        let mut quads = Vec::new();
-        let mut text = Vec::new();
-        let mut hits = Vec::new();
-        super::render_preferences_dialog_scrolled(
-            dialog,
-            &layout,
-            &mut ControlPainter::new(&mut quads, controls, scale),
-            &mut text,
-            &mut hits,
-            scroll,
-            reveal_row,
-        );
-        Self::from_dialog_parts(layout, quads, text, hits, scale, (width, height))
+    ) -> anyhow::Result<Self> {
+        Ok({
+            let scale = scale_factor.max(0.01);
+            let layout = Self::native_dialog_layout(width, height, scale);
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            let mut hits = Vec::new();
+            super::render_preferences_dialog_scrolled(
+                dialog,
+                &layout,
+                &mut ControlPainter::new(&mut quads, controls, scale),
+                &mut text,
+                &mut hits,
+                scroll,
+                reveal_row,
+            )?;
+            Self::from_dialog_parts(layout, quads, text, hits, scale, (width, height))
+        })
     }
 
     /// Native dialogs have no editor sidebars, dock or pane layout to solve.
@@ -195,16 +201,27 @@ impl Renderer {
         scale_factor: f32,
         scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
         reveal_row: Option<usize>,
-    ) -> PreparedScene {
-        PreparedScene::from_native_preferences_cached(
-            dialog,
-            width,
-            height,
-            scale_factor,
-            scroll,
-            reveal_row,
-            &mut self.control_meshes,
-        )
+    ) -> anyhow::Result<PreparedScene> {
+        let mut pending_scroll = scroll.clone();
+        let prepared =
+            crate::text_metrics::measurement_owner::with_owner(&mut self.measurement_fonts, || {
+                let scroll = &mut pending_scroll;
+                Ok({
+                    PreparedScene::from_native_preferences_cached(
+                        dialog,
+                        width,
+                        height,
+                        scale_factor,
+                        scroll,
+                        reveal_row,
+                        &mut self.control_meshes,
+                    )?
+                })
+            });
+        if prepared.is_ok() {
+            *scroll = pending_scroll;
+        }
+        prepared
     }
 }
 
@@ -234,14 +251,16 @@ mod tests {
                         &[],
                         None,
                         true,
-                    );
+                    )
+                    .unwrap();
                     let before = retained_scene_resolve_count();
                     let dialog = PreparedScene::from_native_preferences(
                         &state.ui.global_preferences,
                         width,
                         height,
                         scale,
-                    );
+                    )
+                    .unwrap();
                     assert_eq!(retained_scene_resolve_count(), before);
                     assert_eq!(dialog.menu_overlay_vertices, legacy.menu_overlay_vertices);
                     let surface = RectPx {
@@ -293,7 +312,8 @@ mod tests {
                         &mut quads,
                         &mut text,
                         &mut hits,
-                    );
+                    )
+                    .unwrap();
                     PreparedScene::from_dialog_parts(
                         layout,
                         quads,
@@ -310,6 +330,7 @@ mod tests {
                         height,
                         scale,
                     )
+                    .unwrap()
                 };
                 assert_eq!(scene.layout.left_sidebar.width, 0.0);
                 assert_eq!(scene.layout.right_sidebar.width, 0.0);
@@ -358,7 +379,8 @@ mod tests {
                     scale,
                     &mut scroll,
                     Some(index),
-                );
+                )
+                .unwrap();
                 let close = scene
                     .hit_regions
                     .iter()
@@ -378,10 +400,12 @@ mod tests {
     fn fitting_content_does_not_scroll_past_its_end() {
         let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
         let before =
-            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+                .unwrap();
         assert!(state.ui.global_preferences.scroll_rows(-1));
         let after =
-            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+                .unwrap();
         assert_eq!(before.menu_overlay_text_runs, after.menu_overlay_text_runs);
         assert_eq!(before.hit_regions, after.hit_regions);
         let retained = RetainedScene::empty();
@@ -407,7 +431,8 @@ mod tests {
                 scale,
                 &mut scroll,
                 None,
-            );
+            )
+            .unwrap();
             let search = before
                 .hit_regions
                 .iter()
@@ -435,7 +460,8 @@ mod tests {
                 scale,
                 &mut scroll,
                 None,
-            );
+            )
+            .unwrap();
             let moved_y = after
                 .menu_overlay_text_runs
                 .iter()
@@ -452,7 +478,8 @@ mod tests {
                 scale,
                 &mut scroll,
                 None,
-            );
+            )
+            .unwrap();
             assert_eq!(scroll.content_height, total);
             // The original narrow 1.5x case clips within the final row.
             // At matching logical sizes, its control must be reachable at end.

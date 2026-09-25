@@ -107,7 +107,8 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
                 width,
                 height,
                 scale,
-            );
+            )
+            .unwrap();
             assert!(prepared.is_overlay_only());
             let actual = capture(&mut renderer, &prepared);
             // A retirement/reindex may need one fresh preparation before reuse.
@@ -151,7 +152,8 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
                 &[],
                 None,
                 true,
-            );
+            )
+            .unwrap();
             assert!(
                 actual == capture_retained(&mut renderer, &legacy, &retained),
                 "native surface clipping must preserve legacy dialog pixels"
@@ -172,28 +174,20 @@ fn fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text() {
     let dialog = &state.ui.global_preferences;
     let mut renderer = hardware_renderer(960, 300);
     let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
-    let initial = renderer.renderer.prepare_native_preferences_scrolled(
-        dialog,
-        960,
-        300,
-        1.0,
-        &mut scroll,
-        None,
-    );
+    let initial = renderer
+        .renderer
+        .prepare_native_preferences_scrolled(dialog, 960, 300, 1.0, &mut scroll, None)
+        .unwrap();
     let first = capture(&mut renderer, &initial);
     let header_bottom = scroll.viewport.y as u32;
     for cycle in 0..2 {
         for offset in [0.25, 40.0, 100.0, 75.0, 0.0] {
             scroll.set_offset(offset);
             let previous_builds = renderer.renderer.control_meshes.builds;
-            let scene = renderer.renderer.prepare_native_preferences_scrolled(
-                dialog,
-                960,
-                300,
-                1.0,
-                &mut scroll,
-                None,
-            );
+            let scene = renderer
+                .renderer
+                .prepare_native_preferences_scrolled(dialog, 960, 300, 1.0, &mut scroll, None)
+                .unwrap();
             assert!(scene.is_overlay_only());
             if cycle == 1 {
                 assert_eq!(
@@ -244,7 +238,8 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     let workspace = datum_gui_protocol::load_fixture_workspace_state();
     let dialog_state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let dialog =
-        PreparedScene::from_native_preferences(&dialog_state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&dialog_state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     assert!(renderer.renderer.measurements.is_none());
     assert!(renderer.renderer.gpu_measurement_poll_deadline().is_none());
     let expected_workspace = renderer.render_workspace(&workspace, None).unwrap();
@@ -370,7 +365,8 @@ fn production_dialog_upload_reuses_content_and_matches_evicted_pixels() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut renderer = hardware_renderer(960, 720);
     let prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let cold = capture(&mut renderer, &prepared);
     assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
     let warm = capture(&mut renderer, &prepared);
@@ -399,7 +395,8 @@ fn shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut renderer = hardware_renderer(960, 720);
     let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut workspace = prepared.menu_overlay_text_runs[0].clone();
     workspace.text = "Workspace glyph residency".into();
     workspace.rich_spans.clear();
@@ -507,7 +504,8 @@ fn shared_text_preparation_survives_real_atlas_pressure() {
         hardware_renderer_with_atlas_limit(192, 192, wgpu::Features::empty(), Some(256));
     renderer.renderer.atlas.set_test_limit(256 * 256);
     let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 192, 192, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 192, 192, 1.0)
+            .unwrap();
     let mut run = prepared.menu_overlay_text_runs[0].clone();
     run.rich_spans.clear();
     run.clip_bounds = None;
@@ -557,38 +555,6 @@ fn shared_text_preparation_survives_real_atlas_pressure() {
     eprintln!("real bounded-atlas retries: {retries}");
 }
 
-#[test]
-#[ignore = "requires local GPU; run explicitly with the visual feature"]
-fn cached_shape_relayout_matches_fresh_dialog_pixels() {
-    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
-    let mut renderer = hardware_renderer(960, 720);
-    let mut fresh = hardware_renderer(960, 720);
-    let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
-    let mut label = prepared.menu_overlay_text_runs[0].clone();
-    label.text = "Wrap widths preserve shaped text: µm and Ω".into();
-    label.rich_spans.clear();
-    label.x = 30.0;
-    label.y = 30.0;
-    prepared.menu_overlay_text_runs = vec![label];
-    for (step, width) in [240.0, 100.0, 180.0, 100.0].into_iter().enumerate() {
-        prepared.menu_overlay_text_runs[0].clip_bounds = Some(crate::RectPx {
-            x: 30.0,
-            y: 30.0,
-            width,
-            height: 150.0,
-        });
-        let actual = capture(&mut renderer, &prepared);
-        fresh.renderer.text_buffers = Default::default();
-        assert!(
-            actual == capture(&mut fresh, &prepared),
-            "cached shape differs at width {width}"
-        );
-        assert_eq!(renderer.renderer.text_buffers.shape_reuses, step);
-        assert_eq!(renderer.renderer.text_buffers.entries().len(), 1);
-    }
-}
-
 #[path = "gpu_pass_tests.rs"]
 mod pass_tests;
 
@@ -598,38 +564,48 @@ fn renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut renderer = hardware_renderer(960, 720);
     let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
-    let prepared = renderer.renderer.prepare_native_preferences_scrolled(
-        &state.ui.global_preferences,
-        960,
-        720,
-        1.0,
-        &mut scroll,
-        Some(0),
-    );
+    let prepared = renderer
+        .renderer
+        .prepare_native_preferences_scrolled(
+            &state.ui.global_preferences,
+            960,
+            720,
+            1.0,
+            &mut scroll,
+            Some(0),
+        )
+        .unwrap();
     let cold = capture(&mut renderer, &prepared);
     let builds = renderer.renderer.control_meshes.builds;
     assert!(builds > 0);
-    let warm = renderer.renderer.prepare_native_preferences_scrolled(
-        &state.ui.global_preferences,
-        960,
-        720,
-        1.0,
-        &mut scroll,
-        None,
-    );
+    let warm = renderer
+        .renderer
+        .prepare_native_preferences_scrolled(
+            &state.ui.global_preferences,
+            960,
+            720,
+            1.0,
+            &mut scroll,
+            None,
+        )
+        .unwrap();
     assert_eq!(renderer.renderer.control_meshes.builds, builds);
     assert!(cold == capture(&mut renderer, &warm));
-    let scaled = renderer.renderer.prepare_native_preferences_scrolled(
-        &state.ui.global_preferences,
-        960,
-        720,
-        1.5,
-        &mut scroll,
-        Some(0),
-    );
+    let scaled = renderer
+        .renderer
+        .prepare_native_preferences_scrolled(
+            &state.ui.global_preferences,
+            960,
+            720,
+            1.5,
+            &mut scroll,
+            Some(0),
+        )
+        .unwrap();
     assert!(renderer.renderer.control_meshes.builds > builds);
     let expected =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.5);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.5)
+            .unwrap();
     assert!(capture(&mut renderer, &scaled) == capture(&mut renderer, &expected));
     renderer.renderer = Renderer::new(
         &renderer.device,
@@ -642,14 +618,17 @@ fn renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels() {
         renderer.renderer.control_meshes.builds, 0,
         "renderer replacement starts without old control retention"
     );
-    let restored = renderer.renderer.prepare_native_preferences_scrolled(
-        &state.ui.global_preferences,
-        960,
-        720,
-        1.0,
-        &mut scroll,
-        Some(0),
-    );
+    let restored = renderer
+        .renderer
+        .prepare_native_preferences_scrolled(
+            &state.ui.global_preferences,
+            960,
+            720,
+            1.0,
+            &mut scroll,
+            Some(0),
+        )
+        .unwrap();
     assert!(renderer.renderer.control_meshes.builds > 0);
     assert!(cold == capture(&mut renderer, &restored));
 }
@@ -663,25 +642,6 @@ mod uniform_tests;
 #[path = "gpu_consumer_tests.rs"]
 mod consumer_tests;
 
-#[test]
-#[ignore = "requires local GPU; bounded overlay signature proof"]
-fn oversized_overlay_signature_bypasses_reuse_without_omitting_text() {
-    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
-    let mut renderer = hardware_renderer(960, 720);
-    let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
-    prepared.menu_overlay_text_runs = vec![prepared.menu_overlay_text_runs[0].clone(); 129];
-    let cold = capture(&mut renderer, &prepared);
-    let prepares = renderer.renderer.text_preparation.overlay_prepares;
-    assert!(cold == capture(&mut renderer, &prepared));
-    assert_eq!(
-        renderer.renderer.text_preparation.overlay_prepares,
-        prepares + 1
-    );
-    let mut fresh = hardware_renderer(960, 720);
-    assert!(cold == capture(&mut fresh, &prepared));
-}
-
 #[path = "gpu_terminal_resource_tests.rs"]
 mod terminal_resource_tests;
 
@@ -690,3 +650,6 @@ mod glyph_continuation_tests;
 
 #[path = "gpu_text_paint_tests.rs"]
 mod text_paint_tests;
+
+#[path = "overlay_cache_reuse_tests.rs"]
+mod overlay_cache_reuse_tests;

@@ -1,19 +1,14 @@
 //! Datum ownership of private raster scratch and independently retained pixels.
 use super::budget::{Budget, Permit, staging_process};
 use glyphon::{CacheKey, SwashImage};
-use std::sync::{
-    Arc,
-    atomic::{AtomicU64, Ordering},
-};
+use std::sync::Arc;
 
 pub(crate) struct Raster {
-    cache: Option<crate::SwashCache>,
+    cache: Option<glyphon::SwashCache>,
     permits: Option<[Permit; 2]>,
     bytes: u64,
     host: Option<Arc<Budget>>,
-    outputs: Arc<AtomicU64>,
     scope: crate::cpu_alloc::Scope,
-    lifetimes: Arc<std::sync::Mutex<()>>,
     last_call: Option<crate::cpu_alloc::calls::Report>,
 }
 
@@ -23,21 +18,14 @@ pub(crate) struct Pixels {
     _permits: [Permit; 2],
 }
 struct OutputLease {
-    outputs: Arc<AtomicU64>,
+    scope: crate::cpu_alloc::Scope,
     bytes: u64,
-    lifetimes: Arc<std::sync::Mutex<()>>,
 }
 impl Drop for Pixels {
     fn drop(&mut self) {
-        let _lock = self
-            ._lease
-            .lifetimes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner());
+        let _lock = self._lease.scope.output_lifetimes();
         drop(self.data.take());
-        self._lease
-            .outputs
-            .fetch_sub(self._lease.bytes, Ordering::AcqRel);
+        self._lease.scope.remove_output(self._lease.bytes);
     }
 }
 impl std::ops::Deref for Pixels {
@@ -54,9 +42,7 @@ impl Raster {
             permits: None,
             bytes: 0,
             host: None,
-            outputs: Arc::new(AtomicU64::new(0)),
             scope: crate::cpu_alloc::Scope::new("raster-scratch-and-pixels"),
-            lifetimes: Arc::new(std::sync::Mutex::new(())),
             last_call: None,
         }
     }
@@ -69,7 +55,7 @@ impl Raster {
         let usage = self.scope.usage();
         usage.allocator_installed.then(|| {
             (usage.payload_bytes + usage.tracking_bytes)
-                .checked_sub(self.outputs.load(Ordering::Acquire))
+                .checked_sub(self.scope.output_bytes())
                 .expect("raster pixels belong to raster scope")
         })
     }
@@ -100,18 +86,18 @@ impl Raster {
         {
             self.clear();
         }
-        let lifetimes = self.lifetimes.clone();
-        let _lock = lifetimes.lock().unwrap_or_else(|e| e.into_inner());
+        let lifetimes = self.scope.clone();
+        let _lock = lifetimes.output_lifetimes();
         let call = crate::cpu_alloc::calls::Call::begin(
             &self.scope,
             host.clone(),
             staging_process(),
-            self.outputs.load(Ordering::Acquire),
+            self.scope.output_bytes(),
             self.bytes,
-        );
+        )?;
         let cache = self
             .scope
-            .with(|| self.cache.get_or_insert_with(crate::SwashCache::new));
+            .with(|| self.cache.get_or_insert_with(glyphon::SwashCache::new));
         let image = match fonts.raster(cache, &self.scope, key) {
             Ok(image) => image,
             Err(error) => {
@@ -144,13 +130,12 @@ impl Raster {
         let output = image.map(|mut image| {
             let data = std::mem::take(&mut image.data);
             let bytes = crate::cpu_alloc::heap::capacity_bytes::<u8>(data.capacity()) as u64;
-            self.outputs.fetch_add(bytes, Ordering::AcqRel);
+            self.scope.add_output(bytes);
             let pixels = Pixels {
                 data: Some(data),
                 _lease: OutputLease {
-                    outputs: self.outputs.clone(),
+                    scope: self.scope.clone(),
                     bytes,
-                    lifetimes: self.lifetimes.clone(),
                 },
                 _permits: [permits[0].split(bytes), permits[1].split(bytes)],
             };
@@ -213,11 +198,11 @@ mod tests {
         raster.clear();
         drop(first);
         assert_eq!(
-            raster.outputs.load(Ordering::Acquire),
+            raster.scope.output_bytes(),
             crate::cpu_alloc::heap::capacity_bytes::<u8>(second.capacity()) as u64
         );
         drop(second);
         assert_eq!(raster.scope.usage().allocations, 0);
-        assert_eq!(raster.outputs.load(Ordering::Acquire), 0);
+        assert_eq!(raster.scope.output_bytes(), 0);
     }
 }

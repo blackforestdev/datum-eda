@@ -14,7 +14,8 @@ fn workspace_uploads_preserve_shared_stream_consumers_and_warm_zero_work() {
         1.0,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let mut host = hardware_renderer(960, 720);
     let cold = capture_retained(&mut host, &prepared, &retained);
     let panel_id = host
@@ -87,10 +88,10 @@ fn dialog_producers_reach_upload_receipts_without_workspace_consumer_leakage() {
     let mut host = hardware_renderer(960, 720);
     for consumer in [Consumer::Global, Consumer::Project, Consumer::New] {
         let mut prepared = match consumer {
-            Consumer::New => {
-                host.renderer
-                    .prepare_native_new_project(&state.ui.new_project, 960, 720, 1.0)
-            }
+            Consumer::New => host
+                .renderer
+                .prepare_native_new_project(&state.ui.new_project, 960, 720, 1.0)
+                .unwrap(),
             _ => PreparedScene::from_native_preferences(
                 if consumer == Consumer::Project {
                     &state.ui.project_preferences
@@ -100,7 +101,8 @@ fn dialog_producers_reach_upload_receipts_without_workspace_consumer_leakage() {
                 960,
                 720,
                 1.0,
-            ),
+            )
+            .unwrap(),
         };
         // Same selection used by the real shared native-window adapter.
         prepared.set_native_consumer(consumer);

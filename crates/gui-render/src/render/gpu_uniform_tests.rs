@@ -22,7 +22,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
         fresh.height = height;
         let prepared = PreparedScene::from_workspace_for_surface(
             &state, width, height, 1.0, camera, &retained,
-        );
+        )
+        .unwrap();
         let changed = capture_retained(&mut renderer, &prepared, &retained);
         let host_id = renderer.renderer.resource_owner_id();
         assert_ne!(host_id, fresh.renderer.resource_owner_id());
@@ -114,7 +115,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
             1.0,
             moved_camera,
             &retained,
-        );
+        )
+        .unwrap();
         let moved_pixels = capture_retained(&mut renderer, &moved, &retained);
         assert!(
             renderer
@@ -153,7 +155,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
         renderer.width,
         renderer.height,
         1.0,
-    );
+    )
+    .unwrap();
     let first = capture(&mut renderer, &dialog);
     assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 0);
     assert!(renderer.renderer.surface_scene_uniforms.is_empty());
@@ -167,7 +170,8 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
         renderer.width,
         renderer.height,
         1.0,
-    );
+    )
+    .unwrap();
     let changed = capture(&mut renderer, &resized);
     assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 8);
     fresh.width = renderer.width;
@@ -255,7 +259,8 @@ fn screen_streams_and_uniforms_share_one_host_limit() {
         1.0,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     let reference = capture_retained(&mut independent, &prepared, &retained);
     // A device replacement for this SAME host cannot obtain a fresh allowance.
     assert!(
@@ -560,9 +565,11 @@ fn oversized_control_gpu_buffer_uploads_all_content_without_retention() {
 fn failed_dialog_releases_excess_labels_and_retry_matches_fresh_pixels() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let original =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut oversized =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let template = oversized.menu_overlay_text_runs[0].clone();
     oversized.menu_overlay_text_runs = (0..160)
         .map(|n| {
@@ -613,7 +620,8 @@ fn failed_dialog_releases_excess_labels_and_retry_matches_fresh_pixels() {
 fn composed_workspace_dialog_limits_labels_without_losing_current_content() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let template = prepared.menu_overlay_text_runs[0].clone();
     prepared.menu_overlay_text_runs = (0..160)
         .map(|n| {

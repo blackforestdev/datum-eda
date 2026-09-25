@@ -23,9 +23,9 @@ fn render_new_project_dialog_scrolled(
     hits: &mut Vec<HitRegion>,
     scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
     reveal_focus: bool,
-) {
+) -> anyhow::Result<()> {
     if !dialog.open || !native_window {
-        return;
+        return Ok(());
     }
     let layout = layout.clone().scale_by(1.0 / scale);
     let starts = (quads.len(), text.len(), hits.len());
@@ -65,7 +65,7 @@ fn render_new_project_dialog_scrolled(
         doorway,
         design_tokens::typography::MICRO_SIZE,
         TextFace::Mono,
-    );
+    )?;
     draw_text(
         doorway,
         window.width - doorway_width - 16.0,
@@ -111,7 +111,7 @@ fn render_new_project_dialog_scrolled(
         text,
         hits,
         HitTarget::NewProjectName,
-    );
+    )?;
     y = draw_text_field(
         "Location",
         &dialog.destination,
@@ -123,7 +123,7 @@ fn render_new_project_dialog_scrolled(
         text,
         hits,
         HitTarget::NewProjectDestination,
-    );
+    )?;
     draw_text(
         "Working units for this new Project",
         inset,
@@ -252,7 +252,7 @@ fn render_new_project_dialog_scrolled(
                 &row.value,
                 design_tokens::typography::CAPTION_SIZE,
                 TextFace::Mono,
-            );
+            )?;
             draw_text(
                 &row.value,
                 (summary.x + summary.width - value_width - 12.0)
@@ -370,6 +370,8 @@ fn render_new_project_dialog_scrolled(
     crate::global_preferences_dialog::dialog_coordinates::scale_output(
         quads, text, hits, starts, scale,
     );
+
+    Ok(())
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -384,57 +386,59 @@ fn draw_text_field(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
     target: HitTarget,
-) -> f32 {
-    let x = 18.0;
-    draw_text(
-        label,
-        x,
-        y + 10.0,
-        design_tokens::typography::CAPTION_SIZE,
-        TEXT_SECONDARY,
-        TextFace::UiStrong,
-        text,
-    );
-    let field = RectPx {
-        x: x + 150.0,
-        y,
-        width: width - 150.0,
-        height: 34.0,
-    };
-    push_rounded_rect_with_border(
-        quads,
-        field,
-        design_tokens::chrome::SURFACE_02,
-        if focused {
-            design_tokens::chrome::STATUS_INFO
-        } else {
-            design_tokens::chrome::BORDER_STRONG
-        },
-        if focused { 2.0 } else { 1.0 },
-        design_tokens::radius::MD,
-    );
-    let shown = if value.is_empty() { placeholder } else { value };
-    crate::global_preferences_primitives::paint_input_text(
-        value,
-        &truncate_text(shown, 92),
-        focused,
-        crate::global_preferences_primitives::InputTextLayout {
-            bounds: field,
-            left: 10.0,
-            right: 10.0,
-            placeholder_gap: 0.0,
-            caret_top: 7.0,
-            caret_height: 20.0,
-            caret_trailing: 0.0,
-        },
-        quads,
-        text,
-    );
-    hits.push(HitRegion {
-        target,
-        rect: field,
-    });
-    y + 34.0
+) -> anyhow::Result<f32> {
+    Ok({
+        let x = 18.0;
+        draw_text(
+            label,
+            x,
+            y + 10.0,
+            design_tokens::typography::CAPTION_SIZE,
+            TEXT_SECONDARY,
+            TextFace::UiStrong,
+            text,
+        );
+        let field = RectPx {
+            x: x + 150.0,
+            y,
+            width: width - 150.0,
+            height: 34.0,
+        };
+        push_rounded_rect_with_border(
+            quads,
+            field,
+            design_tokens::chrome::SURFACE_02,
+            if focused {
+                design_tokens::chrome::STATUS_INFO
+            } else {
+                design_tokens::chrome::BORDER_STRONG
+            },
+            if focused { 2.0 } else { 1.0 },
+            design_tokens::radius::MD,
+        );
+        let shown = if value.is_empty() { placeholder } else { value };
+        crate::global_preferences_primitives::paint_input_text(
+            value,
+            &truncate_text(shown, 92),
+            focused,
+            crate::global_preferences_primitives::InputTextLayout {
+                bounds: field,
+                left: 10.0,
+                right: 10.0,
+                placeholder_gap: 0.0,
+                caret_top: 7.0,
+                caret_height: 20.0,
+                caret_trailing: 0.0,
+            },
+            quads,
+            text,
+        )?;
+        hits.push(HitRegion {
+            target,
+            rect: field,
+        });
+        y + 34.0
+    })
 }
 
 #[cfg(test)]
@@ -472,6 +476,7 @@ mod tests {
             None,
             true,
         )
+        .unwrap()
     }
 
     #[test]
@@ -501,7 +506,8 @@ mod tests {
                 &mut quads,
                 &mut text,
                 &mut hits,
-            );
+            )
+            .unwrap();
             let summary = hits
                 .iter()
                 .find(|hit| hit.target == HitTarget::NewProjectUnitsSummary)

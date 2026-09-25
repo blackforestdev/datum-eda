@@ -9,15 +9,17 @@ impl Renderer {
         width: u32,
         height: u32,
         scale_factor: f32,
-    ) -> PreparedScene {
-        self.prepare_native_new_project_scrolled(
-            dialog,
-            width,
-            height,
-            scale_factor,
-            &mut ScrollViewport::default(),
-            false,
-        )
+    ) -> anyhow::Result<PreparedScene> {
+        Ok({
+            self.prepare_native_new_project_scrolled(
+                dialog,
+                width,
+                height,
+                scale_factor,
+                &mut ScrollViewport::default(),
+                false,
+            )?
+        })
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -29,25 +31,42 @@ impl Renderer {
         scale_factor: f32,
         scroll: &mut ScrollViewport,
         reveal_focus: bool,
-    ) -> PreparedScene {
-        let scale = scale_factor.max(0.01);
-        let layout = PreparedScene::native_dialog_layout(width, height, scale);
-        let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
-        render_new_project_dialog_scrolled(
-            dialog,
-            &layout,
-            true,
-            &mut self.control_meshes,
-            scale,
-            &mut quads,
-            &mut text,
-            &mut hits,
-            scroll,
-            reveal_focus,
-        );
-        let mut prepared =
-            PreparedScene::from_dialog_parts(layout, quads, text, hits, scale, (width, height));
-        prepared.set_native_consumer(crate::resource_consumers::Consumer::New);
+    ) -> anyhow::Result<PreparedScene> {
+        let mut pending_scroll = scroll.clone();
+        let prepared =
+            crate::text_metrics::measurement_owner::with_owner(&mut self.measurement_fonts, || {
+                let scroll = &mut pending_scroll;
+                Ok({
+                    let scale = scale_factor.max(0.01);
+                    let layout = PreparedScene::native_dialog_layout(width, height, scale);
+                    let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
+                    render_new_project_dialog_scrolled(
+                        dialog,
+                        &layout,
+                        true,
+                        &mut self.control_meshes,
+                        scale,
+                        &mut quads,
+                        &mut text,
+                        &mut hits,
+                        scroll,
+                        reveal_focus,
+                    )?;
+                    let mut prepared = PreparedScene::from_dialog_parts(
+                        layout,
+                        quads,
+                        text,
+                        hits,
+                        scale,
+                        (width, height),
+                    );
+                    prepared.set_native_consumer(crate::resource_consumers::Consumer::New);
+                    prepared
+                })
+            });
+        if prepared.is_ok() {
+            *scroll = pending_scroll;
+        }
         prepared
     }
 }
@@ -62,7 +81,7 @@ pub(crate) fn render_new_project_dialog(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<()> {
     render_new_project_dialog_scrolled(
         dialog,
         layout,
@@ -74,7 +93,9 @@ pub(crate) fn render_new_project_dialog(
         hits,
         &mut ScrollViewport::default(),
         false,
-    );
+    )?;
+
+    Ok(())
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -184,7 +205,8 @@ mod tests {
                 &mut legacy_hits,
                 &mut ScrollViewport::default(),
                 true,
-            );
+            )
+            .unwrap();
             let mut cache = ControlMeshCache::default();
             let mut scroll = ScrollViewport::default();
             let mut render =
@@ -193,7 +215,8 @@ mod tests {
                     render_new_project_dialog_scrolled(
                         dialog, &layout, true, &mut cache, scale, &mut q, &mut t, &mut h, scroll,
                         reveal,
-                    );
+                    )
+                    .unwrap();
                     (q, t, h)
                 };
             let first = render(&dialog, &mut scroll, true);

@@ -13,7 +13,11 @@ use std::sync::{
     atomic::{AtomicBool, AtomicU64, Ordering},
 };
 
-thread_local! { static CURRENT: Cell<*const State> = const { Cell::new(ptr::null()) }; }
+thread_local! {
+    static CURRENT: Cell<*const State> = const { Cell::new(ptr::null()) };
+    static OWNER_METADATA: Cell<bool> = const { Cell::new(false) };
+}
+static OWNER_METADATA_BYTES: AtomicU64 = AtomicU64::new(0);
 static INSTALLED: AtomicBool = AtomicBool::new(false);
 static NEXT_ID: AtomicU64 = AtomicU64::new(1);
 static OWNERS: Mutex<Vec<Weak<State>>> = Mutex::new(Vec::new());
@@ -25,6 +29,8 @@ struct State {
     overhead: AtomicU64,
     allocations: AtomicU64,
     peak_payload: AtomicU64,
+    outputs: AtomicU64,
+    output_lifetimes: Mutex<()>,
 }
 
 #[derive(Clone, Debug)]
@@ -36,6 +42,8 @@ pub struct Usage {
     pub tracking_bytes: u64,
     pub allocations: u64,
     pub peak_payload_bytes: u64,
+    /// Scope's own Arc/header allocation, counted once per owner, not per block.
+    pub owner_metadata_bytes: u64,
 }
 
 /// Scopes are synchronous and nest by call stack; no raw guard can escape or be
@@ -45,6 +53,7 @@ pub struct Scope(Arc<State>);
 impl Scope {
     pub fn new(label: &'static str) -> Self {
         with_current(ptr::null(), || {
+            OWNER_METADATA.with(|capture| capture.set(true));
             let state = Arc::new(State {
                 id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
                 label,
@@ -52,7 +61,10 @@ impl Scope {
                 overhead: AtomicU64::new(0),
                 allocations: AtomicU64::new(0),
                 peak_payload: AtomicU64::new(0),
+                outputs: AtomicU64::new(0),
+                output_lifetimes: Mutex::new(()),
             });
+            OWNER_METADATA.with(|capture| capture.set(false));
             let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
             owners.retain(|owner| owner.strong_count() != 0);
             owners.push(Arc::downgrade(&state));
@@ -72,6 +84,21 @@ impl Scope {
         let owner = RawOwner(Arc::into_raw(self.0.clone()));
         with_current(owner.0, work)
     }
+    pub(crate) fn output_bytes(&self) -> u64 {
+        self.0.outputs.load(Ordering::Acquire)
+    }
+    pub(crate) fn add_output(&self, bytes: u64) {
+        self.0.outputs.fetch_add(bytes, Ordering::AcqRel);
+    }
+    pub(crate) fn remove_output(&self, bytes: u64) {
+        self.0.outputs.fetch_sub(bytes, Ordering::AcqRel);
+    }
+    pub(crate) fn output_lifetimes(&self) -> std::sync::MutexGuard<'_, ()> {
+        self.0
+            .output_lifetimes
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+    }
     pub fn usage(&self) -> Usage {
         self.0.usage()
     }
@@ -86,6 +113,7 @@ impl State {
             tracking_bytes: self.overhead.load(Ordering::Acquire),
             allocations: self.allocations.load(Ordering::Acquire),
             peak_payload_bytes: self.peak_payload.load(Ordering::Acquire),
+            owner_metadata_bytes: OWNER_METADATA_BYTES.load(Ordering::Acquire),
         }
     }
     fn add_payload(&self, bytes: usize) {
@@ -234,6 +262,9 @@ unsafe fn allocate(layout: Layout, zeroed: bool) -> *mut u8 {
         if base.is_null() {
             return base;
         }
+        if OWNER_METADATA.try_with(Cell::get).unwrap_or(false) {
+            OWNER_METADATA_BYTES.store(combined.size() as u64, Ordering::Release);
+        }
         let owner = CURRENT.try_with(Cell::get).unwrap_or(ptr::null());
         if !owner.is_null() {
             Arc::increment_strong_count(owner);
@@ -256,6 +287,27 @@ impl crate::Renderer {
     pub fn text_cpu_usage(&self) -> Usage {
         self.text_cpu.usage()
     }
+}
+
+/// Shared coordination storage is distinct from scoped payload and reported
+/// once per process. The call ledger is static, with no construction-time heap.
+#[derive(Debug)]
+pub struct RegistryUsage {
+    pub registry_heap_bytes: usize,
+    /// All live and weak-retained scope Arc allocations, counted once here.
+    /// Usage::owner_metadata_bytes describes a subset, not an additional total.
+    pub scope_owner_bytes: u64,
+    pub call_slots_static_bytes: usize,
+}
+pub fn registry_metadata_bytes() -> RegistryUsage {
+    with_current(ptr::null(), || {
+        let owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
+        RegistryUsage {
+            registry_heap_bytes: heap::capacity_bytes::<Weak<State>>(owners.capacity()),
+            scope_owner_bytes: owners.len() as u64 * OWNER_METADATA_BYTES.load(Ordering::Acquire),
+            call_slots_static_bytes: calls::registry_metadata_bytes(),
+        }
+    })
 }
 
 #[cfg(test)]

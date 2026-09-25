@@ -10,7 +10,8 @@ fn production_overrun_stops_preparation_before_retry_or_publication() {
         crate::Renderer::new(&device, &queue, wgpu::TextureFormat::Rgba8UnormSrgb, 4).unwrap();
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut prepared =
-        crate::PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+        crate::PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+            .unwrap();
     let mut run = prepared.menu_overlay_text_runs[0].clone();
     run.text = "W".into();
     run.rich_spans.clear();

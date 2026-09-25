@@ -5,14 +5,21 @@ use super::*;
 impl Runtime {
     pub(super) fn prepared_scene(&mut self) -> Option<&PreparedScene> {
         if self.prepared_scene.is_none() {
-            self.scene_dirty = false;
             if !self.ensure_retained_scene() {
                 return None;
             }
-            self.prepared_scene = Some(
-                self.build_terminal_prepared_scene()
-                    .expect("approved active TerminalCore snapshot fits production limits"),
-            );
+            match self.build_terminal_prepared_scene() {
+                Ok(scene) => {
+                    self.prepared_scene = Some(scene);
+                    self.scene_dirty = false;
+                }
+                Err(error) => {
+                    append_gui_verbose_diagnostic_line(|| {
+                        format!("scene preparation refused: {error:#}")
+                    });
+                    return None;
+                }
+            }
         }
         self.prepared_scene.as_ref()
     }
@@ -33,7 +40,7 @@ impl Runtime {
             .retained_scene
             .as_ref()
             .context("retained scene should exist before prepared scene rebuild")?;
-        let mut prepared = self.renderer.prepare_workspace_with_terminal_renderer(
+        let preparation = self.renderer.prepare_workspace_with_terminal_renderer(
             self.session.workspace(),
             self.config.width,
             self.config.height,
@@ -44,6 +51,17 @@ impl Runtime {
             Some(&mut self.terminal_render_cache),
             false,
         );
+        let mut prepared = match preparation {
+            Ok(prepared) => prepared,
+            Err(error) => {
+                let damage = terminal_panes
+                    .into_iter()
+                    .map(|pane| (pane.session_id, pane.damage))
+                    .collect::<Vec<_>>();
+                self.terminal_sessions.restore_render_damage(damage);
+                return Err(error);
+            }
+        };
         if let Some(camera) = schematic_camera {
             prepared.set_schematic_camera(camera);
         }

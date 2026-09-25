@@ -186,7 +186,8 @@ mod tests {
         SOLVES.with(|count| count.set(0));
         let retained = crate::RetainedScene::from_workspace(&state, 1280, 800);
         let camera = crate::CameraState::fit_to_bounds(&state.scene.bounds);
-        let first = crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+        let first =
+            crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         let layers = |scene: &crate::PreparedScene| {
             scene
                 .hit_regions
@@ -203,7 +204,8 @@ mod tests {
         let initial = layers(&first);
         assert!(!initial.is_empty());
         state.scene.layers[0].name = "Renamed layer".to_owned();
-        let next = crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+        let next =
+            crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         assert_eq!(
             initial,
             layers(&next),

@@ -289,7 +289,8 @@ mod tests {
         let retained = crate::RetainedScene::from_workspace(&state, 1280, 800);
         let camera = crate::CameraState::fit_to_bounds(&state.scene.bounds);
         for _ in 0..3 {
-            let _ = crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+            let _ =
+                crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         }
         assert_eq!(
             SOLVES.with(|count| count.get()),
@@ -297,7 +298,8 @@ mod tests {
             "warm Inspector frames must reuse both layouts"
         );
         state.review.proposal_actions[0].net_name = "CACHE_NET".to_owned();
-        let prepared = crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained);
+        let prepared =
+            crate::PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         assert!(prepared.text_runs.iter().any(|run| run.text == "CACHE_NET"));
         assert_eq!(SOLVES.with(|count| count.get()), [1, 1]);
     }

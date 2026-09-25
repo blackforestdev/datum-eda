@@ -7,7 +7,8 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
     for overlay_only in [true, false] {
         let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
         let mut prepared =
-            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+                .unwrap();
         let template = prepared.menu_overlay_text_runs[0].clone();
         let runs: Vec<_> = (0..6)
             .map(|i| {
@@ -204,7 +205,8 @@ fn text_cache_pressure_refuses_before_glyphs_and_retries_current_frame() {
     for overlay_only in [true, false] {
         let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
         let mut prepared =
-            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+            PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+                .unwrap();
         if !overlay_only {
             prepared.text_runs = vec![prepared.menu_overlay_text_runs[0].clone()];
         }

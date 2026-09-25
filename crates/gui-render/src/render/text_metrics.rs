@@ -1,44 +1,21 @@
 //! Font identity and bounded exact text measurements shared by UI layout and rendering.
 
 use super::*;
+use glyphon::{Attrs, Color, Family, Weight};
 
 #[path = "text_shape.rs"]
-mod text_shape;
+pub(crate) mod text_shape;
 
-/// Shared, lazily-initialized measuring `FontSystem` loaded with the SAME vendored
-/// IBM Plex faces the renderer uses (`load_datum_fonts`), so a measured width here
-/// matches what gpu.rs actually shapes. Kept separate from the renderer's own
-/// `FontSystem` because measurement happens during scene preparation (no GPU) and
-/// must stay deterministic across threads (goldens depend on it).
-static MEASURE_FS: std::sync::OnceLock<std::sync::Mutex<FontSystem>> = std::sync::OnceLock::new();
+#[path = "measurement_owner.rs"]
+pub(crate) mod measurement_owner;
 
-pub(super) fn measure_font_system() -> &'static std::sync::Mutex<FontSystem> {
-    MEASURE_FS
-        .get_or_init(|| measurement_scope().with(|| std::sync::Mutex::new(load_datum_fonts())))
-}
-
-fn measurement_scope() -> &'static crate::cpu_alloc::Scope {
-    static SCOPE: std::sync::OnceLock<crate::cpu_alloc::Scope> = std::sync::OnceLock::new();
-    SCOPE.get_or_init(|| crate::cpu_alloc::Scope::new("text-measurement"))
-}
-
-/// Discover the process font inventory and locale once for measurement and all
-/// renderers. Each consumer keeps its own mutable shaping caches; database IDs,
-/// family defaults, embedded sources and fallback locale come from one catalog.
-/// No live font-reload path exists: a future reload must replace this authority
-/// and invalidate both measurement and renderer caches as one operation.
-pub(super) fn load_datum_fonts() -> FontSystem {
-    static CATALOG: std::sync::OnceLock<(String, glyphon::fontdb::Database)> =
-        std::sync::OnceLock::new();
-    let (locale, database) = CATALOG.get_or_init(|| {
-        crate::cpu_alloc::Scope::new("shared-font-catalog").with(|| {
-            let mut fonts = FontSystem::new();
-            install_datum_font_sources(&mut fonts);
-            fonts.into_locale_and_db()
-        })
-    });
-    FontSystem::new_with_locale_and_db(locale.clone(), database.clone())
-}
+#[path = "font_catalog.rs"]
+mod font_catalog;
+#[cfg(test)]
+use font_catalog::DATUM_FONT_BYTES;
+#[cfg(test)]
+pub(super) use font_catalog::load_datum_fonts;
+pub(super) use font_catalog::try_load_datum_fonts;
 
 /// Real shaped width of a single text run, in px, using cosmic-text/glyphon with
 /// the per-`TextFace` attributes and line height of size × 1.22 used by the
@@ -47,46 +24,8 @@ pub(super) fn load_datum_fonts() -> FontSystem {
 /// with baked padding), this reflects the PROPORTIONAL IBM Plex Sans Condensed UI
 /// face, so per-label error is zero and downstream layout gaps stay uniform.
 /// Deterministic: same inputs -> same width, so it is golden-stable.
-fn measure_uncached(text: &str, size: f32, face: TextFace) -> f32 {
-    let mutex = measure_font_system();
-    let mut font_system = mutex
-        .lock()
-        .unwrap_or_else(|poisoned| poisoned.into_inner());
-    measurement_scope()
-        .with(|| text_shape::measure(&mut font_system, text, &text_attrs(face), size, None).0)
-}
-
-/// Load the vendored IBM Plex faces into the glyphon font database so chrome and
-/// on-canvas UI text render in the Design Book typeface rather than a system
-/// fallback (`docs/gui/DATUM_RENDERING_BOOK.md` §5). Embedded at compile time
-/// from the engine's vendored assets so the GUI never depends on the CWD.
-static DATUM_FONT_BYTES: [&[u8]; 6] = [
-    include_bytes!(
-        "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf"
-    ),
-    include_bytes!(
-        "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Medium.ttf"
-    ),
-    include_bytes!(
-        "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-SemiBold.ttf"
-    ),
-    include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf"),
-    include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf"),
-    include_bytes!("../../../engine/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf"),
-];
-
-fn install_datum_font_sources(font_system: &mut FontSystem) {
-    // The executable already owns immutable font bytes. Share six small Arc
-    // handles instead of allocating another Vec for every font system/renderer.
-    // Keep load order and per-system databases/shaping caches unchanged.
-    static SOURCES: std::sync::OnceLock<[glyphon::fontdb::Source; 6]> = std::sync::OnceLock::new();
-    let sources = SOURCES.get_or_init(|| {
-        DATUM_FONT_BYTES.map(|bytes| glyphon::fontdb::Source::Binary(std::sync::Arc::new(bytes)))
-    });
-    let db = font_system.db_mut();
-    for source in sources {
-        db.load_font_source(source.clone());
-    }
+fn measure_uncached(text: &str, size: f32, face: TextFace) -> anyhow::Result<f32> {
+    Ok(measurement_owner::measure(text, size, face, None)?.0)
 }
 
 pub(super) fn text_attrs(face: TextFace) -> Attrs<'static> {
@@ -116,37 +55,38 @@ thread_local! {
     static MEASUREMENTS: std::cell::RefCell<MeasurementCache> = std::cell::RefCell::default();
 }
 
-pub(super) fn measured_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
+pub(super) fn measured_text_run_width_px(
+    text: &str,
+    size: f32,
+    face: TextFace,
+) -> anyhow::Result<f32> {
     MEASUREMENTS.with(|cache| {
         cache
             .borrow_mut()
-            .measure(text, size, face, || measure_uncached(text, size, face))
+            .try_measure_kind(text, size, face, MeasurementKind::Width, || {
+                measure_uncached(text, size, face)
+            })
     })
 }
 
 /// Wrapped height uses the same immutable font/metric authority as width.
-/// The effective integer wrap width is a layout dependency, not placement.
+/// Failed measurements never enter the scalar cache.
 pub(super) fn measured_text_run_height_px(
     text: &str,
     width: f32,
     size: f32,
     face: TextFace,
-) -> f32 {
+) -> anyhow::Result<f32> {
     let width = width.ceil().max(1.0);
     MEASUREMENTS.with(|cache| {
-        cache.borrow_mut().measure_kind(
+        cache.borrow_mut().try_measure_kind(
             text,
             size,
             face,
             MeasurementKind::WrappedHeight(width.to_bits()),
             || {
-                let mut fonts = crate::measure_font_system()
-                    .lock()
-                    .unwrap_or_else(|poisoned| poisoned.into_inner());
-                let (_, rows) = measurement_scope().with(|| {
-                    text_shape::measure(&mut fonts, text, &text_attrs(face), size, Some(width))
-                });
-                rows.max(1) as f32 * (size * 1.22)
+                let (_, rows) = measurement_owner::measure(text, size, face, Some(width))?;
+                Ok(rows.max(1) as f32 * (size * 1.22))
             },
         )
     })
@@ -163,17 +103,17 @@ pub(super) fn text_color(color: [f32; 3]) -> Color {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use glyphon::{Buffer, Metrics, Shaping};
+    use glyphon::{Buffer, FontSystem, Metrics, Shaping};
 
     #[test]
     fn wrapped_height_reuses_only_matching_layout_dependencies() {
         MEASUREMENTS.with(|cache| *cache.borrow_mut() = MeasurementCache::default());
         let text = "A wrapped Console history record with several words.";
-        let height = measured_text_run_height_px(text, 99.25, 12.0, TextFace::Mono);
+        let height = measured_text_run_height_px(text, 99.25, 12.0, TextFace::Mono).unwrap();
         let misses = || MEASUREMENTS.with(|cache| cache.borrow().misses);
         assert_eq!(misses(), 1);
         assert_eq!(
-            measured_text_run_height_px(text, 100.0, 12.0, TextFace::Mono),
+            measured_text_run_height_px(text, 100.0, 12.0, TextFace::Mono).unwrap(),
             height
         );
         assert_eq!(
@@ -181,12 +121,12 @@ mod tests {
             1,
             "effective width matches; no buffer or shaping work"
         );
-        let wide = measured_text_run_height_px(text, 500.0, 12.0, TextFace::Mono);
+        let wide = measured_text_run_height_px(text, 500.0, 12.0, TextFace::Mono).unwrap();
         assert!(wide < height);
         assert_eq!(misses(), 2);
-        measured_text_run_height_px(text, 100.0, 13.0, TextFace::Mono);
-        measured_text_run_height_px(text, 100.0, 12.0, TextFace::Ui);
-        measured_text_run_width_px(text, 12.0, TextFace::Mono);
+        measured_text_run_height_px(text, 100.0, 13.0, TextFace::Mono).unwrap();
+        measured_text_run_height_px(text, 100.0, 12.0, TextFace::Ui).unwrap();
+        measured_text_run_width_px(text, 12.0, TextFace::Mono).unwrap();
         assert_eq!(misses(), 5, "size, face and measurement kind are distinct");
     }
 

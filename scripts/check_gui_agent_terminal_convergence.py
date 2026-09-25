@@ -502,7 +502,7 @@ def main() -> int:
         + TERMINAL_DRAIN_TESTS.read_text()
         + TERMINAL_CLOSE_TESTS.read_text()
     )
-    render_geometry = RENDER_GEOMETRY.read_text() + RENDER_GEOMETRY.with_name("text_metrics.rs").read_text()
+    render_geometry = "\n".join(RENDER_GEOMETRY.with_name(name).read_text() for name in ("geometry.rs", "text_metrics.rs", "font_catalog.rs", "text_presentation.rs"))
     text_buffer_cache = (
         TEXT_BUFFER_CACHE.read_text()
         + TEXT_BUFFER_CACHE.with_name("text_cache_retention.rs").read_text()

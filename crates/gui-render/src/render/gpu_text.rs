@@ -79,6 +79,7 @@ impl Renderer {
             &mut self.text_buffers,
             &mut self.swash_cache,
             &mut self.font_system,
+            &mut self.measurement_fonts,
             &self.atlas.staging_budget,
             staging,
         );
@@ -381,6 +382,7 @@ impl Renderer {
             &mut self.text_buffers,
             &mut self.swash_cache,
             &mut self.font_system,
+            &mut self.measurement_fonts,
             &self.atlas.staging_budget,
             bytes,
         );

@@ -31,7 +31,8 @@ fn revision_pane_keeps_design_surfaces_board_hits_and_witness_summary_live() {
         1000,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     assert!(
         prepared
@@ -83,7 +84,8 @@ fn revision_pane_keeps_design_surfaces_board_hits_and_witness_summary_live() {
         1000,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
     assert!(
         prepared
             .text_runs
@@ -184,7 +186,8 @@ fn unmanaged_default_workspace_has_no_revision_presentation_or_hits() {
         800,
         CameraState::fit_to_bounds(&state.scene.bounds),
         &retained,
-    );
+    )
+    .unwrap();
 
     for forbidden in [
         "Changes  1 draft",

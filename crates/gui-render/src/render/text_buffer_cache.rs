@@ -1,5 +1,6 @@
 //! Shared shaped-buffer ownership and bounded workspace/dialog retention.
 use super::*;
+use glyphon::TextBounds;
 #[path = "text_cache_admission.rs"]
 mod admission;
 #[path = "text_cache_budget.rs"]
