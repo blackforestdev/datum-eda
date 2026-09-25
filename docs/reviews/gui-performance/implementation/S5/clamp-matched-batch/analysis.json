@@ -1,0 +1,1825 @@
+{
+  "qualification_pass": false,
+  "runs": [
+    {
+      "role": "candidate",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-edges-native-y2pegrfz",
+      "returncode": 0,
+      "verbose_log": "1",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 411182,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 14.68094,
+              "p50": 16.667676,
+              "p95": 16.875351,
+              "p99": 17.024843,
+              "max": 18.557412
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.006848,
+              "p50": 0.150794,
+              "p95": 0.282613,
+              "p99": 0.30973,
+              "max": 2.093336
+            },
+            "native_first_to_last_seconds": 29.983766637,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, -1.0"
+          ],
+          "active_elapsed_seconds": 30.055646693,
+          "active_cpu_ms": 944.077,
+          "gui_cpu_ms": 944.077897,
+          "active_cpu_percent": 3.1410969447544006,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5244872222222222,
+          "tail_cpu_ms": 1.9439999999999458,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": null,
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101292582138779,
+            "finished_ns": 1101292867556693,
+            "cpu_ms": 2.5159999999999627,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101292867308623,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 16.161458,
+              "p50": 16.669969,
+              "p95": 16.873599,
+              "p99": 16.974224,
+              "max": 17.395733
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.008627,
+              "p50": 0.152903,
+              "p95": 0.285717,
+              "p99": 0.304422,
+              "max": 0.55471
+            },
+            "native_first_to_last_seconds": 29.983712362,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, 1.0"
+          ],
+          "active_elapsed_seconds": 30.058468921,
+          "active_cpu_ms": 967.3790000000002,
+          "gui_cpu_ms": 967.378703,
+          "active_cpu_percent": 3.218324268419914,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5374327777777779,
+          "tail_cpu_ms": 2.0729999999997695,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": null,
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101334429129006,
+            "finished_ns": 1101334688256980,
+            "cpu_ms": 2.275000000000027,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101334687928491,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "baseline",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-q7sjbqg3",
+      "returncode": 0,
+      "verbose_log": "0",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 411718,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.00844,
+              "p50": 0.154893,
+              "p95": 0.285879,
+              "p99": 0.30562,
+              "max": 0.477009
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.059889901,
+          "active_cpu_ms": 464.17200000000025,
+          "gui_cpu_ms": 464.171729,
+          "active_cpu_percent": 1.5441573523014092,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.9689999999998875,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101398141819017,
+            "finished_ns": 1101398413478264,
+            "cpu_ms": 2.3460000000001813,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101398413247656,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007721,
+              "p50": 0.148434,
+              "p95": 0.277414,
+              "p99": 0.307626,
+              "max": 1.848767
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.053607644,
+          "active_cpu_ms": 464.27700000000004,
+          "gui_cpu_ms": 464.277543,
+          "active_cpu_percent": 1.5448295109844818,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.9519999999997317,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101440243713038,
+            "finished_ns": 1101440510995540,
+            "cpu_ms": 2.2020000000000373,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101440510755783,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "quiet",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-u7zdqxek",
+      "returncode": 0,
+      "verbose_log": "0",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 412241,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007195,
+              "p50": 0.148782,
+              "p95": 0.282473,
+              "p99": 0.305423,
+              "max": 5.093274
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.058583567,
+          "active_cpu_ms": 462.8079999999999,
+          "gui_cpu_ms": 462.807942,
+          "active_cpu_percent": 1.5396866554553703,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 2.0570000000001976,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101485414320387,
+            "finished_ns": 1101485688164874,
+            "cpu_ms": 1.9239999999998147,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101485687864669,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.011821,
+              "p50": 0.154392,
+              "p95": 0.291985,
+              "p99": 0.327756,
+              "max": 0.56812
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.05829639,
+          "active_cpu_ms": 450.39799999999985,
+          "gui_cpu_ms": 450.397928,
+          "active_cpu_percent": 1.4984149273005418,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.9439999999999458,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101527535080759,
+            "finished_ns": 1101527838537159,
+            "cpu_ms": 2.16800000000017,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101527838311898,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "verbose",
+      "trial": 1,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-dkh6ngz_",
+      "returncode": 0,
+      "verbose_log": "1",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 413013,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 15.431584,
+              "p50": 16.66886,
+              "p95": 16.868451,
+              "p99": 16.969599,
+              "max": 17.949043
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007777,
+              "p50": 0.150591,
+              "p95": 0.279671,
+              "p99": 0.3004,
+              "max": 1.271778
+            },
+            "native_first_to_last_seconds": 29.98378046,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, -1.0"
+          ],
+          "active_elapsed_seconds": 30.055890458,
+          "active_cpu_ms": 930.7030000000001,
+          "gui_cpu_ms": 930.70282,
+          "active_cpu_percent": 3.0965743680113595,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5170572222222223,
+          "tail_cpu_ms": 1.894999999999758,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101572716761462,
+            "finished_ns": 1101572982705268,
+            "cpu_ms": 2.8130000000001765,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101572982453459,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 15.88231,
+              "p50": 16.668112,
+              "p95": 16.855469,
+              "p99": 16.986818,
+              "max": 17.333516
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.010398,
+              "p50": 0.154823,
+              "p95": 0.283355,
+              "p99": 0.333218,
+              "max": 0.611439
+            },
+            "native_first_to_last_seconds": 29.983820596,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, 1.0"
+          ],
+          "active_elapsed_seconds": 30.054660086,
+          "active_cpu_ms": 959.2109999999998,
+          "gui_cpu_ms": 959.211616,
+          "active_cpu_percent": 3.1915549776815393,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5328949999999999,
+          "tail_cpu_ms": 2.0220000000001903,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101614769204510,
+            "finished_ns": 1101615063571384,
+            "cpu_ms": 2.647000000000066,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101615063250725,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "verbose",
+      "trial": 2,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-rtb617wh",
+      "returncode": 0,
+      "verbose_log": "1",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 413523,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 11.724096,
+              "p50": 16.667001,
+              "p95": 16.880301,
+              "p99": 16.975548,
+              "max": 21.512928
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.006992,
+              "p50": 0.156984,
+              "p95": 0.29684,
+              "p99": 0.34083,
+              "max": 0.636148
+            },
+            "native_first_to_last_seconds": 29.983745378,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, -1.0"
+          ],
+          "active_elapsed_seconds": 30.05404939,
+          "active_cpu_ms": 954.2949999999998,
+          "gui_cpu_ms": 954.295034,
+          "active_cpu_percent": 3.1752626330531224,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5301638888888888,
+          "tail_cpu_ms": 1.9569999999999865,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101659906520666,
+            "finished_ns": 1101660173576653,
+            "cpu_ms": 3.01399999999985,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101660173276624,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 14.249962,
+              "p50": 16.66896,
+              "p95": 16.862077,
+              "p99": 16.972024,
+              "max": 19.122854
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007803,
+              "p50": 0.153628,
+              "p95": 0.285799,
+              "p99": 0.303469,
+              "max": 2.567612
+            },
+            "native_first_to_last_seconds": 29.983842397,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, 1.0"
+          ],
+          "active_elapsed_seconds": 30.056154461,
+          "active_cpu_ms": 966.5439999999999,
+          "gui_cpu_ms": 966.544454,
+          "active_cpu_percent": 3.2157939607815083,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5369688888888888,
+          "tail_cpu_ms": 2.0210000000000505,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101702050241208,
+            "finished_ns": 1101702318240789,
+            "cpu_ms": 3.1880000000001907,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101702316992454,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "quiet",
+      "trial": 2,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-gqdbccph",
+      "returncode": 0,
+      "verbose_log": "0",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 413962,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007005,
+              "p50": 0.152825,
+              "p95": 0.286478,
+              "p99": 0.342584,
+              "max": 0.659326
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.056248908,
+          "active_cpu_ms": 456.866,
+          "gui_cpu_ms": 456.865813,
+          "active_cpu_percent": 1.5200366532711174,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 2.104000000000106,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101747155310263,
+            "finished_ns": 1101747430732083,
+            "cpu_ms": 1.9849999999999035,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101747430491881,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007737,
+              "p50": 0.15555,
+              "p95": 0.305202,
+              "p99": 0.354164,
+              "max": 0.628916
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.056811795,
+          "active_cpu_ms": 448.20400000000006,
+          "gui_cpu_ms": 448.203975,
+          "active_cpu_percent": 1.4911894283962597,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.9560000000002908,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101789282363326,
+            "finished_ns": 1101789540877830,
+            "cpu_ms": 2.599000000000018,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101789540633564,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "baseline",
+      "trial": 2,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-jpnw1v6e",
+      "returncode": 0,
+      "verbose_log": "0",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 414500,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007248,
+              "p50": 0.151941,
+              "p95": 0.292746,
+              "p99": 0.323483,
+              "max": 0.402007
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.056413781,
+          "active_cpu_ms": 441.8239999999998,
+          "gui_cpu_ms": 441.823354,
+          "active_cpu_percent": 1.4699824244477777,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.9759999999999778,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101834471090572,
+            "finished_ns": 1101834750430554,
+            "cpu_ms": 1.7960000000001308,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101834750075277,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.028111,
+              "p50": 0.152694,
+              "p95": 0.283139,
+              "p99": 0.307085,
+              "max": 0.383198
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.070271801,
+          "active_cpu_ms": 450.5569999999999,
+          "gui_cpu_ms": 450.556469,
+          "active_cpu_percent": 1.4983469487130356,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.895000000000202,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101876607494612,
+            "finished_ns": 1101876881858572,
+            "cpu_ms": 1.719000000000026,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101876881501108,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "baseline",
+      "trial": 3,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-uj8tzbuk",
+      "returncode": 0,
+      "verbose_log": "0",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 415300,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.006743,
+              "p50": 0.15238,
+              "p95": 0.282024,
+              "p99": 0.301555,
+              "max": 1.934382
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.056468142,
+          "active_cpu_ms": 461.29699999999985,
+          "gui_cpu_ms": 461.29685,
+          "active_cpu_percent": 1.5347678170989005,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.8850000000001366,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1101921768247445,
+            "finished_ns": 1101922070773043,
+            "cpu_ms": 1.9249999999999545,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101922070514364,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.007184,
+              "p50": 0.153804,
+              "p95": 0.290056,
+              "p99": 0.322443,
+              "max": 0.823575
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.057872945,
+          "active_cpu_ms": 470.91100000000006,
+          "gui_cpu_ms": 470.910267,
+          "active_cpu_percent": 1.5666810517885768,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.971000000000167,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1101963972756032,
+            "finished_ns": 1101964254985945,
+            "cpu_ms": 1.7820000000003944,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1101964254737155,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "quiet",
+      "trial": 3,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-hi74o6ac",
+      "returncode": 0,
+      "verbose_log": "0",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 415757,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.010988,
+              "p50": 0.149975,
+              "p95": 0.282773,
+              "p99": 0.302945,
+              "max": 0.35289
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.05910547,
+          "active_cpu_ms": 455.9839999999999,
+          "gui_cpu_ms": 455.983261,
+          "active_cpu_percent": 1.5169579828484496,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 1.9499999999998963,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1102009178761425,
+            "finished_ns": 1102009467633930,
+            "cpu_ms": 1.7279999999999518,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1102009467384089,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": null,
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.026039,
+              "p50": 0.152168,
+              "p95": 0.287172,
+              "p99": 0.33217,
+              "max": 1.06449
+            },
+            "native_first_to_last_seconds": null,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 0,
+          "deltas": [],
+          "active_elapsed_seconds": 30.056947276,
+          "active_cpu_ms": 433.503,
+          "gui_cpu_ms": 433.502551,
+          "active_cpu_percent": 1.4422722175320357,
+          "quiet_cpu_duty_cap_percent": 1.0,
+          "quiet_cpu_duty_pass": false,
+          "cpu_ms_per_received_event": null,
+          "tail_cpu_ms": 2.1500000000003183,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1102051353955295,
+            "finished_ns": 1102051651210872,
+            "cpu_ms": 2.2880000000000678,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1102051650927527,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "verbose",
+      "trial": 3,
+      "gpu": 0,
+      "path": "/tmp/pm045-clamp-matched-native-j4uzetqy",
+      "returncode": 0,
+      "verbose_log": "1",
+      "normal_exit_code": 0,
+      "harness_error": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 416234,
+        "device_epoch": 1
+      },
+      "bounds": [
+        {
+          "bound": "minimum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 15.171815,
+              "p50": 16.668733,
+              "p95": 16.879997,
+              "p99": 17.014507,
+              "max": 18.255573
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.008002,
+              "p50": 0.1517,
+              "p95": 0.279356,
+              "p99": 0.303264,
+              "max": 1.147231
+            },
+            "native_first_to_last_seconds": 29.983701044,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, -1.0"
+          ],
+          "active_elapsed_seconds": 30.056671883,
+          "active_cpu_ms": 951.366,
+          "gui_cpu_ms": 951.365443,
+          "active_cpu_percent": 3.1652406617184083,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5285366666666667,
+          "tail_cpu_ms": 1.9500000000003403,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 3,
+            "end_sample": 4,
+            "started_ns": 1102096567147667,
+            "finished_ns": 1102096869208113,
+            "cpu_ms": 2.4760000000001448,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1102096868953812,
+                "pixel_AE": "71617"
+              }
+            ],
+            "changed": true
+          }
+        },
+        {
+          "bound": "maximum",
+          "cadence": {
+            "native_interarrival_ms": {
+              "n": 1799,
+              "min": 16.200077,
+              "p50": 16.669074,
+              "p95": 16.860931,
+              "p99": 16.962724,
+              "max": 17.281406
+            },
+            "driver_lateness_ms": {
+              "n": 1800,
+              "min": 0.011168,
+              "p50": 0.151602,
+              "p95": 0.282038,
+              "p99": 0.299624,
+              "max": 0.582043
+            },
+            "native_first_to_last_seconds": 29.983791104,
+            "clock_limit": "Native wall-clock cadence only; no cross-clock or physical presentation latency inference."
+          },
+          "scheduled_transitions": 1800,
+          "received_wheel_events": 1800,
+          "deltas": [
+            "0.0, 1.0"
+          ],
+          "active_elapsed_seconds": 30.052978235,
+          "active_cpu_ms": 950.3140000000001,
+          "gui_cpu_ms": 950.313762,
+          "active_cpu_percent": 3.1621291992061367,
+          "quiet_cpu_duty_cap_percent": null,
+          "quiet_cpu_duty_pass": null,
+          "cpu_ms_per_received_event": 0.5279522222222223,
+          "tail_cpu_ms": 1.9859999999995992,
+          "active_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 1800
+          },
+          "tail_counts": {
+            "redraw handler begin": 0,
+            "prepared scene build begin": 0,
+            "retained scene build begin": 0,
+            "frame present begin": 0,
+            "native upload frame": 0,
+            "mouse wheel delta=": 0
+          },
+          "positive_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "endpoint_AE": "0",
+          "pilot_endpoint_comparisons": {
+            "before": "0",
+            "after": "0",
+            "reversal": "0"
+          },
+          "cleanup_counts": {
+            "redraw handler begin": 1,
+            "prepared scene build begin": 1,
+            "retained scene build begin": 0,
+            "frame present begin": 1,
+            "native upload frame": 1,
+            "mouse wheel delta=": 1
+          },
+          "positive_readback": {
+            "start_sample": 8,
+            "end_sample": 9,
+            "started_ns": 1102138736326931,
+            "finished_ns": 1102139030552013,
+            "cpu_ms": 2.5780000000001912,
+            "pixel_polls": [
+              {
+                "monotonic_ns": 1102139030314821,
+                "pixel_AE": "113152"
+              }
+            ],
+            "changed": true
+          }
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Corrected driver alternates pressed/released wheel edges at60Hz; original paired-driver method failure is separately retained. Verbose trials verify1800 native events per bound and one positive event. Quiet trials intentionally lack received-event and work counters. All endpoints compared with corrected pilot; no silent attribution of verbose counts to quiet trials.",
+    "Resource observations use diagnostics off, structural counters use separate matched diagnostics-on trials. No overhead subtraction; three pairs do not meet seven-pair formal relative inference. CPU/action quiet semantic acknowledgements are missing and therefore not inferred from scheduled input.",
+    "Camera numeric state and unrelated cameras are not instrumented. Exact endpoint images and submission logs do not establish physical presentation latency or whole-client GPU inactivity.",
+    "Release after single positive press produces a second inward event only in an explicitly separate cleanup interval; it is not included in the positive-control result. No defect-injection negative control, complete resource/backend-scale/endurance/distinct-reviewer or owner UX acceptance."
+  ]
+}

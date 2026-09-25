@@ -3663,6 +3663,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-native-diagnostic/result.json",
         "status": "Clamp diagnostic only: input rate and single-reversal recipe not satisfied; S5 remains incomplete"
+      },
+      "s5_clamp_matched_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
+        "status": "Corrected clamp input; quiet CPU ceiling not met; S5 remains incomplete"
       }
     },
     {
@@ -4388,6 +4393,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-native-diagnostic/result.json",
         "status": "Clamp diagnostic only: input rate and single-reversal recipe not satisfied; S5 remains incomplete"
+      },
+      "s5_clamp_matched_batch": {
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
+        "status": "Corrected clamp input; quiet CPU ceiling not met; S5 remains incomplete"
       }
     },
     {
