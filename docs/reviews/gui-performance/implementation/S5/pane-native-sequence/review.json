@@ -1,0 +1,56 @@
+{
+  "status": "partial native structural evidence; no S5 acceptance",
+  "frontier_step": "GPI-S5",
+  "candidate_commit": "2bfbef1d8d46537ef83641dead7d3c61b8ff26a4",
+  "binary_sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+  "normalized_model_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "scope": "Pinned F-DOA Board plus existing unadmitted Schematic placeholder, X11/Xwayland Intel P630 Vulkan, physical display1x60Hz; client1280x800; no resolved schematic claim. Default split creates complementary content; native production semantics unchanged.",
+  "recipe": "five second warmup, 60 actions at 500ms start intervals: split vertical, focus next, close focused, focus next; initial/final Board plus unadmitted Schematic placeholder leaves; five second tail",
+  "result": {
+    "actions": 60,
+    "cycles": 15,
+    "native_enter_presses": 60,
+    "native_down_presses": 630,
+    "workload_seconds": 30.000160767,
+    "max_controller_start_lateness_ms": 12.044659,
+    "max_controller_ack_elapsed_ms": 212.739322,
+    "latency_limit": "controller/menu-navigation elapsed, not semantic action CPU or calibrated input-to-photon latency",
+    "endpoint_board_interior_rgb_ae": 0,
+    "endpoint_board_crop": [
+      227,
+      65,
+      981,
+      384
+    ],
+    "rejected_crop": {
+      "rectangle": [
+        227,
+        65,
+        981,
+        385
+      ],
+      "rgb_ae": 754,
+      "difference": "All754 pixels on y384 are the focus border, not Board interior; preserved analyzerv1 failed at this assertion."
+    },
+    "endpoint_scope": "Board interior only; focus/header/footer/console appropriately differ; no full-image equality claim",
+    "normal_exit": 0,
+    "device_live_receipt": {
+      "phase": "drained_device_live",
+      "pid": 493529,
+      "device_epoch": 1
+    },
+    "qualification_pass": false
+  },
+  "native_state_oracles": "Every accepted menu action has native Enter receipt plus observed menu closure, console echo and exact pane-state transition. Pane actions are not covered by the opt-in registry dispatch emitter. Split adds complementary content with inherited active Board camera and retains existing ids/cameras/focus; focus follows ordered leaves; close removes only focused id and retains survivors; after every four actions original two ids survive. No project edits.",
+  "failure_retained": "v1 completed the first split but waited for an unavailable registry dispatch record. It also incorrectly described all leaves as Board. Native input was delivered; default split adds complementary Schematic content. Forced cleanup and display restoration retained. v2 uses native Enter delivery, menu/echo/state receipts and explicit placeholder scope, not a performance rerun.",
+  "visual_review": "Both endpoint compositor captures inspected. Board content remains exact within the declared interior crop. Focus moves to Schematic placeholder after15cycles, headers/footer and echo reflect the last action.",
+  "remaining": [
+    "Three-trial native configuration coverage and distinct reviewer replay",
+    "Wayland and supported physical scale rows",
+    "Prescribed mutation negatives, hidden-store retirement and document replacement",
+    "Complete resource/no-leak and numerical CPU/GPU/latency proof",
+    "Resolved schematic fixture admission, T2 and all pinned resize/temporal exclusions remain unqualified",
+    "Endurance and owner UX acceptance"
+  ],
+  "preserved": "No product/dependency changes; S0-S4 and GEFN preserved. No acceptance rules or row statuses changed."
+}
