@@ -653,3 +653,6 @@ mod text_paint_tests;
 
 #[path = "overlay_cache_reuse_tests.rs"]
 mod overlay_cache_reuse_tests;
+
+#[path = "world_pipeline_tests.rs"]
+mod world_pipeline_tests;

@@ -1,0 +1,44 @@
+{
+  "status": "bounded production correction; full S5 acceptance remains open",
+  "baseline_source": "5dee59af",
+  "change": "Per-renderer OnceLock constructs unchanged world pipelines on first general render; overlay-only hosts omit unused world pipeline creation. Renderer replacement starts empty.",
+  "proof": {
+    "focused_gpu": "1 passed, 0 failed; serial Intel HD Graphics P630 Vulkan; 4x and 8x MSAA; exact eager/lazy overlay and cold/warm board pixels, stable warm handles, fresh replacement handles and exact replacement pixels",
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --lib world_pipelines_are_lazy_reused_and_recreated_without_pixel_changes --offline -- --ignored --test-threads=1",
+    "world_shader_sha256": "a306ddd422f9061cf5bc01ab495879d45d597f1d8b5d4510684bd31c8e2e7857",
+    "descriptors": "World layout and quad descriptors unchanged apart from borrowed layout argument; stroke factory unchanged.",
+    "compile": "Guarded offline cargo check --tests passes both --no-default-features and --features visual after pollster guard fix 5dee59af.",
+    "gates": "Source health 2555 files, dependency authority, cargo resource policy and 20 spec parity inventories pass."
+  },
+  "failures_preserved": {
+    "sandbox": "CPU adapter rejected before assertions",
+    "empty-fixture": "Initial fixture had no world commands; corrected to existing board_fixture_state",
+    "missing-8x-feature": "4x checks completed, 8x device validation rejected missing TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES; corrected test device request",
+    "preflight": "Initial guarded run refused tmp free space below 6 GiB. Existing raw evidence moved intact to disk-backed target, with original path symlink; no shared cache cleanup."
+  },
+  "limitations": [
+    "No measured native opening-time improvement or budget pass claimed.",
+    "Existing replay packet pins previous production binary and sources; final candidate must be rebuilt and repinned before independent replay.",
+    "Same physical GPU renderer replacement is not full device-loss or endurance qualification.",
+    "Simple-demo board checks pipeline correctness, not ADM tier qualification.",
+    "All prior failures, GEFN, PM029/PM047, Vulkan upload-before-acquire ordering and nonblocking resize exclusions retained."
+  ],
+  "logs": {
+    "sandbox": {
+      "path": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/sandbox.log.gz",
+      "sha256": "21941b8c22d3a6728b09f7a89dc91bfbaea865a7c8936f9de227a5f16d13d5da"
+    },
+    "empty-fixture": {
+      "path": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/empty-fixture.log.gz",
+      "sha256": "c659f7485ae4b6b79f807d234703a67ad3bc29ad4ca45627931f1160fcefacc2"
+    },
+    "missing-8x-feature": {
+      "path": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/missing-8x-feature.log.gz",
+      "sha256": "b848754e61bce570e7be0a5f209d1679d356deb237ec05ec265da8d7120f48bc"
+    },
+    "pass": {
+      "path": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/pass.log.gz",
+      "sha256": "981c0b573c344865d53d95a6469273c43ffd454031e87f9faee5680d9abba915"
+    }
+  }
+}
