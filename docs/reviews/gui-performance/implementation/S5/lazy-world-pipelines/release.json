@@ -1,0 +1,20 @@
+{
+  "source_commit": "3cd685d2f6b2cfdb43ad2528d86da0ec12fdc6c2",
+  "candidate_binary": "target/pm045-independent-replay-artifacts/candidate-3cd685d2-datum-gui",
+  "sha256": "6d3db36c7060218f00c2751728b0bd5938799f4ac48b495c649b65d5a9edda9f",
+  "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release -p datum-gui-app --bin datum-gui --offline",
+  "result": "exit 0",
+  "source_bindings": 1977,
+  "previous_candidate_preserved": {
+    "production_commit": "b7b5fcf1",
+    "evidence_commit": "1adc661f",
+    "binary": "target/pm045-independent-replay-artifacts/candidate-datum-gui",
+    "sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+    "binding": "native-owner-focus/result.json plus controls/panes/quad-trial restoration evidence; complete current tracked source hashes in source-bindings.json",
+    "final_candidate": false
+  },
+  "previous_packet_archive_sha256": "fbf785b9d6559d3f5748f4ca9cb997de088302b8b1fd95697a45dc95856f14c8",
+  "release_log_sha256": "fd864ab9fdaa86928bc3a6ac9f42f5108db9ea2b75e9a969f65cda3a8d7c95fa",
+  "qualification_pass": false,
+  "limitations": "Build and exact source/binary bindings only; native performance, complete qualification, final reviewer replay and owner UX remain outstanding."
+}

@@ -10,9 +10,10 @@ Use the existing adoption map and PM045/PM047 contracts as authority. The frozen
 framework. Preserve all S0–S4 implementation exits and every carried qualification
 predicate. The source snapshot includes the existing 14-consumer indexes.
 
-The candidate binary is `b8c1fa1b…`, produced by the shared X11 owner-focus repair
-and restored after the rejected quad-shader experiment. Its current source is
-bound in `source-bindings.json`. Preserved executables are on the local project
+The current candidate is `6d3db36c…`, built from `3cd685d2` after the
+lazy world-pipeline correction. Its source is bound in `source-bindings.json`.
+The prior `b8c1fa1b…` binary remains preserved; prior packet inputs are archived
+in `../lazy-world-pipelines/previous-replay-inputs.tar.gz`. Preserved executables are on the local project
 disk in `target/pm045-independent-replay-artifacts/`; hashes and source/evidence
 identifiers are in `packet.json`. These ignored binaries are not transported by
 Git. A reviewer on another machine must reproduce and pin its actual binaries;
