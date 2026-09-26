@@ -1,6 +1,7 @@
 use super::*;
 
 #[test]
+#[cfg(feature = "visual")]
 #[ignore = "requires local GPU; resource ownership conformance; run serially"]
 fn local_observation_preserves_budget_identity_without_retaining_gpu_resources() {
     let instance = wgpu::Instance::default();
