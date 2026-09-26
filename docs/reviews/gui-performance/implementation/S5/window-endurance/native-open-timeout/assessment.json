@@ -1,0 +1,60 @@
+{
+  "status": "FAILED incomplete producer endurance; no replacement or acceptance",
+  "qualification_pass": false,
+  "raw_origin": "/tmp/dev-agent-s5-endurance-4pokw9mh",
+  "candidate_binary_sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+  "engine_sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+  "driver_sha256": "7a831d9b28be73b71c44536eedb85cd3b31981505fce4e13a7ae08eefb112c2c",
+  "candidate_commit_at_launch": "6728dd90d3048501ebbd1a4877db28916f51261b",
+  "method_commit": "1509ba34",
+  "required_duration_seconds": 3600,
+  "warmup_seconds": 300,
+  "completed_first_use_cycles": 3,
+  "completed_timed_cycles": {
+    "GLOBAL": 39,
+    "PROJECT": 39,
+    "NEW": 39
+  },
+  "failed_cycle": {
+    "host": "GLOBAL",
+    "index": 117,
+    "scheduled_ns": 1156994389571508,
+    "begin_sample": 890,
+    "open_begin_sample": 891
+  },
+  "elapsed_to_last_sample_seconds": 702.316536944,
+  "error": "AssertionError('native predicate timed out')",
+  "observations": [
+    "Cycle117(GLOBAL;zero-based) timed out before recording an auxiliary window identity.117 prior timed cycles completed.",
+    "Native log shows Main focus loss at1790422371.689364025 after its menu click and pointer movements outside the declared menu positions around this failure. Final scheduled arrow/Enter input is not recorded as received by Main.",
+    "No independent device-source attribution or failure screenshot was captured. Unexpected input/focus makes this unsuitable for numerical acceptance; this record does not assign human versus application cause.",
+    "Process was in do_epoll_wait at failure capture. This does not establish the previously tracked final-close root cause.",
+    "Existing resource analyzer exited1 because GPU trace has no end record after forced termination. No bounded-drain/full-resource acceptance follows."
+  ],
+  "cleanup": {
+    "forced_cleanup": true,
+    "remaining_before_cleanup": "",
+    "display_restore_returncode": 0,
+    "binary_unchanged": true,
+    "engine_unchanged": true,
+    "fixture_unchanged": true,
+    "pinned_assets_unchanged": true,
+    "production_source_unchanged": true,
+    "cleanup_errors": null,
+    "persistence_errors": null
+  },
+  "raw_counts": {
+    "samples": 892,
+    "private_lines": 137030,
+    "gpu_lines": 87400,
+    "resource_lines": 365
+  },
+  "limits": [
+    "Less than60minutes; no first/last ten-minute drift comparison or plateau acceptance.",
+    "Diagnostics-on X11/1x F-DOA only; no observer-overhead subtraction or production budget pass.",
+    "No injected recoveries, other backend/scale, mixed PTY, resolved schematic, full instantaneous retained/scratch/driver/client qualification.",
+    "Method review is not independent native replay; owner UX disposition still separate."
+  ],
+  "raw_archive_sha256": "ab5abb639f659ce679971f7e42e5fb95e2a6bff1af7389ab893e1817c029583b",
+  "raw_members": 289
+}
