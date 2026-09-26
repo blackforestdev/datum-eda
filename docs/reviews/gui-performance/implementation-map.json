@@ -4501,6 +4501,12 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-open-timeout/assessment.json",
         "limits": "No60minute/drift/recovery/full-resource, backend-scale, independent replay or owner UX acceptance. Analyzer rejects missing final GPU end record."
+      },
+      "s5_portal_pointer_preparation": {
+        "status": "Fractional portal pointer schedule prepared and offline-checked; no native execution or qualification",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
+        "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved."
       }
     },
     {
@@ -4606,6 +4612,12 @@
         "previous_test_status": "Partial three-cycle Project native menu/Return/Escape sequence: preparation menu keys occur before CPU start; expected window pixels observed before open endpoint, close requires window destruction and focus return. First cold and two warm actions only; complete scheduled/received/saturation/per-consumer qualification remains open.",
         "status": "540 warm native menu/Return/Escape cycles across GLOBAL/PROJECT/NEW and two modes complete with focus restored. This does not qualify full semantic schedule, saturation or other workloads.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json"
+      },
+      "s5_portal_pointer_preparation": {
+        "status": "Fractional portal pointer schedule prepared and offline-checked; no native execution or qualification",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
+        "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved."
       }
     },
     {
@@ -38246,5 +38258,11 @@
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-open-timeout/assessment.json",
     "limits": "No60minute/drift/recovery/full-resource, backend-scale, independent replay or owner UX acceptance. Analyzer rejects missing final GPU end record."
+  },
+  "s5_portal_pointer_preparation": {
+    "status": "Fractional portal pointer schedule prepared and offline-checked; no native execution or qualification",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
+    "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved."
   }
 }
