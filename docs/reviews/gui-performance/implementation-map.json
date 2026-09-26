@@ -38264,5 +38264,364 @@
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
     "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved."
+  },
+  "s5_completed_test_checks": {
+    "purpose": "Owner-requested visible done checklist of existing validated tests. This is a view of preserved evidence, not a new acceptance gate or substitute for original requirements.",
+    "handoff_rule": "Completed tests stay done across agent handoffs. Only demonstrated affected behavior or unresolved acceptance gaps justify additional execution.",
+    "meaning_of_done": "The named bounded test/group passed on the candidate and configuration recorded in its evidence. Parent requirement and S5 acceptance are separate; ignored,failed,unrun and superseded measurements never become passes.",
+    "checks": [
+      {
+        "check": "\u2713 done",
+        "label": "Console regression tests",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/console-reconciliation/result.json",
+        "evidence_field": "verification.console_tests",
+        "evidence_sha256": "674d5976262ca5ca20edb547229770f9fc05106d32b99ac5faa4379e0daed1e3",
+        "validated_result": "9 passed; 0 failed",
+        "requirement_ids": [
+          "AC-08"
+        ],
+        "scope": "Console behavior on recorded candidate.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Console static goldens",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/console-reconciliation/result.json",
+        "evidence_field": "verification.goldens",
+        "evidence_sha256": "674d5976262ca5ca20edb547229770f9fc05106d32b99ac5faa4379e0daed1e3",
+        "validated_result": "10 scale cases across seven manifests; exact zero-pixel differences",
+        "requirement_ids": [
+          "AC-08"
+        ],
+        "scope": "Named Console corpus; broader visual rows remain separate.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Canonical native shell screenshot",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-parity/result.json",
+        "evidence_field": "verification.native",
+        "evidence_sha256": "2ad5ff666cc3c8344d2e6ea22e65ce7358877d8e2505959c1da3f6204971da9b",
+        "validated_result": "0.320% differing pixels and0.2914 mean channel delta; both within existing limits",
+        "requirement_ids": [
+          "AC-08"
+        ],
+        "scope": "Recorded1680x1050 fixture and backend; not every native configuration.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Reference and custom-icon gates",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-parity/result.json",
+        "evidence_field": "verification.reference_icons",
+        "evidence_sha256": "2ad5ff666cc3c8344d2e6ea22e65ce7358877d8e2505959c1da3f6204971da9b",
+        "validated_result": "Board-editor reference accepted;11custom icon checks pass",
+        "requirement_ids": [
+          "AC-08"
+        ],
+        "scope": "Recorded static references, not full product parity.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Renderer unit regression suite",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json",
+        "evidence_field": "proof.renderer",
+        "evidence_sha256": "b366c1b7a5b8effbfaecbbca29892141fc71395d3363172f46d626c696dc17ba",
+        "validated_result": "353passed;89ignored were not executed",
+        "requirement_ids": [
+          "AC-05"
+        ],
+        "scope": "Completed serial visual-feature suite; ignored tests not counted as passed.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Application unit regression suite",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/verification.json",
+        "evidence_field": "app_tests",
+        "evidence_sha256": "e975748e93b2256c185de039197fed2a3d5a62e75f79baa87bc78d6b8b60a3f6",
+        "validated_result": "400passed;17ignored;0failed",
+        "requirement_ids": [
+          "SH-10"
+        ],
+        "scope": "Completed application suite on focus-fix candidate; ignored tests not counted.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Serial GPU regression group",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json",
+        "evidence_field": "proof.gpu",
+        "evidence_sha256": "b366c1b7a5b8effbfaecbbca29892141fc71395d3363172f46d626c696dc17ba",
+        "validated_result": "33serial GPU tests pass",
+        "requirement_ids": [
+          "AC-08",
+          "PASS-RESOLVE"
+        ],
+        "scope": "Named existing group; this does not erase separately tracked concurrent-GPU failure.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Missing-final-resolve negative and restored positive",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json",
+        "evidence_field": "proof.negative",
+        "evidence_sha256": "98e0842e9bc4e67e62deb5c886169fa096be22eec459f3dd2d759534e9cf78eb",
+        "validated_result": "Injected missing resolve fails pixel oracle; restored candidate passes1/1",
+        "requirement_ids": [
+          "PASS-RESOLVE"
+        ],
+        "scope": "Final-stage ordering/resolve sensitivity, unchanged8xquality; not absoluteGPU budget.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Native menu output regression",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/final-msaa-resolve/result.json",
+        "evidence_field": "proof.native",
+        "evidence_sha256": "98e0842e9bc4e67e62deb5c886169fa096be22eec459f3dd2d759534e9cf78eb",
+        "validated_result": "Six normal runs;60menu cycles; exact baseline pixel matches",
+        "requirement_ids": [
+          "AC-08",
+          "PASS-RESOLVE"
+        ],
+        "scope": "Bounded native menu replay, not complete W-WINDOWS or performance qualification.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "X11 auxiliary focus positives and negatives",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/result.json",
+        "evidence_field": "native",
+        "evidence_sha256": "516468d7e4bab48e9eb600e158956368653be87c79db6616e4f42b01dd1e6286",
+        "validated_result": "All3missing-owner-hint negatives fail focus; all3production positives restore focus;6exact captures and normal exits",
+        "requirement_ids": [
+          "SH-10"
+        ],
+        "scope": "Global/Project/New X11/1x owner-focus behavior.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Wayland native-entry close regression",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/native-owner-focus/verification.json",
+        "evidence_field": "wayland",
+        "evidence_sha256": "e975748e93b2256c185de039197fed2a3d5a62e75f79baa87bc78d6b8b60a3f6",
+        "validated_result": "1test passes;12host/profile close cases",
+        "requirement_ids": [
+          "SH-10",
+          "LF-07"
+        ],
+        "scope": "Direct native-handler invocation, not OS delivery; constrained2xheight limitation retained.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Global Preferences30-cycle controls sequence",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "evidence_field": "observations.per_host",
+        "evidence_sha256": "5e8e7be984cca25f29a5ae5a84ac90a87004308eee3da780f5a177a8af98050e",
+        "validated_result": "30cycles;510actions;540image checks;90drag/cancel motion receipts",
+        "requirement_ids": [
+          "HP20-01",
+          "HP21-01",
+          "HP21-02",
+          "HP22-02",
+          "HP23-01"
+        ],
+        "scope": "Actual X11/1x host functional sequence; numerical/full configuration/negative matrix still separate.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Project Preferences30-cycle controls sequence",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "evidence_field": "observations.per_host",
+        "evidence_sha256": "5e8e7be984cca25f29a5ae5a84ac90a87004308eee3da780f5a177a8af98050e",
+        "validated_result": "30cycles;510actions;540image checks;90drag/cancel motion receipts",
+        "requirement_ids": [
+          "HP20-01",
+          "HP21-01",
+          "HP21-02",
+          "HP22-02",
+          "HP23-01"
+        ],
+        "scope": "Actual X11/1x host functional sequence; completed Project sequence was not rerun for supplemental clip probe.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Hidden-control/Search overlap probes",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/controls-30-cycle-batch/result.json",
+        "evidence_field": "observations.clip_probes",
+        "evidence_sha256": "5e8e7be984cca25f29a5ae5a84ac90a87004308eee3da780f5a177a8af98050e",
+        "validated_result": "30actual overlap probes per host preserve fullclient pixels and do not activate hidden control",
+        "requirement_ids": [
+          "HP22-02"
+        ],
+        "scope": "60supplemental native probes; original inert-header-only evidence retained separately.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Native pane transition sequence",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pane-native-sequence/review.json",
+        "evidence_field": "result",
+        "evidence_sha256": "aa04acdd23b7059c815afa9be4fa9cd2c7b5f1c6e521d05ca9ca38eb9ab6a6ec",
+        "validated_result": "60actions/15cycles over30seconds;PaneId/camera retention;exact Board interior;normal drain",
+        "requirement_ids": [
+          "SH-11"
+        ],
+        "scope": "One X11/1x functional sequence; not three-trial/all-scale performance.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Pane tracked-allocation lifetime reconciliation",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pane-resource-sequence/review.json",
+        "evidence_field": "result",
+        "evidence_sha256": "433a95a9aed8fe5cd619b46b8f349497dd96699b0fc7ef3b90663e770b56751d",
+        "validated_result": "606registrations/606releases;25040events;341snapshots;final tracked capacity0",
+        "requirement_ids": [
+          "SH-11",
+          "AC-05",
+          "MEM-CLOSED-LIVE"
+        ],
+        "scope": "Tracked application allocations only; not complete driver/private/API-instant peaks or endurance.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Private-call observer controls",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json",
+        "evidence_field": "proof.observer",
+        "evidence_sha256": "f28af5baa9d4218bf0c8695507b86612d5eb616db3bb0a707c55a603990a0a70",
+        "validated_result": "2explicit serial observer tests pass, including transient peaks,overlap,overflow and abandoned calls",
+        "requirement_ids": [
+          "AC-05"
+        ],
+        "scope": "Observer conformance, not full private-memory qualification.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Private-call native delivery and refusal controls",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json",
+        "evidence_field": "proof.native_trace",
+        "evidence_sha256": "f28af5baa9d4218bf0c8695507b86612d5eb616db3bb0a707c55a603990a0a70",
+        "validated_result": "6373calls/12746events reconcile;native overflow/existing-file controls also retained",
+        "requirement_ids": [
+          "AC-05"
+        ],
+        "scope": "Recorded9cycle run;66historical null measurement origins retained, addressed by separate origin test.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "GPU allocation observer controls",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json",
+        "evidence_field": "proof.observer",
+        "evidence_sha256": "4fe49c68c38462d688867263eefe14c08a0a6dedb8eb77cd2c53e31bf83c91d3",
+        "validated_result": "2explicit serial observer tests pass",
+        "requirement_ids": [
+          "AC-05"
+        ],
+        "scope": "Identity,release,shared-reservation peak and overflow delivery conformance.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "GPU allocation native delivery",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-allocation-observation/result.json",
+        "evidence_field": "proof.analysis",
+        "evidence_sha256": "4fe49c68c38462d688867263eefe14c08a0a6dedb8eb77cd2c53e31bf83c91d3",
+        "validated_result": "6961events;184allocations/releases;no unattributed origin;malformed-history controls rejected",
+        "requirement_ids": [
+          "AC-05"
+        ],
+        "scope": "Tracked-event delivery, not complete GPU residency or numerical caps.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Four-host measurement-origin/refusal/retry test",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/measurement-origin/result.json",
+        "evidence_field": "proof.production_adapters",
+        "evidence_sha256": "a1c9433f11e927a6bb3eed40cc9bb6b8556c93e430526ab9c613590ca34a8c5d",
+        "validated_result": "1explicit GPU test passes all4actual adapters;all measurement calls attributed;zero dropped events",
+        "requirement_ids": [
+          "AC-05"
+        ],
+        "scope": "Direct adapter proof; original native null-origin evidence remains historical.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Resource observer replacement/retirement conformance",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json",
+        "evidence_field": "proof.observer",
+        "evidence_sha256": "b366c1b7a5b8effbfaecbbca29892141fc71395d3363172f46d626c696dc17ba",
+        "validated_result": "RealGPU observer test passes shared budget IDs,retirement and metadata-only ownership",
+        "requirement_ids": [
+          "AC-05",
+          "MEM-CLOSED-LIVE"
+        ],
+        "scope": "Observer semantics; full instantaneous accounting remains outstanding.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Endurance harness method and cleanup review",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/method-review.json",
+        "evidence_field": "conclusion",
+        "evidence_sha256": "fafe1336c859275fe1e33fae3329728795c127fa7856067d02a412d34c351307",
+        "validated_result": "Independent method findings corrected and verified",
+        "requirement_ids": [
+          "AC-06"
+        ],
+        "scope": "Method review only. Both incomplete native attempts remain failed; no endurance pass.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Fractional pointer offline controls",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
+        "evidence_field": "candidate_method.offline_checks",
+        "evidence_sha256": "a64d8575a5ea9dff3d4433af269046ad227c92212529a210ffa3b4a0860635a4",
+        "validated_result": "Schedule plus6simulated portal cases pass; independent source review verified corrections",
+        "requirement_ids": [
+          "AC-07"
+        ],
+        "scope": "No native pointer stream executed; no delivered-input or performance pass.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      }
+    ],
+    "in_progress_change": "Current uncommitted lazy world-pipeline initialization affects renderer construction; focused initialization/pixel verification is pending. It does not reset unrelated completed tests.",
+    "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
   }
 }
