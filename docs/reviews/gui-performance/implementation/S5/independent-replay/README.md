@@ -66,3 +66,9 @@ T2 and unadmitted schematic exclusions remain explicit and unqualified.
 
 Independent replay does not replace the owner's separate native UX/product
 acceptance. The packet records no such acceptance and does not advance S5.
+
+`tools/portal_pointer.py` prepares the required fractional pointer schedule using
+the existing input-only portal API. Its offline schedule checks pass, but native
+execution is pending desktop availability and fresh portal consent. See
+`pointer-method-preparation.json`; this does not rehabilitate the integer XTest
+trials, replace semantic/output evidence or satisfy final replay.

@@ -36,5 +36,9 @@
     "All-backend/scale consolidated lifecycle, mixed PTY and prescribed per-row negatives",
     "Final source-pinned complete required-trial runner covering every applicable predicate"
   ],
-  "archive_policy": "Preserve commands/environment/declaration before launch; raw schedules, process/client identities, logs, query/allocation/private-call data, screenshots, failed or invalid trials, and final summaries with SHA256 per member. Reviewer writes its own findings, not copies producer acceptance."
+  "archive_policy": "Preserve commands/environment/declaration before launch; raw schedules, process/client identities, logs, query/allocation/private-call data, screenshots, failed or invalid trials, and final summaries with SHA256 per member. Reviewer writes its own findings, not copies producer acceptance.",
+  "pointer_offline_plan": "python3 docs/reviews/gui-performance/implementation/S5/independent-replay/tools/portal_pointer.py --plan /tmp/pm045-pointer-plan.json",
+  "pointer_native_input_service": "python3 docs/reviews/gui-performance/implementation/S5/independent-replay/tools/portal_pointer.py --serve /tmp/pm045-pointer-portal-run",
+  "pointer_service_note": "Unexecuted candidate method; fresh paths required. Native service needs exclusive desktop and portal consent. After target harness verifies initial physical pane position(300,150) and actual output scale, send JSON line {\"action\":\"pointer_stream\",\"output_scale\":1,\"initial_position_verified\":true}; requires GUI/CPU/GPU/native-output observers supplied separately. One stream only, no automatic repeat. Send {\"action\":\"close\"} to revoke session;600second idle bound. Schedule alone is not delivery or qualification. Keep controller stdin open during the stream; EOF cancels it. Partial input is bounded, active close is serviced between calls, and an input-interval overrun invalidates the attempt without catch-up.",
+  "pointer_offline_checks": "python3 docs/reviews/gui-performance/implementation/S5/independent-replay/tools/portal_pointer_checks.py"
 }

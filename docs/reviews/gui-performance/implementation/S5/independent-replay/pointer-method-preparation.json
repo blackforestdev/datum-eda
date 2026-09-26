@@ -1,0 +1,80 @@
+{
+  "status": "Unexecuted native pointer method; offline schedule verified only",
+  "qualification_pass": false,
+  "source_gap": "Existing integer XTest workload produced1280changed positions from3600calls and does not establish required120position/s input. Preserve original failures.",
+  "rejected_alternative": {
+    "api": "XIWarpPointer",
+    "reason": "Matching upstream Xwayland24.1.6 ProcXIWarpPointer converts protocol fixed-point destinations into integer dst_x/dst_y before moving the device. Floating-point client API alone cannot remove quantization. No native probe needed or performed.",
+    "source": "https://gitlab.freedesktop.org/xorg/xserver/-/raw/xwayland-24.1.6/Xi/xiwarppointer.c",
+    "source_sha256": "56aadd6743587f28080861187ade9f4372a866578e819c294cc263f25ff0fd94",
+    "installed_package": "xwayland2:24.1.6-1",
+    "boundary": "Read-only reference source in/tmp; not installed, vendored, linked or modified."
+  },
+  "candidate_method": {
+    "path": "tools/portal_pointer.py",
+    "source": "Existing S3/timed-wayland-pixel-scroll/portal-driver.py.gz input-only Gio RemoteDesktop method",
+    "schedule": "3600relative requests over30seconds at120Hz;400x240physical rectangle with four7.5second edges; first move distinct from initial position; final position returns exactly to initial.",
+    "offline_checks": [
+      "3600scheduled positions distinct",
+      "900requests per edge and exact four corner endpoints",
+      "No adjacent duplicate even at1/256logical coordinate quantization for scales1/1.5/2",
+      "Relative deltas sum to zero within floating-point tolerance",
+      "CLI--plan writes expected declaration without importing GI or opening desktop session",
+      "Python syntax,source health2552 and dependency authority pass",
+      "Simulated portal normal stream:3600calls,30seconds,session closed",
+      "Simulated successful20ms call rejected afterward:failure after first call,no catch-up,session closed",
+      "Controller cancellation after first call:partial receipt retained,session closed",
+      "Stalled partial command:600second expiry respected,session closed",
+      "20ms pre-dispatch logging delay:zero motion calls,failed attempt,session closed",
+      "Simulated100ms D-Bus timeout exception:one attempt,no successful returned receipt,session closed"
+    ],
+    "native_launches": 0,
+    "remaining": "Fresh portal consent and exclusive desktop; verify actual initial coordinates/scale, delivered/coalesced input and full semantic/output oracles; integrate with existing CPU/GPU/fixture harness. No performance or final replay acceptance.",
+    "transport_invalidation": "Request must start and return within its scheduled8.333ms interval; otherwise fail this method attempt, retain partial receipts and never catch up/retry. This is no amendment to product CPU/GPU/display limits. Native legal coalescing must still reconcile scheduled/received/final-state counts without invented semantic actions.",
+    "sha256": "418db440bc02a2cd3b68cc0cfb825f8b0f36281e90b0037ab9173072fed7d710",
+    "offline_check_command": "python3 docs/reviews/gui-performance/implementation/S5/independent-replay/tools/portal_pointer_checks.py"
+  },
+  "scope": "Native input transport only; no production/dependency/prototype changes, no threshold or acceptance amendment.",
+  "offline_raw_archive": {
+    "file": "pointer-offline-checks.tar.gz",
+    "sha256": "807daef1236fe34d4effa418c4451533ebb975713f5cf693cc79293edb306368",
+    "cases": [
+      "normal",
+      "slow",
+      "logging_delay",
+      "dbus_timeout",
+      "cancel",
+      "partial"
+    ],
+    "native_input": false
+  },
+  "independent_method_review": {
+    "session": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "scope": "Source inspection only; reviewer did not execute offline checks, native input or replay",
+    "findings": [
+      {
+        "finding": "Schedule generation inside timed window",
+        "status": "resolved_reviewer_verified",
+        "correction": "Prepare full schedule before consent/timing"
+      },
+      {
+        "finding": "Active dispatch unbounded and did not service cancellation",
+        "status": "resolved_reviewer_verified",
+        "correction": "Check controller each interval; reject overrun without catch-up; bounded100ms motion request"
+      },
+      {
+        "finding": "Partial command blocks readline past expiry",
+        "status": "resolved_reviewer_verified",
+        "correction": "Bounded4096byte buffering with select/read and600second expiry"
+      },
+      {
+        "finding": "Logging could delay dispatch after timestamp check",
+        "status": "resolved_reviewer_verified",
+        "correction": "Timestamp/recheck immediately after logging and before call; delayed-log control sends zero motion"
+      }
+    ],
+    "conclusion": "No remaining material defect identified in reviewed delta. Native delivery,scale/coalescing,output oracles and final independent replay remain unqualified.",
+    "driver_sha256": "418db440bc02a2cd3b68cc0cfb825f8b0f36281e90b0037ab9173072fed7d710",
+    "checks_sha256": "e3a9e35742d38d1e5092e88d98b3a2ce3221606563e8aec15693cdcf98b4ebec"
+  }
+}
