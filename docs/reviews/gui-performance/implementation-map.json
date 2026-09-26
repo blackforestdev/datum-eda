@@ -38640,6 +38640,7 @@
   "s5_lazy_world_pipeline_work": {
     "status": "implemented; focused correctness passed; native budget qualification outstanding",
     "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/result.json",
-    "scope": "Remove unused world pipeline creation from overlay-only renderer construction; preserve original requirements and statuses."
+    "scope": "Remove unused world pipeline creation from overlay-only renderer construction; preserve original requirements and statuses.",
+    "release_evidence": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/release.json"
   }
 }
