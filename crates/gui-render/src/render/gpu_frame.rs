@@ -102,6 +102,7 @@ impl Renderer {
         if prepared.is_overlay_only() {
             return self.render_overlay_only(device, queue, target, prepared, width, height);
         }
+        self.prepare_world_pipelines(device);
         let render_started = std::time::Instant::now();
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
@@ -272,7 +273,13 @@ impl Renderer {
                             let Some(buffer) = self.world_vertices_gpu.buffer() else {
                                 continue;
                             };
-                            pass.set_pipeline(&self.world_pipeline);
+                            pass.set_pipeline(
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .quads,
+                            );
                             pass.set_bind_group(0, &self.scene_bind_group.bind_group, &[]);
                             pass.set_scissor_rect(
                                 prepared.scene_viewport.x.max(0.0).floor() as u32,
@@ -289,7 +296,11 @@ impl Renderer {
                             };
                             draw_world_strokes(
                                 &mut pass,
-                                &self.world_stroke_pipeline,
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .strokes,
                                 &self.scene_bind_group.bind_group,
                                 buffer,
                                 prepared.scene_viewport,
@@ -326,7 +337,13 @@ impl Renderer {
                             let Some(buffer) = self.schematic_world_vertices_gpu.buffer() else {
                                 continue;
                             };
-                            pass.set_pipeline(&self.world_pipeline);
+                            pass.set_pipeline(
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .quads,
+                            );
                             pass.set_bind_group(
                                 0,
                                 &self.schematic_scene_bind_group.bind_group,
@@ -347,7 +364,11 @@ impl Renderer {
                             };
                             draw_world_strokes(
                                 &mut pass,
-                                &self.world_stroke_pipeline,
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .strokes,
                                 &self.schematic_scene_bind_group.bind_group,
                                 buffer,
                                 *scene_viewport,

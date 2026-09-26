@@ -20,6 +20,9 @@ mod gpu_vertex_upload;
 #[path = "terminal_graphics.rs"]
 mod terminal_graphics;
 
+#[path = "world_pipelines.rs"]
+mod world_pipelines;
+
 #[path = "gpu_init.rs"]
 mod gpu_init;
 #[path = "gpu_overlay.rs"]

@@ -38619,9 +38619,27 @@
         ],
         "scope": "No native pointer stream executed; no delivered-input or performance pass.",
         "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "completed": true,
+        "label": "Lazy world pipeline initialization and pixel preservation",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/result.json",
+        "evidence_field": "proof.focused_gpu",
+        "evidence_sha256": "379c2851ccdd5dace16a7042093d780adf275ef6e6abdc0a7203c40f00796485",
+        "validated_result": "1 passed, 0 failed; serial Intel HD Graphics P630 Vulkan; 4x and 8x MSAA; exact eager/lazy overlay and cold/warm board pixels, stable warm handles, fresh replacement handles and exact replacement pixels",
+        "requirement_ids": [
+          "AC-08"
+        ],
+        "scope": "Focused 4x/8x pipeline initialization and same-device renderer replacement; not native performance or full recovery.",
+        "carry_forward": "Preserve across handoffs; rerun only for affected behavior."
       }
     ],
-    "in_progress_change": "Current uncommitted lazy world-pipeline initialization affects renderer construction; focused initialization/pixel verification is pending. It does not reset unrelated completed tests.",
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
+  },
+  "s5_lazy_world_pipeline_work": {
+    "status": "implemented; focused correctness passed; native budget qualification outstanding",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/result.json",
+    "scope": "Remove unused world pipeline creation from overlay-only renderer construction; preserve original requirements and statuses."
   }
 }

@@ -57,6 +57,9 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Fractional pointer offline controls** — Schedule plus6simulated portal cases pass; independent source review verified corrections. [Evidence](independent-replay/pointer-method-preparation.json)
   Scope: No native pointer stream executed; no delivered-input or performance pass.
 
+- [x] **Lazy world pipeline initialization and pixels** — Focused hardware test passes at 4× and 8× MSAA: overlay omission, cold/warm board output and renderer replacement. [Evidence](lazy-world-pipelines/result.json)
+  Scope: Exact eager/lazy pixel comparison on one GPU; native performance and full recovery remain open.
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.
@@ -69,9 +72,3 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 S0–S4 implementation exits remain complete. Their carried qualification is part
 of the outstanding original predicates, not a reason to repeat implementation.
 Pinned resize/temporal,T2 and unadmitted schematic exclusions remain unchanged.
-
-## Current change awaiting focused verification
-
-Lazy world-pipeline construction is an uncommitted production change. Its
-initialization and affected pixel checks are pending. Existing unrelated proof
-stays done; neither that patch nor this checklist claims S5 closure.

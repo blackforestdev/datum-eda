@@ -55,6 +55,11 @@ impl Renderer {
         prepared: &PreparedScene,
         schematic: Option<&RetainedScene>,
     ) {
+        self.prepare_world_pipelines(device);
+        let pipelines = self
+            .world_pipelines
+            .get()
+            .expect("world pipelines prepared");
         for (index, (surface, binding)) in prepared
             .surface_passes()
             .iter()
@@ -104,8 +109,8 @@ impl Renderer {
             let mut draws = 0;
             for batch in &batches {
                 let (pipeline, buffer) = match batch.kind {
-                    DrawKind::Quads => (&self.world_pipeline, vertex),
-                    DrawKind::Strokes => (&self.world_stroke_pipeline, stroke),
+                    DrawKind::Quads => (&pipelines.quads, vertex),
+                    DrawKind::Strokes => (&pipelines.strokes, stroke),
                 };
                 let Some(buffer) = buffer else { continue };
                 if bound_kind != Some(batch.kind) {
