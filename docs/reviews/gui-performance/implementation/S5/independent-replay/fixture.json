@@ -1,0 +1,41 @@
+{
+  "archive": "fixture.tar.gz",
+  "archive_sha256": "98501112e7f248e4d3bcf789f0c32b5ab67a8b07a9f46a36fc290576a51dc9c9",
+  "native_files_sha256": {
+    "project.json": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c",
+    "rules/rules.json": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693",
+    "board/board.json": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "schematic/schematic.json": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530",
+    ".datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    ".datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    ".datum/journal/cursor.json": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+    ".datum/journal/transactions.jsonl": "e38b73d15efb2011ccb0d19e3de5121794009b023f31b04e6f8c6f204ab9c4c3",
+    ".datum/revision/v1/head.json": "56193a36ae8b31185f4fc3a91c483f6dcb3ce786e03d047ec95524e401b95423",
+    ".datum/revision/v1/generations/4c1c35afbc2892dda0cd0f031a50cf7750a12278d901a77b24dfd666bad3a589.json": "93f91ed1d8a09e406fa66a7fa868ba0c35135728af3cb89e988dae39b480f407",
+    ".datum/revision/v1/generations/13a0391856aaea2d89b9047e8a48d1b85b634ce6f4df2a115bf5a847db6d202c.json": "d6f42b6ef1addaf080a3b47e906d4604568ab8fc9122cb4272827dd7ecef630b",
+    ".datum/revision/v1/blobs/sha256/d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    ".datum/revision/v1/blobs/sha256/50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436": "50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436",
+    ".datum/revision/v1/blobs/sha256/41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    ".datum/revision/v1/blobs/sha256/d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    ".datum/revision/v1/blobs/sha256/1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb": "1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb"
+  },
+  "source_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed",
+  "normalization": "JSON sorted keys/compact separators, remove only top-level uuid; preserve all nested identities/order.",
+  "excluded_generated_runtime_paths": [
+    ".datum/gui-terminal-context.json",
+    ".datum/tool-sessions/",
+    ".datum/terminal-contexts/"
+  ],
+  "authority_preserved": "All native partitions, complete journal, revision generations/blobs, import map and check runs retained. No reimport or regenerated model.",
+  "counts": {
+    "packages": 39,
+    "pads": 81,
+    "tracks": 148,
+    "vias": 46,
+    "zones": 20,
+    "nets": 24,
+    "layers": 24
+  },
+  "admission_limits": "Model counts only. Required per-host/prepared-frame visible geometry and unique glyph admission remains incomplete. Unresolved schematic placeholder is not admitted resolved schematic."
+}

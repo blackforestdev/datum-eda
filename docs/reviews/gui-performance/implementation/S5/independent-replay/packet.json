@@ -1,0 +1,128 @@
+{
+  "status": "prepared replay inputs; final replay NOT READY",
+  "frontier_step": "GPI-S5",
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "prepared_at": "2026-09-26T05:42:57.502686+00:00",
+  "source_commit": "6728dd90d3048501ebbd1a4877db28916f51261b",
+  "candidate": {
+    "production_commit": "b7b5fcf1",
+    "evidence_commit": "1adc661f",
+    "binary": "target/pm045-independent-replay-artifacts/candidate-datum-gui",
+    "sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
+    "binding": "native-owner-focus/result.json plus controls/panes/quad-trial restoration evidence; complete current tracked source hashes in source-bindings.json",
+    "final_candidate": false
+  },
+  "baseline": {
+    "source_commit": "e4c8edf9",
+    "binary": "target/pm045-independent-replay-artifacts/baseline-datum-gui",
+    "sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447",
+    "evidence": "../final-msaa-resolve/result.json",
+    "comparison_scope": "Preserved S5 reference before final MSAA resolve and subsequent observation/focus changes. It is NOT the original pre-PM045 baseline. Do not claim whole S0-S5 improvement from this pair."
+  },
+  "original_s0_baseline": {
+    "source_commit": "659524ee51dcb8e81313d7f13c5718ee8c5e298a",
+    "historical_binary_sha256": "4b8566df2438e5fde06f2667bae5e99b25acdf35e61c7df73d7d51bdcaafaa44",
+    "evidence": "../../S0/readiness/receipt.json",
+    "local_binary_availability": "not established; historical hash is not a new build result",
+    "rebuild": "Use isolated source archive and guarded disk-backed target; pin actual new binary and toolchain before a matched comparison, do not relabel it historical binary."
+  },
+  "engine": {
+    "binary": "target/pm045-independent-replay-artifacts/datum-eda",
+    "sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284"
+  },
+  "requirements": "requirements.json",
+  "fixture": "fixture.json",
+  "environment": "environment.json",
+  "commands": "commands.json",
+  "reviewer": {
+    "session": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "role": "Fresh independent performance reviewer; no implementation changes",
+    "current_work": "read-only method readiness review; no final native replay",
+    "final_protocol": "Inspect methods, independently rerun required trials on stable pinned candidate, preserve raw failures, report defects to implementation owner. No product editing or report-only acceptance."
+  },
+  "resource_coordination": {
+    "desktop": "Exclusive lease coordinated with implementation session immediately before native replay. Current owner desktop availability does not create simultaneous input permission.",
+    "build": "No native resource measurement during compilation; all expensive builds guarded and serial, artifacts on project disk; no shared target cleanup.",
+    "final_handoff": "Pin final candidate/fixture/method/tool hashes after relevant defects are fixed. Reviewer records its own exact environment and commands. No automatic intermediate replay."
+  },
+  "required_trials": {
+    "source": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md MET-01/MEM-03/STAT-01, existing per-row positive/negative controls",
+    "backends": [
+      "native Wayland",
+      "X11/Xwayland"
+    ],
+    "scales": [
+      1,
+      1.5,
+      2
+    ],
+    "refresh_hz": 60,
+    "warmup_seconds": 5,
+    "active_trials": 3,
+    "active_seconds": 30,
+    "idle_seconds": 60,
+    "cold_process_starts": 10,
+    "controls_cycles_per_host": 30,
+    "window_cycles_per_host": 30,
+    "lifecycle_sequences": 20,
+    "endurance_minutes_per_admitted_tier": 60,
+    "endurance_warmup_minutes": 5,
+    "endurance_window_cycles": 200,
+    "endurance_injected_recoveries": 20,
+    "endurance_sampling_minutes": 5,
+    "endurance_comparison_minutes": 10,
+    "relative_comparison": "Only if a relative claim is pursued:7predeclared alternating AB/BA valid pairs, at most10attempts, exact STAT-01 method. Three pairs descriptive only."
+  },
+  "known_failures": [
+    {
+      "evidence": "../pointer-native-batch/result.json",
+      "finding": "Pointer candidate total CPU13.482-18.801% exceeds10%; diagnostic GPU p95/p99 9.726/11.999ms exceeds4/8ms. Scheduled3600integer calls yielded1280distinct positions; no120distinct-action/s qualification."
+    },
+    {
+      "evidence": "../clamp-matched-batch/result.json",
+      "finding": "Quiet clamp1.442-1.540% exceeds1%; no budget relaxation."
+    },
+    {
+      "evidence": "../window-qualification-batch/result.json",
+      "finding": "Project warm open individual maxima52.612/54.463ms exceeded50ms in two plain trials; no unconditional open-budget pass."
+    },
+    {
+      "issue": "dat-native-final-close-observation-xbb7",
+      "finding": "Intermittent delayed native close delivery; original timeouts and forced cleanup remain failed, later normal exits do not erase them."
+    },
+    {
+      "issue": "dat-board-revision-golden-drift-jn2k",
+      "finding": "Board/Revision4049pixel baseline-identical golden drift; preserve PM038/GEFN and owning visual authority; no blind golden refresh."
+    },
+    {
+      "issue": "dat-wayland-fractional-line-proof-5bot",
+      "finding": "Native fractional-line input method remains unqualified."
+    },
+    {
+      "issues": [
+        "dat-menu-csv-roundtrip-etp",
+        "dat-bootstrap-guard-drift-5s8n",
+        "dat-gpu-test-concurrency-6dt"
+      ],
+      "finding": "Separate recorded drift/concurrent-topology failures remain; serial GPU success cannot close concurrency."
+    }
+  ],
+  "missing_before_final_acceptance": [
+    "Complete ADM-01 rendered/visible/glyph admission per applicable configuration",
+    "Complete ACC-01/02/03 instantaneous private/transient/driver/client accounting and diagnostics overhead",
+    "Exact native fractional/continuous input delivery and full backend/scale workload matrix",
+    "All carried S1/50S2/20S3 positive/negative qualification predicates and all14consumer coverage",
+    "Qualified MEM-03 endurance, recovery, release/no-trend and matched first/last comparisons",
+    "Resolve demonstrated in-scope budget/correctness failures",
+    "Independent actual native replay on final candidate",
+    "Separate owner native UX/product disposition"
+  ],
+  "scope_exclusions": [
+    "T2 larger projects",
+    "unadmitted resolved schematic performance",
+    "flicker and displayed-frame latency/age/pacing",
+    "Resize budget/temporal qualification pinned separately; no S0-S5 development gate"
+  ],
+  "acceptance": "Every original applicable predicate and numerical cap remains controlling. Partial evidence and detection of a PM047 overrun are not acceptance. This packet grants no scope reduction, dependency, prototype, backend or product change.",
+  "raw_result_location": "docs/reviews/gui-performance/implementation/S5/independent-replay/results/<reviewer-session>/<backend>/<scale>/<workload>/<attempt>/; use fresh directories, preserve every invalid/failed attempt. Large in-flight data may live on disk-backed target/pm045-independent-replay-results then archive/hash into evidence. Never overwrite earlier attempts."
+}

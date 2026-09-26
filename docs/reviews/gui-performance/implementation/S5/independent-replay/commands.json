@@ -1,0 +1,40 @@
+{
+  "status": "Exact executable commands for available prerequisites and window-resource method. This is not a complete final-qualification runner; blocked workload methods stay explicitly missing.",
+  "cwd": "/home/bfadmin/Documents/datum-eda",
+  "verify_source": "python3 -c 'import hashlib,json,pathlib; p=pathlib.Path(\"docs/reviews/gui-performance/implementation/S5/independent-replay/source-bindings.json\"); expected=json.loads(p.read_text()); failures=[f for f,h in expected.items() if hashlib.sha256(pathlib.Path(f).read_bytes()).hexdigest()!=h]; print(\"source mismatches:\",failures); assert not failures'",
+  "verify_binaries": [
+    "sha256sum target/pm045-independent-replay-artifacts/candidate-datum-gui",
+    "sha256sum target/pm045-independent-replay-artifacts/baseline-datum-gui",
+    "sha256sum target/pm045-independent-replay-artifacts/datum-eda"
+  ],
+  "prepare_fixture": "mkdir -p /tmp/pm045-independent-replay-fixture && tar -xzf docs/reviews/gui-performance/implementation/S5/independent-replay/fixture.tar.gz -C /tmp/pm045-independent-replay-fixture",
+  "window_resource_endurance": "PM045_REPLAY_PROJECT=/tmp/pm045-independent-replay-fixture/project python3 docs/reviews/gui-performance/implementation/S5/independent-replay/tools/window_endurance.py",
+  "window_resource_analysis": "python3 docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-resource-snapshot-analyze.py <actual-fresh-run-directory>",
+  "analysis_note": "Replace the single run-directory argument with the path printed by the run. Reconcile raw first/last windows and lifecycle/resource/private/GPU traces; existing analyzer returns partial evidence, never full acceptance. Negative parser controls do not substitute for the prescribed leaking production negative.",
+  "candidate_build_if_sources_change": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release --locked --offline -p datum-gui-app --bin datum-gui",
+  "build_note": "No build during a native measurement. A source or binary change requires a new pinned candidate and affected proof before final replay. Do not replace the preserved binaries or old raw results.",
+  "launch_template": [
+    "env",
+    "WINIT_UNIX_BACKEND=x11",
+    "WINIT_X11_SCALE_FACTOR=1",
+    "EDA_CLI_BIN=target/pm045-independent-replay-artifacts/datum-eda",
+    "target/pm045-independent-replay-artifacts/candidate-datum-gui",
+    "--project-root",
+    "/tmp/pm045-independent-replay-fixture/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "launch_note": "Launch alone is not a workload or qualification. Fresh isolated XDG config/cache, actual backend/display identity and exclusive desktop use must accompany reviewer trials. Use Wayland-native input for Wayland rows; do not relabel XTest.",
+  "full_workload_recipes": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md Workload definitions; all original rows and per-consumer positives/negatives in requirements.json. Exact schedules/trial counts remain required even where an executable method is missing.",
+  "currently_incomplete_methods": [
+    "Complete native Wayland fractional line/pixel input and 120-position/s pointer/pan schedule with acknowledged semantic/path evidence",
+    "Lifetime-complete GPU client totals, exact transient/private retained-versus-scratch accounting and observer-overhead qualification",
+    "All-backend/scale consolidated lifecycle, mixed PTY and prescribed per-row negatives",
+    "Final source-pinned complete required-trial runner covering every applicable predicate"
+  ],
+  "archive_policy": "Preserve commands/environment/declaration before launch; raw schedules, process/client identities, logs, query/allocation/private-call data, screenshots, failed or invalid trials, and final summaries with SHA256 per member. Reviewer writes its own findings, not copies producer acceptance."
+}
