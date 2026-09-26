@@ -1,0 +1,9 @@
+{
+  "status": "method-stopped incomplete attempt; not acceptance",
+  "raw_origin": "/tmp/dev-agent-s5-endurance-8r4owapl",
+  "timed_cycles_completed": 3,
+  "reason": "Independent method review identified unpinned helper/references, incomplete first-use warmup, persistence/cleanup and timestamp defects. Execution interrupted to correct method, not to replace threshold failures. Stop arrived after three timed cycles.",
+  "forced_cleanup": true,
+  "display_restored": true,
+  "scope": "X11/1x diagnostics-on F-DOA only; no endurance or independent replay acceptance"
+}

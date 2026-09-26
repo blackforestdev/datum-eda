@@ -9808,6 +9808,13 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_endurance_method_preparation": {
+        "status": "Corrected partial method reviewed; stopped first attempt retained with three completed timed cycles",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/method-stopped/assessment.json",
+        "method_packet": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json",
+        "limits": "No60minute acceptance, recovery injections, full accounting, backend/scale or mixed-workload qualification from the interrupted attempt."
       }
     },
     {
@@ -9910,6 +9917,12 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_independent_replay_preparation": {
+        "status": "Owner-authorized fresh independent reviewer assigned; reproducible inputs prepared; final replay not ready or executed",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json",
+        "limits": "Method review only. Known performance failures and missing methods retained; independent required raw trials and separate owner UX acceptance remain outstanding."
       }
     },
     {
@@ -38210,5 +38223,10 @@
     "status": "Candidate not adopted; native improvement not demonstrated",
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
+  },
+  "s5_independent_replay_preparation": {
+    "status": "Prepared inputs; final replay not ready; no acceptance change",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json"
   }
 }

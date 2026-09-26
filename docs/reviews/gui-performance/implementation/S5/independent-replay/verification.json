@@ -1,0 +1,17 @@
+{
+  "qualification_pass": false,
+  "checks": {
+    "binary_hashes": 3,
+    "source_bindings": 1975,
+    "archive_members": 17,
+    "python_syntax": "pass",
+    "injected_persistence_failure": "termination and later cleanup continue; failure retained",
+    "source_health": "2551files pass",
+    "spec_governance": "315specs pass",
+    "evidence_traceability": "28routes124artifacts pass",
+    "dependency_authority": "pass",
+    "cargo_resource_policy": "pass",
+    "frontier_projection": "current"
+  },
+  "limits": "No Rust implementation changed or rebuilt. Method review and packet validation do not establish runtime acceptance. Consolidated producer run is separate."
+}
