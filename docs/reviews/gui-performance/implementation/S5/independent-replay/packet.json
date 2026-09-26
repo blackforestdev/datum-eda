@@ -105,6 +105,10 @@
         "dat-gpu-test-concurrency-6dt"
       ],
       "finding": "Separate recorded drift/concurrent-topology failures remain; serial GPU success cannot close concurrency."
+    },
+    {
+      "evidence": "../window-endurance/native-open-timeout/assessment.json",
+      "finding": "Consolidated producer attempt failed on118th opening after39completed timed cycles per auxiliary host; unexpected input/focus, forced cleanup and missing GPU end record preserved. No endurance acceptance."
     }
   ],
   "missing_before_final_acceptance": [

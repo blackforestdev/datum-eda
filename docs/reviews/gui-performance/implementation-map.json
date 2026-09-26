@@ -4495,6 +4495,12 @@
         "status": "Candidate not adopted; native improvement not demonstrated",
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
+      },
+      "s5_endurance_open_timeout": {
+        "status": "Incomplete producer endurance failed after39completed timed cycles per auxiliary host; unexpected native input/focus and forced cleanup retained",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-open-timeout/assessment.json",
+        "limits": "No60minute/drift/recovery/full-resource, backend-scale, independent replay or owner UX acceptance. Analyzer rejects missing final GPU end record."
       }
     },
     {
@@ -9815,6 +9821,12 @@
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/method-stopped/assessment.json",
         "method_packet": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json",
         "limits": "No60minute acceptance, recovery injections, full accounting, backend/scale or mixed-workload qualification from the interrupted attempt."
+      },
+      "s5_endurance_open_timeout": {
+        "status": "Incomplete producer endurance failed after39completed timed cycles per auxiliary host; unexpected native input/focus and forced cleanup retained",
+        "qualification_pass": false,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-open-timeout/assessment.json",
+        "limits": "No60minute/drift/recovery/full-resource, backend-scale, independent replay or owner UX acceptance. Analyzer rejects missing final GPU end record."
       }
     },
     {
@@ -38228,5 +38240,11 @@
     "status": "Prepared inputs; final replay not ready; no acceptance change",
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json"
+  },
+  "s5_endurance_open_timeout": {
+    "status": "Incomplete producer endurance failed after39completed timed cycles per auxiliary host; unexpected native input/focus and forced cleanup retained",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-open-timeout/assessment.json",
+    "limits": "No60minute/drift/recovery/full-resource, backend-scale, independent replay or owner UX acceptance. Analyzer rejects missing final GPU end record."
   }
 }
