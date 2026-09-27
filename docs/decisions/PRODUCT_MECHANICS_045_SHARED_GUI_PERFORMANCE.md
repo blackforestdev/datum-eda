@@ -147,3 +147,29 @@ endurance requirements remain. S5 can conclude only its explicitly limited
 non-resize qualification; full resize resource/temporal closure stays on the
 pinned issue. No new kernel investigation or renderer execution is authorized
 by this amendment.
+
+## Owner amendment: reopen S4 for GPU redraw architecture
+
+The 2026-09-27 direction recorded in
+`docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json` makes correction
+of the pointer GPU redraw architecture an S4 exit prerequisite. The earlier
+S4 implementation exit remains historical evidence, but does not satisfy this
+additional obligation. S5 qualification is pending behind reopened S4; its
+existing evidence and original acceptance requirements remain intact.
+
+The implementation contract adds GPI-S4-DESIGN and GPI-S4-APPROVAL before
+reopened GPI-S4 execution. Current authority is solution discovery and
+specification correction only, superseding the earlier execution grant at this
+boundary. No production changes, builds, runtime tests or diagnostic campaigns
+are authorized until the owner approves a concrete reviewed proposal and its
+bounded execution scope. No stencil, image cache, renderer replacement or other
+new mechanism is ratified here. CPU event-loop optimization remains deferred.
+
+After approval, S4 requires the correction and bounded reference-host W-POINTER
+proof at unchanged GPU p95/p99 limits of 4/8 ms and 25% engine duty, with exact
+8x output, correct input/invalidation/recovery and affected resource bounds as
+specified in the implementation contract. Failure or insufficient feasibility
+evidence requires owner review, not a hardware-impossibility claim, silent
+budget change or S4 completion. S5 retains broader qualification, endurance,
+distinct-reviewer replay and owner product acceptance. All nonblocking resize
+and other existing exclusions, dependency/license authority and PM047 remain.

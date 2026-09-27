@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "Ratified specification map; S0-S4 implementation exits complete under approved amendments and PM047; GPI-S5 in progress. All original in-scope qualification predicates, independent replay and endurance remain required; no full performance or product acceptance.",
+  "status": "Ratified specification map; S0-S3 readiness retained. Owner reopened S4 for GPU redraw architecture correction; GPI-S4-DESIGN is planning-only and S5 is pending. Historical evidence remains scoped; all original full qualification and acceptance requirements remain.",
   "parent_clause_count": 67,
   "consumers": [
     {
@@ -12448,7 +12448,13 @@
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
-      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json",
+      "s4_exit_prerequisite": {
+        "owner_direction": "docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json",
+        "status": "Unmet. Bounded reference pointer proof is additionally required before reopened S4 closes; full existing consumer/backend/scale qualification remains S5.",
+        "configuration": "F-DOA / Intel P630 / X11-Xwayland / 1x / W-POINTER",
+        "acceptance_rule": "Unchanged numerical rule and measurement methods below; no pass supplied by sequencing."
+      }
     },
     {
       "id": "BUD-T1-POINTER-GPU-P95",
@@ -12530,7 +12536,13 @@
         "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
         "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
       },
-      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json",
+      "s4_exit_prerequisite": {
+        "owner_direction": "docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json",
+        "status": "Unmet. Bounded reference pointer proof is additionally required before reopened S4 closes; full existing consumer/backend/scale qualification remains S5.",
+        "configuration": "F-DOA / Intel P630 / X11-Xwayland / 1x / W-POINTER",
+        "acceptance_rule": "Unchanged numerical rule and measurement methods below; no pass supplied by sequencing."
+      }
     },
     {
       "id": "BUD-T1-POINTER-GPU-P99",
@@ -12612,7 +12624,13 @@
         "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
         "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
       },
-      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json",
+      "s4_exit_prerequisite": {
+        "owner_direction": "docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json",
+        "status": "Unmet. Bounded reference pointer proof is additionally required before reopened S4 closes; full existing consumer/backend/scale qualification remains S5.",
+        "configuration": "F-DOA / Intel P630 / X11-Xwayland / 1x / W-POINTER",
+        "acceptance_rule": "Unchanged numerical rule and measurement methods below; no pass supplied by sequencing."
+      }
     },
     {
       "id": "BUD-T1-PAN-CPU-DUTY",
@@ -37967,7 +37985,7 @@
     }
   },
   "s4_readiness": {
-    "status": "S4 implementation exit satisfied; full S5 qualification remains unqualified",
+    "status": "Historical original S4 exit retained; reopened S4 GPU redraw prerequisite remains unsatisfied",
     "production_commit": "48d99c50",
     "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json",
     "components": [
@@ -38073,7 +38091,8 @@
       "All50S2 and20S3 carried qualification rows, all S1 obligations, prescribed negatives,60minute/200cycle/20recovery and distinct-reviewer replay remain S5.",
       "GEFN improvements and nonblocking resize/temporal/T2/resolved-schematic exclusions preserved. No dependency/vendor/license/prototype/numerical-cap change."
     ],
-    "decision": "Complete GPI-S4 implementation and select GPI-S5 qualification. Overall issue and goal remain in progress."
+    "decision": "Preserve original component proof; current S4 closure is governed by the GPU redraw owner amendment, not this historical exit.",
+    "historical_exit_decision": "Complete GPI-S4 implementation and select GPI-S5 qualification. Overall issue and goal remain in progress."
   },
   "s5_console_visual_review": {
     "status": "S5 visual qualification failed; no baseline update or acceptance",
@@ -39677,5 +39696,29 @@
       "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/endurance_recovery.py": "ad4f803bbe4dd1a14cf64c423591bb21bf2264bada90612312d5f17ce548c6ed"
     },
     "qualification_pass": false
+  },
+  "s4_gpu_redraw_amendment": {
+    "owner_direction": "docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json",
+    "contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+    "status": "planning only; no solution, implementation or runtime acceptance yet",
+    "selected_step": "GPI-S4-DESIGN",
+    "approval_step": "GPI-S4-APPROVAL",
+    "implementation_exit": "GPI-S4",
+    "preserved_qualification_exit": "GPI-S5",
+    "bounded_scope": {
+      "configuration": "Pinned F-DOA reference pointer configuration, Intel P630, X11/Xwayland, 1x; actual source/binary/fixture/extent/environment bound before approved execution.",
+      "workload": "W-POINTER with unchanged MET/GPU/ACC/STAT methods",
+      "gpu_p95_ms": 4,
+      "gpu_p99_ms": 8,
+      "gpu_engine_duty_percent": 25,
+      "correctness": "Exact reference pixels, required 8x AA, painter order, input/final state, invalidation and recovery; affected live/retiring resources under applicable caps; unexplained material CPU regressions block exit.",
+      "acceptance_status": "Unmet; this record is neither implementation evidence nor hardware feasibility proof."
+    },
+    "preserved": [
+      "All prior S0-S4 component evidence and S5 results retain original pins/scopes and failures; no rerun merely to restate history.",
+      "All 225 existing requirement rows and their full S5 acceptance rules remain. Bounded S4 proof does not substitute for broader backend/scale/consumer/resource/endurance and distinct-reviewer replay.",
+      "Separate owner UX/product acceptance; CPU event-loop optimization deferred; PM047 unchanged.",
+      "Nonblocking resize, temporal/T2/unadmitted schematic exclusions; no dependency/license/backend/prototype or numerical budget change."
+    ]
   }
 }

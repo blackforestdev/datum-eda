@@ -1,5 +1,13 @@
 # S5 completed tests and remaining acceptance
 
+Current sequencing: the 2026-09-27 owner amendment reopens S4 for GPU redraw
+architecture correction and makes S5 pending behind that exit. Current work is
+solution discovery/specification only; implementation, builds and runtime
+experiments require approval of a concrete proposal. See
+[`gpu-redraw-s4-owner-direction.json`](../../gpu-redraw-s4-owner-direction.json)
+and the amended implementation contract. Every result below remains credited
+only at its recorded candidate/scope; no prior test is reset or new pass claimed.
+
 This checklist records existing validated evidence from `implementation-map.json`.
 **An agent handoff does not reset a completed test.** Done applies to the exact
 test scope and candidate in the linked evidence; it does not turn a partial
