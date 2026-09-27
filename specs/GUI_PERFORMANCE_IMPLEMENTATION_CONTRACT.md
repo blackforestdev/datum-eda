@@ -530,3 +530,58 @@ IR-R1-01 preserves the known complete DRM accounting gap: Gate2 must stop native
 performance trials unless resolved within approved scope. No expanded tracing
 authority, performance acceptance, S4/S5 closure or CPU event-loop work follows.
 IR-R1-02 requires explicit suffix pass state initialization and exact-output proof.
+
+## GPU r1 preparation refusal
+
+The first bounded capability build was refused by the mandatory Cargo resource
+guard before Cargo started: 5.8 GiB free on `/tmp`, below its 6.0 GiB reserve.
+`docs/reviews/gui-performance/gpu-redraw-proposal/capability-attempt.json`
+records the exact command, refusal and preserved uncompiled partial patch.
+Production bytes were restored; no capability, fidelity or runtime result exists.
+R1's preparation-failure stop applies: no automatic retry or resource-policy
+bypass. Owner approval and PM048 remain valid; S4 is incomplete. A further attempt
+requires available resources and a reviewed proof disposition, not a claim that
+the failed command passed. The independent Gate2 DRM method gap also remains.
+
+## Owner clarification: complete the shared rendering foundation
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-REASSESS -->
+
+**GPI-S4-REASSESS.** The owner requires a concrete reassessed solution proposal,
+not another sequence of speculative builds. Trace the pointer-to-render path
+and actual ownership of invalidation, damage, retained content, composition and
+GPU lifetime. Identify bypassing/duplicated legacy responsibilities separately
+from necessary platform integration. Propose shared renderer contracts for
+editor changes, name superseded paths to remove and precise repeated GPU work
+removed, and preserve exact 8x output, painter order, invalidation/recovery and
+live/retiring resource accounting. Reuse evidence and retain sound parts of r1.
+If complete DRM lifetime accounting exceeds r1 scope, propose the needed amendment
+and distinguish focused-experiment from final-qualification blockers. That scope
+boundary is not abandonment of the overall GPU repair. CPU optimization stays
+deferred. R1 execution is suspended during reassessment; independent review is a
+recommendation, not owner ratification. No implementation/build/test/native run
+is authorized by this planning clarification.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-APPROVAL-R2 -->
+<!-- OWNER:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-APPROVAL-R2:GPI-S4-APPROVAL-R2 -->
+
+**GPI-S4-APPROVAL-R2.** Obtain explicit owner disposition on the pinned reassessed
+proposal and exact implementation/build/test/native-run scope. Reconcile any
+necessary mechanism/method amendment through numbered-decision governance.
+Neither independent review nor proposal completion resolves the GPU issue;
+approved implementation must demonstrate required correctness and performance.
+
+## Shared-renderer reassessment r2 proposal complete
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-REASSESS-R2 -->
+
+`docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md` pins the revised
+shared RenderSession/change/plan/receipt ownership, named legacy retirements,
+retained exact 8x prefix-copy candidate and proposed DRM scope amendment.
+`reassessment-r2.json` pins the inspected source/evidence. Advisory independent
+review at `independent-review-r2.json` found no remaining blocking proposal
+findings; it supplies no owner ratification, execution or acceptance.
+GPI-S4-REASSESS is complete as a proposal. GPI-S4-APPROVAL-R2 selects explicit
+owner disposition; S4/S5 and the GPU issue remain unresolved. No application
+build/test/native execution occurred during this reassessment. Earlier guard
+refusal and uncompiled draft remain historical evidence, not current scope.

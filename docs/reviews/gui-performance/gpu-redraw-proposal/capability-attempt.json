@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "status": "PREPARATION REFUSED; no compilation or GPU test executed",
+  "base_commit": "74b8f1744fc8bb1e800f9c37e63a6b87d281b489",
+  "patch": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/capability-attempt.patch",
+    "sha256": "e45588b97c50f9084cce55cc7254807c0eabc3d14caa303d7bdd41065626353e",
+    "source_candidate_sha256": "7a57ec17cfff807d973ce6bbcc27b66edfb70d417609b50378905117ed24abfb",
+    "disposition": "Uncompiled partial attachment-owner and capability-control draft; not an implemented candidate. Production source restored exactly after preserving this diff."
+  },
+  "command_attempted": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --locked -p datum-gui-render --features visual prefix_pair_actual_eight_sample_copy_capability -- --ignored --exact --nocapture",
+  "exit_code": 75,
+  "guard_output": [
+    "Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=25.8 GiB target_free=175.9 GiB tmp_free=5.8 GiB",
+    "warning: Cargo target exceeds soft limit: 25.8 GiB used; soft limit 20.0 GiB",
+    "Cargo resource guard refused execution: insufficient /tmp reserve: 5.8 GiB free; requires 6.0 GiB"
+  ],
+  "followup_observation": {
+    "tmp_available_bytes": 6259093504,
+    "required_bytes": 6442450944,
+    "shortfall_bytes": 183357440
+  },
+  "executed_proof": [
+    "Exact-file rustfmt on owned source",
+    "Source health governance passed (2591 source files checked)",
+    "git diff --check passed"
+  ],
+  "runtime_result": null,
+  "command_review": "The short Rust test name combined with --exact would select no fully-qualified test after compilation. A future reviewed attempt must use gpu_surface::tests::prefix_pair_actual_eight_sample_copy_capability with --exact and assert one test ran. Guard refusal occurred before Cargo, so no zero-test run is claimed.",
+  "stop_disposition": "R1 preparation failure ends this attempt. No guard bypass, retry, shared-target cleanup, unrelated /tmp deletion, system tuning or native run. Restore at least the required reserve through separately owned storage management before reviewing another attempt. Existing r1 approval and PM048 remain valid; no renderer implementation or numerical acceptance.",
+  "remaining": [
+    "Complete candidate implementation and bounded Gate1 proof after preparation is available and the failed attempt is reviewed.",
+    "Preserved Gate2 complete-DRM-lifetime accounting gap still prevents the performance campaign.",
+    "Original S4/S5 requirements remain open."
+  ],
+  "subsequent_owner_direction": "owner-clarification-r2.json supersedes the attempt's execution context: proposal-only shared-renderer reassessment; temporary-storage refusal is historical and does not block planning. No retry or application execution under r2 until explicit scope approval."
+}

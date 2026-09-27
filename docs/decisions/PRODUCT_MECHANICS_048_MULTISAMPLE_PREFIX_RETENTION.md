@@ -1,6 +1,7 @@
 # Product Mechanics 048: Multisample scene-prefix retention
 
-Status: ratified by the owner through approval of pinned GPU redraw proposal r1.
+Status: historical r1 decision; execution suspended by the subsequent owner
+clarification recorded below. R2 is a proposal requiring explicit owner approval.
 Issue: `dat-gui-performance-implementation-vkq`; Frontier: GPI-S4.
 
 ## Authority and scope
@@ -62,3 +63,15 @@ work, backend/tuning experiment, replacement renderer or alternative campaign is
 authorized. Missing/failed proof remains failed or unqualified. S5, broader
 qualification, independent native replay and owner product acceptance remain open.
 Rollback uses an isolated revert preserving historical evidence and unrelated work.
+
+## Subsequent owner clarification: planning-only architecture reassessment
+
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-clarification-r2.json`
+records the controlling direction to complete the shared rendering foundation
+and reassess ownership, legacy retirement and DRM method scope. It supersedes
+this record's current execution selection and narrow method stop as the overall
+repair boundary. Earlier approval/review history is retained, not silently
+expanded to cover r2. Independent review is a recommendation, never owner
+ratification. The reassessed `proposal-r2.md` is unratified and authorizes no
+implementation, build, test or native run. The issue remains unresolved until
+approved implementation demonstrates required correctness and performance.

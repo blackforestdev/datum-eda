@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md",
+    "sha256": "c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784"
+  },
+  "production_head": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "review_base_commit": "74b8f1744fc8bb1e800f9c37e63a6b87d281b489",
+  "scope": "Source/history and governed proposal only. No application tests, builds or native runs following owner clarification.",
+  "source_and_evidence_pins": [
+    {
+      "path": "crates/gui-app/src/app_native_events.rs",
+      "sha256": "ecb7560aeb60f20b2a67501496aafb2ec01ecef21d6b6974cf6779289c021716"
+    },
+    {
+      "path": "crates/gui-app/src/app_shell.rs",
+      "sha256": "cc3b2e5ef0d09346e30b09dfec8d744bb17b07d008f92a8cd86bad0f19098a5d"
+    },
+    {
+      "path": "crates/gui-app/src/app_frame.rs",
+      "sha256": "44d26a22a6c21ce6490dd041b89f6727e04cd9d7fb90d61fdf7ebd753069140d"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_camera_pane.rs",
+      "sha256": "82a0c24585c0183fb1caac53c2d36208081aba7c6dcdfadab768b1c0677c0cf1"
+    },
+    {
+      "path": "crates/gui-app/src/interaction_refresh.rs",
+      "sha256": "46c04a3ba20dd0ec706e68f3b6d3fcfa9a1b8b774bdc8c1b5d76d1288ee9354d"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_state.rs",
+      "sha256": "91ed35eb3e2857e8b20acc59b5e39b39a3cf11f58f11ba220526cfab893d672f"
+    },
+    {
+      "path": "crates/gui-app/src/retained_scene_history.rs",
+      "sha256": "c319b40ebaa5e3eff709ec4384c2e3af3dff8dc77beee3f424bf5b6c0f6344d2"
+    },
+    {
+      "path": "crates/gui-app/src/retained_scene_cache_key.rs",
+      "sha256": "0509969810ab56287203f5ef13a2a57c51fe613e71d63c7ad6a0f3aa9bd486d3"
+    },
+    {
+      "path": "crates/gui-app/src/retained_scene_lifecycle.rs",
+      "sha256": "9ce1b9c9e447bcd4688c881ad3685adf44670cc53e9254ba841f07932bb1aa07"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "sha256": "5103b6958c9a381fd0dacac2c14c7f527326416eb77dce1137cec363ed78be38"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "sha256": "1c9ec99e7f498b5c4adecc9a3ea5b5510098b5b9e58ba1ebef772f000aa04842"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "sha256": "c2c52785b7d8fbfaad5080d216c9dbfd3a53c031f737a8c6ecd340ba1d3c7875"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "sha256": "c58bb07de3b39328b7e423e6ca229471c1866ed5558f5fcbcb03a89f1defffb5"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_adapters.rs",
+      "sha256": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252"
+    },
+    {
+      "path": "crates/gui-app/src/native_render_target.rs",
+      "sha256": "33e990e3c337f920b88ecc2a4697346398cbc0885b3ab9ba341b8a54f3f57f75"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "sha256": "24dc24021b3ce22066d0dd83f1bc8f1cfaaf491edf56548cddc747ebdae01df1"
+    },
+    {
+      "path": "crates/gui-app/src/native_queue_owner.rs",
+      "sha256": "c4fece5c7b0695cce2bac4751815cdf2145e9b7841f8a032ca6212aeea6a92b9"
+    },
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "sha256": "b2d5aedcc458041e1fb26511b71933d308613f1e3b79dd0fc7cad5a67b50c950"
+    },
+    {
+      "path": "crates/gui-app/src/pane_grid_lod.rs",
+      "sha256": "9c7cfb4a9ceec4f7f097d2577dd92f7ed66e2cab6b0586ef3d664430cfa65295"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "sha256": "7b48e107880f2ae5e5069e7ccd74c40d586c8e1aa96b3b349667bcc626be7365"
+    },
+    {
+      "path": "crates/gui-app/src/native_gpu.rs",
+      "sha256": "7f63670b9f04ef38f1bac1435113e995031c86f51124308313d2c3cd8d87fa1e"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "sha256": "0e7d6d1014ef5f4aac54a4f53b345226951d4092307e3a6dc9ac5bb01b2bd8af"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame_target.rs",
+      "sha256": "0c0ba8b328066d223f7184bf56608f62150f0c48d7380f904021f1d091b0e297"
+    },
+    {
+      "path": "crates/gui-render/src/render/prepared_scene_access.rs",
+      "sha256": "3e388b3604319d2fe79d76731859cf6902cce25e5fdb93585cb54cb5e6a5ed86"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_preparation.rs",
+      "sha256": "8dc8bf70f343b3b8937a403a3442acc429afe7259adc654bc0aa7b3a7de9933f"
+    },
+    {
+      "path": "crates/gui-render/src/render/interaction_overlay.rs",
+      "sha256": "dc02d347259b16cbb82c9b0f06a73f5253798d3c38c9d74a70ee6f5dc003cd69"
+    },
+    {
+      "path": "crates/gui-render/src/render/coordinate_hit.rs",
+      "sha256": "ffc8bd0d99da22ecb841ca0b4682e264ec996137db5d9dccc3f6b2071674f2da"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface.rs",
+      "sha256": "ca6a0792d95d3608790a921b0f8e78f93564b11db2d2cab8dc7d187abb6dcbf0"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface_pass.rs",
+      "sha256": "ac61aa84595b86f3e3d999ae653c2e2d866efe41f6d1aaa384f48089c0e90cb9"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs",
+      "sha256": "01dee01155accdef82138a2f7de7074a0d1c3a37896aa617df2fbe930885f507"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_overlay.rs",
+      "sha256": "d52345d959ce11db97b2ac7d57999ae89bc63077f1414048f2ca5f5c3460cbc5"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_text.rs",
+      "sha256": "48252614443fed69f8945d66d173c077ae0f2c626706da18197d4bbbe18b952a"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements.rs",
+      "sha256": "75a0f87cc2965de1a351e0917723944631e99cbf59c11e0e680e4c9e6105b3d9"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_owner.rs",
+      "sha256": "2f43d232a89eb25bd3da0678cf2790533df289b2443af1c86e7ec71c7f6ae9ba"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/lifetime.rs",
+      "sha256": "699bbc430ec214d51a64ddb35afeacef153d9765d559fb24dbe2eb6b9096b686"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/budget.rs",
+      "sha256": "92676c620d44ff3fe9bee2bdd6d37b2e6dd805f74443c5840395b799b19d4c8c"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json",
+      "sha256": "b1dba17ee286eb965928bf76dd9c8c13abe26f40a101338e3bafa0638a8de40d"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients.py",
+      "sha256": "52c25c28dba8e708ebd1ad8d2dcabd6c77c57c2d492139ee2a0b3a4ffb80c5c3"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation-map.json",
+      "sha256": "3b8a78f0b9cb65c70e4fb66001c5ae7650805ca602043bd1025b7ff5bbaac843"
+    }
+  ],
+  "existing_evidence_reuse": {
+    "r1_pins_verified": 25,
+    "original_requirement_rows": 225,
+    "consumer_ids": [
+      "MAIN",
+      "BOARD",
+      "SCHEMATIC",
+      "REVISION",
+      "GLOBAL",
+      "PROJECT",
+      "NEW",
+      "LAYERS",
+      "NAV",
+      "INSPECTOR",
+      "MENU",
+      "CONSOLE",
+      "TERMINAL",
+      "TERM_OVERLAY"
+    ],
+    "runtime_result": null,
+    "source_of_prior_results": "r1 review.json and original evidence; no runtime result relabeled or rerun"
+  },
+  "findings": [
+    {
+      "id": "R2-OWN-01",
+      "finding": "Pointer interaction retains CPU world but classification does not reach GPU graph; shared full prefix still executes.",
+      "proposal": "Typed shared session revisions and immutable frame plans select prefix reuse."
+    },
+    {
+      "id": "R2-OWN-02",
+      "finding": "Derived preparation/history/completion responsibilities remain across app entry points; current platform owners are necessary.",
+      "proposal": "Migrate render validity/preparation to one shared owner; bridge existing receipts; preserve native and editor semantic responsibilities."
+    },
+    {
+      "id": "R2-OWN-03",
+      "finding": "Raw and composed world encoders are alternative branches, not proven same-frame duplication.",
+      "proposal": "Normalize compatibility descriptors and retire parallel recipes without resurrecting empty world."
+    },
+    {
+      "id": "R2-METHOD-01",
+      "finding": "Complete DRM lifetime data missing; own-queue timestamps answer a narrower question.",
+      "proposal": "Explicitly amend r1 experiment scope with incomplete-duty label; add complete fd method work before qualification, with its own concrete execution packet."
+    }
+  ],
+  "route_review": {
+    "id": "gui-performance-recovery",
+    "prior_reviewed_digest": "72055f06f6194fb80d44c4f9fac9166cb88368859a61b1a3ca58c5b6ff0f1a5f",
+    "basis": "Reuse full-route review from r1 and preserved approval delta; read controlling contracts and source ownership path for new owner clarification. Original research/225-row map/history unchanged; reconcile only proposal/governance consumers. No runtime truth overrides owner doctrine."
+  },
+  "authority": "Proposal and advisory independent review only; owner approval required; no issue resolution or S4/S5 closure."
+}
