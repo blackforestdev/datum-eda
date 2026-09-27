@@ -38318,7 +38318,14 @@
       "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/rejected-window-selector/result.json",
       "docs/reviews/gui-performance/implementation/S5/cpu-boundary-method/SHA256SUMS"
     ],
-    "boundaries": "No runtime, dependency/license, numerical cap, prototype, GEFN/S0-S4 or resize-scope change. No independent review/replay, formal relative speedup or S5 acceptance."
+    "boundaries": "No runtime, dependency/license, numerical cap, prototype, GEFN/S0-S4 or resize-scope change. No independent review/replay, formal relative speedup or S5 acceptance.",
+    "unused_raw_device_input": {
+      "status": "Unused raw input subscription removed; bounded native clamp behavior preserved; CPU ceiling still fails",
+      "qualification_pass": false,
+      "evidence": "docs/reviews/gui-performance/implementation/S5/raw-device-input/result.json",
+      "evidence_sha256": "5b163b23df7207c7b8d96d267b15f921b8341a91e58c65a63a3b8d4a229038d6",
+      "remaining": "Quiet clamp CPU still exceeds1percent; full native input and original S5 acceptance remain."
+    }
   },
   "s5_final_observation": {
     "status": "Bounded final-observation endpoint implemented and native-tested; GPI-S5 incomplete",
@@ -38959,15 +38966,27 @@
         ],
         "scope": "Pinned0709fc90 X11/1x actualGlobal/Project/New. Six intermediate nonmatching readbacks retained. No GPU/full resource/endurance/otherbackend-scale, formal comparative, independent replay or owner UX acceptance. Historical failures remain.",
         "carry_forward": "Credit completed candidate/configuration proof. No repeat solely for handoff; affected changes and mandatory final independent replay are separate rerun reasons."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Unused raw-device subscription removal: bounded native clamp behavior",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/raw-device-input/result.json",
+        "evidence_field": "runs and passed_scope",
+        "evidence_sha256": "5b163b23df7207c7b8d96d267b15f921b8341a91e58c65a63a3b8d4a229038d6",
+        "validated_result": "3trials/6bounds; all18reference images exact; inward reversal and normal cleanup preserved. CPU ceiling FAILED in every interval.",
+        "requirement_ids": [],
+        "scope": "X11/1x bounded input regression only, not full W-CLAMP or numerical acceptance.",
+        "carry_forward": "Reuse this behavior evidence across handoffs; no repeated batch solely for new session. CPU failure and required final independent replay remain."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 32,
-      "evidence_hashes_checked": 32,
-      "matching_hashes": 32,
-      "native_runs_performed": 6,
-      "meaning": "Existing31groups preserved and one scoped native startup group added. Hash integrity alone is not qualification; each done group retains its own scope. The prior documentation-only reconciliation ran no native trials."
+      "completed_groups": 33,
+      "evidence_hashes_checked": 33,
+      "matching_hashes": 33,
+      "native_runs_performed": 3,
+      "meaning": "Previous32groups preserved; one bounded native input behavior group added. CPU failure remains explicit; no S5 or parent requirement acceptance."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",

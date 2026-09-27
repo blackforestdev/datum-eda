@@ -1,0 +1,246 @@
+{
+  "status": "Unused raw input subscription removed; bounded native clamp behavior preserved; CPU ceiling still fails",
+  "qualification_pass": false,
+  "production_file": "crates/gui-app/src/app_shell.rs",
+  "candidate": "candidate.json",
+  "source_review": "source-review.json",
+  "runs": [
+    {
+      "trial": 1,
+      "raw": "pm045-raw-input-1lyy4b1l",
+      "clamp_trials": [
+        {
+          "bound": "minimum",
+          "first_sample": 0,
+          "last_sample": 1,
+          "tail_sample": 2,
+          "elapsed_seconds": 30.076653025,
+          "cpu_ms": 361.253,
+          "cpu_percent_one_core": 1.2011077153422725,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.074207588,
+          "cpu_ms": 361.874,
+          "cpu_percent_one_core": 1.2032702738422025,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "reference_pixels": {
+        "minimum-before.png": {
+          "AE": "0",
+          "reference_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320",
+          "actual_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320"
+        },
+        "minimum-after.png": {
+          "AE": "0",
+          "reference_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320",
+          "actual_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320"
+        },
+        "minimum-reversal.png": {
+          "AE": "0",
+          "reference_sha256": "6f2497fce79d59bf0499d673dcdd44da56fce5495dab09e2940d9c271288ca3d",
+          "actual_sha256": "6f2497fce79d59bf0499d673dcdd44da56fce5495dab09e2940d9c271288ca3d"
+        },
+        "maximum-before.png": {
+          "AE": "0",
+          "reference_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e",
+          "actual_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e"
+        },
+        "maximum-after.png": {
+          "AE": "0",
+          "reference_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e",
+          "actual_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e"
+        },
+        "maximum-reversal.png": {
+          "AE": "0",
+          "reference_sha256": "842e1b819107954428f16678bd4e21629ab3539047848c6a70b3b4ea7fe675b8",
+          "actual_sha256": "842e1b819107954428f16678bd4e21629ab3539047848c6a70b3b4ea7fe675b8"
+        }
+      },
+      "normal_exit_code": 0,
+      "display_restored": true,
+      "artifact_checks": {
+        "binary_unchanged": true,
+        "engine_unchanged": true,
+        "fixture_unchanged": true,
+        "pinned_assets_unchanged": true,
+        "production_source_unchanged": true
+      }
+    },
+    {
+      "trial": 2,
+      "raw": "pm045-raw-input-q3xhqctt",
+      "clamp_trials": [
+        {
+          "bound": "minimum",
+          "first_sample": 0,
+          "last_sample": 1,
+          "tail_sample": 2,
+          "elapsed_seconds": 30.072073808,
+          "cpu_ms": 356.043,
+          "cpu_percent_one_core": 1.1839655697615465,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.074905053,
+          "cpu_ms": 363.785,
+          "cpu_percent_one_core": 1.2095965036594927,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "reference_pixels": {
+        "minimum-before.png": {
+          "AE": "0",
+          "reference_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320",
+          "actual_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320"
+        },
+        "minimum-after.png": {
+          "AE": "0",
+          "reference_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320",
+          "actual_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320"
+        },
+        "minimum-reversal.png": {
+          "AE": "0",
+          "reference_sha256": "6f2497fce79d59bf0499d673dcdd44da56fce5495dab09e2940d9c271288ca3d",
+          "actual_sha256": "6f2497fce79d59bf0499d673dcdd44da56fce5495dab09e2940d9c271288ca3d"
+        },
+        "maximum-before.png": {
+          "AE": "0",
+          "reference_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e",
+          "actual_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e"
+        },
+        "maximum-after.png": {
+          "AE": "0",
+          "reference_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e",
+          "actual_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e"
+        },
+        "maximum-reversal.png": {
+          "AE": "0",
+          "reference_sha256": "842e1b819107954428f16678bd4e21629ab3539047848c6a70b3b4ea7fe675b8",
+          "actual_sha256": "842e1b819107954428f16678bd4e21629ab3539047848c6a70b3b4ea7fe675b8"
+        }
+      },
+      "normal_exit_code": 0,
+      "display_restored": true,
+      "artifact_checks": {
+        "binary_unchanged": true,
+        "engine_unchanged": true,
+        "fixture_unchanged": true,
+        "pinned_assets_unchanged": true,
+        "production_source_unchanged": true
+      }
+    },
+    {
+      "trial": 3,
+      "raw": "pm045-raw-input-2r5md8d5",
+      "clamp_trials": [
+        {
+          "bound": "minimum",
+          "first_sample": 0,
+          "last_sample": 1,
+          "tail_sample": 2,
+          "elapsed_seconds": 30.069368968,
+          "cpu_ms": 341.846,
+          "cpu_percent_one_core": 1.1368579113309445,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.074338197,
+          "cpu_ms": 348.851,
+          "cpu_percent_one_core": 1.1599623496779021,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "reference_pixels": {
+        "minimum-before.png": {
+          "AE": "0",
+          "reference_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320",
+          "actual_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320"
+        },
+        "minimum-after.png": {
+          "AE": "0",
+          "reference_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320",
+          "actual_sha256": "0909051179662bfb02aa4f3156cf6100a386639e7473240f444360c855b22320"
+        },
+        "minimum-reversal.png": {
+          "AE": "0",
+          "reference_sha256": "6f2497fce79d59bf0499d673dcdd44da56fce5495dab09e2940d9c271288ca3d",
+          "actual_sha256": "6f2497fce79d59bf0499d673dcdd44da56fce5495dab09e2940d9c271288ca3d"
+        },
+        "maximum-before.png": {
+          "AE": "0",
+          "reference_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e",
+          "actual_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e"
+        },
+        "maximum-after.png": {
+          "AE": "0",
+          "reference_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e",
+          "actual_sha256": "2f4d2c28209ea2aa4a0ee7b6583b2a696cdd21abe0a93f388f6a14c9f19b930e"
+        },
+        "maximum-reversal.png": {
+          "AE": "0",
+          "reference_sha256": "842e1b819107954428f16678bd4e21629ab3539047848c6a70b3b4ea7fe675b8",
+          "actual_sha256": "842e1b819107954428f16678bd4e21629ab3539047848c6a70b3b4ea7fe675b8"
+        }
+      },
+      "normal_exit_code": 0,
+      "display_restored": true,
+      "artifact_checks": {
+        "binary_unchanged": true,
+        "engine_unchanged": true,
+        "fixture_unchanged": true,
+        "pinned_assets_unchanged": true,
+        "production_source_unchanged": true
+      }
+    }
+  ],
+  "cpu_percent_one_core_range": [
+    1.1368579113309445,
+    1.2095965036594927
+  ],
+  "cpu_ceiling_percent": 1,
+  "cpu_ceiling_pass": false,
+  "interpretation": "All six measured bound intervals exceed1percent. Historical quiet1.442..1.540percent remains evidence, not a matched baseline for formal improvement. Retain this change because it removes a subscribed event stream with no product consumer; do not claim it resolves clamp performance.",
+  "passed_scope": "Three X11/1x trials, both bounds: outward endpoint AE0, inward reversal changed, all18images exact prior reference, normal exit0, display restored, no remaining descendants; binary/engine/fixture/assets/sources unchanged.",
+  "failed_attempt": "First campaign stopped before process launch/input: AF_UNIX path too long under disk evidence directory. Preserved raw result and campaign log; corrected socket to owned short /tmp directory. No successful or failing product trial replaced.",
+  "resource_preflight": "Initial Cargo refused /tmp reserve. Moved140 prior scene raw files to disk only after archive and copy verification; old path is symlink. Guarded build then succeeded.",
+  "raw_archive_sha256": "624582f46a345e23e7c83f07c723ef8ce9447603fdaabe8d36045f6840f641fc",
+  "raw_files": 486,
+  "limits": [
+    "No native event-count/exact camera-state/zero-forbidden-work proof in quiet trials.",
+    "No separately measured reversal CPU/latency, keyboard semantic qualification, full resource/GPU/otherbackend-scale/endurance/independent replay or owner UX acceptance.",
+    "No new unit test mirrors the three-line API policy call; source review, release compilation and native batch cover the affected decision."
+  ],
+  "preserved": "PM045/PM047, GEFN, upload-before-acquire, dependency/license authority, Claude prototype ownership and nonblocking resize exclusions unchanged."
+}
