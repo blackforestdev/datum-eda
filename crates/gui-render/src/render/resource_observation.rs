@@ -108,3 +108,8 @@ pub fn document_cpu_usage() -> Vec<DocumentCpuUsage> {
 mod tests;
 
 pub use crate::text_admission_observation::{TextAdmissionGroup, TextAdmissionObservation};
+
+pub use crate::geometry_admission::{
+    GeometryAdmissionCounts, GeometryAdmissionRange, PreparedGeometryAdmission,
+    PreparedSourceIdentities, PreparedSourceIdentity,
+};

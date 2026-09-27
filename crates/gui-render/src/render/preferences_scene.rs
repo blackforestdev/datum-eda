@@ -157,6 +157,7 @@ impl PreparedScene {
         };
         let camera = CameraState::fit_to_bounds(&bounds);
         Self {
+            admission_sources: None,
             consumers: crate::resource_consumers::FrameConsumers::dialog(
                 crate::resource_consumers::Consumer::Global,
             ),
