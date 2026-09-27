@@ -411,17 +411,12 @@ fn push_retained_scene_geometry(
         silkscreen_quads += out.len().saturating_sub(silkscreen_before);
     }
     trace_retained_stage("post-copper", post_started, post_before, out.len());
-    trace_render_timing(format!(
-        "retained detail process_pads={}ms/{}q mechanical={}ms/{}q component_silk={}ms/{}q board_graphics={}ms/{}q",
-        process_pad_elapsed.as_millis(),
-        process_pad_quads,
-        mechanical_elapsed.as_millis(),
-        mechanical_quads,
-        silkscreen_elapsed.as_millis(),
-        silkscreen_quads,
-        board_graphics_elapsed.as_millis(),
-        board_graphics_quads
-    ));
+    render_helpers::trace_retained_detail([
+        (process_pad_elapsed, process_pad_quads),
+        (mechanical_elapsed, mechanical_quads),
+        (silkscreen_elapsed, silkscreen_quads),
+        (board_graphics_elapsed, board_graphics_quads),
+    ]);
     let active_started = std::time::Instant::now();
     let active_before = out.len();
     if let Some(active_component_uuid) = active_move_component_uuid.as_deref()

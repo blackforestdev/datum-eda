@@ -1,9 +1,27 @@
 use super::{BoardGraphicPrimitive, RectPx, TextFace, TextRun, TextRunSpan};
 
-pub(crate) fn trace_render_timing(message: String) {
+/// Disabled tracing must not allocate or evaluate diagnostic-only arguments.
+pub(crate) fn trace_render_timing(message: impl FnOnce() -> String) {
     if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
-        eprintln!("[datum-render] {message}");
+        eprintln!("[datum-render] {}", message());
     }
+}
+
+/// Retained construction stages in order: pads, mechanical, silk, graphics.
+pub(crate) fn trace_retained_detail(stages: [(std::time::Duration, usize); 4]) {
+    trace_render_timing(|| {
+        format!(
+            "retained detail process_pads={}ms/{}q mechanical={}ms/{}q component_silk={}ms/{}q board_graphics={}ms/{}q",
+            stages[0].0.as_millis(),
+            stages[0].1,
+            stages[1].0.as_millis(),
+            stages[1].1,
+            stages[2].0.as_millis(),
+            stages[2].1,
+            stages[3].0.as_millis(),
+            stages[3].1,
+        )
+    });
 }
 
 pub(crate) fn trace_graphic_timing(

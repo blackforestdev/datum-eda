@@ -526,25 +526,27 @@ impl Renderer {
         self.submit_gpu_measurement(queue, measurement)?;
         let submit_elapsed = submit_started.elapsed();
         if let Some(finish_elapsed) = finish_elapsed {
-            trace_render_timing(format!(
-                "renderer total={}ms upload={}ms encode={}ms text_prepare={}ms text_encode={}ms submit={}ms finish_us={} submit_us={} vertices panel={} underlay={} world={} overlay={} text_runs={} text_cache={}/{} text_prepare_skipped={}",
-                render_started.elapsed().as_millis(),
-                upload_elapsed.as_millis(),
-                encode_elapsed.as_millis(),
-                text_prepare_elapsed.as_millis(),
-                text_encode_elapsed.as_millis(),
-                submit_elapsed.as_millis(),
-                finish_elapsed.as_micros(),
-                submit_elapsed.as_micros(),
-                panel_vertices.len(),
-                viewport_underlay_vertices.len(),
-                world_vertices.map_or(0, |vertices| vertices.len()),
-                viewport_overlay_vertices.len(),
-                prepared.text_runs.len(),
-                text_cache_stats.hits,
-                text_cache_stats.misses,
-                skipped_text_prepare,
-            ));
+            trace_render_timing(|| {
+                format!(
+                    "renderer total={}ms upload={}ms encode={}ms text_prepare={}ms text_encode={}ms submit={}ms finish_us={} submit_us={} vertices panel={} underlay={} world={} overlay={} text_runs={} text_cache={}/{} text_prepare_skipped={}",
+                    render_started.elapsed().as_millis(),
+                    upload_elapsed.as_millis(),
+                    encode_elapsed.as_millis(),
+                    text_prepare_elapsed.as_millis(),
+                    text_encode_elapsed.as_millis(),
+                    submit_elapsed.as_millis(),
+                    finish_elapsed.as_micros(),
+                    submit_elapsed.as_micros(),
+                    panel_vertices.len(),
+                    viewport_underlay_vertices.len(),
+                    world_vertices.map_or(0, |vertices| vertices.len()),
+                    viewport_overlay_vertices.len(),
+                    prepared.text_runs.len(),
+                    text_cache_stats.hits,
+                    text_cache_stats.misses,
+                    skipped_text_prepare,
+                )
+            });
         }
         Ok(true)
     }
