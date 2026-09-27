@@ -1,5 +1,5 @@
 {
-  "status": "Repeated device-loss injection hook prepared; native recovery qualification not yet run",
+  "status": "Completed20 actual backend device-loss recoveries with structural and selected-window correctness; numerical recovery acceptance remains open",
   "qualification_pass": false,
   "base_commit": "06d07fd4",
   "problem": "Existing backend device.destroy injection is startup-once. Repeated recovery qualification needs controlled faults in one long-lived process with preserved state.",
@@ -16,10 +16,10 @@
   },
   "guard_refusal": "Initial build refused because /tmp had5.4GiB free versus6GiB reserve. Moved the completed endurance raw data to target/pm045-evidence-work/dev-agent-s5-endurance-6aj_2kcs only after verifying all1034 files against the archived hashes at both source and destination; original /tmp path is a symlink. Retried the same guarded command successfully. No shared build artifacts removed.",
   "limits": [
-    "Native20-recovery run, resource/CPU/visible recovery limits, backend/scale and final-state coverage remain required. A request-parser test is not a device recovery pass.",
+    "Twenty native recoveries and trace reconciliation completed at recorded scope. Resource/CPU/visible recovery limits and full backend/scale/final-state coverage remain unqualified.",
     "Request reads add diagnostics-only I/O/CPU and bounded temporary text; no observer overhead or normal-mode performance claim.",
     "Invalid request files fail the diagnostic process explicitly rather than silently skipping a scheduled fault; setup failures must be preserved.",
-    "Stable replay candidate must be rebuilt and pinned after this hook lands. Previous cycle evidence and all native failures remain valid at their recorded scope.",
+    "Candidate rebuilt and pinned in candidate.json; final independent replay packet remains pending stable performance candidate. Prior cycle evidence and all native failures remain valid at their recorded scope.",
     "No full MEM-03/S5 acceptance, independent replay or owner UX acceptance."
   ],
   "preserved": "PM045/PM047, completed S0-S4, GEFN, Vulkan upload-before-acquire, dependency authority, Claude prototype lane and nonblocking resize exclusions. Default device-loss mode does not open the request path.",
@@ -31,5 +31,15 @@
   "source_sha256": {
     "crates/gui-app/src/native_device_recovery.rs": "5874e0574c3d6e3015bac4fe96df8f7a7fb0352c6052d12d1e44a3f7c089a9dc",
     "crates/gui-app/src/native_device_loss_requests.rs": "af866dc59e3f14d333be6c4758ce8162dc0e28bed77400c7eebd9c0f548b8fe5"
+  },
+  "native_trial": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
+    "completed_structural_recoveries": 20,
+    "full_acceptance": false,
+    "cpu_observations_above_100ms": 20,
+    "failed_attempts_preserved": [
+      "../initial-open-timeout/assessment.json",
+      "../stale-cursor-timeout/assessment.json"
+    ]
   }
 }
