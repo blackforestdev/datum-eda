@@ -338,6 +338,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             text_buffers,
             control_meshes: Default::default(),
             cold_world: Default::default(),
+            text_admission: text_admission_observation::Observer::new(
+                std::env::var_os("DATUM_RESOURCE_TRACE").is_some(),
+            ),
             text_preparation: Default::default(),
             panel_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone())
                 .with_staging_budget(staging_budget.clone())

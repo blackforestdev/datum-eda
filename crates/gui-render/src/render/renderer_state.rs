@@ -24,6 +24,7 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
+    pub(super) text_admission: text_admission_observation::Observer,
     pub(super) measurement_fonts: Option<crate::text_metrics::measurement_owner::Owner>,
     pub(super) frame_consumers: resource_consumers::FrameConsumers,
     pub(super) resource_host: crate::text_gpu::allocation_host::Host,

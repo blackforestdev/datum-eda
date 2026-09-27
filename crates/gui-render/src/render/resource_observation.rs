@@ -106,3 +106,5 @@ pub fn document_cpu_usage() -> Vec<DocumentCpuUsage> {
 #[cfg(test)]
 #[path = "resource_observation_tests.rs"]
 mod tests;
+
+pub use crate::text_admission_observation::{TextAdmissionGroup, TextAdmissionObservation};

@@ -273,6 +273,15 @@ fn font_view(u: resource_observation::FontCpuUsage) -> Value {
         "private_bytes":u.private_bytes,"fixed_font_bytes":u.fixed_font_bytes,"cache_reserved_bytes":u.cache_reserved_bytes})
 }
 fn renderer_view(renderer: &Renderer) -> Value {
+    let admission = renderer.text_admission_observation().map(|a| {
+        let group = |g: resource_observation::TextAdmissionGroup| json!({
+            "runs":g.runs,"layout_rows":g.layout_rows,"shaped_instances":g.shaped_instances,
+            "unique_raster_keys":g.unique_raster_keys
+        });
+        json!({"preparation_serial":a.preparation_serial,"font_owner_id":a.font_owner_id,
+            "cache_revision":a.cache_revision,"workspace":group(a.workspace),"overlay":group(a.overlay),
+            "union_unique_raster_keys":a.union_unique_raster_keys,"observer_scratch_bytes":a.scratch_bytes})
+    });
     let control = renderer.control_mesh_usage();
     let text = renderer.text_cache_key_usage();
     let glyph_counts = renderer.glyph_preparation_counts().map(|counts| {
@@ -284,7 +293,10 @@ fn renderer_view(renderer: &Renderer) -> Value {
     }))
     });
 
-    json!({"last_successful_glyph_preparation_workspace_overlay":glyph_counts,
+    json!({"text_admission":admission,"text_admission_failed":renderer.text_admission_observation_failed(),
+        "text_admission_observer":renderer.text_admission_observer_usage().as_ref().map(scope_view),
+        "text_admission_scope":"sampled prepared text; CacheKey includes font ID, size, weight, flags and subpixel bins; owner ID is not model generation; no per-pane or raster visibility claim",
+        "last_successful_glyph_preparation_workspace_overlay":glyph_counts,
         "glyph_count_scope":"last successful preparation groups; sampled, not per-frame/per-pane or unique glyph admission",
         "text_scope":scope_view(&renderer.text_cpu_usage()),"font":font_view(renderer.font_cpu_usage()),
         "measurement_font":renderer.measurement_cpu_usage().map(font_view),

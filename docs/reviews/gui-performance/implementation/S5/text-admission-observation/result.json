@@ -1,0 +1,39 @@
+{
+  "status": "bounded text admission observation; full ADM-01 remains incomplete",
+  "base_commit": "8b931c66",
+  "change": "Opt-in DATUM_RESOURCE_TRACE observation reads the existing admitted shaped buffers for workspace and overlay, including paint reuse. Records preparation serial, font-owner identity, cache revision, per-group shaped counts and full physical CacheKey uniqueness plus union deduplication.",
+  "proof": {
+    "gpu": "1 serial hardware GPU test passed: observer off/on exact pixels; reused preparation advances serial with unchanged counts/cache revision; duplicated text doubles shaped instances but preserves unique keys; invalid index/run input becomes unavailable and next valid render recovers exact pixels; observer retains no key collection and separately records allocation peak.",
+    "app": "Guarded offline cargo check -p datum-gui-app passes.",
+    "gates": "Source health2557, dependency authority and20spec parity inventories pass."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --lib text_admission_observes_reuse_deduplication_and_invalid_input_without_pixel_changes --offline -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo check -p datum-gui-app --offline"
+  ],
+  "semantics": [
+    "Keys include font ID, glyph ID, size bits, weight, flags and subpixel bins from the production glyph.physical call.",
+    "Font owner is a runtime identity, not a claim of model generation or complete font-change qualification.",
+    "Preparation serial identifies this renderer text preparation, including cache reuse; it is not physical presentation or the complete prepared-frame/model identity.",
+    "Scratch is admitted before allocation through existing host/process staging budgets, scoped separately as text-admission-observer, and released before return. Diagnostic peaks therefore include observer scratch; no retrospective subtraction or numerical cap acceptance.",
+    "Missing/failed observation is null plus failure status, not zero. Observer refusal does not change production draw outcome.",
+    "Resource delivery remains sampled; this is not a complete per-frame/pane event stream."
+  ],
+  "remaining": [
+    "Per-frame/pane/model identity and complete geometry/range/culling observations.",
+    "Native before/after layout,font,layer,pane,DPI admission and delivery validation.",
+    "Full observer overhead and applicable instantaneous resource caps.",
+    "Complete S5 performance/endurance/recovery/independent replay and separate owner UX acceptance."
+  ],
+  "preserved": "Original225 predicates/statuses, S0-S4, prior failures and checked passes, GEFN, PM029/PM047, Vulkan upload-before-acquire and all nonblocking resize exclusions. No dependency/shader/prototype change.",
+  "logs": {
+    "gpu": {
+      "path": "docs/reviews/gui-performance/implementation/S5/text-admission-observation/gpu.log.gz",
+      "sha256": "b708b035b3a52512dfd00f35a19b029b998f16bc46b3ebe83087df60883dab4d"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S5/text-admission-observation/app.log.gz",
+      "sha256": "110607dd898362f392450704bb9974b3a9efb1c63fe74ca3e76a35589d4f399e"
+    }
+  }
+}
