@@ -1,0 +1,113 @@
+{
+  "status": "Compact native allocation delivery and call-local classification passed on one X11/1x F-DOA run; full qualification remains open",
+  "qualification_pass": false,
+  "base_commit": "7b81ce37",
+  "candidate": {
+    "source_commit": "7b81ce3782d21ba7e50523924b133fd626d30f73",
+    "binary": "/home/bfadmin/Documents/datum-eda/target/pm045-independent-replay-artifacts/candidate-private-compact-a76381ff79c1-datum-gui",
+    "binary_sha256": "a76381ff79c190b79e61428e355ca27c0a9747ea182c22089672ba28648ef142",
+    "source_bindings_sha256": "350a1de80f712bda72834384f424ca0c6a231dae4874eef73fffc8bd9996c4bd",
+    "kernel": "6.12.107+deb13-amd64",
+    "display": ":1",
+    "wayland_display": "wayland-0",
+    "status": "Producer method integration candidate, not final replay ready",
+    "working_tree_production_patch": "production.patch",
+    "production_patch_sha256": "7660fff6ffebf2e55d616e4946081d669a840abb8962dee5f1a6065302167b46"
+  },
+  "archive": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/compact-raw.tar.gz",
+  "archive_sha256": "36bd92ac1ad5765a3133d026516422e94f08b8e036d872c834e3286468f169fb",
+  "index": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/compact-raw-index.json",
+  "archive_members_verified": 158,
+  "method": "One producer integration run: initial-ready, GLOBAL/PROJECT/NEW first-use cycles, five-second tail, pre-close and drained-device-live endpoints. Unchanged 15s readiness and exact pixels. Capacity131072; historical15728640byte storage ceiling retained. Exact source patch, bindings, commands, driver, environment and raw records in archive. Not an endurance, overhead, numerical-cap or independent replay campaign.",
+  "normal_exit_code": 0,
+  "display_restore_returncode": 0,
+  "remaining_before_cleanup": "",
+  "pins_unchanged": {
+    "binary_unchanged": true,
+    "fixture_unchanged": true,
+    "production_source_unchanged": true
+  },
+  "first_use": [
+    {
+      "host": "GLOBAL",
+      "completed": true,
+      "pixel_ae": "0"
+    },
+    {
+      "host": "PROJECT",
+      "completed": true,
+      "pixel_ae": "0"
+    },
+    {
+      "host": "NEW",
+      "completed": true,
+      "pixel_ae": "0"
+    }
+  ],
+  "driver_endpoints": [
+    {
+      "label": "initial-device-live",
+      "resident_fields_observed": true,
+      "identified_clients": 4
+    },
+    {
+      "label": "final-before-close",
+      "resident_fields_observed": true,
+      "identified_clients": 4
+    },
+    {
+      "label": "drained-device-live",
+      "resident_fields_observed": true,
+      "identified_clients": 4
+    }
+  ],
+  "private": {
+    "events": 201547,
+    "calls": 3025,
+    "owner_labels": {
+      "shared-font-catalog": 1,
+      "renderer-fonts-and-shapes": 1607,
+      "text-measurement": 66,
+      "raster-scratch-and-pixels": 1351
+    },
+    "cpu_owner_count": 13,
+    "renderer_origins": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "calls_without_renderer_origin": 0,
+    "reported_peak_maxima": {
+      "peak_bytes": 1759867,
+      "host_peak_bytes": 1759867,
+      "process_peak_bytes": 1759867
+    },
+    "buffer_capacity_bytes": 11004944,
+    "complete_private_call_delivery": true,
+    "observed_calls_within_reported_limits": true,
+    "qualification_pass": false
+  },
+  "lifetimes": {
+    "valid_delivery_and_classification": true,
+    "qualification_pass": false,
+    "events": 201547,
+    "overrun_calls": [],
+    "simultaneous_active_call_scope_peaks": {
+      "input": 1057319,
+      "output": 1197924,
+      "temporary": 595538,
+      "total": 1759867
+    },
+    "limits": [
+      "Input means live before call; output means allocated during and still live at call end; temporary means born and freed inside call. These are lifetime classes, not inferred semantic cache roles.",
+      "Category maxima need not coincide; never add them as a peak. Active-call aggregate excludes inactive owners and post-call retention; it is not whole-process memory.",
+      "Pre-call births and post-call frees are unobserved. Address identities are resolved only within a call. No ownership inference across unseen gaps.",
+      "Counts include requested payload and Datum header/alignment, not System slack/native mappings. Excluded budget bytes are not assigned to a category without further ownership evidence.",
+      "Complete native coverage, overhead, full process/host budget reconciliation and independent replay remain required."
+    ]
+  },
+  "sampled_cap_violations": [],
+  "resource_qualification_pass": false,
+  "prior_failures": "native-integration/result.json retains both failed attempts; neither is replaced by this run."
+}

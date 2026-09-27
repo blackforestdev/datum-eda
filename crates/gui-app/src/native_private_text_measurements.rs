@@ -1,7 +1,7 @@
 //! Optional bounded PM047 call delivery. Disabled runs allocate no event buffers,
 //! timer, redraw or file output. These receipts alone are not memory qualification.
 use anyhow::{Context, Result};
-use datum_gui_render::cpu_alloc::calls::observation::{self, Batch, Phase};
+use datum_gui_render::cpu_alloc::calls::observation::{self, Batch, Phase, Record};
 use serde_json::json;
 use std::{
     fs::File,
@@ -58,7 +58,7 @@ pub(crate) fn start() -> Result<()> {
         incomplete: false,
     };
     writer.line(json!({"phase":"start", "observation_id":id, "pid":std::process::id(),
-        "capacity":capacity, "allocation_events":allocations, "output_buffer_capacity_bytes":writer.file.capacity(),
+        "capacity":capacity, "allocation_events":allocations, "output_buffer_capacity_bytes":writer.file.capacity(), "event_storage_limit_bytes":observation::MAX_STORAGE_BYTES, "compact_allocation_records":true,
         "allocation_report_accounting":"identity fields only on Allocation; use scope_live_bytes and allocation, Finished for call peaks", "scope":"private call events; not complete CPU/GPU/RSS accounting",
         "storage":"at most two event buffers during drain; allocator/JSON/output overhead and RSS separate"}))?;
     writer.file.flush()?;
@@ -79,7 +79,19 @@ impl Writer {
     }
     fn batch(&mut self, batch: Batch) -> Result<()> {
         self.incomplete |= batch.dropped_events != 0 || batch.first_call_id != 1;
-        for event in batch.events {
+        for record in batch.events {
+            let event = match record {
+                Record::Call(event) => event,
+                Record::Allocation(event) => {
+                    let a = event.allocation;
+                    self.line(json!({"phase":"call", "observation_id":batch.observation_id,
+                        "sequence":event.sequence,"elapsed_ns":event.elapsed_ns,"transition":"Allocation",
+                        "scope_live_bytes":event.scope_live_bytes,
+                        "allocation":{"address":a.address,"bytes":a.bytes,"allocated":a.allocated},
+                        "report":{"call_id":event.call_id,"owner_id":event.owner_id,"allocator_installed":event.allocator_installed}}))?;
+                    continue;
+                }
+            };
             self.incomplete |= event.phase == Phase::Abandoned;
             let r = event.report;
             self.line(json!({

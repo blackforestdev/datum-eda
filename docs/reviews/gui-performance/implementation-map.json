@@ -39112,15 +39112,15 @@
         "completed": true,
         "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json",
         "evidence_field": "verification and limits",
-        "evidence_sha256": "be35b9881550ef983c6fa97274ccc392ba2d6f9574416f6dc0562ed66cdb175f",
-        "validated_result": "Three serial producer controls and app check retained; three offline classifier controls pass after correcting reviewer-identified host/process lower-bound gap. No native allocation-mode classification.",
+        "evidence_sha256": "b7c54a7e209cfe750cf78687e0e204564c0ef29911b6171f2e1b2087de2d1e8f",
+        "validated_result": "Four serial producer controls and three compact classifier controls passed. One X11/1x native integration delivered201547events/3025calls, three exact auxiliary pixels and three live-device DRM endpoints; normal exit. Earlier controls and two failures retained.",
         "requirement_ids": [
           "ACC-02",
           "MEM-02"
         ],
-        "scope": "Producer delivery and synthetic call-local classification only; semantic exclusions, inactive owners/full budgets, native capacity and overhead remain open.",
+        "scope": "Bounded delivery and observed call-local classification. Full budget semantics, inactive owners, native matrix and overhead remain open.",
         "carry_forward": "Reuse producer and classifier controls; do not rerun native history to manufacture missing allocation events. Stable-candidate resource qualification must establish native mode coverage.",
-        "native_limit": "Both native method attempts failed before first presentation; no native qualification added. See native_integration."
+        "native_limit": "One producer method-integration run; not endurance, numerical or independent acceptance."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
@@ -39433,14 +39433,15 @@
   },
   "s5_private_allocation_lifetimes": {
     "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json",
-    "sha256": "be35b9881550ef983c6fa97274ccc392ba2d6f9574416f6dc0562ed66cdb175f",
-    "status": "Offline producer/classifier controls retained; native allocation-mode integration failed startup delivery",
+    "sha256": "b7c54a7e209cfe750cf78687e0e204564c0ef29911b6171f2e1b2087de2d1e8f",
+    "status": "Compact native allocation delivery and call-local classification passed on one X11/1x F-DOA run; full qualification remains open",
     "qualification_pass": false,
     "native_integration": {
-      "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/result.json",
-      "sha256": "611388508ee286266606241bff3284513d21a6aeb99cdd3b081066bb599be332",
-      "status": "Both native method attempts failed; output buffering landed, startup burst delivery remains unresolved",
-      "qualification_pass": false
+      "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/compact-result.json",
+      "sha256": "bbbea899f9783af980a4e5e7f0a091c4eabcb39a0a9715057d0c84643840a3db",
+      "status": "Compact native allocation delivery and call-local classification passed on one X11/1x F-DOA run; full qualification remains open",
+      "qualification_pass": false,
+      "preserved_failed_attempts": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/result.json"
     }
   }
 }

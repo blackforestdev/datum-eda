@@ -120,7 +120,7 @@ def analyze(rows):
         require(call in active, 'event outside active call')
         begin = active[call][0]
         require(owner == begin['report']['owner_id'], 'owner changed')
-        require(all(row[key] == begin[key] for key in immutable), 'call attribution changed')
+        require(all(row[key] == begin[key] for key in immutable if key in row or phase != 'Allocation'), 'call attribution changed')
         active[call].append(row)
         if phase == 'Allocation':
             require(row['allocation'] is not None, 'missing block transition')

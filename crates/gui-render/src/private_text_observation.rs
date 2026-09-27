@@ -61,17 +61,52 @@ impl Event {
     }
 }
 
+/// Compact transitions carry only fields authoritative at allocation time.
+#[derive(Clone, Copy, Debug)]
+pub struct AllocationRecord {
+    pub sequence: u64,
+    pub elapsed_ns: u128,
+    pub call_id: u64,
+    pub owner_id: u64,
+    pub allocator_installed: bool,
+    pub scope_live_bytes: u64,
+    pub allocation: Allocation,
+}
+
+pub enum Record {
+    Call(Box<Event>),
+    Allocation(AllocationRecord),
+}
+impl Record {
+    pub fn sequence(&self) -> u64 {
+        match self {
+            Self::Call(event) => event.sequence,
+            Self::Allocation(event) => event.sequence,
+        }
+    }
+}
+
+// Preserve the previous maximum full-event vector payload allowance. Count
+// vector tracking overhead and boxed call records inside this ceiling too.
+pub const MAX_STORAGE_BYTES: usize = 65_536 * std::mem::size_of::<Event>();
+fn call_bytes() -> usize {
+    crate::cpu_alloc::heap::allocation_bytes(std::alloc::Layout::new::<Event>())
+}
+fn vector_bytes(capacity: usize) -> usize {
+    crate::cpu_alloc::heap::capacity_bytes::<Record>(capacity)
+}
+
 pub struct Batch {
     pub observation_id: u64,
     pub first_call_id: u64,
-    pub events: Vec<Event>,
+    pub events: Vec<Record>,
     /// Cumulative, sticky loss count; a later successful drain cannot erase it.
     pub dropped_events: u64,
     pub total_events: u64,
     pub active_calls: usize,
     pub capacity: usize,
-    /// API vector storage per buffer, excluding allocator metadata. A drain may
-    /// temporarily own two buffers; JSON/output buffers and RSS are separate.
+    /// Requested vector and boxed-call storage including Datum tracking bytes.
+    /// A drain may own two bounded buffers; JSON/output/RSS remain separate.
     pub buffer_capacity_bytes: usize,
 }
 
@@ -79,8 +114,9 @@ pub(super) struct Buffer {
     id: u64,
     first_call_id: u64,
     started: Instant,
-    events: Vec<Event>,
+    events: Vec<Record>,
     limit: usize,
+    boxed_bytes: usize,
     total: u64,
     dropped: u64,
     pub(super) allocations: bool,
@@ -90,14 +126,42 @@ impl Buffer {
         self.total += 1;
         event.sequence = self.total;
         event.elapsed_ns = self.started.elapsed().as_nanos();
-        if self.events.len() == self.limit {
-            self.dropped += 1;
+        let extra = if event.allocation.is_some() {
+            0
         } else {
-            self.events.push(event);
+            call_bytes()
+        };
+        if self.events.len() == self.limit
+            || vector_bytes(self.events.capacity()) + self.boxed_bytes + extra > MAX_STORAGE_BYTES
+        {
+            self.dropped += 1;
+            return;
         }
+        let record = if let Some(allocation) = event.allocation {
+            Record::Allocation(AllocationRecord {
+                sequence: event.sequence,
+                elapsed_ns: event.elapsed_ns,
+                call_id: event.report.call_id,
+                owner_id: event.report.owner_id,
+                allocator_installed: event.report.allocator_installed,
+                scope_live_bytes: event.scope_live_bytes,
+                allocation,
+            })
+        } else {
+            // transaction() clears allocation attribution: this measurement box
+            // cannot recurse into the scoped allocator or the call ledger.
+            self.boxed_bytes += extra;
+            Record::Call(Box::new(event))
+        };
+        self.events.push(record);
     }
-    fn batch(&self, events: Vec<Event>, active_calls: usize) -> Batch {
-        let buffer_capacity_bytes = events.capacity() * std::mem::size_of::<Event>();
+    fn batch(&self, events: Vec<Record>, active_calls: usize) -> Batch {
+        let buffer_capacity_bytes = vector_bytes(events.capacity())
+            + events
+                .iter()
+                .filter(|r| matches!(r, Record::Call(_)))
+                .count()
+                * call_bytes();
         Batch {
             observation_id: self.id,
             first_call_id: self.first_call_id,
@@ -111,10 +175,14 @@ impl Buffer {
     }
 }
 
-fn storage(capacity: usize) -> anyhow::Result<Vec<Event>> {
+fn storage(capacity: usize) -> anyhow::Result<Vec<Record>> {
     super::with_current(std::ptr::null(), || {
         let mut events = Vec::new();
         events.try_reserve_exact(capacity)?;
+        anyhow::ensure!(
+            vector_bytes(events.capacity()) <= MAX_STORAGE_BYTES,
+            "private trace storage ceiling exceeded"
+        );
         Ok(events)
     })
 }
@@ -125,8 +193,8 @@ pub fn start(capacity: usize) -> anyhow::Result<u64> {
     start_mode(capacity, false)
 }
 
-/// Include block lifetime events within monitored calls. Capacity/loss rules are
-/// unchanged; this mode requires the allocation-aware consumer, not summary-only
+/// Include compact block transitions within monitored calls. Event count and
+/// storage-byte exhaustion both fail delivery; this requires an allocation-aware
 /// inference from final totals. Allocator slack/native mappings remain separate.
 pub fn start_with_allocations(capacity: usize) -> anyhow::Result<u64> {
     start_mode(capacity, true)
@@ -134,7 +202,7 @@ pub fn start_with_allocations(capacity: usize) -> anyhow::Result<u64> {
 
 fn start_mode(capacity: usize, allocations: bool) -> anyhow::Result<u64> {
     anyhow::ensure!(
-        (1..=65_536).contains(&capacity),
+        (1..=if allocations { 131_072 } else { 65_536 }).contains(&capacity),
         "invalid private-call trace capacity"
     );
     let events = storage(capacity)?;
@@ -147,6 +215,7 @@ fn start_mode(capacity: usize, allocations: bool) -> anyhow::Result<u64> {
         started: Instant::now(),
         events,
         limit: capacity,
+        boxed_bytes: 0,
         total: 0,
         dropped: 0,
         allocations,
@@ -200,6 +269,7 @@ pub fn drain(id: u64) -> anyhow::Result<Batch> {
             "private-call observer changed during drain"
         );
         let events = std::mem::replace(&mut buffer.events, replacement);
+        buffer.boxed_bytes = 0;
         Ok(buffer.batch(events, ledger.calls.len()))
     })
 }
