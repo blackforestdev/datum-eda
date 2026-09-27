@@ -1,0 +1,3438 @@
+{
+  "analysis.json": {
+    "sha256": "64d95df7e7c87c4d459d21210dbf183f5919e2f8ce7abb3eca7f88512028dce3",
+    "bytes": 16203
+  },
+  "analyze.py": {
+    "sha256": "96036c6d2908eb94aa5af8580297ff732f04f8863a9bf534a4a3e5f05744bc13",
+    "bytes": 7211
+  },
+  "build.log": {
+    "sha256": "7ce5cdf5a6ae5c54ea1842a57d502bc3d4535e55a3ed05fe0a8c153b4da5ae86",
+    "bytes": 443
+  },
+  "campaign-s03t3o4h/declaration.json": {
+    "sha256": "64e60596069b4c1ac7f64b1af188fe0dc131ccbecd8badb11078c807c6dc40cd",
+    "bytes": 3735
+  },
+  "campaign-s03t3o4h/result.json": {
+    "sha256": "7dd728a0640518004237564b6424fabb4a22285d6417a1856ddd0a82cd62ef07",
+    "bytes": 1323
+  },
+  "campaign-s03t3o4h/trial-1-gpu.log": {
+    "sha256": "5352f96264283dd9f2ea19ae89d9660bb78cdff5d8836a88e5dd1e3cd4325977",
+    "bytes": 160
+  },
+  "campaign-s03t3o4h/trial-1-quiet.log": {
+    "sha256": "c729461996349e4f9f4d1d701c48ca3be4aac379803896b88341aaef040926eb",
+    "bytes": 161
+  },
+  "campaign-s03t3o4h/trial-2-gpu.log": {
+    "sha256": "52241c0c3c741f0ee37c1c8e9559a3fd160889c8829d0b0b60e08b5268aa7603",
+    "bytes": 161
+  },
+  "campaign-s03t3o4h/trial-2-quiet.log": {
+    "sha256": "34d19ea9f10745c8c08255561ec0050d597f0aabd798687fc00fdcc9bf6dd24b",
+    "bytes": 161
+  },
+  "campaign-s03t3o4h/trial-3-gpu.log": {
+    "sha256": "48db8c8024709d6f2a404ac98fe7155e1cc1642c7a6a0b5cb3d522f1f12ea841",
+    "bytes": 161
+  },
+  "campaign-s03t3o4h/trial-3-quiet.log": {
+    "sha256": "a04fa9ea7596c00b590caf54e8c5f70630a9c37c7814ddedb9f7025d3a4d886a",
+    "bytes": 161
+  },
+  "campaign.log": {
+    "sha256": "4bc1830f101f8a1cdc0c0c9c96e436d01a646a7a6e71bf6bab38e2e0bf01caea",
+    "bytes": 1254
+  },
+  "campaign.py": {
+    "sha256": "8c06edca04e22e0e7f0e65b1429e9db4c6a9f1ed0115e66a63f554fd693ff0e7",
+    "bytes": 3628
+  },
+  "candidate.json": {
+    "sha256": "88df8cae6cbfebc7892552c6c66ea5e87634a6a36c25a743d8b266a66d15ab28",
+    "bytes": 602
+  },
+  "drm_clients.py": {
+    "sha256": "99a088f5df13674481c383c0ed5bf8ee492d7714f85dcac01d5eb923c8fc7a24",
+    "bytes": 6714
+  },
+  "native_pointer.py": {
+    "sha256": "166458f8dfd799f6f85b6c7262ded12732156972acd956d698b98a1a528fa16c",
+    "bytes": 20830
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/index": {
+    "sha256": "6d0552c4e71fe85e6cdc7e7745882ea91b382fbc56448f2e9e1c2d77dcf67d81",
+    "bytes": 1310728
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/marker": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part0/mesa_cache.db": {
+    "sha256": "d280ab6f58565711d4576b240abb885062c70d2f4e1bb8db708e5daa54d233dd",
+    "bytes": 18807
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part0/mesa_cache.idx": {
+    "sha256": "8fb407208fb6e8481a22074e0ba2ff5eef67c7367cb9f84517df38940300caff",
+    "bytes": 804
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part1/mesa_cache.db": {
+    "sha256": "f8082692d997a3f2366b8fd943008f47017e609e2a270b91e0ed56043d589df6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part1/mesa_cache.idx": {
+    "sha256": "f8082692d997a3f2366b8fd943008f47017e609e2a270b91e0ed56043d589df6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part10/mesa_cache.db": {
+    "sha256": "d47a965d7d5193549021d9d1916b9235a5cf403ae153e0185818e6bfc48baf72",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part10/mesa_cache.idx": {
+    "sha256": "d47a965d7d5193549021d9d1916b9235a5cf403ae153e0185818e6bfc48baf72",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part11/mesa_cache.db": {
+    "sha256": "6da796cf1ee3697cdcda67acc51c3d2581163de17c26ee19433d578ff2d1aa58",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part11/mesa_cache.idx": {
+    "sha256": "6da796cf1ee3697cdcda67acc51c3d2581163de17c26ee19433d578ff2d1aa58",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part12/mesa_cache.db": {
+    "sha256": "4f63123a13b235a95da79bae3fe48fb8a254c6dfd5b803c2d8c3d682d17e3b11",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part12/mesa_cache.idx": {
+    "sha256": "4f63123a13b235a95da79bae3fe48fb8a254c6dfd5b803c2d8c3d682d17e3b11",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part13/mesa_cache.db": {
+    "sha256": "1be24a036b8ca34415b78531bcb00b482af1e6b266a0be70aae11278af4816a3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part13/mesa_cache.idx": {
+    "sha256": "1be24a036b8ca34415b78531bcb00b482af1e6b266a0be70aae11278af4816a3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part14/mesa_cache.db": {
+    "sha256": "3f6f4a199e8020e6951cd3890c75f7d33973c27966d5040adcb74feef5ab8325",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part14/mesa_cache.idx": {
+    "sha256": "3f6f4a199e8020e6951cd3890c75f7d33973c27966d5040adcb74feef5ab8325",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part15/mesa_cache.db": {
+    "sha256": "4b1cf778e38fc1fef9bc91c1449f9d31ae0ca8209fe31681fd7ca5eeba79e815",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part15/mesa_cache.idx": {
+    "sha256": "4b1cf778e38fc1fef9bc91c1449f9d31ae0ca8209fe31681fd7ca5eeba79e815",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part16/mesa_cache.db": {
+    "sha256": "edeb6dad1d547805a840161a653b4953649f3e78af946419728b7df7b0fca73e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part16/mesa_cache.idx": {
+    "sha256": "edeb6dad1d547805a840161a653b4953649f3e78af946419728b7df7b0fca73e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part17/mesa_cache.db": {
+    "sha256": "18fd47ac513f96b24314c500899929675eb89d835c658bd223e2ed0b189de89f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part17/mesa_cache.idx": {
+    "sha256": "18fd47ac513f96b24314c500899929675eb89d835c658bd223e2ed0b189de89f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part18/mesa_cache.db": {
+    "sha256": "e954c4013c2d1919bf30f213aeb8bdba3bab2e076764afea579d1e6e2b8f0f1b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part18/mesa_cache.idx": {
+    "sha256": "e954c4013c2d1919bf30f213aeb8bdba3bab2e076764afea579d1e6e2b8f0f1b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part19/mesa_cache.db": {
+    "sha256": "c17df41b8fcde52dc92961f3a0bf1acc8f7fea5e3a3db7b0be42d253fe131045",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part19/mesa_cache.idx": {
+    "sha256": "c17df41b8fcde52dc92961f3a0bf1acc8f7fea5e3a3db7b0be42d253fe131045",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part2/mesa_cache.db": {
+    "sha256": "d196a803c0efb65c2fb6f0243e94e524e364feea61a228fee79338ec2a5b180b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part2/mesa_cache.idx": {
+    "sha256": "d196a803c0efb65c2fb6f0243e94e524e364feea61a228fee79338ec2a5b180b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part20/mesa_cache.db": {
+    "sha256": "5bc66cd8837b7d1764ceff5b88a67b53e541c182c8a90e717babd67e337e033a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part20/mesa_cache.idx": {
+    "sha256": "5bc66cd8837b7d1764ceff5b88a67b53e541c182c8a90e717babd67e337e033a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part21/mesa_cache.db": {
+    "sha256": "f76f55e76d12e6f95fbae67e59298bf6864b9da451a5fc8291d40215e7478ab5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part21/mesa_cache.idx": {
+    "sha256": "f76f55e76d12e6f95fbae67e59298bf6864b9da451a5fc8291d40215e7478ab5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part22/mesa_cache.db": {
+    "sha256": "d34b21ba8a24f10355102edfe923fe0a82b9fed73ffa76d1f90f433842867527",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part22/mesa_cache.idx": {
+    "sha256": "d34b21ba8a24f10355102edfe923fe0a82b9fed73ffa76d1f90f433842867527",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part23/mesa_cache.db": {
+    "sha256": "b1437656d14cc5a86b411edbf32eb0e820d8e410d90cd3cabffea55645ae65e5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part23/mesa_cache.idx": {
+    "sha256": "b1437656d14cc5a86b411edbf32eb0e820d8e410d90cd3cabffea55645ae65e5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part24/mesa_cache.db": {
+    "sha256": "c7e7e2ba4c8dd4905040ae7f22f3b663b54949088778f8c19c11d91888dbe642",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part24/mesa_cache.idx": {
+    "sha256": "c7e7e2ba4c8dd4905040ae7f22f3b663b54949088778f8c19c11d91888dbe642",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part25/mesa_cache.db": {
+    "sha256": "d1d9adae405e4efdbd2fd31dcd8a5d6841343999a52bb74cc877ef44cf65f2bf",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part25/mesa_cache.idx": {
+    "sha256": "d1d9adae405e4efdbd2fd31dcd8a5d6841343999a52bb74cc877ef44cf65f2bf",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part26/mesa_cache.db": {
+    "sha256": "4074e082570d532acc0c133846860e994e61231ec0f288e6b688905df7dbce46",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part26/mesa_cache.idx": {
+    "sha256": "4074e082570d532acc0c133846860e994e61231ec0f288e6b688905df7dbce46",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part27/mesa_cache.db": {
+    "sha256": "9cc4b1ede1177aaee6b40baec2f51275db3592154bc9b656f2bb1b01ba970e57",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part27/mesa_cache.idx": {
+    "sha256": "9cc4b1ede1177aaee6b40baec2f51275db3592154bc9b656f2bb1b01ba970e57",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part28/mesa_cache.db": {
+    "sha256": "f464150bb74598188ebe27626f724c1d6606809ff64ca23b6c9a1032c5888f58",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part28/mesa_cache.idx": {
+    "sha256": "f464150bb74598188ebe27626f724c1d6606809ff64ca23b6c9a1032c5888f58",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part29/mesa_cache.db": {
+    "sha256": "82d63204da11aa58ab322c1473f648820bc3efa2cadd04aff0856a11c13f167f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part29/mesa_cache.idx": {
+    "sha256": "82d63204da11aa58ab322c1473f648820bc3efa2cadd04aff0856a11c13f167f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part3/mesa_cache.db": {
+    "sha256": "52492d19e03b9a0c0bcc29f87a63a91e2c5a50d3fc1a0ba55f85761147c7928c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part3/mesa_cache.idx": {
+    "sha256": "52492d19e03b9a0c0bcc29f87a63a91e2c5a50d3fc1a0ba55f85761147c7928c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part30/mesa_cache.db": {
+    "sha256": "1c2b91582a91808edeced397075c38a30921c73ff1682802e3cb4506332555c7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part30/mesa_cache.idx": {
+    "sha256": "1c2b91582a91808edeced397075c38a30921c73ff1682802e3cb4506332555c7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part31/mesa_cache.db": {
+    "sha256": "984636332a26045d450144a0972586bcf3491b7e93e381bff155df7bacd7fb03",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part31/mesa_cache.idx": {
+    "sha256": "984636332a26045d450144a0972586bcf3491b7e93e381bff155df7bacd7fb03",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part32/mesa_cache.db": {
+    "sha256": "ad56d1829381ec4da6b264d339bc532027c98183d762bc5e6d14c64d8a5aa124",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part32/mesa_cache.idx": {
+    "sha256": "ad56d1829381ec4da6b264d339bc532027c98183d762bc5e6d14c64d8a5aa124",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part33/mesa_cache.db": {
+    "sha256": "765d9bf2a89c454e484f3571d6b32c4a64d113b74e6a14f18554679b96a59013",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part33/mesa_cache.idx": {
+    "sha256": "765d9bf2a89c454e484f3571d6b32c4a64d113b74e6a14f18554679b96a59013",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part34/mesa_cache.db": {
+    "sha256": "dd18f17749a1f28c1480edc2a795a5e4996874ab59a42219d5e88f2d745250d5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part34/mesa_cache.idx": {
+    "sha256": "dd18f17749a1f28c1480edc2a795a5e4996874ab59a42219d5e88f2d745250d5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part35/mesa_cache.db": {
+    "sha256": "771f613d5425c7fe12fee5d5705072e2865cb2d8fd798245a661e759cc60b838",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part35/mesa_cache.idx": {
+    "sha256": "771f613d5425c7fe12fee5d5705072e2865cb2d8fd798245a661e759cc60b838",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part36/mesa_cache.db": {
+    "sha256": "d9aa5b60b09d379da3f4f2ed6d72d04f01496437e235cd816acb0ad01f1d8ac7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part36/mesa_cache.idx": {
+    "sha256": "d9aa5b60b09d379da3f4f2ed6d72d04f01496437e235cd816acb0ad01f1d8ac7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part37/mesa_cache.db": {
+    "sha256": "3b2fc56e81b57e076408a6b38be38492f49c7a1fdedf38c6d27134b6ad2ccdcd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part37/mesa_cache.idx": {
+    "sha256": "3b2fc56e81b57e076408a6b38be38492f49c7a1fdedf38c6d27134b6ad2ccdcd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part38/mesa_cache.db": {
+    "sha256": "3bc9e567953ee166739a321d0481b2710afeef3eff1cd9603f3426aaa2061508",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part38/mesa_cache.idx": {
+    "sha256": "3bc9e567953ee166739a321d0481b2710afeef3eff1cd9603f3426aaa2061508",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part39/mesa_cache.db": {
+    "sha256": "37e5dcd433d6347071264792dea4b7e46885b2e911f10cdd26f997002d82c9ee",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part39/mesa_cache.idx": {
+    "sha256": "37e5dcd433d6347071264792dea4b7e46885b2e911f10cdd26f997002d82c9ee",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part4/mesa_cache.db": {
+    "sha256": "4cc7900600f1a2e651d4fd49bdebfcbc410de58bf806a8cd09dac27ff27bb758",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part4/mesa_cache.idx": {
+    "sha256": "4cc7900600f1a2e651d4fd49bdebfcbc410de58bf806a8cd09dac27ff27bb758",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part40/mesa_cache.db": {
+    "sha256": "67458c980cb3740a532c79a55a09b1e008ad3ee4bca0c555063b04b4434f1a79",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part40/mesa_cache.idx": {
+    "sha256": "67458c980cb3740a532c79a55a09b1e008ad3ee4bca0c555063b04b4434f1a79",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part41/mesa_cache.db": {
+    "sha256": "74d536d667f0af937d9be13cd02893f192bb3371d44b40c37113ac9fd6ed1236",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part41/mesa_cache.idx": {
+    "sha256": "74d536d667f0af937d9be13cd02893f192bb3371d44b40c37113ac9fd6ed1236",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part42/mesa_cache.db": {
+    "sha256": "29abe86482702be3bb474f8e562a22d26710b935697220b322a3be2aa134d4a5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part42/mesa_cache.idx": {
+    "sha256": "29abe86482702be3bb474f8e562a22d26710b935697220b322a3be2aa134d4a5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part43/mesa_cache.db": {
+    "sha256": "17fbf58b2973b0249a54399cb9f7c6aa93926317cb5436633987198006f2d60e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part43/mesa_cache.idx": {
+    "sha256": "17fbf58b2973b0249a54399cb9f7c6aa93926317cb5436633987198006f2d60e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part44/mesa_cache.db": {
+    "sha256": "32aafec4eaf18f267111d05198d070f8b281c1dcc9e493b5b6bb38706edd08f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part44/mesa_cache.idx": {
+    "sha256": "32aafec4eaf18f267111d05198d070f8b281c1dcc9e493b5b6bb38706edd08f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part45/mesa_cache.db": {
+    "sha256": "6f6367b3b987c14518f0f08e1c08a7312447aab82a0b99e376946b05ffb3a538",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part45/mesa_cache.idx": {
+    "sha256": "6f6367b3b987c14518f0f08e1c08a7312447aab82a0b99e376946b05ffb3a538",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part46/mesa_cache.db": {
+    "sha256": "7f4336779c4cc92f156b28a3edcd12b218df6c5cf32251c815332ed9db8d07a5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part46/mesa_cache.idx": {
+    "sha256": "7f4336779c4cc92f156b28a3edcd12b218df6c5cf32251c815332ed9db8d07a5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part47/mesa_cache.db": {
+    "sha256": "ab0985ac0a4320b83af335c4ec51601f6735d7980d94e56d1d471ff9ec4dcbd5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part47/mesa_cache.idx": {
+    "sha256": "ab0985ac0a4320b83af335c4ec51601f6735d7980d94e56d1d471ff9ec4dcbd5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part48/mesa_cache.db": {
+    "sha256": "c6d84a587db66aa3b3c62297fc9af78a7dc5eba0264885a438f6746d541c1816",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part48/mesa_cache.idx": {
+    "sha256": "c6d84a587db66aa3b3c62297fc9af78a7dc5eba0264885a438f6746d541c1816",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part49/mesa_cache.db": {
+    "sha256": "9fdf98c38861298507bdccd40265298b69512994ac2b4a255ad143a865a21034",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part49/mesa_cache.idx": {
+    "sha256": "9fdf98c38861298507bdccd40265298b69512994ac2b4a255ad143a865a21034",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part5/mesa_cache.db": {
+    "sha256": "245c24948c31de939a189c1d7dfde94516354b5be457d9c3a4943a5755a90781",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part5/mesa_cache.idx": {
+    "sha256": "245c24948c31de939a189c1d7dfde94516354b5be457d9c3a4943a5755a90781",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part6/mesa_cache.db": {
+    "sha256": "8b610bb384cda7ed0e74625d19a39720ac2ed527df83499f64a1edd090b8b934",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part6/mesa_cache.idx": {
+    "sha256": "8b610bb384cda7ed0e74625d19a39720ac2ed527df83499f64a1edd090b8b934",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part7/mesa_cache.db": {
+    "sha256": "c2a815e2c901467adf813f0f0a659bb3cf67bb5a2d6e841c16ef3fd97768e715",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part7/mesa_cache.idx": {
+    "sha256": "c2a815e2c901467adf813f0f0a659bb3cf67bb5a2d6e841c16ef3fd97768e715",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part8/mesa_cache.db": {
+    "sha256": "9b22137841796e2b564d4566d41195c3502ce68ec0b85bddb2f0312616ffc19e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part8/mesa_cache.idx": {
+    "sha256": "9b22137841796e2b564d4566d41195c3502ce68ec0b85bddb2f0312616ffc19e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part9/mesa_cache.db": {
+    "sha256": "015616614210d425032c495678050e828e9965826b41042438989e612f0b94a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/cache/mesa_shader_cache_db/part9/mesa_cache.idx": {
+    "sha256": "015616614210d425032c495678050e828e9965826b41042438989e612f0b94a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-06lh7gi1/declaration.json": {
+    "sha256": "a3905b413afbdbe2ccf3bdc43e762097b950e93cdaef65485ea759ce664464f3",
+    "bytes": 297243
+  },
+  "pm045-pass-pointer-06lh7gi1/display-after.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-06lh7gi1/display-before.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-06lh7gi1/display-during.txt": {
+    "sha256": "015f3920b6b48e2572da0cb1e833aa3659649cfb204bb73110ad3906ebbb6f26",
+    "bytes": 859
+  },
+  "pm045-pass-pointer-06lh7gi1/native.log": {
+    "sha256": "ad0fd7284e6bfbca95fe2bbd84bd5ef71df7695f057ede02220b5c38ca6653de",
+    "bytes": 3812
+  },
+  "pm045-pass-pointer-06lh7gi1/pinned-assets/pm045_wm_close.py": {
+    "sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "bytes": 1357
+  },
+  "pm045-pass-pointer-06lh7gi1/pinned-assets/pointer-reference.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-06lh7gi1/pinned-assets/pointer-stream.py": {
+    "sha256": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "bytes": 1513
+  },
+  "pm045-pass-pointer-06lh7gi1/pointer-final.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-06lh7gi1/pointer-input.json": {
+    "sha256": "4f2280ac7a74c76950ca098f64d996b3a99545c7f6ed56364c48d8a4fabd66e3",
+    "bytes": 880899
+  },
+  "pm045-pass-pointer-06lh7gi1/pointer-warm.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/gui-terminal-context.json": {
+    "sha256": "a2fa7c8b8e20199ed334c29aeb98a39082be10ac2caaaa8dee3bfc6588b472e5",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/journal/cursor.json": {
+    "sha256": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+    "bytes": 32
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/journal/transactions.jsonl": {
+    "sha256": "e38b73d15efb2011ccb0d19e3de5121794009b023f31b04e6f8c6f204ab9c4c3",
+    "bytes": 1118691
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/blobs/sha256/1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb": {
+    "sha256": "1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb",
+    "bytes": 708175
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/blobs/sha256/41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/blobs/sha256/50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436": {
+    "sha256": "50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436",
+    "bytes": 410516
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/blobs/sha256/d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/blobs/sha256/d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/generations/13a0391856aaea2d89b9047e8a48d1b85b634ce6f4df2a115bf5a847db6d202c.json": {
+    "sha256": "d6f42b6ef1addaf080a3b47e906d4604568ab8fc9122cb4272827dd7ecef630b",
+    "bytes": 1126
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/generations/4c1c35afbc2892dda0cd0f031a50cf7750a12278d901a77b24dfd666bad3a589.json": {
+    "sha256": "93f91ed1d8a09e406fa66a7fa868ba0c35135728af3cb89e988dae39b480f407",
+    "bytes": 1086
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/revision/v1/head.json": {
+    "sha256": "56193a36ae8b31185f4fc3a91c483f6dcb3ce786e03d047ec95524e401b95423",
+    "bytes": 220
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/terminal-contexts/context-970949-1790506498738214270.pinned.json": {
+    "sha256": "240ff56ef566ab742337fed7b70b4b82309d49cfae97e29f7f68f6da2826118c",
+    "bytes": 287586
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/terminal-contexts/terminal-970949-1790506498738214270.agent-authority.json": {
+    "sha256": "149abf5cf2c6f3974279e976883432ca671a0fb0d3b23bb7f9613ca9d20922c0",
+    "bytes": 390
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/terminal-contexts/terminal-970949-1790506498738214270.discovery.json": {
+    "sha256": "84a66bb3c148d84f4b8beab1c17da6cdce595425e3bf816392f0672799505627",
+    "bytes": 1479
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/terminal-contexts/terminal-970949-1790506498738214270.json": {
+    "sha256": "f28c8f4f673c8892a548cb15c27af4155be61c177e834b5ff7ab3b583757a547",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/tool-sessions/terminal-970949-1790506498738214270.events.jsonl": {
+    "sha256": "5dd5b0d3d31e1da4a3187a1adb1bd2247b49df12f18c1e86e52b7da27ff6ffa2",
+    "bytes": 232
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/tool-sessions/terminal-970949-1790506498738214270.events.jsonl.io.0.jsonl": {
+    "sha256": "73e7076e7c28542f0071617390d74bfd2d7b86d7f03f434ac72fc73dc0a7619b",
+    "bytes": 1053
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/tool-sessions/terminal-970949-1790506498738214270.json": {
+    "sha256": "445c32050c00423a2c764cee8b81c5ad7ce20bc9ffe991900098c38c6cdf065a",
+    "bytes": 572
+  },
+  "pm045-pass-pointer-06lh7gi1/project/.datum/tool-sessions/terminal-970949-1790506498738214270.terminal-runtime/terminfo/d/datum-256color": {
+    "sha256": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+    "bytes": 1431
+  },
+  "pm045-pass-pointer-06lh7gi1/project/board/board.json": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-06lh7gi1/project/project.json": {
+    "sha256": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c",
+    "bytes": 3198
+  },
+  "pm045-pass-pointer-06lh7gi1/project/rules/rules.json": {
+    "sha256": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693",
+    "bytes": 98
+  },
+  "pm045-pass-pointer-06lh7gi1/project/schematic/schematic.json": {
+    "sha256": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530",
+    "bytes": 154
+  },
+  "pm045-pass-pointer-06lh7gi1/result.json": {
+    "sha256": "9f852d69808793d7c59f5ca0fb1198385451939b8547efc5ca30e7b15ced08e2",
+    "bytes": 307133
+  },
+  "pm045-pass-pointer-06lh7gi1/stderr.log": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/index": {
+    "sha256": "6d0552c4e71fe85e6cdc7e7745882ea91b382fbc56448f2e9e1c2d77dcf67d81",
+    "bytes": 1310728
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/marker": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part0/mesa_cache.db": {
+    "sha256": "e33815e6d440dca15080208e163d6710ced985d30670783e3e885d55debae5e4",
+    "bytes": 18807
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part0/mesa_cache.idx": {
+    "sha256": "c10c213eb1c8faeaaab08c2a822f56adf7f406311e90fc311733981b864bb133",
+    "bytes": 804
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part1/mesa_cache.db": {
+    "sha256": "7c94f41629a315c827fe1248f6e9a9f9fa9ef743098d9675e7e4aa0c00da52b5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part1/mesa_cache.idx": {
+    "sha256": "7c94f41629a315c827fe1248f6e9a9f9fa9ef743098d9675e7e4aa0c00da52b5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part10/mesa_cache.db": {
+    "sha256": "48188020014b785812e27b4ef9c9e34ec56334aa3083647059c32454949b06de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part10/mesa_cache.idx": {
+    "sha256": "48188020014b785812e27b4ef9c9e34ec56334aa3083647059c32454949b06de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part11/mesa_cache.db": {
+    "sha256": "c4f7775bde93b0ae8f2fbf9fc92b5a77ec1748a009876ddab1e060a16555e5e3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part11/mesa_cache.idx": {
+    "sha256": "c4f7775bde93b0ae8f2fbf9fc92b5a77ec1748a009876ddab1e060a16555e5e3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part12/mesa_cache.db": {
+    "sha256": "bc242a8987d438b5b61050ec812cbb8686f61913ae700599701f2bd54c2a7f27",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part12/mesa_cache.idx": {
+    "sha256": "bc242a8987d438b5b61050ec812cbb8686f61913ae700599701f2bd54c2a7f27",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part13/mesa_cache.db": {
+    "sha256": "1cae0e330ddb1963e072293bcacafb22f80eaff8718c0225bc4fcce6a78abfd0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part13/mesa_cache.idx": {
+    "sha256": "1cae0e330ddb1963e072293bcacafb22f80eaff8718c0225bc4fcce6a78abfd0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part14/mesa_cache.db": {
+    "sha256": "07e631994b518f059a42e747b89df0f3c53a95f6af96a50a3d8ac19fd9c3f7cd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part14/mesa_cache.idx": {
+    "sha256": "07e631994b518f059a42e747b89df0f3c53a95f6af96a50a3d8ac19fd9c3f7cd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part15/mesa_cache.db": {
+    "sha256": "ba13be1446df7a728f675f4a9e9f5ed1a6cf680cc5cf93b43b08554429c1ee98",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part15/mesa_cache.idx": {
+    "sha256": "ba13be1446df7a728f675f4a9e9f5ed1a6cf680cc5cf93b43b08554429c1ee98",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part16/mesa_cache.db": {
+    "sha256": "29eb4fb57902bf6ec885ac8aabd4dc3ef802dd2e1c4473414cad6457f62a87e4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part16/mesa_cache.idx": {
+    "sha256": "29eb4fb57902bf6ec885ac8aabd4dc3ef802dd2e1c4473414cad6457f62a87e4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part17/mesa_cache.db": {
+    "sha256": "c6bb60ac653e8e7e038c59877a1c6e53979619f502286f79f7573534484a9777",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part17/mesa_cache.idx": {
+    "sha256": "c6bb60ac653e8e7e038c59877a1c6e53979619f502286f79f7573534484a9777",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part18/mesa_cache.db": {
+    "sha256": "e912923e3b8d2c74bac4bc145b0f26e54bc5aecebeb16b25d96517d839845cb7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part18/mesa_cache.idx": {
+    "sha256": "e912923e3b8d2c74bac4bc145b0f26e54bc5aecebeb16b25d96517d839845cb7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part19/mesa_cache.db": {
+    "sha256": "e315ef2505dce69b59ced996ff9eb9239e9d4b474f4e235d112fd7db829ff79a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part19/mesa_cache.idx": {
+    "sha256": "e315ef2505dce69b59ced996ff9eb9239e9d4b474f4e235d112fd7db829ff79a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part2/mesa_cache.db": {
+    "sha256": "a80e85edec79204f33d760407822b1f47b758346b3559e09780ef9887531c2e4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part2/mesa_cache.idx": {
+    "sha256": "a80e85edec79204f33d760407822b1f47b758346b3559e09780ef9887531c2e4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part20/mesa_cache.db": {
+    "sha256": "4b99242963acb515bbe2a68da23e46bc1e42f94826065998f089be355033728b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part20/mesa_cache.idx": {
+    "sha256": "4b99242963acb515bbe2a68da23e46bc1e42f94826065998f089be355033728b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part21/mesa_cache.db": {
+    "sha256": "8ddb1b8d5c5dc9a9e1e05346075644eeb7630ba35cbe9f6ca8ec8ae8f872f06c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part21/mesa_cache.idx": {
+    "sha256": "8ddb1b8d5c5dc9a9e1e05346075644eeb7630ba35cbe9f6ca8ec8ae8f872f06c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part22/mesa_cache.db": {
+    "sha256": "678c8ffd68d73f7ab4366530926f88618e1fc281342b1cef1819d4fc8e5faf8b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part22/mesa_cache.idx": {
+    "sha256": "678c8ffd68d73f7ab4366530926f88618e1fc281342b1cef1819d4fc8e5faf8b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part23/mesa_cache.db": {
+    "sha256": "520e511ae4dbcede0978ca5bda39436207b7cc9be5cd86336f0edf814a10dbbe",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part23/mesa_cache.idx": {
+    "sha256": "520e511ae4dbcede0978ca5bda39436207b7cc9be5cd86336f0edf814a10dbbe",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part24/mesa_cache.db": {
+    "sha256": "38f713e95e03c9faef78625f52fef173620a2c7a69db64da0b88498f761f39a0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part24/mesa_cache.idx": {
+    "sha256": "38f713e95e03c9faef78625f52fef173620a2c7a69db64da0b88498f761f39a0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part25/mesa_cache.db": {
+    "sha256": "6897cdbd72f5458b79c837a1a88f3b3e4188b0b475f434352dd32a6ca4d401f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part25/mesa_cache.idx": {
+    "sha256": "6897cdbd72f5458b79c837a1a88f3b3e4188b0b475f434352dd32a6ca4d401f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part26/mesa_cache.db": {
+    "sha256": "eee9ab4c2dae0daef6ac261b1c7d9a93a00a7ba76b52bd837b26cb8d11c2ad71",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part26/mesa_cache.idx": {
+    "sha256": "eee9ab4c2dae0daef6ac261b1c7d9a93a00a7ba76b52bd837b26cb8d11c2ad71",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part27/mesa_cache.db": {
+    "sha256": "306b703f66fdfae31c49c8f66aee4968f62d3518d2c803aac9c166ba27aba43d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part27/mesa_cache.idx": {
+    "sha256": "306b703f66fdfae31c49c8f66aee4968f62d3518d2c803aac9c166ba27aba43d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part28/mesa_cache.db": {
+    "sha256": "36a9b99ba9e809fd0937f01a22e938c331797b020fd55bc298e6fd2a6ecb5392",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part28/mesa_cache.idx": {
+    "sha256": "36a9b99ba9e809fd0937f01a22e938c331797b020fd55bc298e6fd2a6ecb5392",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part29/mesa_cache.db": {
+    "sha256": "f34dfb664ac84639da027ee48e998ab15011f9724a48cd47f2c49428a9e13413",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part29/mesa_cache.idx": {
+    "sha256": "f34dfb664ac84639da027ee48e998ab15011f9724a48cd47f2c49428a9e13413",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part3/mesa_cache.db": {
+    "sha256": "39eacbe34d9b0cdba57da332e5b847b6df3d39bc559db110dd07a98f7aad5ba2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part3/mesa_cache.idx": {
+    "sha256": "39eacbe34d9b0cdba57da332e5b847b6df3d39bc559db110dd07a98f7aad5ba2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part30/mesa_cache.db": {
+    "sha256": "a220e73bec9681102b771bf741490f046134c09a334e418182a03ff35043c33f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part30/mesa_cache.idx": {
+    "sha256": "a220e73bec9681102b771bf741490f046134c09a334e418182a03ff35043c33f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part31/mesa_cache.db": {
+    "sha256": "d3982bd80a840f4900455167d38452696b127ffdf2e7a148c9c48f281e71ce9d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part31/mesa_cache.idx": {
+    "sha256": "d3982bd80a840f4900455167d38452696b127ffdf2e7a148c9c48f281e71ce9d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part32/mesa_cache.db": {
+    "sha256": "8a52f8c058327f16011d288efc799590aa2d5a8200192f54ce96d004fe78121b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part32/mesa_cache.idx": {
+    "sha256": "8a52f8c058327f16011d288efc799590aa2d5a8200192f54ce96d004fe78121b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part33/mesa_cache.db": {
+    "sha256": "6be4464b0a1a2dd6033e8a9dfb23025781d16ab338665c389a0aa4d5dcde360b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part33/mesa_cache.idx": {
+    "sha256": "6be4464b0a1a2dd6033e8a9dfb23025781d16ab338665c389a0aa4d5dcde360b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part34/mesa_cache.db": {
+    "sha256": "7ca8abfe2191ddef8f50203e78ded20a8529ac3c20c712eb9b38a54db26f2543",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part34/mesa_cache.idx": {
+    "sha256": "7ca8abfe2191ddef8f50203e78ded20a8529ac3c20c712eb9b38a54db26f2543",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part35/mesa_cache.db": {
+    "sha256": "a231e473e131eb3f9f498e119c88f00030a67cb2556400324fe9b3da6521e7aa",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part35/mesa_cache.idx": {
+    "sha256": "a231e473e131eb3f9f498e119c88f00030a67cb2556400324fe9b3da6521e7aa",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part36/mesa_cache.db": {
+    "sha256": "e20b5e741861601553c4fce1c1ea422f2a3c2f92fc17ff9f31c3fc3f79b6aa47",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part36/mesa_cache.idx": {
+    "sha256": "e20b5e741861601553c4fce1c1ea422f2a3c2f92fc17ff9f31c3fc3f79b6aa47",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part37/mesa_cache.db": {
+    "sha256": "c082d4278a1f9b3185a0a81b62159f435df054d7aaa9efadcf84b98f406041d3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part37/mesa_cache.idx": {
+    "sha256": "c082d4278a1f9b3185a0a81b62159f435df054d7aaa9efadcf84b98f406041d3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part38/mesa_cache.db": {
+    "sha256": "3a6f3b86c760e2ef52069dcfb2fdd54e2ed99a9cf6402995e81055fc0bf0ca90",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part38/mesa_cache.idx": {
+    "sha256": "3a6f3b86c760e2ef52069dcfb2fdd54e2ed99a9cf6402995e81055fc0bf0ca90",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part39/mesa_cache.db": {
+    "sha256": "65f187b49cc35628aa99f6dcd7dabf034c628f6b1f6ce57baba769a9e43d3430",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part39/mesa_cache.idx": {
+    "sha256": "65f187b49cc35628aa99f6dcd7dabf034c628f6b1f6ce57baba769a9e43d3430",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part4/mesa_cache.db": {
+    "sha256": "546cb639b4aba8f248c0f0693dd067907ce3893e13bf311cf1f1d0096e7c2b25",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part4/mesa_cache.idx": {
+    "sha256": "546cb639b4aba8f248c0f0693dd067907ce3893e13bf311cf1f1d0096e7c2b25",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part40/mesa_cache.db": {
+    "sha256": "91c584fd0e45465137052af37b20a53d01dde5a805c93f2acfc8e155fe4ea1b1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part40/mesa_cache.idx": {
+    "sha256": "91c584fd0e45465137052af37b20a53d01dde5a805c93f2acfc8e155fe4ea1b1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part41/mesa_cache.db": {
+    "sha256": "1133e8de3016602aeb769ddc9b8d865782f8ffe31cda01393133044485f03d69",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part41/mesa_cache.idx": {
+    "sha256": "1133e8de3016602aeb769ddc9b8d865782f8ffe31cda01393133044485f03d69",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part42/mesa_cache.db": {
+    "sha256": "5981578fea0c2578fbad63f0d67743fff876286e84c758f7aac6cd45fd715ea8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part42/mesa_cache.idx": {
+    "sha256": "5981578fea0c2578fbad63f0d67743fff876286e84c758f7aac6cd45fd715ea8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part43/mesa_cache.db": {
+    "sha256": "ce33c5087d93605d0936111ae3efbadf554ba56679bb933d91ed9826f80ad7aa",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part43/mesa_cache.idx": {
+    "sha256": "ce33c5087d93605d0936111ae3efbadf554ba56679bb933d91ed9826f80ad7aa",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part44/mesa_cache.db": {
+    "sha256": "04d9095f325e9c3bf68acf56240cfa34364528b2e7210cffebcf07d4f295bdaf",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part44/mesa_cache.idx": {
+    "sha256": "04d9095f325e9c3bf68acf56240cfa34364528b2e7210cffebcf07d4f295bdaf",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part45/mesa_cache.db": {
+    "sha256": "f63bfa3bf20e8d73307fabb52ba14bef4af890472b22581c477e13e45a22b975",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part45/mesa_cache.idx": {
+    "sha256": "f63bfa3bf20e8d73307fabb52ba14bef4af890472b22581c477e13e45a22b975",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part46/mesa_cache.db": {
+    "sha256": "234a4860c7d14a1f6f53053b652b20deea23e0b5fa94a8c8093d5dc706ea4fd5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part46/mesa_cache.idx": {
+    "sha256": "234a4860c7d14a1f6f53053b652b20deea23e0b5fa94a8c8093d5dc706ea4fd5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part47/mesa_cache.db": {
+    "sha256": "a043ceff48fffb768af02f63b6124fecc06cf629be79877757a82f2b029668e8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part47/mesa_cache.idx": {
+    "sha256": "a043ceff48fffb768af02f63b6124fecc06cf629be79877757a82f2b029668e8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part48/mesa_cache.db": {
+    "sha256": "83f96d51b8055de6d40196eb4e037218994b40f17de83a165d1a207b2b05d9a1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part48/mesa_cache.idx": {
+    "sha256": "83f96d51b8055de6d40196eb4e037218994b40f17de83a165d1a207b2b05d9a1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part49/mesa_cache.db": {
+    "sha256": "cb024cd71e1a1eb56218350f9508c76bb79a33296efbf4e1f424065ef1197b51",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part49/mesa_cache.idx": {
+    "sha256": "cb024cd71e1a1eb56218350f9508c76bb79a33296efbf4e1f424065ef1197b51",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part5/mesa_cache.db": {
+    "sha256": "246489d1ecad559a47150e5da33f457f99652b91de795933e7fc721ce4a12cbe",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part5/mesa_cache.idx": {
+    "sha256": "246489d1ecad559a47150e5da33f457f99652b91de795933e7fc721ce4a12cbe",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part6/mesa_cache.db": {
+    "sha256": "33fad315cd4f2d519148bbb426af9931d1dcae3388929f3946ee459e85dbb7e2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part6/mesa_cache.idx": {
+    "sha256": "33fad315cd4f2d519148bbb426af9931d1dcae3388929f3946ee459e85dbb7e2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part7/mesa_cache.db": {
+    "sha256": "89cad5f9f0388db02e254f0dce24e864786ed72d4fbf06a2ed8f8f1d1d32fc99",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part7/mesa_cache.idx": {
+    "sha256": "89cad5f9f0388db02e254f0dce24e864786ed72d4fbf06a2ed8f8f1d1d32fc99",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part8/mesa_cache.db": {
+    "sha256": "c4b440a705b1a50afdbb3c53ae2c9a10c1c5ef2a15d375a34de9e4f22a19c2f5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part8/mesa_cache.idx": {
+    "sha256": "c4b440a705b1a50afdbb3c53ae2c9a10c1c5ef2a15d375a34de9e4f22a19c2f5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part9/mesa_cache.db": {
+    "sha256": "0ac3f31cfec2fc1cd30e79a910702e3dd04046d1fd8f424a8771419437cc910c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/cache/mesa_shader_cache_db/part9/mesa_cache.idx": {
+    "sha256": "0ac3f31cfec2fc1cd30e79a910702e3dd04046d1fd8f424a8771419437cc910c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-4v4nrv0m/declaration.json": {
+    "sha256": "a3905b413afbdbe2ccf3bdc43e762097b950e93cdaef65485ea759ce664464f3",
+    "bytes": 297243
+  },
+  "pm045-pass-pointer-4v4nrv0m/display-after.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-4v4nrv0m/display-before.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-4v4nrv0m/display-during.txt": {
+    "sha256": "015f3920b6b48e2572da0cb1e833aa3659649cfb204bb73110ad3906ebbb6f26",
+    "bytes": 859
+  },
+  "pm045-pass-pointer-4v4nrv0m/native.log": {
+    "sha256": "9f4e6d2e2311fbd32e9c488e4e147d9dd5e7687d82dc381cdab6291a4d86d7c5",
+    "bytes": 3809
+  },
+  "pm045-pass-pointer-4v4nrv0m/pinned-assets/pm045_wm_close.py": {
+    "sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "bytes": 1357
+  },
+  "pm045-pass-pointer-4v4nrv0m/pinned-assets/pointer-reference.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-4v4nrv0m/pinned-assets/pointer-stream.py": {
+    "sha256": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "bytes": 1513
+  },
+  "pm045-pass-pointer-4v4nrv0m/pointer-final.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-4v4nrv0m/pointer-input.json": {
+    "sha256": "1b02d70018926bd4d83570d4a2377291383b58b94d74260772e638c8b07f3f98",
+    "bytes": 880899
+  },
+  "pm045-pass-pointer-4v4nrv0m/pointer-warm.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/gui-terminal-context.json": {
+    "sha256": "013e435ff0cd89d787bab8cafcb47f9858646f45f2b7cf42f124bfba0bf166f8",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/journal/cursor.json": {
+    "sha256": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+    "bytes": 32
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/journal/transactions.jsonl": {
+    "sha256": "e38b73d15efb2011ccb0d19e3de5121794009b023f31b04e6f8c6f204ab9c4c3",
+    "bytes": 1118691
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/blobs/sha256/1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb": {
+    "sha256": "1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb",
+    "bytes": 708175
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/blobs/sha256/41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/blobs/sha256/50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436": {
+    "sha256": "50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436",
+    "bytes": 410516
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/blobs/sha256/d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/blobs/sha256/d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/generations/13a0391856aaea2d89b9047e8a48d1b85b634ce6f4df2a115bf5a847db6d202c.json": {
+    "sha256": "d6f42b6ef1addaf080a3b47e906d4604568ab8fc9122cb4272827dd7ecef630b",
+    "bytes": 1126
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/generations/4c1c35afbc2892dda0cd0f031a50cf7750a12278d901a77b24dfd666bad3a589.json": {
+    "sha256": "93f91ed1d8a09e406fa66a7fa868ba0c35135728af3cb89e988dae39b480f407",
+    "bytes": 1086
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/revision/v1/head.json": {
+    "sha256": "56193a36ae8b31185f4fc3a91c483f6dcb3ce786e03d047ec95524e401b95423",
+    "bytes": 220
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/terminal-contexts/context-972538-1790506710072457256.pinned.json": {
+    "sha256": "8caa8eceebbaf9c0ce09934815fcc2e91fe9362591426283189cf5c5be0f378f",
+    "bytes": 287586
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/terminal-contexts/terminal-972538-1790506710072457256.agent-authority.json": {
+    "sha256": "89cedf7c90bae43e2b0751bd077b24801aa365154a4bf303cf6693b5e2dc4f14",
+    "bytes": 390
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/terminal-contexts/terminal-972538-1790506710072457256.discovery.json": {
+    "sha256": "c507aaeb3e856e48c352dfbec54fd650260966b9882fe9f98346bc43df267afe",
+    "bytes": 1479
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/terminal-contexts/terminal-972538-1790506710072457256.json": {
+    "sha256": "54f3a5fd696dea048a8063503fa28accafa3ae1f3e29884bbfe60be17020eabe",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/tool-sessions/terminal-972538-1790506710072457256.events.jsonl": {
+    "sha256": "920505d6c0c0cd83a437aa5be020121b709dad7dbc7b46069d25fd4a41206d4e",
+    "bytes": 232
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/tool-sessions/terminal-972538-1790506710072457256.events.jsonl.io.0.jsonl": {
+    "sha256": "92c5855243eb655707ba16ab1ffd7ac2f10aea276b7facea715e99ff31101248",
+    "bytes": 853
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/tool-sessions/terminal-972538-1790506710072457256.json": {
+    "sha256": "662ecb6898e100f10ccdf8ca9368bbe9574aac6baad7f1da886d4c5c2a326437",
+    "bytes": 572
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/.datum/tool-sessions/terminal-972538-1790506710072457256.terminal-runtime/terminfo/d/datum-256color": {
+    "sha256": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+    "bytes": 1431
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/board/board.json": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/project.json": {
+    "sha256": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c",
+    "bytes": 3198
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/rules/rules.json": {
+    "sha256": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693",
+    "bytes": 98
+  },
+  "pm045-pass-pointer-4v4nrv0m/project/schematic/schematic.json": {
+    "sha256": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530",
+    "bytes": 154
+  },
+  "pm045-pass-pointer-4v4nrv0m/result.json": {
+    "sha256": "0a93a904219a79b81dc85ce1b7fc01bfba927566a2b0246953054c947149a1a6",
+    "bytes": 307133
+  },
+  "pm045-pass-pointer-4v4nrv0m/stderr.log": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/index": {
+    "sha256": "6d0552c4e71fe85e6cdc7e7745882ea91b382fbc56448f2e9e1c2d77dcf67d81",
+    "bytes": 1310728
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/marker": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part0/mesa_cache.db": {
+    "sha256": "42b2c9127d08ad21b1693317286d91c7b42081bb7863eb798ac64b3181b35430",
+    "bytes": 18807
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part0/mesa_cache.idx": {
+    "sha256": "1b071813c4c80916c8ee86343dc35e5db27bade3bdd60dd082ed66664a711296",
+    "bytes": 804
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part1/mesa_cache.db": {
+    "sha256": "6b4e05640df06a6c9b6e33d13ff5722af90f159e5c73346eb338d9202a6c0eba",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part1/mesa_cache.idx": {
+    "sha256": "6b4e05640df06a6c9b6e33d13ff5722af90f159e5c73346eb338d9202a6c0eba",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part10/mesa_cache.db": {
+    "sha256": "203bedd6af9d0bdcb448f724bd73d084f029f3b4af1524b058939a87eff15e3d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part10/mesa_cache.idx": {
+    "sha256": "203bedd6af9d0bdcb448f724bd73d084f029f3b4af1524b058939a87eff15e3d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part11/mesa_cache.db": {
+    "sha256": "e1ce7d08dd37cb58a38962e6e018311fe6029fed07eb5a7eeec0303780926a0a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part11/mesa_cache.idx": {
+    "sha256": "e1ce7d08dd37cb58a38962e6e018311fe6029fed07eb5a7eeec0303780926a0a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part12/mesa_cache.db": {
+    "sha256": "11f1666d14a4fbff1fc784bf919f50a03f72b2e968e9c7216289ff8ac5555953",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part12/mesa_cache.idx": {
+    "sha256": "11f1666d14a4fbff1fc784bf919f50a03f72b2e968e9c7216289ff8ac5555953",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part13/mesa_cache.db": {
+    "sha256": "ab2ed2745674bc25a3c65ade15eaeef9add74dcac10b340b29dd0f14137aeea3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part13/mesa_cache.idx": {
+    "sha256": "ab2ed2745674bc25a3c65ade15eaeef9add74dcac10b340b29dd0f14137aeea3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part14/mesa_cache.db": {
+    "sha256": "ae351effdeab10ac0d0f0692db32b8033f04fa6f4d009c49cb1a052b67f26dc3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part14/mesa_cache.idx": {
+    "sha256": "ae351effdeab10ac0d0f0692db32b8033f04fa6f4d009c49cb1a052b67f26dc3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part15/mesa_cache.db": {
+    "sha256": "232960293dfb178dcb0a75ec5ed3a1d226b41c09e01c85a6a99746ab8c4bd1a0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part15/mesa_cache.idx": {
+    "sha256": "232960293dfb178dcb0a75ec5ed3a1d226b41c09e01c85a6a99746ab8c4bd1a0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part16/mesa_cache.db": {
+    "sha256": "52e0df8154b0545fd9553fb04aa458a0ec11620cc0911083eeead0403f0991e1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part16/mesa_cache.idx": {
+    "sha256": "52e0df8154b0545fd9553fb04aa458a0ec11620cc0911083eeead0403f0991e1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part17/mesa_cache.db": {
+    "sha256": "6fc4c0479e1c023e46121b777170e71f5e3b2d896d9ca1bf249431293d66cf16",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part17/mesa_cache.idx": {
+    "sha256": "6fc4c0479e1c023e46121b777170e71f5e3b2d896d9ca1bf249431293d66cf16",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part18/mesa_cache.db": {
+    "sha256": "2c88787f181b96ad964f3dedcdd5c26c5343beca7455432cf2013afa0ca32599",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part18/mesa_cache.idx": {
+    "sha256": "2c88787f181b96ad964f3dedcdd5c26c5343beca7455432cf2013afa0ca32599",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part19/mesa_cache.db": {
+    "sha256": "fa8b649586db64edaab2614da1436d98f50d1eafb0383e1d88bbb5895e7fa332",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part19/mesa_cache.idx": {
+    "sha256": "fa8b649586db64edaab2614da1436d98f50d1eafb0383e1d88bbb5895e7fa332",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part2/mesa_cache.db": {
+    "sha256": "4dbeb4513098badfda7f59e7e72d8680cc497ad78e8248753f1cfcb3c771f95d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part2/mesa_cache.idx": {
+    "sha256": "4dbeb4513098badfda7f59e7e72d8680cc497ad78e8248753f1cfcb3c771f95d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part20/mesa_cache.db": {
+    "sha256": "7c211e382d8291e7528148948b71874c4a6cf33d60120a24b8e7de11dcec55ab",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part20/mesa_cache.idx": {
+    "sha256": "7c211e382d8291e7528148948b71874c4a6cf33d60120a24b8e7de11dcec55ab",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part21/mesa_cache.db": {
+    "sha256": "e7423aa7c28c97bb9d4586a4f3f0dc6a63b09e2d1ea5a57729e95f9900246806",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part21/mesa_cache.idx": {
+    "sha256": "e7423aa7c28c97bb9d4586a4f3f0dc6a63b09e2d1ea5a57729e95f9900246806",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part22/mesa_cache.db": {
+    "sha256": "6eebe7b9374de81cb8406b5b1189a19dfa7a06f3ee348c1307b1a039fb3bf683",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part22/mesa_cache.idx": {
+    "sha256": "6eebe7b9374de81cb8406b5b1189a19dfa7a06f3ee348c1307b1a039fb3bf683",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part23/mesa_cache.db": {
+    "sha256": "aec7ec656cd33e1ae4c399a94ccb3a3a538b26dce5f6c41ab531d5cd8594eb0e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part23/mesa_cache.idx": {
+    "sha256": "aec7ec656cd33e1ae4c399a94ccb3a3a538b26dce5f6c41ab531d5cd8594eb0e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part24/mesa_cache.db": {
+    "sha256": "7212638bf6a9456daad5f5ae03a62e85449ea5cb97724fbf2032b28c02148d98",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part24/mesa_cache.idx": {
+    "sha256": "7212638bf6a9456daad5f5ae03a62e85449ea5cb97724fbf2032b28c02148d98",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part25/mesa_cache.db": {
+    "sha256": "b6bcedb2a5c4eaa167bd97adc4c47143d807b1e4f4f262f26f054b2db8425cff",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part25/mesa_cache.idx": {
+    "sha256": "b6bcedb2a5c4eaa167bd97adc4c47143d807b1e4f4f262f26f054b2db8425cff",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part26/mesa_cache.db": {
+    "sha256": "e417fd7b51c81393f99244e370133d6bd7bd1b856b420f5e16de91cbabf1ffbd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part26/mesa_cache.idx": {
+    "sha256": "e417fd7b51c81393f99244e370133d6bd7bd1b856b420f5e16de91cbabf1ffbd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part27/mesa_cache.db": {
+    "sha256": "bcca2a590ec4716ef956fe80c516e627f46db20cc3b27c085442ee9aff770041",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part27/mesa_cache.idx": {
+    "sha256": "bcca2a590ec4716ef956fe80c516e627f46db20cc3b27c085442ee9aff770041",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part28/mesa_cache.db": {
+    "sha256": "80a04ef99d895284164dc571fc995364f8b9e613860f6d1069c08385ec18c4a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part28/mesa_cache.idx": {
+    "sha256": "80a04ef99d895284164dc571fc995364f8b9e613860f6d1069c08385ec18c4a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part29/mesa_cache.db": {
+    "sha256": "d22a300e20f24f7036f581c261b69549bd3ae5b979f9e425b3eec9964f965491",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part29/mesa_cache.idx": {
+    "sha256": "d22a300e20f24f7036f581c261b69549bd3ae5b979f9e425b3eec9964f965491",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part3/mesa_cache.db": {
+    "sha256": "de1d1930c07778bda3711cd3e11d4a493d1c527ae2d348dcd74ae12f28042bb4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part3/mesa_cache.idx": {
+    "sha256": "de1d1930c07778bda3711cd3e11d4a493d1c527ae2d348dcd74ae12f28042bb4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part30/mesa_cache.db": {
+    "sha256": "6d141eef0fb01823c56ee529be2fb04b9bc28c5a49b6f98fd12dad52c7350b03",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part30/mesa_cache.idx": {
+    "sha256": "6d141eef0fb01823c56ee529be2fb04b9bc28c5a49b6f98fd12dad52c7350b03",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part31/mesa_cache.db": {
+    "sha256": "a6d3b771a307a9be05b52721ca225ee4528bc7a8bd3b6dddca31d5f2198389df",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part31/mesa_cache.idx": {
+    "sha256": "a6d3b771a307a9be05b52721ca225ee4528bc7a8bd3b6dddca31d5f2198389df",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part32/mesa_cache.db": {
+    "sha256": "d0d0805c2efc2713daeb9875e847a33cd4de4f04495433b258e54c0270a16c04",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part32/mesa_cache.idx": {
+    "sha256": "d0d0805c2efc2713daeb9875e847a33cd4de4f04495433b258e54c0270a16c04",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part33/mesa_cache.db": {
+    "sha256": "d019c334006ab8275167a25b021d4a694f2cda6474bf5d25d8ef5018e8480e42",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part33/mesa_cache.idx": {
+    "sha256": "d019c334006ab8275167a25b021d4a694f2cda6474bf5d25d8ef5018e8480e42",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part34/mesa_cache.db": {
+    "sha256": "4c5005bdbf959186d4aa688bf0f1d28e1f41a3a5680d0b1bc791a3cb4b9b828b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part34/mesa_cache.idx": {
+    "sha256": "4c5005bdbf959186d4aa688bf0f1d28e1f41a3a5680d0b1bc791a3cb4b9b828b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part35/mesa_cache.db": {
+    "sha256": "d8a189e4d9043a0ff0e8bc1d0b366c2843519e75f7c74b29b4ac5f87b1bc55e1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part35/mesa_cache.idx": {
+    "sha256": "d8a189e4d9043a0ff0e8bc1d0b366c2843519e75f7c74b29b4ac5f87b1bc55e1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part36/mesa_cache.db": {
+    "sha256": "e3a01ee349c901642c55e8f33925dc88ed9ebb79bb35dd4d51a738cfc3f6d83f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part36/mesa_cache.idx": {
+    "sha256": "e3a01ee349c901642c55e8f33925dc88ed9ebb79bb35dd4d51a738cfc3f6d83f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part37/mesa_cache.db": {
+    "sha256": "aaaaa5dbe5a132457dbc12556c234f8df524ea99eff757ff323aa4c08c286ae7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part37/mesa_cache.idx": {
+    "sha256": "aaaaa5dbe5a132457dbc12556c234f8df524ea99eff757ff323aa4c08c286ae7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part38/mesa_cache.db": {
+    "sha256": "88e929936ab98273a84ed076c6020a5fc32be6c2fbe1d6510552f8d8801ebd38",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part38/mesa_cache.idx": {
+    "sha256": "88e929936ab98273a84ed076c6020a5fc32be6c2fbe1d6510552f8d8801ebd38",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part39/mesa_cache.db": {
+    "sha256": "07a1f6eaf9cec57e18ae0c0033a00038700a58755afc2abcf7b3ad6183aa335c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part39/mesa_cache.idx": {
+    "sha256": "07a1f6eaf9cec57e18ae0c0033a00038700a58755afc2abcf7b3ad6183aa335c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part4/mesa_cache.db": {
+    "sha256": "0cb79b577b10a1a735cd3185a85c63ba0ac7e80fb71e63d10479378c755b5442",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part4/mesa_cache.idx": {
+    "sha256": "0cb79b577b10a1a735cd3185a85c63ba0ac7e80fb71e63d10479378c755b5442",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part40/mesa_cache.db": {
+    "sha256": "228ef91522065ecd473e2d85c61a6e8607ecc7f8fe57fbc714ef9440cb0d257c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part40/mesa_cache.idx": {
+    "sha256": "228ef91522065ecd473e2d85c61a6e8607ecc7f8fe57fbc714ef9440cb0d257c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part41/mesa_cache.db": {
+    "sha256": "f311cd1577fcf2ab81e0b7a0ce7801f8707023438c235a6c0236fbcf8622b93b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part41/mesa_cache.idx": {
+    "sha256": "f311cd1577fcf2ab81e0b7a0ce7801f8707023438c235a6c0236fbcf8622b93b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part42/mesa_cache.db": {
+    "sha256": "1f7aa3c09543590a9d52fd6c3dc4425980bccd569d29c8b3a244685ef442f826",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part42/mesa_cache.idx": {
+    "sha256": "1f7aa3c09543590a9d52fd6c3dc4425980bccd569d29c8b3a244685ef442f826",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part43/mesa_cache.db": {
+    "sha256": "be552f9424f3d28acbb955fa66e05ad3d08c8fababa947fb620268f68878c5aa",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part43/mesa_cache.idx": {
+    "sha256": "be552f9424f3d28acbb955fa66e05ad3d08c8fababa947fb620268f68878c5aa",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part44/mesa_cache.db": {
+    "sha256": "f767b4cadc2b870a8e058bc5303824012e52ed1beb1cd1e2fd2496f66a1ec330",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part44/mesa_cache.idx": {
+    "sha256": "f767b4cadc2b870a8e058bc5303824012e52ed1beb1cd1e2fd2496f66a1ec330",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part45/mesa_cache.db": {
+    "sha256": "f25bb48890b79beb5142e0839e30f0d6329c83cf0645effb913130cd18fa54c3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part45/mesa_cache.idx": {
+    "sha256": "f25bb48890b79beb5142e0839e30f0d6329c83cf0645effb913130cd18fa54c3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part46/mesa_cache.db": {
+    "sha256": "77f81bee2259d20c130998b5332d6a9ef584696b56259f51a18a3b7cb69fa97f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part46/mesa_cache.idx": {
+    "sha256": "77f81bee2259d20c130998b5332d6a9ef584696b56259f51a18a3b7cb69fa97f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part47/mesa_cache.db": {
+    "sha256": "490296672f7d457885ab306d296ab88008c7ed1bbfde0af43ca88bf80300b56c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part47/mesa_cache.idx": {
+    "sha256": "490296672f7d457885ab306d296ab88008c7ed1bbfde0af43ca88bf80300b56c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part48/mesa_cache.db": {
+    "sha256": "d811d6e7f5bcafb62e7ba4048027a22f545611fd4c91251943bc1e1b78817488",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part48/mesa_cache.idx": {
+    "sha256": "d811d6e7f5bcafb62e7ba4048027a22f545611fd4c91251943bc1e1b78817488",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part49/mesa_cache.db": {
+    "sha256": "236f4a5d9455cffcf43bb1aa9bdcb91967230bf427199fa5838167a80e8dfb8f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part49/mesa_cache.idx": {
+    "sha256": "236f4a5d9455cffcf43bb1aa9bdcb91967230bf427199fa5838167a80e8dfb8f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part5/mesa_cache.db": {
+    "sha256": "0bf974467668e6507a3ccff668e585f54aee46a5e579b78a0253e42bc52df594",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part5/mesa_cache.idx": {
+    "sha256": "0bf974467668e6507a3ccff668e585f54aee46a5e579b78a0253e42bc52df594",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part6/mesa_cache.db": {
+    "sha256": "aef7e07fe1736cb1dcedff635207bc9fe3d793c9331eca2805e8febdee4ca049",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part6/mesa_cache.idx": {
+    "sha256": "aef7e07fe1736cb1dcedff635207bc9fe3d793c9331eca2805e8febdee4ca049",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part7/mesa_cache.db": {
+    "sha256": "3ffdd7dfc043c23b22eb3ff24cff0c243ddf420f9e41c87eefe3562b0d768f09",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part7/mesa_cache.idx": {
+    "sha256": "3ffdd7dfc043c23b22eb3ff24cff0c243ddf420f9e41c87eefe3562b0d768f09",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part8/mesa_cache.db": {
+    "sha256": "518da1c3d517eecdcc5068c318d323e46e01a51214a17905151ba17dd56748a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part8/mesa_cache.idx": {
+    "sha256": "518da1c3d517eecdcc5068c318d323e46e01a51214a17905151ba17dd56748a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part9/mesa_cache.db": {
+    "sha256": "6a1f60238fa08daf2cf3ec7a20a9d6ba82155d373b1def53e828dcf39af7334f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/cache/mesa_shader_cache_db/part9/mesa_cache.idx": {
+    "sha256": "6a1f60238fa08daf2cf3ec7a20a9d6ba82155d373b1def53e828dcf39af7334f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-85f_uk0w/declaration.json": {
+    "sha256": "f45b5f45b4436b94b5e73ea50f1285002d0b83339394254884c863d2c8bbfba5",
+    "bytes": 297241
+  },
+  "pm045-pass-pointer-85f_uk0w/display-after.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-85f_uk0w/display-before.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-85f_uk0w/display-during.txt": {
+    "sha256": "015f3920b6b48e2572da0cb1e833aa3659649cfb204bb73110ad3906ebbb6f26",
+    "bytes": 859
+  },
+  "pm045-pass-pointer-85f_uk0w/native.log": {
+    "sha256": "73a8c39f97c6e499a8ec26e994741676f23a0780af30c080b232a23de2302443",
+    "bytes": 7852728
+  },
+  "pm045-pass-pointer-85f_uk0w/pinned-assets/pm045_wm_close.py": {
+    "sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "bytes": 1357
+  },
+  "pm045-pass-pointer-85f_uk0w/pinned-assets/pointer-reference.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-85f_uk0w/pinned-assets/pointer-stream.py": {
+    "sha256": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "bytes": 1513
+  },
+  "pm045-pass-pointer-85f_uk0w/pointer-final.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-85f_uk0w/pointer-input.json": {
+    "sha256": "56c4d404593c559ecc536560913c99f66d87695b9649b019191a60efb64c969d",
+    "bytes": 880899
+  },
+  "pm045-pass-pointer-85f_uk0w/pointer-warm.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/gui-terminal-context.json": {
+    "sha256": "7888a7cb6423ac84887dd0f11debe29433647e279b347a3391316951d6cc2666",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/journal/cursor.json": {
+    "sha256": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+    "bytes": 32
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/journal/transactions.jsonl": {
+    "sha256": "e38b73d15efb2011ccb0d19e3de5121794009b023f31b04e6f8c6f204ab9c4c3",
+    "bytes": 1118691
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/blobs/sha256/1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb": {
+    "sha256": "1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb",
+    "bytes": 708175
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/blobs/sha256/41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/blobs/sha256/50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436": {
+    "sha256": "50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436",
+    "bytes": 410516
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/blobs/sha256/d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/blobs/sha256/d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/generations/13a0391856aaea2d89b9047e8a48d1b85b634ce6f4df2a115bf5a847db6d202c.json": {
+    "sha256": "d6f42b6ef1addaf080a3b47e906d4604568ab8fc9122cb4272827dd7ecef630b",
+    "bytes": 1126
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/generations/4c1c35afbc2892dda0cd0f031a50cf7750a12278d901a77b24dfd666bad3a589.json": {
+    "sha256": "93f91ed1d8a09e406fa66a7fa868ba0c35135728af3cb89e988dae39b480f407",
+    "bytes": 1086
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/revision/v1/head.json": {
+    "sha256": "56193a36ae8b31185f4fc3a91c483f6dcb3ce786e03d047ec95524e401b95423",
+    "bytes": 220
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/terminal-contexts/context-972950-1790506762676489893.pinned.json": {
+    "sha256": "8b7c46cf3f4eff5d90902379b1775c3ff168bcbdfea18fca0c0da4366c409ac1",
+    "bytes": 287586
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/terminal-contexts/terminal-972950-1790506762676489893.agent-authority.json": {
+    "sha256": "83f78f795573747073383751d9a01bde842719a15fc9ce263b60dca3fe492fe9",
+    "bytes": 390
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/terminal-contexts/terminal-972950-1790506762676489893.discovery.json": {
+    "sha256": "90de749a80e807d39d8069e1907d132be06e07a9a595abf50a97a3129a5643a7",
+    "bytes": 1479
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/terminal-contexts/terminal-972950-1790506762676489893.json": {
+    "sha256": "b1cff366c138dcf217997a41490a2c3ef409b8b0ac9385f8c71ddbb805b1d029",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/tool-sessions/terminal-972950-1790506762676489893.events.jsonl": {
+    "sha256": "38e90cd104bc8290eee382bd9bfa1653b643b1f9181daf432ff275a884eae916",
+    "bytes": 232
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/tool-sessions/terminal-972950-1790506762676489893.events.jsonl.io.0.jsonl": {
+    "sha256": "97626c1572315404de96ee7308d676ef3037a22577f965d15b4d28739057e8e2",
+    "bytes": 853
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/tool-sessions/terminal-972950-1790506762676489893.json": {
+    "sha256": "4afb4236569686d9f59edbcc74a7aba056f159c0936c60c252114b3b5ec2eb78",
+    "bytes": 572
+  },
+  "pm045-pass-pointer-85f_uk0w/project/.datum/tool-sessions/terminal-972950-1790506762676489893.terminal-runtime/terminfo/d/datum-256color": {
+    "sha256": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+    "bytes": 1431
+  },
+  "pm045-pass-pointer-85f_uk0w/project/board/board.json": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-85f_uk0w/project/project.json": {
+    "sha256": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c",
+    "bytes": 3198
+  },
+  "pm045-pass-pointer-85f_uk0w/project/rules/rules.json": {
+    "sha256": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693",
+    "bytes": 98
+  },
+  "pm045-pass-pointer-85f_uk0w/project/schematic/schematic.json": {
+    "sha256": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530",
+    "bytes": 154
+  },
+  "pm045-pass-pointer-85f_uk0w/result.json": {
+    "sha256": "2e725658d6596eb34e61b5da7bff7208462d8f2be80b6ae46ea5ceaa385edbcd",
+    "bytes": 926985
+  },
+  "pm045-pass-pointer-85f_uk0w/stderr.log": {
+    "sha256": "b268ff7ab390c655c8a7de330c7cd74755ba0131013179e7d570462da75f99c7",
+    "bytes": 328
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/index": {
+    "sha256": "6d0552c4e71fe85e6cdc7e7745882ea91b382fbc56448f2e9e1c2d77dcf67d81",
+    "bytes": 1310728
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/marker": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part0/mesa_cache.db": {
+    "sha256": "4662d2b709df105c9d59c170121854b748cb79c87897caea58383a65dd3a79e6",
+    "bytes": 18807
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part0/mesa_cache.idx": {
+    "sha256": "ccaed092ec9f418732fc79737cf4ccfa83a9ef942636a1292efa49e668f82ec1",
+    "bytes": 804
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part1/mesa_cache.db": {
+    "sha256": "5f00489dddf86b99d7f5c7a4abbf68142518d20a8e6b2b24632023563a01bde5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part1/mesa_cache.idx": {
+    "sha256": "5f00489dddf86b99d7f5c7a4abbf68142518d20a8e6b2b24632023563a01bde5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part10/mesa_cache.db": {
+    "sha256": "42f34c09d7c81c147fad5eaa0afcfd560ee2e67c3f34afd01163a339996c8cd6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part10/mesa_cache.idx": {
+    "sha256": "42f34c09d7c81c147fad5eaa0afcfd560ee2e67c3f34afd01163a339996c8cd6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part11/mesa_cache.db": {
+    "sha256": "3612eb367831cdffed7740c9bb91a1873c4d1641e83837606906bf760de73f31",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part11/mesa_cache.idx": {
+    "sha256": "3612eb367831cdffed7740c9bb91a1873c4d1641e83837606906bf760de73f31",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part12/mesa_cache.db": {
+    "sha256": "1a73970ff4a4444fd461fcbaf437e6a7a29fc22c8bc977dbce7ab2cd067c2357",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part12/mesa_cache.idx": {
+    "sha256": "1a73970ff4a4444fd461fcbaf437e6a7a29fc22c8bc977dbce7ab2cd067c2357",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part13/mesa_cache.db": {
+    "sha256": "5f7dbb67fd59d8bf9c703cf6b886f9be3bb4d6952647eedc13dd4a3a0d05bb24",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part13/mesa_cache.idx": {
+    "sha256": "5f7dbb67fd59d8bf9c703cf6b886f9be3bb4d6952647eedc13dd4a3a0d05bb24",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part14/mesa_cache.db": {
+    "sha256": "02c837e5cdf2417292e07c8e98bd1358cbf59a55fce5e20db5e4de40b5ca3a0b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part14/mesa_cache.idx": {
+    "sha256": "02c837e5cdf2417292e07c8e98bd1358cbf59a55fce5e20db5e4de40b5ca3a0b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part15/mesa_cache.db": {
+    "sha256": "c612aec79ec07c8cb6ee9b45b0ee8ef6b08d9e6301590fd711c680cae6110478",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part15/mesa_cache.idx": {
+    "sha256": "c612aec79ec07c8cb6ee9b45b0ee8ef6b08d9e6301590fd711c680cae6110478",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part16/mesa_cache.db": {
+    "sha256": "f84f55e4fefdda24a056cd4fd2bedc3cd5f5d4ccbec5bb86834108f566db2d30",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part16/mesa_cache.idx": {
+    "sha256": "f84f55e4fefdda24a056cd4fd2bedc3cd5f5d4ccbec5bb86834108f566db2d30",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part17/mesa_cache.db": {
+    "sha256": "853431127ee7949b4329ab86357cfb7727982cbb1102735b2f560a902dd57bcd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part17/mesa_cache.idx": {
+    "sha256": "853431127ee7949b4329ab86357cfb7727982cbb1102735b2f560a902dd57bcd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part18/mesa_cache.db": {
+    "sha256": "713cf729d4b1ac7634d2217defa00391b025baf65f5f0a63f40c2b1df29a78a9",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part18/mesa_cache.idx": {
+    "sha256": "713cf729d4b1ac7634d2217defa00391b025baf65f5f0a63f40c2b1df29a78a9",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part19/mesa_cache.db": {
+    "sha256": "15d51df60b6abee838f999780108063e8be1b75be2ddb925cdbffa0b132bff6f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part19/mesa_cache.idx": {
+    "sha256": "15d51df60b6abee838f999780108063e8be1b75be2ddb925cdbffa0b132bff6f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part2/mesa_cache.db": {
+    "sha256": "e24142dade303cfaa020bc68c08c03e039dd8edb2314546ac3bcf08e12edf1dd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part2/mesa_cache.idx": {
+    "sha256": "e24142dade303cfaa020bc68c08c03e039dd8edb2314546ac3bcf08e12edf1dd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part20/mesa_cache.db": {
+    "sha256": "6bc78bda7bca2c396ccdcba005728fa77ece3ac4f891c05ecf5279979ea8c70e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part20/mesa_cache.idx": {
+    "sha256": "6bc78bda7bca2c396ccdcba005728fa77ece3ac4f891c05ecf5279979ea8c70e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part21/mesa_cache.db": {
+    "sha256": "79fb71e203688444592edd72e8face47bed6abd8259c09799a8dcd9892c2d98d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part21/mesa_cache.idx": {
+    "sha256": "79fb71e203688444592edd72e8face47bed6abd8259c09799a8dcd9892c2d98d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part22/mesa_cache.db": {
+    "sha256": "495f9f8afee4a06bab2ee09804396e4ad140df4ab2661488ca8d76cff385747f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part22/mesa_cache.idx": {
+    "sha256": "495f9f8afee4a06bab2ee09804396e4ad140df4ab2661488ca8d76cff385747f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part23/mesa_cache.db": {
+    "sha256": "454da7801e9098ee0f285ade17e5044a71aaee3d5961012e2874721c23c4fb5d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part23/mesa_cache.idx": {
+    "sha256": "454da7801e9098ee0f285ade17e5044a71aaee3d5961012e2874721c23c4fb5d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part24/mesa_cache.db": {
+    "sha256": "9b545c5728f6f6d07eb45e8d30159f8f7b476a30d92fd4f21e2c02aa588f1f0f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part24/mesa_cache.idx": {
+    "sha256": "9b545c5728f6f6d07eb45e8d30159f8f7b476a30d92fd4f21e2c02aa588f1f0f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part25/mesa_cache.db": {
+    "sha256": "46616a6b6dfa57d49ce12d6800ac42812f0e6ef860f2bece8008c717131a6f2d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part25/mesa_cache.idx": {
+    "sha256": "46616a6b6dfa57d49ce12d6800ac42812f0e6ef860f2bece8008c717131a6f2d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part26/mesa_cache.db": {
+    "sha256": "d4aa26e5aac6be865c0dd5f3d3ef914f93b8c24595be15dfa28ee1305e59e3a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part26/mesa_cache.idx": {
+    "sha256": "d4aa26e5aac6be865c0dd5f3d3ef914f93b8c24595be15dfa28ee1305e59e3a2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part27/mesa_cache.db": {
+    "sha256": "64c27b1574266ec303da36e2de3c8f2d4e2461cd4441594fa720884ad5ccdc3f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part27/mesa_cache.idx": {
+    "sha256": "64c27b1574266ec303da36e2de3c8f2d4e2461cd4441594fa720884ad5ccdc3f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part28/mesa_cache.db": {
+    "sha256": "6e2e0f699e308c9a6026eeb1a8f77c05b63691106742369f0013ccd10ee642f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part28/mesa_cache.idx": {
+    "sha256": "6e2e0f699e308c9a6026eeb1a8f77c05b63691106742369f0013ccd10ee642f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part29/mesa_cache.db": {
+    "sha256": "e4d0e055761582520a201d430943ac7f21dcb575d3e18d58fe2c36261e7695fc",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part29/mesa_cache.idx": {
+    "sha256": "e4d0e055761582520a201d430943ac7f21dcb575d3e18d58fe2c36261e7695fc",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part3/mesa_cache.db": {
+    "sha256": "00995eedd49a37649229c4e7314eeb2c21686a67d4eb333417c767253a5ee179",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part3/mesa_cache.idx": {
+    "sha256": "00995eedd49a37649229c4e7314eeb2c21686a67d4eb333417c767253a5ee179",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part30/mesa_cache.db": {
+    "sha256": "e9baddde57bf8c242ba162996460142efba8151a59a4b7ec0779e9beb79a2c27",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part30/mesa_cache.idx": {
+    "sha256": "e9baddde57bf8c242ba162996460142efba8151a59a4b7ec0779e9beb79a2c27",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part31/mesa_cache.db": {
+    "sha256": "caaffc7e4ca6ce474bfd411b08f493b694717ec826a7bab104354b3401b44159",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part31/mesa_cache.idx": {
+    "sha256": "caaffc7e4ca6ce474bfd411b08f493b694717ec826a7bab104354b3401b44159",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part32/mesa_cache.db": {
+    "sha256": "21df21792906621600432eaddcc823f26dfa29b84669312d4f0abaef83e2ab9e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part32/mesa_cache.idx": {
+    "sha256": "21df21792906621600432eaddcc823f26dfa29b84669312d4f0abaef83e2ab9e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part33/mesa_cache.db": {
+    "sha256": "f4ebd1fb518d13f6faf0bba07f924d9bef60a6a4f6d2940508f153b77681c3ea",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part33/mesa_cache.idx": {
+    "sha256": "f4ebd1fb518d13f6faf0bba07f924d9bef60a6a4f6d2940508f153b77681c3ea",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part34/mesa_cache.db": {
+    "sha256": "15acf2bcfe386cd53ddc5783dabd219c074ac3efd1b47caac532d81ee5b53bcf",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part34/mesa_cache.idx": {
+    "sha256": "15acf2bcfe386cd53ddc5783dabd219c074ac3efd1b47caac532d81ee5b53bcf",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part35/mesa_cache.db": {
+    "sha256": "cabc60a70f4dc2127f1ffdcccc422c81734bf0b8f983aa65f1f49c9da3743735",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part35/mesa_cache.idx": {
+    "sha256": "cabc60a70f4dc2127f1ffdcccc422c81734bf0b8f983aa65f1f49c9da3743735",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part36/mesa_cache.db": {
+    "sha256": "192444cfdd70bb75b4f1d72a839427c6582ef9aac2b7823ea6d9cd056dd7f9f2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part36/mesa_cache.idx": {
+    "sha256": "192444cfdd70bb75b4f1d72a839427c6582ef9aac2b7823ea6d9cd056dd7f9f2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part37/mesa_cache.db": {
+    "sha256": "de890c1832f1539733e0b8302929a21ea446fb128fc0b13d262f1e8c62648aec",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part37/mesa_cache.idx": {
+    "sha256": "de890c1832f1539733e0b8302929a21ea446fb128fc0b13d262f1e8c62648aec",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part38/mesa_cache.db": {
+    "sha256": "411eaa0ad1179e9e17bd55c8bd9a70ef3196c277d8a4e3080e886f5f711c8969",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part38/mesa_cache.idx": {
+    "sha256": "411eaa0ad1179e9e17bd55c8bd9a70ef3196c277d8a4e3080e886f5f711c8969",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part39/mesa_cache.db": {
+    "sha256": "25cac89c7271739a19877a5d6db932174edf233d126bbac010fb3992d9329964",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part39/mesa_cache.idx": {
+    "sha256": "25cac89c7271739a19877a5d6db932174edf233d126bbac010fb3992d9329964",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part4/mesa_cache.db": {
+    "sha256": "92f9e514aebc3588fdca3b74c72caf3f4f6d86c0801ed380755956a94b75d63a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part4/mesa_cache.idx": {
+    "sha256": "92f9e514aebc3588fdca3b74c72caf3f4f6d86c0801ed380755956a94b75d63a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part40/mesa_cache.db": {
+    "sha256": "7e7bb9aa3fc8212d873417cf9cfa0f005aebd5b911f9a3419e27cf5466e3ff74",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part40/mesa_cache.idx": {
+    "sha256": "7e7bb9aa3fc8212d873417cf9cfa0f005aebd5b911f9a3419e27cf5466e3ff74",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part41/mesa_cache.db": {
+    "sha256": "d0debb05fa23b2dcc9f89792e1b09297cbaec964da904e9e9679465338136c4b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part41/mesa_cache.idx": {
+    "sha256": "d0debb05fa23b2dcc9f89792e1b09297cbaec964da904e9e9679465338136c4b",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part42/mesa_cache.db": {
+    "sha256": "d5bee5a4e02ca2a388130bef33c1d720e31ee5e561fd18d48c60a62df9a049c0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part42/mesa_cache.idx": {
+    "sha256": "d5bee5a4e02ca2a388130bef33c1d720e31ee5e561fd18d48c60a62df9a049c0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part43/mesa_cache.db": {
+    "sha256": "ebe385a90e9559c10575a0e493912459981d77146847bdf2be6f2418de22bf94",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part43/mesa_cache.idx": {
+    "sha256": "ebe385a90e9559c10575a0e493912459981d77146847bdf2be6f2418de22bf94",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part44/mesa_cache.db": {
+    "sha256": "5050b901f60b2cdcd2f99e2ee0ba3ce9f3ccd0589f3b1c68de1551c31fe18364",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part44/mesa_cache.idx": {
+    "sha256": "5050b901f60b2cdcd2f99e2ee0ba3ce9f3ccd0589f3b1c68de1551c31fe18364",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part45/mesa_cache.db": {
+    "sha256": "eb9e4153007dd10c04d148980367dfc7f956363b6d823d09cdcd67d46e951dfd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part45/mesa_cache.idx": {
+    "sha256": "eb9e4153007dd10c04d148980367dfc7f956363b6d823d09cdcd67d46e951dfd",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part46/mesa_cache.db": {
+    "sha256": "7a000ad67170836f776c440c87b7006415502fd3c7b9f6775319dde440bea2ce",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part46/mesa_cache.idx": {
+    "sha256": "7a000ad67170836f776c440c87b7006415502fd3c7b9f6775319dde440bea2ce",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part47/mesa_cache.db": {
+    "sha256": "06fa5850e35c06000c518914820a2c572d41f726cd93ef5a3f3ee848db5ca192",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part47/mesa_cache.idx": {
+    "sha256": "06fa5850e35c06000c518914820a2c572d41f726cd93ef5a3f3ee848db5ca192",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part48/mesa_cache.db": {
+    "sha256": "eb7165f4aa1b43113604426b84ad093894cbcea95a96b31a48e4d3f97a380c3c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part48/mesa_cache.idx": {
+    "sha256": "eb7165f4aa1b43113604426b84ad093894cbcea95a96b31a48e4d3f97a380c3c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part49/mesa_cache.db": {
+    "sha256": "0e5e3e56cdaca8f208888557d0a1a7b3ebabb14ac2b4176228419c4e300f7486",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part49/mesa_cache.idx": {
+    "sha256": "0e5e3e56cdaca8f208888557d0a1a7b3ebabb14ac2b4176228419c4e300f7486",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part5/mesa_cache.db": {
+    "sha256": "8a5efddda0c2fbb30477b1c2ca4f103e1e0ff061ce538771e2f406ea3ef32938",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part5/mesa_cache.idx": {
+    "sha256": "8a5efddda0c2fbb30477b1c2ca4f103e1e0ff061ce538771e2f406ea3ef32938",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part6/mesa_cache.db": {
+    "sha256": "a7dfbb0cd30d7915caaae3b058eac41d812e550e3b4c31abad406e59df3fbe3d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part6/mesa_cache.idx": {
+    "sha256": "a7dfbb0cd30d7915caaae3b058eac41d812e550e3b4c31abad406e59df3fbe3d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part7/mesa_cache.db": {
+    "sha256": "d014f93ccd81071da131e2b606feb89bf9b98d5cca1b940d25994532e18f3bd4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part7/mesa_cache.idx": {
+    "sha256": "d014f93ccd81071da131e2b606feb89bf9b98d5cca1b940d25994532e18f3bd4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part8/mesa_cache.db": {
+    "sha256": "57174cfc7a55efe4a9330ace229ae925355326ab4e774f62080703e93dfb951d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part8/mesa_cache.idx": {
+    "sha256": "57174cfc7a55efe4a9330ace229ae925355326ab4e774f62080703e93dfb951d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part9/mesa_cache.db": {
+    "sha256": "cba17e3ab23ffb024913421bd0693e4d59601a097b0442bae105bb34c8c9deb1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/cache/mesa_shader_cache_db/part9/mesa_cache.idx": {
+    "sha256": "cba17e3ab23ffb024913421bd0693e4d59601a097b0442bae105bb34c8c9deb1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-kd3wrqk1/declaration.json": {
+    "sha256": "f45b5f45b4436b94b5e73ea50f1285002d0b83339394254884c863d2c8bbfba5",
+    "bytes": 297241
+  },
+  "pm045-pass-pointer-kd3wrqk1/display-after.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-kd3wrqk1/display-before.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-kd3wrqk1/display-during.txt": {
+    "sha256": "015f3920b6b48e2572da0cb1e833aa3659649cfb204bb73110ad3906ebbb6f26",
+    "bytes": 859
+  },
+  "pm045-pass-pointer-kd3wrqk1/native.log": {
+    "sha256": "69364d9fceb14f74de8b9f890fd7289782c1cb17d6b941182871e9589192feb8",
+    "bytes": 7869357
+  },
+  "pm045-pass-pointer-kd3wrqk1/pinned-assets/pm045_wm_close.py": {
+    "sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "bytes": 1357
+  },
+  "pm045-pass-pointer-kd3wrqk1/pinned-assets/pointer-reference.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-kd3wrqk1/pinned-assets/pointer-stream.py": {
+    "sha256": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "bytes": 1513
+  },
+  "pm045-pass-pointer-kd3wrqk1/pointer-final.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-kd3wrqk1/pointer-input.json": {
+    "sha256": "2d9fa293548a958c49cb0b6c1db11b6f30daeaa10ffe1d1d0e56615f672576b2",
+    "bytes": 880899
+  },
+  "pm045-pass-pointer-kd3wrqk1/pointer-warm.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/gui-terminal-context.json": {
+    "sha256": "10f2e6e6c7d434c5f9d75ab8710200565a9f3c9ca9aa8169433904f2ee786c68",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/journal/cursor.json": {
+    "sha256": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+    "bytes": 32
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/journal/transactions.jsonl": {
+    "sha256": "e38b73d15efb2011ccb0d19e3de5121794009b023f31b04e6f8c6f204ab9c4c3",
+    "bytes": 1118691
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/blobs/sha256/1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb": {
+    "sha256": "1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb",
+    "bytes": 708175
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/blobs/sha256/41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/blobs/sha256/50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436": {
+    "sha256": "50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436",
+    "bytes": 410516
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/blobs/sha256/d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/blobs/sha256/d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/generations/13a0391856aaea2d89b9047e8a48d1b85b634ce6f4df2a115bf5a847db6d202c.json": {
+    "sha256": "d6f42b6ef1addaf080a3b47e906d4604568ab8fc9122cb4272827dd7ecef630b",
+    "bytes": 1126
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/generations/4c1c35afbc2892dda0cd0f031a50cf7750a12278d901a77b24dfd666bad3a589.json": {
+    "sha256": "93f91ed1d8a09e406fa66a7fa868ba0c35135728af3cb89e988dae39b480f407",
+    "bytes": 1086
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/revision/v1/head.json": {
+    "sha256": "56193a36ae8b31185f4fc3a91c483f6dcb3ce786e03d047ec95524e401b95423",
+    "bytes": 220
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/terminal-contexts/context-971336-1790506551660279100.pinned.json": {
+    "sha256": "1c53c908cb4c0b8919d081c7beda07305ab75fbcfa48069913446b922aeb75e1",
+    "bytes": 287586
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/terminal-contexts/terminal-971336-1790506551660279100.agent-authority.json": {
+    "sha256": "a69b592da18a3285dafb743388b53ed3a80610a2e6f952c1e930d0acbe23feb2",
+    "bytes": 390
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/terminal-contexts/terminal-971336-1790506551660279100.discovery.json": {
+    "sha256": "e897585eda3297d97ad0c4a1009ca6b5ae8a757ea78724d8e1540dd982db5b52",
+    "bytes": 1479
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/terminal-contexts/terminal-971336-1790506551660279100.json": {
+    "sha256": "602e93a838a3cedee8b836c47dc3fe8039025dddfd39108c864827e40ffe5e9f",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/tool-sessions/terminal-971336-1790506551660279100.events.jsonl": {
+    "sha256": "d3caf196c806e7eed4999832e19502913ff0ea310b5036fd895be6ccfc2b37ba",
+    "bytes": 232
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/tool-sessions/terminal-971336-1790506551660279100.events.jsonl.io.0.jsonl": {
+    "sha256": "10852e28730ecfa9d56f1e16a826b88c2677a930840f65c0a938c7561bab09fe",
+    "bytes": 853
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/tool-sessions/terminal-971336-1790506551660279100.json": {
+    "sha256": "36e7eda03cf60d748bd078f5e21038a9f9063ec85eb7d5ab341468294692260b",
+    "bytes": 572
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/.datum/tool-sessions/terminal-971336-1790506551660279100.terminal-runtime/terminfo/d/datum-256color": {
+    "sha256": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+    "bytes": 1431
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/board/board.json": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/project.json": {
+    "sha256": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c",
+    "bytes": 3198
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/rules/rules.json": {
+    "sha256": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693",
+    "bytes": 98
+  },
+  "pm045-pass-pointer-kd3wrqk1/project/schematic/schematic.json": {
+    "sha256": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530",
+    "bytes": 154
+  },
+  "pm045-pass-pointer-kd3wrqk1/result.json": {
+    "sha256": "3d9fbb2a1c441de80353d4dc1610e01355d040dc9da004da9a732b22f4aba382",
+    "bytes": 925074
+  },
+  "pm045-pass-pointer-kd3wrqk1/stderr.log": {
+    "sha256": "b268ff7ab390c655c8a7de330c7cd74755ba0131013179e7d570462da75f99c7",
+    "bytes": 328
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/index": {
+    "sha256": "6d0552c4e71fe85e6cdc7e7745882ea91b382fbc56448f2e9e1c2d77dcf67d81",
+    "bytes": 1310728
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/marker": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part0/mesa_cache.db": {
+    "sha256": "00815fc3f9c7df4cb600ef828f7522cf390df9b86ec458855b9be07c09c5089f",
+    "bytes": 18807
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part0/mesa_cache.idx": {
+    "sha256": "4c228c293f4c9cc33aa0a1ef34e46a519181f806a0d899b406b28ad62271616e",
+    "bytes": 804
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part1/mesa_cache.db": {
+    "sha256": "72b4d0323f1a136e282aedb575f624f1beafc4710f8cf0c3dad28392b82c133e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part1/mesa_cache.idx": {
+    "sha256": "72b4d0323f1a136e282aedb575f624f1beafc4710f8cf0c3dad28392b82c133e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part10/mesa_cache.db": {
+    "sha256": "2057250d6af8a58a5ebcdbb9f14515b9f2faadcdbf90031b80e35adf3f6afa49",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part10/mesa_cache.idx": {
+    "sha256": "2057250d6af8a58a5ebcdbb9f14515b9f2faadcdbf90031b80e35adf3f6afa49",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part11/mesa_cache.db": {
+    "sha256": "427fcdc0438ca35c0a090821e05d0df80d16228f71ddc6884bc611e3b40c7ed1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part11/mesa_cache.idx": {
+    "sha256": "427fcdc0438ca35c0a090821e05d0df80d16228f71ddc6884bc611e3b40c7ed1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part12/mesa_cache.db": {
+    "sha256": "a0d11a965846d0344c73421ede72f0608f880317804674f799b1c7181e5c6977",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part12/mesa_cache.idx": {
+    "sha256": "a0d11a965846d0344c73421ede72f0608f880317804674f799b1c7181e5c6977",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part13/mesa_cache.db": {
+    "sha256": "d340e0b8344b402b5a9214125e9e1b8344c341bad366ea45dd0a1f4ab36b74cb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part13/mesa_cache.idx": {
+    "sha256": "d340e0b8344b402b5a9214125e9e1b8344c341bad366ea45dd0a1f4ab36b74cb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part14/mesa_cache.db": {
+    "sha256": "c52209508782b697819d8a0d0eae4357cee99a7bfc9634fbf97cbc7975730dcb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part14/mesa_cache.idx": {
+    "sha256": "c52209508782b697819d8a0d0eae4357cee99a7bfc9634fbf97cbc7975730dcb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part15/mesa_cache.db": {
+    "sha256": "6e96265f538e22df9e12d6045d903a7ee8bdfb2e916317672b9edb1c37f43437",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part15/mesa_cache.idx": {
+    "sha256": "6e96265f538e22df9e12d6045d903a7ee8bdfb2e916317672b9edb1c37f43437",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part16/mesa_cache.db": {
+    "sha256": "ed6badf896f7043347eb3addeb3564c4791bc58854059ee07cb7978f9d339ba1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part16/mesa_cache.idx": {
+    "sha256": "ed6badf896f7043347eb3addeb3564c4791bc58854059ee07cb7978f9d339ba1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part17/mesa_cache.db": {
+    "sha256": "b8bacd3a8b47b0567888cd076c2a3ee6522ba962a3081033fcc7311bb169350f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part17/mesa_cache.idx": {
+    "sha256": "b8bacd3a8b47b0567888cd076c2a3ee6522ba962a3081033fcc7311bb169350f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part18/mesa_cache.db": {
+    "sha256": "8e869a8bc67a3f4c8ae4e1ceb2acb98abd28a73e67aad074d861e92cfd9458f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part18/mesa_cache.idx": {
+    "sha256": "8e869a8bc67a3f4c8ae4e1ceb2acb98abd28a73e67aad074d861e92cfd9458f6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part19/mesa_cache.db": {
+    "sha256": "5ca05a16a70f82f31643f1efe75f170738f97a0e347c08df17f64cf56ae7670d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part19/mesa_cache.idx": {
+    "sha256": "5ca05a16a70f82f31643f1efe75f170738f97a0e347c08df17f64cf56ae7670d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part2/mesa_cache.db": {
+    "sha256": "733e3bcb563a5faa097e6debdf881f43f5a6a6c407e5f444d6ff3fd38c4f0e6e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part2/mesa_cache.idx": {
+    "sha256": "733e3bcb563a5faa097e6debdf881f43f5a6a6c407e5f444d6ff3fd38c4f0e6e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part20/mesa_cache.db": {
+    "sha256": "e4daa88f8f59f3f5a65664dab5538df21a5fe2ef657ee307db03f1ffd1f8eb42",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part20/mesa_cache.idx": {
+    "sha256": "e4daa88f8f59f3f5a65664dab5538df21a5fe2ef657ee307db03f1ffd1f8eb42",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part21/mesa_cache.db": {
+    "sha256": "4d22f03dd31e85b1c8c682e27fc70a9084e5e088bed5f58373bf0322a1f448d8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part21/mesa_cache.idx": {
+    "sha256": "4d22f03dd31e85b1c8c682e27fc70a9084e5e088bed5f58373bf0322a1f448d8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part22/mesa_cache.db": {
+    "sha256": "4a9d3f10d878162c457102e453cdd5d18e0eb11d404505d11befc1227f6ef54e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part22/mesa_cache.idx": {
+    "sha256": "4a9d3f10d878162c457102e453cdd5d18e0eb11d404505d11befc1227f6ef54e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part23/mesa_cache.db": {
+    "sha256": "acdeb2101b5d4c21799b1f0fefe4a9615eb7084f7878947e35771f659447369e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part23/mesa_cache.idx": {
+    "sha256": "acdeb2101b5d4c21799b1f0fefe4a9615eb7084f7878947e35771f659447369e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part24/mesa_cache.db": {
+    "sha256": "a4b0cf1a2b2d6defe8ca7475e5cd747c3e3b1cc2b87826c01ae923cc1c18103d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part24/mesa_cache.idx": {
+    "sha256": "a4b0cf1a2b2d6defe8ca7475e5cd747c3e3b1cc2b87826c01ae923cc1c18103d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part25/mesa_cache.db": {
+    "sha256": "c97df8529d6ecbb322092b905220c6dce5f9b726f405f7a681d559506dd15873",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part25/mesa_cache.idx": {
+    "sha256": "c97df8529d6ecbb322092b905220c6dce5f9b726f405f7a681d559506dd15873",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part26/mesa_cache.db": {
+    "sha256": "1a50158ca83fe477c527fe88a319ce4917a32995ac30502c373a827a00c54e2a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part26/mesa_cache.idx": {
+    "sha256": "1a50158ca83fe477c527fe88a319ce4917a32995ac30502c373a827a00c54e2a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part27/mesa_cache.db": {
+    "sha256": "13993047bbef468486b3143d505901de0efd079144b51ff9adbb69e38c5e4cff",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part27/mesa_cache.idx": {
+    "sha256": "13993047bbef468486b3143d505901de0efd079144b51ff9adbb69e38c5e4cff",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part28/mesa_cache.db": {
+    "sha256": "b1f5cdada23d1181108d21645536bec5dedd47b93ae1498c5a2aa724b6e63236",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part28/mesa_cache.idx": {
+    "sha256": "b1f5cdada23d1181108d21645536bec5dedd47b93ae1498c5a2aa724b6e63236",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part29/mesa_cache.db": {
+    "sha256": "54260bff13143d06101c8922d18f619248d9426fd1a9b7a7ed4777f3aa72fad7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part29/mesa_cache.idx": {
+    "sha256": "54260bff13143d06101c8922d18f619248d9426fd1a9b7a7ed4777f3aa72fad7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part3/mesa_cache.db": {
+    "sha256": "dfbd1598bda18706f0ea00ead2f5439d5c7f7256b1b43e7e34f5fed6b4561ac3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part3/mesa_cache.idx": {
+    "sha256": "dfbd1598bda18706f0ea00ead2f5439d5c7f7256b1b43e7e34f5fed6b4561ac3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part30/mesa_cache.db": {
+    "sha256": "79011b260d4170cf3aed9f14686cc80d0cecf16110656092711a4ec73caacc0a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part30/mesa_cache.idx": {
+    "sha256": "79011b260d4170cf3aed9f14686cc80d0cecf16110656092711a4ec73caacc0a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part31/mesa_cache.db": {
+    "sha256": "d5aa16addd6564eedd94f0a36fa99e0ee5ad8fcc55f57a5b94401d5ad8cd4fef",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part31/mesa_cache.idx": {
+    "sha256": "d5aa16addd6564eedd94f0a36fa99e0ee5ad8fcc55f57a5b94401d5ad8cd4fef",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part32/mesa_cache.db": {
+    "sha256": "0a2913a1e8804a45da97e56f2fc11585668428bf8f3efa16f37a93f25dbc849c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part32/mesa_cache.idx": {
+    "sha256": "0a2913a1e8804a45da97e56f2fc11585668428bf8f3efa16f37a93f25dbc849c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part33/mesa_cache.db": {
+    "sha256": "5fae66b71b2560c289e01130456c70aa6877daf490b4dd8a61978f15c6086536",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part33/mesa_cache.idx": {
+    "sha256": "5fae66b71b2560c289e01130456c70aa6877daf490b4dd8a61978f15c6086536",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part34/mesa_cache.db": {
+    "sha256": "8dd33f1af104b9b43a0d7d4fc8ba3ce93c14884a3ba3d1203a182ece190986ae",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part34/mesa_cache.idx": {
+    "sha256": "8dd33f1af104b9b43a0d7d4fc8ba3ce93c14884a3ba3d1203a182ece190986ae",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part35/mesa_cache.db": {
+    "sha256": "6ff172994c05801d8ae2604661b555fc7dcece5d61cf74f494e0609d193015f0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part35/mesa_cache.idx": {
+    "sha256": "6ff172994c05801d8ae2604661b555fc7dcece5d61cf74f494e0609d193015f0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part36/mesa_cache.db": {
+    "sha256": "2d6f7d7e5891f7c9bcb1e866537287b047ddb9585f44c02d8c7826d067580fa4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part36/mesa_cache.idx": {
+    "sha256": "2d6f7d7e5891f7c9bcb1e866537287b047ddb9585f44c02d8c7826d067580fa4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part37/mesa_cache.db": {
+    "sha256": "3def7ee493a18c95417263faa20a5dda4d1bd041a93950adcc351ce6a7d1e75c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part37/mesa_cache.idx": {
+    "sha256": "3def7ee493a18c95417263faa20a5dda4d1bd041a93950adcc351ce6a7d1e75c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part38/mesa_cache.db": {
+    "sha256": "5e2c3eaa4675a87ee8d5db92c05c983f11c7a4be412e9078a00698cc03ef3cdb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part38/mesa_cache.idx": {
+    "sha256": "5e2c3eaa4675a87ee8d5db92c05c983f11c7a4be412e9078a00698cc03ef3cdb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part39/mesa_cache.db": {
+    "sha256": "8f0afdfff60941f18532779430b1749baa45d17e48d06eb001ab4d9820a961de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part39/mesa_cache.idx": {
+    "sha256": "8f0afdfff60941f18532779430b1749baa45d17e48d06eb001ab4d9820a961de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part4/mesa_cache.db": {
+    "sha256": "9523d44c0f86f802de06af7d9620df50225af90543c26cc1bcfe20208e872836",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part4/mesa_cache.idx": {
+    "sha256": "9523d44c0f86f802de06af7d9620df50225af90543c26cc1bcfe20208e872836",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part40/mesa_cache.db": {
+    "sha256": "8fc5d522896fb3304b20ed370379d6c1e1165e8dff2d32ae8c097be0ea21635e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part40/mesa_cache.idx": {
+    "sha256": "8fc5d522896fb3304b20ed370379d6c1e1165e8dff2d32ae8c097be0ea21635e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part41/mesa_cache.db": {
+    "sha256": "14ba28181b4f6822b206142ad9fb55b9f014a5320b212ef6e9f7cbb58749ef34",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part41/mesa_cache.idx": {
+    "sha256": "14ba28181b4f6822b206142ad9fb55b9f014a5320b212ef6e9f7cbb58749ef34",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part42/mesa_cache.db": {
+    "sha256": "e2c56ef300ba1fece09a625fd4f15b6abd6bb463564d0526a276f318b61b2de0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part42/mesa_cache.idx": {
+    "sha256": "e2c56ef300ba1fece09a625fd4f15b6abd6bb463564d0526a276f318b61b2de0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part43/mesa_cache.db": {
+    "sha256": "c85e7942c3c4c5ff85ff48af56312464711191f2915fd5b8130e0168dbab04df",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part43/mesa_cache.idx": {
+    "sha256": "c85e7942c3c4c5ff85ff48af56312464711191f2915fd5b8130e0168dbab04df",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part44/mesa_cache.db": {
+    "sha256": "b511a00049a7fd61a01e5898965ab13987cabacf66737c524d43c27605ae1bc4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part44/mesa_cache.idx": {
+    "sha256": "b511a00049a7fd61a01e5898965ab13987cabacf66737c524d43c27605ae1bc4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part45/mesa_cache.db": {
+    "sha256": "15ef313a48873d3c89e2e88ecafb08ed5306b975340cefc1609464b66b02d3de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part45/mesa_cache.idx": {
+    "sha256": "15ef313a48873d3c89e2e88ecafb08ed5306b975340cefc1609464b66b02d3de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part46/mesa_cache.db": {
+    "sha256": "d70ba8daebdc9d5d0357611618cb0299ab5e4a0d1634c3fb5562639bf80aa905",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part46/mesa_cache.idx": {
+    "sha256": "d70ba8daebdc9d5d0357611618cb0299ab5e4a0d1634c3fb5562639bf80aa905",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part47/mesa_cache.db": {
+    "sha256": "2f75aa2df457f6c3c5301071b450ecf3feb3e54b9fbc2b46c78363131a8606d1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part47/mesa_cache.idx": {
+    "sha256": "2f75aa2df457f6c3c5301071b450ecf3feb3e54b9fbc2b46c78363131a8606d1",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part48/mesa_cache.db": {
+    "sha256": "7d8bb33d4b049bbdcde14dc0062309891c0b645a394313e0b4ac9e7b61ebb4b7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part48/mesa_cache.idx": {
+    "sha256": "7d8bb33d4b049bbdcde14dc0062309891c0b645a394313e0b4ac9e7b61ebb4b7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part49/mesa_cache.db": {
+    "sha256": "c301137219c429fee113ecc9c0d138506489a331de6ae3f4d4c1d184f5a23150",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part49/mesa_cache.idx": {
+    "sha256": "c301137219c429fee113ecc9c0d138506489a331de6ae3f4d4c1d184f5a23150",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part5/mesa_cache.db": {
+    "sha256": "11a8c9daae968d123cffaa1577155cd884fbc1c52764fa2427f351daadd3704c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part5/mesa_cache.idx": {
+    "sha256": "11a8c9daae968d123cffaa1577155cd884fbc1c52764fa2427f351daadd3704c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part6/mesa_cache.db": {
+    "sha256": "1046e5dde7b6e5df0eaa1b4b598264a03e9c116a3347cf0d687338c7ef540c8e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part6/mesa_cache.idx": {
+    "sha256": "1046e5dde7b6e5df0eaa1b4b598264a03e9c116a3347cf0d687338c7ef540c8e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part7/mesa_cache.db": {
+    "sha256": "bf246d9f30b6736635e00d3ea453e704da3c3a2ab697687661a6a822bc31ba0e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part7/mesa_cache.idx": {
+    "sha256": "bf246d9f30b6736635e00d3ea453e704da3c3a2ab697687661a6a822bc31ba0e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part8/mesa_cache.db": {
+    "sha256": "1303e5da1768a06fb4eb22bc9fdd71f88b3aedb01fa12a2840a8d2dae5057908",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part8/mesa_cache.idx": {
+    "sha256": "1303e5da1768a06fb4eb22bc9fdd71f88b3aedb01fa12a2840a8d2dae5057908",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part9/mesa_cache.db": {
+    "sha256": "6ea12d641dba3bebface7ea4d3ec8d47fdef6660f8df7fa61d89277c1c68d401",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/cache/mesa_shader_cache_db/part9/mesa_cache.idx": {
+    "sha256": "6ea12d641dba3bebface7ea4d3ec8d47fdef6660f8df7fa61d89277c1c68d401",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-tqxaq88c/declaration.json": {
+    "sha256": "a3905b413afbdbe2ccf3bdc43e762097b950e93cdaef65485ea759ce664464f3",
+    "bytes": 297243
+  },
+  "pm045-pass-pointer-tqxaq88c/display-after.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-tqxaq88c/display-before.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-tqxaq88c/display-during.txt": {
+    "sha256": "015f3920b6b48e2572da0cb1e833aa3659649cfb204bb73110ad3906ebbb6f26",
+    "bytes": 859
+  },
+  "pm045-pass-pointer-tqxaq88c/native.log": {
+    "sha256": "fab0b6c3f922e82c6327ac330f130c5bde9a2b84a1bdb1297a044069ed11e45f",
+    "bytes": 3818
+  },
+  "pm045-pass-pointer-tqxaq88c/pinned-assets/pm045_wm_close.py": {
+    "sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "bytes": 1357
+  },
+  "pm045-pass-pointer-tqxaq88c/pinned-assets/pointer-reference.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-tqxaq88c/pinned-assets/pointer-stream.py": {
+    "sha256": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "bytes": 1513
+  },
+  "pm045-pass-pointer-tqxaq88c/pointer-final.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-tqxaq88c/pointer-input.json": {
+    "sha256": "53074be3015497278e59040dc3942e0d1aa0e146f657649d945842ad8704f381",
+    "bytes": 880899
+  },
+  "pm045-pass-pointer-tqxaq88c/pointer-warm.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/gui-terminal-context.json": {
+    "sha256": "c35cea2a22923f56f63514d15fbfb1293f5314c78b37e4ffbe6925d6a59ae9aa",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/journal/cursor.json": {
+    "sha256": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+    "bytes": 32
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/journal/transactions.jsonl": {
+    "sha256": "e38b73d15efb2011ccb0d19e3de5121794009b023f31b04e6f8c6f204ab9c4c3",
+    "bytes": 1118691
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/blobs/sha256/1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb": {
+    "sha256": "1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb",
+    "bytes": 708175
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/blobs/sha256/41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/blobs/sha256/50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436": {
+    "sha256": "50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436",
+    "bytes": 410516
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/blobs/sha256/d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/blobs/sha256/d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/generations/13a0391856aaea2d89b9047e8a48d1b85b634ce6f4df2a115bf5a847db6d202c.json": {
+    "sha256": "d6f42b6ef1addaf080a3b47e906d4604568ab8fc9122cb4272827dd7ecef630b",
+    "bytes": 1126
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/generations/4c1c35afbc2892dda0cd0f031a50cf7750a12278d901a77b24dfd666bad3a589.json": {
+    "sha256": "93f91ed1d8a09e406fa66a7fa868ba0c35135728af3cb89e988dae39b480f407",
+    "bytes": 1086
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/revision/v1/head.json": {
+    "sha256": "56193a36ae8b31185f4fc3a91c483f6dcb3ce786e03d047ec95524e401b95423",
+    "bytes": 220
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/terminal-contexts/context-971761-1790506604584349148.pinned.json": {
+    "sha256": "593f5eddc4ba303a2b22bb2b78a5d487d84794941773e9d2e630823a0cd0efba",
+    "bytes": 287586
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/terminal-contexts/terminal-971761-1790506604584349148.agent-authority.json": {
+    "sha256": "f912a1a3e8c971c284772fa2b5e4055d6bd0e3db67fa112895772d807122c4a9",
+    "bytes": 390
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/terminal-contexts/terminal-971761-1790506604584349148.discovery.json": {
+    "sha256": "2b5c8fb3fe1d87b6fa8917251cd28dd5a64dc170028ad92308348809238a77d6",
+    "bytes": 1479
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/terminal-contexts/terminal-971761-1790506604584349148.json": {
+    "sha256": "6b1bd10c7b145a96671a8030ed1cb2fa4e7bf3c9fa78877cc8689ad3a19ae7e5",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/tool-sessions/terminal-971761-1790506604584349148.events.jsonl": {
+    "sha256": "2b87af3470286fdf449410af3411a22d1574fc1a8b6a04b7fcdb1863533530d6",
+    "bytes": 232
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/tool-sessions/terminal-971761-1790506604584349148.events.jsonl.io.0.jsonl": {
+    "sha256": "eb39b8f42819d3a95f6516837c8a6bca06eb11e5610f54e32218cc2d09c1a883",
+    "bytes": 853
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/tool-sessions/terminal-971761-1790506604584349148.json": {
+    "sha256": "1cbbe63bcb3b5f15a8d584fda90ad2e00b2d3ff923ebedc9fd6711ad74595120",
+    "bytes": 572
+  },
+  "pm045-pass-pointer-tqxaq88c/project/.datum/tool-sessions/terminal-971761-1790506604584349148.terminal-runtime/terminfo/d/datum-256color": {
+    "sha256": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+    "bytes": 1431
+  },
+  "pm045-pass-pointer-tqxaq88c/project/board/board.json": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-tqxaq88c/project/project.json": {
+    "sha256": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c",
+    "bytes": 3198
+  },
+  "pm045-pass-pointer-tqxaq88c/project/rules/rules.json": {
+    "sha256": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693",
+    "bytes": 98
+  },
+  "pm045-pass-pointer-tqxaq88c/project/schematic/schematic.json": {
+    "sha256": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530",
+    "bytes": 154
+  },
+  "pm045-pass-pointer-tqxaq88c/result.json": {
+    "sha256": "67a588b680392487b7e27e7ce80a9c93ee8c0099fccd708363c8e9e0d0ecbe22",
+    "bytes": 307154
+  },
+  "pm045-pass-pointer-tqxaq88c/stderr.log": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/index": {
+    "sha256": "6d0552c4e71fe85e6cdc7e7745882ea91b382fbc56448f2e9e1c2d77dcf67d81",
+    "bytes": 1310728
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/marker": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part0/mesa_cache.db": {
+    "sha256": "9abcead48a1e974b9b14683c8bf7d1c08819cf9cb99605fedfe7262ded061fbf",
+    "bytes": 18807
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part0/mesa_cache.idx": {
+    "sha256": "2610e140e6656d0186007cb22f3b4939d74c6de76d4dce39caff9a3a36224fab",
+    "bytes": 804
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part1/mesa_cache.db": {
+    "sha256": "a402649971238922f92d9b399d4cf7dbd04515a9437014fa248d02f00a8f0ef9",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part1/mesa_cache.idx": {
+    "sha256": "a402649971238922f92d9b399d4cf7dbd04515a9437014fa248d02f00a8f0ef9",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part10/mesa_cache.db": {
+    "sha256": "00f43e75eb6ca423df272492f98139b17408b43981b96ef686906ae2bd1c8a90",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part10/mesa_cache.idx": {
+    "sha256": "00f43e75eb6ca423df272492f98139b17408b43981b96ef686906ae2bd1c8a90",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part11/mesa_cache.db": {
+    "sha256": "a2b88faca94c29c3ececd2c38366bb5486f9e8c65b638d8959b909253a337102",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part11/mesa_cache.idx": {
+    "sha256": "a2b88faca94c29c3ececd2c38366bb5486f9e8c65b638d8959b909253a337102",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part12/mesa_cache.db": {
+    "sha256": "53938a79c7089a8ba9cf19ff95183f7f5c3cf925af14219361dd7a3cf118174f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part12/mesa_cache.idx": {
+    "sha256": "53938a79c7089a8ba9cf19ff95183f7f5c3cf925af14219361dd7a3cf118174f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part13/mesa_cache.db": {
+    "sha256": "1834469745cd6e49fb0e7bc5a62f49076613fb6d24d2194c176cc4471541d2fb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part13/mesa_cache.idx": {
+    "sha256": "1834469745cd6e49fb0e7bc5a62f49076613fb6d24d2194c176cc4471541d2fb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part14/mesa_cache.db": {
+    "sha256": "91165e0da2d8a797331e769ad9cf5ca0476ae4869490d4c70725d6a4cb547dba",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part14/mesa_cache.idx": {
+    "sha256": "91165e0da2d8a797331e769ad9cf5ca0476ae4869490d4c70725d6a4cb547dba",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part15/mesa_cache.db": {
+    "sha256": "6d1ee870b0b07b105735100ff27a1aa580525dd7939b7986a93b7b394a359ea4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part15/mesa_cache.idx": {
+    "sha256": "6d1ee870b0b07b105735100ff27a1aa580525dd7939b7986a93b7b394a359ea4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part16/mesa_cache.db": {
+    "sha256": "3ba8dcc0ec25586834f159772137a2268be17e1947a9642ce6abd2514b85c267",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part16/mesa_cache.idx": {
+    "sha256": "3ba8dcc0ec25586834f159772137a2268be17e1947a9642ce6abd2514b85c267",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part17/mesa_cache.db": {
+    "sha256": "447c3b6d22c11fd1b70ced9ffdbd0440c4245a066ba754938a7e3056e1f9c183",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part17/mesa_cache.idx": {
+    "sha256": "447c3b6d22c11fd1b70ced9ffdbd0440c4245a066ba754938a7e3056e1f9c183",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part18/mesa_cache.db": {
+    "sha256": "7b09296baaf6f721294ed215b584d0ce80669d966bf10d9d39a746a034968ae3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part18/mesa_cache.idx": {
+    "sha256": "7b09296baaf6f721294ed215b584d0ce80669d966bf10d9d39a746a034968ae3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part19/mesa_cache.db": {
+    "sha256": "39ccee901efd370bc943f5540c01997aa5aa2e7f717300c2609a064f6d3168fe",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part19/mesa_cache.idx": {
+    "sha256": "39ccee901efd370bc943f5540c01997aa5aa2e7f717300c2609a064f6d3168fe",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part2/mesa_cache.db": {
+    "sha256": "70185db38d3d210319da1f1171667fff73886304a136d62f82f86c02b46197ad",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part2/mesa_cache.idx": {
+    "sha256": "70185db38d3d210319da1f1171667fff73886304a136d62f82f86c02b46197ad",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part20/mesa_cache.db": {
+    "sha256": "94889b05f85a4c84943c559f3a4bc2c65ff24e271c0aac452a9914969169c4c8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part20/mesa_cache.idx": {
+    "sha256": "94889b05f85a4c84943c559f3a4bc2c65ff24e271c0aac452a9914969169c4c8",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part21/mesa_cache.db": {
+    "sha256": "aa88f402d241e401e8bab452ab51da2d18fd25a74bf19a580fa14e0ed82331a4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part21/mesa_cache.idx": {
+    "sha256": "aa88f402d241e401e8bab452ab51da2d18fd25a74bf19a580fa14e0ed82331a4",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part22/mesa_cache.db": {
+    "sha256": "68c1939751875434470e8811e261153d2f5a0225046fb6994c532b6f4c1fb68e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part22/mesa_cache.idx": {
+    "sha256": "68c1939751875434470e8811e261153d2f5a0225046fb6994c532b6f4c1fb68e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part23/mesa_cache.db": {
+    "sha256": "49199b8361a7d83a2618f1a7723b72bc3a6fdefa04e7294015d21ee8334e7cfc",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part23/mesa_cache.idx": {
+    "sha256": "49199b8361a7d83a2618f1a7723b72bc3a6fdefa04e7294015d21ee8334e7cfc",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part24/mesa_cache.db": {
+    "sha256": "b634c28a8403c9daab26a107ba9e647c1ac1f97fe7f3fa0f61823a11581ea2e5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part24/mesa_cache.idx": {
+    "sha256": "b634c28a8403c9daab26a107ba9e647c1ac1f97fe7f3fa0f61823a11581ea2e5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part25/mesa_cache.db": {
+    "sha256": "7fb98e12aca3d2369564e61633a89b061d1f60c7ef48ad6b53f78f02c4240878",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part25/mesa_cache.idx": {
+    "sha256": "7fb98e12aca3d2369564e61633a89b061d1f60c7ef48ad6b53f78f02c4240878",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part26/mesa_cache.db": {
+    "sha256": "9b1fe0c6d34884f3448b50b356c9cd7e9396090627fde3fdb42e822c96798dff",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part26/mesa_cache.idx": {
+    "sha256": "9b1fe0c6d34884f3448b50b356c9cd7e9396090627fde3fdb42e822c96798dff",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part27/mesa_cache.db": {
+    "sha256": "e994a9d920df8272a6ad5250803be7f84c40490cfc8f79a15a3ada79e37ecb27",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part27/mesa_cache.idx": {
+    "sha256": "e994a9d920df8272a6ad5250803be7f84c40490cfc8f79a15a3ada79e37ecb27",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part28/mesa_cache.db": {
+    "sha256": "4fa52fdd5a8d9d405d16ae60276afeab371ad446e6c4c8b0daf9c11315cd89eb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part28/mesa_cache.idx": {
+    "sha256": "4fa52fdd5a8d9d405d16ae60276afeab371ad446e6c4c8b0daf9c11315cd89eb",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part29/mesa_cache.db": {
+    "sha256": "07d9d6730dcb45c8b355be834767ff1c9380f4059abbade3bdb377fc04cb5ce6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part29/mesa_cache.idx": {
+    "sha256": "07d9d6730dcb45c8b355be834767ff1c9380f4059abbade3bdb377fc04cb5ce6",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part3/mesa_cache.db": {
+    "sha256": "abee58c0731fa2dacda0d4ddbe2c2b80b8f2a212cd7f80bc6946427ecae094de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part3/mesa_cache.idx": {
+    "sha256": "abee58c0731fa2dacda0d4ddbe2c2b80b8f2a212cd7f80bc6946427ecae094de",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part30/mesa_cache.db": {
+    "sha256": "094f7b0930850e879e1707244e4cae0cd680125f4b30dff74b161e5efe4a196c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part30/mesa_cache.idx": {
+    "sha256": "094f7b0930850e879e1707244e4cae0cd680125f4b30dff74b161e5efe4a196c",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part31/mesa_cache.db": {
+    "sha256": "e48533daa5df70d2d851dd352c8f8ac6fb982f2cf9d58efa1d85fe249d58add7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part31/mesa_cache.idx": {
+    "sha256": "e48533daa5df70d2d851dd352c8f8ac6fb982f2cf9d58efa1d85fe249d58add7",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part32/mesa_cache.db": {
+    "sha256": "8cc919e60faaf6f62a5ebf941182dab0ced8bfb3d6135ab9e191138c13d14810",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part32/mesa_cache.idx": {
+    "sha256": "8cc919e60faaf6f62a5ebf941182dab0ced8bfb3d6135ab9e191138c13d14810",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part33/mesa_cache.db": {
+    "sha256": "8ef07359eb325e24d92bc69849dfe60df24712938ac753e7af0bd947304e7ec9",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part33/mesa_cache.idx": {
+    "sha256": "8ef07359eb325e24d92bc69849dfe60df24712938ac753e7af0bd947304e7ec9",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part34/mesa_cache.db": {
+    "sha256": "18b4ec74cb4ac0176734927f2ca8ceee4d3b8c254c612d3661f3338367b9b2b5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part34/mesa_cache.idx": {
+    "sha256": "18b4ec74cb4ac0176734927f2ca8ceee4d3b8c254c612d3661f3338367b9b2b5",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part35/mesa_cache.db": {
+    "sha256": "cf04f89fff09bcb60c74272483585210de144b5c3a315fb146463e98bd47906f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part35/mesa_cache.idx": {
+    "sha256": "cf04f89fff09bcb60c74272483585210de144b5c3a315fb146463e98bd47906f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part36/mesa_cache.db": {
+    "sha256": "48f7bbec518606653e1bac75484a0e48be11150d6d004d35f8e339e7acea396a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part36/mesa_cache.idx": {
+    "sha256": "48f7bbec518606653e1bac75484a0e48be11150d6d004d35f8e339e7acea396a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part37/mesa_cache.db": {
+    "sha256": "39dc6ff28c42c6c32f05eb8c638bffeec7021ab86c42fba8522d88107a95dba2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part37/mesa_cache.idx": {
+    "sha256": "39dc6ff28c42c6c32f05eb8c638bffeec7021ab86c42fba8522d88107a95dba2",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part38/mesa_cache.db": {
+    "sha256": "95362fdbdca2fa6083d64e7ef05f4d1246ef20a3af63607f5a796679344f6078",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part38/mesa_cache.idx": {
+    "sha256": "95362fdbdca2fa6083d64e7ef05f4d1246ef20a3af63607f5a796679344f6078",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part39/mesa_cache.db": {
+    "sha256": "3b38f9c8311d59e80323951aec09e4e674f0a3f9c357f1dae0944458eca4e3a3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part39/mesa_cache.idx": {
+    "sha256": "3b38f9c8311d59e80323951aec09e4e674f0a3f9c357f1dae0944458eca4e3a3",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part4/mesa_cache.db": {
+    "sha256": "66144c2e315b85bcb0ba8e62dc919a9443a86acf065c311ba5ffee146c7b23af",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part4/mesa_cache.idx": {
+    "sha256": "66144c2e315b85bcb0ba8e62dc919a9443a86acf065c311ba5ffee146c7b23af",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part40/mesa_cache.db": {
+    "sha256": "d6b33c9a15614cb2c29586029a4c37136c5f24ae90ce8cf63abb27b35b5b2d01",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part40/mesa_cache.idx": {
+    "sha256": "d6b33c9a15614cb2c29586029a4c37136c5f24ae90ce8cf63abb27b35b5b2d01",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part41/mesa_cache.db": {
+    "sha256": "6d84b9025902709a77f8f1edb5e7a7ebf37dc06208932c5bbdab6ff1ddf9975d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part41/mesa_cache.idx": {
+    "sha256": "6d84b9025902709a77f8f1edb5e7a7ebf37dc06208932c5bbdab6ff1ddf9975d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part42/mesa_cache.db": {
+    "sha256": "a521bf06759c67cb5f455d4f36488a36a658d642e989a5f5ca02d0a16bf5abc0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part42/mesa_cache.idx": {
+    "sha256": "a521bf06759c67cb5f455d4f36488a36a658d642e989a5f5ca02d0a16bf5abc0",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part43/mesa_cache.db": {
+    "sha256": "e0ba41c4a70715113a98efe4d21c8db9e3bcce797809f170e5f5c6508b81ed9d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part43/mesa_cache.idx": {
+    "sha256": "e0ba41c4a70715113a98efe4d21c8db9e3bcce797809f170e5f5c6508b81ed9d",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part44/mesa_cache.db": {
+    "sha256": "a81b2bc1e7ac934977b24fb852cdd9b6f8a3670e4096d1f71b50e1ef9652ea6f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part44/mesa_cache.idx": {
+    "sha256": "a81b2bc1e7ac934977b24fb852cdd9b6f8a3670e4096d1f71b50e1ef9652ea6f",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part45/mesa_cache.db": {
+    "sha256": "c3368cd668ed58f3b67acdbbd5db2b37d2a83ba21df0e5416651d332047f41ee",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part45/mesa_cache.idx": {
+    "sha256": "c3368cd668ed58f3b67acdbbd5db2b37d2a83ba21df0e5416651d332047f41ee",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part46/mesa_cache.db": {
+    "sha256": "dac8227f06eefc531580cac6825626ad462ae9acc36b1172714bfb21ccbab724",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part46/mesa_cache.idx": {
+    "sha256": "dac8227f06eefc531580cac6825626ad462ae9acc36b1172714bfb21ccbab724",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part47/mesa_cache.db": {
+    "sha256": "a3d523033812273e598b21068c44d0daef5ba4217f8024288e7c13293b5dbc57",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part47/mesa_cache.idx": {
+    "sha256": "a3d523033812273e598b21068c44d0daef5ba4217f8024288e7c13293b5dbc57",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part48/mesa_cache.db": {
+    "sha256": "fc9a2646e3f67fa15e3507e261e1285a79b8b4967455e39486443776004b2008",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part48/mesa_cache.idx": {
+    "sha256": "fc9a2646e3f67fa15e3507e261e1285a79b8b4967455e39486443776004b2008",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part49/mesa_cache.db": {
+    "sha256": "008606540ee8b2c4e8926f33de2c96b0ac6b0b5b9ed567ddd0a987e98540892a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part49/mesa_cache.idx": {
+    "sha256": "008606540ee8b2c4e8926f33de2c96b0ac6b0b5b9ed567ddd0a987e98540892a",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part5/mesa_cache.db": {
+    "sha256": "65886762340e4ccc0f953e0314f6bb8bd5388312d65e2e0930df85f680dff290",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part5/mesa_cache.idx": {
+    "sha256": "65886762340e4ccc0f953e0314f6bb8bd5388312d65e2e0930df85f680dff290",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part6/mesa_cache.db": {
+    "sha256": "90061a02f234945432dad1480e130878aa8cb2177c074879495aea5468bd3551",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part6/mesa_cache.idx": {
+    "sha256": "90061a02f234945432dad1480e130878aa8cb2177c074879495aea5468bd3551",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part7/mesa_cache.db": {
+    "sha256": "2e11cb6237a67a5dffe9b5d776ef217336769d572ced550ae95b16360e559837",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part7/mesa_cache.idx": {
+    "sha256": "2e11cb6237a67a5dffe9b5d776ef217336769d572ced550ae95b16360e559837",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part8/mesa_cache.db": {
+    "sha256": "806e258d0c4edf568a6fdaa4fe508c072a16b3d981318ae05991da27982eae3e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part8/mesa_cache.idx": {
+    "sha256": "806e258d0c4edf568a6fdaa4fe508c072a16b3d981318ae05991da27982eae3e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part9/mesa_cache.db": {
+    "sha256": "b2d19e536af356e40a6edecffc6d892855f25a22b143bbee159ff35e05bc521e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/cache/mesa_shader_cache_db/part9/mesa_cache.idx": {
+    "sha256": "b2d19e536af356e40a6edecffc6d892855f25a22b143bbee159ff35e05bc521e",
+    "bytes": 20
+  },
+  "pm045-pass-pointer-wohsv580/declaration.json": {
+    "sha256": "f45b5f45b4436b94b5e73ea50f1285002d0b83339394254884c863d2c8bbfba5",
+    "bytes": 297241
+  },
+  "pm045-pass-pointer-wohsv580/display-after.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-wohsv580/display-before.txt": {
+    "sha256": "ccd5e9002d2bf17e69a7e1d85c44f1614e8e1aea1740421e0992667e21d646fc",
+    "bytes": 862
+  },
+  "pm045-pass-pointer-wohsv580/display-during.txt": {
+    "sha256": "015f3920b6b48e2572da0cb1e833aa3659649cfb204bb73110ad3906ebbb6f26",
+    "bytes": 859
+  },
+  "pm045-pass-pointer-wohsv580/native.log": {
+    "sha256": "9d4fcc9643bf6e2433b86bb78958777ebdba5ebaf391d18458e6310a5c0cab0a",
+    "bytes": 7872548
+  },
+  "pm045-pass-pointer-wohsv580/pinned-assets/pm045_wm_close.py": {
+    "sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "bytes": 1357
+  },
+  "pm045-pass-pointer-wohsv580/pinned-assets/pointer-reference.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-wohsv580/pinned-assets/pointer-stream.py": {
+    "sha256": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "bytes": 1513
+  },
+  "pm045-pass-pointer-wohsv580/pointer-final.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-wohsv580/pointer-input.json": {
+    "sha256": "5140f3a6c60759bed50209c2122ac364292d86ec0a318fa3f60beced92bd135f",
+    "bytes": 880899
+  },
+  "pm045-pass-pointer-wohsv580/pointer-warm.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/check_runs/b3cc61f2-72e2-5ffc-9523-39134c05b78e.json": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/gui-terminal-context.json": {
+    "sha256": "43986891f0fee6cc8e7da00c49f1641d12ea8d2df11e36162245ab5cabd9b8bc",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/import_map/kicad-board-f83aee47-119f-575e-9ae4-5afc4cb672af.json": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/journal/cursor.json": {
+    "sha256": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+    "bytes": 32
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/journal/transactions.jsonl": {
+    "sha256": "e38b73d15efb2011ccb0d19e3de5121794009b023f31b04e6f8c6f204ab9c4c3",
+    "bytes": 1118691
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/blobs/sha256/1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb": {
+    "sha256": "1914688a77e775b97ee3a332a68d80aa217e7a57b8952b45a474cc1a35f66abb",
+    "bytes": 708175
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/blobs/sha256/41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/blobs/sha256/50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436": {
+    "sha256": "50f764c046ced32ee0b2985317c36d40c0afd1091c364255ec15bcbfc8c78436",
+    "bytes": 410516
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/blobs/sha256/d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7": {
+    "sha256": "d382e9c6e45e74ebef105eb18e36667721eccdc0abb1cf0a0dc3a3001a9eeea7",
+    "bytes": 168053
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/blobs/sha256/d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca": {
+    "sha256": "d7913c68ebec71d7ca86b53aa0d49a467105ad0cb44befbed097a56bee7eaaca",
+    "bytes": 204897
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/generations/13a0391856aaea2d89b9047e8a48d1b85b634ce6f4df2a115bf5a847db6d202c.json": {
+    "sha256": "d6f42b6ef1addaf080a3b47e906d4604568ab8fc9122cb4272827dd7ecef630b",
+    "bytes": 1126
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/generations/4c1c35afbc2892dda0cd0f031a50cf7750a12278d901a77b24dfd666bad3a589.json": {
+    "sha256": "93f91ed1d8a09e406fa66a7fa868ba0c35135728af3cb89e988dae39b480f407",
+    "bytes": 1086
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/revision/v1/head.json": {
+    "sha256": "56193a36ae8b31185f4fc3a91c483f6dcb3ce786e03d047ec95524e401b95423",
+    "bytes": 220
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/terminal-contexts/context-972148-1790506657171424684.pinned.json": {
+    "sha256": "eb123e75590f2cf71835b995f9b8665310da7f1cd49a05a8287d967a7d50ee92",
+    "bytes": 287586
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/terminal-contexts/terminal-972148-1790506657171424684.agent-authority.json": {
+    "sha256": "d8b5b3a42298e9ecd388ddc001333e51e297f113719f3709838d4f57851eb82e",
+    "bytes": 390
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/terminal-contexts/terminal-972148-1790506657171424684.discovery.json": {
+    "sha256": "39800fc04e79ab2e23b3538f0e8aaad33f87f62d1820ed81f9009c3308863f85",
+    "bytes": 1479
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/terminal-contexts/terminal-972148-1790506657171424684.json": {
+    "sha256": "a91b13cc327cd4c85c0060869c8faf273944cb829c4d4a24c3a50eba6696b30d",
+    "bytes": 287576
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/tool-sessions/terminal-972148-1790506657171424684.events.jsonl": {
+    "sha256": "d5df89765b7f383bdaa9db1a22728b63b9cda7122389cc3a7d4a72399fc64605",
+    "bytes": 232
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/tool-sessions/terminal-972148-1790506657171424684.events.jsonl.io.0.jsonl": {
+    "sha256": "ee5eb243e2d54a018771113401f840a1df432b01d8006c03b741fd06b2d1bfd0",
+    "bytes": 853
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/tool-sessions/terminal-972148-1790506657171424684.json": {
+    "sha256": "2d4598bfcff722fc8099ec843580317886b79d5a991590d2c1d74daa54139d76",
+    "bytes": 572
+  },
+  "pm045-pass-pointer-wohsv580/project/.datum/tool-sessions/terminal-972148-1790506657171424684.terminal-runtime/terminfo/d/datum-256color": {
+    "sha256": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+    "bytes": 1431
+  },
+  "pm045-pass-pointer-wohsv580/project/board/board.json": {
+    "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "bytes": 166254
+  },
+  "pm045-pass-pointer-wohsv580/project/project.json": {
+    "sha256": "d08d11734bd20993b973c13d1a78cc500194f1de65465483b1b9421fea18d53c",
+    "bytes": 3198
+  },
+  "pm045-pass-pointer-wohsv580/project/rules/rules.json": {
+    "sha256": "0c4eefe98531c88e01907046a5ffa11d56aaa51cb725a7a14d323ae6b2a79693",
+    "bytes": 98
+  },
+  "pm045-pass-pointer-wohsv580/project/schematic/schematic.json": {
+    "sha256": "7b4ae8749b5b11baa801e6f7bdb493008dd48c877e6b961ac9fabcd8f1d6b530",
+    "bytes": 154
+  },
+  "pm045-pass-pointer-wohsv580/result.json": {
+    "sha256": "a3d0cd7135c993d36a798bfbd913612c4063a945fc8f6d5716ccb328062afbd8",
+    "bytes": 925159
+  },
+  "pm045-pass-pointer-wohsv580/stderr.log": {
+    "sha256": "b268ff7ab390c655c8a7de330c7cd74755ba0131013179e7d570462da75f99c7",
+    "bytes": 328
+  },
+  "pointer-reference.png": {
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "bytes": 111195
+  },
+  "pointer-stream.py": {
+    "sha256": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "bytes": 1513
+  },
+  "source-bindings.json": {
+    "sha256": "2b52a1aad10bfe85b06c61405d09be8f2c8f782b04145eac9e641628a53156ce",
+    "bytes": 288833
+  }
+}

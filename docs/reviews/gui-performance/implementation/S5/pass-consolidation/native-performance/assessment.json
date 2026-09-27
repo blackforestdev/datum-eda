@@ -1,0 +1,501 @@
+{
+  "candidate": {
+    "source_commit": "4eaa008754644b7905d235d7a9abb4803687f1a7",
+    "binary": "target/pm045-independent-replay-artifacts/candidate-pass-2d7f8e4effe4-datum-gui",
+    "binary_sha256": "2d7f8e4effe4b752af613fae6d63c71a33970bda4a0bb4514dbe9b9ba7fadd1c",
+    "source_bindings_sha256": "2b52a1aad10bfe85b06c61405d09be8f2c8f782b04145eac9e641628a53156ce",
+    "build_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release -p datum-gui-app --bin datum-gui --offline",
+    "kernel": "6.12.107+deb13-amd64",
+    "status": "Merged pass pointer CPU/GPU assessment; not final replay ready"
+  },
+  "trials": [
+    {
+      "trial": 1,
+      "mode": "quiet",
+      "raw": "/home/bfadmin/Documents/datum-eda/target/pm045-evidence-work/pass-performance/pm045-pass-pointer-06lh7gi1",
+      "cpu_percent_one_core": 11.031644211481188,
+      "cpu_window_seconds": 30.112891028,
+      "input_seconds": 30.000494396,
+      "input_max_lateness_ms": 1.809228,
+      "endpoint_AE": "0",
+      "normal_exit_and_clean_restore": true,
+      "cpu_limit_pass": false
+    },
+    {
+      "trial": 1,
+      "mode": "gpu",
+      "raw": "/home/bfadmin/Documents/datum-eda/target/pm045-evidence-work/pass-performance/pm045-pass-pointer-kd3wrqk1",
+      "cpu_percent_one_core": 21.11488843626484,
+      "cpu_window_seconds": 30.129669021,
+      "input_seconds": 30.000511678,
+      "input_max_lateness_ms": 1.866869,
+      "endpoint_AE": "0",
+      "normal_exit_and_clean_restore": true,
+      "gpu_frame_ms": {
+        "count": 1263,
+        "mean": 8.705351413726408,
+        "p95": 12.055500367904664,
+        "p99": 12.461417046958923,
+        "max": 13.517750412528992
+      },
+      "gpu_pass_ms": {
+        "frame": {
+          "count": 1263,
+          "mean": 8.705351413726408,
+          "p95": 12.055500367904664,
+          "p99": 12.461417046958923,
+          "max": 13.517750412528992
+        }
+      },
+      "gpu_frame_limit_pass": false,
+      "pointer_receipts": {
+        "scheduled": 3600,
+        "changed": 1280,
+        "received": 1280,
+        "final": [
+          300,
+          150
+        ],
+        "all_changed_received": true,
+        "coalesced_or_missing": 0
+      },
+      "drm_endpoint_deltas": {
+        "complete_endpoint_enumerations": true,
+        "same_endpoint_client_set": true,
+        "matched_clients": [
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170532
+            ],
+            "pid": 971336,
+            "starttime_ticks": 126297720,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241185034694470,
+              1241185034901495
+            ],
+            "end_read_bounds_ns": [
+              1241215152688204,
+              1241215152818315
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170539
+            ],
+            "pid": 971336,
+            "starttime_ticks": 126297720,
+            "engine_deltas_ns": {
+              "drm-engine-render": 9959550389,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241185035904211,
+              1241185036182435
+            ],
+            "end_read_bounds_ns": [
+              1241215153474800,
+              1241215153634304
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170534
+            ],
+            "pid": 971336,
+            "starttime_ticks": 126297720,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241185034314171,
+              1241185034548199
+            ],
+            "end_read_bounds_ns": [
+              1241215152457719,
+              1241215152593951
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170535
+            ],
+            "pid": 971336,
+            "starttime_ticks": 126297720,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241185035479209,
+              1241185035680813
+            ],
+            "end_read_bounds_ns": [
+              1241215153211681,
+              1241215153331279
+            ]
+          }
+        ],
+        "matched_engine_percent_over_cpu_window": {
+          "drm-engine-render": 33.05562494582439,
+          "drm-engine-copy": 0.0,
+          "drm-engine-video": 0.0,
+          "drm-engine-video-enhance": 0.0
+        },
+        "limit": "Endpoint-only matched clients, no full intervening client lifecycle or reset exclusion. Not full GPU-DUTY/ACC-03 acceptance."
+      },
+      "gpu_scope": "Completion records from action start through device-live final drain; may include delayed warmup or shutdown. Not displayed latency or exclusive shader cost."
+    },
+    {
+      "trial": 2,
+      "mode": "quiet",
+      "raw": "/home/bfadmin/Documents/datum-eda/target/pm045-evidence-work/pass-performance/pm045-pass-pointer-tqxaq88c",
+      "cpu_percent_one_core": 10.72453436084968,
+      "cpu_window_seconds": 30.113363353,
+      "input_seconds": 30.000478706,
+      "input_max_lateness_ms": 1.506602,
+      "endpoint_AE": "0",
+      "normal_exit_and_clean_restore": true,
+      "cpu_limit_pass": false
+    },
+    {
+      "trial": 2,
+      "mode": "gpu",
+      "raw": "/home/bfadmin/Documents/datum-eda/target/pm045-evidence-work/pass-performance/pm045-pass-pointer-wohsv580",
+      "cpu_percent_one_core": 21.05831803926104,
+      "cpu_window_seconds": 30.064419144,
+      "input_seconds": 30.000228233,
+      "input_max_lateness_ms": 1.913605,
+      "endpoint_AE": "0",
+      "normal_exit_and_clean_restore": true,
+      "gpu_frame_ms": {
+        "count": 1263,
+        "mean": 8.72639344392781,
+        "p95": 12.026167033676147,
+        "p99": 12.52750038230896,
+        "max": 15.429417137535095
+      },
+      "gpu_pass_ms": {
+        "frame": {
+          "count": 1263,
+          "mean": 8.72639344392781,
+          "p95": 12.026167033676147,
+          "p99": 12.52750038230896,
+          "max": 15.429417137535095
+        }
+      },
+      "gpu_frame_limit_pass": false,
+      "pointer_receipts": {
+        "scheduled": 3600,
+        "changed": 1280,
+        "received": 1280,
+        "final": [
+          300,
+          150
+        ],
+        "all_changed_received": true,
+        "coalesced_or_missing": 0
+      },
+      "drm_endpoint_deltas": {
+        "complete_endpoint_enumerations": true,
+        "same_endpoint_client_set": true,
+        "matched_clients": [
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170565
+            ],
+            "pid": 972148,
+            "starttime_ticks": 126308279,
+            "engine_deltas_ns": {
+              "drm-engine-render": 9940630954,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241290554866452,
+              1241290554961845
+            ],
+            "end_read_bounds_ns": [
+              1241320617095491,
+              1241320617202690
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170560
+            ],
+            "pid": 972148,
+            "starttime_ticks": 126308279,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241290554269155,
+              1241290554361902
+            ],
+            "end_read_bounds_ns": [
+              1241320616424122,
+              1241320616514265
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170561
+            ],
+            "pid": 972148,
+            "starttime_ticks": 126308279,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241290554723298,
+              1241290554788306
+            ],
+            "end_read_bounds_ns": [
+              1241320616924944,
+              1241320617002150
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170558
+            ],
+            "pid": 972148,
+            "starttime_ticks": 126308279,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241290554416879,
+              1241290554498561
+            ],
+            "end_read_bounds_ns": [
+              1241320616576760,
+              1241320616664519
+            ]
+          }
+        ],
+        "matched_engine_percent_over_cpu_window": {
+          "drm-engine-render": 33.064437088863116,
+          "drm-engine-copy": 0.0,
+          "drm-engine-video": 0.0,
+          "drm-engine-video-enhance": 0.0
+        },
+        "limit": "Endpoint-only matched clients, no full intervening client lifecycle or reset exclusion. Not full GPU-DUTY/ACC-03 acceptance."
+      },
+      "gpu_scope": "Completion records from action start through device-live final drain; may include delayed warmup or shutdown. Not displayed latency or exclusive shader cost."
+    },
+    {
+      "trial": 3,
+      "mode": "quiet",
+      "raw": "/home/bfadmin/Documents/datum-eda/target/pm045-evidence-work/pass-performance/pm045-pass-pointer-4v4nrv0m",
+      "cpu_percent_one_core": 11.026800267205978,
+      "cpu_window_seconds": 30.114592806,
+      "input_seconds": 30.000242237,
+      "input_max_lateness_ms": 1.998508,
+      "endpoint_AE": "0",
+      "normal_exit_and_clean_restore": true,
+      "cpu_limit_pass": false
+    },
+    {
+      "trial": 3,
+      "mode": "gpu",
+      "raw": "/home/bfadmin/Documents/datum-eda/target/pm045-evidence-work/pass-performance/pm045-pass-pointer-85f_uk0w",
+      "cpu_percent_one_core": 21.404408278931633,
+      "cpu_window_seconds": 30.066446669,
+      "input_seconds": 30.000317275,
+      "input_max_lateness_ms": 4.104839,
+      "endpoint_AE": "0",
+      "normal_exit_and_clean_restore": true,
+      "gpu_frame_ms": {
+        "count": 1267,
+        "mean": 8.905796641159817,
+        "p95": 12.072833701766967,
+        "p99": 12.43816704624939,
+        "max": 13.784917087348939
+      },
+      "gpu_pass_ms": {
+        "frame": {
+          "count": 1267,
+          "mean": 8.905796641159817,
+          "p95": 12.072833701766967,
+          "p99": 12.43816704624939,
+          "max": 13.784917087348939
+        }
+      },
+      "gpu_frame_limit_pass": false,
+      "pointer_receipts": {
+        "scheduled": 3600,
+        "changed": 1280,
+        "received": 1280,
+        "final": [
+          300,
+          150
+        ],
+        "all_changed_received": true,
+        "coalesced_or_missing": 0
+      },
+      "drm_endpoint_deltas": {
+        "complete_endpoint_enumerations": true,
+        "same_endpoint_client_set": true,
+        "matched_clients": [
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170587
+            ],
+            "pid": 972950,
+            "starttime_ticks": 126318832,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241396071931660,
+              1241396071991402
+            ],
+            "end_read_bounds_ns": [
+              1241426133683016,
+              1241426133759545
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170584
+            ],
+            "pid": 972950,
+            "starttime_ticks": 126318832,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241396071673257,
+              1241396071742180
+            ],
+            "end_read_bounds_ns": [
+              1241426133330872,
+              1241426133417180
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170591
+            ],
+            "pid": 972950,
+            "starttime_ticks": 126318832,
+            "engine_deltas_ns": {
+              "drm-engine-render": 10092261745,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241396072175551,
+              1241396072273491
+            ],
+            "end_read_bounds_ns": [
+              1241426133848585,
+              1241426133960433
+            ]
+          },
+          {
+            "driver_pdev_client": [
+              "i915",
+              "0000:00:02.0",
+              170586
+            ],
+            "pid": 972950,
+            "starttime_ticks": 126318832,
+            "engine_deltas_ns": {
+              "drm-engine-render": 0,
+              "drm-engine-copy": 0,
+              "drm-engine-video": 0,
+              "drm-engine-video-enhance": 0
+            },
+            "begin_read_bounds_ns": [
+              1241396071547989,
+              1241396071626115
+            ],
+            "end_read_bounds_ns": [
+              1241426133173685,
+              1241426133270874
+            ]
+          }
+        ],
+        "matched_engine_percent_over_cpu_window": {
+          "drm-engine-render": 33.566526354461516,
+          "drm-engine-copy": 0.0,
+          "drm-engine-video": 0.0,
+          "drm-engine-video-enhance": 0.0
+        },
+        "limit": "Endpoint-only matched clients, no full intervening client lifecycle or reset exclusion. Not full GPU-DUTY/ACC-03 acceptance."
+      },
+      "gpu_scope": "Completion records from action start through device-live final drain; may include delayed warmup or shutdown. Not displayed latency or exclusive shader cost."
+    }
+  ],
+  "qualification_pass": false,
+  "quiet_cpu_passes": 0,
+  "gpu_frame_passes": 0,
+  "fixed_files_unchanged": true,
+  "all_six_native_runs_normal_exact_output": true,
+  "limits": [
+    "Quiet runs lack semantic per-action acknowledgments and full work-count attribution.",
+    "GPU mode enables timestamps and verbose input receipts; its CPU values are not quiet CPU qualification.",
+    "GPU sample scope includes completion records through final drain; no display latency or exclusive shader attribution.",
+    "DRM samples cover matched endpoint clients only; no complete client lifecycle or observer overhead certification.",
+    "Historical pre-change measurements are unpaired; no formal relative-effect claim. Clamp failures carried forward without rerun.",
+    "No full backend/scale/resource/endurance/independent or owner acceptance."
+  ],
+  "disposition": "All three quiet CPU and all three GPU p95/p99 trials fail absolute caps. Retain simplified one-pass production implementation and its correctness proof; no demonstrated native performance cure or formal relative-effect claim. Do not rerun unchanged candidate.",
+  "raw_archive": "raw.tar.gz",
+  "raw_archive_sha256": "ac81c456cefaacf2b2b697a225119bbe1a239eff8ec57cc16d7ac9d8e25cc22e",
+  "raw_members_verified": 859
+}
