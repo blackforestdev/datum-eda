@@ -50,5 +50,19 @@
       "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients_checks.py": "524441caf80331aced6183a3370ce4be7a9cc2af33ad7e28acc7beb93935eabc"
     },
     "limitations": "Historical3-control bindings/evidence retained. This does not supply lifecycle epochs, final counters for earlier client exits, complete residency or observer-overhead qualification. Final replay remains NOT READY."
+  },
+  "lifecycle_feasibility_review": {
+    "reviewer": "Hegel / 01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "mode": "Local source inspection only; no execution",
+    "source_commit": "2d57a230",
+    "findings": [
+      "native_gpu::create crosses loader/instance/surface/adapter/device calls; local wgpu-core28.0.1 internally enumerates/filters adapters. App hooks cannot observe clients that open and close within these calls.",
+      "Recovery replacement and failed/expired staging drop GPU owners. Device destruction is not an exact final DRM descriptor boundary; client epochs cannot be substituted with app device epochs.",
+      "Final shutdown endpoint covers surviving clients only. Complete earlier-client coverage requires acquisition/duplication/replacement/release observation across threads/children, including exec/exit; counters must remain readable before final release.",
+      "Pre-close sampling alone is not proof of drained final GPU work. Crashes, lost observations or unavailable final counters must remain incomplete.",
+      "No local Mesa implementation source establishes exact transient probe lifetimes; no attribution to a specific driver call is claimed."
+    ],
+    "decision": "Do not add endpoint-only application hooks or repeat native snapshots as a proposed ACC-03 cure. Develop/review fd-lifecycle observation and drain semantics before any qualification campaign; preserve existing endpoint evidence at its recorded scope.",
+    "qualification_pass": false
   }
 }

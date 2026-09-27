@@ -39603,6 +39603,8 @@
   },
   "s5_drm_identity_correction": {
     "status": "Collector missing-device deduplication corrected;4offline controls passed. ACC-03 lifecycle/earlier-close qualification remains open.",
-    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json#device_identity_correction"
+    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json#device_identity_correction",
+    "lifecycle_review": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json#lifecycle_feasibility_review",
+    "remaining": "Application hooks cannot certify clients disappearing within driver calls. Complete fd lifecycle observation/drain semantics remain required; no endpoint-only rerun."
   }
 }
