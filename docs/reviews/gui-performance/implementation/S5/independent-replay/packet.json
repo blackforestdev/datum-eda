@@ -3,12 +3,12 @@
   "frontier_step": "GPI-S5",
   "issue_id": "dat-gui-performance-implementation-vkq",
   "prepared_at": "2026-09-26T05:42:57.502686+00:00",
-  "source_commit": "3cd685d2f6b2cfdb43ad2528d86da0ec12fdc6c2",
+  "source_commit": "4d645582aaccea567140d67f2cb869de3f6d40fa",
   "candidate": {
-    "production_commit": "3cd685d2f6b2cfdb43ad2528d86da0ec12fdc6c2",
-    "binary": "target/pm045-independent-replay-artifacts/candidate-3cd685d2-datum-gui",
-    "sha256": "6d3db36c7060218f00c2751728b0bd5938799f4ac48b495c649b65d5a9edda9f",
-    "binding": "Guarded offline release build; tracked source hashes in source-bindings.json; focused 4x/8x correctness in ../lazy-world-pipelines/result.json",
+    "production_commit": "4d645582aaccea567140d67f2cb869de3f6d40fa",
+    "binary": "target/pm045-independent-replay-artifacts/candidate-4d645582-datum-gui",
+    "sha256": "e8b7b5061ea381f749a70bf35117ed72db890f052f3fd272142d986f2d58c60e",
+    "binding": "Guarded locked offline release; 1989 source bindings checked unchanged across compilation; ../frame-admission-delivery/release-4d645582/result.json",
     "final_candidate": false
   },
   "baseline": {
@@ -136,7 +136,14 @@
       "sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e",
       "binding": "native-owner-focus/result.json plus controls/panes/quad-trial restoration evidence; complete current tracked source hashes in source-bindings.json",
       "final_candidate": false
+    },
+    {
+      "production_commit": "3cd685d2f6b2cfdb43ad2528d86da0ec12fdc6c2",
+      "binary": "target/pm045-independent-replay-artifacts/candidate-3cd685d2-datum-gui",
+      "sha256": "6d3db36c7060218f00c2751728b0bd5938799f4ac48b495c649b65d5a9edda9f",
+      "binding": "Guarded offline release build; tracked source hashes in source-bindings.json; focused 4x/8x correctness in ../lazy-world-pipelines/result.json",
+      "final_candidate": false
     }
   ],
-  "candidate_update": "3cd685d2 removes unused world pipeline construction. Native budget acceptance remains unproven. Original candidate binary and prior packet snapshot are preserved."
+  "candidate_update": "4d645582 includes frame admission delivery, actual encoded geometry and text/session observations. Build binding only; known native failures and complete qualification remain open."
 }

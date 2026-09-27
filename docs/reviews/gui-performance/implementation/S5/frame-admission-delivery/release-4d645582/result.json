@@ -1,0 +1,13 @@
+{
+  "qualification_pass": false,
+  "source_commit": "4d645582aaccea567140d67f2cb869de3f6d40fa",
+  "candidate_binary": "target/pm045-independent-replay-artifacts/candidate-4d645582-datum-gui",
+  "sha256": "e8b7b5061ea381f749a70bf35117ed72db890f052f3fd272142d986f2d58c60e",
+  "source_bindings": 1989,
+  "source_unchanged_during_build": true,
+  "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release --locked --offline -p datum-gui-app --bin datum-gui",
+  "result": "exit 0",
+  "previous_packet_archive_sha256": "d1b8afa9e6b7f84649455c43ad9e12658301031e67549dbc3ae9ceea06ee5e16",
+  "release_log_sha256": "fb59be98913be9c2d879c1fe38d20e569df6787bd15bc5312b38a35b5d031562",
+  "limitations": "Build/source/binary binding only. No new native measurement, performance pass, independent replay or owner UX acceptance. Existing failures and scope exclusions remain."
+}

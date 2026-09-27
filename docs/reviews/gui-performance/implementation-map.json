@@ -38251,7 +38251,8 @@
   "s5_independent_replay_preparation": {
     "status": "Prepared inputs; final replay not ready; no acceptance change",
     "qualification_pass": false,
-    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json",
+    "candidate_build_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/release-4d645582/result.json"
   },
   "s5_endurance_open_timeout": {
     "status": "Incomplete producer endurance failed after39completed timed cycles per auxiliary host; unexpected native input/focus and forced cleanup retained",

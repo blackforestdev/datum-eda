@@ -3,7 +3,7 @@
   "cwd": "/home/bfadmin/Documents/datum-eda",
   "verify_source": "python3 -c 'import hashlib,json,pathlib; p=pathlib.Path(\"docs/reviews/gui-performance/implementation/S5/independent-replay/source-bindings.json\"); expected=json.loads(p.read_text()); failures=[f for f,h in expected.items() if hashlib.sha256(pathlib.Path(f).read_bytes()).hexdigest()!=h]; print(\"source mismatches:\",failures); assert not failures'",
   "verify_binaries": [
-    "sha256sum target/pm045-independent-replay-artifacts/candidate-3cd685d2-datum-gui",
+    "sha256sum target/pm045-independent-replay-artifacts/candidate-4d645582-datum-gui",
     "sha256sum target/pm045-independent-replay-artifacts/baseline-datum-gui",
     "sha256sum target/pm045-independent-replay-artifacts/datum-eda"
   ],
@@ -18,7 +18,7 @@
     "WINIT_UNIX_BACKEND=x11",
     "WINIT_X11_SCALE_FACTOR=1",
     "EDA_CLI_BIN=target/pm045-independent-replay-artifacts/datum-eda",
-    "target/pm045-independent-replay-artifacts/candidate-3cd685d2-datum-gui",
+    "target/pm045-independent-replay-artifacts/candidate-4d645582-datum-gui",
     "--project-root",
     "/tmp/pm045-independent-replay-fixture/project",
     "--initial-layout",
