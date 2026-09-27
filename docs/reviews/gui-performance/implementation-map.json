@@ -39127,10 +39127,11 @@
         "label": "Unchanged per-pane grid CPU geometry reuse",
         "completed": true,
         "evidence": "docs/reviews/gui-performance/implementation/S5/grid-reuse/result.json",
-        "evidence_sha256": "afa6da6321452f5c6ba09c95b3350dadf5097afdc5e89d199d4abc02cfefa622",
+        "evidence_sha256": "95bed64302240f015174b96b40cb21882981cec4ab5c8e7f8f26ef552054529e",
         "validated_result": "5render and17viewport grid-filter tests passed; application check passed. Initial negative-test failure preserved and corrected. Source review found no material production defect.",
         "scope": "CPU geometry reuse, dependency invalidation, bounded storage and refusal/release controls. No numerical, native recovery or independent acceptance.",
-        "carry_forward": "Reuse these scoped controls across handoffs. Final native performance/resource/recovery qualification remains required."
+        "carry_forward": "Reuse these scoped controls across handoffs. Final native performance/resource/recovery qualification remains required.",
+        "native_limit": "All three pointer and six clamp CPU intervals fail on pinned current candidate; native_cpu evidence preserves exact pixels and clean exits without acceptance."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
@@ -39474,15 +39475,15 @@
       "Admit and account capacities, keys/batches, temporary construction and replacement overlap; no partial publication on failure.",
       "Keep per-attempt encoded flags fresh; cache reuse does not prove new generation."
     ],
-    "verification_decision": "One cohesive affected correctness/resource batch must establish unchanged-input reuse and camera/LOD/pane mutation invalidation, exact geometry, refusal and lifetime behavior. Reuse completed shell-cache and historical pointer diagnostics. No new native run merely to reconfirm existing failures.",
+    "verification_decision": "Completed affected CPU geometry/resource batch and application check; one three-run quiet native CPU campaign confirms remaining failures. Reuse these results; no unchanged rerun.",
     "limits": [
-      "No release rebuild, GPU/native trial, timing comparison or independent replay for this slice. CPU/GPU cap failures remain open.",
+      "Three quiet X11/1x combined pointer/clamp runs now recorded in native_cpu; all CPU intervals fail. No GPU or independent replay; full acceptance remains open.",
       "Cache retains admitted memory; misses visit geometry twice. No claimed magnitude or overall cap remedy.",
       "GPU grid/world drawing is unchanged. Existing upload-before-acquire and fresh-device upload remain; this CPU check does not independently prove native recovery.",
       "Exact-byte comparison covers fixture geometry; dependency mutation controls show misses, not complete native/backend/scale acceptance."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S5/grid-reuse/result.json",
-    "evidence_sha256": "afa6da6321452f5c6ba09c95b3350dadf5097afdc5e89d199d4abc02cfefa622",
+    "evidence_sha256": "95bed64302240f015174b96b40cb21882981cec4ab5c8e7f8f26ef552054529e",
     "verification": {
       "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-render -p datum-gui-viewport --lib grid -- --test-threads=1",
       "render_passed": 5,
@@ -39498,6 +39499,12 @@
         "tests-final.log.gz": "23060597953d3d3199bb5d906814579eb2335e65df8a091df5a7c34f024cc630",
         "app-check.log.gz": "c4f7fe8a255daa056229029ccf38c07b875333671ea05d2ba25a90f43e367afe"
       }
+    },
+    "native_cpu": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/grid-reuse/native-cpu/assessment.json",
+      "sha256": "c335d30e3c27b961a5d0dcb32afeba919a3daf21ee3c1f53affeb8b4401eafff",
+      "status": "All three current pointer and all six clamp CPU intervals exceed caps; behavior and clean exits preserved",
+      "qualification_pass": false
     }
   }
 }

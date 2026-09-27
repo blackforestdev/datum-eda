@@ -35,10 +35,16 @@
     }
   },
   "limits": [
-    "No release rebuild, GPU/native trial, timing comparison or independent replay for this slice. CPU/GPU cap failures remain open.",
+    "Three quiet X11/1x combined pointer/clamp runs now recorded in native_cpu; all CPU intervals fail. No GPU or independent replay; full acceptance remains open.",
     "Cache retains admitted memory; misses visit geometry twice. No claimed magnitude or overall cap remedy.",
     "GPU grid/world drawing is unchanged. Existing upload-before-acquire and fresh-device upload remain; this CPU check does not independently prove native recovery.",
     "Exact-byte comparison covers fixture geometry; dependency mutation controls show misses, not complete native/backend/scale acceptance."
   ],
-  "preserved": "GEFN, vertex/painter order, AA, per-pane clipping, dependency authority, Claude prototype lane and nonblocking resize exclusions."
+  "preserved": "GEFN, vertex/painter order, AA, per-pane clipping, dependency authority, Claude prototype lane and nonblocking resize exclusions.",
+  "native_cpu": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/grid-reuse/native-cpu/assessment.json",
+    "sha256": "c335d30e3c27b961a5d0dcb32afeba919a3daf21ee3c1f53affeb8b4401eafff",
+    "status": "All three current pointer and all six clamp CPU intervals exceed caps; behavior and clean exits preserved",
+    "qualification_pass": false
+  }
 }

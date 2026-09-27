@@ -115,7 +115,7 @@ Pinned resize/temporal,T2 and unadmitted schematic exclusions remain unchanged.
 
 ## Remaining execution without duplicate campaigns
 
-Latest CPU check: candidate `5b013adb` ran three fixed quiet clamp trials; all six
+Historical CPU check: candidate `5b013adb` ran three fixed quiet clamp trials; all six
 bound intervals exceed the 1% ceiling (**1.047673%–1.122825%**). Endpoint, reversal,
 focus and clean shutdown checks passed. This is a recorded CPU failure, not a
 completed acceptance check. [Evidence](terminal-idle-poll/native-clamp-batch/assessment.json)
@@ -173,3 +173,5 @@ state restoration; separate launches per metric or host are unnecessary. Keep
 independent repetitions, baseline ordering and diagnostics-off/on modes intact.
 These are scheduling reductions, not native acceptance or a complete runner.
 See the existing map's `process_and_endurance_reuse` review.
+
+Current CPU check: candidate `01b99830` / binary `8eff3ed55ae2` completed three combined quiet X11/1x runs. Pointer **10.445–11.288%** exceeds10%; all six clamp intervals **1.125–1.246%** exceed1%. Exact pointer endpoints, unchanged clamp pixels, inward reversals, pinned inputs and normal exits/display restoration passed. No numerical acceptance; no unchanged rerun. [Evidence](grid-reuse/native-cpu/assessment.json)
