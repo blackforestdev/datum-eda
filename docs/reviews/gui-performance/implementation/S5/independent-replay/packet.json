@@ -84,7 +84,8 @@
     },
     {
       "evidence": "../window-qualification-batch/result.json",
-      "finding": "Project warm open individual maxima52.612/54.463ms exceeded50ms in two plain trials; no unconditional open-budget pass."
+      "finding": "Project warm open individual maxima52.612/54.463ms exceeded50ms in two plain trials; no unconditional open-budget pass.",
+      "followup": "Candidate0709fc90 X11/1x startup batch: all270opens/closes meet CPUlimits with exact output; baseline also passes this batch. See ../lazy-terminal-pipeline/native-startup-batch/assessment.json. Historical failures retained; no all-configuration or independent acceptance."
     },
     {
       "issue": "dat-native-final-close-observation-xbb7",

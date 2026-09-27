@@ -14636,11 +14636,13 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Three plain trials per host have mean opens below50ms; Project means37.698/38.990/38.261ms, maxima52.612/48.948/54.463ms. Individual excesses preserved; no unqualified budget acceptance.",
+        "status": "Candidate0709fc90 X11/1x: all270warmopens in3trials perhost meet individual CPUlimit; maximum44.440ms<=50ms. Every cycle retains exact pixels/focus/destruction. Baseline also passes this batch; old excesses preserved. Other backend/scale, complete method/resource and independent acceptance remain open.",
         "id": "proof_bud_windows_open_cpu",
         "positive": "W-WINDOWS warm open transitions; isolate CPU window without padding idle.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_startup_batch": "Three plain trials per host have mean opens below50ms; Project means37.698/38.990/38.261ms, maxima52.612/48.948/54.463ms. Individual excesses preserved; no unqualified budget acceptance.",
+        "startup_batch_evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/native-startup-batch/assessment.json"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-WINDOWS-OPEN-CPU/result.json",
       "acceptance_rule": "Warm open<=50ms application CPU per completed open transition; complete lifetime accounting, all valid trials.",
@@ -21715,11 +21717,13 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Three plain trials per host have mean closes4.982\u20135.158ms, below20ms; native window destruction and Main focus checked. Full uncertainty/resource/backend/scale qualification remains open.",
+        "status": "Candidate0709fc90 X11/1x: all270warmcloses in3trials perhost meet individual CPUlimit; maximum11.952ms<=20ms. Every cycle retains exact pixels/focus/destruction. Baseline also passes this batch; old excesses preserved. Other backend/scale, complete method/resource and independent acceptance remain open.",
         "id": "proof_bud_windows_close_cpu",
         "positive": "W-WINDOWS warm close transitions; lifetime counters captured before exit.",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_startup_batch": "Three plain trials per host have mean closes4.982\u20135.158ms, below20ms; native window destruction and Main focus checked. Full uncertainty/resource/backend/scale qualification remains open.",
+        "startup_batch_evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/native-startup-batch/assessment.json"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-WINDOWS-CLOSE-CPU/result.json",
       "acceptance_rule": "Warm close<=20ms application CPU per completed close transition including bounded drain; all valid trials.",
@@ -38933,15 +38937,30 @@
         ],
         "scope": "Producer diagnostics-on structural recovery only. Numerical CPU/GPU, full accounting, other backend/scale/mixed workloads, independent replay and owner acceptance remain open.",
         "carry_forward": "Retain completed proof on its recorded candidate. Rerun only for affected changes or explicitly required independent replay; handoff is not invalidation."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "X11/1x three-trial native warm-window CPU and output qualification",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/native-startup-batch/assessment.json",
+        "evidence_field": "runs and totals",
+        "evidence_sha256": "65963201a56789ff49f23b09a36935316d2bd1b3792f9483b8bd0821c3e2169f",
+        "validated_result": "3candidate+3baseline trials;30cycles perhost pertrial. All270candidate opens<=50ms/closes<=20ms;558total first-use/warm exact-ready cycles;6normalexits and restored display.",
+        "requirement_ids": [
+          "BUD-WINDOWS-OPEN-CPU",
+          "BUD-WINDOWS-CLOSE-CPU"
+        ],
+        "scope": "Pinned0709fc90 X11/1x actualGlobal/Project/New. Six intermediate nonmatching readbacks retained. No GPU/full resource/endurance/otherbackend-scale, formal comparative, independent replay or owner UX acceptance. Historical failures remain.",
+        "carry_forward": "Credit completed candidate/configuration proof. No repeat solely for handoff; affected changes and mandatory final independent replay are separate rerun reasons."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 31,
-      "evidence_hashes_checked": 31,
-      "matching_hashes": 31,
-      "native_runs_performed": 0,
-      "meaning": "Read existing evidence and reconcile requirement status; hash integrity is not a new qualification pass."
+      "completed_groups": 32,
+      "evidence_hashes_checked": 32,
+      "matching_hashes": 32,
+      "native_runs_performed": 6,
+      "meaning": "Existing31groups preserved and one scoped native startup group added. Hash integrity alone is not qualification; each done group retains its own scope. The prior documentation-only reconciliation ran no native trials."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -38978,7 +38997,7 @@
         "specification_record_row_count": 15,
         "source": "Derive from original requirements[].qualification_scope; retain HP05-02 idle resources as mixed scope."
       },
-      "reuse": "All31 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
+      "reuse": "All32 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
       "before_native_execution": [
         {
           "action": "Reconcile source/negative-control coverage using existing S1-S4 proofs and the31done groups. Enumerate only missing prescribed controls, and combine controls using the same production owner where their assertions remain independently defect-sensitive.",
@@ -39002,7 +39021,7 @@
           ]
         },
         {
-          "action": "Resolve demonstrated pointer/clamp/window performance failures and investigate diagnostic recovery CPU and saved-hour resource growth. Each production correction needs a causal hypothesis and focused affected verification; do not run a full campaign merely to reconfirm an unchanged failure.",
+          "action": "Resolve demonstrated pointer/clamp failures and remaining backend/scale window qualification; current0709fc90 X11/1x warm-window CPU/output batch passes its bounded scope. Investigate diagnostic recovery CPU and saved-hour resource growth. Each production correction needs a causal hypothesis and focused affected verification; do not run a full campaign merely to reconfirm an unchanged failure.",
           "evidence": [
             "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
             "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
@@ -39187,6 +39206,10 @@
       "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/shared-glyph-result.json",
       "status": "One immutable glyph pipeline per renderer replaces duplicate workspace/menu compilation; batch buffers and retirement allowances remain independent. Affected GPU pixel/retry/reindex/replacement test passes; native CPU benefit unmeasured.",
       "candidate": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/startup-candidate.json"
+    },
+    "native_qualification": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/native-startup-batch/assessment.json",
+      "status": "Six fixed before/after X11/1x runs complete. All270candidate warm opens<=50ms and270closes<=20ms, exact pixels/focus/destruction; normal exit and display restoration every run. Baseline also passes this batch. Historical excesses retained; no causal/formal relative improvement or full qualification."
     }
   }
 }
