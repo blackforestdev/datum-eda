@@ -39078,15 +39078,27 @@
         ],
         "scope": "Offscreen distinct-device proof and source-checked commit boundary; no native injected loss, multi-host failed staging execution, timing or full resource acceptance.",
         "carry_forward": "Reuse affected proof; final stable-candidate native recovery remains separate. No handoff-driven replay."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Camera arithmetic and pane ownership after duplicate route layout removal",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/camera-route-layout/result.json",
+        "evidence_field": "proof and limits",
+        "evidence_sha256": "128fc96e9c27b77fd682e6c23c6053bcf4d575a08ad98d2fde6964f437824e8f",
+        "validated_result": "17 existing camera/pane/grid helper tests passed in one guarded batch; source inspection confirms one layout build per pointer route.",
+        "requirement_ids": [],
+        "scope": "Affected helper regression and source equivalence only; not native Runtime routing, allocation-free input or CPU cap acceptance.",
+        "carry_forward": "Reuse this helper evidence; carry saved native failures forward without handoff-driven repetition."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 37,
-      "evidence_hashes_checked": 37,
-      "matching_hashes": 37,
+      "completed_groups": 38,
+      "evidence_hashes_checked": 38,
+      "matching_hashes": 38,
       "native_runs_performed": 0,
-      "meaning": "One extended offscreen GPU test and one app compilation; previous36groups credited. No native performance or recovery acceptance added."
+      "meaning": "One affected17test helper batch; previous groups retained. No native CPU acceptance added."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39375,5 +39387,11 @@
       "Saved recovery SystemTime wall intervals cannot replace process CPU or full successful-recovery/redraw measurement. No overhead subtraction, isolated-phase acceptance or measured speedup.",
       "No release candidate rebuild, repeated20recoveries, endurance rerun or final independent replay this slice."
     ]
+  },
+  "s5_camera_route_layout": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/camera-route-layout/result.json",
+    "sha256": "128fc96e9c27b77fd682e6c23c6053bcf4d575a08ad98d2fde6964f437824e8f",
+    "status": "Duplicate pointer camera layout construction removed; native CPU acceptance remains open",
+    "qualification_pass": false
   }
 }
