@@ -72,12 +72,15 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Render-attempt observer and trace delivery controls** — Two hardware tests pass pixel parity/reuse, delivery and overflow rejection. [Evidence](frame-admission-delivery/result.json)
   Scope: Offscreen render/writer conformance; native workloads, overhead and full admission remain open. Actual composed-world encoded ranges, pane identity and absent-data controls also pass. [Encoded-world supplement](frame-admission-delivery/encoded-world/result.json) Screen/grid delivery and terminal geometry controls also pass. [Immediate-geometry supplement](frame-admission-delivery/immediate-geometry/result.json) Pane text-origin composition, pixel/cache parity and JSON reconciliation pass. [Text-origin supplement](frame-admission-delivery/text-origins/result.json) Actual screen/grid submission and omission controls pass. [Screen-submission supplement](frame-admission-delivery/screen-submission/result.json) Fourteen offline analyzer controls pass. [Analyzer integration](frame-admission-delivery/analysis-integration/result.json) Terminal session reorder/close attribution passes its CPU composition control. [Terminal-origin supplement](frame-admission-delivery/terminal-origins/result.json)
 
+- [x] **X11/1x 60-minute auxiliary window cycles and resource trace reconciliation** — 600 timed cycles (200 per host), all603 cycles reached exact pixel readiness/focus/closure, normal drained exit0;604 renderer lifetimes reconciled and no sampled cap violations. [Evidence](window-endurance/native-60minute-4d645582/assessment.json)
+  Scope: This producer run and delivered traces;288 intermediate nonmatching readiness captures are retained. First/last drift and resource trends still need analysis; recovery injection, broader coverage, overhead and full MEM-03 remain open.
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.
 - [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences.
 - [ ] Complete fixture admission and instantaneous private/scratch/driver/client resource accounting, including observer overhead.
-- [ ] Complete required60-minute endurance,200window cycles and20recoveries. Both archived incomplete attempts remain failures.
+- [ ] Complete remaining endurance drift/trend analysis, tier/configuration coverage and20recoveries. The X11/1x60-minute600-cycle run above is done; both earlier incomplete attempts remain failures.
 - [ ] Complete independent actual replay against the stable final candidate, followed by separate owner UX/product acceptance.
 - [ ] Resolve applicable recorded drift failures; preserve separately tracked concurrency and golden failures.
 

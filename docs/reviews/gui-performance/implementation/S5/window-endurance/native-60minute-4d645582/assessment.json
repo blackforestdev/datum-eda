@@ -1,0 +1,87 @@
+{
+  "status": "Completed producer X11/1x 60-minute auxiliary-window cycle run and trace reconciliation; full MEM-03/S5 acceptance remains open",
+  "qualification_pass": false,
+  "candidate_commit": "4d645582aaccea567140d67f2cb869de3f6d40fa",
+  "evidence_base_commit": "e86ef723",
+  "binary_sha256": "e8b7b5061ea381f749a70bf35117ed72db890f052f3fd272142d986f2d58c60e",
+  "raw_origin": "/tmp/dev-agent-s5-endurance-6aj_2kcs",
+  "command": "PM045_REPLAY_PROJECT=/tmp/pm045-independent-replay-fixture/project python3 -u docs/reviews/gui-performance/implementation/S5/independent-replay/tools/window_endurance.py",
+  "coordination": "Producer held the shared Cargo resource lock throughout native measurement. Independent reviewer notified before launch and after completion. Existing owner desktop authorization used; no independent replay claimed.",
+  "completed_check": {
+    "warmup_seconds": 300,
+    "timed_duration_seconds": 3600.000284971,
+    "first_use_cycles": 3,
+    "timed_cycles": 600,
+    "cycles_per_host": {
+      "GLOBAL": 200,
+      "PROJECT": 200,
+      "NEW": 200
+    },
+    "pixels_focus_close": "All603 first-use/timed cycles reached the existing exact pixel oracle, restored main focus and confirmed destroyed auxiliary window. Raw attempts preserved.",
+    "normal_exit_code": 0,
+    "shutdown_receipt": {
+      "phase": "drained_device_live",
+      "pid": 776948,
+      "device_epoch": 1
+    },
+    "forced_cleanup": false,
+    "display_restore_returncode": 0,
+    "unchanged": {
+      "binary_unchanged": true,
+      "engine_unchanged": true,
+      "fixture_unchanged": true,
+      "pinned_assets_unchanged": true,
+      "production_source_unchanged": true
+    },
+    "readiness_captures": {
+      "total": 891,
+      "intermediate_nonmatching": 288,
+      "final_exact_matches": 603,
+      "interpretation": "Existing bounded readiness polling allowed up to15 captures per cycle. All603 cycles reached exact match;288 earlier nonmatching captures are preserved, not erased or counted as passes. No continuous presentation or latency claim."
+    }
+  },
+  "analysis": {
+    "command": "python3 docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-resource-snapshot-analyze.py /tmp/dev-agent-s5-endurance-6aj_2kcs",
+    "exit_code": 0,
+    "snapshots": 1809,
+    "renderer_lifetimes": 604,
+    "tracked_gpu_allocations": 11313,
+    "private_calls": 337825,
+    "frames": 3481,
+    "submitted_frames": 3480,
+    "frame_admission_gaps": {},
+    "sampled_cap_violations": [],
+    "final_local_reservations_zero": true,
+    "gui_rss_high_water_bytes": 192716800,
+    "scope": "Existing delivery/reconciliation and parser-negative checks only. Point snapshots, registration events and admission reservations are not full instantaneous API-live or driver residency."
+  },
+  "remaining": [
+    "First/last ten-minute CPU/latency drift and five-minute resource plateau/trend assessment still require reconciliation of this preserved run; no rerun is implied.",
+    "No20 injected recoveries, mixed terminal workload, other backend/scale or full tier/configuration coverage in this run.",
+    "Diagnostics-on run; no diagnostics-off numerical CPU/GPU budget pass or validated observer overhead.",
+    "No physical presentation/latency calibration or return-to-idle timing qualification.",
+    "No full instantaneous private retained/scratch/driver/client accounting acceptance.",
+    "Independent actual final replay and separate owner UX/product acceptance remain required."
+  ],
+  "preserved": "Original225 requirements and statuses, S0-S4 exits, prior failed endurance attempts, known budget/drift failures, PM045/PM047, GEFN, dependency authority and nonblocking resize exclusions unchanged. No production/dependency/license/prototype edits.",
+  "artifacts": {
+    "raw.tar.gz": {
+      "sha256": "98fcc87a875fe1722882f835273bdf866b62eb9e93993e2e93cbe9cfe198afdc",
+      "bytes": 61198338
+    },
+    "raw-sha256.json.gz": {
+      "sha256": "43ff63adb4c5bddef926eb2e9361c3e0752284c5a9b9f79165053dd6652eabc9",
+      "bytes": 8090
+    },
+    "analysis.json": {
+      "sha256": "9d98a32ee79ccfac525df32428aeb8e74b4b6f154e03ed3e70448242765d2c99",
+      "bytes": 73251
+    },
+    "driver.py": {
+      "sha256": "809443daa7e0102e36744520c6ef940a349fe0c908dd63a34d33f57c46c76e67",
+      "bytes": 18157
+    }
+  },
+  "raw_files": 1034,
+  "archive_scope": "All1034 regular raw-run files, including891 readiness captures (288 intermediate mismatches), native logs, fixture copy, source hashes, display receipts and isolated config/cache. No failed capture attempts removed."
+}
