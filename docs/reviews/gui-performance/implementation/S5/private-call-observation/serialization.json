@@ -1,0 +1,51 @@
+{
+  "status": "Tracked System allocation operations and private-call accounting serialized; full-table refusal releases tracked arguments after unlock",
+  "qualification_pass": false,
+  "base_commit": "b45c2c1c",
+  "defect": "System allocation/reallocation/free preceded the shared call ledger lock. Actual concurrent owned allocations could overlap without their ledger entries overlapping, undercounting simultaneous private-call peaks.",
+  "source_counterexample": [
+    "Host A begins monitored call, obtains payload P from System, pauses before ledger update.",
+    "Host B begins another call, obtains payload P, records it, frees it and completes its ledger updates.",
+    "Host A records its allocation. Ledger can report peak P while the actual owned overlap was2P. This is a source-order counterexample, not a reproduced native measurement."
+  ],
+  "change": "Owned System alloc/alloc_zeroed/realloc/dealloc now execute under the existing ledger transaction together with their accounting. Unscoped allocation remains outside that lock; null return leaves counts/ownership unchanged. Final owner Arc drops after unlock.",
+  "refusal_correction": "Reviewer found pre-existing conditional deadlock when full call-table refusal drops final scope-tracked host/process budget arguments under the ledger lock. Call::begin now retains arguments outside the transaction until successful admission. Production triggering was not established.",
+  "verification": {
+    "decision": "Determine whether tracked allocation, concurrent incidence, refusal and observation semantics remain valid after serialization; verify full-table rejection releases tracked budget arguments and allows retry.",
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib --no-default-features --offline cpu_alloc:: -- --test-threads=1",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib --no-default-features --offline cpu_alloc:: -- --ignored --test-threads=1",
+      "timeout 120s python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib --no-default-features --offline full_call_table_releases_tracked_arguments_and_allows_retry -- --ignored --test-threads=1"
+    ],
+    "results": [
+      "12passed,2ignored before refusal follow-up; allocation/reallocation/alignment/cross-thread release, concurrent peaks and font refusal/retry.",
+      "2separately ignored observer controls passed serially before refusal follow-up.",
+      "1new capacity-refusal/retry test passed on final source;350registered tests,349filtered. No full suite or native rerun."
+    ],
+    "coverage_limit": "Existing concurrent control does not deterministically schedule the original System-before-ledger gap. Fix is supported by source ordering review; the new exhaustion control exercises the related refusal deadlock.",
+    "gates": "Dependency authority, Cargo resource policy, source-health policy13controls and spec parity20inventories passed; final source-health/traceability/specification gates recorded in commit."
+  },
+  "review": {
+    "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "mode": "Read-only source review, not independent native replay",
+    "finding": "Original race valid; serialization closes it. No new ordinary-path allocator recursion, failure-state corruption or owner lifetime issue found. Full-table refusal finding addressed separately.",
+    "refusal_followup": "Reviewer inspected the Option-owned budget transfer and new exhaustion/retry test; prior conditional deadlock finding resolved, no remaining defect found in this delta. Source review only; test result supplied by producer."
+  },
+  "limits": [
+    "Holding the lock through System calls changes contention; performance impact remains unmeasured. No budget pass or universal overhead subtraction.",
+    "Tracks owned requested Rust allocation layouts/headers. Allocator-internal relocation/slack, native mappings and driver residency remain separate.",
+    "Full PM047/native workload/backend-scale/accounting, stable-candidate independent replay and owner acceptance remain required. Earlier native measurements retain their original scope; do not relabel them as proving corrected concurrent peak accounting."
+  ],
+  "resource_guard": "Initial attempt refused before compilation because /tmp fell just below6GiB reserve. Moved only three completed owned recovery directories to target/pm045-evidence-work after verifying all514files against committed archive hashes at source and destination; original paths preserved as symlinks. No shared build cleanup.",
+  "logs": {
+    "serialization-check.log.gz": "b6c51a02926ba12f291a4cea88b37ce9c7fa9c9c539ef0a4b27034adc2211241",
+    "serialization-observer-check.log.gz": "b1e2f3fd485fa6283f47954b32b159fae387156bfdddd5bb7a419cc4f8783c7c",
+    "serialization-capacity-check.log.gz": "5773f59c02e9c82186d6b5159340000e860f00a44dd180c03886310577790dd2",
+    "serialization-guard-refusal.log.gz": "2899a5f0a0ea617d2accd573d7451e073325948186b812619fa24e71a93639b0"
+  },
+  "source_sha256": {
+    "crates/gui-render/src/cpu_alloc.rs": "81f5a98a56430e5019161d2927405b62037782e937140ccc9e6a3f80eb042bca",
+    "crates/gui-render/src/private_text_call.rs": "15fc9066378837c45052a6a44794b010243643b1dc24bd9978cb6cdf5b347fa4",
+    "crates/gui-render/src/private_text_call_tests.rs": "91a6f65825629638d5f3c6e151987ae4e336ecd9b29a6fa7068693d5e5cd785e"
+  }
+}
