@@ -1,0 +1,834 @@
+{
+  "qualification_pass": false,
+  "source_hashes": {
+    "result.json": "b2d5acfc134aea0b66b9a90314c4d27ad9eda2283dd23302da02c85442712a5c",
+    "resources.jsonl": "93b6ad61f43d057c9a367039df53282326cf911e91e21e199bec3c6aba295416"
+  },
+  "cpu_windows": {
+    "first": {
+      "interval_ns": [
+        1214156301435316,
+        1214756301435316
+      ],
+      "sample_indices": {
+        "before_start": 73,
+        "after_start": 75,
+        "before_end": 771,
+        "after_end": 773
+      },
+      "group_cpu_usec_bounds": [
+        45580810,
+        45603429
+      ],
+      "group_cpu_percent_bounds": [
+        7.596801666666667,
+        7.6005715
+      ]
+    },
+    "last": {
+      "interval_ns": [
+        1217156301435316,
+        1217756301435316
+      ],
+      "sample_indices": {
+        "before_start": 3506,
+        "after_start": 3508,
+        "before_end": 4171,
+        "after_end": 4173
+      },
+      "group_cpu_usec_bounds": [
+        43957537,
+        43962203
+      ],
+      "group_cpu_percent_bounds": [
+        7.326256166666667,
+        7.327033833333333
+      ]
+    }
+  },
+  "cpu_relative_change_bounds": [
+    -0.036091408828051064,
+    -0.035510711635006076
+  ],
+  "diagnostic_cpu_5percent_regression_excluded_by_bounds": true,
+  "readiness_wall_intervals": {
+    "first": {
+      "GLOBAL": {
+        "open": {
+          "n": 34,
+          "mean_ms": 417.68939935294117,
+          "p95_ms": 487.978329,
+          "max_ms": 489.287321
+        },
+        "close": {
+          "n": 34,
+          "mean_ms": 37.57558923529412,
+          "p95_ms": 44.251437,
+          "max_ms": 46.098612
+        }
+      },
+      "PROJECT": {
+        "open": {
+          "n": 33,
+          "mean_ms": 360.00458648484846,
+          "p95_ms": 520.932319,
+          "max_ms": 543.387859
+        },
+        "close": {
+          "n": 33,
+          "mean_ms": 31.241168121212123,
+          "p95_ms": 43.962469,
+          "max_ms": 47.85802
+        }
+      },
+      "NEW": {
+        "open": {
+          "n": 33,
+          "mean_ms": 322.15210021212124,
+          "p95_ms": 441.9627,
+          "max_ms": 449.195179
+        },
+        "close": {
+          "n": 33,
+          "mean_ms": 30.852708545454544,
+          "p95_ms": 46.200357,
+          "max_ms": 49.343557
+        }
+      }
+    },
+    "last": {
+      "GLOBAL": {
+        "open": {
+          "n": 33,
+          "mean_ms": 397.0123106969697,
+          "p95_ms": 489.875337,
+          "max_ms": 515.959794
+        },
+        "close": {
+          "n": 33,
+          "mean_ms": 36.12257233333333,
+          "p95_ms": 43.163383,
+          "max_ms": 48.666189
+        }
+      },
+      "PROJECT": {
+        "open": {
+          "n": 33,
+          "mean_ms": 341.97045339393935,
+          "p95_ms": 502.94349,
+          "max_ms": 525.004452
+        },
+        "close": {
+          "n": 33,
+          "mean_ms": 32.41037745454546,
+          "p95_ms": 42.82772,
+          "max_ms": 43.258217
+        }
+      },
+      "NEW": {
+        "open": {
+          "n": 34,
+          "mean_ms": 342.04524061764704,
+          "p95_ms": 471.579708,
+          "max_ms": 473.172263
+        },
+        "close": {
+          "n": 34,
+          "mean_ms": 31.31402655882353,
+          "p95_ms": 43.940189,
+          "max_ms": 45.817019
+        }
+      }
+    }
+  },
+  "readiness_relative_changes": {
+    "GLOBAL": {
+      "open": {
+        "mean_ms": -0.049503503531579174,
+        "p95_ms": 0.0038874841099758584,
+        "max_ms": 0.054512904494412595
+      },
+      "close": {
+        "mean_ms": -0.038669171436332195,
+        "p95_ms": -0.024587992475815,
+        "max_ms": 0.05569749041467875
+      }
+    },
+    "PROJECT": {
+      "open": {
+        "mean_ms": -0.05009417592980614,
+        "p95_ms": -0.034531988789891166,
+        "max_ms": -0.03383109632561743
+      },
+      "close": {
+        "mean_ms": 0.03742527580265054,
+        "p95_ms": -0.025811766850492357,
+        "max_ms": -0.0961135249640499
+      }
+    },
+    "NEW": {
+      "open": {
+        "mean_ms": 0.061750770497622565,
+        "p95_ms": 0.06701246055379784,
+        "max_ms": 0.0533778747433975
+      },
+      "close": {
+        "mean_ms": 0.014952269512718441,
+        "p95_ms": -0.048921007255420146,
+        "max_ms": -0.07146906737996195
+      }
+    }
+  },
+  "post_close_resource_points": [
+    {
+      "completed_cycle": 1,
+      "scheduled_seconds": 0.0,
+      "window_id": 12582988,
+      "snapshot_sequence": 10,
+      "snapshot_relative_interval_ns": [
+        306240252921,
+        306240657265
+      ],
+      "values": {
+        "gui_rss_bytes": 189583360,
+        "gui_hwm_bytes": 189583360,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 309266,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 50,
+      "scheduled_seconds": 294.0,
+      "window_id": 12583870,
+      "snapshot_sequence": 157,
+      "snapshot_relative_interval_ns": [
+        600130419791,
+        600130833598
+      ],
+      "values": {
+        "gui_rss_bytes": 189833216,
+        "gui_hwm_bytes": 189833216,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 100,
+      "scheduled_seconds": 594.0,
+      "window_id": 12584770,
+      "snapshot_sequence": 307,
+      "snapshot_relative_interval_ns": [
+        900223051903,
+        900223597352
+      ],
+      "values": {
+        "gui_rss_bytes": 189849600,
+        "gui_hwm_bytes": 189849600,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 150,
+      "scheduled_seconds": 894.0,
+      "window_id": 12585670,
+      "snapshot_sequence": 457,
+      "snapshot_relative_interval_ns": [
+        1200163258009,
+        1200163768205
+      ],
+      "values": {
+        "gui_rss_bytes": 189857792,
+        "gui_hwm_bytes": 189857792,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 200,
+      "scheduled_seconds": 1194.0,
+      "window_id": 12586570,
+      "snapshot_sequence": 607,
+      "snapshot_relative_interval_ns": [
+        1500131462400,
+        1500131919966
+      ],
+      "values": {
+        "gui_rss_bytes": 189857792,
+        "gui_hwm_bytes": 189857792,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 250,
+      "scheduled_seconds": 1494.0,
+      "window_id": 12587470,
+      "snapshot_sequence": 757,
+      "snapshot_relative_interval_ns": [
+        1800264394508,
+        1800264763038
+      ],
+      "values": {
+        "gui_rss_bytes": 192659456,
+        "gui_hwm_bytes": 192659456,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 300,
+      "scheduled_seconds": 1794.0,
+      "window_id": 12588370,
+      "snapshot_sequence": 907,
+      "snapshot_relative_interval_ns": [
+        2100169448085,
+        2100169820108
+      ],
+      "values": {
+        "gui_rss_bytes": 192671744,
+        "gui_hwm_bytes": 192671744,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 350,
+      "scheduled_seconds": 2094.0,
+      "window_id": 12589270,
+      "snapshot_sequence": 1057,
+      "snapshot_relative_interval_ns": [
+        2400277156161,
+        2400277743341
+      ],
+      "values": {
+        "gui_rss_bytes": 192671744,
+        "gui_hwm_bytes": 192671744,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 400,
+      "scheduled_seconds": 2394.0,
+      "window_id": 12590170,
+      "snapshot_sequence": 1207,
+      "snapshot_relative_interval_ns": [
+        2700225756382,
+        2700226135087
+      ],
+      "values": {
+        "gui_rss_bytes": 192671744,
+        "gui_hwm_bytes": 192671744,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 450,
+      "scheduled_seconds": 2694.0,
+      "window_id": 12591070,
+      "snapshot_sequence": 1357,
+      "snapshot_relative_interval_ns": [
+        3000006040128,
+        3000006271937
+      ],
+      "values": {
+        "gui_rss_bytes": 192675840,
+        "gui_hwm_bytes": 192675840,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 500,
+      "scheduled_seconds": 2994.0,
+      "window_id": 12591970,
+      "snapshot_sequence": 1507,
+      "snapshot_relative_interval_ns": [
+        3300064028324,
+        3300064191426
+      ],
+      "values": {
+        "gui_rss_bytes": 192692224,
+        "gui_hwm_bytes": 192692224,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 550,
+      "scheduled_seconds": 3294.0,
+      "window_id": 12592870,
+      "snapshot_sequence": 1657,
+      "snapshot_relative_interval_ns": [
+        3600248141279,
+        3600248519662
+      ],
+      "values": {
+        "gui_rss_bytes": 192692224,
+        "gui_hwm_bytes": 192692224,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    },
+    {
+      "completed_cycle": 600,
+      "scheduled_seconds": 3594.0,
+      "window_id": 12593770,
+      "snapshot_sequence": 1807,
+      "snapshot_relative_interval_ns": [
+        3900029090096,
+        3900029481979
+      ],
+      "values": {
+        "gui_rss_bytes": 192696320,
+        "gui_hwm_bytes": 192696320,
+        "observer_window_strings_bytes": 64,
+        "text_cache_registry_bytes": 200,
+        "text_cache_owned_bytes": 412828,
+        "document_cpu_retained_bytes": 3089535,
+        "document_gpu_reserved_bytes": 2883216,
+        "main_screen_reserved_bytes": 78728,
+        "main_control_mesh_reserved_bytes": 15240,
+        "main_atlas_reserved_bytes": 1048576,
+        "main_staging_reserved_bytes": 435032,
+        "scope_frame-admission-writer_payload_bytes": 0,
+        "scope_layout-scratch-and-output_payload_bytes": 102696,
+        "scope_renderer-text_payload_bytes": 311858,
+        "scope_renderer-fonts-and-shapes_payload_bytes": 947982,
+        "scope_shared-font-catalog_payload_bytes": 1113860,
+        "scope_raster-scratch-and-pixels_payload_bytes": 9888,
+        "scope_text-admission-observer_payload_bytes": 7616,
+        "scope_project-preferences-resolver_payload_bytes": 11472565,
+        "scope_retained-board-construction_payload_bytes": 3076944,
+        "scope_text-measurement_payload_bytes": 734742,
+        "scope_prepared-source-observer_payload_bytes": 255
+      }
+    }
+  ],
+  "resource_trends": {
+    "document_cpu_retained_bytes": {
+      "first": 3089535,
+      "last": 3089535,
+      "minimum": 3089535,
+      "maximum": 3089535,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "document_gpu_reserved_bytes": {
+      "first": 2883216,
+      "last": 2883216,
+      "minimum": 2883216,
+      "maximum": 2883216,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "gui_hwm_bytes": {
+      "first": 189583360,
+      "last": 192696320,
+      "minimum": 189583360,
+      "maximum": 192696320,
+      "delta": 3112960,
+      "nondecreasing_with_growth": true,
+      "constant_after_cycle50": false
+    },
+    "gui_rss_bytes": {
+      "first": 189583360,
+      "last": 192696320,
+      "minimum": 189583360,
+      "maximum": 192696320,
+      "delta": 3112960,
+      "nondecreasing_with_growth": true,
+      "constant_after_cycle50": false
+    },
+    "main_atlas_reserved_bytes": {
+      "first": 1048576,
+      "last": 1048576,
+      "minimum": 1048576,
+      "maximum": 1048576,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "main_control_mesh_reserved_bytes": {
+      "first": 15240,
+      "last": 15240,
+      "minimum": 15240,
+      "maximum": 15240,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "main_screen_reserved_bytes": {
+      "first": 78728,
+      "last": 78728,
+      "minimum": 78728,
+      "maximum": 78728,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "main_staging_reserved_bytes": {
+      "first": 435032,
+      "last": 435032,
+      "minimum": 435032,
+      "maximum": 435032,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "observer_window_strings_bytes": {
+      "first": 64,
+      "last": 64,
+      "minimum": 64,
+      "maximum": 64,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_frame-admission-writer_payload_bytes": {
+      "first": 0,
+      "last": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_layout-scratch-and-output_payload_bytes": {
+      "first": 102696,
+      "last": 102696,
+      "minimum": 102696,
+      "maximum": 102696,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_prepared-source-observer_payload_bytes": {
+      "first": 255,
+      "last": 255,
+      "minimum": 255,
+      "maximum": 255,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_project-preferences-resolver_payload_bytes": {
+      "first": 11472565,
+      "last": 11472565,
+      "minimum": 11472565,
+      "maximum": 11472565,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_raster-scratch-and-pixels_payload_bytes": {
+      "first": 9888,
+      "last": 9888,
+      "minimum": 9888,
+      "maximum": 9888,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_renderer-fonts-and-shapes_payload_bytes": {
+      "first": 947982,
+      "last": 947982,
+      "minimum": 947982,
+      "maximum": 947982,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_renderer-text_payload_bytes": {
+      "first": 309266,
+      "last": 311858,
+      "minimum": 309266,
+      "maximum": 311858,
+      "delta": 2592,
+      "nondecreasing_with_growth": true,
+      "constant_after_cycle50": true
+    },
+    "scope_retained-board-construction_payload_bytes": {
+      "first": 3076944,
+      "last": 3076944,
+      "minimum": 3076944,
+      "maximum": 3076944,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_shared-font-catalog_payload_bytes": {
+      "first": 1113860,
+      "last": 1113860,
+      "minimum": 1113860,
+      "maximum": 1113860,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_text-admission-observer_payload_bytes": {
+      "first": 7616,
+      "last": 7616,
+      "minimum": 7616,
+      "maximum": 7616,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_text-measurement_payload_bytes": {
+      "first": 734742,
+      "last": 734742,
+      "minimum": 734742,
+      "maximum": 734742,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "text_cache_owned_bytes": {
+      "first": 412828,
+      "last": 412828,
+      "minimum": 412828,
+      "maximum": 412828,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "text_cache_registry_bytes": {
+      "first": 200,
+      "last": 200,
+      "minimum": 200,
+      "maximum": 200,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    }
+  },
+  "limits": [
+    "CPU bounds use monotonically accumulated whole-cgroup counters over fixed first/last600second intervals, with adjacent timestamps bounding non-atomic sample reads. No interpolation, overhead subtraction or diagnostics-off cap inference.",
+    "First/last windows have100cycles each, with differing round-robin host mixes; per-host readiness statistics are reported separately. This is within-run descriptive drift, not a formal relative candidate/baseline claim.",
+    "Open wall intervals start before xdotool Return and end after exact screenshot-readiness polling; close intervals include external focus/destruction polling. These include harness/process scheduling overhead and are not calibrated displayed-state latency.",
+    "Resource points join the first released native-window snapshot to the corresponding cycle by exact WindowId. They are lifecycle-selected near five-minute cycle boundaries, not asserted exact five-minute wall-clock samples. Resource Instant timestamps have no shared absolute origin in this receipt.",
+    "Scoped heap, caches, documents and reservations overlap. Never sum these into a memory grand total. RSS includes diagnostic retention and mappings, and is not driver-residency measurement.",
+    "These summaries cannot establish full MEM-03:20recoveries, native latency/idle-return, instantaneous resources, observer overhead, complete configuration coverage, distinct replay and owner acceptance remain open."
+  ]
+}

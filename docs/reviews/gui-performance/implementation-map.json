@@ -38729,7 +38729,7 @@
         "completed": true,
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
         "evidence_field": "completed_check and analysis",
-        "evidence_sha256": "c6d1c07278be3f9f59206717a63e94fa9a3ae6d33a2bf32623f1f9a700700238",
+        "evidence_sha256": "6f8fe80c1f7bdadcb696093d48789499992c1c34916cf91e0986839858f79457",
         "validated_result": "600 timed cycles over3600.000285seconds,200 perhost plus3first-use; exact pixel/focus/closure checks; normal drained exit0;604 renderer lifetimes and11313 GPU allocations reconciled,337825 private calls attributed, no sampled cap violations or frame-admission gaps. All603 cycles reached final exact pixel readiness;288 intermediate mismatches among891 captures are retained and are not passes.",
         "requirement_ids": [
           "MEM-03",
@@ -38737,7 +38737,7 @@
           "ACC-01",
           "ACC-02"
         ],
-        "scope": "This native run and trace reconciliation only. Drift/trend assessment,20recoveries, broader workload/configurations, instantaneous accounting, overhead and full acceptance remain open.",
+        "scope": "This native run and trace reconciliation only. Saved-run drift analysis now bounds diagnostic CPU change; unattributed RSS growth and over5% New Project readiness drift remain disclosed.20recoveries, native latency, broader workloads/configurations, instantaneous accounting, overhead and full acceptance remain open.",
         "carry_forward": "Reuse these preserved results and raw data; do not rerun because of an agent handoff. Repeat only affected qualification when a subsequent change invalidates it."
       }
     ],
@@ -38777,12 +38777,29 @@
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
     "remaining": [
-      "First/last ten-minute CPU/latency drift and five-minute resource plateau/trend assessment still require reconciliation of this preserved run; no rerun is implied.",
+      "Saved-run drift/trend analysis is complete in drift-analysis.json. Diagnostics-on CPU growth above5% is excluded by conservative bounds, but sampled RSS growth remains unattributed and New Project screenshot-readiness mean/p95 grew over5%; these harness intervals are not calibrated native latency. No full MEM-03 pass.",
       "No20 injected recoveries, mixed terminal workload, other backend/scale or full tier/configuration coverage in this run.",
       "Diagnostics-on run; no diagnostics-off numerical CPU/GPU budget pass or validated observer overhead.",
       "No physical presentation/latency calibration or return-to-idle timing qualification.",
       "No full instantaneous private retained/scratch/driver/client accounting acceptance.",
       "Independent actual final replay and separate owner UX/product acceptance remain required."
-    ]
+    ],
+    "drift_analysis": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
+      "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e",
+      "command": "python3 docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/analyze_drift.py /tmp/dev-agent-s5-endurance-6aj_2kcs docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582",
+      "cpu_change_bounds_percent": [
+        -3.6091408828051064,
+        -3.5510711635006076
+      ],
+      "sampled_rss_growth_bytes": 3112960,
+      "renderer_text_payload_growth_bytes": 2592,
+      "text_payload_plateau": "All selected points from cycle50 through600 equal311858bytes; no unbounded text-cache growth inferred.",
+      "new_project_open_readiness_change_percent": {
+        "mean": 6.1750770497622565,
+        "p95": 6.701246055379784
+      },
+      "interpretation": "Descriptive within-run diagnostics only. No rerun, production change, causality claim or acceptance relaxation."
+    }
   }
 }
