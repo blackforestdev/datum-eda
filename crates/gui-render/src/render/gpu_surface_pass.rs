@@ -24,7 +24,7 @@ pub(super) fn prepare_schematic_pass<'a>(
 impl Renderer {
     pub(crate) fn draw_surface_grids<'a>(
         &'a self,
-        pass: &mut wgpu::RenderPass<'a>,
+        pass: &mut crate::gpu_frame::clipped_pass::ClippedPass<'_, 'a>,
         batches: &[surface_grid_pass::SurfaceGridBatch],
     ) {
         // Empty geometry releases its upload owner and has nothing to bind.
@@ -41,7 +41,7 @@ impl Renderer {
             set_scissor(pass, batch.viewport);
             pass.draw(batch.vertices.clone(), 0..1);
             if let Some(observation) = self.grid_admission.as_ref().and_then(|g| g.get(index)) {
-                observation.encoded.set(true);
+                pass.record_execution(&observation.encoded_regions);
             }
         }
     }
@@ -106,7 +106,7 @@ impl Renderer {
 
     pub(crate) fn draw_surface_world_passes<'a>(
         &'a self,
-        pass: &mut wgpu::RenderPass<'a>,
+        pass: &mut crate::gpu_frame::clipped_pass::ClippedPass<'_, 'a>,
         prepared: &PreparedScene,
     ) {
         for (surface, cached) in prepared
@@ -116,11 +116,12 @@ impl Renderer {
         {
             set_scissor(pass, surface.scene_viewport);
             pass.execute_bundles(std::iter::once(&cached.bundle));
+            pass.record_execution(&cached.encoded_regions);
         }
     }
 }
 
-fn set_scissor(pass: &mut wgpu::RenderPass<'_>, viewport: RectPx) {
+fn set_scissor(pass: &mut crate::gpu_frame::clipped_pass::ClippedPass<'_, '_>, viewport: RectPx) {
     pass.set_scissor_rect(
         viewport.x.max(0.0).floor() as u32,
         viewport.y.max(0.0).floor() as u32,

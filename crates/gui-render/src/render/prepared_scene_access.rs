@@ -7,6 +7,7 @@ use super::*;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
+    pub(super) composition_revision: gpu_frame::composition_revision::CompositionRevision,
     pub(super) admission_sources:
         Option<std::sync::Arc<geometry_admission::PreparedSourceIdentities>>,
     pub(super) consumers: crate::resource_consumers::FrameConsumers,

@@ -53,6 +53,7 @@ struct TerminalGraphicTextureKey {
 }
 
 struct TerminalGraphicDraw {
+    encoded_regions: std::cell::Cell<Option<u32>>,
     texture_key: TerminalGraphicTextureKey,
     vertices: ScreenBuffer,
     clip: (u32, u32, u32, u32),
@@ -286,6 +287,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             let foreground = placement.z_index() >= 0;
             if visible == self.draws.len() {
                 self.draws.push(TerminalGraphicDraw {
+                    encoded_regions: std::cell::Cell::new(Some(0)),
                     texture_key: key,
                     vertices: ScreenBuffer::with_budgets(vec![
                         self.screen_budget.clone(),
@@ -385,6 +387,12 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             )
     }
 
+    pub(super) fn reset_executions(&self) {
+        for draw in &self.draws {
+            draw.encoded_regions.set(Some(0));
+        }
+    }
+
     pub(super) fn geometry_admission(
         &self,
     ) -> impl Iterator<Item = super::immediate_admission::TerminalGeometryAdmission> + '_ {
@@ -399,6 +407,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             })
             .map(
                 |draw| super::immediate_admission::TerminalGeometryAdmission {
+                    encoded_regions: draw.encoded_regions.get(),
                     graphic_id: draw.texture_key.id,
                     foreground: draw.foreground,
                     scissor: [draw.clip.0, draw.clip.1, draw.clip.2, draw.clip.3],
@@ -421,6 +430,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         screen_bind_group: &wgpu::BindGroup,
         foreground: bool,
         measurement: Option<&mut super::gpu_measurements::FrameQueries>,
+        regions: &[crate::gpu_frame::interaction_damage::Region],
     ) -> anyhow::Result<()> {
         if !self.has_layer(foreground) {
             return Ok(());
@@ -446,13 +456,17 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             timestamp_writes: measurement.map(|m| m.pass(label)).transpose()?,
             multiview_mask: None,
         });
-        self.draw(&mut pass, screen_bind_group, foreground);
+        for (region_index, region) in regions.iter().enumerate() {
+            let mut clipped =
+                crate::gpu_frame::clipped_pass::ClippedPass::new(&mut pass, *region, region_index);
+            self.draw(&mut clipped, screen_bind_group, foreground);
+        }
         Ok(())
     }
 
     fn draw<'pass>(
         &'pass self,
-        pass: &mut wgpu::RenderPass<'pass>,
+        pass: &mut crate::gpu_frame::clipped_pass::ClippedPass<'_, 'pass>,
         screen_bind_group: &'pass wgpu::BindGroup,
         foreground: bool,
     ) {
@@ -484,6 +498,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                     .slice(..),
             );
             pass.draw(0..GRAPHIC_DRAW_VERTICES, 0..1);
+            pass.record_execution(&draw.encoded_regions);
         }
     }
 }
@@ -518,6 +533,7 @@ impl super::Renderer {
         target: Option<&wgpu::TextureView>,
         foreground: bool,
         measurement: Option<&mut super::gpu_measurements::FrameQueries>,
+        regions: &[crate::gpu_frame::interaction_damage::Region],
     ) -> anyhow::Result<()> {
         self.terminal_graphics.encode_layer(
             encoder,
@@ -526,6 +542,7 @@ impl super::Renderer {
             &self.uniform_bind_group,
             foreground,
             measurement,
+            regions,
         )
     }
 }

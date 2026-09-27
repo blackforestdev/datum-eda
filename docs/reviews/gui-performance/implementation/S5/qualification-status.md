@@ -94,7 +94,7 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 
 - [x] Monitored private-call realloc peak/refusal:13allocator/call-guard controls passed in the final batch;1existingignored. Initial passing batch retained; repeated only after scope correction. Explicit replacement overlap reaches the guard. Forced-copy cost, native caps and retained/scratch classification remain unqualified. See `scoped-reallocation-peak/result.json`.
 
-- [x] Active-call block transition delivery:3serial observer controls pass and app writer compiles. Allocation/free order, realloc overlap, summary compatibility and overflow covered. Three offline classifier controls also pass; native mode, semantic exclusions and full-scope qualification remain pending. See `private-allocation-lifetimes/result.json`.
+- [x] Active-call block transition delivery:4serial observer controls pass and app writer compiles. Allocation/free order, realloc overlap, summary compatibility and overflow covered. Three offline classifier controls and the recorded compact X11/1x native integration pass at their stated scope; complete semantic accounting, overhead and full-scope qualification remain pending. See `private-allocation-lifetimes/result.json`.
 
 - [x] **Unchanged per-pane grid geometry reuse** — 5 renderer and17 viewport grid-filter tests plus application check passed. Admitted cache preserves output, invalidates exact dependencies and releases refused/empty storage. No native performance-cap claim. [Evidence](grid-reuse/result.json)
 
@@ -120,7 +120,7 @@ bound intervals exceed the 1% ceiling (**1.047673%–1.122825%**). Endpoint, rev
 focus and clean shutdown checks passed. This is a recorded CPU failure, not a
 completed acceptance check. [Evidence](terminal-idle-poll/native-clamp-batch/assessment.json)
 
-All 40 completed-group evidence hashes match. The original map contains 225
+All 42 completed-group evidence hashes match. The original map contains 225
 requirement rows, not 225 separate tests: 15 specification-record rows, 14
 nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
 or mixed-scope rows. HP05-02 still requires idle resources; its pacing component
@@ -175,3 +175,5 @@ These are scheduling reductions, not native acceptance or a complete runner.
 See the existing map's `process_and_endurance_reuse` review.
 
 Current CPU check: candidate `01b99830` / binary `8eff3ed55ae2` completed three combined quiet X11/1x runs. Pointer **10.445–11.288%** exceeds10%; all six clamp intervals **1.125–1.246%** exceed1%. Exact pointer endpoints, unchanged clamp pixels, inward reversals, pinned inputs and normal exits/display restoration passed. No numerical acceptance; no unchanged rerun. [Evidence](grid-reuse/native-cpu/assessment.json)
+
+- [x] Bounded interaction redraw: seven focused tests pass, including exact GPU pixels for hover/crosshairs, mixed painter overlap and pane switches, plus invalidation and observer controls. Application check passes. No native performance or full resource acceptance. [Evidence](interaction-damage/result.json)

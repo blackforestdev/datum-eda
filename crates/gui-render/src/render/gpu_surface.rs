@@ -224,6 +224,11 @@ impl Renderer {
         Ok(self.surface_attachments.allocations != previous)
     }
 
+    /// Presentation failure must not publish a reusable prior composition.
+    pub fn invalidate_preserved_frame(&mut self) {
+        self.preserved_interaction = None;
+    }
+
     pub fn surface_attachment_snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
         self.surface_attachments.snapshot()
     }
