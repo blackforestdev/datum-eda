@@ -1,0 +1,36 @@
+{
+  "qualification_pass": false,
+  "status": "Competing private redraw-path source/admission negative rejected; full END-03/END-04 acceptance incomplete",
+  "source_commit": "5b013adb",
+  "source_path": "crates/gui-app/src/native_frame_adapters.rs",
+  "source_sha256": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+  "negative_patch": "private-scheduler-negative.patch",
+  "negative_sha256": "b0ef11ce8028cfe29115b26d1675b2a810729a6419064bf48b3664a6fbe41f67",
+  "patch_applied": false,
+  "method": "Review actual NEW adapter and a preserved non-applied counterfactual using the existing shared-boundary and future-consumer admission rules. git apply --check confirms current patch context; no build or runtime mutation.",
+  "authority": [
+    "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#global-adoption-and-retirement",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md:261",
+    "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md:513"
+  ],
+  "original_disposition": "No corresponding private scheduling defect: shared ready_round dispatch, begin_frame receipt, existing surface.render, failure handling and frame_finished completion. This source comparison is not complete runtime or positive registration proof.",
+  "negative_disposition": "Rejected by distinct reviewer: NEW renders before begin_frame, discards result, directly requests another native redraw and returns before frame_finished. Competing generic scheduling has no semantic exception.",
+  "bypassed": [
+    "coordinator attempt/generation admission",
+    "damage completion",
+    "adapter error handling",
+    "conditional successor scheduling"
+  ],
+  "preserved_in_negative": [
+    "Initial ready_round entry",
+    "Existing renderer and SurfaceTransaction",
+    "GPU submission/completion ownership"
+  ],
+  "limits": [
+    "Source/admission rejection only, not automatic runtime detection or a private-renderer implementation.",
+    "END-03 still requires full actual production call-site execution coverage.",
+    "END-04 positive registration requires complete dependencies, owners/caps, input/clip/focus semantics, semantic exceptions and proof references.",
+    "No new runtime registry, framework, dependency or product pane is required or introduced."
+  ],
+  "review": "Distinct authorized reviewer inspected the original adapter and supplied patch and independently rejected the changed scheduling boundary. No reviewer build/native execution."
+}

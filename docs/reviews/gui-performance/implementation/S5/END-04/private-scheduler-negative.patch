@@ -1,0 +1,15 @@
+--- a/crates/gui-app/src/native_frame_adapters.rs
++++ b/crates/gui-app/src/native_frame_adapters.rs
+@@ -106,6 +106,12 @@
+         let (Some(window), Some(surface), Some(runtime)) = (window, surface, &self.runtime) else {
+             return;
+         };
++        // Counterfactual NEW host private redraw/render loop: reject admission.
++        if new {
++            let _ = surface.render(runtime, project, new);
++            window.request_redraw();
++            return;
++        }
+         let Some(receipt) = self.frames.begin_frame(window.id()) else {
+             return;
+         };

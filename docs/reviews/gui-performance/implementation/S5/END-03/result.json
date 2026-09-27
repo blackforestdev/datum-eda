@@ -931,10 +931,9 @@
   },
   "review": "Distinct reviewer inspected native host owner paths and existing proof; no competing default native scheduler/lifecycle path found. Execution owner inspected renderer submissions, continuation callbacks and allocation ownership. No new runtime execution. Final artifact review verified81call references,40source hashes and10evidence hashes; corrected Main visual readback wording to distinguish bounded admission from unbounded completion wait.",
   "remaining": [
-    "Specific END-03 negative demonstrating detection/rejection of a consumer on a competing private path is not established by existing coalescing/queue negatives.",
     "Changed source files are not byte-identical to S1; later production and native evidence support bounded continuity, not automatic transfer of every assertion.",
-    "END-04 future-consumer registration and private-scheduler negative remain distinct and unqualified.",
-    "Original per-consumer full input/backend/scale/resource/fault and final independent native replay requirements remain; no S5 closure."
+    "Original per-consumer full input/backend/scale/resource/fault and final independent native replay requirements remain; no S5 closure.",
+    "END-04 positive registration package and full production runtime coverage remain unqualified; private redraw admission negative now recorded separately."
   ],
   "decision": "Credit existing shared-owner adoption and source inventory; do not rerun completed S1-S4 suites. Consolidate only genuine missing controls into final qualification work.",
   "new_builds": 0,
@@ -944,5 +943,10 @@
     "evidence": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json",
     "evidence_sha256": "bea14c89ab640545806b666db6ff705117cbec1175c39b98ae7248bfc8637414",
     "scope": "Six-case X11 auxiliary own-submit/callback strong-capture gap now passed. Original zero-own-submit pending-queue evidence remains historical; new proof does not establish full memory/driver budgets."
+  },
+  "private_path_negative": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
+    "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956",
+    "disposition": "Distinct source/admission review rejects concrete non-applied NEW private redraw path. Not runtime detection or replacement of GPU ownership."
   }
 }
