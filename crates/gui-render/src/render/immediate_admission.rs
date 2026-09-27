@@ -36,15 +36,18 @@ impl PreparedScene {
 
 #[derive(Clone, Debug)]
 pub struct PreparedGridAdmission {
-    pub(crate) encoded: std::cell::Cell<bool>,
+    pub(crate) encoded_regions: std::cell::Cell<Option<u32>>,
     pub pane_id: datum_gui_protocol::PaneId,
     pub viewport: RectPx,
     pub vertices: std::ops::Range<u32>,
     pub generated_vertices: usize,
 }
 impl PreparedGridAdmission {
+    pub fn encoded_regions(&self) -> Option<u32> {
+        self.encoded_regions.get()
+    }
     pub fn encoded(&self) -> bool {
-        self.encoded.get()
+        self.encoded_regions.get().is_some_and(|mask| mask != 0)
     }
 }
 impl Renderer {
@@ -62,7 +65,7 @@ impl Renderer {
             )?;
             for batch in batches.iter() {
                 observations.push(PreparedGridAdmission {
-                    encoded: std::cell::Cell::new(false),
+                    encoded_regions: std::cell::Cell::new(Some(0)),
                     pane_id: batch.pane_id,
                     viewport: batch.viewport,
                     vertices: batch.vertices.clone(),
@@ -82,6 +85,7 @@ impl Renderer {
 
 #[derive(Clone, Copy, Debug)]
 pub struct TerminalGeometryAdmission {
+    pub encoded_regions: Option<u32>,
     pub graphic_id: u64,
     pub foreground: bool,
     pub scissor: [u32; 4],

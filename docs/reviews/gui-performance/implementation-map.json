@@ -39132,15 +39132,25 @@
         "scope": "CPU geometry reuse, dependency invalidation, bounded storage and refusal/release controls. No numerical, native recovery or independent acceptance.",
         "carry_forward": "Reuse these scoped controls across handoffs. Final native performance/resource/recovery qualification remains required.",
         "native_limit": "All three pointer and six clamp CPU intervals fail on pinned current candidate; native_cpu evidence preserves exact pixels and clean exits without acceptance."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Bounded interaction redraw exact-pixel and failure-path controls",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/result.json",
+        "evidence_sha256": "8f0a7c106be4cc354bb89d0fc878fdf7fbab122876c235d752826f65f57c805a",
+        "validated_result": "7focused tests passed, including two exact-GPU cases and observer negative control; application check passed. Initial compile failure preserved.",
+        "scope": "Changed partial renderer correctness and actual draw receipts; no native or numerical acceptance.",
+        "carry_forward": "Reuse this scope across handoffs. Measure changed stable candidate before any cap or improvement claim."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 40,
-      "evidence_hashes_checked": 40,
-      "matching_hashes": 40,
-      "native_runs_performed": 2,
-      "meaning": "Both new-mode producer attempts failed before first presentation. Prior40scoped groups retained; no native group or acceptance added."
+      "completed_groups": 42,
+      "evidence_hashes_checked": 42,
+      "matching_hashes": 42,
+      "native_runs_performed": 0,
+      "meaning": "Existing bounded passes carried forward by evidence hashes. New renderer GPU controls do not close S5 or replace native qualification."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39514,5 +39524,20 @@
     "qualification_pass": false,
     "decision": "Do not select camera arithmetic or hover lookup as the primary CPU remedy from these results. Inspect renderer/event-round and repeated native event traffic using existing source evidence. Do not rerun this diagnostic unchanged or subtract estimated probe overhead from quiet qualification.",
     "event_source_inspection": "Recorded in evidence: no causal event-traffic defect established; cached/disabled paths and modifier suppression already present. Generic window_other counts cannot justify dropping events."
+  },
+  "s5_pointer_damage_reuse": {
+    "status": "Bounded partial-redraw implementation and correctness proof; native performance unqualified",
+    "issue": "dat-pointer-damage-reuse-6jgg",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/result.json",
+    "evidence_sha256": "8f0a7c106be4cc354bb89d0fc878fdf7fbab122876c235d752826f65f57c805a",
+    "decision": "Use preserved MSAA samples for interaction-only redraw only after exact pixels, conservative invalidation and truthful submitted-work observations pass. No unchanged native campaign rerun.",
+    "limits": [
+      "No CPU/GPU cap, observer-overhead, native UX, full resource accounting, backend/scale/endurance/recovery campaign or independent performance acceptance.",
+      "Previous three pointer and six clamp CPU failures remain failures; no comparative performance claim until the changed candidate is measured.",
+      "Mixed-layer GPU fixtures exercise actual renderer passes with deliberate overlap; they are not native product acceptance or admitted schematic workload qualification.",
+      "New fixed inline bookkeeping and per-draw masks do not allocate proportional region vectors; full host/process and driver/private accounting remains an S5 obligation.",
+      "Owner Wayland fractional-line dependency decision and owner UX acceptance remain separate; PM029/PM047 limits and nonblocking resize exclusions unchanged."
+    ]
   }
 }

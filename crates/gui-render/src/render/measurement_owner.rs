@@ -177,6 +177,10 @@ mod tests {
         let measured_origins: std::collections::BTreeSet<_> = calls
             .events
             .iter()
+            .filter_map(|record| match record {
+                observation::Record::Call(event) => Some(event.as_ref()),
+                observation::Record::Allocation(_) => None,
+            })
             .filter(|event| event.owner_label == "text-measurement")
             .map(|event| {
                 event

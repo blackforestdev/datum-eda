@@ -4,6 +4,7 @@
 use super::*;
 
 pub(crate) struct CachedSurfaceBundle {
+    pub(crate) encoded_regions: std::cell::Cell<Option<u32>>,
     pub(super) bundle: wgpu::RenderBundle,
     pane_id: datum_gui_protocol::PaneId,
     surface: SceneSurface,
@@ -27,6 +28,9 @@ pub struct EncodedWorldAdmission<'a> {
     cached: &'a CachedSurfaceBundle,
 }
 impl EncodedWorldAdmission<'_> {
+    pub fn encoded_regions(&self) -> Option<u32> {
+        self.cached.encoded_regions.get()
+    }
     pub fn ranges(&self) -> impl Iterator<Item = geometry_admission::GeometryAdmissionRange> + '_ {
         self.cached
             .batches
@@ -177,6 +181,7 @@ impl Renderer {
             .chain(std::iter::once(binding.buffer.prepared_ref()))
             .collect();
             let cached = CachedSurfaceBundle {
+                encoded_regions: std::cell::Cell::new(Some(0)),
                 pane_id: surface.pane_id,
                 surface: surface.surface,
                 used_kinds,

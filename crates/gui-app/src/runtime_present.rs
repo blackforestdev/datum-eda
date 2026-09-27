@@ -139,13 +139,17 @@ impl Runtime {
         if !rendered? {
             return Ok(false);
         }
-        let frame = frame.context("rendered native frame must own an acquisition")?;
+        let frame = frame.ok_or_else(|| {
+            self.renderer.invalidate_preserved_frame();
+            anyhow::anyhow!("rendered native frame must own an acquisition")
+        })?;
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(|| {
             format!("renderer render end {}ms", renderer_elapsed.as_millis())
         });
         drop(probe);
         if self.device_health.failed() {
+            self.renderer.invalidate_preserved_frame();
             return Ok(false);
         }
         let present_elapsed = self.present_native_frame(frame)?;
@@ -179,7 +183,10 @@ impl Runtime {
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "frame present begin");
         let first_device_frame = !self.surface_transaction.has_presented();
-        self.surface_transaction.present(frame, &self.window)?;
+        if let Err(error) = self.surface_transaction.present(frame, &self.window) {
+            self.renderer.invalidate_preserved_frame();
+            return Err(error);
+        }
         self.presented_console_layout = self
             .prepared_scene
             .as_ref()
