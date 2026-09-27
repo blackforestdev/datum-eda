@@ -163,8 +163,10 @@ impl Ledger {
     }
 }
 
-/// No allocations or drops of scoped resources may occur inside the closure.
-/// Registry storage itself is unscoped and is not allocator-hook recursion.
+/// Allocator entry points perform owned System operations and their accounting
+/// together here. Other callers must not allocate or drop scoped resources in
+/// the closure: that would recursively acquire the ledger. Registry storage is
+/// unscoped and does not recurse through the allocator hook.
 pub(crate) fn transaction<T>(work: impl FnOnce(&mut Ledger) -> T) -> T {
     with_current(std::ptr::null(), || {
         let mut ledger = LEDGER.lock().unwrap_or_else(|e| e.into_inner());
@@ -187,6 +189,9 @@ impl Call {
         excluded: u64,
         credit: u64,
     ) -> anyhow::Result<Self> {
+        // Refused arguments may own scope-tracked allocations. Keep them outside
+        // the transaction so their final drops cannot recursively lock LEDGER.
+        let mut budgets = Some((host, process));
         transaction(|ledger| {
             if ledger.calls.len() == MAX_CALLS {
                 return None;
@@ -200,6 +205,7 @@ impl Call {
             ledger.next += 1;
             let live = usage.payload_bytes + usage.tracking_bytes;
             let initial = live.saturating_sub(excluded);
+            let (host, process) = budgets.take().expect("unused call budgets");
             ledger.calls.push(Entry {
                 id,
                 owner: usage.owner_id,

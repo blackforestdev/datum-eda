@@ -4261,6 +4261,12 @@
         "previous_test_status": "Native measurement adapters now enter their existing renderer-origin scope; the four-host production preparation/refusal/retry test proves attribution and scope restoration. Prior GPU event delivery remains intact. Native replay of this correction and complete CPU-cache/shared incidence, subcap, driver/RSS and adoption qualification remain open.",
         "status": "Partial native resource snapshots and shared-budget lifetime identities added; combined private/GPU/resource trace batch retained. Sampled overlapping views are not full transient memory, whole-GPU, overhead, endurance or S5 acceptance.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/resource-snapshots/result.json"
+      },
+      "s5_private_call_serialization": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/serialization.json",
+        "status": "Tracked System allocation operations and private-call accounting serialized; full-table refusal releases tracked arguments after unlock",
+        "qualification_pass": false,
+        "remaining": "Native contention/overhead and complete resource qualification remain open; source ordering and focused controls do not replace final replay."
       }
     },
     {
@@ -4524,6 +4530,12 @@
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
         "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
         "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
+      },
+      "s5_private_call_serialization": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/serialization.json",
+        "status": "Tracked System allocation operations and private-call accounting serialized; full-table refusal releases tracked arguments after unlock",
+        "qualification_pass": false,
+        "remaining": "Native contention/overhead and complete resource qualification remain open; source ordering and focused controls do not replace final replay."
       }
     },
     {
@@ -18595,6 +18607,12 @@
         "previous_test_status": "Partial resolver allocation scope observes cold payload peak34353470bytes including retained inputs/output plus transient work. This is not a scratch-only peak or a16MiB staging pass. Complete phase/lifetime partition, other owners and simultaneous local qualification remain required.",
         "status": "Native private-call report delivery added without changing16MiB host admission. Bounded observed calls stay within reported limits and actual GPU overrun refusal still passes. Full transient/staging/metadata/RSS/native/negative qualification remains open.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
+      },
+      "s5_private_call_serialization": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/serialization.json",
+        "status": "Tracked System allocation operations and private-call accounting serialized; full-table refusal releases tracked arguments after unlock",
+        "qualification_pass": false,
+        "remaining": "Native contention/overhead and complete resource qualification remain open; source ordering and focused controls do not replace final replay."
       }
     },
     {
@@ -18920,6 +18938,12 @@
         "previous_test_status": "Partial resolver Rust heap attribution only; whole-process simultaneous scratch including other owners and tracking overhead remains unqualified under unchanged64MiB aggregate ceiling.",
         "status": "Native call events retain existing simultaneous process peaks; concurrent-owner conformance rejects process overrun.64MiB authority unchanged. No complete aggregate/simultaneous native/resource or endurance qualification.",
         "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/result.json"
+      },
+      "s5_private_call_serialization": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/serialization.json",
+        "status": "Tracked System allocation operations and private-call accounting serialized; full-table refusal releases tracked arguments after unlock",
+        "qualification_pass": false,
+        "remaining": "Native contention/overhead and complete resource qualification remain open; source ordering and focused controls do not replace final replay."
       }
     },
     {
@@ -38328,7 +38352,13 @@
       "All225 original requirements, S1/50S2/20S3 qualification, resource event/concurrent peak/subcap proof, native/backend/scale/negative controls, cold,endurance,owner UX and distinct-reviewer actual replay remain.",
       "Preserve existing Board/Revision golden failures, menuCSV/bootstrap drift, prior CPU/GPU limits and missing NVIDIA counters. No broad golden/drift rerun or new acceptance."
     ],
-    "boundaries": "No admission budget/failure-path, model/journal, dependency/license/backend/AA/prototype/terminal-state change. Preserve S0-S4, GEFN, PM029/PM047 and every nonblocking resize/temporal/T2/unadmitted schematic exclusion."
+    "boundaries": "No admission budget/failure-path, model/journal, dependency/license/backend/AA/prototype/terminal-state change. Preserve S0-S4, GEFN, PM029/PM047 and every nonblocking resize/temporal/T2/unadmitted schematic exclusion.",
+    "serialization_fix": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/private-call-observation/serialization.json",
+      "status": "Tracked System allocation operations and private-call accounting serialized; full-table refusal releases tracked arguments after unlock",
+      "qualification_pass": false,
+      "remaining": "Native contention/overhead and complete resource qualification remain open; source ordering and focused controls do not replace final replay."
+    }
   },
   "s5_gpu_allocation_observation": {
     "status": "Bounded GPU allocation history delivered and reconciled; GPI-S5 incomplete",

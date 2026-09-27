@@ -1,6 +1,31 @@
 use super::*;
 
 #[test]
+#[ignore = "exhausts the process-wide private-call table; run serially"]
+fn full_call_table_releases_tracked_arguments_and_allows_retry() {
+    let scopes: Vec<_> = (0..MAX_CALLS)
+        .map(|_| Scope::new("call-capacity-occupant"))
+        .collect();
+    let calls: Vec<_> = scopes
+        .iter()
+        .map(|scope| Call::begin(scope, Budget::new(1000), Budget::new(1000), 0, 0).unwrap())
+        .collect();
+    let scope = Scope::new("call-capacity-refused-budgets");
+    let (host, process) = scope.with(|| (Budget::new(1000), Budget::new(1000)));
+    assert_eq!(scope.usage().allocations, 2);
+    let error = Call::begin(&scope, host, process, 0, 0).err().unwrap();
+    assert!(error.to_string().contains("concurrency capacity exhausted"));
+    assert_eq!(scope.usage().allocations, 0);
+    assert_eq!(scope.usage().payload_bytes, 0);
+    assert_eq!(scope.usage().tracking_bytes, 0);
+    drop(calls);
+    let call = Call::begin(&scope, Budget::new(1000), Budget::new(1000), 0, 0).unwrap();
+    let (permits, report) = call.finish(0, None, None).unwrap();
+    assert!(!report.exceeded);
+    drop(permits);
+}
+
+#[test]
 fn released_transient_peak_rejects_without_using_lifetime_high_water() {
     let scope = Scope::new("private-call-transient");
     let host = Budget::new(512);

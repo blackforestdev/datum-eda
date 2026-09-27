@@ -200,10 +200,12 @@ unsafe impl GlobalAlloc for Allocator {
         unsafe {
             let base = pointer.sub(offset);
             let owner = (*base.cast::<Header>()).owner;
-            System.dealloc(base, combined);
-            if !owner.is_null() {
+            if owner.is_null() {
+                System.dealloc(base, combined);
+            } else {
                 let owner = Arc::from_raw(owner);
                 calls::transaction(|ledger| {
+                    System.dealloc(base, combined);
                     owner
                         .payload
                         .fetch_sub(layout.size() as u64, Ordering::AcqRel);
@@ -230,12 +232,14 @@ unsafe impl GlobalAlloc for Allocator {
         unsafe {
             let base = pointer.sub(offset);
             let owner = (*base.cast::<Header>()).owner;
-            let resized = System.realloc(base, combined, next.size());
-            if resized.is_null() {
-                return resized;
-            }
-            if !owner.is_null() {
+            let resized = if owner.is_null() {
+                System.realloc(base, combined, next.size())
+            } else {
                 calls::transaction(|ledger| {
+                    let resized = System.realloc(base, combined, next.size());
+                    if resized.is_null() {
+                        return resized;
+                    }
                     if new_size >= layout.size() {
                         (*owner).add_payload(new_size - layout.size());
                     } else {
@@ -244,9 +248,14 @@ unsafe impl GlobalAlloc for Allocator {
                             .fetch_sub((layout.size() - new_size) as u64, Ordering::AcqRel);
                     }
                     ledger.allocation((*owner).id, new_size as u64, layout.size() as u64);
-                });
+                    resized
+                })
+            };
+            if resized.is_null() {
+                resized
+            } else {
+                resized.add(offset)
             }
-            resized.add(offset)
         }
     }
 }
@@ -260,26 +269,37 @@ unsafe fn allocate(layout: Layout, zeroed: bool) -> *mut u8 {
     // SAFETY: both System entry points receive a valid layout. The payload starts
     // at Layout::extend's aligned offset; zero initialization covers the payload.
     unsafe {
-        let base = if zeroed {
-            System.alloc_zeroed(combined)
+        let system_allocate = || {
+            if zeroed {
+                System.alloc_zeroed(combined)
+            } else {
+                System.alloc(combined)
+            }
+        };
+        let owner = CURRENT.try_with(Cell::get).unwrap_or(ptr::null());
+        // Serialize the actual owned allocation with its ledger update. Taking
+        // the lock only afterwards can miss concurrent transient live peaks.
+        let base = if owner.is_null() {
+            system_allocate()
         } else {
-            System.alloc(combined)
+            calls::transaction(|ledger| {
+                let base = system_allocate();
+                if base.is_null() {
+                    return base;
+                }
+                Arc::increment_strong_count(owner);
+                (*owner).add_payload(layout.size());
+                (*owner).overhead.fetch_add(offset as u64, Ordering::AcqRel);
+                (*owner).allocations.fetch_add(1, Ordering::AcqRel);
+                ledger.allocation((*owner).id, (layout.size() + offset) as u64, 0);
+                base
+            })
         };
         if base.is_null() {
             return base;
         }
         if OWNER_METADATA.try_with(Cell::get).unwrap_or(false) {
             OWNER_METADATA_BYTES.store(combined.size() as u64, Ordering::Release);
-        }
-        let owner = CURRENT.try_with(Cell::get).unwrap_or(ptr::null());
-        if !owner.is_null() {
-            Arc::increment_strong_count(owner);
-            calls::transaction(|ledger| {
-                (*owner).add_payload(layout.size());
-                (*owner).overhead.fetch_add(offset as u64, Ordering::AcqRel);
-                (*owner).allocations.fetch_add(1, Ordering::AcqRel);
-                ledger.allocation((*owner).id, (layout.size() + offset) as u64, 0);
-            });
         }
         base.cast::<Header>().write(Header { owner });
         base.add(offset)
