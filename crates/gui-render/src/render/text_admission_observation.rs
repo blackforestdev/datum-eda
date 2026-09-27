@@ -36,6 +36,9 @@ impl Observer {
             failed: false,
         }
     }
+    pub fn serial(&self) -> u64 {
+        self.serial
+    }
     pub fn begin(&mut self) {
         self.latest = None;
         self.failed = false;

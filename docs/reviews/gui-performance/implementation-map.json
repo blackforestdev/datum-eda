@@ -38676,6 +38676,21 @@
         ],
         "scope": "Three CPU tests over production prepared/retained data; no native/full ADM-01 or submission/raster pass.",
         "carry_forward": "Preserve across handoffs; rerun only affected behavior."
+      },
+      {
+        "check": "\u2713 done",
+        "completed": true,
+        "label": "Render-attempt observer and trace delivery controls",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/result.json",
+        "evidence_field": "proof",
+        "evidence_sha256": "4462d5351302c0e769bd96fa3cc5d341ed568a740e3ef2119f402f40d448b3a2",
+        "validated_result": "1 hardware GPU test passed: exact observer-off/on pixels across reused frames, callback identity/outcome and propagated observer error. 1 hardware application test passed: actual offscreen render attempts reach native JSON writer; sequence/renderer/extent/submission records reconcile; injected capacity exhaustion returns error and final complete_delivery is false.",
+        "requirement_ids": [
+          "AC-06",
+          "AC-08"
+        ],
+        "scope": "Two focused offscreen hardware tests; no OS-delivered workload, overhead or full admission/resource acceptance.",
+        "carry_forward": "Preserve across handoffs; rerun only affected behavior."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
@@ -38698,5 +38713,9 @@
   "s5_geometry_admission_work": {
     "status": "bounded prepared-world/source view implemented; full admission pending",
     "evidence": "docs/reviews/gui-performance/implementation/S5/geometry-admission/result.json"
+  },
+  "s5_frame_admission_delivery_work": {
+    "status": "bounded per-render-attempt delivery implemented; full native ADM-01 acceptance remains open",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/result.json"
   }
 }

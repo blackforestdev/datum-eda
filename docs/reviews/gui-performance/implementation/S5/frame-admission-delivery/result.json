@@ -1,0 +1,44 @@
+{
+  "status": "bounded per-render-attempt delivery implemented; full native ADM-01 acceptance remains open",
+  "base_commit": "7d160eb4",
+  "change": "Deliver borrowed prepared world and current-attempt text observations through the existing opt-in resource trace. Record submission/defer/error outcome, renderer identity and extent; enforce frame record capacity and latch delivery failures. Default mode installs no callback.",
+  "proof": {
+    "renderer": "1 hardware GPU test passed: exact observer-off/on pixels across reused frames, callback identity/outcome and propagated observer error.",
+    "writer": "1 hardware application test passed: actual offscreen render attempts reach native JSON writer; sequence/renderer/extent/submission records reconcile; injected capacity exhaustion returns error and final complete_delivery is false.",
+    "gates": "Source health2562, dependency authority and20spec parity inventories pass."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --offline frame_observation_delivers_reused_frames_without_changing_pixels_and_propagates_failure -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --offline frame_trace_serializes_actual_render_attempts_and_refuses_overflow -- --ignored --test-threads=1 --nocapture"
+  ],
+  "verification_note": "Renderer test passed before a mechanical metadata-field rename from text_prepared_this_attempt to text_observation_attempted. Application test compiled the final production field name and passed. No broad regression or completed native workload was repeated.",
+  "semantics": [
+    "Callback follows render attempt cleanup without changing upload-before-acquire ordering. Original renderer errors take precedence over simultaneous observer errors.",
+    "Some(true) means submitted, not displayed. Prepared world ranges do not prove GPU raster coverage.",
+    "Text observations are omitted when no observation was attempted; absent preparation groups are not reported from stale prior groups.",
+    "One million frame records maximum by default; DATUM_RESOURCE_TRACE_FRAME_LIMIT can lower the limit. Overflow invalidates delivery; no silent truncation.",
+    "Serialization allocations use a separate frame-admission-writer CPU scope. Actual overhead and all resource caps remain unqualified.",
+    "Function-pointer registration retains no GPU resources. Registration occurs before the native event loop constructs renderers."
+  ],
+  "remaining": [
+    "OS-delivered native backend/scale workloads and complete per-pane text/model admission.",
+    "Immediate shell/control/grid/terminal geometry and applicable raster coverage.",
+    "Observer overhead, instantaneous private/driver/client resource accounting and numerical caps.",
+    "Recorded performance failures, endurance/recovery, stable-candidate independent replay and separate owner UX acceptance."
+  ],
+  "preserved": "All225 original predicates/statuses, completed S0-S4 and prior evidence. GEFN, PM029/PM047, upload-before-acquire, Claude prototype ownership and nonblocking resize exclusions unchanged.",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/renderer.log.gz",
+      "sha256": "a0a89bcc2987d16c2f8dfa25287b3138320df020e8f3c3fb1d14406f8939030e"
+    },
+    "writer": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/writer.log.gz",
+      "sha256": "c2bfe678770622b988916a62b91e8f78a9627e20aa30ddac0472c961b7f45592"
+    },
+    "writer_trace": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/writer_trace.jsonl.gz",
+      "sha256": "a0e6b3b932eb27f32b907443200d5a3cf7bdee4ba5a7ad1aafc320fe56ae44cc"
+    }
+  }
+}

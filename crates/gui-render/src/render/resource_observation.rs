@@ -113,3 +113,37 @@ pub use crate::geometry_admission::{
     GeometryAdmissionCounts, GeometryAdmissionRange, PreparedGeometryAdmission,
     PreparedSourceIdentities, PreparedSourceIdentity,
 };
+
+/// Borrowed state at the end of one render attempt. `Some(true)` means the
+/// frame was submitted, not presented; `Some(false)` includes upload-only or
+/// deferred acquisition. Errors and missing text observations remain explicit.
+pub struct FrameObservation<'a> {
+    pub renderer: &'a crate::Renderer,
+    pub prepared: &'a crate::PreparedScene,
+    pub board: &'a crate::RetainedScene,
+    pub schematic: Option<&'a crate::RetainedScene>,
+    pub extent: [u32; 2],
+    pub submitted_frame: Option<bool>,
+    pub error: Option<&'a anyhow::Error>,
+    pub text_observation_attempted: bool,
+}
+pub type FrameObserver = for<'a> fn(FrameObservation<'a>) -> anyhow::Result<()>;
+static FRAME_OBSERVER: std::sync::OnceLock<FrameObserver> = std::sync::OnceLock::new();
+
+/// Install before constructing native renderers. Registration retains only a
+/// function pointer. A different observer cannot silently replace the writer.
+pub fn register_frame_observer(observer: FrameObserver) -> anyhow::Result<()> {
+    if let Some(current) = FRAME_OBSERVER.get() {
+        anyhow::ensure!(
+            std::ptr::fn_addr_eq(*current, observer),
+            "frame observer already registered"
+        );
+        return Ok(());
+    }
+    FRAME_OBSERVER
+        .set(observer)
+        .map_err(|_| anyhow::anyhow!("frame observer registration raced"))
+}
+pub(crate) fn frame_observer() -> Option<FrameObserver> {
+    FRAME_OBSERVER.get().copied()
+}

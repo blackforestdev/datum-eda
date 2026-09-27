@@ -69,6 +69,9 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Prepared world geometry and source identity** — Three tests pass range/fallback validation, missing-data rejection, triangle boundaries and immutable source identity. [Evidence](geometry-admission/result.json)
   Scope: Read-only prepared-world observations; native delivery and full admission remain open.
 
+- [x] **Render-attempt observer and trace delivery controls** — Two hardware tests pass pixel parity/reuse, delivery and overflow rejection. [Evidence](frame-admission-delivery/result.json)
+  Scope: Offscreen render/writer conformance; native workloads, overhead and full admission remain open.
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.

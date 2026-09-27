@@ -338,6 +338,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             text_buffers,
             control_meshes: Default::default(),
             cold_world: Default::default(),
+            frame_observer: crate::resource_observation::frame_observer(),
             text_admission: text_admission_observation::Observer::new(
                 std::env::var_os("DATUM_RESOURCE_TRACE").is_some(),
             ),
