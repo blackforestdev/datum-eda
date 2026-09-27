@@ -14,6 +14,8 @@ use texture_generations::TextureGenerations;
 #[path = "terminal_upload.rs"]
 mod upload;
 
+const GRAPHIC_DRAW_VERTICES: u32 = 6;
+
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 struct TerminalGraphicVertex {
@@ -347,6 +349,30 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             )
     }
 
+    pub(super) fn geometry_admission(
+        &self,
+    ) -> impl Iterator<Item = super::immediate_admission::TerminalGeometryAdmission> + '_ {
+        self.draws
+            .iter()
+            .filter(|draw| {
+                draw.vertices.buffer().is_some()
+                    && self
+                        .textures
+                        .iter()
+                        .any(|texture| texture.key == draw.texture_key)
+            })
+            .map(
+                |draw| super::immediate_admission::TerminalGeometryAdmission {
+                    graphic_id: draw.texture_key.id,
+                    foreground: draw.foreground,
+                    scissor: [draw.clip.0, draw.clip.1, draw.clip.2, draw.clip.3],
+                    vertices: GRAPHIC_DRAW_VERTICES,
+                    payload_bytes: GRAPHIC_DRAW_VERTICES as usize
+                        * std::mem::size_of::<TerminalGraphicVertex>(),
+                },
+            )
+    }
+
     pub(super) fn has_layer(&self, foreground: bool) -> bool {
         self.draws.iter().any(|draw| draw.foreground == foreground)
     }
@@ -417,7 +443,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                     .expect("visible graphic uploaded")
                     .slice(..),
             );
-            pass.draw(0..6, 0..1);
+            pass.draw(0..GRAPHIC_DRAW_VERTICES, 0..1);
         }
     }
 }

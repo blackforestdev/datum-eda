@@ -149,3 +149,7 @@ pub(crate) fn frame_observer() -> Option<FrameObserver> {
 }
 
 pub use crate::gpu_surface_pass::EncodedWorldAdmission;
+
+pub use crate::immediate_admission::{
+    PreparedGridAdmission, PreparedScreenGeometry, TerminalGeometryAdmission,
+};

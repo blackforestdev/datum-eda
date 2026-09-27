@@ -121,6 +121,7 @@ impl Renderer {
         let schematic_overlay_vertices = prepared.schematic_overlay_vertices();
         let (surface_grid_vertices, surface_grid_batches) =
             surface_grid_pass::build_surface_grids(prepared);
+        self.observe_surface_grids(&surface_grid_vertices, &surface_grid_batches)?;
         self.prepare_surface_uniforms(device, queue, prepared, width, height)?;
         self.uniform_buffer.sync(
             queue,

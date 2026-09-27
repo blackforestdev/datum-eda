@@ -2,6 +2,7 @@ use super::*;
 use std::ops::Range;
 
 pub(crate) struct SurfaceGridBatch {
+    pub pane_id: datum_gui_protocol::PaneId,
     pub viewport: RectPx,
     pub vertices: Range<u32>,
 }
@@ -28,6 +29,7 @@ pub(crate) fn build_surface_grids(
         let end = vertices.len() as u32;
         if start != end {
             batches.push(SurfaceGridBatch {
+                pane_id: pass.pane_id,
                 viewport: pass.scene_viewport,
                 vertices: start..end,
             });

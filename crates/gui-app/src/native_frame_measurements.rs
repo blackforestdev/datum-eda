@@ -74,6 +74,21 @@ impl Writer {
                     "submitted_stroke_instances":strokes,"submitted_triangles":triangles,"ranges":ranges})
             }).collect::<Vec<_>>()
         });
+        let screen: Vec<_> = frame.prepared.screen_geometry_admission().into_iter().map(|g| {
+            json!({"group":g.group,"prepared_vertices":g.vertices,"payload_bytes":g.payload_bytes})
+        }).collect();
+        let grids = frame.renderer.grid_geometry_admission().map(|grids| grids.iter().map(|g| {
+            json!({"pane_id":g.pane_id.0,"viewport":[g.viewport.x,g.viewport.y,g.viewport.width,g.viewport.height],
+                "range":[g.vertices.start,g.vertices.end],"generated_vertices":g.generated_vertices,
+                "prepared_vertices":g.vertices.end-g.vertices.start})
+        }).collect::<Vec<_>>());
+        let terminal = (frame.submitted_frame == Some(true)).then(|| {
+            if frame.prepared.prepared_terminal_graphic_count() == 0 { return Vec::new(); }
+            frame.renderer.terminal_geometry_admission().map(|g| {
+                json!({"graphic_id":g.graphic_id,"foreground":g.foreground,"scissor":g.scissor,
+                    "submitted_vertices":g.vertices,"submitted_triangles":g.vertices/3,"payload_bytes":g.payload_bytes})
+            }).collect::<Vec<_>>()
+        });
         let admission = frame
             .text_observation_attempted
             .then(|| frame.renderer.text_admission_observation())
@@ -94,6 +109,8 @@ impl Writer {
             "submitted_frame":frame.submitted_frame,"render_error":frame.error.map(|e|format!("{e:#}")),
             "text_observation_attempted":frame.text_observation_attempted,"text_admission":text,
             "text_admission_failed":frame.renderer.text_admission_observation_failed(),
+            "prepared_screen_geometry":screen,"prepared_surface_grids":grids,
+            "prepared_terminal_graphics":frame.prepared.prepared_terminal_graphic_count(),"submitted_terminal_geometry":terminal,
             "glyph_preparation_workspace_overlay":glyphs,"world_panes":panes,"submitted_world_bundles":encoded_world,
             "scope":"render attempt and prepared retained-world/text; not presentation, raster coverage or complete immediate UI geometry"}))
     }
