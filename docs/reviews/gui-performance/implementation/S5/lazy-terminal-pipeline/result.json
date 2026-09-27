@@ -1,0 +1,34 @@
+{
+  "status": "Unused terminal image shader/pipeline initialization removed from cold renderers; focused correctness passes. S5 remains open.",
+  "qualification_pass": false,
+  "base_commit": "432a1e61",
+  "source_sha256": {
+    "crates/gui-render/src/render/terminal_graphics.rs": "3e4cd3af7234244947630094c401a84bb4fad406ba6b82e5093594028beda2a9",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "c5142b415aa9a31551cd3db4851566607053f6b905f9f6bfb44aae9246bb8e94"
+  },
+  "change": "Compile the terminal image shader/pipeline only after sync finds nonempty image pixels and a nonempty visible clip. Retain one pipeline thereafter. Renderer replacement starts cold with new device/layout dependencies; budgets and image/vertex retirement unchanged.",
+  "decision": "Verify that avoiding unused auxiliary/text-only terminal compilation preserves first-image rendering, cancellation/retry, warm reuse and renderer replacement. Native CPU benefit is unmeasured; do not repeat the window campaign solely for this slice.",
+  "test": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib --features visual --offline terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels -- --ignored --test-threads=1",
+    "result": "1passed;0failed;451filtered;test1.29s",
+    "scope": "Existing actual-hardware960x720/4xMSAA terminal image test: empty sync leaves pipeline absent, first image initializes it, upload cancellation and retry, warm buffer/texture reuse, clip/placement changes, close/retirement, same-device renderer replacement with exact cold/replacement pixel equality.",
+    "raw": "focused-test.log.gz",
+    "raw_sha256": "cd2ef1b7b71f9c6560f485379974f97bbe10f6485329b3a3abcf60e9f8e4246d"
+  },
+  "source_equivalence": {
+    "terminal_wgsl_sha256": "8573b96e14ad6aee4304e39bb65f0002a52c107aefd169a65058703d2d625de4",
+    "finding": "WGSL exactly equals base commit; source review confirms unchanged pipeline descriptor, blending, MSAA and draw ordering."
+  },
+  "review": {
+    "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "mode": "Independent source review, no runtime replay.",
+    "finding": "No correctness or lifetime defect found. Empty encode exits before pipeline access; replacement uses supplied device/layout/format/samples."
+  },
+  "limits": [
+    "Same-device replacement is not actual device-loss proof; fully clipped images are exercised after initialization, not as a cold negative.",
+    "Test asserts a non-CPU hardware adapter but successful captured output does not identify its model; no all-backend/scale or8xnative qualification.",
+    "First-image compilation is deferred, not eliminated. First-use cost and native warm-open CPU remain unqualified. Existing budget failures remain.",
+    "No full resource, mixed/endurance, independent runtime replay or owner UX acceptance."
+  ],
+  "preserved": "GEFN, upload-before-acquire, shader/MSAA quality, PM029/PM047 dependency authority and nonblocking resize exclusions unchanged. Fractional-line owner exception still pending; no dependency edit."
+}

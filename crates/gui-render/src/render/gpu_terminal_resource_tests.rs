@@ -22,10 +22,19 @@ fn terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels() {
     .unwrap();
     assert!(prepared.terminal_graphics.len() >= 2);
     let mut renderer = hardware_renderer(960, 720);
+    assert!(!renderer.renderer.terminal_graphics.pipeline_initialized());
+    let mut empty = prepared.clone();
+    empty.terminal_graphics.clear();
+    renderer
+        .renderer
+        .sync_terminal_graphics(&renderer.device, &renderer.queue, &empty, 960, 720)
+        .unwrap();
+    assert!(!renderer.renderer.terminal_graphics.pipeline_initialized());
     renderer
         .renderer
         .sync_terminal_graphics(&renderer.device, &renderer.queue, &prepared, 960, 720)
         .unwrap();
+    assert!(renderer.renderer.terminal_graphics.pipeline_initialized());
     let cancelled: Vec<_> = Renderer::gpu_process_allocations()
         .into_iter()
         .filter(|r| r.kind == crate::text_gpu::Kind::TerminalTexture)
@@ -132,6 +141,18 @@ fn terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels() {
         );
     }
     assert!(cold == capture_retained(&mut renderer, &prepared, &retained));
+    renderer.renderer = renderer
+        .renderer
+        .recreate_for_device(
+            &renderer.device,
+            &renderer.queue,
+            renderer.renderer.msaa_format,
+            renderer.renderer.msaa_samples,
+        )
+        .unwrap();
+    assert!(!renderer.renderer.terminal_graphics.pipeline_initialized());
+    assert!(cold == capture_retained(&mut renderer, &prepared, &retained));
+    assert!(renderer.renderer.terminal_graphics.pipeline_initialized());
 }
 
 #[test]
