@@ -238,3 +238,68 @@ fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_uploa
             + raster.reserved_bytes()
     );
 }
+
+#[test]
+#[ignore = "requires local GPU; production glyph count lifecycle"]
+fn glyph_preparation_counts_distinguish_empty_reused_and_cancelled() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let mut atlas = Atlas::new(&device);
+    let screen = super::super::budget::Budget::new(16 * 1024 * 1024);
+    let format = wgpu::TextureFormat::Rgba8UnormSrgb;
+    let mut draw = Draw::new(&device, &atlas, format, 1, screen);
+    let mut fonts = crate::load_datum_fonts();
+    let mut raster = SwashCache::new();
+    assert_eq!(draw.preparation_counts, None);
+    prepare(
+        &mut draw,
+        &device,
+        &queue,
+        &mut atlas,
+        &mut fonts,
+        &mut raster,
+        "AAAAAAAA",
+    )
+    .unwrap();
+    let counts = draw.preparation_counts.unwrap();
+    assert_eq!(counts.areas, 1);
+    assert_eq!(counts.shaped_instances, 8);
+    assert_eq!(counts.prepared_instances, 8);
+    assert_eq!(
+        counts.shaped_instances,
+        counts.row_culled_instances
+            + counts.clipped_instances
+            + counts.without_raster_instances
+            + counts.prepared_instances
+    );
+    draw.flush_uploads(&device, &queue);
+    assert_eq!(
+        draw.preparation_counts,
+        Some(counts),
+        "upload reuse preserves counts"
+    );
+    draw.cancel_preparation();
+    assert_eq!(
+        draw.preparation_counts, None,
+        "cancellation is not zero glyphs"
+    );
+    prepare(
+        &mut draw,
+        &device,
+        &queue,
+        &mut atlas,
+        &mut fonts,
+        &mut raster,
+        "",
+    )
+    .unwrap();
+    assert_eq!(draw.preparation_counts.unwrap().prepared_instances, 0);
+    assert_eq!(draw.preparation_counts.unwrap().shaped_instances, 0);
+    assert_eq!(
+        draw.replacement(&device, &atlas, format, 1)
+            .preparation_counts,
+        None
+    );
+}

@@ -1,5 +1,6 @@
 //! Read-only resource views. Cache capacities overlap scoped heap ownership;
 //! reservation peaks include pending construction and are not driver residency.
+pub use crate::text_gpu::GlyphPreparationCounts;
 use crate::text_gpu::budget::Budget;
 pub use crate::text_layout::fonts::Usage as FontCpuUsage;
 use std::sync::Arc;
@@ -67,6 +68,16 @@ impl LocalReservationObserver {
     }
 }
 impl crate::Renderer {
+    /// Workspace and overlay counts remain valid across paint reuse, but become
+    /// absent on failed/cancelled preparation and on renderer replacement.
+    /// These are preparation groups, not per-pane or complete ADM-01 admission.
+    pub fn glyph_preparation_counts(&self) -> [Option<GlyphPreparationCounts>; 2] {
+        [
+            self.text_renderer.preparation_counts,
+            self.menu_overlay_text_renderer.preparation_counts,
+        ]
+    }
+
     pub fn local_reservation_observer(&self) -> LocalReservationObserver {
         LocalReservationObserver {
             renderer_id: self.resource_owner_id(),
