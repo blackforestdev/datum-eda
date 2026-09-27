@@ -39037,7 +39037,7 @@
         "new_native_runs_executed_in_reconciliation": 0,
         "final_backend_scale_campaigns": 6,
         "exact_remaining_process_trial_count": null,
-        "reason_count_not_final": "Consumer/recipe variants and missing prescribed negative controls still need evidence-level reconciliation; six campaigns is not a claim of six remaining tests. Do not launch them with this count unresolved."
+        "reason_count_not_final": "Exact process launches depend on packing required workloads, baseline ordering and fault controls. This is a scheduling result, not a separate acceptance gate. Before each expensive batch declare its complete applicable variants, repetitions and stopping condition; no extra launches solely for separate metrics or hosts."
       },
       "contract_review": {
         "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
@@ -39070,6 +39070,18 @@
         "consumer_variants": "Apply exact contract consumer scope: T1one/two/four leaves, terminal hidden/visible, main and each real auxiliary host; both Preferences pixel/line scroll, boundaries/reversal and all specified controls. Preserve modality and native accepted dimensions. Shared correctness applies to partial panes; no resolved schematic performance claim.",
         "runs": "MET-01 three independent trials for applicable active workloads; W-IDLE3x60s; exact cycle recipes override duration. Keep baseline/candidate ordering, ten-start cold distribution and all required faults/negative controls. Credit existing adequate proof only at matching scope; do not silently collapse variants.",
         "status": "Pending stable candidate and method/defect resolution. Unsupported configuration must be recorded explicitly, not replaced by rescaling."
+      },
+      "process_and_endurance_reuse": {
+        "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+        "mode": "Read-only contract review; no native replay or acceptance.",
+        "basis": [
+          "GUI_PERFORMANCE_ACCEPTANCE_MATRIX workload definitions, MET-01, MET-06, MEM-03",
+          "GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT consumer applicability"
+        ],
+        "warm_trials": "Three repetitions remain required for cycle recipes: controls3x30 per Preferences host, windows3x30 per auxiliary host, lifecycle3x20 sequences. Cycle counts override duration, not repetitions. Clamp covers each bound; scroll covers both hosts, pixel/line, interior/both boundaries. Apply consumer variants only where relevant.",
+        "process_reuse": "Cold-start processes may continue into warm qualification after recording first use and restoring declared initial state. Distribute independent repetitions across processes where needed. A process per workload, host or metric is not required; preserve baseline ordering and separate diagnostics-off/on modes.",
+        "endurance_reuse": "MEM-03 requires200open/close cycles total, not200per auxiliary host. Three30-cycle blocks for each of3hosts give270cycles and may also satisfy the endurance count when run inside the same qualifying hour. Embed required recovery/lifecycle and mixed activity with exact recipes and isolated windows; one block cannot count as three repetitions. The hour is per admitted tier, not automatically tripled by MET-01; applicable backend/scale coverage remains required.",
+        "limits": "This does not establish complete runner coverage or a final launch total. Existing600-cycle producer proof remains credited; do not repeat600cycles as an invented minimum. Preserve original failures, PM047 accounting, required negative controls and independent replay."
       }
     }
   },
