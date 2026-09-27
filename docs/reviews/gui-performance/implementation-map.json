@@ -39443,5 +39443,28 @@
       "qualification_pass": false,
       "preserved_failed_attempts": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/result.json"
     }
+  },
+  "s5_pointer_grid_reuse": {
+    "status": "Demonstrated repeated grid construction; implementation pending",
+    "issue": "dat-pointer-grid-rebuild-hnrp",
+    "inspected_commit": "caebf66a",
+    "qualification_pass": false,
+    "finding": "gpu_frame.rs calls surface_grid_pass::build_surface_grids every full render, allocating quads, expanded vertices and batch vectors even for unchanged PreparedScene pointer redraw. Upload equality skips transfer only. PM045 GP-045-03 unchanged-dependency reuse applies.",
+    "sources": [
+      "crates/gui-render/src/render/gpu_frame.rs",
+      "crates/gui-render/src/render/surface_grid_pass.rs",
+      "crates/gui-render/src/render/coordinate_hit.rs",
+      "crates/gui-render/src/render/interaction_overlay.rs",
+      "crates/gui-render/src/render/immediate_admission.rs"
+    ],
+    "review": "Hegel / 01a0dc35-5c6f-7931-9958-f0c6962ac11e independently confirmed avoidable generation. Source review only; no tests/build/native run.",
+    "implementation_constraints": [
+      "Exact ordered pane/surface/viewport/bounds/camera/resolved-LOD dependencies; setters can mutate PreparedScene.",
+      "Preserve vertex order, batch ranges, scissors and fresh-device upload.",
+      "Admit and account capacities, keys/batches, temporary construction and replacement overlap; no partial publication on failure.",
+      "Keep per-attempt encoded flags fresh; cache reuse does not prove new generation."
+    ],
+    "verification_decision": "One cohesive affected correctness/resource batch must establish unchanged-input reuse and camera/LOD/pane mutation invalidation, exact geometry, refusal and lifetime behavior. Reuse completed shell-cache and historical pointer diagnostics. No new native run merely to reconfirm existing failures.",
+    "limits": "CPU waste proven by source, magnitude unmeasured. GPU grid draw and world rendering remain unchanged; not a CPU/GPU cap remedy claim. Existing pointer-observer-attribution already has quiet/verbose pairs, thread attribution and unreliable sampled profiling; do not repeat those without a new decision gap."
   }
 }
