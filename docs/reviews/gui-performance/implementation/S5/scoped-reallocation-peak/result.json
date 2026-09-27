@@ -1,0 +1,52 @@
+{
+  "status": "Monitored private-call realloc overlap is explicit and reaches peak/refusal accounting",
+  "qualification_pass": false,
+  "requirements": [
+    "MEM-02",
+    "ACC-02"
+  ],
+  "sources": {
+    "crates/gui-render/src/cpu_alloc.rs": "eb51df9a23a54240f3843fca0a32b9ab5e9e53aaf5c8adcd2267ded45078c8e3",
+    "crates/gui-render/src/private_text_call.rs": "824b0f805193360cf6be33f4405d74990dce30e36fb443aea0a2ce1a55b8d90b",
+    "crates/gui-render/src/private_text_call_tests.rs": "2dbc8b333d08da506b2a2243f9f26544dd66e839cf152ed1e220194ac30abcc3"
+  },
+  "problem": "System.realloc exposed only the final-size delta to the call ledger; moving-copy overlap inside System was not observable. Existing receipts cannot establish that intermediate peak.",
+  "change": "Reallocations whose allocation owner has an active monitored private call now explicitly allocate/account/copy/release under the existing ledger lock, capturing simultaneous old/new payload/header bytes. One Arc ownership reference transfers with the header. Failure keeps the old allocation. Other scoped and all unscoped reallocations retain System.realloc and their previous accounting policy.",
+  "verification": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-render --lib -- cpu_alloc::tests cpu_alloc::calls::tests cpu_alloc::heap::tests --test-threads=1",
+    "passed": 13,
+    "failed": 0,
+    "ignored": 1,
+    "filtered": 338,
+    "build_seconds": null,
+    "test_seconds": 0.44,
+    "raw": "tests.log.gz",
+    "raw_sha256": "8350f2dbc99b90a2f4d99e6c3394c74ddffd30f86f44e1f7526d367e6160bd47",
+    "known_byte_control": "128-byte payload grows to256: both headers/payloads count simultaneously. Final264bytes fits300; overlap400fails300andpasses512. Contents and final release reconcile.",
+    "reused_controls": "Alignment, invalid-layout allocation failure, growth/shrink/cross-thread release, simultaneous host/process peaks, font refusal/retry, sharing and retained permit transfer. Ignored full-table exhaustion proof not repeated. Existing alignment/invalid-layout/growth/shrink tests exercise preserved ordinary scoped fallback; new active-call test verifies preserved payload and overlap/refusal, not forced OS allocation failure.",
+    "source_health": "2587 files passed",
+    "build_duration": "See raw log; incremental affected batch after scope correction",
+    "prior_attempt": {
+      "raw": "initial-broad-policy-tests.log.gz",
+      "raw_sha256": "a60ca63369418f33a56d5ad616fb0f2c65944533abaeebe6d078f875841b18c6",
+      "passed": 13,
+      "ignored": 1,
+      "build_seconds": 81,
+      "test_seconds": 1.97,
+      "disposition": "Passing initial implementation narrowed after review to active monitored owners; same affected batch repeated because implementation changed, not for qualification sampling."
+    }
+  },
+  "review": {
+    "reviewer": "Hegel / 01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "result": "No concrete memory-safety/accounting-order defect found. Reviewer verified final owner-window predicate under the same lock and unchanged fallback outside active calls. Forced moves within those windows change cost/peaks; native resource/performance proof remains required.",
+    "independent_native_replay": false
+  },
+  "limits": [
+    "These are real peaks of the revised implementation, not reconstructed historical System.realloc peaks. Existing native receipts are not upgraded.",
+    "Within monitored owner windows every realloc now copies, including shrink/same-size and pre-existing blocks. Possible in-place reuse is lost, temporary space increases, and copying holds the shared ledger lock. Previously successful requests may fail allocation or unchanged budget limits. Outside monitored owner windows behavior is preserved.",
+    "No expansion of PM047 monitored-call exception to other Datum-controlled allocations; their pre-admission requirements remain. System allocator slack/native mappings are still separate.",
+    "Retained input/output versus transient scratch classification, complete native instantaneous resources and observer overhead remain open.",
+    "No release rebuild, native performance/resource campaign or independent replay. Saved CPU/GPU failures remain open."
+  ],
+  "rejected_optimization": "Read-only inspection ruled out idle queue polling: QueueOwner::progress returns before device poll when completed equals submitted; measurement Host::poll returns immediately when disabled. No queue-service edit or test was made."
+}

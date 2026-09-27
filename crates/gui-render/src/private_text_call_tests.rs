@@ -218,3 +218,41 @@ fn failed_font_call_never_turns_into_an_absent_raster_glyph() {
     drop((actual, expected, raster, fonts));
     assert_eq!(host.used(), 0);
 }
+
+#[test]
+fn realloc_overlap_is_counted_and_rejects_even_when_final_storage_fits() {
+    for limit in [300, 512] {
+        let scope = Scope::new("private-call-realloc-overlap");
+        let host = Budget::new(limit);
+        let process = Budget::new(1024);
+        let mut payload = scope.with(|| vec![7_u8; 128]);
+        let initial = scope.usage().payload_bytes + scope.usage().tracking_bytes;
+        let call = Call::begin(&scope, host.clone(), process.clone(), 0, 0).unwrap();
+        payload.reserve_exact(128);
+        assert_eq!(payload.capacity(), 256);
+        assert!(payload.iter().all(|byte| *byte == 7));
+        let final_bytes = scope.usage().payload_bytes + scope.usage().tracking_bytes;
+        assert!(final_bytes < limit);
+        let result = call.finish(final_bytes, None, None);
+        let report = if limit == 300 {
+            result.err().unwrap().downcast_ref::<Overrun>().unwrap().0
+        } else {
+            let (permits, report) = result.unwrap();
+            drop(permits);
+            report
+        };
+        assert_eq!(report.peak_bytes, initial + final_bytes);
+        assert_eq!(report.host_peak_bytes, initial + final_bytes);
+        assert_eq!(report.process_peak_bytes, initial + final_bytes);
+        assert_eq!(report.final_bytes, final_bytes);
+        assert_eq!(report.exceeded, limit == 300);
+        drop(payload);
+        assert_eq!(scope.usage().allocations, 0);
+        assert_eq!(
+            scope.usage().payload_bytes + scope.usage().tracking_bytes,
+            0
+        );
+        assert_eq!(host.used(), 0);
+        assert_eq!(process.used(), 0);
+    }
+}

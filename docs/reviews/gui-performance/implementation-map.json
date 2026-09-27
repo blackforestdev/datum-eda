@@ -39090,15 +39090,30 @@
         "requirement_ids": [],
         "scope": "Affected helper regression and source equivalence only; not native Runtime routing, allocation-free input or CPU cap acceptance.",
         "carry_forward": "Reuse this helper evidence; carry saved native failures forward without handoff-driven repetition."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Monitored private-call realloc overlap accounting and refusal",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/scoped-reallocation-peak/result.json",
+        "evidence_field": "verification and limits",
+        "evidence_sha256": "6a74ab3f1862379d4543942736707bf2eb1fd5597370fdbf067d3f1e5248adfb",
+        "validated_result": "Final guarded batch13passed,1existingignored after owner-window scope correction. Exact overlap exceeds cap despite compliant final size; positive larger-cap transfer and existing allocator/concurrent/font controls pass.",
+        "requirement_ids": [
+          "MEM-02",
+          "ACC-02"
+        ],
+        "scope": "Allocator/call-guard proof and source safety review; not native caps, scratch classification or performance acceptance. Forced moves within active monitored owner windows change cost and peaks.",
+        "carry_forward": "Reuse affected controls. Preserve historical native results at historical scope; final candidate requires native resource/performance qualification."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 38,
-      "evidence_hashes_checked": 38,
-      "matching_hashes": 38,
+      "completed_groups": 39,
+      "evidence_hashes_checked": 39,
+      "matching_hashes": 39,
       "native_runs_performed": 0,
-      "meaning": "One affected17test helper batch; previous groups retained. No native CPU acceptance added."
+      "meaning": "Final affected allocator/call-guard batch13passed,1ignored; initial broader-policy passing batch retained and superseded after source scope correction. Previous38scoped groups retained; no native acceptance added."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39392,6 +39407,12 @@
     "evidence": "docs/reviews/gui-performance/implementation/S5/camera-route-layout/result.json",
     "sha256": "128fc96e9c27b77fd682e6c23c6053bcf4d575a08ad98d2fde6964f437824e8f",
     "status": "Duplicate pointer camera layout construction removed; native CPU acceptance remains open",
+    "qualification_pass": false
+  },
+  "s5_scoped_reallocation_peak": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/scoped-reallocation-peak/result.json",
+    "sha256": "6a74ab3f1862379d4543942736707bf2eb1fd5597370fdbf067d3f1e5248adfb",
+    "status": "Monitored private-call realloc overlap is explicit and reaches peak/refusal accounting",
     "qualification_pass": false
   }
 }

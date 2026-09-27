@@ -137,7 +137,11 @@ impl Ledger {
         }
         bytes
     }
-    fn refresh(&mut self) {
+    pub(super) fn observes(&self, owner: u64) -> bool {
+        self.calls.iter().any(|call| call.owner == owner)
+    }
+
+    pub(super) fn refresh(&mut self) {
         for index in 0..self.calls.len() {
             let call = &self.calls[index];
             let host = self.used(&call.host);

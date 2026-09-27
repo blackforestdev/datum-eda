@@ -236,18 +236,44 @@ unsafe impl GlobalAlloc for Allocator {
                 System.realloc(base, combined, next.size())
             } else {
                 calls::transaction(|ledger| {
-                    let resized = System.realloc(base, combined, next.size());
+                    // Outside monitored private construction preserve the
+                    // existing reallocation/admission policy.
+                    if !ledger.observes((*owner).id) {
+                        let resized = System.realloc(base, combined, next.size());
+                        if !resized.is_null() {
+                            if new_size >= layout.size() {
+                                (*owner).add_payload(new_size - layout.size());
+                            } else {
+                                (*owner)
+                                    .payload
+                                    .fetch_sub((layout.size() - new_size) as u64, Ordering::AcqRel);
+                            }
+                            ledger.allocation((*owner).id, new_size as u64, layout.size() as u64);
+                        }
+                        return resized;
+                    }
+                    // System.realloc may copy through an unobservable old+new
+                    // overlap. Own the move so the private-call peak includes
+                    // both blocks before releasing the original allocation.
+                    let resized = System.alloc(next);
                     if resized.is_null() {
                         return resized;
                     }
-                    if new_size >= layout.size() {
-                        (*owner).add_payload(new_size - layout.size());
-                    } else {
-                        (*owner)
-                            .payload
-                            .fetch_sub((layout.size() - new_size) as u64, Ordering::AcqRel);
-                    }
-                    ledger.allocation((*owner).id, new_size as u64, layout.size() as u64);
+                    (*owner).add_payload(new_size);
+                    (*owner).overhead.fetch_add(offset as u64, Ordering::AcqRel);
+                    (*owner).allocations.fetch_add(1, Ordering::AcqRel);
+                    ledger.allocation((*owner).id, (new_size + offset) as u64, 0);
+                    ledger.refresh();
+                    // The one owning Arc reference transfers with the header;
+                    // no observer can access the intermediate block here.
+                    ptr::copy_nonoverlapping(base, resized, offset + layout.size().min(new_size));
+                    System.dealloc(base, combined);
+                    (*owner)
+                        .payload
+                        .fetch_sub(layout.size() as u64, Ordering::AcqRel);
+                    (*owner).overhead.fetch_sub(offset as u64, Ordering::AcqRel);
+                    (*owner).allocations.fetch_sub(1, Ordering::AcqRel);
+                    ledger.allocation((*owner).id, 0, (layout.size() + offset) as u64);
                     resized
                 })
             };
