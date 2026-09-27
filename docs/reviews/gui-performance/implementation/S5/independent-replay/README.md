@@ -95,3 +95,10 @@ resident fields or incomplete reads fail with partial evidence preserved. The
 runner records a separate observation end time after CPU reads and before device
 release. This integration is source-reviewed but has not been run natively;
 historical trials remain unchanged and do not gain driver-memory evidence.
+
+Optional private allocation events are prepared in
+`../private-allocation-lifetimes/result.json`. They are not enabled by this
+runner: existing summary analyzers reject the new transition. Implement the
+allocation-aware classifier before final use; this is not scratch-accounting
+acceptance. Allocation records use only the embedded report identity; their
+current live bytes come from `scope_live_bytes`, and call peaks from Finished.
