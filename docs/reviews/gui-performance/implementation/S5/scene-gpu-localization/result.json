@@ -74,5 +74,17 @@
     "Exact before/after pixels/focus and changed-position receipts are not continuous path/hit, display latency or owner UX acceptance.",
     "No full resource/accounting/endurance/otherbackend-scale or independent replay acceptance."
   ],
-  "preserved": "GEFN, upload-before-acquire, dependencies/licenses, prototypes, numerical caps and nonblocking resize exclusions unchanged."
+  "preserved": "GEFN, upload-before-acquire, dependencies/licenses, prototypes, numerical caps and nonblocking resize exclusions unchanged.",
+  "source_investigation": {
+    "inspected_commit": "59022d30",
+    "findings": [
+      "Composed world uses cached bundles with live camera bindings and per-pane scissors; adjacent compatible draws already batch without reordering. No duplicate composed plus fallback world draw: fallback is guarded by empty surface passes.",
+      "Stroke quads are oriented capsule bounds; per-sample discard preserves round-cap antialiasing. Removing it is not an authorized quality-preserving optimization.",
+      "World triangle helper encodes [a,b,c,c], expanded into six vertices including a zero-area triangle. This is avoidable vertex work, but the timestamp interval does not establish vertex processing as the bottleneck."
+    ],
+    "fixture_check": "Native F-DOA board contains six drilled pads. Their 128-triangle drill fans imply2304 redundant submitted vertices in this family alone; not a complete retained-scene count or timing attribution.",
+    "reviewer": "Distinct read-only reviewer agreed triangle compaction is actionable waste but not a demonstrated material GPU remedy. No implementation, benchmark or native replay by reviewer.",
+    "disposition": "Do not repeat color conversion trials, remove per-sample antialiasing, or launch a triangle-compaction benchmark on this evidence. No production correction selected from this investigation. GPU budget failure remains open.",
+    "next_evidence_need": "A causal production cost beyond already-reused encoding is still needed before selecting a GPU optimization. Retain existing raw run for analysis; do not rerun it merely to reconfirm the failure."
+  }
 }

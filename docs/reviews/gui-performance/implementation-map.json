@@ -38330,9 +38330,9 @@
     "scene_gpu_localization": {
       "status": "Diagnostic complete; world draw interval is largest measured contributor; S5 incomplete",
       "evidence": "docs/reviews/gui-performance/implementation/S5/scene-gpu-localization/result.json",
-      "evidence_sha256": "25320434d2de7954e3a798fb2da4d6bfc7d089f60c8d5031d156eb8e6288dce8",
+      "evidence_sha256": "68622d518614d8987638b8c970b185c9d8c368a0fa6ce8e1dbea6d7c687acf72",
       "qualification_pass": false,
-      "next_decision": "Inspect composed world rendering for a bounded production defect; do not repeat this diagnostic or adopt a speculative shader change."
+      "next_decision": "Source inspection ruled out duplicate composed/fallback draws and an unproven triangle-compaction experiment; no demonstrated GPU remedy selected. Preserve failure and existing evidence."
     }
   },
   "s5_window_qualification_batch": {
