@@ -24,13 +24,13 @@ struct CameraViewport {
 }
 
 impl Runtime {
-    /// Resolve the FOCUSED pane to its `(slot, bounds, viewport)` — one path for board,
-    /// schematic, and any future pane, collapsing the old per-surface fork. `None` = a
-    /// focused pane with no resolved scene; camera handlers then refuse to act.
-    fn camera_viewport_for_pane(&self, pane: datum_gui_protocol::PaneId) -> Option<CameraViewport> {
-        let panes = self
-            .current_layout()
-            .viewport_panes(&self.workspace().ui.layout);
+    /// Resolve a selected pane against the caller's layout — one path for board,
+    /// schematic, and future panes. An unresolved scene refuses camera input.
+    fn camera_viewport_for_pane(
+        &self,
+        panes: &datum_gui_render::ViewportPanes,
+        pane: datum_gui_protocol::PaneId,
+    ) -> Option<CameraViewport> {
         let leaf = panes.panes.iter().find(|leaf| leaf.id == pane)?;
         let bounds = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)?
             .bounds
@@ -47,11 +47,19 @@ impl Runtime {
     }
 
     fn focused_viewport(&self) -> Option<CameraViewport> {
-        self.camera_viewport_for_pane(self.workspace().ui.layout.focused)
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        self.camera_viewport_for_pane(&panes, self.workspace().ui.layout.focused)
     }
 
     fn pointer_viewport(&self, pos: (f32, f32)) -> Option<CameraViewport> {
-        self.camera_viewport_for_pane(self.pane_at_screen(pos.0, pos.1)?)
+        // Locate and resolve against one layout: rebuilding it here duplicates
+        // pane/divider allocations on every pointer event, even clamped zoom.
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        self.camera_viewport_for_pane(&panes, panes.leaf_at(pos.0, pos.1)?)
     }
 
     /// A mutable handle to the camera behind `slot` — the active board camera

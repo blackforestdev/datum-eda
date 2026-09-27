@@ -1,0 +1,23 @@
+{
+  "status": "Duplicate pointer camera layout construction removed; native CPU acceptance remains open",
+  "qualification_pass": false,
+  "source": "crates/gui-app/src/runtime_camera_pane.rs",
+  "source_sha256": "82a0c24585c0183fb1caac53c2d36208081aba7c6dcdfadab768b1c0677c0cf1",
+  "change": "pointer_viewport now passes the same ViewportPanes used for leaf_at into camera_viewport_for_pane. Focused routing still resolves the focused pane from one fresh layout. Shared tiling, selection, active-board choice, bounds and camera math are unchanged.",
+  "proof": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-app --bin datum-gui -- runtime_camera_pane::zoom::tests pane_cameras::tests pane_grid_lod::tests --test-threads=1",
+    "passed": 17,
+    "failed": 0,
+    "filtered": 403,
+    "build_seconds": 24.49,
+    "test_seconds": 0.0,
+    "raw": "tests.log.gz",
+    "raw_sha256": "d623bfac3e243c707d23808bfdade62d8c3d8a294b8bd0c5ec7a0bd86d244276",
+    "source_health": "2587 files passed"
+  },
+  "limits": [
+    "Existing tests cover clamp/anchor arithmetic, warm pane camera ownership and grid-camera state; they do not directly execute Runtime pointer routing or native input. Route equivalence was inspected in source.",
+    "One layout still allocates pane/divider storage per routing call. No allocation-free input or quantified speedup claim.",
+    "No native rerun or release build. All saved clamp CPU failures remain failures; final stable-candidate qualification remains required."
+  ]
+}
