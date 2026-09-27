@@ -39506,5 +39506,12 @@
       "status": "All three current pointer and all six clamp CPU intervals exceed caps; behavior and clean exits preserved",
       "qualification_pass": false
     }
+  },
+  "s5_callback_cpu_attribution": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-observer-attribution/callback-phases/result.json",
+    "sha256": "c1a8c3eedaffa437092a44c74834b18d5ea1896e482ee46882762f78e2d86ab5",
+    "status": "One callback attribution diagnostic completed; substantial residual remains unattributed",
+    "qualification_pass": false,
+    "decision": "Do not select camera arithmetic or hover lookup as the primary CPU remedy from these results. Inspect renderer/event-round and repeated native event traffic using existing source evidence. Do not rerun this diagnostic unchanged or subtract estimated probe overhead from quiet qualification."
   }
 }

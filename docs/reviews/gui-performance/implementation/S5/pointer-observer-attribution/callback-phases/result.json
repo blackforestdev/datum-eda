@@ -1,0 +1,156 @@
+{
+  "status": "One callback attribution diagnostic completed; substantial residual remains unattributed",
+  "qualification_pass": false,
+  "candidate": {
+    "source_commit": "b285e6717bdcbe807963d7b48793f0077e1577d2",
+    "production_patch_sha256": "4605ab933a4c364b7e75d556b92f5a5ad8a8db56c6e4c4752686193b4c932033",
+    "source_bindings_sha256": "d7c07d089af1f43384d7a1026440f27869fa60592300f05273c708cae0b0871f",
+    "binary": "target/pm045-independent-replay-artifacts/candidate-callback-cpu-e439e76d2621-datum-gui",
+    "binary_sha256": "e439e76d26219780e4c6c21677ea12c903e363e6e0535686149c50657fbed5d4",
+    "status": "Callback CPU diagnostic only; base commit plus recorded patch"
+  },
+  "command": "python3 target/pm045-evidence-work/callback-cpu/campaign.py",
+  "analysis_command": "python3 target/pm045-evidence-work/callback-cpu/analyze.py",
+  "analysis": {
+    "diagnostic_only": true,
+    "qualification_pass": false,
+    "run": "/home/bfadmin/Documents/datum-eda/target/pm045-evidence-work/callback-cpu/pm045-callback-cpu-dw41mgyo",
+    "intervals": [
+      {
+        "name": "pointer",
+        "elapsed_seconds": 30.111746863,
+        "gui_process_cpu_ms": 6302.789865,
+        "family_cpu_ms": 6302.79,
+        "phases": {
+          "window_other": {
+            "count": 8565,
+            "wall_ms": 97.82106300000045,
+            "process_ms": 93.5459349999997,
+            "thread_ms": 78.4238190000002
+          },
+          "event_round": {
+            "count": 10775,
+            "wall_ms": 2643.7469759999967,
+            "process_ms": 2706.3520579999913,
+            "thread_ms": 2583.4914879999997
+          },
+          "window_pointer": {
+            "count": 1280,
+            "wall_ms": 90.05906100000016,
+            "process_ms": 87.29403199999996,
+            "thread_ms": 81.05221400000012
+          },
+          "prepare": {
+            "count": 1265,
+            "wall_ms": 17.392681000000017,
+            "process_ms": 17.050036999999985,
+            "thread_ms": 16.37013000000001
+          },
+          "acquire": {
+            "count": 1265,
+            "wall_ms": 223.20769499999997,
+            "process_ms": 218.5232339999998,
+            "thread_ms": 217.95536999999968
+          },
+          "renderer": {
+            "count": 1265,
+            "wall_ms": 1485.629463000001,
+            "process_ms": 1480.7209669999982,
+            "thread_ms": 1476.1769389999993
+          },
+          "present": {
+            "count": 1265,
+            "wall_ms": 110.40180000000014,
+            "process_ms": 110.78041799999997,
+            "thread_ms": 110.65604599999999
+          }
+        },
+        "disjoint_top_level_thread_ms": 2742.967521,
+        "unattributed_gui_process_cpu_ms": 3559.8223439999997,
+        "limit": "Top-level means observed window callbacks plus event_round. Residual includes probe output, uninstrumented callbacks, backend and other GUI threads; boundary skew is not removed. Nested phases must not be added."
+      },
+      {
+        "name": "minimum",
+        "elapsed_seconds": 30.070949534,
+        "gui_process_cpu_ms": 1345.113337,
+        "family_cpu_ms": 1345.113,
+        "phases": {
+          "window_other": {
+            "count": 3600,
+            "wall_ms": 67.63004999999994,
+            "process_ms": 63.4187870000002,
+            "thread_ms": 51.025206999999945
+          },
+          "window_wheel": {
+            "count": 1800,
+            "wall_ms": 42.70877200000007,
+            "process_ms": 41.21636399999999,
+            "thread_ms": 38.3380749999999
+          },
+          "event_round": {
+            "count": 1816,
+            "wall_ms": 35.172256999999966,
+            "process_ms": 34.32291399999999,
+            "thread_ms": 32.83617300000004
+          }
+        },
+        "disjoint_top_level_thread_ms": 122.19945499999989,
+        "unattributed_gui_process_cpu_ms": 1222.913882,
+        "limit": "Top-level means observed window callbacks plus event_round. Residual includes probe output, uninstrumented callbacks, backend and other GUI threads; boundary skew is not removed. Nested phases must not be added."
+      },
+      {
+        "name": "maximum",
+        "elapsed_seconds": 30.070754154,
+        "gui_process_cpu_ms": 1315.377914,
+        "family_cpu_ms": 1315.378,
+        "phases": {
+          "window_other": {
+            "count": 3600,
+            "wall_ms": 66.77810899999979,
+            "process_ms": 62.61481800000013,
+            "thread_ms": 50.478945000000074
+          },
+          "window_wheel": {
+            "count": 1800,
+            "wall_ms": 41.772826000000094,
+            "process_ms": 40.617500000000035,
+            "thread_ms": 37.74093599999999
+          },
+          "event_round": {
+            "count": 1811,
+            "wall_ms": 34.25432100000001,
+            "process_ms": 33.46611300000001,
+            "thread_ms": 31.983323000000084
+          }
+        },
+        "disjoint_top_level_thread_ms": 120.20320400000014,
+        "unattributed_gui_process_cpu_ms": 1195.1747099999998,
+        "limit": "Top-level means observed window callbacks plus event_round. Residual includes probe output, uninstrumented callbacks, backend and other GUI threads; boundary skew is not removed. Nested phases must not be added."
+      }
+    ],
+    "normal_exit": true,
+    "display_restored": true,
+    "limits": [
+      "Scope-exit records selected by log byte offsets include completion-boundary skew. Not exact interval accounting.",
+      "Probe clock reads and output add substantial cost; outer phases include nested probe logging while own final logging is outside their end timestamp. No overhead subtraction from quiet qualification.",
+      "No statistical profile, backend-exclusive cost, performance pass or independent native replay."
+    ]
+  },
+  "archive": "docs/reviews/gui-performance/implementation/S5/pointer-observer-attribution/callback-phases/raw.tar.gz",
+  "archive_sha256": "153e9d4468225d327078314a133a8e5a482a7f0531cd60f7f8bc1b0e8493e6d2",
+  "index": "docs/reviews/gui-performance/implementation/S5/pointer-observer-attribution/callback-phases/raw-index.json",
+  "verified_archive_members": 170,
+  "verification": "Six-line opt-in probe placement built successfully in22.72s; source health2590 passed. One fixed diagnostic only, no retries. Exact pointer endpoint/clamp unchanged pixels/reversal and normal shutdown/display restoration preserved; all campaign and per-run pins held. No added unit tests for placement of the existing probe.",
+  "review": "Hegel found no material production defect. Confirmed top-level window/event_round scope ordering; nested phases not additive. Completion-byte boundaries include skew. Own final log formatting/output lies outside measured probe duration; nested logging lies inside parents. Source review, not independent replay.",
+  "decision": "Do not select camera arithmetic or hover lookup as the primary CPU remedy from these results. Inspect renderer/event-round and repeated native event traffic using existing source evidence. Do not rerun this diagnostic unchanged or subtract estimated probe overhead from quiet qualification.",
+  "limits": [
+    "Window-wheel bodies take about38ms per30secondclamp interval; all observed top-level callback bodies total about120ms, while instrumented GUI process totals exceed1300ms. This does not establish quiet costs or their rank.",
+    "Residual includes own probe writes, uninstrumented callbacks/event-loop work, other GUI threads and boundary skew. Family CPU additionally includes descendants. It cannot establish driver-exclusive cost.",
+    "Pointer:1280window_pointer callbacks;1265renderer probes. Phase counts are scoped diagnostic receipts, not full semantic action/presentation/zero-work acceptance.",
+    "No numerical cap, full GPU/resource/endurance/backend-scale, final distinct replay or owner UX acceptance. All quiet failures in grid-reuse/native-cpu remain authoritative at their scope."
+  ],
+  "source": {
+    "crates/gui-app/src/app_native_events.rs": "ecb7560aeb60f20b2a67501496aafb2ec01ecef21d6b6974cf6779289c021716",
+    "crates/gui-app/src/phase_probe.rs": "e27c820d145881b14cc087ba2e1628e7bf46d715afbb407fc4a4eef3d14176dc"
+  }
+}
