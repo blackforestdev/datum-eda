@@ -2197,7 +2197,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open. Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open. Default Wayland native close crash reproduced twice and corrected by keeping window fields alive through all GPU field drops; all four Wayland and X11 host regressions pass (s1_native_window_lifetime_work). Complete driver-memory and fault/endurance qualification remain open. Eight existing Wayland/X11 healthy traces now reconcile physical attachment payload, allocation identity, sampled per-host current/retiring bounds and zero final references. Main X11 same-extent successive presentations reuse the allocation; auxiliary warm proof and complete resource/driver/fault qualification remain separate (s1_native_attachment_reconciliation).",
+        "status": "Partial LF-07: existing lifetime/ticket/retirement proof retained. New six-case X11 native auxiliary close-after-own-submit proof passes actual production callback hold, strong-window-capture negative, healthy same-epoch post-close dispatch and ledger retirement. Driver memory, complete close budgets and remaining backend/scale/fault qualification remain open.",
         "id": "proof_lf_07",
         "positive": "Close after submit before callback",
         "negative_control": "Capture strong native-host owner in callback",
@@ -2205,11 +2205,13 @@
         "executed_component_tests": [
           "completion_callback_keeps_closed_host_accounting_until_gpu_completion",
           "closed_host_releases_ticket_but_not_outstanding_gpu_ownership",
-          "closed_attachment_retirement_cannot_release_a_later_host_submission"
+          "closed_attachment_retirement_cannot_release_a_later_host_submission",
+          "gui_runtime_support::native_surface_transaction::close_after_submit_tests::auxiliary_close_after_own_submit_releases_host_before_completion_and_detects_capture"
         ],
         "atomic_device_staging_evidence": "docs/reviews/gui-performance/implementation/S1/atomic-device-staging/receipt.json",
         "atomic_device_staging_result": "Default replacement stages all live hosts before Main publication. Three actual auxiliary paths reject epoch 3 while retaining epoch 1, drop both staged transactions with zero acquisition/submission, then F5 commits epoch 5 and presents current extent; workspace/terminal state and Main teardown checks pass. Full requirement qualification remains open.",
-        "pending_queue_close": "Four native X11 cases close with receipt 1 unpublished: Main after submit; auxiliaries before their own configuration/submission, followed by Main close. All exit zero, with no lifecycle work after owner drop and Main window reference released. This is publication-hold shutdown evidence, not actual callback-after-close or memory-budget qualification."
+        "pending_queue_close": "Four native X11 cases close with receipt 1 unpublished: Main after submit; auxiliaries before their own configuration/submission, followed by Main close. All exit zero, with no lifecycle work after owner drop and Main window reference released. This is publication-hold shutdown evidence, not actual callback-after-close or memory-budget qualification.",
+        "callback_lifetime_evidence": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-07/result.json",
       "acceptance_rule": "No late redraw/configure; live resources retire after GPU completion; close memory budgets pass.",
@@ -10049,7 +10051,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Current source call-site inventory reconciled with existing S1-S4 host/renderer adoption proof; specific competing-private-path negative and complete runtime coverage remain unqualified.",
+        "status": "Source call-site inventory and existing shared adoption proof reconciled; auxiliary own-submit close/callback strong-capture gap now has six-case native proof. Competing-private-path negative and complete runtime coverage remain unqualified.",
         "id": "proof_end_03",
         "positive": "Enumerate configure/acquire/present/submit/redraw/allocation/close calls",
         "negative_control": "Leave one consumer on competing private path",
@@ -10106,9 +10108,10 @@
       },
       "s5_adoption_reconciliation": {
         "evidence": "docs/reviews/gui-performance/implementation/S5/END-03/result.json",
-        "evidence_sha256": "dcfa5297e06eb0b91a600aa166c91ef8ed8a0fcbcd48a39c80277cba62414087",
+        "evidence_sha256": "c45083fc4c38b9d033fc6001b0ab147dc58681c69933b076fc0a4cb127ec4375",
         "qualification_pass": false,
-        "new_native_runs": 0
+        "new_native_runs": 0,
+        "callback_lifetime_evidence": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json"
       }
     },
     {
@@ -38984,15 +38987,29 @@
         "requirement_ids": [],
         "scope": "X11/1x bounded input regression only, not full W-CLAMP or numerical acceptance.",
         "carry_forward": "Reuse this behavior evidence across handoffs; no repeated batch solely for new session. CPU failure and required final independent replay remain."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "X11 auxiliary close-after-own-submit callback lifetime and strong-capture negative",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json",
+        "evidence_field": "cases and method",
+        "evidence_sha256": "bea14c89ab640545806b666db6ff705117cbec1175c39b98ae7248bfc8637414",
+        "validated_result": "3normal+3negative cases pass; own presented receipt held, native close received, retention negative detected, healthy same-epoch dispatch has no closed-host scheduler/work, ledger retired.",
+        "requirement_ids": [
+          "LF-07"
+        ],
+        "scope": "Global/Project/New X11/1x. No driver-memory/full close-budget/otherbackend-scale, independent replay or full LF-07 acceptance.",
+        "carry_forward": "Credit this completed callback gap. Do not rerun solely for handoff; affected changes and final independent replay remain separate requirements."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 33,
-      "evidence_hashes_checked": 33,
-      "matching_hashes": 33,
-      "native_runs_performed": 3,
-      "meaning": "Previous32groups preserved; one bounded native input behavior group added. CPU failure remains explicit; no S5 or parent requirement acceptance."
+      "completed_groups": 34,
+      "evidence_hashes_checked": 34,
+      "matching_hashes": 34,
+      "native_runs_performed": 1,
+      "meaning": "One cohesive native test contains3positive+3negative auxiliary cases; prior33groups retained. Full LF-07/S5 acceptance remains separate."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39029,16 +39046,17 @@
         "specification_record_row_count": 15,
         "source": "Derive from original requirements[].qualification_scope; retain HP05-02 idle resources as mixed scope."
       },
-      "reuse": "All33 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
+      "reuse": "All34 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
       "before_native_execution": [
         {
-          "action": "Reuse END-03 current source inventory and existing S1-S4 ownership proof. Remaining controls: competing private consumer path; auxiliary callback-after-own-submit close/strong-host-capture; END-04 future-consumer registration/private-scheduler rejection. Preserve each predicate and consolidate controls where production ownership overlaps.",
+          "action": "Reuse END-03 source inventory, S1-S4 shared ownership proof and the six-case native auxiliary own-submit close/callback negative. Remaining controls: competing private consumer path and END-04 future-consumer registration/private-scheduler rejection. Consolidate where production ownership overlaps without dropping predicates.",
           "requirements": [
             "END-03",
             "END-04"
           ],
           "new_native_runs": 0,
-          "evidence": "docs/reviews/gui-performance/implementation/S5/END-03/result.json"
+          "evidence": "docs/reviews/gui-performance/implementation/S5/END-03/result.json",
+          "callback_lifetime_evidence": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json"
         },
         {
           "action": "Finish admission/accounting/input/observer methods using existing controls; inspect saved traces before adding instrumentation. Fractional wheel/scroll input (not a blanket distinct-pointer-rate rule), exited-client GPU endpoints, actual instantaneous resource incidence and observer overhead remain unresolved. Each new method proof must identify the missing original predicate.",

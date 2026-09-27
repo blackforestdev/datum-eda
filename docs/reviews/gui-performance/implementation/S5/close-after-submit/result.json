@@ -1,0 +1,124 @@
+{
+  "status": "Auxiliary close-after-own-submit callback lifetime and strong-host-capture negative passed; full LF-07 remains partial",
+  "qualification_pass": false,
+  "source_base_commit": "3299a1fe",
+  "test": "gui_runtime_support::native_surface_transaction::close_after_submit_tests::auxiliary_close_after_own_submit_releases_host_before_completion_and_detects_capture",
+  "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-app --bin datum-gui auxiliary_close_after_own_submit_releases_host_before_completion_and_detects_capture -- --ignored --test-threads=1 --show-output",
+  "result": "1 passed,419filtered;13.00s final compilation,9.94s runtime",
+  "cases": [
+    {
+      "host": "0",
+      "negative": "false",
+      "serial": "4",
+      "host_released_before_callback": "true",
+      "callbacks": "2",
+      "no_late_work": "true",
+      "retired": "true"
+    },
+    {
+      "host": "1",
+      "negative": "false",
+      "serial": "7",
+      "host_released_before_callback": "true",
+      "callbacks": "2",
+      "no_late_work": "true",
+      "retired": "true"
+    },
+    {
+      "host": "2",
+      "negative": "false",
+      "serial": "10",
+      "host_released_before_callback": "true",
+      "callbacks": "2",
+      "no_late_work": "true",
+      "retired": "true"
+    },
+    {
+      "host": "0",
+      "negative": "true",
+      "serial": "13",
+      "host_released_before_callback": "false",
+      "callbacks": "2",
+      "no_late_work": "true",
+      "retired": "true"
+    },
+    {
+      "host": "1",
+      "negative": "true",
+      "serial": "16",
+      "host_released_before_callback": "false",
+      "callbacks": "2",
+      "no_late_work": "true",
+      "retired": "true"
+    },
+    {
+      "host": "2",
+      "negative": "true",
+      "serial": "19",
+      "host_released_before_callback": "false",
+      "callbacks": "2",
+      "no_late_work": "true",
+      "retired": "true"
+    }
+  ],
+  "method": "Real App native hosts on X11. Warm host before arming test-only shared-queue hold; require its own presented-frame serial greater than published completion. Wgpu delivery stores the untouched production closure, never fabricates completion. Entire queue epoch is held to prevent later max-watermark bypass. Send real X11 WM_DELETE_WINDOW client message through existing helper; actual production WindowEvent handler closes host. Identical weak-window oracle accepts normal closure and rejects deliberate strong-window capture in held callback. Poll backend, release delivered closures outside mutex, then pump healthy same-epoch production dispatch for250ms while asserting no scheduler registration or counter advance for closed host and ledger retirement.",
+  "backend": "X11/Xwayland Vulkan, Intel HD Graphics P630 (KBL GT2), Intel open-source Mesa driver25.0.7-2+deb13u1; native.log.gz preserves identity.",
+  "fixture": {
+    "path": "/tmp/datum-gui-candidate-boundary-v3/DOA2526.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "engine_sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+  "test_binary": "target/debug/deps/datum_gui-89f6505f70927b20",
+  "test_binary_sha256": "f0de1cfcc4bae5b006cbd15d14a4d9c664f8931b375a876813b189b7255bca3b",
+  "source_sha256": {
+    "crates/gui-app/src/native_queue_owner.rs": "c4fece5c7b0695cce2bac4751815cdf2145e9b7841f8a032ca6212aeea6a92b9",
+    "crates/gui-app/src/native_surface_transaction.rs": "24dc24021b3ce22066d0dd83f1bc8f1cfaaf491edf56548cddc747ebdae01df1",
+    "crates/gui-app/src/native_queue_callback_hold.rs": "068420353bd290c9a39a478aa8b331e859721b3fa0dd128395a5889afe3dca6e",
+    "crates/gui-app/src/native_close_after_submit_tests.rs": "c04e092d4ff496834e8ec84cf68a3f3191703319594bfa5f6a36863564e16648"
+  },
+  "source_bindings": "source-bindings.json.gz",
+  "source_bindings_uncompressed_sha256": "6e7f21fd8c32690d55c711658485ab4a6cd21d9c11700095329a275f7e56086d",
+  "helper_sha256": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+  "environment": {
+    "WINIT_UNIX_BACKEND": "x11",
+    "WINIT_X11_SCALE_FACTOR": "1",
+    "WAYLAND_DISPLAY": "unset",
+    "DATUM_GUI_VERBOSE_LOG": "1",
+    "DATUM_GPU_MEASUREMENTS": "0",
+    "DATUM_GPU_SCENE_MARKERS": "0",
+    "XDG_CONFIG_HOME": "target/pm045-evidence-work/close-after-submit/config",
+    "XDG_CACHE_HOME": "target/pm045-evidence-work/close-after-submit/cache"
+  },
+  "logs": {
+    "stopped-build": {
+      "file": "stopped-build.log.gz",
+      "uncompressed_sha256": "4146c0c1dcadfa21e6ecaa70a6663cd23ae4f22433ea4afabefdc10d3407c591"
+    },
+    "compile-errors": {
+      "file": "compile-errors.log.gz",
+      "uncompressed_sha256": "82fc55635ced21b4d17922123d6204f41f4cec70412f1fd0a728a5ce4ddc911e"
+    },
+    "passed": {
+      "file": "passed.log.gz",
+      "uncompressed_sha256": "10eebbbee0adb429bc7b8995a197b9f9a35ff337d1e24ca98111bafdcd05feec"
+    },
+    "native": {
+      "file": "native.log.gz",
+      "uncompressed_sha256": "0c826846903c499992f94bd7ef584ffe64af41550e78eb404b43f8e1fd43dd9a"
+    }
+  },
+  "prior_attempts": [
+    "Initial compilation stopped before application/test execution to correct reviewer-identified missing scheduler/queue-health oracles and close-helper timeout.",
+    "Second compilation failed with4harness errors: module path,semicolon,two private-window accesses. No native cases ran. Corrected through existing App window handles; final focused run passed."
+  ],
+  "review": "Distinct reviewer confirmed corrected method and inspected final result/native log/assertions: no material unresolved defect; all six bounded cases corroborated. Read-only review, not independent native execution.",
+  "limits": [
+    "Hold defers production callback body/publication after actual backend completion; not proof of hardware completion occurring after close or driver hang recovery.",
+    "WM_DELETE client-message delivery, not physical titlebar/WM interaction.",
+    "Application attachment ledger retirement, not driver memory release, full instantaneous resource accounting or close CPU/memory budget acceptance.",
+    "Only three auxiliary hosts on X11/1x; existing Main and other lifecycle evidence retained, no blanket backend-scale or full LF-07/S5 acceptance.",
+    "No numerical performance comparison, independent native replay or owner UX acceptance."
+  ],
+  "default_runtime": "Hook,hold,and new test exist only under cfg(test,target_os=linux). Ordinary QueueOwner registration uses the same production closure and queue API. No release candidate rebuild needed.",
+  "preserved": "PM045/PM047, GEFN, upload-before-acquire, dependency/license authority, visual lane and nonblocking resize exclusions unchanged."
+}

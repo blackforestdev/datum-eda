@@ -16,6 +16,10 @@ mod attachment;
 
 #[derive(Clone, Default)]
 pub(super) struct QueueOwner(Rc<RefCell<State>>);
+#[cfg(all(test, target_os = "linux"))]
+#[path = "native_queue_callback_hold.rs"]
+pub(crate) mod callback_hold;
+
 struct State {
     epoch: u64,
     next_host: u64,
@@ -28,6 +32,8 @@ struct State {
     progress: super::native_recovery::Recovery,
     progress_completed: u64,
     held_completion: Option<Arc<Mutex<HeldCompletion>>>,
+    #[cfg(all(test, target_os = "linux"))]
+    callback_hold: Option<Arc<callback_hold::CallbackHold>>,
 }
 impl Default for State {
     fn default() -> Self {
@@ -46,6 +52,8 @@ impl Default for State {
             progress: Default::default(),
             progress_completed: 0,
             held_completion: None,
+            #[cfg(all(test, target_os = "linux"))]
+            callback_hold: None,
         }
     }
 }
@@ -317,7 +325,13 @@ impl QueueOwner {
     }
     pub(super) fn submitted(&self, queue: &wgpu::Queue) -> u64 {
         let (serial, completion) = self.submission_receipt();
-        queue.on_submitted_work_done(self.completion_callback(serial, completion));
+        let callback = self.completion_callback(serial, completion);
+        #[cfg(all(test, target_os = "linux"))]
+        if let Some(hold) = self.0.borrow().callback_hold.clone() {
+            hold.register(queue, callback);
+            return serial;
+        }
+        queue.on_submitted_work_done(callback);
         serial
     }
     fn completion_callback(

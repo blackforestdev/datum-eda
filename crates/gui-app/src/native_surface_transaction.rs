@@ -883,3 +883,7 @@ mod tests {
 #[cfg(all(test, target_os = "linux"))]
 #[path = "native_gesture_reconciliation_tests.rs"]
 mod gesture_reconciliation_tests;
+
+#[cfg(all(test, target_os = "linux"))]
+#[path = "native_close_after_submit_tests.rs"]
+mod close_after_submit_tests;
