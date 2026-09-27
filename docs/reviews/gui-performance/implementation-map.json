@@ -1988,7 +1988,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: component rebind/isolation and separate native device-loss recovery runs for each of four hosts pass; simultaneous four-host fault, full cache/data/camera/focus and resource qualification remain open Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open.",
+        "status": "partial: component rebind/isolation and separate native device-loss recovery runs for each of four hosts pass; simultaneous four-host fault, full cache/data/camera/focus and resource qualification remain open Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open. Additional producer20-loss run completes5recoveries per selected host with workspace/registry receipts, exact selected-window pixels and focus. No simultaneous four-host/mixed-PTY state or full budget acceptance.",
         "id": "proof_lf_05",
         "positive": "Device loss while all four hosts have work",
         "negative_control": "Recreate separately per host or keep stale GPU keys",
@@ -1998,7 +1998,8 @@
           "retired_device_error_bursts_cannot_wake_or_fail_replacement_generation"
         ],
         "atomic_device_staging_evidence": "docs/reviews/gui-performance/implementation/S1/atomic-device-staging/receipt.json",
-        "atomic_device_staging_result": "Default replacement stages all live hosts before Main publication. Three actual auxiliary paths reject epoch 3 while retaining epoch 1, drop both staged transactions with zero acquisition/submission, then F5 commits epoch 5 and presents current extent; workspace/terminal state and Main teardown checks pass. Full requirement qualification remains open."
+        "atomic_device_staging_result": "Default replacement stages all live hosts before Main publication. Three actual auxiliary paths reject epoch 3 while retaining epoch 1, drop both staged transactions with zero acquisition/submission, then F5 commits epoch 5 and presents current extent; workspace/terminal state and Main teardown checks pass. Full requirement qualification remains open.",
+        "status_before_s5_evidence_reconciliation": "partial: component rebind/isolation and separate native device-loss recovery runs for each of four hosts pass; simultaneous four-host fault, full cache/data/camera/focus and resource qualification remain open Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open."
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-05/result.json",
       "acceptance_rule": "One coordinated automatic recreation per episode, GPU caches invalidated, data/cameras/focus preserved.",
@@ -2046,7 +2047,13 @@
         "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
+          "sha256": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f"
+        }
+      ]
     },
     {
       "id": "LF-06",
@@ -9772,11 +9779,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial executed evidence: X11/1x hour completed600window cycles; separate20backend recoveries completed with exact selected-host pixels/focus and state receipts. Both normal exits and resource trace reconciliation pass. No full MEM-03: no combined hour/recovery/mixed matrix, isolated recovery CPU, full accounting/overhead or complete backend/scale acceptance. Existing completed tests remain credited.",
         "id": "proof_end_01",
         "positive": "60minute T1 soak after5minute warmup,200open/close,20recoveries",
         "negative_control": "Leak one resource per cycle",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/END-01/result.json",
       "acceptance_rule": "MEM caps/release/plateau and first-last10minute <=5% drift rule; missing evidence cannot pass",
@@ -9839,7 +9847,21 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-open-timeout/assessment.json",
         "limits": "No60minute/drift/recovery/full-resource, backend-scale, independent replay or owner UX acceptance. Analyzer rejects missing final GPU end record."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
+          "sha256": "6f8fe80c1f7bdadcb696093d48789499992c1c34916cf91e0986839858f79457"
+        },
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
+          "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e"
+        },
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
+          "sha256": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f"
+        }
+      ]
     },
     {
       "id": "END-02",
@@ -11585,11 +11607,12 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Corrected native clamp campaign executed; quiet CPU ceiling not met. Retain exact minimum/maximum-bound trials, reversal observations and quiet/verbose overhead distinction from recorded result. No full budget pass; another identical measurement is not needed to establish failure.",
         "id": "proof_bud_clamp_cpu_duty",
         "positive": "CLAMP: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-CLAMP-CPU-DUTY/result.json",
       "acceptance_rule": "<=1% per valid trial; method MET-02 ACC-03 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
@@ -11597,7 +11620,13 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
+          "sha256": "cd802d33f7244ec7b525b19abdf2e11ba61595a99defa3a448aaf686875e3556"
+        }
+      ]
     },
     {
       "id": "BUD-CLAMP-CPU-ACTION",
@@ -11641,11 +11670,12 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Corrected native clamp campaign executed; quiet CPU ceiling not met. Retain exact minimum/maximum-bound trials, reversal observations and quiet/verbose overhead distinction from recorded result. No full budget pass; another identical measurement is not needed to establish failure.",
         "id": "proof_bud_clamp_cpu_action",
         "positive": "CLAMP: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-CLAMP-CPU-ACTION/result.json",
       "acceptance_rule": "<=0.167ms per scheduled input at60/s; no semantic-action division by zero per valid trial; method MET-02 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
@@ -11653,7 +11683,13 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
+          "sha256": "cd802d33f7244ec7b525b19abdf2e11ba61595a99defa3a448aaf686875e3556"
+        }
+      ]
     },
     {
       "id": "BUD-CLAMP-GPU-DUTY",
@@ -12165,11 +12201,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_cpu_duty",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-POINTER-CPU-DUTY/result.json",
       "acceptance_rule": "<=10% per valid trial; method MET-02 ACC-03 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
@@ -12180,7 +12217,13 @@
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
+          "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
+        }
+      ]
     },
     {
       "id": "BUD-T1-POINTER-CPU-ACTION",
@@ -12234,11 +12277,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_cpu_action",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-POINTER-CPU-ACTION/result.json",
       "acceptance_rule": "<=0.833ms at120/s per valid trial; method MET-02 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
@@ -12249,7 +12293,13 @@
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
+          "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
+        }
+      ]
     },
     {
       "id": "BUD-T1-POINTER-GPU-DUTY",
@@ -12372,11 +12422,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_gpu_p95",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P95 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-POINTER-GPU-P95/result.json",
       "acceptance_rule": "<=4ms per valid trial; method MET-04 GPU-01 GPU-02 GPU-03; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
@@ -12387,7 +12438,13 @@
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
+          "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
+        }
+      ]
     },
     {
       "id": "BUD-T1-POINTER-GPU-P99",
@@ -12441,11 +12498,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_gpu_p99",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P99 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-POINTER-GPU-P99/result.json",
       "acceptance_rule": "<=8ms per valid trial; method MET-04 GPU-01 GPU-02 GPU-03; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
@@ -12456,7 +12514,13 @@
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
+          "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
+        }
+      ]
     },
     {
       "id": "BUD-T1-PAN-CPU-DUTY",
@@ -19202,11 +19266,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial auxiliary attachment drain and resolver cache eviction/teardown tests. Resolver is one bounded runtime-owned shared cache across dialog closes; current output Arcs remain attributed until final release. Other exclusive resources, driver lifetimes and complete bounded-drain qualification remain open.",
+        "status": "Partial auxiliary attachment drain and resolver cache eviction/teardown tests. Resolver is one bounded runtime-owned shared cache across dialog closes; current output Arcs remain attributed until final release. Other exclusive resources, driver lifetimes and complete bounded-drain qualification remain open. Later hour and20-recovery traces reconcile all recorded renderer origins and final local reservations zero at normal shutdown; registration/reservation views do not prove all instantaneous driver/API-live ownership.",
         "id": "proof_mem_closed_live",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "Partial auxiliary attachment drain and resolver cache eviction/teardown tests. Resolver is one bounded runtime-owned shared cache across dialog closes; current output Arcs remain attributed until final release. Other exclusive resources, driver lifetimes and complete bounded-drain qualification remain open."
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/MEM-CLOSED-LIVE/result.json",
       "acceptance_rule": "zero closed exclusive live resources after bounded drain/device teardown; shared caches bounded; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -19249,7 +19314,17 @@
         ],
         "qualification_pass": false,
         "previous_test_status": "planned; not executed"
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
+          "sha256": "6f8fe80c1f7bdadcb696093d48789499992c1c34916cf91e0986839858f79457"
+        },
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
+          "sha256": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f"
+        }
+      ]
     },
     {
       "id": "Q-CPU-P95",
@@ -20195,11 +20270,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Executed diagnostic20-recovery intervals all exceed100ms: GUI process275.743\u2013774.777ms. Interval includes native wake, diagnostics and redraw through observed commit; isolated total application normal-mode recovery remains unqualified. Do not repeat unchanged diagnostic qualification; establish cause/method and apply justified correction first.",
         "id": "proof_q_recovery_cpu",
         "positive": "Successful lifecycle recovery",
         "negative_control": "Inject isolated limit violation or suppress necessary record; matching assertion must fail",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/Q-RECOVERY-CPU/result.json",
       "acceptance_rule": "<=100ms total application CPU/recovery; MET-01 samples, nearest rank and complete records; missing required evidence unqualified",
@@ -20219,7 +20295,13 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
+          "sha256": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f"
+        }
+      ]
     },
     {
       "id": "Q-RECOVERY-GPU95",
@@ -20680,11 +20762,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Saved-hour diagnostic CPU comparison completed: conservative first/last600s bounds exclude>5% CPU growth. Screenshot-readiness drift is descriptive and is not the deferred display-latency acceptance criterion. Full admitted workload/configuration and diagnostic-overhead qualification remain open; no repeat hour solely to recompute these statistics.",
         "id": "proof_q_endurance_drift",
         "positive": "60minutes200cycles20recoveries first/last10minute windows",
         "negative_control": "Inject isolated limit violation or suppress necessary record; matching assertion must fail",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/Q-ENDURANCE-DRIFT/result.json",
       "acceptance_rule": "CPU/latency not regress>5%; temporal latency portion deferred; MET-01 samples, nearest rank and complete records; missing required evidence unqualified",
@@ -20704,7 +20787,17 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
+          "sha256": "6f8fe80c1f7bdadcb696093d48789499992c1c34916cf91e0986839858f79457"
+        },
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
+          "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e"
+        }
+      ]
     },
     {
       "id": "Q-ENDURANCE-TREND",
@@ -20777,11 +20870,12 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Saved-hour analysis completed: sampled RSS grew3112960bytes, cause unattributed; renderer text payload grew2592bytes then plateaued from selected cycle50through600. Samples selected at lifecycle boundaries, not exact five-minute wall-clock points. No full no-growth/instantaneous-accounting pass; investigate saved trace first.",
         "id": "proof_q_endurance_trend",
         "positive": "Live sample every5minutes after5minute warmup",
         "negative_control": "Inject isolated limit violation or suppress necessary record; matching assertion must fail",
-        "entry": "Production adapter and actual boundary counters; native pinned fixture"
+        "entry": "Production adapter and actual boundary counters; native pinned fixture",
+        "status_before_s5_evidence_reconciliation": "planned; not executed"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/Q-ENDURANCE-TREND/result.json",
       "acceptance_rule": "No monotonic live-resource growth; reported driver/allocator plateau obeys budgets; MET-01 samples, nearest rank and complete records; missing required evidence unqualified",
@@ -20801,7 +20895,13 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
+          "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e"
+        }
+      ]
     },
     {
       "id": "Q-RETURN-IDLE",
@@ -38755,7 +38855,153 @@
         "carry_forward": "Retain completed proof on its recorded candidate. Rerun only for affected changes or explicitly required independent replay; handoff is not invalidation."
       }
     ],
-    "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
+    "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
+    "evidence_reconciliation": {
+      "completed_groups": 31,
+      "evidence_hashes_checked": 31,
+      "matching_hashes": 31,
+      "native_runs_performed": 0,
+      "meaning": "Read existing evidence and reconcile requirement status; hash integrity is not a new qualification pass."
+    },
+    "remaining_execution": {
+      "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
+      "counting": "225 mapped requirement rows are not225 tests. One native trial may satisfy many metric/consumer predicates. A campaign below contains multiple required trials and is not counted as one test. No unsupported precise process-run total is claimed.",
+      "classification": {
+        "resize_only_nonblocking_rows": [
+          "RS-01",
+          "RS-02",
+          "RS-03",
+          "RS-04",
+          "BUD-T0-RESIZE-CPU-DUTY",
+          "BUD-T0-RESIZE-CPU-ACTION",
+          "BUD-T0-RESIZE-GPU-DUTY",
+          "BUD-T0-RESIZE-GPU-P95",
+          "BUD-T0-RESIZE-GPU-P99",
+          "BUD-T1-RESIZE-CPU-DUTY",
+          "BUD-T1-RESIZE-CPU-ACTION",
+          "BUD-T1-RESIZE-GPU-DUTY",
+          "BUD-T1-RESIZE-GPU-P95",
+          "BUD-T1-RESIZE-GPU-P99"
+        ],
+        "wholly_deferred_temporal_rows": [
+          "HP24-02",
+          "Q-DISPLAY-P95",
+          "Q-DISPLAY-P99",
+          "Q-WINDOW-DISPLAY-P95",
+          "Q-WINDOW-DISPLAY-P99",
+          "Q-PACING",
+          "Q-FINAL-DISPLAY",
+          "Q-RECOVERY-DISPLAY"
+        ],
+        "mixed_scope_note": "HP05-02 retains idle resource qualification despite its deferred-temporal label; Q-ENDURANCE-DRIFT and Q-RETURN-IDLE retain non-temporal obligations. No deferred display calibration blocks initial S5.",
+        "initial_or_mixed_row_count": 188,
+        "specification_record_row_count": 15,
+        "source": "Derive from original requirements[].qualification_scope; retain HP05-02 idle resources as mixed scope."
+      },
+      "reuse": "All31 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons.",
+      "before_native_execution": [
+        {
+          "action": "Reconcile source/negative-control coverage using existing S1-S4 proofs and the31done groups. Enumerate only missing prescribed controls, and combine controls using the same production owner where their assertions remain independently defect-sensitive.",
+          "requirements": [
+            "END-03",
+            "END-04"
+          ],
+          "new_native_runs": 0
+        },
+        {
+          "action": "Finish admission/accounting/input/observer methods using existing controls; inspect saved traces before adding instrumentation. Fractional native input, exited-client GPU endpoints, actual instantaneous resource incidence and observer overhead remain unresolved. Each new method proof must identify the missing original predicate.",
+          "requirements": [
+            "AC-01",
+            "AC-02",
+            "AC-03",
+            "AC-04",
+            "AC-05",
+            "AC-06",
+            "AC-07",
+            "HP24-01"
+          ]
+        },
+        {
+          "action": "Resolve demonstrated pointer/clamp/window performance failures and investigate diagnostic recovery CPU and saved-hour resource growth. Each production correction needs a causal hypothesis and focused affected verification; do not run a full campaign merely to reconfirm an unchanged failure.",
+          "evidence": [
+            "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
+            "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
+            "docs/reviews/gui-performance/implementation/S5/window-qualification-batch/result.json",
+            "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
+            "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json"
+          ]
+        }
+      ],
+      "final_native_campaigns": [
+        {
+          "backend": "native Wayland",
+          "scale": 1
+        },
+        {
+          "backend": "native Wayland",
+          "scale": 1.5
+        },
+        {
+          "backend": "native Wayland",
+          "scale": 2
+        },
+        {
+          "backend": "X11/Xwayland",
+          "scale": 1
+        },
+        {
+          "backend": "X11/Xwayland",
+          "scale": 1.5
+        },
+        {
+          "backend": "X11/Xwayland",
+          "scale": 2
+        }
+      ],
+      "endurance": "Use final independent replay to obtain the required stable-candidate T1MEM-03 hour after5minute warmup with200window cycles and20injections, five-minute live-resource samples and first/last10minute comparisons. Existing producer hour and separate20recoveries are credited and must not be repeated merely to prepare the packet. Exact tier/configuration applicability follows contract; this statement waives no additional admitted-tier requirement.",
+      "independent_review": "Owner-authorized distinct reviewer actually executes one consolidated final campaign on stable candidate. Its new-coverage receipts satisfy applicable qualification and its actual reruns satisfy independent replay; distinguish new coverage from reproduced producer results. No separate blanket producer final matrix is required. Preserve all trial counts, methods, fixtures and separate owner UX acceptance.",
+      "owner_acceptance": "Separate native UX/product disposition after concrete results; existing execution/dependency/scope approvals must not be requested again.",
+      "rerun_control": "Every additional run records its original requirement, decision enabled, missing or invalidated evidence, fixed trial count and stopping condition before launch. Failed qualification is retained and triggers cause/fix work, not automatic retries. Relative seven-pair comparisons apply only when making a relative claim; do not add them merely to pass absolute caps.",
+      "current_execution_counts": {
+        "new_native_runs_scheduled_now": 0,
+        "new_native_runs_executed_in_reconciliation": 0,
+        "final_backend_scale_campaigns": 6,
+        "exact_remaining_process_trial_count": null,
+        "reason_count_not_final": "Consumer/recipe variants and missing prescribed negative controls still need evidence-level reconciliation; six campaigns is not a claim of six remaining tests. Do not launch them with this count unresolved."
+      },
+      "contract_review": {
+        "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+        "mode": "read-only contract review; no runtime replay or acceptance",
+        "basis": [
+          "PM045 GP-045-05",
+          "GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT S5 and final independent replay paragraph",
+          "implementation-map END-02",
+          "GUI_PERFORMANCE_ACCEPTANCE_MATRIX MET-01/MET-06/MEM-03"
+        ],
+        "finding": "No explicit requirement for two separately complete final matrices. Consolidated reviewer execution may provide new qualification and required independent reruns, with each receipt labelled by role. Producer still supplies implementation, usable conforming methods and focused correction verification."
+      },
+      "separate_measurement_modes": "MET-06 requires diagnostics-off resource acceptance and separate matched diagnostics-on structural trials with identical schedules and delivered output. Consolidation cannot merge these modes or subtract a universal overhead.",
+      "final_native_recipe": {
+        "refresh_hz": 60,
+        "fixture": "Pinned F-DOA and admitted T0 configurations",
+        "workloads": [
+          "W-IDLE",
+          "W-POINTER",
+          "W-ZOOM",
+          "W-CLAMP",
+          "W-PAN",
+          "W-SCROLL",
+          "W-CONTROLS",
+          "W-PANES",
+          "W-WINDOWS",
+          "W-LIFECYCLE",
+          "W-MIXED"
+        ],
+        "consumer_variants": "Apply exact contract consumer scope: T1one/two/four leaves, terminal hidden/visible, main and each real auxiliary host; both Preferences pixel/line scroll, boundaries/reversal and all specified controls. Preserve modality and native accepted dimensions. Shared correctness applies to partial panes; no resolved schematic performance claim.",
+        "runs": "MET-01 three independent trials for applicable active workloads; W-IDLE3x60s; exact cycle recipes override duration. Keep baseline/candidate ordering, ten-start cold distribution and all required faults/negative controls. Credit existing adequate proof only at matching scope; do not silently collapse variants.",
+        "status": "Pending stable candidate and method/defect resolution. Unsupported configuration must be recorded explicitly, not replaced by rescaling."
+      }
+    }
   },
   "s5_lazy_world_pipeline_work": {
     "status": "implemented; focused correctness passed; native budget qualification outstanding",

@@ -284,6 +284,36 @@ The per-domain tool contracts in `docs/contracts/` specify the target each
 domain builds toward on the landed substrate.
 
 ## Working Posture (for agents)
+
+### Verification must earn its cost
+
+**Make every proposed test justify the decision it will enable.** This is the
+owner-directed default for all repository work, including benchmarks, diagnostics
+and repeat runs.
+
+- Before execution, name the requirement or concrete risk, the evidence gap,
+  and what a pass or failure will change. One short rationale per cohesive batch
+  suffices; a mandated check can cite its controlling requirement.
+- Reuse adequate evidence at its recorded scope. Handoffs, new sessions and
+  documentation edits do not invalidate tests. A rerun needs an affected change,
+  demonstrated method defect, unresolved question, or explicitly required replay.
+- Use the smallest meaningful verification that supports the decision. Do not
+  add tests for reversible low-impact edits or merely mirror implementation.
+  Batch related assertions; preserve required independent trials and separate
+  measurement modes. Broaden only when results or affected scope justify it.
+- Define repetitions and a stopping condition before expensive experiments.
+  Preserve failures, investigate their cause and fix demonstrated defects before
+  repeating qualification. No parameter sweeps, automatic retries until green,
+  or full-suite reruns without a stated reason.
+- Keep evidence concise: store raw output once, link the existing authoritative
+  result, and report the outcome and limitations. Handoffs carry unresolved work
+  and evidence pointers, not copied logs, repetitive histories or speculative
+  test lists. Do not create another framework or ledger to enforce this rule.
+- Retain required acceptance, negative controls, commit gates and independent
+  review. This rule removes redundant work; it does not waive requirements or
+  turn partial proof into acceptance. Ordinary justified verification proceeds
+  without an additional owner-approval step.
+
 - **Cargo output is a governed resource.** Full-workspace, proof, Clippy,
   release, compatibility, and GUI-smoke compilation goes through
   `python3 scripts/run_cargo_guarded.py --workload proof -- cargo ...`; focused

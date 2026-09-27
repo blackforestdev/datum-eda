@@ -256,6 +256,14 @@ terminals are behavioral references only. Run
 `python3 scripts/check_dependency_authority.py` before landing dependency or
 terminal work.
 
+## Verification discipline
+
+**Make every proposed test justify the decision it will enable.** Follow
+[CLAUDE.md — Verification must earn its cost](CLAUDE.md#verification-must-earn-its-cost).
+State a brief rationale per cohesive batch, reuse adequate evidence across
+handoffs, and keep raw output out of working context. No new approval workflow
+or test ledger is required. Required acceptance and commit checks remain in force.
+
 ## Rust build resource discipline
 
 Datum's verification workload is larger and more concurrent than Cargo's
