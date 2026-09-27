@@ -1,5 +1,5 @@
 {
-  "status": "Offline producer/classifier controls retained; native allocation-mode integration failed startup delivery",
+  "status": "Compact native allocation delivery and call-local classification passed on one X11/1x F-DOA run; full qualification remains open",
   "qualification_pass": false,
   "requirement_ids": [
     "ACC-02",
@@ -16,7 +16,7 @@
     "environment": {
       "DATUM_PRIVATE_TEXT_TRACE": "<fresh-output-file>",
       "DATUM_PRIVATE_TEXT_ALLOCATION_EVENTS": "1",
-      "DATUM_PRIVATE_TEXT_TRACE_CAPACITY": "<predeclared capacity 1..65536>"
+      "DATUM_PRIVATE_TEXT_TRACE_CAPACITY": "<predeclared allocation-mode capacity 1..131072; summary mode 1..65536>"
     },
     "semantics": "Same bounded call buffer records ordered Allocation transitions with address, requested bytes including Datum header/alignment, allocated/free flag, and full scope_live_bytes. Begin/Finished delimit coverage. Call owner/renderer incidence retained. No header or dependency changes.",
     "report_interpretation": "On Allocation, embedded report is identity-only (call_id/owner_id/allocator_installed): accounting can precede transition. Use allocation and scope_live_bytes for transition, Finished for call peaks/refusal. Native start receipt and API documentation state this."
@@ -43,14 +43,14 @@
     "scope": "Source review only, not independent native replay."
   },
   "limits": [
-    "Transitions cover only active monitored owner calls. Pre-call allocation births and post-call frees/reallocations are absent; addresses can be reused across unseen gaps and cannot be treated as global allocation IDs.",
-    "Allocation-aware classifier and integration have synthetic controls. Native allocation-mode receipt compatibility, delivery capacity and overhead remain unqualified. Historical summary traces return no lifetime classification.",
-    "Observed call-local lifetime classes do not assign excluded budget bytes to semantic input/cache/scratch owners or reconcile full process/host budgets. Requested block capacities do not expose System allocator slack/native mappings.",
-    "Event struct and summary JSON are larger even in summary-only diagnostics. Allocation mode timestamps/stores transitions under the ledger lock. Neither diagnostic overhead nor native capacity sufficiency has been qualified; overflow invalidates delivery.",
-    "No native trial, release rebuild, numerical acceptance or final independent replay. Historical evidence remains at its original scope."
+    "Input means live before call; output means allocated during and still live at call end; temporary means born and freed inside call. These are lifetime classes, not inferred semantic cache roles.",
+    "Category maxima need not coincide; never add them as a peak. Active-call aggregate excludes inactive owners and post-call retention; it is not whole-process memory.",
+    "Pre-call births and post-call frees are unobserved. Address identities are resolved only within a call. No ownership inference across unseen gaps.",
+    "Counts include requested payload and Datum header/alignment, not System slack/native mappings. Excluded budget bytes are not assigned to a category without further ownership evidence.",
+    "Native delivery established only for the archived X11/1x integration run. Diagnostic overhead, full native coverage and process/host reconciliation remain open; no numerical acceptance or final independent replay."
   ],
   "analysis": {
-    "status": "Synthetic known-byte controls passed; no native trace analyzed in allocation mode",
+    "status": "Historical synthetic controls retained; compact schema controls and native classification recorded in compact_storage and native_integration.",
     "sources": {
       "docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-private-lifetimes.py": "fbcbc7f54631c2f1aac65000f130faef073904942576241893c8f40ca40aefad",
       "docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-private-lifetimes-checks.py": "037f6aad07787bd84e1b6b428de8481fec649a09071c7737b5082e04934ab281",
@@ -71,9 +71,36 @@
     "scope": "Lifetime classes describe observed call windows: initial input, new blocks surviving end, and new blocks freed before end. Category peaks must not be summed. Active-call aggregate excludes inactive owners and post-call retention. This is not whole-process accounting or semantic cache/scratch ownership."
   },
   "native_integration": {
-    "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/result.json",
-    "sha256": "611388508ee286266606241bff3284513d21a6aeb99cdd3b081066bb599be332",
-    "status": "Both native method attempts failed; output buffering landed, startup burst delivery remains unresolved",
-    "qualification_pass": false
+    "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/compact-result.json",
+    "sha256": "bbbea899f9783af980a4e5e7f0a091c4eabcb39a0a9715057d0c84643840a3db",
+    "status": "Compact native allocation delivery and call-local classification passed on one X11/1x F-DOA run; full qualification remains open",
+    "qualification_pass": false,
+    "preserved_failed_attempts": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/result.json"
+  },
+  "compact_storage": {
+    "sources": {
+      "crates/gui-render/src/private_text_observation.rs": "136a93ac23a338b77d6f85308d292c7b795845f3a7fe031b83f32fea25f077d9",
+      "crates/gui-render/src/private_text_observation_tests.rs": "eab14e9e2d2c5fa4c7afc56476ec11ee6386218b825b146bdd7e99a651efcfb0",
+      "crates/gui-app/src/native_private_text_measurements.rs": "45fab4446a594ef22c33052758c59fc837fbd757b6bf248de82f2a7353ccda72",
+      "docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-private-lifetimes.py": "9aad95491b6f9d097bc34a9f13684d7477cfe3a491d05cf1ed7ce03a9c2bf0be",
+      "docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-private-lifetimes-checks.py": "8f61dd80fc6ef4d13b0ef7cae6b8e05673b0d1da5bbb63495e13bbfb6b10e75b"
+    },
+    "design": "Compact inline allocation records and boxed call records share bounded storage. Record count and requested vector plus box bytes are checked before allocation. Historical byte ceiling retained; allocation count maximum131072. Sticky loss remains fatal. Compact JSON omits stale accounting and derives metadata from Begin.",
+    "verification": {
+      "observer_passed": 4,
+      "observer_failed": 0,
+      "observer_filtered": 350,
+      "observer_build_seconds": 13.52,
+      "classifier_passed": 3,
+      "classifier_failed": 0,
+      "release_build_seconds": 37.54,
+      "burst_events": 123064,
+      "negative": "Byte exhaustion below count bound stays fatal across drain; out-of-range capacity rejected."
+    },
+    "review": "Hegel source review found no material lock/drop, storage-bound or schema defect. Per-buffer ceiling: native synchronous drain permits two; callers retaining arbitrary batches are not globally bounded. Summary boxing can reach bytes before count. Requested storage excludes System slack and JSON/output buffers. Not independent native replay.",
+    "raw": {
+      "compact-tests.log.gz": "4660e2bbb3ad5afd62bf9012b80059d3b121e5feb0ef9b1f9745ff95b62cfad9",
+      "compact-classifier.log.gz": "807dc3cedcd4d8eccbfaab03e07eaf40304ee467428e35396e110c975348d625"
+    }
   }
 }

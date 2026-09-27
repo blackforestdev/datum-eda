@@ -64,6 +64,13 @@ class Controls(unittest.TestCase):
         integrated = legacy.validate_private(rows)
         self.assertEqual(integrated['allocation_lifetimes'], result)
         self.assertEqual(integrated['calls'], 2)
+        for row in rows:
+            if row.get('transition') == 'Allocation':
+                for key in ('renderer_origin', 'owner_label', 'excluded_bytes', 'credited_bytes', 'host_limit_bytes', 'process_limit_bytes'):
+                    del row[key]
+                row['report'] = {key: row['report'][key] for key in ('call_id', 'owner_id', 'allocator_installed')}
+        self.assertEqual(method.analyze(rows), result)
+        self.assertEqual(legacy.validate_private(rows)['allocation_lifetimes'], result)
 
     def test_corruption_and_absent_coverage_rejected(self):
         def underreport_admission(rows):

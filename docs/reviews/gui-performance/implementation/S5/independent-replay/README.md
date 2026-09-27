@@ -93,19 +93,21 @@ The endurance driver invokes the collector at initial readiness, before close,
 and inside the existing drained-device-live acknowledgement hold. Missing
 resident fields or incomplete reads fail with partial evidence preserved. The
 runner records a separate observation end time after CPU reads and before device
-release. This integration is source-reviewed but has not been run natively;
+release. This integration has run at three live-device endpoints in the compact X11/1x producer run;
 historical trials remain unchanged and do not gain driver-memory evidence.
 
 Optional private allocation events are prepared in
 `../private-allocation-lifetimes/result.json`. They are not enabled by this
 historically pinned runner. The current resource analyzer now classifies
-allocation-mode call windows; synthetic controls pass, while native mode and
-full resource qualification remain open. Historical summary data gains no
+allocation-mode call windows; synthetic controls and one native integration pass; full resource qualification remains open. Historical summary data gains no
 lifetime classification. This is not scratch-accounting acceptance. Allocation records use only the embedded report identity; their
 current live bytes come from `scope_live_bytes`, and call peaks from Finished.
 
-Native allocation-mode integration has now been attempted and failed before
-first presentation: unbuffered output hit readiness timeout; the buffered
-candidate exposed123064startup events exceeding65536capacity. Both attempts
-remain failed evidence in `../private-allocation-lifetimes/native-integration/`.
-Do not start final replay with this unresolved burst-delivery gap.
+Compact allocation records now deliver the observed startup burst within the unchanged
+storage byte ceiling. One X11/1x producer integration classified201547events across
+3025calls, passed all three auxiliary pixel checks, observed DRM at three endpoints,
+and exited normally. See `../private-allocation-lifetimes/native-integration/compact-result.json`
+for the pinned candidate, raw archive and limitations. The original timeout and
+65536-record overflow remain preserved failures. This is not observer-overhead,
+full resource, endurance or independent acceptance. Final replay remains not ready;
+use a stable final candidate after the remaining failures and coverage gaps are resolved.
