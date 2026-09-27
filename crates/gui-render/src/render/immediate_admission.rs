@@ -48,11 +48,9 @@ impl PreparedGridAdmission {
     }
 }
 impl Renderer {
-    pub(crate) fn observe_surface_grids(
-        &mut self,
-        vertices: &[Vertex],
-        batches: &[surface_grid_pass::SurfaceGridBatch],
-    ) -> anyhow::Result<()> {
+    pub(crate) fn observe_surface_grids(&mut self) -> anyhow::Result<()> {
+        let vertices = &self.surface_grids.vertices;
+        let batches = &self.surface_grids.batches;
         if self.frame_observer.is_none() {
             return Ok(());
         }
@@ -62,7 +60,7 @@ impl Renderer {
                 batches.len(),
                 &self.atlas.staging_budget,
             )?;
-            for batch in batches {
+            for batch in batches.iter() {
                 observations.push(PreparedGridAdmission {
                     encoded: std::cell::Cell::new(false),
                     pane_id: batch.pane_id,

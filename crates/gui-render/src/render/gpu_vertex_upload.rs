@@ -47,6 +47,11 @@ macro_rules! world_streams {
     }};
 }
 impl Renderer {
+    /// CPU grid keys, vertices and batches, including Datum allocation headers.
+    pub fn surface_grid_cache_bytes(&self) -> u64 {
+        self.surface_grids.allocated_bytes()
+    }
+
     /// Glyph instance preparation, comparison and batch storage under staging admission.
     pub fn glyph_upload_storage_bytes(&self) -> u64 {
         self.text_renderer.cpu_storage_bytes() + self.menu_overlay_text_renderer.cpu_storage_bytes()

@@ -119,9 +119,9 @@ impl Renderer {
         // offscreen captures supply neither cursor nor hover quads.
         let schematic_underlay_vertices = prepared.schematic_underlay_vertices();
         let schematic_overlay_vertices = prepared.schematic_overlay_vertices();
-        let (surface_grid_vertices, surface_grid_batches) =
-            surface_grid_pass::build_surface_grids(prepared);
-        self.observe_surface_grids(&surface_grid_vertices, &surface_grid_batches)?;
+        self.surface_grids
+            .prepare(prepared.surface_passes(), &self.atlas.staging_budget)?;
+        self.observe_surface_grids()?;
         self.prepare_surface_uniforms(device, queue, prepared, width, height)?;
         self.uniform_buffer.sync(
             queue,
@@ -149,7 +149,7 @@ impl Renderer {
             device,
             queue,
             "datum-surface-grid-vertex-buffer",
-            &surface_grid_vertices,
+            &self.surface_grids.vertices,
         )?;
         if world_vertices.is_some() {
             self.world_strokes_gpu
@@ -278,7 +278,7 @@ impl Renderer {
             {
                 m.mark_scene(&mut pass, 0)?;
             }
-            self.draw_surface_grids(&mut pass, &surface_grid_batches);
+            self.draw_surface_grids(&mut pass, &self.surface_grids.batches);
             if !prepared.surface_passes().is_empty()
                 && let Some(m) = &mut measurement
             {

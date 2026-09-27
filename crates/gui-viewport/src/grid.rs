@@ -115,22 +115,45 @@ impl GridEngine {
         y_axis: AxisProjection,
     ) -> Vec<GridLine> {
         let mut out = Vec::new();
+        Self::visit(config, tier, viewport, x_axis, y_axis, |line| {
+            out.push(line);
+            true
+        });
+        out
+    }
+
+    /// Emit the same bounded, ordered grid without allocating a temporary vector.
+    /// Returning false stops emission after the current line; callers can retain
+    /// their admission error and refuse publication of the partial output.
+    pub fn visit(
+        config: &GridConfig,
+        tier: usize,
+        viewport: GridViewport,
+        x_axis: AxisProjection,
+        y_axis: AxisProjection,
+        mut emit: impl FnMut(GridLine) -> bool,
+    ) -> usize {
+        let mut out = GridOutput {
+            emit: &mut emit,
+            count: 0,
+            stopped: false,
+        };
         let Some(tier) = config.tiers.get(tier) else {
-            return out;
+            return out.count;
         };
         if viewport.width <= 0.0 || viewport.height <= 0.0 {
-            return out;
+            return out.count;
         }
         let Some(x_bounds) = x_axis.visible_nm(viewport.x, viewport.x + viewport.width) else {
-            return out;
+            return out.count;
         };
         let Some(y_bounds) = y_axis.visible_nm(viewport.y, viewport.y + viewport.height) else {
-            return out;
+            return out.count;
         };
         let origin = config.origin_nm.unwrap_or((0, 0));
         let weight = config.weight.resolve_px(x_axis.scale).max(0.0);
         if weight == 0.0 || !weight.is_finite() {
-            return out;
+            return out.count;
         }
 
         for (pitch, color) in [
@@ -175,8 +198,7 @@ impl GridEngine {
                 break;
             }
         }
-        out.truncate(MAX_GRID_PRIMITIVES);
-        out
+        out.count
     }
 }
 
@@ -195,9 +217,30 @@ fn first_last(bounds: (i64, i64), pitch: i64, origin: i64) -> Option<(i128, i128
     (first <= last).then_some((first, last))
 }
 
+struct GridOutput<'a> {
+    emit: &'a mut dyn FnMut(GridLine) -> bool,
+    count: usize,
+    stopped: bool,
+}
+impl GridOutput<'_> {
+    fn len(&self) -> usize {
+        if self.stopped {
+            MAX_GRID_PRIMITIVES
+        } else {
+            self.count
+        }
+    }
+    fn push(&mut self, line: GridLine) {
+        if !self.stopped {
+            self.count += 1;
+            self.stopped = !(self.emit)(line);
+        }
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 fn emit_axis_lines(
-    out: &mut Vec<GridLine>,
+    out: &mut GridOutput<'_>,
     vertical: bool,
     bounds: (i64, i64),
     pitch: i64,
@@ -239,7 +282,7 @@ fn emit_axis_lines(
 
 #[allow(clippy::too_many_arguments)]
 fn emit_marks(
-    out: &mut Vec<GridLine>,
+    out: &mut GridOutput<'_>,
     mark: GridMark,
     xb: (i64, i64),
     yb: (i64, i64),

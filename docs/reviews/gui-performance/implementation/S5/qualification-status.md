@@ -96,6 +96,8 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 
 - [x] Active-call block transition delivery:3serial observer controls pass and app writer compiles. Allocation/free order, realloc overlap, summary compatibility and overflow covered. Three offline classifier controls also pass; native mode, semantic exclusions and full-scope qualification remain pending. See `private-allocation-lifetimes/result.json`.
 
+- [x] **Unchanged per-pane grid geometry reuse** — 5 renderer and17 viewport grid-filter tests plus application check passed. Admitted cache preserves output, invalidates exact dependencies and releases refused/empty storage. No native performance-cap claim. [Evidence](grid-reuse/result.json)
+
 ## Still open — do not reset the done list
 
 Private allocation startup delivery now passes one compact-record X11/1x integration run:201547events/3025calls, three exact auxiliary pixels, three live-device DRM endpoints and normal exit. Four producer controls and three classifier controls pass. Both earlier startup failures remain preserved. See `private-allocation-lifetimes/native-integration/compact-result.json`. This closes the observed burst-delivery defect, not native matrix, overhead, full accounting or independent acceptance.

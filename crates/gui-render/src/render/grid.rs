@@ -89,6 +89,26 @@ fn emit_immediate_grid(
     profile: &ViewportProfile,
     previous_lod: GridLodState,
 ) -> GridLodState {
+    visit_immediate_grid(projection, profile, previous_lod, |line| {
+        out.push(Quad::from_rect(
+            RectPx {
+                x: line.x,
+                y: line.y,
+                width: line.width,
+                height: line.height,
+            },
+            line.color,
+        ));
+        true
+    })
+}
+
+fn visit_immediate_grid(
+    projection: &Projection,
+    profile: &ViewportProfile,
+    previous_lod: GridLodState,
+    emit: impl FnMut(datum_gui_viewport::grid::GridLine) -> bool,
+) -> GridLodState {
     let viewport = GridViewport {
         x: projection.viewport.x,
         y: projection.viewport.y,
@@ -109,21 +129,7 @@ fn emit_immediate_grid(
     let Some(tier) = lod.tier else {
         return lod;
     };
-    out.extend(
-        GridEngine::compute(&profile.grid, tier, viewport, x_axis, y_axis)
-            .into_iter()
-            .map(|line| {
-                Quad::from_rect(
-                    RectPx {
-                        x: line.x,
-                        y: line.y,
-                        width: line.width,
-                        height: line.height,
-                    },
-                    line.color,
-                )
-            }),
-    );
+    GridEngine::visit(&profile.grid, tier, viewport, x_axis, y_axis, emit);
     lod
 }
 
@@ -149,4 +155,17 @@ pub(crate) fn push_scene_grid(out: &mut Vec<Quad>, projection: &Projection) {
 
 pub(crate) fn push_schematic_grid(out: &mut Vec<Quad>, projection: &Projection) {
     let _ = push_schematic_grid_with_lod(out, projection, GridLodState::default());
+}
+
+pub(crate) fn visit_surface_grid(
+    pass: &crate::PreparedSurfacePass,
+    emit: impl FnMut(datum_gui_viewport::grid::GridLine) -> bool,
+) {
+    let field = crate::inset_rect(pass.scene_viewport, 10.0, 10.0, 10.0, 10.0);
+    let projection = Projection::new(field, &pass.bounds, pass.camera);
+    let profile = match pass.surface {
+        crate::SceneSurface::Board => &*BOARD_PROFILE,
+        crate::SceneSurface::Schematic => &*SCHEMATIC_PROFILE,
+    };
+    visit_immediate_grid(&projection, profile, pass.grid_lod_resolved, emit);
 }

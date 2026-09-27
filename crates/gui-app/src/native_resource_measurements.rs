@@ -301,7 +301,7 @@ fn renderer_view(renderer: &Renderer) -> Value {
     }))
     });
 
-    json!({"text_admission":admission,"text_admission_failed":renderer.text_admission_observation_failed(),
+    json!({"surface_grid_cache_bytes":renderer.surface_grid_cache_bytes(),"text_admission":admission,"text_admission_failed":renderer.text_admission_observation_failed(),
         "text_admission_observer":renderer.text_admission_observer_usage().as_ref().map(scope_view),
         "text_admission_scope":"sampled prepared text; CacheKey includes font ID, size, weight, flags and subpixel bins; owner ID is not model generation; no per-pane or raster visibility claim",
         "last_successful_glyph_preparation_workspace_overlay":glyph_counts,
