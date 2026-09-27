@@ -73,3 +73,11 @@ the existing input-only portal API. Its offline schedule checks pass, but native
 execution is pending desktop availability and fresh portal consent. See
 `pointer-method-preparation.json`; this does not rehabilitate the integer XTest
 trials, replace semantic/output evidence or satisfy final replay.
+
+The existing resource analyzer now checks current frame records alongside
+snapshots: delivery sequence, renderer identities, geometry totals, text-origin
+reconciliation and retirement ordering. `commands.json` includes the offline
+parser controls. Those controls use archived records and explicitly synthetic
+envelopes; they do not establish native admission or qualify a candidate.
+Historical snapshot-only evidence retains its original scope. Final replay
+still requires refreshed source/method pins and a stable candidate.

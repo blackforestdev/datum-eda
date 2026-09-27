@@ -38710,6 +38710,11 @@
           "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/result.json",
           "sha256": "ad95a67014917db534e803e2a07e2466bfe833defd03da5ae98219c537c987b0",
           "validated_result": "1 focused hardware test passes exact observer-off/on pixels across reused dialog frames, actual menu draw/scissor counts, callback retirement on failure and duplicate-stream observation invalidation. 1 final focused hardware application test passes actual screen draw counts versus prepared payloads, exclusion of the unsubmitted fallback underlay, submitted grid commands/vertices/triangles, null submitted fields on deferred attempts, callback retirement and existing text/world/overflow checks."
+        },
+        "analysis_integration_supplement": {
+          "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/analysis-integration/result.json",
+          "sha256": "13c9e3a0a4b5d229bda8d5b643279fecdbd3eeebe3a1e6f7cd53ecc08f54ecdd",
+          "validated_result": "14 parser controls pass, including the real overflow trace rejection, malformed counts/sequence/geometry/text/renderer controls, historical snapshot compatibility, synthetic mixed-record integration and post-retirement rejection."
         }
       }
     ],
@@ -38740,6 +38745,7 @@
     "encoded_world_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/result.json",
     "immediate_geometry_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/result.json",
     "text_origin_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/result.json",
-    "screen_submission_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/result.json"
+    "screen_submission_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/result.json",
+    "analysis_integration_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/analysis-integration/result.json"
   }
 }

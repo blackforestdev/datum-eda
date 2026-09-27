@@ -1,0 +1,20 @@
+{
+  "status": "existing resource analyzer integrated with frame observations; native qualification remains pending",
+  "base_commit": "8658d64b",
+  "problem": "The existing snapshot analyzer asserted every interior row was a snapshot, rejecting the new per-attempt frame records.",
+  "change": "Validate frame delivery/counts/identities alongside snapshots, reject frames after recorded renderer retirement, reconcile screen/grid/world primitive counts and text-origin totals, and report missing admission counts/identities separately. Preserve historical snapshot-only interpretation. Add the offline command to the existing replay packet without refreshing its historical candidate pins.",
+  "proof": {
+    "offline": "14 parser controls pass, including the real overflow trace rejection, malformed counts/sequence/geometry/text/renderer controls, historical snapshot compatibility, synthetic mixed-record integration and post-retirement rejection.",
+    "checks": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/analysis-integration/checks.json",
+    "checks_sha256": "e9357653ce1afef5a226f6de2936740495f7f510a1ffb3f1c1f4cf4fd60102ac"
+  },
+  "command": "python3 docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-frame-admission-checks.py",
+  "scope": [
+    "No native automation, compilation, runtime measurement or acceptance rerun.",
+    "Parser-positive envelopes explicitly alter completion metadata and remap identities for integration controls only; they are not execution evidence. Original raw traces and their failures remain unchanged.",
+    "Latest frame records are validated; older snapshot-only traces report unavailable frame admission, not a retrospective pass. Earlier partial frame schemas are not promoted to current coverage.",
+    "Record consistency is not full fixture/configuration coverage, physical output, overhead, instantaneous resource accounting, endurance, independent replay or owner UX acceptance.",
+    "All qualification_pass fields remain false; missing world counts in the component trace remain reported gaps."
+  ],
+  "preserved": "All225 original requirements/statuses, completed S0-S4, existing evidence, PM029/PM047, GEFN, Vulkan upload-before-acquire, prototype ownership and nonblocking resize exclusions unchanged. No dependency/license change."
+}
