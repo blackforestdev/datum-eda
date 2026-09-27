@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-DESIGN-REVIEW-R1",
+  "revision": "r1",
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "production_head": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal.md",
+    "sha256": "6b7ed1c58158b65dc9c635535362f78360a32a7427be9183b694d6363d816eee"
+  },
+  "scope": "Source/history, existing evidence and proposal consistency review only. Same-session review, not independent review or native replay. No implementation, build, runtime tests, benchmark, native diagnostic or system tuning.",
+  "route_before": {
+    "id": "gui-performance-recovery",
+    "reviewed_digest": "493856fe8b6257956824dd2bfb4c037ae47ff1c8896d43bdc1e00d87a1723ab4",
+    "members": [
+      {
+        "path": "research/gui-performance/SHARED_GUI_PERFORMANCE_AUDIT.md",
+        "sha256": "0869dc24f75b8fcbd254b7ecdfb0e3a461cb66887b7cebc19aec2836105d9200",
+        "review": "Historical retained preparation and upload audit; preserve manual-first shared ownership, actual consumer boundaries and historical HP obligations."
+      },
+      {
+        "path": "research/gui-performance/BASELINE_AND_FIRST_SLICE.md",
+        "sha256": "57b2a27001698ee9fd0475274d0a8ac7a25b7a13d1e8a1d2948099d926fb2468",
+        "review": "Historical samples are not current performance. Pin import-derived identity/order; preserve rejected capture/input cases and modal ownership."
+      },
+      {
+        "path": "research/gui-performance/C01_CONSUMER_RECONCILIATION.md",
+        "sha256": "5b418309c7c038d0ffcb5c2456046d9cf6b6b090350d84ceb0d7e216134bb290",
+        "review": "Fourteen consumer inventory and 101-hunk/25-HP review; resolved schematic unadmitted; shared correctness is not native scope qualification."
+      },
+      {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "sha256": "46a8cd7cfb9b0c2c4137b85e73f1642e3f85a3341e1d1f60f3feeca303ea01aa",
+        "review": "R01-R42/HP01-HP25, staged ratification and owner-only new mechanism; newer GPU planning amendment supersedes old execution language."
+      },
+      {
+        "path": "docs/reviews/gui-performance/specification-clauses.json",
+        "sha256": "60e268757400e430123b3ee34d0334dd93828ae1246a4e28c99c40944a3d4662",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/promotion-owner-direction.json",
+        "sha256": "0a80c764d348aa82c56ad9fbae9efe7d77c107549a4e3ad47dc4a51ea20f9dfd",
+        "review": "Reviewed dated owner authority against later PM045 GPU amendment; preserve original record. Earlier grants do not authorize this candidate."
+      },
+      {
+        "path": "docs/reviews/gui-performance/policy-promotion-owner-20260917.json",
+        "sha256": "fff6b53a4e8459816b3e3f3a69783d13b01ea67767249f417655d3f1b2cf2534",
+        "review": "Reviewed dated owner authority against later PM045 GPU amendment; preserve original record. Earlier grants do not authorize this candidate."
+      },
+      {
+        "path": "docs/reviews/gui-performance/sequencing-owner-direction.json",
+        "sha256": "fb9c00e899f311ca6552021fda7d9b8702746e2370cf618438493e62cd9940fe",
+        "review": "Reviewed dated owner authority against later PM045 GPU amendment; preserve original record. Earlier grants do not authorize this candidate."
+      },
+      {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "sha256": "d5bae3f834ca45532afcfbce59bf7ceab205b0073f9d1bec5bdab4552e209a01",
+        "review": "E01-E12: actual dependency invalidation, shared host/lifetime, no unchanged world upload, painter order, preserved terminal/input authority. PASS graph is historical ceiling, not mandate for redundant passes."
+      },
+      {
+        "path": "docs/reviews/gui-performance/zoom-noop-slice.md",
+        "sha256": "144073e5e0ba1a72e6731802856e45438549edf883b3e40b60f2d6d91a45a50f",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/independent-review.json",
+        "sha256": "ec46541e7e82c468eaaa6b64ca6c4b7357ffb3b2f14a0829a29aa9bdd058f486",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/verification.json",
+        "sha256": "0107901b9e04b91ff5c1b4af98e8b2bb6138f197ab430cd4acf232289d8d902b",
+        "review": "Reviewed bounded existing proof scope and limitations; reuse only unchanged evidence, no inferred current GPU budget or full acceptance."
+      },
+      {
+        "path": "docs/reviews/gui-performance/measurements/SHA256SUMS",
+        "sha256": "3824850b8b8e0ec5a369b8602d92a4150b8c57911e22469158d878611e666455",
+        "review": "Preserve all 580 historical checksum entries byte-for-byte; no runtime evidence regeneration or relabeling."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c01-historical-hunk-review.json",
+        "sha256": "d5b6ecc1767f87049ea58e188ac9041fbdb5efa22f10a229abbda10f222946c5",
+        "review": "Preserve six revisions, 101 hunks and HP obligations as historical mapped evidence, not fresh runtime proof."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c01-review.json",
+        "sha256": "45e4c8c53a0d39fcdf4af765c56fb2d6df2795ccf5a0afe895970b25268ccc5e",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/resize-slice.md",
+        "sha256": "1210754337c11fb9e7e46e220da3a43dc18a5239a526504f18983843765c57b0",
+        "review": "Reviewed historical resize/source/owner scope and retained failures; latest nonblocking amendment controls. No resize or kernel investigation, temporal claim or candidate reactivation."
+      },
+      {
+        "path": "docs/reviews/gui-performance/resize-review.json",
+        "sha256": "3131d7d6318853950aaa32da45b53321d6e163ff681b0544675ec905414617d0",
+        "review": "Reviewed historical resize/source/owner scope and retained failures; latest nonblocking amendment controls. No resize or kernel investigation, temporal claim or candidate reactivation."
+      },
+      {
+        "path": "docs/reviews/gui-performance/rendering-reopening.json",
+        "sha256": "16ed9c8495993d15c005ae5c97e8377431538171f0e164497bfec840af30e97e",
+        "review": "Reviewed historical resize/source/owner scope and retained failures; latest nonblocking amendment controls. No resize or kernel investigation, temporal claim or candidate reactivation."
+      },
+      {
+        "path": "docs/reviews/gui-performance/rendering-reopening-review.json",
+        "sha256": "8db0fbce7de9587ec4cc0510888efd1530084b5680fb94d1495a7344ff2c0549",
+        "review": "Reviewed historical resize/source/owner scope and retained failures; latest nonblocking amendment controls. No resize or kernel investigation, temporal claim or candidate reactivation."
+      },
+      {
+        "path": "docs/reviews/gui-performance/resize-recovery.md",
+        "sha256": "6f9bb5cf289e00be2ef3fc69b289c395731886b306eb32049048aab300683c28",
+        "review": "Reviewed historical resize/source/owner scope and retained failures; latest nonblocking amendment controls. No resize or kernel investigation, temporal claim or candidate reactivation."
+      },
+      {
+        "path": "docs/reviews/gui-performance/specification-resumption-owner-direction.json",
+        "sha256": "5d1bdb15e3adea14ab9ec3ad03721b2016273e53549dae749d07023f85b36b85",
+        "review": "Reviewed dated owner authority against later PM045 GPU amendment; preserve original record. Earlier grants do not authorize this candidate."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c02-contract-review.json",
+        "sha256": "8d6f55b00becb6792687653b9b2a3bfb26bea8b72a7a5e7c62f8dc62ba6e00fa",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "sha256": "b43e7f769da2d9a836978b5c725d68f70756f19ecbf3244d0d3f72db39bcdb73",
+        "review": "MET/GPU/ACC/STAT and all resource limits retained. Copy-inclusive span, complete duty and diagnostic overhead are prerequisites; three descriptive pairs are not seven-pair formal inference."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c03-working-review.json",
+        "sha256": "2a307ac06acc34f7cc78540e3155794b559d99d35bbaef3b7ca730e30d75a0a4",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/initial-qualification-owner-direction.json",
+        "sha256": "95837a8b2d8f0cdb5deeb2744ff46091e17bd414528dbbb34e7fd343b16640b4",
+        "review": "Reviewed dated owner authority against later PM045 GPU amendment; preserve original record. Earlier grants do not authorize this candidate."
+      },
+      {
+        "path": "docs/reviews/gui-performance/initial-qualification-review.json",
+        "sha256": "12c23edf39dfae6e2db2eda93d545152b48427a12bf24055798970ecd05a4254",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c03-completion-review.json",
+        "sha256": "9a9bfd9f9f30ce56b53186c8b1b08a18e6ea78b6f52cc62914483780b66da719",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+        "sha256": "8919c8e851b009fd9eb853812392e8b02728b2f31539e26914c1795c5b3679ca",
+        "review": "Final amendment selects discovery/approval before S4. Proposed new cache, proof and fallback cannot close S4 or qualify S5."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation-map.json",
+        "sha256": "3b8a78f0b9cb65c70e4fb66001c5ae7650805ca602043bd1025b7ff5bbaac843",
+        "review": "Reviewed 225-row/14-consumer mapping, relevant PASS/HP06/HP08/REUSE/MEM/AC acceptance rules, historical S4 readiness and GPU amendment. No row status or failed evidence changed; earlier work entries remain historical."
+      },
+      {
+        "path": "docs/reviews/gui-performance/prepared-implementation-completion.json",
+        "sha256": "e057f3108608e59649eaaf13ed899a55fbb5e43c9ba4eaef6d70c87a5acad618",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c04-completion-review.json",
+        "sha256": "1f6f4d7e30efdbc27b6b3932c6094ce96fe88d3d264f29a13f6fc5c4cf0894fa",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c04-map-validation.json",
+        "sha256": "3d5f3ee9e418b7fbcba252730d801c2f9c6dd060f1c298234285064d3355fc82",
+        "review": "Reviewed bounded existing proof scope and limitations; reuse only unchanged evidence, no inferred current GPU budget or full acceptance."
+      },
+      {
+        "path": "docs/reviews/gui-performance/residual-risks.json",
+        "sha256": "3ddaed4ce94db7a9942688c5631938ddc419fd1a241cf04d45ef0b561457554f",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md",
+        "sha256": "b1b6507271367e6ecc3d50499966e8b135bdec377a3fcd2b55865a59870c871d",
+        "review": "Ratified shared foundation and budgets; final GPU amendment withholds execution pending reviewed proposal and owner disposition."
+      },
+      {
+        "path": "docs/reviews/gui-performance/c05-review-corpus.json",
+        "sha256": "46265a95f9cfcce1fb05fa840773dce628a0768277c270883de27a27c744e1cd",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/final-specification-review.json",
+        "sha256": "6eb0ed17a7649bc3018a95cf768c28c351ee43824a6a8f7e7a0c4d1e6354cdb1",
+        "review": "Reviewed planning/review obligations and historical dispositions; preserve qualification gaps and unchanged numerical/product/dependency boundaries. New proposal does not retroactively satisfy this record."
+      },
+      {
+        "path": "docs/reviews/gui-performance/owner-packet.json",
+        "sha256": "845b43dcc66731f577bd4ce552f0eff427258f575359a3e14b0f642c4f59eab2",
+        "review": "Frozen original specification approval packet; no amendment to original artifact pins or clause coverage."
+      },
+      {
+        "path": "docs/reviews/gui-performance/final-owner-direction.json",
+        "sha256": "6dbdc287391473793b4759c9f2875dbfd10e2d3eb1a3f80e8c61e131ee10dc66",
+        "review": "Actual 67-clause specification-only ratification controls preceding draft wording; no new image-cache mechanism approval."
+      },
+      {
+        "path": "docs/reviews/gui-performance/resize-deferral-owner-direction.json",
+        "sha256": "58bbdda312b92a8adb72f91406dfe58f387727eb2e1300cb28cadf8f107bdbc1",
+        "review": "Reviewed historical resize/source/owner scope and retained failures; latest nonblocking amendment controls. No resize or kernel investigation, temporal claim or candidate reactivation."
+      },
+      {
+        "path": "docs/reviews/gui-performance/resize-deferral-review.json",
+        "sha256": "3d7e3ba948a7601ff34670b52669fa55db5fffea7a06f2f915e1f455866160a3",
+        "review": "Reviewed historical resize/source/owner scope and retained failures; latest nonblocking amendment controls. No resize or kernel investigation, temporal claim or candidate reactivation."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S0/GPU-01-03/receipt.json",
+        "sha256": "cee90bf0d024381e0f7ebb903eea133d5ccde36abc77835d15b516e3fa5ce3b7",
+        "review": "Reviewed bounded existing proof scope and limitations; reuse only unchanged evidence, no inferred current GPU budget or full acceptance."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S0/readiness/receipt.json",
+        "sha256": "9c24dc8e99a83e955662bf65b02fe74ebd22b83b1fb8bb8d450ccf0001510e34",
+        "review": "Reviewed bounded existing proof scope and limitations; reuse only unchanged evidence, no inferred current GPU budget or full acceptance."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S1/redraw-owner/receipt.json",
+        "sha256": "d5a19d1c4fec002caa5bd25b54a8292f0025c520130516bf886874f4b646138f",
+        "review": "Reviewed dated owner authority against later PM045 GPU amendment; preserve original record. Earlier grants do not authorize this candidate."
+      },
+      {
+        "path": "docs/decisions/PRODUCT_MECHANICS_046_BOUNDED_TEXT_DEPENDENCY_PATCHES.md",
+        "sha256": "05f975fd46f5ca934e595def9e06ff4c91fc62070cc62819eba10d7bd1e621b8",
+        "review": "Historical retired patch trial; no active dependency exception."
+      },
+      {
+        "path": "docs/decisions/PRODUCT_MECHANICS_047_PRIVATE_TEXT_CONSTRUCTION_GUARD.md",
+        "sha256": "1d458ddc6f0bc25a89f3f0765134f9621abe8ac838571fd873543dedc21f518c",
+        "review": "Monitored opaque private text exception unchanged; Datum-controlled image allocation still needs pre-admission."
+      },
+      {
+        "path": "docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json",
+        "sha256": "f0181eb5ba31060758b6f816378d2d11a2f1c9dc1c1613f7be18a0692f42550b",
+        "review": "Exact owner discovery-only restriction, failed GPU evidence and reopened S4 bound preserved; no CPU event-loop investigation."
+      }
+    ]
+  },
+  "production_sources": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "0cee76a3005add00e0a63311e937ed7e15d54c0ec57627849b4cb4e756b7387c"
+    },
+    {
+      "path": "crates/gui-app/src/interaction_refresh.rs",
+      "sha256": "46c04a3ba20dd0ec706e68f3b6d3fcfa9a1b8b774bdc8c1b5d76d1288ee9354d"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "sha256": "1c9ec99e7f498b5c4adecc9a3ea5b5510098b5b9e58ba1ebef772f000aa04842"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "sha256": "0e7d6d1014ef5f4aac54a4f53b345226951d4092307e3a6dc9ac5bb01b2bd8af"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame_target.rs",
+      "sha256": "0c0ba8b328066d223f7184bf56608f62150f0c48d7380f904021f1d091b0e297"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface.rs",
+      "sha256": "ca6a0792d95d3608790a921b0f8e78f93564b11db2d2cab8dc7d187abb6dcbf0"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface_pass.rs",
+      "sha256": "ac61aa84595b86f3e3d999ae653c2e2d866efe41f6d1aaa384f48089c0e90cb9"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs",
+      "sha256": "01dee01155accdef82138a2f7de7074a0d1c3a37896aa617df2fbe930885f507"
+    },
+    {
+      "path": "crates/gui-render/src/render/world_pipelines.rs",
+      "sha256": "7468824445535e60ea46adb6857612aa04d53e840570e308cef0508633a990cc"
+    },
+    {
+      "path": "crates/gui-render/src/render/interaction_overlay.rs",
+      "sha256": "dc02d347259b16cbb82c9b0f06a73f5253798d3c38c9d74a70ee6f5dc003cd69"
+    },
+    {
+      "path": "crates/gui-render/src/render/prepared_scene_access.rs",
+      "sha256": "3e388b3604319d2fe79d76731859cf6902cce25e5fdb93585cb54cb5e6a5ed86"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_preparation.rs",
+      "sha256": "8dc8bf70f343b3b8937a403a3442acc429afe7259adc654bc0aa7b3a7de9933f"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements.rs",
+      "sha256": "75a0f87cc2965de1a351e0917723944631e99cbf59c11e0e680e4c9e6105b3d9"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/draw.rs",
+      "sha256": "8cd2647f2718c877072f4323066cb53cb2f7c5216e2751f5aed7b1946fe4860a"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/glyph.wgsl",
+      "sha256": "e014266c7282cb05a23fe649d917f9138f1b1c21c0d0d07ecbef426a689228f0"
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_graphics.rs",
+      "sha256": "a95fa985eea8f9b08064cc1f72a2490eea16dd6c56886b793caefab5b67f01d8"
+    }
+  ],
+  "installed_upstream_sources": [
+    {
+      "path": "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-28.0.0/src/api/command_encoder.rs",
+      "sha256": "8668d189b7c7752ecd7a5080a5911ae8d8b24602c56b835c2d00c7e8bea3df69",
+      "package_relative_path": "wgpu-28.0.0/src/api/command_encoder.rs"
+    },
+    {
+      "path": "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-core-28.0.1/src/command/transfer.rs",
+      "sha256": "ce36f5bfaf289ad467c4a7a39a7e47bc1050b28784ad4d6cd84c1b6d7f74aa27",
+      "package_relative_path": "wgpu-core-28.0.1/src/command/transfer.rs"
+    },
+    {
+      "path": "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-core-28.0.1/src/device/resource.rs",
+      "sha256": "99ddb1d8e2a65e54e84833b82e0e7c1587f8f78c35539ed7546b46d3112c017b",
+      "package_relative_path": "wgpu-core-28.0.1/src/device/resource.rs"
+    },
+    {
+      "path": "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-hal-28.0.1/src/vulkan/command.rs",
+      "sha256": "d38772cdbaa63eb87a84b0b31ffec0848c70ffc8f26b2743ec7f9e51ed39db36",
+      "package_relative_path": "wgpu-hal-28.0.1/src/vulkan/command.rs"
+    }
+  ],
+  "existing_evidence": [
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/scene-gpu-localization/result.json",
+      "sha256": "68622d518614d8987638b8c970b185c9d8c368a0fa6ce8e1dbea6d7c687acf72"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/scene-gpu-localization/candidate.json",
+      "sha256": "2fddae44000c760f004f12aee73360a15d307e36dc13ff62e81494bc82744969"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json",
+      "sha256": "d5eec8fff199c38c54d45671f0bd25211aa616889d6b7d654a2535c0ead9ecec"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json",
+      "sha256": "5b467fda9936895a3a9903b5cb990427037b76ba266a3ef1109138cbd3c8eeb2"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S4/readiness/result.json",
+      "sha256": "6e01a81a9708d021470b8896ee63790b15ffee865548016949ae1c8b66543e80"
+    }
+  ],
+  "history": [
+    "500387c183ec868adeb16041d4bc73bd973ddd7d",
+    "0de1d528",
+    "4eaa008754644b7905d235d7a9abb4803687f1a7",
+    "9f16eb69"
+  ],
+  "findings": [
+    {
+      "id": "GPU-DESIGN-R1-01",
+      "finding": "Resolved-image reuse cannot preserve arbitrary sample-correlated 8x overlay blending.",
+      "disposition": "Use equal-format full multisample texture copy; leave every post-boundary painter stage in order."
+    },
+    {
+      "id": "GPU-DESIGN-R1-02",
+      "finding": "Native pinned wgpu allows equal-sample full copies, not partial XY multisample copies.",
+      "disposition": "Select full copy; region shader/tile alternatives require separate review, no hidden fallback."
+    },
+    {
+      "id": "GPU-DESIGN-R1-03",
+      "finding": "Existing first-pass timestamp omits a preceding image copy.",
+      "disposition": "Require copy-inclusive diagnostic span/conformance and overhead; suffix-only timing cannot pass."
+    },
+    {
+      "id": "GPU-DESIGN-R1-04",
+      "finding": "Existing DRM endpoint observations lack complete lifetime/reset coverage.",
+      "disposition": "Explicit prerequisite and stop condition before numerical qualification; no laundering of old results."
+    },
+    {
+      "id": "GPU-DESIGN-R1-05",
+      "finding": "Image cache increases memory, cold/camera work and retirement overlap.",
+      "disposition": "Actual-size optional cache with explicit cap, complete pair accounting, one retiring generation and bounded affected-camera comparison."
+    }
+  ],
+  "conclusion": "Concrete proposal supports owner review of mechanism and bounded scope. Performance feasibility remains unresolved; no driver defect or hardware impossibility established. New mechanism requires owner ratification before execution.",
+  "independent_review": {
+    "performed": false,
+    "limitation": "Same-session source/design review only. R10 independent architecture delta review remains required before new mechanism ratification; S5 distinct-reviewer native replay remains mandatory. Neither is claimed here."
+  },
+  "runtime_acceptance": false,
+  "planning_exit": "GPI-S4-DESIGN proposal ready for owner decision; release planning lease and select GPI-S4-APPROVAL with owner_decision authorization. No execution grant.",
+  "governance_notes": "No runtime inventory shapes, dependency versions, numerical acceptance rows or prototype files changed. Spec parity inventory remains unchanged."
+}
