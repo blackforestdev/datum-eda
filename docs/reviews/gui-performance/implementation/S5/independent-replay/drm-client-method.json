@@ -25,5 +25,20 @@
     "Separate memory classes may overlap; aliases are grouped, never summed. Deprecated drm-memory is retained separately from resident. Samples are sequential, not instantaneous peaks.",
     "A client absent at an endpoint does not establish zero driver retention. ACC-03 start/end and reset/epoch receipts remain required.",
     "No Datum process launched, GPU workload repeated, Cargo build performed, observer overhead qualified or numerical acceptance claimed. Final packet candidate remains historical and NOT READY."
-  ]
+  ],
+  "endurance_integration": {
+    "status": "Prepared and source-reviewed; not executed natively",
+    "runner": "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/window_endurance.py",
+    "runner_sha256": "c2cbbe0b67f69309f5b0a42bceb9c9fc2151d9d4c8998d3d372acde373fa70da",
+    "endpoints": [
+      "initial-device-live after initial ready frame",
+      "final-before-close",
+      "drained-device-live before existing shutdown acknowledgement"
+    ],
+    "ordering": "Driver reads precede final CPU readings and observation_end_ns, then acknowledgement releases the held device. Historical monotonic_ns remains pre-CPU; observation_begin_ns/end_ns bracket sequential reads.",
+    "failure": "Missing or unidentified clients, read errors or no resident fields fail the endpoint. Already collected driver records enter the report before CPU reads; failed partial rows may lack CPU or end timestamps. Existing failure preservation/cleanup remains in force.",
+    "review": "Hegel identified partial-record loss on subsequent CPU failure and timestamp compatibility risk. Partial data is now appended before CPU reads; historical timestamp semantics restored using a separate end field. Source review only.",
+    "verification": "Runner syntax compiled without executing top-level native setup. Existing collector controls reused; no repeated parser tests, application build or endurance run.",
+    "limits": "Resident fields cover identified observed clients only. This does not prove all relevant clients export fdinfo, capture earlier exits/startup, establish lifecycle epochs, quantify overhead, or satisfy complete ACC-01/03. Historical source/binary pins still prevent an unpinned run; refresh the stable final candidate before replay."
+  }
 }

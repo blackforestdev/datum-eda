@@ -38478,9 +38478,10 @@
     "candidate_build_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/release-4d645582/result.json",
     "driver_memory_method": {
       "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json",
-      "sha256": "9df833512cec0bb5f19291fdf0e47b7b34c946d5551694a01786a05cf0ed473f",
+      "sha256": "be9c553db9f840463100e15ba132613f6d0d400c03d5d3d67023da0cac2f66f3",
       "status": "Offline method controls passed; no native resource acceptance",
-      "qualification_pass": false
+      "qualification_pass": false,
+      "endpoint_integration": "Initial-ready, pre-close and drained-device-live collection prepared in the existing endurance runner; source-reviewed, native execution pending. No historical qualification upgraded."
     }
   },
   "s5_endurance_open_timeout": {

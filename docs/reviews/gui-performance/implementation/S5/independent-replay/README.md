@@ -88,3 +88,10 @@ explicit PIDs, retaining duplicate-FD samples without summing them. Use the
 command template in `commands.json`; `drm-client-method.json` records the offline
 controls and limits. This does not fill ACC-03 lifecycle/epoch coverage or
 instantaneous peak and observer-overhead gaps. No native rerun was performed.
+
+The endurance driver invokes the collector at initial readiness, before close,
+and inside the existing drained-device-live acknowledgement hold. Missing
+resident fields or incomplete reads fail with partial evidence preserved. The
+runner records a separate observation end time after CPU reads and before device
+release. This integration is source-reviewed but has not been run natively;
+historical trials remain unchanged and do not gain driver-memory evidence.
