@@ -234,7 +234,11 @@ fn fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text() {
 #[test]
 #[ignore = "requires timestamp-capable hardware; production measurement parity"]
 fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
-    let mut renderer = hardware_renderer_with_features(960, 720, wgpu::Features::TIMESTAMP_QUERY);
+    let mut renderer = hardware_renderer_with_features(
+        960,
+        720,
+        wgpu::Features::TIMESTAMP_QUERY | wgpu::Features::TIMESTAMP_QUERY_INSIDE_PASSES,
+    );
     let workspace = datum_gui_protocol::load_fixture_workspace_state();
     let dialog_state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let dialog =
@@ -276,6 +280,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
         .poll_gpu_measurements(&renderer.device)
         .unwrap();
     assert_eq!(samples.len(), 1);
+    assert!(samples[0].scene_marker_ticks.is_some());
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
         ["scene", "text"]
@@ -290,6 +295,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
         .poll_gpu_measurements(&renderer.device)
         .unwrap();
     assert_eq!(samples.len(), 1);
+    assert!(samples[0].scene_marker_ticks.is_none());
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
         ["dialog"]

@@ -1,0 +1,8 @@
+{
+  "binary": "target/pm045-independent-replay-artifacts/candidate-scene-0ac241107753-datum-gui",
+  "binary_sha256": "0ac241107753c254e8b2d4f92fe4423d51dbf540dd74c2cadd7b4f720115f92b",
+  "base_commit": "62696261",
+  "status": "Diagnostic only; not final qualification candidate",
+  "source_bindings_sha256": "b3a097cc1c08f180e6e850b0bee2d28587211e7df8964fc5d609486b8b9bf06f",
+  "build_log": "/tmp/pm045-scene-marker-release.log"
+}

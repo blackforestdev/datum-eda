@@ -38326,7 +38326,14 @@
     "evidence": "docs/reviews/gui-performance/implementation/S5/gpu-final-observation/result.json",
     "source": "crates/gui-app/src/native_measurement_shutdown.rs",
     "boundaries": "S0-S4/GEFN rendering, dependency/license authority, product model and persistence, all numerical limits, and nonblocking resize/temporal exclusions preserved.",
-    "remaining": "Earlier client lifecycle hooks/coverage and observer calibration; complete all-host/trial/backend/scale/resource/negative/endurance qualification; distinct reviewer actual replay and native owner UX. No budget or independent acceptance."
+    "remaining": "Earlier client lifecycle hooks/coverage and observer calibration; complete all-host/trial/backend/scale/resource/negative/endurance qualification; distinct reviewer actual replay and native owner UX. No budget or independent acceptance.",
+    "scene_gpu_localization": {
+      "status": "Diagnostic complete; world draw interval is largest measured contributor; S5 incomplete",
+      "evidence": "docs/reviews/gui-performance/implementation/S5/scene-gpu-localization/result.json",
+      "evidence_sha256": "25320434d2de7954e3a798fb2da4d6bfc7d089f60c8d5031d156eb8e6288dce8",
+      "qualification_pass": false,
+      "next_decision": "Inspect composed world rendering for a bounded production defect; do not repeat this diagnostic or adopt a speculative shader change."
+    }
   },
   "s5_window_qualification_batch": {
     "status": "Partial native window qualification and observer conformance; GPI-S5 incomplete",

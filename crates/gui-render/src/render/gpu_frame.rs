@@ -273,8 +273,23 @@ impl Renderer {
                     immediate_admission::screen_admission::scissor(prepared.scene_viewport),
                 );
             }
+            if !prepared.surface_passes().is_empty()
+                && let Some(m) = &mut measurement
+            {
+                m.mark_scene(&mut pass, 0)?;
+            }
             self.draw_surface_grids(&mut pass, &surface_grid_batches);
+            if !prepared.surface_passes().is_empty()
+                && let Some(m) = &mut measurement
+            {
+                m.mark_scene(&mut pass, 1)?;
+            }
             self.draw_surface_world_passes(&mut pass, prepared);
+            if !prepared.surface_passes().is_empty()
+                && let Some(m) = &mut measurement
+            {
+                m.mark_scene(&mut pass, 2)?;
+            }
             pass.set_pipeline(&self.pipeline);
             pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             if prepared.surface_passes().is_empty() {

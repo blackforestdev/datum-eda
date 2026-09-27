@@ -1,0 +1,78 @@
+{
+  "status": "Diagnostic complete; world draw interval is largest measured contributor; S5 incomplete",
+  "qualification_pass": false,
+  "decision": "Inspect composed world rendering for a bounded production defect; do not repeat this diagnostic or adopt a speculative shader change.",
+  "candidate": "candidate.json",
+  "samples": 1276,
+  "post_close_arrivals": 1,
+  "interval_ms": {
+    "underlay": {
+      "mean": 2.19256015050619,
+      "p95": 2.316166737350464,
+      "p99": 6.698083537742615
+    },
+    "grid": {
+      "mean": 0.5620122951031867,
+      "p95": 0.45925001401519777,
+      "p99": 5.020500153213502
+    },
+    "world": {
+      "mean": 4.466887479578772,
+      "p95": 8.38625025592804,
+      "p99": 8.76200026739502
+    },
+    "remainder": {
+      "mean": 0.022622780209723685,
+      "p95": 0.03325000101470947,
+      "p99": 0.03708333446502686
+    },
+    "scene": {
+      "mean": 7.244082705397872,
+      "p95": 10.912000333007812,
+      "p99": 11.359167013320924
+    },
+    "frame": {
+      "mean": 9.105602485299945,
+      "p95": 12.780333723358154,
+      "p99": 13.337500407028198
+    }
+  },
+  "method": "Per-frame ordered timestamp differences, then nearest-rank percentiles. Not differences of independently computed percentiles. Includes scheduling, synchronization and instrumentation overhead.",
+  "sample_scope": "All records received from action start through final drain; may include delayed warmup and shutdown work. Diagnostic only.",
+  "pointer_receipts": {
+    "scheduled": 3600,
+    "changed": 1280,
+    "received": 1280,
+    "final": [
+      300,
+      150
+    ],
+    "all_changed_received": true,
+    "coalesced_or_missing": 0
+  },
+  "pixels": {
+    "returncode": 0,
+    "ae": "0"
+  },
+  "normal_exit_code": 0,
+  "display_restored": true,
+  "remaining_descendants": "",
+  "raw_archive": "raw.tar.gz",
+  "raw_archive_sha256": "5df5465856fa5126d925495418a8507539090c990d4e8dd7fd53c3e10f81b0cc",
+  "raw_files": 140,
+  "checks": [
+    "Existing marker unit check: 1 passed",
+    "Existing GPU pixel equality check: 1 passed on Intel P630/Vulkan",
+    "Release build finished in34.90s",
+    "One30s native pointer stream, no retries; final drain validated"
+  ],
+  "review": "Distinct reviewer source/method inspection only. Driver findings corrected before run: post-drain validation and forced-cleanup failure. No independent native replay claim.",
+  "limits": [
+    "Diagnostic localization, not CPU/GPU resource-cap or relative performance acceptance.",
+    "Markers include pipeline scheduling/synchronization/marker overhead, not isolated shader execution.",
+    "Every expected composed-scene frame must have three valid markers; missing samples fail this method.",
+    "Exact before/after pixels/focus and changed-position receipts are not continuous path/hit, display latency or owner UX acceptance.",
+    "No full resource/accounting/endurance/otherbackend-scale or independent replay acceptance."
+  ],
+  "preserved": "GEFN, upload-before-acquire, dependencies/licenses, prototypes, numerical caps and nonblocking resize exclusions unchanged."
+}
