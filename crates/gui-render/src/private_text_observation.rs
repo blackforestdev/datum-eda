@@ -10,13 +10,28 @@ pub enum Phase {
     Begin,
     Finished,
     Abandoned,
+    Allocation,
+}
+
+/// A requested block lifetime transition, including Datum header/alignment bytes.
+/// Addresses can be reused; the ordered allocation event identifies each lifetime.
+#[derive(Clone, Copy, Debug)]
+pub struct Allocation {
+    pub address: usize,
+    pub bytes: u64,
+    pub allocated: bool,
 }
 
 #[derive(Clone, Copy, Debug)]
 pub struct Event {
     pub sequence: u64,
+    pub allocation: Option<Allocation>,
+    pub scope_live_bytes: u64,
     pub elapsed_ns: u128,
     pub phase: Phase,
+    /// For Phase::Allocation only call_id, owner_id and allocator_installed are
+    /// authoritative here. Accounting fields can precede the transition; use
+    /// allocation + scope_live_bytes for it, and Finished for call peak/refusal.
     pub report: Report,
     pub renderer_id: Option<u64>,
     pub owner_label: &'static str,
@@ -30,6 +45,8 @@ impl Event {
     pub(super) fn new(call: &Entry, phase: Phase, requested_retained_bytes: Option<u64>) -> Self {
         Self {
             sequence: 0,
+            allocation: None,
+            scope_live_bytes: call.live,
             elapsed_ns: 0,
             phase,
             report: call.report,
@@ -66,6 +83,7 @@ pub(super) struct Buffer {
     limit: usize,
     total: u64,
     dropped: u64,
+    pub(super) allocations: bool,
 }
 impl Buffer {
     pub(super) fn push(&mut self, mut event: Event) {
@@ -104,6 +122,17 @@ fn storage(capacity: usize) -> anyhow::Result<Vec<Event>> {
 /// Start at a quiescent call boundary. The first call ID exposes earlier calls;
 /// consumers requiring startup coverage must reject any value other than one.
 pub fn start(capacity: usize) -> anyhow::Result<u64> {
+    start_mode(capacity, false)
+}
+
+/// Include block lifetime events within monitored calls. Capacity/loss rules are
+/// unchanged; this mode requires the allocation-aware consumer, not summary-only
+/// inference from final totals. Allocator slack/native mappings remain separate.
+pub fn start_with_allocations(capacity: usize) -> anyhow::Result<u64> {
+    start_mode(capacity, true)
+}
+
+fn start_mode(capacity: usize, allocations: bool) -> anyhow::Result<u64> {
     anyhow::ensure!(
         (1..=65_536).contains(&capacity),
         "invalid private-call trace capacity"
@@ -120,6 +149,7 @@ pub fn start(capacity: usize) -> anyhow::Result<u64> {
         limit: capacity,
         total: 0,
         dropped: 0,
+        allocations,
     });
     let installed = transaction(|ledger| {
         if ledger.observer.is_some() || ledger.calls.len() != 0 {

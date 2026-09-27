@@ -158,6 +158,32 @@ impl Ledger {
             call.report.exceeded |= exceeded;
         }
     }
+    pub(super) fn allocation_event(
+        &mut self,
+        owner: u64,
+        address: usize,
+        bytes: u64,
+        allocated: bool,
+    ) {
+        if !self
+            .observer
+            .as_ref()
+            .is_some_and(|buffer| buffer.allocations)
+        {
+            return;
+        }
+        let Some(call) = self.calls.iter().find(|call| call.owner == owner) else {
+            return;
+        };
+        let mut event = observation::Event::new(call, observation::Phase::Allocation, None);
+        event.allocation = Some(observation::Allocation {
+            address,
+            bytes,
+            allocated,
+        });
+        self.observe(event);
+    }
+
     pub(super) fn allocation(&mut self, owner: u64, added: u64, removed: u64) {
         for call in self.calls.iter_mut() {
             if call.owner == owner {

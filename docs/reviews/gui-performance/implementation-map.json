@@ -39105,15 +39105,30 @@
         ],
         "scope": "Allocator/call-guard proof and source safety review; not native caps, scratch classification or performance acceptance. Forced moves within active monitored owner windows change cost and peaks.",
         "carry_forward": "Reuse affected controls. Preserve historical native results at historical scope; final candidate requires native resource/performance qualification."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Bounded active-call allocation transition delivery",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json",
+        "evidence_field": "verification and limits",
+        "evidence_sha256": "4372dd8edc45ccd838875404e86d9dbf811094048d72c598685ac970869857bb",
+        "validated_result": "Three serial observer tests pass, including ordered realloc overlap and overflow; native writer compiles. Existing summary/concurrent delivery retained.",
+        "requirement_ids": [
+          "ACC-02",
+          "MEM-02"
+        ],
+        "scope": "Allocation transition delivery only; classifier, diagnostic overhead, capacity sufficiency and full native accounting remain open.",
+        "carry_forward": "Reuse observer controls. Implement allocation-aware analysis before enabling mode in final native replay."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 39,
-      "evidence_hashes_checked": 39,
-      "matching_hashes": 39,
+      "completed_groups": 40,
+      "evidence_hashes_checked": 40,
+      "matching_hashes": 40,
       "native_runs_performed": 0,
-      "meaning": "Final affected allocator/call-guard batch13passed,1ignored; initial broader-policy passing batch retained and superseded after source scope correction. Previous38scoped groups retained; no native acceptance added."
+      "meaning": "One three-test observer batch and app compilation; previous39groups retained. No classification or native acceptance added."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39413,6 +39428,12 @@
     "evidence": "docs/reviews/gui-performance/implementation/S5/scoped-reallocation-peak/result.json",
     "sha256": "6a74ab3f1862379d4543942736707bf2eb1fd5597370fdbf067d3f1e5248adfb",
     "status": "Monitored private-call realloc overlap is explicit and reaches peak/refusal accounting",
+    "qualification_pass": false
+  },
+  "s5_private_allocation_lifetimes": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json",
+    "sha256": "4372dd8edc45ccd838875404e86d9dbf811094048d72c598685ac970869857bb",
+    "status": "Opt-in active-call block transitions delivered; classification and native qualification pending",
     "qualification_pass": false
   }
 }

@@ -1,0 +1,52 @@
+{
+  "status": "Opt-in active-call block transitions delivered; classification and native qualification pending",
+  "qualification_pass": false,
+  "requirement_ids": [
+    "ACC-02",
+    "MEM-02"
+  ],
+  "sources": {
+    "crates/gui-render/src/cpu_alloc.rs": "eccfc53450e2751a2ee30ce6273c5f0d646c24e8cfa2b382e0a5c584b2fd286b",
+    "crates/gui-render/src/private_text_call.rs": "7ad455766bad7cebb8f983f22011fc5693a1a07dc37a0ff435bbb7b39bf346e5",
+    "crates/gui-render/src/private_text_observation.rs": "dfd50e24339a1cf2f2a149dd9d47d020ada598f634762b4f5166269b796b8ffb",
+    "crates/gui-render/src/private_text_observation_tests.rs": "ce346f7b3a83210077ffb190a465c92b5d7f601d26d98c2c629b22408e47cd55",
+    "crates/gui-app/src/native_private_text_measurements.rs": "e03ff125f201b165b8a9f7e63d2e8faab36454b0be168958483d7aa1536ceacc"
+  },
+  "mode": {
+    "environment": {
+      "DATUM_PRIVATE_TEXT_TRACE": "<fresh-output-file>",
+      "DATUM_PRIVATE_TEXT_ALLOCATION_EVENTS": "1",
+      "DATUM_PRIVATE_TEXT_TRACE_CAPACITY": "<predeclared capacity 1..65536>"
+    },
+    "semantics": "Same bounded call buffer records ordered Allocation transitions with address, requested bytes including Datum header/alignment, allocated/free flag, and full scope_live_bytes. Begin/Finished delimit coverage. Call owner/renderer incidence retained. No header or dependency changes.",
+    "report_interpretation": "On Allocation, embedded report is identity-only (call_id/owner_id/allocator_installed): accounting can precede transition. Use allocation and scope_live_bytes for transition, Finished for call peaks/refusal. Native start receipt and API documentation state this."
+  },
+  "verification": {
+    "observer_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-render --lib -- cpu_alloc::calls::observation::tests --ignored --test-threads=1",
+    "passed": 3,
+    "failed": 0,
+    "filtered": 350,
+    "build_seconds": 11.33,
+    "test_seconds": 0.0,
+    "app_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo check --locked --offline -p datum-gui-app --bin datum-gui",
+    "app_result": "passed in5.09s; subsequent edits only document allocation report interpretation in rustdoc and a literal start-receipt string",
+    "coverage": "New real allocation/realloc/input-free/retained-output trace, ordered identities/full-live byte totals and sticky allocation-event overflow. Existing summary delivery and concurrent owner-incidence tests pass unchanged.",
+    "raw": {
+      "tests.log.gz": "8386546e27dec23dede518c00cf9d867f5aaebd32e13c58551a3e1d491a6e051",
+      "app-check.log.gz": "30478d2b19da1bc78087ed76cca45a9f76a331fdb2e0b24664573b3bf458dc82"
+    },
+    "source_health": "2587 files passed"
+  },
+  "review": {
+    "reviewer": "Hegel / 01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "finding": "No concrete allocator-safety defect; identified mixed-time embedded reports. Restricted their documented authority on allocation transitions rather than adding extra ledger refreshes.",
+    "scope": "Source review only, not independent native replay."
+  },
+  "limits": [
+    "Transitions cover only active monitored owner calls. Pre-call allocation births and post-call frees/reallocations are absent; addresses can be reused across unseen gaps and cannot be treated as global allocation IDs.",
+    "An allocation-aware classifier with exact coverage/reconciliation and negative controls is still needed. Existing summary analyzers reject Allocation transitions; mode is not enabled in the final runner.",
+    "Call-local retained input/output versus temporary scratch and concurrent aggregate classification are not yet established. Requested block capacities do not expose System allocator slack/native mappings.",
+    "Event struct and summary JSON are larger even in summary-only diagnostics. Allocation mode timestamps/stores transitions under the ledger lock. Neither diagnostic overhead nor native capacity sufficiency has been qualified; overflow invalidates delivery.",
+    "No native trial, release rebuild, numerical acceptance or final independent replay. Historical evidence remains at its original scope."
+  ]
+}

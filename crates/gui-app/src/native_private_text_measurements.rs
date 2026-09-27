@@ -21,7 +21,16 @@ struct Writer {
 }
 
 pub(crate) fn start() -> Result<()> {
+    let allocations = match std::env::var("DATUM_PRIVATE_TEXT_ALLOCATION_EVENTS").as_deref() {
+        Err(std::env::VarError::NotPresent) | Ok("0") => false,
+        Ok("1") => true,
+        other => anyhow::bail!("invalid private allocation event mode: {other:?}"),
+    };
     let Some(path) = std::env::var_os("DATUM_PRIVATE_TEXT_TRACE") else {
+        anyhow::ensure!(
+            !allocations,
+            "allocation events require private text trace output"
+        );
         return Ok(());
     };
     let capacity = match std::env::var("DATUM_PRIVATE_TEXT_TRACE_CAPACITY") {
@@ -36,14 +45,19 @@ pub(crate) fn start() -> Result<()> {
         .create_new(true)
         .open(path)
         .context("create private-text observation file")?;
-    let id = observation::start(capacity)?;
+    let id = if allocations {
+        observation::start_with_allocations(capacity)?
+    } else {
+        observation::start(capacity)?
+    };
     let mut writer = Writer {
         file,
         id,
         incomplete: false,
     };
     writer.line(json!({"phase":"start", "observation_id":id, "pid":std::process::id(),
-        "capacity":capacity, "scope":"private call events; not complete CPU/GPU/RSS accounting",
+        "capacity":capacity, "allocation_events":allocations,
+        "allocation_report_accounting":"identity fields only on Allocation; use scope_live_bytes and allocation, Finished for call peaks", "scope":"private call events; not complete CPU/GPU/RSS accounting",
         "storage":"at most two event buffers during drain; allocator/JSON/output overhead and RSS separate"}))?;
     *WRITER.lock().unwrap_or_else(|e| e.into_inner()) = Some(writer);
     ENABLED.store(true, Ordering::Release);
@@ -68,6 +82,8 @@ impl Writer {
             self.line(json!({
                 "phase":"call", "observation_id":batch.observation_id,
                 "sequence":event.sequence, "elapsed_ns":event.elapsed_ns,
+                "scope_live_bytes":event.scope_live_bytes,
+                "allocation":event.allocation.map(|a| json!({"address":a.address,"bytes":a.bytes,"allocated":a.allocated})),
                 "transition":format!("{:?}", event.phase),
                 "renderer_origin":event.renderer_id, "owner_label":event.owner_label,
                 "host_limit_bytes":event.host_limit_bytes, "process_limit_bytes":event.process_limit_bytes,

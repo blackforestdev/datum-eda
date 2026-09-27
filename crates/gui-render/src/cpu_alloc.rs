@@ -212,6 +212,12 @@ unsafe impl GlobalAlloc for Allocator {
                     owner.overhead.fetch_sub(offset as u64, Ordering::AcqRel);
                     owner.allocations.fetch_sub(1, Ordering::AcqRel);
                     ledger.allocation(owner.id, 0, (layout.size() + offset) as u64);
+                    ledger.allocation_event(
+                        owner.id,
+                        pointer as usize,
+                        (layout.size() + offset) as u64,
+                        false,
+                    );
                 });
             }
         }
@@ -263,6 +269,12 @@ unsafe impl GlobalAlloc for Allocator {
                     (*owner).overhead.fetch_add(offset as u64, Ordering::AcqRel);
                     (*owner).allocations.fetch_add(1, Ordering::AcqRel);
                     ledger.allocation((*owner).id, (new_size + offset) as u64, 0);
+                    ledger.allocation_event(
+                        (*owner).id,
+                        resized.add(offset) as usize,
+                        (new_size + offset) as u64,
+                        true,
+                    );
                     ledger.refresh();
                     // The one owning Arc reference transfers with the header;
                     // no observer can access the intermediate block here.
@@ -274,6 +286,12 @@ unsafe impl GlobalAlloc for Allocator {
                     (*owner).overhead.fetch_sub(offset as u64, Ordering::AcqRel);
                     (*owner).allocations.fetch_sub(1, Ordering::AcqRel);
                     ledger.allocation((*owner).id, 0, (layout.size() + offset) as u64);
+                    ledger.allocation_event(
+                        (*owner).id,
+                        pointer as usize,
+                        (layout.size() + offset) as u64,
+                        false,
+                    );
                     resized
                 })
             };
@@ -318,6 +336,12 @@ unsafe fn allocate(layout: Layout, zeroed: bool) -> *mut u8 {
                 (*owner).overhead.fetch_add(offset as u64, Ordering::AcqRel);
                 (*owner).allocations.fetch_add(1, Ordering::AcqRel);
                 ledger.allocation((*owner).id, (layout.size() + offset) as u64, 0);
+                ledger.allocation_event(
+                    (*owner).id,
+                    base.add(offset) as usize,
+                    (layout.size() + offset) as u64,
+                    true,
+                );
                 base
             })
         };
