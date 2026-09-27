@@ -10108,7 +10108,7 @@
       },
       "s5_adoption_reconciliation": {
         "evidence": "docs/reviews/gui-performance/implementation/S5/END-03/result.json",
-        "evidence_sha256": "928036c1a1b3c14b00a826f0e2bd4ff3fe173d91366c0baed3c2ad8fa9401a64",
+        "evidence_sha256": "f123a75577e62303802c4a44806bdfd8373e7c108efffd88d92f02c866e72007",
         "qualification_pass": false,
         "new_native_runs": 0,
         "callback_lifetime_evidence": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json"
@@ -10116,7 +10116,7 @@
       "s5_recorded_evidence": [
         {
           "path": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
-          "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956"
+          "sha256": "37f7459cd36a07b6f3a6658dcd588942c5caa78891483573a5e7cbcee6d83ec5"
         }
       ]
     },
@@ -10166,7 +10166,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Concrete private redraw source/admission negative rejected by distinct reviewer; positive registration package remains incomplete. No runtime admission validator implied.",
+        "status": "NEW registration declaration reviewed with13source/7proof bindings; private redraw admission negative rejected. Full positive qualification and actual future-pane admission remain unproven; no runtime admission validator implied.",
         "id": "proof_end_04",
         "positive": "Register future pane/profile with proof",
         "negative_control": "Add private scheduler/renderer without contract",
@@ -10224,7 +10224,7 @@
       "s5_recorded_evidence": [
         {
           "path": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
-          "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956"
+          "sha256": "37f7459cd36a07b6f3a6658dcd588942c5caa78891483573a5e7cbcee6d83ec5"
         }
       ]
     },
@@ -39038,7 +39038,7 @@
         "completed": true,
         "evidence": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
         "evidence_field": "negative_disposition and limits",
-        "evidence_sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956",
+        "evidence_sha256": "37f7459cd36a07b6f3a6658dcd588942c5caa78891483573a5e7cbcee6d83ec5",
         "validated_result": "Distinct reviewer rejects actual NEW-adapter counterfactual bypassing shared frame admission/completion and failure handling.",
         "requirement_ids": [
           "END-03",
@@ -39053,8 +39053,8 @@
       "completed_groups": 36,
       "evidence_hashes_checked": 36,
       "matching_hashes": 36,
-      "native_runs_performed": 3,
-      "meaning": "36 completed scoped groups retained; private redraw admission negative reviewed. Separate3-run quiet clamp batch fails CPU cap and is not marked as a passed CPU check."
+      "native_runs_performed": 0,
+      "meaning": "36 completed scoped group hashes still match after registration-package review. No additional application test, build or native run; CPU failure and all remaining acceptance retained."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39094,7 +39094,7 @@
       "reuse": "All34 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
       "before_native_execution": [
         {
-          "action": "Reuse END-03 source inventory, S1-S4 shared ownership proof, six-case native auxiliary own-submit close/callback negative, and rejected private redraw source/admission counterexample. Complete END-04 positive registration package and missing actual production runtime coverage without substituting review for execution.",
+          "action": "Reuse END-03 source inventory, S1-S4 ownership proof, auxiliary callback negative and rejected private redraw counterexample. Use the reviewed NEW registration declaration to complete missing native/resource qualification and actual production runtime coverage; do not substitute source review for execution.",
           "requirements": [
             "END-03",
             "END-04"
@@ -39328,7 +39328,8 @@
   },
   "s5_private_path_admission_negative": {
     "evidence": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
-    "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956",
-    "scope": "Non-applied NEW private redraw path rejected by source/admission review; no automatic runtime detection or full END-03/04 acceptance."
+    "sha256": "37f7459cd36a07b6f3a6658dcd588942c5caa78891483573a5e7cbcee6d83ec5",
+    "scope": "Non-applied NEW private redraw path rejected by source/admission review; no automatic runtime detection or full END-03/04 acceptance.",
+    "positive_registration": "Same evidence now contains reviewed existingNEW host/profile, dependencies, resource owners/caps, input/clip/focus semantics, exception and scoped proof references. Declaration review only; full positive qualification remains open."
   }
 }

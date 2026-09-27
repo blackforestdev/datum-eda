@@ -1,6 +1,6 @@
 {
   "qualification_pass": false,
-  "status": "Competing private redraw-path source/admission negative rejected; full END-03/END-04 acceptance incomplete",
+  "status": "Reviewed NEW registration declaration and rejected competing private redraw source/admission negative; full END-03/END-04 acceptance incomplete",
   "source_commit": "5b013adb",
   "source_path": "crates/gui-app/src/native_frame_adapters.rs",
   "source_sha256": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
@@ -32,5 +32,139 @@
     "END-04 positive registration requires complete dependencies, owners/caps, input/clip/focus semantics, semantic exceptions and proof references.",
     "No new runtime registry, framework, dependency or product pane is required or introduced."
   ],
-  "review": "Distinct authorized reviewer inspected the original adapter and supplied patch and independently rejected the changed scheduling boundary. No reviewer build/native execution."
+  "review": "Distinct authorized reviewer inspected the original adapter and supplied patch and independently rejected the changed scheduling boundary. No reviewer build/native execution.",
+  "positive_registration": {
+    "purpose": "Concrete registration package for the existing NEW form profile, using current production source and preserved proof. No new pane or admission mechanism; existing implementation authorization remains unchanged.",
+    "consumer": "NEW",
+    "host": "Separate owned native New Project window; main application device/queue epoch shared through GlobalPreferencesWindowSurface and SurfaceTransaction. NativeFrameCoordinator owns frame tokens and completion.",
+    "profile": "Dialog-only Renderer + form profile. Empty retained world; direct NewProjectDialogState preparation, not workspace clone/general shell backdrop.",
+    "damage_dependencies": [
+      "Authoritative form state changes and keyboard/pointer outcomes route through request_dialog_key_redraw; consumed-only input does not invalidate.",
+      "Dialog damage clears prepared form and marks hit publication pending before shared host invalidation.",
+      "Changed nonzero extent and changed scale clear stale hit regions, cancel scroll grab and invalidate prepared form. Renderer detects viewport/content reflow and reveals the focused control even if focus identity did not change.",
+      "Focus/units-choice changes request focus reveal; device replacement reconstructs renderer resources through existing shared recovery path."
+    ],
+    "input_clip_focus": "Shared owned-dialog pointer route handles continuous ScrollViewport wheel/drag before form hits. Hit regions publish only after successful presentation; reversed paint-order hits use clipped form geometry. NewProjectFocus and handle_new_project_key retain form semantics. Native parent/show policy establishes ownership and initial focus; closure returns focus to main. Reflow and focused-control reveal are separate from excluded resize performance qualification.",
+    "resource_owners_and_caps": [
+      {
+        "owner": "Per-renderer shaped text",
+        "bound": "8MiB local /32MiB process; existing key/entry caps retained",
+        "source": "crates/gui-render/src/render/text_cache_budget.rs"
+      },
+      {
+        "owner": "Per-thread scalar measurement cache",
+        "bound": "256entries /64KiB keys /128KiB owned payload",
+        "source": "crates/gui-render/src/render/measurement_cache.rs"
+      },
+      {
+        "owner": "Renderer control mesh cache and GPU control buffers",
+        "bound": "256entries /4MiB CPU /4MiB GPU",
+        "source": [
+          "crates/gui-render/src/render/control_mesh.rs",
+          "crates/gui-render/src/render/gpu_init.rs"
+        ]
+      },
+      {
+        "owner": "Host screen buffers",
+        "bound": "16MiB local",
+        "source": "crates/gui-render/src/render/gpu_init.rs"
+      },
+      {
+        "owner": "Host staging/scratch, including monitored private font/raster calls",
+        "bound": "16MiB local /64MiB aggregate; PM047 transient overshoot/OOM limits unchanged",
+        "source": [
+          "crates/gui-render/src/render/gpu_init.rs",
+          "crates/gui-render/src/text_gpu/budget.rs"
+        ]
+      },
+      {
+        "owner": "Glyph atlas",
+        "bound": "32MiB local /128MiB aggregate",
+        "source": [
+          "crates/gui-render/src/text_gpu/atlas.rs",
+          "crates/gui-render/src/text_gpu/budget.rs"
+        ]
+      },
+      {
+        "owner": "Surface attachments and all application GPU allocations",
+        "bound": "Shared GPU512MiB peak, existing one-current/one-retiring host attachment and submit-lifetime ownership; driver residency separate",
+        "source": "crates/gui-render/src/text_gpu/budget.rs"
+      },
+      {
+        "owner": "Native host process contribution",
+        "bound": "64MiB steady incremental RSS;512MiB combined peak; close within16MiB of warmed prior RSS within5s; live payload separately zero",
+        "authority": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md MEM-02"
+      },
+      {
+        "owner": "Prepared form and presented hit geometry",
+        "bound": "One current prepared form and last-published hit set; complete transient/owned byte accounting remains subject to MEM-02/ACC and unqualified in S5",
+        "source": [
+          "crates/gui-app/src/global_preferences_window.rs",
+          "crates/gui-app/src/presented_hit_regions.rs"
+        ]
+      }
+    ],
+    "semantic_exception": "Form dialog has no board camera/world scene or terminal content. Retain project creation authority and discrete focus/units controls; reuse generic scheduling/rendering/scroll/clip owners. No exception permitting a private scheduler or relaxed resource cap.",
+    "proof": [
+      {
+        "path": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json",
+        "sha256": "75ea966a6086030a8dc4bb73481086b5e5599815eaa42e768fe6af90954c0f75",
+        "scope": "Dialog-only migration; recorded CPU/GPU comparison and bounded native input. Full backend/input/resource qualification not implied."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S3/new-project-form-scroll/result.json",
+        "sha256": "c5dc95ae1088dfa22ce465dbdf16666f7743c1d4f2138025538924df20348697",
+        "scope": "Shared scrolling, clipping and focus reveal; renderer1/1.5/2x and bounded native2x cases. No actual monitor-scale transition or creation authority exercised."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S3/new-project-summary-clipping/result.json",
+        "sha256": "a241cb8f746c6e16d81393df9f0bc1697ff060feff50f008f8e6758a8d292bae",
+        "scope": "Summary ancestor clipping with long strings; bounded static native capture."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json",
+        "sha256": "11f71b78ce2c69b08d824b4df6a62909f72431a1e02410df812f8b08f706ca41",
+        "scope": "Changed-state dialog-only pass observations. Recorded partial-name capture is not final-text timing proof."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/native-startup-batch/assessment.json",
+        "sha256": "65963201a56789ff49f23b09a36935316d2bd1b3792f9483b8bd0821c3e2169f",
+        "scope": "X11/1x warm-window CPU and exact readiness for actualNEW among3hosts; other configurations and final replay remain open."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json",
+        "sha256": "bea14c89ab640545806b666db6ff705117cbec1175c39b98ae7248bfc8637414",
+        "scope": "ActualNEW own-presented-submit native close plus strong-capture lifetime negative; not driver memory or complete close resource budget."
+      },
+      {
+        "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
+        "sha256": "6f8fe80c1f7bdadcb696093d48789499992c1c34916cf91e0986839858f79457",
+        "scope": "Producer hour contains200NEW open/close cycles; resource/RSS/fullMEM03 limitations retained."
+      }
+    ],
+    "source_sha256": {
+      "crates/gui-app/src/new_project_window.rs": "6ba218159b83a5a182932f8b135a3743c3249c8ce03c880b075ebf6398c9c039",
+      "crates/gui-app/src/global_preferences_window.rs": "b2d5aedcc458041e1fb26511b71933d308613f1e3b79dd0fc7cad5a67b50c950",
+      "crates/gui-app/src/native_frame_adapters.rs": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+      "crates/gui-app/src/owned_dialog_pointer.rs": "81b54d7bf949fdcd86c2b63f078ccf7dc0ac3b6448dbf7408d8824c840cb45ab",
+      "crates/gui-app/src/owned_window_policy.rs": "ee3691316e2813588af8b2dfd13b417e80641539da34d7e489b3d871d45f9075",
+      "crates/gui-app/src/presented_hit_regions.rs": "7b48e107880f2ae5e5069e7ccd74c40d586c8e1aa96b3b349667bcc626be7365",
+      "crates/gui-render/src/render/new_project_scene.rs": "132cebd33d24cbb4c7de030b10b677905f41982f531180124fa850bad45e659d",
+      "crates/gui-render/src/render/gpu_init.rs": "aa94596804f0b8e28317eae127fef011fac05365fdc15502e78219a171be4710",
+      "crates/gui-render/src/render/control_mesh.rs": "12343b4e268257475bcf2b923ea5b7f0e4d2ace3d45b0effc781728014897bec",
+      "crates/gui-render/src/render/text_cache_budget.rs": "26997d2136be60abf0cec480103fa89abfb6ebc72d14ea05e091a535d2741cc8",
+      "crates/gui-render/src/render/measurement_cache.rs": "7cbe71947dbe951e2a181e649d65a4f50774f2659201fe1dda1cb94a9bacb65d",
+      "crates/gui-render/src/text_gpu/atlas.rs": "28ca596935869a415e3f9ec228953f297533a14292ba45a299c53276466263ae",
+      "crates/gui-render/src/text_gpu/budget.rs": "92676c620d44ff3fe9bee2bdd6d37b2e6dd805f74443c5840395b799b19d4c8c"
+    },
+    "negative_proof": "The private-scheduler-negative.patch and distinct rejection above supply source/admission negative only; close-after-submit supplies separate native callback-retention negative.",
+    "remaining": [
+      "Complete per-consumer native input/final-state/static/focus proof across required backend/scale configurations; recorded form-name capture limitation remains.",
+      "Complete instantaneous local/aggregate resource accounting, overhead and lifecycle caps; declarations are ceilings, not measurements.",
+      "Complete final stable-candidate independent native replay and separate owner UX/product acceptance."
+    ],
+    "admission_status": "Distinct source review accepts registration description and verifies13source/7proof bindings. Full END-04 positive acceptance and admission of an actual future pane remain unproven; existing implementation authorization unchanged.",
+    "reviewed_source_commit": "c5301fc4",
+    "review": "No material false scope/ownership declaration found. Reflow already reveals focused control; no production fix follows. Recorded ceilings and historical scoped evidence are not current complete qualification."
+  }
 }
