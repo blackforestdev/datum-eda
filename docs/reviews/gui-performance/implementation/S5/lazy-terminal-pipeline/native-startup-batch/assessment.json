@@ -1,0 +1,394 @@
+{
+  "status": "Six fixed native X11/1x warm-window CPU trials complete; bounded candidate open/close limits met. Full S5 acceptance remains open.",
+  "qualification_pass": false,
+  "candidate_commit": "0709fc90",
+  "decision_result": "All270candidate warm opens<=50ms and270closes<=20ms, with exact pixels/focus/destruction. All270baseline opens/closes also meet these limits in this batch. No causal or formal relative improvement claim; original historical excesses remain.",
+  "method": "startup_campaign.py invokes startup_windows.py in fixed baseline1,candidate1,candidate2,baseline2,baseline3,candidate3 order. Three first-use observations per process kept separate; five-second warmup then30warmcycles perhost and five-second idle tail. Diagnostic traces/GPUtimestamps/verboseoff; CPU intervals include GUI and descendant cgroup usage through observed pixel readiness/destruction. Existing Cargo resource lock held throughout native work.",
+  "baseline": "Preserved ba24e35a producer binary, not pre-PM045 baseline.",
+  "runs": [
+    {
+      "role": "baseline",
+      "trial": 1,
+      "raw_directory": "pm045-startup-xbrroxul",
+      "binary_sha256": "05fbc6bc8e9e29c439f901ee6107c5c778ddaee1b8690d33840d52ab71e54b1b",
+      "host_cpu": {
+        "GLOBAL": {
+          "open": {
+            "mean_ms": 33.8941,
+            "p95_ms": 39.764,
+            "max_ms": 40.451,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.365033333333333,
+            "p95_ms": 10.29,
+            "max_ms": 10.842,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "PROJECT": {
+          "open": {
+            "mean_ms": 38.91276666666667,
+            "p95_ms": 45.387,
+            "max_ms": 46.461,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.080633333333333,
+            "p95_ms": 10.921,
+            "max_ms": 11.022,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "NEW": {
+          "open": {
+            "mean_ms": 33.71443333333333,
+            "p95_ms": 38.967,
+            "max_ms": 40.896,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.555233333333332,
+            "p95_ms": 11.014,
+            "max_ms": 11.645,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        }
+      },
+      "exit_code": 0,
+      "display_restored": true,
+      "identities_unchanged": true
+    },
+    {
+      "role": "candidate",
+      "trial": 1,
+      "raw_directory": "pm045-startup-99_lk9mx",
+      "binary_sha256": "35d413855bc19cb12a8f69a2915003ed0b08403d92f4ccac8443c07149de1f6a",
+      "host_cpu": {
+        "GLOBAL": {
+          "open": {
+            "mean_ms": 31.5155,
+            "p95_ms": 36.48,
+            "max_ms": 37.106,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.077433333333333,
+            "p95_ms": 10.787,
+            "max_ms": 10.886,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "PROJECT": {
+          "open": {
+            "mean_ms": 37.2686,
+            "p95_ms": 42.405,
+            "max_ms": 44.44,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.888233333333334,
+            "p95_ms": 10.582,
+            "max_ms": 11.163,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "NEW": {
+          "open": {
+            "mean_ms": 32.217933333333335,
+            "p95_ms": 40.434,
+            "max_ms": 40.942,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.4332,
+            "p95_ms": 11.597,
+            "max_ms": 11.626,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        }
+      },
+      "exit_code": 0,
+      "display_restored": true,
+      "identities_unchanged": true
+    },
+    {
+      "role": "candidate",
+      "trial": 2,
+      "raw_directory": "pm045-startup-890w0h1n",
+      "binary_sha256": "35d413855bc19cb12a8f69a2915003ed0b08403d92f4ccac8443c07149de1f6a",
+      "host_cpu": {
+        "GLOBAL": {
+          "open": {
+            "mean_ms": 30.255533333333336,
+            "p95_ms": 38.069,
+            "max_ms": 38.257,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.606,
+            "p95_ms": 10.851,
+            "max_ms": 11.28,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "PROJECT": {
+          "open": {
+            "mean_ms": 35.856,
+            "p95_ms": 42.14,
+            "max_ms": 43.53,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.239566666666667,
+            "p95_ms": 10.722,
+            "max_ms": 11.113,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "NEW": {
+          "open": {
+            "mean_ms": 33.034166666666664,
+            "p95_ms": 39.19,
+            "max_ms": 39.552,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.797033333333333,
+            "p95_ms": 11.698,
+            "max_ms": 11.886,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        }
+      },
+      "exit_code": 0,
+      "display_restored": true,
+      "identities_unchanged": true
+    },
+    {
+      "role": "baseline",
+      "trial": 2,
+      "raw_directory": "pm045-startup-juga84vh",
+      "binary_sha256": "05fbc6bc8e9e29c439f901ee6107c5c778ddaee1b8690d33840d52ab71e54b1b",
+      "host_cpu": {
+        "GLOBAL": {
+          "open": {
+            "mean_ms": 32.53123333333333,
+            "p95_ms": 38.508,
+            "max_ms": 38.905,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.4685,
+            "p95_ms": 10.588,
+            "max_ms": 10.908,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "PROJECT": {
+          "open": {
+            "mean_ms": 35.99373333333333,
+            "p95_ms": 47.108,
+            "max_ms": 47.867,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.1996,
+            "p95_ms": 10.749,
+            "max_ms": 10.859,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "NEW": {
+          "open": {
+            "mean_ms": 33.24293333333333,
+            "p95_ms": 39.696,
+            "max_ms": 42.352,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.0177,
+            "p95_ms": 10.857,
+            "max_ms": 11.129,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        }
+      },
+      "exit_code": 0,
+      "display_restored": true,
+      "identities_unchanged": true
+    },
+    {
+      "role": "baseline",
+      "trial": 3,
+      "raw_directory": "pm045-startup-lk2fiiai",
+      "binary_sha256": "05fbc6bc8e9e29c439f901ee6107c5c778ddaee1b8690d33840d52ab71e54b1b",
+      "host_cpu": {
+        "GLOBAL": {
+          "open": {
+            "mean_ms": 32.3824,
+            "p95_ms": 38.045,
+            "max_ms": 38.048,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.301933333333332,
+            "p95_ms": 11.082,
+            "max_ms": 11.178,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "PROJECT": {
+          "open": {
+            "mean_ms": 37.685233333333336,
+            "p95_ms": 44.191,
+            "max_ms": 45.118,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.1936,
+            "p95_ms": 10.57,
+            "max_ms": 11.321,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "NEW": {
+          "open": {
+            "mean_ms": 33.7038,
+            "p95_ms": 39.136,
+            "max_ms": 40.834,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.592833333333335,
+            "p95_ms": 11.118,
+            "max_ms": 11.166,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        }
+      },
+      "exit_code": 0,
+      "display_restored": true,
+      "identities_unchanged": true
+    },
+    {
+      "role": "candidate",
+      "trial": 3,
+      "raw_directory": "pm045-startup-v9ttbnlg",
+      "binary_sha256": "35d413855bc19cb12a8f69a2915003ed0b08403d92f4ccac8443c07149de1f6a",
+      "host_cpu": {
+        "GLOBAL": {
+          "open": {
+            "mean_ms": 31.7789,
+            "p95_ms": 37.146,
+            "max_ms": 42.499,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 8.4099,
+            "p95_ms": 11.023,
+            "max_ms": 11.301,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "PROJECT": {
+          "open": {
+            "mean_ms": 37.01733333333333,
+            "p95_ms": 42.872,
+            "max_ms": 43.305,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.038233333333332,
+            "p95_ms": 10.801,
+            "max_ms": 11.952,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        },
+        "NEW": {
+          "open": {
+            "mean_ms": 32.764466666666664,
+            "p95_ms": 39.31,
+            "max_ms": 39.695,
+            "limit_ms": 50,
+            "exceeding_cycle_indices": []
+          },
+          "close": {
+            "mean_ms": 9.748999999999999,
+            "p95_ms": 11.194,
+            "max_ms": 11.425,
+            "limit_ms": 20,
+            "exceeding_cycle_indices": []
+          }
+        }
+      },
+      "exit_code": 0,
+      "display_restored": true,
+      "identities_unchanged": true
+    }
+  ],
+  "totals": {
+    "warm_cycles": 540,
+    "candidate_warm_cycles": 270,
+    "first_use_cycles": 18,
+    "exact_ready_cycles": 558,
+    "readback_captures": 564,
+    "intermediate_nonmatching_captures": 6,
+    "failed_or_replaced_trials": 0
+  },
+  "review": {
+    "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "mode": "Read-only method/controller review before execution; NOT independent native replay.",
+    "finding": "No additional material measurement defect; record that ten-minute guard is between cycles, not a hard whole-process wall-clock deadline."
+  },
+  "limits": [
+    "Only X11/Xwayland1x, pinned F-DOA, actualGlobal/Project/New hosts; other backend/scale and consumer configurations remain unqualified.",
+    "Sixnormalexits/staticreadiness do not erase prior intermittent close failures or establish continuous displayed-frame/latency acceptance.",
+    "No GPU duty/timestamps, full instantaneous resource/driver accounting, observer overhead, cold10start, mixed/endurance or owner UX acceptance.",
+    "Three before/after pairs are descriptive; no seven-pair comparative inference or claim that source changes caused the numerical difference. Both baseline and candidate pass current scope; older failed trials remain authoritative at their original scope.",
+    "Cgroup includes exited descendants but sampledPIDrecords do not prove exhaustive short-lived identity. Quiet pointer settles do not claim acknowledged native cursor-motion counts.",
+    "Distinct final native replay remains required; this is producer affected qualification, not a substitute."
+  ],
+  "artifacts": {
+    "raw": "raw.tar.gz",
+    "raw_sha256": "45296a1f39350bb29f808e86453c7c881a1d8a9addfbc89a53f0780cd0e56d8a",
+    "members": 1408,
+    "raw_member_manifest": "raw-sha256.json.gz",
+    "per_cycle_cpu": "campaign-result.json"
+  },
+  "preserved": "No production/dependency/quality/scope change during trial. GEFN, upload-before-acquire, PM029/PM047 and nonblocking resize exclusions remain."
+}

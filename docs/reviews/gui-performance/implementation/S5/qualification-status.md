@@ -78,9 +78,12 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Twenty native backend device-loss recoveries, X11/1x** — Five each for Main, Global Preferences, Project Preferences and New Project; exact selected-window pixels, focus and workspace/registry receipts. Normal shutdown; 51 renderer origins, 719 GPU allocations and 40,648 private calls reconciled. [Evidence](repeated-device-recovery/native20-ba24e35a/assessment.json)
   Scope: Producer structural recovery on ba24e35a; all 20 diagnostic CPU intervals exceed 100 ms. Full performance, simultaneous four-host/mixed-PTY and backend/scale acceptance remain open. Two driver failures are preserved. This run is separate from the earlier hour.
 
+- [x] **X11/1x warm-window CPU and native output, three trials per host** — All270candidate opens≤50ms (maximum44.440ms) and closes≤20ms (maximum11.952ms); exact pixels/focus/destruction. Six fixed baseline/candidate runs,558first-use/warm cycles, normal exits and display restoration. [Evidence](lazy-terminal-pipeline/native-startup-batch/assessment.json)
+  Scope: Candidate0709fc90, actualGlobal/Project/New; baseline also passes this batch. Six intermediate nonmatching readbacks and historical failures retained. No causal speedup, otherbackend/scale, GPU/full resource, independent replay or owner UX acceptance.
+
 ## Still open — do not reset the done list
 
-- [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.
+- [ ] Resolve recorded pointer CPU/GPU and clamp CPU failures. Current X11/1x warm-window CPU/output qualification is checked above; other configurations and final independent replay remain. Preserve historical Project-open excesses.
 - [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences.
 - [ ] Complete fixture admission and instantaneous private/scratch/driver/client resource accounting, including observer overhead.
 - [ ] Resolve the saved endurance resource trend and missing in-scope tier/configuration, accounting and recovery-performance proof. The hour and separate 20 structural recoveries above are done. Readback timing remains descriptive; deferred displayed latency is not an initial S5 gate. Earlier failed attempts remain failures.
@@ -93,7 +96,7 @@ Pinned resize/temporal,T2 and unadmitted schematic exclusions remain unchanged.
 
 ## Remaining execution without duplicate campaigns
 
-All 31 completed-group evidence hashes match. The original map contains 225
+All 32 completed-group evidence hashes match. The original map contains 225
 requirement rows, not 225 separate tests: 15 specification-record rows, 14
 nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
 or mixed-scope rows. HP05-02 still requires idle resources; its pacing component
