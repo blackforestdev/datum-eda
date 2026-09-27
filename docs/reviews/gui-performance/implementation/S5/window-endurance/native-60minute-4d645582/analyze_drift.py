@@ -83,6 +83,12 @@ for index in [0]+list(range(49,600,50)):
             'document_gpu_reserved_bytes':sum(s['reserved_bytes'] for s in row['documents_gpu'])}
     values.update({'main_'+k+'_reserved_bytes':main['reservations'][k]['reserved_bytes'] for k in ('screen','control_mesh','atlas','staging')})
     values.update({'scope_'+k+'_payload_bytes':v for k,v in scope.items()})
+    values.update({'scope_registry_'+k:v for k,v in row['scope_registry'].items()})
+    values['observer_host_slots_capacity_bytes']=row['observer_storage']['host_slots_capacity_bytes']
+    for field in ('entries','key_bytes','retained_bytes'):
+        values['width_cache_'+field]=sum(s[field] for s in row['thread_measurements'])
+    values['scope_tracking_bytes']=sum(s['tracking_bytes'] for s in row['scoped_heap'])
+    values['scope_live_allocations']=sum(s['allocations'] for s in row['scoped_heap'])
     points.append({'completed_cycle':index+1,'scheduled_seconds':(c['scheduled_ns']-start)/1e9,'window_id':c['window'],'snapshot_sequence':row['sequence'],'snapshot_relative_interval_ns':[row['started_ns'],row['finished_ns']],'values':values})
 keys=set.intersection(*(set(p['values']) for p in points))
 trends={}
@@ -97,6 +103,7 @@ result={'qualification_pass':False,'source_hashes':{k:expected[k] for k in ('res
         'Open wall intervals start before xdotool Return and end after exact screenshot-readiness polling; close intervals include external focus/destruction polling. These include harness/process scheduling overhead and are not calibrated displayed-state latency.',
         'Resource points join the first released native-window snapshot to the corresponding cycle by exact WindowId. They are lifecycle-selected near five-minute cycle boundaries, not asserted exact five-minute wall-clock samples. Resource Instant timestamps have no shared absolute origin in this receipt.',
         'Scoped heap, caches, documents and reservations overlap. Never sum these into a memory grand total. RSS includes diagnostic retention and mappings, and is not driver-residency measurement.',
+        'Scope registry metadata, observer host slots, width cache and allocation-tracking storage are reported separately. Flat sampled capacities rule out growth in those recorded fields at these points, not transient growth, uninstrumented application allocations or allocator/driver retention. No causal attribution of RSS growth follows.',
         'These summaries cannot establish full MEM-03:20recoveries, native latency/idle-return, instantaneous resources, observer overhead, complete configuration coverage, distinct replay and owner acceptance remain open.']}
 (evidence/'drift-analysis.json').write_text(json.dumps(result,indent=2)+'\n')
 print('CPU relative change bounds',ratio)

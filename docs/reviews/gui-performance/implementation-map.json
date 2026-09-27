@@ -9889,7 +9889,7 @@
         },
         {
           "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
-          "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e"
+          "sha256": "b0b77cbd69b89d584610a5894c3362248e06f5a84dce6676d352beec9cc9fcb1"
         },
         {
           "path": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
@@ -20870,7 +20870,7 @@
         },
         {
           "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
-          "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e"
+          "sha256": "b0b77cbd69b89d584610a5894c3362248e06f5a84dce6676d352beec9cc9fcb1"
         }
       ]
     },
@@ -20974,7 +20974,7 @@
       "s5_recorded_evidence": [
         {
           "path": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
-          "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e"
+          "sha256": "b0b77cbd69b89d584610a5894c3362248e06f5a84dce6676d352beec9cc9fcb1"
         }
       ]
     },
@@ -39213,7 +39213,7 @@
     ],
     "drift_analysis": {
       "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
-      "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e",
+      "sha256": "b0b77cbd69b89d584610a5894c3362248e06f5a84dce6676d352beec9cc9fcb1",
       "command": "python3 docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/analyze_drift.py /tmp/dev-agent-s5-endurance-6aj_2kcs docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582",
       "cpu_change_bounds_percent": [
         -3.6091408828051064,
@@ -39226,7 +39226,9 @@
         "mean": 6.1750770497622565,
         "p95": 6.701246055379784
       },
-      "interpretation": "Descriptive within-run diagnostics only. No rerun, production change, causality claim or acceptance relaxation."
+      "interpretation": "Descriptive within-run diagnostics only. No rerun, production change, causality claim or acceptance relaxation.",
+      "sampled_metadata_plateaus": "At all selected cycle50..600 post-close points: observer host slots90112bytes, scope registry264bytes, scope owners1248bytes, static call slots11880bytes, tracked allocations100464/tracking803752bytes, width cache62entries/652key bytes/4284retained bytes. These overlapping fields are not additive; initial scope-owner metadata grows96bytes then plateaus.",
+      "rss_investigation_decision": "Saved traces do not demonstrate growth in these tracked capacities after warmup. RSS growth remains unattributed; no production leak fix or repeat endurance run is justified by this observation alone. Uninstrumented allocations, transient peaks and allocator/driver retention remain unresolved. Full MEM-03 acceptance remains false."
     }
   },
   "s5_repeated_device_recovery": {
