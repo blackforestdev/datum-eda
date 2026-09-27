@@ -56,7 +56,7 @@
     "scope": "Existing delivery/reconciliation and parser-negative checks only. Point snapshots, registration events and admission reservations are not full instantaneous API-live or driver residency."
   },
   "remaining": [
-    "First/last ten-minute CPU/latency drift and five-minute resource plateau/trend assessment still require reconciliation of this preserved run; no rerun is implied.",
+    "Saved-run drift/trend analysis is complete in drift-analysis.json. Diagnostics-on CPU growth above5% is excluded by conservative bounds, but sampled RSS growth remains unattributed and New Project screenshot-readiness mean/p95 grew over5%; these harness intervals are not calibrated native latency. No full MEM-03 pass.",
     "No20 injected recoveries, mixed terminal workload, other backend/scale or full tier/configuration coverage in this run.",
     "Diagnostics-on run; no diagnostics-off numerical CPU/GPU budget pass or validated observer overhead.",
     "No physical presentation/latency calibration or return-to-idle timing qualification.",
@@ -83,5 +83,22 @@
     }
   },
   "raw_files": 1034,
-  "archive_scope": "All1034 regular raw-run files, including891 readiness captures (288 intermediate mismatches), native logs, fixture copy, source hashes, display receipts and isolated config/cache. No failed capture attempts removed."
+  "archive_scope": "All1034 regular raw-run files, including891 readiness captures (288 intermediate mismatches), native logs, fixture copy, source hashes, display receipts and isolated config/cache. No failed capture attempts removed.",
+  "drift_analysis": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json",
+    "sha256": "06624862aa660620aa746c4fba57c3261263e67563a365b9b18d5498a42ad79e",
+    "command": "python3 docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/analyze_drift.py /tmp/dev-agent-s5-endurance-6aj_2kcs docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582",
+    "cpu_change_bounds_percent": [
+      -3.6091408828051064,
+      -3.5510711635006076
+    ],
+    "sampled_rss_growth_bytes": 3112960,
+    "renderer_text_payload_growth_bytes": 2592,
+    "text_payload_plateau": "All selected points from cycle50 through600 equal311858bytes; no unbounded text-cache growth inferred.",
+    "new_project_open_readiness_change_percent": {
+      "mean": 6.1750770497622565,
+      "p95": 6.701246055379784
+    },
+    "interpretation": "Descriptive within-run diagnostics only. No rerun, production change, causality claim or acceptance relaxation."
+  }
 }
