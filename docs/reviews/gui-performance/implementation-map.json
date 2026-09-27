@@ -38496,10 +38496,16 @@
     "limits": "No60minute/drift/recovery/full-resource, backend-scale, independent replay or owner UX acceptance. Analyzer rejects missing final GPU end record."
   },
   "s5_portal_pointer_preparation": {
-    "status": "Fractional portal pointer schedule prepared and offline-checked; no native execution or qualification",
+    "status": "Fractional portal controller prepared and source-reviewed; native setup timed out awaiting consent before any motion. Delivery remains unqualified.",
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
-    "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved."
+    "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved.",
+    "native_attempt": {
+      "status": "Failed setup: fresh portal Start consent timed out. No input trial executed; no automatic retry.",
+      "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/portal-consent-timeout/result.json",
+      "motion_requests": 0,
+      "qualification_pass": false
+    }
   },
   "s5_completed_test_checks": {
     "purpose": "Owner-requested visible done checklist of existing validated tests. This is a view of preserved evidence, not a new acceptance gate or substitute for original requirements.",
