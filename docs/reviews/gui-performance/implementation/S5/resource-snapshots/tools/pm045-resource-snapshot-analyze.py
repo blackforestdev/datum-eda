@@ -1,14 +1,19 @@
 import sys,json,copy,collections,importlib.util
 from pathlib import Path
 spec=importlib.util.spec_from_file_location('gpu_evidence',Path(__file__).with_name('pm045-resource-gpu-analyze.py'));gpu=importlib.util.module_from_spec(spec);spec.loader.exec_module(gpu)
+spec=importlib.util.spec_from_file_location('frame_evidence',Path(__file__).with_name('pm045-frame-admission-analyze.py'));frames=importlib.util.module_from_spec(spec);spec.loader.exec_module(frames)
 
 def check(rows,expected_origins):
  assert rows[0]['phase']=='start' and rows[-1]['phase']=='end' and rows[-1]['complete_delivery'] and rows[-1]['event_loop_ok']
+ frame_result=frames.check(rows,expected_origins)
  seen=set();closed=set();peaks={};budgets={};violations=[];sequence=0;last_end=0;maxima=collections.defaultdict(int);hostnames={};last=None
  def bound(label,value,limit,seq):
   maxima[label]=max(maxima[label],value)
   if value>limit:violations.append({'snapshot':seq,'boundary':label,'value':value,'limit':limit})
  for row in rows[1:-1]:
+  if row['phase']=='frame':
+   assert row['renderer_id'] not in closed,'frame after renderer retirement'
+   continue
   assert row['phase']=='snapshot';sequence+=1;assert row['sequence']==sequence
   assert row['started_ns']>=last_end and row['finished_ns']>=row['started_ns'];last_end=row['finished_ns'];last=row
   owners={x['owner_id'] for x in row['text_cache_owners']};assert len(owners)==len(row['text_cache_owners'])
@@ -47,7 +52,7 @@ def check(rows,expected_origins):
  assert last['final'] and not any(h['present'] for h in last['hosts'])
  assert seen==closed==set(expected_origins),(seen-closed,set(expected_origins)-seen)
  assert not last['documents_gpu'] and not last['documents_cpu'] and not last['text_cache_owners']
- return {'snapshots':sequence,'renderer_origins':len(seen),'native_host_names':dict(collections.Counter(hostnames.values())),
+ return {'frame_admission':frame_result,'snapshots':sequence,'renderer_origins':len(seen),'native_host_names':dict(collections.Counter(hostnames.values())),
   'unique_local_budget_ids':len(budgets),'observed_maxima':dict(maxima),'sampled_cap_violations':violations,
   'final_cpu_scopes':last['scoped_heap'],'final_thread_measurements':last['thread_measurements'],
   'final_local_reservations_zero':True,'all_gpu_origins_have_resource_views':True,'qualification_pass':False,

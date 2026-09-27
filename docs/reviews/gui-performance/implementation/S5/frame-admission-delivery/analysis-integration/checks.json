@@ -1,0 +1,27 @@
+{
+  "qualification_pass": false,
+  "controls": {
+    "actual-overflow-trace": "rejected",
+    "synthetic-clean-envelope": "record consistency checked, no acceptance",
+    "sequence-gap": "rejected",
+    "count-mismatch": "rejected",
+    "unavailable-screen": "rejected",
+    "wrong-screen-vertices": "rejected",
+    "wrong-grid-triangles": "rejected",
+    "duplicate-text-origin": "rejected",
+    "wrong-text-total": "rejected",
+    "unknown-renderer": "rejected",
+    "missing-source-identity": "reported as admission gap, not zero or pass",
+    "historical-snapshot-trace": "existing snapshot checks preserved; frame admission unavailable",
+    "synthetic-mixed-envelope": "frame and snapshot checks both exercised; no acceptance",
+    "frame-after-retirement": "rejected"
+  },
+  "observed_record_gaps": {
+    "missing_world_counts": 2
+  },
+  "inputs": {
+    "frame-admission-delivery/screen-submission/trace.gz": "6b307a1cceea59a3768b6dd997008d5f157f1b3bb451dd8c25c84fc59ed2a365",
+    "resource-snapshots/on-1.tar.gz": "18d7a1398abb652c34d4907272f37dacfcfff3a141d1ce40fe752524af97a441"
+  },
+  "limits": "Offline parser conformance only. Synthetic envelopes/remapped identities are not execution evidence; actual overflow failure preserved."
+}
