@@ -211,7 +211,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1152,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -245,7 +254,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -279,7 +297,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -313,7 +340,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -347,7 +383,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -381,7 +426,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -415,7 +469,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -449,7 +512,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -483,7 +555,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -517,7 +598,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -551,7 +641,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -585,7 +684,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     },
     {
@@ -619,7 +727,16 @@
         "scope_project-preferences-resolver_payload_bytes": 11472565,
         "scope_retained-board-construction_payload_bytes": 3076944,
         "scope_text-measurement_payload_bytes": 734742,
-        "scope_prepared-source-observer_payload_bytes": 255
+        "scope_prepared-source-observer_payload_bytes": 255,
+        "scope_registry_call_slots_static_bytes": 11880,
+        "scope_registry_registry_heap_bytes": 264,
+        "scope_registry_scope_owner_bytes": 1248,
+        "observer_host_slots_capacity_bytes": 90112,
+        "width_cache_entries": 62,
+        "width_cache_key_bytes": 652,
+        "width_cache_retained_bytes": 4284,
+        "scope_tracking_bytes": 803752,
+        "scope_live_allocations": 100464
       }
     }
   ],
@@ -696,6 +813,15 @@
       "nondecreasing_with_growth": false,
       "constant_after_cycle50": true
     },
+    "observer_host_slots_capacity_bytes": {
+      "first": 90112,
+      "last": 90112,
+      "minimum": 90112,
+      "maximum": 90112,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
     "observer_window_strings_bytes": {
       "first": 64,
       "last": 64,
@@ -719,6 +845,15 @@
       "last": 102696,
       "minimum": 102696,
       "maximum": 102696,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_live_allocations": {
+      "first": 100464,
+      "last": 100464,
+      "minimum": 100464,
+      "maximum": 100464,
       "delta": 0,
       "nondecreasing_with_growth": false,
       "constant_after_cycle50": true
@@ -748,6 +883,33 @@
       "maximum": 9888,
       "delta": 0,
       "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_registry_call_slots_static_bytes": {
+      "first": 11880,
+      "last": 11880,
+      "minimum": 11880,
+      "maximum": 11880,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_registry_registry_heap_bytes": {
+      "first": 264,
+      "last": 264,
+      "minimum": 264,
+      "maximum": 264,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "scope_registry_scope_owner_bytes": {
+      "first": 1152,
+      "last": 1248,
+      "minimum": 1152,
+      "maximum": 1248,
+      "delta": 96,
+      "nondecreasing_with_growth": true,
       "constant_after_cycle50": true
     },
     "scope_renderer-fonts-and-shapes_payload_bytes": {
@@ -804,6 +966,15 @@
       "nondecreasing_with_growth": false,
       "constant_after_cycle50": true
     },
+    "scope_tracking_bytes": {
+      "first": 803752,
+      "last": 803752,
+      "minimum": 803752,
+      "maximum": 803752,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
     "text_cache_owned_bytes": {
       "first": 412828,
       "last": 412828,
@@ -821,6 +992,33 @@
       "delta": 0,
       "nondecreasing_with_growth": false,
       "constant_after_cycle50": true
+    },
+    "width_cache_entries": {
+      "first": 62,
+      "last": 62,
+      "minimum": 62,
+      "maximum": 62,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "width_cache_key_bytes": {
+      "first": 652,
+      "last": 652,
+      "minimum": 652,
+      "maximum": 652,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
+    },
+    "width_cache_retained_bytes": {
+      "first": 4284,
+      "last": 4284,
+      "minimum": 4284,
+      "maximum": 4284,
+      "delta": 0,
+      "nondecreasing_with_growth": false,
+      "constant_after_cycle50": true
     }
   },
   "limits": [
@@ -829,6 +1027,7 @@
     "Open wall intervals start before xdotool Return and end after exact screenshot-readiness polling; close intervals include external focus/destruction polling. These include harness/process scheduling overhead and are not calibrated displayed-state latency.",
     "Resource points join the first released native-window snapshot to the corresponding cycle by exact WindowId. They are lifecycle-selected near five-minute cycle boundaries, not asserted exact five-minute wall-clock samples. Resource Instant timestamps have no shared absolute origin in this receipt.",
     "Scoped heap, caches, documents and reservations overlap. Never sum these into a memory grand total. RSS includes diagnostic retention and mappings, and is not driver-residency measurement.",
+    "Scope registry metadata, observer host slots, width cache and allocation-tracking storage are reported separately. Flat sampled capacities rule out growth in those recorded fields at these points, not transient growth, uninstrumented application allocations or allocator/driver retention. No causal attribution of RSS growth follows.",
     "These summaries cannot establish full MEM-03:20recoveries, native latency/idle-return, instantaneous resources, observer overhead, complete configuration coverage, distinct replay and owner acceptance remain open."
   ]
 }
