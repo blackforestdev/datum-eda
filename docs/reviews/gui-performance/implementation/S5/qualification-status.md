@@ -98,9 +98,11 @@ S0–S4 implementation exits remain complete. Their carried qualification is par
 of the outstanding original predicates, not a reason to repeat implementation.
 Pinned resize/temporal,T2 and unadmitted schematic exclusions remain unchanged.
 
+- [x] **Terminal idle-poll regression batch** — 19 passed; wake consumption, deferred/no-proxy polling, bounded draining and close behavior. Native CPU effect remains unqualified. [Evidence](terminal-idle-poll/result.json)
+
 ## Remaining execution without duplicate campaigns
 
-All 34 completed-group evidence hashes match. The original map contains 225
+All 35 completed-group evidence hashes match. The original map contains 225
 requirement rows, not 225 separate tests: 15 specification-record rows, 14
 nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
 or mixed-scope rows. HP05-02 still requires idle resources; its pacing component

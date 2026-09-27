@@ -396,8 +396,15 @@ impl TerminalSessionRegistry {
         self.terminal_wake.request();
     }
 
-    pub(super) fn acknowledge_output_poll(&self) {
-        self.terminal_wake.acknowledge();
+    pub(super) fn begin_output_poll(&self, shutting_down: bool) -> bool {
+        let deferred_work = shutting_down
+            || !self.pending_spawns.is_empty()
+            || self.sessions.iter().any(|slot| {
+                slot.pending_restart
+                    || slot.remove_when_closed
+                    || !slot.pending_drain_output.is_empty()
+            });
+        self.terminal_wake.begin_poll(deferred_work)
     }
 
     /// Refresh the active session's incremental activity summary and return

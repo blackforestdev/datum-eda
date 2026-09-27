@@ -39001,15 +39001,29 @@
         ],
         "scope": "Global/Project/New X11/1x. No driver-memory/full close-budget/otherbackend-scale, independent replay or full LF-07 acceptance.",
         "carry_forward": "Credit this completed callback gap. Do not rerun solely for handoff; affected changes and final independent replay remain separate requirements."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Terminal idle-poll wake/drain/close regression batch",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/terminal-idle-poll/result.json",
+        "evidence_field": "result and limits",
+        "evidence_sha256": "e767061cf8a7e08093279d9dffd27345bf9ba98be9919d2e4cd32711b52221cc",
+        "validated_result": "19 passed,0 failed; atomic wake take, deferred/no-proxy polling, bounded drain and close behavior.",
+        "requirement_ids": [
+          "BUD-CLAMP-CPU-DUTY"
+        ],
+        "scope": "Affected source behavior only; no CPU cap, native UX, independent native replay or full S5 acceptance.",
+        "carry_forward": "Reuse scoped regression result; numerical effect belongs to consolidated final-candidate qualification."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 34,
-      "evidence_hashes_checked": 34,
-      "matching_hashes": 34,
-      "native_runs_performed": 1,
-      "meaning": "One cohesive native test contains3positive+3negative auxiliary cases; prior33groups retained. Full LF-07/S5 acceptance remains separate."
+      "completed_groups": 35,
+      "evidence_hashes_checked": 35,
+      "matching_hashes": 35,
+      "native_runs_performed": 0,
+      "meaning": "One affected19-test batch; prior34groups retained. No native or numerical acceptance added."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39264,5 +39278,11 @@
       "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/native-startup-batch/assessment.json",
       "status": "Six fixed before/after X11/1x runs complete. All270candidate warm opens<=50ms and270closes<=20ms, exact pixels/focus/destruction; normal exit and display restoration every run. Baseline also passes this batch. Historical excesses retained; no causal/formal relative improvement or full qualification."
     }
+  },
+  "s5_terminal_idle_poll": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/terminal-idle-poll/result.json",
+    "sha256": "e767061cf8a7e08093279d9dffd27345bf9ba98be9919d2e4cd32711b52221cc",
+    "status": "Production fast path and focused regression batch complete; native CPU effect unqualified.",
+    "decision": "Retain bounded idle-poll fast path after wake/lifecycle review and affected regression checks; defer numerical decision to consolidated native qualification."
   }
 }

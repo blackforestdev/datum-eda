@@ -1,0 +1,28 @@
+{
+  "base_commit": "a515cdb1",
+  "source_sha256": {
+    "crates/gui-app/src/production_status_refresh.rs": "d91bafc7d3ba11263cf7d02409149011e2b2424a16334d68d3fba29b4ccc98ad",
+    "crates/gui-app/src/terminal_session.rs": "1f3a32e05d9f8058ee34f780499561bf082a977af2915e017f138ddf1fb853cd",
+    "crates/gui-app/src/terminal_transport/wake.rs": "1b91a9fe9ae219f6625237bb8e6c52bbe3ccf337a496934073ccd6ef6f14bbec"
+  },
+  "decision": "Retain bounded idle-poll fast path after wake/lifecycle review and affected regression checks; defer numerical decision to consolidated native qualification.",
+  "change": "Consume coalesced terminal wake atomically before ClosedStrip capture or transport inspection. Preserve explicit no-proxy polling, application shutdown, pending spawns/restarts/removals, retained output and clear-before-drain continuation. Surrounding scheduled background work remains unconditional.",
+  "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-app --bin datum-gui -- terminal_transport::wake::tests terminal_session::drain::tests terminal_session::terminal_session_close_tests --test-threads=1",
+  "result": {
+    "passed": 19,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 401,
+    "build_seconds": 12.75,
+    "test_seconds": 0.28
+  },
+  "tests_log_sha256": "d67c1b112e2f871298d2cad532f9d5e5edf9c7b6ce229a35ddf7caa3af8aae19",
+  "tests_log_gzip_sha256": "7956ce69de69ff694024d885c7ebb2cd7b0660e08f8091e521bf484876986b16",
+  "review": "Distinct reviewer found no material atomic/lifecycle defect; verified producer wake paths and deferred-work fallbacks. Source review, not native performance replay.",
+  "limits": [
+    "Sequential wake tests plus source review do not establish every concurrent interleaving.",
+    "Drain/close tests exercise existing transport behavior without proving native event-loop CPU or full UX acceptance.",
+    "No release rebuild, native run or numerical-cap pass. Existing clamp and pointer failures remain open; final stable candidate replay must include this production change.",
+    "No dependency, renderer, upload/acquire, prototype, admission-cap or resize-exclusion changes."
+  ]
+}

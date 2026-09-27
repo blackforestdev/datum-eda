@@ -242,11 +242,16 @@ impl Runtime {
     }
 
     pub(super) fn poll_terminal_output(&mut self) -> bool {
+        if !self
+            .terminal_sessions
+            .begin_output_poll(self.application_shutdown_started.is_some())
+        {
+            return false;
+        }
         let strip = terminal_output_damage::ClosedStrip::capture(
             self.workspace().ui.active_dock_tab.is_some(),
             &self.workspace().ui.terminal,
         );
-        self.terminal_sessions.acknowledge_output_poll();
         let spawn_notices = self
             .terminal_sessions
             .complete_pending_spawns(&mut self.session.workspace_mut().ui.terminal);

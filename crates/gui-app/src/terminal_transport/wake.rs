@@ -26,10 +26,18 @@ impl TerminalWakeGate {
         });
     }
 
-    /// Clear before draining so concurrent output can schedule one successor.
-    pub(crate) fn acknowledge(&self) {
-        self.pending.store(false, Ordering::Release);
+    /// Consume a request before draining so concurrent output can schedule one
+    /// successor. Without a proxy, callers must keep polling explicitly.
+    pub(crate) fn begin_poll(&self, deferred_work: bool) -> bool {
+        begin_poll(&self.pending, deferred_work || self.proxy.is_none())
     }
+}
+
+fn begin_poll(pending: &AtomicBool, must_poll: bool) -> bool {
+    // One atomic take: a request before this point is serviced by this drain;
+    // a later request remains pending and schedules its own event-loop turn.
+    let requested = pending.swap(false, Ordering::AcqRel);
+    must_poll || requested
 }
 
 fn request_coalesced_wake(pending: &AtomicBool, wake: impl FnOnce() -> bool) {
@@ -59,12 +67,17 @@ mod tests {
         }
         assert_eq!(wakes.load(Ordering::SeqCst), 1);
 
-        gate.acknowledge();
+        assert!(begin_poll(&gate.pending, false));
+        assert!(!begin_poll(&gate.pending, false));
         request_coalesced_wake(&gate.pending, || {
             wakes.fetch_add(1, Ordering::SeqCst);
             true
         });
         assert_eq!(wakes.load(Ordering::SeqCst), 2);
+        assert!(begin_poll(&gate.pending, false));
+        assert!(!begin_poll(&gate.pending, false));
+        assert!(begin_poll(&gate.pending, true));
+        assert!(gate.begin_poll(false)); // No proxy retains explicit polling.
     }
 
     #[test]
