@@ -68,6 +68,43 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
     renderer
         .render(&device, &queue, &view, &prepared, &retained, None, 960, 720)
         .unwrap();
+    let fixture_root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad");
+    let board_state = datum_gui_protocol::load_board_editor_workspace_state(
+        &datum_gui_protocol::LiveReviewRequest {
+            board_file: Some(fixture_root.join("simple-demo.kicad_pcb")),
+            project_root: fixture_root,
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+            kicad_board_source: None,
+        },
+    )
+    .unwrap();
+    let board = datum_gui_render::RetainedScene::from_workspace(&board_state, 960, 720);
+    let board_prepared = datum_gui_render::PreparedScene::from_workspace_for_surface(
+        &board_state,
+        960,
+        720,
+        1.0,
+        datum_gui_render::CameraState::fit_to_bounds(&board_state.scene.bounds),
+        &board,
+    )
+    .unwrap();
+    renderer
+        .render(
+            &device,
+            &queue,
+            &view,
+            &board_prepared,
+            &board,
+            None,
+            960,
+            720,
+        )
+        .unwrap();
     {
         let mut lock = WRITER.lock().unwrap();
         let writer = lock.as_mut().unwrap();
@@ -95,7 +132,50 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
         assert_eq!(row["sequence"], index as u64 + 1);
         assert_eq!(row["renderer_id"], renderer.resource_owner_id());
         assert_eq!(row["extent"], json!([960, 720]));
-        assert!(row["world_panes"].as_array().unwrap().is_empty());
+        if row["world_panes"].as_array().unwrap().is_empty() || row["submitted_frame"] != true {
+            assert!(row["submitted_world_bundles"].is_null());
+        }
+    }
+    let world_frame = frames
+        .iter()
+        .find(|r| r["submitted_world_bundles"].is_array())
+        .unwrap();
+    let panes = world_frame["submitted_world_bundles"].as_array().unwrap();
+    assert!(!panes.is_empty());
+    for pane in panes {
+        let prepared_pane = world_frame["world_panes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|p| p["pane_id"] == pane["pane_id"])
+            .unwrap();
+        assert_eq!(
+            pane["submitted_commands"],
+            pane["ranges"].as_array().unwrap().len()
+        );
+        if prepared_pane["counts"].is_null() {
+            assert_eq!(pane["surface"], "Schematic");
+            assert_eq!(
+                prepared_pane["error"],
+                "missing retained scene for prepared pane"
+            );
+            assert_eq!(pane["submitted_commands"], 0);
+            assert!(pane["ranges"].as_array().unwrap().is_empty());
+            continue;
+        }
+        assert_eq!(
+            pane["submitted_vertices"],
+            prepared_pane["counts"]["prepared_vertices"]
+        );
+        assert_eq!(
+            pane["submitted_stroke_instances"],
+            prepared_pane["counts"]["prepared_stroke_instances"]
+        );
+        assert_eq!(
+            pane["submitted_triangles"],
+            prepared_pane["counts"]["prepared_triangles"]
+        );
+        assert!(pane["submitted_triangles"].as_u64().unwrap() > 0);
     }
     let end = rows.last().unwrap();
     assert_eq!(end["phase"], "end");

@@ -147,3 +147,5 @@ pub fn register_frame_observer(observer: FrameObserver) -> anyhow::Result<()> {
 pub(crate) fn frame_observer() -> Option<FrameObserver> {
     FRAME_OBSERVER.get().copied()
 }
+
+pub use crate::gpu_surface_pass::EncodedWorldAdmission;

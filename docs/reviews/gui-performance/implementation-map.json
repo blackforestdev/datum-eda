@@ -38690,7 +38690,12 @@
           "AC-08"
         ],
         "scope": "Two focused offscreen hardware tests; no OS-delivered workload, overhead or full admission/resource acceptance.",
-        "carry_forward": "Preserve across handoffs; rerun only affected behavior."
+        "carry_forward": "Preserve across handoffs; rerun only affected behavior.",
+        "encoded_world_supplement": {
+          "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/result.json",
+          "sha256": "bf9d9903f4e88f02cc0ca941b4a5114b920a526190f67bba16e81279159d1f68",
+          "validated_result": "1 focused GPU test passed with new assertions: actual primitive order, coalesced range reuse, two-pane identity and skipped missing-buffer commands. Existing cache invalidation/release controls also passed. 1 focused hardware application test passed: actual Board frame JSON preserves 2310 vertices,90 stroke instances,950 triangles and4 encoded commands; absent retained schematic data remains an explicit prepared-count error with an empty encoded draw list; dialog/upload-only records do not claim submitted world bundles; overflow remains an incomplete delivery."
+        }
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
@@ -38716,6 +38721,7 @@
   },
   "s5_frame_admission_delivery_work": {
     "status": "bounded per-render-attempt delivery implemented; full native ADM-01 acceptance remains open",
-    "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/result.json",
+    "encoded_world_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/result.json"
   }
 }

@@ -1,0 +1,45 @@
+{
+  "status": "encoded composed-world command delivery verified; full ADM-01 remains open",
+  "base_commit": "20c46bcf",
+  "change": "Expose borrowed actual cached world-bundle ranges with pane/surface identity. Native frame writer records them and derived primitive counts only for successful composed-world submissions; other attempts report null. No alternative scene or draw batching implementation.",
+  "proof": {
+    "renderer": "1 focused GPU test passed with new assertions: actual primitive order, coalesced range reuse, two-pane identity and skipped missing-buffer commands. Existing cache invalidation/release controls also passed.",
+    "writer": "1 focused hardware application test passed: actual Board frame JSON preserves 2310 vertices,90 stroke instances,950 triangles and4 encoded commands; absent retained schematic data remains an explicit prepared-count error with an empty encoded draw list; dialog/upload-only records do not claim submitted world bundles; overflow remains an incomplete delivery.",
+    "gates": "Source health2562, dependency authority and20spec parity inventories pass."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --offline world_bundle_reuse_and_invalidation_on_real_gpu -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --offline frame_trace_serializes_actual_render_attempts_and_refuses_overflow -- --ignored --test-threads=1 --nocapture"
+  ],
+  "failure_retained": "Initial writer assertion incorrectly equated unavailable schematic prepared counts with the empty encoded draw stream. Retained log/raw trace; corrected assertion explicitly checks unavailable counts and the missing-retained-scene error. No runtime requirement or missing-data semantics relaxed.",
+  "scope": [
+    "Borrowed reads retain no GPU owners and allocate nothing; existing opt-in writer serialization retains separate observer allocation scope.",
+    "Bundle ranges reflect buffer-presence filtering and production coalescing. Reading the renderer API alone proves encoding only; native writer also requires a successful current composed-world submission.",
+    "Counts are geometry, not raster-visible pixels or displayed output.",
+    "Legacy fallback submission ranges, immediate/control/grid/terminal geometry, per-pane text, complete model/configuration admission, observer overhead and native backend/scale coverage remain outstanding.",
+    "No performance, resource-cap, endurance, recovery, independent replay or owner acceptance claim. Existing candidate packet remains unready; no intermediate release/replay."
+  ],
+  "preserved": "All225 requirements/statuses, prior passed/failed evidence, PM029/PM047, GEFN, Vulkan upload-before-acquire, prototype ownership and nonblocking resize exclusions.",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/renderer.gz",
+      "sha256": "1725547566dabeb6ca3e546d7be8c055251e78bde2b4fb6c564917e38426db13"
+    },
+    "writer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/writer-initial.gz",
+      "sha256": "afe077ca2accbb58b4fdb11776311a388ab13f6f78609004f649190c08f9b4dc"
+    },
+    "writer": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/writer.gz",
+      "sha256": "0916c5ef90b50cdb53a4a5ace1f11880ce24decdfc56c2f8005ae8c52d4f6b94"
+    },
+    "initial-trace": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/initial-trace.gz",
+      "sha256": "1769bdb81af5d26b1fdaca3823d6e70559b833bd55d3fa17eed5e5b56adecbc9"
+    },
+    "trace": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/trace.gz",
+      "sha256": "7972d31bae2b78af8680ee919e4f92e5cf213ba6b4e0ac71f1ab7df5d0c72f7a"
+    }
+  }
+}
