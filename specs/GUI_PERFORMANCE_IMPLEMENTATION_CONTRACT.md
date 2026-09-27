@@ -517,3 +517,16 @@ no production edits, builds, application tests, native runs or benchmarks occur
 in this step. GPI-S4 now depends on this explicit prerequisite. The owner need
 not approve unchanged r1 again. Original S4/S5 obligations, budgets, historical
 evidence, exclusion of CPU event-loop work and r1 stop rules remain unchanged.
+
+## GPU redraw r1 independent review and ratification
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-REVIEW-R1 -->
+
+GPI-S4-REVIEW is complete through the distinct-session review at
+`docs/reviews/gui-performance/gpu-redraw-proposal/independent-review-r1.json`
+and owner-approved mechanism ratification in Product Mechanics 048. Select GPI-S4
+execution for the exact r1 candidate and Gate1 capability/fidelity/lifetime proof.
+IR-R1-01 preserves the known complete DRM accounting gap: Gate2 must stop native
+performance trials unless resolved within approved scope. No expanded tracing
+authority, performance acceptance, S4/S5 closure or CPU event-loop work follows.
+IR-R1-02 requires explicit suffix pass state initialization and exact-output proof.
