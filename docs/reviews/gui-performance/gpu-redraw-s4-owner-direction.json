@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "marker": "OWNER:GUI-PERFORMANCE:GPU-REDRAW-S4",
+  "recorded_at": "2026-09-27T19:42:20.578488+00:00",
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "decision": "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md",
+  "owner_instructions": [
+    "I did not ask you to build a measure a canidate as the result of the GPU work. the goal for now is to simply find a sloution or if the budget is even possible on this host. the boundry is sest purely as a sloution discovery venture. my reason is that other codex sessions hve been churning through compute trying to find a sloution to these issues by process of trial and error. once we have found posible sloutions I will approve build test run report.",
+    "its clear that this needs to be corrected before phase S.4 can close.",
+    "what needs to be done? document via specification correction?",
+    "please do this."
+  ],
+  "approval_context": "The last instruction authorizes the discussed specification amendment and reconciliation of the expired claim. It does not approve an unseen rendering mechanism or lift the earlier build/test/run restriction.",
+  "disposition": "Reopen S4 for GPU redraw architecture correction; select solution discovery under planning authorization, followed by explicit owner proposal/execution approval, then implementation and bounded proof. Return S5 to pending without resetting historical evidence.",
+  "claim_handoff": {
+    "previous_claim": {
+      "agent": "codex",
+      "claimed_at": "2026-09-26T05:27:03Z",
+      "expires_at": "2026-09-27T17:41:25Z",
+      "harness": "codex-cli",
+      "head": "b285e6717bdcbe807963d7b48793f0077e1577d2",
+      "heartbeat_at": "2026-09-27T09:41:25Z",
+      "scope": [
+        "crates/gui-app",
+        "crates/gui-render",
+        "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+        "specs/PROGRESS.md",
+        "specs/active_frontier.json",
+        "specs/evidence_traceability_manifest.json",
+        "specs/source_module_size_manifest.json",
+        "specs/SPEC_PARITY.md",
+        "docs/reviews/gui-performance/implementation-map.json",
+        ".beads/issues.jsonl",
+        "docs/reviews/gui-performance/implementation/S0",
+        "specs/spec_governance_manifest.json",
+        "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md",
+        "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "docs/reviews/gui-performance/implementation",
+        "docs/SOURCE_HEALTH_POLICY.md",
+        "docs/decisions/PRODUCT_MECHANICS_047_PRIVATE_TEXT_CONSTRUCTION_GUARD.md",
+        "crates/gui-viewport",
+        "scripts/check_gui_visual_parity.py",
+        "crates/engine/src/substrate"
+      ],
+      "session": "dev-agent-pm045-s5-20260926",
+      "worktree": "/home/bfadmin/Documents/datum-eda"
+    },
+    "worktree_at_handoff": "clean; no uncommitted production work to transfer",
+    "remaining_scope": "Governance correction and GPU solution discovery only. Production renderer scope is excluded from the replacement claim.",
+    "authorization": "Explicit owner request to reconcile the expired claim; expiry alone did not release it."
+  },
+  "historical_s4_evidence": [
+    {
+      "kind": "document",
+      "marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-IMPLEMENTED",
+      "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md"
+    }
+  ],
+  "implementation_gate": {
+    "discovery": "GPI-S4-DESIGN",
+    "owner_approval": "GPI-S4-APPROVAL",
+    "reopened_execution": "GPI-S4",
+    "qualification": "GPI-S5",
+    "current_authorization": "planning",
+    "renderer_implementation_authorized": false,
+    "build_test_run_authorized": false,
+    "mechanism_ratified": false
+  },
+  "s4_additional_exit": {
+    "configuration": "Pinned F-DOA reference pointer configuration, Intel P630, X11/Xwayland, 1x; actual source/binary/fixture/extent/environment bound before approved execution.",
+    "workload": "W-POINTER with unchanged MET/GPU/ACC/STAT methods",
+    "gpu_p95_ms": 4,
+    "gpu_p99_ms": 8,
+    "gpu_engine_duty_percent": 25,
+    "correctness": "Exact reference pixels, required 8x AA, painter order, input/final state, invalidation and recovery; affected live/retiring resources under applicable caps; unexplained material CPU regressions block exit.",
+    "acceptance_status": "Unmet; this record is neither implementation evidence nor hardware feasibility proof."
+  },
+  "preserved": [
+    "All prior S0-S4 component evidence and S5 results retain original pins/scopes and failures; no rerun merely to restate history.",
+    "All 225 existing requirement rows and their full S5 acceptance rules remain. Bounded S4 proof does not substitute for broader backend/scale/consumer/resource/endurance and distinct-reviewer replay.",
+    "Separate owner UX/product acceptance; CPU event-loop optimization deferred; PM047 unchanged.",
+    "Nonblocking resize, temporal/T2/unadmitted schematic exclusions; no dependency/license/backend/prototype or numerical budget change."
+  ],
+  "existing_evidence": [
+    "docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json",
+    "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json",
+    "docs/reviews/gui-performance/implementation/S4/readiness/result.json"
+  ],
+  "review_scope": "Source/history and governance reconciliation only; no new runtime experiment, independent native replay or product acceptance."
+}

@@ -1,7 +1,10 @@
 # Shared GUI performance implementation and adoption contract
 
-Status: PM045 ratified specification; owner authorized amended S0–S5 execution
-on2026-09-20. Runtime acceptance remains separate. Parent:
+Status: PM045 ratified specification; the 2026-09-27 owner amendment reopens S4
+for GPU redraw architecture correction. Current authorization is solution
+discovery and specification only; a concrete proposal requires separate owner
+approval before implementation, builds or runtime experiments. The earlier
+2026-09-20 S0–S5 execution grant is suspended at this boundary. Runtime acceptance remains separate. Parent:
 `GUI_PERFORMANCE_RECOVERY_PLAN.md`; engineering: `GUI_SHARED_ENGINEERING_CONTRACT.md`;
 budgets and methods: `GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md`.
 
@@ -58,7 +61,7 @@ earlier proven behavior; it is not a destructive reset of shared work.
 | S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | Establish implementation readiness from the current production call-site inventory for all four native hosts, retired competing default paths, shared-owner correctness regressions, actual per-host native adapter evidence, and implemented surface-generation/submission/attachment-lifetime accounting. Preserve bounded affected-change positive/negative evidence and all failed attempts; an unexplained regression still blocks advancement. Record each unfinished SH/LF/affected-HP predicate in its existing map row. Outstanding prescribed per-row negative-control replays, complete native final-state/static/input/focus coverage, backend/scale coverage and full resource/method qualification become explicit S5 exit prerequisites. They remain unqualified, not satisfied by S1 readiness. Rollback preserves coherent shared adoption. Resize qualification stays separately nonblocking. |
 | S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Establish bounded shared-implementation readiness from the default production consumers of retained world, encoding, screen/uniform upload and shaped-text ownership; retired competing paths; affected warm/replacement/eviction and painter/AA/text correctness proofs; and explicit resource limits. Keep each unfinished implementation and qualification predicate in its existing map row. Complete accounting/caps, exact changed-range transfers and complete shaping/layout dependency implementation are S4 exit prerequisites; full native/replacement/device-reset/negative and budget qualification is required at S5. Partial limits are not complete byte caps. Unexplained regressions block readiness. Preserve separately reversible geometry/text/upload patches. |
 | S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | Establish bounded shared-implementation readiness from the current default production consumers of shared dialog/control/scroll/clip/hit owners, retirement of the New Project general backdrop and competing machinery, affected correctness and defect-sensitive tests, bounded native adapter evidence, and warm reuse/eviction behavior at explicitly recorded limits. Preserve legitimate discrete Layers/terminal semantics and existing preference/project authority. Record every unfinished S3 qualification predicate individually in its existing adoption-map row as required at S5, including complete per-consumer native input/focus/final-state/static appearance, backend/scale, prescribed negative controls, pass/forbidden-work and cache qualification. None becomes passed through readiness. Missing default-path adoption or an unexplained implementation regression still blocks S3 exit. Complete S2-owned resource dependencies retain their S4 implementation and S5 qualification deadlines. No other unfinished implementation is deferred by this amendment. |
-| S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. Complete every unfinished S2 accounting/cap, exact changed-range transfer and shaping/layout dependency implementation carried in the adoption map, with affected positive/negative and counter-conformance proof. Private dependency internals remain a technical boundary to resolve within owner-authorized scope, not a waiver or permission to modify third-party code. |
+| S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. Complete every unfinished S2 accounting/cap, exact changed-range transfer and shaping/layout dependency implementation carried in the adoption map, with affected positive/negative and counter-conformance proof. Private dependency internals remain a technical boundary to resolve within owner-authorized scope, not a waiver or permission to modify third-party code. The 2026-09-27 amendment additionally requires GPU redraw correction and bounded reference pointer proof; discovery and explicit proposal approval precede execution. |
 | S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. Close every in-scope SH/LF/affected-HP predicate carried from S1, including prescribed negative controls and native final-state/static/input/focus and complete resource/method proof. S1 readiness does not waive any such result. Close every in-scope qualification predicate carried from S2, including exact warm/replacement/address-reuse/eviction/device-reset negatives, painter/AA/text parity, complete byte caps and ACC-01/02 conformance across the required consumers/configurations. Unfinished implementation at S4 blocks S5 entry; moving a predicate does not satisfy it. Close every outstanding qualification predicate carried from S3, under its unchanged acceptance rule and actual applicable consumer scope. Consolidate native input/focus/final-state/static appearance, backend/scale, negative-control, pass/forbidden-work and cache proof with the existing pinned-candidate qualification. S3 readiness is not full adoption or performance acceptance. Missing proof and unresolved failures remain explicit; qualification is not satisfied merely by moving its deadline. |
 
 S1 owns scheduler/surface generations, redraw/configure/acquire/submit/present
@@ -169,7 +172,7 @@ record remains history, not a competing live contract.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4 -->
 
-**GPI-S4.** Finish terminal fairness/hidden work and all-host recovery/resource adoption; preserve separate concurrent multi-device failure. Complete the unfinished S2 implementation predicates carried by the S2/S4 tables before advancing to S5.
+**GPI-S4.** Finish terminal fairness/hidden work and all-host recovery/resource adoption; preserve separate concurrent multi-device failure. Complete the unfinished S2 implementation predicates carried by the S2/S4 tables and the owner-approved GPU redraw correction with bounded reference-host proof below before advancing to S5. Existing component evidence remains credited; this reopened step requires GPI-S4-APPROVAL before any implementation or runtime experiment.
 
 For private font selection/loading/cache and raster construction only, the S4 implementation prerequisite is the shared MEM-02/ACC-02 call guard, correct simultaneous local/process accounting, and default production refusal/release/retry integration with affected positive/negative proof. A hard pre-call bound on these opaque internal allocations is no longer required. Every other unfinished S2/S4 implementation predicate remains due before S5. This change supplies no completion evidence by itself.
 
@@ -215,7 +218,8 @@ This approves the bounded S0 readiness and S1–S4 component proof allocation ab
 followed by S5 comprehensive in-scope qualification. It supersedes the earlier
 all-host S0 accounting prerequisite, including that reading of GP-045-05,
 E08 and ADM-01. It does not complete S0 or any implementation slice. The existing
-execution grant remains in force. All numerical criteria, affected production
+execution grant remained in force at that disposition; the later GPU redraw
+amendment suspends execution at the current discovery/approval boundary. All numerical criteria, affected production
 proof, independent replay, exclusions and owner-only dependency authority remain.
 Frozen specification approval packets and earlier receipts remain historical.
 
@@ -374,7 +378,7 @@ required at S5. All 50 carried S2 implementation predicates remain due at S4.
 No full HP-row, resource-budget, global adoption, product or resize acceptance
 follows. The overall implementation issue remains open.
 
-## S4 implementation exit
+## Historical S4 implementation exit (superseded for current closure)
 
 <!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-IMPLEMENTED -->
 
@@ -388,8 +392,9 @@ native lifecycle satisfy the implementation prerequisites. All 50 carried S2
 rows have no remaining recorded implementation gap: 27 implementation predicates
 completed at S4 and 23 without a newly asserted implementation defect.
 
-GPI-S4 is complete for implementation; GPI-S5 is selected for qualification.
-This is an exit determination under the existing contract, not an amendment.
+At that recorded revision, GPI-S4 was complete for implementation and GPI-S5
+was selected for qualification. The subsequent owner amendment below reopens
+S4 and supersedes that selection, without invalidating the component evidence.
 All original S1 obligations, 50 S2 qualification rows and 20 S3 qualification
 rows retain their acceptance rules and failed/partial evidence. The known Console
 routine-focused 1x golden discrepancy remains failed at 3,778 pixels; no golden
@@ -398,3 +403,72 @@ resource ceilings, endurance and distinct-reviewer replay remain required at S5.
 Serial shared-device proof does not close the concurrent multi-device issue.
 PM047 overshoot/OOM limits and all nonblocking resize exclusions remain unchanged.
 The implementation issue and overall goal remain open.
+
+## Owner amendment: GPU redraw architecture is an S4 exit prerequisite
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:GPU-REDRAW-S4-AMENDMENT -->
+
+The owner's instruction that this issue must be corrected before S4 closes,
+and subsequent authorization to document the correction and reconcile the
+expired claim, are recorded verbatim in
+`docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json`. This is a
+sequencing and authorization correction under PM045, not approval of a rendering
+mechanism or a claim that the reference hardware can meet the budget.
+
+The current architecture retains geometry and drawing commands but redraws the
+composed scene for pointer-only interaction. Existing candidate measurements
+still exceed the pointer GPU limits. The old pointer scene-cache invalidation
+defect was already corrected; neither a new driver defect nor hardware
+inadequacy has been established. A specific mask, image cache, texture copy or
+backend change remains a proposal until reviewed and approved.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-DESIGN -->
+
+**GPI-S4-DESIGN.** Discover and document a concrete GPU redraw solution or a
+bounded, evidence-supported feasibility finding on the PM045 reference host.
+Use source/history inspection, existing measurements and external research;
+do not implement, build, benchmark, launch diagnostic workloads, change system
+settings or start CPU event-loop optimization. Distinguish demonstrated costs
+from hypotheses and unknowns. Compare viable alternatives against exact 8x
+output, painter order, invalidation/recovery, attachment lifetime and memory
+limits, GPU work removed and work remaining. Define production touch points,
+scope, rollback and the smallest decision-enabling future proof with explicit
+failure/stop rules. Preserve the retired partial-redraw failure and explain
+how a proposed mechanism differs. Pin the reviewable proposal and applicable
+evidence; complete discovery only when it can support an owner decision.
+An uncertainty statement alone is not a completed solution proposal.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-APPROVAL -->
+<!-- OWNER:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-APPROVAL:GPI-S4-APPROVAL -->
+
+**GPI-S4-APPROVAL.** Obtain the owner's explicit disposition on the pinned,
+reviewed proposal and exact build/test/run/report scope. Follow existing
+numbered-decision and evidence-route governance for any new mechanism; this
+amendment ratifies none. Approval must be recorded with the corresponding
+Frontier authorization change before selecting reopened GPI-S4 execution.
+Discovery approval is not implementation or product acceptance. If feasibility
+remains unresolved or the proposal cannot meet the unchanged requirements,
+return the evidence for owner revision; do not waive limits or mark S4 complete.
+
+After approval, **GPI-S4 closure additionally requires** a production GPU redraw
+correction and bounded proof on pinned F-DOA, Intel P630, X11/Xwayland at 1x in
+the reference pointer configuration that exhibited the failure. Apply the
+unchanged W-POINTER recipe and MET/GPU/ACC/STAT methods: GPU p95 <=4 ms,
+p99 <=8 ms and engine duty <=25% per valid trial. Preserve exact reference
+pixels, 8x antialiasing, painter order, input/final state, changed-dependency
+invalidation and recovery; account affected live/retiring resources under all
+applicable caps. Explain material CPU regressions without opening a separate
+CPU optimization workstream. Missing conformance, incomplete accounting or
+failed numerical/correctness proof cannot pass this bounded exit. No repeated
+unchanged campaign or speculative parameter sweep is authorized.
+
+The S4 table's original obligations remain; the paragraph above adds an exit
+prerequisite rather than replacing them. GPI-S5 is pending behind reopened S4.
+It retains complete admitted backend/scale/consumer qualification, all original
+CPU/GPU/resource requirements, endurance/recovery, distinct-reviewer native
+replay and separate owner UX/product disposition. Bounded S4 proof does not
+complete those rows. Reuse adequate evidence on unchanged candidates; retain
+all prior S4/S5 successes and failures at their original pins and scopes.
+CPU event-loop investigation follows the GPU solution and subsequent authorized
+selection, not this planning amendment. Nonblocking resize, temporal/T2 and
+unadmitted schematic exclusions, PM047 and PM029 remain unchanged.
