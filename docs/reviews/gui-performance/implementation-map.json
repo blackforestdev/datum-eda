@@ -38739,6 +38739,20 @@
         ],
         "scope": "This native run and trace reconciliation only. Saved-run drift analysis now bounds diagnostic CPU change; unattributed RSS growth and over5% New Project readiness drift remain disclosed.20recoveries, native latency, broader workloads/configurations, instantaneous accounting, overhead and full acceptance remain open.",
         "carry_forward": "Reuse these preserved results and raw data; do not rerun because of an agent handoff. Repeat only affected qualification when a subsequent change invalidates it."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Twenty native backend device-loss recoveries, X11/1x",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
+        "evidence_field": "completed_check",
+        "evidence_sha256": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f",
+        "validated_result": "20recoveries,5eachMain/Global/Project/New; exact selected-window pixels, focus and workspace/registry receipts; normal shutdown and complete resource trace reconciliation.",
+        "requirement_ids": [
+          "MEM-03"
+        ],
+        "scope": "Producer diagnostics-on structural recovery only. Numerical CPU/GPU, full accounting, other backend/scale/mixed workloads, independent replay and owner acceptance remain open.",
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only for affected changes or explicitly required independent replay; handoff is not invalidation."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
@@ -38803,9 +38817,9 @@
     }
   },
   "s5_repeated_device_recovery": {
-    "status": "Repeated device-loss injection hook prepared; native recovery qualification not yet run",
+    "status": "Completed20 actual backend device-loss recoveries with structural and selected-window correctness; numerical recovery acceptance remains open",
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/result.json",
-    "native_trials": "Pending; request conformance is not20-recovery qualification."
+    "native_trials": "20/20 completed;51renderer origins,719GPU allocations,40648private calls reconciled with normal shutdown. All20 diagnostic CPU intervals exceed100ms; no budget acceptance. Two prior failed attempts preserved."
   }
 }

@@ -1,0 +1,18 @@
+{
+  "qualification_pass": false,
+  "raw_origin": "/tmp/dev-agent-s5-recovery-aky3kkro",
+  "error": "AssertionError('native predicate timed out')",
+  "completed_requests": [
+    1,
+    2
+  ],
+  "requested_total": 20,
+  "fault3_issued": false,
+  "failure_interpretation": "Historical cursor shortcut can accept a stale position during asynchronous focus return. Driver subsequently requires fresh distinct-position and target receipts; production cause not inferred.",
+  "forced_cleanup": true,
+  "display_restore_returncode": 0,
+  "failure_capture_errors": [
+    "PermissionError(13, 'Permission denied')"
+  ],
+  "limits": "Partial recovery and exact selected-window screenshots are not full recovery/resource/CPU acceptance; forced termination leaves end-of-trace release proof incomplete. All raw evidence preserved."
+}

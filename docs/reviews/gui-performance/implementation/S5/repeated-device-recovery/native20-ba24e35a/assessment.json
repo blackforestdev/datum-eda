@@ -1,0 +1,256 @@
+{
+  "status": "Completed20 actual backend device-loss recoveries with structural and selected-window correctness; numerical recovery acceptance remains open",
+  "qualification_pass": false,
+  "candidate_commit": "ba24e35a0f5b662247dd2dd2f8e95373cf5cebbe",
+  "binary_sha256": "05fbc6bc8e9e29c439f901ee6107c5c778ddaee1b8690d33840d52ab71e54b1b",
+  "raw_origin": "/tmp/dev-agent-s5-recovery-2hio1wzi",
+  "command": "PM045_REPLAY_PROJECT=/tmp/pm045-independent-replay-fixture/project python3 -u docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native_recovery.py",
+  "coordination": "Producer held shared Cargo resource lock; exclusive desktop window coordinated with independent reviewer. No builds overlapped. No independent replay claimed.",
+  "completed_check": {
+    "recoveries": 20,
+    "per_host": {
+      "MAIN": 5,
+      "GLOBAL": 5,
+      "PROJECT": 5,
+      "NEW": 5
+    },
+    "device_epochs": [
+      2,
+      4,
+      7,
+      10,
+      12,
+      14,
+      17,
+      20,
+      22,
+      24,
+      27,
+      30,
+      32,
+      34,
+      37,
+      40,
+      42,
+      44,
+      47,
+      50
+    ],
+    "workspace_terminal_registry_preservation_receipts": 20,
+    "exact_selected_window_pixel_matches": 20,
+    "focus_preserved": true,
+    "normal_exit_code": 0,
+    "forced_cleanup": false,
+    "shutdown_receipt": {
+      "phase": "drained_device_live",
+      "pid": 817899,
+      "device_epoch": 50
+    },
+    "display_restore_returncode": 0,
+    "binary_engine_fixture_assets_source_unchanged": true
+  },
+  "resource_reconciliation": {
+    "analyzer_command": "python3 docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools/pm045-resource-snapshot-analyze.py /tmp/dev-agent-s5-recovery-2hio1wzi",
+    "exit_code": 0,
+    "snapshots": 53,
+    "renderer_origins": 51,
+    "allocations": 719,
+    "gpu_events": 29142,
+    "tracked_registration_peak_bytes": 60913984,
+    "private_calls": 40648,
+    "private_events": 81296,
+    "private_calls_without_renderer_origin": 0,
+    "frames": 165,
+    "submitted_frames": 144,
+    "admission_gaps": {},
+    "sampled_cap_violations": [],
+    "final_local_reservations_zero": true
+  },
+  "cpu_observations": {
+    "interval": "Process CPU sampled before request publication through observation of committed replacement after ordinary cursor-wake delivery. Includes diagnostics, preparation and redraw work; not isolated replacement CPU. No overhead subtraction.",
+    "gui_process_ms_min": 275.742952,
+    "gui_process_ms_max": 774.777464,
+    "gui_process_ms_p95_nearest_rank": 746.310405,
+    "intervals_above_100ms": 20,
+    "interpretation": "All20 observed diagnostic recovery intervals exceed100ms. This does not establish diagnostics-off isolated recovery cost, and provides no numerical recovery pass.",
+    "trials": [
+      {
+        "sequence": 1,
+        "host": "MAIN",
+        "gui_process_cpu_ms": 560.194399,
+        "cgroup_cpu_ms": 560.25,
+        "observed_interval_ms": 619.995521,
+        "request_to_exact_readback_ms": 869.617363
+      },
+      {
+        "sequence": 2,
+        "host": "GLOBAL",
+        "gui_process_cpu_ms": 275.742952,
+        "cgroup_cpu_ms": 275.845,
+        "observed_interval_ms": 290.792132,
+        "request_to_exact_readback_ms": 467.540075
+      },
+      {
+        "sequence": 3,
+        "host": "PROJECT",
+        "gui_process_cpu_ms": 731.300866,
+        "cgroup_cpu_ms": 731.388,
+        "observed_interval_ms": 749.111861,
+        "request_to_exact_readback_ms": 927.38225
+      },
+      {
+        "sequence": 4,
+        "host": "NEW",
+        "gui_process_cpu_ms": 746.310405,
+        "cgroup_cpu_ms": 746.382,
+        "observed_interval_ms": 768.837573,
+        "request_to_exact_readback_ms": 936.714026
+      },
+      {
+        "sequence": 5,
+        "host": "MAIN",
+        "gui_process_cpu_ms": 517.198969,
+        "cgroup_cpu_ms": 517.252,
+        "observed_interval_ms": 542.432455,
+        "request_to_exact_readback_ms": 792.239107
+      },
+      {
+        "sequence": 6,
+        "host": "GLOBAL",
+        "gui_process_cpu_ms": 277.589823,
+        "cgroup_cpu_ms": 277.665,
+        "observed_interval_ms": 290.366685,
+        "request_to_exact_readback_ms": 470.690657
+      },
+      {
+        "sequence": 7,
+        "host": "PROJECT",
+        "gui_process_cpu_ms": 721.330314,
+        "cgroup_cpu_ms": 721.399,
+        "observed_interval_ms": 744.97947,
+        "request_to_exact_readback_ms": 922.5751
+      },
+      {
+        "sequence": 8,
+        "host": "NEW",
+        "gui_process_cpu_ms": 351.202754,
+        "cgroup_cpu_ms": 351.296,
+        "observed_interval_ms": 371.716911,
+        "request_to_exact_readback_ms": 538.800737
+      },
+      {
+        "sequence": 9,
+        "host": "MAIN",
+        "gui_process_cpu_ms": 499.472412,
+        "cgroup_cpu_ms": 499.521,
+        "observed_interval_ms": 516.150882,
+        "request_to_exact_readback_ms": 763.360563
+      },
+      {
+        "sequence": 10,
+        "host": "GLOBAL",
+        "gui_process_cpu_ms": 713.586906,
+        "cgroup_cpu_ms": 713.651,
+        "observed_interval_ms": 748.362297,
+        "request_to_exact_readback_ms": 930.720952
+      },
+      {
+        "sequence": 11,
+        "host": "PROJECT",
+        "gui_process_cpu_ms": 327.383572,
+        "cgroup_cpu_ms": 327.453,
+        "observed_interval_ms": 345.303565,
+        "request_to_exact_readback_ms": 526.525285
+      },
+      {
+        "sequence": 12,
+        "host": "NEW",
+        "gui_process_cpu_ms": 717.096758,
+        "cgroup_cpu_ms": 717.183,
+        "observed_interval_ms": 744.956114,
+        "request_to_exact_readback_ms": 911.937225
+      },
+      {
+        "sequence": 13,
+        "host": "MAIN",
+        "gui_process_cpu_ms": 489.942416,
+        "cgroup_cpu_ms": 489.992,
+        "observed_interval_ms": 520.880955,
+        "request_to_exact_readback_ms": 771.350952
+      },
+      {
+        "sequence": 14,
+        "host": "GLOBAL",
+        "gui_process_cpu_ms": 708.525331,
+        "cgroup_cpu_ms": 708.596,
+        "observed_interval_ms": 748.428776,
+        "request_to_exact_readback_ms": 930.33036
+      },
+      {
+        "sequence": 15,
+        "host": "PROJECT",
+        "gui_process_cpu_ms": 736.060585,
+        "cgroup_cpu_ms": 736.145,
+        "observed_interval_ms": 769.976709,
+        "request_to_exact_readback_ms": 946.138105
+      },
+      {
+        "sequence": 16,
+        "host": "NEW",
+        "gui_process_cpu_ms": 715.601097,
+        "cgroup_cpu_ms": 715.675,
+        "observed_interval_ms": 745.950814,
+        "request_to_exact_readback_ms": 912.566827
+      },
+      {
+        "sequence": 17,
+        "host": "MAIN",
+        "gui_process_cpu_ms": 475.09975,
+        "cgroup_cpu_ms": 475.15,
+        "observed_interval_ms": 491.36901,
+        "request_to_exact_readback_ms": 744.130568
+      },
+      {
+        "sequence": 18,
+        "host": "GLOBAL",
+        "gui_process_cpu_ms": 302.26016,
+        "cgroup_cpu_ms": 302.33,
+        "observed_interval_ms": 320.07443,
+        "request_to_exact_readback_ms": 497.182163
+      },
+      {
+        "sequence": 19,
+        "host": "PROJECT",
+        "gui_process_cpu_ms": 742.426481,
+        "cgroup_cpu_ms": 742.514,
+        "observed_interval_ms": 770.176402,
+        "request_to_exact_readback_ms": 946.507084
+      },
+      {
+        "sequence": 20,
+        "host": "NEW",
+        "gui_process_cpu_ms": 774.777464,
+        "cgroup_cpu_ms": 774.877,
+        "observed_interval_ms": 794.798153,
+        "request_to_exact_readback_ms": 979.346211
+      }
+    ]
+  },
+  "limits": [
+    "Diagnostics-on structural/resource endurance only; no diagnostics-off numerical CPU/GPU or observer-overhead acceptance.",
+    "Sampled overlapping ownership views and reservation peaks do not establish full instantaneous memory or driver residency.",
+    "No other backend/scale, mixed terminal workload, simultaneous four-host recovery, physical latency calibration, independent replay or owner UX acceptance.",
+    "Exact X11 window readback is static readiness, not calibrated physical presentation.",
+    "Cgroup counts include exiting descendants, but sampled process identities do not establish exhaustive short-lived process identity.",
+    "Workspace equality and terminal registry address/count receipts do not independently prove live PTY contents or mixed terminal workloads.",
+    "Before/after exact pixels cover the selected host only; simultaneous four-host visual recovery remains unqualified.",
+    "Request-to-readback intervals include input, scheduling, polling and screenshot work. They are not calibrated visible recovery latency from resources becoming available.",
+    "The20 injections supplement the separate completed hour; no claim that these faults occurred inside that earlier60-minute run.",
+    "Diagnostics-off CPU/GPU budgets, observer overhead, full instantaneous accounting, other backend/scale and remaining lifecycle faults remain required."
+  ],
+  "prior_failures": [
+    "../initial-open-timeout/assessment.json",
+    "../stale-cursor-timeout/assessment.json"
+  ],
+  "method_correction": "Historical cursor receipts were stale across focus return. Driver now requires fresh movement to x+2 and then requested x before menu click or request-wake completion. No production code changed between the three attempts."
+}

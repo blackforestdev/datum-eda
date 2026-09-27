@@ -1,0 +1,10 @@
+{
+  "source_commit": "ba24e35a0f5b662247dd2dd2f8e95373cf5cebbe",
+  "binary": "target/pm045-independent-replay-artifacts/candidate-ba24e35a-datum-gui",
+  "sha256": "05fbc6bc8e9e29c439f901ee6107c5c778ddaee1b8690d33840d52ab71e54b1b",
+  "source_inputs": 1990,
+  "unchanged_during_build": true,
+  "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release --locked --offline -p datum-gui-app --bin datum-gui",
+  "exit_code": 0,
+  "qualification_pass": false
+}
