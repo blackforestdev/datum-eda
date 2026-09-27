@@ -5,9 +5,12 @@
   "base_commit": "74b8f1744fc8bb1e800f9c37e63a6b87d281b489",
   "patch": {
     "path": "docs/reviews/gui-performance/gpu-redraw-proposal/capability-attempt.patch",
-    "sha256": "e45588b97c50f9084cce55cc7254807c0eabc3d14caa303d7bdd41065626353e",
+    "sha256": "69234856fb6866392755df2a186aa1a157d27f48451fcd0738c220cef8a8833e",
     "source_candidate_sha256": "7a57ec17cfff807d973ce6bbcc27b66edfb70d417609b50378905117ed24abfb",
-    "disposition": "Uncompiled partial attachment-owner and capability-control draft; not an implemented candidate. Production source restored exactly after preserving this diff."
+    "disposition": "Uncompiled partial attachment-owner and capability-control draft; not an implemented candidate. Production source restored exactly after preserving this diff.",
+    "original_context_patch_sha256": "e45588b97c50f9084cce55cc7254807c0eabc3d14caa303d7bdd41065626353e",
+    "original_context_patch_commit": "1afbaa37",
+    "format": "Zero-context diff; historical candidate bytes reconstructed and hash-verified unchanged. Original context diff remains in the recorded commit."
   },
   "command_attempted": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --locked -p datum-gui-render --features visual prefix_pair_actual_eight_sample_copy_capability -- --ignored --exact --nocapture",
   "exit_code": 75,

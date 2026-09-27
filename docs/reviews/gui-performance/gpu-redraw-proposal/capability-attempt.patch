@@ -2,26 +2,11 @@ diff --git a/crates/gui-render/src/render/gpu_surface.rs b/crates/gui-render/src
 index 6053bce4..e426beed 100644
 --- a/crates/gui-render/src/render/gpu_surface.rs
 +++ b/crates/gui-render/src/render/gpu_surface.rs
-@@ -7,6 +7,7 @@ struct AttachmentKey {
-     extent: (u32, u32),
-     format: wgpu::TextureFormat,
-     samples: u32,
+@@ -9,0 +10 @@ struct AttachmentKey {
 +    prefix: bool,
- }
- impl AttachmentKey {
-     fn new(width: u32, height: u32, format: wgpu::TextureFormat, samples: u32) -> Self {
-@@ -14,6 +15,7 @@ impl AttachmentKey {
-             extent: (width.max(1), height.max(1)),
-             format,
-             samples,
+@@ -16,0 +18 @@ impl AttachmentKey {
 +            prefix: false,
-         }
-     }
- 
-@@ -38,11 +40,22 @@ pub struct SurfaceAttachmentSnapshot {
-     pub payload_bytes: Option<u64>,
- }
- 
+@@ -40,0 +43,10 @@ pub struct SurfaceAttachmentSnapshot {
 +pub(super) struct AttachmentImage {
 +    pub(super) texture: wgpu::Texture,
 +    pub(super) view: wgpu::TextureView,
@@ -32,42 +17,19 @@ index 6053bce4..e426beed 100644
 +        &self.view
 +    }
 +}
- #[derive(Clone)]
- pub(crate) struct SurfaceAttachment {
-     key: AttachmentKey,
-     allocation: u64,
+@@ -45 +57,2 @@ pub(crate) struct SurfaceAttachment {
 -    view: Arc<Tracked<wgpu::TextureView>>,
 +    view: Arc<Tracked<AttachmentImage>>,
 +    prefix: Option<Arc<Tracked<AttachmentImage>>>,
- }
- 
- /// Keep the resource and its exact reuse identity together. Native admission
-@@ -53,6 +66,7 @@ pub(crate) struct SurfaceAttachments {
-     owner: Owner,
-     generations: Arc<crate::text_gpu::budget::Budget>,
-     allocations: u64,
+@@ -55,0 +69 @@ pub(crate) struct SurfaceAttachments {
 +    prefix_requested: bool,
-     current: Option<SurfaceAttachment>,
-     #[cfg(all(test, feature = "visual", target_os = "linux"))]
-     force_replacement: bool,
-@@ -68,6 +82,7 @@ impl SurfaceAttachments {
-             owner: Owner::new(),
-             generations,
-             allocations: 0,
+@@ -70,0 +85 @@ impl SurfaceAttachments {
 +            prefix_requested: false,
-             current: None,
-             #[cfg(all(test, feature = "visual", target_os = "linux"))]
-             force_replacement: false,
-@@ -82,13 +97,34 @@ impl SurfaceAttachments {
-     pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
-         if let Some(attachment) = &self.current {
-             attachment.view.set_consumers(consumers);
+@@ -84,0 +100,3 @@ impl SurfaceAttachments {
 +            if let Some(prefix) = &attachment.prefix {
 +                prefix.set_consumers(consumers);
 +            }
-         }
-     }
- 
+@@ -88,4 +106,22 @@ impl SurfaceAttachments {
 -    pub(super) fn submission_ref(&self) -> Option<SubmissionRef> {
 -        self.current
 -            .as_ref()
@@ -94,28 +56,14 @@ index 6053bce4..e426beed 100644
 +            prefix.view.clone(),
 +            current.allocation,
 +        ))
-     }
- 
-     fn snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
-@@ -115,10 +151,13 @@ impl SurfaceAttachments {
-     fn ensure_guarded(
-         &mut self,
-         device: &wgpu::Device,
+@@ -118 +154 @@ impl SurfaceAttachments {
 -        key: AttachmentKey,
 +        mut key: AttachmentKey,
-         mut healthy: impl FnMut() -> bool,
-     ) -> anyhow::Result<&wgpu::TextureView> {
-         anyhow::ensure!(healthy(), "surface attachment preparation on failed device");
+@@ -121,0 +158,3 @@ impl SurfaceAttachments {
 +        key.prefix = self.prefix_requested
 +            && key.samples == 8
 +            && key.payload_bytes().is_some_and(|n| n <= 45 * 1024 * 1024);
-         #[cfg(all(test, feature = "visual", target_os = "linux"))]
-         let forced = std::mem::take(&mut self.force_replacement);
-         #[cfg(not(all(test, feature = "visual", target_os = "linux")))]
-@@ -135,8 +174,25 @@ impl SurfaceAttachments {
-             let generation = self.generations.reserve(1).map_err(|_| {
-                 anyhow::anyhow!("attachment generation limit reached: one current and one retiring")
-             })?;
+@@ -138,2 +177,19 @@ impl SurfaceAttachments {
 -            let reservation =
 -                crate::text_gpu::budget::GpuReservation::new(bytes, vec![generation])?;
 +            let total = bytes
@@ -137,13 +85,7 @@ index 6053bce4..e426beed 100644
 +            } else {
 +                None
 +            };
-             let texture = device.create_texture(&wgpu::TextureDescriptor {
-                 label: Some("datum-gui-render-msaa"),
-                 size: wgpu::Extent3d {
-@@ -148,7 +204,12 @@ impl SurfaceAttachments {
-                 sample_count: key.samples,
-                 dimension: wgpu::TextureDimension::D2,
-                 format: key.format,
+@@ -151 +207,6 @@ impl SurfaceAttachments {
 -                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
 +                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
 +                    | if key.prefix {
@@ -151,13 +93,7 @@ index 6053bce4..e426beed 100644
 +                    } else {
 +                        wgpu::TextureUsages::empty()
 +                    },
-                 view_formats: &[],
-             });
-             self.allocations = self
-@@ -157,14 +218,35 @@ impl SurfaceAttachments {
-                 .expect("attachment allocation exhausted");
-             anyhow::ensure!(healthy(), "surface attachment allocation failed");
-             let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+@@ -160,3 +221,23 @@ impl SurfaceAttachments {
 -            // The tracked view must be the final local handle before a later
 -            // health failure can release its byte and generation reservations.
 -            drop(texture);
@@ -184,30 +120,16 @@ index 6053bce4..e426beed 100644
 +                    reservation,
 +                ))
 +            });
-             let replacement = SurfaceAttachment {
-                 key,
+@@ -164,0 +246 @@ impl SurfaceAttachments {
 +                prefix,
-                 allocation: self.allocations,
-                 view: Arc::new(self.owner.track_reserved(
+@@ -167 +249 @@ impl SurfaceAttachments {
 -                    view,
 +                    AttachmentImage { texture, view },
-                     self.allocations,
-                     Kind::Attachment,
-                     reservation,
-@@ -175,6 +257,9 @@ impl SurfaceAttachments {
-             // the caller aborts before uploads, encoding or submission.
-             anyhow::ensure!(healthy(), "surface attachment replacement failed");
-             if let Some(previous) = &self.current {
+@@ -177,0 +260,3 @@ impl SurfaceAttachments {
 +                if let Some(prefix) = &previous.prefix {
 +                    prefix.retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
 +                }
-                 previous
-                     .view
-                     .retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
-@@ -464,6 +549,71 @@ mod tests {
-         assert_eq!(negative.allocations_created, 3);
-         assert_eq!(negative.extent, second.extent);
-     }
+@@ -466,0 +552,65 @@ mod tests {
 +    #[cfg(all(feature = "visual", target_os = "linux"))]
 +    #[test]
 +    #[ignore = "bounded PM048 actual-adapter capability gate"]
@@ -273,6 +195,3 @@ index 6053bce4..e426beed 100644
 +            "actual 8x copy validation"
 +        );
 +    }
- }
- 
- #[cfg(all(test, feature = "visual", target_os = "linux"))]
