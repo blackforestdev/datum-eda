@@ -1,0 +1,195 @@
+{
+  "status": "All three current pointer and all six clamp CPU intervals exceed caps; behavior and clean exits preserved",
+  "qualification_pass": false,
+  "candidate": {
+    "source_commit": "01b9983023c5f5b3aee8a8b5c43c609dfa24f49a",
+    "binary": "target/pm045-independent-replay-artifacts/candidate-grid-reuse-8eff3ed55ae2-datum-gui",
+    "binary_sha256": "8eff3ed55ae27d075dcfe49014166dba68b8277df65aa981732ef49eeaa7eee5",
+    "source_bindings_sha256": "da12b2209994703ef68fb8e0a57a5e41c7a26eeb51a41cfc5207cd403bb5fc86",
+    "build_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release --locked --offline -p datum-gui-app --bin datum-gui",
+    "kernel": "6.12.107+deb13-amd64",
+    "status": "Affected quiet CPU measurement candidate; not final replay ready"
+  },
+  "command": "python3 target/pm045-evidence-work/grid-cpu-campaign/campaign.py",
+  "decision": "Grid/camera corrections do not resolve observed quiet CPU failures. Do not repeat this campaign unchanged. Final performance replay remains not ready; further correction needs causal evidence.",
+  "trials": [
+    {
+      "trial": 1,
+      "raw": "pm045-grid-cpu-mocpu19r",
+      "pointer": {
+        "first_sample": 0,
+        "last_sample": 1,
+        "tail_sample": 2,
+        "elapsed_seconds": 30.112927904,
+        "cpu_ms": 3145.233,
+        "cpu_percent_one_core": 10.444793047115848,
+        "endpoint_AE": "0",
+        "endpoint_returncode": 0,
+        "final_focus": 27262980
+      },
+      "clamps": [
+        {
+          "bound": "minimum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.06738229,
+          "cpu_ms": 338.155,
+          "cpu_percent_one_core": 1.1246572672622241,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 6,
+          "last_sample": 7,
+          "tail_sample": 8,
+          "elapsed_seconds": 30.070924321,
+          "cpu_ms": 355.654,
+          "cpu_percent_one_core": 1.1827172194757891,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "input": {
+        "scheduled": 3600,
+        "duration_seconds": 30.000413902,
+        "maximum_lateness_ms": 2.012023,
+        "changed_integer_positions": 1281,
+        "scope": "Schedule/ABI calls, not native semantic acknowledgments"
+      },
+      "normal_exit_code": 0,
+      "display_restore_returncode": 0,
+      "pins_unchanged": true,
+      "cleanup_errors": []
+    },
+    {
+      "trial": 2,
+      "raw": "pm045-grid-cpu-nzg85trr",
+      "pointer": {
+        "first_sample": 0,
+        "last_sample": 1,
+        "tail_sample": 2,
+        "elapsed_seconds": 30.113473824,
+        "cpu_ms": 3392.435,
+        "cpu_percent_one_core": 11.265505334347306,
+        "endpoint_AE": "0",
+        "endpoint_returncode": 0,
+        "final_focus": 29360132
+      },
+      "clamps": [
+        {
+          "bound": "minimum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.071431415,
+          "cpu_ms": 344.097,
+          "cpu_percent_one_core": 1.144265449992381,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 6,
+          "last_sample": 7,
+          "tail_sample": 8,
+          "elapsed_seconds": 30.068773326,
+          "cpu_ms": 357.966,
+          "cpu_percent_one_core": 1.1904908661188132,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "input": {
+        "scheduled": 3600,
+        "duration_seconds": 30.00050849,
+        "maximum_lateness_ms": 0.999977,
+        "changed_integer_positions": 1281,
+        "scope": "Schedule/ABI calls, not native semantic acknowledgments"
+      },
+      "normal_exit_code": 0,
+      "display_restore_returncode": 0,
+      "pins_unchanged": true,
+      "cleanup_errors": []
+    },
+    {
+      "trial": 3,
+      "raw": "pm045-grid-cpu-0fyq5rw0",
+      "pointer": {
+        "first_sample": 0,
+        "last_sample": 1,
+        "tail_sample": 2,
+        "elapsed_seconds": 30.113114768,
+        "cpu_ms": 3399.067,
+        "cpu_percent_one_core": 11.287663286203964,
+        "endpoint_AE": "0",
+        "endpoint_returncode": 0,
+        "final_focus": 29360132
+      },
+      "clamps": [
+        {
+          "bound": "minimum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.073988684,
+          "cpu_ms": 374.636,
+          "cpu_percent_one_core": 1.2457143744265433,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "261537",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 6,
+          "last_sample": 7,
+          "tail_sample": 8,
+          "elapsed_seconds": 30.072310945,
+          "cpu_ms": 360.172,
+          "cpu_percent_one_core": 1.1976864719799138,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "input": {
+        "scheduled": 3600,
+        "duration_seconds": 30.000499506,
+        "maximum_lateness_ms": 2.624711,
+        "changed_integer_positions": 1281,
+        "scope": "Schedule/ABI calls, not native semantic acknowledgments"
+      },
+      "normal_exit_code": 0,
+      "display_restore_returncode": 0,
+      "pins_unchanged": true,
+      "cleanup_errors": []
+    }
+  ],
+  "limits_percent_one_core": {
+    "pointer": 10,
+    "clamp": 1
+  },
+  "archive": "docs/reviews/gui-performance/implementation/S5/grid-reuse/native-cpu/raw.tar.gz",
+  "archive_sha256": "d73175aa40cbeb352ab5a96ddab8a588c7d4ac3709a5a7e9a95449aea64f76c6",
+  "index": "docs/reviews/gui-performance/implementation/S5/grid-reuse/native-cpu/raw-index.json",
+  "verified_archive_members": 482,
+  "review": "Hegel source-reviewed method; identified missing campaign-wide pin enforcement. Fixed before launch; original three-trial declaration retained. No reviewer native replay.",
+  "limits": [
+    "Quiet CPU is GUI+descendants; helper CPU is outside cgroup. Measured interval brackets helper launch and serialization; schedule duration separately reported. No overhead subtraction or relative improvement inference.",
+    "Pointer helper schedules3600positions with integer duplicates; schedule validation is not native consumption/hit/path proof. No independent semantic action denominator.",
+    "Clamp helper alternates press/release edges60Hz; local winit0.30.13 xinput2_button_input maps both to wheel events. Quiet run does not independently count received events or zero forbidden frames.",
+    "Exact endpoint pixels/reversal/focus/cleanup do not replace full input, temporal, GPU, resource, endurance, backend-scale, independent replay or owner acceptance."
+  ],
+  "preserved": "No source or binary changes during campaign; no retries, replaced trials, numerical waivers or resize scope changes."
+}
