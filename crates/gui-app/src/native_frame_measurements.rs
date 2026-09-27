@@ -47,6 +47,33 @@ impl Writer {
                 "source":pane.source.map(|s|json!({"scene_id":s.scene_id,"source_revision":s.source_revision})),
                 "counts":counts,"error":error,"ranges":ranges})
         }).collect();
+        // Only the composed path executes cached bundles. Upload-only, error
+        // and legacy fallback attempts must not publish stale cached draws.
+        let encoded_world = (frame.submitted_frame == Some(true)
+            && !frame.prepared.surface_passes().is_empty()).then(|| {
+            frame.renderer.encoded_world_admission().map(|pane| {
+                let mut vertices = 0_u64;
+                let mut strokes = 0_u64;
+                let mut triangles = 0_u64;
+                let ranges: Vec<_> = pane.ranges().map(|range| match range {
+                    GeometryAdmissionRange::Vertices(r) => {
+                        let n = u64::from(r.end - r.start);
+                        vertices += n;
+                        triangles += n / 3;
+                        json!({"kind":"vertices","start":r.start,"end":r.end})
+                    }
+                    GeometryAdmissionRange::StrokeInstances(r) => {
+                        let n = u64::from(r.end - r.start);
+                        strokes += n;
+                        triangles += n * 2;
+                        json!({"kind":"stroke_instances","start":r.start,"end":r.end})
+                    }
+                }).collect();
+                json!({"pane_id":pane.pane_id.0,"surface":format!("{:?}",pane.surface),
+                    "submitted_commands":ranges.len(),"submitted_vertices":vertices,
+                    "submitted_stroke_instances":strokes,"submitted_triangles":triangles,"ranges":ranges})
+            }).collect::<Vec<_>>()
+        });
         let admission = frame
             .text_observation_attempted
             .then(|| frame.renderer.text_admission_observation())
@@ -67,7 +94,7 @@ impl Writer {
             "submitted_frame":frame.submitted_frame,"render_error":frame.error.map(|e|format!("{e:#}")),
             "text_observation_attempted":frame.text_observation_attempted,"text_admission":text,
             "text_admission_failed":frame.renderer.text_admission_observation_failed(),
-            "glyph_preparation_workspace_overlay":glyphs,"world_panes":panes,
+            "glyph_preparation_workspace_overlay":glyphs,"world_panes":panes,"submitted_world_bundles":encoded_world,
             "scope":"render attempt and prepared retained-world/text; not presentation, raster coverage or complete immediate UI geometry"}))
     }
 }

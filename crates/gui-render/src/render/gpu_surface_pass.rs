@@ -3,6 +3,7 @@ use super::*;
 #[path = "gpu_surface_pass/world_bundles.rs"]
 mod world_bundles;
 pub(super) use world_bundles::CachedSurfaceBundle;
+pub use world_bundles::EncodedWorldAdmission;
 
 pub(super) fn prepare_schematic_pass<'a>(
     prepared: &PreparedScene,

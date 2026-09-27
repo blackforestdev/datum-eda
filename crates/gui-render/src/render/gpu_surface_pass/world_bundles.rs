@@ -18,6 +18,30 @@ pub(crate) struct CachedSurfaceBundle {
     _allocations: Vec<crate::text_gpu::lifetime::SubmissionRef>,
 }
 
+/// Borrowed encoded world draws. Missing GPU buffers were skipped by the
+/// encoder and are excluded here as well. Reading a cached bundle alone does
+/// not establish that the bundle was submitted on the current attempt.
+pub struct EncodedWorldAdmission<'a> {
+    pub pane_id: datum_gui_protocol::PaneId,
+    pub surface: SceneSurface,
+    cached: &'a CachedSurfaceBundle,
+}
+impl EncodedWorldAdmission<'_> {
+    pub fn ranges(&self) -> impl Iterator<Item = geometry_admission::GeometryAdmissionRange> + '_ {
+        self.cached
+            .batches
+            .iter()
+            .filter_map(|batch| match batch.kind {
+                DrawKind::Quads => self.cached.vertex_buffer.as_ref().map(|_| {
+                    geometry_admission::GeometryAdmissionRange::Vertices(batch.range.clone())
+                }),
+                DrawKind::Strokes => self.cached.stroke_buffer.as_ref().map(|_| {
+                    geometry_admission::GeometryAdmissionRange::StrokeInstances(batch.range.clone())
+                }),
+            })
+    }
+}
+
 impl CachedSurfaceBundle {
     fn matches(
         &self,
@@ -34,6 +58,18 @@ impl CachedSurfaceBundle {
 }
 
 impl Renderer {
+    /// Views over the actual cached command stream, without rebuilding geometry
+    /// or retaining GPU ownership. Callers must separately establish submission.
+    pub fn encoded_world_admission(&self) -> impl Iterator<Item = EncodedWorldAdmission<'_>> {
+        self.surface_world_bundles
+            .iter()
+            .map(|cached| EncodedWorldAdmission {
+                pane_id: cached.pane_id,
+                surface: cached.surface,
+                cached,
+            })
+    }
+
     /// Prepared retained-world associations: (allocation ID, pane ID, surface).
     /// Shared allocations occur once per referencing pane; sum allocation records
     /// by ID, never by incidence. This iterator allocates nothing and does not
@@ -213,6 +249,38 @@ mod tests {
                 &device, &queue, &view, &prepared, &retained, None, 1280, 800,
             )
             .unwrap();
+        let encoded = renderer.encoded_world_admission().next().unwrap();
+        assert_eq!(encoded.pane_id, prepared.surface_passes[0].pane_id);
+        assert_eq!(encoded.surface, prepared.surface_passes[0].surface);
+        let observed: Vec<_> = encoded
+            .ranges()
+            .flat_map(|r| match r {
+                geometry_admission::GeometryAdmissionRange::Vertices(r) => {
+                    r.map(|i| (false, i)).collect::<Vec<_>>()
+                }
+                geometry_admission::GeometryAdmissionRange::StrokeInstances(r) => {
+                    r.map(|i| (true, i)).collect::<Vec<_>>()
+                }
+            })
+            .collect();
+        let expected: Vec<_> = prepared
+            .visible_draw_commands
+            .iter()
+            .flat_map(|r| match r {
+                RetainedDrawCommand::Quads { range, .. } => {
+                    range.clone().map(|i| (false, i)).collect::<Vec<_>>()
+                }
+                RetainedDrawCommand::Strokes { range, .. } => {
+                    range.clone().map(|i| (true, i)).collect::<Vec<_>>()
+                }
+            })
+            .collect();
+        assert!(!observed.is_empty());
+        assert_eq!(
+            observed, expected,
+            "encoded ranges preserve actual primitive order"
+        );
+        let initial_ranges: Vec<_> = encoded.ranges().collect();
         let initial = renderer.surface_world_bundles[0].bundle.clone();
         camera.zoom *= 1.5;
         prepared = make_prepared(&state, camera);
@@ -274,6 +342,14 @@ mod tests {
             initial, renderer.surface_world_bundles[0].bundle,
             "equivalent encoded batches ignore upstream labels and segmentation"
         );
+        let observed_ranges: Vec<_> = renderer
+            .encoded_world_admission()
+            .next()
+            .unwrap()
+            .ranges()
+            .collect();
+        assert_eq!(observed_ranges, initial_ranges);
+        assert!(observed_ranges.len() < equivalent.visible_draw_commands.len());
         let key = &renderer.surface_world_bundles[0].batches;
         assert!(key.len() < equivalent.visible_draw_commands.len());
         eprintln!(
@@ -442,6 +518,21 @@ mod tests {
             !renderer
                 .retained_surface_resource_consumers()
                 .any(|(_, pane, _)| pane == datum_gui_protocol::PaneId(u32::MAX - 1))
+        );
+        let panes: Vec<_> = renderer.encoded_world_admission().collect();
+        assert_eq!(panes.len(), 2);
+        assert_ne!(panes[0].pane_id, panes[1].pane_id);
+        assert_eq!(
+            panes[0].ranges().collect::<Vec<_>>(),
+            panes[1].ranges().collect::<Vec<_>>()
+        );
+        renderer.world_vertices_gpu.clear();
+        renderer.prepare_surface_world_bundles(&device, &quads_only, None);
+        assert!(
+            renderer
+                .encoded_world_admission()
+                .all(|p| p.ranges().next().is_none()),
+            "commands skipped for missing GPU buffers are not reported as encoded"
         );
         prepared.surface_passes.clear();
         renderer
