@@ -66,6 +66,9 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Text admission reuse and unique-key controls** — One hardware test passes exact observer pixel parity, duplicate-key counts, reuse and invalid-input recovery. [Evidence](text-admission-observation/result.json)
   Scope: Sampled production-shaped-buffer observation; full frame/pane/native admission remains open.
 
+- [x] **Prepared world geometry and source identity** — Three tests pass range/fallback validation, missing-data rejection, triangle boundaries and immutable source identity. [Evidence](geometry-admission/result.json)
+  Scope: Read-only prepared-world observations; native delivery and full admission remain open.
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.

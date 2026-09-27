@@ -33,3 +33,6 @@ mod gpu_frame;
 
 #[path = "text_admission_observation.rs"]
 mod text_admission_observation;
+
+#[path = "geometry_admission.rs"]
+mod geometry_admission;

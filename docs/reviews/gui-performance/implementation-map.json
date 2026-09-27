@@ -38662,6 +38662,20 @@
         ],
         "scope": "Bounded real-shaped-buffer/hardware observation controls; not full ADM-01, native delivery, overhead or resource qualification.",
         "carry_forward": "Preserve on recorded candidate; rerun only affected behavior, never merely for a handoff."
+      },
+      {
+        "check": "\u2713 done",
+        "completed": true,
+        "label": "Prepared world geometry ranges and source snapshot",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/geometry-admission/result.json",
+        "evidence_field": "proof.focused",
+        "evidence_sha256": "9fa1aa6c7f6d889e2861520a706f9250a382209eed9398c7fe96c20e7148964e",
+        "validated_result": "3 final focused default-feature tests pass: real board prepared/fallback agreement and invalid range rejection; missing retained geometry rejection; triangle-list remainder boundaries; source snapshot remains unchanged after later model revision mutation.",
+        "requirement_ids": [
+          "AC-06"
+        ],
+        "scope": "Three CPU tests over production prepared/retained data; no native/full ADM-01 or submission/raster pass.",
+        "carry_forward": "Preserve across handoffs; rerun only affected behavior."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
@@ -38680,5 +38694,9 @@
   "s5_text_admission_observation_work": {
     "status": "implemented bounded unique glyph observation; full admission still open",
     "evidence": "docs/reviews/gui-performance/implementation/S5/text-admission-observation/result.json"
+  },
+  "s5_geometry_admission_work": {
+    "status": "bounded prepared-world/source view implemented; full admission pending",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/geometry-admission/result.json"
   }
 }

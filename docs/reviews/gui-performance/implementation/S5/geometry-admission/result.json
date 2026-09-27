@@ -1,0 +1,44 @@
+{
+  "status": "bounded prepared world geometry/source views; full ADM-01 and native delivery remain open",
+  "base_commit": "54fd2080",
+  "change": "Expose per-pane prepared ranges and retained/selected vertex, stroke and triangle counts from existing production geometry. Include composed and legacy fallback world paths. Snapshot board/schematic scene IDs and source revisions during opt-in preparation; share immutable identities across clones with observer-scoped allocations.",
+  "proof": {
+    "focused": "3 final focused default-feature tests pass: real board prepared/fallback agreement and invalid range rejection; missing retained geometry rejection; triangle-list remainder boundaries; source snapshot remains unchanged after later model revision mutation.",
+    "app": "Guarded offline application check passes.",
+    "gates": "Source health2559, dependency authority and20spec parity inventories pass."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib geometry_admission::tests --offline",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo check -p datum-gui-app --offline"
+  ],
+  "verification_note": "Final focused check repeated after final observer representation/overflow edits; no broad or native qualification rerun.",
+  "semantics": [
+    "Prepared ranges are borrowed from the production visibility-selected command lists, not an alternate scene/culling implementation.",
+    "Triangle-list assembly restarts per vertex draw; strokes expand to two triangles per instance. Invalid/reversed/out-of-bounds or missing retained data is an error, never zero.",
+    "Repeated retained counts across panes are incidence, not separate allocations.",
+    "Source revision is the engine model revision for native projections and a source revision for legacy projections; neither is silently relabelled.",
+    "Identity capture is opt-in via DATUM_RESOURCE_TRACE, immutable and observer-scoped; default mode leaves it absent. Dialogs have no world source identity.",
+    "Prepared geometry does not establish actual submission, raster coverage or displayed pixels."
+  ],
+  "remaining": [
+    "Per-frame native delivery linking the geometry views and text observations to host/model/pane transitions.",
+    "Immediate shell/control/grid/terminal geometry accounting and applicable raster coverage.",
+    "Native before/after layout,font,layer,pane,DPI admission, observer overhead and full resource caps.",
+    "Remaining S5 performance/endurance/recovery/independent replay and separate owner UX acceptance."
+  ],
+  "preserved": "All225 original predicates/statuses, completed S0-S4 and prior passed/failed evidence. GEFN, PM029/PM047, upload-before-acquire, dependency/prototype authority and nonblocking resize exclusions unchanged.",
+  "logs": {
+    "initial": {
+      "path": "docs/reviews/gui-performance/implementation/S5/geometry-admission/initial.log.gz",
+      "sha256": "d91176cbcb33ea9eac944b919235d1a7ad40e626e1e90a09b47a44f299704272"
+    },
+    "final": {
+      "path": "docs/reviews/gui-performance/implementation/S5/geometry-admission/final.log.gz",
+      "sha256": "b3251b6d04869f783ea45f8bd6a1d6df821d48bc7ade84902456954358c87a38"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S5/geometry-admission/app.log.gz",
+      "sha256": "8bf67fc241d8053604d1b37b094a244c87bf8b2ed797c6ca8711af4fb9e0ed52"
+    }
+  }
+}

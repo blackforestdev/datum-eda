@@ -509,6 +509,7 @@ impl PreparedScene {
                 usize::from(schematic_scene_viewport.is_some()),
             );
             Self {
+                admission_sources: geometry_admission::PreparedSourceIdentities::observe(state),
                 consumers,
                 layout,
                 hit_regions,
