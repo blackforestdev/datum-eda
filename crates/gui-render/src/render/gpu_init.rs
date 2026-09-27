@@ -25,6 +25,7 @@ impl Renderer {
         std::mem::swap(&mut self.measurement_fonts, &mut previous.measurement_fonts);
         std::mem::swap(&mut self.text_buffers, &mut previous.text_buffers);
         std::mem::swap(&mut self.control_meshes, &mut previous.control_meshes);
+        std::mem::swap(&mut self.surface_grids, &mut previous.surface_grids);
     }
 
     pub fn new(
@@ -325,6 +326,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_world_vertices_gpu: Default::default(),
             schematic_world_strokes_gpu: Default::default(),
             surface_world_bundles: Vec::new(),
+            surface_grids: Default::default(),
             surface_grid_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
             )

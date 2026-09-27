@@ -65,8 +65,12 @@ impl Vertex {
 /// surface's encode round-trips to the authored token instead of washing
 /// near-blacks up to grey. Text goes through glyphon, which is already sRGB-aware.
 fn quad_to_vertices(out: &mut Vec<Vertex>, quad: Quad) {
+    out.extend_from_slice(&quad_vertices(quad));
+}
+
+pub(crate) fn quad_vertices(quad: Quad) -> [Vertex; 6] {
     let [a, b, c, d] = quad.points;
-    out.extend_from_slice(&[
+    [
         Vertex {
             pos: [a.0, a.1],
             color: quad.color,
@@ -91,7 +95,7 @@ fn quad_to_vertices(out: &mut Vec<Vertex>, quad: Quad) {
             pos: [d.0, d.1],
             color: quad.color,
         },
-    ]);
+    ]
 }
 
 pub(crate) fn quads_to_vertices(quads: &[Quad]) -> Vec<Vertex> {

@@ -39121,6 +39121,16 @@
         "scope": "Bounded delivery and observed call-local classification. Full budget semantics, inactive owners, native matrix and overhead remain open.",
         "carry_forward": "Reuse producer and classifier controls; do not rerun native history to manufacture missing allocation events. Stable-candidate resource qualification must establish native mode coverage.",
         "native_limit": "One producer method-integration run; not endurance, numerical or independent acceptance."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Unchanged per-pane grid CPU geometry reuse",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/grid-reuse/result.json",
+        "evidence_sha256": "afa6da6321452f5c6ba09c95b3350dadf5097afdc5e89d199d4abc02cfefa622",
+        "validated_result": "5render and17viewport grid-filter tests passed; application check passed. Initial negative-test failure preserved and corrected. Source review found no material production defect.",
+        "scope": "CPU geometry reuse, dependency invalidation, bounded storage and refusal/release controls. No numerical, native recovery or independent acceptance.",
+        "carry_forward": "Reuse these scoped controls across handoffs. Final native performance/resource/recovery qualification remains required."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
@@ -39445,7 +39455,7 @@
     }
   },
   "s5_pointer_grid_reuse": {
-    "status": "Demonstrated repeated grid construction; implementation pending",
+    "status": "Unchanged per-pane grid construction reused; affected CPU controls and application check passed",
     "issue": "dat-pointer-grid-rebuild-hnrp",
     "inspected_commit": "caebf66a",
     "qualification_pass": false,
@@ -39465,6 +39475,29 @@
       "Keep per-attempt encoded flags fresh; cache reuse does not prove new generation."
     ],
     "verification_decision": "One cohesive affected correctness/resource batch must establish unchanged-input reuse and camera/LOD/pane mutation invalidation, exact geometry, refusal and lifetime behavior. Reuse completed shell-cache and historical pointer diagnostics. No new native run merely to reconfirm existing failures.",
-    "limits": "CPU waste proven by source, magnitude unmeasured. GPU grid draw and world rendering remain unchanged; not a CPU/GPU cap remedy claim. Existing pointer-observer-attribution already has quiet/verbose pairs, thread attribution and unreliable sampled profiling; do not repeat those without a new decision gap."
+    "limits": [
+      "No release rebuild, GPU/native trial, timing comparison or independent replay for this slice. CPU/GPU cap failures remain open.",
+      "Cache retains admitted memory; misses visit geometry twice. No claimed magnitude or overall cap remedy.",
+      "GPU grid/world drawing is unchanged. Existing upload-before-acquire and fresh-device upload remain; this CPU check does not independently prove native recovery.",
+      "Exact-byte comparison covers fixture geometry; dependency mutation controls show misses, not complete native/backend/scale acceptance."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S5/grid-reuse/result.json",
+    "evidence_sha256": "afa6da6321452f5c6ba09c95b3350dadf5097afdc5e89d199d4abc02cfefa622",
+    "verification": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-render -p datum-gui-viewport --lib grid -- --test-threads=1",
+      "render_passed": 5,
+      "viewport_passed": 17,
+      "failed": 0,
+      "app_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo check --locked --offline -p datum-gui-app --bin datum-gui",
+      "app_result": "passed in51.82s",
+      "coverage": "Exact vertices and pane batch ranges against prior construction wrapper, stable allocation identity on warm reuse, changed key invalidation, initial and post-key allocation refusal with cleanup, empty-cache release, existing grid LOD/style/boundedness tests. The broad grid filter also includes existing terminal geometry controls; no separate run was added.",
+      "initial_failure": "4render tests passed; new negative used an unrepresentable +1nm f32 delta and got a legitimate cache hit. Changed to +500000nm with assert_ne precondition; retained failed log. Viewport tests had not run before Cargo stopped.",
+      "review": "Hegel source review found no material production defect. Identified initial zero-budget proof as first-allocation refusal only; added post-key refusal to final batch. Reviewer did not run tests or native replay.",
+      "raw": {
+        "tests-initial.log.gz": "d026a86f73f758ed4898cb136e412f68a55a5b93759db744641e84a0cedbab3b",
+        "tests-final.log.gz": "23060597953d3d3199bb5d906814579eb2335e65df8a091df5a7c34f024cc630",
+        "app-check.log.gz": "c4f7fe8a255daa056229029ccf38c07b875333671ea05d2ba25a90f43e367afe"
+      }
+    }
   }
 }

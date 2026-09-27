@@ -1,0 +1,44 @@
+{
+  "status": "Unchanged per-pane grid construction reused; affected CPU controls and application check passed",
+  "qualification_pass": false,
+  "issue": "dat-pointer-grid-rebuild-hnrp",
+  "requirement": "PM045 GP-045-03; GPI-S5 unchanged-dependency reuse",
+  "base_commit": "88943453",
+  "sources": {
+    "crates/gui-viewport/src/grid.rs": "ca65b9e0a2da60d3229b54bd7d460745974aa57ed6feda601f6578a87fc314d3",
+    "crates/gui-render/src/render/grid.rs": "a2ebc7e5363ff4360eb4a16dfa1e1fb2a6306b67c35cc8b451cadb2bf5884dff",
+    "crates/gui-render/src/render/gpu_data.rs": "4439066c5ae7988f49a7c20ab14c112f6f923e332cf1cdf39a5a108d2c720c16",
+    "crates/gui-render/src/render/gpu_frame.rs": "53aa7e351ac0c3e1bbf1772be3f8e909872f3ecac7419ca8765fa4b0f37eb9fb",
+    "crates/gui-render/src/render/gpu_init.rs": "36412dec95cd58b847ca7bfbb2ae0f7c3aa1ad1c97b925f019e84a43bc32ff7b",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "017d6b3f2d123370fa250e77301231287d33693ff9e9e57d7e5c435f4bdf65a3",
+    "crates/gui-render/src/render/immediate_admission.rs": "7c5573b25b18490fe8c95c92db250a2dd6daeeeb3fb9756a73f8ed6614341af9",
+    "crates/gui-render/src/render/renderer_state.rs": "35f5c556fc755d35d26185cee83dbfefc04fe67d6314669e236c1f78afdb653f",
+    "crates/gui-render/src/render/surface_grid_pass.rs": "407bc8be72cbab0a70bc242e2ce3fccd1051cc94c9be46fd149640c348306fbd",
+    "crates/gui-render/src/render/surface_grid_cache_tests.rs": "3a3df5bc4e0aecb530ec1ac63395a0344a038f8a34228a7eae685399b76aec87",
+    "crates/gui-app/src/native_resource_measurements.rs": "7b5fd17d095847e3f8c7095d1fecf5e7e8c5a21631c38146acb215c77471e884"
+  },
+  "change": "Shared GridEngine visitor emits bounded ordered lines without temporary vectors. Renderer retains one admitted generation of exact keys, expanded vertices and batches. Ordered pane/surface/viewport/bounds/camera/resolved LOD determine reuse; previous LOD is not a generation input. Cache misses count then emit, reserve old/new overlap, and publish only after success. Same-host CPU recovery transfers cache while GPU upload stays cold. Scope and native resource view expose retained capacities.",
+  "verification": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-render -p datum-gui-viewport --lib grid -- --test-threads=1",
+    "render_passed": 5,
+    "viewport_passed": 17,
+    "failed": 0,
+    "app_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo check --locked --offline -p datum-gui-app --bin datum-gui",
+    "app_result": "passed in51.82s",
+    "coverage": "Exact vertices and pane batch ranges against prior construction wrapper, stable allocation identity on warm reuse, changed key invalidation, initial and post-key allocation refusal with cleanup, empty-cache release, existing grid LOD/style/boundedness tests. The broad grid filter also includes existing terminal geometry controls; no separate run was added.",
+    "initial_failure": "4render tests passed; new negative used an unrepresentable +1nm f32 delta and got a legitimate cache hit. Changed to +500000nm with assert_ne precondition; retained failed log. Viewport tests had not run before Cargo stopped.",
+    "review": "Hegel source review found no material production defect. Identified initial zero-budget proof as first-allocation refusal only; added post-key refusal to final batch. Reviewer did not run tests or native replay.",
+    "raw": {
+      "tests-initial.log.gz": "d026a86f73f758ed4898cb136e412f68a55a5b93759db744641e84a0cedbab3b",
+      "tests-final.log.gz": "23060597953d3d3199bb5d906814579eb2335e65df8a091df5a7c34f024cc630",
+      "app-check.log.gz": "c4f7fe8a255daa056229029ccf38c07b875333671ea05d2ba25a90f43e367afe"
+    }
+  },
+  "limits": [
+    "No release rebuild, GPU/native trial, timing comparison or independent replay for this slice. CPU/GPU cap failures remain open.",
+    "Cache retains admitted memory; misses visit geometry twice. No claimed magnitude or overall cap remedy.",
+    "GPU grid/world drawing is unchanged. Existing upload-before-acquire and fresh-device upload remain; this CPU check does not independently prove native recovery.",
+    "Exact-byte comparison covers fixture geometry; dependency mutation controls show misses, not complete native/backend/scale acceptance."
+  ],
+  "preserved": "GEFN, vertex/painter order, AA, per-pane clipping, dependency authority, Claude prototype lane and nonblocking resize exclusions."
+}

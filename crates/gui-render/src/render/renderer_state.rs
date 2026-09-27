@@ -54,6 +54,7 @@ pub struct Renderer {
     pub(super) surface_world_bundles: Vec<gpu_surface_pass::CachedSurfaceBundle>,
     pub(super) pane_uniform_generations: crate::text_gpu::slot_generations::SlotGenerations,
     pub(super) surface_scene_uniforms: Vec<gpu_data::uniform_buffer::UniformBinding<SceneUniform>>,
+    pub(super) surface_grids: surface_grid_pass::GridCache,
     pub(super) surface_grid_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) schematic_scene_bind_group: gpu_data::uniform_buffer::UniformBinding<SceneUniform>,
     pub(super) schematic_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
