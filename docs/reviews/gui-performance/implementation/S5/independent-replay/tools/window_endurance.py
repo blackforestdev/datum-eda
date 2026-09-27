@@ -19,7 +19,7 @@ TOOLS = ROOT / 'docs/reviews/gui-performance/implementation/S5/resource-snapshot
 
 OUT = Path(tempfile.mkdtemp(prefix='dev-agent-s5-endurance-', dir=os.environ.get('PM045_REPLAY_OUTPUT_ROOT')))
 print(OUT, flush=True)
-BINARY = Path(os.environ.get('PM045_REPLAY_BINARY', str(ROOT/'target/pm045-independent-replay-artifacts/candidate-3cd685d2-datum-gui')))
+BINARY = Path(os.environ.get('PM045_REPLAY_BINARY', str(ROOT/'target/pm045-independent-replay-artifacts/candidate-4d645582-datum-gui')))
 PROJECT_SOURCE = Path(os.environ['PM045_REPLAY_PROJECT'])
 PROJECT = OUT/'project'
 def fixture_inventory(project):
@@ -38,7 +38,7 @@ for rel in fixture_hashes:
     dest.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(PROJECT_SOURCE/rel, dest)
 assert fixture_inventory(PROJECT) == fixture_hashes
-EXPECTED = '6d3db36c7060218f00c2751728b0bd5938799f4ac48b495c649b65d5a9edda9f'
+EXPECTED = 'e8b7b5061ea381f749a70bf35117ed72db890f052f3fd272142d986f2d58c60e'
 sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
 assert sha(BINARY) == EXPECTED
 ENGINE = ROOT/'target/pm045-independent-replay-artifacts/datum-eda'

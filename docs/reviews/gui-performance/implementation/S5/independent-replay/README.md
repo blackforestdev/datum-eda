@@ -10,9 +10,10 @@ Use the existing adoption map and PM045/PM047 contracts as authority. The frozen
 framework. Preserve all S0–S4 implementation exits and every carried qualification
 predicate. The source snapshot includes the existing 14-consumer indexes.
 
-The current candidate is `6d3db36c…`, built from `3cd685d2` after the
-lazy world-pipeline correction. Its source is bound in `source-bindings.json`.
-The prior `b8c1fa1b…` binary remains preserved; prior packet inputs are archived
+The current candidate is `e8b7b506…`, built from `4d645582` with the
+frame admission and session attribution observations. Its source is bound in `source-bindings.json`.
+The prior `6d3db36c…` and `b8c1fa1b…` binaries remain preserved; the preceding
+packet is archived in `../frame-admission-delivery/release-4d645582/previous-replay-inputs.tar.gz`; prior packet inputs are archived
 in `../lazy-world-pipelines/previous-replay-inputs.tar.gz`. Preserved executables are on the local project
 disk in `target/pm045-independent-replay-artifacts/`; hashes and source/evidence
 identifiers are in `packet.json`. These ignored binaries are not transported by
