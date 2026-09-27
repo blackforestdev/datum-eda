@@ -273,11 +273,13 @@ impl RetainedScene {
                     )
                 },
             )?;
-            trace_render_timing(format!(
-                "retained text+board_graphics batches={}ms/{}q",
-                board_graphics_started.elapsed().as_millis(),
-                world_quads.len().saturating_sub(board_graphics_before)
-            ));
+            trace_render_timing(|| {
+                format!(
+                    "retained text+board_graphics batches={}ms/{}q",
+                    board_graphics_started.elapsed().as_millis(),
+                    world_quads.len().saturating_sub(board_graphics_before)
+                )
+            });
             let geometry_elapsed = geometry_started.elapsed();
             let hits_started = std::time::Instant::now();
             let world_hit_regions = board_hit_construction::build(&state.scene, state, |bytes| {
@@ -301,16 +303,18 @@ impl RetainedScene {
             let quad_count = world_quads.len();
             drop(world_quads);
             let vertex_elapsed = vertex_started.elapsed();
-            trace_render_timing(format!(
-                "retained total={}ms geometry={}ms hits={}ms vertices={}ms quads={} vertices={} hit_regions={}",
-                started.elapsed().as_millis(),
-                geometry_elapsed.as_millis(),
-                hits_elapsed.as_millis(),
-                vertex_elapsed.as_millis(),
-                quad_count,
-                world_vertices.len(),
-                world_hit_regions.len()
-            ));
+            trace_render_timing(|| {
+                format!(
+                    "retained total={}ms geometry={}ms hits={}ms vertices={}ms quads={} vertices={} hit_regions={}",
+                    started.elapsed().as_millis(),
+                    geometry_elapsed.as_millis(),
+                    hits_elapsed.as_millis(),
+                    vertex_elapsed.as_millis(),
+                    quad_count,
+                    world_vertices.len(),
+                    world_hit_regions.len()
+                )
+            });
             let world_hit_index =
                 Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
             Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;

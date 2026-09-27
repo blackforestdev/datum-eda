@@ -194,11 +194,13 @@ impl Renderer {
             } else {
                 self.surface_world_bundles[index] = cached;
             }
-            trace_render_timing(format!(
-                "world bundle rebuilt pane={} source_commands={} draws={draws}",
-                index,
-                commands.len()
-            ));
+            trace_render_timing(|| {
+                format!(
+                    "world bundle rebuilt pane={} source_commands={} draws={draws}",
+                    index,
+                    commands.len()
+                )
+            });
         }
         // Bound retained resources to currently visible panes, including layout shrink.
         self.surface_world_bundles

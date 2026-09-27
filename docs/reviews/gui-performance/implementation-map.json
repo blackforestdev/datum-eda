@@ -39646,5 +39646,11 @@
     "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json#device_identity_correction",
     "lifecycle_review": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json#lifecycle_feasibility_review",
     "remaining": "Application hooks cannot certify clients disappearing within driver calls. Complete fd lifecycle observation/drain semantics remain required; no endpoint-only rerun."
+  },
+  "s5_lazy_renderer_timing": {
+    "status": "Disabled renderer timing formatting made lazy; no numerical performance claim.",
+    "change": "trace_render_timing accepts a closure; retained construction/bundle diagnostics construct messages only inside enabled branch. Retained detail formatter moves to existing diagnostics owner; root include ceiling6115->6110.",
+    "proof": "Guarded visual-feature renderer check passed after extraction1.47s. Source health2590 with --base-ref HEAD passed. Initial check40.18s passed; initial source gate rejected6117>6115 before extraction. No runtime tests or native campaign justified for this formatting-only change.",
+    "limits": "Saved endurance analysis already establishes flat sampled tracked fields but does not attribute RSS growth; no new attribution or endurance rerun. Existing CPU/GPU/resource/native/independent acceptance gaps remain."
   }
 }

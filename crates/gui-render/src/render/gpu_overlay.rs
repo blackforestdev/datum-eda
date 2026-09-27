@@ -134,12 +134,14 @@ impl Renderer {
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(queue, measurement)?;
         if let Some(started) = started {
-            trace_render_timing(format!(
-                "dialog renderer={}us passes=1 text_cache={}/{}",
-                started.elapsed().as_micros(),
-                text_stats.hits,
-                text_stats.misses,
-            ));
+            trace_render_timing(|| {
+                format!(
+                    "dialog renderer={}us passes=1 text_cache={}/{}",
+                    started.elapsed().as_micros(),
+                    text_stats.hits,
+                    text_stats.misses,
+                )
+            });
         }
         Ok(true)
     }
