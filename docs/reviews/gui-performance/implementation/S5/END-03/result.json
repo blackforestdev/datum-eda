@@ -933,7 +933,7 @@
   "remaining": [
     "Changed source files are not byte-identical to S1; later production and native evidence support bounded continuity, not automatic transfer of every assertion.",
     "Original per-consumer full input/backend/scale/resource/fault and final independent native replay requirements remain; no S5 closure.",
-    "END-04 positive registration package and full production runtime coverage remain unqualified; private redraw admission negative now recorded separately."
+    "END-04 NEW registration declaration is reviewed; its full native/resource qualification and actual future-pane admission remain unproven. Full production runtime coverage remains open; private redraw admission negative is recorded separately."
   ],
   "decision": "Credit existing shared-owner adoption and source inventory; do not rerun completed S1-S4 suites. Consolidate only genuine missing controls into final qualification work.",
   "new_builds": 0,
@@ -946,7 +946,7 @@
   },
   "private_path_negative": {
     "evidence": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
-    "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956",
+    "sha256": "37f7459cd36a07b6f3a6658dcd588942c5caa78891483573a5e7cbcee6d83ec5",
     "disposition": "Distinct source/admission review rejects concrete non-applied NEW private redraw path. Not runtime detection or replacement of GPU ownership."
   }
 }
