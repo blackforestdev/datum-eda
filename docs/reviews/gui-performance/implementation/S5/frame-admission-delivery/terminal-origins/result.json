@@ -1,0 +1,24 @@
+{
+  "status": "terminal composition/session attribution control passed; native terminal qualification remains open",
+  "base_commit": "d7c97155",
+  "change": "Add one CPU conformance test using the existing TerminalCore snapshot fixture through production split composition and cached row plans. Reuse the test-only snapshot helper; no production behavior changed.",
+  "proof": "1 final focused CPU test passes two distinct sessions, reordered input with unchanged cached-row rebuild count, closure/removal of one session, and immutable identity/text associations in the earlier prepared frame. Per-session reconstructed cell text contains only its own marker.",
+  "command": "DATUM_RESOURCE_TRACE=1 python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib --offline terminal_origin_tracks_session_reorder_and_close -- --ignored --test-threads=1 --nocapture",
+  "failure_retained": "Initial oracle searched for a whole marker in a single TextRun; production terminal text is emitted per cell. Corrected oracle concatenates cell text by attributed session and also rejects the other session marker. No production defect or requirement relaxation inferred from that setup failure.",
+  "scope": [
+    "Real TerminalCore parsed snapshots and production frame/source composition, including warm session-keyed row reuse. No hand-built renderer text runs.",
+    "CPU-only direct component check; no OS input, PTY process, GPU/presentation, backend/scale, resource-cap or endurance acceptance.",
+    "Native terminal session/focus/output transitions and mixed workload qualification remain required.",
+    "All original requirements/statuses, prior evidence and nonblocking exclusions remain unchanged. No dependency/license or prototype change."
+  ],
+  "logs": {
+    "initial": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/terminal-origins/initial.log.gz",
+      "sha256": "2fa148f3fdd4fbef5d0350865df9538a16eca444f67f717e47aaa62bf2ef841f"
+    },
+    "final": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/terminal-origins/final.log.gz",
+      "sha256": "b562d3ee571b7b11833e41e9b75fedc0f8e4f3df53e1f965baacf3a03bd3a441"
+    }
+  }
+}

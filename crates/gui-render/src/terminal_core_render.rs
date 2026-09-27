@@ -643,3 +643,6 @@ pub(super) fn render_cursor(
 #[cfg(test)]
 #[path = "terminal_core_render_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+pub(crate) use tests::snapshot as test_snapshot;

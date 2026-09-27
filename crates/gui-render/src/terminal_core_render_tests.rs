@@ -42,7 +42,7 @@ fn limits() -> CoreLimits {
     .unwrap()
 }
 
-fn snapshot(bytes: &[u8]) -> RenderSnapshot {
+pub(crate) fn snapshot(bytes: &[u8]) -> RenderSnapshot {
     let limits = limits();
     let mut core = TerminalCore::new(limits, TerminalSize::new(12, 3, 120, 48).unwrap()).unwrap();
     let mut parser = StreamingParser::new(limits);
