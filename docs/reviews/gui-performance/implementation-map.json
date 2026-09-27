@@ -38722,6 +38722,23 @@
           "sha256": "7c1fd89b29b1645f3086769380a236b41cbaf014da1e1c4d3e1088a18b5a6b00",
           "validated_result": "1 final focused CPU test passes two distinct sessions, reordered input with unchanged cached-row rebuild count, closure/removal of one session, and immutable identity/text associations in the earlier prepared frame. Per-session reconstructed cell text contains only its own marker."
         }
+      },
+      {
+        "check": "\u2713 done",
+        "label": "X11/1x 60-minute auxiliary window cycles and delivered resource traces",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
+        "evidence_field": "completed_check and analysis",
+        "evidence_sha256": "c6d1c07278be3f9f59206717a63e94fa9a3ae6d33a2bf32623f1f9a700700238",
+        "validated_result": "600 timed cycles over3600.000285seconds,200 perhost plus3first-use; exact pixel/focus/closure checks; normal drained exit0;604 renderer lifetimes and11313 GPU allocations reconciled,337825 private calls attributed, no sampled cap violations or frame-admission gaps. All603 cycles reached final exact pixel readiness;288 intermediate mismatches among891 captures are retained and are not passes.",
+        "requirement_ids": [
+          "MEM-03",
+          "ADM-01",
+          "ACC-01",
+          "ACC-02"
+        ],
+        "scope": "This native run and trace reconciliation only. Drift/trend assessment,20recoveries, broader workload/configurations, instantaneous accounting, overhead and full acceptance remain open.",
+        "carry_forward": "Reuse these preserved results and raw data; do not rerun because of an agent handoff. Repeat only affected qualification when a subsequent change invalidates it."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
@@ -38754,5 +38771,18 @@
     "screen_submission_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/result.json",
     "analysis_integration_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/analysis-integration/result.json",
     "terminal_origin_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/terminal-origins/result.json"
+  },
+  "s5_native_60minute_window_run": {
+    "status": "Completed producer X11/1x 60-minute auxiliary-window cycle run and trace reconciliation; full MEM-03/S5 acceptance remains open",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/assessment.json",
+    "remaining": [
+      "First/last ten-minute CPU/latency drift and five-minute resource plateau/trend assessment still require reconciliation of this preserved run; no rerun is implied.",
+      "No20 injected recoveries, mixed terminal workload, other backend/scale or full tier/configuration coverage in this run.",
+      "Diagnostics-on run; no diagnostics-off numerical CPU/GPU budget pass or validated observer overhead.",
+      "No physical presentation/latency calibration or return-to-idle timing qualification.",
+      "No full instantaneous private retained/scratch/driver/client accounting acceptance.",
+      "Independent actual final replay and separate owner UX/product acceptance remain required."
+    ]
   }
 }
