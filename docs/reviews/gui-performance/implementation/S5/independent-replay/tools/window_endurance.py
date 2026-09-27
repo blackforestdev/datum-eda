@@ -14,6 +14,8 @@ import tempfile
 import time
 import uuid
 
+import drm_clients
+
 ROOT = Path(os.environ.get('PM045_REPLAY_ROOT', subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip()))
 TOOLS = ROOT / 'docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools'
 
@@ -65,7 +67,7 @@ report = {
     'frontier_step': 'GPI-S5', 'qualification_pass': False,
     'candidate_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
     'binary_sha256': EXPECTED, 'engine_sha256': sha(ENGINE),
-    'normalized_model_sha256': model_hash, 'source_sha256': source, 'driver_sha256': sha(__file__),
+    'normalized_model_sha256': model_hash, 'source_sha256': source, 'driver_sha256': sha(__file__), 'drm_collector_sha256': sha(drm_clients.__file__),
     'fixture_file_sha256': fixture_hashes,
     'fixture_generated_runtime_exclusions': ['.datum/gui-terminal-context.json', '.datum/tool-sessions/', '.datum/terminal-contexts/'], 'pinned_asset_sha256': asset_hashes,
     'declaration': 'One X11/1x F-DOA sustained run; separately recorded first-use for each auxiliary host, then300s warmup, then600 cycles starting every6s for3600s, round-robin GLOBAL/PROJECT/NEW (200 each). No replacements after failure. Native pixel/focus/closure oracle each cycle. Group CPU and process RSS throughout; existing resource/private/GPU observations retained. No fault injection in this run.',
@@ -74,7 +76,8 @@ report = {
         'Sampled overlapping ownership views and reservation peaks do not establish full instantaneous memory or driver residency.',
         'No injected recovery, other backend/scale, mixed terminal workload, resolved schematic, independent replay or owner UX acceptance.',
         'Exact X11 window readback is static readiness, not calibrated physical presentation.',
-        'Cgroup counts include exiting descendants, but sampled process identities do not establish exhaustive short-lived process identity.'
+        'Cgroup counts include exiting descendants, but sampled process identities do not establish exhaustive short-lived process identity.',
+        'Driver memory endpoints are sequential samples at readiness, before close and drained-device-live. They do not cover startup/earlier client exits, lifecycle epochs, instantaneous peaks or observer overhead; no endpoint can establish ACC-03 lifetime completeness.'
     ],
     'cycles': [], 'first_use_cycles': [], 'samples': []
 }
@@ -139,7 +142,8 @@ def until(fn, seconds=15):
 def group_counts():
     return dict((k, int(v)) for k, v in (line.split() for line in (group/'cpu.stat').read_text().splitlines()))
 
-def sample(label):
+def sample(label, driver_endpoint=False):
+    began = time.monotonic_ns()
     members = (group/'cgroup.procs').read_text().split()
     processes = []
     for pid in members:
@@ -151,9 +155,27 @@ def sample(label):
                             if line.startswith(('Name:', 'VmRSS:', 'VmHWM:')))})
         except FileNotFoundError:
             processes.append({'pid': int(pid), 'exited_during_sample': True})
-    row = {'label': label, 'monotonic_ns': time.monotonic_ns(), 'group': group_counts(),
-           'gui_cpu_ns': time.clock_gettime_ns(clock_id.value), 'processes': processes}
+    # Driver reads precede closing CPU counters and the common endpoint time.
+    driver = drm_clients.collect([int(pid) for pid in members]) if driver_endpoint else None
+    row = {'label': label, 'observation_begin_ns': began, 'processes': processes}
     report['samples'].append(row)
+    if driver is not None:
+        row['drm_endpoint'] = driver
+        # Record partial output before failing; successful fd reads alone do not
+        # establish availability of the required driver-resident counters.
+        row['driver_residency_observed'] = (driver['complete_enumeration']
+            and bool(driver['clients']) and all(any(
+                key.startswith(('drm-resident-', 'drm-memory-'))
+                for key in client['first_sample']['memory_bytes'])
+                for client in driver['clients']))
+    # Keep driver records even if subsequent CPU/process reads fail.
+    # Preserve the historical pre-CPU timestamp for existing bounded analyses.
+    row['monotonic_ns'] = time.monotonic_ns()
+    row['group'] = group_counts()
+    row['gui_cpu_ns'] = time.clock_gettime_ns(clock_id.value)
+    row['observation_end_ns'] = time.monotonic_ns()
+    if driver is not None and not row['driver_residency_observed']:
+        raise RuntimeError('incomplete driver memory endpoint: ' + label)
     return len(report['samples'])-1
 
 def wait_to(deadline, label):
@@ -236,6 +258,7 @@ try:
     xd('windowactivate', '--sync', main)
     until(lambda: int(xd('getwindowfocus')) == main)
     until(lambda: 'frame present end' in log.read_text())
+    sample('initial-device-live', driver_endpoint=True)
     report['initial_geometry'] = xd('getwindowgeometry', '--shell', main)
     assert 'WIDTH=1280' in report['initial_geometry'] and 'HEIGHT=800' in report['initial_geometry']
     for index, host in enumerate(('GLOBAL', 'PROJECT', 'NEW')):
@@ -254,7 +277,7 @@ try:
     wait_to(start+3600, 'final-interval')
     report['workload_end_ns'] = time.monotonic_ns()
     wait_to(time.monotonic()+5, 'idle-tail')
-    report['final_before_close_sample'] = sample('final-before-close')
+    report['final_before_close_sample'] = sample('final-before-close', driver_endpoint=True)
     close_window(main)
     connection, _ = listener.accept()
     with connection:
@@ -267,7 +290,8 @@ try:
         report['shutdown_receipt'] = json.loads(receipt)
         assert report['shutdown_receipt']['pid'] == p.pid
         assert report['shutdown_receipt']['phase'] == 'drained_device_live'
-        sample('drained-device-live')
+        report['drained_device_live_sample'] = sample('drained-device-live', driver_endpoint=True)
+        report['observation_end_ns'] = report['samples'][-1]['observation_end_ns']
         connection.sendall(b'!')
     p.wait(timeout=15)
     report['normal_exit_code'] = p.returncode
