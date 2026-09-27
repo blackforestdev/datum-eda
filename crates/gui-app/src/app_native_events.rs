@@ -72,6 +72,11 @@ impl App {
         window_id: WindowId,
         event: WindowEvent,
     ) {
+        let _cpu_probe = gui_runtime_support::phase_probe::Probe::start(match &event {
+            WindowEvent::CursorMoved { .. } => "window_pointer",
+            WindowEvent::MouseWheel { .. } => "window_wheel",
+            _ => "window_other",
+        });
         if self.frames.consume_cancelled_release(window_id, &event) {
             return;
         }
@@ -469,6 +474,7 @@ impl ApplicationHandler for App {
     }
 
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        let _cpu_probe = gui_runtime_support::phase_probe::Probe::start("event_round");
         // Reconcile close/open input before selecting surviving host tokens.
         if let Err(err) = self.sync_owned_product_windows(event_loop) {
             fatal_gui_error(event_loop, "synchronize owned product window", err);
