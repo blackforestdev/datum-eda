@@ -83,6 +83,8 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 
 ## Still open — do not reset the done list
 
+- [x] **Unused raw-device subscription removal: X11/1x clamp behavior** — Three trials, both bounds; all18reference images exact, inward reversal and normal cleanup preserved. CPU1.14–1.21% exceeds1% in all six intervals; this check does not mark CPU or full W-CLAMP accepted. [Evidence](raw-device-input/result.json)
+
 - [ ] Resolve recorded pointer CPU/GPU and clamp CPU failures. Current X11/1x warm-window CPU/output qualification is checked above; other configurations and final independent replay remain. Preserve historical Project-open excesses.
 - [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences.
 - [ ] Complete fixture admission and instantaneous private/scratch/driver/client resource accounting, including observer overhead.
@@ -96,7 +98,7 @@ Pinned resize/temporal,T2 and unadmitted schematic exclusions remain unchanged.
 
 ## Remaining execution without duplicate campaigns
 
-All 32 completed-group evidence hashes match. The original map contains 225
+All 33 completed-group evidence hashes match. The original map contains 225
 requirement rows, not 225 separate tests: 15 specification-record rows, 14
 nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
 or mixed-scope rows. HP05-02 still requires idle resources; its pacing component

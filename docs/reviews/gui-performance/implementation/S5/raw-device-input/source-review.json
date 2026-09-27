@@ -1,0 +1,15 @@
+{
+  "dependency": "Existing locked winit0.30.13; no dependency or license change",
+  "files_sha256": {
+    "application.rs": "993ddc2bbffca969224b2045dfd6cefd6cadd923df83f8ba24da8da8e5ab3fb4",
+    "event_loop.rs": "f84209476849188122139926697f1fe97e17409a41ef0e8dfadf9bd4718108c7",
+    "platform_impl/linux/x11/mod.rs": "811861508c9e34923fc77ff9aa610b1b977b641fd72a919e634ce0d38f788d45",
+    "platform_impl/linux/x11/event_processor.rs": "eefe47e789dae7cd56f3579eb292935d6237c886d486688ed2649b2aa6a76237",
+    "platform_impl/linux/wayland/event_loop/mod.rs": "dd1ceefa859550fb109460ff9b536307dfa457069899244da0220c0a81267edb"
+  },
+  "finding": "App has no DeviceEvent consumer. Default winit WhenFocused selects raw XInput motion/button/key on root; default trait discards delivered DeviceEvents. All product input uses WindowEvent.",
+  "change": "Set Never before run_app. Existing X11 implementation stores policy and applies raw mask on first and later focus transitions. Initial pre-focus subscription and already queued events remain possible. Per-window input and separate hotplug selection remain. Wayland setter is no-op.",
+  "review": "Distinct reviewer confirmed inspected input ownership and first-focus update; no tests or native replay performed by reviewer.",
+  "verification_decision": "One release build and three fixed quiet native clamp runs evaluate preserved clamp/reversal behavior and absolute CPU ceiling in X11/1x. No mirrored unit test or broad regression suite for the three-line policy call.",
+  "limits": "No formal comparative CPU improvement claim, complete W-CLAMP work/event accounting, keyboard semantic qualification, otherbackend-scale or independent acceptance."
+}

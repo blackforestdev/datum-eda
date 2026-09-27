@@ -1,0 +1,8 @@
+{
+  "binary": "target/pm045-independent-replay-artifacts/candidate-raw-input-6c5f3ef8d52f-datum-gui",
+  "binary_sha256": "6c5f3ef8d52fdb1306213fa040e09a309c2a8b74df746832a55725a75f24ac83",
+  "base_commit": "3da74fa0",
+  "production_delta": "App::run disables unconsumed raw DeviceEvents before run_app; X11 applies on first focus processing. WindowEvent input unchanged.",
+  "status": "Affected qualification candidate, not final replay ready",
+  "source_bindings_sha256": "4d66d5f0a5b24744bb8a5feb2d8a8ee1b469a16cfc7855eca5f7d2a3afc6fbe5"
+}

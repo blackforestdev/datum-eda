@@ -34,6 +34,9 @@ impl App {
         private_text_measurements::start()?;
         gpu_allocation_measurements::start()?;
         resource_measurements::start()?;
+        // All product input uses WindowEvent; App does not consume DeviceEvent.
+        // Select this before first focus so X11 drops the unused raw XI stream.
+        event_loop.listen_device_events(winit::event_loop::DeviceEvents::Never);
         let result = event_loop.run_app(&mut self).context("failed to run app");
         // Opt-in observer handoff must happen before any live device is dropped.
         let result = result.and_then(|()| self.finish_measurement_observation());
