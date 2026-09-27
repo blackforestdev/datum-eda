@@ -244,3 +244,10 @@ move to `render/scene_layout_tests.rs`. Renderer include expansion falls from
 test file from 1,070 to 960. Exact ceilings ratchet downward. Fallible measurement
 and native pressure/retry, renderer/app suites and dialog pixel tests verify the
 new ownership boundaries; no normal budget or exception is increased.
+
+PM045 S5 text-origin observation moves the text placement payload and its
+production-origin annotation into `render/text_run.rs`. The actual renderer
+include expansion falls from 6,125 to 6,115 lines; the older 6,244-line ceiling
+is ratcheted to that exact measured value. Shaping/cache identity remains in
+its existing owners. Thirteen policy-integrity tests and the source-health
+base comparison pass; normal budgets and the remaining debt count are unchanged.

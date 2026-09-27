@@ -296,6 +296,10 @@ impl PreparedScene {
                     viewport_overlay_quads.len(),
                 );
                 consumers.note(Stream::Text, Consumer::Board, before_text, text_runs.len());
+                TextRun::annotate(
+                    &mut text_runs[before_text..],
+                    TextOrigin::Viewport(board_pane_id),
+                );
                 let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
                 let board_projection = Projection::new(board_field, &state.scene.bounds, camera);
                 interaction_overlay::push_pane_interaction(
@@ -319,6 +323,7 @@ impl PreparedScene {
                         &mut text_runs,
                         &mut hit_regions,
                     );
+                    TextRun::annotate(&mut text_runs[before_text..], TextOrigin::Viewport(pane.id));
                     consumers.note(
                         Stream::ViewportOverlay,
                         Consumer::Revision,
@@ -336,6 +341,12 @@ impl PreparedScene {
             let before_console_text = text_runs.len();
             let (console_overlay_vertices, console_overlay_layout) =
                 scene_console::prepare(state, &layout, scale, &mut text_runs, &mut hit_regions)?;
+            if let Some(console) = console_overlay_layout {
+                TextRun::annotate(
+                    &mut text_runs[before_console_text..],
+                    TextOrigin::Viewport(console.pane_id),
+                );
+            }
             consumers.note(
                 Stream::Console,
                 Consumer::Console,
@@ -509,7 +520,10 @@ impl PreparedScene {
                 usize::from(schematic_scene_viewport.is_some()),
             );
             Self {
-                admission_sources: geometry_admission::PreparedSourceIdentities::observe(state),
+                admission_sources: geometry_admission::PreparedSourceIdentities::observe(
+                    state,
+                    terminal_panes,
+                ),
                 consumers,
                 layout,
                 hit_regions,

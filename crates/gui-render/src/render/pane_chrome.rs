@@ -65,6 +65,7 @@ fn render_viewport_panes_logical(
     // Focus is the single source of truth: it drives the per-pane header chrome
     // here and (context-follows-focus) which document the side panels read.
     for leaf in &panes.panes {
+        let text_start = text_runs.len();
         consumers.insert(match leaf.content {
             datum_gui_protocol::PaneContent::Board => Consumer::Board,
             datum_gui_protocol::PaneContent::Schematic => Consumer::Schematic,
@@ -158,6 +159,10 @@ fn render_viewport_panes_logical(
             datum_gui_protocol::PaneContent::Board => {}
             datum_gui_protocol::PaneContent::Revision(_) => {}
         }
+        TextRun::annotate(
+            &mut text_runs[text_start..],
+            crate::TextOrigin::Viewport(leaf.id),
+        );
     }
     // Divider gutters between split siblings. They never overlap a pane frame
     // (each sits in the reserved gutter span), so painting them after the panes

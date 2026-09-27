@@ -153,3 +153,6 @@ pub use crate::gpu_surface_pass::EncodedWorldAdmission;
 pub use crate::immediate_admission::{
     PreparedGridAdmission, PreparedScreenGeometry, TerminalGeometryAdmission,
 };
+
+pub use crate::text_admission_observation::TextOriginAdmission;
+pub use crate::text_run::TextOrigin;

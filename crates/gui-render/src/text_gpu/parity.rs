@@ -97,6 +97,7 @@ fn owned_draw_matches_installed_text_renderer() {
                     }
                     buffer.shape_until_scroll(&mut fonts, false);
                     let mut run = crate::TextRun {
+                        origin: Default::default(),
                         text: text.into(),
                         rich_spans: Vec::new(),
                         x: left,

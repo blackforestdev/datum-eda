@@ -115,7 +115,8 @@ pub(super) fn render_bottom_tabs(
                             .iter()
                             .map(|pane| pane.session_id.as_str()),
                     );
-                    for pane in terminal_render.panes {
+                    for (index, pane) in terminal_render.panes.iter().enumerate() {
+                        let text_start = text_runs.len();
                         let geometry = geometries
                             .iter()
                             .find(|candidate| candidate.session_id == pane.session_id)
@@ -136,6 +137,10 @@ pub(super) fn render_bottom_tabs(
                             target,
                             (panel_quads, text_runs, hit_regions),
                         );
+                        TextRun::annotate(
+                            &mut text_runs[text_start..],
+                            crate::TextOrigin::TerminalLeaf(index),
+                        );
                     }
                     if let Some(active_layout) = active_layout {
                         render_terminal_split_dividers(
@@ -145,7 +150,13 @@ pub(super) fn render_bottom_tabs(
                             hit_regions,
                         );
                     }
-                } else if let Some(pane) = terminal_render.panes.iter().find(|pane| pane.focused) {
+                } else if let Some((index, pane)) = terminal_render
+                    .panes
+                    .iter()
+                    .enumerate()
+                    .find(|(_, pane)| pane.focused)
+                {
+                    let text_start = text_runs.len();
                     crate::terminal_core_render::render_terminal_core_snapshot(
                         state,
                         &pane.snapshot,
@@ -153,6 +164,10 @@ pub(super) fn render_bottom_tabs(
                         panel_quads,
                         text_runs,
                         hit_regions,
+                    );
+                    TextRun::annotate(
+                        &mut text_runs[text_start..],
+                        crate::TextOrigin::TerminalLeaf(index),
                     );
                 }
             } else {

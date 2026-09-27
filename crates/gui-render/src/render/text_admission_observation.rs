@@ -3,6 +3,9 @@
 use super::*;
 use crate::text_gpu::staging_vec::StagingVec;
 use glyphon::CacheKey;
+#[path = "text_admission_origins.rs"]
+mod origins;
+pub use origins::TextOriginAdmission;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct TextAdmissionGroup {
@@ -22,6 +25,7 @@ pub struct TextAdmissionObservation {
     pub scratch_bytes: u64,
 }
 pub(crate) struct Observer {
+    origins: Option<StagingVec<TextOriginAdmission>>,
     scope: Option<crate::cpu_alloc::Scope>,
     serial: u64,
     pub latest: Option<TextAdmissionObservation>,
@@ -30,6 +34,7 @@ pub(crate) struct Observer {
 impl Observer {
     pub fn new(enabled: bool) -> Self {
         Self {
+            origins: None,
             scope: enabled.then(|| crate::cpu_alloc::Scope::new("text-admission-observer")),
             serial: 0,
             latest: None,
@@ -40,6 +45,7 @@ impl Observer {
         self.serial
     }
     pub fn begin(&mut self) {
+        self.origins = None;
         self.latest = None;
         self.failed = false;
         if self.scope.is_some() {
@@ -116,18 +122,33 @@ impl Renderer {
             }
             a.unique_raster_keys = unique(&mut keys[..a.shaped_instances]);
             b.unique_raster_keys = unique(&mut keys[a.shaped_instances..]);
+            let union_unique_raster_keys = unique(&mut keys);
+            let origins = origins::collect(
+                entries,
+                [(workspace, workspace_runs), (overlay, overlay_runs)],
+                &mut keys,
+                &self.atlas.staging_budget,
+            )?;
+            let scratch_bytes = keys.allocated_bytes() + origins.allocated_bytes();
+            self.text_admission.origins = Some(origins);
             Ok(TextAdmissionObservation {
                 preparation_serial: self.text_admission.serial,
                 font_owner_id: self.font_system.usage().allocation.owner_id,
                 cache_revision: self.text_buffers.revision(),
                 workspace: a,
                 overlay: b,
-                union_unique_raster_keys: unique(&mut keys),
-                scratch_bytes: keys.allocated_bytes(),
+                union_unique_raster_keys,
+                scratch_bytes,
             })
         });
+        if result.is_err() {
+            self.text_admission.origins = None;
+        }
         self.text_admission.failed = result.is_err();
         self.text_admission.latest = result.ok();
+    }
+    pub fn text_origin_admission(&self) -> Option<&[TextOriginAdmission]> {
+        self.text_admission.origins.as_deref()
     }
     pub fn text_admission_observation(&self) -> Option<TextAdmissionObservation> {
         self.text_admission.latest

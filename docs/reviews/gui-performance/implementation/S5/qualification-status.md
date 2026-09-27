@@ -70,7 +70,7 @@ counts overlap and must not be summed. No tests were rerun to create this list.
   Scope: Read-only prepared-world observations; native delivery and full admission remain open.
 
 - [x] **Render-attempt observer and trace delivery controls** — Two hardware tests pass pixel parity/reuse, delivery and overflow rejection. [Evidence](frame-admission-delivery/result.json)
-  Scope: Offscreen render/writer conformance; native workloads, overhead and full admission remain open. Actual composed-world encoded ranges, pane identity and absent-data controls also pass. [Encoded-world supplement](frame-admission-delivery/encoded-world/result.json) Screen/grid delivery and terminal geometry controls also pass. [Immediate-geometry supplement](frame-admission-delivery/immediate-geometry/result.json)
+  Scope: Offscreen render/writer conformance; native workloads, overhead and full admission remain open. Actual composed-world encoded ranges, pane identity and absent-data controls also pass. [Encoded-world supplement](frame-admission-delivery/encoded-world/result.json) Screen/grid delivery and terminal geometry controls also pass. [Immediate-geometry supplement](frame-admission-delivery/immediate-geometry/result.json) Pane text-origin composition, pixel/cache parity and JSON reconciliation pass. [Text-origin supplement](frame-admission-delivery/text-origins/result.json)
 
 ## Still open — do not reset the done list
 

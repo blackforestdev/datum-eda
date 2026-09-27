@@ -1,8 +1,12 @@
 use super::*;
 
 #[test]
-#[ignore = "requires local GPU; serial resource writer delivery and overflow"]
+#[ignore = "requires local GPU and DATUM_RESOURCE_TRACE=1; serial delivery and overflow"]
 fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
+    assert!(
+        std::env::var_os("DATUM_RESOURCE_TRACE").is_some(),
+        "run with DATUM_RESOURCE_TRACE=1 to enable text/source observation"
+    );
     struct Reset;
     impl Drop for Reset {
         fn drop(&mut self) {
@@ -160,6 +164,24 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
         .iter()
         .find(|r| r["submitted_world_bundles"].is_array())
         .unwrap();
+    let text = &world_frame["text_admission"];
+    let origins = world_frame["text_origins"].as_array().unwrap();
+    assert!(!origins.is_empty());
+    assert!(origins.iter().any(|o| o["origin"]["kind"] == "viewport"));
+    for (overlay, group) in [(false, "workspace"), (true, "overlay")] {
+        let runs: u64 = origins
+            .iter()
+            .filter(|o| o["overlay"] == overlay)
+            .map(|o| o["runs"].as_u64().unwrap())
+            .sum();
+        let glyphs: u64 = origins
+            .iter()
+            .filter(|o| o["overlay"] == overlay)
+            .map(|o| o["shaped_instances"].as_u64().unwrap())
+            .sum();
+        assert_eq!(text[group]["runs"], runs);
+        assert_eq!(text[group]["shaped_instances"], glyphs);
+    }
     let grids = world_frame["prepared_surface_grids"].as_array().unwrap();
     assert!(!grids.is_empty());
     for grid in grids {
