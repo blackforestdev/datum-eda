@@ -263,19 +263,9 @@ struct TextRunSpan {
     italic: bool,
 }
 
-#[derive(Debug, Clone, PartialEq)]
-struct TextRun {
-    text: String,
-    rich_spans: Vec<TextRunSpan>,
-    x: f32,
-    y: f32,
-    size: f32,
-    color: [f32; 3],
-    face: TextFace,
-    clip_bounds: Option<RectPx>,
-    // Stable layout extent; ancestor clipping changes visibility only.
-    layout_size: Option<(f32, f32)>,
-}
+#[path = "text_run.rs"]
+mod text_run;
+use text_run::{TextOrigin, TextRun};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct TextBufferSpanKey {

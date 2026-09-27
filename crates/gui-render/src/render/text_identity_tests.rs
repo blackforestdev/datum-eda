@@ -4,6 +4,7 @@ use glyphon::Weight;
 #[test]
 fn text_buffer_key_ignores_position_and_color_but_tracks_content() {
     let base = TextRun {
+        origin: Default::default(),
         text: "PROJECT".to_string(),
         rich_spans: Vec::new(),
         x: 12.0,
@@ -63,6 +64,7 @@ fn conformance_medium_type_tiers_resolve_to_medium_weight() {
 #[test]
 fn text_prepare_signature_tracks_render_relevant_inputs() {
     let run = TextRun {
+        origin: Default::default(),
         text: "TERMINAL".to_string(),
         rich_spans: Vec::new(),
         x: 12.0,

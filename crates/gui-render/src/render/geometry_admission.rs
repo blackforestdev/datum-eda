@@ -10,14 +10,21 @@ pub struct PreparedSourceIdentity {
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PreparedSourceIdentities {
+    pub terminal_sessions: Vec<String>,
     pub board: PreparedSourceIdentity,
     pub schematic: Option<PreparedSourceIdentity>,
 }
 impl PreparedSourceIdentities {
-    pub(crate) fn observe(state: &ReviewWorkspaceState) -> Option<std::sync::Arc<Self>> {
-        std::env::var_os("DATUM_RESOURCE_TRACE").map(|_| Self::capture(state))
+    pub(crate) fn observe(
+        state: &ReviewWorkspaceState,
+        terminal_panes: &[crate::TerminalPaneRenderState<'_>],
+    ) -> Option<std::sync::Arc<Self>> {
+        std::env::var_os("DATUM_RESOURCE_TRACE").map(|_| Self::capture(state, terminal_panes))
     }
-    fn capture(state: &ReviewWorkspaceState) -> std::sync::Arc<Self> {
+    fn capture(
+        state: &ReviewWorkspaceState,
+        terminal_panes: &[crate::TerminalPaneRenderState<'_>],
+    ) -> std::sync::Arc<Self> {
         let scope = crate::cpu_alloc::Scope::new("prepared-source-observer");
         scope.with(|| {
             let identity = |s: &BoardReviewSceneV1| PreparedSourceIdentity {
@@ -25,6 +32,10 @@ impl PreparedSourceIdentities {
                 source_revision: s.source_revision.clone(),
             };
             std::sync::Arc::new(Self {
+                terminal_sessions: terminal_panes
+                    .iter()
+                    .map(|p| p.session_id.clone())
+                    .collect(),
                 board: identity(&state.scene),
                 schematic: state.schematic_scene.as_ref().map(identity),
             })

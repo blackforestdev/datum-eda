@@ -26,7 +26,14 @@ fn text_admission_observes_reuse_deduplication_and_invalid_input_without_pixel_c
     assert!(first.scratch_bytes > 0);
     let usage = gpu.renderer.text_admission_observer_usage().unwrap();
     assert!(usage.allocator_installed);
-    assert_eq!(usage.payload_bytes, 0, "observer retains no key collection");
+    assert!(
+        usage.payload_bytes > 0,
+        "bounded origin summaries remain available"
+    );
+    let origins = gpu.renderer.text_origin_admission().unwrap();
+    assert_eq!(origins.len(), 1);
+    assert_eq!(origins[0].origin, crate::TextOrigin::Host);
+    assert_eq!(origins[0].counts, first.overlay);
     assert!(usage.peak_payload_bytes > 0);
     assert!(reference == capture(&mut gpu, &prepared));
     let reused = gpu.renderer.text_admission_observation().unwrap();
@@ -34,8 +41,29 @@ fn text_admission_observes_reuse_deduplication_and_invalid_input_without_pixel_c
     assert_eq!(reused.cache_revision, first.cache_revision);
     assert_eq!(reused.overlay, first.overlay);
 
+    crate::TextRun::annotate(
+        &mut prepared.menu_overlay_text_runs,
+        crate::TextOrigin::Viewport(datum_gui_protocol::PaneId(42)),
+    );
+    assert!(reference == capture(&mut gpu, &prepared));
+    assert_eq!(
+        gpu.renderer
+            .text_admission_observation()
+            .unwrap()
+            .cache_revision,
+        reused.cache_revision
+    );
+    assert_eq!(
+        gpu.renderer.text_origin_admission().unwrap()[0].origin,
+        crate::TextOrigin::Viewport(datum_gui_protocol::PaneId(42))
+    );
     let original = prepared.menu_overlay_text_runs.clone();
-    prepared.menu_overlay_text_runs.extend(original.clone());
+    let mut duplicate = original.clone();
+    crate::TextRun::annotate(
+        &mut duplicate,
+        crate::TextOrigin::Viewport(datum_gui_protocol::PaneId(43)),
+    );
+    prepared.menu_overlay_text_runs.extend(duplicate);
     capture(&mut gpu, &prepared);
     let doubled = gpu.renderer.text_admission_observation().unwrap();
     assert_eq!(
@@ -46,10 +74,21 @@ fn text_admission_observes_reuse_deduplication_and_invalid_input_without_pixel_c
         doubled.overlay.unique_raster_keys,
         first.overlay.unique_raster_keys
     );
+    let origins = gpu.renderer.text_origin_admission().unwrap();
+    assert_eq!(origins.len(), 2);
+    assert!(origins.iter().all(|o| o.counts == first.overlay));
+    assert_eq!(
+        origins
+            .iter()
+            .map(|o| o.counts.shaped_instances)
+            .sum::<usize>(),
+        doubled.overlay.shaped_instances
+    );
     prepared.menu_overlay_text_runs = original;
     gpu.renderer
         .observe_text_admission(&[], &[], &[], &prepared.menu_overlay_text_runs);
     assert!(gpu.renderer.text_admission_observation_failed());
+    assert!(gpu.renderer.text_origin_admission().is_none());
     assert!(
         gpu.renderer.text_admission_observation().is_none(),
         "invalid indices cannot count as zero"

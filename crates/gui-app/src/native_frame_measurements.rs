@@ -93,6 +93,18 @@ impl Writer {
             .text_observation_attempted
             .then(|| frame.renderer.text_admission_observation())
             .flatten();
+        let text_origins = admission.and_then(|_| frame.renderer.text_origin_admission()).map(|origins| {
+            origins.iter().map(|o| {
+                let origin = match o.origin {
+                    resource_observation::TextOrigin::Host => json!({"kind":"host"}),
+                    resource_observation::TextOrigin::Viewport(pane) => json!({"kind":"viewport","pane_id":pane.0}),
+                    resource_observation::TextOrigin::TerminalLeaf(index) => json!({"kind":"terminal","leaf_index":index,
+                        "session_id":frame.prepared.admission_sources().and_then(|s|s.terminal_sessions.get(index))}),
+                };
+                json!({"origin":origin,"overlay":o.overlay,"runs":o.counts.runs,"layout_rows":o.counts.layout_rows,
+                    "shaped_instances":o.counts.shaped_instances,"unique_raster_keys":o.counts.unique_raster_keys})
+            }).collect::<Vec<_>>()
+        });
         let text = admission.map(text_value);
         let glyphs = admission.map(|a| {
             let counts = frame.renderer.glyph_preparation_counts();
@@ -107,7 +119,7 @@ impl Writer {
         self.line(json!({"phase":"frame","sequence":self.frames,"monotonic_ns":self.started.elapsed().as_nanos(),
             "renderer_id":frame.renderer.resource_owner_id(),"extent":frame.extent,
             "submitted_frame":frame.submitted_frame,"render_error":frame.error.map(|e|format!("{e:#}")),
-            "text_observation_attempted":frame.text_observation_attempted,"text_admission":text,
+            "text_observation_attempted":frame.text_observation_attempted,"text_admission":text,"text_origins":text_origins,
             "text_admission_failed":frame.renderer.text_admission_observation_failed(),
             "prepared_screen_geometry":screen,"prepared_surface_grids":grids,
             "prepared_terminal_graphics":frame.prepared.prepared_terminal_graphic_count(),"submitted_terminal_geometry":terminal,

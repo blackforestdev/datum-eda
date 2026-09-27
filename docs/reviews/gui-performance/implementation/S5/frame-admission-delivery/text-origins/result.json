@@ -1,0 +1,64 @@
+{
+  "status": "production text origin retained and delivered; full ADM-01/native acceptance remains open",
+  "base_commit": "ec1d049a",
+  "change": "Retain Host,Viewport(PaneId),TerminalLeaf(index) origin on text placement payloads at production composition boundaries. Snapshot terminal session identities with prepared source metadata. Observe runs/rows/shaped instances/unique raster keys per origin and workspace/overlay from the existing shaped buffers, reusing admitted key scratch. Deliver through existing frame records.",
+  "proof": {
+    "gpu": "1 focused hardware test passes: changing only origin preserves exact pixels and shaping cache revision; duplicate text assigned to distinct panes produces two reconciled origin summaries without inflating union unique-key counts; invalid input clears summaries.",
+    "composition": "1 focused CPU test passes actual multi-pane composition at1x,1.5x,2x; Host text remains distinct and each pane retains its origin through scaling.",
+    "writer": "1 focused hardware application test passes with DATUM_RESOURCE_TRACE=1: actual viewport-origin JSON is delivered and run/glyph sums reconcile separately with workspace/overlay totals; existing geometry/overflow checks remain passing.",
+    "policy": "13 source-health policy tests pass; source-health base comparison2565files, dependency authority and20parity inventories pass."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --offline text_admission_observes_reuse_deduplication_and_invalid_input_without_pixel_changes -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --offline production_pane_composition_retains_text_origin_through_scaling -- --test-threads=1",
+    "DATUM_RESOURCE_TRACE=1 python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --offline frame_trace_serializes_actual_render_attempts_and_refuses_overflow -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/test_source_health_governance.py",
+    "python3 scripts/check_source_health.py --base-ref ec1d049a"
+  ],
+  "semantics": [
+    "Origin metadata is assigned where pane/Console/Revision/terminal composition appends text; no geometric ownership inference or alternate shaping path. Host covers shared shell/dialog content.",
+    "Normal text placements carry a small scalar origin field; no session string is cloned into every run. Terminal indices join to immutable prepared session identity snapshots captured only for resource tracing.",
+    "Shaping and paint cache keys deliberately exclude origin metadata; display geometry/style are unchanged.",
+    "Per-origin summaries use existing host/process staging admission and the text observer CPU scope, retained until next preparation/replacement or failure. Glyph-key scratch is released. This changes the earlier observer retention scope: summaries now remain available, but no key collection is retained.",
+    "Distinct origins may share glyph keys; never sum their unique counts as a union.",
+    "The application component test now requires DATUM_RESOURCE_TRACE=1 to enable production text/source observation; its explicit ignore reason and early assertion state that requirement.",
+    "Prepared source metadata remains absent in uninstrumented mode. Missing session identities remain null, not fabricated strings."
+  ],
+  "source_health": {
+    "owning_module": "crates/gui-render/src/render/text_run.rs",
+    "actual_include_before": 6125,
+    "actual_include_after": 6115,
+    "previous_ceiling": 6244,
+    "new_ceiling": 6115,
+    "debt_count": 85,
+    "note": "Placement data and origin annotation now have a normal module owner. Existing cache-key/shaping owners remain. Expected source-health parity digest refreshed after updating its owning policy; no budgets loosened."
+  },
+  "remaining": [
+    "Terminal split/session identity replay and native pane/font/layer/DPI/model transition admission.",
+    "Exact screen/grid submission records and complete per-frame/model/resource accounting, observer overhead and applicable raster coverage.",
+    "Native/backend/scale qualification, performance failures, endurance/recovery, stable-candidate independent replay and separate owner UX acceptance."
+  ],
+  "preserved": "All225 predicates/statuses and prior evidence, completed S0-S4, GEFN, PM029/PM047, Vulkan upload-before-acquire, prototype authority and nonblocking resize exclusions. No dependency/license changes.",
+  "logs": {
+    "gpu": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/gpu.gz",
+      "sha256": "ca0b7ed853561e4115ab2b75df4a4bce0d93ecfe10534c8af2a59be11765ad9b"
+    },
+    "composition": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/composition.gz",
+      "sha256": "b00d0c5b2c3620f476121a301c7385402f75089352c7d6bd3d4337af22e8118d"
+    },
+    "writer": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/writer.gz",
+      "sha256": "1fca2002454be46b612df896cd4d69b2811c81552254415dbe64ba7d6b6fceec"
+    },
+    "source-policy": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/source-policy.gz",
+      "sha256": "1cf79d0aaaa5c9cfdda78199f94a4facabaafc687433cf6b8b41555fcec1948e"
+    },
+    "trace": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/trace.gz",
+      "sha256": "aed2c349ad6bca2a64ed0c6ead631361eb6159d74707da7ca2d3ff35646e51e4"
+    }
+  }
+}

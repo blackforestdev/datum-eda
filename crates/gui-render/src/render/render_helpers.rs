@@ -41,6 +41,7 @@ pub(crate) fn draw_text(
     out: &mut Vec<TextRun>,
 ) {
     out.push(TextRun {
+        origin: Default::default(),
         text: text.to_string(),
         rich_spans: Vec::new(),
         x,
@@ -73,6 +74,7 @@ pub(crate) fn draw_rich_text(
         text
     );
     out.push(TextRun {
+        origin: Default::default(),
         text: text.to_string(),
         rich_spans: spans,
         x,
@@ -98,6 +100,7 @@ pub(crate) fn draw_text_clipped(
     out: &mut Vec<TextRun>,
 ) {
     out.push(TextRun {
+        origin: Default::default(),
         text: text.to_string(),
         rich_spans: Vec::new(),
         x,

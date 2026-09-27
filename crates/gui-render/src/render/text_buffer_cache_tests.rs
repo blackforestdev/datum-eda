@@ -4,6 +4,7 @@ use super::*;
 
 pub(super) fn run() -> TextRun {
     TextRun {
+        origin: Default::default(),
         text: "Cache label".into(),
         rich_spans: vec![],
         x: 0.0,
@@ -327,6 +328,7 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
     let mut cache = TextBufferCache::default();
     let runs: Vec<_> = (0..640)
         .map(|index| TextRun {
+            origin: Default::default(),
             text: format!("indexed label {index}"),
             ..run()
         })

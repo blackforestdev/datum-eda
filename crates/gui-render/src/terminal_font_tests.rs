@@ -121,6 +121,7 @@ fn prompt_style_boundaries_do_not_restart_glyph_positioning() {
 #[test]
 fn terminal_rich_span_colors_invalidate_paint_but_preserve_shaping() {
     let mut run = TextRun {
+        origin: Default::default(),
         text: "$ command".to_string(),
         rich_spans: vec![TextRunSpan {
             text: "$ command".to_string(),

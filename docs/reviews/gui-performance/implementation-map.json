@@ -38700,6 +38700,11 @@
           "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/result.json",
           "sha256": "c86bc0f24edc69b4697d2cc4c77805a99f0db648206b0fe3e43b12738737779c",
           "validated_result": "1 focused GPU test passed with admission assertions: prepared and uploaded terminal counts reconcile; each quad carries6vertices/96bytes; clips are nonempty and fully clipped placements report no draw. Existing exact pixel/reuse/movement/retirement checks also pass. 1 focused hardware application test passed: eight screen groups and20byte vertex payloads, generated grid range bounds and pane association, no stale terminal submission on deferred attempts, grid observer retirement after callback, existing world delivery and overflow controls."
+        },
+        "text_origin_supplement": {
+          "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/result.json",
+          "sha256": "8fda406296fbd09df900aedb5c422f549046519a81c118c055f9e68a9d41bfb3",
+          "validated_result": "1 focused hardware test passes: changing only origin preserves exact pixels and shaping cache revision; duplicate text assigned to distinct panes produces two reconciled origin summaries without inflating union unique-key counts; invalid input clears summaries. 1 focused CPU test passes actual multi-pane composition at1x,1.5x,2x; Host text remains distinct and each pane retains its origin through scaling. 1 focused hardware application test passes with DATUM_RESOURCE_TRACE=1: actual viewport-origin JSON is delivered and run/glyph sums reconcile separately with workspace/overlay totals; existing geometry/overflow checks remain passing."
         }
       }
     ],
@@ -38728,6 +38733,7 @@
     "status": "bounded per-render-attempt delivery implemented; full native ADM-01 acceptance remains open",
     "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/result.json",
     "encoded_world_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/result.json",
-    "immediate_geometry_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/result.json"
+    "immediate_geometry_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/result.json",
+    "text_origin_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/result.json"
   }
 }

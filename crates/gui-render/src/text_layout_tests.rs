@@ -19,6 +19,7 @@ fn owned_layout_matches_buffer_for_plain_rich_and_extent_changes() {
             "👩‍🔧 😀",
         ] {
             let mut run = crate::TextRun {
+                origin: Default::default(),
                 text: text.into(),
                 x: 0.0,
                 y: 0.0,
@@ -142,6 +143,7 @@ fn live_span_paint_matches_baked_reference_across_text_boundaries() {
         ["אבג ", "123 English"],
     ] {
         let run = crate::TextRun {
+            origin: Default::default(),
             text: parts.concat(),
             rich_spans: parts
                 .into_iter()

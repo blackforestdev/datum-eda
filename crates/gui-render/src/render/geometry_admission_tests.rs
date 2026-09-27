@@ -92,7 +92,7 @@ fn geometry_count_triangle_lists_do_not_join_incomplete_draws() {
 #[test]
 fn prepared_source_identity_is_a_snapshot_not_a_later_model_reference() {
     let mut state = crate::gpu_surface_pass::board_fixture_state();
-    let observed = PreparedSourceIdentities::capture(&state);
+    let observed = PreparedSourceIdentities::capture(&state, &[]);
     assert_eq!(observed.board.scene_id, state.scene.scene_id);
     assert_eq!(observed.board.source_revision, state.scene.source_revision);
     let before = state.scene.source_revision.clone();
