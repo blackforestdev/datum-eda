@@ -39082,6 +39082,11 @@
         "process_reuse": "Cold-start processes may continue into warm qualification after recording first use and restoring declared initial state. Distribute independent repetitions across processes where needed. A process per workload, host or metric is not required; preserve baseline ordering and separate diagnostics-off/on modes.",
         "endurance_reuse": "MEM-03 requires200open/close cycles total, not200per auxiliary host. Three30-cycle blocks for each of3hosts give270cycles and may also satisfy the endurance count when run inside the same qualifying hour. Embed required recovery/lifecycle and mixed activity with exact recipes and isolated windows; one block cannot count as three repetitions. The hour is per admitted tier, not automatically tripled by MET-01; applicable backend/scale coverage remains required.",
         "limits": "This does not establish complete runner coverage or a final launch total. Existing600-cycle producer proof remains credited; do not repeat600cycles as an invented minimum. Preserve original failures, PM047 accounting, required negative controls and independent replay."
+      },
+      "fractional_line_owner_boundary": {
+        "packet": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json#fractional_line_owner_boundary",
+        "issue": "dat-wayland-fractional-line-proof-5bot",
+        "status": "Existing native Wayland adapter cannot emit required fractional LineDelta; exact dependency/license exception proposed, not approved. No runtime rerun or acceptance; unrelated authorized work remains available."
       }
     }
   },

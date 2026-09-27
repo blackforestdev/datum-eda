@@ -169,5 +169,53 @@
     "evidence": "../pointer-native-batch/input-reconciliation.json",
     "contract_interpretation": "W-POINTER and MET-02 do not require120distinct native positions/s. Lack of distinct integer motion for every scheduled position is not an independent failure or a reason to require a new fractional pointer campaign. Quantization is reported explicitly.",
     "remaining": "CPU/GPU excesses, semantic hit/crosshair/path correctness, method/overhead and full backend/scale/consumer coverage remain open. Native fractional wheel/scroll obligations are unchanged."
+  },
+  "fractional_line_owner_boundary": {
+    "status": "Proposed bounded dependency exception; NOT APPROVED. No dependency source, manifest, lockfile or system permissions changed.",
+    "issue": "dat-wayland-fractional-line-proof-5bot",
+    "requirements": "W-ZOOM requires native +/-0.1 line at60/s; W-SCROLL separately requires +/-0.25 line at120/s. PixelDelta and synthetic WindowEvent injection do not satisfy these predicates.",
+    "source_findings": "Locked SCTK0.19.2 binds wl_seat1..=7 in initial and dynamic paths; AxisScroll.discrete is i32. Locked winit0.30.13 Wayland emits LineDelta only from integer discrete casts, otherwise PixelDelta. Thus required fractional LineDelta cannot be delivered by this existing native adapter. This is a source-level limitation, not a native trial result or a claim that Wayland cannot support fractions.",
+    "source_sha256": {
+      "winit-0.30.13/src/platform_impl/linux/wayland/seat/pointer/mod.rs": "842ea0e853a3fef090ddf2ff6bc68f00c008f38db3b222468f8332451aa569b8",
+      "smithay-client-toolkit-0.19.2/src/seat/mod.rs": "15f7f6893df5bca1edbc90476394c1161793c752505c6186d3db19e2e9fae3b5",
+      "smithay-client-toolkit-0.19.2/src/seat/pointer/mod.rs": "cf38c70fa3cc6f05eee722eb0bb19a6ae9bedbfb0f34b701788ebc16847b4492"
+    },
+    "protocol_basis": {
+      "url": "https://wayland.freedesktop.org/docs/html/apa.html",
+      "finding": "wl_pointer.axis_value120 since version8 represents one wheel step by120units;12and30units represent0.1and0.25steps."
+    },
+    "proposed_change": [
+      "Pin bounded local patches to inherited smithay-client-toolkit0.19.2 and winit0.30.13, with source/package hashes and reviewed diff. No version upgrade or new transitive dependencies.",
+      "SCTK: negotiate seat/pointer up to version8 in both binding paths; retain signed high-resolution value120 and its presence through frame aggregation. Preserve older integer discrete and continuous pixel semantics.",
+      "winit: emit LineDelta from value120/120 with existing sign convention, once; do not apply display scaling to line units or emit duplicate pixel events. Preserve phase, focus and per-window routing, legacy wheel and touchpad behavior.",
+      "Land an explicit numbered owner decision and reconcile dependency policy, licensing inventory, Frontier/tracker and governing evidence before dependency adoption. Exception must explicitly address PM029 DA008 for this Apache-only inherited component; PM047 alone does not authorize it."
+    ],
+    "packages": [
+      {
+        "name": "winit",
+        "version": "0.30.13",
+        "registry_checksum": "a6755fa58a9f8350bd1e472d4c3fcc25f824ec358933bba33306d0b63df5978d",
+        "declared_license": "Apache-2.0",
+        "license_boundary": "Owner acceptance of the actual LICENSE terms and explicit narrowly scoped DA008 exception required; preserve license/notices and mark modified source as required. Existing baseline inclusion is not patch approval."
+      },
+      {
+        "name": "smithay-client-toolkit",
+        "version": "0.19.2",
+        "registry_checksum": "3457dea1f0eb631b4034d61d4d8c32074caa6cd1ab2d59f2327bd8461e2c0016",
+        "declared_license": "MIT",
+        "license_boundary": "Preserve copyright and permission notice; exact modified-dependency adoption still requires owner decision."
+      }
+    ],
+    "native_delivery_limit": "A real high-resolution wheel or a Datum-owned Linux uinput source is still needed to prove delivery. /dev/uinput currently root:root0600; no device was opened, permissions changed or input injected. Patch authorization alone neither grants device access nor proves compositor delivery.",
+    "verification_decision": "After authorization, one cohesive affected batch must establish exact fractional line/sign/aggregation and legacy pixel/discrete routing, followed by scheduled native qualification on the stable candidate. No unchanged wheel trial before correction: its result cannot resolve this source limitation. No additional full producer campaign.",
+    "owner_response": "Approve the exact winit0.30.13/SCTK0.19.2 high-resolution wheel patch exception, including their stated licenses and the narrow PM029 DA008 exception for winit; or retain the current dependency boundary. Retaining it leaves these S5 native line predicates unqualified. Neither answer waives caps or constitutes acceptance.",
+    "unrelated_work": "Performance corrections, existing pixel input and other authorized S5 work may continue while this decision is pending.",
+    "distribution": "Proposed source-only vendoring of exactly the two checksum-pinned inherited crates under vendor/pm045-input/, selected by workspace [patch.crates-io], with preserved license files, change notices and a reviewed patch digest. No downloaded upgrade, new transitive dependency or binary helper. This distribution method also requires the numbered owner exception before adoption.",
+    "independent_review": {
+      "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+      "mode": "Read-only source and contract review; no tests or input.",
+      "finding": "Confirmed both v7 binding paths and integer-only native LineDelta conversion; no existing non-patching Wayland delivery path found. Proposed v8/value120 preservation is technically consistent, but requires exact dependency/distribution/license authority including DA008; compositor delivery remains unqualified.",
+      "limit": "Reviewer filesystem did not expose /dev/uinput; host root0600 observation is execution-owner evidence only."
+    }
   }
 }
