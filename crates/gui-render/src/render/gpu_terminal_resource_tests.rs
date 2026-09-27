@@ -40,6 +40,14 @@ fn terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels() {
         );
     }
     let cold = capture_retained(&mut renderer, &prepared, &retained);
+    let observed: Vec<_> = renderer.renderer.terminal_geometry_admission().collect();
+    assert_eq!(observed.len(), prepared.prepared_terminal_graphic_count());
+    assert!(
+        observed.iter().all(|g| g.vertices == 6
+            && g.payload_bytes == 96
+            && g.scissor[2] > 0
+            && g.scissor[3] > 0)
+    );
     let initial = renderer.renderer.terminal_graphics.vertex_state();
     assert!(initial.iter().all(|(_, bytes)| *bytes == 96));
     let textures: Vec<_> = Renderer::gpu_process_allocations()
@@ -82,6 +90,7 @@ fn terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels() {
         graphic.clip.width = 0.0;
     }
     let hidden = capture_retained(&mut renderer, &clipped, &retained);
+    assert_eq!(renderer.renderer.terminal_geometry_admission().count(), 0);
     assert!(
         renderer
             .renderer

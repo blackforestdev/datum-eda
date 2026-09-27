@@ -136,10 +136,50 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
             assert!(row["submitted_world_bundles"].is_null());
         }
     }
+    for row in &frames {
+        let screen = row["prepared_screen_geometry"].as_array().unwrap();
+        assert_eq!(screen.len(), 8);
+        for group in screen {
+            assert_eq!(
+                group["payload_bytes"].as_u64().unwrap(),
+                group["prepared_vertices"].as_u64().unwrap() * 20
+            );
+        }
+        if row["submitted_frame"] == true {
+            assert!(
+                row["submitted_terminal_geometry"]
+                    .as_array()
+                    .unwrap()
+                    .is_empty()
+            );
+        } else {
+            assert!(row["submitted_terminal_geometry"].is_null());
+        }
+    }
     let world_frame = frames
         .iter()
         .find(|r| r["submitted_world_bundles"].is_array())
         .unwrap();
+    let grids = world_frame["prepared_surface_grids"].as_array().unwrap();
+    assert!(!grids.is_empty());
+    for grid in grids {
+        let range = grid["range"].as_array().unwrap();
+        let start = range[0].as_u64().unwrap();
+        let end = range[1].as_u64().unwrap();
+        assert!(start < end && end <= grid["generated_vertices"].as_u64().unwrap());
+        assert_eq!(grid["prepared_vertices"], end - start);
+        assert!(
+            world_frame["world_panes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|p| p["pane_id"] == grid["pane_id"])
+        );
+    }
+    assert!(
+        renderer.grid_geometry_admission().is_none(),
+        "observer metadata retires after callback"
+    );
     let panes = world_frame["submitted_world_bundles"].as_array().unwrap();
     assert!(!panes.is_empty());
     for pane in panes {

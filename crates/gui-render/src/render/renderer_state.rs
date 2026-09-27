@@ -24,6 +24,9 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
+    pub(super) grid_admission: Option<
+        crate::text_gpu::staging_vec::StagingVec<immediate_admission::PreparedGridAdmission>,
+    >,
     pub(super) frame_observer: Option<crate::resource_observation::FrameObserver>,
     pub(super) text_admission: text_admission_observation::Observer,
     pub(super) measurement_fonts: Option<crate::text_metrics::measurement_owner::Owner>,

@@ -36,3 +36,6 @@ mod text_admission_observation;
 
 #[path = "geometry_admission.rs"]
 mod geometry_admission;
+
+#[path = "immediate_admission.rs"]
+mod immediate_admission;

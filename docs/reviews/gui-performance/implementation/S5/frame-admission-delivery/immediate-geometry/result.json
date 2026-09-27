@@ -1,0 +1,42 @@
+{
+  "status": "prepared screen/grid and submitted terminal geometry recorded; full ADM-01 remains open",
+  "base_commit": "97b35d7d",
+  "change": "Expose eight existing prepared screen streams and payload bytes, capture generated surface-grid ranges with pane identity at their production boundary, and expose actual uploaded terminal draw geometry/scissors. Deliver through the existing native frame trace, separating preparation from submission.",
+  "proof": {
+    "terminal": "1 focused GPU test passed with admission assertions: prepared and uploaded terminal counts reconcile; each quad carries6vertices/96bytes; clips are nonempty and fully clipped placements report no draw. Existing exact pixel/reuse/movement/retirement checks also pass.",
+    "writer": "1 focused hardware application test passed: eight screen groups and20byte vertex payloads, generated grid range bounds and pane association, no stale terminal submission on deferred attempts, grid observer retirement after callback, existing world delivery and overflow controls.",
+    "gates": "Source health2563, dependency authority and20spec parity inventories pass."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --offline terminal_graphics_reuse_quads_and_retire_textures_without_changing_pixels -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --offline frame_trace_serializes_actual_render_attempts_and_refuses_overflow -- --ignored --test-threads=1 --nocapture"
+  ],
+  "semantics": [
+    "Screen/control vertices come from existing PreparedScene arrays; counts and payload bytes are not retained capacities or submission claims.",
+    "Grid metadata is captured only with a frame observer. Its storage uses existing host/process staging admission and a separate grid-admission-observer CPU scope; reset before an attempt and released after its callback, including delivery errors. Failure to allocate causes an explicit observed render error. No grid reconstruction for measurement.",
+    "Each grid record repeats the shared generated buffer vertex count; do not sum that field across pane incidence. Its range is the per-pane prepared subset.",
+    "Terminal observations use the production clipped draw list with resident texture/buffer filtering and the same vertex-count constant as encoding. Successful frame outcome is required before native submitted-terminal records are emitted. Scissors are bounds, not measured pixel coverage.",
+    "Default mode allocates no grid-observer storage; normal draw ordering, shaders and primitive counts are unchanged.",
+    "The application writer test has no terminal placements; terminal geometry behavior is covered by the separate terminal GPU test. This is not a native terminal-input workload."
+  ],
+  "remaining": [
+    "Exact submitted screen/grid commands and pane ownership, per-pane text/font/model/configuration admission, and applicable raster coverage.",
+    "Full native backend/scale workloads, observer overhead and complete resource accounting/caps.",
+    "Performance failures, endurance/recovery, stable-candidate independent replay and separate owner UX acceptance."
+  ],
+  "preserved": "All225 original predicates/statuses, prior passed/failed evidence and completed S0-S4. PM029/PM047, GEFN, upload-before-acquire, Claude prototype ownership and nonblocking resize exclusions unchanged.",
+  "logs": {
+    "terminal": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/terminal.gz",
+      "sha256": "f6c25bca35e2c2537a050b483ea226aa96f468967b7034d28fed6fcb04f11400"
+    },
+    "writer": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/writer.gz",
+      "sha256": "93ffa12b68ea455ab121c431d39943d01931b6a752b898ba5477378dca4df3b4"
+    },
+    "trace": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/trace.gz",
+      "sha256": "d294ea2b4aa75dab53cd1db4bceb7ac5b6caaa79e9c0e32ff1e4d4a276cad0b8"
+    }
+  }
+}
