@@ -279,19 +279,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 screen_budget.clone(),
             ),
         };
-        let menu_overlay_text_renderer = match previous {
-            Some(old) => {
-                old.menu_overlay_text_renderer
-                    .replacement(device, &atlas, format, msaa_samples)
-            }
-            None => crate::text_gpu::Draw::new(
-                device,
-                &atlas,
-                format,
-                msaa_samples,
-                screen_budget.clone(),
-            ),
-        };
+        let menu_overlay_text_renderer =
+            text_renderer.new_batch_owner(previous.map(|old| &old.menu_overlay_text_renderer));
         Ok(Self {
             resource_host,
             frame_consumers: Default::default(),

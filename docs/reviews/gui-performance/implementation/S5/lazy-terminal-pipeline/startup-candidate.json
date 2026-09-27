@@ -1,0 +1,17 @@
+{
+  "status": "Release candidate built and pinned for affected qualification; NOT final replay ready or S5 accepted.",
+  "created_utc": "2026-09-27T05:50:54.961765+00:00",
+  "base_commit": "ab6e097f",
+  "production_delta": "Shared glyph pipeline changes recorded in shared-glyph-result.json; includes prior lazy terminal initialization and0403f52c allocator serialization. Full source binding inventory matches after build.",
+  "binary": "target/pm045-independent-replay-artifacts/candidate-startup-35d413855bc1-datum-gui",
+  "binary_sha256": "35d413855bc19cb12a8f69a2915003ed0b08403d92f4ccac8443c07149de1f6a",
+  "source_bindings": "startup-source-bindings.json",
+  "source_bindings_sha256": "dd16dbdf07f69d58e8ce9027765eee6edb6e63335a605426b2436c7a920190ed",
+  "source_bindings_count": 1990,
+  "build_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release --locked --offline -p datum-gui-app --bin datum-gui",
+  "build_result": "Exit0; Finished `release` profile [optimized] target(s) in 5m 26s",
+  "raw_build_log": "startup-release.log.gz",
+  "raw_log_sha256": "c9d7e3bd692574216e047c6db41d27f9725dbc2e326c6ba94a8f710dcb82c506",
+  "reuse": "Use this preserved binary for affected startup/window qualification; verify hashes before launch. Historical binaries, fixture and final replay packet pins remain unchanged. No native input was delivered during build.",
+  "limits": "No new numerical, native UX, device-loss, endurance or independent replay acceptance. Existing performance failures and missing methods remain."
+}

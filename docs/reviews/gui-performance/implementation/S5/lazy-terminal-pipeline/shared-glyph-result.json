@@ -1,0 +1,30 @@
+{
+  "status": "Duplicate same-renderer glyph pipeline removed; affected layered-text GPU test passes. Native performance remains unqualified.",
+  "qualification_pass": false,
+  "base_commit": "ab6e097f",
+  "source_sha256": {
+    "crates/gui-render/src/text_gpu/draw.rs": "8cd2647f2718c877072f4323066cb53cb2f7c5216e2751f5aed7b1946fe4860a",
+    "crates/gui-render/src/render/gpu_init.rs": "aa94596804f0b8e28317eae127fef011fac05365fdc15502e78219a171be4710",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "6b4b64ed95670d75472799c2476cab0a789a4b22fc6cdf4df0eabdd3d6b1a780"
+  },
+  "change": "Workspace and menu glyph draws share one immutable pipeline bound to the same new atlas/device/format/MSAA. Each draw retains independent instances, batches, snapshot, pending uploads, generation and preparation counts. Recovery preserves the previous menu draw generation budget while using the new pipeline.",
+  "decision": "Determine whether duplicate shader/pipeline construction can be removed without changing layered output, cache retry or recovery ownership. Native warm-open cost is a separate pending measurement for the consolidated candidate.",
+  "test": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib --features visual --offline shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs -- --ignored --test-threads=1",
+    "result": "1passed;0failed;451filtered;0.79s runtime;15.84s build",
+    "scope": "960x720/4xMSAA hardware layered workspace/menu text; shared and independently constructed pipelines produce identical pixels; same-device recreation, warm reuse, forced atlas preparation retry and cache reindex remain correct.",
+    "raw": "shared-glyph-test.log.gz",
+    "raw_sha256": "72046d405d061c9a49d596e615d18c038e88c5dd23929577b5f417cc8e2c5436"
+  },
+  "review": {
+    "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "mode": "Source review, not native replay.",
+    "finding": "No correctness, admission or recovery defect found. Immutable pipeline alone shared; independent buffer state and old menu retirement allowance retained."
+  },
+  "limits": [
+    "Same-device recreation is not actual device-loss evidence.",
+    "No native CPU reduction, warm-window budget, full backend/scale/resource/endurance or owner UX acceptance.",
+    "Existing numerical failures remain; final independent replay still required."
+  ],
+  "preserved": "No shader/MSAA/painter-order, dependencies, license, GEFN, upload-before-acquire or resize-exclusion change."
+}
