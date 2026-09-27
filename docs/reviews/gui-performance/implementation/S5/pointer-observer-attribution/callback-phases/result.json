@@ -152,5 +152,30 @@
   "source": {
     "crates/gui-app/src/app_native_events.rs": "ecb7560aeb60f20b2a67501496aafb2ec01ecef21d6b6974cf6779289c021716",
     "crates/gui-app/src/phase_probe.rs": "e27c820d145881b14cc087ba2e1628e7bf46d715afbb407fc4a4eef3d14176dc"
+  },
+  "event_source_inspection": {
+    "commit": "2f9a9f7d",
+    "sources": {
+      "crates/gui-app/src/app_native_events.rs": "ecb7560aeb60f20b2a67501496aafb2ec01ecef21d6b6974cf6779289c021716",
+      "crates/gui-app/src/native_frame_coordinator.rs": "c58bb07de3b39328b7e423e6ca229471c1866ed5558f5fcbcb03a89f1defffb5",
+      "crates/gui-app/src/native_gpu_measurements.rs": "9ca9127bfb5f62c190d2c354bfe638a5e8ab7c035f8e6c23d7b2bf4097fca470",
+      "crates/gui-app/src/native_surface_transaction.rs": "24dc24021b3ce22066d0dd83f1bc8f1cfaaf491edf56548cddc747ebdae01df1",
+      "crates/gui-app/src/gui_runtime_support.rs": "9655ebb70849922611a4cf2c2391ed414a77d5e3242c99e0f68b7e4b9c40ea54"
+    },
+    "inherited_dependency_reference": {
+      "package": "winit0.30.13",
+      "source": "src/platform_impl/linux/x11/event_processor.rs",
+      "sha256": "eefe47e789dae7cd56f3579eb292935d6237c886d486688ed2649b2aa6a76237",
+      "access": "Read-only installed registry source; no fetch, patch or dependency adoption."
+    },
+    "findings": [
+      "xinput2_mouse_motion can emit CursorMoved followed by per-valuator AxisMotion or MouseWheel. Generic window_other records do not identify which variants occurred, and their counts alone cannot prove redundant events.",
+      "send_modifiers suppresses unchanged values unless force is requested. Synthetic keyboard replay has a separate modifier path; its existence does not explain measured pointer/clamp traffic.",
+      "Datum handles ModifiersChanged by updating current modifier state. Release/cancellation and lifecycle processing must remain authoritative; no event-discard optimization selected.",
+      "GPU measurement Host::event returns immediately when disabled. Surface drawability synchronization reads coordinator state without querying native dimensions.",
+      "Native event diagnostic label construction is already gated before formatting when verbose logging is disabled. No disabled-formatting bug was found."
+    ],
+    "decision": "No demonstrated redundant event-generation defect or safe cap-remedy was established by this inspection. Do not repeat the same source investigation, drop unclassified event variants, or infer backend-exclusive residual. Existing quiet failures and diagnostic limitations remain unchanged.",
+    "verification": "Read-only source investigation; no build, test, native run or production edit."
   }
 }
