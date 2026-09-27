@@ -218,5 +218,10 @@
       "finding": "Confirmed both v7 binding paths and integer-only native LineDelta conversion; no existing non-patching Wayland delivery path found. Proposed v8/value120 preservation is technically consistent, but requires exact dependency/distribution/license authority including DA008; compositor delivery remains unqualified.",
       "limit": "Reviewer filesystem did not expose /dev/uinput; host root0600 observation is execution-owner evidence only."
     }
+  },
+  "driver_memory_method": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json",
+    "status": "Offline method controls passed; no native resource acceptance",
+    "qualification_pass": false
   }
 }

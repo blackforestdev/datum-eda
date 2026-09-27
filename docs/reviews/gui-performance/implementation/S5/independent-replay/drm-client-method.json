@@ -1,0 +1,29 @@
+{
+  "status": "Offline method controls passed; no native resource acceptance",
+  "requirement_ids": [
+    "ACC-01",
+    "ACC-03"
+  ],
+  "qualification_pass": false,
+  "decision": "Permit this external collector for explicitly scoped DRM memory endpoint observations. Do not infer complete lifetime, peak or residency acceptance.",
+  "source": "https://docs.kernel.org/gpu/drm-usage-stats.html",
+  "command": "python3 docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients_checks.py",
+  "result": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.002s\n\nOK\n",
+  "bindings": {
+    "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients.py": "99a088f5df13674481c383c0ed5bf8ee492d7714f85dcac01d5eb923c8fc7a24",
+    "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients_checks.py": "bfc9d17cee3cfe339a560874f2ecc324a8ae7757b96c8d9db2a9ae6f6cbb96b8"
+  },
+  "method_review": {
+    "reviewer": "Hegel / 01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+    "finding": "Initial drm-total prefix incorrectly treated drm-total-cycles utilization as bytes. Corrected by excluding that namespace; retained raw counters and added utilization-only negative in the single controls batch.",
+    "scope": "Source/method review, not independent native replay."
+  },
+  "limits": [
+    "Only explicitly supplied PIDs and listed descriptors are observed. Open/close between reads, omitted descendants and lifecycle epochs remain unresolved; no automatic lifetime integration.",
+    "complete_enumeration means listed reads succeeded with identified clients. It does not prove an atomic snapshot or lifetime completeness. Errors and unidentified clients retain partial observations.",
+    "memory_counters_available means at least some memory fields for each identified client, not complete residency coverage. Empty or absent counters are unknown; explicit zero is preserved.",
+    "Separate memory classes may overlap; aliases are grouped, never summed. Deprecated drm-memory is retained separately from resident. Samples are sequential, not instantaneous peaks.",
+    "A client absent at an endpoint does not establish zero driver retention. ACC-03 start/end and reset/epoch receipts remain required.",
+    "No Datum process launched, GPU workload repeated, Cargo build performed, observer overhead qualified or numerical acceptance claimed. Final packet candidate remains historical and NOT READY."
+  ]
+}

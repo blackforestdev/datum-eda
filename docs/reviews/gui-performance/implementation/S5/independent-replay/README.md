@@ -82,3 +82,9 @@ parser controls. Those controls use archived records and explicitly synthetic
 envelopes; they do not establish native admission or qualify a candidate.
 Historical snapshot-only evidence retains its original scope. Final replay
 still requires refreshed source/method pins and a stable candidate.
+
+`tools/drm_clients.py` records external DRM memory endpoint observations for
+explicit PIDs, retaining duplicate-FD samples without summing them. Use the
+command template in `commands.json`; `drm-client-method.json` records the offline
+controls and limits. This does not fill ACC-03 lifecycle/epoch coverage or
+instantaneous peak and observer-overhead gaps. No native rerun was performed.
