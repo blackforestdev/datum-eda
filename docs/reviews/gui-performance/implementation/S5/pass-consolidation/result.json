@@ -1,0 +1,45 @@
+{
+  "baseline_commit": "0de1d528",
+  "candidate_source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "703dcb65fc12a57667cfcbb0ed4224a2efde1b9be13e32c58b54ad3d6bc4f044",
+    "crates/gui-render/src/render/gpu_measurements.rs": "75a0f87cc2965de1a351e0917723944631e99cbf59c11e0e680e4c9e6105b3d9",
+    "crates/gui-render/src/render/terminal_graphics.rs": "a95fa985eea8f9b08064cc1f72a2490eea16dd6c56886b793caefab5b67f01d8",
+    "crates/gui-render/src/render/gpu_pass_tests.rs": "24415110e6400306f8185190b15ff60214902d91f63cbe01570b78af8e3a9622",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "2be8fba1a1b7f565b9fb9b2784155e990d5cdbda36a383715aa6d4808504ff48",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "4c35a82bf78339b5671813c9a569156ffbb67f4c12c00e7c1b4f90b29b0a8d4d"
+  },
+  "decision": "Determine whether compatible physical pass consolidation preserves the exercised painter/resource semantics before native performance qualification.",
+  "change": "One general-frame physical pass, scene then terminal background then workspace text then terminal foreground then menu card then menu text. Full-target text scissors restored. One final resolve; MSAA sample contents discarded, allocation/submission ownership unchanged.",
+  "measurements": "frame is the whole physical interval including layers and final resolve; historical scene interval is not comparable. Three optional scene markers remain nested.",
+  "proof": {
+    "compile": "guarded offline cargo check -p datum-gui-render passed (20.83s)",
+    "gpu_batch": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --offline --lib gpu_overlay_tests -- --ignored --test-threads=1",
+      "passed": 35,
+      "failed": 1,
+      "seconds": 18.59,
+      "log": "gpu-correctness.log.gz"
+    },
+    "failure": "Terminal continuation expected staging sum omitted retained surface_grid_cache_bytes (148 bytes). Added owned cache to exact accounting; numerical limit unchanged.",
+    "affected_rerun": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --offline --lib terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content -- --ignored --test-threads=1",
+      "passed": 1,
+      "failed": 0,
+      "seconds": 1.0,
+      "log": "terminal-accounting-correction.log.gz"
+    },
+    "source_review": "Hegel: no material correctness defect; state restoration, layering, Discard ownership, timestamp semantics inspected. No execution or performance certification.",
+    "gates": [
+      "source health:2590 passed",
+      "dependency authority:PASS",
+      "cargo resource policy:PASS"
+    ]
+  },
+  "limitations": [
+    "Existing GPU assertions cover exercised pixel equivalence, layered text/graphics, resources and measurement; no new native baseline comparison or timing qualification performed.",
+    "Native CPU/GPU numerical failures remain unresolved until measured on this candidate.",
+    "Independent source review is not required independent native performance replay.",
+    "Full consumer/backend/scale/resource/endurance/recovery and owner UX acceptance remain open; nonblocking resize exclusions preserved."
+  ],
+  "qualification_pass": false
+}

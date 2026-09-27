@@ -283,7 +283,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     assert!(samples[0].scene_marker_ticks.is_some());
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["scene", "text"]
+        ["frame"]
     );
     let measured_dialog = capture(&mut renderer, &dialog);
     assert!(
@@ -336,17 +336,9 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
         .poll_gpu_measurements(&renderer.device)
         .unwrap();
     assert_eq!(samples.len(), 1);
-    assert!(
-        samples[0]
-            .passes_ns
-            .iter()
-            .any(|p| p.0 == "datum-terminal-foreground-graphics-pass")
-    );
-    assert!(
-        samples[0]
-            .passes_ns
-            .iter()
-            .any(|p| p.0 == "datum-terminal-background-graphics-pass")
+    assert_eq!(
+        samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
+        ["frame"]
     );
     let measured_menu = renderer.render_workspace(&menu_workspace, None).unwrap();
     assert!(
@@ -360,7 +352,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     assert_eq!(samples.len(), 1);
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["scene", "text", "menu-background", "menu-text"]
+        ["frame"]
     );
     assert!(renderer.renderer.gpu_measurement_poll_deadline().is_none());
 }

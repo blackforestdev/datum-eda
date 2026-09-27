@@ -1,0 +1,5 @@
+Baseline 0de1d528; gpu_frame.rs and terminal_graphics.rs inspected before mutation.
+Order: scene -> terminal background -> workspace text -> terminal foreground -> menu card -> menu text.
+All stages target same 8x MSAA attachment; scene clears APP_BG, later stages Load; all Store. Only final active stage resolves. No intervening attachment sampling/copy. Text uses shared atlas prepared before acquisition. Menu must occlude workspace text; terminal graphics retain background/foreground ordering.
+Candidate: one physical pass, same ordered commands, full-target scissor reset before text, final resolve then Discard MSAA samples (allocation and in-flight ownership retained). Measurement frame interval covers all layers; optional scene markers stay nested.
+Decision gate: correctness/painter parity before native performance; no rerun of retired partial-redraw campaign.

@@ -192,24 +192,11 @@ impl Renderer {
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
-        // Every layer loads the same preserved MSAA samples. Nothing reads the
-        // resolved target until submission, so only the last active layer needs
-        // to resolve it. Keep physical passes and painter order unchanged.
-        let final_resolve = if !menu_overlay_vertices.is_empty() {
-            if prepared.has_overlay_text() {
-                ResolvePass::MenuText
-            } else {
-                ResolvePass::MenuBackground
-            }
-        } else if self.terminal_graphics.has_layer(true) {
-            ResolvePass::TerminalForeground
-        } else if prepared.has_workspace_text() {
-            ResolvePass::Text
-        } else if self.terminal_graphics.has_layer(false) {
-            ResolvePass::TerminalBackground
-        } else {
-            ResolvePass::Scene
-        };
+        // All layers share one attachment and retain their painter order. The
+        // resolved target is consumed only after submission; MSAA samples need
+        // not survive the final resolve because the next frame clears them.
+        let encode_elapsed;
+        let text_encode_elapsed;
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
         });
@@ -218,7 +205,7 @@ impl Renderer {
                 label: Some("datum-gui-render-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: (final_resolve == ResolvePass::Scene).then_some(&view),
+                    resolve_target: Some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
@@ -227,12 +214,12 @@ impl Renderer {
                             b: APP_BG[2] as f64,
                             a: 1.0,
                         }),
-                        store: wgpu::StoreOp::Store,
+                        store: wgpu::StoreOp::Discard,
                     },
                 })],
                 depth_stencil_attachment: None,
                 occlusion_query_set: None,
-                timestamp_writes: measurement.as_mut().map(|m| m.pass("scene")).transpose()?,
+                timestamp_writes: measurement.as_mut().map(|m| m.pass("frame")).transpose()?,
                 multiview_mask: None,
             });
             pass.set_pipeline(&self.pipeline);
@@ -476,79 +463,21 @@ impl Renderer {
                 );
             }
             self.draw_console(&mut pass, console_overlay_vertices, prepared);
-            // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
-            // composited AFTER the main text pass (below) so it occludes not only
-            // the work-pane quads but every underlying text_run too; its own text
-            // then draws in a final pass on top of the card.
-        }
-        self.encode_terminal_graphics(
-            &mut encoder,
-            &msaa_view,
-            (final_resolve == ResolvePass::TerminalBackground).then_some(&view),
-            false,
-            measurement.as_mut(),
-        )?;
-        let encode_elapsed = encode_started.elapsed();
-        let text_encode_started = std::time::Instant::now();
-        // Empty text does not introduce a physical pass; the preceding or
-        // following active layer owns the single final resolve.
-        if prepared.has_workspace_text() {
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("datum-gui-text-pass"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &msaa_view,
-                    resolve_target: (final_resolve == ResolvePass::Text).then_some(&view),
-                    depth_slice: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Load,
-                        store: wgpu::StoreOp::Store,
-                    },
-                })],
-                depth_stencil_attachment: None,
-                occlusion_query_set: None,
-                timestamp_writes: measurement.as_mut().map(|m| m.pass("text")).transpose()?,
-                multiview_mask: None,
-            });
-            self.text_renderer
-                .render(&self.atlas, &mut pass)
-                .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
-        }
-        let text_encode_elapsed = text_encode_started.elapsed();
-
-        self.encode_terminal_graphics(
-            &mut encoder,
-            &msaa_view,
-            (final_resolve == ResolvePass::TerminalForeground).then_some(&view),
-            true,
-            measurement.as_mut(),
-        )?;
-
-        // Composite the menu card and its text after the main text pass.
-        if !menu_overlay_vertices.is_empty() {
-            // Pass C: the dropdown card background/rows. Base pipeline + screen
-            // uniform; full-window scissor so the drop below the menu bar is not
-            // re-clipped to the scene viewport.
-            {
-                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                    label: Some("datum-gui-menu-overlay-pass"),
-                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                        view: &msaa_view,
-                        resolve_target: (final_resolve == ResolvePass::MenuBackground)
-                            .then_some(&view),
-                        depth_slice: None,
-                        ops: wgpu::Operations {
-                            load: wgpu::LoadOp::Load,
-                            store: wgpu::StoreOp::Store,
-                        },
-                    })],
-                    depth_stencil_attachment: None,
-                    occlusion_query_set: None,
-                    timestamp_writes: measurement
-                        .as_mut()
-                        .map(|m| m.pass("menu-background"))
-                        .transpose()?,
-                    multiview_mask: None,
-                });
+            self.terminal_graphics
+                .draw_layer(&mut pass, &self.uniform_bind_group, false);
+            encode_elapsed = encode_started.elapsed();
+            let text_encode_started = std::time::Instant::now();
+            if prepared.has_workspace_text() {
+                pass.set_scissor_rect(0, 0, width, height);
+                self.text_renderer
+                    .render(&self.atlas, &mut pass)
+                    .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
+            }
+            text_encode_elapsed = text_encode_started.elapsed();
+            self.terminal_graphics
+                .draw_layer(&mut pass, &self.uniform_bind_group, true);
+            // The card must occlude workspace text as well as geometry.
+            if !menu_overlay_vertices.is_empty() {
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
                 pass.set_scissor_rect(0, 0, width, height);
@@ -565,34 +494,8 @@ impl Renderer {
                     menu_overlay_vertices.len() as u32,
                     [0, 0, width, height],
                 );
-            }
-
-            // Pass D: the dropdown's own text, on top of the card. Uses the
-            // dedicated overlay text renderer so the main renderer's prepared
-            // state/caching is untouched. The content-keyed text_buffer_cache is
-            // shared, so overlay glyph buffers reuse the same atlas.
-            if prepared.has_overlay_text() {
-                {
-                    let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                        label: Some("datum-gui-menu-overlay-text-pass"),
-                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                            view: &msaa_view,
-                            resolve_target: (final_resolve == ResolvePass::MenuText)
-                                .then_some(&view),
-                            depth_slice: None,
-                            ops: wgpu::Operations {
-                                load: wgpu::LoadOp::Load,
-                                store: wgpu::StoreOp::Store,
-                            },
-                        })],
-                        depth_stencil_attachment: None,
-                        occlusion_query_set: None,
-                        timestamp_writes: measurement
-                            .as_mut()
-                            .map(|m| m.pass("menu-text"))
-                            .transpose()?,
-                        multiview_mask: None,
-                    });
+                if prepared.has_overlay_text() {
+                    pass.set_scissor_rect(0, 0, width, height);
                     self.menu_overlay_text_renderer
                         .render(&self.atlas, &mut pass)
                         .map_err(|error| anyhow::anyhow!("render menu overlay text: {error}"))?;
@@ -645,14 +548,4 @@ impl Renderer {
         }
         Ok(true)
     }
-}
-
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum ResolvePass {
-    Scene,
-    TerminalBackground,
-    Text,
-    TerminalForeground,
-    MenuBackground,
-    MenuText,
 }

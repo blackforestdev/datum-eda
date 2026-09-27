@@ -413,49 +413,15 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         self.draws.iter().any(|draw| draw.foreground == foreground)
     }
 
-    pub(super) fn encode_layer(
-        &self,
-        encoder: &mut wgpu::CommandEncoder,
-        msaa_view: &wgpu::TextureView,
-        target: Option<&wgpu::TextureView>,
-        screen_bind_group: &wgpu::BindGroup,
-        foreground: bool,
-        measurement: Option<&mut super::gpu_measurements::FrameQueries>,
-    ) -> anyhow::Result<()> {
-        if !self.has_layer(foreground) {
-            return Ok(());
-        }
-        let label = if foreground {
-            "datum-terminal-foreground-graphics-pass"
-        } else {
-            "datum-terminal-background-graphics-pass"
-        };
-        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: Some(label),
-            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: msaa_view,
-                resolve_target: target,
-                depth_slice: None,
-                ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Load,
-                    store: wgpu::StoreOp::Store,
-                },
-            })],
-            depth_stencil_attachment: None,
-            occlusion_query_set: None,
-            timestamp_writes: measurement.map(|m| m.pass(label)).transpose()?,
-            multiview_mask: None,
-        });
-        self.draw(&mut pass, screen_bind_group, foreground);
-        Ok(())
-    }
-
-    fn draw<'pass>(
+    pub(super) fn draw_layer<'pass>(
         &'pass self,
         pass: &mut wgpu::RenderPass<'pass>,
         screen_bind_group: &'pass wgpu::BindGroup,
         foreground: bool,
     ) {
+        if !self.has_layer(foreground) {
+            return;
+        }
         pass.set_pipeline(
             self.pipeline
                 .as_ref()
@@ -509,24 +475,6 @@ impl super::Renderer {
     ) -> anyhow::Result<()> {
         self.terminal_graphics
             .sync(device, queue, prepared.terminal_graphics(), width, height)
-    }
-
-    pub(super) fn encode_terminal_graphics(
-        &self,
-        encoder: &mut wgpu::CommandEncoder,
-        msaa_view: &wgpu::TextureView,
-        target: Option<&wgpu::TextureView>,
-        foreground: bool,
-        measurement: Option<&mut super::gpu_measurements::FrameQueries>,
-    ) -> anyhow::Result<()> {
-        self.terminal_graphics.encode_layer(
-            encoder,
-            msaa_view,
-            target,
-            &self.uniform_bind_group,
-            foreground,
-            measurement,
-        )
     }
 }
 

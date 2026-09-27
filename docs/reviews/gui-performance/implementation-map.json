@@ -39564,5 +39564,11 @@
       ],
       "decision": "Restore all partial-redraw production/test changes to fa72501b bytes; retain separate measurement_owner test compatibility fix. No retry of rejected candidate or unchanged clamp qualification. Historical comparison is unpaired."
     }
+  },
+  "s5_pass_consolidation": {
+    "status": "Implemented with bounded GPU correctness proof; native benefit unmeasured; S5 open.",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/pass-consolidation/result.json",
+    "reused_evidence": "Existing completed groups remain credited at recorded scope; retired partial redraw stays rejected.",
+    "test_policy": "One cohesive GPU batch, then only the failed accounting test rerun after correcting its omitted cache term. No broad repeat or native trial."
   }
 }
