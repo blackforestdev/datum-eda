@@ -1,0 +1,35 @@
+{
+  "status": "Repeated device-loss injection hook prepared; native recovery qualification not yet run",
+  "qualification_pass": false,
+  "base_commit": "06d07fd4",
+  "problem": "Existing backend device.destroy injection is startup-once. Repeated recovery qualification needs controlled faults in one long-lived process with preserved state.",
+  "change": "Add requests mode to the existing opt-in device-loss hook. A harness atomically publishes sequential integers1..20 to a regular request file and sends ordinary native input to service the existing loop. Healthy, presented device and no pending replacement are required before accepting a request. Existing device.destroy, registered backend callback, recovery scheduler, state-preservation checks and resource replacement remain the actual path. No timer or input-handler branch added.",
+  "configuration": {
+    "DATUM_DIAGNOSTIC_DEVICE_LOSS": "requests",
+    "DATUM_DIAGNOSTIC_DEVICE_LOSS_REQUEST": "absolute path to harness-owned regular file; absent or0 initially; atomic numbered replacements thereafter"
+  },
+  "proof": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --bin datum-gui --offline requests_are_sequential_bounded_and_never_replayed -- --test-threads=1",
+    "result": "1 focused test passed. Missing/zero no-op, sequential20 requests, duplicate no replay, skipped/backward/over-limit/malformed/oversized rejection, symlink rejection. Native injection/replacement remains unqualified for this new trigger.",
+    "gates": "Dependency authority, source health2572, evidence traceability28routes, spec governance315specs and spec parity20inventories pass; no dependencies added.",
+    "final_application_check": "Guarded interactive cargo check -p datum-gui-app --bin datum-gui --offline passed after placing the requests-mode check first; normal runs skip added device-health/pending/presentation checks."
+  },
+  "guard_refusal": "Initial build refused because /tmp had5.4GiB free versus6GiB reserve. Moved the completed endurance raw data to target/pm045-evidence-work/dev-agent-s5-endurance-6aj_2kcs only after verifying all1034 files against the archived hashes at both source and destination; original /tmp path is a symlink. Retried the same guarded command successfully. No shared build artifacts removed.",
+  "limits": [
+    "Native20-recovery run, resource/CPU/visible recovery limits, backend/scale and final-state coverage remain required. A request-parser test is not a device recovery pass.",
+    "Request reads add diagnostics-only I/O/CPU and bounded temporary text; no observer overhead or normal-mode performance claim.",
+    "Invalid request files fail the diagnostic process explicitly rather than silently skipping a scheduled fault; setup failures must be preserved.",
+    "Stable replay candidate must be rebuilt and pinned after this hook lands. Previous cycle evidence and all native failures remain valid at their recorded scope.",
+    "No full MEM-03/S5 acceptance, independent replay or owner UX acceptance."
+  ],
+  "preserved": "PM045/PM047, completed S0-S4, GEFN, Vulkan upload-before-acquire, dependency authority, Claude prototype lane and nonblocking resize exclusions. Default device-loss mode does not open the request path.",
+  "logs": {
+    "request-test.log.gz": "d8b92802ae3acfcbc529a47f82a59a7d71c710252cc11eb9b2ba1816d1577b2e",
+    "initial-guard-refusal.log.gz": "e1a37044da696157f4adf4987664f465f8e0c11c7d2b47f554b1b07431a1ecce",
+    "application-check.log.gz": "67adb5ec15a1ab2b684dc263f2d8619fcb981d249131dece73e3ae74f93c0ec1"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/native_device_recovery.rs": "5874e0574c3d6e3015bac4fe96df8f7a7fb0352c6052d12d1e44a3f7c089a9dc",
+    "crates/gui-app/src/native_device_loss_requests.rs": "af866dc59e3f14d333be6c4758ce8162dc0e28bed77400c7eebd9c0f548b8fe5"
+  }
+}
