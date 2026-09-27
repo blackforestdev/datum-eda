@@ -1,0 +1,63 @@
+{
+  "scope": "Independent read-only design delta review of GPU redraw proposal r1; no repository edits, builds, tests, native runs, CPU event-loop investigation or runtime acceptance.",
+  "reviewer": {
+    "agent_path": "/root/gpu_r1_independent_review",
+    "session": "01a0e531-9768-7411-8626-b9c238d0efa2"
+  },
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal.md",
+    "sha256": "6b7ed1c58158b65dc9c635535362f78360a32a7427be9183b694d6363d816eee"
+  },
+  "pin_verification": "All 16 production-source, four installed-upstream-source and five existing-evidence hashes in review.json match current bytes.",
+  "conclusion": "No blocking defect found in the proposed rendering mechanism. Supports numbered-decision ratification and the already-approved bounded Gate1 capability/fidelity/ownership implementation and proof. Complete performance campaign is not ready: known complete-duty method gap triggers Gate2 stop before native performance trials. This does not prohibit Gate1, which answers a distinct owner-approved question.",
+  "findings": [
+    {
+      "id": "IR-R1-01",
+      "severity": "high",
+      "kind": "execution readiness; preserved known method gap, not a new renderer-mechanism defect",
+      "sources": [
+        "docs/reviews/gui-performance/gpu-redraw-proposal/proposal.md:232",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/proposal.md:244",
+        "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json:54",
+        "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md:439"
+      ],
+      "finding": "The existing observers cannot supply complete DRM client lifetime/epoch/final-drain accounting. App device hooks miss transient internal loader/adapter clients; endpoint equality cannot exclude those clients, earlier exits, or reset. Copy-inclusive pass timestamps do not cure this independent duty-accounting gap.",
+      "disposition": "Reuse source evidence for Gate2; do not add endpoint-only hooks, repeat native snapshots as a cure, or silently expand fd-lifecycle/system tracing scope. Ratification and bounded Gate1 may proceed unchanged: its sample-exactness and ownership decision is independent of numerical performance qualification. Stop at Gate2 while complete observation remains unavailable. Source-only-first sequencing is an optional economy recommendation, not a normative prohibition on owner-approved Gate1."
+    },
+    {
+      "id": "IR-R1-02",
+      "severity": "low",
+      "kind": "implementation obligation already covered by fidelity gate",
+      "sources": [
+        "docs/reviews/gui-performance/gpu-redraw-proposal/proposal.md:68",
+        "crates/gui-render/src/render/gpu_frame.rs:283",
+        "crates/gui-render/src/render/gpu_frame.rs:398"
+      ],
+      "finding": "Current suffix inherits main screen pipeline and uniform bindings restored after prefix world bundles. A new render pass does not inherit them.",
+      "disposition": "Explicitly initialize pipeline/bind groups/scissor/vertex state in the extracted suffix; prove first nonempty schematic/viewport/board overlay and empty preceding suffix cases. No mechanism or proposal change required."
+    }
+  ],
+  "reviewed_arguments": {
+    "native_api": "wgpu-core28.0.1 command/transfer.rs:490-530,1325-1455 permits full XY equal-sample compatible-format copies with COPY_SRC/COPY_DST, transitions and initialization; device/resource.rs:1441+ permits multisample render attachments with supported usage/sample flags; Vulkan command.rs:347+ emits cmd_copy_image. No API-level contradiction. Actual P630 combined support remains Gate1, no performance inference.",
+    "fidelity_order": "Identical stored 8x color samples copied without resolve/filter/format conversion, then exact suffix in original order, is a coherent exactness argument. General composed path boundary after world and before schematic interaction agrees with current source. Exact GPU equality and sample-sensitive negative controls remain mandatory; no proof from final averages alone.",
+    "invalidation": "Explicit composition/resource/device/host generation plus conservative nonpointer invalidation covers the declared domain. Must audit public mutators, cloned PreparedScene and retained replacement: no pointer-length-only key. Publish only after successful native presentation, not renderer queue submission; observer/device failures invalidate, pending damage survives. Existing runtime_present/target adapters require explicit completion notification as proposal anticipates.",
+    "lifetime_accounting": "45MiB optional A and 4KiB metadata cap, both A/B allocations counted, coherent pair-generation reservation and one retiring pair are consistent with unchanged aggregate512MiB. Texture and view aliases must represent one allocation, both resources held to completion; failure rollback releases reservations. Actual driver overhead remains separate. No extra source or dependency authority.",
+    "proof": "Capability/fidelity/lifetime negative controls and copy-inclusive marker+suffix span are appropriate narrow gates. Native source writes pass timestamps before/after renderpass commands; suffix-only timer is insufficient. Marker overhead, complete duty, final state and all trial limits remain required. Three pairs are descriptive, not STAT01 formal inference. Stop-first-failure and no alternative sweep respected. S5 acceptance untouched."
+  },
+  "limitations": "No independent GPU execution or complete requalification of historical evidence. Route inventory and structured historical dispositions inspected for delta compatibility; controlling current GPU contract/matrix/PM045 and current source path reviewed. Native feasibility, exact output, resource controls and numerical budgets remain unproven.",
+  "method_disposition_source_pins": [
+    {
+      "path": "crates/gui-app/src/native_gpu.rs",
+      "sha256": "7f63670b9f04ef38f1bac1435113e995031c86f51124308313d2c3cd8d87fa1e"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients.py",
+      "sha256": "52c25c28dba8e708ebd1ad8d2dcabd6c77c57c2d492139ee2a0b3a4ffb80c5c3"
+    },
+    {
+      "path": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json",
+      "sha256": "b1dba17ee286eb965928bf76dd9c8c13abe26f40a101338e3bafa0638a8de40d"
+    }
+  ],
+  "method_disposition": "Independently inspected native_gpu.rs:45-78 and drm_clients.py:70-124. The native creation boundary wraps opaque instance/surface/adapter/device calls; collector enumerates supplied PIDs/listed fdinfo names sequentially. Neither observes open/close within opaque calls. A complete method requires process/thread acquisition/duplication/replacement/release and exec/exit epochs, final readable counters after bounded normal drain, reset detection, lost-event and overhead controls. This exceeds r1 existing-observer/no-system-tracing scope. Existing evidence is sufficient to invoke the r1 Gate2 stop before numerical performance trials. No new native run is needed to reconfirm this method gap. Gate1 native capability/fidelity proof remains independently decision-enabling and authorized after ratification; no new owner approval is needed for that bounded work."
+}
