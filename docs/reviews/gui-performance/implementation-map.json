@@ -39112,14 +39112,14 @@
         "completed": true,
         "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json",
         "evidence_field": "verification and limits",
-        "evidence_sha256": "4372dd8edc45ccd838875404e86d9dbf811094048d72c598685ac970869857bb",
-        "validated_result": "Three serial observer tests pass, including ordered realloc overlap and overflow; native writer compiles. Existing summary/concurrent delivery retained.",
+        "evidence_sha256": "ac4759f9dc622c8b7e84f2236665a334132554e97f9c1ecf48d3b5e3c688671a",
+        "validated_result": "Three serial producer controls and app check retained; three offline classifier controls pass after correcting reviewer-identified host/process lower-bound gap. No native allocation-mode classification.",
         "requirement_ids": [
           "ACC-02",
           "MEM-02"
         ],
-        "scope": "Allocation transition delivery only; classifier, diagnostic overhead, capacity sufficiency and full native accounting remain open.",
-        "carry_forward": "Reuse observer controls. Implement allocation-aware analysis before enabling mode in final native replay."
+        "scope": "Producer delivery and synthetic call-local classification only; semantic exclusions, inactive owners/full budgets, native capacity and overhead remain open.",
+        "carry_forward": "Reuse producer and classifier controls; do not rerun native history to manufacture missing allocation events. Stable-candidate resource qualification must establish native mode coverage."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
@@ -39128,7 +39128,7 @@
       "evidence_hashes_checked": 40,
       "matching_hashes": 40,
       "native_runs_performed": 0,
-      "meaning": "One three-test observer batch and app compilation; previous39groups retained. No classification or native acceptance added."
+      "meaning": "Existing private allocation group extended with classifier controls; no new group or native acceptance. Initial synthetic batch repeated only after a demonstrated validation defect was fixed."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39432,8 +39432,8 @@
   },
   "s5_private_allocation_lifetimes": {
     "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json",
-    "sha256": "4372dd8edc45ccd838875404e86d9dbf811094048d72c598685ac970869857bb",
-    "status": "Opt-in active-call block transitions delivered; classification and native qualification pending",
+    "sha256": "ac4759f9dc622c8b7e84f2236665a334132554e97f9c1ecf48d3b5e3c688671a",
+    "status": "Bounded producer and call-local lifetime classifier prepared; native/full-scope accounting unqualified",
     "qualification_pass": false
   }
 }

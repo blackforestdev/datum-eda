@@ -1,8 +1,12 @@
 """Reconcile bounded allocation delivery; never substitute it for full qualification."""
-import json,sys,copy,re,collections
+import json,sys,copy,re,collections,importlib.util
 from pathlib import Path
 
 def validate_private(rows):
+ lifetimes=None
+ if rows[0].get('allocation_events',False):
+  spec=importlib.util.spec_from_file_location('private_lifetimes',Path(__file__).with_name('pm045-private-lifetimes.py'));module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+  lifetimes=module.analyze(rows)
  assert rows[0]['phase']=='start' and rows[-1]['phase']=='end' and rows[-1]['complete_delivery']
  ident=rows[0]['observation_id'];active={};calls=[];sequence=0;elapsed=0;batches=[]
  for row in rows:
@@ -13,6 +17,9 @@ def validate_private(rows):
   if row['phase']!='call':continue
   sequence+=1;assert row['sequence']==sequence and row['elapsed_ns']>=elapsed;elapsed=row['elapsed_ns']
   r=row['report'];assert r['allocator_installed'];key=r['call_id']
+  if row['transition']=='Allocation':
+   assert lifetimes is not None
+   continue
   if row['transition']=='Begin':
    assert key not in active;active[key]=row
   else:
@@ -25,7 +32,7 @@ def validate_private(rows):
    calls.append(row)
  assert not active and sequence==batches[-1]['total_events']
  assert sorted(x['report']['call_id'] for x in calls)==list(range(1,len(calls)+1))
- return {'events':sequence,'calls':len(calls),'owner_labels':dict(collections.Counter(x['owner_label'] for x in calls)),'cpu_owner_count':len(set(x['report']['owner_id'] for x in calls)),'renderer_origins':sorted(set(x['renderer_origin'] for x in calls if x['renderer_origin'] is not None)),'calls_without_renderer_origin':sum(x['renderer_origin'] is None for x in calls),'reported_peak_maxima':{k:max(x['report'][k] for x in calls) for k in ['peak_bytes','host_peak_bytes','process_peak_bytes']},'buffer_capacity_bytes':max(x['buffer_capacity_bytes'] for x in batches),'complete_private_call_delivery':True,'observed_calls_within_reported_limits':True,'qualification_pass':False}
+ return {'allocation_lifetimes':lifetimes,'events':sequence,'calls':len(calls),'owner_labels':dict(collections.Counter(x['owner_label'] for x in calls)),'cpu_owner_count':len(set(x['report']['owner_id'] for x in calls)),'renderer_origins':sorted(set(x['renderer_origin'] for x in calls if x['renderer_origin'] is not None)),'calls_without_renderer_origin':sum(x['renderer_origin'] is None for x in calls),'reported_peak_maxima':{k:max(x['report'][k] for x in calls) for k in ['peak_bytes','host_peak_bytes','process_peak_bytes']},'buffer_capacity_bytes':max(x['buffer_capacity_bytes'] for x in batches),'complete_private_call_delivery':True,'observed_calls_within_reported_limits':True,'qualification_pass':False}
 
 def validate(rows):
  assert rows[0]['phase']=='start' and rows[-1]['phase']=='end'

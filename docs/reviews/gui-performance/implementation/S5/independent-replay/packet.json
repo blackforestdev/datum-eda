@@ -226,7 +226,7 @@
   },
   "private_allocation_lifetime_method": {
     "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json",
-    "status": "Opt-in active-call block transitions delivered; classification and native qualification pending",
+    "status": "Bounded producer and call-local lifetime classifier prepared; native/full-scope accounting unqualified",
     "qualification_pass": false
   }
 }
