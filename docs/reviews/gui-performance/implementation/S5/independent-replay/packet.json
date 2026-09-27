@@ -75,7 +75,7 @@
   "known_failures": [
     {
       "evidence": "../pointer-native-batch/result.json",
-      "finding": "Pointer candidate total CPU13.482-18.801% exceeds10%; diagnostic GPU p95/p99 9.726/11.999ms exceeds4/8ms. Scheduled3600integer calls yielded1280distinct positions; no120distinct-action/s qualification."
+      "finding": "Pointer candidate total CPU13.482-18.801% exceeds10%; diagnostic GPU p95/p99 9.726/11.999ms exceeds4/8ms. Offline receipt reconciliation accounts for3600scheduled requests,2320sameintegerpositions and all1280changed native positions in order. No120distinct-position/s contract condition; semantic path/hit and acknowledged-action accounting remain open."
     },
     {
       "evidence": "../clamp-matched-batch/result.json",
@@ -162,5 +162,10 @@
     "allocation": "Owner-authorized distinct reviewer actually executes one consolidated final campaign on stable candidate. Its new-coverage receipts satisfy applicable qualification and its actual reruns satisfy independent replay; distinguish new coverage from reproduced producer results. No separate blanket producer final matrix is required. Preserve all trial counts, methods, fixtures and separate owner UX acceptance.",
     "measurement_modes": "MET-06 requires diagnostics-off resource acceptance and separate matched diagnostics-on structural trials with identical schedules and delivered output. Consolidation cannot merge these modes or subtract a universal overhead.",
     "scope": "Same existing requirements; no new gate, waiver, approval request, candidate readiness or acceptance. Six backend/scale campaigns are not six individual tests; exact variants and existing evidence must be reconciled before execution."
+  },
+  "pointer_input_reconciliation": {
+    "evidence": "../pointer-native-batch/input-reconciliation.json",
+    "contract_interpretation": "W-POINTER and MET-02 do not require120distinct native positions/s. Lack of distinct integer motion for every scheduled position is not an independent failure or a reason to require a new fractional pointer campaign. Quantization is reported explicitly.",
+    "remaining": "CPU/GPU excesses, semantic hit/crosshair/path correctness, method/overhead and full backend/scale/consumer coverage remain open. Native fractional wheel/scroll obligations are unchanged."
   }
 }

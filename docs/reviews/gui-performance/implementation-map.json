@@ -3678,9 +3678,9 @@
       "s5_pointer_native_batch": {
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
-        "status": "Bounded X11 pointer observation complete; CPU/GPU limits exceeded and120distinct-actions/s requirement not qualified",
+        "status": "Bounded X11 pointer observation complete; CPU/GPU limits exceeded. Scheduled/integer/native positions now reconcile without a120distinct-position condition; semantic correctness and full methods remain unqualified.",
         "limits": [
-          "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. This does not prove120 distinct delivered semantic actions/second.",
+          "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. The count alone is not a contract failure; see s5_pointer_input_reconciliation for exact sequence reconciliation. Semantic action acknowledgement remains separate.",
           "Per-event CPU denominators use actual received events or changed positions, never3600 scheduled calls or frames. No independent semantic-consumption acknowledgments exist in this trace.",
           "Verbose native logging enabled equally in every run; overhead not subtracted or independently qualified. Family CPU includes kernel/descendants; residual against GUI clock includes sampling skew and is not exclusive engine attribution.",
           "Endpoint pixel equality is relative to first baseline, not owner UX acceptance or physical presentation latency. No hit-state oracle, calibrated temporal/crosshair path proof, shell-solve counter or per-origin upload trace. Aggregate upload totals do not alone prove no world upload.",
@@ -3739,6 +3739,11 @@
         "status": "Candidate not adopted; native improvement not demonstrated",
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/quad-vertex-color/review.json"
+      },
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
       }
     },
     {
@@ -4441,9 +4446,9 @@
       "s5_pointer_native_batch": {
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
-        "status": "Bounded X11 pointer observation complete; CPU/GPU limits exceeded and120distinct-actions/s requirement not qualified",
+        "status": "Bounded X11 pointer observation complete; CPU/GPU limits exceeded. Scheduled/integer/native positions now reconcile without a120distinct-position condition; semantic correctness and full methods remain unqualified.",
         "limits": [
-          "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. This does not prove120 distinct delivered semantic actions/second.",
+          "Integer XTest quantization reduced3600 scheduled calls to1280 changed physical positions; missing changed positions reported individually. The count alone is not a contract failure; see s5_pointer_input_reconciliation for exact sequence reconciliation. Semantic action acknowledgement remains separate.",
           "Per-event CPU denominators use actual received events or changed positions, never3600 scheduled calls or frames. No independent semantic-consumption acknowledgments exist in this trace.",
           "Verbose native logging enabled equally in every run; overhead not subtracted or independently qualified. Family CPU includes kernel/descendants; residual against GUI clock includes sampling skew and is not exclusive engine attribution.",
           "Endpoint pixel equality is relative to first baseline, not owner UX acceptance or physical presentation latency. No hit-state oracle, calibrated temporal/crosshair path proof, shell-solve counter or per-origin upload trace. Aggregate upload totals do not alone prove no world upload.",
@@ -4514,6 +4519,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
         "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved."
+      },
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
       }
     },
     {
@@ -4625,6 +4635,11 @@
         "qualification_pass": false,
         "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/pointer-method-preparation.json",
         "limits": "Reuses existing portal input API; source-rejected XIWarp integer alternative. Native coordinates/scale/delivery/coalescing/semantic output and full measurements remain unqualified. Original integer XTest failures preserved."
+      },
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
       }
     },
     {
@@ -9534,6 +9549,11 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
       }
     },
     {
@@ -12201,7 +12221,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_cpu_duty",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12223,7 +12243,12 @@
           "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
           "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
         }
-      ]
+      ],
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
+      }
     },
     {
       "id": "BUD-T1-POINTER-CPU-ACTION",
@@ -12277,7 +12302,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_cpu_action",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12299,7 +12324,12 @@
           "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
           "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
         }
-      ]
+      ],
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
+      }
     },
     {
       "id": "BUD-T1-POINTER-GPU-DUTY",
@@ -12422,7 +12452,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_gpu_p95",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P95 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12444,7 +12474,12 @@
           "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
           "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
         }
-      ]
+      ],
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
+      }
     },
     {
       "id": "BUD-T1-POINTER-GPU-P99",
@@ -12498,7 +12533,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Integer input produced1280changed positions from3600calls, so120distinct-actions/s acceptance is unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
         "id": "proof_bud_t1_pointer_gpu_p99",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P99 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12520,7 +12555,12 @@
           "path": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/result.json",
           "sha256": "8516b5647d0e86f03bab366a60197bb148ac73ca7e4cf8dd57717db2ee5e8ef2"
         }
-      ]
+      ],
+      "s5_pointer_input_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+        "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+        "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
+      }
     },
     {
       "id": "BUD-T1-PAN-CPU-DUTY",
@@ -38898,7 +38938,7 @@
         "specification_record_row_count": 15,
         "source": "Derive from original requirements[].qualification_scope; retain HP05-02 idle resources as mixed scope."
       },
-      "reuse": "All31 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons.",
+      "reuse": "All31 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
       "before_native_execution": [
         {
           "action": "Reconcile source/negative-control coverage using existing S1-S4 proofs and the31done groups. Enumerate only missing prescribed controls, and combine controls using the same production owner where their assertions remain independently defect-sensitive.",
@@ -38909,7 +38949,7 @@
           "new_native_runs": 0
         },
         {
-          "action": "Finish admission/accounting/input/observer methods using existing controls; inspect saved traces before adding instrumentation. Fractional native input, exited-client GPU endpoints, actual instantaneous resource incidence and observer overhead remain unresolved. Each new method proof must identify the missing original predicate.",
+          "action": "Finish admission/accounting/input/observer methods using existing controls; inspect saved traces before adding instrumentation. Fractional wheel/scroll input (not a blanket distinct-pointer-rate rule), exited-client GPU endpoints, actual instantaneous resource incidence and observer overhead remain unresolved. Each new method proof must identify the missing original predicate.",
           "requirements": [
             "AC-01",
             "AC-02",
@@ -39067,5 +39107,19 @@
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/result.json",
     "native_trials": "20/20 completed;51renderer origins,719GPU allocations,40648private calls reconciled with normal shutdown. All20 diagnostic CPU intervals exceed100ms; no budget acceptance. Two prior failed attempts preserved."
+  },
+  "s5_pointer_input_reconciliation": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
+    "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
+    "command": "python3 docs/reviews/gui-performance/implementation/S5/pointer-native-batch/reconcile_input.py",
+    "new_native_runs": 0,
+    "result": "All7archived schedules have3600positions at120Hz;2320requests repeat the rounded current integer coordinate. All1280changed positions match native receipts in exact order, with verified initial/final300,150 and focus.",
+    "contract_interpretation": "W-POINTER and MET-02 do not require120distinct native positions/s. Lack of distinct integer motion for every scheduled position is not an independent failure or a reason to require a new fractional pointer campaign. Quantization is reported explicitly.",
+    "review": {
+      "reviewer": "01a0dc35-5c6f-7931-9958-f0c6962ac11e",
+      "method": "Read-only contract, archived reports and reconciliation source/results review; no native replay or acceptance",
+      "finding": "Count discrepancy resolved without native rerun. Preserve acknowledged-semantic-action denominator, semantic path/hit correctness, numerical failures and complete methods."
+    },
+    "remaining": "CPU/GPU excesses, semantic hit/crosshair/path correctness, method/overhead and full backend/scale/consumer coverage remain open. Native fractional wheel/scroll obligations are unchanged."
   }
 }
