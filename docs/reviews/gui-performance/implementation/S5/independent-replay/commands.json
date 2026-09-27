@@ -31,7 +31,7 @@
   "launch_note": "Launch alone is not a workload or qualification. Fresh isolated XDG config/cache, actual backend/display identity and exclusive desktop use must accompany reviewer trials. Use Wayland-native input for Wayland rows; do not relabel XTest.",
   "full_workload_recipes": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md Workload definitions; all original rows and per-consumer positives/negatives in requirements.json. Exact schedules/trial counts remain required even where an executable method is missing.",
   "currently_incomplete_methods": [
-    "Complete native Wayland fractional line/pixel input and 120-position/s pointer/pan schedule with acknowledged semantic/path evidence",
+    "Complete native Wayland fractional line/pixel input and pointer/pan semantic/path evidence at120scheduled positions/s; no additional120distinct-native-positions/s condition. Reuse saved pointer receipt reconciliation.",
     "Lifetime-complete GPU client totals, exact transient/private retained-versus-scratch accounting and observer-overhead qualification",
     "All-backend/scale consolidated lifecycle, mixed PTY and prescribed per-row negatives",
     "Final source-pinned complete required-trial runner covering every applicable predicate"

@@ -104,8 +104,10 @@ performance defects and measurement gaps before final native qualification.
 The existing map now lists six final backend/scale campaigns: Wayland and
 X11/Xwayland, each at 1x, 1.5x and 2x where supported. Each contains the applicable
 workload/host/pane/terminal variants and prescribed repetitions; six campaigns
-must never be reported as six tests. Exact remaining process-trial counts await
-that evidence reconciliation; no new native campaign is scheduled by this edit.
+must never be reported as six tests. Exact process launches depend on workload packing and remaining methods;
+a fixed global launch total is not an additional acceptance gate. Each expensive
+batch still needs complete applicable variants, fixed repetitions and a stopping
+condition. No new native campaign is scheduled by this edit.
 
 The distinct reviewer's contract reading confirms that one final independent
 campaign may supply missing qualification and independently rerun producer
@@ -130,3 +132,17 @@ condition. No new fractional-pointer run is required merely to satisfy that
 invented condition. Semantic hit/crosshair correctness, acknowledged semantic
 actions, numerical failures and actual fractional wheel/scroll requirements
 remain open. No native run was repeated for this reconciliation.
+
+Independent contract review also confirms that MEM-03 requires **200 window
+cycles total**, not 200 per host. The existing 600-cycle producer result stays
+done. Three 30-cycle W-WINDOWS trials for each of the three hosts yield 270
+cycles that can also contribute to the same qualifying endurance hour. Required
+recovery/lifecycle and mixed work can share that hour with distinct measurement
+windows. Cycle recipes still require three repetitions; one block cannot count
+three times. The hour is per admitted tier, not automatically three hours.
+
+Cold-start processes can continue into warm trials after first-use recording and
+state restoration; separate launches per metric or host are unnecessary. Keep
+independent repetitions, baseline ordering and diagnostics-off/on modes intact.
+These are scheduling reductions, not native acceptance or a complete runner.
+See the existing map's `process_and_endurance_reuse` review.

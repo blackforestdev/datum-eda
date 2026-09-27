@@ -70,7 +70,8 @@
     "endurance_injected_recoveries": 20,
     "endurance_sampling_minutes": 5,
     "endurance_comparison_minutes": 10,
-    "relative_comparison": "Only if a relative claim is pursued:7predeclared alternating AB/BA valid pairs, at most10attempts, exact STAT-01 method. Three pairs descriptive only."
+    "relative_comparison": "Only if a relative claim is pursued:7predeclared alternating AB/BA valid pairs, at most10attempts, exact STAT-01 method. Three pairs descriptive only.",
+    "cycle_repetition_note": "Controls/window/lifecycle counts above are per trial; MET-01 requires3trials. Endurance200window cycles is total, not per host. Exact recipe blocks may contribute to the same endurance hour; do not add duplicate cycles solely for separate labels."
   },
   "known_failures": [
     {
@@ -161,7 +162,8 @@
     },
     "allocation": "Owner-authorized distinct reviewer actually executes one consolidated final campaign on stable candidate. Its new-coverage receipts satisfy applicable qualification and its actual reruns satisfy independent replay; distinguish new coverage from reproduced producer results. No separate blanket producer final matrix is required. Preserve all trial counts, methods, fixtures and separate owner UX acceptance.",
     "measurement_modes": "MET-06 requires diagnostics-off resource acceptance and separate matched diagnostics-on structural trials with identical schedules and delivered output. Consolidation cannot merge these modes or subtract a universal overhead.",
-    "scope": "Same existing requirements; no new gate, waiver, approval request, candidate readiness or acceptance. Six backend/scale campaigns are not six individual tests; exact variants and existing evidence must be reconciled before execution."
+    "scope": "Same existing requirements; no new gate, waiver, approval request, candidate readiness or acceptance. Six backend/scale campaigns are not six individual tests; exact variants and existing evidence must be reconciled before execution.",
+    "process_and_endurance_reuse": "See existing adoption map s5_completed_test_checks.remaining_execution.process_and_endurance_reuse for independently reviewed packing rules. No per-workload process requirement or200cycles-per-host endurance minimum. Required repetitions, measurement modes and applicable configurations remain unchanged."
   },
   "pointer_input_reconciliation": {
     "evidence": "../pointer-native-batch/input-reconciliation.json",
