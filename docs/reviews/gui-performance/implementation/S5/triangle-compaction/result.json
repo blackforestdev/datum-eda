@@ -1,0 +1,24 @@
+{
+  "status": "Bounded correctness passed; no native performance claim",
+  "baseline": "5967bf43",
+  "decision": "Remove demonstrated redundant zero-area triangles while preserving painter geometry, ranges and admission.",
+  "implementation": "Board and schematic constructors expand sorted retained quad commands in painter order; triangle encoding c==d emits3 rather than6 vertices. Stroke ranges/layers preserved; screen geometry unchanged. Existing six-per-quad admission upper bound remains.",
+  "proof": [
+    "Focused unit:1passed, exact allocation/range remapping/refusal without publication.",
+    "GPU:1passed at8xAA, scales1and1.5; compact vs degenerate-expanded board pixels exact, warm reuse exact, missing-triangle negative differs.",
+    "Distinct Hegel source review found no material defect; constructor-only single-use requirement satisfied.",
+    "Source health2590 passed."
+  ],
+  "limitations": [
+    "Not a demonstrated remedy for pointer CPU/GPU failures. No performance rerun.",
+    "GPU fixture is board; shared converter semantics and schematic constructor adoption do not constitute full schematic/native acceptance.",
+    "S5 resource/endurance/recovery/distinct native replay/owner UX obligations and nonblocking resize exclusions unchanged."
+  ],
+  "sources_sha256": {
+    "crates/gui-render/src/render/gpu_data.rs": "6d14122a41631e847e19e6868051b6ca09b01e9e274bd932219cd3254ade10de",
+    "crates/gui-render/src/render/scene_retained_access.rs": "0d4ad36b84d7638e3b81ad0c4075925882d4df0e7b1ba23f1c3112173f733f89",
+    "crates/gui-render/src/render/schematic_retained.rs": "c1a413c0e3b7cdecd5af6c15ba6b5b0b099191fc63f5d5de7e4a41d600173a37",
+    "crates/gui-render/src/render/world_pipeline_tests.rs": "3139e78bf400657bcd4e7604ae95d7bd406e15a5635e9e9fb2bcf0366abd60b0"
+  },
+  "qualification_pass": false
+}

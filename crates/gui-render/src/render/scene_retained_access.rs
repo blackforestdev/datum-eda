@@ -297,7 +297,7 @@ impl RetainedScene {
                 world_quads.len(),
                 limit,
             )?;
-            let world_vertices = gpu_data::try_quads_to_vertices(&world_quads)?;
+            let world_vertices = gpu_data::try_retained_vertices(&world_quads, &mut draw_commands)?;
             let quad_count = world_quads.len();
             drop(world_quads);
             let vertex_elapsed = vertex_started.elapsed();

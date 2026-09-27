@@ -127,7 +127,7 @@ impl RetainedScene {
                 world_quads.len(),
                 limit,
             )?;
-            let world_vertices = gpu_data::try_quads_to_vertices(&world_quads)?;
+            let world_vertices = gpu_data::try_retained_vertices(&world_quads, &mut draw_commands)?;
             drop(world_quads);
             // S3 / UVT-004: build typed schematic hit shapes independently from the
             // current tool's selection eligibility.
