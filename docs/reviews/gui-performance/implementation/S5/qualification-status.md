@@ -121,3 +121,12 @@ runs; investigate cause before retry. Existing evidence may satisfy multiple
 predicates with distinct assertions, but one trial cannot count as several
 required repetitions. Seven-pair relative inference is required only when making
 that claim; it is not an extra condition for every absolute budget result.
+
+Pointer input clarification: [reconciliation of all seven saved runs](pointer-native-batch/input-reconciliation.json)
+accounts for all 3,600 scheduled requests: 2,320 repeat the current rounded
+integer coordinate and all 1,280 changed coordinates reach native receipts in
+order. W-POINTER does not impose an additional 120 **distinct** native positions/s
+condition. No new fractional-pointer run is required merely to satisfy that
+invented condition. Semantic hit/crosshair correctness, acknowledged semantic
+actions, numerical failures and actual fractional wheel/scroll requirements
+remain open. No native run was repeated for this reconciliation.

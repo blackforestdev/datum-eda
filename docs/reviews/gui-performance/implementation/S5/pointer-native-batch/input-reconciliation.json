@@ -1,0 +1,92 @@
+{
+  "new_native_runs": 0,
+  "qualification_pass": false,
+  "runs": [
+    {
+      "archive": "baseline-1-gpu0.tar.gz",
+      "sha256": "1d862783c4eeecb9afba23bfc4ee1f6f6aacc98e9a755dc41fbd42437171fe27",
+      "scheduled_positions": 3600,
+      "changed_integer_positions": 1280,
+      "same_integer_position_requests": 2320,
+      "received_positions_in_exact_order": 1280,
+      "maximum_coordinate_rounding_error_px": 0.466666666666697,
+      "maximum_send_lateness_ms": 1.784649,
+      "exact_final_position_and_focus": true,
+      "normal_exit_code": 0
+    },
+    {
+      "archive": "baseline-2-gpu0.tar.gz",
+      "sha256": "c55fed15f467cd617379aa2c17764e80f023959a188af8c04625b8638616ba1e",
+      "scheduled_positions": 3600,
+      "changed_integer_positions": 1280,
+      "same_integer_position_requests": 2320,
+      "received_positions_in_exact_order": 1280,
+      "maximum_coordinate_rounding_error_px": 0.466666666666697,
+      "maximum_send_lateness_ms": 1.536571,
+      "exact_final_position_and_focus": true,
+      "normal_exit_code": 0
+    },
+    {
+      "archive": "baseline-3-gpu0.tar.gz",
+      "sha256": "4a02109b874f17e49be9e451a9dc5b7eb4218685d10cf27098d65add30dc1019",
+      "scheduled_positions": 3600,
+      "changed_integer_positions": 1280,
+      "same_integer_position_requests": 2320,
+      "received_positions_in_exact_order": 1280,
+      "maximum_coordinate_rounding_error_px": 0.466666666666697,
+      "maximum_send_lateness_ms": 2.929838,
+      "exact_final_position_and_focus": true,
+      "normal_exit_code": 0
+    },
+    {
+      "archive": "candidate-1-gpu0.tar.gz",
+      "sha256": "40a23749dc89c6d7de2f1342c87baec2f123ec89a47753aab04a0faa166b4cdb",
+      "scheduled_positions": 3600,
+      "changed_integer_positions": 1280,
+      "same_integer_position_requests": 2320,
+      "received_positions_in_exact_order": 1280,
+      "maximum_coordinate_rounding_error_px": 0.466666666666697,
+      "maximum_send_lateness_ms": 1.495013,
+      "exact_final_position_and_focus": true,
+      "normal_exit_code": 0
+    },
+    {
+      "archive": "candidate-1-gpu1.tar.gz",
+      "sha256": "994754803be425a23c66965707b88c2116a242c4baf3644cc7cd3101a19a5d78",
+      "scheduled_positions": 3600,
+      "changed_integer_positions": 1280,
+      "same_integer_position_requests": 2320,
+      "received_positions_in_exact_order": 1280,
+      "maximum_coordinate_rounding_error_px": 0.466666666666697,
+      "maximum_send_lateness_ms": 1.578615,
+      "exact_final_position_and_focus": true,
+      "normal_exit_code": 0
+    },
+    {
+      "archive": "candidate-2-gpu0.tar.gz",
+      "sha256": "3e28756648156957540075a9f07c5f2fe06783e80acc903f2ebaa1c12877d611",
+      "scheduled_positions": 3600,
+      "changed_integer_positions": 1280,
+      "same_integer_position_requests": 2320,
+      "received_positions_in_exact_order": 1280,
+      "maximum_coordinate_rounding_error_px": 0.466666666666697,
+      "maximum_send_lateness_ms": 0.565714,
+      "exact_final_position_and_focus": true,
+      "normal_exit_code": 0
+    },
+    {
+      "archive": "candidate-3-gpu0.tar.gz",
+      "sha256": "5cbe743f24125aba694a1a9ead73ea71f532d55ed6adb2ff6e50fc2d8bc65773",
+      "scheduled_positions": 3600,
+      "changed_integer_positions": 1280,
+      "same_integer_position_requests": 2320,
+      "received_positions_in_exact_order": 1280,
+      "maximum_coordinate_rounding_error_px": 0.466666666666697,
+      "maximum_send_lateness_ms": 1.529944,
+      "exact_final_position_and_focus": true,
+      "normal_exit_code": 0
+    }
+  ],
+  "finding": "All seven archived schedules contain3600positions at120Hz. 2320requests repeat the current rounded integer position; all1280changed positions appear in native receipts in exact order.",
+  "limits": "Native cursor receipts do not establish semantic hit/crosshair correctness, complete counter conformance or numerical budgets. Integer rounding is explicit; no fractional native delivery claim. CPU/action acceptance requires acknowledged semantic actions; cursor receipts alone are not that denominator. All prior CPU/GPU failures and other scope gaps remain."
+}
