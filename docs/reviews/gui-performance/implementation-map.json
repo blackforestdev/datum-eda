@@ -38538,7 +38538,12 @@
           "PASS-RESOLVE"
         ],
         "scope": "Named existing group; this does not erase separately tracked concurrent-GPU failure.",
-        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation."
+        "carry_forward": "Retain completed proof on its recorded candidate. Rerun only if a subsequent change affects this tested behavior; an agent handoff is not invalidation.",
+        "affected_followup": {
+          "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/result.json",
+          "evidence_sha256": "eac8b8e7f288010cc5aa318ab484fd1764739b8a30a354608acd183d3244cbbb",
+          "result": "One existing terminal resource test extended and passed after lazy terminal pipeline change; not a rerun of the33-test group."
+        }
       },
       {
         "check": "\u2713 done",
@@ -39168,5 +39173,10 @@
       "finding": "Count discrepancy resolved without native rerun. Preserve acknowledged-semantic-action denominator, semantic path/hit correctness, numerical failures and complete methods."
     },
     "remaining": "CPU/GPU excesses, semantic hit/crosshair/path correctness, method/overhead and full backend/scale/consumer coverage remain open. Native fractional wheel/scroll obligations are unchanged."
+  },
+  "s5_lazy_terminal_pipeline": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/result.json",
+    "status": "Unused terminal image shader/pipeline initialization removed from cold renderers; focused correctness passes. S5 remains open.",
+    "limits": "First-image cost moves to first use; no native numerical acceptance. Existing correctness evidence retained; one affected GPU test run, no broad rerun."
   }
 }

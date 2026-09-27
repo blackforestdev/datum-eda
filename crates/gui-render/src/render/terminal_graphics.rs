@@ -64,7 +64,10 @@ pub(super) struct TerminalGraphicsRenderer {
     staging_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     draw_generations: crate::text_gpu::slot_generations::SlotGenerations,
     texture_generations: TextureGenerations,
-    pipeline: wgpu::RenderPipeline,
+    pipeline: Option<wgpu::RenderPipeline>,
+    screen_layout: wgpu::BindGroupLayout,
+    format: wgpu::TextureFormat,
+    samples: u32,
     texture_layout: wgpu::BindGroupLayout,
     textures: Vec<CachedTerminalGraphicTexture>,
     draws: Vec<TerminalGraphicDraw>,
@@ -102,9 +105,53 @@ impl TerminalGraphicsRenderer {
                 },
             ],
         });
+        Self {
+            screen_budget,
+            staging_budget,
+            draw_generations: Default::default(),
+            texture_generations: Default::default(),
+            pipeline: None,
+            screen_layout: screen_layout.clone(),
+            format,
+            samples,
+            texture_layout,
+            textures: Vec::new(),
+            draws: Vec::new(),
+            upload_chunks: 0,
+            upload_bytes: 0,
+        }
+    }
+
+    // Auxiliary windows and text-only terminals never need this pipeline.
+    // Keep its device/layout dependencies with the renderer; replacement starts
+    // cold and never reuses a pipeline from the old device.
+    fn prepare_pipeline(&mut self, device: &wgpu::Device) {
+        if self.pipeline.is_none() {
+            self.pipeline = Some(Self::create_pipeline(
+                device,
+                &self.screen_layout,
+                &self.texture_layout,
+                self.format,
+                self.samples,
+            ));
+        }
+    }
+
+    #[cfg(all(test, feature = "visual"))]
+    pub(super) fn pipeline_initialized(&self) -> bool {
+        self.pipeline.is_some()
+    }
+
+    fn create_pipeline(
+        device: &wgpu::Device,
+        screen_layout: &wgpu::BindGroupLayout,
+        texture_layout: &wgpu::BindGroupLayout,
+        format: wgpu::TextureFormat,
+        samples: u32,
+    ) -> wgpu::RenderPipeline {
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-terminal-graphic-pipeline-layout"),
-            bind_group_layouts: &[screen_layout, &texture_layout],
+            bind_group_layouts: &[screen_layout, texture_layout],
             immediate_size: 0,
         });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -146,7 +193,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                 .into(),
             ),
         });
-        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("datum-terminal-graphic-pipeline"),
             layout: Some(&layout),
             vertex: wgpu::VertexState {
@@ -174,19 +221,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             },
             multiview_mask: None,
             cache: None,
-        });
-        Self {
-            screen_budget,
-            staging_budget,
-            draw_generations: Default::default(),
-            texture_generations: Default::default(),
-            pipeline,
-            texture_layout,
-            textures: Vec::new(),
-            draws: Vec::new(),
-            upload_chunks: 0,
-            upload_bytes: 0,
-        }
+        })
     }
 
     pub(super) fn replacement(
@@ -236,6 +271,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             if clip_right <= clip_x || clip_bottom <= clip_y {
                 continue;
             }
+            self.prepare_pipeline(device);
             let key = texture_key(graphic);
             if !self.textures.iter().any(|entry| entry.key == key) {
                 self.textures.push(CachedTerminalGraphicTexture::new(
@@ -420,7 +456,11 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         screen_bind_group: &'pass wgpu::BindGroup,
         foreground: bool,
     ) {
-        pass.set_pipeline(&self.pipeline);
+        pass.set_pipeline(
+            self.pipeline
+                .as_ref()
+                .expect("drawable terminal image prepared"),
+        );
         pass.set_bind_group(0, screen_bind_group, &[]);
         for draw in self
             .draws
