@@ -659,3 +659,6 @@ mod world_pipeline_tests;
 
 #[path = "text_admission_tests.rs"]
 mod text_admission_tests;
+
+#[path = "frame_observation_tests.rs"]
+mod frame_observation_tests;

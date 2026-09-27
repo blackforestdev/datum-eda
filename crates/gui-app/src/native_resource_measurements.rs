@@ -19,6 +19,9 @@ use std::{
     time::{Duration, Instant},
 };
 
+#[path = "native_frame_measurements.rs"]
+mod frames;
+
 static ENABLED: AtomicBool = AtomicBool::new(false);
 static WRITER: Mutex<Option<Writer>> = Mutex::new(None);
 const HOST_LIMIT: usize = 1024;
@@ -31,6 +34,10 @@ struct Host {
     released_last_snapshot: bool,
 }
 struct Writer {
+    frames: u64,
+    frame_limit: u64,
+    frame_failed: bool,
+    frame_scope: cpu_alloc::Scope,
     file: File,
     hosts: Vec<Host>,
     started: Instant,
@@ -55,7 +62,12 @@ pub(crate) fn start() -> Result<()> {
     let mut hosts = Vec::new();
     hosts.try_reserve_exact(HOST_LIMIT)?;
     let now = Instant::now();
+    let frame_limit = parameter("DATUM_RESOURCE_TRACE_FRAME_LIMIT", 1_000_000, 1_000_000)?;
     let mut writer = Writer {
+        frames: 0,
+        frame_limit,
+        frame_failed: false,
+        frame_scope: cpu_alloc::Scope::new("frame-admission-writer"),
         file,
         hosts,
         started: now,
@@ -65,12 +77,14 @@ pub(crate) fn start() -> Result<()> {
         limit,
     };
     writer.line(json!({"phase":"start","pid":std::process::id(),"snapshot_limit":limit,
+        "frame_limit":frame_limit,"frame_delivery":"every renderer attempt, joined to host/window lifecycle by renderer_id",
         "minimum_interval_ms":interval.as_millis(),"host_limit":HOST_LIMIT,
         "host_slot_capacity_bytes":writer.hosts.capacity()*std::mem::size_of::<Host>(),
         "budget_metadata_bytes_each":LocalReservationObserver::budget_metadata_bytes_each(),
         "semantics":"opportunistic sampled counters on existing event-loop turns, plus lifecycle transitions; no atomic cross-owner or exact API-live peak claim",
         "overlap":"cache, document, font, scoped heap and reservation views overlap; do not sum them; deduplicate budget IDs shared across renderer replacement",
         "observer":"host slots, copied window strings, retained budget metadata, snapshot/JSON/I/O allocations and RSS are separate measurement overhead"}))?;
+    resource_observation::register_frame_observer(frames::record)?;
     *WRITER.lock().unwrap_or_else(|e| e.into_inner()) = Some(writer);
     ENABLED.store(true, Ordering::Release);
     Ok(())
@@ -248,8 +262,8 @@ pub(crate) fn finish(event_loop_ok: bool) -> Result<()> {
         .context("resource writer missing")?;
     writer.update_hosts(None)?;
     writer.snapshot(None, true)?;
-    let complete = event_loop_ok && writer.hosts.is_empty();
-    writer.line(json!({"phase":"end","complete_delivery":complete,"event_loop_ok":event_loop_ok,"snapshots":writer.sequence,"unreleased_hosts":writer.hosts.len()}))?;
+    let complete = event_loop_ok && writer.hosts.is_empty() && !writer.frame_failed;
+    writer.line(json!({"phase":"end","complete_delivery":complete,"event_loop_ok":event_loop_ok,"snapshots":writer.sequence,"frames":writer.frames,"frame_delivery_failed":writer.frame_failed,"unreleased_hosts":writer.hosts.len()}))?;
     writer.file.flush()?;
     anyhow::ensure!(complete, "resource observation incomplete");
     Ok(())
@@ -273,15 +287,9 @@ fn font_view(u: resource_observation::FontCpuUsage) -> Value {
         "private_bytes":u.private_bytes,"fixed_font_bytes":u.fixed_font_bytes,"cache_reserved_bytes":u.cache_reserved_bytes})
 }
 fn renderer_view(renderer: &Renderer) -> Value {
-    let admission = renderer.text_admission_observation().map(|a| {
-        let group = |g: resource_observation::TextAdmissionGroup| json!({
-            "runs":g.runs,"layout_rows":g.layout_rows,"shaped_instances":g.shaped_instances,
-            "unique_raster_keys":g.unique_raster_keys
-        });
-        json!({"preparation_serial":a.preparation_serial,"font_owner_id":a.font_owner_id,
-            "cache_revision":a.cache_revision,"workspace":group(a.workspace),"overlay":group(a.overlay),
-            "union_unique_raster_keys":a.union_unique_raster_keys,"observer_scratch_bytes":a.scratch_bytes})
-    });
+    let admission = renderer
+        .text_admission_observation()
+        .map(frames::text_value);
     let control = renderer.control_mesh_usage();
     let text = renderer.text_cache_key_usage();
     let glyph_counts = renderer.glyph_preparation_counts().map(|counts| {
@@ -330,3 +338,7 @@ fn linux_rss() -> Result<Value> {
     #[cfg(not(target_os = "linux"))]
     Ok(json!({"unsupported":"Linux /proc RSS method unavailable"}))
 }
+
+#[cfg(test)]
+#[path = "native_frame_measurement_tests.rs"]
+mod frame_tests;

@@ -47,6 +47,7 @@ impl Renderer {
         self.frame_consumers = prepared.consumer_incidence();
         let _resource_scope = self.resource_host.enter_for(self.frame_consumers.all());
         self.atlas.owner.begin_upload_frame();
+        let text_serial_before = self.text_admission.serial();
         let result = self.render_submission_inner(
             device,
             queue,
@@ -69,6 +70,23 @@ impl Renderer {
             self.text_preparation.cancel();
             self.text_renderer.cancel_preparation();
             self.menu_overlay_text_renderer.cancel_preparation();
+        }
+        if let Some(observer) = self.frame_observer {
+            let observed = observer(crate::resource_observation::FrameObservation {
+                renderer: self,
+                prepared,
+                board: retained,
+                schematic: schematic_retained,
+                extent: [width, height],
+                submitted_frame: result.as_ref().ok().copied(),
+                error: result.as_ref().err(),
+                text_observation_attempted: self.text_admission.serial() != text_serial_before,
+            });
+            // Preserve a production failure when both rendering and observation
+            // fail. The writer also latches delivery errors for its final record.
+            if result.is_ok() {
+                observed?;
+            }
         }
         result
     }
