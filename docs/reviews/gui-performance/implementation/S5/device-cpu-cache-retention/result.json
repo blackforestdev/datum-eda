@@ -1,0 +1,53 @@
+{
+  "base_commit": "05c973c1",
+  "qualification_pass": false,
+  "status": "Default Main/auxiliary device commit retains same-host CPU caches; affected distinct-device GPU proof and app compilation pass",
+  "source_sha256": {
+    "crates/gui-app/src/native_device_recovery.rs": "f5c8c91d3032c66d0869222b3102e35844563b50504231dbabd5d66fcb4c83ad",
+    "crates/gui-render/src/render/gpu_init.rs": "a3906c4c76ec18473de6a193d89a59dac99397e56f811e5810b7c8d526a6ce3d",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "6313fc02a0df70ac9695ad611dff8c9e74753278b82fda7fc8f2673c9d69a3e7",
+    "crates/gui-render/src/render/gpu_text_recovery_tests.rs": "82b32dff14deb05b2da3d688015a15f6e9776f5eec8576f85d94a5aad33cff0e"
+  },
+  "production_change": "After every staged host passes final health validation, transfer font_system, text_cpu, swash_cache, measurement_fonts, whole text_buffers and control_meshes into its same-host replacement. Assert matching staging/screen/control budget identity before mutation. Keep replacement GPU resource-host identity, atlas, draw batches, pipelines, preparation and current-dimension resolution fresh.",
+  "reason": "GPU recreation previously discarded device-independent CPU font/shaping/measurement/raster/control retention despite preserved authoritative state. Transfer avoids forcing those derived caches cold at successful commit.",
+  "proof": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --locked --offline -p datum-gui-render --features visual shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs -- --ignored --test-threads=1 --show-output",
+    "passed": 1,
+    "failed": 0,
+    "filtered_library_tests": 452,
+    "test_seconds": 0.83,
+    "build_seconds": 107,
+    "adapter": "Intel HD Graphics P630 / Vulkan",
+    "observations": [
+      "Unrelated-host budget adoption panics before CPU mutation; panic is caught as expected negative.",
+      "Abandoned staged renderer leaves source cache identities and contents unchanged.",
+      "Successful transfer preserves font/text/cache/measurement owner identities, text-cache contents and control-mesh usage.",
+      "Repeated form preparation causes no control-mesh rebuild; retained workspace shaping has zero cache misses.",
+      "Replacement uses independently requested device/capture target and fresh GPU preparation; pixels equal original. Existing atlas refusal/retry/reindex assertions still pass."
+    ],
+    "app_check_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo check --locked --offline -p datum-gui-app --bin datum-gui",
+    "app_check_pass": true,
+    "app_check_seconds": 60
+  },
+  "review": "Distinct source reviewer found no material rollback/coupled-ownership defect; transfers are after final staged validation and before old renderers are overwritten. No reviewer native replay.",
+  "logs": {
+    "gpu": {
+      "path": "docs/reviews/gui-performance/implementation/S5/device-cpu-cache-retention/gpu.log.gz",
+      "raw_sha256": "18b604c7ba4c46f565e87597f32118ba42dc7ca3d687608b6451ef8e65cc8e24",
+      "gzip_sha256": "ae841971595fd4816bb6f0d8e8a9e38e3d87c5e73ec18031273bb88505191b71"
+    },
+    "app-check": {
+      "path": "docs/reviews/gui-performance/implementation/S5/device-cpu-cache-retention/app-check.log.gz",
+      "raw_sha256": "6fa4048524ae17b0d9866bb3afe9971015b1bded85f12a27e6a3a7133d138bc0",
+      "gzip_sha256": "5ba1231db4a0a83d2eca74b7b3d57daaf92721f9ec61470154a4423c2f2b45ae"
+    }
+  },
+  "limits": [
+    "Renderer abandoned-stage proof is not execution of App multi-host injected staging failure. Existing source boundary is preserved; final native recovery qualification remains required.",
+    "Distinct-device offscreen rendering does not inject device loss or establish native UX/latency, full resource budgets or recovery CPU acceptance.",
+    "Replacement constructors still initialize fresh CPU owners before commit swaps; this change does not eliminate that initialization cost.",
+    "Saved recovery SystemTime wall intervals cannot replace process CPU or full successful-recovery/redraw measurement. No overhead subtraction, isolated-phase acceptance or measured speedup.",
+    "No release candidate rebuild, repeated20recoveries, endurance rerun or final independent replay this slice."
+  ],
+  "preserved": "All PM045/PM047 caps, authoritative state, GEFN, Vulkan upload-before-acquire, dependency authority, prototype ownership and nonblocking resize/temporal exclusions."
+}

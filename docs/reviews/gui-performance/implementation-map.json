@@ -2052,6 +2052,10 @@
         {
           "path": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json",
           "sha256": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f"
+        },
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/device-cpu-cache-retention/result.json",
+          "sha256": "d372476f5e27feb6cd23b382a514e462cc96638182a5605093f914300883ea43"
         }
       ]
     },
@@ -5974,6 +5978,12 @@
           "work": "s4_text_owner_reconciliation.retirement_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-retirement/result.json",
           "status": "Default text retirement and shared-shape accounting use no temporary heap storage; metadata-shrink overlap concern reconciled to the existing accounting boundary"
+        }
+      ],
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/device-cpu-cache-retention/result.json",
+          "sha256": "d372476f5e27feb6cd23b382a514e462cc96638182a5605093f914300883ea43"
         }
       ]
     },
@@ -39046,15 +39056,30 @@
         ],
         "scope": "Source/admission rejection only. Original runtime coverage and complete positive registration package remain open.",
         "carry_forward": "Preserve rejected patch and review; do not invent a runtime registration framework or repeat unrelated native tests."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Same-host CPU cache transfer with distinct-device GPU preparation",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/device-cpu-cache-retention/result.json",
+        "evidence_field": "proof and limits",
+        "evidence_sha256": "d372476f5e27feb6cd23b382a514e462cc96638182a5605093f914300883ea43",
+        "validated_result": "Extended existing GPU test1passed; cross-host rejection, abandoned staging, retained CPU identity/reuse, fresh replacement GPU pixels and retry/reindex negatives. App integration compiles.",
+        "requirement_ids": [
+          "LF-05",
+          "HP08-03"
+        ],
+        "scope": "Offscreen distinct-device proof and source-checked commit boundary; no native injected loss, multi-host failed staging execution, timing or full resource acceptance.",
+        "carry_forward": "Reuse affected proof; final stable-candidate native recovery remains separate. No handoff-driven replay."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 36,
-      "evidence_hashes_checked": 36,
-      "matching_hashes": 36,
+      "completed_groups": 37,
+      "evidence_hashes_checked": 37,
+      "matching_hashes": 37,
       "native_runs_performed": 0,
-      "meaning": "36 completed scoped group hashes still match after registration-package review. No additional application test, build or native run; CPU failure and all remaining acceptance retained."
+      "meaning": "One extended offscreen GPU test and one app compilation; previous36groups credited. No native performance or recovery acceptance added."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39331,5 +39356,17 @@
     "sha256": "37f7459cd36a07b6f3a6658dcd588942c5caa78891483573a5e7cbcee6d83ec5",
     "scope": "Non-applied NEW private redraw path rejected by source/admission review; no automatic runtime detection or full END-03/04 acceptance.",
     "positive_registration": "Same evidence now contains reviewed existingNEW host/profile, dependencies, resource owners/caps, input/clip/focus semantics, exception and scoped proof references. Declaration review only; full positive qualification remains open."
+  },
+  "s5_device_cpu_cache_retention": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/device-cpu-cache-retention/result.json",
+    "sha256": "d372476f5e27feb6cd23b382a514e462cc96638182a5605093f914300883ea43",
+    "status": "Default Main/auxiliary device commit retains same-host CPU caches; affected distinct-device GPU proof and app compilation pass",
+    "limits": [
+      "Renderer abandoned-stage proof is not execution of App multi-host injected staging failure. Existing source boundary is preserved; final native recovery qualification remains required.",
+      "Distinct-device offscreen rendering does not inject device loss or establish native UX/latency, full resource budgets or recovery CPU acceptance.",
+      "Replacement constructors still initialize fresh CPU owners before commit swaps; this change does not eliminate that initialization cost.",
+      "Saved recovery SystemTime wall intervals cannot replace process CPU or full successful-recovery/redraw measurement. No overhead subtraction, isolated-phase acceptance or measured speedup.",
+      "No release candidate rebuild, repeated20recoveries, endurance rerun or final independent replay this slice."
+    ]
   }
 }

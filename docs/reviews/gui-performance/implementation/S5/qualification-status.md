@@ -88,6 +88,8 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Terminal idle-poll regression batch** — 19 passed; wake consumption, deferred/no-proxy polling, bounded draining and close behavior. Native CPU cap still fails; relative performance effect remains unqualified. [Evidence](terminal-idle-poll/result.json)
 - [x] **Private redraw admission negative** — Distinct reviewer rejects non-applied NEW-adapter bypass of shared frame admission/completion. Source/admission proof only. [Evidence](END-04/result.json)
 
+- [x] **CPU cache retention across device replacement** — Extended existing GPU test passes with a distinct device, retained CPU identities/reuse, cross-host rejection and fresh-GPU pixel parity. App integration compiles; native recovery timing/resource acceptance remains open. [Evidence](device-cpu-cache-retention/result.json)
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU and clamp CPU failures. Current X11/1x warm-window CPU/output qualification is checked above; other configurations and final independent replay remain. Preserve historical Project-open excesses.
@@ -108,7 +110,7 @@ bound intervals exceed the 1% ceiling (**1.047673%–1.122825%**). Endpoint, rev
 focus and clean shutdown checks passed. This is a recorded CPU failure, not a
 completed acceptance check. [Evidence](terminal-idle-poll/native-clamp-batch/assessment.json)
 
-All 36 completed-group evidence hashes match. The original map contains 225
+All 37 completed-group evidence hashes match. The original map contains 225
 requirement rows, not 225 separate tests: 15 specification-record rows, 14
 nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
 or mixed-scope rows. HP05-02 still requires idle resources; its pacing component

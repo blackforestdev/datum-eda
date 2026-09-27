@@ -188,7 +188,7 @@ impl Runtime {
 
     fn commit_native_gpu(&mut self, prepared: PreparedDevice) {
         let PreparedDevice {
-            renderer,
+            mut renderer,
             transaction,
             bundle: (instance, surface, adapter, device, queue),
             config,
@@ -197,6 +197,7 @@ impl Runtime {
         } = prepared;
         // Only a replacement validated across every live host reaches this
         // boundary. Destruction alone is not a completed GPU milestone.
+        renderer.commit_cpu_recovery_from(&mut self.renderer);
         self.device.destroy();
         let _ = self.device.poll(wgpu::PollType::Poll);
         self.instance = instance;
@@ -398,17 +399,17 @@ impl App {
         let gpu = prepared.view();
         // Stage all auxiliary GPU state before admitting any host again. Existing
         // windows, settings, scroll offsets and engine/terminal state stay owned.
-        let global = self
+        let mut global = self
             .global_preferences_surface
             .as_ref()
             .map(|surface| surface.replacement(gpu))
             .transpose()?;
-        let project = self
+        let mut project = self
             .project_preferences_surface
             .as_ref()
             .map(|surface| surface.replacement(gpu))
             .transpose()?;
-        let new = self
+        let mut new = self
             .new_project_surface
             .as_ref()
             .map(|surface| surface.replacement(gpu))
@@ -428,6 +429,19 @@ impl App {
             !prepared.health.failed(),
             "replacement device failed while rebuilding auxiliary renderers"
         );
+        // Staging errors above leave every live CPU cache untouched. These
+        // infallible same-host transfers are part of the successful commit.
+        for (previous, replacement) in [
+            (self.global_preferences_surface.as_mut(), global.as_mut()),
+            (self.project_preferences_surface.as_mut(), project.as_mut()),
+            (self.new_project_surface.as_mut(), new.as_mut()),
+        ] {
+            if let (Some(previous), Some(replacement)) = (previous, replacement) {
+                replacement
+                    .renderer
+                    .commit_cpu_recovery_from(&mut previous.renderer);
+            }
+        }
         runtime.commit_native_gpu(prepared);
         self.global_preferences_surface = global;
         self.project_preferences_surface = project;
