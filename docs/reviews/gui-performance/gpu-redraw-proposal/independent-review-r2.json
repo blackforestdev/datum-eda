@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "reviewer": {
+    "agent_path": "/root/gpu_r1_independent_review",
+    "session": "01a0e531-9768-7411-8626-b9c238d0efa2"
+  },
+  "scope": "Independent planning-only architecture and final proposal delta review. No repository edits, builds, tests, native runs, runtime qualification or CPU event-loop investigation.",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md",
+    "sha256": "c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784"
+  },
+  "disposition": "Recommend owner review/approval of this pinned r2 architecture and its explicit bounded proof-scope amendment. No remaining blocking proposal findings found. This is advisory independent review, not owner ratification or execution authorization.",
+  "owner_authority": false,
+  "runtime_acceptance": false,
+  "resolved_findings": [
+    {
+      "id": "IR-R2-01",
+      "finding": "prepare must distinguish native exposure from unchanged content.",
+      "resolution": "FrameRequest explicitly carries exposure/content demand and host/device/configuration/attempt identity; coordinator remains delivery owner."
+    },
+    {
+      "id": "IR-R2-02",
+      "finding": "Typed Interaction labels cannot themselves authorize prefix reuse, especially tool previews.",
+      "resolution": "Tags explicitly remain hints subordinate to source/descriptor versions; only audited suffix-only preview changes qualify."
+    },
+    {
+      "id": "IR-R2-03",
+      "finding": "Ownership migration must not duplicate immutable world payloads or erase later terminal damage.",
+      "resolution": "Per-host sessions share charged document handles; terminal snapshot/damage lease covers later encode/acquire/present failure and merges newer damage."
+    },
+    {
+      "id": "IR-R2-04",
+      "finding": "Offscreen completion must not publish native displayed geometry or acknowledge native damage.",
+      "resolution": "Capture uses its own target token and explicitly excludes native hit/damage publication."
+    },
+    {
+      "id": "IR-R2-05",
+      "finding": "Experiment stopping thresholds should be concrete while duty remains unavailable.",
+      "resolution": "Explicit p95>4ms/p99>8ms stop, no replacement runs; incomplete DRM and no S4 qualification retained."
+    }
+  ],
+  "architecture_review": "Concrete retirement of nullable prepared-state policy, direct mutators, duplicate preparation entrypoints and legacy raw/composed world recipes establishes shared ownership beyond an image-cache patch. Existing NativeFrameCoordinator, NativeRenderTarget, SurfaceTransaction, QueueOwner, command bundles, text/terminal and dialog rendering retain their legitimate roles. Retained-history relocation preserves existing algorithms/accounting instead of speculative redesign. Full8x prefix copy remains a coherent sample-preserving candidate; exact GPU output and performance remain unproven.",
+  "method_review": "Known fd-lifecycle/drain/reset observation gap blocks complete duty qualification, not source planning or the distinct value of an owner-approved own-queue timestamp experiment. R2 explicitly requests the amendment to r1, retains unavailable-duty labels and final requirements, and does not select/ratify ptrace or another unknown observer. Observer mechanism/privilege/race/drain/overhead selection needs a reviewed execution packet before instrumentation execution.",
+  "remaining_risks": [
+    "Implementation must actually retire bypasses across every native/capture consumer; a wrapper retaining parallel mutable authorities does not satisfy the proposal.",
+    "Fullcopy bandwidth, cold/camera overhead, device usage support and exact sample output need future authorized proof.",
+    "Complete workload-fd observer feasibility and sufficiently low overhead remain unresolved; no implementation mechanism is approved by this review.",
+    "Source-health extractions and broad API adoption may be substantial; preserve boundaries rather than opportunistically migrate editor semantic state or CPU scheduling."
+  ],
+  "evidence_reuse": "Prior source inspection and pinned r1 native-wgpu evidence reused at unchanged scope; final r2 delta inspected without repeating runtime work. Earlier independent architecture notes: /tmp/gpu-shared-foundation-independent-review.md."
+}

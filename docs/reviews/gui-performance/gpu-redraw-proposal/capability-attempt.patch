@@ -1,0 +1,278 @@
+diff --git a/crates/gui-render/src/render/gpu_surface.rs b/crates/gui-render/src/render/gpu_surface.rs
+index 6053bce4..e426beed 100644
+--- a/crates/gui-render/src/render/gpu_surface.rs
++++ b/crates/gui-render/src/render/gpu_surface.rs
+@@ -7,6 +7,7 @@ struct AttachmentKey {
+     extent: (u32, u32),
+     format: wgpu::TextureFormat,
+     samples: u32,
++    prefix: bool,
+ }
+ impl AttachmentKey {
+     fn new(width: u32, height: u32, format: wgpu::TextureFormat, samples: u32) -> Self {
+@@ -14,6 +15,7 @@ impl AttachmentKey {
+             extent: (width.max(1), height.max(1)),
+             format,
+             samples,
++            prefix: false,
+         }
+     }
+ 
+@@ -38,11 +40,22 @@ pub struct SurfaceAttachmentSnapshot {
+     pub payload_bytes: Option<u64>,
+ }
+ 
++pub(super) struct AttachmentImage {
++    pub(super) texture: wgpu::Texture,
++    pub(super) view: wgpu::TextureView,
++}
++impl std::ops::Deref for AttachmentImage {
++    type Target = wgpu::TextureView;
++    fn deref(&self) -> &Self::Target {
++        &self.view
++    }
++}
+ #[derive(Clone)]
+ pub(crate) struct SurfaceAttachment {
+     key: AttachmentKey,
+     allocation: u64,
+-    view: Arc<Tracked<wgpu::TextureView>>,
++    view: Arc<Tracked<AttachmentImage>>,
++    prefix: Option<Arc<Tracked<AttachmentImage>>>,
+ }
+ 
+ /// Keep the resource and its exact reuse identity together. Native admission
+@@ -53,6 +66,7 @@ pub(crate) struct SurfaceAttachments {
+     owner: Owner,
+     generations: Arc<crate::text_gpu::budget::Budget>,
+     allocations: u64,
++    prefix_requested: bool,
+     current: Option<SurfaceAttachment>,
+     #[cfg(all(test, feature = "visual", target_os = "linux"))]
+     force_replacement: bool,
+@@ -68,6 +82,7 @@ impl SurfaceAttachments {
+             owner: Owner::new(),
+             generations,
+             allocations: 0,
++            prefix_requested: false,
+             current: None,
+             #[cfg(all(test, feature = "visual", target_os = "linux"))]
+             force_replacement: false,
+@@ -82,13 +97,34 @@ impl SurfaceAttachments {
+     pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
+         if let Some(attachment) = &self.current {
+             attachment.view.set_consumers(consumers);
++            if let Some(prefix) = &attachment.prefix {
++                prefix.set_consumers(consumers);
++            }
+         }
+     }
+ 
+-    pub(super) fn submission_ref(&self) -> Option<SubmissionRef> {
+-        self.current
+-            .as_ref()
+-            .map(|attachment| attachment.view.submission_ref())
++    pub(super) fn submission_ref(&self) -> impl Iterator<Item = SubmissionRef> + '_ {
++        self.current.iter().flat_map(|attachment| {
++            std::iter::once(attachment.view.submission_ref())
++                .chain(attachment.prefix.iter().map(|image| image.submission_ref()))
++        })
++    }
++
++    pub(super) fn request_prefix(&mut self) {
++        self.prefix_requested = true;
++    }
++
++    pub(super) fn prefix_images(
++        &self,
++    ) -> Option<(wgpu::Texture, wgpu::Texture, wgpu::TextureView, u64)> {
++        let current = self.current.as_ref()?;
++        let prefix = current.prefix.as_ref()?;
++        Some((
++            prefix.texture.clone(),
++            current.view.texture.clone(),
++            prefix.view.clone(),
++            current.allocation,
++        ))
+     }
+ 
+     fn snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
+@@ -115,10 +151,13 @@ impl SurfaceAttachments {
+     fn ensure_guarded(
+         &mut self,
+         device: &wgpu::Device,
+-        key: AttachmentKey,
++        mut key: AttachmentKey,
+         mut healthy: impl FnMut() -> bool,
+     ) -> anyhow::Result<&wgpu::TextureView> {
+         anyhow::ensure!(healthy(), "surface attachment preparation on failed device");
++        key.prefix = self.prefix_requested
++            && key.samples == 8
++            && key.payload_bytes().is_some_and(|n| n <= 45 * 1024 * 1024);
+         #[cfg(all(test, feature = "visual", target_os = "linux"))]
+         let forced = std::mem::take(&mut self.force_replacement);
+         #[cfg(not(all(test, feature = "visual", target_os = "linux")))]
+@@ -135,8 +174,25 @@ impl SurfaceAttachments {
+             let generation = self.generations.reserve(1).map_err(|_| {
+                 anyhow::anyhow!("attachment generation limit reached: one current and one retiring")
+             })?;
+-            let reservation =
+-                crate::text_gpu::budget::GpuReservation::new(bytes, vec![generation])?;
++            let total = bytes
++                .checked_mul(if key.prefix { 2 } else { 1 })
++                .ok_or_else(|| anyhow::anyhow!("attachment pair size overflow"))?;
++            // Admission failure for optional A must not reject required B.
++            let mut reservation =
++                match crate::text_gpu::budget::GpuReservation::new(total, vec![generation]) {
++                    Ok(reservation) => reservation,
++                    Err(_) if key.prefix => {
++                        key.prefix = false;
++                        let generation = self.generations.reserve(1)?;
++                        crate::text_gpu::budget::GpuReservation::new(bytes, vec![generation])?
++                    }
++                    Err(error) => return Err(error),
++                };
++            let prefix_reservation = if key.prefix {
++                Some(reservation.split(bytes)?)
++            } else {
++                None
++            };
+             let texture = device.create_texture(&wgpu::TextureDescriptor {
+                 label: Some("datum-gui-render-msaa"),
+                 size: wgpu::Extent3d {
+@@ -148,7 +204,12 @@ impl SurfaceAttachments {
+                 sample_count: key.samples,
+                 dimension: wgpu::TextureDimension::D2,
+                 format: key.format,
+-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
++                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
++                    | if key.prefix {
++                        wgpu::TextureUsages::COPY_DST
++                    } else {
++                        wgpu::TextureUsages::empty()
++                    },
+                 view_formats: &[],
+             });
+             self.allocations = self
+@@ -157,14 +218,35 @@ impl SurfaceAttachments {
+                 .expect("attachment allocation exhausted");
+             anyhow::ensure!(healthy(), "surface attachment allocation failed");
+             let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+-            // The tracked view must be the final local handle before a later
+-            // health failure can release its byte and generation reservations.
+-            drop(texture);
++            let prefix = prefix_reservation.map(|reservation| {
++                let texture = device.create_texture(&wgpu::TextureDescriptor {
++                    label: Some("datum-gui-render-prefix"),
++                    size: wgpu::Extent3d {
++                        width: key.extent.0,
++                        height: key.extent.1,
++                        depth_or_array_layers: 1,
++                    },
++                    mip_level_count: 1,
++                    sample_count: key.samples,
++                    dimension: wgpu::TextureDimension::D2,
++                    format: key.format,
++                    usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
++                    view_formats: &[],
++                });
++                let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
++                Arc::new(self.owner.track_reserved(
++                    AttachmentImage { texture, view },
++                    self.allocations,
++                    Kind::Attachment,
++                    reservation,
++                ))
++            });
+             let replacement = SurfaceAttachment {
+                 key,
++                prefix,
+                 allocation: self.allocations,
+                 view: Arc::new(self.owner.track_reserved(
+-                    view,
++                    AttachmentImage { texture, view },
+                     self.allocations,
+                     Kind::Attachment,
+                     reservation,
+@@ -175,6 +257,9 @@ impl SurfaceAttachments {
+             // the caller aborts before uploads, encoding or submission.
+             anyhow::ensure!(healthy(), "surface attachment replacement failed");
+             if let Some(previous) = &self.current {
++                if let Some(prefix) = &previous.prefix {
++                    prefix.retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
++                }
+                 previous
+                     .view
+                     .retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
+@@ -464,6 +549,71 @@ mod tests {
+         assert_eq!(negative.allocations_created, 3);
+         assert_eq!(negative.extent, second.extent);
+     }
++    #[cfg(all(feature = "visual", target_os = "linux"))]
++    #[test]
++    #[ignore = "bounded PM048 actual-adapter capability gate"]
++    fn prefix_pair_actual_eight_sample_copy_capability() {
++        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
++            backends: wgpu::Backends::VULKAN,
++            ..Default::default()
++        });
++        let adapter =
++            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
++                .unwrap();
++        eprintln!("PM048 adapter: {:?}", adapter.get_info());
++        assert!(
++            adapter.get_info().name.contains("P630"),
++            "requires pinned Intel P630"
++        );
++        let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
++            required_features: wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES,
++            ..Default::default()
++        }))
++        .unwrap();
++        let mut owner = SurfaceAttachments::default();
++        owner.request_prefix();
++        let key = AttachmentKey::new(32, 32, wgpu::TextureFormat::Bgra8UnormSrgb, 8);
++        device.push_error_scope(wgpu::ErrorFilter::Validation);
++        owner.ensure(&device, key).unwrap();
++        let (a, b, a_view, _) = owner.prefix_images().expect("admitted prefix pair");
++        assert_eq!(owner.generations.used(), 1);
++        let records = owner.owner.records();
++        assert_eq!(records.len(), 2);
++        assert_eq!(
++            records.iter().map(|r| r.bytes).sum::<u64>(),
++            32 * 32 * 4 * 8 * 2
++        );
++        let mut encoder = device.create_command_encoder(&Default::default());
++        {
++            let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
++                label: Some("prefix-capability-clear"),
++                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
++                    view: &a_view,
++                    depth_slice: None,
++                    resolve_target: None,
++                    ops: wgpu::Operations {
++                        load: wgpu::LoadOp::Clear(wgpu::Color::RED),
++                        store: wgpu::StoreOp::Store,
++                    },
++                })],
++                ..Default::default()
++            });
++        }
++        encoder.copy_texture_to_texture(a.as_image_copy(), b.as_image_copy(), a.size());
++        let submission = queue.submit([encoder.finish()]);
++        let holds: Vec<_> = owner.submission_ref().collect();
++        crate::text_gpu::hold_until_done(&queue, holds);
++        device
++            .poll(wgpu::PollType::Wait {
++                submission_index: Some(submission),
++                timeout: None,
++            })
++            .unwrap();
++        assert!(
++            pollster::block_on(device.pop_error_scope()).is_none(),
++            "actual 8x copy validation"
++        );
++    }
+ }
+ 
+ #[cfg(all(test, feature = "visual", target_os = "linux"))]
