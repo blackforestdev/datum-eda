@@ -24,6 +24,9 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
+    pub(super) screen_admission: std::cell::Cell<
+        Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 8]>,
+    >,
     pub(super) grid_admission: Option<
         crate::text_gpu::staging_vec::StagingVec<immediate_admission::PreparedGridAdmission>,
     >,

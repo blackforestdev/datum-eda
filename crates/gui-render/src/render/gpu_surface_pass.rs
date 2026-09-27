@@ -37,9 +37,12 @@ impl Renderer {
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.uniform_bind_group, &[]);
         pass.set_vertex_buffer(0, buffer.slice(..));
-        for batch in batches {
+        for (index, batch) in batches.iter().enumerate() {
             set_scissor(pass, batch.viewport);
             pass.draw(batch.vertices.clone(), 0..1);
+            if let Some(observation) = self.grid_admission.as_ref().and_then(|g| g.get(index)) {
+                observation.encoded.set(true);
+            }
         }
     }
 

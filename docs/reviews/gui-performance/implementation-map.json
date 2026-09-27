@@ -38705,6 +38705,11 @@
           "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/result.json",
           "sha256": "8fda406296fbd09df900aedb5c422f549046519a81c118c055f9e68a9d41bfb3",
           "validated_result": "1 focused hardware test passes: changing only origin preserves exact pixels and shaping cache revision; duplicate text assigned to distinct panes produces two reconciled origin summaries without inflating union unique-key counts; invalid input clears summaries. 1 focused CPU test passes actual multi-pane composition at1x,1.5x,2x; Host text remains distinct and each pane retains its origin through scaling. 1 focused hardware application test passes with DATUM_RESOURCE_TRACE=1: actual viewport-origin JSON is delivered and run/glyph sums reconcile separately with workspace/overlay totals; existing geometry/overflow checks remain passing."
+        },
+        "screen_submission_supplement": {
+          "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/result.json",
+          "sha256": "ad95a67014917db534e803e2a07e2466bfe833defd03da5ae98219c537c987b0",
+          "validated_result": "1 focused hardware test passes exact observer-off/on pixels across reused dialog frames, actual menu draw/scissor counts, callback retirement on failure and duplicate-stream observation invalidation. 1 final focused hardware application test passes actual screen draw counts versus prepared payloads, exclusion of the unsubmitted fallback underlay, submitted grid commands/vertices/triangles, null submitted fields on deferred attempts, callback retirement and existing text/world/overflow checks."
         }
       }
     ],
@@ -38734,6 +38739,7 @@
     "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/result.json",
     "encoded_world_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/encoded-world/result.json",
     "immediate_geometry_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/result.json",
-    "text_origin_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/result.json"
+    "text_origin_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/result.json",
+    "screen_submission_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/result.json"
   }
 }

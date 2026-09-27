@@ -77,10 +77,21 @@ impl Writer {
         let screen: Vec<_> = frame.prepared.screen_geometry_admission().into_iter().map(|g| {
             json!({"group":g.group,"prepared_vertices":g.vertices,"payload_bytes":g.payload_bytes})
         }).collect();
+        let submitted_screen = if frame.submitted_frame == Some(true) {
+            Some(frame.renderer.encoded_screen_geometry().context("screen draw observation unavailable")?.into_iter().flatten().map(|d| {
+                json!({"group":d.group,"range":[0,d.vertices],"submitted_commands":1,
+                    "submitted_vertices":d.vertices,"submitted_triangles":d.vertices/3,"scissor":d.scissor})
+            }).collect::<Vec<_>>())
+        } else {
+            None
+        };
         let grids = frame.renderer.grid_geometry_admission().map(|grids| grids.iter().map(|g| {
             json!({"pane_id":g.pane_id.0,"viewport":[g.viewport.x,g.viewport.y,g.viewport.width,g.viewport.height],
                 "range":[g.vertices.start,g.vertices.end],"generated_vertices":g.generated_vertices,
-                "prepared_vertices":g.vertices.end-g.vertices.start})
+                "prepared_vertices":g.vertices.end-g.vertices.start,"encoded":g.encoded(),
+                "submitted_commands":(frame.submitted_frame==Some(true)).then_some(u32::from(g.encoded())),
+                "submitted_vertices":(frame.submitted_frame==Some(true)).then_some(if g.encoded() {g.vertices.end-g.vertices.start} else {0}),
+                "submitted_triangles":(frame.submitted_frame==Some(true)).then_some(if g.encoded() {(g.vertices.end-g.vertices.start)/3} else {0})})
         }).collect::<Vec<_>>());
         let terminal = (frame.submitted_frame == Some(true)).then(|| {
             if frame.prepared.prepared_terminal_graphic_count() == 0 { return Vec::new(); }
@@ -121,7 +132,7 @@ impl Writer {
             "submitted_frame":frame.submitted_frame,"render_error":frame.error.map(|e|format!("{e:#}")),
             "text_observation_attempted":frame.text_observation_attempted,"text_admission":text,"text_origins":text_origins,
             "text_admission_failed":frame.renderer.text_admission_observation_failed(),
-            "prepared_screen_geometry":screen,"prepared_surface_grids":grids,
+            "prepared_screen_geometry":screen,"submitted_screen_geometry":submitted_screen,"prepared_surface_grids":grids,
             "prepared_terminal_graphics":frame.prepared.prepared_terminal_graphic_count(),"submitted_terminal_geometry":terminal,
             "glyph_preparation_workspace_overlay":glyphs,"world_panes":panes,"submitted_world_bundles":encoded_world,
             "scope":"render attempt and prepared retained-world/text; not presentation, raster coverage or complete immediate UI geometry"}))

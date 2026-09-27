@@ -156,3 +156,5 @@ pub use crate::immediate_admission::{
 
 pub use crate::text_admission_observation::TextOriginAdmission;
 pub use crate::text_run::TextOrigin;
+
+pub use crate::immediate_admission::screen_admission::EncodedScreenGeometry;

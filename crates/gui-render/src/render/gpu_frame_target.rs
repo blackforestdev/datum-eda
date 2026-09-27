@@ -47,6 +47,9 @@ impl Renderer {
         self.frame_consumers = prepared.consumer_incidence();
         let _resource_scope = self.resource_host.enter_for(self.frame_consumers.all());
         self.atlas.owner.begin_upload_frame();
+        if self.frame_observer.is_some() {
+            self.screen_admission.set(Some([None; 8]));
+        }
         self.grid_admission = None;
         let text_serial_before = self.text_admission.serial();
         let result = self.render_submission_inner(
@@ -86,6 +89,7 @@ impl Renderer {
             // Preserve a production failure when both rendering and observation
             // fail. The writer also latches delivery errors for its final record.
             self.grid_admission = None;
+            self.screen_admission.set(None);
             if result.is_ok() {
                 observed?;
             }

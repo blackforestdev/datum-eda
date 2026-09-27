@@ -1,0 +1,46 @@
+{
+  "status": "actual screen/grid draw observation implemented; native/full ADM-01 remains open",
+  "base_commit": "fea9ecb5",
+  "change": "Record each existing immediate screen draw at its encoding site, including its exact vertex range and scissor. Mark each generated pane grid when its production draw executes. Emit command/vertex/triangle totals only on successful frame submission, preserving prepared counts separately.",
+  "proof": {
+    "gpu": "1 focused hardware test passes exact observer-off/on pixels across reused dialog frames, actual menu draw/scissor counts, callback retirement on failure and duplicate-stream observation invalidation.",
+    "writer": "1 final focused hardware application test passes actual screen draw counts versus prepared payloads, exclusion of the unsubmitted fallback underlay, submitted grid commands/vertices/triangles, null submitted fields on deferred attempts, callback retirement and existing text/world/overflow checks.",
+    "gates": "Source health2566/base comparison, dependency authority and20spec parity inventories pass."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --offline frame_observation_delivers_reused_frames_without_changing_pixels_and_propagates_failure -- --ignored --test-threads=1 --nocapture",
+    "DATUM_RESOURCE_TRACE=1 python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --offline frame_trace_serializes_actual_render_attempts_and_refuses_overflow -- --ignored --test-threads=1 --nocapture"
+  ],
+  "verification_note": "Initial writer check passed. Final affected writer check followed addition of explicit grid submitted vertex/triangle fields and assertions; both logs retained. No broad/native qualification rerun.",
+  "semantics": [
+    "Screen metadata has one fixed slot for each of the eight existing streams, with no per-draw allocation. Duplicate stream records invalidate the observation; native writer rejects unavailable screen observations on successful submission.",
+    "Records are grouped stream observations, not a chronological GPU command replay. Shared panel/overlay streams retain their real scissors and are not arbitrarily apportioned among panes.",
+    "Grid ranges retain production pane identity. Encoded does not mean submitted when a later error occurs; submitted counters remain null unless the render attempt reports success.",
+    "All metadata retires after the callback, including delivery errors. Default mode skips screen record mutation; fixed scalar storage remains part of the renderer.",
+    "Scissors and triangle counts do not establish raster-visible pixels or presentation. No drawing conditions, primitive ordering, shader or MSAA resolve behavior changed."
+  ],
+  "remaining": [
+    "Native backend/scale and before/after pane,font,layer,DPI/model admission, including terminal session identity replay.",
+    "Complete per-pane attribution of shared screen streams where applicable, resource accounting/caps and measured observer overhead.",
+    "Existing performance failures, endurance/recovery, stable-candidate independent replay and separate owner UX acceptance."
+  ],
+  "preserved": "All225 original predicates/statuses, completed S0-S4 and prior evidence. PM029/PM047, GEFN, Vulkan upload-before-acquire, Claude prototype ownership and nonblocking resize exclusions unchanged. No dependency/license change.",
+  "logs": {
+    "gpu": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/gpu.gz",
+      "sha256": "33befef4bd2aadfc0bd73dd537178f347e07cb456aa4719091cc3dc4c917a943"
+    },
+    "writer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/writer-initial.gz",
+      "sha256": "5238a367cfc560d7b7d4499870dd4dde56dfbdb9d7244ff8c6953b8080872d08"
+    },
+    "writer": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/writer.gz",
+      "sha256": "490a59e72363e62089cdc440fd73a08bca3141c286160670ea46539440a6a2c3"
+    },
+    "trace": {
+      "path": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/trace.gz",
+      "sha256": "6b307a1cceea59a3768b6dd997008d5f157f1b3bb451dd8c25c84fc59ed2a365"
+    }
+  }
+}

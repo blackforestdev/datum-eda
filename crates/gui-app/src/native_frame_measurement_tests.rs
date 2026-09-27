@@ -150,6 +150,17 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
             );
         }
         if row["submitted_frame"] == true {
+            let draws = row["submitted_screen_geometry"].as_array().unwrap();
+            assert!(!draws.is_empty());
+            for draw in draws {
+                let source = screen.iter().find(|g| g["group"] == draw["group"]).unwrap();
+                assert_eq!(draw["submitted_vertices"], source["prepared_vertices"]);
+                assert_eq!(draw["submitted_commands"], 1);
+                assert_eq!(
+                    draw["submitted_triangles"].as_u64().unwrap(),
+                    draw["submitted_vertices"].as_u64().unwrap() / 3
+                );
+            }
             assert!(
                 row["submitted_terminal_geometry"]
                     .as_array()
@@ -158,6 +169,7 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
             );
         } else {
             assert!(row["submitted_terminal_geometry"].is_null());
+            assert!(row["submitted_screen_geometry"].is_null());
         }
     }
     let world_frame = frames
@@ -190,6 +202,10 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
         let end = range[1].as_u64().unwrap();
         assert!(start < end && end <= grid["generated_vertices"].as_u64().unwrap());
         assert_eq!(grid["prepared_vertices"], end - start);
+        assert_eq!(grid["encoded"], true);
+        assert_eq!(grid["submitted_commands"], 1);
+        assert_eq!(grid["submitted_vertices"], end - start);
+        assert_eq!(grid["submitted_triangles"], (end - start) / 3);
         assert!(
             world_frame["world_panes"]
                 .as_array()
@@ -198,6 +214,15 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
                 .any(|p| p["pane_id"] == grid["pane_id"])
         );
     }
+    assert!(
+        world_frame["submitted_screen_geometry"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|g| g["group"] != "viewport_underlay"),
+        "composed grids replace the prepared fallback underlay"
+    );
+    assert!(renderer.encoded_screen_geometry().is_none());
     assert!(
         renderer.grid_geometry_admission().is_none(),
         "observer metadata retires after callback"
