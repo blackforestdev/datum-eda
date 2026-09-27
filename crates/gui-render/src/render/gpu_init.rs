@@ -3,6 +3,30 @@
 use super::*;
 
 impl Renderer {
+    /// Finish a same-host device replacement after every staged host validates.
+    /// The caller retires `previous` afterward. Keep CPU font/cache identities
+    /// together, while the replacement's GPU owners and preparation stay cold.
+    pub fn commit_cpu_recovery_from(&mut self, previous: &mut Self) {
+        assert!(std::sync::Arc::ptr_eq(
+            &self.atlas.staging_budget,
+            &previous.atlas.staging_budget,
+        ));
+        assert!(std::sync::Arc::ptr_eq(
+            &self.screen_budget,
+            &previous.screen_budget
+        ));
+        assert!(std::sync::Arc::ptr_eq(
+            &self.control_gpu_budget,
+            &previous.control_gpu_budget,
+        ));
+        std::mem::swap(&mut self.font_system, &mut previous.font_system);
+        std::mem::swap(&mut self.text_cpu, &mut previous.text_cpu);
+        std::mem::swap(&mut self.swash_cache, &mut previous.swash_cache);
+        std::mem::swap(&mut self.measurement_fonts, &mut previous.measurement_fonts);
+        std::mem::swap(&mut self.text_buffers, &mut previous.text_buffers);
+        std::mem::swap(&mut self.control_meshes, &mut previous.control_meshes);
+    }
+
     pub fn new(
         device: &wgpu::Device,
         _queue: &wgpu::Queue,
