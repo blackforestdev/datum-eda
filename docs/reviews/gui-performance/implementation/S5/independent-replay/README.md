@@ -98,7 +98,8 @@ historical trials remain unchanged and do not gain driver-memory evidence.
 
 Optional private allocation events are prepared in
 `../private-allocation-lifetimes/result.json`. They are not enabled by this
-runner: existing summary analyzers reject the new transition. Implement the
-allocation-aware classifier before final use; this is not scratch-accounting
-acceptance. Allocation records use only the embedded report identity; their
+historically pinned runner. The current resource analyzer now classifies
+allocation-mode call windows; synthetic controls pass, while native mode and
+full resource qualification remain open. Historical summary data gains no
+lifetime classification. This is not scratch-accounting acceptance. Allocation records use only the embedded report identity; their
 current live bytes come from `scope_live_bytes`, and call peaks from Finished.

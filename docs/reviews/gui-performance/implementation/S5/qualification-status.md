@@ -94,7 +94,7 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 
 - [x] Monitored private-call realloc peak/refusal:13allocator/call-guard controls passed in the final batch;1existingignored. Initial passing batch retained; repeated only after scope correction. Explicit replacement overlap reaches the guard. Forced-copy cost, native caps and retained/scratch classification remain unqualified. See `scoped-reallocation-peak/result.json`.
 
-- [x] Active-call block transition delivery:3serial observer controls pass and app writer compiles. Allocation/free order, realloc overlap, summary compatibility and overflow covered; classifier and native qualification remain pending. See `private-allocation-lifetimes/result.json`.
+- [x] Active-call block transition delivery:3serial observer controls pass and app writer compiles. Allocation/free order, realloc overlap, summary compatibility and overflow covered. Three offline classifier controls also pass; native mode, semantic exclusions and full-scope qualification remain pending. See `private-allocation-lifetimes/result.json`.
 
 ## Still open — do not reset the done list
 
