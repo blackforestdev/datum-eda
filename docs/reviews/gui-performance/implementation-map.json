@@ -10049,7 +10049,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Current source call-site inventory reconciled with existing S1-S4 host/renderer adoption proof; specific competing-private-path negative and complete runtime coverage remain unqualified.",
         "id": "proof_end_03",
         "positive": "Enumerate configure/acquire/present/submit/redraw/allocation/close calls",
         "negative_control": "Leave one consumer on competing private path",
@@ -10103,6 +10103,12 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s5_adoption_reconciliation": {
+        "evidence": "docs/reviews/gui-performance/implementation/S5/END-03/result.json",
+        "evidence_sha256": "dcfa5297e06eb0b91a600aa166c91ef8ed8a0fcbcd48a39c80277cba62414087",
+        "qualification_pass": false,
+        "new_native_runs": 0
       }
     },
     {
@@ -39023,15 +39029,16 @@
         "specification_record_row_count": 15,
         "source": "Derive from original requirements[].qualification_scope; retain HP05-02 idle resources as mixed scope."
       },
-      "reuse": "All32 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
+      "reuse": "All33 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
       "before_native_execution": [
         {
-          "action": "Reconcile source/negative-control coverage using existing S1-S4 proofs and the31done groups. Enumerate only missing prescribed controls, and combine controls using the same production owner where their assertions remain independently defect-sensitive.",
+          "action": "Reuse END-03 current source inventory and existing S1-S4 ownership proof. Remaining controls: competing private consumer path; auxiliary callback-after-own-submit close/strong-host-capture; END-04 future-consumer registration/private-scheduler rejection. Preserve each predicate and consolidate controls where production ownership overlaps.",
           "requirements": [
             "END-03",
             "END-04"
           ],
-          "new_native_runs": 0
+          "new_native_runs": 0,
+          "evidence": "docs/reviews/gui-performance/implementation/S5/END-03/result.json"
         },
         {
           "action": "Finish admission/accounting/input/observer methods using existing controls; inspect saved traces before adding instrumentation. Fractional wheel/scroll input (not a blanket distinct-pointer-rate rule), exited-client GPU endpoints, actual instantaneous resource incidence and observer overhead remain unresolved. Each new method proof must identify the missing original predicate.",

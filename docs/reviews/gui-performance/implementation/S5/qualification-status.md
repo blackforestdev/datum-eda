@@ -81,12 +81,12 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **X11/1x warm-window CPU and native output, three trials per host** — All270candidate opens≤50ms (maximum44.440ms) and closes≤20ms (maximum11.952ms); exact pixels/focus/destruction. Six fixed baseline/candidate runs,558first-use/warm cycles, normal exits and display restoration. [Evidence](lazy-terminal-pipeline/native-startup-batch/assessment.json)
   Scope: Candidate0709fc90, actualGlobal/Project/New; baseline also passes this batch. Six intermediate nonmatching readbacks and historical failures retained. No causal speedup, otherbackend/scale, GPU/full resource, independent replay or owner UX acceptance.
 
-## Still open — do not reset the done list
-
 - [x] **Unused raw-device subscription removal: X11/1x clamp behavior** — Three trials, both bounds; all18reference images exact, inward reversal and normal cleanup preserved. CPU1.14–1.21% exceeds1% in all six intervals; this check does not mark CPU or full W-CLAMP accepted. [Evidence](raw-device-input/result.json)
 
+## Still open — do not reset the done list
+
 - [ ] Resolve recorded pointer CPU/GPU and clamp CPU failures. Current X11/1x warm-window CPU/output qualification is checked above; other configurations and final independent replay remain. Preserve historical Project-open excesses.
-- [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences.
+- [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences. The [current call-site inventory](END-03/result.json) reuses S1–S4 ownership proof; competing-private-path and auxiliary close-after-own-submit/strong-host-capture controls remain unqualified. END-04 future-consumer registration remains distinct.
 - [ ] Complete fixture admission and instantaneous private/scratch/driver/client resource accounting, including observer overhead.
 - [ ] Resolve the saved endurance resource trend and missing in-scope tier/configuration, accounting and recovery-performance proof. The hour and separate 20 structural recoveries above are done. Readback timing remains descriptive; deferred displayed latency is not an initial S5 gate. Earlier failed attempts remain failures.
 - [ ] Complete independent actual replay against the stable final candidate, followed by separate owner UX/product acceptance.
