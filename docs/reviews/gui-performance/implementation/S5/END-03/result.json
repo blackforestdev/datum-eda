@@ -1,0 +1,944 @@
+{
+  "status": "Current native/renderer source call-site inventory reconciled with existing S1-S4 proof; END-03 acceptance remains incomplete",
+  "qualification_pass": false,
+  "source_commit": "338445e0cce12549fd5434277eadea81f9f13ce4",
+  "method": "Search current gui-app/gui-render Rust calls; inspect implementation and cfg context; classify non-GPU present methods, tests and explicit diagnostic/capture exceptions. Reuse existing proof without rerunning it. Search results alone do not establish runtime coverage.",
+  "queries": [
+    "rg -n 'request_redraw\\(|\\.configure\\(|get_current_texture\\(|\\.present\\(|\\.submit\\(' crates/gui-app/src crates/gui-render/src -g '*.rs'",
+    "rg -n 'create_texture\\(|create_texture_with_data\\(' crates/gui-render/src crates/gui-app/src -g '*.rs'"
+  ],
+  "call_sites": [
+    {
+      "path": "crates/gui-render/src/visual_capture.rs",
+      "line": 223,
+      "call": "self.queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "visual_capture",
+      "owner": "Feature-gated offscreen/readback path; tracked capture references and bounded readback, no private native scheduler"
+    },
+    {
+      "path": "crates/gui-render/src/capture_resource.rs",
+      "line": 134,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/upload_tests.rs",
+      "line": 127,
+      "call": "queue.submit([pending.command(), encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/parity.rs",
+      "line": 398,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/atlas.rs",
+      "line": 215,
+      "call": "queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/upload.rs",
+      "line": 388,
+      "call": "queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/sparse_upload_tests.rs",
+      "line": 87,
+      "call": "queue.submit([pending.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/sparse_upload_tests.rs",
+      "line": 131,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/sparse_upload_tests.rs",
+      "line": 152,
+      "call": "queue.submit([repeated.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/sparse_upload_tests.rs",
+      "line": 204,
+      "call": "queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 222,
+      "call": "window.request_redraw();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "NativeFrameCoordinator host damage/token/visibility/recovery ownership"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 315,
+      "call": "window.request_redraw();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "NativeFrameCoordinator host damage/token/visibility/recovery ownership"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 408,
+      "call": "window.request_redraw();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "NativeFrameCoordinator host damage/token/visibility/recovery ownership"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 520,
+      "call": "window.request_redraw();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "NativeFrameCoordinator host damage/token/visibility/recovery ownership"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/atlas/chunks.rs",
+      "line": 83,
+      "call": "let submission = queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_renderer",
+      "owner": "Upload-only continuation retains references and reports submission through native callback before any acquire"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_probe.rs",
+      "line": 54,
+      "call": "queue.submit(Some(encoder.finish()))",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Clear-only probe returns actual submission to SurfaceTransaction"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs",
+      "line": 89,
+      "call": "queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/atlas/tests.rs",
+      "line": 234,
+      "call": "let submission = queue.submit([]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "line": 69,
+      "call": "hits.present(&mut prepared);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "non_gpu_present_method",
+      "owner": "Presented hit snapshot; not surface presentation"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "line": 74,
+      "call": "hits.present(&mut prepared);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "non_gpu_present_method",
+      "owner": "Presented hit snapshot; not surface presentation"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "line": 83,
+      "call": "hits.present(&mut replacement);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "non_gpu_present_method",
+      "owner": "Presented hit snapshot; not surface presentation"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 276,
+      "call": "surface.configure(device, config);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "SurfaceTransaction lease/configuration/queue admission and submission-before-present"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 340,
+      "call": "surface.get_current_texture()",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "SurfaceTransaction lease/configuration/queue admission and submission-before-present"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 423,
+      "call": "if !self.configure(surface, device, config, health) {",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "SurfaceTransaction lease/configuration/queue admission and submission-before-present"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 504,
+      "call": ".present();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native",
+      "owner": "SurfaceTransaction lease/configuration/queue admission and submission-before-present"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 793,
+      "call": "transaction.submitted(&mut frame, &queue, queue.submit([encoder.finish()]));",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-app/src/native_device_recovery.rs",
+      "line": 542,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "line": 182,
+      "call": "self.surface_transaction.present(frame, &self.window)?;",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native_adapter",
+      "owner": "Main/shared auxiliary renderer delegates to SurfaceTransaction"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "line": 188,
+      "call": "self.presented_hits.present(prepared);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "non_gpu_present_method",
+      "owner": "Presented hit snapshot; not surface presentation"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements_tests.rs",
+      "line": 149,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements_tests.rs",
+      "line": 216,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_graphic_texture.rs",
+      "line": 205,
+      "call": "queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_graphic_texture.rs",
+      "line": 229,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-app/src/native_layers_scroll_tests.rs",
+      "line": 65,
+      "call": "runtime.presented_hits.present(&mut prepared);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-app/src/owned_dialog_pointer_tests.rs",
+      "line": 146,
+      "call": "surface(app, index).window.request_redraw();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 80,
+      "call": "surface.configure(&device, &config);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 123,
+      "call": "window.request_redraw();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 144,
+      "call": "self.surface.configure(&self.device, &self.config);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 152,
+      "call": ".get_current_texture()",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 178,
+      "call": "self.queue.submit([commands]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 182,
+      "call": "frame.present();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 218,
+      "call": "state.window.request_redraw();",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "line": 348,
+      "call": "self.queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "visual_capture",
+      "owner": "Feature-gated capture readback; tracked resource references and bounded admission, but wait_indefinitely plus blocking recv has no completion timeout. Not default native frame scheduling."
+    },
+    {
+      "path": "crates/gui-render/src/render/screen_buffer/tests.rs",
+      "line": 12,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/screen_buffer/tests.rs",
+      "line": 44,
+      "call": "queue.submit([]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/cold_world_upload.rs",
+      "line": 111,
+      "call": "let submission = queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_renderer",
+      "owner": "Upload-only continuation retains references and reports submission through native callback before any acquire"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "line": 610,
+      "call": "let submission = queue.submit(",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_renderer",
+      "owner": "Render Target submission callback; shared retained-reference holds and upload batch before drawing"
+    },
+    {
+      "path": "crates/gui-render/src/render/uniform_buffer_tests.rs",
+      "line": 19,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface.rs",
+      "line": 394,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_upload.rs",
+      "line": 77,
+      "call": "let submission = queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_renderer",
+      "owner": "Upload-only continuation retains references and reports submission through native callback before any acquire"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_buffer.rs",
+      "line": 194,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_overlay.rs",
+      "line": 122,
+      "call": "let submission = queue.submit(",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_renderer",
+      "owner": "Render Target submission callback; shared retained-reference holds and upload batch before drawing"
+    },
+    {
+      "path": "crates/gui-render/src/render/cold_world_upload_tests.rs",
+      "line": 282,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "line": 452,
+      "call": "self.surface_transaction.present(frame, &self.window)?;",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "default_native_adapter",
+      "owner": "Main/shared auxiliary renderer delegates to SurfaceTransaction"
+    },
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "line": 454,
+      "call": ".present(self.prepared.as_mut().expect(\"prepared frame presented\"));",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "non_gpu_present_method",
+      "owner": "Presented hit snapshot; not surface presentation"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+      "line": 406,
+      "call": "renderer.queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+      "line": 473,
+      "call": "host.queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+      "line": 502,
+      "call": "host.queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+      "line": 533,
+      "call": "host.queue.submit([batch.command()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+      "line": 545,
+      "call": "host.queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/world_generation_tests.rs",
+      "line": 68,
+      "call": "let _submission = queue.submit([]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/attachment_cost_probe.rs",
+      "line": 48,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurement_resource_tests.rs",
+      "line": 94,
+      "call": "queue.submit([encoder.finish()]);",
+      "inventory_group": "scheduling_surface_submission",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/upload_tests.rs",
+      "line": 9,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/parity.rs",
+      "line": 325,
+      "call": "let target = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/parity.rs",
+      "line": 338,
+      "call": ".create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/atlas.rs",
+      "line": 386,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "default_texture_not_attachment",
+      "owner": "Atlas page owner with local/process/global reservations and generation lifetime"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_measurement_tests.rs",
+      "line": 57,
+      "call": "let target = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/capture_resource.rs",
+      "line": 31,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "visual_capture",
+      "owner": "CaptureTarget typed reservation and submitted-reference lifetime"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements_tests.rs",
+      "line": 77,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_graphic_texture.rs",
+      "line": 53,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "default_texture_not_attachment",
+      "owner": "Terminal image owner with terminal/global reservation and generation lifetime"
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_graphic_texture.rs",
+      "line": 171,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_terminal_resource_tests.rs",
+      "line": 241,
+      "call": "let target = renderer.device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurement_resource_tests.rs",
+      "line": 58,
+      "call": "let target = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/attachment_cost_probe.rs",
+      "line": 136,
+      "call": "let target = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "explicit_diagnostic",
+      "owner": "Opt-in isolation/probe, not product scheduler or acceptance"
+    },
+    {
+      "path": "crates/gui-render/src/render/cold_world_upload_tests.rs",
+      "line": 45,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/cold_world_upload_tests.rs",
+      "line": 317,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs",
+      "line": 223,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Explicit cfg(test) fixture/helper"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs",
+      "line": 32,
+      "call": "let target = renderer.device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs",
+      "line": 214,
+      "call": "let target = renderer.device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "test_only",
+      "owner": "Test fixture/readback; not default native schedule"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface.rs",
+      "line": 140,
+      "call": "let texture = device.create_texture(&wgpu::TextureDescriptor {",
+      "inventory_group": "texture_creation",
+      "classification": "default_attachment",
+      "owner": "SurfaceAttachments exact key plus GpuReservation and current/retiring generation ownership"
+    }
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "b2d5aedcc458041e1fb26511b71933d308613f1e3b79dd0fc7cad5a67b50c950",
+    "crates/gui-app/src/main.rs": "c2c52785b7d8fbfaad5080d216c9dbfd3a53c031f737a8c6ecd340ba1d3c7875",
+    "crates/gui-app/src/native_device_recovery.rs": "5874e0574c3d6e3015bac4fe96df8f7a7fb0352c6052d12d1e44a3f7c089a9dc",
+    "crates/gui-app/src/native_frame_coordinator.rs": "c58bb07de3b39328b7e423e6ca229471c1866ed5558f5fcbcb03a89f1defffb5",
+    "crates/gui-app/src/native_frame_measurement_tests.rs": "e67f09ca22e65098b1ec81d8dd20ea273b8bd29aeb6790034f8c7aa6775308d6",
+    "crates/gui-app/src/native_frame_probe.rs": "09434f59ddfb6a6712411604a48cf668b99d1ca19c4456d68cce7cd77067b0c4",
+    "crates/gui-app/src/native_layers_scroll_tests.rs": "efabe026b45fa688aba975bed116fe26dfc9b29bd55619113425f96986607436",
+    "crates/gui-app/src/native_resize_repro.rs": "2863a7f291bc8633687b973d8146b8ccb6af7b89b03b5ac5435292b73ce7f831",
+    "crates/gui-app/src/native_surface_transaction.rs": "f053df16d14a1e277b5eb821f4429681e221b636db7c677273f43b2f86476f0f",
+    "crates/gui-app/src/owned_dialog_pointer_tests.rs": "34a2254ca1e65570bf795ff51157b2b6e2ea3b2c1e65a369b196edeca97ebf67",
+    "crates/gui-app/src/presented_hit_regions.rs": "7b48e107880f2ae5e5069e7ccd74c40d586c8e1aa96b3b349667bcc626be7365",
+    "crates/gui-app/src/runtime_present.rs": "1c9ec99e7f498b5c4adecc9a3ea5b5510098b5b9e58ba1ebef772f000aa04842",
+    "crates/gui-render/src/capture_resource.rs": "932117817f426ac5fedff17612b4d3374df1716f594868a86b13df68c6fbff80",
+    "crates/gui-render/src/render/attachment_cost_probe.rs": "80654c8e93c27874888599c1b843e34d61b9bd6214e812ac908df4cf63126b81",
+    "crates/gui-render/src/render/cold_world_upload.rs": "421d62956845ed47e53f4a847ed2db9509a086433220225d109b7a2dc89e47c2",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "d3ab0f7cf538411efdf4fa263afec3a6f7c36eee6fcb4715618398b961d81f31",
+    "crates/gui-render/src/render/gpu_frame.rs": "8f6e29f1d6de9b45bc2994e46d997b4b4727ad674065571f0be598968dbfdc8d",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "02417d2f15dc2e6c880afeb40af465a6c488568e61033021b3f3a2d88527bfe6",
+    "crates/gui-render/src/render/gpu_measurement_resource_tests.rs": "1b8d70388ec5e9d80d4c5a373c3624e1bb35f8baf1a53e82bfa51005cc1082db",
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": "d77e347444e7b7dc2df185876312d182defd09c12265ebb97f09eaf47b2d322d",
+    "crates/gui-render/src/render/gpu_overlay.rs": "8e491960cec7392a62b5ff6915a1c0d84f7a80d4520744aab65d1e086588bf4e",
+    "crates/gui-render/src/render/gpu_surface.rs": "ca6a0792d95d3608790a921b0f8e78f93564b11db2d2cab8dc7d187abb6dcbf0",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "e2be540de00b5fa684d4b0bde142b39660194939e65dbefcc1726813b247969e",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "c5142b415aa9a31551cd3db4851566607053f6b905f9f6bfb44aae9246bb8e94",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "4968b11edcb991e341929f4165346a7bc99b006f98b1c0d65082aed9fcae1ed5",
+    "crates/gui-render/src/render/retained_buffer.rs": "fde56f570a770eb9aae83932426cfa75b892ec22d7fd93da75725a8668d6e01a",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "6eefe39a9176f16a2ced8a52e57322a0d09b75c2ba18b934bfb93f618a91182e",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "107f8ecde7b0359d36f4b862fabf3be237f1ed62bc98b7bfbd5483852d60b58c",
+    "crates/gui-render/src/render/terminal_upload.rs": "4515b8baeb2ffe2e819e7d1e1b208ae012c89f86c510fdd557e9902052b4426c",
+    "crates/gui-render/src/render/uniform_buffer_tests.rs": "0d66ae069273c7052867c3ebcc2829a1ff6a5e1915587d7ee63a7dca904f115e",
+    "crates/gui-render/src/render/world_generation_tests.rs": "24574772c57c1623a3c495e116192fab8e391ec9269c7ffbf090e753bd64e38a",
+    "crates/gui-render/src/text_gpu/atlas.rs": "28ca596935869a415e3f9ec228953f297533a14292ba45a299c53276466263ae",
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": "f82ceac89578d697d41a12f16898d0ce7680c75b645151ac36ff8127ec1fe7f9",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs": "8c3e3ceaefae3cf129bb9c562502a884bee4ae76fdc1f1561856b78e14abd496",
+    "crates/gui-render/src/text_gpu/atlas/tests.rs": "45418866f8934bbb6651baaff8dfa0ca91bbf47d0adfd92c63223c86f0c1f503",
+    "crates/gui-render/src/text_gpu/parity.rs": "fcf6ea40ee5d89dbbdae58711d917c98105545ebb182c92ecec9405f357b784a",
+    "crates/gui-render/src/text_gpu/sparse_upload_tests.rs": "66aaac4534e741d3a11476c716dda1f32ad9b75f8a19e6fdaef6a03fa822ee38",
+    "crates/gui-render/src/text_gpu/upload.rs": "25d613256b24d2ce6ae76fbd647d94ad531de499e3a3e27680f1b3a5662f0e74",
+    "crates/gui-render/src/text_gpu/upload_tests.rs": "44c3e0839ee16a317dcb4fe042d780cbd67bfd6709393b7003bc93b2a13f185f",
+    "crates/gui-render/src/visual_capture.rs": "ea89d547e861bda1e4a4ec605683c90da9756efdf7c23067581bf8459169de78"
+  },
+  "consumers": [
+    {
+      "id": "MAIN",
+      "native_host": "MAIN",
+      "profile": "NativeFrameCoordinator + shared layout",
+      "adapters": [
+        "crates/gui-app/src/main.rs",
+        "crates/gui-app/src/app_shell.rs",
+        "crates/gui-app/src/runtime_primary_pointer.rs",
+        "crates/gui-render/src/render/shell_layout.rs"
+      ]
+    },
+    {
+      "id": "BOARD",
+      "native_host": "MAIN",
+      "profile": "EditorViewport + retained world",
+      "adapters": [
+        "crates/gui-app/src/runtime_camera_pane.rs",
+        "crates/gui-app/src/pane_cameras.rs"
+      ]
+    },
+    {
+      "id": "SCHEMATIC",
+      "native_host": "MAIN",
+      "profile": "EditorViewport + retained world",
+      "adapters": [
+        "crates/gui-app/src/runtime_camera_pane.rs",
+        "crates/gui-app/src/pane_cameras.rs"
+      ]
+    },
+    {
+      "id": "REVISION",
+      "native_host": "MAIN",
+      "profile": "shared screen/control profile",
+      "adapters": [
+        "crates/gui-app/src/runtime_revision_workspace.rs"
+      ]
+    },
+    {
+      "id": "GLOBAL",
+      "native_host": "GLOBAL",
+      "profile": "dialog-only Renderer + ScrollViewport",
+      "adapters": [
+        "crates/gui-app/src/global_preferences_window.rs"
+      ]
+    },
+    {
+      "id": "PROJECT",
+      "native_host": "PROJECT",
+      "profile": "dialog-only Renderer + ScrollViewport",
+      "adapters": [
+        "crates/gui-app/src/project_preferences_window.rs"
+      ]
+    },
+    {
+      "id": "NEW",
+      "native_host": "NEW",
+      "profile": "dialog-only Renderer + form profile",
+      "adapters": [
+        "crates/gui-app/src/new_project_window.rs"
+      ]
+    },
+    {
+      "id": "LAYERS",
+      "native_host": "MAIN",
+      "profile": "shared clip/conversion + discrete row adapter",
+      "adapters": [
+        "crates/gui-app/src/runtime_revision_workspace.rs",
+        "crates/gui-render/src/side_panels/project_layout.rs",
+        "crates/gui-render/src/side_panels/filters_layout.rs",
+        "crates/gui-render/src/render/shell_layout/cache.rs"
+      ]
+    },
+    {
+      "id": "NAV",
+      "native_host": "MAIN",
+      "profile": "shared shell/control profile",
+      "adapters": [
+        "crates/gui-app/src/runtime_primary_pointer.rs",
+        "crates/gui-render/src/side_panels/project_layout.rs"
+      ]
+    },
+    {
+      "id": "INSPECTOR",
+      "native_host": "MAIN",
+      "profile": "shared control/ScrollViewport when scrolling",
+      "adapters": [
+        "crates/gui-app/src/runtime_primary_pointer.rs",
+        "crates/gui-render/src/side_panels/inspector_layout.rs"
+      ]
+    },
+    {
+      "id": "MENU",
+      "native_host": "MAIN",
+      "profile": "retained menu inventory + overlay",
+      "adapters": [
+        "crates/gui-app/src/runtime_menu_actions.rs"
+      ]
+    },
+    {
+      "id": "CONSOLE",
+      "native_host": "MAIN",
+      "profile": "shared screen/overlay",
+      "adapters": [
+        "crates/gui-app/src/production_status_refresh.rs"
+      ]
+    },
+    {
+      "id": "TERMINAL",
+      "native_host": "MAIN",
+      "profile": "TerminalCore row adapter + shared host",
+      "adapters": [
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-app/src/runtime_terminal_geometry.rs"
+      ]
+    },
+    {
+      "id": "TERM_OVERLAY",
+      "native_host": "MAIN",
+      "profile": "terminal overlay + shared clip/resource owner",
+      "adapters": [
+        "crates/gui-app/src/runtime_terminal_render.rs"
+      ]
+    }
+  ],
+  "close_owners": {
+    "MAIN": "app_native_events.rs CloseRequested -> App::request_controlled_close -> owned terminal shutdown -> exit; SurfaceTransaction::drop closes queue registration",
+    "GLOBAL": "global_preferences_window.rs CloseRequested/Destroyed -> shared host unregister/drop",
+    "PROJECT": "project_preferences_window.rs CloseRequested/Destroyed -> shared host unregister/drop",
+    "NEW": "new_project_window.rs CloseRequested/Destroyed -> shared host unregister/drop"
+  },
+  "reused_evidence": {
+    "docs/reviews/gui-performance/implementation/S1/readiness/result.json": "a92fc91e6ff3771d7f1f969099cbb9b3ee62d8cd8851257641c22af2670d4d4b",
+    "docs/reviews/gui-performance/implementation/S1/submission-boundary/validation.json": "bdd233542c553c509afa91458c737fe44f1c40375bc752e9b2886880b6617010",
+    "docs/reviews/gui-performance/implementation/S1/LF-02/result.json": "66e338d0c3f3197ea8a02fa73d187a092b387bab0113c99d84cd2b573aa22d31",
+    "docs/reviews/gui-performance/implementation/S1/queue-admission/queue-receipts.json": "f850191455f3367f95c59f889b1b7f28d761c632e9d1b37e4ecc509d274a5cfb",
+    "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/result.json": "898f54648df13bace5b521787e71257180e5cd254f7d62b25c781513c7d53c2f",
+    "docs/reviews/gui-performance/implementation/S1/pending-queue-close/result.json": "c3bfafdadcc9fa41d0b125c795499fc8cca796bfb884499c8a44c2420b3a340f",
+    "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json": "473e633dd574abec0ff269e80fbf6cea3dde4cce5994c03b30265361d11e0545",
+    "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json": "44fa24add7f26a7650a92ac55a006eebd29f627e461c5ff1a6c7b5350806bd43",
+    "docs/reviews/gui-performance/implementation/S4/upload-frames/result.json": "ce2822a06e52553fa101d254c9f8ad396b48bbc71657bee54220e3b509b09e9d",
+    "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f"
+  },
+  "s1_source_continuity": {
+    "crates/gui-app/src/native_frame_coordinator.rs": {
+      "previous_sha256": "a7ec38840b10291286442d71948373c5bbeca90c7a0b97626c5cbbc067e91140",
+      "current_sha256": "c58bb07de3b39328b7e423e6ca229471c1866ed5558f5fcbcb03a89f1defffb5",
+      "unchanged": false
+    },
+    "crates/gui-app/src/native_frame_adapters.rs": {
+      "previous_sha256": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+      "current_sha256": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+      "unchanged": true
+    },
+    "crates/gui-app/src/app_native_events.rs": {
+      "previous_sha256": "bdd4aa0e03a267d3783419fc7ce8a5edcf30f757456bf6b58c2574a9fc0fb8cc",
+      "current_sha256": "4a674d84df4100e1c9d783a37a5307e0682184d78771844325bad25a7b9ee321",
+      "unchanged": false
+    },
+    "crates/gui-app/src/native_surface_transaction.rs": {
+      "previous_sha256": "0b9decfa54a726dee6203d3b1bebfd7b96227311ede2d4137e61655eb75f93a1",
+      "current_sha256": "f053df16d14a1e277b5eb821f4429681e221b636db7c677273f43b2f86476f0f",
+      "unchanged": false
+    },
+    "crates/gui-app/src/native_queue_owner.rs": {
+      "previous_sha256": "9376a698f4726d89a72a046adc60decc61ad503c8c1beca1d964ce948a6e0f8b",
+      "current_sha256": "9376a698f4726d89a72a046adc60decc61ad503c8c1beca1d964ce948a6e0f8b",
+      "unchanged": true
+    },
+    "crates/gui-app/src/native_attachment_ledger.rs": {
+      "previous_sha256": "99eb8910a722c705d75a21c53aedc66ba85e9127ca7f12049db816cffa1999ea",
+      "current_sha256": "99eb8910a722c705d75a21c53aedc66ba85e9127ca7f12049db816cffa1999ea",
+      "unchanged": true
+    },
+    "crates/gui-app/src/native_device_recovery.rs": {
+      "previous_sha256": "b689472f68908a56265786988cef87ac6d62ec2b493eb4f7880f1048a22f2eb1",
+      "current_sha256": "5874e0574c3d6e3015bac4fe96df8f7a7fb0352c6052d12d1e44a3f7c089a9dc",
+      "unchanged": false
+    },
+    "crates/gui-app/src/runtime_init.rs": {
+      "previous_sha256": "78f073042648030284a784a9cde059461f3d1ccb59dff092d3677df3dbf86956",
+      "current_sha256": "dc915dd824dc65d4618fada1dd063cae9aea0dc6d5618c91093786b41662faeb",
+      "unchanged": false
+    },
+    "crates/gui-app/src/runtime_state.rs": {
+      "previous_sha256": "4aecf5b5d39c7822c332eb8585852884cee701501ab769005c8acff23d06bf54",
+      "current_sha256": "91ed35eb3e2857e8b20acc59b5e39b39a3cf11f58f11ba220526cfab893d672f",
+      "unchanged": false
+    },
+    "crates/gui-app/src/runtime_present.rs": {
+      "previous_sha256": "70440a93f8664d52144a117ad2b313ad75e3f1cc4dfb3e56c5b0c88d14cbf537",
+      "current_sha256": "1c9ec99e7f498b5c4adecc9a3ea5b5510098b5b9e58ba1ebef772f000aa04842",
+      "unchanged": false
+    },
+    "crates/gui-app/src/global_preferences_window.rs": {
+      "previous_sha256": "8ac28b8ec25bd6e363d4c79f6fc01bdff4d9f2ddf44e88585f31d8eb87ee34d2",
+      "current_sha256": "b2d5aedcc458041e1fb26511b71933d308613f1e3b79dd0fc7cad5a67b50c950",
+      "unchanged": false
+    },
+    "crates/gui-app/src/project_preferences_window.rs": {
+      "previous_sha256": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472",
+      "current_sha256": "3657f681916088e55e83eda27986ea58594702aac4bc6a60fbfd6b2c6020c97d",
+      "unchanged": false
+    },
+    "crates/gui-app/src/new_project_window.rs": {
+      "previous_sha256": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8",
+      "current_sha256": "6ba218159b83a5a182932f8b135a3743c3249c8ce03c880b075ebf6398c9c039",
+      "unchanged": false
+    },
+    "crates/gui-app/src/app_shell.rs": {
+      "previous_sha256": "3553d33394f5858191823cc081e105a94ff4cf7ec59b8556e17b9f95bea2506c",
+      "current_sha256": "cc3b2e5ef0d09346e30b09dfec8d744bb17b07d008f92a8cd86bad0f19098a5d",
+      "unchanged": false
+    },
+    "crates/gui-render/src/render/gpu_frame.rs": {
+      "previous_sha256": "75fbaa6c9d8009a6cbc4b3e2a24babfe1e76e558d25ba9f8d303c900746907a6",
+      "current_sha256": "8f6e29f1d6de9b45bc2994e46d997b4b4727ad674065571f0be598968dbfdc8d",
+      "unchanged": false
+    },
+    "crates/gui-render/src/render/gpu_overlay.rs": {
+      "previous_sha256": "3f4caa0fd7bdcbd08d3a6c2906dfe0ec389279c665e0a2b5d481676c824e68be",
+      "current_sha256": "8e491960cec7392a62b5ff6915a1c0d84f7a80d4520744aab65d1e086588bf4e",
+      "unchanged": false
+    },
+    "crates/gui-render/src/render/gpu_surface.rs": {
+      "previous_sha256": "09815785479ddfdbdee24ef23e9b1ba72ba3574d8fb59e7c1b954255834a5f7f",
+      "current_sha256": "ca6a0792d95d3608790a921b0f8e78f93564b11db2d2cab8dc7d187abb6dcbf0",
+      "unchanged": false
+    }
+  },
+  "review": "Distinct reviewer inspected native host owner paths and existing proof; no competing default native scheduler/lifecycle path found. Execution owner inspected renderer submissions, continuation callbacks and allocation ownership. No new runtime execution. Final artifact review verified81call references,40source hashes and10evidence hashes; corrected Main visual readback wording to distinguish bounded admission from unbounded completion wait.",
+  "remaining": [
+    "Specific END-03 negative demonstrating detection/rejection of a consumer on a competing private path is not established by existing coalescing/queue negatives.",
+    "Auxiliary pending-queue-close evidence has zero own submissions; it does not prove callback-after-own-submit close or the prescribed strong-host-capture negative. Preserve that gap.",
+    "Changed source files are not byte-identical to S1; later production and native evidence support bounded continuity, not automatic transfer of every assertion.",
+    "END-04 future-consumer registration and private-scheduler negative remain distinct and unqualified.",
+    "Original per-consumer full input/backend/scale/resource/fault and final independent native replay requirements remain; no S5 closure."
+  ],
+  "decision": "Credit existing shared-owner adoption and source inventory; do not rerun completed S1-S4 suites. Consolidate only genuine missing controls into final qualification work.",
+  "new_builds": 0,
+  "new_native_runs": 0,
+  "preserved": "GEFN, Vulkan upload-before-acquire, dependency/license authority, prototype lane, caps and nonblocking resize exclusions unchanged."
+}
