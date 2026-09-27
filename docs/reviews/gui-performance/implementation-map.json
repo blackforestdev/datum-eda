@@ -38475,7 +38475,13 @@
     "status": "Prepared inputs; final replay not ready; no acceptance change",
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/packet.json",
-    "candidate_build_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/release-4d645582/result.json"
+    "candidate_build_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/release-4d645582/result.json",
+    "driver_memory_method": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json",
+      "sha256": "9df833512cec0bb5f19291fdf0e47b7b34c946d5551694a01786a05cf0ed473f",
+      "status": "Offline method controls passed; no native resource acceptance",
+      "qualification_pass": false
+    }
   },
   "s5_endurance_open_timeout": {
     "status": "Incomplete producer endurance failed after39completed timed cycles per auxiliary host; unexpected native input/focus and forced cleanup retained",
