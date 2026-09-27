@@ -15,6 +15,10 @@ import time
 import uuid
 
 import drm_clients
+import endurance_recovery
+
+SCHEDULE = endurance_recovery.schedule()
+SLOT_SECONDS = 3600 / len(SCHEDULE)
 
 ROOT = Path(os.environ.get('PM045_REPLAY_ROOT', subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip()))
 TOOLS = ROOT / 'docs/reviews/gui-performance/implementation/S5/resource-snapshots/tools'
@@ -68,18 +72,19 @@ report = {
     'candidate_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
     'binary_sha256': EXPECTED, 'engine_sha256': sha(ENGINE),
     'normalized_model_sha256': model_hash, 'source_sha256': source, 'driver_sha256': sha(__file__), 'drm_collector_sha256': sha(drm_clients.__file__),
+    'recovery_helper_sha256': sha(endurance_recovery.__file__), 'schedule': SCHEDULE,
     'fixture_file_sha256': fixture_hashes,
     'fixture_generated_runtime_exclusions': ['.datum/gui-terminal-context.json', '.datum/tool-sessions/', '.datum/terminal-contexts/'], 'pinned_asset_sha256': asset_hashes,
-    'declaration': 'One X11/1x F-DOA sustained run; separately recorded first-use for each auxiliary host, then300s warmup, then600 cycles starting every6s for3600s, round-robin GLOBAL/PROJECT/NEW (200 each). No replacements after failure. Native pixel/focus/closure oracle each cycle. Group CPU and process RSS throughout; existing resource/private/GPU observations retained. No fault injection in this run.',
+    'declaration': 'One X11/1x F-DOA sustained run; separately recorded first-use for each auxiliary host, then300s warmup, then270 window cycles and20 numbered recoveries interleaved in290 fixed slots over3600s. Window hosts round-robin GLOBAL/PROJECT/NEW (90 each); recovery interaction hosts MAIN/GLOBAL/PROJECT/NEW (5 each). No replacements after failure. Native pixel/focus/closure oracle each cycle. Group CPU and process RSS throughout; existing resource/private/GPU observations retained. Existing backend device.destroy request protocol with5s settle and exact before/after pixels; request-to-observation time is not calibrated recovery latency.',
     'limits': [
         'Diagnostics-on structural/resource endurance only; no diagnostics-off numerical CPU/GPU or observer-overhead acceptance.',
         'Sampled overlapping ownership views and reservation peaks do not establish full instantaneous memory or driver residency.',
-        'No injected recovery, other backend/scale, mixed terminal workload, resolved schematic, independent replay or owner UX acceptance.',
+        'No other backend/scale, simultaneous-four-host recovery, mixed terminal workload, resolved schematic, independent replay or owner UX acceptance.',
         'Exact X11 window readback is static readiness, not calibrated physical presentation.',
         'Cgroup counts include exiting descendants, but sampled process identities do not establish exhaustive short-lived process identity.',
         'Driver memory endpoints are sequential samples at readiness, before close and drained-device-live. They do not cover startup/earlier client exits, lifecycle epochs, instantaneous peaks or observer overhead; no endpoint can establish ACC-03 lifetime completeness.'
     ],
-    'cycles': [], 'first_use_cycles': [], 'samples': []
+    'cycles': [], 'first_use_cycles': [], 'samples': [], 'recoveries': []
 }
 def save():
     pending = OUT/'result.pending.json'
@@ -107,6 +112,8 @@ for key in ('WAYLAND_DISPLAY', 'LD_AUDIT', 'PM045_X11_AUDIT_PATH', 'DATUM_ACTION
     env.pop(key, None)
 env.update(WINIT_UNIX_BACKEND='x11', WINIT_X11_SCALE_FACTOR='1',
     XDG_CONFIG_HOME=str(OUT/'config'), XDG_CACHE_HOME=str(OUT/'cache'),
+    DATUM_DIAGNOSTIC_DEVICE_LOSS='requests',
+    DATUM_DIAGNOSTIC_DEVICE_LOSS_REQUEST=str(OUT/'loss-request.txt'),
     DATUM_GUI_LOG=str(log), DATUM_GUI_VERBOSE_LOG='1', DATUM_GPU_MEASUREMENTS='0',
     EDA_CLI_BIN=str(ENGINE),
     DATUM_RESOURCE_TRACE=str(OUT/'resources.jsonl'), DATUM_RESOURCE_TRACE_INTERVAL_MS='1000',
@@ -194,6 +201,9 @@ def pixels(wid, host, index):
         subprocess.run(['import', '-window', str(wid), str(path)], check=True, timeout=10)
         result = subprocess.run(['compare', '-metric', 'AE', str(reference), str(path), 'null:'], capture_output=True, text=True, timeout=10)
         attempts.append({'path': path.name, 'ae': result.stderr, 'returncode': result.returncode, 'ns': time.monotonic_ns()})
+        if result.returncode not in (0, 1):
+            report['failed_pixel_attempts'] = attempts
+            raise RuntimeError(('pixel comparison infrastructure error', result.returncode, result.stderr))
         if result.returncode == 0:
             return attempts
         time.sleep(.025)
@@ -203,9 +213,15 @@ def pixels(wid, host, index):
 def cycle(host, index, due, first_use=False):
     assert int(xd('getwindowfocus')) == main
     row = {'host': host, 'index': index, 'scheduled_ns': int(due*1e9), 'begin_sample': sample('cycle-start')}
+    completed_recoveries = sum(bool(item.get('completed')) for item in report['recoveries'])
+    row['completed_recoveries_before'] = completed_recoveries
+    row['first_host_open_after_recovery'] = bool(completed_recoveries) and not any(
+        item['host'] == host and item.get('completed_recoveries_before') == completed_recoveries
+        for item in report['cycles'])
     report['first_use_cycles' if first_use else 'cycles'].append(row)
     save()
-    xd('mousemove', '--window', main, 148 if host!='NEW' else 110, 16, 'click', 1)
+    endurance_recovery.move_and_ack(sys.modules[__name__], main, 148 if host!='NEW' else 110, 16)
+    xd('click', 1)
     if host!='NEW':
         xd('key', '--delay', 20, 'Up', 'Right', *(['Down'] if host=='PROJECT' else []))
     time.sleep(.15)
@@ -226,7 +242,7 @@ def cycle(host, index, due, first_use=False):
     row['focus_restored'] = True
     row['completed'] = True
     row['finished_ns'] = time.monotonic_ns()
-    assert time.monotonic() < due+(30 if first_use else 6), ('cycle overran next scheduled cycle', index)
+    assert time.monotonic() < due+(30 if first_use else SLOT_SECONDS), ('cycle overran next scheduled cycle', index)
     save()
 
 try:
@@ -268,12 +284,18 @@ try:
     wait_to(time.monotonic()+300, 'warmup')
     start = time.monotonic()
     report['workload_start_ns'] = int(start*1e9)
-    for index in range(600):
-        due = start + index*6
-        wait_to(due, 'between-cycles')
-        cycle(('GLOBAL', 'PROJECT', 'NEW')[index%3], index, due)
-        if index%10 == 9:
-            print(f'{index+1}/600 cycles complete; elapsed={time.monotonic()-start:.1f}s', flush=True)
+    for slot, (offset, kind, host, sequence) in enumerate(SCHEDULE):
+        due = start + offset
+        wait_to(due, 'between-events')
+        if kind == 'window':
+            cycle(host, sequence, due)
+        else:
+            endurance_recovery.recovery(sys.modules[__name__], host, sequence)
+        assert time.monotonic() < due + SLOT_SECONDS, ('event overran fixed slot', slot, kind)
+        if slot % 10 == 9:
+            print(f'{slot+1}/{len(SCHEDULE)} scheduled events complete', flush=True)
+    assert len(report['cycles']) == 270 and all(r['completed'] for r in report['cycles'])
+    assert len(report['recoveries']) == 20 and all(r['completed'] for r in report['recoveries'])
     wait_to(start+3600, 'final-interval')
     report['workload_end_ns'] = time.monotonic_ns()
     wait_to(time.monotonic()+5, 'idle-tail')
@@ -332,12 +354,16 @@ finally:
             report['remaining_before_cleanup'] = remaining
             preserve()
             if remaining:
+                report['forced_descendant_cleanup'] = True
+                preserve()
                 (group/'cgroup.kill').write_text('1')
                 time.sleep(.5)
             report['group_after_cleanup'] = {'begin_ns': time.monotonic_ns(), 'counts': group_counts(), 'end_ns': time.monotonic_ns()}
             preserve()
-            if not (group/'cgroup.procs').read_text().strip():
-                group.rmdir()
+            report['remaining_after_cleanup'] = (group/'cgroup.procs').read_text().strip()
+            preserve()
+            assert not report['remaining_after_cleanup'], 'descendants survived cleanup'
+            group.rmdir()
     cleanup('close-group', close_group)
     if stream:
         cleanup('close-stream', stream.close)
@@ -364,10 +390,13 @@ finally:
         final_model.pop('uuid', None)
         report['normalized_model_sha256_final'] = hashlib.sha256(json.dumps(final_model, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
         report['pinned_assets_unchanged'] = all(sha(assets/name) == digest for name, digest in asset_hashes.items())
+        report['recovery_helper_unchanged'] = sha(endurance_recovery.__file__) == report['recovery_helper_sha256']
+        assert report['recovery_helper_unchanged']
         report['production_source_unchanged'] = all(sha(ROOT/path) == digest for path, digest in source.items())
         assert report['binary_unchanged'] and report['engine_unchanged'] and report['fixture_unchanged'] and report['pinned_assets_unchanged'] and report['production_source_unchanged']
         assert report['normalized_model_sha256_final'] == model_hash
     cleanup('verify-artifacts', verify_artifacts)
     preserve()
-if report.get('error') or report.get('cleanup_errors') or report.get('persistence_errors'):
+if any(report.get(key) for key in ('error', 'cleanup_errors', 'persistence_errors',
+        'forced_cleanup', 'forced_descendant_cleanup', 'remaining_before_cleanup', 'remaining_after_cleanup')):
     raise SystemExit(1)
