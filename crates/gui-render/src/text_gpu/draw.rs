@@ -99,9 +99,32 @@ impl Draw {
             multiview_mask: None,
             cache: None,
         });
+        Self::with_pipeline(pipeline, screen_budget, super::budget::Budget::new(2))
+    }
+
+    // A second batch owner for the same renderer/atlas needs separate instances,
+    // uploads and generation allowance, but the immutable pipeline is identical.
+    // On recovery clone only the newly created owner's pipeline, never the old
+    // device's pipeline; preserve the previous batch's retirement allowance.
+    pub fn new_batch_owner(&self, previous: Option<&Self>) -> Self {
+        Self::with_pipeline(
+            self.pipeline.clone(),
+            self.screen_budget.clone(),
+            previous.map_or_else(
+                || super::budget::Budget::new(2),
+                |old| old.generation_budget.clone(),
+            ),
+        )
+    }
+
+    fn with_pipeline(
+        pipeline: wgpu::RenderPipeline,
+        screen_budget: std::sync::Arc<super::budget::Budget>,
+        generation_budget: std::sync::Arc<super::budget::Budget>,
+    ) -> Self {
         Self {
             screen_budget,
-            generation_budget: super::budget::Budget::new(2),
+            generation_budget,
             pipeline,
             instances: None,
             batches: Default::default(),

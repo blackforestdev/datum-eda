@@ -38543,6 +38543,11 @@
           "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/result.json",
           "evidence_sha256": "eac8b8e7f288010cc5aa318ab484fd1764739b8a30a354608acd183d3244cbbb",
           "result": "One existing terminal resource test extended and passed after lazy terminal pipeline change; not a rerun of the33-test group."
+        },
+        "shared_pipeline_followup": {
+          "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/shared-glyph-result.json",
+          "evidence_sha256": "bea72e65fe1d7bcf831916df5b016496b5275dc6bdcc14c98ab03879f428bc64",
+          "result": "One existing layered-text GPU test extended and passed for shared-versus-independent pipelines and same-device replacement; no repeat of the33-test group."
         }
       },
       {
@@ -39177,6 +39182,11 @@
   "s5_lazy_terminal_pipeline": {
     "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/result.json",
     "status": "Unused terminal image shader/pipeline initialization removed from cold renderers; focused correctness passes. S5 remains open.",
-    "limits": "First-image cost moves to first use; no native numerical acceptance. Existing correctness evidence retained; one affected GPU test run, no broad rerun."
+    "limits": "First-image cost moves to first use; no native numerical acceptance. Existing correctness evidence retained; one affected GPU test run, no broad rerun.",
+    "shared_glyph_pipeline": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/shared-glyph-result.json",
+      "status": "One immutable glyph pipeline per renderer replaces duplicate workspace/menu compilation; batch buffers and retirement allowances remain independent. Affected GPU pixel/retry/reindex/replacement test passes; native CPU benefit unmeasured.",
+      "candidate": "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/startup-candidate.json"
+    }
   }
 }

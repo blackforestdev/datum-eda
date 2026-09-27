@@ -21,7 +21,7 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Application unit regression suite** — 400passed;17ignored;0failed. [Evidence](native-owner-focus/verification.json)
   Scope: Completed application suite on focus-fix candidate; ignored tests not counted.
 - [x] **Serial GPU regression group** — 33serial GPU tests pass. [Evidence](resource-snapshots/result.json)
-  Scope: Named existing group; this does not erase separately tracked concurrent-GPU failure. [Affected follow-up](lazy-terminal-pipeline/result.json): one terminal-image GPU test passes after deferring unused pipeline compilation; empty/first-use/reuse/same-device replacement checked. Native CPU benefit remains unmeasured.
+  Scope: Named existing group; this does not erase separately tracked concurrent-GPU failure. [Affected follow-up](lazy-terminal-pipeline/result.json): one terminal-image GPU test passes after deferring unused pipeline compilation; empty/first-use/reuse/same-device replacement checked. Native CPU benefit remains unmeasured. [Shared glyph follow-up](lazy-terminal-pipeline/shared-glyph-result.json): layered workspace/menu pixels match independent pipelines; cache retry/reindex and same-device replacement pass in one affected test.
 - [x] **Missing-final-resolve negative and restored positive** — Injected missing resolve fails pixel oracle; restored candidate passes1/1. [Evidence](final-msaa-resolve/result.json)
   Scope: Final-stage ordering/resolve sensitivity, unchanged8xquality; not absoluteGPU budget.
 - [x] **Native menu output regression** — Six normal runs;60menu cycles; exact baseline pixel matches. [Evidence](final-msaa-resolve/result.json)

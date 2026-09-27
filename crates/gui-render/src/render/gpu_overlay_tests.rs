@@ -419,6 +419,29 @@ fn shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs() {
         [0.05; 3],
     )]);
     let cold = capture(&mut renderer, &prepared);
+    // Compare the shared immutable pipeline against the former independent
+    // pipeline construction while both workspace and overlay batches are live.
+    let mut separate = hardware_renderer(960, 720);
+    separate.renderer.menu_overlay_text_renderer = crate::text_gpu::Draw::new(
+        &separate.device,
+        &separate.renderer.atlas,
+        OUTPUT_FORMAT,
+        separate.renderer.msaa_samples,
+        separate.renderer.screen_budget.clone(),
+    );
+    assert!(cold == capture(&mut separate, &prepared));
+    drop(separate);
+    renderer.renderer = renderer
+        .renderer
+        .recreate_for_device(
+            &renderer.device,
+            &renderer.queue,
+            OUTPUT_FORMAT,
+            renderer.renderer.msaa_samples,
+        )
+        .unwrap();
+    assert!(cold == capture(&mut renderer, &prepared));
+
     let count = renderer.renderer.text_preparation.workspace_prepares;
     assert!(cold == capture(&mut renderer, &prepared));
     assert_eq!(
