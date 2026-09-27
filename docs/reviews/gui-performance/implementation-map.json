@@ -39147,15 +39147,55 @@
         "validated_result": "7focused tests passed, including two exact-GPU cases and observer negative control; application check passed. Initial compile failure preserved.",
         "scope": "Historical correctness proof on500387c1; implementation retired after failed native performance. Not proof of current default performance.",
         "carry_forward": "Keep the seven scoped passes and failed six-trial assessment. Do not resurrect or retest this unchanged rejected candidate."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Merged-pass GPU correctness and accounting controls",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pass-consolidation/result.json",
+        "evidence_sha256": "fb2e54691c4c5f1aae58e786f4d530e0502146fa56fa8c207a806862ee79761d",
+        "validated_result": "35 passed initially; omitted retained-grid assertion corrected and the one affected test passed. Source review and renderer check passed.",
+        "scope": "Candidate4eaa0087; exercised GPU layers/resources/timestamps. Not full native or numerical acceptance.",
+        "carry_forward": "Reuse recorded bounded proof across handoffs. Rerun only for an affected change, demonstrated method defect or explicitly required independent replay."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Merged-pass native output and clean shutdown",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json",
+        "evidence_sha256": "5b467fda9936895a3a9903b5cb990427037b76ba266a3ef1109138cbd3c8eeb2",
+        "validated_result": "Six fixed native runs: exact reference pixels, stable pins, normal exits and clean display/process restoration.",
+        "scope": "Candidate4eaa0087 X11/1x. All three quiet CPU and all three GPU p95/p99 trials failed; only output/lifecycle correctness is done.",
+        "carry_forward": "Reuse recorded bounded proof across handoffs. Rerun only for an affected change, demonstrated method defect or explicitly required independent replay."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Retained triangle compaction bounded correctness",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/triangle-compaction/result.json",
+        "evidence_sha256": "b9ba906d6717f03d5959ef9ea27526670d6fdb40d5fe5e06aa58e810a67ba0ec",
+        "validated_result": "One allocation/range/refusal unit and one exact GPU parity test passed at8xAA/scales1and1.5, with warm reuse and missing-triangle negative.",
+        "scope": "Candidate9f16eb69. Board GPU fixture and shared converter; no full schematic/native or performance acceptance.",
+        "carry_forward": "Reuse recorded bounded proof across handoffs. Rerun only for an affected change, demonstrated method defect or explicitly required independent replay."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "DRM missing-device identity controls",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json",
+        "evidence_sha256": "b1dba17ee286eb965928bf76dd9c8c13abe26f40a101338e3bafa0638a8de40d",
+        "validated_result": "Four offline controls passed; missing/empty devices remain unidentified rather than falsely merged.",
+        "scope": "Candidate2d57a230 collector. Endpoint parser/grouping only; client lifecycle, drain and observer overhead remain unqualified.",
+        "carry_forward": "Reuse recorded bounded proof across handoffs. Rerun only for an affected change, demonstrated method defect or explicitly required independent replay."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 42,
-      "evidence_hashes_checked": 42,
-      "matching_hashes": 42,
+      "completed_groups": 46,
+      "evidence_hashes_checked": 46,
+      "matching_hashes": 46,
       "native_runs_performed": 0,
-      "meaning": "Existing bounded passes carried forward by evidence hashes. New renderer GPU controls do not close S5 or replace native qualification."
+      "meaning": "Existing evidence files inspected and hashes reconciled; no tests/builds/native runs repeated. Done groups preserve individual scope, failures and S5 acceptance gaps."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",

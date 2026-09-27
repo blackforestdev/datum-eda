@@ -98,6 +98,11 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 
 - [x] **Unchanged per-pane grid geometry reuse** — 5 renderer and17 viewport grid-filter tests plus application check passed. Admitted cache preserves output, invalidates exact dependencies and releases refused/empty storage. No native performance-cap claim. [Evidence](grid-reuse/result.json)
 
+- [x] **Merged-pass GPU correctness and accounting controls** — 35 passed initially; omitted retained-grid assertion corrected and the one affected test passed. Source review and renderer check passed. Candidate4eaa0087; exercised GPU layers/resources/timestamps. Not full native or numerical acceptance. [Evidence](pass-consolidation/result.json)
+- [x] **Merged-pass native output and clean shutdown** — Six fixed native runs: exact reference pixels, stable pins, normal exits and clean display/process restoration. Candidate4eaa0087 X11/1x. All three quiet CPU and all three GPU p95/p99 trials failed; only output/lifecycle correctness is done. [Evidence](pass-consolidation/native-performance/assessment.json)
+- [x] **Retained triangle compaction bounded correctness** — One allocation/range/refusal unit and one exact GPU parity test passed at8xAA/scales1and1.5, with warm reuse and missing-triangle negative. Candidate9f16eb69. Board GPU fixture and shared converter; no full schematic/native or performance acceptance. [Evidence](triangle-compaction/result.json)
+- [x] **DRM missing-device identity controls** — Four offline controls passed; missing/empty devices remain unidentified rather than falsely merged. Candidate2d57a230 collector. Endpoint parser/grouping only; client lifecycle, drain and observer overhead remain unqualified. [Evidence](independent-replay/drm-client-method.json)
+
 ## Still open — do not reset the done list
 
 Private allocation startup delivery now passes one compact-record X11/1x integration run:201547events/3025calls, three exact auxiliary pixels, three live-device DRM endpoints and normal exit. Four producer controls and three classifier controls pass. Both earlier startup failures remain preserved. See `private-allocation-lifetimes/native-integration/compact-result.json`. This closes the observed burst-delivery defect, not native matrix, overhead, full accounting or independent acceptance.
@@ -120,7 +125,7 @@ bound intervals exceed the 1% ceiling (**1.047673%–1.122825%**). Endpoint, rev
 focus and clean shutdown checks passed. This is a recorded CPU failure, not a
 completed acceptance check. [Evidence](terminal-idle-poll/native-clamp-batch/assessment.json)
 
-All 42 completed-group evidence hashes match. The original map contains 225
+All 46 completed-group evidence hashes match. The original map contains 225
 requirement rows, not 225 separate tests: 15 specification-record rows, 14
 nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
 or mixed-scope rows. HP05-02 still requires idle resources; its pacing component
@@ -174,8 +179,10 @@ independent repetitions, baseline ordering and diagnostics-off/on modes intact.
 These are scheduling reductions, not native acceptance or a complete runner.
 See the existing map's `process_and_endurance_reuse` review.
 
-Current CPU check: candidate `01b99830` / binary `8eff3ed55ae2` completed three combined quiet X11/1x runs. Pointer **10.445–11.288%** exceeds10%; all six clamp intervals **1.125–1.246%** exceed1%. Exact pointer endpoints, unchanged clamp pixels, inward reversals, pinned inputs and normal exits/display restoration passed. No numerical acceptance; no unchanged rerun. [Evidence](grid-reuse/native-cpu/assessment.json)
+Earlier CPU check: candidate `01b99830` / binary `8eff3ed55ae2` completed three combined quiet X11/1x runs. Pointer **10.445–11.288%** exceeds10%; all six clamp intervals **1.125–1.246%** exceed1%. Exact pointer endpoints, unchanged clamp pixels, inward reversals, pinned inputs and normal exits/display restoration passed. No numerical acceptance; no unchanged rerun. [Evidence](grid-reuse/native-cpu/assessment.json)
 
 - [x] Retired partial-redraw candidate `500387c1`: seven focused correctness tests passed, including exact GPU mixed-layer/pane/hover output and failure controls. These remain historical passes; native performance failed and the implementation was retired. [Correctness evidence](interaction-damage/result.json)
 
 The fixed six-run pointer assessment failed: quiet CPU **15.378–16.361%** (limit10%); GPU **15.002–15.132ms p95 /16.847–17.172ms p99** (limits4/8ms). All six runs exited normally with exact endpoints; all three GPU runs received1280/1280changed pointer positions. Restore the prior production path, retain all failures and do not repeat this rejected candidate. No formal relative-effect claim from unpaired historical comparisons; no full GPU-duty/client-lifetime acceptance. [Assessment](interaction-damage/native-performance/assessment.json)
+
+Latest measured candidate `4eaa0087` still fails pointer CPU **10.725–11.032%** and GPU **12.026–12.073ms p95 /12.438–12.528ms p99**. Triangle compaction has bounded correctness proof but no later native performance result. Do not repeat unchanged qualification; retain clamp failures and all broader acceptance gaps. [Latest assessment](pass-consolidation/native-performance/assessment.json)
