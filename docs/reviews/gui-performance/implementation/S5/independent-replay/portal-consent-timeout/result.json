@@ -1,0 +1,51 @@
+{
+  "status": "Failed setup: fresh portal Start consent timed out. No input trial executed; no automatic retry.",
+  "qualification_pass": false,
+  "candidate": {
+    "source_commit": "c88c17de59a1c94a742243de33f541e119d787fe",
+    "binary": "target/pm045-independent-replay-artifacts/candidate-portal-e2da5a3945b8-datum-gui",
+    "binary_sha256": "e2da5a3945b814795f9d83501e22cf87d846ae63aa1b9a89c9a556565cfacb43",
+    "source_bindings_sha256": "f38ae043919d797a88084309bceb49a4b4bf0ea4df174525247371e9d894bafa",
+    "kernel": "6.12.107+deb13-amd64",
+    "status": "One fractional portal input method attempt; not performance/final qualification"
+  },
+  "build": "Guarded offline release build passed5m30s.",
+  "decision": "Determine whether portal fractional motion can meet the scheduled120positions/s method; consent is required before verified initial position, warmup and timing.",
+  "outcome": {
+    "motion_requests": 0,
+    "timeout_seconds": 300,
+    "controller_exit": 1,
+    "error": "RuntimeError(('portal exited before response', 1))",
+    "forced_gui_cleanup": true,
+    "cleanup_errors": {
+      "close-portal": "RuntimeError(('portal cleanup incomplete or failed', 1, []))"
+    },
+    "remaining_after_cleanup": "",
+    "display_restore_returncode": 0,
+    "source_and_controller_unchanged": true
+  },
+  "portal_errors": [
+    {
+      "kind": "error",
+      "monotonic_ns": 1244070421325693,
+      "realtime_ns": 1790509447662119835,
+      "message": "TimeoutError('Start consent response timeout')"
+    },
+    {
+      "kind": "close_error",
+      "monotonic_ns": 1244070426135644,
+      "realtime_ns": 1790509447666929780,
+      "target": "/org/freedesktop/portal/desktop/session/1_4968/pm045_e780e9d46bdb40fe8a6665766f96efd2_session",
+      "message": "GLib.Error('GDBus.Error:org.freedesktop.DBus.Error.UnknownMethod: Object does not exist at path \u201c/org/freedesktop/portal/desktop/session/1_4968/pm045_e780e9d46bdb40fe8a6665766f96efd2_session\u201d', 'g-dbus-error-quark', 19)"
+    }
+  ],
+  "method_preparation": "Adapted existing controller; consent before timing, observed1xscale and initial-position gate, bounded portal cleanup, executed-source hashes, two-decimal receipts through final drain with post-close counts. Distinct source reviewer verified corrections. All-received is a stricter method diagnostic, not a new product no-coalescing rule.",
+  "limitations": [
+    "No native motion/delivery, CPU/GPU numerical or UX acceptance follows from startup.",
+    "Consent absence did not authorize input or a replacement attempt.",
+    "Existing integer-driver failures, full resource/lifecycle gaps, backend/scale/endurance and independent/owner obligations remain."
+  ],
+  "next_action": "Resume a single input-method attempt only when fresh OS portal consent is available; no unchanged polling or benchmark campaign. Separate exact Wayland dependency/license decision remains pending.",
+  "raw_archive_sha256": "4f184b2cb5aba2d92e7231ebcd99764cb4c7ef02fafef056f2c780a99df5d58e",
+  "raw_members_verified": 153
+}
