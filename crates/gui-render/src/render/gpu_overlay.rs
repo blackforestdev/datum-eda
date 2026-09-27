@@ -106,6 +106,11 @@ impl Renderer {
                     .slice(..),
             );
             pass.draw(0..prepared.menu_overlay_vertices().len() as u32, 0..1);
+            self.observe_screen_draw(
+                immediate_admission::screen_admission::ScreenGroup::Menu,
+                prepared.menu_overlay_vertices().len() as u32,
+                [0, 0, width, height],
+            );
             if has_text {
                 self.menu_overlay_text_renderer
                     .render(&self.atlas, &mut pass)

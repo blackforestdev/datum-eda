@@ -246,6 +246,11 @@ impl Renderer {
                         .slice(..),
                 );
                 pass.draw(0..panel_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Panel,
+                    panel_vertices.len() as u32,
+                    [0, 0, width, height],
+                );
             }
             if prepared.surface_passes().is_empty() && !viewport_underlay_vertices.is_empty() {
                 pass.set_scissor_rect(
@@ -262,6 +267,11 @@ impl Renderer {
                         .slice(..),
                 );
                 pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Underlay,
+                    viewport_underlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(prepared.scene_viewport),
+                );
             }
             self.draw_surface_grids(&mut pass, &surface_grid_batches);
             self.draw_surface_world_passes(&mut pass, prepared);
@@ -327,6 +337,11 @@ impl Renderer {
                 );
                 pass.set_vertex_buffer(0, buffer.slice(..));
                 pass.draw(0..schematic_underlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::SchematicUnderlay,
+                    schematic_underlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(*scene_viewport),
+                );
             }
             // The companion pass uses its own camera uniforms and pane scissor.
             if prepared.surface_passes().is_empty()
@@ -394,6 +409,11 @@ impl Renderer {
                 );
                 pass.set_vertex_buffer(0, buffer.slice(..));
                 pass.draw(0..schematic_overlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::SchematicOverlay,
+                    schematic_overlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(scene_viewport),
+                );
             }
             if !viewport_overlay_vertices.is_empty() {
                 pass.set_scissor_rect(
@@ -410,6 +430,11 @@ impl Renderer {
                         .slice(..),
                 );
                 pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Overlay,
+                    viewport_overlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(prepared.scene_viewport),
+                );
             }
             if !board_interaction_vertices.is_empty() {
                 let interaction_viewport = prepared
@@ -429,6 +454,11 @@ impl Renderer {
                         .slice(..),
                 );
                 pass.draw(0..board_interaction_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::BoardInteraction,
+                    board_interaction_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(interaction_viewport),
+                );
             }
             self.draw_console(&mut pass, console_overlay_vertices, prepared);
             // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
@@ -515,6 +545,11 @@ impl Renderer {
                         .slice(..),
                 );
                 pass.draw(0..menu_overlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Menu,
+                    menu_overlay_vertices.len() as u32,
+                    [0, 0, width, height],
+                );
             }
 
             // Pass D: the dropdown's own text, on top of the card. Uses the

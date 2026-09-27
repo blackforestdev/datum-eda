@@ -14,6 +14,22 @@ fn observe(frame: crate::resource_observation::FrameObservation<'_>) -> anyhow::
             .count(),
         0
     );
+    if frame.submitted_frame == Some(true) {
+        let draws: Vec<_> = frame
+            .renderer
+            .encoded_screen_geometry()
+            .unwrap()
+            .into_iter()
+            .flatten()
+            .collect();
+        assert_eq!(draws.len(), 1);
+        assert_eq!(draws[0].group, "menu_overlay");
+        assert_eq!(draws[0].scissor, [0, 0, 960, 720]);
+        assert_eq!(
+            draws[0].vertices as usize,
+            frame.prepared.screen_geometry_admission()[1].vertices
+        );
+    }
     OBSERVED.lock().unwrap().push((
         frame.renderer.resource_owner_id(),
         frame.submitted_frame,
@@ -74,5 +90,21 @@ fn frame_observation_delivers_reused_frames_without_changing_pixels_and_propagat
             .unwrap_err()
             .to_string()
             .contains("injected observer delivery failure")
+    );
+    assert!(
+        gpu.renderer.encoded_screen_geometry().is_none(),
+        "records retire after callback even on delivery error"
+    );
+    gpu.renderer.screen_admission.set(Some([None; 8]));
+    for _ in 0..2 {
+        gpu.renderer.observe_screen_draw(
+            crate::immediate_admission::screen_admission::ScreenGroup::Menu,
+            6,
+            [0, 0, 960, 720],
+        );
+    }
+    assert!(
+        gpu.renderer.encoded_screen_geometry().is_none(),
+        "duplicate stream records invalidate observation"
     );
 }

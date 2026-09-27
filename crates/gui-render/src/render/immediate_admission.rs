@@ -1,5 +1,7 @@
 //! Admission metadata from existing screen geometry and grid preparation.
 use super::*;
+#[path = "screen_admission.rs"]
+pub(crate) mod screen_admission;
 
 #[derive(Clone, Copy, Debug)]
 pub struct PreparedScreenGeometry {
@@ -34,10 +36,16 @@ impl PreparedScene {
 
 #[derive(Clone, Debug)]
 pub struct PreparedGridAdmission {
+    pub(crate) encoded: std::cell::Cell<bool>,
     pub pane_id: datum_gui_protocol::PaneId,
     pub viewport: RectPx,
     pub vertices: std::ops::Range<u32>,
     pub generated_vertices: usize,
+}
+impl PreparedGridAdmission {
+    pub fn encoded(&self) -> bool {
+        self.encoded.get()
+    }
 }
 impl Renderer {
     pub(crate) fn observe_surface_grids(
@@ -56,6 +64,7 @@ impl Renderer {
             )?;
             for batch in batches {
                 observations.push(PreparedGridAdmission {
+                    encoded: std::cell::Cell::new(false),
                     pane_id: batch.pane_id,
                     viewport: batch.viewport,
                     vertices: batch.vertices.clone(),
