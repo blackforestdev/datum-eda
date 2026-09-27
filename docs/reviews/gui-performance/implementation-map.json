@@ -39600,5 +39600,9 @@
     "status": "Bounded implementation/correctness complete; native budget failures remain open.",
     "evidence": "docs/reviews/gui-performance/implementation/S5/triangle-compaction/result.json",
     "reuse": "Reuse these bounded checks; no handoff rerun or stand-alone performance campaign justified."
+  },
+  "s5_drm_identity_correction": {
+    "status": "Collector missing-device deduplication corrected;4offline controls passed. ACC-03 lifecycle/earlier-close qualification remains open.",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/independent-replay/drm-client-method.json#device_identity_correction"
   }
 }

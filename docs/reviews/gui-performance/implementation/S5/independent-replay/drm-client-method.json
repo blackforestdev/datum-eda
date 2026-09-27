@@ -40,5 +40,15 @@
     "review": "Hegel identified partial-record loss on subsequent CPU failure and timestamp compatibility risk. Partial data is now appended before CPU reads; historical timestamp semantics restored using a separate end field. Source review only.",
     "verification": "Runner syntax compiled without executing top-level native setup. Existing collector controls reused; no repeated parser tests, application build or endurance run.",
     "limits": "Resident fields cover identified observed clients only. This does not prove all relevant clients export fdinfo, capture earlier exits/startup, establish lifecycle epochs, quantify overhead, or satisfy complete ACC-01/03. Historical source/binary pins still prevent an unpinned run; refresh the stable final candidate before replay."
+  },
+  "device_identity_correction": {
+    "decision": "Prevent unidentified DRM devices from being deduplicated as complete client observations.",
+    "change": "Absent or empty drm-pdev remains unidentified, alongside absent client ID. Raw fd records preserved individually; complete_enumeration false. No inferred physical-device mapping.",
+    "proof": "4 offline collector controls passed in0.005s, including missing/empty-device negative, duplicate-fd grouping, counter parsing and proc races. No native trial or Cargo build.",
+    "bindings": {
+      "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients.py": "52c25c28dba8e708ebd1ad8d2dcabd6c77c57c2d492139ee2a0b3a4ffb80c5c3",
+      "docs/reviews/gui-performance/implementation/S5/independent-replay/tools/drm_clients_checks.py": "524441caf80331aced6183a3370ce4be7a9cc2af33ad7e28acc7beb93935eabc"
+    },
+    "limitations": "Historical3-control bindings/evidence retained. This does not supply lifecycle epochs, final counters for earlier client exits, complete residency or observer-overhead qualification. Final replay remains NOT READY."
   }
 }

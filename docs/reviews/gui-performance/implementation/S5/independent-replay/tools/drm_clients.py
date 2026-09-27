@@ -96,7 +96,7 @@ def collect(pids, proc_root=Path("/proc")):
                     sample = {"pid": pid, "starttime_ticks": process["starttime_ticks"],
                               "fd": int(name), "started_ns": began,
                               "finished_ns": time.monotonic_ns(), **item}
-                    if item["client_id"] is None:
+                    if item["client_id"] is None or not item["pdev"]:
                         result["unidentified"].append(sample)
                         continue
                     key = (item["driver"], item["pdev"], item["client_id"])
