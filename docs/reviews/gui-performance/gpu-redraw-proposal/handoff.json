@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4-DESIGN",
+  "role": "gpu-repair-agent",
+  "authorization": "planning",
+  "owner_instruction": "The owner has assigned this GPU workstream to your session. Reconcile the existing planning claim through an explicit handoff using your actual session identity, synchronized Frontier/beads updates, and the repository workflow. Do not silently inherit another session\u2019s claim.",
+  "previous_claim": {
+    "agent": "codex",
+    "claimed_at": "2026-09-27T19:37:57Z",
+    "expires_at": "2026-09-28T03:37:57Z",
+    "harness": "codex-cli",
+    "head": "7d04bf53ab4a0fa9c9f2d3164fb4c7363988e2a1",
+    "heartbeat_at": "2026-09-27T19:37:57Z",
+    "scope": [
+      "specs/active_frontier.json",
+      "specs/PROGRESS.md",
+      "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+      "specs/spec_governance_manifest.json",
+      "specs/evidence_traceability_manifest.json",
+      "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md",
+      "docs/reviews/gui-performance/implementation-map.json",
+      "docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json",
+      "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
+      ".beads/issues.jsonl",
+      "specs/GUI_SHARED_ENGINEERING_CONTRACT.md"
+    ],
+    "session": "01a0e343-3d9c-70f1-899e-5bd239513383",
+    "worktree": "/home/bfadmin/Documents/datum-eda"
+  },
+  "replacement_claim": {
+    "agent": "codex",
+    "harness": "codex-cli",
+    "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+    "worktree": "/home/bfadmin/Documents/datum-eda",
+    "head": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+    "claimed_at": "2026-09-27T22:54:48Z",
+    "heartbeat_at": "2026-09-27T22:54:48Z",
+    "expires_at": "2026-09-28T06:54:48Z",
+    "scope": [
+      "specs/active_frontier.json",
+      "specs/PROGRESS.md",
+      ".beads/issues.jsonl",
+      "specs/evidence_traceability_manifest.json",
+      "specs/spec_governance_manifest.json",
+      "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+      "docs/reviews/gui-performance/gpu-redraw-proposal"
+    ]
+  },
+  "worktree_at_handoff": "clean; outgoing session reports no uncommitted implementation to transfer",
+  "remaining_scope": "GPU redraw solution discovery and governed proposal documentation only. No production edits, candidate builds, benchmarks, native diagnostics, system tuning, CPU event-loop work or execution authority."
+}

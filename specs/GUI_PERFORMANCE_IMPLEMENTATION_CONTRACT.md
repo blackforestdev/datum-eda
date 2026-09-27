@@ -472,3 +472,25 @@ all prior S4/S5 successes and failures at their original pins and scopes.
 CPU event-loop investigation follows the GPU solution and subsequent authorized
 selection, not this planning amendment. Nonblocking resize, temporal/T2 and
 unadmitted schematic exclusions, PM047 and PM029 remain unchanged.
+
+## GPU redraw discovery proposal r1
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-DESIGN-R1 -->
+
+`docs/reviews/gui-performance/gpu-redraw-proposal/proposal.md` pins a concrete
+8x multisample prefix-image reuse proposal against production `997b618e`.
+It compares the retired per-region replay, stencil masking and resolved-image
+alternatives; specifies exact painter order, full-copy API constraints, shared
+invalidation/lifetime ownership, cache caps, rollback and bounded future proof.
+`review.json` in that directory pins source/history/evidence and the same-session
+design review. Independent architecture delta review remains required before
+new mechanism ratification; no independent review or native replay is claimed.
+
+GPI-S4-DESIGN has a decision-ready proposal. GPI-S4-APPROVAL is the owner boundary;
+no mechanism, implementation/build/test/run scope or hardware feasibility result
+is approved. The full multisample copy cost is unresolved, and complete duty
+observation plus copy-inclusive timing are explicit execution prerequisites.
+All prior failures, original S4 obligations, 225 qualification rows, S5 review
+and nonblocking exclusions remain unchanged. The planning claim is released
+with its explicit handoff retained; execution requires a new synchronized claim
+after recorded owner disposition and the corresponding authorization change.
