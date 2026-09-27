@@ -38801,5 +38801,11 @@
       },
       "interpretation": "Descriptive within-run diagnostics only. No rerun, production change, causality claim or acceptance relaxation."
     }
+  },
+  "s5_repeated_device_recovery": {
+    "status": "Repeated device-loss injection hook prepared; native recovery qualification not yet run",
+    "qualification_pass": false,
+    "evidence": "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/result.json",
+    "native_trials": "Pending; request conformance is not20-recovery qualification."
   }
 }

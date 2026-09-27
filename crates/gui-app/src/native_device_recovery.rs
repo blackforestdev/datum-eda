@@ -12,6 +12,9 @@ use std::{
     time::{Duration, Instant},
 };
 
+#[path = "native_device_loss_requests.rs"]
+mod loss_requests;
+
 #[derive(Clone, Default)]
 pub(super) struct DeviceHealth {
     failure: Arc<AtomicU8>,
@@ -90,22 +93,32 @@ pub(super) struct DeviceRecovery {
     inject: bool,
     verify_state: bool,
     inject_staging_failure: bool,
+    requests: Option<loss_requests::LossRequests>,
 }
 impl Default for DeviceRecovery {
     fn default() -> Self {
         let inject = match std::env::var("DATUM_DIAGNOSTIC_DEVICE_LOSS").as_deref() {
-            Err(std::env::VarError::NotPresent) | Ok("0") => false,
+            Err(std::env::VarError::NotPresent) | Ok("0" | "requests") => false,
             Ok("once" | "once-fail-staging") => true,
             other => panic!("invalid DATUM_DIAGNOSTIC_DEVICE_LOSS: {other:?}"),
         };
+        let requests = (std::env::var("DATUM_DIAGNOSTIC_DEVICE_LOSS").as_deref() == Ok("requests"))
+            .then(|| {
+                loss_requests::LossRequests::new(
+                    std::env::var_os("DATUM_DIAGNOSTIC_DEVICE_LOSS_REQUEST")
+                        .expect("requests mode requires DATUM_DIAGNOSTIC_DEVICE_LOSS_REQUEST")
+                        .into(),
+                )
+            });
         Self {
             pending: None,
             attempted: false,
             reported: false,
             inject,
-            verify_state: inject,
+            verify_state: inject || requests.is_some(),
             inject_staging_failure: std::env::var("DATUM_DIAGNOSTIC_DEVICE_LOSS").as_deref()
                 == Ok("once-fail-staging"),
+            requests,
         }
     }
 }
@@ -227,6 +240,20 @@ impl App {
         if !self.frames.contains_host(runtime.window.id()) {
             self.device_recovery.pending = None;
             return None;
+        }
+        if let Some(requests) = &mut self.device_recovery.requests
+            && !runtime.device_health.failed()
+            && self.device_recovery.pending.is_none()
+            && runtime.surface_transaction.has_presented()
+            && requests
+                .take_request()
+                .unwrap_or_else(|err| panic!("invalid diagnostic device loss request: {err:#}"))
+        {
+            self.device_recovery.inject = true;
+            append_gui_diagnostic_line(format!(
+                "native device loss request accepted sequence={}",
+                requests.accepted()
+            ));
         }
         if self.device_recovery.inject && runtime.surface_transaction.has_presented() {
             self.device_recovery.inject = false;
