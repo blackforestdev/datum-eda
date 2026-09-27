@@ -1,0 +1,147 @@
+{
+  "qualification_pass": false,
+  "candidate": {
+    "binary": "target/pm045-independent-replay-artifacts/candidate-idle-poll-daed651a1e74-datum-gui",
+    "binary_sha256": "daed651a1e749005db75cdd71128c31455002ce0b17a7a1aadb109b6dcf421a8",
+    "base_commit": "5b013adb",
+    "status": "Affected quiet CPU qualification candidate, not final independent replay ready",
+    "source_bindings_sha256": "4cccd0f3cd3f6dda86ca4b75b2345cd5a40862f7f263079ad21a2832bc2551bc"
+  },
+  "command": "python3 target/pm045-evidence-work/terminal-idle-poll/campaign.py",
+  "raw_root": "target/pm045-evidence-work/terminal-idle-poll",
+  "method": "Unchanged raw-device-input/native_clamp.py; campaign changes only output root. Three fixed quiet X11/1x runs, both bounds per run; no replacement or retry. Shared build-resource lock spans native batch.",
+  "runs": [
+    {
+      "trial": 1,
+      "raw": "pm045-raw-input-viqnrx5s",
+      "clamp_trials": [
+        {
+          "bound": "minimum",
+          "first_sample": 0,
+          "last_sample": 1,
+          "tail_sample": 2,
+          "elapsed_seconds": 30.07197006,
+          "cpu_ms": 315.056,
+          "cpu_percent_one_core": 1.047673296333416,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.075816795,
+          "cpu_ms": 324.0,
+          "cpu_percent_one_core": 1.0772774758152663,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "normal_exit_code": 0,
+      "display_restore_returncode": 0,
+      "raw_result_sha256": "92c7f8f95f2756c0a35252995834a12e283f1acfd64fcc51614c6e41ded37369"
+    },
+    {
+      "trial": 2,
+      "raw": "pm045-raw-input-z7cfq1m4",
+      "clamp_trials": [
+        {
+          "bound": "minimum",
+          "first_sample": 0,
+          "last_sample": 1,
+          "tail_sample": 2,
+          "elapsed_seconds": 30.075491027,
+          "cpu_ms": 325.722,
+          "cpu_percent_one_core": 1.0830147368419887,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.07352184,
+          "cpu_ms": 330.139,
+          "cpu_percent_one_core": 1.097772990328292,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "normal_exit_code": 0,
+      "display_restore_returncode": 0,
+      "raw_result_sha256": "145b284733e0f33302895f3d9a58b108ec21cd9fc635db7af39ecb778dc15273"
+    },
+    {
+      "trial": 3,
+      "raw": "pm045-raw-input-74zbp7kn",
+      "clamp_trials": [
+        {
+          "bound": "minimum",
+          "first_sample": 0,
+          "last_sample": 1,
+          "tail_sample": 2,
+          "elapsed_seconds": 30.06974888,
+          "cpu_ms": 329.337,
+          "cpu_percent_one_core": 1.0952435995202099,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "71617",
+          "reversal_changed": true
+        },
+        {
+          "bound": "maximum",
+          "first_sample": 3,
+          "last_sample": 4,
+          "tail_sample": 5,
+          "elapsed_seconds": 30.075385618,
+          "cpu_ms": 337.694,
+          "cpu_percent_one_core": 1.1228251710192254,
+          "endpoint_AE": "0",
+          "endpoint_returncode": 0,
+          "reversal_AE": "113152",
+          "reversal_changed": true
+        }
+      ],
+      "normal_exit_code": 0,
+      "display_restore_returncode": 0,
+      "raw_result_sha256": "8b81fbfeb1bc4bf49f7cb1938a0acf7c6e86bd7c767841bd9bf1d9c2763bea25"
+    }
+  ],
+  "cpu_ceiling_percent": 1,
+  "cpu_percent_one_core_range": [
+    1.047673296333416,
+    1.1228251710192254
+  ],
+  "cpu_ceiling_pass": false,
+  "interpretation": "All six measured intervals exceed1percent. No matched baseline or formal relative improvement claim. The terminal idle fast path does not resolve clamp acceptance. Stop this batch; another run needs a demonstrated change or unresolved decision.",
+  "passed_scope": {
+    "reference_pixel_comparisons": 18,
+    "all_AE_zero": true,
+    "outward_endpoint_unchanged": true,
+    "inward_reversal_changed": true,
+    "focus_preserved": true,
+    "normal_exit_and_display_restore": true,
+    "no_remaining_descendants": true,
+    "source_binary_engine_fixture_assets_unchanged": true
+  },
+  "raw_files": 466,
+  "raw_archive_sha256": "e5dd885d5eca1a42c49b443c9dc3c7b7170976197f94a6f3166f20babddd70db",
+  "release_build_seconds": 325,
+  "limits": [
+    "Quiet trials do not independently count native input events, export exact camera bounds or prove zero forbidden rendering.",
+    "Reversal success is not separately measured reversal CPU/display latency. No full terminal output/keyboard or product UX acceptance.",
+    "No complete resources/GPU/other backend-scale/endurance, final independent native replay or full S5 acceptance. Existing failures and exclusions remain."
+  ],
+  "preserved": "GEFN, Vulkan upload-before-acquire, dependency/license authority, prototype ownership and nonblocking resize exclusions.",
+  "release_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release --locked --offline -p datum-gui-app --bin datum-gui"
+}

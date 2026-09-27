@@ -10051,7 +10051,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Source call-site inventory and existing shared adoption proof reconciled; auxiliary own-submit close/callback strong-capture gap now has six-case native proof. Competing-private-path negative and complete runtime coverage remain unqualified.",
+        "status": "Source inventory, reused shared-path proof and auxiliary callback lifetime reconciled; concrete private redraw source/admission negative rejected. Full runtime/backend/scale/resource coverage remains unqualified.",
         "id": "proof_end_03",
         "positive": "Enumerate configure/acquire/present/submit/redraw/allocation/close calls",
         "negative_control": "Leave one consumer on competing private path",
@@ -10108,11 +10108,17 @@
       },
       "s5_adoption_reconciliation": {
         "evidence": "docs/reviews/gui-performance/implementation/S5/END-03/result.json",
-        "evidence_sha256": "c45083fc4c38b9d033fc6001b0ab147dc58681c69933b076fc0a4cb127ec4375",
+        "evidence_sha256": "928036c1a1b3c14b00a826f0e2bd4ff3fe173d91366c0baed3c2ad8fa9401a64",
         "qualification_pass": false,
         "new_native_runs": 0,
         "callback_lifetime_evidence": "docs/reviews/gui-performance/implementation/S5/close-after-submit/result.json"
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
+          "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956"
+        }
+      ]
     },
     {
       "id": "END-04",
@@ -10160,7 +10166,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Concrete private redraw source/admission negative rejected by distinct reviewer; positive registration package remains incomplete. No runtime admission validator implied.",
         "id": "proof_end_04",
         "positive": "Register future pane/profile with proof",
         "negative_control": "Add private scheduler/renderer without contract",
@@ -10214,7 +10220,13 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_recorded_evidence": [
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
+          "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956"
+        }
+      ]
     },
     {
       "id": "DOC-01",
@@ -11648,7 +11660,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "Corrected native clamp campaign executed; quiet CPU ceiling not met. Retain exact minimum/maximum-bound trials, reversal observations and quiet/verbose overhead distinction from recorded result. No full budget pass; another identical measurement is not needed to establish failure.",
+        "status": "Latest candidate5b013adb: all six quiet X11/1x bound intervals across3trials exceed1percent (1.047673..1.122825percent). Previous failures preserved; no full numerical acceptance.",
         "id": "proof_bud_clamp_cpu_duty",
         "positive": "CLAMP: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -11666,6 +11678,10 @@
         {
           "path": "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json",
           "sha256": "cd802d33f7244ec7b525b19abdf2e11ba61595a99defa3a448aaf686875e3556"
+        },
+        {
+          "path": "docs/reviews/gui-performance/implementation/S5/terminal-idle-poll/native-clamp-batch/assessment.json",
+          "sha256": "17d75cc1d4a0aa70622f189a958999dddc86c7a2765bfe92158d30798663a146"
         }
       ]
     },
@@ -39015,15 +39031,30 @@
         ],
         "scope": "Affected source behavior only; no CPU cap, native UX, independent native replay or full S5 acceptance.",
         "carry_forward": "Reuse scoped regression result; numerical effect belongs to consolidated final-candidate qualification."
+      },
+      {
+        "check": "\u2713 done",
+        "label": "Competing private redraw source/admission negative",
+        "completed": true,
+        "evidence": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
+        "evidence_field": "negative_disposition and limits",
+        "evidence_sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956",
+        "validated_result": "Distinct reviewer rejects actual NEW-adapter counterfactual bypassing shared frame admission/completion and failure handling.",
+        "requirement_ids": [
+          "END-03",
+          "END-04"
+        ],
+        "scope": "Source/admission rejection only. Original runtime coverage and complete positive registration package remain open.",
+        "carry_forward": "Preserve rejected patch and review; do not invent a runtime registration framework or repeat unrelated native tests."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
     "evidence_reconciliation": {
-      "completed_groups": 35,
-      "evidence_hashes_checked": 35,
-      "matching_hashes": 35,
-      "native_runs_performed": 0,
-      "meaning": "One affected19-test batch; prior34groups retained. No native or numerical acceptance added."
+      "completed_groups": 36,
+      "evidence_hashes_checked": 36,
+      "matching_hashes": 36,
+      "native_runs_performed": 3,
+      "meaning": "36 completed scoped groups retained; private redraw admission negative reviewed. Separate3-run quiet clamp batch fails CPU cap and is not marked as a passed CPU check."
     },
     "remaining_execution": {
       "purpose": "Execution consolidation within GPI-S5, not new acceptance requirements, a roadmap change or a new governance gate. Requirement rows and controlling contracts retain authority.",
@@ -39063,7 +39094,7 @@
       "reuse": "All34 existing completed groups remain credited at their recorded candidate/configuration. Do not rerun whole unit/GPU suites, the producer hour, or20-recovery correctness solely for handoff, evidence reconciliation or another metric computed from saved raw data. Changed behavior and final independent replay are separate explicit rerun reasons. The7saved pointer schedules also reconcile every changed integer position; do not rerun solely to meet the unsupported120distinct-position/s condition.",
       "before_native_execution": [
         {
-          "action": "Reuse END-03 source inventory, S1-S4 shared ownership proof and the six-case native auxiliary own-submit close/callback negative. Remaining controls: competing private consumer path and END-04 future-consumer registration/private-scheduler rejection. Consolidate where production ownership overlaps without dropping predicates.",
+          "action": "Reuse END-03 source inventory, S1-S4 shared ownership proof, six-case native auxiliary own-submit close/callback negative, and rejected private redraw source/admission counterexample. Complete END-04 positive registration package and missing actual production runtime coverage without substituting review for execution.",
           "requirements": [
             "END-03",
             "END-04"
@@ -39282,7 +39313,22 @@
   "s5_terminal_idle_poll": {
     "evidence": "docs/reviews/gui-performance/implementation/S5/terminal-idle-poll/result.json",
     "sha256": "e767061cf8a7e08093279d9dffd27345bf9ba98be9919d2e4cd32711b52221cc",
-    "status": "Production fast path and focused regression batch complete; native CPU effect unqualified.",
-    "decision": "Retain bounded idle-poll fast path after wake/lifecycle review and affected regression checks; defer numerical decision to consolidated native qualification."
+    "status": "Production fast path and19-test regression batch complete. Three native quiet clamp trials preserve behavior but all six CPU intervals fail1percent cap.",
+    "decision": "Retain bounded idle-poll fast path after wake/lifecycle review and affected regression checks; defer numerical decision to consolidated native qualification.",
+    "native_qualification": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/terminal-idle-poll/native-clamp-batch/assessment.json",
+      "sha256": "17d75cc1d4a0aa70622f189a958999dddc86c7a2765bfe92158d30798663a146",
+      "cpu_percent_one_core_range": [
+        1.047673296333416,
+        1.1228251710192254
+      ],
+      "cpu_ceiling_pass": false,
+      "decision": "All six measured intervals exceed1percent. No matched baseline or formal relative improvement claim. The terminal idle fast path does not resolve clamp acceptance. Stop this batch; another run needs a demonstrated change or unresolved decision."
+    }
+  },
+  "s5_private_path_admission_negative": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/END-04/result.json",
+    "sha256": "61802482439447fcb7ba8947a2bf5ed9e4c99631102a5eecaf71eec3aeaef956",
+    "scope": "Non-applied NEW private redraw path rejected by source/admission review; no automatic runtime detection or full END-03/04 acceptance."
   }
 }

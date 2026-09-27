@@ -85,10 +85,13 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 
 - [x] **Auxiliary close-after-own-submit callback lifetime** — One six-case X11 run covers Global/Project/New, each with normal and deliberately strong-capturing callbacks. Native close, shared retention oracle, healthy post-release dispatch and ledger retirement pass. Full driver-memory/close-budget and LF-07 acceptance remain open. [Evidence](close-after-submit/result.json)
 
+- [x] **Terminal idle-poll regression batch** — 19 passed; wake consumption, deferred/no-proxy polling, bounded draining and close behavior. Native CPU cap still fails; relative performance effect remains unqualified. [Evidence](terminal-idle-poll/result.json)
+- [x] **Private redraw admission negative** — Distinct reviewer rejects non-applied NEW-adapter bypass of shared frame admission/completion. Source/admission proof only. [Evidence](END-04/result.json)
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU and clamp CPU failures. Current X11/1x warm-window CPU/output qualification is checked above; other configurations and final independent replay remain. Preserve historical Project-open excesses.
-- [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences. The [current call-site inventory](END-03/result.json) reuses S1–S4 ownership proof; competing-private-path detection remains unqualified. The auxiliary callback/strong-capture gap is checked above. END-04 future-consumer registration remains distinct.
+- [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences. The [current call-site inventory](END-03/result.json) reuses S1–S4 ownership proof; the concrete private redraw admission negative is now rejected. The auxiliary callback/strong-capture gap is checked above. END-04 positive registration remains incomplete.
 - [ ] Complete fixture admission and instantaneous private/scratch/driver/client resource accounting, including observer overhead.
 - [ ] Resolve the saved endurance resource trend and missing in-scope tier/configuration, accounting and recovery-performance proof. The hour and separate 20 structural recoveries above are done. Readback timing remains descriptive; deferred displayed latency is not an initial S5 gate. Earlier failed attempts remain failures.
 - [ ] Complete independent actual replay against the stable final candidate, followed by separate owner UX/product acceptance.
@@ -98,11 +101,14 @@ S0–S4 implementation exits remain complete. Their carried qualification is par
 of the outstanding original predicates, not a reason to repeat implementation.
 Pinned resize/temporal,T2 and unadmitted schematic exclusions remain unchanged.
 
-- [x] **Terminal idle-poll regression batch** — 19 passed; wake consumption, deferred/no-proxy polling, bounded draining and close behavior. Native CPU effect remains unqualified. [Evidence](terminal-idle-poll/result.json)
-
 ## Remaining execution without duplicate campaigns
 
-All 35 completed-group evidence hashes match. The original map contains 225
+Latest CPU check: candidate `5b013adb` ran three fixed quiet clamp trials; all six
+bound intervals exceed the 1% ceiling (**1.047673%–1.122825%**). Endpoint, reversal,
+focus and clean shutdown checks passed. This is a recorded CPU failure, not a
+completed acceptance check. [Evidence](terminal-idle-poll/native-clamp-batch/assessment.json)
+
+All 36 completed-group evidence hashes match. The original map contains 225
 requirement rows, not 225 separate tests: 15 specification-record rows, 14
 nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
 or mixed-scope rows. HP05-02 still requires idle resources; its pacing component
