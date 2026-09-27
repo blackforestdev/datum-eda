@@ -47,20 +47,59 @@ impl Writer {
                 "source":pane.source.map(|s|json!({"scene_id":s.scene_id,"source_revision":s.source_revision})),
                 "counts":counts,"error":error,"ranges":ranges})
         }).collect();
-        let encoded_world = draw_measurements::world(&frame)?;
+        // Only the composed path executes cached bundles. Upload-only, error
+        // and legacy fallback attempts must not publish stale cached draws.
+        let encoded_world = (frame.submitted_frame == Some(true)
+            && !frame.prepared.surface_passes().is_empty()).then(|| {
+            frame.renderer.encoded_world_admission().map(|pane| {
+                let mut vertices = 0_u64;
+                let mut strokes = 0_u64;
+                let mut triangles = 0_u64;
+                let ranges: Vec<_> = pane.ranges().map(|range| match range {
+                    GeometryAdmissionRange::Vertices(r) => {
+                        let n = u64::from(r.end - r.start);
+                        vertices += n;
+                        triangles += n / 3;
+                        json!({"kind":"vertices","start":r.start,"end":r.end})
+                    }
+                    GeometryAdmissionRange::StrokeInstances(r) => {
+                        let n = u64::from(r.end - r.start);
+                        strokes += n;
+                        triangles += n * 2;
+                        json!({"kind":"stroke_instances","start":r.start,"end":r.end})
+                    }
+                }).collect();
+                json!({"pane_id":pane.pane_id.0,"surface":format!("{:?}",pane.surface),
+                    "submitted_commands":ranges.len(),"submitted_vertices":vertices,
+                    "submitted_stroke_instances":strokes,"submitted_triangles":triangles,"ranges":ranges})
+            }).collect::<Vec<_>>()
+        });
         let screen: Vec<_> = frame.prepared.screen_geometry_admission().into_iter().map(|g| {
             json!({"group":g.group,"prepared_vertices":g.vertices,"payload_bytes":g.payload_bytes})
         }).collect();
         let submitted_screen = if frame.submitted_frame == Some(true) {
             Some(frame.renderer.encoded_screen_geometry().context("screen draw observation unavailable")?.into_iter().flatten().map(|d| {
-                json!({"group":d.group,"range":[0,d.vertices],"submitted_commands":d.draws,
-                    "submitted_vertices":u64::from(d.vertices)*u64::from(d.draws),"submitted_triangles":u64::from(d.vertices/3)*u64::from(d.draws),"scissor":d.scissor,"scissors":d.scissors()})
+                json!({"group":d.group,"range":[0,d.vertices],"submitted_commands":1,
+                    "submitted_vertices":d.vertices,"submitted_triangles":d.vertices/3,"scissor":d.scissor})
             }).collect::<Vec<_>>())
         } else {
             None
         };
-        let grids = draw_measurements::grids(&frame)?;
-        let terminal = draw_measurements::terminal(&frame)?;
+        let grids = frame.renderer.grid_geometry_admission().map(|grids| grids.iter().map(|g| {
+            json!({"pane_id":g.pane_id.0,"viewport":[g.viewport.x,g.viewport.y,g.viewport.width,g.viewport.height],
+                "range":[g.vertices.start,g.vertices.end],"generated_vertices":g.generated_vertices,
+                "prepared_vertices":g.vertices.end-g.vertices.start,"encoded":g.encoded(),
+                "submitted_commands":(frame.submitted_frame==Some(true)).then_some(u32::from(g.encoded())),
+                "submitted_vertices":(frame.submitted_frame==Some(true)).then_some(if g.encoded() {g.vertices.end-g.vertices.start} else {0}),
+                "submitted_triangles":(frame.submitted_frame==Some(true)).then_some(if g.encoded() {(g.vertices.end-g.vertices.start)/3} else {0})})
+        }).collect::<Vec<_>>());
+        let terminal = (frame.submitted_frame == Some(true)).then(|| {
+            if frame.prepared.prepared_terminal_graphic_count() == 0 { return Vec::new(); }
+            frame.renderer.terminal_geometry_admission().map(|g| {
+                json!({"graphic_id":g.graphic_id,"foreground":g.foreground,"scissor":g.scissor,
+                    "submitted_vertices":g.vertices,"submitted_triangles":g.vertices/3,"payload_bytes":g.payload_bytes})
+            }).collect::<Vec<_>>()
+        });
         let admission = frame
             .text_observation_attempted
             .then(|| frame.renderer.text_admission_observation())
@@ -90,8 +129,7 @@ impl Writer {
         });
         self.line(json!({"phase":"frame","sequence":self.frames,"monotonic_ns":self.started.elapsed().as_nanos(),
             "renderer_id":frame.renderer.resource_owner_id(),"extent":frame.extent,
-            "submitted_frame":frame.submitted_frame,
-            "redraw_scissors":frame.renderer.frame_redraw_scissors().collect::<Vec<_>>(),"render_error":frame.error.map(|e|format!("{e:#}")),
+            "submitted_frame":frame.submitted_frame,"render_error":frame.error.map(|e|format!("{e:#}")),
             "text_observation_attempted":frame.text_observation_attempted,"text_admission":text,"text_origins":text_origins,
             "text_admission_failed":frame.renderer.text_admission_observation_failed(),
             "prepared_screen_geometry":screen,"submitted_screen_geometry":submitted_screen,"prepared_surface_grids":grids,
@@ -100,6 +138,3 @@ impl Writer {
             "scope":"render attempt and prepared retained-world/text; not presentation, raster coverage or complete immediate UI geometry"}))
     }
 }
-
-#[path = "native_frame_draw_measurements.rs"]
-mod draw_measurements;

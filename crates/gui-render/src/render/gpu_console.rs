@@ -10,18 +10,18 @@ pub(super) struct ConsoleGpuResources {
 impl Renderer {
     pub(super) fn draw_console<'pass>(
         &'pass self,
-        pass: &mut crate::gpu_frame::clipped_pass::ClippedPass<'_, 'pass>,
+        pass: &mut wgpu::RenderPass<'pass>,
         vertices: &[Vertex],
         prepared: &PreparedScene,
     ) {
-        if let Some(_layout) =
+        if let Some(layout) =
             self.console_gpu
                 .draw(pass, vertices, prepared.console_overlay_layout())
         {
-            self.observe_screen_draw_clipped(
+            self.observe_screen_draw(
                 super::immediate_admission::screen_admission::ScreenGroup::Console,
                 vertices.len() as u32,
-                pass.current_scissor(),
+                super::immediate_admission::screen_admission::scissor(layout.pane_body),
             );
         }
     }
@@ -45,7 +45,7 @@ impl ConsoleGpuResources {
 
     pub(super) fn draw<'pass>(
         &'pass self,
-        pass: &mut crate::gpu_frame::clipped_pass::ClippedPass<'_, 'pass>,
+        pass: &mut wgpu::RenderPass<'pass>,
         vertices: &[Vertex],
         layout: Option<ConsoleOverlayLayout>,
     ) -> Option<ConsoleOverlayLayout> {

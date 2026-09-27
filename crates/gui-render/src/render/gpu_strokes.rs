@@ -201,7 +201,7 @@ pub(crate) fn create_world_stroke_pipeline(
 }
 
 pub(crate) fn draw_world_strokes<'a>(
-    pass: &mut crate::gpu_frame::clipped_pass::ClippedPass<'_, 'a>,
+    pass: &mut wgpu::RenderPass<'a>,
     pipeline: &'a wgpu::RenderPipeline,
     bind_group: &'a wgpu::BindGroup,
     buffer: &'a wgpu::Buffer,

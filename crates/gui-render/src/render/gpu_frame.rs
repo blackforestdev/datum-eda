@@ -3,22 +3,69 @@ use super::*;
 #[path = "gpu_frame_target.rs"]
 pub(crate) mod target;
 
-#[path = "composition_revision.rs"]
-pub(crate) mod composition_revision;
-
-#[path = "interaction_damage.rs"]
-pub(crate) mod interaction_damage;
-
-#[path = "preserved_interaction.rs"]
-pub(crate) mod preserved_interaction;
-
-#[path = "clipped_pass.rs"]
-pub(crate) mod clipped_pass;
-
-#[path = "damage_reset.rs"]
-pub(crate) mod damage_reset;
-
 impl Renderer {
+    #[allow(clippy::too_many_arguments)]
+    pub fn render(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        target: &wgpu::TextureView,
+        prepared: &PreparedScene,
+        retained: &RetainedScene,
+        schematic_retained: Option<&RetainedScene>,
+        width: u32,
+        height: u32,
+    ) -> anyhow::Result<()> {
+        // Synchronous convenience for offscreen/capture clients. Native hosts use
+        // render_with_acquisition and yield to the coordinator between chunks.
+        loop {
+            if self.render_with_submission(
+                device,
+                queue,
+                target,
+                prepared,
+                retained,
+                schematic_retained,
+                width,
+                height,
+                &mut |_| {},
+            )? {
+                return Ok(());
+            }
+            device.poll(wgpu::PollType::wait_indefinitely())?;
+        }
+    }
+
+    /// Offscreen callers already own their target and observe every submission.
+    /// Native hosts must use render_with_acquisition to avoid acquiring swapchain
+    /// images for upload-only turns. False retains pending damage in either path.
+    #[allow(clippy::too_many_arguments)]
+    pub fn render_with_submission(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        target: &wgpu::TextureView,
+        prepared: &PreparedScene,
+        retained: &RetainedScene,
+        schematic_retained: Option<&RetainedScene>,
+        width: u32,
+        height: u32,
+        on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
+    ) -> anyhow::Result<bool> {
+        self.render_with_acquisition(
+            device,
+            queue,
+            prepared,
+            retained,
+            schematic_retained,
+            width,
+            height,
+            &mut (),
+            &mut |_| Ok(Some(target.clone())),
+            &mut |_, submission| on_submitted(submission),
+        )
+    }
+
     #[allow(clippy::too_many_arguments)]
     pub(super) fn render_submission_inner(
         &mut self,
@@ -31,10 +78,6 @@ impl Renderer {
         width: u32,
         height: u32,
     ) -> anyhow::Result<bool> {
-        self.damage_regions = 0;
-        let previous_composition = self.preserved_interaction.take();
-        let world_unchanged =
-            self.world_upload_sources_match(prepared, retained, schematic_retained);
         if self.resume_glyph_upload(device, queue, &mut |submission| {
             target.submitted(submission)
         })? {
@@ -147,15 +190,6 @@ impl Renderer {
         let mut measurement = self.begin_gpu_measurement()?;
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
-        let (next_composition, regions, partial) = self.prepare_interaction_damage(
-            device,
-            prepared,
-            schematic_pass.is_some(),
-            world_unchanged,
-            previous_composition,
-            width,
-            height,
-        );
         self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
         // Every layer loads the same preserved MSAA samples. Nothing reads the
@@ -187,16 +221,12 @@ impl Renderer {
                     resolve_target: (final_resolve == ResolvePass::Scene).then_some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
-                        load: if partial {
-                            wgpu::LoadOp::Load
-                        } else {
-                            wgpu::LoadOp::Clear(wgpu::Color {
-                                r: APP_BG[0] as f64,
-                                g: APP_BG[1] as f64,
-                                b: APP_BG[2] as f64,
-                                a: 1.0,
-                            })
-                        },
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: APP_BG[0] as f64,
+                            g: APP_BG[1] as f64,
+                            b: APP_BG[2] as f64,
+                            a: 1.0,
+                        }),
                         store: wgpu::StoreOp::Store,
                     },
                 })],
@@ -205,263 +235,251 @@ impl Renderer {
                 timestamp_writes: measurement.as_mut().map(|m| m.pass("scene")).transpose()?,
                 multiview_mask: None,
             });
-            for (region_index, region) in regions.as_slice().iter().enumerate() {
-                let mut pass = clipped_pass::ClippedPass::new(&mut pass, *region, region_index);
-                if partial {
-                    pass.set_pipeline(self.damage_reset.get().expect("partial reset prepared"));
-                    pass.draw(0..3, 0..1);
-                }
-                pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                if !panel_vertices.is_empty() {
-                    pass.set_vertex_buffer(
-                        0,
-                        self.panel_gpu
-                            .buffer()
-                            .expect("panel vertex buffer should exist")
-                            .slice(..),
-                    );
-                    pass.draw(0..panel_vertices.len() as u32, 0..1);
-                    self.observe_screen_draw_clipped(
-                        immediate_admission::screen_admission::ScreenGroup::Panel,
-                        panel_vertices.len() as u32,
-                        pass.current_scissor(),
-                    );
-                }
-                if prepared.surface_passes().is_empty() && !viewport_underlay_vertices.is_empty() {
-                    pass.set_scissor_rect(
-                        prepared.scene_viewport.x.max(0.0).floor() as u32,
-                        prepared.scene_viewport.y.max(0.0).floor() as u32,
-                        prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                        prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                    );
-                    pass.set_vertex_buffer(
-                        0,
-                        self.viewport_underlay_gpu
-                            .buffer()
-                            .expect("viewport underlay vertex buffer should exist")
-                            .slice(..),
-                    );
-                    pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
-                    self.observe_screen_draw_clipped(
-                        immediate_admission::screen_admission::ScreenGroup::Underlay,
-                        viewport_underlay_vertices.len() as u32,
-                        pass.current_scissor(),
-                    );
-                }
-                if !partial
-                    && !prepared.surface_passes().is_empty()
-                    && let Some(m) = &mut measurement
-                {
-                    m.mark_scene(&mut pass, 0)?;
-                }
-                self.draw_surface_grids(&mut pass, &self.surface_grids.batches);
-                if !partial
-                    && !prepared.surface_passes().is_empty()
-                    && let Some(m) = &mut measurement
-                {
-                    m.mark_scene(&mut pass, 1)?;
-                }
-                self.draw_surface_world_passes(&mut pass, prepared);
-                if !partial
-                    && !prepared.surface_passes().is_empty()
-                    && let Some(m) = &mut measurement
-                {
-                    m.mark_scene(&mut pass, 2)?;
-                }
-                pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                if prepared.surface_passes().is_empty() {
-                    for command in prepared.visible_draw_commands() {
-                        match command {
-                            RetainedDrawCommand::Quads { range, .. } => {
-                                let Some(buffer) = self.world_vertices_gpu.buffer() else {
-                                    continue;
-                                };
-                                pass.set_pipeline(
-                                    &self
-                                        .world_pipelines
-                                        .get()
-                                        .expect("general pipelines prepared")
-                                        .quads,
-                                );
-                                pass.set_bind_group(0, &self.scene_bind_group.bind_group, &[]);
-                                pass.set_scissor_rect(
-                                    prepared.scene_viewport.x.max(0.0).floor() as u32,
-                                    prepared.scene_viewport.y.max(0.0).floor() as u32,
-                                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                                );
-                                pass.set_vertex_buffer(0, buffer.slice(..));
-                                pass.draw(range.clone(), 0..1);
-                            }
-                            RetainedDrawCommand::Strokes { range, .. } => {
-                                let Some(buffer) = self.world_strokes_gpu.buffer() else {
-                                    continue;
-                                };
-                                draw_world_strokes(
-                                    &mut pass,
-                                    &self
-                                        .world_pipelines
-                                        .get()
-                                        .expect("general pipelines prepared")
-                                        .strokes,
-                                    &self.scene_bind_group.bind_group,
-                                    buffer,
-                                    prepared.scene_viewport,
-                                    std::slice::from_ref(range),
-                                );
-                            }
-                        }
-                    }
-                    pass.set_pipeline(&self.pipeline);
-                    pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                }
-                // Keep the schematic grid screen-space so zoom cannot thicken it.
-                if prepared.surface_passes().is_empty()
-                    && !schematic_underlay_vertices.is_empty()
-                    && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
-                    && let Some(buffer) = self.schematic_underlay_gpu.buffer()
-                {
-                    pass.set_scissor_rect(
-                        scene_viewport.x.max(0.0).floor() as u32,
-                        scene_viewport.y.max(0.0).floor() as u32,
-                        scene_viewport.width.max(1.0).ceil() as u32,
-                        scene_viewport.height.max(1.0).ceil() as u32,
-                    );
-                    pass.set_vertex_buffer(0, buffer.slice(..));
-                    pass.draw(0..schematic_underlay_vertices.len() as u32, 0..1);
-                    self.observe_screen_draw_clipped(
-                        immediate_admission::screen_admission::ScreenGroup::SchematicUnderlay,
-                        schematic_underlay_vertices.len() as u32,
-                        pass.current_scissor(),
-                    );
-                }
-                // The companion pass uses its own camera uniforms and pane scissor.
-                if prepared.surface_passes().is_empty()
-                    && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref()
-                {
-                    for command in sr.all_draw_commands() {
-                        match command {
-                            RetainedDrawCommand::Quads { range, .. } => {
-                                let Some(buffer) = self.schematic_world_vertices_gpu.buffer()
-                                else {
-                                    continue;
-                                };
-                                pass.set_pipeline(
-                                    &self
-                                        .world_pipelines
-                                        .get()
-                                        .expect("general pipelines prepared")
-                                        .quads,
-                                );
-                                pass.set_bind_group(
-                                    0,
-                                    &self.schematic_scene_bind_group.bind_group,
-                                    &[],
-                                );
-                                pass.set_scissor_rect(
-                                    scene_viewport.x.max(0.0).floor() as u32,
-                                    scene_viewport.y.max(0.0).floor() as u32,
-                                    scene_viewport.width.max(1.0).ceil() as u32,
-                                    scene_viewport.height.max(1.0).ceil() as u32,
-                                );
-                                pass.set_vertex_buffer(0, buffer.slice(..));
-                                pass.draw(range.clone(), 0..1);
-                            }
-                            RetainedDrawCommand::Strokes { range, .. } => {
-                                let Some(buffer) = self.schematic_world_strokes_gpu.buffer() else {
-                                    continue;
-                                };
-                                draw_world_strokes(
-                                    &mut pass,
-                                    &self
-                                        .world_pipelines
-                                        .get()
-                                        .expect("general pipelines prepared")
-                                        .strokes,
-                                    &self.schematic_scene_bind_group.bind_group,
-                                    buffer,
-                                    *scene_viewport,
-                                    std::slice::from_ref(range),
-                                );
-                            }
-                        }
-                    }
-                    pass.set_pipeline(&self.pipeline);
-                    pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                }
-                // Interaction chrome stays above schematic world geometry.
-                if !schematic_overlay_vertices.is_empty()
-                    && let Some(scene_viewport) =
-                        prepared.interaction_viewport(SceneSurface::Schematic)
-                    && let Some(buffer) = self.schematic_overlay_gpu.buffer()
-                {
-                    pass.set_scissor_rect(
-                        scene_viewport.x.max(0.0).floor() as u32,
-                        scene_viewport.y.max(0.0).floor() as u32,
-                        scene_viewport.width.max(1.0).ceil() as u32,
-                        scene_viewport.height.max(1.0).ceil() as u32,
-                    );
-                    pass.set_vertex_buffer(0, buffer.slice(..));
-                    pass.draw(0..schematic_overlay_vertices.len() as u32, 0..1);
-                    self.observe_screen_draw_clipped(
-                        immediate_admission::screen_admission::ScreenGroup::SchematicOverlay,
-                        schematic_overlay_vertices.len() as u32,
-                        pass.current_scissor(),
-                    );
-                }
-                if !viewport_overlay_vertices.is_empty() {
-                    pass.set_scissor_rect(
-                        prepared.scene_viewport.x.max(0.0).floor() as u32,
-                        prepared.scene_viewport.y.max(0.0).floor() as u32,
-                        prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                        prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                    );
-                    pass.set_vertex_buffer(
-                        0,
-                        self.viewport_overlay_gpu
-                            .buffer()
-                            .expect("viewport overlay vertex buffer should exist")
-                            .slice(..),
-                    );
-                    pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
-                    self.observe_screen_draw_clipped(
-                        immediate_admission::screen_admission::ScreenGroup::Overlay,
-                        viewport_overlay_vertices.len() as u32,
-                        pass.current_scissor(),
-                    );
-                }
-                if !board_interaction_vertices.is_empty() {
-                    let interaction_viewport = prepared
-                        .interaction_viewport(SceneSurface::Board)
-                        .unwrap_or(prepared.scene_viewport);
-                    pass.set_scissor_rect(
-                        interaction_viewport.x.max(0.0).floor() as u32,
-                        interaction_viewport.y.max(0.0).floor() as u32,
-                        interaction_viewport.width.max(1.0).ceil() as u32,
-                        interaction_viewport.height.max(1.0).ceil() as u32,
-                    );
-                    pass.set_vertex_buffer(
-                        0,
-                        self.board_interaction_gpu
-                            .buffer()
-                            .expect("board interaction vertex buffer should exist")
-                            .slice(..),
-                    );
-                    pass.draw(0..board_interaction_vertices.len() as u32, 0..1);
-                    self.observe_screen_draw_clipped(
-                        immediate_admission::screen_admission::ScreenGroup::BoardInteraction,
-                        board_interaction_vertices.len() as u32,
-                        pass.current_scissor(),
-                    );
-                }
-                self.draw_console(&mut pass, console_overlay_vertices, prepared);
-                // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
-                // composited AFTER the main text pass (below) so it occludes not only
-                // the work-pane quads but every underlying text_run too; its own text
-                // then draws in a final pass on top of the card.
+            pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            if !panel_vertices.is_empty() {
+                pass.set_vertex_buffer(
+                    0,
+                    self.panel_gpu
+                        .buffer()
+                        .expect("panel vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..panel_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Panel,
+                    panel_vertices.len() as u32,
+                    [0, 0, width, height],
+                );
             }
+            if prepared.surface_passes().is_empty() && !viewport_underlay_vertices.is_empty() {
+                pass.set_scissor_rect(
+                    prepared.scene_viewport.x.max(0.0).floor() as u32,
+                    prepared.scene_viewport.y.max(0.0).floor() as u32,
+                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.viewport_underlay_gpu
+                        .buffer()
+                        .expect("viewport underlay vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Underlay,
+                    viewport_underlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(prepared.scene_viewport),
+                );
+            }
+            if !prepared.surface_passes().is_empty()
+                && let Some(m) = &mut measurement
+            {
+                m.mark_scene(&mut pass, 0)?;
+            }
+            self.draw_surface_grids(&mut pass, &self.surface_grids.batches);
+            if !prepared.surface_passes().is_empty()
+                && let Some(m) = &mut measurement
+            {
+                m.mark_scene(&mut pass, 1)?;
+            }
+            self.draw_surface_world_passes(&mut pass, prepared);
+            if !prepared.surface_passes().is_empty()
+                && let Some(m) = &mut measurement
+            {
+                m.mark_scene(&mut pass, 2)?;
+            }
+            pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            if prepared.surface_passes().is_empty() {
+                for command in prepared.visible_draw_commands() {
+                    match command {
+                        RetainedDrawCommand::Quads { range, .. } => {
+                            let Some(buffer) = self.world_vertices_gpu.buffer() else {
+                                continue;
+                            };
+                            pass.set_pipeline(
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .quads,
+                            );
+                            pass.set_bind_group(0, &self.scene_bind_group.bind_group, &[]);
+                            pass.set_scissor_rect(
+                                prepared.scene_viewport.x.max(0.0).floor() as u32,
+                                prepared.scene_viewport.y.max(0.0).floor() as u32,
+                                prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                                prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                            );
+                            pass.set_vertex_buffer(0, buffer.slice(..));
+                            pass.draw(range.clone(), 0..1);
+                        }
+                        RetainedDrawCommand::Strokes { range, .. } => {
+                            let Some(buffer) = self.world_strokes_gpu.buffer() else {
+                                continue;
+                            };
+                            draw_world_strokes(
+                                &mut pass,
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .strokes,
+                                &self.scene_bind_group.bind_group,
+                                buffer,
+                                prepared.scene_viewport,
+                                std::slice::from_ref(range),
+                            );
+                        }
+                    }
+                }
+                pass.set_pipeline(&self.pipeline);
+                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            }
+            // Keep the schematic grid screen-space so zoom cannot thicken it.
+            if prepared.surface_passes().is_empty()
+                && !schematic_underlay_vertices.is_empty()
+                && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
+                && let Some(buffer) = self.schematic_underlay_gpu.buffer()
+            {
+                pass.set_scissor_rect(
+                    scene_viewport.x.max(0.0).floor() as u32,
+                    scene_viewport.y.max(0.0).floor() as u32,
+                    scene_viewport.width.max(1.0).ceil() as u32,
+                    scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(0, buffer.slice(..));
+                pass.draw(0..schematic_underlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::SchematicUnderlay,
+                    schematic_underlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(*scene_viewport),
+                );
+            }
+            // The companion pass uses its own camera uniforms and pane scissor.
+            if prepared.surface_passes().is_empty()
+                && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref()
+            {
+                for command in sr.all_draw_commands() {
+                    match command {
+                        RetainedDrawCommand::Quads { range, .. } => {
+                            let Some(buffer) = self.schematic_world_vertices_gpu.buffer() else {
+                                continue;
+                            };
+                            pass.set_pipeline(
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .quads,
+                            );
+                            pass.set_bind_group(
+                                0,
+                                &self.schematic_scene_bind_group.bind_group,
+                                &[],
+                            );
+                            pass.set_scissor_rect(
+                                scene_viewport.x.max(0.0).floor() as u32,
+                                scene_viewport.y.max(0.0).floor() as u32,
+                                scene_viewport.width.max(1.0).ceil() as u32,
+                                scene_viewport.height.max(1.0).ceil() as u32,
+                            );
+                            pass.set_vertex_buffer(0, buffer.slice(..));
+                            pass.draw(range.clone(), 0..1);
+                        }
+                        RetainedDrawCommand::Strokes { range, .. } => {
+                            let Some(buffer) = self.schematic_world_strokes_gpu.buffer() else {
+                                continue;
+                            };
+                            draw_world_strokes(
+                                &mut pass,
+                                &self
+                                    .world_pipelines
+                                    .get()
+                                    .expect("general pipelines prepared")
+                                    .strokes,
+                                &self.schematic_scene_bind_group.bind_group,
+                                buffer,
+                                *scene_viewport,
+                                std::slice::from_ref(range),
+                            );
+                        }
+                    }
+                }
+                pass.set_pipeline(&self.pipeline);
+                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            }
+            // Interaction chrome stays above schematic world geometry.
+            if !schematic_overlay_vertices.is_empty()
+                && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)
+                && let Some(buffer) = self.schematic_overlay_gpu.buffer()
+            {
+                pass.set_scissor_rect(
+                    scene_viewport.x.max(0.0).floor() as u32,
+                    scene_viewport.y.max(0.0).floor() as u32,
+                    scene_viewport.width.max(1.0).ceil() as u32,
+                    scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(0, buffer.slice(..));
+                pass.draw(0..schematic_overlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::SchematicOverlay,
+                    schematic_overlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(scene_viewport),
+                );
+            }
+            if !viewport_overlay_vertices.is_empty() {
+                pass.set_scissor_rect(
+                    prepared.scene_viewport.x.max(0.0).floor() as u32,
+                    prepared.scene_viewport.y.max(0.0).floor() as u32,
+                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.viewport_overlay_gpu
+                        .buffer()
+                        .expect("viewport overlay vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Overlay,
+                    viewport_overlay_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(prepared.scene_viewport),
+                );
+            }
+            if !board_interaction_vertices.is_empty() {
+                let interaction_viewport = prepared
+                    .interaction_viewport(SceneSurface::Board)
+                    .unwrap_or(prepared.scene_viewport);
+                pass.set_scissor_rect(
+                    interaction_viewport.x.max(0.0).floor() as u32,
+                    interaction_viewport.y.max(0.0).floor() as u32,
+                    interaction_viewport.width.max(1.0).ceil() as u32,
+                    interaction_viewport.height.max(1.0).ceil() as u32,
+                );
+                pass.set_vertex_buffer(
+                    0,
+                    self.board_interaction_gpu
+                        .buffer()
+                        .expect("board interaction vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..board_interaction_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::BoardInteraction,
+                    board_interaction_vertices.len() as u32,
+                    immediate_admission::screen_admission::scissor(interaction_viewport),
+                );
+            }
+            self.draw_console(&mut pass, console_overlay_vertices, prepared);
+            // NOTE: the menu dropdown card is intentionally NOT drawn here. It is
+            // composited AFTER the main text pass (below) so it occludes not only
+            // the work-pane quads but every underlying text_run too; its own text
+            // then draws in a final pass on top of the card.
         }
         self.encode_terminal_graphics(
             &mut encoder,
@@ -469,7 +487,6 @@ impl Renderer {
             (final_resolve == ResolvePass::TerminalBackground).then_some(&view),
             false,
             measurement.as_mut(),
-            regions.as_slice(),
         )?;
         let encode_elapsed = encode_started.elapsed();
         let text_encode_started = std::time::Instant::now();
@@ -492,12 +509,9 @@ impl Renderer {
                 timestamp_writes: measurement.as_mut().map(|m| m.pass("text")).transpose()?,
                 multiview_mask: None,
             });
-            for region in regions.as_slice() {
-                region.set(&mut pass);
-                self.text_renderer
-                    .render(&self.atlas, &mut pass)
-                    .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
-            }
+            self.text_renderer
+                .render(&self.atlas, &mut pass)
+                .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
         let text_encode_elapsed = text_encode_started.elapsed();
 
@@ -507,7 +521,6 @@ impl Renderer {
             (final_resolve == ResolvePass::TerminalForeground).then_some(&view),
             true,
             measurement.as_mut(),
-            regions.as_slice(),
         )?;
 
         // Composite the menu card and its text after the main text pass.
@@ -536,25 +549,22 @@ impl Renderer {
                         .transpose()?,
                     multiview_mask: None,
                 });
-                for (region_index, region) in regions.as_slice().iter().enumerate() {
-                    let mut pass = clipped_pass::ClippedPass::new(&mut pass, *region, region_index);
-                    pass.set_pipeline(&self.pipeline);
-                    pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                    pass.set_scissor_rect(0, 0, width, height);
-                    pass.set_vertex_buffer(
-                        0,
-                        self.menu_overlay_gpu
-                            .buffer()
-                            .expect("menu overlay vertex buffer should exist")
-                            .slice(..),
-                    );
-                    pass.draw(0..menu_overlay_vertices.len() as u32, 0..1);
-                    self.observe_screen_draw_clipped(
-                        immediate_admission::screen_admission::ScreenGroup::Menu,
-                        menu_overlay_vertices.len() as u32,
-                        pass.current_scissor(),
-                    );
-                }
+                pass.set_pipeline(&self.pipeline);
+                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+                pass.set_scissor_rect(0, 0, width, height);
+                pass.set_vertex_buffer(
+                    0,
+                    self.menu_overlay_gpu
+                        .buffer()
+                        .expect("menu overlay vertex buffer should exist")
+                        .slice(..),
+                );
+                pass.draw(0..menu_overlay_vertices.len() as u32, 0..1);
+                self.observe_screen_draw(
+                    immediate_admission::screen_admission::ScreenGroup::Menu,
+                    menu_overlay_vertices.len() as u32,
+                    [0, 0, width, height],
+                );
             }
 
             // Pass D: the dropdown's own text, on top of the card. Uses the
@@ -583,14 +593,9 @@ impl Renderer {
                             .transpose()?,
                         multiview_mask: None,
                     });
-                    for region in regions.as_slice() {
-                        region.set(&mut pass);
-                        self.menu_overlay_text_renderer
-                            .render(&self.atlas, &mut pass)
-                            .map_err(|error| {
-                                anyhow::anyhow!("render menu overlay text: {error}")
-                            })?;
-                    }
+                    self.menu_overlay_text_renderer
+                        .render(&self.atlas, &mut pass)
+                        .map_err(|error| anyhow::anyhow!("render menu overlay text: {error}"))?;
                 }
             }
         }
@@ -638,7 +643,6 @@ impl Renderer {
                 skipped_text_prepare,
             ));
         }
-        self.preserved_interaction = next_composition;
         Ok(true)
     }
 }

@@ -326,10 +326,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_world_vertices_gpu: Default::default(),
             schematic_world_strokes_gpu: Default::default(),
             surface_world_bundles: Vec::new(),
-            damage_regions: 0,
-            frame_damage_regions: Default::default(),
-            preserved_interaction: None,
-            damage_reset: Default::default(),
             surface_grids: Default::default(),
             surface_grid_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
@@ -357,7 +353,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             text_buffers,
             control_meshes: Default::default(),
             cold_world: Default::default(),
-            screen_admission: std::cell::RefCell::new(None),
+            screen_admission: std::cell::Cell::new(None),
             grid_admission: None,
             frame_observer: crate::resource_observation::frame_observer(),
             text_admission: text_admission_observation::Observer::new(

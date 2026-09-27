@@ -445,18 +445,11 @@ impl GlobalPreferencesWindowSurface {
         if !rendered? {
             return Ok(false);
         }
-        let frame = frame.ok_or_else(|| {
-            self.renderer.invalidate_preserved_frame();
-            anyhow::anyhow!("rendered owned frame must own an acquisition")
-        })?;
+        let frame = frame.context("rendered owned frame must own an acquisition")?;
         if runtime.device_health.failed() {
-            self.renderer.invalidate_preserved_frame();
             return Ok(false);
         }
-        if let Err(error) = self.surface_transaction.present(frame, &self.window) {
-            self.renderer.invalidate_preserved_frame();
-            return Err(error);
-        }
+        self.surface_transaction.present(frame, &self.window)?;
         self.presented_hits
             .present(self.prepared.as_mut().expect("prepared frame presented"));
         Ok(true)
