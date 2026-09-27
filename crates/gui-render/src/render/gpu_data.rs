@@ -121,6 +121,60 @@ pub(crate) fn try_quads_to_vertices(quads: &[Quad]) -> anyhow::Result<Vec<Vertex
     Ok(out)
 }
 
+/// Expand retained painter commands directly, omitting the zero-area second
+/// triangle used to represent a triangle in the quad construction stream.
+/// Commands keep their order and layer identity; stroke ranges are untouched.
+pub(crate) fn try_retained_vertices(
+    quads: &[Quad],
+    commands: &mut [super::RetainedDrawCommand],
+) -> anyhow::Result<Vec<Vertex>> {
+    let mut count = 0usize;
+    for command in commands.iter() {
+        if let super::RetainedDrawCommand::Quads { range, .. } = command {
+            anyhow::ensure!(
+                range.start % 6 == 0 && range.end % 6 == 0,
+                "retained quad range must span complete primitives"
+            );
+            let shapes = quads
+                .get(range.start as usize / 6..range.end as usize / 6)
+                .ok_or_else(|| {
+                    anyhow::anyhow!("retained quad range outside construction stream")
+                })?;
+            for quad in shapes {
+                count = count
+                    .checked_add(if quad.points[2] == quad.points[3] {
+                        3
+                    } else {
+                        6
+                    })
+                    .ok_or_else(|| anyhow::anyhow!("retained vertex count overflow"))?;
+            }
+        }
+    }
+    anyhow::ensure!(
+        count <= quads.len().saturating_mul(6) && u32::try_from(count).is_ok(),
+        "retained expansion exceeds admitted capacity or draw index range"
+    );
+    let mut out = Vec::new();
+    out.try_reserve_exact(count)?;
+    for command in commands {
+        if let super::RetainedDrawCommand::Quads { range, .. } = command {
+            let start = out.len() as u32;
+            for quad in &quads[range.start as usize / 6..range.end as usize / 6] {
+                let vertices = quad_vertices(*quad);
+                let keep = if quad.points[2] == quad.points[3] {
+                    3
+                } else {
+                    6
+                };
+                out.extend_from_slice(&vertices[..keep]);
+            }
+            *range = start..out.len() as u32;
+        }
+    }
+    Ok(out)
+}
+
 #[cfg(test)]
 mod quad_allocation_tests {
     use super::*;
@@ -148,6 +202,58 @@ mod quad_allocation_tests {
         );
         drop(vertices);
         assert_eq!(scope.usage().allocations, 0);
+    }
+
+    #[test]
+    fn retained_expansion_preserves_painter_ranges_without_degenerate_triangles() {
+        use super::super::RetainedDrawCommand::{Quads, Strokes};
+        let triangle = Quad {
+            points: [(0.0, 0.0), (4.0, 0.0), (2.0, 3.0), (2.0, 3.0)],
+            color: [0.2, 0.4, 0.6],
+        };
+        let rectangle = Quad {
+            points: [(0.0, 0.0), (4.0, 0.0), (4.0, 3.0), (0.0, 3.0)],
+            color: [0.6, 0.4, 0.2],
+        };
+        let mut commands = vec![
+            Quads {
+                layer_id: Some("front".into()),
+                range: 6..12,
+            },
+            Strokes {
+                layer_id: None,
+                range: 3..7,
+            },
+            Quads {
+                layer_id: Some("back".into()),
+                range: 0..6,
+            },
+        ];
+        let scope = crate::cpu_alloc::Scope::new("retained-triangle-expansion");
+        let vertices = scope
+            .with(|| try_retained_vertices(&[triangle, rectangle], &mut commands))
+            .unwrap();
+        assert_eq!((vertices.len(), vertices.capacity()), (9, 9));
+        assert_eq!(&vertices[..6], &quad_vertices(rectangle));
+        assert_eq!(&vertices[6..], &quad_vertices(triangle)[..3]);
+        assert!(
+            matches!(&commands[0], Quads {layer_id: Some(layer), range} if layer == "front" && *range == (0..6))
+        );
+        assert!(matches!(&commands[1], Strokes {range, ..} if *range == (3..7)));
+        assert!(
+            matches!(&commands[2], Quads {layer_id: Some(layer), range} if layer == "back" && *range == (6..9))
+        );
+        assert_eq!(scope.usage().allocations, 1);
+        drop(vertices);
+        assert_eq!(scope.usage().allocations, 0);
+        for range in [1..6, 0..18, 12..6] {
+            let mut invalid = [Quads {
+                layer_id: None,
+                range: range.clone(),
+            }];
+            assert!(try_retained_vertices(&[triangle, rectangle], &mut invalid).is_err());
+            assert!(matches!(&invalid[0], Quads {range: unchanged, ..} if *unchanged == range));
+        }
     }
 
     #[test]

@@ -93,3 +93,69 @@ fn world_pipelines_are_lazy_reused_and_recreated_without_pixel_changes() {
         assert_ne!(strokes, replacement.strokes);
     }
 }
+
+#[test]
+#[ignore = "requires local GPU; retained triangle expansion pixel parity"]
+fn compact_retained_triangles_match_degenerate_expansion_pixels() {
+    let state = crate::gpu_surface_pass::board_fixture_state();
+    let mut renderer = hardware_renderer_with_features(
+        960,
+        720,
+        wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES,
+    );
+    renderer.renderer = Renderer::new(&renderer.device, &renderer.queue, OUTPUT_FORMAT, 8).unwrap();
+    for scale in [1.0, 1.5] {
+        let compact = RetainedScene::from_workspace_for_surface(&state, 960, 720, scale);
+        assert!(!compact.world_vertices.is_empty());
+        let mut expanded = compact.clone();
+        // Reintroduce the old triangle-as-quad encoding without changing any
+        // nondegenerate triangle, color, winding, layer or stroke command.
+        expanded.world_vertices = compact
+            .world_vertices
+            .chunks_exact(3)
+            .flat_map(|t| [t[0], t[1], t[2], t[0], t[2], t[2]])
+            .collect::<Vec<_>>()
+            .into();
+        let mut commands = compact.all_draw_commands().to_vec();
+        for command in &mut commands {
+            if let crate::RetainedDrawCommand::Quads { range, .. } = command {
+                *range = range.start * 2..range.end * 2;
+            }
+        }
+        expanded.draw_commands = commands.into();
+        let prepare = |retained: &RetainedScene| {
+            PreparedScene::from_workspace_with_terminal_renderer(
+                &state,
+                960,
+                720,
+                scale,
+                CameraState::fit_to_bounds(&state.scene.bounds),
+                retained,
+                &[],
+                None,
+                true,
+            )
+            .unwrap()
+        };
+        let expected = capture_retained(&mut renderer, &prepare(&expanded), &expanded);
+        let actual = capture_retained(&mut renderer, &prepare(&compact), &compact);
+        assert!(
+            expected == actual,
+            "triangle expansion changed pixels at scale {scale}"
+        );
+        assert!(actual == capture_retained(&mut renderer, &prepare(&compact), &compact));
+        let mut absent = compact.clone();
+        absent.world_vertices = Vec::new().into();
+        absent.draw_commands = compact
+            .all_draw_commands()
+            .iter()
+            .filter(|c| !matches!(c, crate::RetainedDrawCommand::Quads { .. }))
+            .cloned()
+            .collect::<Vec<_>>()
+            .into();
+        assert!(
+            actual != capture_retained(&mut renderer, &prepare(&absent), &absent),
+            "fixture must expose missing world triangles"
+        );
+    }
+}

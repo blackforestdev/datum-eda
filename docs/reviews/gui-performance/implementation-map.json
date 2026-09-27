@@ -39595,5 +39595,10 @@
       "qualification_pass": false,
       "disposition": "All three quiet CPU and all three GPU p95/p99 trials fail absolute caps. Retain simplified one-pass production implementation and its correctness proof; no demonstrated native performance cure or formal relative-effect claim. Do not rerun unchanged candidate."
     }
+  },
+  "s5_triangle_compaction": {
+    "status": "Bounded implementation/correctness complete; native budget failures remain open.",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/triangle-compaction/result.json",
+    "reuse": "Reuse these bounded checks; no handoff rerun or stand-alone performance campaign justified."
   }
 }
