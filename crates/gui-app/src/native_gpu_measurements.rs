@@ -16,14 +16,27 @@ fn enabled() -> Result<bool> {
 }
 
 pub(super) fn required_features(adapter: &wgpu::Adapter) -> Result<wgpu::Features> {
+    let scene_markers = match std::env::var("DATUM_GPU_SCENE_MARKERS").as_deref() {
+        Err(std::env::VarError::NotPresent) | Ok("0") => false,
+        Ok("1") => true,
+        other => anyhow::bail!("invalid DATUM_GPU_SCENE_MARKERS: {other:?}"),
+    };
     if !enabled()? {
+        anyhow::ensure!(
+            !scene_markers,
+            "scene markers require DATUM_GPU_MEASUREMENTS=1"
+        );
         return Ok(wgpu::Features::empty());
     }
+    let mut features = wgpu::Features::TIMESTAMP_QUERY;
+    if scene_markers {
+        features |= wgpu::Features::TIMESTAMP_QUERY_INSIDE_PASSES;
+    }
     anyhow::ensure!(
-        adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY),
-        "GPU timestamp measurement unavailable on adapter"
+        adapter.features().contains(features),
+        "requested GPU timestamp features unavailable on adapter"
     );
-    Ok(wgpu::Features::TIMESTAMP_QUERY)
+    Ok(features)
 }
 
 pub(super) struct Host {
@@ -113,6 +126,7 @@ impl Host {
                     "host": sample.host, "device_epoch": sample.device_epoch,
                     "frame": sample.frame, "submission": sample.submission,
                     "timestamp_period_ns": sample.period_ns, "raw_ticks": sample.raw_ticks,
+                    "scene_marker_ticks": sample.scene_marker_ticks,
                     "passes_ns": sample.passes_ns, "own_pass_sum_ns": sample.own_pass_sum_ns,
                     "frame_span_ns": sample.frame_span_ns,
                 })

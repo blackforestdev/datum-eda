@@ -27,6 +27,9 @@ pub struct GpuFrameSample {
     pub submission: u64,
     pub period_ns: f64,
     pub raw_ticks: Vec<u64>,
+    /// Raw queries 2/3/4 inside the first scene pass: before grid, after grid,
+    /// after composed world bundles. These nested points are not extra passes.
+    pub scene_marker_ticks: Option<[u64; 3]>,
     pub passes_ns: Vec<(&'static str, f64)>,
     pub own_pass_sum_ns: f64,
     pub frame_span_ns: f64,
@@ -47,6 +50,7 @@ struct Pending {
     frame: u64,
     submission: Option<u64>,
     passes: Vec<&'static str>,
+    marker_count: u32,
     signal: Arc<AtomicU8>,
     active_start: Duration,
 }
@@ -66,6 +70,9 @@ pub(crate) struct FrameQueries {
     queries: wgpu::QuerySet,
     resources: Vec<SubmissionRef>,
     passes: Vec<&'static str>,
+    query_count: u32,
+    marker_count: u32,
+    scene_markers_enabled: bool,
     signal: Arc<AtomicU8>,
     resolved: bool,
     submitted: bool,
@@ -81,16 +88,39 @@ impl FrameQueries {
             "GPU measurement pass after query resolution"
         );
         anyhow::ensure!(
-            self.passes.len() < (QUERIES / 2) as usize,
+            self.query_count + 2 <= QUERIES,
             "GPU measurement pass capacity exceeded"
         );
-        let index = self.passes.len() as u32 * 2;
+        let index = self.query_count;
+        self.query_count += 2;
         self.passes.push(name);
         Ok(wgpu::RenderPassTimestampWrites {
             query_set: &self.queries,
             beginning_of_pass_write_index: Some(index),
             end_of_pass_write_index: Some(index + 1),
         })
+    }
+
+    pub(crate) fn mark_scene(
+        &mut self,
+        pass: &mut wgpu::RenderPass<'_>,
+        marker: u32,
+    ) -> anyhow::Result<()> {
+        if !self.scene_markers_enabled {
+            return Ok(());
+        }
+        anyhow::ensure!(
+            !self.resolved
+                && self.passes.as_slice() == ["scene"]
+                && marker == self.marker_count
+                && marker < 3
+                && self.query_count < QUERIES,
+            "invalid GPU scene marker order or capacity"
+        );
+        pass.write_timestamp(&self.queries, self.query_count);
+        self.query_count += 1;
+        self.marker_count += 1;
+        Ok(())
     }
 }
 
@@ -128,6 +158,7 @@ pub(crate) struct GpuMeasurements {
     host: u64,
     epoch: u64,
     period_ns: f64,
+    scene_markers_enabled: bool,
     next_frame: u64,
     slots: Vec<Slot>,
     clock: ActiveClock,
@@ -161,6 +192,9 @@ impl GpuMeasurements {
             host,
             epoch,
             period_ns,
+            scene_markers_enabled: device
+                .features()
+                .contains(wgpu::Features::TIMESTAMP_QUERY_INSIDE_PASSES),
             next_frame: 0,
             slots,
             clock: ActiveClock {
@@ -224,6 +258,7 @@ impl GpuMeasurements {
             frame: self.next_frame,
             submission: None,
             passes: Vec::new(),
+            marker_count: 0,
             signal: signal.clone(),
             active_start: self.clock.elapsed,
         });
@@ -235,6 +270,9 @@ impl GpuMeasurements {
             queries: (*slot.queries).clone(),
             resources: slot.submission_refs(),
             passes: Vec::new(),
+            query_count: 0,
+            marker_count: 0,
+            scene_markers_enabled: self.scene_markers_enabled,
             signal,
             resolved: false,
             submitted: false,
@@ -267,7 +305,11 @@ impl GpuMeasurements {
             "GPU measurement missing or duplicate pass resolution"
         );
         let slot = &self.slots[frame.slot];
-        let count = frame.passes.len() as u32 * 2;
+        anyhow::ensure!(
+            matches!(frame.marker_count, 0 | 3),
+            "incomplete GPU scene markers"
+        );
+        let count = frame.query_count;
         encoder.resolve_query_set(&slot.queries, 0..count, &slot.resolve, 0);
         encoder.copy_buffer_to_buffer(&slot.resolve, 0, &slot.readback, 0, u64::from(count) * 8);
         frame.resolved = true;
@@ -291,11 +333,12 @@ impl GpuMeasurements {
         let slot = &mut self.slots[frame.slot];
         let pending = slot.pending.as_mut().expect("validated reservation");
         pending.passes = std::mem::take(&mut frame.passes);
+        pending.marker_count = frame.marker_count;
         pending.submission = Some(frame.submission);
         frame.signal.store(MAPPING, Ordering::Release);
         let signal = frame.signal.clone();
         slot.readback
-            .slice(..pending.passes.len() as u64 * 16)
+            .slice(..(pending.passes.len() as u64 * 2 + u64::from(pending.marker_count)) * 8)
             .map_async(wgpu::MapMode::Read, move |result| {
                 signal.store(
                     if result.is_ok() { READY } else { MAP_FAILED },
@@ -356,9 +399,12 @@ impl GpuMeasurements {
                 READY => {
                     let view = slot
                         .readback
-                        .slice(..pending.passes.len() as u64 * 16)
+                        .slice(
+                            ..(pending.passes.len() as u64 * 2 + u64::from(pending.marker_count))
+                                * 8,
+                        )
                         .get_mapped_range();
-                    let raw: Vec<u64> = view
+                    let mut raw: Vec<u64> = view
                         .as_chunks::<8>()
                         .0
                         .iter()
@@ -367,6 +413,7 @@ impl GpuMeasurements {
                     drop(view);
                     slot.readback.unmap();
                     let pending = slot.pending.take().expect("ready frame");
+                    let scene_marker_ticks = extract_scene_markers(&mut raw, pending.marker_count)?;
                     let (passes_ns, own_pass_sum_ns, frame_span_ns) =
                         decode(&pending.passes, &raw, self.period_ns)?;
                     samples.push(GpuFrameSample {
@@ -376,6 +423,7 @@ impl GpuMeasurements {
                         submission: pending.submission.expect("mapped only after submit"),
                         period_ns: self.period_ns,
                         raw_ticks: raw,
+                        scene_marker_ticks,
                         passes_ns,
                         own_pass_sum_ns,
                         frame_span_ns,
@@ -424,6 +472,22 @@ impl Drop for GpuMeasurements {
     fn drop(&mut self) {
         self.cancel();
     }
+}
+
+// Keep the ordinary pass-pair representation intact for existing consumers.
+// Nested markers never contribute a second time to own_pass_sum_ns.
+fn extract_scene_markers(raw: &mut Vec<u64>, count: u32) -> anyhow::Result<Option<[u64; 3]>> {
+    if count == 0 {
+        return Ok(None);
+    }
+    anyhow::ensure!(count == 3 && raw.len() >= 5, "missing GPU scene markers");
+    let markers = [raw[2], raw[3], raw[4]];
+    anyhow::ensure!(
+        raw[0] <= markers[0] && markers.is_sorted() && markers[2] <= raw[1],
+        "GPU scene markers outside ordered scene interval"
+    );
+    raw.drain(2..5);
+    Ok(Some(markers))
 }
 
 type Decoded = (Vec<(&'static str, f64)>, f64, f64);

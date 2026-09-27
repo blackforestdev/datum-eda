@@ -276,3 +276,24 @@ fn real_gpu_query_ring_completion_and_failure_controls() {
     assert!(measurement.begin().is_err());
     assert_eq!(cancellations.lock().unwrap().len(), 6);
 }
+
+#[test]
+fn scene_markers_preserve_pass_totals_and_reject_missing_or_reversed_ticks() {
+    let mut raw = vec![10, 100, 20, 30, 90, 110, 120];
+    assert_eq!(
+        extract_scene_markers(&mut raw, 3).unwrap(),
+        Some([20, 30, 90])
+    );
+    assert_eq!(raw, [10, 100, 110, 120]);
+    let (_, sum, span) = decode(&["scene", "text"], &raw, 1.0).unwrap();
+    assert_eq!((sum, span), (100.0, 110.0));
+    for (mut raw, count) in [
+        (vec![10, 100], 3),
+        (vec![10, 100, 20, 30, 90], 2),
+        (vec![10, 100, 9, 30, 90], 3),
+        (vec![10, 100, 20, 19, 90], 3),
+        (vec![10, 100, 20, 30, 101], 3),
+    ] {
+        assert!(extract_scene_markers(&mut raw, count).is_err());
+    }
+}
