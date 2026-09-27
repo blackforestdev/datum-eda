@@ -12268,7 +12268,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Candidate500387c1 failed three quiet X11/1x trials:16.361,15.607,15.378% against10%. Normal exit and exact final pixels allpass. Candidate retired; earlier default-path failures retained. No unchanged repeat.",
+        "status": "Candidate4eaa0087 fails all three quiet X11/1x CPU trials:11.032,10.725,11.027% against10%. Six-run raw assessment: docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json. Earlier failures retained; no full acceptance.",
         "id": "proof_bud_t1_pointer_cpu_duty",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12502,7 +12502,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Candidate500387c1 failed all three X11/1x diagnostic GPU trials:15.102,15.132,15.002ms against4ms. Completion records include final drain; markers disabled and no displayed-latency claim. Candidate retired; prior failures retained.",
+        "status": "Candidate4eaa0087 fails all three X11/1x GPU trials:12.056,12.026,12.073ms against4ms. Six-run raw assessment: docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json. Earlier failures retained; no full acceptance.",
         "id": "proof_bud_t1_pointer_gpu_p95",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P95 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12584,7 +12584,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Candidate500387c1 failed all three X11/1x diagnostic GPU trials:17.172,16.847,17.136ms against8ms. Completion records include final drain; no full method/backend/scale acceptance. Candidate retired; prior failures retained.",
+        "status": "Candidate4eaa0087 fails all three X11/1x GPU trials:12.461,12.528,12.438ms against8ms. Six-run raw assessment: docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json. Earlier failures retained; no full acceptance.",
         "id": "proof_bud_t1_pointer_gpu_p99",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P99 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -39566,9 +39566,34 @@
     }
   },
   "s5_pass_consolidation": {
-    "status": "Implemented with bounded GPU correctness proof; native benefit unmeasured; S5 open.",
+    "status": "Implemented; six native runs preserve reference pixels but all pointer CPU/GPU cap trials fail. S5 open.",
     "evidence": "docs/reviews/gui-performance/implementation/S5/pass-consolidation/result.json",
     "reused_evidence": "Existing completed groups remain credited at recorded scope; retired partial redraw stays rejected.",
-    "test_policy": "One cohesive GPU batch, then only the failed accounting test rerun after correcting its omitted cache term. No broad repeat or native trial."
+    "test_policy": "One cohesive GPU batch, then only the failed accounting test rerun after correcting its omitted cache term. No broad repeat or native trial.",
+    "native_performance": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json",
+      "quiet_cpu_percent": [
+        11.031644211481188,
+        10.72453436084968,
+        11.026800267205978
+      ],
+      "gpu_p95_p99_ms": [
+        [
+          12.055500367904664,
+          12.461417046958923
+        ],
+        [
+          12.026167033676147,
+          12.52750038230896
+        ],
+        [
+          12.072833701766967,
+          12.43816704624939
+        ]
+      ],
+      "exact_native_output_runs": 6,
+      "qualification_pass": false,
+      "disposition": "All three quiet CPU and all three GPU p95/p99 trials fail absolute caps. Retain simplified one-pass production implementation and its correctness proof; no demonstrated native performance cure or formal relative-effect claim. Do not rerun unchanged candidate."
+    }
   }
 }
