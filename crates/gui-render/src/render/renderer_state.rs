@@ -24,12 +24,7 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
-    pub(super) damage_regions: usize,
-    pub(super) frame_damage_regions: gpu_frame::interaction_damage::Regions,
-    pub(super) preserved_interaction:
-        Option<gpu_frame::preserved_interaction::PreservedInteraction>,
-    pub(super) damage_reset: std::sync::OnceLock<wgpu::RenderPipeline>,
-    pub(super) screen_admission: std::cell::RefCell<
+    pub(super) screen_admission: std::cell::Cell<
         Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 8]>,
     >,
     pub(super) grid_admission: Option<

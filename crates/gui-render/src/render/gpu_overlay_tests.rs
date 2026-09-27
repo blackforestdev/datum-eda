@@ -564,6 +564,3 @@ mod text_admission_tests;
 
 #[path = "frame_observation_tests.rs"]
 mod frame_observation_tests;
-
-#[path = "interaction_damage_gpu_tests.rs"]
-mod interaction_damage_gpu_tests;

@@ -42,14 +42,6 @@ impl PreparedScene {
     /// Override the companion schematic pass camera while keeping its immediate
     /// grid and interaction buffers projected through the same warm camera.
     pub fn set_schematic_camera(&mut self, camera: CameraState) {
-        if self.schematic_camera != camera
-            || self
-                .surface_passes
-                .iter()
-                .any(|pass| pass.surface == SceneSurface::Schematic && pass.camera != camera)
-        {
-            self.composition_revision.invalidate();
-        }
         self.schematic_camera = camera;
         if let Some(pass) = self
             .surface_passes

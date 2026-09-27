@@ -12268,7 +12268,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Candidate500387c1 failed three quiet X11/1x trials:16.361,15.607,15.378% against10%. Normal exit and exact final pixels allpass. Candidate retired; earlier default-path failures retained. No unchanged repeat.",
         "id": "proof_bud_t1_pointer_cpu_duty",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12295,7 +12295,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
         "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
         "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
-      }
+      },
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
     },
     {
       "id": "BUD-T1-POINTER-CPU-ACTION",
@@ -12349,7 +12350,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Unqualified:500387c1 duty failures do not establish per-action CPU. GPU-mode logs receive all1280changed positions per trial, but quiet semantic-action denominator remains absent. Candidate retired; requirements unchanged.",
         "id": "proof_bud_t1_pointer_cpu_action",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable CPU-ACTION in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12376,7 +12377,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
         "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
         "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
-      }
+      },
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
     },
     {
       "id": "BUD-T1-POINTER-GPU-DUTY",
@@ -12430,7 +12432,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Unqualified full GPU-DUTY/ACC-03:500387c1 matched endpoint-client render counters observe34.468\u201334.737% over the input CPU windows; complete intervening client lifecycle/observer overhead is not established. Candidate retired; no zero-fill or full acceptance.",
         "id": "proof_bud_t1_pointer_gpu_duty",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-DUTY in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12445,7 +12447,8 @@
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
     },
     {
       "id": "BUD-T1-POINTER-GPU-P95",
@@ -12499,7 +12502,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Candidate500387c1 failed all three X11/1x diagnostic GPU trials:15.102,15.132,15.002ms against4ms. Completion records include final drain; markers disabled and no displayed-latency claim. Candidate retired; prior failures retained.",
         "id": "proof_bud_t1_pointer_gpu_p95",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P95 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12526,7 +12529,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
         "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
         "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
-      }
+      },
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
     },
     {
       "id": "BUD-T1-POINTER-GPU-P99",
@@ -12580,7 +12584,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Executed bounded pointer campaign: three candidate CPU duties13.482\u201318.801% exceed10%; separate diagnostic GPU span p95/p99=9.726/11.999ms exceed4/8ms. Offline reconciliation of all7runs proves3600scheduled positions and all1280changed integer positions received in order;120distinct positions/s is not a contract requirement. Semantic hit/crosshair and acknowledged-action accounting remain unqualified. Preserve failure; no unchanged repeat until method/fix resolves the stated gap.",
+        "status": "Candidate500387c1 failed all three X11/1x diagnostic GPU trials:17.172,16.847,17.136ms against8ms. Completion records include final drain; no full method/backend/scale acceptance. Candidate retired; prior failures retained.",
         "id": "proof_bud_t1_pointer_gpu_p99",
         "positive": "T1-POINTER: exact corresponding W recipe; each admitted backend/scale/pane/host configuration, MET-01 trials",
         "negative_control": "Inject excess attributable GPU-P99 in isolated candidate; threshold assertion must fail. For report-only row omit raw accounting and require incomplete result.",
@@ -12607,7 +12611,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S5/pointer-native-batch/input-reconciliation.json",
         "sha256": "0d7fb34bb33ed0c6298398f035ea6f0b034584df597ef3f51fbbceb16a0a2902",
         "scope": "Scheduled/rounded/native position reconciliation only; no semantic-action denominator or numerical budget pass."
-      }
+      },
+      "s5_rejected_partial_redraw_evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json"
     },
     {
       "id": "BUD-T1-PAN-CPU-DUTY",
@@ -39135,13 +39140,13 @@
       },
       {
         "check": "\u2713 done",
-        "label": "Bounded interaction redraw exact-pixel and failure-path controls",
+        "label": "Retired partial-redraw candidate exact-pixel and failure-path controls",
         "completed": true,
         "evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/result.json",
         "evidence_sha256": "8f0a7c106be4cc354bb89d0fc878fdf7fbab122876c235d752826f65f57c805a",
         "validated_result": "7focused tests passed, including two exact-GPU cases and observer negative control; application check passed. Initial compile failure preserved.",
-        "scope": "Changed partial renderer correctness and actual draw receipts; no native or numerical acceptance.",
-        "carry_forward": "Reuse this scope across handoffs. Measure changed stable candidate before any cap or improvement claim."
+        "scope": "Historical correctness proof on500387c1; implementation retired after failed native performance. Not proof of current default performance.",
+        "carry_forward": "Keep the seven scoped passes and failed six-trial assessment. Do not resurrect or retest this unchanged rejected candidate."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md",
@@ -39526,18 +39531,38 @@
     "event_source_inspection": "Recorded in evidence: no causal event-traffic defect established; cached/disabled paths and modifier suppression already present. Generic window_other counts cannot justify dropping events."
   },
   "s5_pointer_damage_reuse": {
-    "status": "Bounded partial-redraw implementation and correctness proof; native performance unqualified",
+    "status": "Rejected and retired after three quiet CPU and three GPU-frame failures",
     "issue": "dat-pointer-damage-reuse-6jgg",
     "qualification_pass": false,
     "evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/result.json",
     "evidence_sha256": "8f0a7c106be4cc354bb89d0fc878fdf7fbab122876c235d752826f65f57c805a",
-    "decision": "Use preserved MSAA samples for interaction-only redraw only after exact pixels, conservative invalidation and truthful submitted-work observations pass. No unchanged native campaign rerun.",
+    "decision": "The bounded correctness pass is historical evidence on500387c1, not a performance success. Six-trial assessment rejected the approach; no changed-candidate numerical or full S5 acceptance.",
     "limits": [
       "No CPU/GPU cap, observer-overhead, native UX, full resource accounting, backend/scale/endurance/recovery campaign or independent performance acceptance.",
       "Previous three pointer and six clamp CPU failures remain failures; no comparative performance claim until the changed candidate is measured.",
       "Mixed-layer GPU fixtures exercise actual renderer passes with deliberate overlap; they are not native product acceptance or admitted schematic workload qualification.",
       "New fixed inline bookkeeping and per-draw masks do not allocate proportional region vectors; full host/process and driver/private accounting remains an S5 obligation.",
       "Owner Wayland fractional-line dependency decision and owner UX acceptance remain separate; PM029/PM047 limits and nonblocking resize exclusions unchanged."
-    ]
+    ],
+    "native_performance": {
+      "evidence": "docs/reviews/gui-performance/implementation/S5/interaction-damage/native-performance/assessment.json",
+      "evidence_sha256": "d5eec8fff199c38c54d45671f0bd25211aa616889d6b7d654a2535c0ead9ecec",
+      "quiet_cpu_percent": [
+        16.360866871885474,
+        15.606641611257,
+        15.37786007897327
+      ],
+      "gpu_p95_ms": [
+        15.101833794204712,
+        15.132167128463745,
+        15.002250457832336
+      ],
+      "gpu_p99_ms": [
+        17.171917190711977,
+        16.84741718080902,
+        17.13550052293396
+      ],
+      "decision": "Restore all partial-redraw production/test changes to fa72501b bytes; retain separate measurement_owner test compatibility fix. No retry of rejected candidate or unchanged clamp qualification. Historical comparison is unpaired."
+    }
   }
 }
