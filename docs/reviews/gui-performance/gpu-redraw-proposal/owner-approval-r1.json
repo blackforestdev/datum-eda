@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-OWNER-APPROVAL-R1",
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "recorded_at": "2026-09-27T23:12:02Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "owner_response_exact": "+ approve GPU redraw proposal r1",
+  "disposition": "approved subject to the prerequisites and bounded scope in pinned proposal r1",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal.md",
+    "sha256": "6b7ed1c58158b65dc9c635535362f78360a32a7427be9183b694d6363d816eee",
+    "commit": "6c35a415c6551e14f5a877bece511111f963bb87"
+  },
+  "authorization": "Owner approval of the exact candidate and staged proof is recorded. Effective Frontier authorization remains planning until independent design review and numbered-decision ratification complete. This record does not ratify the mechanism or assert implementation/performance acceptance.",
+  "remaining_prerequisites": [
+    "Independent design delta review by a reviewer distinct from the proposal author; same-session review.json does not satisfy it.",
+    "Resolve findings within the approved scope; material proposal changes return to owner.",
+    "Numbered-decision ratification, evidence-route reconciliation and synchronized Frontier execution authorization before production edits/build/test/run/report."
+  ],
+  "roadmap": "GPI-S4-APPROVAL complete; GPI-S4-REVIEW explicitly represents the already-approved prerequisite, then GPI-S4 and GPI-S5 remain pending.",
+  "preserved_boundaries": [
+    "All original budgets, exact 8x output and resource limits",
+    "One bounded candidate and fixed proof/stop rules; no alternative campaign",
+    "No CPU event-loop investigation",
+    "No new dependency or prototype authority",
+    "No S4/S5 or product acceptance"
+  ],
+  "route_review": {
+    "id": "gui-performance-recovery",
+    "prior_reviewed_digest": "1cb5c009f397baf42db958026aace876276f75a3e0cf6f1c297044b083a790a9",
+    "basis": "Reuse unchanged full-route review from r1. Current route digest verified before edits; reconcile only owner disposition and explicit prerequisite sequencing. Historical results, sources and proposal bytes remain unchanged."
+  }
+}

@@ -494,3 +494,26 @@ All prior failures, original S4 obligations, 225 qualification rows, S5 review
 and nonblocking exclusions remain unchanged. The planning claim is released
 with its explicit handoff retained; execution requires a new synchronized claim
 after recorded owner disposition and the corresponding authorization change.
+
+## GPU redraw proposal r1 owner approval
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-OWNER-APPROVAL-R1 -->
+
+The owner responded `+ approve GPU redraw proposal r1`. The exact response and
+immutable proposal pin are recorded in
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r1.json`.
+GPI-S4-APPROVAL is complete for the owner disposition. Its previously stated
+independent design delta review and numbered-decision ratification prerequisites
+are carried explicitly into GPI-S4-REVIEW; they are not claimed complete.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-REVIEW -->
+
+**GPI-S4-REVIEW.** Complete independent design delta review of approved r1,
+resolve findings within its approved scope, and ratify the new mechanism in a
+numbered decision with reconciled evidence and synchronized Frontier execution
+authorization. Material changes to the approved proposal require owner revision.
+Planning authorization applies until these existing prerequisites are satisfied;
+no production edits, builds, application tests, native runs or benchmarks occur
+in this step. GPI-S4 now depends on this explicit prerequisite. The owner need
+not approve unchanged r1 again. Original S4/S5 obligations, budgets, historical
+evidence, exclusion of CPU event-loop work and r1 stop rules remain unchanged.
