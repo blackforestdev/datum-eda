@@ -275,7 +275,18 @@ fn font_view(u: resource_observation::FontCpuUsage) -> Value {
 fn renderer_view(renderer: &Renderer) -> Value {
     let control = renderer.control_mesh_usage();
     let text = renderer.text_cache_key_usage();
-    json!({"text_scope":scope_view(&renderer.text_cpu_usage()),"font":font_view(renderer.font_cpu_usage()),
+    let glyph_counts = renderer.glyph_preparation_counts().map(|counts| {
+        counts.map(|c| json!({
+        "areas":c.areas,"layout_rows":c.layout_rows,"shaped_instances":c.shaped_instances,
+        "row_culled_instances":c.row_culled_instances,"clipped_instances":c.clipped_instances,
+        "without_raster_instances":c.without_raster_instances,
+        "prepared_instances":c.prepared_instances,"draw_batches":c.draw_batches
+    }))
+    });
+
+    json!({"last_successful_glyph_preparation_workspace_overlay":glyph_counts,
+        "glyph_count_scope":"last successful preparation groups; sampled, not per-frame/per-pane or unique glyph admission",
+        "text_scope":scope_view(&renderer.text_cpu_usage()),"font":font_view(renderer.font_cpu_usage()),
         "measurement_font":renderer.measurement_cpu_usage().map(font_view),
         "control_mesh":{"entries":control.entries,"entry_capacity":control.entry_capacity,
             "key_capacity_bytes":control.key_capacity_bytes,"entry_storage_bytes":control.entry_storage_bytes,

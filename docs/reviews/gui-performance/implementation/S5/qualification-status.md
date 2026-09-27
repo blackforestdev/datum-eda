@@ -60,6 +60,9 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Lazy world pipeline initialization and pixels** — Focused hardware test passes at 4× and 8× MSAA: overlay omission, cold/warm board output and renderer replacement. [Evidence](lazy-world-pipelines/result.json)
   Scope: Exact eager/lazy pixel comparison on one GPU; native performance and full recovery remain open.
 
+- [x] **Glyph preparation count lifecycle** — One hardware test passes populated/empty counts, reuse, cancellation and replacement. [Evidence](glyph-preparation-counts/result.json)
+  Scope: Last-successful preparation groups only; full ADM-01 and native delivery remain open.
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.

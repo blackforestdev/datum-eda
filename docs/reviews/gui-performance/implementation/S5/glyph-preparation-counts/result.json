@@ -1,0 +1,42 @@
+{
+  "status": "bounded preparation-count implementation; ADM-01 incomplete",
+  "base_commit": "a3421107",
+  "change": "Count areas, layout rows, shaped instances and row-culled/clipped/without-raster/prepared outcomes inside the existing glyph preparation loop. Publish only after successful preparation; invalidate at entry and cancellation; replacement starts absent. Existing sampled resource views expose separate workspace/overlay last-successful counts.",
+  "proof": {
+    "gpu": "1 hardware GPU test passed: eight shaped/prepared glyphs and count reconciliation, empty preparation, upload reuse, cancellation and renderer replacement.",
+    "app": "Guarded offline cargo check -p datum-gui-app passed.",
+    "source_health": "2555 files pass",
+    "dependency_authority": "pass",
+    "spec_parity": "20 inventories pass"
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --lib glyph_preparation_counts_distinguish_empty_reused_and_cancelled --offline -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo check -p datum-gui-app --offline"
+  ],
+  "semantics": [
+    "Null means no successful current preparation, never zero.",
+    "A zero populated count is an observed empty successful preparation.",
+    "Prepared instances do not establish queue submission, raster coverage or physical display.",
+    "Counts survive unchanged paint reuse; sampled groups are not individual prepared frames or panes.",
+    "Counters use inline scalar storage; no collection, allocation, extra shaping, rasterization, timer or input source is introduced."
+  ],
+  "remaining": [
+    "Unique font-generation/glyph/size/raster keys.",
+    "Complete frame/pane/model identities and before/after layout/font/layer/pane/DPI observations.",
+    "Retained and submitted geometry/ranges and CPU-culling observations.",
+    "Per-counter clipping/no-raster and failed-construction controls in the complete admission campaign.",
+    "Native delivery and numerical observer-overhead/performance qualification.",
+    "Full in-scope S5 adoption/resource/endurance/recovery/replay and owner UX acceptance."
+  ],
+  "preserved": "All225 original predicates and statuses; S0-S4; previous failures and completed tests; GEFN, PM029/PM047, upload-before-acquire and nonblocking resize exclusions. No dependency or shader change.",
+  "logs": {
+    "gpu": {
+      "path": "docs/reviews/gui-performance/implementation/S5/glyph-preparation-counts/gpu.log.gz",
+      "sha256": "e16f105860f414e5662ed5519619d4b14dba3d1b606c569e52ca2de6483301b2"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S5/glyph-preparation-counts/app.log.gz",
+      "sha256": "57a12e649d723aa3261660eacf17728713d2e984523a1f3c9d389cd80e0a7b16"
+    }
+  }
+}

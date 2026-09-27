@@ -38633,6 +38633,20 @@
         ],
         "scope": "Focused 4x/8x pipeline initialization and same-device renderer replacement; not native performance or full recovery.",
         "carry_forward": "Preserve across handoffs; rerun only for affected behavior."
+      },
+      {
+        "check": "\u2713 done",
+        "completed": true,
+        "label": "Glyph preparation count lifecycle",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/glyph-preparation-counts/result.json",
+        "evidence_field": "proof.gpu",
+        "evidence_sha256": "10bd3ff7fe02235c8147e5c0aef0c91b115014f5ef91da35a1f6ced092009309",
+        "validated_result": "1 hardware GPU test passed: eight shaped/prepared glyphs and count reconciliation, empty preparation, upload reuse, cancellation and renderer replacement.",
+        "requirement_ids": [
+          "AC-06"
+        ],
+        "scope": "Bounded hardware count lifecycle; no unique glyph/per-pane/per-frame/native admission pass.",
+        "carry_forward": "Preserve on recorded candidate across handoffs; rerun only for affected behavior."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
@@ -38642,5 +38656,10 @@
     "evidence": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/result.json",
     "scope": "Remove unused world pipeline creation from overlay-only renderer construction; preserve original requirements and statuses.",
     "release_evidence": "docs/reviews/gui-performance/implementation/S5/lazy-world-pipelines/release.json"
+  },
+  "s5_glyph_preparation_counts_work": {
+    "status": "implemented bounded count view; complete admission remains outstanding",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/glyph-preparation-counts/result.json",
+    "scope": "Production glyph preparation scalars and lifecycle validity, not complete ADM-01 or native acceptance."
   }
 }

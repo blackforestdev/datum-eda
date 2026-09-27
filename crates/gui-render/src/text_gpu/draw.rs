@@ -27,6 +27,19 @@ struct Instance {
     is_color: u32,
 }
 
+/// Counts from the last successful glyph preparation, not raster-visible pixels.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct GlyphPreparationCounts {
+    pub areas: usize,
+    pub layout_rows: usize,
+    pub shaped_instances: usize,
+    pub row_culled_instances: usize,
+    pub clipped_instances: usize,
+    pub without_raster_instances: usize,
+    pub prepared_instances: usize,
+    pub draw_batches: usize,
+}
+
 pub(crate) struct Draw {
     screen_budget: std::sync::Arc<super::budget::Budget>,
     generation_budget: std::sync::Arc<super::budget::Budget>,
@@ -37,6 +50,7 @@ pub(crate) struct Draw {
     pending_instances: Option<StagingVec<Instance>>,
     generation: Option<u64>,
     pub upload_bytes: u64,
+    pub preparation_counts: Option<GlyphPreparationCounts>,
 }
 
 impl Draw {
@@ -95,6 +109,7 @@ impl Draw {
             pending_instances: None,
             generation: None,
             upload_bytes: 0,
+            preparation_counts: None,
         }
     }
 
@@ -121,13 +136,16 @@ impl Draw {
         resolution: [u32; 2],
         areas: impl IntoIterator<Item = Area<'a, R>>,
     ) -> anyhow::Result<()> {
+        self.preparation_counts = None;
         self.generation = None;
         self.pending_instances = None;
         self.batches.clear();
         self.upload_bytes = 0;
         anyhow::ensure!(!resolution.contains(&0), "zero text target extent");
+        let mut counts = GlyphPreparationCounts::default();
         let mut instances = StagingVec::default();
         for area in areas {
+            counts.areas += 1;
             let bounds = [
                 area.bounds.left.max(0),
                 area.bounds.top.max(0),
@@ -135,10 +153,13 @@ impl Draw {
                 area.bounds.bottom.min(resolution[1] as i32),
             ];
             for row in area.rows {
+                counts.layout_rows += 1;
+                counts.shaped_instances += row.glyphs.len();
                 let row_top = (area.top + row.line_top * area.scale) as i32;
                 if row_top > bounds[3]
                     || row_top + ((row.line_height * area.scale) as i32) < bounds[1]
                 {
+                    counts.row_culled_instances += row.glyphs.len();
                     continue;
                 }
                 for glyph in row.glyphs {
@@ -146,6 +167,7 @@ impl Draw {
                     let Some(location) =
                         atlas.glyph(device, queue, fonts, raster, physical.cache_key)?
                     else {
+                        counts.without_raster_instances += 1;
                         continue;
                     };
                     let x = physical.x + location.bearing[0];
@@ -156,6 +178,7 @@ impl Draw {
                     let right = (x + location.size[0] as i32).min(bounds[2]);
                     let bottom = (y + location.size[1] as i32).min(bounds[3]);
                     if left >= right || top >= bottom {
+                        counts.clipped_instances += 1;
                         continue;
                     }
                     let index = instances.len() as u32;
@@ -243,6 +266,9 @@ impl Draw {
         if let Some(buffer) = &self.instances {
             buffer.set_requested_bytes(required);
         }
+        counts.prepared_instances = instances.len();
+        counts.draw_batches = self.batches.len();
+        self.preparation_counts = Some(counts);
         self.pending_instances = Some(instances);
         self.generation = Some(atlas.generation);
         Ok(())
@@ -255,6 +281,7 @@ impl Draw {
     }
 
     pub fn cancel_preparation(&mut self) {
+        self.preparation_counts = None;
         self.generation = None;
         self.pending_instances = None;
         self.batches.clear();

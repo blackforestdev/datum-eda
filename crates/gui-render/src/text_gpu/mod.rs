@@ -8,6 +8,7 @@ pub(crate) mod upload;
 pub(crate) mod upload_totals;
 
 pub(crate) use atlas::{Atlas, UploadRequired};
+pub use draw::GlyphPreparationCounts;
 pub(crate) use draw::{Area, Draw};
 pub(crate) use lifetime::hold_until_done;
 pub use lifetime::{Kind, Observer, Record, ReleasedAllocations, RetirementReason};
