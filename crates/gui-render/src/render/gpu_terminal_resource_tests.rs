@@ -272,6 +272,7 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
         assert_eq!(ready, attempt == 2);
         assert!(
             renderer.renderer.upload_staging_reserved_bytes()
+                - renderer.renderer.surface_grid_cache_bytes()
                 - renderer.renderer.layout_scratch_reserved_bytes()
                 - renderer.renderer.pending_glyph_pixel_bytes()
                 - renderer.renderer.screen_upload_metadata_bytes()
@@ -290,7 +291,8 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
             .unwrap();
         assert_eq!(
             renderer.renderer.upload_staging_reserved_bytes(),
-            renderer.renderer.layout_scratch_reserved_bytes()
+            renderer.renderer.surface_grid_cache_bytes()
+                + renderer.renderer.layout_scratch_reserved_bytes()
                 + renderer.renderer.pending_glyph_pixel_bytes()
                 + renderer.renderer.screen_upload_metadata_bytes()
                 + renderer.renderer.screen_upload_snapshot_bytes()

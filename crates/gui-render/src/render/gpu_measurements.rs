@@ -111,7 +111,7 @@ impl FrameQueries {
         }
         anyhow::ensure!(
             !self.resolved
-                && self.passes.as_slice() == ["scene"]
+                && self.passes.as_slice() == ["frame"]
                 && marker == self.marker_count
                 && marker < 3
                 && self.query_count < QUERIES,

@@ -46,7 +46,7 @@ fn empty_workspace_text_omits_preparation_and_pass_without_pixel_change() {
         .unwrap();
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["scene"]
+        ["frame"]
     );
     assert_eq!(renderer.renderer.text_preparation.workspace_prepares, 0);
     let mut blank = invisible.clone();
@@ -71,20 +71,20 @@ fn empty_workspace_text_omits_preparation_and_pass_without_pixel_change() {
             .unwrap();
         assert_eq!(
             samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-            ["scene"]
+            ["frame"]
         );
         assert_eq!(renderer.renderer.text_preparation.workspace_prepares, 0);
     }
-    let mut extra_pass = prepared.clone();
-    extra_pass.text_runs = vec![invisible];
-    assert!(without_text == capture(&mut renderer, &extra_pass));
+    let mut with_text = prepared.clone();
+    with_text.text_runs = vec![invisible];
+    assert!(without_text == capture(&mut renderer, &with_text));
     let samples = renderer
         .renderer
         .poll_gpu_measurements(&renderer.device)
         .unwrap();
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["scene", "text"]
+        ["frame"]
     );
     assert_eq!(renderer.renderer.text_preparation.workspace_prepares, 1);
     assert!(
@@ -97,7 +97,7 @@ fn empty_workspace_text_omits_preparation_and_pass_without_pixel_change() {
         .unwrap();
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["scene"]
+        ["frame"]
     );
     assert_eq!(renderer.renderer.text_preparation.workspace_prepares, 1);
     let mut menu = prepared.clone();
@@ -110,10 +110,10 @@ fn empty_workspace_text_omits_preparation_and_pass_without_pixel_change() {
         .unwrap();
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["scene", "menu-background"]
+        ["frame"]
     );
     assert_eq!(renderer.renderer.text_preparation.overlay_prepares, 0);
-    menu.menu_overlay_text_runs = extra_pass.text_runs.clone();
+    menu.menu_overlay_text_runs = with_text.text_runs.clone();
     assert!(card_only == capture(&mut renderer, &menu));
     let samples = renderer
         .renderer
@@ -121,7 +121,7 @@ fn empty_workspace_text_omits_preparation_and_pass_without_pixel_change() {
         .unwrap();
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["scene", "menu-background", "menu-text"]
+        ["frame"]
     );
     assert_eq!(renderer.renderer.text_preparation.overlay_prepares, 1);
 }
