@@ -53,6 +53,18 @@ class Controls(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 drm.parse(record() + invalid + "\n")
 
+    def test_missing_device_identity_cannot_merge_clients(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            missing = record().replace("drm-pdev: 0000:00:02.0\n", "")
+            fixture(root, 100, {3: missing, 4: missing, 5: record(pdev="")})
+            result = drm.collect([100], root)
+            self.assertFalse(result["complete_enumeration"])
+            self.assertFalse(result["memory_counters_available"])
+            self.assertEqual(result["clients"], [])
+            self.assertEqual(len(result["unidentified"]), 3)
+            self.assertEqual([s["fd"] for s in result["unidentified"]], [3, 4, 5])
+
     def test_closed_fd_and_process_change_remain_incomplete(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
