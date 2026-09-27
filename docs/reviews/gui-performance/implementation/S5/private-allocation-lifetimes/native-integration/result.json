@@ -1,0 +1,99 @@
+{
+  "status": "Both native method attempts failed; output buffering landed, startup burst delivery remains unresolved",
+  "qualification_pass": false,
+  "declaration": "One producer X11/1x F-DOA run per candidate, initial/prefix/full-live driver endpoints and one existing first-use pixel/focus/close cycle per auxiliary host. Capacity65536 and readiness15seconds fixed. Second run followed a concrete writer change; no repeated endurance campaign or retry to obtain a pass. Both stopped during startup.",
+  "runs": [
+    {
+      "stage": "initial-unbuffered",
+      "candidate": {
+        "source_commit": "dbd7ea113e900f3e6cc165b94d722188ad9139c8",
+        "binary": "/home/bfadmin/Documents/datum-eda/target/pm045-independent-replay-artifacts/candidate-private-lifetimes-8247ef907e6a-datum-gui",
+        "binary_sha256": "8247ef907e6a071f88cb12e141944a893d7e2435c102c1d0a3629f98eb35c625",
+        "source_bindings_sha256": "d7aedc243e81b91bdd0de2dccd3580dae62de97c560364e84b49d9e5e8977d70",
+        "kernel": "6.12.107+deb13-amd64",
+        "display": ":1",
+        "wayland_display": "wayland-0",
+        "status": "Producer method integration candidate, not final replay ready"
+      },
+      "raw_root": "target/pm045-evidence-work/private-lifetime-native",
+      "native_run": "dev-agent-s5-endurance-_jqrmwjm",
+      "error": "AssertionError('native predicate timed out')",
+      "normal_exit_code": null,
+      "forced_cleanup": true,
+      "remaining_children": "",
+      "display_restore_returncode": 0,
+      "cleanup_errors": null,
+      "binary_unchanged": true,
+      "fixture_unchanged": true,
+      "production_source_unchanged": true,
+      "completed_cycles": 0,
+      "private_trace_bytes": 30864781,
+      "failure_detail": "15second native readiness predicate timed out before first presentation; private trace ended mid-record in the first batch. No complete allocation trace, DRM endpoint or auxiliary cycle."
+    },
+    {
+      "stage": "buffered",
+      "candidate": {
+        "source_commit": "dbd7ea113e900f3e6cc165b94d722188ad9139c8",
+        "binary": "/home/bfadmin/Documents/datum-eda/target/pm045-independent-replay-artifacts/candidate-private-buffered-783c49452f9d-datum-gui",
+        "binary_sha256": "783c49452f9d0c4727b17bf3195bbd6082aecb03a9cb426ae2b37d6690b6177e",
+        "source_bindings_sha256": "81fcce0c63c93528881c806d1e0207798d7c8f54aa6c570317fe02f91563c56d",
+        "kernel": "6.12.107+deb13-amd64",
+        "display": ":1",
+        "wayland_display": "wayland-0",
+        "status": "Producer method integration candidate, not final replay ready",
+        "working_tree_production_patch": "production.patch",
+        "production_patch_sha256": "172d02b2244ca1d687fbd2a861d5ba5cd3e353dd6994b4aeb4c1fee10a027bca"
+      },
+      "raw_root": "target/pm045-evidence-work/private-lifetime-buffered",
+      "native_run": "dev-agent-s5-endurance-7yw81eg9",
+      "error": "AssertionError(('process exit', 1))",
+      "normal_exit_code": null,
+      "forced_cleanup": false,
+      "remaining_children": "",
+      "display_restore_returncode": 0,
+      "cleanup_errors": null,
+      "binary_unchanged": true,
+      "fixture_unchanged": true,
+      "production_source_unchanged": true,
+      "completed_cycles": 0,
+      "private_trace_bytes": 44463544,
+      "failure_detail": {
+        "producer_exit": 1,
+        "total_events": 123064,
+        "delivered_events": 65536,
+        "dropped_events": 57528,
+        "declared_capacity": 65536,
+        "active_calls_at_batch": 0,
+        "incomplete": true,
+        "output_buffer_capacity_bytes": 65536,
+        "event_buffer_capacity_bytes": 15728640,
+        "first_frame_presented": false,
+        "drm_endpoints": 0
+      }
+    }
+  ],
+  "change": "Private trace uses a bounded64KiB BufWriter, reports capacity and flushes start/each batch. Batch flush failures stay sticky and propagate. No new quiet-run buffer/timer; no caps/timeouts changed.",
+  "review": "Hegel source review found no material buffering/error propagation defect. Flush drains userspace to file, not durable storage; successful producer completion remains required in addition to an end record. Batch serialization is still synchronous.",
+  "verification": {
+    "initial_release_build": "passed36.37s",
+    "buffered_release_build": "passed21.84s",
+    "source_health": "2589files passed",
+    "archive_members": {
+      "initial-failed": 153,
+      "buffered-failed": 152
+    },
+    "archives": {
+      "initial-failed-raw.tar.gz": "d9e945d451bad41cccba1434945f88515fea24043c7dc4c5153b726fb4114fdc",
+      "buffered-failed-raw.tar.gz": "9bfb85611ee284c5ef261d7b73e02b2507ed4efc7b4a458002346f5ecbedcc46",
+      "buffered-failed-sha256.json": "39db60aa066525c93874f63071d079a317e365d0d4bf6e8d68c40b325ca7ca2c",
+      "initial-failed-sha256.json": "e8ae180b918dbd63d68566866bd5610cb7415f2405c0e81cb5a1cfe5b9fdc824"
+    },
+    "source_note": "Buffered candidate source bindings and production.patch preserve exact executed source. Final source differs only in the comment clarifying flush-to-file rather than durability."
+  },
+  "next_implementation_gap": "Startup burst exceeds the allocation observer buffer before the event-loop drain. Need bounded delivery/storage that handles this demonstrated burst without silently dropping events; no further run declared until that defect is addressed.",
+  "limits": [
+    "No first presentation, native auxiliary cycle, successful shutdown receipt or DRM endpoint was reached. No lifetime classification or complete resource/native acceptance follows.",
+    "Buffering produced a complete failing batch, not a qualified overhead or performance result. Both failed traces remain authoritative failures.",
+    "Full capacity/overhead, semantic ownership, native/backend/scale, endurance/recovery, numerical failures and distinct final replay/owner UX remain open."
+  ]
+}

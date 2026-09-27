@@ -1,5 +1,5 @@
 {
-  "status": "Bounded producer and call-local lifetime classifier prepared; native/full-scope accounting unqualified",
+  "status": "Offline producer/classifier controls retained; native allocation-mode integration failed startup delivery",
   "qualification_pass": false,
   "requirement_ids": [
     "ACC-02",
@@ -69,5 +69,11 @@
     "coverage": "Known input/output/temporary byte totals, within-call address reuse, overlapping calls and category/combined active-call peaks; stale allocation accounting ignored; integrated summary mode remains unclassified. Missing/lost events, inconsistent live/free/peak totals, duplicate live addresses/owners, abandoned calls, failed envelope and underreported admission peaks are rejected. Reported overruns remain explicit and integrated acceptance rejects them.",
     "review": "Hegel found a false-acceptance path when host/process peaks were below reconstructed scope. Added the necessary lower bound and forged-zero-admission/200bytecap negative; repeated the same offline batch after this correction. Initial passing output is retained.",
     "scope": "Lifetime classes describe observed call windows: initial input, new blocks surviving end, and new blocks freed before end. Category peaks must not be summed. Active-call aggregate excludes inactive owners and post-call retention. This is not whole-process accounting or semantic cache/scratch ownership."
+  },
+  "native_integration": {
+    "evidence": "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/native-integration/result.json",
+    "sha256": "611388508ee286266606241bff3284513d21a6aeb99cdd3b081066bb599be332",
+    "status": "Both native method attempts failed; output buffering landed, startup burst delivery remains unresolved",
+    "qualification_pass": false
   }
 }

@@ -98,6 +98,8 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 
 ## Still open — do not reset the done list
 
+Private allocation native mode currently fails startup: initial unbuffered writer timed out, then the buffered candidate rejected123064events against65536capacity (57528dropped). Both attempts stopped before first presentation or DRM endpoints. Raw failures and cleanups are preserved in `private-allocation-lifetimes/native-integration/result.json`. No native acceptance added.
+
 - [ ] Resolve recorded pointer CPU/GPU and clamp CPU failures. Current X11/1x warm-window CPU/output qualification is checked above; other configurations and final independent replay remain. Preserve historical Project-open excesses.
 - [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences. The [current call-site inventory](END-03/result.json) reuses S1–S4 ownership proof; the concrete private redraw admission negative is now rejected. The auxiliary callback/strong-capture gap is checked above. The END-04 NEW registration declaration is reviewed; full positive qualification remains incomplete.
 - [ ] Complete fixture admission and instantaneous private/scratch/driver/client resource accounting, including observer overhead.

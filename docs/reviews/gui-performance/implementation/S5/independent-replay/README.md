@@ -103,3 +103,9 @@ allocation-mode call windows; synthetic controls pass, while native mode and
 full resource qualification remain open. Historical summary data gains no
 lifetime classification. This is not scratch-accounting acceptance. Allocation records use only the embedded report identity; their
 current live bytes come from `scope_live_bytes`, and call peaks from Finished.
+
+Native allocation-mode integration has now been attempted and failed before
+first presentation: unbuffered output hit readiness timeout; the buffered
+candidate exposed123064startup events exceeding65536capacity. Both attempts
+remain failed evidence in `../private-allocation-lifetimes/native-integration/`.
+Do not start final replay with this unresolved burst-delivery gap.

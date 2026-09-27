@@ -5,17 +5,19 @@ use datum_gui_render::cpu_alloc::calls::observation::{self, Batch, Phase};
 use serde_json::json;
 use std::{
     fs::File,
-    io::Write,
+    io::{BufWriter, Write},
     sync::{
         Mutex,
         atomic::{AtomicBool, Ordering},
     },
 };
 
+const OUTPUT_BUFFER_BYTES: usize = 64 * 1024;
+
 static ENABLED: AtomicBool = AtomicBool::new(false);
 static WRITER: Mutex<Option<Writer>> = Mutex::new(None);
 struct Writer {
-    file: File,
+    file: BufWriter<File>,
     id: u64,
     incomplete: bool,
 }
@@ -51,14 +53,15 @@ pub(crate) fn start() -> Result<()> {
         observation::start(capacity)?
     };
     let mut writer = Writer {
-        file,
+        file: BufWriter::with_capacity(OUTPUT_BUFFER_BYTES, file),
         id,
         incomplete: false,
     };
     writer.line(json!({"phase":"start", "observation_id":id, "pid":std::process::id(),
-        "capacity":capacity, "allocation_events":allocations,
+        "capacity":capacity, "allocation_events":allocations, "output_buffer_capacity_bytes":writer.file.capacity(),
         "allocation_report_accounting":"identity fields only on Allocation; use scope_live_bytes and allocation, Finished for call peaks", "scope":"private call events; not complete CPU/GPU/RSS accounting",
         "storage":"at most two event buffers during drain; allocator/JSON/output overhead and RSS separate"}))?;
+    writer.file.flush()?;
     *WRITER.lock().unwrap_or_else(|e| e.into_inner()) = Some(writer);
     ENABLED.store(true, Ordering::Release);
     Ok(())
@@ -101,7 +104,12 @@ impl Writer {
             "first_call_id":batch.first_call_id,"total_events":batch.total_events,"dropped_events":batch.dropped_events,
             "active_calls":batch.active_calls,"capacity":batch.capacity,
             "buffer_capacity_bytes":batch.buffer_capacity_bytes,"incomplete":self.incomplete}),
-        )
+        )?;
+        // A completed batch is flushed to the file before returning to the event loop.
+        // Buffer individual JSON writes without hiding batch-delivery failures.
+        let flushed = self.file.flush();
+        self.incomplete |= flushed.is_err();
+        flushed.map_err(Into::into)
     }
 }
 
