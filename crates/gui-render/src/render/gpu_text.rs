@@ -119,6 +119,7 @@ impl Renderer {
         height: u32,
         overlay_only: bool,
     ) -> anyhow::Result<(TextBufferCacheStats, bool)> {
+        self.text_admission.begin();
         let scope = self.text_cpu.clone();
         scope.with(|| {
             self.prepare_frame_text_inner(device, queue, prepared, width, height, overlay_only)
@@ -290,6 +291,20 @@ impl Renderer {
             signature.map(|signature| (revision, self.atlas.generation, signature));
         self.text_preparation.overlay_prepared =
             overlay_signature.map(|signature| (revision, self.atlas.generation, signature));
+        self.observe_text_admission(
+            &workspace,
+            if has_workspace_text {
+                &prepared.text_runs
+            } else {
+                &[]
+            },
+            &overlay,
+            if has_overlay_text {
+                prepared.menu_overlay_text_runs()
+            } else {
+                &[]
+            },
+        );
         Ok((stats, !has_workspace_text || (reuse && !retried)))
     }
 

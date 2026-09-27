@@ -63,6 +63,9 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **Glyph preparation count lifecycle** — One hardware test passes populated/empty counts, reuse, cancellation and replacement. [Evidence](glyph-preparation-counts/result.json)
   Scope: Last-successful preparation groups only; full ADM-01 and native delivery remain open.
 
+- [x] **Text admission reuse and unique-key controls** — One hardware test passes exact observer pixel parity, duplicate-key counts, reuse and invalid-input recovery. [Evidence](text-admission-observation/result.json)
+  Scope: Sampled production-shaped-buffer observation; full frame/pane/native admission remains open.
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.

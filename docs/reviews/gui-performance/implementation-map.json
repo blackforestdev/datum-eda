@@ -38647,6 +38647,21 @@
         ],
         "scope": "Bounded hardware count lifecycle; no unique glyph/per-pane/per-frame/native admission pass.",
         "carry_forward": "Preserve on recorded candidate across handoffs; rerun only for affected behavior."
+      },
+      {
+        "check": "\u2713 done",
+        "completed": true,
+        "label": "Text admission reuse, deduplication and invalid-input parity",
+        "evidence": "docs/reviews/gui-performance/implementation/S5/text-admission-observation/result.json",
+        "evidence_field": "proof.gpu",
+        "evidence_sha256": "3279828a0fe33483fc2794e0e52ba3d1981b1c8e5a61b56705f4e4ec4591ba88",
+        "validated_result": "1 serial hardware GPU test passed: observer off/on exact pixels; reused preparation advances serial with unchanged counts/cache revision; duplicated text doubles shaped instances but preserves unique keys; invalid index/run input becomes unavailable and next valid render recovers exact pixels; observer retains no key collection and separately records allocation peak.",
+        "requirement_ids": [
+          "AC-06",
+          "AC-08"
+        ],
+        "scope": "Bounded real-shaped-buffer/hardware observation controls; not full ADM-01, native delivery, overhead or resource qualification.",
+        "carry_forward": "Preserve on recorded candidate; rerun only affected behavior, never merely for a handoff."
       }
     ],
     "readable_checklist": "docs/reviews/gui-performance/implementation/S5/qualification-status.md"
@@ -38661,5 +38676,9 @@
     "status": "implemented bounded count view; complete admission remains outstanding",
     "evidence": "docs/reviews/gui-performance/implementation/S5/glyph-preparation-counts/result.json",
     "scope": "Production glyph preparation scalars and lifecycle validity, not complete ADM-01 or native acceptance."
+  },
+  "s5_text_admission_observation_work": {
+    "status": "implemented bounded unique glyph observation; full admission still open",
+    "evidence": "docs/reviews/gui-performance/implementation/S5/text-admission-observation/result.json"
   }
 }

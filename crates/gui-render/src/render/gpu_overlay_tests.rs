@@ -656,3 +656,6 @@ mod overlay_cache_reuse_tests;
 
 #[path = "world_pipeline_tests.rs"]
 mod world_pipeline_tests;
+
+#[path = "text_admission_tests.rs"]
+mod text_admission_tests;

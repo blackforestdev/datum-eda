@@ -30,3 +30,6 @@ mod gpu_overlay;
 
 #[path = "gpu_frame.rs"]
 mod gpu_frame;
+
+#[path = "text_admission_observation.rs"]
+mod text_admission_observation;
