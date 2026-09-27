@@ -38715,6 +38715,11 @@
           "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/analysis-integration/result.json",
           "sha256": "13c9e3a0a4b5d229bda8d5b643279fecdbd3eeebe3a1e6f7cd53ecc08f54ecdd",
           "validated_result": "14 parser controls pass, including the real overflow trace rejection, malformed counts/sequence/geometry/text/renderer controls, historical snapshot compatibility, synthetic mixed-record integration and post-retirement rejection."
+        },
+        "terminal_origin_supplement": {
+          "evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/terminal-origins/result.json",
+          "sha256": "7c1fd89b29b1645f3086769380a236b41cbaf014da1e1c4d3e1088a18b5a6b00",
+          "validated_result": "1 final focused CPU test passes two distinct sessions, reordered input with unchanged cached-row rebuild count, closure/removal of one session, and immutable identity/text associations in the earlier prepared frame. Per-session reconstructed cell text contains only its own marker."
         }
       }
     ],
@@ -38746,6 +38751,7 @@
     "immediate_geometry_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/immediate-geometry/result.json",
     "text_origin_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/text-origins/result.json",
     "screen_submission_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/screen-submission/result.json",
-    "analysis_integration_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/analysis-integration/result.json"
+    "analysis_integration_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/analysis-integration/result.json",
+    "terminal_origin_evidence": "docs/reviews/gui-performance/implementation/S5/frame-admission-delivery/terminal-origins/result.json"
   }
 }

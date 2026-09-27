@@ -70,3 +70,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "text_origin_terminal_tests.rs"]
+mod terminal_tests;
