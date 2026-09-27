@@ -75,15 +75,49 @@ counts overlap and must not be summed. No tests were rerun to create this list.
 - [x] **X11/1x 60-minute auxiliary window cycles and resource trace reconciliation** — 600 timed cycles (200 per host), all603 cycles reached exact pixel readiness/focus/closure, normal drained exit0;604 renderer lifetimes reconciled and no sampled cap violations. [Evidence](window-endurance/native-60minute-4d645582/assessment.json)
   Scope: This producer run and delivered traces;288 intermediate nonmatching readiness captures are retained. [Saved-run drift analysis](window-endurance/native-60minute-4d645582/drift-analysis.json) excludes over5% diagnostics-on CPU regression; sampled RSS grows3,112,960bytes and New Project readiness mean/p95 grow6.18%/6.70%. These remain unqualified for native latency/resource-trend acceptance. Recovery injection, broader coverage, overhead and full MEM-03 remain open.
 
+- [x] **Twenty native backend device-loss recoveries, X11/1x** — Five each for Main, Global Preferences, Project Preferences and New Project; exact selected-window pixels, focus and workspace/registry receipts. Normal shutdown; 51 renderer origins, 719 GPU allocations and 40,648 private calls reconciled. [Evidence](repeated-device-recovery/native20-ba24e35a/assessment.json)
+  Scope: Producer structural recovery on ba24e35a; all 20 diagnostic CPU intervals exceed 100 ms. Full performance, simultaneous four-host/mixed-PTY and backend/scale acceptance remain open. Two driver failures are preserved. This run is separate from the earlier hour.
+
 ## Still open — do not reset the done list
 
 - [ ] Resolve recorded pointer CPU/GPU, clamp CPU and warm Project-open budget failures; verify affected corrections.
 - [ ] Complete missing native backend/scale, input, semantic-output and required negative cases; reuse already completed host sequences.
 - [ ] Complete fixture admission and instantaneous private/scratch/driver/client resource accounting, including observer overhead.
-- [ ] Resolve the recorded endurance RSS trend/readiness drift and complete native latency, tier/configuration coverage and20recoveries. The X11/1x60-minute600-cycle run above is done; both earlier incomplete attempts remain failures.
+- [ ] Resolve the saved endurance resource trend and missing in-scope tier/configuration, accounting and recovery-performance proof. The hour and separate 20 structural recoveries above are done. Readback timing remains descriptive; deferred displayed latency is not an initial S5 gate. Earlier failed attempts remain failures.
 - [ ] Complete independent actual replay against the stable final candidate, followed by separate owner UX/product acceptance.
 - [ ] Resolve applicable recorded drift failures; preserve separately tracked concurrency and golden failures.
 
 S0–S4 implementation exits remain complete. Their carried qualification is part
 of the outstanding original predicates, not a reason to repeat implementation.
 Pinned resize/temporal,T2 and unadmitted schematic exclusions remain unchanged.
+
+## Remaining execution without duplicate campaigns
+
+All 31 completed-group evidence hashes match. The original map contains 225
+requirement rows, not 225 separate tests: 15 specification-record rows, 14
+nonblocking resize rows, eight wholly deferred temporal rows, and 188 initial
+or mixed-scope rows. HP05-02 still requires idle resources; its pacing component
+is deferred. A row count is not a remaining trial count.
+
+Use existing source and negative-control proofs first. Resolve demonstrated
+performance defects and measurement gaps before final native qualification.
+The existing map now lists six final backend/scale campaigns: Wayland and
+X11/Xwayland, each at 1x, 1.5x and 2x where supported. Each contains the applicable
+workload/host/pane/terminal variants and prescribed repetitions; six campaigns
+must never be reported as six tests. Exact remaining process-trial counts await
+that evidence reconciliation; no new native campaign is scheduled by this edit.
+
+The distinct reviewer's contract reading confirms that one final independent
+campaign may supply missing qualification and independently rerun producer
+trials. No second blanket producer final campaign is required. New coverage
+and reproduced results must remain distinguishable. MET-06 still requires
+separate diagnostics-off resource trials and matched diagnostics-on structural
+trials. Endurance, negative controls, baseline ordering and owner UX acceptance
+remain unchanged. See the [existing replay packet](independent-replay/packet.json).
+
+Before another run, name the original requirement, decision enabled, missing or
+invalidated evidence, fixed repetitions and stopping condition. Preserve failed
+runs; investigate cause before retry. Existing evidence may satisfy multiple
+predicates with distinct assertions, but one trial cannot count as several
+required repetitions. Seven-pair relative inference is required only when making
+that claim; it is not an extra condition for every absolute budget result.
