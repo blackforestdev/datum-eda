@@ -67,3 +67,53 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
         (self.frame, self.acquire_elapsed)
     }
 }
+
+// Shared presentation bridge for Main and every owned dialog kind. The receipt
+// captures the platform host, queue epoch and configured surface generation.
+impl SurfaceTransaction {
+    pub(crate) fn begin_render_receipt(
+        &self,
+        renderer: &mut datum_gui_render::Renderer,
+    ) -> impl FnOnce(&mut datum_gui_render::Renderer, u64, u64, u64, bool) -> bool + use<> {
+        let (device, _, _) = self.queue_owner.snapshot();
+        let receipt = renderer.render_session_mut().begin_frame(
+            self.queue_host,
+            device,
+            self.configuration_generation,
+            true,
+        );
+        move |renderer, host, device, configuration, presented| {
+            renderer.render_session_mut().complete_frame(
+                receipt,
+                host,
+                device,
+                configuration,
+                presented,
+            )
+        }
+    }
+
+    pub(crate) fn present_rendered(
+        &mut self,
+        frame: NativeSurfaceFrame,
+        window: &winit::window::Window,
+        renderer: &mut datum_gui_render::Renderer,
+        complete: impl FnOnce(&mut datum_gui_render::Renderer, u64, u64, u64, bool) -> bool,
+    ) -> anyhow::Result<()> {
+        let (device, _, _) = self.queue_owner.snapshot();
+        let result = self.present(frame, window);
+        let accepted = complete(
+            renderer,
+            self.queue_host,
+            device,
+            self.configuration_generation,
+            result.is_ok(),
+        );
+        result?;
+        anyhow::ensure!(
+            accepted,
+            "presented frame rejected by shared render session"
+        );
+        Ok(())
+    }
+}

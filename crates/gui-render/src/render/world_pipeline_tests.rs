@@ -112,7 +112,9 @@ fn compact_retained_triangles_match_degenerate_expansion_pixels() {
         // nondegenerate triangle, color, winding, layer or stroke command.
         expanded.world_vertices = compact
             .world_vertices
-            .chunks_exact(3)
+            .as_chunks::<3>()
+            .0
+            .iter()
             .flat_map(|t| [t[0], t[1], t[2], t[0], t[2], t[2]])
             .collect::<Vec<_>>()
             .into();

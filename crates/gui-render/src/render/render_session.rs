@@ -1,7 +1,10 @@
 //! Per-host derived rendering state. Editors supply source and view inputs;
 //! active payloads and bounded history share one lifetime/accounting owner.
 use crate::RetainedScene;
+#[path = "frame_revision.rs"]
+mod frame_revision;
 use datum_gui_protocol::ReviewWorkspaceState;
+use frame_revision::{Change, Receipt, Revisions, Target};
 #[path = "retained_scene_history.rs"]
 mod history;
 use history::RetainedSceneHistory;
@@ -9,6 +12,7 @@ pub use history::{RetainedSceneCacheKey, retained_selection_cache_key};
 
 #[derive(Default)]
 pub struct RenderSession {
+    revisions: Revisions,
     board: Option<RetainedScene>,
     board_history: RetainedSceneHistory,
     schematic: Option<RetainedScene>,
@@ -16,6 +20,59 @@ pub struct RenderSession {
 }
 
 impl RenderSession {
+    pub fn content_revision(&self) -> u64 {
+        self.revisions.current()
+    }
+    pub fn has_pending_frame(&self) -> bool {
+        self.revisions.pending()
+    }
+    pub fn interaction_only_damage(&self) -> bool {
+        self.revisions.interaction_only()
+    }
+    pub fn composition_changed(&mut self) {
+        self.revisions.update(Change::Composition);
+    }
+    pub fn interaction_changed(&mut self) {
+        self.revisions.update(Change::Interaction);
+    }
+    pub fn begin_frame(
+        &mut self,
+        host: u64,
+        device: u64,
+        configuration: u64,
+        native: bool,
+    ) -> Receipt {
+        self.revisions.begin(
+            Target {
+                host,
+                device,
+                configuration,
+            },
+            native,
+        )
+    }
+    pub fn complete_frame(
+        &mut self,
+        receipt: Receipt,
+        host: u64,
+        device: u64,
+        configuration: u64,
+        presented: bool,
+    ) -> bool {
+        self.revisions.complete(
+            receipt,
+            Target {
+                host,
+                device,
+                configuration,
+            },
+            presented,
+        )
+    }
+    pub fn retire_target(&mut self) {
+        self.revisions.retire_target();
+    }
+
     /// Read-only projection for hit testing. Clones share charged immutable data.
     pub fn board(&self) -> Option<&RetainedScene> {
         self.board.as_ref()
@@ -36,6 +93,7 @@ impl RenderSession {
     }
 
     pub fn clear_content(&mut self) {
+        self.revisions.update(Change::Content);
         self.board = None;
         self.board_history.clear();
         self.clear_schematic();
@@ -47,6 +105,7 @@ impl RenderSession {
     }
 
     pub fn resize_content(&mut self) {
+        self.revisions.retire_target();
         self.board_history.invalidate_surface_size(&mut self.board);
         self.schematic_history
             .invalidate_surface_size(&mut self.schematic);
@@ -57,6 +116,7 @@ impl RenderSession {
         previous: RetainedSceneCacheKey,
         next: &RetainedSceneCacheKey,
     ) {
+        self.revisions.update(Change::Content);
         if let Some(board) = self.board.take() {
             self.board_history.insert(previous, board);
         }

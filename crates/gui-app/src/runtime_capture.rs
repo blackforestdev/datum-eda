@@ -52,6 +52,11 @@ impl Runtime {
             .as_ref()
             .context("prepared scene should exist before visual screenshot")?;
         let schematic_retained = self.renderer.render_session().schematic().cloned();
+        let owner = self.renderer.resource_owner_id();
+        let receipt = self
+            .renderer
+            .render_session_mut()
+            .begin_frame(owner, owner, 0, false);
         let rendered = self.renderer.render(
             &self.device,
             &self.queue,
@@ -64,7 +69,11 @@ impl Runtime {
         );
         target.hold_submission(&self.queue);
         rendered?;
-        self.read_visual_texture(&target)
+        let result = self.read_visual_texture(&target);
+        self.renderer
+            .render_session_mut()
+            .complete_frame(receipt, owner, owner, 0, result.is_ok());
+        result
     }
 
     #[cfg(feature = "visual")]
