@@ -585,3 +585,15 @@ GPI-S4-REASSESS is complete as a proposal. GPI-S4-APPROVAL-R2 selects explicit
 owner disposition; S4/S5 and the GPU issue remain unresolved. No application
 build/test/native execution occurred during this reassessment. Earlier guard
 refusal and uncompiled draft remain historical evidence, not current scope.
+
+## GPU shared-renderer r2 owner approval
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-OWNER-APPROVAL-R2 -->
+
+The owner replied `approve GPU shared-renderer proposal r2`; the exact pinned
+scope is recorded in `docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r2.json` and ratified by Product Mechanics049.
+GPI-S4-APPROVAL-R2 is complete and GPI-S4 execution selects the approved shared
+render-session adoption, legacy retirement, exact8xcopy and bounded proof.
+Incomplete DRM duty remains unavailable in the permitted focused experiment;
+complete qualification and a concrete observer execution scope remain required.
+No GPU issue closure, S4/S5 completion or CPU optimization is authorized.

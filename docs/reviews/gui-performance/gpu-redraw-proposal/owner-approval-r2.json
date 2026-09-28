@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "owner_response_exact": "approve GPU shared-renderer proposal r2",
+  "recorded_at": "2026-09-28T02:26:03Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md",
+    "sha256": "c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+    "commit": "64243aeb751dea5a827c1a1228ecf72a64268946"
+  },
+  "disposition": "Explicit owner approval of pinned r2 architecture, implementation, bounded correctness proof and nonqualifying timing experiment scope; complete DRM method design included, its instrumentation execution requires a separately reviewed concrete scope.",
+  "authority": "Owner response, not independent review, ratifies this scope. No issue resolution, S4/S5 completion or numerical acceptance.",
+  "route_before": "a55dae4e3f3096bb7879bca8607953c4a490d72315da09441d3f14174cec9f9a"
+}
