@@ -1,0 +1,245 @@
+{
+  "status": "Terminal producer-damage lease continuation of ordered unit1; shared prepared ownership and GPI-S4 remain incomplete.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "PM049 and pinned owner-approved proposal r2",
+  "base_commit": "969e11ecdcbcda0307c03d3c586ee59f65d6207a",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "change": [
+    "RenderSession retains allocator-scoped terminal retry metadata until matching successful native presentation of its revision. Failed/deferred/dropped attempts and offscreen completion cannot retire it.",
+    "Before rebuilding, transfer leased damage back into authoritative terminal sessions and merge with newer producer changes. Successful native completion does not erase subsequent producer output.",
+    "Preparation failure restores the lease immediately. Retained-content precondition runs before snapshot consumption. Partial multi-pane snapshot failure rolls earlier leaves back.",
+    "Use the existing pending-damage cap and Full fallback when merging independently accumulated retry/producer sets; no numerical cap change."
+  ],
+  "verification_rationale": "Lease integration and bounded-union controls establish failure/retry safety before prepared ownership migration. App visual compile checks capture/native build paths; focused shared-owner, registry and core-adapter suites check affected contracts without a native or performance run. Prior unaffected broader proof remains valid only at its recorded scope.",
+  "verification": {
+    "render": {
+      "passed": 26,
+      "failed": 0
+    },
+    "session": {
+      "passed": 15,
+      "failed": 0
+    },
+    "adapter": {
+      "passed": 13,
+      "failed": 0
+    },
+    "initial_session_fixture": "The multi-character ASCII test writes each correctly produced Full. Replaced them with single-character writes on distinct rows; producer implementation unchanged. Diagnostic and initial failure preserved.",
+    "app_visual_check": "passed after explicit tuple annotation fixed E0282 in partial snapshot rollback",
+    "clippy": "affected GUI app/render all-target visual passed",
+    "source_health": "passed; 13 policy regressions passed",
+    "initial_parallel_history_batch": "24 passed, 2 failed because same-fixture tests competed for shared document six-entry budget; serial rerun restores prior history proof isolation. Original failure preserved; intake dat-gpu-history-fixture-isolation-1dug.",
+    "terminal_boundaries": "adapter, renderer and GUI convergence passed"
+  },
+  "review": {
+    "scope": "Read-only advisory review of terminal damage lease continuation; no repository edits, builds, tests or native runs. Prepared ownership remains pending.",
+    "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+    "disposition": "No remaining blocking finding in this bounded terminal damage lease continuation after source follow-up. Advisory source review only; tests/builds remain unverified by reviewer, prepared ownership and full PM049 acceptance remain pending.",
+    "findings": [
+      {
+        "id": "TERMINAL-LEASE-01",
+        "severity": "medium",
+        "source": "crates/gui-app/src/terminal_core_adapter.rs:335; runtime_terminal_render.rs:30; terminal_damage.rs:34",
+        "finding": "merge_render_damage deduplicates then pushes without enforcing pending_damage limit. The new retry path merges independent old leased and newer producer sets; their union can exceed configured bound and gets cloned into lease metadata. Existing helper issue is now directly relevant to the bounded retry contract.",
+        "required": "Enforce existing bounded merge semantics (Full fallback rather than omitted damage) and cover a small configured limit with disjoint old/new sets. push_damage_bounded already supplies the bounded primitive; preserve explicit Full handling.",
+        "status": "resolved by follow-up source inspection",
+        "resolution": "merge_render_damage preserves explicit Full handling and routes other entries through existing push_damage_bounded. Added small-limit source control merges two disjoint 2-entry sets under limit 2 and expects Full, with duplicate and explicit-Full controls. Reviewer did not execute tests."
+      }
+    ],
+    "review_notes": [
+      "retain_terminal_damage assigns a new composition revision; only accepted matching native completion calls presented(receipt_revision), so failed/deferred/dropped/capture attempts retain the lease. Older presentation cannot retire a newer lease.",
+      "Before a new prepared composition, old lease transfers back to producer and merges with newer pending damage; it does not overwrite producer state. A successful older native frame only retires its derived lease, not subsequent producer output.",
+      "Partial multi-pane snapshot failure restores all previously consumed panes. take_render_state creates its fallible snapshot before taking pending damage, so the failing pane itself keeps damage.",
+      "Preparation failure restores lease immediately; later encoding/acquisition/presentation failure leaves it owned for reuse or next rebuild. Closed dock restores producer damage before creating empty lease, preserving hidden state.",
+      "Metadata vector, cloned session strings and damage vectors are allocated in render-terminal-damage-lease scope; allocation owner follows buffers returned for merge. Scope accounting is observation of owned bytes, not itself full host/process budget qualification.",
+      "No new terminal authority, parser/input semantics or private mutation path introduced. Existing RenderSession recovery transfer carries lease; clear_content does not erase it.",
+      "Verified retained-board precondition occurs before take_active_tab_render_states, so an absent retained scene cannot consume new terminal damage without establishing a lease. Any prior lease has already been restored to producer before this precondition failure."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/terminal_damage.rs",
+        "sha256": "4cdfe0ca617bd2345e3b019905d1240dcd1c70a884a578f780d5cfc886566d65"
+      },
+      {
+        "path": "crates/gui-render/src/render/render_session.rs",
+        "sha256": "6f3bfa9d16583a5b16782368e267c9eeffe1307e54ee715569b85cae6e50ee32"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_terminal_render.rs",
+        "sha256": "d32affb97f637bc413f4e3c0032772caf0f86cf8e8aaaa93fd53b872537b75ff"
+      },
+      {
+        "path": "crates/gui-app/src/terminal_session_render.rs",
+        "sha256": "f855ce27d4ae257fd15e29cf14c85baa3dff2f87ceb851c67cbabf25544d3a66"
+      },
+      {
+        "path": "crates/gui-app/src/terminal_session_drain_tests.rs",
+        "sha256": "aee05e8a7bc79f5ccafa7e9dc8f3dba9cd12a0e495c19b6687b531446687daa5"
+      },
+      {
+        "path": "crates/gui-app/src/terminal_core_adapter.rs",
+        "sha256": "db504a90bd081d5ee822b28582bed83dc70acb8457c29513a1f5849d096141fa"
+      },
+      {
+        "path": "crates/gui-app/src/terminal_core_adapter_tests.rs",
+        "sha256": "788ea7d274d233f7960d05d762ee1c211b336e04a7129a416851cf42ab6a1d51"
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "One bounded-merge finding remains; no lost-damage or premature-retirement defect found in lease ownership itself.",
+        "findings": [
+          {
+            "id": "TERMINAL-LEASE-01",
+            "severity": "medium",
+            "source": "crates/gui-app/src/terminal_core_adapter.rs:335; runtime_terminal_render.rs:30; terminal_damage.rs:34",
+            "finding": "merge_render_damage deduplicates then pushes without enforcing pending_damage limit. The new retry path merges independent old leased and newer producer sets; their union can exceed configured bound and gets cloned into lease metadata. Existing helper issue is now directly relevant to the bounded retry contract.",
+            "required": "Enforce existing bounded merge semantics (Full fallback rather than omitted damage) and cover a small configured limit with disjoint old/new sets. push_damage_bounded already supplies the bounded primitive; preserve explicit Full handling.",
+            "status": "resolved by follow-up source inspection",
+            "resolution": "merge_render_damage preserves explicit Full handling and routes other entries through existing push_damage_bounded. Added small-limit source control merges two disjoint 2-entry sets under limit 2 and expects Full, with duplicate and explicit-Full controls. Reviewer did not execute tests."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/terminal_damage.rs",
+            "sha256": "4cdfe0ca617bd2345e3b019905d1240dcd1c70a884a578f780d5cfc886566d65"
+          },
+          {
+            "path": "crates/gui-render/src/render/render_session.rs",
+            "sha256": "6f3bfa9d16583a5b16782368e267c9eeffe1307e54ee715569b85cae6e50ee32"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_terminal_render.rs",
+            "sha256": "d32affb97f637bc413f4e3c0032772caf0f86cf8e8aaaa93fd53b872537b75ff"
+          },
+          {
+            "path": "crates/gui-app/src/terminal_session_render.rs",
+            "sha256": "f855ce27d4ae257fd15e29cf14c85baa3dff2f87ceb851c67cbabf25544d3a66"
+          },
+          {
+            "path": "crates/gui-app/src/terminal_session_drain_tests.rs",
+            "sha256": "aee05e8a7bc79f5ccafa7e9dc8f3dba9cd12a0e495c19b6687b531446687daa5"
+          },
+          {
+            "path": "crates/gui-app/src/terminal_core_adapter.rs",
+            "sha256": "db504a90bd081d5ee822b28582bed83dc70acb8457c29513a1f5849d096141fa"
+          },
+          {
+            "path": "crates/gui-app/src/terminal_core_adapter_tests.rs",
+            "sha256": "788ea7d274d233f7960d05d762ee1c211b336e04a7129a416851cf42ab6a1d51"
+          }
+        ]
+      }
+    ]
+  },
+  "post_review": "After advisory pins: explicit snapshot tuple typing fixed compilation; lease allocation-lifetime assertions strengthened; integration fixture uses single-character writes to obtain distinct damage instead of intentional ASCII-run Full. No changed lease policy. Current source pins identify tested revision.",
+  "remaining": [
+    "Shared prepared scene and terminal render-cache ownership, typed immutable inputs/plans and source/descriptor validation.",
+    "Normalized pane inputs and removal of legacy preparation/encoder branches.",
+    "Tracked exact8x prefix strategy and required pixel/resource/failure controls.",
+    "Bounded performance experiment and complete DRM observer method execution scope/qualification."
+  ],
+  "qualification": "No completed unit1 adoption, GPU work reduction, native output/performance or S4 resolution claimed. CPU event-loop work excluded. Scoped metadata observation is not full process-cap qualification. Prior menu/bootstrap drift failures remain recorded separately.",
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "sha256": "d32affb97f637bc413f4e3c0032772caf0f86cf8e8aaaa93fd53b872537b75ff"
+    },
+    {
+      "path": "crates/gui-app/src/terminal_core_adapter.rs",
+      "sha256": "db504a90bd081d5ee822b28582bed83dc70acb8457c29513a1f5849d096141fa"
+    },
+    {
+      "path": "crates/gui-app/src/terminal_core_adapter_tests.rs",
+      "sha256": "788ea7d274d233f7960d05d762ee1c211b336e04a7129a416851cf42ab6a1d51"
+    },
+    {
+      "path": "crates/gui-app/src/terminal_session_drain_tests.rs",
+      "sha256": "29d22d4daf48d283239c52169c0c6280780f0189c9f5138a4440166355014214"
+    },
+    {
+      "path": "crates/gui-app/src/terminal_session_render.rs",
+      "sha256": "cc6fea4aa4488b30a23812a492c304ad4da5f00647421f54799532997cb8785a"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_revision.rs",
+      "sha256": "e5a78fbfa0fbabda3c83a5eae31869468cf068ba9ce399d9d74c395776751545"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "6f3bfa9d16583a5b16782368e267c9eeffe1307e54ee715569b85cae6e50ee32"
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_damage.rs",
+      "sha256": "1db18350bcd247135b5f9cf48d1254700c659ffbe42dffc3759dfbef2a152dff"
+    }
+  ],
+  "raw_logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/interrupted-check.log",
+      "sha256": "74bba11818ff71655c9784ca74afcb199ef567c10200c64ff1aa7e28552090ed",
+      "original_sha256": "74bba11818ff71655c9784ca74afcb199ef567c10200c64ff1aa7e28552090ed"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/initial-check-error.log",
+      "sha256": "576d22fa1087fe15c78d490ad453741ab6f53b31e4e6e8e2a6653208033b581f",
+      "original_sha256": "576d22fa1087fe15c78d490ad453741ab6f53b31e4e6e8e2a6653208033b581f"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/app-visual-check.log",
+      "sha256": "9668603e28eec7b5bf40140359df05a0d8a24edded5eee2b897ad471f893bb91",
+      "original_sha256": "9668603e28eec7b5bf40140359df05a0d8a24edded5eee2b897ad471f893bb91"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/parallel-history-failure.log",
+      "sha256": "9bee40f0ed01fe7d03f602edeb5bfb749d12640c75655ba9b0ac38702b757f72",
+      "original_sha256": "9bee40f0ed01fe7d03f602edeb5bfb749d12640c75655ba9b0ac38702b757f72"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/render-tests.log",
+      "sha256": "d0dd6bcbe730799ef147345e0482e4cd8c71f0256072c5418af0f0634ddf768d",
+      "original_sha256": "44441be09e1b5635aca8200e7dc55e7d58ec42356ba33dadb8abdb72f26c7bf4"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/initial-session-fixture-error.log",
+      "sha256": "338b15825a38cd7676de267c3c540ffc2c3b0253105a298b899aa2c56a70fe10",
+      "original_sha256": "338b15825a38cd7676de267c3c540ffc2c3b0253105a298b899aa2c56a70fe10"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/session-fixture-diagnostic.log",
+      "sha256": "ef377c41d941985312a6877f844434bee78b5b8eb92b13b2ea15e9c740924ac7",
+      "original_sha256": "ef377c41d941985312a6877f844434bee78b5b8eb92b13b2ea15e9c740924ac7"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/session-tests.log",
+      "sha256": "a81168f0bc3a1eeaaf3b5d692d4a6b95204752e46290be0911adfc913f3ddac8",
+      "original_sha256": "11266c791b46a050a867f953de2ab4a56134afe90eceb2044f53bbe1e9eb13d9"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/adapter-tests.log",
+      "sha256": "a1b8dfc3f234c5f5c5b10c550d5e289e0129b0fd7950d812e156cbf4624c0b41",
+      "original_sha256": "dd89fdefd23f9412bc4f7bc516ea06a2e52420876926ec1f29033476ce7e4183"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/clippy.log",
+      "sha256": "5864c3b76d012747465cd5664fedf34bfc9c376ac60323f408408c9a22713365",
+      "original_sha256": "5864c3b76d012747465cd5664fedf34bfc9c376ac60323f408408c9a22713365"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/source-health.log",
+      "sha256": "9e9c61743330bee2cc8bfb847d60b18eb6ba40e32fb203907e20a24a15cf8399",
+      "original_sha256": "9e9c61743330bee2cc8bfb847d60b18eb6ba40e32fb203907e20a24a15cf8399"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/source-health-final.log",
+      "sha256": "84d2789261302e570f6c2a01a8d5ee89ecce83122bae679773eb6622cbdf0071",
+      "original_sha256": "84d2789261302e570f6c2a01a8d5ee89ecce83122bae679773eb6622cbdf0071"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/boundaries.log",
+      "sha256": "079b91129630f622fb12fdb6d47e9436877b7d5decae5931b3bddf31aee00bbf",
+      "original_sha256": "079b91129630f622fb12fdb6d47e9436877b7d5decae5931b3bddf31aee00bbf"
+    }
+  ]
+}

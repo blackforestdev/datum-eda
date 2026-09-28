@@ -384,3 +384,19 @@ fn osc8_urls_and_cwd_relative_paths_resolve_as_inert_link_targets() {
         })
     );
 }
+
+#[test]
+fn retry_damage_union_obeys_the_existing_pending_damage_limit() {
+    let mut adapter = adapter("bounded-retry");
+    adapter.limits.pending_damage = datum_terminal_core::PendingDamageLimit::new(2).unwrap();
+    drop(adapter.take_render_state().unwrap());
+    adapter.merge_render_damage(&[Damage::Cursor, Damage::Title]);
+    let (_, older) = adapter.take_render_state().unwrap();
+    adapter.merge_render_damage(&[Damage::History, Damage::Graphics]);
+    adapter.merge_render_damage(&older);
+    assert_eq!(adapter.take_render_state().unwrap().1, vec![Damage::Full]);
+    adapter.merge_render_damage(&[Damage::Cursor, Damage::Cursor]);
+    assert_eq!(adapter.take_render_state().unwrap().1, vec![Damage::Cursor]);
+    adapter.merge_render_damage(&[Damage::Title, Damage::Full, Damage::History]);
+    assert_eq!(adapter.take_render_state().unwrap().1, vec![Damage::Full]);
+}

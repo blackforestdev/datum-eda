@@ -26,6 +26,14 @@ impl Runtime {
 
     pub(super) fn build_terminal_prepared_scene(&mut self) -> Result<PreparedScene> {
         let schematic_camera = self.schematic_camera_for_render();
+        let retry = self.renderer.render_session_mut().restore_terminal_damage();
+        self.terminal_sessions.restore_render_damage(retry);
+        let retained = self
+            .renderer
+            .render_session()
+            .board()
+            .cloned()
+            .context("retained scene should exist before prepared scene rebuild")?;
         // Closed docks consume no terminal render input. Leave dirty rows in
         // TerminalCore until the dock opens instead of copying its full screen
         // for each board camera frame.
@@ -36,12 +44,9 @@ impl Runtime {
         } else {
             Vec::new()
         };
-        let retained = self
-            .renderer
-            .render_session()
-            .board()
-            .cloned()
-            .context("retained scene should exist before prepared scene rebuild")?;
+        self.renderer
+            .render_session_mut()
+            .retain_terminal_damage(&terminal_panes);
         let preparation = self.renderer.prepare_workspace_with_terminal_renderer(
             self.session.workspace(),
             self.config.width,
@@ -56,10 +61,8 @@ impl Runtime {
         let mut prepared = match preparation {
             Ok(prepared) => prepared,
             Err(error) => {
-                let damage = terminal_panes
-                    .into_iter()
-                    .map(|pane| (pane.session_id, pane.damage))
-                    .collect::<Vec<_>>();
+                drop(terminal_panes);
+                let damage = self.renderer.render_session_mut().restore_terminal_damage();
                 self.terminal_sessions.restore_render_damage(damage);
                 return Err(error);
             }

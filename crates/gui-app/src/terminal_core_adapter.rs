@@ -342,9 +342,7 @@ impl TerminalCoreSessionAdapter {
                 self.pending_render_damage.push(Damage::Full);
                 return;
             }
-            if !self.pending_render_damage.contains(&entry) {
-                self.pending_render_damage.push(entry);
-            }
+            push_damage_bounded(&mut self.pending_render_damage, self.limits, entry);
         }
     }
 }

@@ -185,14 +185,29 @@ impl TerminalSessionRegistry {
                     .collect::<Vec<_>>()
             })
             .unwrap_or_else(|| vec![active_session_id]);
-        let mut snapshots = Vec::with_capacity(session_ids.len());
+        let mut snapshots: Vec<(
+            usize,
+            String,
+            datum_terminal_core::RenderSnapshot,
+            Vec<datum_terminal_core::Damage>,
+        )> = Vec::with_capacity(session_ids.len());
         for session_id in session_ids {
             let index = self
                 .sessions
                 .iter()
                 .position(|slot| slot.session.session_id() == session_id)
                 .expect("terminal split leaf must name an owned session");
-            let (snapshot, damage) = self.sessions[index].core.take_render_state()?;
+            let (snapshot, damage) = match self.sessions[index].core.take_render_state() {
+                Ok(state) => state,
+                Err(error) => {
+                    // Earlier leaves may already have consumed damage. Roll
+                    // those back even though no prepared composition exists.
+                    for (previous, _, _, damage) in snapshots {
+                        self.sessions[previous].core.merge_render_damage(&damage);
+                    }
+                    return Err(error);
+                }
+            };
             snapshots.push((index, session_id, snapshot, damage));
         }
         // Finish mutable snapshot consumption before borrowing projections.

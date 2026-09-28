@@ -1,6 +1,9 @@
 //! Per-host derived rendering state. Editors supply source and view inputs;
 //! active payloads and bounded history share one lifetime/accounting owner.
-use crate::RetainedScene;
+use crate::{RetainedScene, TerminalPaneRenderState};
+#[path = "terminal_damage.rs"]
+mod terminal_damage;
+use terminal_damage::PendingTerminalDamage;
 #[path = "frame_revision.rs"]
 mod frame_revision;
 use datum_gui_protocol::ReviewWorkspaceState;
@@ -13,6 +16,7 @@ pub use history::{RetainedSceneCacheKey, retained_selection_cache_key};
 #[derive(Default)]
 pub struct RenderSession {
     revisions: Revisions,
+    terminal_damage: PendingTerminalDamage,
     board: Option<RetainedScene>,
     board_history: RetainedSceneHistory,
     schematic: Option<RetainedScene>,
@@ -59,7 +63,8 @@ impl RenderSession {
         configuration: u64,
         presented: bool,
     ) -> bool {
-        self.revisions.complete(
+        let revision = receipt.revision();
+        let accepted = self.revisions.complete(
             receipt,
             Target {
                 host,
@@ -67,7 +72,20 @@ impl RenderSession {
                 configuration,
             },
             presented,
-        )
+        );
+        if accepted {
+            self.terminal_damage.presented(revision);
+        }
+        accepted
+    }
+
+    pub fn retain_terminal_damage(&mut self, panes: &[TerminalPaneRenderState<'_>]) {
+        let revision = self.revisions.update(Change::Composition);
+        self.terminal_damage.retain(revision, panes);
+    }
+
+    pub fn restore_terminal_damage(&mut self) -> Vec<(String, Vec<datum_terminal_core::Damage>)> {
+        self.terminal_damage.restore()
     }
     pub fn retire_target(&mut self) {
         self.revisions.retire_target();

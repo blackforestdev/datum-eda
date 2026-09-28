@@ -31,6 +31,12 @@ pub struct Receipt {
     completed: bool,
 }
 
+impl Receipt {
+    pub(super) fn revision(&self) -> u64 {
+        self.revision
+    }
+}
+
 impl Drop for Receipt {
     fn drop(&mut self) {
         if !self.completed {
