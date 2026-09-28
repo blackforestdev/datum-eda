@@ -50,19 +50,26 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
     let layout = runtime.current_layout();
     let initial_camera = runtime.camera;
     let camera = format!("{:?}", initial_camera);
-    runtime.prepared_scene = None;
+    runtime.renderer.render_session_mut().composition_changed();
     runtime.last_cursor_pos = Some((0.0, 0.0));
     assert!(!runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, -1.0)));
     assert!(
-        runtime.prepared_scene.is_none(),
+        runtime.renderer.render_session().prepared().is_none(),
         "outside Layers must not prepare a scene"
     );
     assert_eq!(format!("{:?}", runtime.camera), camera);
 
     let _ = runtime.prepared_scene();
-    let mut prepared = runtime.prepared_scene.take().unwrap();
-    runtime.presented_hits.mark_pending();
-    runtime.presented_hits.present(&mut prepared);
+    // This input fixture explicitly supplies a displayed hit map without a GPU frame.
+    let hits = runtime
+        .renderer
+        .render_session()
+        .prepared()
+        .unwrap()
+        .hit_regions
+        .clone();
+    runtime.presented_hits.replace(hits);
+    runtime.renderer.render_session_mut().composition_changed();
     let region = runtime
         .presented_hits
         .regions()
@@ -96,7 +103,7 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         "changing Layers wheel must not fall through into board zoom"
     );
     assert!(
-        runtime.prepared_scene.is_none(),
+        runtime.renderer.render_session().prepared().is_none(),
         "scroll routing must not prepare a scene"
     );
     runtime.scene_dirty = false;
@@ -153,7 +160,7 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
             "Layers physical/line disagreement at scale={scale} lines={lines}"
         );
         assert_eq!(format!("{:?}", runtime.camera), camera);
-        assert!(runtime.prepared_scene.is_none());
+        assert!(runtime.renderer.render_session().prepared().is_none());
     }
 
     // The same native routing entry point must still reach the editor camera.
@@ -176,7 +183,7 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
             "camera physical/line disagreement at scale={scale} lines={lines}"
         );
         assert!(
-            runtime.prepared_scene.is_none(),
+            runtime.renderer.render_session().prepared().is_none(),
             "camera route must not prepare Layers"
         );
     }

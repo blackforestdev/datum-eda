@@ -102,7 +102,6 @@ impl Runtime {
             divider_drag: None,
             terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),
-            prepared_scene: None,
             presented_hits: Default::default(),
             presented_console_layout: None,
             terminal_render_cache: TerminalRenderCache::new(),

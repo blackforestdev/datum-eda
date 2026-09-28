@@ -106,7 +106,7 @@ fn native_terminal_scrollback_boundaries_do_not_redraw() {
         screen.y + screen.height * 0.5,
     ));
     let camera = format!("{:?}", runtime.camera);
-    runtime.prepared_scene = None;
+    runtime.renderer.render_session_mut().composition_changed();
     for lines in [-8.0_f32, -0.25, 0.25, 8.0] {
         for delta in [
             MouseScrollDelta::LineDelta(0.0, lines),
@@ -126,14 +126,14 @@ fn native_terminal_scrollback_boundaries_do_not_redraw() {
             );
             assert!(runtime.scene_dirty);
             assert_eq!(format!("{:?}", runtime.camera), camera);
-            assert!(runtime.prepared_scene.is_none());
+            assert!(runtime.renderer.render_session().prepared().is_none());
             // Outward input at either boundary stays local and makes no frame.
             runtime.session.workspace_mut().ui.terminal.scroll_offset = maximum - start;
             runtime.scene_dirty = false;
             assert!(!runtime.handle_native_wheel(delta));
             assert!(!runtime.scene_dirty);
             assert_eq!(format!("{:?}", runtime.camera), camera);
-            assert!(runtime.prepared_scene.is_none());
+            assert!(runtime.renderer.render_session().prepared().is_none());
         }
     }
     eprintln!(

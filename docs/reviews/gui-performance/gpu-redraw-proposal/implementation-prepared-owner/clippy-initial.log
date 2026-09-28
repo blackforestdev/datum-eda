@@ -1,0 +1,27 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=28.8 GiB target_free=171.9 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 28.8 GiB used; soft limit 20.0 GiB
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error[E0609]: no field `prepared` on type `&global_preferences_window::GlobalPreferencesWindowSurface`
+   --> crates/gui-app/src/owned_dialog_pointer_tests.rs:149:10
+    |
+149 |         .prepared
+    |          ^^^^^^^^ unknown field
+    |
+    = note: available fields are: `surface`, `config`, `renderer`, `surface_transaction`, `scale_factor` ... and 11 others
+
+error[E0609]: no field `prepared` on type `&global_preferences_window::GlobalPreferencesWindowSurface`
+   --> crates/gui-app/src/owned_dialog_pointer_tests.rs:219:15
+    |
+219 |         owned.prepared.is_some(),
+    |               ^^^^^^^^ unknown field
+    |
+    = note: available fields are: `surface`, `config`, `renderer`, `surface_transaction`, `scale_factor` ... and 11 others
+
+For more information about this error, try `rustc --explain E0609`.
+error: could not compile `datum-gui-app` (bin "datum-gui" test) due to 2 previous errors

@@ -32,11 +32,14 @@ impl Runtime {
         )?;
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         self.renderer.render_session_mut().retry_content();
-        if self.prepared_scene.is_none() {
+        if self.renderer.render_session().prepared().is_none() {
             self.scene_dirty = false;
             self.ensure_retained_scene();
             self.renderer.render_session_mut().check_content_budget()?;
-            self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
+            let prepared = self.build_terminal_prepared_scene()?;
+            self.renderer
+                .render_session_mut()
+                .install_prepared(prepared);
         }
         self.renderer.render_session_mut().check_content_budget()?;
         self.ensure_schematic_retained_scene();
@@ -47,26 +50,24 @@ impl Runtime {
             .board()
             .cloned()
             .context("retained scene should exist before visual screenshot")?;
-        let prepared = self
-            .prepared_scene
-            .as_ref()
-            .context("prepared scene should exist before visual screenshot")?;
         let schematic_retained = self.renderer.render_session().schematic().cloned();
         let owner = self.renderer.resource_owner_id();
         let receipt = self
             .renderer
             .render_session_mut()
             .begin_frame(owner, owner, 0, false);
-        let rendered = self.renderer.render(
-            &self.device,
-            &self.queue,
-            &target_view,
-            prepared,
-            &retained,
-            schematic_retained.as_ref(),
-            self.config.width,
-            self.config.height,
-        );
+        let rendered = self.renderer.with_prepared_scene(|renderer, prepared| {
+            renderer.render(
+                &self.device,
+                &self.queue,
+                &target_view,
+                prepared,
+                &retained,
+                schematic_retained.as_ref(),
+                self.config.width,
+                self.config.height,
+            )
+        });
         target.hold_submission(&self.queue);
         rendered?;
         let result = self.read_visual_texture(&target);

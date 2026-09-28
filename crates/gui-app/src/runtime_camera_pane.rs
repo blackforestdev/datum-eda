@@ -594,8 +594,9 @@ impl Runtime {
         }
         let resolved = {
             let prepared = self
-                .prepared_scene
-                .as_ref()
+                .renderer
+                .render_session()
+                .prepared()
                 .expect("prepared scene built above");
             let board_retained = self
                 .renderer

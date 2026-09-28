@@ -1,17 +1,26 @@
 //! Hit geometry belongs to the last successfully presented native frame.
-use datum_gui_render::{HitRegion, HitTarget, PreparedScene};
+#[cfg(test)]
+use datum_gui_render::PreparedScene;
+use datum_gui_render::{HitRegion, HitTarget};
 
 #[derive(Default)]
 pub(crate) struct PresentedHitRegions {
     regions: Vec<HitRegion>,
+    #[cfg(test)]
     pending: bool,
 }
 
 impl PresentedHitRegions {
+    pub(crate) fn replace(&mut self, regions: Vec<HitRegion>) {
+        self.regions = regions;
+    }
+
+    #[cfg(test)]
     pub(crate) fn mark_pending(&mut self) {
         self.pending = true;
     }
 
+    #[cfg(test)]
     pub(crate) fn present(&mut self, prepared: &mut PreparedScene) {
         if self.pending {
             self.regions = std::mem::take(&mut prepared.hit_regions);
