@@ -70,22 +70,6 @@ use scene_projection::render_scene;
 mod scene_visibility;
 use scene_visibility::*;
 
-fn dim_unrelated_active(state: &ReviewWorkspaceState) -> bool {
-    if !state.ui.filters.dim_unrelated {
-        return false;
-    }
-    has_review_focus(state) || !matches!(state.selection, SelectionTarget::None)
-}
-
-fn is_hovered(state: &ReviewWorkspaceState, object_id: &str) -> bool {
-    if !matches!(state.selection, SelectionTarget::None) {
-        return false;
-    }
-    state.ui.hovered_object.as_ref().is_some_and(|hover| {
-        hover.surface == datum_gui_protocol::PaneContent::Board && hover.object_id == object_id
-    })
-}
-
 fn unrouted_matches_active_action(
     unrouted: &UnroutedPrimitive,
     state: &ReviewWorkspaceState,

@@ -679,13 +679,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 6006
+        "expanded_lines": 5991
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Shared scene visibility policy moves into normal scene_visibility.rs while RenderSession adopts frame snapshots and derived terminal/grid state. Remaining include debt stays frozen."
+      "note": "Shared dim/hover predicates move into scene_visibility.rs alongside authored/layer visibility. Typed dialog/profile adoption removes public prepared installation; remaining include debt stays frozen."
     },
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",

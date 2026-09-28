@@ -79,7 +79,13 @@ impl Renderer {
         self.render_session
             .grid_lod
             .apply_to_prepared(&mut prepared);
-        self.render_session.install_prepared(prepared);
+        self.render_session.install_prepared(
+            prepared,
+            Preparation {
+                extent: [view.width, view.height],
+                profile: PreparedProfile::Workspace,
+            },
+        );
         Ok(())
     }
 }

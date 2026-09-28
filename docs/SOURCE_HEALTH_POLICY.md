@@ -268,3 +268,9 @@ PM049 shared frame snapshots move offscreen launch/capture coordination into
 Exact ceilings ratchet downward. Terminal row caching and per-pane grid history
 join RenderSession; editor camera intent remains application state. These are
 ownership corrections, not GPU performance or complete adoption acceptance.
+
+PM049 typed preparation profiles move dim/hover predicates into the existing
+`render/scene_visibility.rs` owner alongside authored/layer visibility. Renderer
+include expansion falls from 6,006 to 5,991 and its exact ceiling ratchets down.
+The unused public workspace preparation bypass is removed after its pressure
+control adopts shared workspace/dialog preparation. No GPU performance claim.

@@ -3,8 +3,8 @@ use super::*;
 #[path = "render_session.rs"]
 mod render_session;
 pub use render_session::{
-    FramePlan, RenderSession, RetainedSceneCacheKey, SubmittedFrame, WorkspaceView,
-    retained_selection_cache_key,
+    DialogInput, DialogView, FramePlan, RenderSession, RetainedSceneCacheKey, SubmittedFrame,
+    WorkspaceView, retained_selection_cache_key,
 };
 #[path = "../cpu_alloc.rs"]
 pub mod cpu_alloc;

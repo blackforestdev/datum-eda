@@ -1,0 +1,49 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=29.3 GiB target_free=171.3 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 29.3 GiB used; soft limit 20.0 GiB
+   Compiling bitflags v2.11.0
+   Compiling smallvec v1.15.1
+   Compiling once_cell v1.21.4
+   Compiling bytemuck v1.25.0
+   Compiling ahash v0.8.12
+   Compiling ttf-parser v0.25.1
+   Compiling smol_str v0.2.2
+   Compiling gpu-descriptor-types v0.2.0
+   Compiling parking_lot_core v0.9.12
+   Compiling spirv v0.3.0+sdk-1.3.268.0
+   Compiling gpu-descriptor v0.3.2
+   Compiling font-types v0.11.1
+   Compiling font-types v0.10.1
+   Compiling wgpu-types v28.0.0
+   Compiling parking_lot v0.12.5
+   Compiling hashbrown v0.14.5
+   Compiling qoi v0.4.1
+   Compiling read-fonts v0.37.0
+   Compiling read-fonts v0.35.0
+   Compiling exr v1.74.0
+   Compiling png v0.18.1
+   Compiling hashlink v0.9.1
+   Compiling naga v28.0.0
+   Compiling rusqlite v0.32.1
+   Compiling fontdb v0.23.0
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling image v0.25.10
+   Compiling skrifa v0.37.0
+   Compiling harfrust v0.3.2
+   Compiling skrifa v0.40.0
+   Compiling wgpu-hal v28.0.1
+   Compiling swash v0.2.7
+   Compiling wgpu-core-deps-windows-linux-android v28.0.0
+   Compiling wgpu-core v28.0.1
+   Compiling cosmic-text v0.15.0
+   Compiling wgpu v28.0.0
+   Compiling glyphon v0.10.0
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 32s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 1 test
+test text_metrics::measurement_owner::tests::default_native_preparation_adapters_refuse_host_pressure_and_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 501 filtered out; finished in 2.26s

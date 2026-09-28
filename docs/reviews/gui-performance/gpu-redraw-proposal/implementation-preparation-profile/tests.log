@@ -1,0 +1,60 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=33.0 GiB target_free=167.6 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 33.0 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+warning: unused import: `super::*`
+ --> crates/gui-render/src/render/session_dialog.rs:2:5
+  |
+2 | use super::*;
+  |     ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `datum-gui-render` (lib test) generated 1 warning (run `cargo fix --lib -p datum-gui-render --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.01s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 42 tests
+test renderer_state::render_session::frame_revision::tests::actual_present_target_must_match_every_identity_component ... ok
+test renderer_state::render_session::frame_revision::tests::dropped_and_superseded_attempts_never_acknowledge ... ok
+test renderer_state::render_session::frame_revision::tests::failed_capture_foreign_and_retired_receipts_preserve_damage ... ok
+test renderer_state::render_session::frame_revision::tests::mixed_damage_cannot_be_downgraded_by_pointer_order ... ok
+test renderer_state::render_session::frame_revision::tests::receipt_mailbox_has_no_per_attempt_allocation_and_stale_drop_is_isolated ... ok
+test renderer_state::render_session::frame_revision::tests::warm_failure_and_abandoned_exposure_require_full_recovery ... ok
+test renderer_state::render_session::history::heap_tests::history_keys_scene_metadata_and_entry_capacity_match_allocator ... ok
+test renderer_state::render_session::history::lifecycle::tests::construction_failure_is_sticky_for_input_and_explicitly_retryable ... ok
+test renderer_state::render_session::history::lifecycle::tests::construction_failure_retires_matching_history_and_retries_once ... ok
+test renderer_state::render_session::history::resize_tests::companion_schematic_uses_active_and_retiring_cpu_ownership ... ok
+test renderer_state::render_session::history::resize_tests::dependent_scene_retires_active_and_history_charges_for_reconstruction ... ok
+test renderer_state::render_session::history::resize_tests::document_history_container_charges_spare_capacity_and_growth_overlap ... ok
+test renderer_state::render_session::history::resize_tests::document_pressure_bypasses_candidate_without_forgiving_external_owner ... ok
+test renderer_state::render_session::history::resize_tests::document_pressure_retires_only_matching_history_and_keeps_external_pins_charged ... ok
+test renderer_state::render_session::history::resize_tests::history_entry_limit_is_shared_across_owners_without_limiting_active_references ... ok
+test renderer_state::render_session::history::resize_tests::history_storage_retains_allocating_document_identity_until_release ... ok
+test renderer_state::render_session::history::resize_tests::resize_keeps_complete_active_charge_while_retiring_obsolete_history ... ok
+test renderer_state::render_session::history::resize_tests::retirement_observer_storage_is_charged_through_growth_reuse_and_drop ... ok
+test renderer_state::render_session::history::resize_tests::retirement_storage_refusal_keeps_pinned_payload_accounted_and_allows_retry ... ok
+test renderer_state::render_session::history::resize_tests::shared_document_history_metadata_is_charged_per_owner_and_released_on_take ... ok
+test renderer_state::render_session::history::tests::active_and_history_charge_shared_geometry_once ... ok
+test renderer_state::render_session::history::tests::active_payload_prunes_history_and_oversized_scene_bypasses_retention ... ok
+test renderer_state::render_session::history::tests::externally_pinned_geometry_remains_charged_after_history_clear ... ok
+test renderer_state::render_session::history::tests::history_growth_admits_old_and_new_metadata_before_allocating ... ok
+test renderer_state::render_session::history::tests::history_preserves_six_entries_and_retires_oldest_under_byte_pressure ... ok
+test renderer_state::render_session::prepared_tests::capture_and_failure_cannot_publish_native_hits_or_consume_their_storage ... ok
+test renderer_state::render_session::prepared_tests::old_completion_cannot_publish_a_newer_prepared_projection ... ok
+test renderer_state::render_session::prepared_tests::replacement_target_requires_new_hit_projection_after_cpu_owner_transfer ... ok
+test renderer_state::render_session::prepared_tests::stronger_changes_evict_preparation_and_pointer_cannot_recreate_it ... ok
+test renderer_state::render_session::session_frame::tests::completion_publishes_the_rendered_snapshot_while_newer_input_stays_pending ... ok
+test renderer_state::render_session::session_frame::tests::dropped_and_retired_plans_force_repreparation_and_cannot_overwrite_new_owner ... ok
+test renderer_state::render_session::session_frame::tests::equal_area_extent_change_and_missing_schematic_fail_closed ... ok
+test renderer_state::render_session::session_frame::tests::failed_or_capture_snapshot_restores_storage_without_native_publication ... ok
+test renderer_state::render_session::session_frame::tests::failure_capture_and_old_presentation_preserve_terminal_damage_until_matching_frame ... ok
+test renderer_state::render_session::session_frame::tests::missing_world_source_refuses_without_consuming_pending_projection ... ok
+test renderer_state::render_session::session_grid::tests::camera_motion_preserves_warm_state ... ok
+test renderer_state::render_session::session_grid::tests::content_replacement_resets_only_mismatched_surface ... ok
+test renderer_state::render_session::session_grid::tests::duplicate_surface_panes_are_independent ... ok
+test renderer_state::render_session::session_grid::tests::repeated_pane_closure_releases_lod_without_resetting_surviving_hysteresis ... ok
+test renderer_state::render_session::session_grid::tests::sequential_frames_apply_twenty_eighty_hysteresis ... ok
+test renderer_state::render_session::session_preparation::tests::missing_content_keeps_consumed_terminal_damage_available_for_rollback ... ok
+test renderer_state::render_session::terminal_damage::tests::an_older_presentation_cannot_retire_newer_terminal_damage ... ok
+
+test result: ok. 42 passed; 0 failed; 0 ignored; 0 measured; 460 filtered out; finished in 0.70s

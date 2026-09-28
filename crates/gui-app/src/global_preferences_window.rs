@@ -322,18 +322,22 @@ impl GlobalPreferencesWindowSurface {
             || !runtime.device_health.failed(),
         )?;
         if self.renderer.render_session().prepared().is_none() {
-            let mut prepared;
+            let view = datum_gui_render::DialogView {
+                width: self.config.width,
+                height: self.config.height,
+                scale: self.scale_factor,
+            };
             if new_project {
                 let dialog = &runtime.workspace().ui.new_project;
                 let focus = (dialog.focus, dialog.units_choice);
                 let reveal_focus = self.new_project_focus != Some(focus);
-                prepared = self.renderer.prepare_native_new_project_scrolled(
-                    &runtime.workspace().ui.new_project,
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
+                self.renderer.prepare_session_dialog(
+                    datum_gui_render::DialogInput::NewProject {
+                        dialog,
+                        reveal_focus,
+                    },
+                    view,
                     &mut self.scroll,
-                    reveal_focus,
                 )?;
                 self.new_project_focus = Some(focus);
             } else {
@@ -372,14 +376,13 @@ impl GlobalPreferencesWindowSurface {
                 if identity_changed || expanded_changed {
                     self.scroll.release();
                 }
-                prepared = self.renderer.prepare_native_preferences_scrolled(
-                    dialog,
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                    &mut self.scroll,
-                    reveal_row,
-                )?;
+                let input = if project_preferences {
+                    datum_gui_render::DialogInput::ProjectPreferences { dialog, reveal_row }
+                } else {
+                    datum_gui_render::DialogInput::GlobalPreferences { dialog, reveal_row }
+                };
+                self.renderer
+                    .prepare_session_dialog(input, view, &mut self.scroll)?;
                 // Scrolling rebuilds geometry, but unchanged reveal keys stay owned here.
                 if focus_changed {
                     self.scroll_focus = Some(dialog.focus.clone());
@@ -396,18 +399,6 @@ impl GlobalPreferencesWindowSurface {
                     ));
                 }
             }
-            {
-                prepared.set_native_consumer(if new_project {
-                    datum_gui_render::resource_consumers::Consumer::New
-                } else if project_preferences {
-                    datum_gui_render::resource_consumers::Consumer::Project
-                } else {
-                    datum_gui_render::resource_consumers::Consumer::Global
-                });
-            }
-            self.renderer
-                .render_session_mut()
-                .install_prepared(prepared);
             append_gui_verbose_diagnostic_line(|| {
                 format!(
                     "native control_meshes window={:?} builds={}",
