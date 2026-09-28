@@ -4,20 +4,11 @@
 //! pointer-only changes refresh interaction chrome, while authored/session
 //! changes may invalidate the considerably more expensive retained geometry.
 
-use super::{RetainedSceneCacheKey, Runtime};
+use super::Runtime;
 
 impl Runtime {
-    pub(super) fn invalidate_scene_for_session_change(
-        &mut self,
-        previous_key: RetainedSceneCacheKey,
-    ) {
-        let next_key = self.retained_scene_cache_key();
-        self.renderer
-            .render_session_mut()
-            .change_document(previous_key, &next_key);
-    }
-
     pub(super) fn invalidate_scene(&mut self) {
+        self.render_sources.replaced();
         self.renderer.render_session_mut().clear_content();
     }
 
@@ -62,9 +53,8 @@ impl Runtime {
         }
     }
 
-    /// Refresh only screen-space interaction chrome. Cursor and hover motion
-    /// must never evict the prepared shell or authored board/schematic geometry:
-    /// all three are expensive and independent of transient pointer state.
+    /// Submit pointer intent. Shared dependencies decide whether the change is
+    /// suffix-only or alters retained material emphasis and prepared hover text.
     pub(super) fn refresh_interaction_overlay(&mut self) {
         let generation = self.renderer.render_session().pointer_generation();
         let ui = &self.session.workspace().ui;

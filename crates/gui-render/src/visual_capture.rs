@@ -137,19 +137,9 @@ impl OffscreenRenderer {
         // not an editor revision stream. Treat each as replacement input; never
         // infer equality from a reused address, length or previous warm call.
         let session = self.renderer.render_session_mut();
-        session.clear_content();
         session.reset_pane_projections();
         session.retry_content();
         let _ = session.restore_terminal_damage();
-        anyhow::ensure!(
-            session.ensure_board(state, self.width, self.height, scale_factor),
-            "capture retained board preparation refused"
-        );
-        anyhow::ensure!(
-            session.ensure_schematic(state, self.width, self.height, scale_factor),
-            "capture retained schematic preparation refused"
-        );
-        session.check_content_budget()?;
         let camera = camera.unwrap_or_else(|| CameraState::fit_to_bounds(&state.scene.bounds));
         let terminal_panes = terminal_snapshot
             .filter(|_| !state.ui.global_preferences.open)
@@ -173,6 +163,7 @@ impl OffscreenRenderer {
         self.renderer.prepare_session_workspace(
             state,
             WorkspaceView {
+                source_revision: None,
                 width: self.width,
                 height: self.height,
                 scale: scale_factor,

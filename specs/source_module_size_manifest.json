@@ -645,13 +645,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1155
+        "pre_test_lines": 1128
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Offscreen launch/capture ownership moves to runtime_capture.rs; remaining root debt stays frozen."
+      "note": "Selection/filter retained validity and history decisions move into shared RenderSession source validation; remaining root debt stays frozen."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",

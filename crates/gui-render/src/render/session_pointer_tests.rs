@@ -235,8 +235,13 @@ fn effective_board_hover_transitions_require_full_content_and_text_preparation()
         object_id: state.scene.pads.first().unwrap().object_id.clone(),
         surface: PaneContent::Board,
     });
-    assert!(session.invalidate_changed_hover(&state));
-    assert!(session.board().is_none());
+    session
+        .ensure_sources(&state, None, 1600, 1000, 1.0)
+        .unwrap();
+    assert_eq!(
+        session.board().unwrap(),
+        &RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0)
+    );
     assert!(session.prepared().is_none());
 }
 

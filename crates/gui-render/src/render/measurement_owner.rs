@@ -129,6 +129,7 @@ mod tests {
                     0 => renderer.prepare_session_workspace(
                         &state,
                         crate::WorkspaceView {
+                            source_revision: None,
                             width: 960,
                             height: 720,
                             scale: 1.0,

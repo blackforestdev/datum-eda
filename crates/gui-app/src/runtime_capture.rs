@@ -38,8 +38,6 @@ impl Runtime {
             self.build_terminal_prepared_scene()?;
         }
         self.renderer.render_session_mut().check_content_budget()?;
-        self.ensure_schematic_retained_scene();
-        self.renderer.render_session_mut().check_content_budget()?;
         let owner = self.renderer.resource_owner_id();
         let plan = self.renderer.render_session_mut().prepare_frame(
             owner,

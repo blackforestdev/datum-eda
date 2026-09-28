@@ -19,6 +19,8 @@ pub mod render_input;
 mod session_frame;
 #[path = "session_hover.rs"]
 mod session_hover;
+#[path = "session_sources.rs"]
+mod session_sources;
 pub use session_frame::{FramePlan, SubmittedFrame};
 #[path = "frame_revision.rs"]
 mod frame_revision;
@@ -32,6 +34,7 @@ pub use history::{RetainedSceneCacheKey, retained_selection_cache_key};
 #[derive(Default)]
 pub struct RenderSession {
     revisions: Revisions,
+    sources: session_sources::Sources,
     prepared: Option<crate::PreparedScene>,
     prepared_revision: u64,
     preparation_generation: u64,
@@ -132,6 +135,7 @@ impl RenderSession {
         self.revisions.update(Change::Content);
         self.prepared = None;
         self.board = None;
+        self.sources.active = None;
         self.board_history.clear();
         self.clear_schematic();
     }
@@ -144,26 +148,14 @@ impl RenderSession {
     pub fn resize_content(&mut self) {
         self.retire_target();
         self.board_history.invalidate_surface_size(&mut self.board);
+        if self.board.is_none() {
+            self.sources.active = None;
+        }
         self.schematic_history
             .invalidate_surface_size(&mut self.schematic);
     }
 
-    pub fn change_document(
-        &mut self,
-        previous: RetainedSceneCacheKey,
-        next: &RetainedSceneCacheKey,
-    ) {
-        self.revisions.update(Change::Content);
-        self.prepared = None;
-        self.preparation = None; // History identity includes exact effective board hover.
-        if let Some(board) = self.board.take() {
-            self.board_history.insert(previous, board);
-        }
-        self.clear_schematic();
-        self.board = self.board_history.take(next);
-    }
-
-    pub fn ensure_board(
+    pub(crate) fn ensure_board(
         &mut self,
         state: &ReviewWorkspaceState,
         width: u32,
@@ -185,7 +177,7 @@ impl RenderSession {
         true
     }
 
-    pub fn ensure_schematic(
+    pub(crate) fn ensure_schematic(
         &mut self,
         state: &ReviewWorkspaceState,
         width: u32,

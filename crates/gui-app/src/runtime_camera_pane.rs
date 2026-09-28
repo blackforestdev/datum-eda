@@ -563,7 +563,7 @@ impl Runtime {
     /// symbol hit regions (built lazily like the board's, and reused when the render
     /// path already resolved it). `None` when there is no schematic scene/pane.
     pub(super) fn schematic_world_hit(&mut self, world_point: PointNm) -> Option<HitTarget> {
-        if !self.ensure_schematic_retained_scene() {
+        if !self.ensure_retained_scene() {
             return None;
         }
         self.renderer
@@ -591,9 +591,8 @@ impl Runtime {
         {
             return self.clear_interaction_overlay();
         }
-        // Ensure the caches exist: the prepared build also builds the board
-        // retained scene; the companion schematic retained scene is built here.
-        if self.prepared_scene().is_none() || !self.ensure_schematic_retained_scene() {
+        // Shared preparation validates both retained sources before projection.
+        if self.prepared_scene().is_none() || !self.ensure_retained_scene() {
             return self.clear_interaction_overlay();
         }
         let resolved = {

@@ -21,6 +21,9 @@ pub struct RetainedSceneCacheKey {
     layer_visibility: Box<[(String, bool)]>,
     pub(super) selection: String,
     board_hover: Option<String>,
+    review_target: String,
+    schematic_source: Option<(String, String)>,
+    projection: [Option<[u32; 4]>; 2],
 }
 
 struct Entry {
@@ -63,7 +66,44 @@ impl RetainedSceneCacheKey {
     pub fn selection_matches(&self, selection: &str) -> bool {
         self.selection == selection
     }
-    fn heap_bytes(&self) -> Option<usize> {
+    pub(super) fn allocation_bound(
+        state: &datum_gui_protocol::ReviewWorkspaceState,
+    ) -> Option<usize> {
+        use datum_gui_protocol::SelectionTarget;
+        let selection_len = match &state.selection {
+            SelectionTarget::None => 0,
+            SelectionTarget::AuthoredObject(id)
+            | SelectionTarget::ReviewAction(id)
+            | SelectionTarget::CheckFinding(id) => id.len(),
+        };
+        let strings = [
+            state.scene.scene_id.len(),
+            state.scene.source_revision.len(),
+            state.active_review_target_id.len(),
+            selection_len.checked_add(32)?,
+            state
+                .ui
+                .hovered_object
+                .as_ref()
+                .map_or(0, |h| h.object_id.len()),
+        ];
+        let mut bytes = capacity_bytes::<(String, bool)>(state.ui.filters.layer_visibility.len());
+        for len in strings
+            .into_iter()
+            .chain(state.ui.filters.layer_visibility.keys().map(String::len))
+            .chain(
+                state
+                    .schematic_scene
+                    .iter()
+                    .flat_map(|scene| [scene.scene_id.len(), scene.source_revision.len()]),
+            )
+        {
+            bytes =
+                bytes.checked_add(capacity_bytes::<u8>(len.checked_mul(2)?.checked_add(32)?))?;
+        }
+        Some(bytes)
+    }
+    pub(super) fn heap_bytes(&self) -> Option<usize> {
         let mut bytes = capacity_bytes::<u8>(self.scene_id.capacity())
             .checked_add(capacity_bytes::<u8>(self.source_revision.capacity()))?
             .checked_add(capacity_bytes::<u8>(self.selection.capacity()))?
@@ -76,7 +116,36 @@ impl RetainedSceneCacheKey {
         for (layer, _) in &self.layer_visibility {
             bytes = bytes.checked_add(capacity_bytes::<u8>(layer.capacity()))?;
         }
+        bytes = bytes.checked_add(capacity_bytes::<u8>(self.review_target.capacity()))?;
+        if let Some((id, revision)) = &self.schematic_source {
+            bytes = bytes
+                .checked_add(capacity_bytes::<u8>(id.capacity()))?
+                .checked_add(capacity_bytes::<u8>(revision.capacity()))?;
+        }
         Some(bytes)
+    }
+
+    pub(super) fn same_content(&self, other: &Self) -> bool {
+        self.scene_id == other.scene_id
+            && self.source_revision == other.source_revision
+            && self.show_authored == other.show_authored
+            && self.show_proposed == other.show_proposed
+            && self.show_unrouted == other.show_unrouted
+            && self.dim_unrelated == other.dim_unrelated
+            && self.layer_visibility == other.layer_visibility
+            && self.selection == other.selection
+            && self.board_hover == other.board_hover
+            && self.review_target == other.review_target
+            && self.schematic_source == other.schematic_source
+    }
+
+    pub(super) fn same_projection(&self, other: &Self, schematic: bool) -> bool {
+        let index = usize::from(schematic);
+        self.projection[index] == other.projection[index]
+    }
+
+    pub(super) fn schematic_present(&self) -> bool {
+        self.schematic_source.is_some() && self.projection[1].is_some()
     }
 }
 
@@ -483,7 +552,32 @@ impl RetainedSceneCacheKey {
         height: u32,
         scale_factor: f32,
     ) -> Self {
+        let shell = crate::ShellLayout::for_surface(
+            width,
+            height,
+            scale_factor,
+            crate::dock_height_for_state(workspace),
+        );
+        let bits = |rect: crate::RectPx| {
+            [
+                rect.x.to_bits(),
+                rect.y.to_bits(),
+                rect.width.to_bits(),
+                rect.height.to_bits(),
+            ]
+        };
         RetainedSceneCacheKey {
+            review_target: workspace.active_review_target_id.clone(),
+            schematic_source: workspace
+                .schematic_scene
+                .as_ref()
+                .map(|scene| (scene.scene_id.clone(), scene.source_revision.clone())),
+            projection: [
+                Some(bits(shell.scene_viewport(&workspace.ui.layout))),
+                shell
+                    .schematic_scene_viewport(&workspace.ui.layout)
+                    .map(bits),
+            ],
             scene_id: workspace.scene.scene_id.clone(),
             source_revision: workspace.scene.source_revision.clone(),
             width,
@@ -526,6 +620,9 @@ mod tests {
     pub(super) fn key(index: usize) -> RetainedSceneCacheKey {
         RetainedSceneCacheKey {
             scene_id: format!("scene-{index}"),
+            review_target: String::new(),
+            schematic_source: None,
+            projection: [None, None],
             board_hover: None,
             source_revision: "revision".into(),
             width: 960,

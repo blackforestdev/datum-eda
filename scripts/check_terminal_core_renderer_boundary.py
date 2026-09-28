@@ -153,7 +153,7 @@ def check(root: Path) -> list[str]:
         if marker not in main + runtime_render:
             failures.append(f"production runtime bypasses retained core rendering: {marker}")
     preparation = read(root, SESSION_PREPARATION)
-    for marker in ("begin_workspace_preparation(panes)?", "self.retain_terminal_damage(panes)",
+    for marker in ("begin_workspace_preparation(state, &view, panes)?", "self.retain_terminal_damage(panes)",
                    "then_some(&mut self.render_session.terminal_cache)"):
         if marker not in preparation:
             failures.append(f"shared preparation bypasses retained core rendering: {marker}")

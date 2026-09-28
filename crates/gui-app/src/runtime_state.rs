@@ -15,6 +15,7 @@ pub(super) struct Runtime {
     pub(super) scale_factor: f32,
     pub(super) measurements: native_gpu_measurements::Host,
     pub(super) session: LiveDesignSession,
+    pub(super) render_sources: datum_gui_render::render_input::SourceEpoch,
     /// Camera for the renderer's live board leaf. Pointer and focused commands
     /// reach it only when their typed pane route names that leaf; schematic and
     /// additional-pane cameras remain independently warm in `pane_cameras`.

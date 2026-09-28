@@ -94,11 +94,6 @@ impl Runtime {
         }
         self.renderer.render_session_mut().check_content_budget()?;
         let scene_elapsed = scene_started.elapsed();
-        // P2.2a: resolve the companion schematic world buffer lazily (cleared on
-        // every scene/frame invalidation, so this stays fresh). `None` when the
-        // workspace has no companion schematic / Schematic pane — second pass off.
-        self.ensure_schematic_retained_scene();
-        self.renderer.render_session_mut().check_content_budget()?;
         drop(probe);
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();

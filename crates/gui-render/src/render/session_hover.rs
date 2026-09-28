@@ -44,23 +44,3 @@ impl BoardHover {
         self == Self::Disabled || (self != Self::Unknown && self == Self::resolve(hover, retained))
     }
 }
-
-impl RenderSession {
-    pub(super) fn invalidate_changed_hover(&mut self, state: &ReviewWorkspaceState) -> bool {
-        let Some(preparation) = self
-            .preparation
-            .filter(|p| p.profile == PreparedProfile::Workspace)
-        else {
-            return false;
-        };
-        let Some(board) = &self.board else {
-            return false;
-        };
-        let current = BoardHover::capture(state, board);
-        if current == preparation.hover && current != BoardHover::Unknown {
-            return false;
-        }
-        self.clear_content();
-        true
-    }
-}

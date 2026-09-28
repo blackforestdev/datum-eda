@@ -6,6 +6,7 @@ use datum_gui_protocol::{PaneContent, PaneId};
 /// Coherent editor camera intent and physical target inputs. Editors supply
 /// values before preparation; only the session mutates derived projections.
 pub struct WorkspaceView<'a> {
+    pub source_revision: Option<render_input::SourceRevision>,
     pub width: u32,
     pub height: u32,
     pub scale: f32,
@@ -18,14 +19,22 @@ pub struct WorkspaceView<'a> {
 }
 
 impl RenderSession {
-    fn begin_workspace_preparation(
+    pub(super) fn begin_workspace_preparation(
         &mut self,
+        state: &ReviewWorkspaceState,
+        view: &WorkspaceView<'_>,
         panes: &[TerminalPaneRenderState<'_>],
     ) -> anyhow::Result<RetainedScene> {
         self.retain_terminal_damage(panes);
-        self.board
-            .clone()
-            .ok_or_else(|| anyhow::anyhow!("workspace preparation requires retained content"))
+        self.composition_changed();
+        self.ensure_sources(
+            state,
+            view.source_revision,
+            view.width,
+            view.height,
+            view.scale,
+        )?;
+        Ok(self.board.clone().expect("validated board"))
     }
 
     pub fn retire_pane_projection(&mut self, pane: PaneId, content: PaneContent) {
@@ -48,29 +57,10 @@ impl Renderer {
         view: WorkspaceView<'_>,
         panes: &[TerminalPaneRenderState<'_>],
     ) -> anyhow::Result<()> {
-        // Lease consumed producer damage before any fallible prerequisite.
-        let mut retained = self.render_session.begin_workspace_preparation(panes)?;
-        if self.render_session.invalidate_changed_hover(state) {
-            drop(retained);
-            // A full input carrying changed hover must not bless geometry built
-            // for the old hover, even if the caller supplied a weak change hint.
-            anyhow::ensure!(
-                self.render_session
-                    .ensure_board(state, view.width, view.height, view.scale),
-                "board hover content reconstruction failed"
-            );
-            anyhow::ensure!(
-                self.render_session
-                    .ensure_schematic(state, view.width, view.height, view.scale),
-                "schematic content reconstruction failed"
-            );
-            self.render_session.check_content_budget()?;
-            retained = self
-                .render_session
-                .board
-                .clone()
-                .expect("reconstructed board");
-        }
+        // Lease consumed producer damage before source validation/admission can fail.
+        let retained = self
+            .render_session
+            .begin_workspace_preparation(state, &view, panes)?;
         let _host = self.resource_host.enter();
         let prepared = crate::text_metrics::measurement_owner::with_owner(
             &mut self.measurement_fonts,
@@ -105,31 +95,5 @@ impl Renderer {
             Preparation::workspace(state, &retained, [view.width, view.height]),
         );
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn missing_content_keeps_consumed_terminal_damage_available_for_rollback() {
-        let state = datum_gui_protocol::load_fixture_workspace_state();
-        let panes = [TerminalPaneRenderState {
-            session_id: "producer".into(),
-            focused: true,
-            lane: &state.ui.terminal,
-            snapshot: crate::terminal_core_render::test_snapshot(b"damage before failure"),
-            damage: vec![datum_terminal_core::Damage::Full],
-        }];
-        let mut session = RenderSession::default();
-        assert!(session.begin_workspace_preparation(&panes).is_err());
-        assert_eq!(
-            session.restore_terminal_damage(),
-            vec![(
-                "producer".to_string(),
-                vec![datum_terminal_core::Damage::Full]
-            )]
-        );
-        assert!(session.has_pending_frame());
     }
 }
