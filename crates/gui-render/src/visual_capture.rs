@@ -5,7 +5,9 @@ use anyhow::{Context, anyhow};
 use datum_gui_protocol::ReviewWorkspaceState;
 use image::RgbaImage;
 
-use crate::{CameraState, PreparedScene, Renderer, RetainedScene};
+use crate::{CameraState, Renderer, SubmittedFrame, WorkspaceView};
+#[cfg_attr(not(test), allow(unused_imports))] // Existing GPU test children share these types.
+use crate::{PreparedScene, RetainedScene};
 
 const DEFAULT_MSAA_SAMPLES: u32 = 4;
 const OUTPUT_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8UnormSrgb;
@@ -83,7 +85,7 @@ impl OffscreenRenderer {
     ) -> anyhow::Result<RgbaImage> {
         let target =
             self.render_workspace_texture_for_surface_scale(state, camera, scale_factor, None)?;
-        self.read_texture(&target)
+        self.read_frame(target)
     }
 
     pub fn render_workspace_with_terminal_snapshot(
@@ -98,7 +100,7 @@ impl OffscreenRenderer {
             scale_factor,
             Some(snapshot),
         )?;
-        self.read_texture(&target)
+        self.read_frame(target)
     }
 
     pub fn warm_workspace_for_surface_scale(
@@ -107,8 +109,14 @@ impl OffscreenRenderer {
         camera: Option<CameraState>,
         scale_factor: f32,
     ) -> anyhow::Result<()> {
-        let _target =
+        let (_target, frame) =
             self.render_workspace_texture_for_surface_scale(state, camera, scale_factor, None)?;
+        let completed = self.device.poll(wgpu::PollType::Wait {
+            submission_index: None,
+            timeout: Some(READBACK_TIMEOUT),
+        });
+        self.complete_capture(frame, completed.is_ok());
+        completed.context("drain warm capture submission")?;
         Ok(())
     }
 
@@ -118,66 +126,94 @@ impl OffscreenRenderer {
         camera: Option<CameraState>,
         scale_factor: f32,
         terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>,
-    ) -> anyhow::Result<crate::capture_resource::CaptureTarget> {
+    ) -> anyhow::Result<(crate::capture_resource::CaptureTarget, SubmittedFrame)> {
         let target = crate::capture_resource::CaptureTarget::new(
             &self.device,
             self.extent(),
             OUTPUT_FORMAT,
         )?;
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
-        let retained = RetainedScene::try_from_workspace_for_surface(
-            state,
-            self.width,
-            self.height,
-            scale_factor,
-        )?;
-        // P2.2a: companion schematic world buffer for the additive second GPU pass
-        // (None when the state has no schematic scene / Schematic pane).
-        let schematic_retained = RetainedScene::try_from_workspace_schematic_for_surface(
-            state,
-            self.width,
-            self.height,
-            scale_factor,
-        )?;
-        let camera = camera.unwrap_or_else(|| CameraState::fit_to_bounds(&state.scene.bounds));
-        let prepared = if state.ui.global_preferences.open {
-            PreparedScene::from_workspace_with_terminal_renderer(
-                state,
-                self.width,
-                self.height,
-                scale_factor,
-                camera,
-                &retained,
-                &[],
-                None,
-                true,
-            )?
-        } else {
-            PreparedScene::from_workspace_with_terminal_snapshot(
-                state,
-                self.width,
-                self.height,
-                scale_factor,
-                camera,
-                &retained,
-                terminal_snapshot,
-            )?
-        };
-
-        let rendered = self.renderer.render(
-            &self.device,
-            &self.queue,
-            &target_view,
-            &prepared,
-            &retained,
-            schematic_retained.as_ref(),
-            self.width,
-            self.height,
+        // This legacy visual API accepts arbitrary immutable workspace values,
+        // not an editor revision stream. Treat each as replacement input; never
+        // infer equality from a reused address, length or previous warm call.
+        let session = self.renderer.render_session_mut();
+        session.clear_content();
+        session.reset_pane_projections();
+        session.retry_content();
+        let _ = session.restore_terminal_damage();
+        anyhow::ensure!(
+            session.ensure_board(state, self.width, self.height, scale_factor),
+            "capture retained board preparation refused"
         );
+        anyhow::ensure!(
+            session.ensure_schematic(state, self.width, self.height, scale_factor),
+            "capture retained schematic preparation refused"
+        );
+        session.check_content_budget()?;
+        let camera = camera.unwrap_or_else(|| CameraState::fit_to_bounds(&state.scene.bounds));
+        let terminal_panes = terminal_snapshot
+            .filter(|_| !state.ui.global_preferences.open)
+            .map(|snapshot| {
+                vec![crate::TerminalPaneRenderState {
+                    session_id: state
+                        .ui
+                        .terminal
+                        .active_session_id
+                        .clone()
+                        .unwrap_or_else(|| "terminal".to_string()),
+                    focused: true,
+                    lane: &state.ui.terminal,
+                    snapshot: snapshot.clone(),
+                    // Standalone snapshots replace prior input; a reused session id
+                    // does not imply that its cached rows are still current.
+                    damage: vec![datum_terminal_core::Damage::Full],
+                }]
+            })
+            .unwrap_or_default();
+        self.renderer.prepare_session_workspace(
+            state,
+            WorkspaceView {
+                width: self.width,
+                height: self.height,
+                scale: scale_factor,
+                camera,
+                schematic_camera: None,
+                pane_cameras: &[],
+                include_preferences_overlay: state.ui.global_preferences.open,
+                single_terminal_snapshot: true,
+            },
+            &terminal_panes,
+        )?;
+        let owner = self.renderer.resource_owner_id();
+        let plan = self.renderer.render_session_mut().prepare_frame(
+            owner,
+            owner,
+            0,
+            false,
+            self.width,
+            self.height,
+        )?;
+        let rendered = self
+            .renderer
+            .encode_capture(plan, &self.device, &self.queue, &target_view);
         target.hold_submission(&self.queue);
-        rendered?;
+        Ok((target, rendered?))
+    }
 
-        Ok(target)
+    fn complete_capture(&mut self, frame: SubmittedFrame, success: bool) {
+        let owner = self.renderer.resource_owner_id();
+        self.renderer
+            .render_session_mut()
+            .complete_submitted(frame, owner, owner, 0, success);
+    }
+
+    fn read_frame(
+        &mut self,
+        (target, frame): (crate::capture_resource::CaptureTarget, SubmittedFrame),
+    ) -> anyhow::Result<RgbaImage> {
+        let result = self.read_texture(&target);
+        self.complete_capture(frame, result.is_ok());
+        result
     }
 
     fn extent(&self) -> wgpu::Extent3d {
@@ -385,3 +421,7 @@ mod tests {
 #[cfg(test)]
 #[path = "render/gpu_overlay_tests.rs"]
 mod gpu_overlay_tests;
+
+#[cfg(test)]
+#[path = "render/offscreen_session_tests.rs"]
+mod offscreen_session_tests;

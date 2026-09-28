@@ -45,6 +45,8 @@ impl Runtime {
                 camera: self.camera,
                 schematic_camera,
                 pane_cameras: &pane_cameras,
+                include_preferences_overlay: false,
+                single_terminal_snapshot: false,
             },
             &terminal_panes,
         );

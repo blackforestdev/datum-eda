@@ -81,12 +81,12 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             "mod runtime_terminal_render;\n", encoding="utf-8"
         )
         (root / guard.APP / "runtime_terminal_render.rs").write_text(
-            "take_active_tab_render_states( prepare_session_workspace(\n",
+            "take_active_tab_render_states( prepare_session_workspace( single_terminal_snapshot: false\n",
             encoding="utf-8",
         )
         (root / guard.SESSION_PREPARATION).write_text(
             "begin_workspace_preparation(panes)? self.retain_terminal_damage(panes) "
-            "Some(&mut self.render_session.terminal_cache)\n", encoding="utf-8"
+            "then_some(&mut self.render_session.terminal_cache)\n", encoding="utf-8"
         )
         (root / guard.APP / "terminal_core_adapter.rs").write_text(
             "pixel_width: u32 pixel_height: u32 take_render_state( pending_render_damage\n",
@@ -155,7 +155,7 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
 
     def test_shared_preparation_cannot_drop_lease_or_row_cache(self) -> None:
         for marker in ("begin_workspace_preparation(panes)?", "self.retain_terminal_damage(panes)",
-                       "Some(&mut self.render_session.terminal_cache)"):
+                       "then_some(&mut self.render_session.terminal_cache)"):
             with self.subTest(marker=marker):
                 self.assertTrue(self.mutate(guard.SESSION_PREPARATION, marker, ""))
 

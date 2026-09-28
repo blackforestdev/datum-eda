@@ -1,0 +1,689 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.5 GiB target_free=169.2 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.5 GiB used; soft limit 20.0 GiB
+   Compiling bytemuck v1.25.0
+   Compiling ahash v0.8.12
+   Compiling naga v28.0.0
+   Compiling exr v1.74.0
+   Compiling png v0.18.1
+   Compiling hashbrown v0.14.5
+   Compiling font-types v0.11.1
+   Compiling font-types v0.10.1
+   Compiling wgpu-types v28.0.0
+   Compiling qoi v0.4.1
+   Compiling read-fonts v0.35.0
+   Compiling read-fonts v0.37.0
+   Compiling hashlink v0.9.1
+   Compiling rusqlite v0.32.1
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling image v0.25.10
+   Compiling harfrust v0.3.2
+   Compiling skrifa v0.37.0
+   Compiling skrifa v0.40.0
+   Compiling wgpu-hal v28.0.1
+   Compiling swash v0.2.7
+   Compiling wgpu-core-deps-windows-linux-android v28.0.0
+   Compiling wgpu-core v28.0.1
+   Compiling cosmic-text v0.15.0
+   Compiling wgpu v28.0.0
+   Compiling glyphon v0.10.0
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+error[E0425]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_overlay_tests.rs:65:57
+   |
+65 | fn capture(renderer: &mut OffscreenRenderer, prepared: &PreparedScene) -> RgbaImage {
+   |                                                         ^^^^^^^^^^^^^ not found in this scope
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/gpu_overlay_tests.rs:66:43
+   |
+66 |     capture_retained(renderer, prepared, &RetainedScene::empty())
+   |                                           ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::RetainedScene;
+   |
+
+error[E0425]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_overlay_tests.rs:71:16
+   |
+71 |     prepared: &PreparedScene,
+   |                ^^^^^^^^^^^^^ not found in this scope
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0425]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/gpu_overlay_tests.rs:72:16
+   |
+72 |     retained: &RetainedScene,
+   |                ^^^^^^^^^^^^^ not found in this scope
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::RetainedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_overlay_tests.rs:102:24
+    |
+102 |         let retained = RetainedScene::from_workspace_for_surface(&state, width, height, scale);
+    |                        ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_overlay_tests.rs:105:28
+    |
+105 |             let prepared = PreparedScene::from_native_preferences(
+    |                            ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_overlay_tests.rs:145:26
+    |
+145 |             let legacy = PreparedScene::from_workspace_with_terminal_renderer(
+    |                          ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/control_gpu_tests.rs:11:9
+   |
+11 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_overlay_tests.rs:245:9
+    |
+245 |         PreparedScene::from_native_preferences(&dialog_state.ui.global_preferences, 960, 720, 1.0)
+    |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_overlay_tests.rs:366:9
+    |
+366 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+    |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_overlay_tests.rs:401:9
+    |
+401 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 192, 192, 1.0)
+    |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_pass_tests.rs:10:9
+   |
+10 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_pass_tests.rs:136:20
+    |
+136 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+    |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_pass_tests.rs:138:20
+    |
+138 |     let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+    |                    ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_overlay_tests.rs:501:9
+    |
+501 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.5)
+    |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/gpu_control_tests.rs:13:20
+   |
+13 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+   |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::RetainedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_control_tests.rs:41:25
+   |
+41 |         let mut fresh = PreparedScene::from_workspace_with_terminal_renderer(
+   |                         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/gpu_control_tests.rs:71:64
+   |
+71 |         let actual = capture_retained(&mut renderer, &edited, &RetainedScene::empty());
+   |                                                                ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::RetainedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+ --> crates/gui-render/src/render/gpu_uniform_tests.rs:9:20
+  |
+9 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+  |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+  |
+help: consider importing this struct through its public re-export
+  |
+2 + use crate::RetainedScene;
+  |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_uniform_tests.rs:23:24
+   |
+23 |         let prepared = PreparedScene::from_workspace_for_surface(
+   |                        ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:111:21
+    |
+111 |         let moved = PreparedScene::from_workspace_for_surface(
+    |                     ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:153:18
+    |
+153 |     let dialog = PreparedScene::from_native_preferences(
+    |                  ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:168:19
+    |
+168 |     let resized = PreparedScene::from_native_preferences(
+    |                   ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:254:20
+    |
+254 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+    |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:255:20
+    |
+255 |     let prepared = PreparedScene::from_workspace_for_surface(
+    |                    ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:568:9
+    |
+568 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+    |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:571:9
+    |
+571 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+    |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:594:14
+    |
+594 |             &RetainedScene::empty(),
+    |              ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_uniform_tests.rs:623:9
+    |
+623 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+    |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+ --> crates/gui-render/src/render/gpu_consumer_tests.rs:9:20
+  |
+9 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+  |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+  |
+help: consider importing this struct through its public re-export
+  |
+2 + use crate::RetainedScene;
+  |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_consumer_tests.rs:10:20
+   |
+10 |     let prepared = PreparedScene::from_workspace_for_surface(
+   |                    ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_consumer_tests.rs:95:18
+   |
+95 |             _ => PreparedScene::from_native_preferences(
+   |                  ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:11:20
+   |
+11 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+   |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::RetainedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:13:20
+   |
+13 |     let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+   |                    ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:165:20
+    |
+165 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+    |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:167:24
+    |
+167 |     let mut prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+    |                        ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:223:20
+    |
+223 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+    |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:225:24
+    |
+225 |     let mut prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+    |                        ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:387:20
+    |
+387 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+    |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:388:20
+    |
+388 |     let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+    |                    ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:458:20
+    |
+458 |     let retained = RetainedScene::from_workspace(&state, 960, 720);
+    |                    ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_terminal_resource_tests.rs:459:20
+    |
+459 |     let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+    |                    ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_glyph_continuation_tests.rs:10:13
+   |
+10 |             PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |             ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/gpu_glyph_continuation_tests.rs:30:24
+   |
+30 |         let retained = RetainedScene::empty();
+   |                        ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::RetainedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/gpu_glyph_continuation_tests.rs:208:13
+    |
+208 |             PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+    |             ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/gpu_glyph_continuation_tests.rs:241:18
+    |
+241 |                 &RetainedScene::empty(),
+    |                  ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_text_paint_tests.rs:11:9
+   |
+11 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/gpu_text_paint_tests.rs:80:9
+   |
+80 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/overlay_cache_reuse_tests.rs:11:9
+   |
+11 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/overlay_cache_reuse_tests.rs:43:9
+   |
+43 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/world_pipeline_tests.rs:25:22
+   |
+25 |         let dialog = PreparedScene::from_native_preferences(
+   |                      ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/world_pipeline_tests.rs:45:13
+   |
+45 |             RetainedScene::from_workspace_for_surface(&state, lazy.width, lazy.height, 1.0);
+   |             ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::RetainedScene;
+   |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/world_pipeline_tests.rs:46:21
+   |
+46 |         let scene = PreparedScene::from_workspace_with_terminal_renderer(
+   |                     ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 2 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/world_pipeline_tests.rs:108:23
+    |
+108 |         let compact = RetainedScene::from_workspace_for_surface(&state, 960, 720, scale);
+    |                       ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0425]: cannot find type `RetainedScene` in this scope
+   --> crates/gui-render/src/render/world_pipeline_tests.rs:128:35
+    |
+128 |         let prepare = |retained: &RetainedScene| {
+    |                                   ^^^^^^^^^^^^^ not found in this scope
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::RetainedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+   --> crates/gui-render/src/render/world_pipeline_tests.rs:129:13
+    |
+129 |             PreparedScene::from_workspace_with_terminal_renderer(
+    |             ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+    |
+help: consider importing this struct through its public re-export
+    |
+  2 + use crate::PreparedScene;
+    |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+ --> crates/gui-render/src/render/text_admission_tests.rs:9:9
+  |
+9 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+  |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+  |
+help: consider importing this struct through its public re-export
+  |
+2 + use crate::PreparedScene;
+  |
+
+error[E0433]: cannot find type `PreparedScene` in this scope
+  --> crates/gui-render/src/render/frame_observation_tests.rs:57:9
+   |
+57 |         PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0)
+   |         ^^^^^^^^^^^^^ use of undeclared type `PreparedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 1 + use crate::PreparedScene;
+   |
+
+error[E0433]: cannot find type `RetainedScene` in this scope
+  --> crates/gui-render/src/render/frame_observation_tests.rs:83:10
+   |
+83 |         &RetainedScene::empty(),
+   |          ^^^^^^^^^^^^^ use of undeclared type `RetainedScene`
+   |
+help: consider importing this struct through its public re-export
+   |
+ 1 + use crate::RetainedScene;
+   |
+
+error[E0614]: type `std::ops::Range<u32>` cannot be dereferenced
+   --> crates/gui-render/src/render/world_pipeline_tests.rs:124:17
+    |
+124 |                 *range = range.start * 2..range.end * 2;
+    |                 ^^^^^^ can't be dereferenced
+
+Some errors have detailed explanations: E0425, E0433, E0614.
+For more information about an error, try `rustc --explain E0425`.
+error: could not compile `datum-gui-render` (lib test) due to 60 previous errors

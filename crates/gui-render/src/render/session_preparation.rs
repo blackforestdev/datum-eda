@@ -11,6 +11,9 @@ pub struct WorkspaceView<'a> {
     pub scale: f32,
     pub camera: CameraState,
     pub schematic_camera: Option<CameraState>,
+    pub include_preferences_overlay: bool,
+    /// Compatibility capture supplies one root snapshot, not an active split-tab input set.
+    pub single_terminal_snapshot: bool,
     pub pane_cameras: &'a [(PaneId, CameraState)],
 }
 
@@ -59,8 +62,9 @@ impl Renderer {
                     view.camera,
                     &retained,
                     panes,
-                    Some(&mut self.render_session.terminal_cache),
-                    false,
+                    (!view.single_terminal_snapshot)
+                        .then_some(&mut self.render_session.terminal_cache),
+                    view.include_preferences_overlay,
                     &mut self.control_meshes,
                 )
             },

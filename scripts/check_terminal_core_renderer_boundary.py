@@ -148,12 +148,13 @@ def check(root: Path) -> list[str]:
     for marker in (
         "take_active_tab_render_states(",
         "prepare_session_workspace(",
+        "single_terminal_snapshot: false",
     ):
         if marker not in main + runtime_render:
             failures.append(f"production runtime bypasses retained core rendering: {marker}")
     preparation = read(root, SESSION_PREPARATION)
     for marker in ("begin_workspace_preparation(panes)?", "self.retain_terminal_damage(panes)",
-                   "Some(&mut self.render_session.terminal_cache)"):
+                   "then_some(&mut self.render_session.terminal_cache)"):
         if marker not in preparation:
             failures.append(f"shared preparation bypasses retained core rendering: {marker}")
     if "terminal_panes: &[crate::TerminalPaneRenderState]" not in scene:
