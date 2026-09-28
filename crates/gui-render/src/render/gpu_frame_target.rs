@@ -31,7 +31,7 @@ impl Renderer {
     /// Acquisition may itself defer (None), also retaining pending damage.
     /// One context serializes both callbacks without interior mutability.
     #[allow(clippy::too_many_arguments)]
-    pub fn render_with_acquisition<C>(
+    pub(crate) fn render_with_acquisition<C>(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,

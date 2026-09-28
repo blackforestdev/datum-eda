@@ -1,0 +1,56 @@
+{
+  "status": "Ordered unit1 continuation; production raw render entrypoints fenced to shared crate. GPU repair remains open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "6b5ccd47ab98988c83e867ddcd43505bea59ce8c",
+  "authority": "PM049; approved proposal-r2.md c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "change": [
+    "render/render_with_submission/render_with_acquisition are crate-private. External production and diagnostic callers require shared FramePlan/SubmittedFrame. Existing internal reference/control tests retain raw encoder access.",
+    "Last app raw caller, frame admission observer control, now prepares typed workspace/dialog inputs and completes nonnative snapshots after bounded queue drain. encode_capture is available without visual feature because it has no image/readback dependency."
+  ],
+  "verification_rationale": "All-target app/render Clippy proves raw API consumer adoption; actual observer test proves source/admission records and overflow refusal still work through shared session.",
+  "verification": {
+    "affected_visual_all_target_clippy": "pass",
+    "GPU_frame_observer_serialization_and_overflow": "1 passed"
+  },
+  "failures_preserved": [
+    "Initial migrated observer fixture omitted retained schematic content despite an admitted pane. New profile guard rejected it; fixture now supplies both sources."
+  ],
+  "qualification": "No rendering algorithm or painter order change. No new performance experiment or full r2/S4 completion. Typed dependency contract, legacy world branch retirement, exact8x prefix/resource/performance/duty proof remain pending; CPU deferred.",
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/native_frame_measurement_tests.rs",
+      "sha256": "206a1bf2b4eb489c30ee83ef0eab3bf81032d018b14397943837c279e5bbcb02"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "sha256": "98b518617d3d96b6ae5bb3b926c6f4dee80ff1be5ccd4fa00672788ecbdee82f"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame_target.rs",
+      "sha256": "511c9cf9c27fb244684a7b381ad6c656d4a4a2acee36b2ceff1cc9bcb48043e9"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_frame.rs",
+      "sha256": "d58c5c90f3843aaf80893a8ca8602188a0f7dbc68165e1d05e53e8995766a982"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-session-api/clippy.log",
+      "sha256": "ddb77d2f5d7f5866a019745d99d9f77d7b979efb900f6fd9619bef37e0fbd980",
+      "original_sha256": "ddb77d2f5d7f5866a019745d99d9f77d7b979efb900f6fd9619bef37e0fbd980"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-session-api/frame-trace.log",
+      "sha256": "efe2303211821c249cbc0db48be5b7a02ce59c2398995b246539a88df1329602",
+      "original_sha256": "5dd406c8eb4350d64f9a12c5be3770d53f6adb71a4f717dc166101bc7f910292"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-session-api/frame-trace-missing-source.log",
+      "sha256": "d6934eb7c1637c58ef570551a03d2d3398c6ebe0dab95860039c0ac742f44f3c",
+      "original_sha256": "d6934eb7c1637c58ef570551a03d2d3398c6ebe0dab95860039c0ac742f44f3c"
+    }
+  ]
+}
