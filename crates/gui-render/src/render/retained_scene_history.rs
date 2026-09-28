@@ -1,14 +1,14 @@
 //! Bounded derived-scene history; document/session authority stays elsewhere.
-use super::{RetainedScene, Runtime, retained_selection_cache_key};
-use datum_gui_render::RetainedGeometryObserver;
-use datum_gui_render::cpu_alloc::heap::capacity_bytes;
+use crate::RetainedGeometryObserver;
+use crate::RetainedScene;
+use crate::cpu_alloc::heap::capacity_bytes;
 
 const MAX_ENTRIES: usize = 6;
 const MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(super) struct RetainedSceneCacheKey {
-    scene_id: String,
+pub struct RetainedSceneCacheKey {
+    pub(super) scene_id: String,
     source_revision: String,
     width: u32,
     height: u32,
@@ -27,19 +27,19 @@ struct Entry {
     scene: RetainedScene,
     heap_bytes: usize,
     geometry: RetainedGeometryObserver,
-    _document_metadata: datum_gui_render::DocumentCpuCharge,
+    _document_metadata: crate::DocumentCpuCharge,
 }
 
 pub(super) struct RetainedSceneHistory {
     entries: Vec<Entry>,
-    entry_storage: Option<datum_gui_render::DocumentCpuCharge>,
+    entry_storage: Option<crate::DocumentCpuCharge>,
     heap_bytes: usize,
     active_bytes: usize,
     active_geometry: Option<RetainedGeometryObserver>,
     retired_geometry: Vec<RetainedGeometryObserver>,
-    retired_storage: Option<datum_gui_render::DocumentCpuCharge>,
+    retired_storage: Option<crate::DocumentCpuCharge>,
     budget: usize,
-    construction_error: Option<String>,
+    pub(super) construction_error: Option<String>,
 }
 
 impl Default for RetainedSceneHistory {
@@ -59,6 +59,9 @@ impl Default for RetainedSceneHistory {
 }
 
 impl RetainedSceneCacheKey {
+    pub fn selection_matches(&self, selection: &str) -> bool {
+        self.selection == selection
+    }
     fn heap_bytes(&self) -> Option<usize> {
         let mut bytes = capacity_bytes::<u8>(self.scene_id.capacity())
             .checked_add(capacity_bytes::<u8>(self.source_revision.capacity()))?
@@ -252,7 +255,7 @@ impl RetainedSceneHistory {
         entry
     }
 
-    fn limit_for_active(&mut self, scene: &RetainedScene) {
+    pub(super) fn limit_for_active(&mut self, scene: &RetainedScene) {
         self.limit_for_active_document(scene, MAX_PAYLOAD_BYTES);
     }
 
@@ -422,7 +425,7 @@ impl RetainedSceneHistory {
         }
     }
 
-    fn take(&mut self, key: &RetainedSceneCacheKey) -> Option<RetainedScene> {
+    pub(super) fn take(&mut self, key: &RetainedSceneCacheKey) -> Option<RetainedScene> {
         let index = self.entries.iter().position(|entry| &entry.key == key)?;
         let entry = self.remove(index);
         drop(entry._document_metadata);
@@ -433,6 +436,71 @@ impl RetainedSceneHistory {
 
 #[path = "retained_scene_lifecycle.rs"]
 mod lifecycle;
+
+pub fn retained_selection_cache_key(
+    workspace: &datum_gui_protocol::ReviewWorkspaceState,
+    selection: &datum_gui_protocol::SelectionTarget,
+) -> String {
+    match selection {
+        datum_gui_protocol::SelectionTarget::None => "none".to_string(),
+        datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
+        datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
+        datum_gui_protocol::SelectionTarget::AuthoredObject(id) => {
+            let lightweight = workspace
+                .scene
+                .board_texts
+                .iter()
+                .any(|text| &text.object_id == id)
+                || workspace
+                    .scene
+                    .outline
+                    .iter()
+                    .any(|outline| &outline.object_id == id)
+                || workspace
+                    .scene
+                    .board_graphics
+                    .iter()
+                    .any(|graphic| &graphic.object_id == id);
+            if lightweight && !workspace.ui.filters.dim_unrelated {
+                "none".to_string()
+            } else if lightweight {
+                "lightweight-authored".to_string()
+            } else {
+                format!("object:{id}")
+            }
+        }
+    }
+}
+
+impl RetainedSceneCacheKey {
+    pub fn for_workspace(
+        workspace: &datum_gui_protocol::ReviewWorkspaceState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+    ) -> Self {
+        RetainedSceneCacheKey {
+            scene_id: workspace.scene.scene_id.clone(),
+            source_revision: workspace.scene.source_revision.clone(),
+            width,
+            height,
+            scale_bits: scale_factor.to_bits(),
+            dock_height_px: workspace.ui.effective_dock_height_px(),
+            show_authored: workspace.ui.filters.show_authored,
+            show_proposed: workspace.ui.filters.show_proposed,
+            show_unrouted: workspace.ui.filters.show_unrouted,
+            dim_unrelated: workspace.ui.filters.dim_unrelated,
+            layer_visibility: workspace
+                .ui
+                .filters
+                .layer_visibility
+                .iter()
+                .map(|(key, value)| (key.clone(), *value))
+                .collect(),
+            selection: retained_selection_cache_key(workspace, &workspace.selection),
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {

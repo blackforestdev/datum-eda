@@ -246,7 +246,8 @@ mod quad_allocation_tests {
         assert_eq!(scope.usage().allocations, 1);
         drop(vertices);
         assert_eq!(scope.usage().allocations, 0);
-        for range in [1..6, 0..18, 12..6] {
+        // Reversed endpoints are intentional invalid command data, not iteration.
+        for range in [1..6, 0..18, std::ops::Range { start: 12, end: 6 }] {
             let mut invalid = [Quads {
                 layer_id: None,
                 range: range.clone(),

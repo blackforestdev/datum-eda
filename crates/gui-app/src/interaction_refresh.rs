@@ -4,35 +4,24 @@
 //! pointer-only changes refresh interaction chrome, while authored/session
 //! changes may invalidate the considerably more expensive retained geometry.
 
-use super::{RetainedScene, RetainedSceneCacheKey, Runtime};
+use super::{RetainedSceneCacheKey, Runtime};
 
 impl Runtime {
-    pub(super) fn cache_retained_scene(
-        &mut self,
-        key: RetainedSceneCacheKey,
-        retained: RetainedScene,
-    ) {
-        self.retained_scene_cache.insert(key, retained);
-    }
-
     pub(super) fn invalidate_scene_for_session_change(
         &mut self,
         previous_key: RetainedSceneCacheKey,
     ) {
-        if let Some(retained) = self.retained_scene.take() {
-            self.cache_retained_scene(previous_key, retained);
-        }
+        let next_key = self.retained_scene_cache_key();
+        self.renderer
+            .render_session_mut()
+            .change_document(previous_key, &next_key);
         self.prepared_scene = None;
-        self.clear_schematic_retained_scene();
         self.scene_dirty = true;
-        self.restore_cached_retained_scene();
     }
 
     pub(super) fn invalidate_scene(&mut self) {
-        self.retained_scene = None;
-        self.retained_scene_cache.clear();
+        self.renderer.render_session_mut().clear_content();
         self.prepared_scene = None;
-        self.clear_schematic_retained_scene();
         self.scene_dirty = true;
     }
 
@@ -41,10 +30,7 @@ impl Runtime {
         self.presented_hits.clear();
         // Historical entries carry old surface keys. Preserve only live geometry
         // whose construction has no dependency on the reference projection size.
-        self.retained_scene_cache
-            .invalidate_surface_size(&mut self.retained_scene);
-        self.schematic_scene_accounting
-            .invalidate_surface_size(&mut self.schematic_retained_scene);
+        self.renderer.render_session_mut().resize_content();
         self.prepared_scene = None;
         self.scene_dirty = true;
     }
@@ -87,9 +73,10 @@ impl Runtime {
     /// must never evict the prepared shell or authored board/schematic geometry:
     /// all three are expensive and independent of transient pointer state.
     pub(super) fn refresh_interaction_overlay(&mut self) {
-        if let (Some(prepared), Some(retained)) =
-            (self.prepared_scene.as_mut(), self.retained_scene.as_ref())
-        {
+        if let (Some(prepared), Some(retained)) = (
+            self.prepared_scene.as_mut(),
+            self.renderer.render_session().board(),
+        ) {
             prepared.refresh_interaction(self.session.workspace(), retained);
         }
         self.scene_dirty = true;

@@ -14,8 +14,7 @@ impl Runtime {
         if self.device_health.failed() {
             return Ok(false);
         }
-        self.retained_scene_cache.retry_construction();
-        self.schematic_scene_accounting.retry_construction();
+        self.renderer.render_session_mut().retry_content();
         let render_started = std::time::Instant::now();
         if !self.surface_transaction.begin_frame(
             &self.surface,
@@ -67,7 +66,7 @@ impl Runtime {
             || !self.device_health.failed(),
         )?;
         let scene_started = std::time::Instant::now();
-        let retained_was_cached = self.retained_scene.is_some();
+        let retained_was_cached = self.renderer.render_session().board().is_some();
         let prepared_was_cached = self.prepared_scene.is_some();
         let mut retained_build_ms = 0;
         let mut prepared_build_ms = 0;
@@ -75,11 +74,11 @@ impl Runtime {
             append_gui_verbose_diagnostic_line(|| {
                 format!("render scene prepare begin retained_cached={retained_was_cached}")
             });
-            if self.retained_scene.is_none() {
+            if self.renderer.render_session().board().is_none() {
                 let retained_started = std::time::Instant::now();
                 append_gui_verbose_diagnostic_line(|| "retained scene build begin");
                 self.ensure_retained_scene();
-                self.retained_scene_cache.check_render_budget()?;
+                self.renderer.render_session_mut().check_content_budget()?;
                 retained_build_ms = retained_started.elapsed().as_millis();
                 append_gui_verbose_diagnostic_line(|| {
                     format!("retained scene build end {retained_build_ms}ms")
@@ -94,22 +93,24 @@ impl Runtime {
                 format!("prepared scene build end {prepared_build_ms}ms")
             });
         }
-        self.retained_scene_cache.check_render_budget()?;
+        self.renderer.render_session_mut().check_content_budget()?;
         let scene_elapsed = scene_started.elapsed();
         // P2.2a: resolve the companion schematic world buffer lazily (cleared on
         // every scene/frame invalidation, so this stays fresh). `None` when the
         // workspace has no companion schematic / Schematic pane — second pass off.
         self.ensure_schematic_retained_scene();
-        self.schematic_scene_accounting.check_render_budget()?;
+        self.renderer.render_session_mut().check_content_budget()?;
         let retained = self
-            .retained_scene
-            .as_ref()
+            .renderer
+            .render_session()
+            .board()
+            .cloned()
             .context("retained scene should exist before render")?;
         let prepared = self
             .prepared_scene
             .as_ref()
             .context("prepared scene should exist before render")?;
-        let schematic_retained = self.schematic_retained_scene.as_ref();
+        let schematic_retained = self.renderer.render_session().schematic().cloned();
         drop(probe);
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();
@@ -127,8 +128,8 @@ impl Runtime {
             &self.device,
             &self.queue,
             prepared,
-            retained,
-            schematic_retained,
+            &retained,
+            schematic_retained.as_ref(),
             self.config.width,
             self.config.height,
             &mut target,

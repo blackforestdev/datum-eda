@@ -6,7 +6,7 @@ fn history_keys_scene_metadata_and_entry_capacity_match_allocator() {
     let state = datum_gui_protocol::load_fixture_workspace_state();
     let scene = RetainedScene::from_workspace(&state, 960, 720);
     let geometry = scene.geometry_observer().heap_bytes_excluding([]);
-    let scope = datum_gui_render::cpu_alloc::Scope::new("history-owned-heap-proof");
+    let scope = crate::cpu_alloc::Scope::new("history-owned-heap-proof");
     let mut history = RetainedSceneHistory::default();
     scope.with(|| {
         for n in 0..6 {

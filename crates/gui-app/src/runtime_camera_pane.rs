@@ -505,8 +505,9 @@ impl Runtime {
                 return false;
             }
             let retained = self
-                .retained_scene
-                .as_ref()
+                .renderer
+                .render_session()
+                .board()
                 .expect("retained scene initialized");
             retained
                 .hit_test_authored_world(world_point, self.session.workspace())
@@ -561,8 +562,9 @@ impl Runtime {
         if !self.ensure_schematic_retained_scene() {
             return None;
         }
-        self.schematic_retained_scene
-            .as_ref()?
+        self.renderer
+            .render_session()
+            .schematic()?
             .hit_test_world(world_point)
             .cloned()
     }
@@ -596,13 +598,14 @@ impl Runtime {
                 .as_ref()
                 .expect("prepared scene built above");
             let board_retained = self
-                .retained_scene
-                .as_ref()
+                .renderer
+                .render_session()
+                .board()
                 .expect("board retained scene built with prepared");
             datum_gui_render::resolve_pane_hover(
                 prepared,
                 board_retained,
-                self.schematic_retained_scene.as_ref(),
+                self.renderer.render_session().schematic(),
                 self.session.workspace(),
                 pos.0,
                 pos.1,

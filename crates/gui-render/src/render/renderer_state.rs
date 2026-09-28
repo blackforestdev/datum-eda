@@ -1,5 +1,8 @@
 //! Renderer-owned resources shared by full-scene and auxiliary rendering.
 use super::*;
+#[path = "render_session.rs"]
+mod render_session;
+pub use render_session::{RenderSession, RetainedSceneCacheKey, retained_selection_cache_key};
 #[path = "../cpu_alloc.rs"]
 pub mod cpu_alloc;
 #[path = "resource_consumers.rs"]
@@ -24,6 +27,7 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
+    pub(super) render_session: RenderSession,
     pub(super) screen_admission: std::cell::Cell<
         Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 8]>,
     >,
@@ -108,6 +112,12 @@ pub struct TextCacheKeyUsage {
 }
 
 impl Renderer {
+    pub fn render_session(&self) -> &RenderSession {
+        &self.render_session
+    }
+    pub fn render_session_mut(&mut self) -> &mut RenderSession {
+        &mut self.render_session
+    }
     /// Allocation-origin identity for this renderer/device lifetime. Native host
     /// receipts map it to window and queue epoch; resource capacities count once.
     pub fn resource_owner_id(&self) -> u64 {

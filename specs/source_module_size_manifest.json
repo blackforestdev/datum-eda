@@ -645,13 +645,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1386
+        "pre_test_lines": 1236
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Retained-scene history, cache-key construction, admission and active-scene restoration/construction now belong to retained_scene_history.rs. Main keeps prepared-scene orchestration; remaining legacy debt stays frozen."
+      "note": "Native capture and readback now belong to runtime_capture.rs; retained content and history move to renderer RenderSession. Remaining root debt stays frozen."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",
@@ -679,13 +679,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 6110
+        "expanded_lines": 6048
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Retained-stage diagnostic formatting moves to existing render_helpers owner; disabled timing does not construct strings. Exact downward include ceiling retained."
+      "note": "Board immediate projection moves to the normal scene_projection owner while RenderSession adopts retained content history. Remaining include debt stays frozen."
     },
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",

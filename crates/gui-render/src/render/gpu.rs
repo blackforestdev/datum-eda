@@ -4,9 +4,9 @@ pub use retained_scene_owner::{DocumentCpuCharge, RetainedGeometryObserver, Reta
 #[path = "renderer_state.rs"]
 mod renderer_state;
 pub use renderer_state::{
-    ControlMeshUsage, Renderer, TextCacheKeyUsage, TextCacheOwnerUsage, TextGpuAllocation,
-    TextGpuAllocationKind, TextGpuAllocationObserver, WidthMeasurementCacheUsage, cpu_alloc,
-    resource_consumers,
+    ControlMeshUsage, RenderSession, Renderer, RetainedSceneCacheKey, TextCacheKeyUsage,
+    TextCacheOwnerUsage, TextGpuAllocation, TextGpuAllocationKind, TextGpuAllocationObserver,
+    WidthMeasurementCacheUsage, cpu_alloc, resource_consumers, retained_selection_cache_key,
 };
 #[path = "gpu_measurements.rs"]
 mod gpu_measurements;

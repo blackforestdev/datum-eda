@@ -1,0 +1,298 @@
+{
+  "status": "First retained-content increment of ordered unit 1; focused verification passed, full repository drift red. Unit 1 and S4 remain incomplete.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "PM049; exact owner-approved proposal r2",
+  "base_commit": "f34dad6b",
+  "change": "Move board/schematic retained active content, bounded history, cache-key construction and admission into renderer-owned RenderSession. Native input/capture/render adapters read shared content. Existing prepared-scene and GPU graph remain for subsequent ordered units.",
+  "preserved": [
+    "six-entry/64MiB history limits",
+    "charged shared immutable geometry/commands/hits; transient render clones share allocations",
+    "active/pinned/retiring accounting and construction refusal/retry",
+    "selection key semantics, resize reuse and painter graph",
+    "staged device recovery moves CPU owner only after all hosts validate; native recovery still invalidates content as before"
+  ],
+  "remaining": [
+    "typed versioned inputs, immutable plans and completion receipts",
+    "shared prepared-projection and terminal damage leases across all native/dialog/capture consumers",
+    "normalize ordered pane inputs and remove legacy world encoder branches",
+    "tracked exact8x prefix image pair, single suffix and copy-inclusive diagnostics",
+    "correctness/resource controls and bounded performance experiment",
+    "complete DRM lifetime observer method execution scope and final qualification"
+  ],
+  "verification": {
+    "app_visual_check": "passed",
+    "history_tests": {
+      "passed": 19,
+      "failed": 0,
+      "ignored": 0
+    },
+    "source_health_policy_tests": 13,
+    "source_health_base_check": "passed",
+    "workspace_clippy": "passed after explicit invalid-range fixture correction",
+    "full_drift": "All commands in the standard battery attempted, resuming after recorded failures. Unchanged menu CSV/JSON mismatch and CLI bootstrap source-guard mismatch remain red. Source-location and pre-merge GPU checker defects corrected; affected negative controls pass. Skipped GUI checks were executed separately.",
+    "console_checks": {
+      "app_tests_passed": 7,
+      "native_tests_ignored": 1,
+      "protocol_tests_passed": 8,
+      "render_tests_passed": 9,
+      "existing_exact_visual_golden_passed": 1,
+      "scope": "Standard Console proof; not completed r2 exact8x proof or native-host qualification."
+    },
+    "unrelated_blocker_issue": "dat-menu-csv-parity-block-p6fz",
+    "gui_conformance_tests_passed": 5,
+    "shell_visual_parity": {
+      "passed_existing_gate": true,
+      "differing_pixels": 5641,
+      "total_pixels": 1764000,
+      "mean_channel_delta": 0.2914,
+      "existing_differing_percent_limit": 0.5,
+      "existing_mean_limit": 1.5,
+      "qualification": "Not exact output evidence for the r2 prefix strategy; no golden or tolerance modified."
+    },
+    "invalid_range_control": {
+      "initial_exact_filter": "Matched zero tests; no proof credited.",
+      "corrected_exact_filter": "gpu_data::quad_allocation_tests::retained_expansion_preserves_painter_ranges_without_degenerate_triangles",
+      "passed": 1,
+      "failed": 0
+    },
+    "mcp_self_test": {
+      "run": 415,
+      "skipped": 45,
+      "result": "pass"
+    }
+  },
+  "review": {
+    "scope": "Read-only review of first retained-content ownership migration only. Existing graph/prepared-state authority remains for later approved units. No builds/tests/native runs performed by reviewer.",
+    "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+    "disposition": "No remaining blocking semantic finding after the two source fixes below. Advisory source review only; does not establish build/test success, GPU performance, completed RenderSession adoption or owner acceptance.",
+    "findings": [
+      {
+        "id": "UNIT1-01",
+        "severity": "high",
+        "status": "resolved by source inspection",
+        "finding": "Moved history test module referred to a heap-test file left in gui-app, preventing gui-render test compilation.",
+        "resolution": "retained_history_heap_tests.rs now moved into gui-render/render and uses crate::cpu_alloc."
+      },
+      {
+        "id": "UNIT1-02",
+        "severity": "medium",
+        "status": "resolved by source inspection",
+        "finding": "Combined capture content budget check could encounter a sticky schematic error before retry_content, unlike prior retry ordering.",
+        "resolution": "runtime_capture invokes retry_content before the first combined content budget check, including cached PreparedScene path."
+      }
+    ],
+    "review_notes": [
+      "Retained history algorithms, six-entry/64MiB limits, shared document storage charges, active/pinned/retired observation, construction retry and selection/cache-key predicates are preserved in the relocation. Resize tests are byte-identical moved sources.",
+      "New per-render retained clones use existing SharedGeometry and Arc commands/hit handles; no deep geometry duplication or new heap payload observed. They are scoped preparation/render/capture leases and release on return.",
+      "Recovery staging initializes replacement session empty and leaves old content untouched until commit_cpu_recovery_from. Successful commit moves rather than clones CPU/history owners. Native commit still calls invalidate_scene after installing replacement, as before: do not claim warm retained-content preservation across successful device recovery. Failure before commit preserves existing CPU ownership.",
+      "App hit reads use immutable shared projections; selection_matches is equivalent to previous field equality. change_document preserves old insert/clear-schematic/take order and key values.",
+      "The current public render_session_mut and remaining app prepared_scene/scene_dirty are transitional, not completed r2 authority. Subsequent units must retire direct mutation paths and add typed snapshot/receipt validity.",
+      "Moving the RenderSession before other Renderer fields changes destruction ordering; physical shared allocations retain their own charges and submission references, so no confirmed live-resource accounting hole found. Do not equate dropping session ownership with GPU completion."
+    ],
+    "source_pins": [
+      {
+        "path": "crates/gui-render/src/render/render_session.rs",
+        "sha256": "1b04f307c5e206842d88f60f42b3524b00d0747f5573f1a3a3bc290614b014e5"
+      },
+      {
+        "path": "crates/gui-render/src/render/retained_scene_history.rs",
+        "sha256": "edacbd86976de2111e9e957a6c4cc14ed7de477492ab21d54d27ca7a27fbb252"
+      },
+      {
+        "path": "crates/gui-render/src/render/retained_scene_lifecycle.rs",
+        "sha256": "5d330ece9721a0161686d3e7ff3c9d9ebe365089e2ee52916e39976af3cb441f"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_init.rs",
+        "sha256": "8ae606f646f58a800ddc7e596b1cc45cf0b50bf2edb41acaa831dd41bb5f298a"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_capture.rs",
+        "sha256": "f7c3749175544d383cce2f1678bcabac5a612136d39b8882cdc69c1b373a719e"
+      },
+      {
+        "path": "crates/gui-app/src/native_device_recovery.rs",
+        "sha256": "f5c8c91d3032c66d0869222b3102e35844563b50504231dbabd5d66fcb4c83ad"
+      },
+      {
+        "path": "crates/gui-render/src/render/retained_history_heap_tests.rs",
+        "sha256": "2f0934ad3cc24687b1a2be5b353b07ba8a7fad2c8844ebf46c2cc636724774a6"
+      }
+    ]
+  },
+  "storage": {
+    "source": "/tmp/pm045-pinned-negative-source",
+    "archive": "/home/bfadmin/Documents/datum-eda/.datum/proof-source-archive/pm045-pinned-negative-source",
+    "tree_sha256": "d49d11392b54abc9f982c36a6fc6b5f5cef800eeb841174e58d969cad994c0ad",
+    "files": 7945,
+    "method": "Copied all files/symlinks and verified full manifest before releasing tmpfs copy; original path retained as directory symlink. No active process cwd/command/open-fd references found before relocation. Historical source snapshot only; no shared target or active source touched.",
+    "tmp_free_bytes": 6884069376
+  },
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/interaction_refresh.rs",
+      "sha256": "40d983d9fb2435608edb8b74e8c2ac2ad9f4656b91e311a14c16df7cb1ec305b"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "sha256": "80c38ca6e126af8f8ae98c542a8b478605bb0926eb094ff84898e39229a8f3b6"
+    },
+    {
+      "path": "crates/gui-app/src/retained_scene_lifecycle.rs",
+      "sha256": "301106032c415d8a12335574e9aed9394ab93bf51425dab523d30853a0b85ce9"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_camera_pane.rs",
+      "sha256": "d64a6db33b0408692ca2d0bb5dcaac615405f4e61735f380dbff149a545b362f"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_capture.rs",
+      "sha256": "f7c3749175544d383cce2f1678bcabac5a612136d39b8882cdc69c1b373a719e"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_init.rs",
+      "sha256": "283910fe572fb37db5f002f26479a5c53eadbc925d71d76915f610f8f1448265"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "sha256": "c5c1706b74255557b15de58edcc77a2da999546465bba21391f3bea60b7c472f"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_primary_pointer.rs",
+      "sha256": "4176742d6a58d3a5ff129760d5a4c177d8b19221f40d2f57d9a2b9115c6f5c99"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_state.rs",
+      "sha256": "9ec29996da580d54114e6114c5ee60bcb3accf67968c2017216f2dc3db5d60f1"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "sha256": "4781542bf8857a90379db9a266c4cbb6091b20faba9b463014161da2db167c59"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu.rs",
+      "sha256": "1eaae601f63f19668cc481d7e316da1dc78bd6cec180eb6c41f19a041805ce37"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_data.rs",
+      "sha256": "ab9849a7ea2e3de9d7fb4e6ec61f8951d36ce8102d80805f9f6781749d4f6adb"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_init.rs",
+      "sha256": "8ae606f646f58a800ddc7e596b1cc45cf0b50bf2edb41acaa831dd41bb5f298a"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "1b04f307c5e206842d88f60f42b3524b00d0747f5573f1a3a3bc290614b014e5"
+    },
+    {
+      "path": "crates/gui-render/src/render/renderer_state.rs",
+      "sha256": "c6df5a3822ff76ddcede48671adde489316726e88bcd23e68e3d3efd55f0109e"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_history_heap_tests.rs",
+      "sha256": "2f0934ad3cc24687b1a2be5b353b07ba8a7fad2c8844ebf46c2cc636724774a6"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_history.rs",
+      "sha256": "edacbd86976de2111e9e957a6c4cc14ed7de477492ab21d54d27ca7a27fbb252"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_lifecycle.rs",
+      "sha256": "5d330ece9721a0161686d3e7ff3c9d9ebe365089e2ee52916e39976af3cb441f"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_resize_tests.rs",
+      "sha256": "e11da20f57c97d8f65758b2e384767fc47efda5c9d33855dac8bd6741711b063"
+    },
+    {
+      "path": "crates/gui-render/src/render/scene.rs",
+      "sha256": "3c9bf4e5c4d1c17b4debb29e9c0572884a9e8265b4641874bcd4f65b60e17c70"
+    },
+    {
+      "path": "crates/gui-render/src/render/scene_projection.rs",
+      "sha256": "ef5c9fc5bd1ff53016db3b9952f05e60f2bb03d129ee0f8339053e270cf7c226"
+    }
+  ],
+  "proof_gate_reconciliation": [
+    "Moved hit-clipping source guard follows normal scene_projection module; existing negatives preserved.",
+    "Existing merged-pass terminal image calls replace stale pre-merge marker spellings in checker and its mutation tests; no runtime change.",
+    "GPU invalid-range test retains reversed endpoints as explicit Range data under Rust1.98 Clippy; dat-gpu-range-negative-clippy-d2ew."
+  ],
+  "qualification": "No GPU performance, exact8x candidate parity, duty, full RenderSession adoption or issue resolution claimed. CPU optimization remains deferred.",
+  "source_migrations": {
+    "crates/gui-app/src/retained_scene_history.rs": "crates/gui-render/src/render/retained_scene_history.rs",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "crates/gui-render/src/render/retained_scene_resize_tests.rs",
+    "crates/gui-app/src/retained_history_heap_tests.rs": "crates/gui-render/src/render/retained_history_heap_tests.rs",
+    "crates/gui-app/src/retained_scene_cache_key.rs": "crates/gui-render/src/render/retained_scene_history.rs"
+  },
+  "raw_logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/content-check.log",
+      "sha256": "d988aa821c8d14a53136aa97c49945149f66e5ba4355edf0a2c9fd82de417500",
+      "runner_output_sha256": "d988aa821c8d14a53136aa97c49945149f66e5ba4355edf0a2c9fd82de417500"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/history-tests.log",
+      "sha256": "c6f98d468dfa832e615c191cb437306e567befb8dad96e7d4c5b4afb65d76531",
+      "runner_output_sha256": "0d5b68969e70dfde852c526f2b5a953efd47d0be1631ed42fc97627dacf7fdc9"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/source-health-tests.log",
+      "sha256": "46b94003bbe6bbb2cb21e0451848aa1fb9e6e9b2417da401b94003391fa6c907",
+      "runner_output_sha256": "46b94003bbe6bbb2cb21e0451848aa1fb9e6e9b2417da401b94003391fa6c907"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/unit1-drift.log",
+      "sha256": "ea173df752c4beacea4d04fcee805a81f53680bb89423617026851a01ff67016",
+      "runner_output_sha256": "ea173df752c4beacea4d04fcee805a81f53680bb89423617026851a01ff67016"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/unit1-drift-fixed.log",
+      "sha256": "75a8c6f2db17349558064870394aa2d47bd028d6fe1bb5cd06a4019432d5a0c9",
+      "runner_output_sha256": "75a8c6f2db17349558064870394aa2d47bd028d6fe1bb5cd06a4019432d5a0c9"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/unit1-drift-resume.log",
+      "sha256": "52f0d624809a14cd485f5bf7e0fbe63240bfd0eb6801a93aa0c373a1aa7d53af",
+      "runner_output_sha256": "52f0d624809a14cd485f5bf7e0fbe63240bfd0eb6801a93aa0c373a1aa7d53af"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/unit1-drift-resume2.log",
+      "sha256": "8b4a18e6c683f994818d0ab2ed90af34b19ed87f4a850acac791654d2e44c478",
+      "runner_output_sha256": "8b4a18e6c683f994818d0ab2ed90af34b19ed87f4a850acac791654d2e44c478"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/unit1-drift-resume3.log",
+      "sha256": "c31895f037ff16e8c22f171a157efad8d047ec7af1f1ba70234a03f6bb9d0525",
+      "runner_output_sha256": "c31895f037ff16e8c22f171a157efad8d047ec7af1f1ba70234a03f6bb9d0525"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/unit1-drift-remaining.log",
+      "sha256": "34a161316f4e2d1f4146af91ce3f2156144902b93c926528c1eac864288ca94e",
+      "runner_output_sha256": "34a161316f4e2d1f4146af91ce3f2156144902b93c926528c1eac864288ca94e"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/invalid-range-test.log",
+      "sha256": "9e482e4a32aaa632c9d33070e27e7653e86305e859e2cc95366bbfcfdc80e5a4",
+      "runner_output_sha256": "76439b9f606a11914fa1b9c6bf23c321e1e5b18186aed8446e47fc248d700c8a"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/invalid-range-test-corrected.log",
+      "sha256": "7219260964656efe700afc18de346abe44dcad3c0172ce484540cda33933d88b",
+      "runner_output_sha256": "a098933443783d9a1d29737eaad6fe6c143ae79db56015de444f2bbfd055c5e1"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/conformance-tests.log",
+      "sha256": "279f8129cfa317aba8e48736e53b43321288dcf994c9069e14b713db445c8b48",
+      "runner_output_sha256": "ff4fa4f0953280b9da5e78a04ffff47cc207a1bce07b29bbf1dee252df19491b"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-unit1/visual-parity.log",
+      "sha256": "12e0bf78ec12a24dc58d22f974410634ced2de00177b5d97d3cd4cc3ba8292be",
+      "runner_output_sha256": "12e0bf78ec12a24dc58d22f974410634ced2de00177b5d97d3cd4cc3ba8292be"
+    }
+  ],
+  "log_storage": "Runner output text with excess final blank lines normalized to one newline for repository whitespace checks; original byte digests retained per log. No output lines or numeric results changed."
+}

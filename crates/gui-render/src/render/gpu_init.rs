@@ -7,6 +7,7 @@ impl Renderer {
     /// The caller retires `previous` afterward. Keep CPU font/cache identities
     /// together, while the replacement's GPU owners and preparation stay cold.
     pub fn commit_cpu_recovery_from(&mut self, previous: &mut Self) {
+        self.render_session = std::mem::take(&mut previous.render_session);
         assert!(std::sync::Arc::ptr_eq(
             &self.atlas.staging_budget,
             &previous.atlas.staging_budget,
@@ -307,6 +308,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let menu_overlay_text_renderer =
             text_renderer.new_batch_owner(previous.map(|old| &old.menu_overlay_text_renderer));
         Ok(Self {
+            render_session: Default::default(),
             resource_host,
             frame_consumers: Default::default(),
             measurements: None,

@@ -251,3 +251,12 @@ include expansion falls from 6,125 to 6,115 lines; the older 6,244-line ceiling
 is ratcheted to that exact measured value. Shaping/cache identity remains in
 its existing owners. Thirteen policy-integrity tests and the source-health
 base comparison pass; normal budgets and the remaining debt count are unchanged.
+
+PM049 shared retained-content ownership moves native capture/readback into
+`gui-app/src/runtime_capture.rs` and board immediate projection into
+`gui-render/src/render/scene_projection.rs`. Main production falls from 1,386
+to 1,236 lines; renderer include expansion falls from 6,110 to 6,048. Exact
+ceilings ratchet downward. Existing retained-history accounting and tests move
+into the renderer-owned session without changing their budgets. Prepared-frame
+and incremental GPU adoption remain subsequent work; this extraction claims no
+GPU performance result.
