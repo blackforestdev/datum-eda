@@ -19,7 +19,6 @@ impl PreparedScene {
             && self.text_runs.is_empty()
             && self.terminal_graphics.is_empty()
             && self.schematic_scene_viewport.is_none()
-            && self.schematic_underlay_vertices.is_empty()
             && self.schematic_overlay_vertices.is_empty()
     }
 }

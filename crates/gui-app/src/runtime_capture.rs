@@ -33,8 +33,6 @@ impl Runtime {
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         self.renderer.render_session_mut().retry_content();
         if self.renderer.render_session().prepared().is_none() {
-            self.ensure_retained_scene();
-            self.renderer.render_session_mut().check_content_budget()?;
             self.build_terminal_prepared_scene()?;
         }
         self.renderer.render_session_mut().check_content_budget()?;

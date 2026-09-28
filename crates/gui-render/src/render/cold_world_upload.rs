@@ -13,13 +13,9 @@ pub(crate) struct ColdWorldUploads {
 
 impl PreparedScene {
     pub(crate) fn requires_board_world(&self) -> bool {
-        // The legacy single-viewport path still draws visible board commands
-        // when it has no composed surface passes.
-        (self.surface_passes().is_empty() && !self.visible_draw_commands().is_empty())
-            || self
-                .surface_passes()
-                .iter()
-                .any(|pass| pass.surface == crate::SceneSurface::Board)
+        self.surface_passes()
+            .iter()
+            .any(|pass| pass.surface == crate::SceneSurface::Board)
     }
 }
 
@@ -48,7 +44,7 @@ impl Renderer {
         };
         board_matches
             && match crate::gpu_surface_pass::prepare_schematic_pass(prepared, schematic) {
-                Some((_, _, _, scene)) => {
+                Some(scene) => {
                     self.schematic_world_vertices_gpu
                         .matches_source(&scene.world_vertices)
                         && self
@@ -56,8 +52,8 @@ impl Renderer {
                             .matches_source(scene.world_strokes())
                 }
                 None => {
-                    self.schematic_world_vertices_gpu.pending_bytes() == 0
-                        && self.schematic_world_strokes_gpu.pending_bytes() == 0
+                    self.schematic_world_vertices_gpu.buffer().is_none()
+                        && self.schematic_world_strokes_gpu.buffer().is_none()
                 }
             }
     }

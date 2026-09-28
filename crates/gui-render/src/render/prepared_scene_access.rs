@@ -44,28 +44,21 @@ pub struct PreparedScene {
     // `ScreenConstant` chrome — driven by live hover, so they are empty in the
     // offscreen visual-test capture, keeping the board frame byte-identical. Board
     // hover folds straight into `viewport_overlay_vertices` at construction; the
-    // schematic hover rides `schematic_underlay_vertices`, rebuilt when the warm
+    // schematic hover rides `schematic_overlay_vertices`, rebuilt when the warm
     // schematic camera is applied (`set_schematic_camera`) — hence the hovered
     // symbol's world bbox is retained here to re-project it against that camera.
     pub(super) schematic_hover_bounds_nm: Option<datum_gui_protocol::RectNm>,
     // S4 cursor crosshair (decision 023 UVT-005): the live cursor in device-pixel
     // SCREEN space and the user-selected style, retained so `set_schematic_camera`
-    // (which has no `state`) can rebuild the schematic underlay crosshair against
+    // (which has no `state`) can rebuild the schematic overlay crosshair against
     // the warm camera. `None` cursor in the offscreen capture keeps the frame
     // byte-identical; both the board and schematic panes read these.
     pub(super) crosshair_cursor_screen: Option<(f32, f32)>,
     pub(super) crosshair_style: datum_gui_protocol::CrosshairStyle,
-    pub(super) schematic_underlay_vertices: Vec<Vertex>,
     pub(super) schematic_overlay_vertices: Vec<Vertex>,
 }
 
 impl PreparedScene {
-    /// The immediate pre-world schematic grid underlay. S4 interaction chrome
-    /// uses a separate post-world buffer with the same pane scissor.
-    pub(super) fn schematic_underlay_vertices(&self) -> &[Vertex] {
-        &self.schematic_underlay_vertices
-    }
-
     pub(super) fn schematic_overlay_vertices(&self) -> &[Vertex] {
         &self.schematic_overlay_vertices
     }

@@ -199,7 +199,10 @@ fn screen_streams_and_uniforms_share_one_host_limit() {
         &independent.renderer.screen_budget
     ));
     let baseline = budget.used();
-    assert_eq!(baseline, 16 + 2 * 64);
+    assert_eq!(
+        baseline, 16,
+        "only the screen uniform is fixed; pane cameras are lazy"
+    );
     let filler = budget.reserve(16 * 1024 * 1024 - baseline - 60).unwrap();
     let vertices = [Vertex {
         pos: [0.0; 2],
@@ -213,7 +216,6 @@ fn screen_streams_and_uniforms_share_one_host_limit() {
         &mut r.board_interaction_gpu,
         &mut r.console_gpu.vertices,
         &mut r.menu_overlay_gpu,
-        &mut r.schematic_underlay_gpu,
         &mut r.schematic_overlay_gpu,
         &mut r.surface_grid_gpu,
     ] {
@@ -263,6 +265,8 @@ fn screen_streams_and_uniforms_share_one_host_limit() {
     .unwrap();
     let reference = capture_retained(&mut independent, &prepared, &retained);
     // A device replacement for this SAME host cannot obtain a fresh allowance.
+    // Leave less than one screen uniform now that obsolete camera bindings are gone.
+    let recovery_pressure = budget.reserve(45).unwrap();
     assert!(
         renderer
             .renderer
@@ -276,9 +280,10 @@ fn screen_streams_and_uniforms_share_one_host_limit() {
     );
     assert_eq!(
         budget.used(),
-        16 * 1024 * 1024 - 60,
-        "failed initialization rolls back its uniform"
+        16 * 1024 * 1024 - 15,
+        "failed initialization preserves admitted host storage"
     );
+    drop(recovery_pressure);
     drop(filler);
     assert_eq!(budget.used(), baseline);
     let replacement = renderer

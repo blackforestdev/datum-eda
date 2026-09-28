@@ -117,7 +117,6 @@ impl Renderer {
         let schematic_pass = gpu_surface_pass::prepare_schematic_pass(prepared, schematic_retained);
         // S4 grid and interaction overlays remain immediate screen-space geometry;
         // offscreen captures supply neither cursor nor hover quads.
-        let schematic_underlay_vertices = prepared.schematic_underlay_vertices();
         let schematic_overlay_vertices = prepared.schematic_overlay_vertices();
         self.surface_grids
             .prepare(prepared.surface_passes(), &self.atlas.staging_budget)?;
@@ -141,8 +140,7 @@ impl Renderer {
             console_overlay_vertices,
             menu_overlay_vertices,
             world_vertices,
-            schematic_pass.as_ref().map(|(_, _, _, scene)| *scene),
-            schematic_underlay_vertices,
+            schematic_pass,
             schematic_overlay_vertices,
         )?;
         self.surface_grid_gpu.sync(
@@ -155,7 +153,7 @@ impl Renderer {
             self.world_strokes_gpu
                 .sync(device, queue, "datum-world-strokes", world_strokes)?;
         }
-        if let Some((_, _, _, scene)) = schematic_pass.as_ref() {
+        if let Some(scene) = schematic_pass {
             self.schematic_world_strokes_gpu.sync(
                 device,
                 queue,
@@ -279,125 +277,6 @@ impl Renderer {
             }
             pass.set_pipeline(&self.pipeline);
             pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            if prepared.surface_passes().is_empty() {
-                for command in prepared.visible_draw_commands() {
-                    match command {
-                        RetainedDrawCommand::Quads { range, .. } => {
-                            let Some(buffer) = self.world_vertices_gpu.buffer() else {
-                                continue;
-                            };
-                            pass.set_pipeline(
-                                &self
-                                    .world_pipelines
-                                    .get()
-                                    .expect("general pipelines prepared")
-                                    .quads,
-                            );
-                            pass.set_bind_group(0, &self.scene_bind_group.bind_group, &[]);
-                            pass.set_scissor_rect(
-                                prepared.scene_viewport.x.max(0.0).floor() as u32,
-                                prepared.scene_viewport.y.max(0.0).floor() as u32,
-                                prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                                prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                            );
-                            pass.set_vertex_buffer(0, buffer.slice(..));
-                            pass.draw(range.clone(), 0..1);
-                        }
-                        RetainedDrawCommand::Strokes { range, .. } => {
-                            let Some(buffer) = self.world_strokes_gpu.buffer() else {
-                                continue;
-                            };
-                            draw_world_strokes(
-                                &mut pass,
-                                &self
-                                    .world_pipelines
-                                    .get()
-                                    .expect("general pipelines prepared")
-                                    .strokes,
-                                &self.scene_bind_group.bind_group,
-                                buffer,
-                                prepared.scene_viewport,
-                                std::slice::from_ref(range),
-                            );
-                        }
-                    }
-                }
-                pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            }
-            // Keep the schematic grid screen-space so zoom cannot thicken it.
-            if prepared.surface_passes().is_empty()
-                && !schematic_underlay_vertices.is_empty()
-                && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
-                && let Some(buffer) = self.schematic_underlay_gpu.buffer()
-            {
-                pass.set_scissor_rect(
-                    scene_viewport.x.max(0.0).floor() as u32,
-                    scene_viewport.y.max(0.0).floor() as u32,
-                    scene_viewport.width.max(1.0).ceil() as u32,
-                    scene_viewport.height.max(1.0).ceil() as u32,
-                );
-                pass.set_vertex_buffer(0, buffer.slice(..));
-                pass.draw(0..schematic_underlay_vertices.len() as u32, 0..1);
-                self.observe_screen_draw(
-                    immediate_admission::screen_admission::ScreenGroup::SchematicUnderlay,
-                    schematic_underlay_vertices.len() as u32,
-                    immediate_admission::screen_admission::scissor(*scene_viewport),
-                );
-            }
-            // The companion pass uses its own camera uniforms and pane scissor.
-            if prepared.surface_passes().is_empty()
-                && let Some((scene_viewport, _, _, sr)) = schematic_pass.as_ref()
-            {
-                for command in sr.all_draw_commands() {
-                    match command {
-                        RetainedDrawCommand::Quads { range, .. } => {
-                            let Some(buffer) = self.schematic_world_vertices_gpu.buffer() else {
-                                continue;
-                            };
-                            pass.set_pipeline(
-                                &self
-                                    .world_pipelines
-                                    .get()
-                                    .expect("general pipelines prepared")
-                                    .quads,
-                            );
-                            pass.set_bind_group(
-                                0,
-                                &self.schematic_scene_bind_group.bind_group,
-                                &[],
-                            );
-                            pass.set_scissor_rect(
-                                scene_viewport.x.max(0.0).floor() as u32,
-                                scene_viewport.y.max(0.0).floor() as u32,
-                                scene_viewport.width.max(1.0).ceil() as u32,
-                                scene_viewport.height.max(1.0).ceil() as u32,
-                            );
-                            pass.set_vertex_buffer(0, buffer.slice(..));
-                            pass.draw(range.clone(), 0..1);
-                        }
-                        RetainedDrawCommand::Strokes { range, .. } => {
-                            let Some(buffer) = self.schematic_world_strokes_gpu.buffer() else {
-                                continue;
-                            };
-                            draw_world_strokes(
-                                &mut pass,
-                                &self
-                                    .world_pipelines
-                                    .get()
-                                    .expect("general pipelines prepared")
-                                    .strokes,
-                                &self.schematic_scene_bind_group.bind_group,
-                                buffer,
-                                *scene_viewport,
-                                std::slice::from_ref(range),
-                            );
-                        }
-                    }
-                }
-                pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            }
             // Interaction chrome stays above schematic world geometry.
             if !schematic_overlay_vertices.is_empty()
                 && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)

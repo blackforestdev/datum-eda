@@ -72,7 +72,6 @@ impl Renderer {
         replacement.schematic_world_vertices_gpu = self.schematic_world_vertices_gpu.replacement();
         replacement.schematic_world_strokes_gpu = self.schematic_world_strokes_gpu.replacement();
         replacement.surface_grid_gpu = self.surface_grid_gpu.replacement();
-        replacement.schematic_underlay_gpu = self.schematic_underlay_gpu.replacement();
         replacement.schematic_overlay_gpu = self.schematic_overlay_gpu.replacement();
         replacement.panel_gpu = self.panel_gpu.replacement();
         replacement.viewport_underlay_gpu = self.viewport_underlay_gpu.replacement();
@@ -196,47 +195,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 resource: uniform_buffer.buffer().as_entire_binding(),
             }],
         });
-        let scene_uniform = SceneUniform {
-            resolution: [1.0, 1.0, 0.0, 0.0],
-            viewport_origin: [0.0, 0.0, 0.0, 0.0],
-            viewport_size: [1.0, 1.0, 0.0, 0.0],
-            camera_center_scale: [0.0, 0.0, 1.0, 0.0],
-        };
-        let scene_bind_group = gpu_data::uniform_buffer::UniformBinding::from_buffer(
-            device,
-            &scene_bind_group_layout,
-            "datum-gui-render-scene-bg",
-            gpu_data::uniform_buffer::UniformBuffer::new_in_generation(
-                device,
-                "datum-gui-render-scene-bg",
-                scene_uniform,
-                &screen_budget,
-                previous.map_or_else(
-                    || crate::text_gpu::budget::Budget::new(2),
-                    |old| old.scene_bind_group.buffer.generation_budget.clone(),
-                ),
-            )?,
-        )?;
-        let schematic_scene_bind_group = gpu_data::uniform_buffer::UniformBinding::from_buffer(
-            device,
-            &scene_bind_group_layout,
-            "datum-gui-render-schematic-scene-bg",
-            gpu_data::uniform_buffer::UniformBuffer::new_in_generation(
-                device,
-                "datum-gui-render-schematic-scene-bg",
-                scene_uniform,
-                &screen_budget,
-                previous.map_or_else(
-                    || crate::text_gpu::budget::Budget::new(2),
-                    |old| {
-                        old.schematic_scene_bind_group
-                            .buffer
-                            .generation_budget
-                            .clone()
-                    },
-                ),
-            )?,
-        )?;
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-gui-render-pipeline-layout"),
             bind_group_layouts: &[&uniform_bind_group_layout],
@@ -318,7 +276,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             terminal_graphics,
             uniform_bind_group,
             uniform_buffer,
-            scene_bind_group,
             scene_bind_group_layout,
             surface_scene_uniforms: Vec::new(),
             pane_uniform_generations: previous
@@ -331,11 +288,6 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             surface_world_bundles: Vec::new(),
             surface_grids: Default::default(),
             surface_grid_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
-                screen_budget.clone(),
-            )
-            .with_staging_budget(staging_budget.clone()),
-            schematic_scene_bind_group,
-            schematic_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
             )
             .with_staging_budget(staging_budget.clone()),

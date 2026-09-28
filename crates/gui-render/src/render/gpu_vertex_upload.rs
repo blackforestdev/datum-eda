@@ -24,8 +24,6 @@ macro_rules! screen_streams {
         $action;
         let $stream = & $($mutability)? $this.menu_overlay_gpu;
         $action;
-        let $stream = & $($mutability)? $this.schematic_underlay_gpu;
-        $action;
         let $stream = & $($mutability)? $this.schematic_overlay_gpu;
         $action;
         let $stream = & $($mutability)? $this.surface_grid_gpu;
@@ -107,7 +105,6 @@ impl Renderer {
         menu_overlay: &[Vertex],
         world: Option<&gpu_data::shared_geometry::SharedGeometry<Vertex>>,
         schematic_world: Option<&RetainedScene>,
-        schematic_underlay: &[Vertex],
         schematic_overlay: &[Vertex],
     ) -> anyhow::Result<()> {
         self.panel_gpu
@@ -155,12 +152,6 @@ impl Renderer {
             self.schematic_world_vertices_gpu.clear();
             self.schematic_world_strokes_gpu.clear();
         }
-        self.schematic_underlay_gpu.sync(
-            device,
-            queue,
-            "datum-gui-render-schematic-underlay-vertex-buffer",
-            schematic_underlay,
-        )?;
         self.schematic_overlay_gpu.sync(
             device,
             queue,

@@ -12,7 +12,7 @@ pub struct PreparedScreenGeometry {
 impl PreparedScene {
     /// CPU-prepared streams, not a claim that each stream was submitted.
     /// Control meshes are already expanded into these production vertices.
-    pub fn screen_geometry_admission(&self) -> [PreparedScreenGeometry; 8] {
+    pub fn screen_geometry_admission(&self) -> [PreparedScreenGeometry; 7] {
         [
             ("panel", &self.panel_vertices),
             ("menu_overlay", &self.menu_overlay_vertices),
@@ -20,7 +20,6 @@ impl PreparedScene {
             ("viewport_overlay", &self.viewport_overlay_vertices),
             ("board_interaction", &self.board_interaction_vertices),
             ("console_overlay", &self.console_overlay_vertices),
-            ("schematic_underlay", &self.schematic_underlay_vertices),
             ("schematic_overlay", &self.schematic_overlay_vertices),
         ]
         .map(|(group, vertices)| PreparedScreenGeometry {

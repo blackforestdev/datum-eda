@@ -186,7 +186,6 @@ impl PreparedScene {
             schematic_hover_bounds_nm: None,
             crosshair_cursor_screen: None,
             crosshair_style: Default::default(),
-            schematic_underlay_vertices: Vec::new(),
             schematic_overlay_vertices: Vec::new(),
         }
     }

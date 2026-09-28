@@ -1,5 +1,4 @@
 use super::{Output, PointNm};
-use std::ops::Range;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
@@ -198,31 +197,6 @@ pub(crate) fn create_world_stroke_pipeline(
         multiview_mask: None,
         cache: None,
     })
-}
-
-pub(crate) fn draw_world_strokes<'a>(
-    pass: &mut wgpu::RenderPass<'a>,
-    pipeline: &'a wgpu::RenderPipeline,
-    bind_group: &'a wgpu::BindGroup,
-    buffer: &'a wgpu::Buffer,
-    viewport: super::RectPx,
-    ranges: &[Range<u32>],
-) {
-    if ranges.is_empty() {
-        return;
-    }
-    pass.set_pipeline(pipeline);
-    pass.set_bind_group(0, bind_group, &[]);
-    pass.set_scissor_rect(
-        viewport.x.max(0.0).floor() as u32,
-        viewport.y.max(0.0).floor() as u32,
-        viewport.width.max(1.0).ceil() as u32,
-        viewport.height.max(1.0).ceil() as u32,
-    );
-    pass.set_vertex_buffer(0, buffer.slice(..));
-    for range in ranges {
-        pass.draw(0..6, range.clone());
-    }
 }
 
 #[cfg(test)]

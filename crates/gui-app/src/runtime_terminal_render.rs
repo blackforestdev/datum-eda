@@ -5,9 +5,6 @@ use super::*;
 impl Runtime {
     pub(super) fn prepared_scene(&mut self) -> Option<&PreparedScene> {
         if self.renderer.render_session().prepared().is_none() {
-            if !self.ensure_retained_scene() {
-                return None;
-            }
             match self.build_terminal_prepared_scene() {
                 Ok(()) => {}
                 Err(error) => {

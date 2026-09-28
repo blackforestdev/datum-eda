@@ -7,11 +7,10 @@ pub use retained_scene_owner::{
 #[path = "renderer_state.rs"]
 mod renderer_state;
 pub use renderer_state::{
-    ControlMeshUsage, DialogInput, DialogView, FramePlan, RenderSession, Renderer,
-    RetainedSceneCacheKey, SubmittedFrame, TextCacheKeyUsage, TextCacheOwnerUsage,
-    TextGpuAllocation, TextGpuAllocationKind, TextGpuAllocationObserver,
-    WidthMeasurementCacheUsage, WorkspaceView, cpu_alloc, render_input, resource_consumers,
-    retained_selection_cache_key,
+    ControlMeshUsage, DialogInput, DialogView, FramePlan, RenderSession, Renderer, SubmittedFrame,
+    TextCacheKeyUsage, TextCacheOwnerUsage, TextGpuAllocation, TextGpuAllocationKind,
+    TextGpuAllocationObserver, WidthMeasurementCacheUsage, WorkspaceView, cpu_alloc, render_input,
+    resource_consumers,
 };
 #[path = "gpu_measurements.rs"]
 mod gpu_measurements;

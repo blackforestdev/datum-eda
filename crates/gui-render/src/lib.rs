@@ -94,7 +94,6 @@ mod grid;
 #[path = "render/surface_grid_pass.rs"]
 mod surface_grid_pass;
 pub use grid::resolve_surface_grid_lod;
-pub(crate) use grid::{push_scene_grid, push_schematic_grid};
 #[path = "render/via.rs"]
 mod via;
 pub(crate) use via::push_via_primitive_world;

@@ -103,7 +103,6 @@ pub(crate) enum Stream {
     ViewportOverlay,
     BoardInteraction,
     Console,
-    SchematicUnderlay,
     SchematicOverlay,
     Grid,
     BoardWorld,
@@ -112,7 +111,7 @@ pub(crate) enum Stream {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub(crate) struct FrameConsumers([Consumers; 14]);
+pub(crate) struct FrameConsumers([Consumers; 13]);
 impl FrameConsumers {
     pub fn dialog(consumer: Consumer) -> Self {
         let mut result = Self::default();
@@ -147,11 +146,6 @@ impl crate::PreparedScene {
                 Stream::BoardInteraction,
                 Consumer::Board,
                 self.board_interaction_vertices.len(),
-            ),
-            (
-                Stream::SchematicUnderlay,
-                Consumer::Schematic,
-                self.schematic_underlay_vertices.len(),
             ),
             (
                 Stream::SchematicOverlay,
@@ -195,8 +189,6 @@ impl crate::Renderer {
         self.console_gpu
             .vertices
             .set_consumers(frame.get(Stream::Console));
-        self.schematic_underlay_gpu
-            .set_consumers(frame.get(Stream::SchematicUnderlay));
         self.schematic_overlay_gpu
             .set_consumers(frame.get(Stream::SchematicOverlay));
         self.surface_grid_gpu.set_consumers(frame.get(Stream::Grid));
@@ -207,12 +199,6 @@ impl crate::Renderer {
         self.schematic_world_vertices_gpu
             .set_consumers(frame.get(Stream::SchematicWorld));
         self.schematic_world_strokes_gpu
-            .set_consumers(frame.get(Stream::SchematicWorld));
-        self.scene_bind_group
-            .buffer
-            .set_consumers(frame.get(Stream::BoardWorld));
-        self.schematic_scene_bind_group
-            .buffer
             .set_consumers(frame.get(Stream::SchematicWorld));
         self.uniform_buffer.set_consumers(frame.all());
         self.surface_attachments.set_consumers(frame.all());
