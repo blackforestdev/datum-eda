@@ -78,7 +78,6 @@ pub(super) struct GlobalPreferencesWindowSurface {
     scale_factor: f32,
     pub(super) measurements: native_gpu_measurements::Host,
     // Dialog hosts never contain world geometry; retain this immutable envelope.
-    empty_scene: RetainedScene,
     // Input keeps targeting the last presented geometry while damage coalesces.
     presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
     cursor_position: Option<(f32, f32)>,
@@ -153,7 +152,6 @@ impl GlobalPreferencesWindowSurface {
             scale_factor: scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32),
             renderer,
             measurements,
-            empty_scene: RetainedScene::empty(),
             presented_hits,
             cursor_position: None,
             scroll: Default::default(),
@@ -419,9 +417,11 @@ impl GlobalPreferencesWindowSurface {
             });
         }
         use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
-        let complete_render = self
-            .surface_transaction
-            .begin_render_receipt(&mut self.renderer);
+        let plan = self.surface_transaction.prepare_render_plan(
+            &mut self.renderer,
+            self.config.width,
+            self.config.height,
+        )?;
         let mut target = NativeRenderTarget::new(
             &mut self.surface_transaction,
             &self.surface,
@@ -430,24 +430,18 @@ impl GlobalPreferencesWindowSurface {
             &self.config,
             &runtime.device_health,
         );
-        let rendered = self.renderer.with_prepared_scene(|renderer, prepared| {
-            renderer.render_with_acquisition(
-                &runtime.device,
-                &runtime.queue,
-                prepared,
-                &self.empty_scene,
-                None,
-                self.config.width,
-                self.config.height,
-                &mut target,
-                &mut NativeRenderTarget::acquire,
-                &mut NativeRenderTarget::submitted,
-            )
-        });
+        let rendered = self.renderer.encode_frame(
+            plan,
+            &runtime.device,
+            &runtime.queue,
+            &mut target,
+            &mut NativeRenderTarget::acquire,
+            &mut NativeRenderTarget::submitted,
+        );
         let (frame, _) = target.finish(&self.renderer);
-        if !rendered? {
+        let Some(submitted) = rendered? else {
             return Ok(false);
-        }
+        };
         let frame = frame.context("rendered owned frame must own an acquisition")?;
         if runtime.device_health.failed() {
             return Ok(false);
@@ -456,7 +450,7 @@ impl GlobalPreferencesWindowSurface {
             frame,
             &self.window,
             &mut self.renderer,
-            complete_render,
+            submitted,
         )?;
         if let Some((hits, _)) = self.renderer.render_session_mut().take_published_frame() {
             self.presented_hits.replace(hits);

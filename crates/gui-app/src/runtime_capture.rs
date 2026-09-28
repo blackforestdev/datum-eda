@@ -33,47 +33,35 @@ impl Runtime {
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         self.renderer.render_session_mut().retry_content();
         if self.renderer.render_session().prepared().is_none() {
-            self.scene_dirty = false;
             self.ensure_retained_scene();
             self.renderer.render_session_mut().check_content_budget()?;
-            let prepared = self.build_terminal_prepared_scene()?;
-            self.renderer
-                .render_session_mut()
-                .install_prepared(prepared);
+            self.build_terminal_prepared_scene()?;
         }
         self.renderer.render_session_mut().check_content_budget()?;
         self.ensure_schematic_retained_scene();
         self.renderer.render_session_mut().check_content_budget()?;
-        let retained = self
-            .renderer
-            .render_session()
-            .board()
-            .cloned()
-            .context("retained scene should exist before visual screenshot")?;
-        let schematic_retained = self.renderer.render_session().schematic().cloned();
         let owner = self.renderer.resource_owner_id();
-        let receipt = self
+        let plan = self.renderer.render_session_mut().prepare_frame(
+            owner,
+            owner,
+            0,
+            false,
+            self.config.width,
+            self.config.height,
+        )?;
+        let rendered = self
             .renderer
-            .render_session_mut()
-            .begin_frame(owner, owner, 0, false);
-        let rendered = self.renderer.with_prepared_scene(|renderer, prepared| {
-            renderer.render(
-                &self.device,
-                &self.queue,
-                &target_view,
-                prepared,
-                &retained,
-                schematic_retained.as_ref(),
-                self.config.width,
-                self.config.height,
-            )
-        });
+            .encode_capture(plan, &self.device, &self.queue, &target_view);
         target.hold_submission(&self.queue);
-        rendered?;
+        let submitted = rendered?;
         let result = self.read_visual_texture(&target);
-        self.renderer
-            .render_session_mut()
-            .complete_frame(receipt, owner, owner, 0, result.is_ok());
+        self.renderer.render_session_mut().complete_submitted(
+            submitted,
+            owner,
+            owner,
+            0,
+            result.is_ok(),
+        );
         result
     }
 
@@ -149,4 +137,85 @@ impl Runtime {
         image::RgbaImage::from_raw(width, height, pixels)
             .context("construct visual shell image from readback pixels")
     }
+}
+
+#[cfg(feature = "visual")]
+pub(super) fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
+    args.validate_visual_args()?;
+    append_gui_diagnostic_line("offscreen visual test begin");
+    let request = args
+        .resolve_request()
+        .context("resolve offscreen visual-test review context")?;
+    let workspace_include_review = !args.wants_plain_project_board_view();
+    let mut state = if let Some(schematic_file) = &args.schematic_file {
+        load_kicad_schematic_workspace_state(schematic_file)
+            .context("load schematic offscreen workspace state")?
+    } else if args.wants_plain_project_board_view() {
+        load_board_editor_workspace_state(&request)
+            .context("load board editor offscreen workspace state")?
+    } else {
+        load_live_workspace_state(&request).context("load live offscreen workspace state")?
+    };
+    // Preset a component selection when requested, mirroring the on-screen launch
+    // path in app_bootstrap. `--select` accepts a reference designator (e.g. R1)
+    // Unknown selectors leave the inspector empty so captures fail loudly.
+    if let Some(sel) = &args.select {
+        let object_id = state
+            .scene
+            .components
+            .iter()
+            .find(|c| c.reference == *sel)
+            .map(|c| c.object_id.clone())
+            .unwrap_or_else(|| sel.clone());
+        state.select_authored_object(&object_id);
+    }
+    args.apply_initial_layout(&mut state.ui.layout);
+    args.apply_focus_pane(&mut state.ui.layout);
+    args.apply_fixture_revision_surface(&mut state.ui);
+    args.apply_layers_scroll(&mut state.ui);
+    if let Some(menu) = &args.open_menu {
+        state.ui.active_menu = Some(menu.clone());
+    }
+    let mut global_preferences =
+        global_preferences_runtime::GlobalPreferencesCoordinator::from_platform()?;
+    global_preferences.publish_projection(&mut state.ui);
+    if args.open_global_preferences {
+        state.ui.global_preferences.reset_transient_view();
+        state.ui.global_preferences.open = true;
+        keyboard_focus::initialize_application_focus(&mut state, ApplicationFocus::Overlay);
+    }
+    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+    let (width, height) = args.visual_window_size()?;
+    let scale_factor = args.visual_scale_factor.unwrap_or(1.0);
+    let screenshot_out = args
+        .screenshot_out
+        .as_ref()
+        .context("--screenshot-out is required for --visual-test")?;
+    let mut renderer =
+        OffscreenRenderer::new(width, height).context("create offscreen renderer")?;
+    renderer
+        .warm_workspace_for_surface_scale(&state, Some(camera), scale_factor)
+        .context("warm offscreen visual-test renderer")?;
+    let image = renderer
+        .render_workspace_for_surface_scale(&state, Some(camera), scale_factor)
+        .context("render offscreen visual-test workspace")?;
+    if let Some(parent) = screenshot_out.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("create screenshot directory {}", parent.display()))?;
+    }
+    image.save(screenshot_out).with_context(|| {
+        format!(
+            "write offscreen visual-test screenshot {}",
+            screenshot_out.display()
+        )
+    })?;
+    append_gui_diagnostic_line(format!(
+        "offscreen visual test end path={} include_review={workspace_include_review}",
+        screenshot_out.display()
+    ));
+    Ok(())
+}
+#[cfg(not(feature = "visual"))]
+pub(super) fn run_offscreen_visual_test(_args: &GuiArgs) -> Result<()> {
+    anyhow::bail!("datum-gui --visual-test requires the datum-gui-app visual feature")
 }

@@ -559,7 +559,7 @@ fn refused_scene_restores_consumed_terminal_damage_for_retry() {
 }
 
 #[test]
-fn shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output() {
+fn shared_render_lease_merges_newer_terminal_output_without_acknowledgement() {
     let mut registry = synthetic_registry(1);
     let mut lane = TerminalLaneState::default();
     // Start from a consumed initial full-damage state, so a broad initial flag
@@ -576,10 +576,8 @@ fn shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output(
     assert!(!old_damage.is_empty());
     render.retain_terminal_damage(&panes);
     drop(panes);
-    let failed = render.begin_frame(1, 1, 1, true);
-    assert!(!render.complete_frame(failed, 1, 1, 1, false));
-    let capture = render.begin_frame(1, 1, 1, false);
-    assert!(!render.complete_frame(capture, 1, 1, 1, true));
+    // Failed/capture/submitted snapshot policy is exercised inside the shared
+    // owner. This adapter cannot manufacture a successful GPU submission.
     registry.sessions[0]
         .core
         .apply_output(&mut lane, b"\x1b[3;1Hn")
@@ -599,13 +597,11 @@ fn shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output(
     }
     render.retain_terminal_damage(&retry);
     drop(retry);
-    let native = render.begin_frame(1, 1, 1, true);
     registry.sessions[0]
         .core
         .apply_output(&mut lane, b"\x1b[5;1Hl")
         .unwrap();
-    assert!(render.complete_frame(native, 1, 1, 1, true));
-    assert!(render.restore_terminal_damage().is_empty());
+    assert!(!render.restore_terminal_damage().is_empty());
     assert!(
         !registry.take_active_tab_render_states(&lane).unwrap()[0]
             .damage

@@ -32,6 +32,10 @@ pub struct Receipt {
 }
 
 impl Receipt {
+    pub(super) fn target(&self) -> Target {
+        self.target
+    }
+
     pub(super) fn revision(&self) -> u64 {
         self.revision
     }
@@ -99,6 +103,15 @@ impl Revisions {
             self.strong_revision = self.revision;
         }
         self.revision
+    }
+
+    pub(super) fn matches(&self, receipt: &Receipt) -> bool {
+        receipt.owner == self.owner
+            && self.active.as_ref().is_some_and(|active| {
+                active.attempt == receipt.attempt
+                    && active.target == receipt.target
+                    && self.mailbox.load(Ordering::Acquire) == active.attempt
+            })
     }
 
     pub fn current(&self) -> u64 {

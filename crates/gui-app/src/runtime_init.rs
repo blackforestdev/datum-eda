@@ -91,7 +91,6 @@ impl Runtime {
             session: LiveDesignSession::new(state),
             camera,
             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
-            pane_grid_lod: pane_grid_lod::PaneGridLod::default(),
             last_cursor_pos: None,
             pan_gesture: PanGestureState::default(),
             dock_drag_active: false,
@@ -104,10 +103,8 @@ impl Runtime {
             modifiers: ModifiersState::empty(),
             presented_hits: Default::default(),
             presented_console_layout: None,
-            terminal_render_cache: TerminalRenderCache::new(),
             terminal_accessibility:
                 terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge::default(),
-            scene_dirty: true,
             terminal_sessions,
             terminal_launch_context,
             terminal_profiles,

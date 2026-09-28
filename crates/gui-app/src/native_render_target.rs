@@ -71,26 +71,21 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
 // Shared presentation bridge for Main and every owned dialog kind. The receipt
 // captures the platform host, queue epoch and configured surface generation.
 impl SurfaceTransaction {
-    pub(crate) fn begin_render_receipt(
+    pub(crate) fn prepare_render_plan(
         &self,
         renderer: &mut datum_gui_render::Renderer,
-    ) -> impl FnOnce(&mut datum_gui_render::Renderer, u64, u64, u64, bool) -> bool + use<> {
+        width: u32,
+        height: u32,
+    ) -> anyhow::Result<datum_gui_render::FramePlan> {
         let (device, _, _) = self.queue_owner.snapshot();
-        let receipt = renderer.render_session_mut().begin_frame(
+        renderer.render_session_mut().prepare_frame(
             self.queue_host,
             device,
             self.configuration_generation,
             true,
-        );
-        move |renderer, host, device, configuration, presented| {
-            renderer.render_session_mut().complete_frame(
-                receipt,
-                host,
-                device,
-                configuration,
-                presented,
-            )
-        }
+            width,
+            height,
+        )
     }
 
     pub(crate) fn present_rendered(
@@ -98,12 +93,12 @@ impl SurfaceTransaction {
         frame: NativeSurfaceFrame,
         window: &winit::window::Window,
         renderer: &mut datum_gui_render::Renderer,
-        complete: impl FnOnce(&mut datum_gui_render::Renderer, u64, u64, u64, bool) -> bool,
+        submitted: datum_gui_render::SubmittedFrame,
     ) -> anyhow::Result<()> {
         let (device, _, _) = self.queue_owner.snapshot();
         let result = self.present(frame, window);
-        let accepted = complete(
-            renderer,
+        let accepted = renderer.render_session_mut().complete_submitted(
+            submitted,
             self.queue_host,
             device,
             self.configuration_generation,

@@ -645,13 +645,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1236
+        "pre_test_lines": 1155
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Native capture and readback now belong to runtime_capture.rs; retained content and history move to renderer RenderSession. Remaining root debt stays frozen."
+      "note": "Offscreen launch/capture ownership moves to runtime_capture.rs; remaining root debt stays frozen."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",
@@ -679,13 +679,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 6048
+        "expanded_lines": 6006
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Board immediate projection moves to the normal scene_projection owner while RenderSession adopts retained content history. Remaining include debt stays frozen."
+      "note": "Shared scene visibility policy moves into normal scene_visibility.rs while RenderSession adopts frame snapshots and derived terminal/grid state. Remaining include debt stays frozen."
     },
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",

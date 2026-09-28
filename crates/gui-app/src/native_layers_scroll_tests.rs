@@ -90,13 +90,13 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         region.x + region.width * 0.5,
         region.y + region.height * 0.5,
     ));
-    runtime.scene_dirty = false;
+    let clean_revision = runtime.renderer.render_session().content_revision();
     assert!(runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, -1000.0)));
     assert_eq!(
         runtime.workspace().ui.filters.layer_scroll_offset,
         total - visible
     );
-    assert!(runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() != clean_revision);
     assert_eq!(
         format!("{:?}", runtime.camera),
         camera,
@@ -106,10 +106,10 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         runtime.renderer.render_session().prepared().is_none(),
         "scroll routing must not prepare a scene"
     );
-    runtime.scene_dirty = false;
+    let clean_revision = runtime.renderer.render_session().content_revision();
     assert!(!runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, -1000.0)));
     assert!(
-        !runtime.scene_dirty,
+        runtime.renderer.render_session().content_revision() == clean_revision,
         "boundary input must not dirty the scene"
     );
     runtime
@@ -124,7 +124,7 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         total - visible
     );
     assert!(
-        runtime.scene_dirty,
+        runtime.renderer.render_session().content_revision() != clean_revision,
         "clamping stale Layers offset must redraw"
     );
     assert!(runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, 1.0)));

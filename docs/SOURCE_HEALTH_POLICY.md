@@ -260,3 +260,11 @@ ceilings ratchet downward. Existing retained-history accounting and tests move
 into the renderer-owned session without changing their budgets. Prepared-frame
 and incremental GPU adoption remain subsequent work; this extraction claims no
 GPU performance result.
+
+PM049 shared frame snapshots move offscreen launch/capture coordination into
+`gui-app/src/runtime_capture.rs` and scene visibility policy into the normal
+`gui-render/src/render/scene_visibility.rs` module. Main production falls from
+1,236 to 1,155 lines; renderer include expansion falls from 6,048 to 6,006.
+Exact ceilings ratchet downward. Terminal row caching and per-pane grid history
+join RenderSession; editor camera intent remains application state. These are
+ownership corrections, not GPU performance or complete adoption acceptance.

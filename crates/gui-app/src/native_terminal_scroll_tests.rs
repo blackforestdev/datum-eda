@@ -67,19 +67,19 @@ fn native_terminal_scrollback_boundaries_do_not_redraw() {
     let visible = usize::from(runtime.terminal_screen_geometry().rows);
     let maximum = rows.saturating_sub(visible);
     runtime.session.workspace_mut().ui.terminal.scroll_offset = 0;
-    runtime.scene_dirty = false;
+    let clean_revision = runtime.renderer.render_session().content_revision();
     assert!(
         !runtime.handle_dock_scroll(-1.0),
         "bottom boundary must not redraw"
     );
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     runtime.session.workspace_mut().ui.terminal.scroll_offset = maximum;
     assert!(
         !runtime.handle_dock_scroll(1.0),
         "top boundary must not redraw or overscroll"
     );
     assert_eq!(runtime.workspace().ui.terminal.scroll_offset, maximum);
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     // History/capacity changes can leave an old offset beyond today's extent.
     // An outward wheel still changes that state when it clamps back into range.
     runtime.session.workspace_mut().ui.terminal.scroll_offset = maximum + 1;
@@ -88,17 +88,17 @@ fn native_terminal_scrollback_boundaries_do_not_redraw() {
         "clamping stale scrollback must redraw"
     );
     assert_eq!(runtime.workspace().ui.terminal.scroll_offset, maximum);
-    assert!(runtime.scene_dirty);
-    runtime.scene_dirty = false;
+    assert!(runtime.renderer.render_session().content_revision() != clean_revision);
+    let clean_revision = runtime.renderer.render_session().content_revision();
     for delta in [0.0, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
         assert!(!runtime.handle_dock_scroll(delta));
         assert_eq!(runtime.workspace().ui.terminal.scroll_offset, maximum);
-        assert!(!runtime.scene_dirty);
+        assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     }
     assert!(maximum > 2, "nonempty history is mandatory");
     assert!(runtime.handle_dock_scroll(-1.0));
     assert_eq!(runtime.workspace().ui.terminal.scroll_offset, maximum - 1);
-    assert!(runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() != clean_revision);
 
     let screen = runtime.terminal_screen_geometry().screen;
     runtime.last_cursor_pos = Some((
@@ -117,21 +117,21 @@ fn native_terminal_scrollback_boundaries_do_not_redraw() {
         ] {
             let start = if lines > 0.0 { 0 } else { maximum };
             runtime.session.workspace_mut().ui.terminal.scroll_offset = start;
-            runtime.scene_dirty = false;
+            let clean_revision = runtime.renderer.render_session().content_revision();
             assert!(runtime.handle_native_wheel(delta));
             assert_eq!(
                 runtime.workspace().ui.terminal.scroll_offset,
                 if lines > 0.0 { 1 } else { maximum - 1 },
                 "terminal must scroll exactly one row per event"
             );
-            assert!(runtime.scene_dirty);
+            assert!(runtime.renderer.render_session().content_revision() != clean_revision);
             assert_eq!(format!("{:?}", runtime.camera), camera);
             assert!(runtime.renderer.render_session().prepared().is_none());
             // Outward input at either boundary stays local and makes no frame.
             runtime.session.workspace_mut().ui.terminal.scroll_offset = maximum - start;
-            runtime.scene_dirty = false;
+            let clean_revision = runtime.renderer.render_session().content_revision();
             assert!(!runtime.handle_native_wheel(delta));
-            assert!(!runtime.scene_dirty);
+            assert!(runtime.renderer.render_session().content_revision() == clean_revision);
             assert_eq!(format!("{:?}", runtime.camera), camera);
             assert!(runtime.renderer.render_session().prepared().is_none());
         }

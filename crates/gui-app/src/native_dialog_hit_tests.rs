@@ -185,7 +185,8 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
             42,
             "S4 retained Console feedback",
         ));
-    let closed = runtime.build_terminal_prepared_scene().unwrap();
+    runtime.build_terminal_prepared_scene().unwrap();
+    let closed = runtime.renderer.render_session().prepared().unwrap();
     assert!(
         closed
             .console_overlay_layout()

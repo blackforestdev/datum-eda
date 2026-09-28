@@ -2,7 +2,10 @@
 use super::*;
 #[path = "render_session.rs"]
 mod render_session;
-pub use render_session::{RenderSession, RetainedSceneCacheKey, retained_selection_cache_key};
+pub use render_session::{
+    FramePlan, RenderSession, RetainedSceneCacheKey, SubmittedFrame, WorkspaceView,
+    retained_selection_cache_key,
+};
 #[path = "../cpu_alloc.rs"]
 pub mod cpu_alloc;
 #[path = "resource_consumers.rs"]
