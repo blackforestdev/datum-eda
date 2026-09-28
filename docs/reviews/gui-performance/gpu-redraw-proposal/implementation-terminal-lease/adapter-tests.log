@@ -1,0 +1,21 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.0 GiB target_free=169.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.0 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-89f6505f70927b20)
+
+running 13 tests
+test terminal_core_adapter::tests::production_profile_matches_the_owner_approved_p22_l1_values ... ok
+test terminal_core_adapter::tests::incoming_output_preserves_the_users_scrollback_anchor ... ok
+test terminal_core_adapter::tests::adapters_isolate_output_modes_resize_and_context ... ok
+test terminal_core_adapter::tests::adapter_keeps_session_context_identity_and_projects_core_state ... ok
+test terminal_core_adapter::tests::render_state_preserves_surface_pixels_and_consumes_damage_once ... ok
+test terminal_core_adapter::tests::retry_damage_union_obeys_the_existing_pending_damage_limit ... ok
+test terminal_core_adapter::tests::native_input_selection_search_and_links_use_the_same_core_state ... ok
+test terminal_core_adapter::tests::osc8_urls_and_cwd_relative_paths_resolve_as_inert_link_targets ... ok
+test terminal_core_adapter::tests::stream_finish_repairs_incomplete_utf8_before_lifecycle_completion ... ok
+test terminal_core_adapter::tests::terminal_replies_are_emitted_once_and_never_enter_terminal_cells ... ok
+test terminal_core_adapter::tests::search_match_resolves_to_a_stable_scrollback_window ... ok
+test terminal_core_adapter::tests::batched_ascii_path_matches_incremental_parser_state_across_terminal_boundaries ... ok
+test terminal_core_adapter::tests::repeated_bells_remain_bounded_but_preserve_visible_count ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 390 filtered out; finished in 0.00s

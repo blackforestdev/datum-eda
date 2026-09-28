@@ -1,0 +1,24 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.0 GiB target_free=169.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.0 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.89s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-89f6505f70927b20)
+
+running 15 tests
+test terminal_session::drain::tests::refused_scene_restores_consumed_terminal_damage_for_retry ... ok
+test terminal_session::drain::tests::active_pending_tab_keeps_previous_session_output_in_its_parked_projection ... ok
+test terminal_session::drain::tests::inactive_output_and_bell_mark_only_the_originating_tab_unread ... ok
+test terminal_session::drain::tests::seventeenth_session_is_refused_by_preallocation_guard ... ok
+test terminal_session::drain::tests::osc52_becomes_a_typed_session_scoped_request_without_changing_cells ... ok
+test terminal_session::drain::tests::osc7_and_osc133_are_untrusted_session_metadata_not_design_authority ... ok
+test terminal_session::drain::tests::render_panes_borrow_matching_active_and_parked_lane_projections ... ok
+test terminal_session::drain::tests::shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output ... ok
+test terminal_session::drain::tests::same_session_output_is_applied_before_its_final_exit_control ... ok
+test terminal_session::drain::tests::tiny_chunk_flood_is_applied_once_per_session_per_turn ... ok
+test terminal_session::drain::tests::split_control_and_utf8_chunks_batch_without_cross_session_leakage ... ok
+test terminal_session::drain::tests::budget_yield_retains_bytes_rotates_application_and_cannot_overtake_exit ... ok
+test terminal_session::drain::tests::one_gui_turn_never_exceeds_owner_ratified_output_limits ... ok
+test terminal_session::drain::tests::control_priority_round_robin_cursor_and_exact_global_caps_are_literal ... ok
+test terminal_session::drain::tests::spare_dispatch_time_rotates_batches_with_one_shared_application_byte_cap ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 388 filtered out; finished in 0.07s

@@ -1,0 +1,3 @@
+terminal core adapter boundary: PASS
+terminal core renderer boundary: PASS
+GUI agent/terminal convergence guard passed.

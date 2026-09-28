@@ -1,0 +1,24 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.0 GiB target_free=169.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.0 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.95s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-89f6505f70927b20)
+
+running 1 test
+test terminal_session::drain::tests::shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output ... FAILED
+
+failures:
+
+---- terminal_session::drain::tests::shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output stdout ----
+
+thread 'terminal_session::drain::tests::shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output' (56) panicked at crates/gui-app/src/terminal_session_drain_tests.rs:588:5:
+old=[Full]; newer=[Full]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    terminal_session::drain::tests::shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 402 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p datum-gui-app --bin datum-gui`

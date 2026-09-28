@@ -557,3 +557,58 @@ fn refused_scene_restores_consumed_terminal_damage_for_retry() {
             .is_empty()
     );
 }
+
+#[test]
+fn shared_render_lease_survives_failed_capture_and_merges_newer_terminal_output() {
+    let mut registry = synthetic_registry(1);
+    let mut lane = TerminalLaneState::default();
+    // Start from a consumed initial full-damage state, so a broad initial flag
+    // cannot conceal loss of either later row's independent damage.
+    // Single-character writes retain distinct cell damage; ASCII runs use Full.
+    drop(registry.take_active_tab_render_states(&lane).unwrap());
+    registry.sessions[0]
+        .core
+        .apply_output(&mut lane, b"o")
+        .unwrap();
+    let mut render = datum_gui_render::RenderSession::default();
+    let panes = registry.take_active_tab_render_states(&lane).unwrap();
+    let old_damage = panes[0].damage.clone();
+    assert!(!old_damage.is_empty());
+    render.retain_terminal_damage(&panes);
+    drop(panes);
+    let failed = render.begin_frame(1, 1, 1, true);
+    assert!(!render.complete_frame(failed, 1, 1, 1, false));
+    let capture = render.begin_frame(1, 1, 1, false);
+    assert!(!render.complete_frame(capture, 1, 1, 1, true));
+    registry.sessions[0]
+        .core
+        .apply_output(&mut lane, b"\x1b[3;1Hn")
+        .unwrap();
+    let newer = registry.take_active_tab_render_states(&lane).unwrap();
+    let newer_damage = newer[0].damage.clone();
+    assert!(
+        newer_damage.iter().any(|entry| !old_damage.contains(entry)),
+        "old={old_damage:?}; newer={newer_damage:?}"
+    );
+    drop(newer);
+    registry.restore_render_damage(vec![("synthetic-0".into(), newer_damage.clone())]);
+    registry.restore_render_damage(render.restore_terminal_damage());
+    let retry = registry.take_active_tab_render_states(&lane).unwrap();
+    for entry in old_damage.iter().chain(&newer_damage) {
+        assert!(retry[0].damage.contains(entry), "retry lost {entry:?}");
+    }
+    render.retain_terminal_damage(&retry);
+    drop(retry);
+    let native = render.begin_frame(1, 1, 1, true);
+    registry.sessions[0]
+        .core
+        .apply_output(&mut lane, b"\x1b[5;1Hl")
+        .unwrap();
+    assert!(render.complete_frame(native, 1, 1, 1, true));
+    assert!(render.restore_terminal_damage().is_empty());
+    assert!(
+        !registry.take_active_tab_render_states(&lane).unwrap()[0]
+            .damage
+            .is_empty()
+    );
+}

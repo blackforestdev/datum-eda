@@ -1,0 +1,15 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=27.0 GiB target_free=173.1 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 27.0 GiB used; soft limit 20.0 GiB
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error[E0282]: type annotations needed
+   --> crates/gui-app/src/terminal_session_render.rs:201:25
+    |
+201 |                         self.sessions[previous].core.merge_render_damage(&damage);
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
+
+For more information about this error, try `rustc --explain E0282`.
+error: could not compile `datum-gui-app` (bin "datum-gui") due to 1 previous error
