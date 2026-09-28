@@ -31,7 +31,7 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
     let mut runtime = pollster::block_on(Runtime::new(window, launch, Some(1.0), wake)).unwrap();
     assert!(runtime.workspace().ui.new_project.open);
     let _ = runtime.prepared_scene();
-    runtime.scene_dirty = false;
+    let clean_revision = runtime.renderer.render_session().content_revision();
     assert!(runtime.renderer.render_session().prepared().is_some());
 
     assert!(runtime.activate_new_project_hit(&HitTarget::NewProjectDestination));
@@ -43,7 +43,10 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
         runtime.renderer.render_session().prepared().is_some(),
         "local focus must retain Main's preparation"
     );
-    assert!(!runtime.scene_dirty, "local focus must not dirty Main");
+    assert!(
+        runtime.renderer.render_session().content_revision() == clean_revision,
+        "local focus must not dirty Main"
+    );
     assert!(
         runtime.activate_new_project_hit(&HitTarget::NewProjectUnitsChoice(
             NewProjectUnitsChoice::Factory
@@ -57,24 +60,27 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
         runtime.renderer.render_session().prepared().is_some(),
         "preview choice must retain Main's preparation"
     );
-    assert!(!runtime.scene_dirty, "preview choice must not dirty Main");
+    assert!(
+        runtime.renderer.render_session().content_revision() == clean_revision,
+        "preview choice must not dirty Main"
+    );
     assert!(runtime.close_new_project());
     assert!(!runtime.workspace().ui.new_project.open);
     assert!(
         runtime.renderer.render_session().prepared().is_none(),
         "close still invalidates the owner"
     );
-    assert!(runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() != clean_revision);
 
     runtime.open_global_preferences();
     let _ = runtime.prepared_scene();
-    runtime.scene_dirty = false;
+    let clean_revision = runtime.renderer.render_session().content_revision();
     assert_eq!(
         runtime.activate_application_overlay_hit_target(&HitTarget::GlobalPreferencesSearch),
         Some(true)
     );
     assert!(runtime.renderer.render_session().prepared().is_some());
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     runtime
         .session
         .workspace_mut()
@@ -111,19 +117,19 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
             .is_none()
     );
     assert!(runtime.renderer.render_session().prepared().is_some());
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     assert!(runtime.choose_global_preference_value("datum.units.system", "imperial"));
     assert!(
         runtime.renderer.render_session().prepared().is_some(),
         "future-project Units must retain Main preparation"
     );
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     assert!(runtime.reset_global_preference("datum.units.system"));
     assert!(
         runtime.renderer.render_session().prepared().is_some(),
         "future-project Units reset must retain Main preparation"
     );
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     assert!(
         runtime.activate_global_preference_control("datum.accessibility.high_contrast_noncolor")
     );
@@ -138,21 +144,21 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
         runtime.renderer.render_session().prepared().is_none(),
         "current paint change must invalidate Main"
     );
-    assert!(runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() != clean_revision);
     runtime.close_global_preferences();
     assert!(runtime.renderer.render_session().prepared().is_none());
-    assert!(runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() != clean_revision);
 
     runtime.open_project_preferences();
     assert!(runtime.workspace().ui.project_preferences.open);
     let _ = runtime.prepared_scene();
-    runtime.scene_dirty = false;
+    let clean_revision = runtime.renderer.render_session().content_revision();
     assert_eq!(
         runtime.activate_project_preferences_hit_target(&HitTarget::GlobalPreferencesSearch),
         Some(true)
     );
     assert!(runtime.renderer.render_session().prepared().is_some());
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     runtime
         .session
         .workspace_mut()
@@ -189,10 +195,10 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
             .is_none()
     );
     assert!(runtime.renderer.render_session().prepared().is_some());
-    assert!(!runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() == clean_revision);
     runtime.close_project_preferences();
     assert!(runtime.renderer.render_session().prepared().is_none());
-    assert!(runtime.scene_dirty);
+    assert!(runtime.renderer.render_session().content_revision() != clean_revision);
 
     runtime.begin_application_terminal_shutdown();
     let deadline = std::time::Instant::now() + Duration::from_secs(6);

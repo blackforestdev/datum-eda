@@ -1,0 +1,14 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=27.0 GiB target_free=173.7 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 27.0 GiB used; soft limit 20.0 GiB
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+warning: unused import: `RetainedScene`
+  --> crates/gui-app/src/main.rs:18:54
+   |
+18 |     CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, SceneSurface, ShellLayout,
+   |                                                      ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `datum-gui-app` (bin "datum-gui") generated 1 warning (run `cargo fix --bin "datum-gui" -p datum-gui-app` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.34s

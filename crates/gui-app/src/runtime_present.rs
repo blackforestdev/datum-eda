@@ -86,11 +86,7 @@ impl Runtime {
             }
             let prepared_started = std::time::Instant::now();
             append_gui_verbose_diagnostic_line(|| "prepared scene build begin");
-            let prepared = self.build_terminal_prepared_scene()?;
-            self.renderer
-                .render_session_mut()
-                .install_prepared(prepared);
-            self.scene_dirty = false;
+            self.build_terminal_prepared_scene()?;
             prepared_build_ms = prepared_started.elapsed().as_millis();
             append_gui_verbose_diagnostic_line(|| {
                 format!("prepared scene build end {prepared_build_ms}ms")
@@ -103,21 +99,16 @@ impl Runtime {
         // workspace has no companion schematic / Schematic pane — second pass off.
         self.ensure_schematic_retained_scene();
         self.renderer.render_session_mut().check_content_budget()?;
-        let retained = self
-            .renderer
-            .render_session()
-            .board()
-            .cloned()
-            .context("retained scene should exist before render")?;
-        let schematic_retained = self.renderer.render_session().schematic().cloned();
         drop(probe);
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "renderer render begin");
         use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
-        let complete_render = self
-            .surface_transaction
-            .begin_render_receipt(&mut self.renderer);
+        let plan = self.surface_transaction.prepare_render_plan(
+            &mut self.renderer,
+            self.config.width,
+            self.config.height,
+        )?;
         let mut target = NativeRenderTarget::new(
             &mut self.surface_transaction,
             &self.surface,
@@ -126,24 +117,18 @@ impl Runtime {
             &self.config,
             &self.device_health,
         );
-        let rendered = self.renderer.with_prepared_scene(|renderer, prepared| {
-            renderer.render_with_acquisition(
-                &self.device,
-                &self.queue,
-                prepared,
-                &retained,
-                schematic_retained.as_ref(),
-                self.config.width,
-                self.config.height,
-                &mut target,
-                &mut NativeRenderTarget::acquire,
-                &mut NativeRenderTarget::submitted,
-            )
-        });
+        let rendered = self.renderer.encode_frame(
+            plan,
+            &self.device,
+            &self.queue,
+            &mut target,
+            &mut NativeRenderTarget::acquire,
+            &mut NativeRenderTarget::submitted,
+        );
         let (frame, acquire_elapsed) = target.finish(&self.renderer);
-        if !rendered? {
+        let Some(submitted) = rendered? else {
             return Ok(false);
-        }
+        };
         let frame = frame.context("rendered native frame must own an acquisition")?;
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(|| {
@@ -153,7 +138,7 @@ impl Runtime {
         if self.device_health.failed() {
             return Ok(false);
         }
-        let present_elapsed = self.present_native_frame(frame, complete_render)?;
+        let present_elapsed = self.present_native_frame(frame, submitted)?;
         append_gui_verbose_diagnostic_line(|| {
             format!(
                 "frame present end {}ms total={}ms",
@@ -179,7 +164,7 @@ impl Runtime {
     fn present_native_frame(
         &mut self,
         frame: gui_runtime_support::native_surface_transaction::NativeSurfaceFrame,
-        complete: impl FnOnce(&mut Renderer, u64, u64, u64, bool) -> bool,
+        submitted: datum_gui_render::SubmittedFrame,
     ) -> Result<std::time::Duration> {
         let probe = gui_runtime_support::phase_probe::Probe::start("present");
         let started = std::time::Instant::now();
@@ -189,7 +174,7 @@ impl Runtime {
             frame,
             &self.window,
             &mut self.renderer,
-            complete,
+            submitted,
         )?;
         if let Some((hits, console)) = self.renderer.render_session_mut().take_published_frame() {
             self.presented_console_layout = console;

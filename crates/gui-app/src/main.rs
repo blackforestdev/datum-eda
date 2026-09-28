@@ -15,8 +15,7 @@ use datum_gui_protocol::{
 #[cfg(feature = "visual")]
 use datum_gui_render::visual_capture::OffscreenRenderer;
 use datum_gui_render::{
-    CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, SceneSurface, ShellLayout,
-    TerminalRenderCache,
+    CameraState, HitTarget, PreparedScene, Renderer, SceneSurface, ShellLayout,
 };
 use gui_runtime_support::native_surface_transaction::SurfaceTransaction;
 use runtime_state::Runtime;
@@ -66,6 +65,7 @@ mod resize_smoke;
 mod retained_scene_lifecycle;
 mod runtime_capture;
 use datum_gui_render::RetainedSceneCacheKey;
+use runtime_capture::run_offscreen_visual_test;
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
@@ -160,87 +160,6 @@ fn main() -> Result<()> {
     let event_loop = EventLoop::new().context("failed to create event loop")?;
     App::new(args, event_loop.create_proxy()).run(event_loop)
 }
-#[cfg(feature = "visual")]
-fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
-    args.validate_visual_args()?;
-    append_gui_diagnostic_line("offscreen visual test begin");
-    let request = args
-        .resolve_request()
-        .context("resolve offscreen visual-test review context")?;
-    let workspace_include_review = !args.wants_plain_project_board_view();
-    let mut state = if let Some(schematic_file) = &args.schematic_file {
-        load_kicad_schematic_workspace_state(schematic_file)
-            .context("load schematic offscreen workspace state")?
-    } else if args.wants_plain_project_board_view() {
-        load_board_editor_workspace_state(&request)
-            .context("load board editor offscreen workspace state")?
-    } else {
-        load_live_workspace_state(&request).context("load live offscreen workspace state")?
-    };
-    // Preset a component selection when requested, mirroring the on-screen launch
-    // path in app_bootstrap. `--select` accepts a reference designator (e.g. R1)
-    // Unknown selectors leave the inspector empty so captures fail loudly.
-    if let Some(sel) = &args.select {
-        let object_id = state
-            .scene
-            .components
-            .iter()
-            .find(|c| c.reference == *sel)
-            .map(|c| c.object_id.clone())
-            .unwrap_or_else(|| sel.clone());
-        state.select_authored_object(&object_id);
-    }
-    args.apply_initial_layout(&mut state.ui.layout);
-    args.apply_focus_pane(&mut state.ui.layout);
-    args.apply_fixture_revision_surface(&mut state.ui);
-    args.apply_layers_scroll(&mut state.ui);
-    if let Some(menu) = &args.open_menu {
-        state.ui.active_menu = Some(menu.clone());
-    }
-    let mut global_preferences =
-        global_preferences_runtime::GlobalPreferencesCoordinator::from_platform()?;
-    global_preferences.publish_projection(&mut state.ui);
-    if args.open_global_preferences {
-        state.ui.global_preferences.reset_transient_view();
-        state.ui.global_preferences.open = true;
-        keyboard_focus::initialize_application_focus(&mut state, ApplicationFocus::Overlay);
-    }
-    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
-    let (width, height) = args.visual_window_size()?;
-    let scale_factor = args.visual_scale_factor.unwrap_or(1.0);
-    let screenshot_out = args
-        .screenshot_out
-        .as_ref()
-        .context("--screenshot-out is required for --visual-test")?;
-    let mut renderer =
-        OffscreenRenderer::new(width, height).context("create offscreen renderer")?;
-    renderer
-        .warm_workspace_for_surface_scale(&state, Some(camera), scale_factor)
-        .context("warm offscreen visual-test renderer")?;
-    let image = renderer
-        .render_workspace_for_surface_scale(&state, Some(camera), scale_factor)
-        .context("render offscreen visual-test workspace")?;
-    if let Some(parent) = screenshot_out.parent() {
-        fs::create_dir_all(parent)
-            .with_context(|| format!("create screenshot directory {}", parent.display()))?;
-    }
-    image.save(screenshot_out).with_context(|| {
-        format!(
-            "write offscreen visual-test screenshot {}",
-            screenshot_out.display()
-        )
-    })?;
-    append_gui_diagnostic_line(format!(
-        "offscreen visual test end path={} include_review={workspace_include_review}",
-        screenshot_out.display()
-    ));
-    Ok(())
-}
-#[cfg(not(feature = "visual"))]
-fn run_offscreen_visual_test(_args: &GuiArgs) -> Result<()> {
-    anyhow::bail!("datum-gui --visual-test requires the datum-gui-app visual feature")
-}
-
 impl Runtime {
     // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001: there is
     // deliberately NO `push_terminal_line` here. Terminal cells are mutated

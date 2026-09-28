@@ -19,6 +19,7 @@ UPLOAD = RENDER / "src/render/terminal_upload.rs"
 STAGING = RENDER / "src/text_gpu/upload.rs"
 GPU = RENDER / "src/render/gpu_frame.rs"
 SCENE = RENDER / "src/render/frame_preparation.rs"
+SESSION_PREPARATION = RENDER / "src/render/session_preparation.rs"
 TESTS = RENDER / "src/terminal_core_render_tests.rs"
 VISUAL = RENDER / "src/visual_capture.rs"
 PANE_RENDER = RENDER / "src/terminal_pane_render.rs"
@@ -146,11 +147,15 @@ def check(root: Path) -> list[str]:
 
     for marker in (
         "take_active_tab_render_states(",
-        "prepare_workspace_with_terminal_renderer(",
-        "Some(&mut self.terminal_render_cache)",
+        "prepare_session_workspace(",
     ):
         if marker not in main + runtime_render:
             failures.append(f"production runtime bypasses retained core rendering: {marker}")
+    preparation = read(root, SESSION_PREPARATION)
+    for marker in ("begin_workspace_preparation(panes)?", "self.retain_terminal_damage(panes)",
+                   "Some(&mut self.render_session.terminal_cache)"):
+        if marker not in preparation:
+            failures.append(f"shared preparation bypasses retained core rendering: {marker}")
     if "terminal_panes: &[crate::TerminalPaneRenderState]" not in scene:
         failures.append("prepared scene does not accept immutable per-pane TerminalCore snapshots")
     for marker in (

@@ -21,7 +21,6 @@ pub(super) struct Runtime {
     pub(super) camera: CameraState,
     /// Warm per-leaf view cameras keyed by `PaneId` (decision 021, P2.1b).
     pub(super) pane_cameras: PaneCameras,
-    pub(super) pane_grid_lod: pane_grid_lod::PaneGridLod,
     pub(super) last_cursor_pos: Option<(f32, f32)>,
     pub(super) pan_gesture: PanGestureState,
     pub(super) dock_drag_active: bool,
@@ -38,10 +37,8 @@ pub(super) struct Runtime {
     pub(super) presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
     /// Console input/lifetime queries must not prepare a dirty workspace frame.
     pub(super) presented_console_layout: Option<datum_gui_render::ConsoleOverlayLayout>,
-    pub(super) terminal_render_cache: TerminalRenderCache,
     pub(super) terminal_accessibility:
         terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge,
-    pub(super) scene_dirty: bool,
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) terminal_launch_context: TerminalLaunchContext,
     pub(super) terminal_profiles: terminal_profile::TerminalProfileCatalog,

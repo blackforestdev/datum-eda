@@ -4,6 +4,14 @@ use crate::{RetainedScene, TerminalPaneRenderState};
 #[path = "terminal_damage.rs"]
 mod terminal_damage;
 use terminal_damage::PendingTerminalDamage;
+#[path = "session_grid.rs"]
+mod session_grid;
+#[path = "session_preparation.rs"]
+mod session_preparation;
+pub use session_preparation::WorkspaceView;
+#[path = "session_frame.rs"]
+mod session_frame;
+pub use session_frame::{FramePlan, SubmittedFrame};
 #[path = "frame_revision.rs"]
 mod frame_revision;
 use datum_gui_protocol::ReviewWorkspaceState;
@@ -21,7 +29,10 @@ pub struct RenderSession {
     prepared_hits_pending: bool,
     publication: Option<(Vec<crate::HitRegion>, Option<crate::ConsoleOverlayLayout>)>,
     terminal_damage: PendingTerminalDamage,
+    terminal_cache: crate::TerminalRenderCache,
+    grid_lod: session_grid::PaneGridLod,
     board: Option<RetainedScene>,
+    empty: std::sync::OnceLock<RetainedScene>,
     board_history: RetainedSceneHistory,
     schematic: Option<RetainedScene>,
     schematic_history: RetainedSceneHistory,
@@ -44,13 +55,7 @@ impl RenderSession {
     pub fn interaction_changed(&mut self) {
         self.revisions.update(Change::Interaction);
     }
-    pub fn begin_frame(
-        &mut self,
-        host: u64,
-        device: u64,
-        configuration: u64,
-        native: bool,
-    ) -> Receipt {
+    fn begin_frame(&mut self, host: u64, device: u64, configuration: u64, native: bool) -> Receipt {
         self.revisions.begin(
             Target {
                 host,
@@ -60,38 +65,24 @@ impl RenderSession {
             native,
         )
     }
-    pub fn complete_frame(
+    #[cfg(test)]
+    fn complete_frame(
         &mut self,
-        receipt: Receipt,
+        plan: FramePlan,
         host: u64,
         device: u64,
         configuration: u64,
         presented: bool,
     ) -> bool {
-        let revision = receipt.revision();
-        let accepted = self.revisions.complete(
-            receipt,
+        self.finish_snapshot(
+            plan,
             Target {
                 host,
                 device,
                 configuration,
             },
             presented,
-        );
-        if accepted {
-            self.terminal_damage.presented(revision);
-            if self.prepared_revision <= revision
-                && self.prepared_hits_pending
-                && let Some(prepared) = self.prepared.as_mut()
-            {
-                self.publication = Some((
-                    std::mem::take(&mut prepared.hit_regions),
-                    prepared.console_overlay_layout(),
-                ));
-                self.prepared_hits_pending = false;
-            }
-        }
-        accepted
+        )
     }
 
     pub fn retain_terminal_damage(&mut self, panes: &[TerminalPaneRenderState<'_>]) {
@@ -235,34 +226,12 @@ impl RenderSession {
         }
     }
 
-    /// Only complete_frame can create a publication. Native adapters transfer
+    /// Only matching submitted-frame completion can create a publication. Native adapters transfer
     /// this read-only snapshot to their input projection after matching success.
     pub fn take_published_frame(
         &mut self,
     ) -> Option<(Vec<crate::HitRegion>, Option<crate::ConsoleOverlayLayout>)> {
         self.publication.take()
-    }
-}
-
-impl crate::Renderer {
-    /// Lend one immutable prepared snapshot while mutating GPU resource owners.
-    /// Move its envelope, never clone the geometry or borrow through a mutable
-    /// alias. A concurrent semantic update prevents reinserting an old snapshot.
-    pub fn with_prepared_scene<R>(
-        &mut self,
-        encode: impl FnOnce(&mut Self, &crate::PreparedScene) -> anyhow::Result<R>,
-    ) -> anyhow::Result<R> {
-        let prepared = self
-            .render_session
-            .prepared
-            .take()
-            .ok_or_else(|| anyhow::anyhow!("shared prepared scene must exist before encode"))?;
-        let revision = self.render_session.revisions.current();
-        let result = encode(self, &prepared);
-        if self.render_session.revisions.current() == revision {
-            self.render_session.prepared = Some(prepared);
-        }
-        result
     }
 }
 

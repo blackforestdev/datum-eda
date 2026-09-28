@@ -272,7 +272,9 @@ impl Runtime {
         // Prune after the focus transition, which stashes the outgoing camera.
         // Otherwise closing the active Board would reinsert its dead pane id.
         self.pane_cameras.retain_live(&live);
-        self.pane_grid_lod.retain_live(&live);
+        self.renderer
+            .render_session_mut()
+            .retain_pane_projections(&live);
     }
 
     pub(super) fn pane_toggle_zoom(&mut self) {
@@ -290,7 +292,7 @@ impl Runtime {
         self.camera = CameraState::fit_to_bounds(&bounds);
         let content = self.workspace().ui.layout.focused_content();
         self.pane_cameras.reset(focused, content, self.camera);
-        self.pane_grid_lod.reset();
+        self.renderer.render_session_mut().reset_pane_projections();
         self.invalidate_frame();
     }
 
@@ -303,7 +305,9 @@ impl Runtime {
             .ui
             .layout
             .set_focused_content(content);
-        self.pane_grid_lod.retarget(retargeted_pane, content);
+        self.renderer
+            .render_session_mut()
+            .retire_pane_projection(retargeted_pane, content);
         let incoming_board = self.scene_leaf_id();
         if outgoing_board != incoming_board {
             let bounds = self.workspace().scene.bounds.clone();

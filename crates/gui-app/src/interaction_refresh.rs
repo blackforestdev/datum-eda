@@ -15,12 +15,10 @@ impl Runtime {
         self.renderer
             .render_session_mut()
             .change_document(previous_key, &next_key);
-        self.scene_dirty = true;
     }
 
     pub(super) fn invalidate_scene(&mut self) {
         self.renderer.render_session_mut().clear_content();
-        self.scene_dirty = true;
     }
 
     pub(super) fn invalidate_surface_size(&mut self) {
@@ -29,7 +27,6 @@ impl Runtime {
         // Historical entries carry old surface keys. Preserve only live geometry
         // whose construction has no dependency on the reference projection size.
         self.renderer.render_session_mut().resize_content();
-        self.scene_dirty = true;
     }
 
     pub(super) fn invalidate_frame(&mut self) {
@@ -37,7 +34,6 @@ impl Runtime {
         // Camera/layout/chrome changes rebuild the prepared projection only.
         // Schematic authored geometry is camera-independent retained world data,
         // just like the board retained scene, and must stay warm here.
-        self.scene_dirty = true;
         self.refresh_global_preferences_accessibility();
         self.refresh_menu_accessibility();
         self.trace_action_state();
@@ -73,7 +69,6 @@ impl Runtime {
         self.renderer
             .render_session_mut()
             .refresh_interaction(self.session.workspace());
-        self.scene_dirty = true;
     }
 }
 

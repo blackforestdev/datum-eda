@@ -34,7 +34,7 @@ impl PreparedScene {
 
 impl PreparedScene {
     #[allow(clippy::too_many_arguments)]
-    fn from_workspace_with_controls(
+    pub(crate) fn from_workspace_with_controls(
         state: &ReviewWorkspaceState,
         width: u32,
         height: u32,

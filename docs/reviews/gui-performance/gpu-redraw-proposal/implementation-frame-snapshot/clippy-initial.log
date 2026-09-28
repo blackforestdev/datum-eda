@@ -1,0 +1,72 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=28.8 GiB target_free=171.9 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 28.8 GiB used; soft limit 20.0 GiB
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error[E0599]: no method named `console_overlay_layout` found for unit type `()` in the current scope
+   --> crates/gui-app/src/native_dialog_hit_tests.rs:191:14
+    |
+190 | /         closed
+191 | |             .console_overlay_layout()
+    | |             -^^^^^^^^^^^^^^^^^^^^^^ method not found in `()`
+    | |_____________|
+    |
+
+error[E0624]: method `begin_frame` is private
+   --> crates/gui-app/src/terminal_session_drain_tests.rs:579:25
+    |
+579 |     let failed = render.begin_frame(1, 1, 1, true);
+    |                         ^^^^^^^^^^^ private method
+    |
+   ::: crates/gui-render/src/render/render_session.rs:58:5
+    |
+ 58 |     fn begin_frame(&mut self, host: u64, device: u64, configuration: u64, native: bool) -> Receipt {
+    |     ---------------------------------------------------------------------------------------------- private method defined here
+
+error[E0599]: no method named `complete_frame` found for struct `datum_gui_render::RenderSession` in the current scope
+   --> crates/gui-app/src/terminal_session_drain_tests.rs:580:21
+    |
+580 |     assert!(!render.complete_frame(failed, 1, 1, 1, false));
+    |                     ^^^^^^^^^^^^^^ method not found in `datum_gui_render::RenderSession`
+
+error[E0624]: method `begin_frame` is private
+   --> crates/gui-app/src/terminal_session_drain_tests.rs:581:26
+    |
+581 |     let capture = render.begin_frame(1, 1, 1, false);
+    |                          ^^^^^^^^^^^ private method
+    |
+   ::: crates/gui-render/src/render/render_session.rs:58:5
+    |
+ 58 |     fn begin_frame(&mut self, host: u64, device: u64, configuration: u64, native: bool) -> Receipt {
+    |     ---------------------------------------------------------------------------------------------- private method defined here
+
+error[E0599]: no method named `complete_frame` found for struct `datum_gui_render::RenderSession` in the current scope
+   --> crates/gui-app/src/terminal_session_drain_tests.rs:582:21
+    |
+582 |     assert!(!render.complete_frame(capture, 1, 1, 1, true));
+    |                     ^^^^^^^^^^^^^^ method not found in `datum_gui_render::RenderSession`
+
+error[E0624]: method `begin_frame` is private
+   --> crates/gui-app/src/terminal_session_drain_tests.rs:602:25
+    |
+602 |     let native = render.begin_frame(1, 1, 1, true);
+    |                         ^^^^^^^^^^^ private method
+    |
+   ::: crates/gui-render/src/render/render_session.rs:58:5
+    |
+ 58 |     fn begin_frame(&mut self, host: u64, device: u64, configuration: u64, native: bool) -> Receipt {
+    |     ---------------------------------------------------------------------------------------------- private method defined here
+
+error[E0599]: no method named `complete_frame` found for struct `datum_gui_render::RenderSession` in the current scope
+   --> crates/gui-app/src/terminal_session_drain_tests.rs:607:20
+    |
+607 |     assert!(render.complete_frame(native, 1, 1, 1, true));
+    |                    ^^^^^^^^^^^^^^ method not found in `datum_gui_render::RenderSession`
+
+Some errors have detailed explanations: E0599, E0624.
+For more information about an error, try `rustc --explain E0599`.
+error: could not compile `datum-gui-app` (bin "datum-gui" test) due to 7 previous errors
