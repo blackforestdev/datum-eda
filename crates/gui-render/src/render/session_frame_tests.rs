@@ -15,7 +15,14 @@ fn prepare(session: &mut RenderSession, menu: bool) -> *const crate::HitRegion {
     )
     .unwrap();
     let hits = scene.hit_regions.as_ptr();
-    session.install_prepared(scene);
+    session.board = Some(retained);
+    session.install_prepared(
+        scene,
+        Preparation {
+            extent: [1280, 800],
+            profile: PreparedProfile::Workspace,
+        },
+    );
     hits
 }
 fn plan(session: &mut RenderSession, native: bool) -> FramePlan {
@@ -116,4 +123,32 @@ fn failure_capture_and_old_presentation_preserve_terminal_damage_until_matching_
     let current = plan(&mut session, true);
     assert!(session.complete_submitted(SubmittedFrame(current), 1, 2, 3, true));
     assert!(session.restore_terminal_damage().is_empty());
+}
+
+#[test]
+fn missing_world_source_refuses_without_consuming_pending_projection() {
+    let mut session = RenderSession::default();
+    let hits = prepare(&mut session, false);
+    let board = session.board.take().unwrap();
+    assert!(session.prepare_frame(1, 2, 3, true, 1280, 800).is_err());
+    assert_eq!(session.prepared().unwrap().hit_regions.as_ptr(), hits);
+    assert!(session.has_pending_frame());
+    assert!(session.take_published_frame().is_none());
+    session.board = Some(board);
+    let attempt = plan(&mut session, true);
+    assert!(session.complete_submitted(SubmittedFrame(attempt), 1, 2, 3, true));
+}
+
+#[test]
+fn equal_area_extent_change_and_missing_schematic_fail_closed() {
+    let mut session = RenderSession::default();
+    prepare(&mut session, false);
+    assert!(session.prepare_frame(1, 2, 3, true, 800, 1280).is_err());
+    assert!(session.prepared().is_some());
+    let scene = session.prepared.as_mut().unwrap();
+    assert!(!scene.surface_passes.is_empty());
+    scene.surface_passes[0].surface = crate::SceneSurface::Schematic;
+    assert!(session.prepare_frame(1, 2, 3, true, 1280, 800).is_err());
+    assert!(session.prepared().is_some());
+    assert!(session.has_pending_frame());
 }

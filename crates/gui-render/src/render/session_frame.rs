@@ -27,15 +27,38 @@ impl RenderSession {
         width: u32,
         height: u32,
     ) -> anyhow::Result<FramePlan> {
+        let preparation = self.preparation.ok_or_else(|| {
+            anyhow::anyhow!("shared preparation profile required before frame planning")
+        })?;
+        anyhow::ensure!(
+            preparation.extent == [width, height],
+            "frame extent differs from prepared projection"
+        );
         let scene = self
             .prepared
-            .take()
-            .ok_or_else(|| anyhow::anyhow!("shared preparation required before frame planning"))?;
-        let board = self
-            .board
             .as_ref()
-            .unwrap_or_else(|| self.empty.get_or_init(RetainedScene::empty))
-            .clone();
+            .ok_or_else(|| anyhow::anyhow!("shared preparation required before frame planning"))?;
+        let board = match preparation.profile {
+            PreparedProfile::Workspace => {
+                anyhow::ensure!(
+                    !scene
+                        .surface_passes
+                        .iter()
+                        .any(|pass| pass.surface == crate::SceneSurface::Schematic)
+                        || self.schematic.is_some(),
+                    "prepared schematic pane requires retained schematic content"
+                );
+                self.board
+                    .as_ref()
+                    .ok_or_else(|| {
+                        anyhow::anyhow!("workspace frame requires retained board content")
+                    })?
+                    .clone()
+            }
+            PreparedProfile::Dialog => self.empty.get_or_init(RetainedScene::empty).clone(),
+        };
+        // Validate before moving the pending projection: refusal keeps retryable input.
+        let scene = self.prepared.take().expect("validated preparation");
         Ok(FramePlan {
             receipt: self.begin_frame(host, device, configuration, native),
             scene,

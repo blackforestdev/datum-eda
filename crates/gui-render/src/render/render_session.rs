@@ -9,6 +9,10 @@ mod session_grid;
 #[path = "session_preparation.rs"]
 mod session_preparation;
 pub use session_preparation::WorkspaceView;
+#[path = "session_dialog.rs"]
+mod session_dialog;
+pub use session_dialog::{DialogInput, DialogView};
+use session_dialog::{Preparation, PreparedProfile};
 #[path = "session_frame.rs"]
 mod session_frame;
 pub use session_frame::{FramePlan, SubmittedFrame};
@@ -26,6 +30,7 @@ pub struct RenderSession {
     revisions: Revisions,
     prepared: Option<crate::PreparedScene>,
     prepared_revision: u64,
+    preparation: Option<Preparation>,
     prepared_hits_pending: bool,
     publication: Option<(Vec<crate::HitRegion>, Option<crate::ConsoleOverlayLayout>)>,
     terminal_damage: PendingTerminalDamage,
@@ -210,9 +215,9 @@ impl RenderSession {
         self.prepared.as_ref()
     }
 
-    /// Transitional preparation adapter. Scene construction will join typed
-    /// input submission; this owner already controls storage and publication.
-    pub fn install_prepared(&mut self, prepared: crate::PreparedScene) {
+    // Only shared preparation owners install derived scene/profile pairs.
+    fn install_prepared(&mut self, prepared: crate::PreparedScene, preparation: Preparation) {
+        self.preparation = Some(preparation);
         self.prepared_revision = self.revisions.update(Change::Composition);
         self.prepared = Some(prepared);
         self.prepared_hits_pending = true;

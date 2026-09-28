@@ -1,0 +1,198 @@
+{
+  "status": "Ordered unit1 continuation: typed dialog input and explicit preparation profiles. GPU repair remains open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "4d0311a277f3c4a897009f390feb0beea5e87095",
+  "authority": "PM049; approved proposal-r2.md c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "change": [
+    "Only shared owners install prepared scene/profile pairs. Native Global/Project/New submit typed dialog state and scroll intent; shared renderer assigns consumer identity and owns construction.",
+    "Frame planning rejects extent mismatch, missing board and missing admitted schematic before consuming pending projection. Empty world source is private dialog-only authority.",
+    "Unused raw workspace preparation removed; pressure/refusal control uses actual shared workspace/dialog entrypoints. Dim/hover predicates join scene_visibility; include ceiling6006->5991."
+  ],
+  "verification_rationale": "Fail-closed source/extent controls prove preservation on refusal; actual native dialog scale/extent/presentation and shared measurement pressure/retry prove adapter adoption. No performance campaign.",
+  "verification": {
+    "shared_session_cpu_tests": 42,
+    "affected_visual_all_target_clippy": "pass",
+    "native_dialog_scale_extent_presentation": 1,
+    "shared_gpu_preparation_pressure_retry": 1
+  },
+  "failures_preserved": [
+    "Initial app compile lacked root reexports for new typed inputs; corrected and covered by affected Clippy and actual native build.",
+    "Source-health initially detected one export line above frozen include ceiling; actual dim/hover ownership extraction reduced6006->5991, no ceiling increase."
+  ],
+  "review": {
+    "reviewer": "/root/gpu_r1_independent_review",
+    "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+    "scope": "Read-only typed dialog/preparation-profile increment after 4d0311a2; no builds/tests/native runs or repository edits. CPU issue excluded.",
+    "disposition": "No concrete correctness/lifetime/adoption blocker found for this bounded increment. Advisory only, not ratification or full architecture acceptance.",
+    "findings": [],
+    "observations": [
+      "Only private shared preparation owners install scene/profile pairs. Dialog enum dispatch owns consumer attribution and admits empty board only for the dialog profile. Native adapter preserves prior focus/reveal and scroll update ordering.",
+      "Frame planning validates exact extent, required board and schematic source for admitted schematic passes before taking PreparedScene. Refusal therefore preserves pending projection and damage rather than dropping its allocation.",
+      "Preparation metadata survives temporary snapshot movement. Restoration requires matching active receipt and unchanged revision; newer preparation or retirement prevents stale scene restoration. Retired/preparation-invalidated paths retain metadata but prepared=None makes it inert.",
+      "Dialog uses existing overlay-only scene construction; optional leftover schematic handle cannot add a world pass to that profile in current renderer.",
+      "Pressure test now exercises actual shared preparation entrypoints. Test-only clone of prepared projection is not a production geometry-copy regression.",
+      "Public legacy constructors/raw renderer APIs still exist for test/reference use but cannot install a RenderSession projection because installation/profile construction is private. Complete removal or fencing of raw rendering bypasses remains part of broader adoption audit."
+    ],
+    "limitations": [
+      "Parent-reported CPU42 pass and ongoing Clippy are not reviewer-run evidence.",
+      "Full typed/versioned workspace dependency contract, target compatibility beyond exact extent, and GPU prefix strategy remain pending.",
+      "Source-health extraction/ceiling ratchet is parent-owned governance work; this review does not authorize authority refresh."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/session_dialog.rs",
+        "sha256": "be18126676b483864c959c9c0a6b678856b6bba8335e7263d8f760dcf7b9040b"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_frame.rs",
+        "sha256": "2d72ef39d0b5af44a9fb0d900e0c963d62bd26b34a673a0c32b2fa1054d0df6e"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_preparation.rs",
+        "sha256": "6093178cdea4fa55b1e7a9cb7d6c7acdf75dc02b731d7918f382972441859cb9"
+      },
+      {
+        "path": "crates/gui-render/src/render/render_session.rs",
+        "sha256": "d9d1e4eeaaf2b59f8e87dc5b480e5ce7b5a719151052704938fca7a436bd347c"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_frame_tests.rs",
+        "sha256": "dcc0c2ef9032aae58f829539a1ad97bb52511745ca68ba3816a3378f3430a819"
+      },
+      {
+        "path": "crates/gui-render/src/render/prepared_session_tests.rs",
+        "sha256": "7c4e4c83304c2d1b3f957b05cb22d21573406692a640b7ef809bf209c3f18e03"
+      },
+      {
+        "path": "crates/gui-render/src/render/measurement_owner.rs",
+        "sha256": "40c38296d876ee9da9f6e53ed79f16b4f93fa3269d6b3a8445e7577f1e1610c5"
+      },
+      {
+        "path": "crates/gui-app/src/global_preferences_window.rs",
+        "sha256": "6fa5df85f6c209c60cc0ac85ab1825269183995cc87e80156ea5685265fef062"
+      },
+      {
+        "path": "crates/gui-render/src/render/frame_preparation.rs",
+        "sha256": "6158646012906b1d47c75e4a2cf5d44ddc6db35094634ec1a01eb571db9d809d"
+      },
+      {
+        "path": "crates/gui-render/src/render/scene_visibility.rs",
+        "sha256": "f0ff0676db3b66bb7fddcc7e4ac2d5dbe80cca480c3f047b49499fd7a8153d79"
+      }
+    ]
+  },
+  "qualification": "Bounded profile/source-refusal correctness only. No full unit1 completion, native8x pixel, GPU work reduction or performance/duty acceptance. CPU deferred; unrelated historical menu/bootstrap drift failures unchanged.",
+  "remaining": [
+    "Full typed/versioned workspace dependency contract.",
+    "Retire editor raw rendering APIs and legacy world encoding branches.",
+    "Exact8x tracked prefix-copy/suffix and correctness/resource/performance qualification.",
+    "Complete DRM lifetime observer method and separately approved execution before duty acceptance."
+  ],
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "sha256": "6fa5df85f6c209c60cc0ac85ab1825269183995cc87e80156ea5685265fef062"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_preparation.rs",
+      "sha256": "6158646012906b1d47c75e4a2cf5d44ddc6db35094634ec1a01eb571db9d809d"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu.rs",
+      "sha256": "d4528afed438c7a01ae044e27db2ff8f8e99c1beef6242319a628322bdba7317"
+    },
+    {
+      "path": "crates/gui-render/src/render/measurement_owner.rs",
+      "sha256": "40c38296d876ee9da9f6e53ed79f16b4f93fa3269d6b3a8445e7577f1e1610c5"
+    },
+    {
+      "path": "crates/gui-render/src/render/prepared_session_tests.rs",
+      "sha256": "7c4e4c83304c2d1b3f957b05cb22d21573406692a640b7ef809bf209c3f18e03"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "d9d1e4eeaaf2b59f8e87dc5b480e5ce7b5a719151052704938fca7a436bd347c"
+    },
+    {
+      "path": "crates/gui-render/src/render/renderer_state.rs",
+      "sha256": "83b0a3feebc1f87cdfac89c04ff01ea59fc01c089431d4a84ab1c9450114a79c"
+    },
+    {
+      "path": "crates/gui-render/src/render/scene.rs",
+      "sha256": "5eff670e5bcfd40a26b342622ec3c8929da3be6818c31b79272beecc95134ed0"
+    },
+    {
+      "path": "crates/gui-render/src/render/scene_visibility.rs",
+      "sha256": "f0ff0676db3b66bb7fddcc7e4ac2d5dbe80cca480c3f047b49499fd7a8153d79"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_dialog.rs",
+      "sha256": "be18126676b483864c959c9c0a6b678856b6bba8335e7263d8f760dcf7b9040b"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_frame.rs",
+      "sha256": "2d72ef39d0b5af44a9fb0d900e0c963d62bd26b34a673a0c32b2fa1054d0df6e"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_frame_tests.rs",
+      "sha256": "dcc0c2ef9032aae58f829539a1ad97bb52511745ca68ba3816a3378f3430a819"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_preparation.rs",
+      "sha256": "6093178cdea4fa55b1e7a9cb7d6c7acdf75dc02b731d7918f382972441859cb9"
+    },
+    {
+      "path": "docs/SOURCE_HEALTH_POLICY.md",
+      "sha256": "20bb6f6472da4621c0caa02dcdb30f750f5d7216ae726d2a36a63e254655afe5"
+    },
+    {
+      "path": "specs/SPEC_PARITY.md",
+      "sha256": "1a9bc7906060058574a37346803b2e9ca599a62ec0e329a75deeadc004a4b756"
+    },
+    {
+      "path": "specs/source_module_size_manifest.json",
+      "sha256": "b4aa8bafad280215b33f19fda96424f24a64c0f6056e67653fa6a3422a27aa64"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-preparation-profile/check.log",
+      "sha256": "e99a773266833b1f8a777f2d6a5deb44542922148bf7f9cba883f6183007a017",
+      "original_sha256": "e99a773266833b1f8a777f2d6a5deb44542922148bf7f9cba883f6183007a017"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-preparation-profile/tests.log",
+      "sha256": "3ac50e932718fab2820ba788e0538f977af07a6fe1e2158880ad805856cad4b2",
+      "original_sha256": "060f686e47e848fa519830e42eb519f332add572edeeb124effb90a066c214c0"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-preparation-profile/clippy.log",
+      "sha256": "3f29bee6f152d79b29c37a17fa8bb362a81aca31a6691d5cc8dff9e855d3ec42",
+      "original_sha256": "3f29bee6f152d79b29c37a17fa8bb362a81aca31a6691d5cc8dff9e855d3ec42"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-preparation-profile/native.log",
+      "sha256": "da7f1260260058dc6ef0a82f9d5c8735295e41d49889f1a2e6d73a618bc3edb2",
+      "original_sha256": "b05715c2ed7f998d45dcc2077828ec9596f90f259e63747dc0607a1604886754"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-preparation-profile/pressure.log",
+      "sha256": "77b7088ec74d30642db386cd0ec94bd5eeddf0edf633a2bdd4c3c61f36c0818a",
+      "original_sha256": "3b38503ebc628c498fe6f1bf10e46fc52b185f1f309b638917774199782229fa"
+    }
+  ],
+  "native_commands": [
+    "#!/usr/bin/env bash",
+    "set -euo pipefail",
+    "export DATUM_NATIVE_TEST_BOARD=/tmp/gpu-prepared-native/board.kicad_pcb",
+    "export EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "export XDG_CONFIG_HOME=/tmp/gpu-profile-native/config",
+    "export XDG_CACHE_HOME=/tmp/gpu-profile-native/cache",
+    "export XDG_DATA_HOME=/tmp/gpu-profile-native/data",
+    "export XDG_STATE_HOME=/tmp/gpu-profile-native/state",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui --features visual global_preferences_window::native_dialog_hit_tests::native_preferences_hits_reject_old_scale_and_extent_until_presented -- --ignored --exact --test-threads=1 > /tmp/gpu-profile-native.log 2>&1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib default_native_preparation_adapters_refuse_host_pressure_and_retry -- --ignored --test-threads=1 > /tmp/gpu-profile-pressure.log 2>&1"
+  ]
+}

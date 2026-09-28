@@ -556,37 +556,3 @@ impl PreparedScene {
         })
     }
 }
-
-impl Renderer {
-    #[allow(clippy::too_many_arguments)]
-    pub fn prepare_workspace_with_terminal_renderer(
-        &mut self,
-        state: &ReviewWorkspaceState,
-        width: u32,
-        height: u32,
-        scale_factor: f32,
-        camera: CameraState,
-        retained_scene: &RetainedScene,
-        terminal_panes: &[crate::TerminalPaneRenderState],
-        terminal_cache: Option<&mut crate::TerminalRenderCache>,
-        native_dialog: bool,
-    ) -> anyhow::Result<PreparedScene> {
-        let _host = self.resource_host.enter();
-        crate::text_metrics::measurement_owner::with_owner(&mut self.measurement_fonts, || {
-            Ok({
-                PreparedScene::from_workspace_with_controls(
-                    state,
-                    width,
-                    height,
-                    scale_factor,
-                    camera,
-                    retained_scene,
-                    terminal_panes,
-                    terminal_cache,
-                    native_dialog,
-                    &mut self.control_meshes,
-                )?
-            })
-        })
-    }
-}

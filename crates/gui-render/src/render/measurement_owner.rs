@@ -109,44 +109,63 @@ mod tests {
             state.ui.global_preferences.open = consumer == 1;
             state.ui.project_preferences.open = consumer == 2;
             state.ui.new_project.open = consumer == 3;
-            let retained = crate::RetainedScene::empty();
+            assert!(
+                renderer
+                    .render_session_mut()
+                    .ensure_board(&state, 960, 720, 1.0)
+            );
             let camera = crate::CameraState::fit_to_bounds(&state.scene.bounds);
             let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
             super::super::MEASUREMENTS.with(|cache| *cache.borrow_mut() = Default::default());
             let host = renderer.atlas.staging_budget.clone();
             let pressure = host.reserve(host.available()).unwrap();
-            let mut prepare = |renderer: &mut crate::Renderer| match consumer {
-                0 => renderer.prepare_workspace_with_terminal_renderer(
-                    &state,
-                    960,
-                    720,
-                    1.0,
-                    camera,
-                    &retained,
-                    &[],
-                    None,
-                    false,
-                ),
-                1 | 2 => renderer.prepare_native_preferences_scrolled(
-                    if consumer == 1 {
-                        &state.ui.global_preferences
-                    } else {
-                        &state.ui.project_preferences
-                    },
-                    960,
-                    720,
-                    1.0,
-                    &mut scroll,
-                    Some(0),
-                ),
-                _ => renderer.prepare_native_new_project_scrolled(
-                    &state.ui.new_project,
-                    960,
-                    720,
-                    1.0,
-                    &mut scroll,
-                    true,
-                ),
+            let mut prepare = |renderer: &mut crate::Renderer| {
+                let view = crate::DialogView {
+                    width: 960,
+                    height: 720,
+                    scale: 1.0,
+                };
+                match consumer {
+                    0 => renderer.prepare_session_workspace(
+                        &state,
+                        crate::WorkspaceView {
+                            width: 960,
+                            height: 720,
+                            scale: 1.0,
+                            camera,
+                            schematic_camera: None,
+                            include_preferences_overlay: false,
+                            single_terminal_snapshot: false,
+                            pane_cameras: &[],
+                        },
+                        &[],
+                    ),
+                    1 => renderer.prepare_session_dialog(
+                        crate::DialogInput::GlobalPreferences {
+                            dialog: &state.ui.global_preferences,
+                            reveal_row: Some(0),
+                        },
+                        view,
+                        &mut scroll,
+                    ),
+                    2 => renderer.prepare_session_dialog(
+                        crate::DialogInput::ProjectPreferences {
+                            dialog: &state.ui.project_preferences,
+                            reveal_row: Some(0),
+                        },
+                        view,
+                        &mut scroll,
+                    ),
+                    _ => renderer.prepare_session_dialog(
+                        crate::DialogInput::NewProject {
+                            dialog: &state.ui.new_project,
+                            reveal_focus: true,
+                        },
+                        view,
+                        &mut scroll,
+                    ),
+                }?;
+                Ok::<_, anyhow::Error>(renderer.render_session().prepared().unwrap().clone())
             };
             assert!(prepare(&mut renderer).is_err(), "consumer {consumer}");
             drop(pressure);
