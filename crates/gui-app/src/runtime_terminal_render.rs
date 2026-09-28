@@ -39,6 +39,7 @@ impl Runtime {
         let preparation = self.renderer.prepare_session_workspace(
             self.session.workspace(),
             datum_gui_render::WorkspaceView {
+                source_revision: Some(self.render_sources.revision()),
                 width: self.config.width,
                 height: self.config.height,
                 scale: self.scale_factor,

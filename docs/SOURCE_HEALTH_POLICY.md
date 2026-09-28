@@ -280,3 +280,9 @@ PM049 narrow pointer submission moves retained resolve observation into its
 5,991 to 5,975 and its exact ceiling ratchets down. Shared pointer generation
 and effective board-hover invalidation replace unrestricted full-state refresh;
 existing painter order is preserved. Full GPU qualification remains pending.
+
+PM049 typed source input moves selection/filter retained-validity and history
+policy from Main into the shared RenderSession. Main production falls from
+1,155 to 1,128 lines and its exact ceiling ratchets down. Editors carry source
+generations; shared validation owns admitted keys, source replacement and
+reference-projection dependencies. Normal limits and remaining debt are unchanged.

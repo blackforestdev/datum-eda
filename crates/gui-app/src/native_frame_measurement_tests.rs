@@ -94,20 +94,11 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
         },
     )
     .unwrap();
-    assert!(
-        renderer
-            .render_session_mut()
-            .ensure_board(&board_state, 960, 720, 1.0)
-    );
-    assert!(
-        renderer
-            .render_session_mut()
-            .ensure_schematic(&board_state, 960, 720, 1.0)
-    );
     renderer
         .prepare_session_workspace(
             &board_state,
             datum_gui_render::WorkspaceView {
+                source_revision: None,
                 width: 960,
                 height: 720,
                 scale: 1.0,

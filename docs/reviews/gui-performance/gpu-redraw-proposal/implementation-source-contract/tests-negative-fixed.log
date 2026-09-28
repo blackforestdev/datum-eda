@@ -1,0 +1,15 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.5 GiB target_free=169.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.5 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.59s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 5 tests
+test renderer_state::render_session::session_sources::tests::admitted_active_key_and_overlap_refusal_preserve_damage_and_allow_retry ... ok
+test renderer_state::render_session::session_sources::tests::equal_identity_length_replacement_and_unknown_producer_never_reuse_old_payload ... ok
+test renderer_state::render_session::session_sources::tests::schematic_pane_admission_and_same_revision_replacement_are_owned_dependencies ... ok
+test renderer_state::render_session::session_sources::tests::shared_selection_history_and_filter_validation_ignore_weak_editor_hints ... ok
+test renderer_state::render_session::session_sources::tests::view_changes_preserve_independent_geometry_and_rebuild_dependent_geometry ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 507 filtered out; finished in 0.44s
+

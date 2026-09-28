@@ -89,6 +89,7 @@ impl Runtime {
             renderer,
             measurements,
             session: LiveDesignSession::new(state),
+            render_sources: Default::default(),
             camera,
             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
             last_cursor_pos: None,

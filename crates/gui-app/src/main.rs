@@ -64,7 +64,6 @@ mod project_preferences_window;
 mod resize_smoke;
 mod retained_scene_lifecycle;
 mod runtime_capture;
-use datum_gui_render::RetainedSceneCacheKey;
 use runtime_capture::run_offscreen_visual_test;
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
@@ -124,7 +123,6 @@ use board_text_terminal_commands::{
     board_text_quick_edit_terminal_command,
 };
 use datum_gui_protocol::ApplicationFocus;
-use datum_gui_render::retained_selection_cache_key;
 pub(crate) use gui_runtime_support::*;
 use pan_gesture::PanGestureState;
 use pane_cameras::PaneCameras;
@@ -463,39 +461,15 @@ impl Runtime {
         self.invalidate_frame();
     }
 
-    fn apply_session_result(
-        &mut self,
-        result: datum_gui_protocol::SessionCommandResult,
-        previous_retained_key: Option<RetainedSceneCacheKey>,
-    ) -> bool {
+    fn apply_session_result(&mut self, result: datum_gui_protocol::SessionCommandResult) -> bool {
         if !result.handled {
             return false;
         }
         for event in result.events {
             match event {
-                SessionEvent::SceneChanged => {
-                    if let Some(key) = previous_retained_key.clone() {
-                        self.invalidate_scene_for_session_change(key);
-                    } else {
-                        self.invalidate_scene();
-                    }
-                }
-                // Text and outline selection feedback is drawn as a lightweight
-                // screen overlay. Do not rebuild retained board geometry when
-                // only that overlay target changes.
-                SessionEvent::SelectionChanged(selection) => {
-                    let next_selection_key =
-                        retained_selection_cache_key(self.workspace(), &selection);
-                    if previous_retained_key
-                        .as_ref()
-                        .is_some_and(|key| key.selection_matches(&next_selection_key))
-                    {
-                        self.invalidate_frame();
-                    } else if let Some(key) = previous_retained_key.clone() {
-                        self.invalidate_scene_for_session_change(key);
-                    } else {
-                        self.invalidate_scene();
-                    }
+                // Shared source dependency validation owns retained reuse/history.
+                SessionEvent::SceneChanged | SessionEvent::SelectionChanged(_) => {
+                    self.invalidate_frame()
                 }
                 SessionEvent::FrameChanged => self.invalidate_frame(),
                 SessionEvent::ToolChanged(_) => self.invalidate_frame(),
@@ -505,9 +479,8 @@ impl Runtime {
     }
 
     fn dispatch_session_command(&mut self, command: SessionCommand) -> bool {
-        let previous_retained_key = self.retained_scene_cache_key();
         let result = self.session.apply(command);
-        self.apply_session_result(result, Some(previous_retained_key))
+        self.apply_session_result(result)
     }
 
     fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {

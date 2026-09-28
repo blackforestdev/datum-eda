@@ -1,4 +1,5 @@
 //! Pointer-only input cannot carry source, camera, pane or chrome replacement.
+pub use super::session_sources::{SourceEpoch, SourceRevision};
 use super::*;
 use datum_gui_protocol::{CrosshairStyle, HoverTarget, PaneContent, ScreenPointPx};
 

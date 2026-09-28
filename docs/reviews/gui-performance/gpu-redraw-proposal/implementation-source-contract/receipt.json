@@ -1,0 +1,282 @@
+{
+  "status": "Shared source-generation/dependency validation adopted. GPU repair remains open; normalized GPU graph and exact8x prefix strategy/qualification still pending.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "374db989fb052ae4a8b170544fcaee55337df1c1",
+  "authority": "PM049; approved proposal-r2.md c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "changes": [
+    "Producer SourceEpoch covers immutable board/schematic/review/check/proposal payload replacement independently of IDs, lengths or identity-derived source revisions. Native epoch survives device recovery; production refresh advances it. Unversioned offscreen input always replaces retained sources.",
+    "RenderSession owns selection/filter/hover/review/schematic/reference-projection dependency checks and charged retained-history lookup. Remove app previous/next key and selection validity decisions. Preserve size-independent active geometry and six-entry/64MiB history/document caps.",
+    "Shared preparation ensures both sources after leasing terminal damage. Raw ensure_board/ensure_schematic are crate-private. Failed admission invalidates speculative preparation, preserves terminal retry and sticky schematic failure, and cannot bless old hit indices.",
+    "Admit conservative key allocation-capacity bounds before owned string construction; verify actual capacity within reservation. Active and replacement overlap remain charged by existing document metadata observer; history uses existing exact accounting.",
+    "Main retained-validity policy moves to shared owner; exact source-health ceiling1155->1128. Terminal renderer guard follows new shared helper signature with unchanged negative controls."
+  ],
+  "verification_rationale": "Replacement/weak-hint/source-swap negatives validate shared ownership; retained history/resize/metadata and terminal failure controls preserve existing contracts. Existing exact4x capture comparator plus native Main/all-dialog/capture control validate affected integration without claiming8x or performance qualification.",
+  "verification": {
+    "shared_session_CPU_tests": 52,
+    "offscreen_exact4x_GPU_control": 1,
+    "native_Main_dialog_capture_control": 1,
+    "terminal_boundary_mutation_controls": 7,
+    "affected_all_target_visual_clippy": "pass",
+    "source_health_parity_frontier_traceability_governance_progress_dependency": "pass"
+  },
+  "preserved_failures": [
+    "New resize test initially assumed fixture was size-dependent, but current fixture is size-independent. Reused existing mechanical projection-dependency negative; targeted five controls and final52 pass.",
+    "Terminal boundary check initially recognized the prior helper signature; reconciled exact new source/view signature and reran all7 mutation controls."
+  ],
+  "review": {
+    "reviewer": "/root/gpu_r1_independent_review",
+    "scope": "Read-only source epoch/dependency migration review; no edits/builds/tests/native runs; CPU issue excluded.",
+    "disposition": "No concrete source correctness, lifetime, accounting-observer or retained warm behavior blocker established in inspected paths.",
+    "findings": [],
+    "observations": [
+      "SourceRevision is an opaque producer owner/generation; None or changed generation clears histories/content/preparation, preventing same-ID/same-length payload reuse when producers follow the explicit epoch contract.",
+      "Inspected native production/workspace payload refresh returns Changed and calls invalidate_scene, which advances SourceEpoch. Inspected SceneChanged commands alter filters rather than payloads; shared keys now own those decisions.",
+      "Retained source key includes filters, effective selection and hover, review target, schematic identity, and reference projection. History lookup now occurs inside session rather than editor selection branches.",
+      "New retained hit arrays invalidate preparation metadata, preserving BoardHover index ownership. Failed source validation evicts prepared projection and keeps conservative pending damage. Full preparation leases terminal damage before validation.",
+      "Warm pointer adapter with valid preparation avoids source-key construction; unchanged camera/full preparation preserves geometry where existing can_reuse_for_surface_resize allows. Full input still allocates a candidate key before comparison and reserves overlap; no zero-allocation full-input claim.",
+      "Document key admission reserves capacity before key strings are allocated, includes hover/review/schematic strings and layer storage, and checks actual capacity. Existing immutable world sharing remains intact.",
+      "Accounting question resolved: native_resource_measurements.rs:213-232 separately emits document_cpu_usage, including manual DocumentCpuCharge metadata, alongside scoped_heap. No new observer gap established. Reservation is conservative allocation-capacity accounting, not allocator-measured actual bytes; existing history mechanism retained."
+    ],
+    "open_questions": [],
+    "limitations": [
+      "Source epochs require producer compliance; arbitrary callers retaining a revision across changed immutable payload are outside contract. No broad engine schema change necessary.",
+      "Review covered concrete inspected native payload-refresh paths, not a claim that every future producer mutation is statically fenced.",
+      "CPU tests/Clippy are parent-run evidence, not executed by this reviewer. GPU prefix implementation and correctness/performance qualification remain pending."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/session_sources.rs",
+        "sha256": "9a4cdedb0411c684286f827dad2197f44b57944813e0b68f7de46955e2ecb457"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_sources_tests.rs",
+        "sha256": "a351cbedb924ba91d0094919a0cf14ba8c4a91dd520ee6935e812be92d7412d5"
+      },
+      {
+        "path": "crates/gui-render/src/render/retained_scene_history.rs",
+        "sha256": "b05631534481dc55f656d4ff1ac9d21aed01927e5635276cb6bc3121fe12dba9"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_preparation.rs",
+        "sha256": "592e8aca0370ebc4af3764570cf91f18a767e9f445bcd78780821b5e2cbca42f"
+      },
+      {
+        "path": "crates/gui-render/src/render/render_session.rs",
+        "sha256": "68c1d6f1c6743f9bf7edf608f1a61d8e92dc7987cc1ea1a4e880c1b6f40e7c1b"
+      },
+      {
+        "path": "crates/gui-app/src/retained_scene_lifecycle.rs",
+        "sha256": "7a253506b68a9da5b924729e734731ca30d28310aac0d1da61ed21204a0ceb44"
+      },
+      {
+        "path": "crates/gui-app/src/interaction_refresh.rs",
+        "sha256": "1d111fd05889abb308fcf06a33a448fe958c8dd7960b341da02ec511eebcc178"
+      },
+      {
+        "path": "crates/gui-app/src/main.rs",
+        "sha256": "3a3bde5fc1c9c3caed284106426977d8edf34d5bec9cf3733726f4054b893eac"
+      },
+      {
+        "path": "crates/gui-app/src/production_status_refresh.rs",
+        "sha256": "d91bafc7d3ba11263cf7d02409149011e2b2424a16334d68d3fba29b4ccc98ad"
+      },
+      {
+        "path": "crates/gui-app/src/native_resource_measurements.rs",
+        "sha256": "7b5fd17d095847e3f8c7095d1fecf5e7e8c5a21631c38146acb215c77471e884"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_capture.rs",
+        "sha256": "53e5a95db649de67fc5e16f7122004ecbbcf1ea2b889ddfbd1f9360bfba30a37"
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "No concrete source correctness, lifetime, accounting-observer or retained warm behavior blocker established in inspected paths.",
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/session_sources.rs",
+            "sha256": "0ec6841c839154e5567c3ff5099ac0ac79888966a1993bdacc49be9bba929b05"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_sources_tests.rs",
+            "sha256": "9499213193d03a38992b1e0f9ecd8dc07b4c5f676f6d04e4d50f913b41781caf"
+          },
+          {
+            "path": "crates/gui-render/src/render/retained_scene_history.rs",
+            "sha256": "b05631534481dc55f656d4ff1ac9d21aed01927e5635276cb6bc3121fe12dba9"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_preparation.rs",
+            "sha256": "592e8aca0370ebc4af3764570cf91f18a767e9f445bcd78780821b5e2cbca42f"
+          },
+          {
+            "path": "crates/gui-render/src/render/render_session.rs",
+            "sha256": "68c1d6f1c6743f9bf7edf608f1a61d8e92dc7987cc1ea1a4e880c1b6f40e7c1b"
+          },
+          {
+            "path": "crates/gui-app/src/retained_scene_lifecycle.rs",
+            "sha256": "7a253506b68a9da5b924729e734731ca30d28310aac0d1da61ed21204a0ceb44"
+          },
+          {
+            "path": "crates/gui-app/src/interaction_refresh.rs",
+            "sha256": "5224bf5ab9c7116144b9198f94e7d1679fa5294906677d827a33ba8e9c765608"
+          },
+          {
+            "path": "crates/gui-app/src/main.rs",
+            "sha256": "3a3bde5fc1c9c3caed284106426977d8edf34d5bec9cf3733726f4054b893eac"
+          },
+          {
+            "path": "crates/gui-app/src/production_status_refresh.rs",
+            "sha256": "d91bafc7d3ba11263cf7d02409149011e2b2424a16334d68d3fba29b4ccc98ad"
+          },
+          {
+            "path": "crates/gui-app/src/native_resource_measurements.rs",
+            "sha256": "7b5fd17d095847e3f8c7095d1fecf5e7e8c5a21631c38146acb215c77471e884"
+          }
+        ]
+      }
+    ],
+    "final_followup": "Source-verified final ordering: equal key drops transient candidate and its charge before checking budget, but explicitly ensure_schematic still propagates sticky failure. New admitted active key is installed before fallible schematic construction, so repeat validation does not clear that failure via active=None replacement. Added source control repeats refusal then invokes explicit retry. Capture redundant legacy ensure removed. No new blocker found.",
+    "parent_reported_verification": "Parent reports all 52 shared CPU tests, 7 terminal boundary mutation controls and Clippy passed; not executed or independently log-certified by reviewer."
+  },
+  "visual_observation": "Inspected /tmp/gpu-source-native/capture.png. Existing Console occlusion defect remains visibly unresolved (dat-gpu-console-occlusion-ly6r); no golden update or visual acceptance claim.",
+  "limits": [
+    "Producer compliance with explicit SourceEpoch contract remains necessary; no promise that arbitrary unsubmitted model mutation is detected.",
+    "Current capture comparison is4x compatibility only; exact8x prefix/work/resource/performance and complete DRM duty qualification remain pending.",
+    "No performance experiment runs consumed. CPU event-loop optimization, prototype edits and dependency adoption excluded."
+  ],
+  "pins": [
+    {
+      "path": "crates/gui-app/src/interaction_refresh.rs",
+      "sha256": "1d111fd05889abb308fcf06a33a448fe958c8dd7960b341da02ec511eebcc178"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "sha256": "3a3bde5fc1c9c3caed284106426977d8edf34d5bec9cf3733726f4054b893eac"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_measurement_tests.rs",
+      "sha256": "9113e85e362a67e4f61af60c05465823b46a8e96b230295cf0ceb70c81bfc9b7"
+    },
+    {
+      "path": "crates/gui-app/src/retained_scene_lifecycle.rs",
+      "sha256": "7a253506b68a9da5b924729e734731ca30d28310aac0d1da61ed21204a0ceb44"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_camera_pane.rs",
+      "sha256": "1a52e082baeb065fbb0842ed4ad55a8a08756c05ddd0b0c140e5d4217aa70af5"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_capture.rs",
+      "sha256": "53e5a95db649de67fc5e16f7122004ecbbcf1ea2b889ddfbd1f9360bfba30a37"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_init.rs",
+      "sha256": "83339b471046ee6f5724c3a7b0df3e2e309109e7e5bf3b288ff24cf95956825b"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "sha256": "4182f282acd84d03511dac33a3b2a11a1470da7755ccb88f70fae4e92c7a44a8"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_state.rs",
+      "sha256": "4a5b2d751eafa9745a833cfb490e3b9af9dc5b5190a8ef320535948fb5ac6143"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "sha256": "768ceb499fc9632cba53b0112dcf08b51bc3ae7a11fe80536f35c44651bb21d4"
+    },
+    {
+      "path": "crates/gui-render/src/render/measurement_owner.rs",
+      "sha256": "87b6731584b984b7779455ec1844df143bf1e10da8eb3876048f41f5da7e9e57"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "68c1d6f1c6743f9bf7edf608f1a61d8e92dc7987cc1ea1a4e880c1b6f40e7c1b"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_history.rs",
+      "sha256": "b05631534481dc55f656d4ff1ac9d21aed01927e5635276cb6bc3121fe12dba9"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_hover.rs",
+      "sha256": "ca740ec74233c3488b937079d446fe8c4cd1a3b76794262de426e476fa2c2247"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_pointer.rs",
+      "sha256": "b570e692009e156822f19a385270d933f8ce29a2539064cd24cbe96159b56d2b"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_pointer_tests.rs",
+      "sha256": "f91e945e9ea951a99ba73e540e24562043c9b15608a1c3a9526c8faeee4731f6"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_preparation.rs",
+      "sha256": "592e8aca0370ebc4af3764570cf91f18a767e9f445bcd78780821b5e2cbca42f"
+    },
+    {
+      "path": "crates/gui-render/src/visual_capture.rs",
+      "sha256": "701c1b281eff184bc44607c943f3c904ed0c9e649ba2effa6d2fdf23094a2026"
+    },
+    {
+      "path": "docs/SOURCE_HEALTH_POLICY.md",
+      "sha256": "f07ce2c56bb95b8989faf8c0f423cc47e5b5250969c7b2c02b73125eb8319922"
+    },
+    {
+      "path": "scripts/check_terminal_core_renderer_boundary.py",
+      "sha256": "053d7517587ddae5b0ce6732b8f4dfcb05f25f1f0f981a0802b29a2d208b0498"
+    },
+    {
+      "path": "scripts/test_terminal_core_renderer_boundary.py",
+      "sha256": "39f76dabed76ff765a9c29cb3aba668b5851ebc55c4a984b8236f87e895f4876"
+    },
+    {
+      "path": "specs/SPEC_PARITY.md",
+      "sha256": "9d3343844e437b485f0c06b3182405c2f837a68fd7fd20e2fa928db8cfcd927d"
+    },
+    {
+      "path": "specs/source_module_size_manifest.json",
+      "sha256": "3e2a09089f1386743a7b1abcea5b762d5b19eb0fa015d662fd2482dd652e1096"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_sources.rs",
+      "sha256": "9a4cdedb0411c684286f827dad2197f44b57944813e0b68f7de46955e2ecb457"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_sources_tests.rs",
+      "sha256": "a351cbedb924ba91d0094919a0cf14ba8c4a91dd520ee6935e812be92d7412d5"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/tests-initial.log",
+      "sha256": "86ff882ffd38cafdeb04b94996105edc350d4a73dac56d79fa0e685f694b2c79"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/tests-negative-initial.log",
+      "sha256": "9daaddf056cec197fd5561aa87d863362d97851430d8a0f5a4206607a551ef99"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/tests-negative-fixed.log",
+      "sha256": "62894683dc3ffe50df352c01aa0d7ecb8d54ef3fd37b82a0fd871a6ee3d3b003"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/tests-final.log",
+      "sha256": "074fdf093f0c71cfa7df46ea4ce9bdb884ae489ac8edf2bc0fbc271577c05e9e"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/offscreen.log",
+      "sha256": "8d3a74959ba88753f396cd1f82c51e0f74828e5a97f696e34c182e6614ee6bdf"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/native.log",
+      "sha256": "f24a1dab668408ca4c8140a32c708ebb25b51db89ac732bcea24e9b76f99cbdb"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/clippy.log",
+      "sha256": "915dcf7bd33115f16ee8697689a81c74860a6b6d90e11d4921367069846c1e9a"
+    }
+  ]
+}
