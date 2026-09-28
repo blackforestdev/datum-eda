@@ -135,31 +135,9 @@ impl PreparedScene {
         board: &'a RetainedScene,
         schematic: Option<&'a RetainedScene>,
     ) -> impl Iterator<Item = PreparedGeometryAdmission<'a>> + 'a {
-        let fallback = if self.surface_passes.is_empty() {
-            [
-                self.requires_board_world().then_some((
-                    self.board_pane_id,
-                    SceneSurface::Board,
-                    self.scene_viewport,
-                )),
-                gpu_surface_pass::prepare_schematic_pass(self, schematic).map(
-                    |(viewport, _, _, _)| {
-                        (
-                            self.schematic_pane_id
-                                .unwrap_or(datum_gui_protocol::PaneId(0)),
-                            SceneSurface::Schematic,
-                            viewport,
-                        )
-                    },
-                ),
-            ]
-        } else {
-            [None, None]
-        };
         self.surface_passes
             .iter()
             .map(|pass| (pass.pane_id, pass.surface, pass.scene_viewport))
-            .chain(fallback.into_iter().flatten())
             .map(move |(pane_id, surface, viewport)| {
                 let (retained, commands, source) = match surface {
                     SceneSurface::Board => (

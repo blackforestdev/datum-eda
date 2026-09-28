@@ -1,6 +1,5 @@
 use super::{
-    BoardSurfaceRole, Projection, Quad, RectPx, SCHEMATIC_GRID_MAJOR, SCHEMATIC_GRID_MINOR,
-    board_surface_color,
+    BoardSurfaceRole, Projection, SCHEMATIC_GRID_MAJOR, SCHEMATIC_GRID_MINOR, board_surface_color,
 };
 use datum_gui_viewport::{
     AxisProjection, GridConfig, GridEngine, GridMode, GridTier, ViewportProfile, WeightClass,
@@ -83,26 +82,6 @@ pub fn resolve_surface_grid_lod(
     GridEngine::resolve_lod(&profile.grid, projection.scale, previous_lod)
 }
 
-fn emit_immediate_grid(
-    out: &mut Vec<Quad>,
-    projection: &Projection,
-    profile: &ViewportProfile,
-    previous_lod: GridLodState,
-) -> GridLodState {
-    visit_immediate_grid(projection, profile, previous_lod, |line| {
-        out.push(Quad::from_rect(
-            RectPx {
-                x: line.x,
-                y: line.y,
-                width: line.width,
-                height: line.height,
-            },
-            line.color,
-        ));
-        true
-    })
-}
-
 fn visit_immediate_grid(
     projection: &Projection,
     profile: &ViewportProfile,
@@ -133,30 +112,6 @@ fn visit_immediate_grid(
     lod
 }
 
-pub(crate) fn push_scene_grid_with_lod(
-    out: &mut Vec<Quad>,
-    projection: &Projection,
-    previous_lod: GridLodState,
-) -> GridLodState {
-    emit_immediate_grid(out, projection, &BOARD_PROFILE, previous_lod)
-}
-
-pub(crate) fn push_schematic_grid_with_lod(
-    out: &mut Vec<Quad>,
-    projection: &Projection,
-    previous_lod: GridLodState,
-) -> GridLodState {
-    emit_immediate_grid(out, projection, &SCHEMATIC_PROFILE, previous_lod)
-}
-
-pub(crate) fn push_scene_grid(out: &mut Vec<Quad>, projection: &Projection) {
-    let _ = push_scene_grid_with_lod(out, projection, GridLodState::default());
-}
-
-pub(crate) fn push_schematic_grid(out: &mut Vec<Quad>, projection: &Projection) {
-    let _ = push_schematic_grid_with_lod(out, projection, GridLodState::default());
-}
-
 pub(crate) fn visit_surface_grid(
     pass: &crate::PreparedSurfacePass,
     emit: impl FnMut(datum_gui_viewport::grid::GridLine) -> bool,
@@ -168,4 +123,44 @@ pub(crate) fn visit_surface_grid(
         crate::SceneSurface::Schematic => &*SCHEMATIC_PROFILE,
     };
     visit_immediate_grid(&projection, profile, pass.grid_lod_resolved, emit);
+}
+
+// Uncached emission is retained only as a comparison oracle for the admitted grid owner.
+#[cfg(test)]
+fn emit_immediate_grid(
+    out: &mut Vec<crate::Quad>,
+    projection: &Projection,
+    profile: &ViewportProfile,
+    previous_lod: GridLodState,
+) -> GridLodState {
+    visit_immediate_grid(projection, profile, previous_lod, |line| {
+        out.push(crate::Quad::from_rect(
+            crate::RectPx {
+                x: line.x,
+                y: line.y,
+                width: line.width,
+                height: line.height,
+            },
+            line.color,
+        ));
+        true
+    })
+}
+
+#[cfg(test)]
+pub(crate) fn push_scene_grid_with_lod(
+    out: &mut Vec<crate::Quad>,
+    projection: &Projection,
+    previous_lod: GridLodState,
+) -> GridLodState {
+    emit_immediate_grid(out, projection, &BOARD_PROFILE, previous_lod)
+}
+
+#[cfg(test)]
+pub(crate) fn push_schematic_grid_with_lod(
+    out: &mut Vec<crate::Quad>,
+    projection: &Projection,
+    previous_lod: GridLodState,
+) -> GridLodState {
+    emit_immediate_grid(out, projection, &SCHEMATIC_PROFILE, previous_lod)
 }

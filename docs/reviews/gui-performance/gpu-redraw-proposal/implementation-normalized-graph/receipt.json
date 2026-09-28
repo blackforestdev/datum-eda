@@ -1,0 +1,455 @@
+{
+  "status": "Ordered unit2 normalization implemented; shared GPU prefix strategy and complete qualification remain pending. GPU repair stays open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "f35c49305f05979f22c5cb552bf8d63d6a1cc990",
+  "authority": "PM049; approved proposal-r2.md c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "changes": [
+    "One normalized ordered pane descriptor list drives world upload eligibility, geometry observation and bundle encoding. Remove raw empty-descriptor board/companion world fallbacks. Empty layouts cannot resurrect board commands; missing schematic remains unadmitted, while zero quad count no longer suppresses possible stroke-only schematic geometry.",
+    "Remove both unused fixed legacy camera uniforms from initialization, recovery, consumers and submission holds. Required fixed screen uniform and charged per-pane camera owners remain.",
+    "Remove unused schematic immediate grid CPU/GPU storage and old board immediate underlay/grid construction. Ordered shared grid owner draws every admitted pane; existing panel backgrounds and empty-layout background fallback remain. Internal screen streams7 and consumer-incidence streams13; all14 logical consumers remain.",
+    "Native Main/input projection/capture no longer run duplicate retained ensures before shared full preparation. Shared terminal damage lease precedes fallible source validation. Diagnostic preparation timing now names combined source/prepared work.",
+    "Remove obsolete editor-facing history-key exports; renderer root physical size and include expansion shrink, exact expanded ceiling5975->5973. No cap increase."
+  ],
+  "verification_rationale": "Normalized descriptors must preserve all composition consumers and prevent fallback resurrection. Existing renderer contracts, affected fixed/pane uniform retirement and shared host admission, exact capture comparison, and native Main/dialog/capture control establish this unit before prefix copying.",
+  "verification": {
+    "default_renderer_tests_passed": 414,
+    "default_renderer_tests_ignored": 99,
+    "default_suite_scope": "Includes existing nonignored GPU attachment controls; not a CPU-only or complete visual-qualification suite.",
+    "targeted_GPU_controls": 4,
+    "native_Main_dialog_capture_control": 1,
+    "terminal_boundary_mutation_controls": 7,
+    "affected_all_target_visual_clippy": "pass",
+    "source_health_parity_frontier_dependency": "pass"
+  },
+  "preserved_failures": [
+    "New normalization negative initially used a fixture with no visible commands; changed to existing real board fixture, which also includes schematic. Updated its initial schematic expectation accordingly.",
+    "Two old substrate assertions observed unused underlay vertices. Migrated unchanged substrate/no-decorative-edge requirements to the drawn pane panel stream and asserted composed underlay is absent; final414 pass.",
+    "Host admission negative expected obsolete144-byte fixed uniform baseline. Actual16-byte baseline confirmed removal; reserve45 of remaining60 bytes so required16-byte replacement must refuse. Refusal/retirement and pixel control pass.",
+    "Clippy found now-unused immediate grid emitters. Retained only cfg(test) comparison helpers for shared grid owner; production uses admitted visitor. Final affected Clippy passes."
+  ],
+  "review": {
+    "reviewer": "/root/gpu_r1_independent_review",
+    "scope": "Read-only ordered descriptor unit2 review after f35c4930; no edits/builds/tests/native runs.",
+    "disposition": "No concrete correctness, painter-order or resource-lifetime blocker identified in inspected delta. Advisory source review only.",
+    "findings": [],
+    "observations": [
+      "World admission, upload requirements and draws now use ordered descriptors consistently; empty descriptor lists cannot resurrect legacy board/companion world draws. Explicit empty-layout background underlay remains.",
+      "Main composed painter order remains panel, surface grids, ordered world bundles, schematic interaction and remaining original suffix. Removed branches only previously applied to empty descriptor lists.",
+      "Schematic admission now depends on descriptor presence, not nonempty quad storage; this correctly allows stroke-only schematic payloads.",
+      "Absent schematic source now requires no active GPU buffers for source match; upload preparation clears previous buffers when descriptors disappear. Existing tracked submissions retain retiring resources independently.",
+      "Fixed world camera uniforms and schematic underlay buffer were removed from construction, recovery, upload and submission-reference paths together; descriptor-owned pane uniforms/grid storage remain.",
+      "Resource stream count changes remove one obsolete physical stream, not logical consumers. Removed duplicated schematic CPU grid construction cannot alter composed grid output, which is still produced from descriptors.",
+      "Source export fencing and test updates are consistent with owner-controlled keys."
+    ],
+    "limitations": [
+      "Parent CPU/GPU/capture/lifetime verification results not executed or certified by reviewer.",
+      "Source-health/governance ratchets remain parent-owned checks; this source review does not refresh authority.",
+      "GPU prefix/copy strategy and native exactness/performance qualification remain pending."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/gpu_frame.rs",
+        "sha256": "2d2255c0c31abd3a567dfc7f5c4a498bb95cc9a3e0f4a1656c06a6ee8066c997"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_surface_pass.rs",
+        "sha256": "2d9f4fb66a18c6e717c6282637321aac51e247c6e24e0336f3323d0b9dfb3fc6"
+      },
+      {
+        "path": "crates/gui-render/src/render/cold_world_upload.rs",
+        "sha256": "f697b132af9c5b90c5181ce4a19878d0d04f727332f1c8511deb07b08805427c"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_vertex_upload.rs",
+        "sha256": "2eaf87f7472eb955e35b0bca6500f74888cea4f81576cf4b9f51c1adfc8f764b"
+      },
+      {
+        "path": "crates/gui-render/src/render/geometry_admission.rs",
+        "sha256": "01af71800dc589ddda6b9b711acbf6e69a271bf71de69169a94ba9a2f808f29a"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_init.rs",
+        "sha256": "38227ffdd16deac8dd7110ac2b51b6db272c21518991fccb41bf3da2cb97bfa6"
+      },
+      {
+        "path": "crates/gui-render/src/render/uniform_buffer.rs",
+        "sha256": "89d12abdee4032f155836e8978561b0d11175273d887be10c10dd509d60807a7"
+      },
+      {
+        "path": "crates/gui-render/src/render/resource_consumers.rs",
+        "sha256": "647e8c2caa6247449d80ed29ac39bf012555eb52f6ec67dc574cc82240290d28"
+      },
+      {
+        "path": "crates/gui-render/src/render/frame_preparation.rs",
+        "sha256": "0f183c91904ad40bbaaf4723e0ead233d7896031b60cfca4d8b76bfa504621a3"
+      },
+      {
+        "path": "crates/gui-render/src/render/interaction_overlay.rs",
+        "sha256": "0fb813342a117588a16862a2ac9cfab3fa503614a189c9c117e79c66493dbd0d"
+      },
+      {
+        "path": "crates/gui-render/src/render/prepared_scene_access.rs",
+        "sha256": "807512a69479d8b3f13e0fbe9a8564be1fd26b83c1f4169b38feb0c46e8c1604"
+      },
+      {
+        "path": "crates/gui-render/src/render/scene_projection.rs",
+        "sha256": "dc49e3e080aab4aa08d15e72f2122424f5d595a985cd03d79d30f7587a8219a4"
+      },
+      {
+        "path": "crates/gui-render/src/render/grid.rs",
+        "sha256": "9261f081826d1db0045693bb487605a4a63fa8475272cd5009c43fb4f8dda4e8"
+      },
+      {
+        "path": "crates/gui-render/src/render/pane_chrome.rs",
+        "sha256": "5dccd3e85f828c024cc3545a33e766177202b28605f0d1eab71c47f018b27615"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_terminal_render.rs",
+        "sha256": "b12062e5868fa7f8822dc8e76e201820033228cfd93e81b1e9c64b10de102736"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_present.rs",
+        "sha256": "588ef2117a25553e78471a81ae7d9c2c4d34b5e550eea5d4b9a20aa4dd20afdb"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_capture.rs",
+        "sha256": "765abc67c85c953b330cb7c00c522a555bdf81f16d084d49e5fe2b69279eac1f"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_preparation.rs",
+        "sha256": "592e8aca0370ebc4af3764570cf91f18a767e9f445bcd78780821b5e2cbca42f"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+        "sha256": "74b436957a664bfbdb3bd38d5f7178b0485abae59bb404ec3cd052ced0f9c7fc"
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "No concrete correctness, painter-order or resource-lifetime blocker identified in inspected delta. Advisory source review only.",
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/gpu_frame.rs",
+            "sha256": "2d2255c0c31abd3a567dfc7f5c4a498bb95cc9a3e0f4a1656c06a6ee8066c997"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_surface_pass.rs",
+            "sha256": "738faad233afc1029d8762b34b946b635376c5cecd5457cd24d8d39d12b5ccf2"
+          },
+          {
+            "path": "crates/gui-render/src/render/cold_world_upload.rs",
+            "sha256": "f697b132af9c5b90c5181ce4a19878d0d04f727332f1c8511deb07b08805427c"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_vertex_upload.rs",
+            "sha256": "2eaf87f7472eb955e35b0bca6500f74888cea4f81576cf4b9f51c1adfc8f764b"
+          },
+          {
+            "path": "crates/gui-render/src/render/geometry_admission.rs",
+            "sha256": "01af71800dc589ddda6b9b711acbf6e69a271bf71de69169a94ba9a2f808f29a"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_init.rs",
+            "sha256": "38227ffdd16deac8dd7110ac2b51b6db272c21518991fccb41bf3da2cb97bfa6"
+          },
+          {
+            "path": "crates/gui-render/src/render/uniform_buffer.rs",
+            "sha256": "89d12abdee4032f155836e8978561b0d11175273d887be10c10dd509d60807a7"
+          },
+          {
+            "path": "crates/gui-render/src/render/resource_consumers.rs",
+            "sha256": "647e8c2caa6247449d80ed29ac39bf012555eb52f6ec67dc574cc82240290d28"
+          },
+          {
+            "path": "crates/gui-render/src/render/frame_preparation.rs",
+            "sha256": "3c1d642e2a2e0c9b795371a3da2782955432608c91da74f13e0af41350c5e898"
+          },
+          {
+            "path": "crates/gui-render/src/render/interaction_overlay.rs",
+            "sha256": "0fb813342a117588a16862a2ac9cfab3fa503614a189c9c117e79c66493dbd0d"
+          },
+          {
+            "path": "crates/gui-render/src/render/prepared_scene_access.rs",
+            "sha256": "807512a69479d8b3f13e0fbe9a8564be1fd26b83c1f4169b38feb0c46e8c1604"
+          }
+        ]
+      },
+      {
+        "disposition": "No concrete correctness, painter-order or resource-lifetime blocker identified in inspected delta. Advisory source review only.",
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/gpu_frame.rs",
+            "sha256": "2d2255c0c31abd3a567dfc7f5c4a498bb95cc9a3e0f4a1656c06a6ee8066c997"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_surface_pass.rs",
+            "sha256": "2d9f4fb66a18c6e717c6282637321aac51e247c6e24e0336f3323d0b9dfb3fc6"
+          },
+          {
+            "path": "crates/gui-render/src/render/cold_world_upload.rs",
+            "sha256": "f697b132af9c5b90c5181ce4a19878d0d04f727332f1c8511deb07b08805427c"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_vertex_upload.rs",
+            "sha256": "2eaf87f7472eb955e35b0bca6500f74888cea4f81576cf4b9f51c1adfc8f764b"
+          },
+          {
+            "path": "crates/gui-render/src/render/geometry_admission.rs",
+            "sha256": "01af71800dc589ddda6b9b711acbf6e69a271bf71de69169a94ba9a2f808f29a"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_init.rs",
+            "sha256": "38227ffdd16deac8dd7110ac2b51b6db272c21518991fccb41bf3da2cb97bfa6"
+          },
+          {
+            "path": "crates/gui-render/src/render/uniform_buffer.rs",
+            "sha256": "89d12abdee4032f155836e8978561b0d11175273d887be10c10dd509d60807a7"
+          },
+          {
+            "path": "crates/gui-render/src/render/resource_consumers.rs",
+            "sha256": "647e8c2caa6247449d80ed29ac39bf012555eb52f6ec67dc574cc82240290d28"
+          },
+          {
+            "path": "crates/gui-render/src/render/frame_preparation.rs",
+            "sha256": "0f183c91904ad40bbaaf4723e0ead233d7896031b60cfca4d8b76bfa504621a3"
+          },
+          {
+            "path": "crates/gui-render/src/render/interaction_overlay.rs",
+            "sha256": "0fb813342a117588a16862a2ac9cfab3fa503614a189c9c117e79c66493dbd0d"
+          },
+          {
+            "path": "crates/gui-render/src/render/prepared_scene_access.rs",
+            "sha256": "807512a69479d8b3f13e0fbe9a8564be1fd26b83c1f4169b38feb0c46e8c1604"
+          },
+          {
+            "path": "crates/gui-render/src/render/scene_projection.rs",
+            "sha256": "dc49e3e080aab4aa08d15e72f2122424f5d595a985cd03d79d30f7587a8219a4"
+          },
+          {
+            "path": "crates/gui-render/src/render/grid.rs",
+            "sha256": "9261f081826d1db0045693bb487605a4a63fa8475272cd5009c43fb4f8dda4e8"
+          },
+          {
+            "path": "crates/gui-render/src/render/pane_chrome.rs",
+            "sha256": "5dccd3e85f828c024cc3545a33e766177202b28605f0d1eab71c47f018b27615"
+          }
+        ],
+        "followup": "Source-verified removal of unused board immediate grid/underlay construction: ordered descriptors are now built before composition; only empty descriptor composition retains VIEWPORT_BG underlay. Existing pane_chrome panel background remains before world drawing, and ordered grid builder is unchanged. No new blocker identified. Substrate/no-gold tests should assert the actually drawn panel stream, as parent migrated."
+      }
+    ],
+    "followup": "Source-verified removal of unused board immediate grid/underlay construction: ordered descriptors are now built before composition; only empty descriptor composition retains VIEWPORT_BG underlay. Existing pane_chrome panel background remains before world drawing, and ordered grid builder is unchanged. No new blocker identified. Substrate/no-gold tests should assert the actually drawn panel stream, as parent migrated.",
+    "final_integration_followup": "Source-verified Main prepared_scene/runtime_present/native capture now rely on shared preparation to lease terminal damage before ensure_sources. Error adapter restores lease; no early prerequisite consumes unleased damage. Combined source_and_prepared_build diagnostic truthfully measures shared boundary. Host recovery refusal test reserves 45 of asserted 60 remaining bytes, leaving 15 below required 16-byte screen uniform, verifies failure retains admitted bytes, then releases pressure for recovery. No new blocker found."
+  },
+  "post_review": "Grid comparison helpers subsequently fenced cfg(test) to resolve dead production code; production admitted visitor unchanged. Final Clippy compiles production/test paths.",
+  "native_image": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/native-capture.png",
+    "sha256": "5f93353f636b09550a6310d1e221dafc13fe3d392e00d7d56f5b7ec0532c734d",
+    "baseline_path": "/tmp/gpu-source-native/capture.png",
+    "baseline_source_receipt": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/receipt.json",
+    "exact_file_match": true,
+    "visual_review": "Inspected image; existing Console occlusion dat-gpu-console-occlusion-ly6r remains. This bounded same-fixture compatibility is not full visual qualification."
+  },
+  "limits": [
+    "No pointer GPU-performance improvement is claimed by dead-path removal. Current graph still redraws the prefix.",
+    "Exact8x retained copy/work/resource/invalidation proof and performance/DRM duty qualification remain outstanding. No performance experiment runs consumed.",
+    "CPU event-loop optimization, dependency adoption, tuning, prototype changes and acceptance exclusions unchanged."
+  ],
+  "pins": [
+    {
+      "path": "crates/gui-app/src/runtime_capture.rs",
+      "sha256": "765abc67c85c953b330cb7c00c522a555bdf81f16d084d49e5fe2b69279eac1f"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "sha256": "588ef2117a25553e78471a81ae7d9c2c4d34b5e550eea5d4b9a20aa4dd20afdb"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "sha256": "b12062e5868fa7f8822dc8e76e201820033228cfd93e81b1e9c64b10de102736"
+    },
+    {
+      "path": "crates/gui-render/src/lib.rs",
+      "sha256": "268f1453a065e0cbd3b3bdcd89503f83efed640cbac169c30199a537ea4142a6"
+    },
+    {
+      "path": "crates/gui-render/src/render/cold_world_upload.rs",
+      "sha256": "f697b132af9c5b90c5181ce4a19878d0d04f727332f1c8511deb07b08805427c"
+    },
+    {
+      "path": "crates/gui-render/src/render/coordinate_hit.rs",
+      "sha256": "dd63f3e925e7ab5eff68db240be8b73140158d7254dd1ce81beba80dba8813b9"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_observation_tests.rs",
+      "sha256": "651df855984f8b9b56238ba1b9f014cfd1ec5aac887e4570932e0ca9c9cb9a3c"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_preparation.rs",
+      "sha256": "0f183c91904ad40bbaaf4723e0ead233d7896031b60cfca4d8b76bfa504621a3"
+    },
+    {
+      "path": "crates/gui-render/src/render/geometry_admission.rs",
+      "sha256": "01af71800dc589ddda6b9b711acbf6e69a271bf71de69169a94ba9a2f808f29a"
+    },
+    {
+      "path": "crates/gui-render/src/render/geometry_admission_tests.rs",
+      "sha256": "95c99f7922df4002aef0482612fc1756735ce53b25affc757cf562814c362f84"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu.rs",
+      "sha256": "96c5a18254c7611cdb9a25b677cf40cdebadae41b2d39cc9c844c1979ace779c"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "sha256": "2d2255c0c31abd3a567dfc7f5c4a498bb95cc9a3e0f4a1656c06a6ee8066c997"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame_target.rs",
+      "sha256": "eb81c2258c98e95a92b40bf8699f88e42b7889132e7b8620d30fe145980f990a"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_init.rs",
+      "sha256": "38227ffdd16deac8dd7110ac2b51b6db272c21518991fccb41bf3da2cb97bfa6"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_overlay.rs",
+      "sha256": "50be7bfb763203c8ebb98e3cbcbb859ec16766021b0c2bb938667c345eb028bb"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_strokes.rs",
+      "sha256": "3e6710557507c32c45385c6859ecd0fd5c78e891f6239f2f907d15fbee512448"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface_pass.rs",
+      "sha256": "2d9f4fb66a18c6e717c6282637321aac51e247c6e24e0336f3323d0b9dfb3fc6"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+      "sha256": "74b436957a664bfbdb3bd38d5f7178b0485abae59bb404ec3cd052ced0f9c7fc"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_vertex_upload.rs",
+      "sha256": "2eaf87f7472eb955e35b0bca6500f74888cea4f81576cf4b9f51c1adfc8f764b"
+    },
+    {
+      "path": "crates/gui-render/src/render/grid.rs",
+      "sha256": "a2078da2661a2e1baa050099ca1f68ac7d8a03da39e53dd3528addb2780d4247"
+    },
+    {
+      "path": "crates/gui-render/src/render/grid_tests.rs",
+      "sha256": "9c59d7f17aaf57ffdff0432d5b9f96a78b98bdb0e01ef0dc4cedf6a3feec8311"
+    },
+    {
+      "path": "crates/gui-render/src/render/immediate_admission.rs",
+      "sha256": "006150fcd3b6d8012cca912d502606e3c446d4a0de34b7d7407307becd3abe58"
+    },
+    {
+      "path": "crates/gui-render/src/render/interaction_overlay.rs",
+      "sha256": "0fb813342a117588a16862a2ac9cfab3fa503614a189c9c117e79c66493dbd0d"
+    },
+    {
+      "path": "crates/gui-render/src/render/preferences_scene.rs",
+      "sha256": "3b1e32373b39c9e471c8a38016b48fbdd4b70bc5208e168dfedbf9ff7c093c88"
+    },
+    {
+      "path": "crates/gui-render/src/render/prepared_scene_access.rs",
+      "sha256": "807512a69479d8b3f13e0fbe9a8564be1fd26b83c1f4169b38feb0c46e8c1604"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "f1c0b4dd028d1d979181e297797138d10bc39e7e67ed4ce3a353f9c40802effe"
+    },
+    {
+      "path": "crates/gui-render/src/render/renderer_state.rs",
+      "sha256": "7bae96f09feaee3520afae0e1c8c8ba51723e598e211cd136dbfd816907b68e3"
+    },
+    {
+      "path": "crates/gui-render/src/render/resource_consumers.rs",
+      "sha256": "647e8c2caa6247449d80ed29ac39bf012555eb52f6ec67dc574cc82240290d28"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_history.rs",
+      "sha256": "fc570331d61166892b325d5f352b4deb9dcf680154cba522bb325635b082b67d"
+    },
+    {
+      "path": "crates/gui-render/src/render/scene_projection.rs",
+      "sha256": "dc49e3e080aab4aa08d15e72f2122424f5d595a985cd03d79d30f7587a8219a4"
+    },
+    {
+      "path": "crates/gui-render/src/render/screen_admission.rs",
+      "sha256": "95ab740c1bb6946c4837f59bb8bc80ef5292d6420db1a19b99a3680b02b6dde7"
+    },
+    {
+      "path": "crates/gui-render/src/render/uniform_buffer.rs",
+      "sha256": "89d12abdee4032f155836e8978561b0d11175273d887be10c10dd509d60807a7"
+    },
+    {
+      "path": "crates/gui-render/src/render/uniform_buffer_tests.rs",
+      "sha256": "42691b5b38e1a22cbf1674c1280226417e5be5f6a3ccf4d10f3b1f887a9a2981"
+    },
+    {
+      "path": "crates/gui-render/src/render_contract_tests.rs",
+      "sha256": "6934ed1087018fb71c7c76a377902e022bbfb2b30931d3f57b09dbb650aca1ff"
+    },
+    {
+      "path": "docs/SOURCE_HEALTH_POLICY.md",
+      "sha256": "e27640288f67135c10bc12045e62831d81a69a8d00954567f82f0868df8e3bee"
+    },
+    {
+      "path": "specs/SPEC_PARITY.md",
+      "sha256": "7d027b0752b53306c476148069ad12dd3bc51307abc4094b6eae5d9fb8ff35f8"
+    },
+    {
+      "path": "specs/source_module_size_manifest.json",
+      "sha256": "ffd9d2532dfb80a01695731bf7f00cd045b0b9ab5145c84f394e7342aba0f3e0"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/renderer-tests-initial.log",
+      "sha256": "9d47844f8d3fa7098bb8d433317de631cf704591036bb73526a2d3fe2b28db83"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/renderer-tests-migration.log",
+      "sha256": "93616619ac40eb0551b64b2bbaf1ece63573dbb6dacd83c9efe461ff70855332"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/renderer-tests-final.log",
+      "sha256": "8b8426214792abe08b78a4b8f76741b5f75ae5b1fede1b2cde5059e97fc497bf"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/fixed-uniform.log",
+      "sha256": "6dfc0dbda6c11db1a5acc516ac3a470d55370f32bcda2d965cf2d2762b23ec0c"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/pane-uniform.log",
+      "sha256": "500676eb9afb2ed38fd605729c486859ff61e1c55bf51d344855314c930f74a9"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/host-limit-initial.log",
+      "sha256": "097c341b4ebac3a54c58964959280e021c4dda8a9b174dc49b6373200a21062d"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/host-limit-final.log",
+      "sha256": "1a9e7b965987b977c5a2256e959ace81f63b95ea5bdd7def05d6e5507926d2ae"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/offscreen.log",
+      "sha256": "196416d462ec1aa7c032ac5dcdc191c8876d1072543143a4ef0edbf15208bf30"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/native.log",
+      "sha256": "193e8e359cc22725d73101224a6c950ef50f7064d08300b81906c9b9a4597fbd"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/clippy-initial.log",
+      "sha256": "53f43a78075086041e6a183fc079236fa62c0dbec411f045c5f90ea267529595"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/clippy-final.log",
+      "sha256": "2e8a3bdc39d2000a3261f551e514e3cd4c1e41cd4637a96ffa09bd511754a580"
+    }
+  ]
+}

@@ -28,8 +28,8 @@ use datum_gui_protocol::ReviewWorkspaceState;
 use frame_revision::{Change, Receipt, Revisions, Target};
 #[path = "retained_scene_history.rs"]
 mod history;
+use history::RetainedSceneCacheKey;
 use history::RetainedSceneHistory;
-pub use history::{RetainedSceneCacheKey, retained_selection_cache_key};
 
 #[derive(Default)]
 pub struct RenderSession {

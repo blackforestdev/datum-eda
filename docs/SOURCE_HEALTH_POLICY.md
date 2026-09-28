@@ -286,3 +286,10 @@ policy from Main into the shared RenderSession. Main production falls from
 1,155 to 1,128 lines and its exact ceiling ratchets down. Editors carry source
 generations; shared validation owns admitted keys, source replacement and
 reference-projection dependencies. Normal limits and remaining debt are unchanged.
+
+PM049 ordered GPU composition removes superseded raw world encoders, fixed
+legacy camera bindings, duplicate immediate grid construction/storage and
+editor-facing history-key exports. Ordered pane descriptors own grid/world
+admission and encoding. Renderer root expansion falls from5,975 to5,973 lines
+and its exact ceiling ratchets down; the root itself also shrinks. Normal
+budgets and retained source/resource caps are unchanged.

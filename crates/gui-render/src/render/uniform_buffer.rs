@@ -205,13 +205,7 @@ impl crate::Renderer {
         }
     }
     pub(crate) fn uniform_submission_refs(&self) -> impl Iterator<Item = SubmissionRef> + '_ {
-        [
-            self.uniform_buffer.submission_ref(),
-            self.scene_bind_group.buffer.submission_ref(),
-            self.schematic_scene_bind_group.buffer.submission_ref(),
-        ]
-        .into_iter()
-        .chain(
+        std::iter::once(self.uniform_buffer.submission_ref()).chain(
             self.surface_scene_uniforms
                 .iter()
                 .map(|binding| binding.buffer.submission_ref()),

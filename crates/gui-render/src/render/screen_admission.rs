@@ -10,7 +10,6 @@ pub(crate) enum ScreenGroup {
     Overlay,
     BoardInteraction,
     Console,
-    SchematicUnderlay,
     SchematicOverlay,
 }
 impl ScreenGroup {
@@ -22,7 +21,6 @@ impl ScreenGroup {
             Self::Overlay => "viewport_overlay",
             Self::BoardInteraction => "board_interaction",
             Self::Console => "console_overlay",
-            Self::SchematicUnderlay => "schematic_underlay",
             Self::SchematicOverlay => "schematic_overlay",
         }
     }
@@ -56,7 +54,7 @@ impl Renderer {
     }
     /// Only valid during the frame callback. `None` means unavailable/invalid,
     /// never zero draws; callers separately establish successful submission.
-    pub fn encoded_screen_geometry(&self) -> Option<[Option<EncodedScreenGeometry>; 8]> {
+    pub fn encoded_screen_geometry(&self) -> Option<[Option<EncodedScreenGeometry>; 7]> {
         self.screen_admission.get()
     }
 }

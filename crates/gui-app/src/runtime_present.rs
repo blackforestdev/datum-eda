@@ -68,22 +68,11 @@ impl Runtime {
         let scene_started = std::time::Instant::now();
         let retained_was_cached = self.renderer.render_session().board().is_some();
         let prepared_was_cached = self.renderer.render_session().prepared().is_some();
-        let mut retained_build_ms = 0;
         let mut prepared_build_ms = 0;
         if self.renderer.render_session().prepared().is_none() {
             append_gui_verbose_diagnostic_line(|| {
                 format!("render scene prepare begin retained_cached={retained_was_cached}")
             });
-            if self.renderer.render_session().board().is_none() {
-                let retained_started = std::time::Instant::now();
-                append_gui_verbose_diagnostic_line(|| "retained scene build begin");
-                self.ensure_retained_scene();
-                self.renderer.render_session_mut().check_content_budget()?;
-                retained_build_ms = retained_started.elapsed().as_millis();
-                append_gui_verbose_diagnostic_line(|| {
-                    format!("retained scene build end {retained_build_ms}ms")
-                });
-            }
             let prepared_started = std::time::Instant::now();
             append_gui_verbose_diagnostic_line(|| "prepared scene build begin");
             self.build_terminal_prepared_scene()?;
@@ -142,11 +131,10 @@ impl Runtime {
             )
         });
         self.trace_timing(|| format!(
-            "runtime render total={}ms acquire={}ms scene={}ms retained_build={}ms prepared_build={}ms renderer={}ms present={}ms retained_was_cached={} prepared_was_cached={}",
+            "runtime render total={}ms acquire={}ms scene={}ms source_and_prepared_build={}ms renderer={}ms present={}ms retained_was_cached={} prepared_was_cached={}",
             render_started.elapsed().as_millis(),
             acquire_elapsed.as_millis(),
             scene_elapsed.as_millis(),
-            retained_build_ms,
             prepared_build_ms,
             renderer_elapsed.as_millis(),
             present_elapsed.as_millis(),

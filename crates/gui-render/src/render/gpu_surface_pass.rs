@@ -8,16 +8,13 @@ pub use world_bundles::EncodedWorldAdmission;
 pub(super) fn prepare_schematic_pass<'a>(
     prepared: &PreparedScene,
     schematic_retained: Option<&'a RetainedScene>,
-) -> Option<(RectPx, RectPx, Projection, &'a RetainedScene)> {
-    match (prepared.schematic_scene_viewport, schematic_retained) {
-        (Some(scene_viewport), Some(scene)) if !scene.world_vertices().is_empty() => {
-            let field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
-            let projection =
-                Projection::new(field, &prepared.schematic_bounds, prepared.schematic_camera);
-            Some((scene_viewport, field, projection, scene))
-        }
-        _ => None,
-    }
+) -> Option<&'a RetainedScene> {
+    prepared
+        .surface_passes()
+        .iter()
+        .any(|pass| pass.surface == SceneSurface::Schematic)
+        .then_some(schematic_retained)
+        .flatten()
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -305,5 +302,40 @@ mod tests {
             );
             assert!(draw_batches(&commands).count() <= commands.len());
         }
+    }
+    #[test]
+    fn normalized_descriptors_alone_admit_world_sources() {
+        let state = board_fixture_state();
+        let retained = RetainedScene::from_workspace(&state, 960, 720);
+        let mut prepared = PreparedScene::from_workspace(
+            &state,
+            960,
+            720,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        )
+        .unwrap();
+        assert!(prepared.requires_board_world());
+        assert!(prepare_schematic_pass(&prepared, Some(&retained)).is_some());
+        let mut descriptor = prepared.surface_passes[0].clone();
+        descriptor.surface = SceneSurface::Schematic;
+        prepared.surface_passes = vec![descriptor];
+        assert!(!prepared.requires_board_world());
+        let empty = RetainedScene::empty();
+        assert!(
+            prepare_schematic_pass(&prepared, Some(&empty)).is_some(),
+            "empty quads are not a test for schematic admission; strokes can exist independently"
+        );
+        assert!(prepare_schematic_pass(&prepared, None).is_none());
+        prepared.surface_passes.clear();
+        assert!(!prepared.visible_draw_commands().is_empty());
+        assert!(!prepared.requires_board_world());
+        assert!(prepare_schematic_pass(&prepared, Some(&retained)).is_none());
+        assert_eq!(
+            prepared
+                .geometry_admission(&retained, Some(&retained))
+                .count(),
+            0
+        );
     }
 }

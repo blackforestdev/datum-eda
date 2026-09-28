@@ -68,6 +68,29 @@ impl PreparedScene {
                 .scene_leaf()
                 .is_some();
 
+            let (schematic_scene_viewport, schematic_bounds, schematic_camera) =
+                match state.schematic_scene.as_ref() {
+                    Some(schematic_scene) => (
+                        layout.schematic_scene_viewport(&state.ui.layout),
+                        schematic_scene.bounds.clone(),
+                        CameraState::fit_to_bounds(&schematic_scene.bounds),
+                    ),
+                    None => {
+                        // Inert placeholder: with no schematic viewport the second pass
+                        // is gated off in gpu.rs, so these values are never consumed.
+                        let inert = datum_gui_protocol::SceneBounds {
+                            min_x: 0,
+                            min_y: 0,
+                            max_x: 1,
+                            max_y: 1,
+                        };
+                        let camera = CameraState::fit_to_bounds(&inert);
+                        (None, inert, camera)
+                    }
+                };
+            let surface_passes =
+                coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera);
+
             let board_hover_bounds = state.ui.hovered_object.as_ref().and_then(|hover| {
                 (hover.surface == datum_gui_protocol::PaneContent::Board)
                     .then(|| {
@@ -92,7 +115,9 @@ impl PreparedScene {
             panel_quads.push(Quad::from_rect(layout.right_sidebar, APP_BG));
             panel_quads.push(Quad::from_rect(layout.bottom_strip, APP_BG));
             panel_quads.push(Quad::from_rect(layout.status_bar, PANEL_BG));
-            viewport_underlay_quads.push(Quad::from_rect(layout.viewport, VIEWPORT_BG));
+            if surface_passes.is_empty() {
+                viewport_underlay_quads.push(Quad::from_rect(layout.viewport, VIEWPORT_BG));
+            }
 
             consumers.note(Stream::Panel, Consumer::Main, 0, panel_quads.len());
             consumers.note(
@@ -271,23 +296,15 @@ impl PreparedScene {
                 menu_overlay_text_runs.len(),
             );
             if board_scene_active {
-                let before_underlay = viewport_underlay_quads.len();
                 let before_overlay = viewport_overlay_quads.len();
                 let before_text = text_runs.len();
                 render_scene(
                     state,
                     scene_viewport,
                     camera,
-                    &mut viewport_underlay_quads,
                     &mut viewport_overlay_quads,
                     &mut text_runs,
                     &mut hit_regions,
-                );
-                consumers.note(
-                    Stream::Underlay,
-                    Consumer::Board,
-                    before_underlay,
-                    viewport_underlay_quads.len(),
                 );
                 consumers.note(
                     Stream::ViewportOverlay,
@@ -424,47 +441,12 @@ impl PreparedScene {
             let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
             let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
             let board_interaction_vertices = quads_to_vertices(&board_interaction_quads);
-            // P2.2a: describe the companion schematic pass. It is active only when the
-            // layout has a Schematic pane AND the workspace carries a projected
-            // schematic scene. The camera seeded here is fit-to-schematic-bounds — the
-            // INITIAL framing; P2.2d makes the focused schematic pane interactive by
-            // overriding this via `set_schematic_camera` with the pane's warm camera
-            // (the gui-app render/capture path). Left as fit, this is byte-identical to
-            // the pre-P2.2d static default (goldens/tests take this path unchanged).
-            let (schematic_scene_viewport, schematic_bounds, schematic_camera) =
-                match state.schematic_scene.as_ref() {
-                    Some(schematic_scene) => (
-                        layout.schematic_scene_viewport(&state.ui.layout),
-                        schematic_scene.bounds.clone(),
-                        CameraState::fit_to_bounds(&schematic_scene.bounds),
-                    ),
-                    None => {
-                        // Inert placeholder: with no schematic viewport the second pass
-                        // is gated off in gpu.rs, so these values are never consumed.
-                        let inert = datum_gui_protocol::SceneBounds {
-                            min_x: 0,
-                            min_y: 0,
-                            max_x: 1,
-                            max_y: 1,
-                        };
-                        let camera = CameraState::fit_to_bounds(&inert);
-                        (None, inert, camera)
-                    }
-                };
             let visible_draw_commands = if board_scene_active {
                 retained_scene.visible_draw_commands(state)
             } else {
                 Vec::new()
             };
 
-            // S4: the schematic grid + interaction overlays share ONE immediate
-            // screen-space underlay buffer (spec §1.2 / S1b), rebuilt against the pane's
-            // warm camera in `set_schematic_camera` so grid weight + crosshair track it.
-            let schematic_underlay_vertices = interaction_overlay::build_schematic_grid_vertices(
-                schematic_scene_viewport,
-                &schematic_bounds,
-                schematic_camera,
-            );
             let schematic_overlay_vertices =
                 interaction_overlay::build_schematic_interaction_vertices(
                     schematic_scene_viewport,
@@ -474,8 +456,6 @@ impl PreparedScene {
                     crosshair_cursor_screen,
                     crosshair_style,
                 );
-            let surface_passes =
-                coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera);
 
             consumers.note(
                 Stream::BoardInteraction,
@@ -488,12 +468,6 @@ impl PreparedScene {
                 Consumer::Board,
                 0,
                 visible_draw_commands.len(),
-            );
-            consumers.note(
-                Stream::SchematicUnderlay,
-                Consumer::Schematic,
-                0,
-                schematic_underlay_vertices.len(),
             );
             consumers.note(
                 Stream::SchematicOverlay,
@@ -550,7 +524,6 @@ impl PreparedScene {
                 schematic_hover_bounds_nm: schematic_hover_bounds,
                 crosshair_cursor_screen,
                 crosshair_style,
-                schematic_underlay_vertices,
                 schematic_overlay_vertices,
             }
         })

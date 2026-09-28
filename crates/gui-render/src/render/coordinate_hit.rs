@@ -572,9 +572,9 @@ mod coordinate_hit_tests {
     }
 
     /// S4 (b, schematic): hovering a schematic symbol emits the class-A hover
-    /// pre-highlight ring into the SCHEMATIC pane's underlay buffer (not the board).
+    /// pre-highlight ring into the SCHEMATIC pane's overlay buffer (not the board).
     #[test]
-    fn schematic_hover_ring_lands_in_the_schematic_underlay() {
+    fn schematic_hover_ring_lands_in_the_schematic_overlay() {
         let mut state = schematic_workspace_state();
         let board = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
 
@@ -636,7 +636,7 @@ mod coordinate_hit_tests {
         let mut prepared = prepared_for(&state, &board);
         let resolves_before = retained_scene_resolve_count();
         let draw_commands_before = prepared.visible_draw_commands.clone();
-        let grid_before = prepared.schematic_underlay_vertices.clone();
+        let grid_before = surface_grid_pass::build_surface_grids(&prepared).0;
 
         state.ui.cursor_pos = Some(datum_gui_protocol::ScreenPointPx { x: 320.0, y: 240.0 });
         prepared.refresh_interaction(&state, &board);
@@ -647,6 +647,9 @@ mod coordinate_hit_tests {
             "pointer chrome must not resolve retained world geometry"
         );
         assert_eq!(prepared.visible_draw_commands, draw_commands_before);
-        assert_eq!(prepared.schematic_underlay_vertices, grid_before);
+        assert_eq!(
+            surface_grid_pass::build_surface_grids(&prepared).0,
+            grid_before
+        );
     }
 }

@@ -50,11 +50,6 @@ impl PreparedScene {
         {
             pass.camera = camera;
         }
-        self.schematic_underlay_vertices = build_schematic_grid_vertices(
-            self.schematic_scene_viewport,
-            &self.schematic_bounds,
-            self.schematic_camera,
-        );
         self.schematic_overlay_vertices = build_schematic_interaction_vertices(
             self.schematic_scene_viewport,
             &self.schematic_bounds,
@@ -220,21 +215,6 @@ pub(crate) fn push_pane_interaction(
             CrosshairStyle::None => {}
         }
     }
-}
-
-/// Build the schematic pane's immediate screen-space grid underlay.
-pub(crate) fn build_schematic_grid_vertices(
-    schematic_scene_viewport: Option<RectPx>,
-    schematic_bounds: &datum_gui_protocol::SceneBounds,
-    schematic_camera: CameraState,
-) -> Vec<Vertex> {
-    let mut quads = Vec::new();
-    if let Some(viewport) = schematic_scene_viewport {
-        let field = inset_rect(viewport, 10.0, 10.0, 10.0, 10.0);
-        let projection = Projection::new(field, schematic_bounds, schematic_camera);
-        push_schematic_grid(&mut quads, &projection);
-    }
-    quads_to_vertices(&quads)
 }
 
 /// Build schematic hover/cursor chrome separately from the grid so the renderer
@@ -640,18 +620,6 @@ mod interaction_overlay_tests {
         assert!(
             with_cursor.len() > baseline.len() && crosshair_verts > 0,
             "the crosshair adds class-A vertices to the schematic overlay"
-        );
-        let grid = build_schematic_grid_vertices(
-            Some(viewport()),
-            &bounds(),
-            CameraState::fit_to_bounds(&bounds()),
-        );
-        assert_eq!(
-            grid.iter()
-                .filter(|vertex| vertex.color == CURSOR_CROSSHAIR)
-                .count(),
-            0,
-            "the pre-world grid must never contain interaction chrome"
         );
     }
 }

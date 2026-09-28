@@ -3,8 +3,7 @@ use super::*;
 #[path = "render_session.rs"]
 mod render_session;
 pub use render_session::{
-    DialogInput, DialogView, FramePlan, RenderSession, RetainedSceneCacheKey, SubmittedFrame,
-    WorkspaceView, render_input, retained_selection_cache_key,
+    DialogInput, DialogView, FramePlan, RenderSession, SubmittedFrame, WorkspaceView, render_input,
 };
 #[path = "../cpu_alloc.rs"]
 pub mod cpu_alloc;
@@ -32,7 +31,7 @@ pub struct ControlMeshUsage {
 pub struct Renderer {
     pub(super) render_session: RenderSession,
     pub(super) screen_admission: std::cell::Cell<
-        Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 8]>,
+        Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 7]>,
     >,
     pub(super) grid_admission: Option<
         crate::text_gpu::staging_vec::StagingVec<immediate_admission::PreparedGridAdmission>,
@@ -56,15 +55,12 @@ pub struct Renderer {
     pub(super) terminal_graphics: terminal_graphics::TerminalGraphicsRenderer,
     pub(super) uniform_bind_group: wgpu::BindGroup,
     pub(super) uniform_buffer: gpu_data::uniform_buffer::UniformBuffer<ScreenUniform>,
-    pub(super) scene_bind_group: gpu_data::uniform_buffer::UniformBinding<SceneUniform>,
     pub(super) scene_bind_group_layout: wgpu::BindGroupLayout,
     pub(super) surface_world_bundles: Vec<gpu_surface_pass::CachedSurfaceBundle>,
     pub(super) pane_uniform_generations: crate::text_gpu::slot_generations::SlotGenerations,
     pub(super) surface_scene_uniforms: Vec<gpu_data::uniform_buffer::UniformBinding<SceneUniform>>,
     pub(super) surface_grids: surface_grid_pass::GridCache,
     pub(super) surface_grid_gpu: gpu_data::screen_buffer::ScreenBuffer,
-    pub(super) schematic_scene_bind_group: gpu_data::uniform_buffer::UniformBinding<SceneUniform>,
-    pub(super) schematic_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) schematic_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) font_system: crate::text_layout::fonts::Fonts,
     pub(super) text_cpu: crate::cpu_alloc::Scope,

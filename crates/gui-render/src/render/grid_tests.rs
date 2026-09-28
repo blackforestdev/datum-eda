@@ -34,7 +34,7 @@ fn resolving_grid_lod_never_rebuilds_retained_geometry() {
 
 // Slice S1b: the companion schematic pass draws a subtle SQUARE grid as an
 // IMMEDIATE screen-space pass (shared `GridEngine`, `ScreenConstant` weight).
-// This is a structural check that `push_schematic_grid` produces grid geometry
+// This is a structural check that `push_schematic_grid_with_lod` produces grid geometry
 // in the schematic `#sgrid` whisper colours (major + minor at the fine tier)
 // and that every emitted quad is one of those two colours — the grid must never
 // borrow the board grid palette.
@@ -63,7 +63,7 @@ fn schematic_grid_emits_square_underlay_geometry() {
         }),
     );
     let mut out = Vec::new();
-    push_schematic_grid(&mut out, &projection);
+    grid::push_schematic_grid_with_lod(&mut out, &projection, Default::default());
     assert!(
         !out.is_empty(),
         "the schematic pass must emit a grid underlay"
@@ -132,7 +132,7 @@ fn schematic_grid_weight_is_screen_constant_across_zoom() {
         };
         let projection = Projection::new(viewport, &bounds, camera);
         let mut out = Vec::new();
-        push_schematic_grid(&mut out, &projection);
+        grid::push_schematic_grid_with_lod(&mut out, &projection, Default::default());
         out.iter()
             .map(|q| {
                 let xs = q.points.iter().map(|p| p.0);

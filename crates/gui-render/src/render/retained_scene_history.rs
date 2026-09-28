@@ -63,9 +63,6 @@ impl Default for RetainedSceneHistory {
 }
 
 impl RetainedSceneCacheKey {
-    pub fn selection_matches(&self, selection: &str) -> bool {
-        self.selection == selection
-    }
     pub(super) fn allocation_bound(
         state: &datum_gui_protocol::ReviewWorkspaceState,
     ) -> Option<usize> {
@@ -510,7 +507,7 @@ impl RetainedSceneHistory {
 #[path = "retained_scene_lifecycle.rs"]
 mod lifecycle;
 
-pub fn retained_selection_cache_key(
+fn retained_selection_cache_key(
     workspace: &datum_gui_protocol::ReviewWorkspaceState,
     selection: &datum_gui_protocol::SelectionTarget,
 ) -> String {

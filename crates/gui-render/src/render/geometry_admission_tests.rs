@@ -29,11 +29,15 @@ fn prepared_geometry_counts_follow_production_ranges_and_reject_invalid_ranges()
     assert!(counts.prepared_commands > 0);
     assert!(counts.prepared_triangles > 0);
     assert_eq!(board.ranges().count(), counts.prepared_commands);
-    let pane = board.pane_id;
-    prepared.surface_passes.clear();
-    let fallback = prepared.geometry_admission(&retained, None).next().unwrap();
-    assert_eq!(fallback.pane_id, pane);
-    assert_eq!(fallback.counts().unwrap(), counts);
+    let passes = std::mem::take(&mut prepared.surface_passes);
+    assert!(!prepared.visible_draw_commands.is_empty());
+    assert_eq!(
+        prepared.geometry_admission(&retained, None).count(),
+        0,
+        "empty normalized descriptors cannot resurrect legacy board commands"
+    );
+    assert!(!prepared.requires_board_world());
+    prepared.surface_passes = passes;
     prepared.visible_draw_commands = vec![RetainedDrawCommand::Quads {
         layer_id: None,
         range: 0..u32::MAX,
@@ -48,6 +52,7 @@ fn prepared_geometry_counts_follow_production_ranges_and_reject_invalid_ranges()
     );
     prepared.visible_draw_commands.clear();
     prepared.schematic_scene_viewport = None;
+    prepared.surface_passes.clear();
     assert_eq!(prepared.geometry_admission(&retained, None).count(), 0);
 }
 

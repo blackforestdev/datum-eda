@@ -1,0 +1,26 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.5 GiB target_free=169.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.5 GiB used; soft limit 20.0 GiB
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+error: function `emit_immediate_grid` is never used
+  --> crates/gui-render/src/render/grid.rs:86:4
+   |
+86 | fn emit_immediate_grid(
+   |    ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `-D dead-code` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: function `push_scene_grid_with_lod` is never used
+   --> crates/gui-render/src/render/grid.rs:136:15
+    |
+136 | pub(crate) fn push_scene_grid_with_lod(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: function `push_schematic_grid_with_lod` is never used
+   --> crates/gui-render/src/render/grid.rs:144:15
+    |
+144 | pub(crate) fn push_schematic_grid_with_lod(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: could not compile `datum-gui-render` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...

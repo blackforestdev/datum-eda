@@ -115,25 +115,13 @@ fn fixed_uniform_recovery_preserves_submission_generations() {
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
     let format = wgpu::TextureFormat::Rgba8UnormSrgb;
     let first = crate::Renderer::new(&device, &queue, format, 1).unwrap();
-    let holds = [
-        first.uniform_buffer.submission_ref(),
-        first.scene_bind_group.buffer.submission_ref(),
-        first.schematic_scene_bind_group.buffer.submission_ref(),
-    ];
-    let budgets = [
-        first.uniform_buffer.generation_budget.clone(),
-        first.scene_bind_group.buffer.generation_budget.clone(),
-        first
-            .schematic_scene_bind_group
-            .buffer
-            .generation_budget
-            .clone(),
-    ];
+    let hold = first.uniform_buffer.submission_ref();
+    let budget = first.uniform_buffer.generation_budget.clone();
     let second = first
         .recreate_for_device(&device, &queue, format, 1)
         .unwrap();
     drop(first);
-    assert!(budgets.iter().all(|b| b.used() == 2));
+    assert_eq!(budget.used(), 2);
     let screen = second.screen_budget.clone();
     let before = screen.used();
     assert!(
@@ -145,26 +133,16 @@ fn fixed_uniform_recovery_preserves_submission_generations() {
             .contains("two live GPU allocations")
     );
     assert_eq!(screen.used(), before);
-    // Release each earlier allocation separately: failure at later constructors
-    // must roll back the earlier reservations from the same recovery attempt.
-    for (index, hold) in holds.into_iter().enumerate() {
-        drop(hold);
-        if budgets.iter().any(|b| b.used() == 2) {
-            assert!(
-                second
-                    .recreate_for_device(&device, &queue, format, 1)
-                    .is_err()
-            );
-            assert_eq!(screen.used(), before - 16 - index as u64 * 64);
-        }
-    }
+    // Only the screen uniform is fixed; world cameras belong to pane bindings.
+    drop(hold);
+    assert_eq!(screen.used(), before - 16);
     let third = second
         .recreate_for_device(&device, &queue, format, 1)
         .unwrap();
-    assert!(budgets.iter().all(|b| b.used() == 2));
+    assert_eq!(budget.used(), 2);
     drop(second);
     drop(third);
-    assert!(budgets.iter().all(|b| b.used() == 0));
+    assert_eq!(budget.used(), 0);
     assert_eq!(screen.used(), 0);
 }
 

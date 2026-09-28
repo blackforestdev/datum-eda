@@ -448,12 +448,12 @@ fn diagnostic_evidence_marks_endpoints_only_over_proposed_copper() {
 // rest of the terminal dock contract).
 
 #[test]
-fn scene_underlay_has_no_decorative_gold_edge_frame() {
+fn pane_background_has_no_decorative_gold_edge_frame() {
     // Bug A: the spurious gold rounded-rect frame around the board (a fixed 10px
     // viewport-inset stroke in the InnerField-mixed EDGE color) is removed. The
     // ONLY board outline is the REAL projected Edge.Cuts in the retained world
-    // pass. Assert the underlay still fills the inner field but no longer emits
-    // any stroke in the retired decorative-edge color, while the real board
+    // pass. Assert the pane background still fills the inner field but emits
+    // no stroke in the retired decorative-edge color, while the real board
     // outline batches still exist in the retained scene.
     let state = datum_gui_protocol::load_fixture_workspace_state();
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
@@ -468,14 +468,18 @@ fn scene_underlay_has_no_decorative_gold_edge_frame() {
     let inner_field = board_surface_color(BoardSurfaceRole::InnerField);
     let decorative_edge = mix_color(design_tokens::content::EDGE, inner_field, 0.18);
 
-    let underlay = prepared.viewport_underlay_vertices();
+    assert!(
+        prepared.viewport_underlay_vertices().is_empty(),
+        "composed panes own backgrounds"
+    );
+    let underlay = prepared.panel_vertices();
     assert!(
         underlay.iter().any(|v| v.color == inner_field),
-        "underlay must still fill the inner board field"
+        "pane background must still fill the inner board field"
     );
     assert!(
         !underlay.iter().any(|v| v.color == decorative_edge),
-        "underlay must not emit the retired decorative gold edge frame color"
+        "pane background must not emit the retired decorative gold edge frame color"
     );
     // The real Edge.Cuts outline source is still present on the scene (projected
     // separately in the retained world pass, not synthesized in the underlay).
@@ -514,10 +518,10 @@ fn board_scene_stays_in_board_pane_regardless_of_focus() {
     .unwrap();
     assert!(
         prepared_b
-            .viewport_underlay_vertices()
+            .panel_vertices()
             .iter()
             .any(|v| v.color == inner_field),
-        "board-focused underlay must carry the board substrate field"
+        "board-focused pane background must carry the board substrate field"
     );
 
     // Same layout, but focus the Schematic leaf.
@@ -577,7 +581,7 @@ fn board_scene_stays_in_board_pane_regardless_of_focus() {
     // field) even though the Schematic pane is focused.
     assert!(
         prepared_s
-            .viewport_underlay_vertices()
+            .panel_vertices()
             .iter()
             .any(|v| v.color == inner_field),
         "board substrate must persist in the board pane when the Schematic is focused"

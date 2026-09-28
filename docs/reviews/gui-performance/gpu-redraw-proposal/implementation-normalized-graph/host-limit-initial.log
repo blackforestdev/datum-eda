@@ -1,0 +1,27 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.5 GiB target_free=169.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.5 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 1 test
+test visual::visual_capture::gpu_overlay_tests::uniform_tests::screen_streams_and_uniforms_share_one_host_limit ... FAILED
+
+failures:
+
+---- visual::visual_capture::gpu_overlay_tests::uniform_tests::screen_streams_and_uniforms_share_one_host_limit stdout ----
+pixel parity adapter: Intel(R) HD Graphics P630 (KBL GT2) (IntegratedGpu, Vulkan)
+pixel parity adapter: Intel(R) HD Graphics P630 (KBL GT2) (IntegratedGpu, Vulkan)
+
+thread 'visual::visual_capture::gpu_overlay_tests::uniform_tests::screen_streams_and_uniforms_share_one_host_limit' (1332851) panicked at crates/gui-render/src/render/gpu_uniform_tests.rs:202:5:
+assertion `left == right` failed
+  left: 16
+ right: 144
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    visual::visual_capture::gpu_overlay_tests::uniform_tests::screen_streams_and_uniforms_share_one_host_limit
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 512 filtered out; finished in 0.56s
+
+error: test failed, to rerun pass `-p datum-gui-render --lib`

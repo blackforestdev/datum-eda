@@ -95,7 +95,7 @@ fn frame_observation_delivers_reused_frames_without_changing_pixels_and_propagat
         gpu.renderer.encoded_screen_geometry().is_none(),
         "records retire after callback even on delivery error"
     );
-    gpu.renderer.screen_admission.set(Some([None; 8]));
+    gpu.renderer.screen_admission.set(Some([None; 7]));
     for _ in 0..2 {
         gpu.renderer.observe_screen_draw(
             crate::immediate_admission::screen_admission::ScreenGroup::Menu,

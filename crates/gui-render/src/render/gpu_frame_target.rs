@@ -48,7 +48,7 @@ impl Renderer {
         let _resource_scope = self.resource_host.enter_for(self.frame_consumers.all());
         self.atlas.owner.begin_upload_frame();
         if self.frame_observer.is_some() {
-            self.screen_admission.set(Some([None; 8]));
+            self.screen_admission.set(Some([None; 7]));
         }
         self.grid_admission = None;
         let text_serial_before = self.text_admission.serial();
