@@ -1,4 +1,5 @@
 //! Typed world-free preparation; only this owner admits the empty source profile.
+use super::{RetainedScene, ReviewWorkspaceState, session_hover::BoardHover};
 use crate::Renderer;
 use datum_gui_protocol::{GlobalPreferencesDialogState, NewProjectDialogState};
 use datum_gui_viewport::scroll::ScrollViewport;
@@ -25,7 +26,7 @@ pub enum DialogInput<'a> {
     },
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub(super) enum PreparedProfile {
     Workspace,
     Dialog,
@@ -34,6 +35,21 @@ pub(super) enum PreparedProfile {
 pub(super) struct Preparation {
     pub extent: [u32; 2],
     pub profile: PreparedProfile,
+    pub hover: BoardHover,
+}
+
+impl Preparation {
+    pub(super) fn workspace(
+        state: &ReviewWorkspaceState,
+        retained: &RetainedScene,
+        extent: [u32; 2],
+    ) -> Self {
+        Self {
+            extent,
+            profile: PreparedProfile::Workspace,
+            hover: BoardHover::capture(state, retained),
+        }
+    }
 }
 
 impl Renderer {
@@ -90,6 +106,7 @@ impl Renderer {
             Preparation {
                 extent: [view.width, view.height],
                 profile: PreparedProfile::Dialog,
+                hover: BoardHover::Disabled,
             },
         );
         Ok(())

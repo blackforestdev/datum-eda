@@ -94,6 +94,9 @@ impl Default for Revisions {
 }
 
 impl Revisions {
+    pub(super) fn owner(&self) -> u64 {
+        self.owner
+    }
     pub fn update(&mut self, change: Change) -> u64 {
         self.revision = self
             .revision

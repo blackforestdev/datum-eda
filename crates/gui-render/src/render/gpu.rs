@@ -1,13 +1,16 @@
 #[path = "retained_scene_owner.rs"]
 mod retained_scene_owner;
-pub use retained_scene_owner::{DocumentCpuCharge, RetainedGeometryObserver, RetainedScene};
+use retained_scene_owner::RETAINED_RESOLVE_COUNT;
+pub use retained_scene_owner::{
+    DocumentCpuCharge, RetainedGeometryObserver, RetainedScene, retained_scene_resolve_count,
+};
 #[path = "renderer_state.rs"]
 mod renderer_state;
 pub use renderer_state::{
     ControlMeshUsage, DialogInput, DialogView, FramePlan, RenderSession, Renderer,
     RetainedSceneCacheKey, SubmittedFrame, TextCacheKeyUsage, TextCacheOwnerUsage,
     TextGpuAllocation, TextGpuAllocationKind, TextGpuAllocationObserver,
-    WidthMeasurementCacheUsage, WorkspaceView, cpu_alloc, resource_consumers,
+    WidthMeasurementCacheUsage, WorkspaceView, cpu_alloc, render_input, resource_consumers,
     retained_selection_cache_key,
 };
 #[path = "gpu_measurements.rs"]

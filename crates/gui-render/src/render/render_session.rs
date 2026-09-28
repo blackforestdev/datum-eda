@@ -13,8 +13,12 @@ pub use session_preparation::WorkspaceView;
 mod session_dialog;
 pub use session_dialog::{DialogInput, DialogView};
 use session_dialog::{Preparation, PreparedProfile};
+#[path = "session_pointer.rs"]
+pub mod render_input;
 #[path = "session_frame.rs"]
 mod session_frame;
+#[path = "session_hover.rs"]
+mod session_hover;
 pub use session_frame::{FramePlan, SubmittedFrame};
 #[path = "frame_revision.rs"]
 mod frame_revision;
@@ -30,6 +34,7 @@ pub struct RenderSession {
     revisions: Revisions,
     prepared: Option<crate::PreparedScene>,
     prepared_revision: u64,
+    preparation_generation: u64,
     preparation: Option<Preparation>,
     prepared_hits_pending: bool,
     publication: Option<(Vec<crate::HitRegion>, Option<crate::ConsoleOverlayLayout>)>,
@@ -56,9 +61,6 @@ impl RenderSession {
     pub fn composition_changed(&mut self) {
         self.revisions.update(Change::Composition);
         self.prepared = None;
-    }
-    pub fn interaction_changed(&mut self) {
-        self.revisions.update(Change::Interaction);
     }
     fn begin_frame(&mut self, host: u64, device: u64, configuration: u64, native: bool) -> Receipt {
         self.revisions.begin(
@@ -153,6 +155,7 @@ impl RenderSession {
     ) {
         self.revisions.update(Change::Content);
         self.prepared = None;
+        self.preparation = None; // History identity includes exact effective board hover.
         if let Some(board) = self.board.take() {
             self.board_history.insert(previous, board);
         }
@@ -219,16 +222,9 @@ impl RenderSession {
     fn install_prepared(&mut self, prepared: crate::PreparedScene, preparation: Preparation) {
         self.preparation = Some(preparation);
         self.prepared_revision = self.revisions.update(Change::Composition);
+        self.preparation_generation = self.prepared_revision;
         self.prepared = Some(prepared);
         self.prepared_hits_pending = true;
-    }
-
-    pub fn refresh_interaction(&mut self, state: &ReviewWorkspaceState) {
-        self.interaction_changed();
-        if let (Some(prepared), Some(retained)) = (&mut self.prepared, &self.board) {
-            prepared.refresh_interaction(state, retained);
-            self.prepared_revision = self.revisions.current();
-        }
     }
 
     /// Only matching submitted-frame completion can create a publication. Native adapters transfer

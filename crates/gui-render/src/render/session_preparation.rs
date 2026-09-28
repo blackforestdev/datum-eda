@@ -49,7 +49,28 @@ impl Renderer {
         panes: &[TerminalPaneRenderState<'_>],
     ) -> anyhow::Result<()> {
         // Lease consumed producer damage before any fallible prerequisite.
-        let retained = self.render_session.begin_workspace_preparation(panes)?;
+        let mut retained = self.render_session.begin_workspace_preparation(panes)?;
+        if self.render_session.invalidate_changed_hover(state) {
+            drop(retained);
+            // A full input carrying changed hover must not bless geometry built
+            // for the old hover, even if the caller supplied a weak change hint.
+            anyhow::ensure!(
+                self.render_session
+                    .ensure_board(state, view.width, view.height, view.scale),
+                "board hover content reconstruction failed"
+            );
+            anyhow::ensure!(
+                self.render_session
+                    .ensure_schematic(state, view.width, view.height, view.scale),
+                "schematic content reconstruction failed"
+            );
+            self.render_session.check_content_budget()?;
+            retained = self
+                .render_session
+                .board
+                .clone()
+                .expect("reconstructed board");
+        }
         let _host = self.resource_host.enter();
         let prepared = crate::text_metrics::measurement_owner::with_owner(
             &mut self.measurement_fonts,
@@ -81,10 +102,7 @@ impl Renderer {
             .apply_to_prepared(&mut prepared);
         self.render_session.install_prepared(
             prepared,
-            Preparation {
-                extent: [view.width, view.height],
-                profile: PreparedProfile::Workspace,
-            },
+            Preparation::workspace(state, &retained, [view.width, view.height]),
         );
         Ok(())
     }
