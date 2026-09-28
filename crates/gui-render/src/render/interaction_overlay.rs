@@ -65,30 +65,16 @@ impl PreparedScene {
         );
     }
 
-    /// Refresh high-frequency pointer chrome without rebuilding retained world
-    /// geometry or reconstructing the prepared shell.
-    pub fn refresh_interaction(
+    pub(crate) fn refresh_pointer(
         &mut self,
-        state: &ReviewWorkspaceState,
-        board_retained: &RetainedScene,
+        cursor: Option<datum_gui_protocol::ScreenPointPx>,
+        style: datum_gui_protocol::CrosshairStyle,
+        board_hover: Option<datum_gui_protocol::RectNm>,
+        schematic_hover: Option<datum_gui_protocol::RectNm>,
     ) {
-        let board_hover = state.ui.hovered_object.as_ref().and_then(|hover| {
-            (hover.surface == datum_gui_protocol::PaneContent::Board)
-                .then(|| board_hover_bounds(board_retained, &hover.object_id))
-                .flatten()
-        });
-        self.schematic_hover_bounds_nm = state.ui.hovered_object.as_ref().and_then(|hover| {
-            (hover.surface == datum_gui_protocol::PaneContent::Schematic)
-                .then(|| {
-                    state
-                        .schematic_scene
-                        .as_ref()
-                        .and_then(|scene| schematic_symbol_bounds(scene, &hover.object_id))
-                })
-                .flatten()
-        });
-        self.crosshair_cursor_screen = state.ui.cursor_pos.map(|point| (point.x, point.y));
-        self.crosshair_style = state.ui.crosshair_style;
+        self.schematic_hover_bounds_nm = schematic_hover;
+        self.crosshair_cursor_screen = cursor.map(|point| (point.x, point.y));
+        self.crosshair_style = style;
 
         let mut board = Vec::new();
         let active = self.crosshair_cursor_screen.and_then(|(x, y)| {
@@ -348,6 +334,39 @@ fn bounds_of_points(
         max_x,
         max_y,
     })
+}
+
+#[cfg(test)]
+impl PreparedScene {
+    /// Refresh high-frequency pointer chrome without rebuilding retained world
+    /// geometry or reconstructing the prepared shell.
+    pub(crate) fn refresh_interaction(
+        &mut self,
+        state: &ReviewWorkspaceState,
+        board_retained: &RetainedScene,
+    ) {
+        let board_hover = state.ui.hovered_object.as_ref().and_then(|hover| {
+            (hover.surface == datum_gui_protocol::PaneContent::Board)
+                .then(|| board_hover_bounds(board_retained, &hover.object_id))
+                .flatten()
+        });
+        let schematic_hover = state.ui.hovered_object.as_ref().and_then(|hover| {
+            (hover.surface == datum_gui_protocol::PaneContent::Schematic)
+                .then(|| {
+                    state
+                        .schematic_scene
+                        .as_ref()
+                        .and_then(|scene| schematic_symbol_bounds(scene, &hover.object_id))
+                })
+                .flatten()
+        });
+        self.refresh_pointer(
+            state.ui.cursor_pos,
+            state.ui.crosshair_style,
+            board_hover,
+            schematic_hover,
+        );
+    }
 }
 
 #[cfg(test)]

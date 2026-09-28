@@ -1,0 +1,266 @@
+{
+  "status": "Ordered unit1 continuation: narrow pointer input, preparation capability and conservative material/text hover dependency. GPU repair remains open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "related_issue": "dat-gpu-pad-hover-dependency-ix1b",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "3238ffbd729deb95a6d88f1f2a339df2acbc622f",
+  "authority": "PM049; approved proposal-r2.md c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "change": [
+    "Replace full-state public pointer refresh with borrowed pointer-only input and opaque session/preparation generation. Resolve hover bounds from owned retained hit data; reject stale/foreign generations without modifying valid state.",
+    "Missing generation conservatively invalidates pending projection, and retained content when effective hover is uncertain/changed. Older in-flight completion cannot restore pre-pointer state. Strong pending changes are never downgraded.",
+    "Legacy retained pad color/dimming and prepared hovered-net text are actual non-suffix dependencies. Enabled board-hover enter/leave/change invalidates retained content/history and text; same-effective-hover cursor motion remains warm. Full preparation also detects changed hover before reconstructing sources. Selection disables effective material hover consistently with existing is_hovered.",
+    "History keys include exact effective board-hover identity and charge its string capacity. History source selection drops old preparation metadata; a region index never authorizes pointer mutation across a retained-source replacement.",
+    "Retained resolve observation moves into its owner; renderer include ceiling5991->5975. Old full-state PreparedScene refresh remains only as a test reference."
+  ],
+  "verification_rationale": "CPU geometry equivalence and source-path bounds prove owned hover lookup preserves existing ring/crosshair behavior. Negative generation/inflight/material transitions prove stronger invalidation and equal-length history identity. No new GPU graph introduced; broader exact8x native hover and performance qualification remains required.",
+  "verification": {
+    "shared_session_CPU_tests": 48,
+    "affected_all_target_visual_clippy": "pass",
+    "earlier_pre_material_pointer_control": 46
+  },
+  "failures_preserved": [
+    "Initial Clippy rejected test-only helper placed after the test module; moved it before that module. No lint waiver."
+  ],
+  "review": {
+    "reviewer": "/root/gpu_r1_independent_review",
+    "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+    "scope": "Read-only narrow pointer contract review after 3238ffbd. No builds/tests/native runs/edits.",
+    "disposition": "No additional concrete blocker found in conservative hover transition correction. Narrow pointer contract and hover material dependency handled; full source replacement/dependency safety not yet complete.",
+    "findings": [],
+    "observations": [
+      "PointerUpdate accepts only borrowed hover identity, cursor, crosshair style, and opaque owner/preparation generation. No source, layout, camera or chrome replacement can be silently ignored through this API.",
+      "Shared owner resolves board and schematic bounds from retained hit storage. Eligible schematic hit geometry uses source path bounds; comparison controls cover fixture graphics and full prepared scene equivalence. No new immutable world clone or source-key allocation introduced on warm pointer path; existing overlay vertex allocations remain.",
+      "Successful pointer refresh increments Interaction revision without changing preparation generation, permitting sequential updates against same prepared dependency snapshot. Strong pending revisions remain dominant.",
+      "Absent generation conservatively evicts preparation and advances Composition. Actual app submits this case instead of skipping it, so an inflight older frame cannot restore pre-pointer preparation. Stale/foreign supplied tokens reject without mutating owner state; callers must honor rejection.",
+      "Public full-state session refresh removed; old PreparedScene full-state helper is test-only and forwards geometry construction to the production narrow routine."
+    ],
+    "limitations": [
+      "No builds/tests/native runs performed by reviewer. Parent-reported CPU47/48 status is not independently executed evidence.",
+      "BoardHover::Region index is valid only for its retained hit array. Current document transition clears preparation metadata; full typed source replacement must preserve this invariant whenever replacing board without document switch.",
+      "Source/content generation remains required: same scene/source_revision strings do not establish identical payload, and current pointer generation cannot detect unsubmitted model mutation. Schematic source_revision can be identity-derived. Do not describe this increment as complete typed dependency protection.",
+      "Full-input selection/filter/tool-preview/review dependencies beyond effective hover remain part of next source dependency submission unit.",
+      "Actual GPU prefix strategy and correctness/performance qualification remain pending."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/session_pointer.rs",
+        "sha256": "567dd9c7844f88fff4358816deb5960695144ec923d0823ab71b57850f8cf93c"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_pointer_tests.rs",
+        "sha256": "3627ca7ab3357c1cc81a93a14073554e6090dae80daa56819734bf3d8f041c1c"
+      },
+      {
+        "path": "crates/gui-render/src/render/render_session.rs",
+        "sha256": "835d7883c6b8961299098f4ad15c3f56f40408180fe597c6ee653e5ddf610361"
+      },
+      {
+        "path": "crates/gui-render/src/render/interaction_overlay.rs",
+        "sha256": "7b79c1b6aadd6ea8aabac58f6a1a904fdedbacb26cf28394c572a9011f135d9d"
+      },
+      {
+        "path": "crates/gui-render/src/render/coordinate_hit.rs",
+        "sha256": "ffc8bd0d99da22ecb841ca0b4682e264ec996137db5d9dccc3f6b2071674f2da"
+      },
+      {
+        "path": "crates/gui-app/src/interaction_refresh.rs",
+        "sha256": "eba21b5a8503f518bcd76502af34397174ab6d3f9e12405a030097e8e5f97299"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_hover.rs",
+        "sha256": "050e46df5bd4bd670f0071abe53b306f8a5c0501bfafbe3def8890ae1432a0d1"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_preparation.rs",
+        "sha256": "26c5e72d6289ec1b4482180fe86864c8e2ef8cf52023be73b643759715b675d6"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_dialog.rs",
+        "sha256": "14daac0ed463241f52e162880330a236cd8a40c46600501e18c9dd20e15c00bc"
+      },
+      {
+        "path": "crates/gui-render/src/render/retained_scene_history.rs",
+        "sha256": "c43fd4b543798b92b2e8be13c0a763052431a2201bcd358d4b79b80b2bfc8ff4"
+      }
+    ],
+    "followup_findings": [
+      {
+        "id": "POINTER-PREFIX-01",
+        "severity": "high for final prefix eligibility",
+        "status": "resolved for effective hover transitions by source inspection; complete source dependency contract remains pending",
+        "finding": "Board pad hover affects retained copper related color and copper/process dimming in retained.rs, plus net-label text in overlay.rs. Narrow pointer refresh updates only ring/crosshair, preserving historical stale behavior; it cannot establish that all hover is suffix-only. is_hovered excludes explicit selection, so eligibility depends on both hover and selection.",
+        "required": "Conservatively rebuild retained board and prepared composition and invalidate GPU prefix on effective pad-hover enter/leave/change; include this dependency in history/admission identity or bypass affected history entries. Same-effective-hover cursor motion and audited schematic hover can retain suffix-only classification. Do not move material geometry into final overlay without painter-order proof.",
+        "authority": [
+          "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md:76-85",
+          "docs/decisions/PRODUCT_MECHANICS_049_SHARED_RENDER_SESSION.md:41-47",
+          "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md:112,2458"
+        ],
+        "sources": [
+          "crates/gui-render/src/render/retained.rs:142,280",
+          "crates/gui-render/src/render/overlay.rs:150",
+          "crates/gui-render/src/render/scene_visibility.rs::is_hovered"
+        ],
+        "resolution": "BoardHover classifies against owned hit arrays without new pointer-key allocations; enabled identity changes and unknowns clear content/history/prepared text. Same effective hover or selection-disabled hover remains warm. Missing generation consults prior hover before conservative invalidation. Full preparation checks hover and reconstructs retained sources when needed. History key now includes exact effective board hover plus string capacity charge; change_document clears old per-array hover metadata."
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "No concrete blocker found for this bounded pointer-only contract increment.",
+        "followup_findings": [
+          {
+            "id": "POINTER-PREFIX-01",
+            "severity": "high for final prefix eligibility",
+            "status": "resolved for effective hover transitions by source inspection; complete source dependency contract remains pending",
+            "finding": "Board pad hover affects retained copper related color and copper/process dimming in retained.rs, plus net-label text in overlay.rs. Narrow pointer refresh updates only ring/crosshair, preserving historical stale behavior; it cannot establish that all hover is suffix-only. is_hovered excludes explicit selection, so eligibility depends on both hover and selection.",
+            "required": "Conservatively rebuild retained board and prepared composition and invalidate GPU prefix on effective pad-hover enter/leave/change; include this dependency in history/admission identity or bypass affected history entries. Same-effective-hover cursor motion and audited schematic hover can retain suffix-only classification. Do not move material geometry into final overlay without painter-order proof.",
+            "authority": [
+              "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md:76-85",
+              "docs/decisions/PRODUCT_MECHANICS_049_SHARED_RENDER_SESSION.md:41-47",
+              "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md:112,2458"
+            ],
+            "sources": [
+              "crates/gui-render/src/render/retained.rs:142,280",
+              "crates/gui-render/src/render/overlay.rs:150",
+              "crates/gui-render/src/render/scene_visibility.rs::is_hovered"
+            ],
+            "resolution": "BoardHover classifies against owned hit arrays without new pointer-key allocations; enabled identity changes and unknowns clear content/history/prepared text. Same effective hover or selection-disabled hover remains warm. Missing generation consults prior hover before conservative invalidation. Full preparation checks hover and reconstructs retained sources when needed. History key now includes exact effective board hover plus string capacity charge; change_document clears old per-array hover metadata."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/session_pointer.rs",
+            "sha256": "842de906b960e1708070be8624652ab1d14dfc3812512c1d4b71995961bd41bf"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_pointer_tests.rs",
+            "sha256": "5b855c6ba692cbe8fd505d0b180fec888c41b0b86d27c863ab837c077fa69192"
+          },
+          {
+            "path": "crates/gui-render/src/render/render_session.rs",
+            "sha256": "f56e916a208739e261388fad48037ffb4e65984cf10dbb817c24375af2704304"
+          },
+          {
+            "path": "crates/gui-render/src/render/interaction_overlay.rs",
+            "sha256": "c943f74f078ecf4b4c222a8c470a77f5d5fd0506352f8457ac7905cdfd1201bf"
+          },
+          {
+            "path": "crates/gui-render/src/render/coordinate_hit.rs",
+            "sha256": "ffc8bd0d99da22ecb841ca0b4682e264ec996137db5d9dccc3f6b2071674f2da"
+          },
+          {
+            "path": "crates/gui-app/src/interaction_refresh.rs",
+            "sha256": "eba21b5a8503f518bcd76502af34397174ab6d3f9e12405a030097e8e5f97299"
+          }
+        ],
+        "limitations": [
+          "Source generation/content dependency submission remains pending; opaque preparation identity does not by itself validate unchanged authored source.",
+          "No test results independently executed or certified. Fixture-wide schematic bounds comparisons are not exhaustive evidence for every future imported primitive type.",
+          "GPU prefix correctness, performance and final architecture acceptance remain pending.",
+          "Historical ring/crosshair compatibility does not certify complete hover correctness or GPU prefix eligibility; effective pad-hover dependency must be handled before final strategy adoption."
+        ]
+      }
+    ]
+  },
+  "qualification": "No complete unit1/S4, exact8x native hover, GPU work reduction, timing or duty acceptance. Pad-hover intake remains open pending integrated qualification. Source replacement generations/full dependency submission, legacy branch normalization and tracked prefix strategy remain pending. CPU event-loop deferred.",
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/interaction_refresh.rs",
+      "sha256": "eba21b5a8503f518bcd76502af34397174ab6d3f9e12405a030097e8e5f97299"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_revision.rs",
+      "sha256": "97ffbb7fbde736cff857c398e728c46ee3c2953f0b0b24594f45c3dc2a594870"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu.rs",
+      "sha256": "02e5206663dd1dc19471ee14703efcade39fa318311f83a4ee5b3f2b6df9c888"
+    },
+    {
+      "path": "crates/gui-render/src/render/interaction_overlay.rs",
+      "sha256": "7b79c1b6aadd6ea8aabac58f6a1a904fdedbacb26cf28394c572a9011f135d9d"
+    },
+    {
+      "path": "crates/gui-render/src/render/prepared_session_tests.rs",
+      "sha256": "293f18284b1577e9d6e65cb7c9a61b78b9f62ed2343424291fe1766317663ab6"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "835d7883c6b8961299098f4ad15c3f56f40408180fe597c6ee653e5ddf610361"
+    },
+    {
+      "path": "crates/gui-render/src/render/renderer_state.rs",
+      "sha256": "079b10576287e8ed8a40e55687a0cd8eb0306e6b2eb0f16615a518df19898cce"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_history.rs",
+      "sha256": "c43fd4b543798b92b2e8be13c0a763052431a2201bcd358d4b79b80b2bfc8ff4"
+    },
+    {
+      "path": "crates/gui-render/src/render/retained_scene_owner.rs",
+      "sha256": "cc6cfec5d99f24c38e71e0ba8d5dc4f3f8e25438407c98f85cff4fb23e6ba900"
+    },
+    {
+      "path": "crates/gui-render/src/render/scene.rs",
+      "sha256": "c98060ed09351ef47e616fe08f697d72430b9d60cbe31cbe93c7be5108411e79"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_dialog.rs",
+      "sha256": "14daac0ed463241f52e162880330a236cd8a40c46600501e18c9dd20e15c00bc"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_frame_tests.rs",
+      "sha256": "70fe9d436aafaa5d89782c8e1f35f500d7d8f96d02221de59c5c71e9f956c775"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_hover.rs",
+      "sha256": "050e46df5bd4bd670f0071abe53b306f8a5c0501bfafbe3def8890ae1432a0d1"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_pointer.rs",
+      "sha256": "567dd9c7844f88fff4358816deb5960695144ec923d0823ab71b57850f8cf93c"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_pointer_tests.rs",
+      "sha256": "3627ca7ab3357c1cc81a93a14073554e6090dae80daa56819734bf3d8f041c1c"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_preparation.rs",
+      "sha256": "26c5e72d6289ec1b4482180fe86864c8e2ef8cf52023be73b643759715b675d6"
+    },
+    {
+      "path": "docs/SOURCE_HEALTH_POLICY.md",
+      "sha256": "7203ed3e74e3ce56322aa003438fd61dc191174815b06cf783b3734159d71f4e"
+    },
+    {
+      "path": "specs/SPEC_PARITY.md",
+      "sha256": "8144d0f73d5a5d7c0c8acdc976041a6a726b5e151b4dd4953ea0449c26b93043"
+    },
+    {
+      "path": "specs/source_module_size_manifest.json",
+      "sha256": "83a226121b57004b912d92e7f3a8fd7f536e08199b7f2ca7a6ef153053dac3e3"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-pointer-contract/tests.log",
+      "sha256": "a62f08386603a43948f83c545c53540cd3b4134ff635f131f58971cf31fcba61",
+      "original_sha256": "140f7551ca5a2199463c71f68263e6099651fecf1b9752d72589b0695ca6f115"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-pointer-contract/tests-final.log",
+      "sha256": "a1afacf45db70945e3a9a9aa6a8a946156d9e549f47598c2ccad66a7e777cbb7",
+      "original_sha256": "7794758b1102ff0c59d6d8abab654b6857cb9250c98cb2c3093e98985edafda4"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-pointer-contract/clippy-initial.log",
+      "sha256": "703b970b9e2515a450a3cfc952fd1a7ea65c97fa2c0e873153fcdc5473a705f9",
+      "original_sha256": "703b970b9e2515a450a3cfc952fd1a7ea65c97fa2c0e873153fcdc5473a705f9"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-pointer-contract/clippy-final.log",
+      "sha256": "c80cf784342a5a6e921d39d4e9f1da6488e3fc1bb8e7e87dc2ae548d8f31ca4c",
+      "original_sha256": "c80cf784342a5a6e921d39d4e9f1da6488e3fc1bb8e7e87dc2ae548d8f31ca4c"
+    }
+  ]
+}

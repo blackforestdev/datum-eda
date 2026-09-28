@@ -274,3 +274,9 @@ PM049 typed preparation profiles move dim/hover predicates into the existing
 include expansion falls from 6,006 to 5,991 and its exact ceiling ratchets down.
 The unused public workspace preparation bypass is removed after its pressure
 control adopts shared workspace/dialog preparation. No GPU performance claim.
+
+PM049 narrow pointer submission moves retained resolve observation into its
+`render/retained_scene_owner.rs` owner. Renderer include expansion falls from
+5,991 to 5,975 and its exact ceiling ratchets down. Shared pointer generation
+and effective board-hover invalidation replace unrestricted full-state refresh;
+existing painter order is preserved. Full GPU qualification remains pending.

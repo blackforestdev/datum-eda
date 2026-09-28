@@ -66,9 +66,16 @@ impl Runtime {
     /// must never evict the prepared shell or authored board/schematic geometry:
     /// all three are expensive and independent of transient pointer state.
     pub(super) fn refresh_interaction_overlay(&mut self) {
-        self.renderer
-            .render_session_mut()
-            .refresh_interaction(self.session.workspace());
+        let generation = self.renderer.render_session().pointer_generation();
+        let ui = &self.session.workspace().ui;
+        self.renderer.render_session_mut().update_pointer(
+            datum_gui_render::render_input::PointerUpdate {
+                generation,
+                cursor: ui.cursor_pos,
+                hover: ui.hovered_object.as_ref(),
+                style: ui.crosshair_style,
+            },
+        );
     }
 }
 

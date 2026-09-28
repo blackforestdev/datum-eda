@@ -20,6 +20,7 @@ pub struct RetainedSceneCacheKey {
     dim_unrelated: bool,
     layer_visibility: Box<[(String, bool)]>,
     pub(super) selection: String,
+    board_hover: Option<String>,
 }
 
 struct Entry {
@@ -69,6 +70,9 @@ impl RetainedSceneCacheKey {
             .checked_add(capacity_bytes::<(String, bool)>(
                 self.layer_visibility.len(),
             ))?;
+        if let Some(hover) = &self.board_hover {
+            bytes = bytes.checked_add(capacity_bytes::<u8>(hover.capacity()))?;
+        }
         for (layer, _) in &self.layer_visibility {
             bytes = bytes.checked_add(capacity_bytes::<u8>(layer.capacity()))?;
         }
@@ -498,6 +502,19 @@ impl RetainedSceneCacheKey {
                 .map(|(key, value)| (key.clone(), *value))
                 .collect(),
             selection: retained_selection_cache_key(workspace, &workspace.selection),
+            board_hover: matches!(
+                workspace.selection,
+                datum_gui_protocol::SelectionTarget::None
+            )
+            .then(|| {
+                workspace
+                    .ui
+                    .hovered_object
+                    .as_ref()
+                    .filter(|h| h.surface == datum_gui_protocol::PaneContent::Board)
+                    .map(|h| h.object_id.clone())
+            })
+            .flatten(),
         }
     }
 }
@@ -509,6 +526,7 @@ mod tests {
     pub(super) fn key(index: usize) -> RetainedSceneCacheKey {
         RetainedSceneCacheKey {
             scene_id: format!("scene-{index}"),
+            board_hover: None,
             source_revision: "revision".into(),
             width: 960,
             height: 720,

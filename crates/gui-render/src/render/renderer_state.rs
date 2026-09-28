@@ -4,7 +4,7 @@ use super::*;
 mod render_session;
 pub use render_session::{
     DialogInput, DialogView, FramePlan, RenderSession, RetainedSceneCacheKey, SubmittedFrame,
-    WorkspaceView, retained_selection_cache_key,
+    WorkspaceView, render_input, retained_selection_cache_key,
 };
 #[path = "../cpu_alloc.rs"]
 pub mod cpu_alloc;

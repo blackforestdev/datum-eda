@@ -15,14 +15,9 @@ fn prepare(session: &mut RenderSession, menu: bool) -> *const crate::HitRegion {
     )
     .unwrap();
     let hits = scene.hit_regions.as_ptr();
+    let preparation = Preparation::workspace(&state, &retained, [1280, 800]);
     session.board = Some(retained);
-    session.install_prepared(
-        scene,
-        Preparation {
-            extent: [1280, 800],
-            profile: PreparedProfile::Workspace,
-        },
-    );
+    session.install_prepared(scene, preparation);
     hits
 }
 fn plan(session: &mut RenderSession, native: bool) -> FramePlan {

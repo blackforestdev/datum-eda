@@ -21,10 +21,7 @@ fn install(session: &mut RenderSession, scene: PreparedScene) {
     session.ensure_board(&state, 1280, 800, 1.0);
     session.install_prepared(
         scene,
-        Preparation {
-            extent: [1280, 800],
-            profile: PreparedProfile::Workspace,
-        },
+        Preparation::workspace(&state, session.board().unwrap(), [1280, 800]),
     );
 }
 
@@ -86,8 +83,14 @@ fn stronger_changes_evict_preparation_and_pointer_cannot_recreate_it() {
     install(&mut session, scene(false));
     let receipt = session.prepare_frame(1, 1, 1, true, 1280, 800).unwrap();
     assert!(session.complete_frame(receipt, 1, 1, 1, true));
+    let generation = session.pointer_generation().unwrap();
     session.composition_changed();
-    session.refresh_interaction(&state);
+    assert!(!session.update_pointer(render_input::PointerUpdate {
+        generation: Some(generation),
+        cursor: state.ui.cursor_pos,
+        hover: state.ui.hovered_object.as_ref(),
+        style: state.ui.crosshair_style,
+    }));
     assert!(session.prepared().is_none());
     assert!(!session.interaction_only_damage());
     install(&mut session, scene(false));
