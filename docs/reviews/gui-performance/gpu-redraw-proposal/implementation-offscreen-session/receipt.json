@@ -1,0 +1,198 @@
+{
+  "status": "Ordered unit1 continuation: standalone offscreen shared snapshot adoption; GPU repair remains open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "74c02015be2a306116c6701c92ec4a48fb920f51",
+  "authority": "PM049; approved proposal-r2.md c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "change": [
+    "Standalone OffscreenRenderer prepares, encodes and completes immutable shared session snapshots after successful readback or bounded warm submission drain. No native publication or native terminal damage acknowledgement.",
+    "Arbitrary replacement input rebuilds retained sources and resets derived grid and clone-only terminal lease; same pointer/length never establishes validity.",
+    "Explicit shared preparation inputs preserve preferences overlay and historical root terminal snapshot composition; native retains split-aware shared terminal cache. Existing standalone 4x output preserved."
+  ],
+  "verification_rationale": "Exact old-recipe pixel comparison catches composition changes in offscreen migration. Compile all affected native consumers and boundary mutation checks; previous native snapshot evidence reused, no repeated native run or performance campaign.",
+  "verification": {
+    "actual_gpu_test": "1 passed; scales1/1.5, menu, preferences, split terminal metadata and same-length replacement exact against prior recipe",
+    "affected_visual_all_target_clippy": "pass",
+    "boundary_mutations": "7 passed"
+  },
+  "failures_preserved": [
+    "Initial compile exposed missing test-support parent imports, restored.",
+    "Initial --exact module filter selected zero tests; no proof claimed; corrected unique filter ran one passing test."
+  ],
+  "review": {
+    "reviewer": "/root/gpu_r1_independent_review",
+    "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+    "scope": "Read-only offscreen RenderSession adoption following 74c02015. No builds/tests/native runs/repository edits; CPU work excluded. Advisory only.",
+    "disposition": "No outstanding blocker identified in bounded standalone offscreen adoption after compatibility fix. Advisory source review only; full GPU r2 implementation/qualification remains pending.",
+    "findings": [
+      {
+        "id": "OFFSCREEN-01",
+        "severity": "medium",
+        "status": "resolved by source inspection",
+        "source": "visual_capture.rs::render_workspace_texture_for_surface_scale -> session_preparation.rs::prepare_session_workspace -> bottom_dock.rs:94-167",
+        "finding": "Previous single-snapshot API passed no terminal cache, rendering focused snapshot into root_geometry without split dividers. Shared preparation now supplies cache, selects matching active terminal split leaf and adds dividers. With active_tab_id/tab_layouts containing splits, output changes even with identical input. The new exact-pixel test does not construct a split layout.",
+        "required": "Preserve existing single-snapshot root composition through an explicit shared preparation profile, or record intentional authorized behavior change with split-layout compatibility coverage. Do not silently treat current unsplit pixel control as full compatibility evidence.",
+        "resolution": "WorkspaceView.single_terminal_snapshot explicitly selects no-cache historical root snapshot composition. Standalone capture sets true; native sets false. Exact-pixel control now exercises split-tab metadata and preferences as well as prior cases."
+      }
+    ],
+    "positive_notes": [
+      "Existing 4x MSAA and output format preserved; this is not native 8x qualification.",
+      "Each arbitrary workspace input clears retained content/history and grid projection state before rebuilding; reused addresses, lengths, scene ids and warm calls do not silently retain old geometry.",
+      "Standalone immutable snapshots now use the historical uncached root composition via the explicit compatibility flag, preventing stale same-length rows without applying native split-tab geometry. Full-damage lease remains nonnative and is discarded only when replacement input is submitted.",
+      "SubmittedFrame remains owned until readback completes or bounded warm device drain resolves. Failure also consumes the frame through nonnative completion. Capture cannot publish native hit maps or retire native damage. Existing target/readback submission holds preserve allocation charges across error paths.",
+      "Native adapter sets include_preferences_overlay=false while standalone capture preserves state.ui.global_preferences.open branch."
+    ],
+    "limitations": [
+      "Reviewer performed no builds/tests/native runs. Parent reports corrected exact filter ran one GPU test successfully; reviewer has not independently inspected raw execution evidence.",
+      "Same-length replacement test also changes split metadata between its two snapshots, so the final inequality alone is not an isolated row-change control; per-snapshot exact reference comparisons remain meaningful. This is nonblocking with explicit uncached snapshot composition.",
+      "Full typed/versioned input and GPU prefix strategy remain pending; 4x compatibility is not native 8x correctness/performance qualification."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/visual_capture.rs",
+        "sha256": "1d146a13ebc018fffc4993aa3a6324b219752f992c90d18efda670ecd314821d"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_preparation.rs",
+        "sha256": "2a455b94ea1ec59dafeaa702a9337c63fed773272a0d967ce2c3326e597fc086"
+      },
+      {
+        "path": "crates/gui-render/src/render/offscreen_session_tests.rs",
+        "sha256": "b9d5a46d811c1e1b9d3d60db66db762e5d269be445ff0284d28370d85c86011a"
+      },
+      {
+        "path": "crates/gui-render/src/bottom_dock.rs",
+        "sha256": "d67d8b09030ea268e2352a0fbd6a0a33765f277c2d1d352a27f87e607b4c7a4b"
+      },
+      {
+        "path": "crates/gui-render/src/terminal_scene.rs",
+        "sha256": "c85f154cd601bdaf451f98ce0cab32f741d4fcb590a8852f89f27bc386a9674d"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_frame.rs",
+        "sha256": "0b2530e900975a0f6463a7690e4e19f1387d96d9933251a82cf91a7a9b2bbf82"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_terminal_render.rs",
+        "sha256": "c79139b41a15ecfccec58e6cf4399873f234ff24d642498d03b838d7f64d90b8"
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "One concrete terminal split composition compatibility issue requires resolution/disposition; no additional snapshot lifetime or same-length input invalidation blocker found.",
+        "findings": [
+          {
+            "id": "OFFSCREEN-01",
+            "severity": "medium",
+            "status": "resolved by source inspection",
+            "source": "visual_capture.rs::render_workspace_texture_for_surface_scale -> session_preparation.rs::prepare_session_workspace -> bottom_dock.rs:94-167",
+            "finding": "Previous single-snapshot API passed no terminal cache, rendering focused snapshot into root_geometry without split dividers. Shared preparation now supplies cache, selects matching active terminal split leaf and adds dividers. With active_tab_id/tab_layouts containing splits, output changes even with identical input. The new exact-pixel test does not construct a split layout.",
+            "required": "Preserve existing single-snapshot root composition through an explicit shared preparation profile, or record intentional authorized behavior change with split-layout compatibility coverage. Do not silently treat current unsplit pixel control as full compatibility evidence.",
+            "resolution": "WorkspaceView.single_terminal_snapshot explicitly selects no-cache historical root snapshot composition. Standalone capture sets true; native sets false. Exact-pixel control now exercises split-tab metadata and preferences as well as prior cases."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/visual_capture.rs",
+            "sha256": "1d146a13ebc018fffc4993aa3a6324b219752f992c90d18efda670ecd314821d"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_preparation.rs",
+            "sha256": "ddae6d8985fa9a41d1d0af1108300ebe2eeca0aa6426b05ff12e6101734ee416"
+          },
+          {
+            "path": "crates/gui-render/src/render/offscreen_session_tests.rs",
+            "sha256": "41e0648837a1370a3f360f7d2c280aa5bb33b7dec98a3000e53f1946acc6c9ed"
+          },
+          {
+            "path": "crates/gui-render/src/bottom_dock.rs",
+            "sha256": "d67d8b09030ea268e2352a0fbd6a0a33765f277c2d1d352a27f87e607b4c7a4b"
+          },
+          {
+            "path": "crates/gui-render/src/terminal_scene.rs",
+            "sha256": "c85f154cd601bdaf451f98ce0cab32f741d4fcb590a8852f89f27bc386a9674d"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_frame.rs",
+            "sha256": "0b2530e900975a0f6463a7690e4e19f1387d96d9933251a82cf91a7a9b2bbf82"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_terminal_render.rs",
+            "sha256": "c79139b41a15ecfccec58e6cf4399873f234ff24d642498d03b838d7f64d90b8"
+          }
+        ],
+        "limitations": [
+          "No test execution by reviewer. Parent reports exact-pixel test running; result not assessed.",
+          "New pixel test covers scales/menu/unsplit terminal replacement, not split terminal layout or explicit preferences-open branch.",
+          "Full typed/versioned input and GPU prefix strategy remain pending."
+        ]
+      }
+    ]
+  },
+  "qualification": "4x standalone compatibility only, not native8x correctness or GPU performance/duty acceptance. CPU deferred; prior unrelated menu/bootstrap drift failures remain unchanged.",
+  "remaining": [
+    "Typed/versioned input contracts and explicit world-free profiles.",
+    "Normalize composed world descriptors and retire editor raw rendering bypass.",
+    "Exact8x tracked prefix-copy/suffix implementation and required correctness/resource/performance qualification.",
+    "Complete DRM lifetime observer method and separately approved observer execution before duty acceptance."
+  ],
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "sha256": "c79139b41a15ecfccec58e6cf4399873f234ff24d642498d03b838d7f64d90b8"
+    },
+    {
+      "path": "crates/gui-render/src/render/offscreen_session_tests.rs",
+      "sha256": "b9d5a46d811c1e1b9d3d60db66db762e5d269be445ff0284d28370d85c86011a"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_preparation.rs",
+      "sha256": "2a455b94ea1ec59dafeaa702a9337c63fed773272a0d967ce2c3326e597fc086"
+    },
+    {
+      "path": "crates/gui-render/src/visual_capture.rs",
+      "sha256": "1d146a13ebc018fffc4993aa3a6324b219752f992c90d18efda670ecd314821d"
+    },
+    {
+      "path": "scripts/check_terminal_core_renderer_boundary.py",
+      "sha256": "23361b9928892cda6797671d603c430e9403a67bdfacedc4be80fe4324f9b330"
+    },
+    {
+      "path": "scripts/test_terminal_core_renderer_boundary.py",
+      "sha256": "58c57a3bc2c8ff4d29b7a136d6ce6b6bd286ee279470059a392c09982e7d2f5b"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-offscreen-session/pixels.log",
+      "sha256": "139816f9963e4eb92f142469c8de2a85224bdc4277e0025f61cc5eb86d952eec",
+      "original_sha256": "95ed904e5c567d090bf8ab14bb07efaea6acfb1d762e2261bc222157c7006e78"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-offscreen-session/pixels-compile-failure.log",
+      "sha256": "51d5c78837363cbbef805f1ca89febcac4b856cc306b24e669219aa38ee61ed2",
+      "original_sha256": "51d5c78837363cbbef805f1ca89febcac4b856cc306b24e669219aa38ee61ed2"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-offscreen-session/pixels-empty-filter.log",
+      "sha256": "2c811eedb6ad4360f2a660d5e291b3fbdf7e5ac1821e40968d7a623945137900",
+      "original_sha256": "67eab730f135239090fbdb5fdbd56dd8bd5d61d509d8b3e994ff6b6a5c08ce8f"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-offscreen-session/check.log",
+      "sha256": "faf8d1da76cf91861cdc5a9aad7d60a87b26408c4cf633f186c1134ac14c1a2c",
+      "original_sha256": "faf8d1da76cf91861cdc5a9aad7d60a87b26408c4cf633f186c1134ac14c1a2c"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-offscreen-session/clippy.log",
+      "sha256": "5c81db90bb6e51f603cbf8aa6fd8f42c0c22768161873453a06418d665df27e6",
+      "original_sha256": "5c81db90bb6e51f603cbf8aa6fd8f42c0c22768161873453a06418d665df27e6"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-offscreen-session/boundary.log",
+      "sha256": "f2721cc9cb3d134f60a1bf73126fed3e817b8fe6b8bc7ffce675fa27dcd16183",
+      "original_sha256": "f2721cc9cb3d134f60a1bf73126fed3e817b8fe6b8bc7ffce675fa27dcd16183"
+    }
+  ]
+}
