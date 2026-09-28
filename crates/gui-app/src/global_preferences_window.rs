@@ -197,6 +197,7 @@ impl GlobalPreferencesWindowSurface {
     }
 
     pub(super) fn invalidate(&mut self) {
+        self.renderer.render_session_mut().composition_changed();
         self.prepared = None;
         self.presented_hits.mark_pending();
     }
@@ -419,6 +420,9 @@ impl GlobalPreferencesWindowSurface {
             });
         }
         use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
+        let complete_render = self
+            .surface_transaction
+            .begin_render_receipt(&mut self.renderer);
         let mut target = NativeRenderTarget::new(
             &mut self.surface_transaction,
             &self.surface,
@@ -449,7 +453,12 @@ impl GlobalPreferencesWindowSurface {
         if runtime.device_health.failed() {
             return Ok(false);
         }
-        self.surface_transaction.present(frame, &self.window)?;
+        self.surface_transaction.present_rendered(
+            frame,
+            &self.window,
+            &mut self.renderer,
+            complete_render,
+        )?;
         self.presented_hits
             .present(self.prepared.as_mut().expect("prepared frame presented"));
         Ok(true)

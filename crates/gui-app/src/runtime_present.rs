@@ -49,7 +49,7 @@ impl Runtime {
             if self.device_health.failed() {
                 return Ok(false);
             }
-            self.present_native_frame(frame)?;
+            self.surface_transaction.present(frame, &self.window)?;
             self.trace_timing(|| {
                 format!(
                     "runtime render diagnostic_clear=true total={}ms acquire={}ms renderer=0ms",
@@ -116,6 +116,9 @@ impl Runtime {
         let renderer_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "renderer render begin");
         use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
+        let complete_render = self
+            .surface_transaction
+            .begin_render_receipt(&mut self.renderer);
         let mut target = NativeRenderTarget::new(
             &mut self.surface_transaction,
             &self.surface,
@@ -149,7 +152,7 @@ impl Runtime {
         if self.device_health.failed() {
             return Ok(false);
         }
-        let present_elapsed = self.present_native_frame(frame)?;
+        let present_elapsed = self.present_native_frame(frame, complete_render)?;
         append_gui_verbose_diagnostic_line(|| {
             format!(
                 "frame present end {}ms total={}ms",
@@ -175,18 +178,26 @@ impl Runtime {
     fn present_native_frame(
         &mut self,
         frame: gui_runtime_support::native_surface_transaction::NativeSurfaceFrame,
+        complete: impl FnOnce(&mut Renderer, u64, u64, u64, bool) -> bool,
     ) -> Result<std::time::Duration> {
         let probe = gui_runtime_support::phase_probe::Probe::start("present");
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "frame present begin");
         let first_device_frame = !self.surface_transaction.has_presented();
-        self.surface_transaction.present(frame, &self.window)?;
-        self.presented_console_layout = self
-            .prepared_scene
-            .as_ref()
-            .and_then(PreparedScene::console_overlay_layout);
-        if let Some(prepared) = self.prepared_scene.as_mut() {
-            self.presented_hits.present(prepared);
+        self.surface_transaction.present_rendered(
+            frame,
+            &self.window,
+            &mut self.renderer,
+            complete,
+        )?;
+        {
+            self.presented_console_layout = self
+                .prepared_scene
+                .as_ref()
+                .and_then(PreparedScene::console_overlay_layout);
+            if let Some(prepared) = self.prepared_scene.as_mut() {
+                self.presented_hits.present(prepared);
+            }
         }
         if first_device_frame && self.terminal_owns_input() {
             let (x, y, width, height) = self.terminal_ime_cursor_rect();

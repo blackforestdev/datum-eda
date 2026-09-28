@@ -1,0 +1,15 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=28.8 GiB target_free=171.6 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 28.8 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.11s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-a9a942f6552ff861)
+
+running 6 tests
+test renderer_state::render_session::frame_revision::tests::receipt_mailbox_has_no_per_attempt_allocation_and_stale_drop_is_isolated ... ok
+test renderer_state::render_session::frame_revision::tests::dropped_and_superseded_attempts_never_acknowledge ... ok
+test renderer_state::render_session::frame_revision::tests::actual_present_target_must_match_every_identity_component ... ok
+test renderer_state::render_session::frame_revision::tests::failed_capture_foreign_and_retired_receipts_preserve_damage ... ok
+test renderer_state::render_session::frame_revision::tests::mixed_damage_cannot_be_downgraded_by_pointer_order ... ok
+test renderer_state::render_session::frame_revision::tests::warm_failure_and_abandoned_exposure_require_full_recovery ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 375 filtered out; finished in 0.00s

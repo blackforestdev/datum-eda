@@ -36,6 +36,7 @@ impl Runtime {
     }
 
     pub(super) fn invalidate_frame(&mut self) {
+        self.renderer.render_session_mut().composition_changed();
         self.prepared_scene = None;
         // Camera/layout/chrome changes rebuild the prepared projection only.
         // Schematic authored geometry is camera-independent retained world data,
@@ -73,6 +74,7 @@ impl Runtime {
     /// must never evict the prepared shell or authored board/schematic geometry:
     /// all three are expensive and independent of transient pointer state.
     pub(super) fn refresh_interaction_overlay(&mut self) {
+        self.renderer.render_session_mut().interaction_changed();
         if let (Some(prepared), Some(retained)) = (
             self.prepared_scene.as_mut(),
             self.renderer.render_session().board(),

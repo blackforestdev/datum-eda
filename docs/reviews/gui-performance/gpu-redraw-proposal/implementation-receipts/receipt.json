@@ -1,0 +1,292 @@
+{
+  "status": "Receipt/revision continuation of ordered unit 1; unit 1 and GPI-S4 remain incomplete.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "PM049 and pinned proposal r2",
+  "base_commit": "cfc8ebf32b95b4470b3f7da3f1c543a91eb8a59d",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "change": [
+    "Renderer session accumulates monotonic semantic changes; stronger damage cannot be downgraded by interaction hints.",
+    "Main and all owned dialog kinds share target-bound completion bridge. Failed, abandoned, foreign, superseded or retired receipts cannot acknowledge native semantic damage. Rejected completion returns failure to existing native scheduling owner.",
+    "Only successful matching native completion permits existing native hit publication. Capture cannot acknowledge native damage. Recovery transfer retires previous session target.",
+    "One allocator-scoped mailbox per session; frame begin clones its handle without allocation. Stale receipt drop cannot poison a new attempt; allocation remains observable when a receipt outlives its session."
+  ],
+  "verification_rationale": "Negative controls decide whether this completion boundary is safe to build immutable frame/image reuse on. Focused app visual compile and affected-crate all-target Clippy verify both default native adapters and capture. No GPU graph or pixel output changes: reuse unit1 broader checks at their recorded scope; no new native/performance experiment.",
+  "verification": {
+    "revision_tests": {
+      "passed": 6,
+      "failed": 0
+    },
+    "app_visual_check": "passed before final mailbox-only revision; final all-target Clippy covers that revision",
+    "affected_crates_all_target_visual_clippy": "passed after replacing existing constant chunks_exact(3) with equivalent as_chunks::<3>().0.iter() in GPU pixel parity fixture; no painter or production behavior change",
+    "source_health_base": "passed"
+  },
+  "review": {
+    "scope": "Read-only advisory review of revision/receipt continuation; no builds/tests/native runs or edits. Prepared ownership and immutable frame plan remain pending.",
+    "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+    "disposition": "All UNIT2 findings resolved by follow-up source inspection. No remaining blocking finding in this bounded continuation. Advisory review only; no test execution by reviewer, full resource/performance acceptance or completed PM049 adoption claimed.",
+    "findings": [
+      {
+        "id": "UNIT2-01",
+        "severity": "medium",
+        "source": "frame_revision.rs:72-102; runtime_present.rs:143-153; runtime_capture.rs:71",
+        "finding": "Failed completion clears active but does not invalidate interaction-only reuse; receipt drop leaves active without conservative state. After warm ack and Interaction, failure retains interaction_only=true; failed clean exposure leaves pending=false. Early errors/deferred exits drop the completion closure instead of reporting failure.",
+        "required": "Make failure/drop conservative for reuse and preserve required pending work; targeted warm-failure/drop controls. No stale cache is used yet, so this is a new owner contract flaw rather than demonstrated current image regression.",
+        "status": "resolved by follow-up source inspection",
+        "resolution": "Receipt Drop marks attempt abandonment; pending/reuse observes it, supersede promotes Target, and failed completion promotes Target. Early exits dropping closure therefore fail closed."
+      },
+      {
+        "id": "UNIT2-02",
+        "severity": "medium",
+        "source": "native_render_target.rs:74-100; frame_revision.rs:96-104",
+        "finding": "Receipt Target only compares with its own stored active copy; bridge supplies only a bool and never proves actual presented transaction target equals captured receipt Target. Same-session target-A receipt could acknowledge target-B successful presentation through public bridge. Current production sites pair correctly.",
+        "required": "Bind actual host/device/configuration presentation identity into completion verification; reject same-session wrong target, not only another Revisions owner. Ensure semantic rejection cannot clear coordinator work as a success.",
+        "status": "resolved by follow-up source inspection",
+        "resolution": "Completion receives actual host/device/configuration from SurfaceTransaction; all components must match. Shared bridge returns Err on rejected semantic receipt, preventing coordinator success acknowledgement."
+      },
+      {
+        "id": "UNIT2-03",
+        "severity": "medium",
+        "status": "resolved by source inspection",
+        "source": "crates/gui-render/src/render/frame_revision.rs:115",
+        "finding": "Fresh Arc<AtomicBool> is allocated for every begin attempt without visible pre-admission/owned metadata charge. New transient/live receipt heap storage must retain the approved full resource-accounting boundary.",
+        "required": "Reuse a bounded charged session mailbox with attempt discrimination, or explicitly admit/charge new receipt allocation and its ownership lifetime. This is separate from resolved receipt correctness findings.",
+        "resolution": "One session-owned Arc<AtomicU64> mailbox replaces per-attempt allocation. begin clones an existing handle; stale Drop compare_exchange is keyed to monotonically unique attempt and cannot clear the current mailbox. The mailbox is created in cpu_alloc Scope render-session-receipt, so actual payload, header and owner lifetime remain visible through standard cpu_alloc::usage/native resource observation, including a receipt outliving its session. Added focused test source covers allocation-free begin, pointer identity, stale drop and outliving lifetime; reviewer did not execute it."
+      }
+    ],
+    "positive_findings": [
+      "Strong revision preserves mixed Composition/Interaction dominance independent of update order.",
+      "Completing an older native revision leaves newer changes pending.",
+      "Foreign owner, superseded attempt and explicitly retired target receipts are rejected.",
+      "Capture completion never acknowledges native damage.",
+      "Recovery transfer calls retire_target, invalidating prior attempts and promoting strong pending revision.",
+      "No new selection/history behavior change in this continuation found."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/frame_revision.rs",
+        "sha256": "80a5a94e35aed08c4c59d635b6c6840c61a8e723ff1788f6c0252f5c7f63783e"
+      },
+      {
+        "path": "crates/gui-render/src/render/render_session.rs",
+        "sha256": "884c232aca0029ca2b129f097e33da6ef548df93a735bc5b369f2cabbf08c951"
+      },
+      {
+        "path": "crates/gui-app/src/native_render_target.rs",
+        "sha256": "783d4935039ef9d03026583eaef44ba42af876e3796352ef6b992d0a91d268fa"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_present.rs",
+        "sha256": "256d2ac30db523633ba2b311f2898bad9e8f4379b021268f6ce7289064f6ae0c"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_capture.rs",
+        "sha256": "e309790579436cc467a817d3d81c9c945313d90ab240b197d217aa5249033b2a"
+      },
+      {
+        "path": "crates/gui-app/src/global_preferences_window.rs",
+        "sha256": "ef5ce7626b633a226cff88d1b22344f9a9df15949fe5f3475b5bba6c6e50dc30"
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "Two medium contract-completeness findings remain before using revision/receipt predicates as image-cache authority. No additional observed current full-render output regression.",
+        "findings": [
+          {
+            "id": "UNIT2-01",
+            "severity": "medium",
+            "source": "frame_revision.rs:72-102; runtime_present.rs:143-153; runtime_capture.rs:71",
+            "finding": "Failed completion clears active but does not invalidate interaction-only reuse; receipt drop leaves active without conservative state. After warm ack and Interaction, failure retains interaction_only=true; failed clean exposure leaves pending=false. Early errors/deferred exits drop the completion closure instead of reporting failure.",
+            "required": "Make failure/drop conservative for reuse and preserve required pending work; targeted warm-failure/drop controls. No stale cache is used yet, so this is a new owner contract flaw rather than demonstrated current image regression.",
+            "status": "resolved by follow-up source inspection",
+            "resolution": "Receipt Drop marks attempt abandonment; pending/reuse observes it, supersede promotes Target, and failed completion promotes Target. Early exits dropping closure therefore fail closed."
+          },
+          {
+            "id": "UNIT2-02",
+            "severity": "medium",
+            "source": "native_render_target.rs:74-100; frame_revision.rs:96-104",
+            "finding": "Receipt Target only compares with its own stored active copy; bridge supplies only a bool and never proves actual presented transaction target equals captured receipt Target. Same-session target-A receipt could acknowledge target-B successful presentation through public bridge. Current production sites pair correctly.",
+            "required": "Bind actual host/device/configuration presentation identity into completion verification; reject same-session wrong target, not only another Revisions owner. Ensure semantic rejection cannot clear coordinator work as a success.",
+            "status": "resolved by follow-up source inspection",
+            "resolution": "Completion receives actual host/device/configuration from SurfaceTransaction; all components must match. Shared bridge returns Err on rejected semantic receipt, preventing coordinator success acknowledgement."
+          },
+          {
+            "id": "UNIT2-03",
+            "severity": "medium",
+            "status": "open accounting follow-up",
+            "source": "crates/gui-render/src/render/frame_revision.rs:115",
+            "finding": "Fresh Arc<AtomicBool> is allocated for every begin attempt without visible pre-admission/owned metadata charge. New transient/live receipt heap storage must retain the approved full resource-accounting boundary.",
+            "required": "Reuse a bounded charged session mailbox with attempt discrimination, or explicitly admit/charge new receipt allocation and its ownership lifetime. This is separate from resolved receipt correctness findings."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/frame_revision.rs",
+            "sha256": "7d4e0178e25c4f09510861acc898bd9a48126e93f22a7f8e4f115f0da9361612"
+          },
+          {
+            "path": "crates/gui-render/src/render/render_session.rs",
+            "sha256": "884c232aca0029ca2b129f097e33da6ef548df93a735bc5b369f2cabbf08c951"
+          },
+          {
+            "path": "crates/gui-app/src/native_render_target.rs",
+            "sha256": "783d4935039ef9d03026583eaef44ba42af876e3796352ef6b992d0a91d268fa"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_present.rs",
+            "sha256": "256d2ac30db523633ba2b311f2898bad9e8f4379b021268f6ce7289064f6ae0c"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_capture.rs",
+            "sha256": "e309790579436cc467a817d3d81c9c945313d90ab240b197d217aa5249033b2a"
+          },
+          {
+            "path": "crates/gui-app/src/global_preferences_window.rs",
+            "sha256": "ef5ce7626b633a226cff88d1b22344f9a9df15949fe5f3475b5bba6c6e50dc30"
+          }
+        ]
+      },
+      {
+        "disposition": "UNIT2-01 and UNIT2-02 resolved by source inspection. One new medium accounting follow-up for per-attempt Arc storage remains. Advisory source review only; prepared ownership/immutable frame plan and PM049 completion remain pending.",
+        "findings": [
+          {
+            "id": "UNIT2-01",
+            "severity": "medium",
+            "source": "frame_revision.rs:72-102; runtime_present.rs:143-153; runtime_capture.rs:71",
+            "finding": "Failed completion clears active but does not invalidate interaction-only reuse; receipt drop leaves active without conservative state. After warm ack and Interaction, failure retains interaction_only=true; failed clean exposure leaves pending=false. Early errors/deferred exits drop the completion closure instead of reporting failure.",
+            "required": "Make failure/drop conservative for reuse and preserve required pending work; targeted warm-failure/drop controls. No stale cache is used yet, so this is a new owner contract flaw rather than demonstrated current image regression.",
+            "status": "resolved by follow-up source inspection",
+            "resolution": "Receipt Drop marks attempt abandonment; pending/reuse observes it, supersede promotes Target, and failed completion promotes Target. Early exits dropping closure therefore fail closed."
+          },
+          {
+            "id": "UNIT2-02",
+            "severity": "medium",
+            "source": "native_render_target.rs:74-100; frame_revision.rs:96-104",
+            "finding": "Receipt Target only compares with its own stored active copy; bridge supplies only a bool and never proves actual presented transaction target equals captured receipt Target. Same-session target-A receipt could acknowledge target-B successful presentation through public bridge. Current production sites pair correctly.",
+            "required": "Bind actual host/device/configuration presentation identity into completion verification; reject same-session wrong target, not only another Revisions owner. Ensure semantic rejection cannot clear coordinator work as a success.",
+            "status": "resolved by follow-up source inspection",
+            "resolution": "Completion receives actual host/device/configuration from SurfaceTransaction; all components must match. Shared bridge returns Err on rejected semantic receipt, preventing coordinator success acknowledgement."
+          },
+          {
+            "id": "UNIT2-03",
+            "severity": "medium",
+            "status": "resolved by source inspection",
+            "source": "crates/gui-render/src/render/frame_revision.rs:115",
+            "finding": "Fresh Arc<AtomicBool> is allocated for every begin attempt without visible pre-admission/owned metadata charge. New transient/live receipt heap storage must retain the approved full resource-accounting boundary.",
+            "required": "Reuse a bounded charged session mailbox with attempt discrimination, or explicitly admit/charge new receipt allocation and its ownership lifetime. This is separate from resolved receipt correctness findings.",
+            "resolution": "One session-owned Arc<AtomicU64> mailbox replaces per-attempt allocation. begin clones an existing handle; stale Drop compare_exchange is keyed to monotonically unique attempt and cannot clear the current mailbox. The mailbox is created in cpu_alloc Scope render-session-receipt, so actual payload, header and owner lifetime remain visible through standard cpu_alloc::usage/native resource observation, including a receipt outliving its session. Added focused test source covers allocation-free begin, pointer identity, stale drop and outliving lifetime; reviewer did not execute it."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/frame_revision.rs",
+            "sha256": "80a5a94e35aed08c4c59d635b6c6840c61a8e723ff1788f6c0252f5c7f63783e"
+          },
+          {
+            "path": "crates/gui-render/src/render/render_session.rs",
+            "sha256": "884c232aca0029ca2b129f097e33da6ef548df93a735bc5b369f2cabbf08c951"
+          },
+          {
+            "path": "crates/gui-app/src/native_render_target.rs",
+            "sha256": "783d4935039ef9d03026583eaef44ba42af876e3796352ef6b992d0a91d268fa"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_present.rs",
+            "sha256": "256d2ac30db523633ba2b311f2898bad9e8f4379b021268f6ce7289064f6ae0c"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_capture.rs",
+            "sha256": "e309790579436cc467a817d3d81c9c945313d90ab240b197d217aa5249033b2a"
+          },
+          {
+            "path": "crates/gui-app/src/global_preferences_window.rs",
+            "sha256": "ef5ce7626b633a226cff88d1b22344f9a9df15949fe5f3475b5bba6c6e50dc30"
+          }
+        ]
+      }
+    ],
+    "followup_accounting_sources": [
+      {
+        "path": "crates/gui-render/src/cpu_alloc.rs",
+        "sha256": "eccfc53450e2751a2ee30ce6273c5f0d646c24e8cfa2b382e0a5c584b2fd286b"
+      },
+      {
+        "path": "crates/gui-app/src/native_resource_measurements.rs",
+        "sha256": "7b5fd17d095847e3f8c7095d1fecf5e7e8c5a21631c38146acb215c77471e884"
+      }
+    ]
+  },
+  "remaining": [
+    "Shared prepared-projection ownership, immutable frame plans and versioned source/descriptor validation; current boolean scene_dirty and prepared nullable state still transitional.",
+    "Terminal snapshot/damage rollback leases through deferred/failed native presentation and merging newer producer changes.",
+    "Normalized ordered pane inputs and retirement of legacy raw board/companion encoder branches.",
+    "Tracked exact8x prefix pair, shared painter suffix, copy-inclusive diagnostics and required correctness/resource controls.",
+    "Bounded candidate performance comparison; complete DRM observer method scope and final qualification."
+  ],
+  "qualification": "No completed adoption, warm GPU work reduction, exact8x parity, performance or issue resolution claimed. CPU event-loop work excluded. Existing menu/bootstrap repository drift failure remains recorded by dat-menu-csv-parity-block-p6fz.",
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "sha256": "ef5ce7626b633a226cff88d1b22344f9a9df15949fe5f3475b5bba6c6e50dc30"
+    },
+    {
+      "path": "crates/gui-app/src/interaction_refresh.rs",
+      "sha256": "f9ad5921e9669117ce55bed54b4c00aae38954c475b6c1dfc453062c39cf2356"
+    },
+    {
+      "path": "crates/gui-app/src/native_render_target.rs",
+      "sha256": "783d4935039ef9d03026583eaef44ba42af876e3796352ef6b992d0a91d268fa"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_capture.rs",
+      "sha256": "e309790579436cc467a817d3d81c9c945313d90ab240b197d217aa5249033b2a"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "sha256": "256d2ac30db523633ba2b311f2898bad9e8f4379b021268f6ce7289064f6ae0c"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_init.rs",
+      "sha256": "c2612efddc6669c7b831138b8fe884cf1b8cef136059cdcbadfa60cebef0d09b"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "884c232aca0029ca2b129f097e33da6ef548df93a735bc5b369f2cabbf08c951"
+    },
+    {
+      "path": "crates/gui-render/src/render/world_pipeline_tests.rs",
+      "sha256": "dd80a1dc64ad99447a1dbd19e091403669123524f61e24e3b06f38abb0fe7fe5"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_revision.rs",
+      "sha256": "80a5a94e35aed08c4c59d635b6c6840c61a8e723ff1788f6c0252f5c7f63783e"
+    }
+  ],
+  "raw_logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-receipts/initial-clippy.log",
+      "sha256": "d4372b6bb623b917b7aa32eec8c899215d0cd50519d34bb5c30bc4c988973685",
+      "original_sha256": "d4372b6bb623b917b7aa32eec8c899215d0cd50519d34bb5c30bc4c988973685"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-receipts/revision-tests.log",
+      "sha256": "dd6d7348eed09e1613e61f686405a7eb6f0faedbafd82536b8614df6dac33099",
+      "original_sha256": "5961be191662f2152026161918d5eef33a8f8c4a6703e0c7fd9dccade3bfe141"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-receipts/app-visual-check.log",
+      "sha256": "ddad25c6341a3f3c34669cc4cad22f4e100d15cd7b19b3e6cb6ab95f2de31aa2",
+      "original_sha256": "ddad25c6341a3f3c34669cc4cad22f4e100d15cd7b19b3e6cb6ab95f2de31aa2"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-receipts/source-health.log",
+      "sha256": "ab09b2ade1410e550b4f180d0d3fdc3b8965940e16601a374592a674a9032723",
+      "original_sha256": "ab09b2ade1410e550b4f180d0d3fdc3b8965940e16601a374592a674a9032723"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-receipts/clippy.log",
+      "sha256": "b11f5216e413c2c37ac83e000fb9092b1ab50d6dea0d7541c05b6b67637a5e10",
+      "original_sha256": "b11f5216e413c2c37ac83e000fb9092b1ab50d6dea0d7541c05b6b67637a5e10"
+    }
+  ]
+}

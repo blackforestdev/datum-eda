@@ -8,6 +8,7 @@ impl Renderer {
     /// together, while the replacement's GPU owners and preparation stay cold.
     pub fn commit_cpu_recovery_from(&mut self, previous: &mut Self) {
         self.render_session = std::mem::take(&mut previous.render_session);
+        self.render_session.retire_target();
         assert!(std::sync::Arc::ptr_eq(
             &self.atlas.staging_budget,
             &previous.atlas.staging_budget,
