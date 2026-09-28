@@ -158,7 +158,6 @@ impl Renderer {
         }
     }
 
-    #[cfg(feature = "visual")]
     pub fn encode_capture(
         &mut self,
         plan: FramePlan,

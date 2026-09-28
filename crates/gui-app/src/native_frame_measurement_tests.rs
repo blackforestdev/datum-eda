@@ -46,14 +46,23 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
     let mut renderer = Renderer::new(&device, &queue, format, 4).unwrap();
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.global_preferences.open = true;
-    let prepared = datum_gui_render::PreparedScene::from_native_preferences(
-        &state.ui.global_preferences,
-        960,
-        720,
-        1.0,
-    )
-    .unwrap();
-    let retained = datum_gui_render::RetainedScene::empty();
+    let prepare_dialog = |renderer: &mut Renderer| {
+        renderer
+            .prepare_session_dialog(
+                datum_gui_render::DialogInput::GlobalPreferences {
+                    dialog: &state.ui.global_preferences,
+                    reveal_row: None,
+                },
+                datum_gui_render::DialogView {
+                    width: 960,
+                    height: 720,
+                    scale: 1.0,
+                },
+                &mut datum_gui_viewport::scroll::ScrollViewport::default(),
+            )
+            .unwrap();
+    };
+    prepare_dialog(&mut renderer);
     let target = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("frame-writer-test"),
         size: wgpu::Extent3d {
@@ -69,9 +78,7 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
         view_formats: &[],
     });
     let view = target.create_view(&Default::default());
-    renderer
-        .render(&device, &queue, &view, &prepared, &retained, None, 960, 720)
-        .unwrap();
+    draw_session_capture(&mut renderer, &device, &queue, &view).unwrap();
     let fixture_root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/kicad");
     let board_state = datum_gui_protocol::load_board_editor_workspace_state(
@@ -87,37 +94,41 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
         },
     )
     .unwrap();
-    let board = datum_gui_render::RetainedScene::from_workspace(&board_state, 960, 720);
-    let board_prepared = datum_gui_render::PreparedScene::from_workspace_for_surface(
-        &board_state,
-        960,
-        720,
-        1.0,
-        datum_gui_render::CameraState::fit_to_bounds(&board_state.scene.bounds),
-        &board,
-    )
-    .unwrap();
+    assert!(
+        renderer
+            .render_session_mut()
+            .ensure_board(&board_state, 960, 720, 1.0)
+    );
+    assert!(
+        renderer
+            .render_session_mut()
+            .ensure_schematic(&board_state, 960, 720, 1.0)
+    );
     renderer
-        .render(
-            &device,
-            &queue,
-            &view,
-            &board_prepared,
-            &board,
-            None,
-            960,
-            720,
+        .prepare_session_workspace(
+            &board_state,
+            datum_gui_render::WorkspaceView {
+                width: 960,
+                height: 720,
+                scale: 1.0,
+                camera: datum_gui_render::CameraState::fit_to_bounds(&board_state.scene.bounds),
+                schematic_camera: None,
+                pane_cameras: &[],
+                include_preferences_overlay: false,
+                single_terminal_snapshot: false,
+            },
+            &[],
         )
         .unwrap();
+    draw_session_capture(&mut renderer, &device, &queue, &view).unwrap();
     {
         let mut lock = WRITER.lock().unwrap();
         let writer = lock.as_mut().unwrap();
         assert!(writer.frames > 0);
         writer.frame_limit = writer.frames;
     }
-    let error = renderer
-        .render(&device, &queue, &view, &prepared, &retained, None, 960, 720)
-        .unwrap_err();
+    prepare_dialog(&mut renderer);
+    let error = draw_session_capture(&mut renderer, &device, &queue, &view).unwrap_err();
     assert!(error.to_string().contains("frame capacity exhausted"));
     assert!(WRITER.lock().unwrap().as_ref().unwrap().frame_failed);
     assert!(
@@ -270,4 +281,26 @@ fn frame_trace_serializes_actual_render_attempts_and_refuses_overflow() {
     assert_eq!(end["frame_delivery_failed"], true);
     assert_eq!(end["complete_delivery"], false);
     eprintln!("preserved frame writer trace: {}", path.display());
+}
+
+fn draw_session_capture(
+    renderer: &mut Renderer,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    view: &wgpu::TextureView,
+) -> anyhow::Result<()> {
+    let owner = renderer.resource_owner_id();
+    let plan = renderer
+        .render_session_mut()
+        .prepare_frame(owner, owner, 0, false, 960, 720)?;
+    let frame = renderer.encode_capture(plan, device, queue, view)?;
+    let result = device.poll(wgpu::PollType::Wait {
+        submission_index: None,
+        timeout: Some(std::time::Duration::from_secs(30)),
+    });
+    renderer
+        .render_session_mut()
+        .complete_submitted(frame, owner, owner, 0, result.is_ok());
+    result?;
+    Ok(())
 }

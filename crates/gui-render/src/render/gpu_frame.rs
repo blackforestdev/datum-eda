@@ -5,7 +5,7 @@ pub(crate) mod target;
 
 impl Renderer {
     #[allow(clippy::too_many_arguments)]
-    pub fn render(
+    pub(crate) fn render(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -40,7 +40,7 @@ impl Renderer {
     /// Native hosts must use render_with_acquisition to avoid acquiring swapchain
     /// images for upload-only turns. False retains pending damage in either path.
     #[allow(clippy::too_many_arguments)]
-    pub fn render_with_submission(
+    pub(crate) fn render_with_submission(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
