@@ -4,13 +4,13 @@ use super::*;
 
 impl Runtime {
     pub(super) fn prepared_scene(&mut self) -> Option<&PreparedScene> {
-        if self.prepared_scene.is_none() {
+        if self.renderer.render_session().prepared().is_none() {
             if !self.ensure_retained_scene() {
                 return None;
             }
             match self.build_terminal_prepared_scene() {
                 Ok(scene) => {
-                    self.prepared_scene = Some(scene);
+                    self.renderer.render_session_mut().install_prepared(scene);
                     self.scene_dirty = false;
                 }
                 Err(error) => {
@@ -21,7 +21,7 @@ impl Runtime {
                 }
             }
         }
-        self.prepared_scene.as_ref()
+        self.renderer.render_session().prepared()
     }
 
     pub(super) fn build_terminal_prepared_scene(&mut self) -> Result<PreparedScene> {
@@ -78,7 +78,6 @@ impl Runtime {
                 self.renderer.control_mesh_build_count()
             )
         });
-        self.presented_hits.mark_pending();
         Ok(prepared)
     }
 }

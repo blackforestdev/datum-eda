@@ -67,10 +67,10 @@ impl Runtime {
         )?;
         let scene_started = std::time::Instant::now();
         let retained_was_cached = self.renderer.render_session().board().is_some();
-        let prepared_was_cached = self.prepared_scene.is_some();
+        let prepared_was_cached = self.renderer.render_session().prepared().is_some();
         let mut retained_build_ms = 0;
         let mut prepared_build_ms = 0;
-        if self.prepared_scene.is_none() {
+        if self.renderer.render_session().prepared().is_none() {
             append_gui_verbose_diagnostic_line(|| {
                 format!("render scene prepare begin retained_cached={retained_was_cached}")
             });
@@ -86,7 +86,10 @@ impl Runtime {
             }
             let prepared_started = std::time::Instant::now();
             append_gui_verbose_diagnostic_line(|| "prepared scene build begin");
-            self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
+            let prepared = self.build_terminal_prepared_scene()?;
+            self.renderer
+                .render_session_mut()
+                .install_prepared(prepared);
             self.scene_dirty = false;
             prepared_build_ms = prepared_started.elapsed().as_millis();
             append_gui_verbose_diagnostic_line(|| {
@@ -106,10 +109,6 @@ impl Runtime {
             .board()
             .cloned()
             .context("retained scene should exist before render")?;
-        let prepared = self
-            .prepared_scene
-            .as_ref()
-            .context("prepared scene should exist before render")?;
         let schematic_retained = self.renderer.render_session().schematic().cloned();
         drop(probe);
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
@@ -127,18 +126,20 @@ impl Runtime {
             &self.config,
             &self.device_health,
         );
-        let rendered = self.renderer.render_with_acquisition(
-            &self.device,
-            &self.queue,
-            prepared,
-            &retained,
-            schematic_retained.as_ref(),
-            self.config.width,
-            self.config.height,
-            &mut target,
-            &mut NativeRenderTarget::acquire,
-            &mut NativeRenderTarget::submitted,
-        );
+        let rendered = self.renderer.with_prepared_scene(|renderer, prepared| {
+            renderer.render_with_acquisition(
+                &self.device,
+                &self.queue,
+                prepared,
+                &retained,
+                schematic_retained.as_ref(),
+                self.config.width,
+                self.config.height,
+                &mut target,
+                &mut NativeRenderTarget::acquire,
+                &mut NativeRenderTarget::submitted,
+            )
+        });
         let (frame, acquire_elapsed) = target.finish(&self.renderer);
         if !rendered? {
             return Ok(false);
@@ -190,14 +191,9 @@ impl Runtime {
             &mut self.renderer,
             complete,
         )?;
-        {
-            self.presented_console_layout = self
-                .prepared_scene
-                .as_ref()
-                .and_then(PreparedScene::console_overlay_layout);
-            if let Some(prepared) = self.prepared_scene.as_mut() {
-                self.presented_hits.present(prepared);
-            }
+        if let Some((hits, console)) = self.renderer.render_session_mut().take_published_frame() {
+            self.presented_console_layout = console;
+            self.presented_hits.replace(hits);
         }
         if first_device_frame && self.terminal_owns_input() {
             let (x, y, width, height) = self.terminal_ime_cursor_rect();

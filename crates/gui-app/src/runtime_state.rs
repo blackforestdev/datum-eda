@@ -35,7 +35,6 @@ pub(super) struct Runtime {
     pub(super) divider_drag: Option<DividerDrag>,
     pub(super) terminal_mouse_button: Option<MouseButton>,
     pub(super) modifiers: ModifiersState,
-    pub(super) prepared_scene: Option<PreparedScene>,
     pub(super) presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
     /// Console input/lifetime queries must not prepare a dirty workspace frame.
     pub(super) presented_console_layout: Option<datum_gui_render::ConsoleOverlayLayout>,

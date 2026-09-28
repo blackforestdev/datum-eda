@@ -15,13 +15,11 @@ impl Runtime {
         self.renderer
             .render_session_mut()
             .change_document(previous_key, &next_key);
-        self.prepared_scene = None;
         self.scene_dirty = true;
     }
 
     pub(super) fn invalidate_scene(&mut self) {
         self.renderer.render_session_mut().clear_content();
-        self.prepared_scene = None;
         self.scene_dirty = true;
     }
 
@@ -31,13 +29,11 @@ impl Runtime {
         // Historical entries carry old surface keys. Preserve only live geometry
         // whose construction has no dependency on the reference projection size.
         self.renderer.render_session_mut().resize_content();
-        self.prepared_scene = None;
         self.scene_dirty = true;
     }
 
     pub(super) fn invalidate_frame(&mut self) {
         self.renderer.render_session_mut().composition_changed();
-        self.prepared_scene = None;
         // Camera/layout/chrome changes rebuild the prepared projection only.
         // Schematic authored geometry is camera-independent retained world data,
         // just like the board retained scene, and must stay warm here.
@@ -74,13 +70,9 @@ impl Runtime {
     /// must never evict the prepared shell or authored board/schematic geometry:
     /// all three are expensive and independent of transient pointer state.
     pub(super) fn refresh_interaction_overlay(&mut self) {
-        self.renderer.render_session_mut().interaction_changed();
-        if let (Some(prepared), Some(retained)) = (
-            self.prepared_scene.as_mut(),
-            self.renderer.render_session().board(),
-        ) {
-            prepared.refresh_interaction(self.session.workspace(), retained);
-        }
+        self.renderer
+            .render_session_mut()
+            .refresh_interaction(self.session.workspace());
         self.scene_dirty = true;
     }
 }

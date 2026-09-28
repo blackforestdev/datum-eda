@@ -1,0 +1,320 @@
+{
+  "status": "Prepared-projection ownership continuation of ordered unit1; typed immutable FramePlan and complete GPI-S4 adoption/qualification remain open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "PM049 and exact owner-approved proposal r2",
+  "base_commit": "206143d583299382ae98cec35ff69357429bb297",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "change": [
+    "RenderSession now owns the prepared projection for Main and every owned native dialog. Runtime/global dialog nullable cache fields are removed; readers use the shared accessor.",
+    "Main/native dialogs/capture encode one borrowed immutable scene via a move-and-restore envelope without geometry cloning. A semantic revision change during encoding prevents restoring an obsolete snapshot.",
+    "Only accepted native completion can create hit/Console publication. Capture, failure and old completion cannot publish a newer prepared projection; cached exposures cannot replace displayed hits with the consumed empty vector.",
+    "Target retirement invalidates prepared and unpublished projection state, preserving retained CPU content and terminal damage. This prevents recovered dialogs inheriting consumed hit maps."
+  ],
+  "verification_rationale": "Shared storage and publication alter all native/capture adapters. CPU negative controls prove revision/capture/recovery policy. Two existing hidden X11 tests verify actual scale/extent hit publication and serial Main/GLOBAL/PROJECT/NEW presentation with an added offscreen capture isolation assertion. Native checks use a pinned real board and isolated XDG settings; no performance schedule or tuning.",
+  "verification": {
+    "tests": {
+      "passed": 30,
+      "failed": 0
+    },
+    "native-hits": {
+      "passed": 1,
+      "failed": 0
+    },
+    "native-hosts": {
+      "passed": 1,
+      "failed": 0
+    },
+    "app_visual_check": "passed",
+    "clippy": "affected GUI app/render all-target visual passed; initial compile caught two old-field references in owned-dialog test helpers, corrected to shared accessors",
+    "source_health": "passed",
+    "terminal_boundaries": "renderer and GUI convergence passed"
+  },
+  "review": {
+    "scope": "Read-only advisory review of shared prepared-projection ownership migration. No edits, builds, tests or native runs. CPU work excluded.",
+    "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+    "disposition": "No remaining blocking finding in this bounded prepared-ownership continuation after recovery fix. Advisory source review only; no independent builds/tests/runs or completed PM049 acceptance. Per-attempt immutable FramePlan/publication adoption remains pending as previously noted.",
+    "findings": [
+      {
+        "id": "PREPARED-01",
+        "severity": "high",
+        "status": "resolved by follow-up source inspection",
+        "sources": [
+          "crates/gui-render/src/render/render_session.rs::retire_target",
+          "crates/gui-render/src/render/gpu_init.rs::commit_cpu_recovery_from",
+          "crates/gui-app/src/global_preferences_window.rs::new_with_device/replacement/render",
+          "crates/gui-app/src/native_device_recovery.rs:434"
+        ],
+        "finding": "Auxiliary recovery installs a fresh empty PresentedHitRegions, but now transfers an already-presented PreparedScene and prepared_hits_pending=false in RenderSession. That PreparedScene hit vector was moved out previously. retire_target does not invalidate prepared/publication; next recovered dialog render skips rebuild and emits no hit publication. All three auxiliary kinds can therefore render but retain empty input hit maps after recovery. Previously replacement.prepared=None forced reconstruction.",
+        "required": "Invalidate prepared projection/pending publication on target retirement/recovery while preserving leased terminal damage and retained CPU source content, or explicitly transfer and rebind correct hit state. For this unit, rebuilding matches historical recovery behavior. Cover previously-presented dialog\u2192replacement empty input owner\u2192retirement\u2192fresh preparation\u2192matching presentation publication.",
+        "resolution": "retire_target clears prepared, prepared_hits_pending and queued publication while retaining CPU content and terminal lease. resize_content delegates to it. Existing recovery commit invokes retire_target after transferring RenderSession, forcing auxiliary rebuild. Added source control covers consumed hit map, retirement removing projection/publication and later matching presentation publishing fresh hits. Reviewer did not execute it."
+      }
+    ],
+    "review_notes": [
+      "Main, all dialog kinds, and capture now move PreparedScene through with_prepared_scene rather than deep cloning it. Normal result success/error restores the same envelope when semantic revision is unchanged; changed revision prevents restoring stale content.",
+      "Only accepted matching native completion constructs publication; failed/deferred/dropped/capture paths do not take hits or retire lease. Capture retains the projection for subsequent native use, without publishing native input state.",
+      "Composition/content/resize transitions remove shared prepared state. Current native adapters synchronously take publication immediately after accepted present, preserving last displayed app hit map through ordinary preparation failure.",
+      "prepared_revision comparison prevents an old receipt from publishing a newer replacement. This continuation does not yet own a per-attempt immutable publication snapshot: if semantic changes are allowed between encoding and present, skipping newer publication is safe against speculative hits but cannot publish the older frame actually displayed. Current synchronous adapters do not interleave semantic updates there; final FramePlan adoption must bind the rendered snapshot, not merely current shared prepared state.",
+      "Test-only PresentedHitRegions mark_pending/present remains historical helper; future behavior tests must exercise shared complete_frame/take_published_frame production path, not only that legacy test helper.",
+      "App terminal cache and camera/grid construction plus diagnostic/test scene_dirty remain explicitly transitional; this migration is not complete PM049 adoption."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/render_session.rs",
+        "sha256": "42e4f4dc14840d088febdd50c9ca4665be2cc49e1b4e919fc9b1998dbe6a0092"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_present.rs",
+        "sha256": "39b2b5b268755895c3f83d170381c99a61d442b6de2bd9c3ed26e4bd216518d3"
+      },
+      {
+        "path": "crates/gui-app/src/global_preferences_window.rs",
+        "sha256": "a091d772597c588719c0d492971002420ebd7a45ab9fa1f5115be82a021fd4f7"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_capture.rs",
+        "sha256": "7c1109dc3f1d546bc491b05fe7d9b318f07798016f9c8ec63956766163fb868b"
+      },
+      {
+        "path": "crates/gui-app/src/runtime_terminal_render.rs",
+        "sha256": "8993905ce164e2fcb76b7253f8a03bef99c08a57f90a3925ed9834ea673156fb"
+      },
+      {
+        "path": "crates/gui-app/src/presented_hit_regions.rs",
+        "sha256": "b2428d266c3760bc35d23c4a22bc908241c96a566306497843ba0ef514905980"
+      },
+      {
+        "path": "crates/gui-app/src/native_device_recovery.rs",
+        "sha256": "f5c8c91d3032c66d0869222b3102e35844563b50504231dbabd5d66fcb4c83ad"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_init.rs",
+        "sha256": "c2612efddc6669c7b831138b8fe884cf1b8cef136059cdcbadfa60cebef0d09b"
+      },
+      {
+        "path": "crates/gui-render/src/render/prepared_session_tests.rs",
+        "sha256": "2112b85206ab6dfbd25087faec2a02c210b372ebdc3f749c582741ddcd85bbe6"
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "One high recovery regression remains before landing this continuation. No current single-thread native/capture invalidation or borrow regression otherwise found.",
+        "findings": [
+          {
+            "id": "PREPARED-01",
+            "severity": "high",
+            "status": "resolved by follow-up source inspection",
+            "sources": [
+              "crates/gui-render/src/render/render_session.rs::retire_target",
+              "crates/gui-render/src/render/gpu_init.rs::commit_cpu_recovery_from",
+              "crates/gui-app/src/global_preferences_window.rs::new_with_device/replacement/render",
+              "crates/gui-app/src/native_device_recovery.rs:434"
+            ],
+            "finding": "Auxiliary recovery installs a fresh empty PresentedHitRegions, but now transfers an already-presented PreparedScene and prepared_hits_pending=false in RenderSession. That PreparedScene hit vector was moved out previously. retire_target does not invalidate prepared/publication; next recovered dialog render skips rebuild and emits no hit publication. All three auxiliary kinds can therefore render but retain empty input hit maps after recovery. Previously replacement.prepared=None forced reconstruction.",
+            "required": "Invalidate prepared projection/pending publication on target retirement/recovery while preserving leased terminal damage and retained CPU source content, or explicitly transfer and rebind correct hit state. For this unit, rebuilding matches historical recovery behavior. Cover previously-presented dialog\u2192replacement empty input owner\u2192retirement\u2192fresh preparation\u2192matching presentation publication.",
+            "resolution": "retire_target clears prepared, prepared_hits_pending and queued publication while retaining CPU content and terminal lease. resize_content delegates to it. Existing recovery commit invokes retire_target after transferring RenderSession, forcing auxiliary rebuild. Added source control covers consumed hit map, retirement removing projection/publication and later matching presentation publishing fresh hits. Reviewer did not execute it."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/render_session.rs",
+            "sha256": "42e4f4dc14840d088febdd50c9ca4665be2cc49e1b4e919fc9b1998dbe6a0092"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_present.rs",
+            "sha256": "39b2b5b268755895c3f83d170381c99a61d442b6de2bd9c3ed26e4bd216518d3"
+          },
+          {
+            "path": "crates/gui-app/src/global_preferences_window.rs",
+            "sha256": "a091d772597c588719c0d492971002420ebd7a45ab9fa1f5115be82a021fd4f7"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_capture.rs",
+            "sha256": "7c1109dc3f1d546bc491b05fe7d9b318f07798016f9c8ec63956766163fb868b"
+          },
+          {
+            "path": "crates/gui-app/src/runtime_terminal_render.rs",
+            "sha256": "8993905ce164e2fcb76b7253f8a03bef99c08a57f90a3925ed9834ea673156fb"
+          },
+          {
+            "path": "crates/gui-app/src/presented_hit_regions.rs",
+            "sha256": "b2428d266c3760bc35d23c4a22bc908241c96a566306497843ba0ef514905980"
+          },
+          {
+            "path": "crates/gui-app/src/native_device_recovery.rs",
+            "sha256": "f5c8c91d3032c66d0869222b3102e35844563b50504231dbabd5d66fcb4c83ad"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_init.rs",
+            "sha256": "c2612efddc6669c7b831138b8fe884cf1b8cef136059cdcbadfa60cebef0d09b"
+          },
+          {
+            "path": "crates/gui-render/src/render/prepared_session_tests.rs",
+            "sha256": "2112b85206ab6dfbd25087faec2a02c210b372ebdc3f749c582741ddcd85bbe6"
+          }
+        ]
+      }
+    ]
+  },
+  "post_review": "After follow-up review, test helpers migrated their last two old field accesses and the existing multi-host native test gained a visual-feature capture/publication assertion. No changed owner policy. Current source pins identify tested revision.",
+  "native_commands": [
+    "#!/usr/bin/env bash",
+    "set -euo pipefail",
+    "export DATUM_NATIVE_TEST_BOARD=/tmp/gpu-prepared-native/board.kicad_pcb",
+    "export EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "export XDG_CONFIG_HOME=/tmp/gpu-prepared-native/hits-config",
+    "export XDG_CACHE_HOME=/tmp/gpu-prepared-native/hits-cache",
+    "export XDG_DATA_HOME=/tmp/gpu-prepared-native/hits-data",
+    "export XDG_STATE_HOME=/tmp/gpu-prepared-native/hits-state",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui --features visual global_preferences_window::native_dialog_hit_tests::native_preferences_hits_reject_old_scale_and_extent_until_presented -- --ignored --exact --test-threads=1 > /tmp/gpu-prepared-native-hits.log 2>&1",
+    "export XDG_CONFIG_HOME=/tmp/gpu-prepared-native/hosts-config",
+    "export XDG_CACHE_HOME=/tmp/gpu-prepared-native/hosts-cache",
+    "export XDG_DATA_HOME=/tmp/gpu-prepared-native/hosts-data",
+    "export XDG_STATE_HOME=/tmp/gpu-prepared-native/hosts-state",
+    "export DATUM_NATIVE_CAPTURE_OUT=/tmp/gpu-prepared-native/capture.png",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui --features visual global_preferences_window::native_dialog_hit_tests::native_shared_device_hosts_preserve_hidden_terminal_and_console_work -- --ignored --exact --test-threads=1 > /tmp/gpu-prepared-native-hosts.log 2>&1"
+  ],
+  "sandbox_attempt": "First native test stalled during sandbox graphics initialization with unavailable render-device warnings and was terminated after about2min. It is not correctness evidence. Same tests passed with approved host-device access; no system tuning or candidate change.",
+  "native_fixture": {
+    "source": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "cli": "target/release/datum-eda",
+    "cli_sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+    "prior_method": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json"
+  },
+  "capture": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/capture.png",
+    "sha256": "5f93353f636b09550a6310d1e221dafc13fe3d392e00d7d56f5b7ec0532c734d",
+    "extent": [
+      960,
+      720
+    ],
+    "inspection": "960x720 board, shell and terminal populated. Board labels remain visible through/over the Console history area; baseline comparison and intended occlusion are unqualified. Tracked as dat-gpu-console-occlusion-ly6r.",
+    "qualification": "Native composition smoke artifact; no exact8x baseline comparison or visual parity acceptance claimed."
+  },
+  "remaining": [
+    "Versioned immutable input descriptors and FramePlan/submission receipt ownership; current preparation adapters still construct scenes and mutate camera/grid before installation.",
+    "App terminal render-cache ownership and redundant scene_dirty flag; normalize ordered pane inputs and retire legacy raw board/companion and preparation entry paths.",
+    "Tracked exact8x prefix/suffix strategy and required output/resource/negative controls.",
+    "Bounded performance experiment and complete DRM observer method execution scope/final qualification."
+  ],
+  "qualification": "No completed ordered-unit1, GPU work reduction, exact8x parity, performance, Wayland universality or issue resolution claimed. CPU event-loop work remains excluded. Prior menu/bootstrap drift and shared-history parallel-fixture intake remain recorded.",
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/app_frame.rs",
+      "sha256": "35a43db4e4e1a4cc2640d09a48a8b0be979fc5aa23d505705213f40c3e307c84"
+    },
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "sha256": "a091d772597c588719c0d492971002420ebd7a45ab9fa1f5115be82a021fd4f7"
+    },
+    {
+      "path": "crates/gui-app/src/interaction_refresh.rs",
+      "sha256": "82afa2a1c6ccaf511a570c811b3a7072f76d645d284e6cc7c5103c536a517097"
+    },
+    {
+      "path": "crates/gui-app/src/native_dialog_hit_tests.rs",
+      "sha256": "0ca5fd52f6cad6189079338d6b34fa9cc22017bf0ea2c42bcfc5ab1e860d7be4"
+    },
+    {
+      "path": "crates/gui-app/src/native_dialog_refresh_tests.rs",
+      "sha256": "5fe652a042b3fde88fdb6ca63dfa40868698f8c2c5c7490df2bf76a45618af69"
+    },
+    {
+      "path": "crates/gui-app/src/native_layers_scroll_tests.rs",
+      "sha256": "0d316a30719f4adf6acc859adb8d8cbf906ab25b72bcb631d6f804875a41bf34"
+    },
+    {
+      "path": "crates/gui-app/src/native_terminal_scroll_tests.rs",
+      "sha256": "c1e0953a73dbb077540cf6efed069861950338ef087abde932f5de3b861d6ed1"
+    },
+    {
+      "path": "crates/gui-app/src/owned_dialog_pointer_tests.rs",
+      "sha256": "6f843f643e71c11cdbb1ff0e148b361cd929b63d0366bf1fe5492ff9c2455b5a"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "sha256": "b2428d266c3760bc35d23c4a22bc908241c96a566306497843ba0ef514905980"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_camera_pane.rs",
+      "sha256": "569af497b5b8f9ebe94efca6703e10c1222f21e865be75b8c3c06d99a6f5ae82"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_capture.rs",
+      "sha256": "7c1109dc3f1d546bc491b05fe7d9b318f07798016f9c8ec63956766163fb868b"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_init.rs",
+      "sha256": "c48898836cbe0617f522333dfcaac7a1b9028fa1755087c07aa75de14cb9279c"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "sha256": "39b2b5b268755895c3f83d170381c99a61d442b6de2bd9c3ed26e4bd216518d3"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_state.rs",
+      "sha256": "3129b519e74f72e3a8ed926d07e3f43489e76fb7b5873e245f8a29d3f70c2927"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "sha256": "8993905ce164e2fcb76b7253f8a03bef99c08a57f90a3925ed9834ea673156fb"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "42e4f4dc14840d088febdd50c9ca4665be2cc49e1b4e919fc9b1998dbe6a0092"
+    },
+    {
+      "path": "crates/gui-render/src/render/prepared_session_tests.rs",
+      "sha256": "2112b85206ab6dfbd25087faec2a02c210b372ebdc3f749c582741ddcd85bbe6"
+    }
+  ],
+  "raw_logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/check.log",
+      "sha256": "abaa381b230d465bbb605c0527f13e530b655b518f8b7bb28687e0d66493ca19",
+      "original_sha256": "abaa381b230d465bbb605c0527f13e530b655b518f8b7bb28687e0d66493ca19"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/tests.log",
+      "sha256": "ae82ba46c722a03eebc7eafce04a79ac14cd493d5f7e30c456d4d0ef5178e0dc",
+      "original_sha256": "3e76de57f23d0959830f05b156548aefad5b3c9258dd530a273d73be5eec8eb8"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/clippy-initial.log",
+      "sha256": "a75ec3f57cdea21777fed60e44f30f69da9862cae64e7339273e74ccff20f51b",
+      "original_sha256": "a75ec3f57cdea21777fed60e44f30f69da9862cae64e7339273e74ccff20f51b"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/clippy.log",
+      "sha256": "b9a91f8c221b3fb3edd990a5fbef444ede196c52b368fc296180c9b4afe9c661",
+      "original_sha256": "b9a91f8c221b3fb3edd990a5fbef444ede196c52b368fc296180c9b4afe9c661"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/native-hits-sandbox.log",
+      "sha256": "23f67423d556e362552ae9433b76a3f48394676e99976910313d685e7ab49f49",
+      "original_sha256": "23f67423d556e362552ae9433b76a3f48394676e99976910313d685e7ab49f49"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/native-hits.log",
+      "sha256": "741bf402e0ac21b8688cc80357d68fb40458b11c2c9fa57805400cb0d244b3f0",
+      "original_sha256": "e2be4681ed8f3dba269f33b28c6a75c9baf13ea8272eb4f032537afb11813f3d"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/native-hosts.log",
+      "sha256": "fc703ed5b30d5ef1e2234aa5909c6c11911cadf5c8cc0ed9830803fb60d02213",
+      "original_sha256": "9fdb3d8ef99cd3f4afa4860efd00331d7f1335909c3f353def2765052914546f"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/source-health-final.log",
+      "sha256": "6c4d184dcdcc9e68a5cfd9f3fa168cfea9ccfd39dd95ef71a65384c26512fda3",
+      "original_sha256": "6c4d184dcdcc9e68a5cfd9f3fa168cfea9ccfd39dd95ef71a65384c26512fda3"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prepared-owner/boundaries.log",
+      "sha256": "899d6ae7cfe3ff400dcd330a1395362e2df706e9afd45339789b43dfd8b0ce4b",
+      "original_sha256": "899d6ae7cfe3ff400dcd330a1395362e2df706e9afd45339789b43dfd8b0ce4b"
+    }
+  ]
+}

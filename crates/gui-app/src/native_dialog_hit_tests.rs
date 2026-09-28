@@ -213,7 +213,7 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
         .console
         .set_history_expanded(true);
     runtime.resize_terminal_to_dock();
-    runtime.prepared_scene = None;
+    runtime.renderer.render_session_mut().composition_changed();
     let present_main = |runtime: &mut Runtime| {
         let deadline = std::time::Instant::now() + Duration::from_secs(10);
         while !runtime.render().unwrap() {
@@ -228,8 +228,9 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
     present_main(&mut runtime);
     assert!(
         runtime
-            .prepared_scene
-            .as_ref()
+            .renderer
+            .render_session()
+            .prepared()
             .unwrap()
             .console_overlay_layout()
             .unwrap()
@@ -247,6 +248,23 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
             .is_empty(),
         "visible preparation consumed the pending terminal update"
     );
+    #[cfg(feature = "visual")]
+    if let Ok(path) = std::env::var("DATUM_NATIVE_CAPTURE_OUT") {
+        let hits = runtime.presented_hits.regions().as_ptr();
+        let count = runtime.presented_hits.regions().len();
+        runtime
+            .write_visual_screenshot(std::path::Path::new(&path))
+            .unwrap();
+        assert_eq!(runtime.presented_hits.regions().as_ptr(), hits);
+        assert_eq!(runtime.presented_hits.regions().len(), count);
+        assert!(
+            runtime
+                .renderer
+                .render_session_mut()
+                .take_published_frame()
+                .is_none()
+        );
+    }
     for host in ["GLOBAL", "PROJECT", "NEW"] {
         match host {
             "GLOBAL" => {

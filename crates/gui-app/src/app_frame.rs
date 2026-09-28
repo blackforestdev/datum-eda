@@ -78,8 +78,9 @@ impl Runtime {
         );
 
         let prepared = self
-            .prepared_scene
-            .as_ref()
+            .renderer
+            .render_session()
+            .prepared()
             .context("prepared scene should exist before interaction smoke click")?;
         let click = (
             prepared.scene_viewport.x + prepared.scene_viewport.width * 0.5,

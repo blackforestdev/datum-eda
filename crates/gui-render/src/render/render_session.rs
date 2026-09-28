@@ -16,6 +16,10 @@ pub use history::{RetainedSceneCacheKey, retained_selection_cache_key};
 #[derive(Default)]
 pub struct RenderSession {
     revisions: Revisions,
+    prepared: Option<crate::PreparedScene>,
+    prepared_revision: u64,
+    prepared_hits_pending: bool,
+    publication: Option<(Vec<crate::HitRegion>, Option<crate::ConsoleOverlayLayout>)>,
     terminal_damage: PendingTerminalDamage,
     board: Option<RetainedScene>,
     board_history: RetainedSceneHistory,
@@ -35,6 +39,7 @@ impl RenderSession {
     }
     pub fn composition_changed(&mut self) {
         self.revisions.update(Change::Composition);
+        self.prepared = None;
     }
     pub fn interaction_changed(&mut self) {
         self.revisions.update(Change::Interaction);
@@ -75,6 +80,16 @@ impl RenderSession {
         );
         if accepted {
             self.terminal_damage.presented(revision);
+            if self.prepared_revision <= revision
+                && self.prepared_hits_pending
+                && let Some(prepared) = self.prepared.as_mut()
+            {
+                self.publication = Some((
+                    std::mem::take(&mut prepared.hit_regions),
+                    prepared.console_overlay_layout(),
+                ));
+                self.prepared_hits_pending = false;
+            }
         }
         accepted
     }
@@ -89,6 +104,11 @@ impl RenderSession {
     }
     pub fn retire_target(&mut self) {
         self.revisions.retire_target();
+        // A replacement native host starts with no displayed hit projection.
+        // Rebuild even when CPU retained content survives the device transfer.
+        self.prepared = None;
+        self.prepared_hits_pending = false;
+        self.publication = None;
     }
 
     /// Read-only projection for hit testing. Clones share charged immutable data.
@@ -112,6 +132,7 @@ impl RenderSession {
 
     pub fn clear_content(&mut self) {
         self.revisions.update(Change::Content);
+        self.prepared = None;
         self.board = None;
         self.board_history.clear();
         self.clear_schematic();
@@ -123,7 +144,7 @@ impl RenderSession {
     }
 
     pub fn resize_content(&mut self) {
-        self.revisions.retire_target();
+        self.retire_target();
         self.board_history.invalidate_surface_size(&mut self.board);
         self.schematic_history
             .invalidate_surface_size(&mut self.schematic);
@@ -135,6 +156,7 @@ impl RenderSession {
         next: &RetainedSceneCacheKey,
     ) {
         self.revisions.update(Change::Content);
+        self.prepared = None;
         if let Some(board) = self.board.take() {
             self.board_history.insert(previous, board);
         }
@@ -191,3 +213,59 @@ impl RenderSession {
         true
     }
 }
+
+impl RenderSession {
+    pub fn prepared(&self) -> Option<&crate::PreparedScene> {
+        self.prepared.as_ref()
+    }
+
+    /// Transitional preparation adapter. Scene construction will join typed
+    /// input submission; this owner already controls storage and publication.
+    pub fn install_prepared(&mut self, prepared: crate::PreparedScene) {
+        self.prepared_revision = self.revisions.update(Change::Composition);
+        self.prepared = Some(prepared);
+        self.prepared_hits_pending = true;
+    }
+
+    pub fn refresh_interaction(&mut self, state: &ReviewWorkspaceState) {
+        self.interaction_changed();
+        if let (Some(prepared), Some(retained)) = (&mut self.prepared, &self.board) {
+            prepared.refresh_interaction(state, retained);
+            self.prepared_revision = self.revisions.current();
+        }
+    }
+
+    /// Only complete_frame can create a publication. Native adapters transfer
+    /// this read-only snapshot to their input projection after matching success.
+    pub fn take_published_frame(
+        &mut self,
+    ) -> Option<(Vec<crate::HitRegion>, Option<crate::ConsoleOverlayLayout>)> {
+        self.publication.take()
+    }
+}
+
+impl crate::Renderer {
+    /// Lend one immutable prepared snapshot while mutating GPU resource owners.
+    /// Move its envelope, never clone the geometry or borrow through a mutable
+    /// alias. A concurrent semantic update prevents reinserting an old snapshot.
+    pub fn with_prepared_scene<R>(
+        &mut self,
+        encode: impl FnOnce(&mut Self, &crate::PreparedScene) -> anyhow::Result<R>,
+    ) -> anyhow::Result<R> {
+        let prepared = self
+            .render_session
+            .prepared
+            .take()
+            .ok_or_else(|| anyhow::anyhow!("shared prepared scene must exist before encode"))?;
+        let revision = self.render_session.revisions.current();
+        let result = encode(self, &prepared);
+        if self.render_session.revisions.current() == revision {
+            self.render_session.prepared = Some(prepared);
+        }
+        result
+    }
+}
+
+#[cfg(test)]
+#[path = "prepared_session_tests.rs"]
+mod prepared_tests;

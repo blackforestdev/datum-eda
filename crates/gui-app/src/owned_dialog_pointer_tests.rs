@@ -146,8 +146,9 @@ fn present_changed_content(
     surface(app, index).window.request_redraw();
     let deadline = Instant::now() + Duration::from_secs(5);
     while !surface(app, index)
-        .prepared
-        .as_ref()
+        .renderer
+        .render_session()
+        .prepared()
         .is_some_and(|prepared| prepared.hit_regions.is_empty())
     {
         // Native redraw delivery observes compositor frame-callback pacing.
@@ -216,7 +217,7 @@ fn verify_content_change_capture(
     present_changed_content(events, app, index);
     let owned = surface(app, index);
     assert!(
-        owned.prepared.is_some(),
+        owned.renderer.render_session().prepared().is_some(),
         "changed content must be presented"
     );
     let offset = owned.scroll.offset();

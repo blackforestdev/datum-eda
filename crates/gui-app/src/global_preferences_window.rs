@@ -79,7 +79,6 @@ pub(super) struct GlobalPreferencesWindowSurface {
     pub(super) measurements: native_gpu_measurements::Host,
     // Dialog hosts never contain world geometry; retain this immutable envelope.
     empty_scene: RetainedScene,
-    prepared: Option<PreparedScene>,
     // Input keeps targeting the last presented geometry while damage coalesces.
     presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
     cursor_position: Option<(f32, f32)>,
@@ -145,9 +144,8 @@ impl GlobalPreferencesWindowSurface {
         )?;
         let mut surface_transaction = SurfaceTransaction::new(&window, gpu.health);
         surface_transaction.share_queue_with(gpu.transaction);
-        let mut presented_hits =
+        let presented_hits =
             gui_runtime_support::presented_hit_regions::PresentedHitRegions::default();
-        presented_hits.mark_pending();
         Ok(Self {
             surface,
             surface_transaction,
@@ -156,7 +154,6 @@ impl GlobalPreferencesWindowSurface {
             renderer,
             measurements,
             empty_scene: RetainedScene::empty(),
-            prepared: None,
             presented_hits,
             cursor_position: None,
             scroll: Default::default(),
@@ -198,8 +195,6 @@ impl GlobalPreferencesWindowSurface {
 
     pub(super) fn invalidate(&mut self) {
         self.renderer.render_session_mut().composition_changed();
-        self.prepared = None;
-        self.presented_hits.mark_pending();
     }
 
     pub(super) fn resize(&mut self, _runtime: &Runtime, width: u32, height: u32) {
@@ -328,19 +323,20 @@ impl GlobalPreferencesWindowSurface {
             self.config.height,
             || !runtime.device_health.failed(),
         )?;
-        if self.prepared.is_none() {
+        if self.renderer.render_session().prepared().is_none() {
+            let mut prepared;
             if new_project {
                 let dialog = &runtime.workspace().ui.new_project;
                 let focus = (dialog.focus, dialog.units_choice);
                 let reveal_focus = self.new_project_focus != Some(focus);
-                self.prepared = Some(self.renderer.prepare_native_new_project_scrolled(
+                prepared = self.renderer.prepare_native_new_project_scrolled(
                     &runtime.workspace().ui.new_project,
                     self.config.width,
                     self.config.height,
                     self.scale_factor,
                     &mut self.scroll,
                     reveal_focus,
-                )?);
+                )?;
                 self.new_project_focus = Some(focus);
             } else {
                 let dialog = if project_preferences {
@@ -378,14 +374,14 @@ impl GlobalPreferencesWindowSurface {
                 if identity_changed || expanded_changed {
                     self.scroll.release();
                 }
-                self.prepared = Some(self.renderer.prepare_native_preferences_scrolled(
+                prepared = self.renderer.prepare_native_preferences_scrolled(
                     dialog,
                     self.config.width,
                     self.config.height,
                     self.scale_factor,
                     &mut self.scroll,
                     reveal_row,
-                )?);
+                )?;
                 // Scrolling rebuilds geometry, but unchanged reveal keys stay owned here.
                 if focus_changed {
                     self.scroll_focus = Some(dialog.focus.clone());
@@ -402,7 +398,7 @@ impl GlobalPreferencesWindowSurface {
                     ));
                 }
             }
-            if let Some(prepared) = &mut self.prepared {
+            {
                 prepared.set_native_consumer(if new_project {
                     datum_gui_render::resource_consumers::Consumer::New
                 } else if project_preferences {
@@ -411,6 +407,9 @@ impl GlobalPreferencesWindowSurface {
                     datum_gui_render::resource_consumers::Consumer::Global
                 });
             }
+            self.renderer
+                .render_session_mut()
+                .install_prepared(prepared);
             append_gui_verbose_diagnostic_line(|| {
                 format!(
                     "native control_meshes window={:?} builds={}",
@@ -431,20 +430,20 @@ impl GlobalPreferencesWindowSurface {
             &self.config,
             &runtime.device_health,
         );
-        let rendered = self.renderer.render_with_acquisition(
-            &runtime.device,
-            &runtime.queue,
-            self.prepared
-                .as_ref()
-                .context("Global Preferences prepared scene must exist")?,
-            &self.empty_scene,
-            None,
-            self.config.width,
-            self.config.height,
-            &mut target,
-            &mut NativeRenderTarget::acquire,
-            &mut NativeRenderTarget::submitted,
-        );
+        let rendered = self.renderer.with_prepared_scene(|renderer, prepared| {
+            renderer.render_with_acquisition(
+                &runtime.device,
+                &runtime.queue,
+                prepared,
+                &self.empty_scene,
+                None,
+                self.config.width,
+                self.config.height,
+                &mut target,
+                &mut NativeRenderTarget::acquire,
+                &mut NativeRenderTarget::submitted,
+            )
+        });
         let (frame, _) = target.finish(&self.renderer);
         if !rendered? {
             return Ok(false);
@@ -459,8 +458,9 @@ impl GlobalPreferencesWindowSurface {
             &mut self.renderer,
             complete_render,
         )?;
-        self.presented_hits
-            .present(self.prepared.as_mut().expect("prepared frame presented"));
+        if let Some((hits, _)) = self.renderer.render_session_mut().take_published_frame() {
+            self.presented_hits.replace(hits);
+        }
         Ok(true)
     }
 }
