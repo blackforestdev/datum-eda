@@ -1,0 +1,15 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=37.9 GiB target_free=162.5 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 37.9 GiB used; soft limit 20.0 GiB
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 5 tests
+test text_identity_tests::conformance_medium_type_tiers_resolve_to_medium_weight ... ok
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb]: parsed KiCad board skeleton into canonical nets, packages, tracks, vias, zones, and stackup; full geometry and rule import is not implemented yet
+datum-import warning [/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+test visual::visual_runner::tests::conformance_golden_camera_frames_board_fit_to_bounds ... ok
+test menu_chrome::tests::conformance_menu_title_width_padding_is_uniform_and_tight ... ok
+test render_contract_tests::conformance_pane_header_tools_and_binding_chips_render ... ok
+test render_contract_tests::conformance_region_token_bindings_follow_design_book ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 473 filtered out; finished in 0.62s

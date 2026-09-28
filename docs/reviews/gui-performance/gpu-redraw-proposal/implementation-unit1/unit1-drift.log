@@ -1,0 +1,42 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.003s
+
+OK
+Cargo resource policy: PASS
+== rustfmt: workspace formatting gate ==
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+OK
+rustfmt gate passed for workspace (3 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).
+== clippy: workspace lint gate (-D warnings) ==
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=28.4 GiB target_free=172.7 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 28.4 GiB used; soft limit 20.0 GiB
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking eda-test-harness v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/test-harness)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-eda-cli v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/cli)
+    Checking eda-engine-daemon v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine-daemon)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error: this range is empty so it will yield no values
+   --> crates/gui-render/src/render/gpu_data.rs:249:36
+    |
+249 |         for range in [1..6, 0..18, 12..6] {
+    |                                    ^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#reversed_empty_ranges
+    = note: `#[deny(clippy::reversed_empty_ranges)]` on by default
+help: consider using the following if you are attempting to iterate over this range in reverse
+    |
+249 -         for range in [1..6, 0..18, 12..6] {
+249 +         for range in [1..6, 0..18, (6..12).rev()] {
+    |
+
+error: could not compile `datum-gui-render` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

@@ -116,8 +116,8 @@ def check(root: Path) -> list[str]:
         "crate::text_gpu::upload::TextureUpload {",
         "GraphicAnchorResolution::History",
         "GraphicAnchorResolution::Screen",
-        "encode_terminal_graphics(&mutencoder,&msaa_view,&view,false,measurement.as_mut())",
-        "encode_terminal_graphics(&mutencoder,&msaa_view,&view,true,measurement.as_mut())",
+        "terminal_graphics.draw_layer(&mutpass,&self.uniform_bind_group,false)",
+        "terminal_graphics.draw_layer(&mutpass,&self.uniform_bind_group,true)",
     ):
         corpus = core + graphics + texture + gpu
         if marker not in corpus:

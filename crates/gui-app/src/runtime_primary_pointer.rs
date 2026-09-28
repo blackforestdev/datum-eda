@@ -144,8 +144,9 @@ impl Runtime {
                     return focus_changed;
                 }
                 let retained = self
-                    .retained_scene
-                    .as_ref()
+                    .renderer
+                    .render_session()
+                    .board()
                     .expect("retained scene initialized");
                 retained
                     .hit_test_authored_world(world_point, self.session.workspace())

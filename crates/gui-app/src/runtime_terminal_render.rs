@@ -37,8 +37,10 @@ impl Runtime {
             Vec::new()
         };
         let retained = self
-            .retained_scene
-            .as_ref()
+            .renderer
+            .render_session()
+            .board()
+            .cloned()
             .context("retained scene should exist before prepared scene rebuild")?;
         let preparation = self.renderer.prepare_workspace_with_terminal_renderer(
             self.session.workspace(),
@@ -46,7 +48,7 @@ impl Runtime {
             self.config.height,
             self.scale_factor,
             self.camera,
-            retained,
+            &retained,
             &terminal_panes,
             Some(&mut self.terminal_render_cache),
             false,

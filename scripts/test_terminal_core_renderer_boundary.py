@@ -63,8 +63,8 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         (root / guard.GPU).write_text(
             "self.submit_terminal_upload_chunk(device, queue, &mut |submission| { target.submitted(submission) })?\n"
             "target.acquire()?\n"
-            "encode_terminal_graphics(&mut encoder, &msaa_view, &view, false, measurement.as_mut(),)\n"
-            "encode_terminal_graphics(&mut encoder, &msaa_view, &view, true, measurement.as_mut(),)\n",
+            "terminal_graphics.draw_layer(&mut pass, &self.uniform_bind_group, false)\n"
+            "terminal_graphics.draw_layer(&mut pass, &self.uniform_bind_group, true)\n",
             encoding="utf-8",
         )
         (root / guard.SCENE).write_text(
@@ -126,14 +126,14 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         self.assertTrue(self.mutate(guard.CORE_RENDER, "\n", "\nuse TerminalScreen;\n"))
 
     def test_image_dpi_and_runtime_wiring_mutations_fail(self) -> None:
-        self.assertTrue(self.mutate(guard.GPU, "&view, false,", "&view, true,"))
+        self.assertTrue(self.mutate(guard.GPU, "&self.uniform_bind_group, false)", "&self.uniform_bind_group, true)"))
         self.assertTrue(self.mutate(guard.SCENE, "terminal_panes: &[crate::TerminalPaneRenderState]", ""))
         self.assertTrue(self.mutate(guard.TEXTURE, "crate::text_gpu::upload::TextureUpload {", ""))
         self.assertTrue(self.mutate(guard.GRAPHICS, "mod texture;", ""))
         self.assertTrue(
             self.mutate(
                 guard.GPU,
-                "encode_terminal_graphics(&mut encoder, &msaa_view, &view, true, measurement.as_mut(),)",
+                "terminal_graphics.draw_layer(&mut pass, &self.uniform_bind_group, true)",
                 "",
             )
         )

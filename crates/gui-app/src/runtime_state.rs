@@ -35,8 +35,6 @@ pub(super) struct Runtime {
     pub(super) divider_drag: Option<DividerDrag>,
     pub(super) terminal_mouse_button: Option<MouseButton>,
     pub(super) modifiers: ModifiersState,
-    pub(super) retained_scene: Option<RetainedScene>,
-    pub(super) retained_scene_cache: RetainedSceneHistory,
     pub(super) prepared_scene: Option<PreparedScene>,
     pub(super) presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
     /// Console input/lifetime queries must not prepare a dirty workspace frame.
@@ -44,10 +42,6 @@ pub(super) struct Runtime {
     pub(super) terminal_render_cache: TerminalRenderCache,
     pub(super) terminal_accessibility:
         terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge,
-    // Lazily retained schematic world geometry; camera-independent geometry
-    // survives frame invalidation and eligible surface-size changes.
-    pub(super) schematic_retained_scene: Option<RetainedScene>,
-    pub(super) schematic_scene_accounting: RetainedSceneHistory,
     pub(super) scene_dirty: bool,
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) terminal_launch_context: TerminalLaunchContext,
