@@ -5,7 +5,7 @@
   "step": "GPI-S4",
   "authority": "owner-direction.json",
   "status": "Native ledger uses shared existing10entry capacity; focused offline proof passes; candidate/native pending.",
-  "change": "Expose existing renderer current/submitted union bound through Renderer::SURFACE_ATTACHMENT_USAGE_CAPACITY; use same bound in renderer return arrays and native temporary current IDs. No image graph, sampler, mask, shader, scene, observer format/capacity or numerical limit change. Native stack scratch grows112bytes (3to10Option<(u64,u64)> entries); no new retained or GPU allocation.",
+  "change": "Expose existing renderer current/submitted union bound through Renderer::SURFACE_ATTACHMENT_USAGE_CAPACITY; use same bound in renderer return arrays and native temporary current IDs. No image graph, sampler, mask, shader, scene, observer format/capacity or numerical limit change. Native fixed stack scratch grows from3to10membership entries; no new retained or GPU allocation.",
   "proof": {
     "native_owner": "23tests pass; new5current+5submitted,last-use completion,close and device-loss controls exercise QueueOwner-to-Ledger production bridge. Original crash is preserved negative evidence.",
     "lint": "gui-render/gui-app all-target visual and default Clippy pass -D warnings.",

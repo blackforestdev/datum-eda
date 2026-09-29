@@ -1,0 +1,71 @@
+{
+  "active": {
+    "n": 1275,
+    "min_ms": 2.375500072494507,
+    "p50_ms": 4.83925014768219,
+    "p95_ms": 6.700166871139526,
+    "p99_ms": 10.205083644767761,
+    "max_ms": 12.937750394828797
+  },
+  "pass_intervals": {
+    "upload-leading": {
+      "n": 1275,
+      "min_ms": 0.015166667129516602,
+      "p50_ms": 0.02116666731262207,
+      "p95_ms": 0.0227500006942749,
+      "p99_ms": 0.04083333457946777,
+      "max_ms": 1.3165000401763916
+    },
+    "restore": {
+      "n": 1275,
+      "min_ms": 0.5304166828536987,
+      "p50_ms": 1.0908333666229248,
+      "p95_ms": 1.307250039894104,
+      "p99_ms": 1.4516667109680175,
+      "max_ms": 2.7159167495498657
+    },
+    "suffix": {
+      "n": 1275,
+      "min_ms": 1.03366669821167,
+      "p50_ms": 2.4059167400894164,
+      "p95_ms": 3.909000119293213,
+      "p99_ms": 4.291500130966186,
+      "max_ms": 4.775000145721435
+    },
+    "frame-trailing": {
+      "n": 1275,
+      "min_ms": 0.014916667121887207,
+      "p50_ms": 0.019500000595092774,
+      "p95_ms": 0.021583333992004395,
+      "p99_ms": 4.8725001486969,
+      "max_ms": 7.930916908699036
+    }
+  },
+  "interval_after_suffix_before_final_marker": {
+    "n": 1275,
+    "min_ms": 0.6764166873092652,
+    "p50_ms": 1.1275833677444458,
+    "p95_ms": 2.358833405319214,
+    "p99_ms": 2.9235000892181398,
+    "max_ms": 8.844083603233337
+  },
+  "total_after_suffix_end": {
+    "n": 1275,
+    "min_ms": 0.6914166877670288,
+    "p50_ms": 1.1528333685150147,
+    "p95_ms": 2.616833413192749,
+    "p99_ms": 6.120083520103455,
+    "max_ms": 9.15116694593811
+  },
+  "over_4ms": 988,
+  "over_8ms": 32,
+  "world_submissions_active": 0,
+  "complete_frames": 1278,
+  "phase_counts": {
+    "startup": 2,
+    "active": 1275,
+    "close": 1
+  },
+  "input_records": 2571,
+  "qualification": "All1275active frames retained. Pass and interval quantiles are separate distributions and must not be added. After-suffix intervals include copies, transitions and marker execution/scheduling; no isolated copy-cost or paired speedup inference. One completed30s pointer trial is not repeated stability/endurance evidence."
+}

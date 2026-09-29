@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "defect": "dat-r4-native-attachment-capacity-uquy",
+  "step": "GPI-S4",
+  "authority": "../r4-native-correction/owner-direction.json",
+  "source": "c3949e53",
+  "status": "First valid R4 native result; attachment crash corrected. Pointer p95/p99 fail; campaign stopped after C-G1, no further native trials.",
+  "gpu": {
+    "n": 1275,
+    "p95_ms": 6.700166871139526,
+    "p99_ms": 10.205083644767761,
+    "max_ms": 12.937750394828797
+  },
+  "correctness": "Readiness/final exact zero pixel difference; final crosshair visually inspected.3600requests,1280integer changes all received/completed viewport routing.1278complete GPU frames,1275active retained.2571/4096inputrecords,nooverflow;normal controlled drain/exit,no remaining processes,unchanged binary.",
+  "stability": "One complete30s active pointer workload without crash, lost receipts or output mismatch. No repeated-run or endurance inference; first numerical failure cancelled11remainingtrials.",
+  "budget": "Both4ms/8ms limits failed under pinned copy-inclusive method.988activeframes exceed4ms;32exceed8ms. Allactivegraphs restore/suffix/finalmarker with zero world submissions, so this run shows no cold-invalidation regression.",
+  "assessment_limits": "No paired baseline/quiet observations or overhead measurement. Pass/interval quantiles not additive. Post-suffix intervals include copies, transitions, marker execution and scheduling; cause of long final-marker tails not isolated. No hardware/Wayland limit established. Complete DRM duty and broader S4/S5 qualification remain unavailable.",
+  "build_note": "First release invocation returned old baseline as fresh; hash preflight rejected it. With compilation idle, guarded cargo clean restricted to gui-app/gui-render release artifacts; actual rebuild produced distinct source-pinned candidate. No native trial spent on stale binary. One new candidate produced; baseline reused unchanged.",
+  "artifacts_sha256": {
+    "build-state.json": "6ac9411c70982a20661c55082ab513e1eb57d2c002b5f2c43359f676a0139dff",
+    "declaration.json": "664eb72f774b7ea0b811cd7bf6e5e32ef83c9591bbb7570a442d82dc5952f977",
+    "raw.tar.gz": "6854e71c0548953e1ea5bd4c395df2eebde2d4c65a3dfa03c8c095dfc953d7a8",
+    "analysis.json": "9d1736adef2b29e296aa69e7d88d83f946a9d58be38ca289dcc12626de2c7a64",
+    "native-result.json": "d26cffbcbb00b669a226a38af2cc524666c9dd387181f4cd87c5a1f33accaed2",
+    "campaign-state.json": "ff5607ecec844d8d2139d3887d029d0972d253a0a7eade063fc137e31c9ef92c"
+  }
+}
