@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "recorded_at": "2026-09-29T22:22:30.639597+00:00",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "owner_request_exact": "Your assessment describes why attribution is unresolved; it does not perform the requested study. Prepare the smallest concrete attribution experiment that can distinguish backend-operation cost from avoidable Datum overhead, including timing-marker effects. Specify exact controls, build/run limits, and interpretation before execution. No renderer redesign or optimization sweep. After approval, execute the packet and report measured findings; an inconclusive result ends the study. Do not substitute another summary of existing uncertainty for this deliverable.",
+  "disposition": "Planning and governed approval packet only now. Future diagnostic implementation/build/run/report requires approval of packet.md. No production changes or runs occurred."
+}
