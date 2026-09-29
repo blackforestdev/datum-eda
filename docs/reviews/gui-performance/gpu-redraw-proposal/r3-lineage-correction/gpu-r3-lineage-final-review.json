@@ -1,0 +1,26 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only final source/proposal recheck; no builds/tests/native runs; independent recommendation only",
+  "pins": {
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": "71b715f572dbe4e216702f30a373ee1fd661928175345ae136fc498d6fc4856f",
+    "scripts/gpu_r3_receipts.py": "f70fa03a9589f362b7a0689497500121a8bb664b3dfb01e2d09b5f7cee114b4f",
+    "crates/gui-render/src/render/gpu_repreparation_conformance_tests.rs": "3ad41a98a2456c6d543115ca1bf3a221b4d885d8ca13a77b9a8ce54bb0d7fdf5",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/r3-lineage-correction/receipt.json": "154dd670bbd5ce844ce4f990856a59f115eee0d5cc5566d6d96ca7744157781b",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/r3-lineage-correction/validation-proposal.json": "90813f6f13adba8b4292643bbd4d6f3affd64c81dcb56c0f15da7352832784b3",
+    "target/gpu-r3-proof/campaign-state.json": "3b320358ae259d10ae79e2830cc4279b805ac35eb59b6ff56773486b451e05cc"
+  },
+  "blocking_findings": [],
+  "disposition": "Minimal correction matches recommendation. Proposed bounded validation packet is reviewable; owner approval remains required.",
+  "verified": [
+    "Producer and consumer retain owner/host/device/configuration equality and permit nondecreasing attempt/revision/preparation; recorded prior tuples are not rewritten. Errors now preserve previous/current attempt tuples.",
+    "GPU case uses real shared preparation and encoder, asserts first turn has one actual world upload, then changes composition/menu and rebuilds preparation; requires later strictly larger preparation while first tuple remains original. Fixed six encoder turns and bounded queue waits prevent indefinite amplification.",
+    "One complete sample covers all actual submissions, manifest begins world and ends final, active demand is retained across newer drain preparation, raw bounds monotonic and span covers first-to-last.",
+    "Packet explicitly leaves exact historical rejected field unknown and excludes new execution until exact owner response. Original campaign still stopped; new proposal names separate future campaign and cannot spend old remaining quota.",
+    "Packet reuses prior exact-output and unrelated timing evidence rather than rerunning prior batches."
+  ],
+  "limitations": [
+    "This GPU case demonstrates lineage/timing supersession on an exact8x renderer, not new pixel-equality evidence; no readback comparison is performed. Prior unchanged rendering-output evidence is explicitly reused.",
+    "Source review does not establish that native startup will now succeed; another field mismatch must stop and retain diagnostic tuples.",
+    "Reported CPU/Clippy passes are parent-provided and documented; reviewer did not execute them."
+  ]
+}

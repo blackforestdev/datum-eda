@@ -115,8 +115,9 @@ def validate(samples, receipt, declaration):
             require(len(attempt) == 7 and all(isinstance(v, int) and v >= 0 for v in attempt)
                     and all(attempt[i] > 0 for i in range(4)), "missing render attempt lineage")
             if previous_attempt:
-                require(all(previous_attempt[i] == attempt[i] for i in (0, 3, 4, 5, 6))
-                        and previous_attempt[1] <= attempt[1] and previous_attempt[2] <= attempt[2], "changed or reversed render lineage")
+                require(all(previous_attempt[i] == attempt[i] for i in (0, 4, 5, 6))
+                        and all(previous_attempt[i] <= attempt[i] for i in (1, 2, 3)),
+                        f"changed or reversed render lineage: previous={previous_attempt} current={attempt}")
             previous_attempt = attempt
             tag = record.get("workload", [])
             require(len(tag) == 8 and tag[0] == epoch and 0 < tag[1] < 64, "missing workload attribution")

@@ -19,6 +19,32 @@ def fixtures():
 
 
 class Receipts(unittest.TestCase):
+    def test_repreparation_keeps_earlier_active_uploads_in_the_complete_span(self):
+        receipt, sample = fixtures()
+        old = [1, 1, 1, 1, 1, 1, 0]
+        new = [1, 2, 2, 2, 1, 1, 0]
+        sample.update(submission=2, raw_ticks=[10, 11, 20, 21, 30, 31, 40, 50],
+                      passes_ns=[["upload-leading", 1], ["upload-trailing", 1],
+                                 ["upload-leading", 1], ["frame", 10]],
+                      own_pass_sum_ns=13, frame_span_ns=40)
+        sample["submission_manifest"] = [
+            dict(submission=1, kind="world", attempt=old,
+                 workload=[7, 4, 0, 0, 1, 0, 0, 0], first_tick=10, last_tick=21,
+                 transfer_first_tick=11, transfer_last_tick=20, span_ns=11, transfer_interval_ns=9),
+            dict(submission=2, kind="final", attempt=new,
+                 workload=[7, 32, 0, 0, 0, 0, 0, 2], first_tick=30, last_tick=50,
+                 transfer_first_tick=31, transfer_last_tick=40, span_ns=20, transfer_interval_ns=9)]
+        result = validate([sample], receipt, DECLARATION)[0]
+        self.assertEqual(result["phase"], "active")
+        self.assertEqual(result["phase_union"], [3, 6])
+        self.assertEqual(result["frame_span_ns"], 40)
+        self.assertEqual([r["attempt"] for r in sample["submission_manifest"]], [old, new])
+        for field in range(7):
+            bad = copy.deepcopy(sample)
+            bad["submission_manifest"][1]["attempt"][field] = (
+                old[field] + 1 if field in (0, 4, 5, 6) else old[field] - 1)
+            with self.assertRaises(ValueError): validate([bad], receipt, DECLARATION)
+
     def test_late_active_and_explicit_close_are_semantic(self):
         receipt, sample = fixtures()
         sample["log_arrival_ns"] = DECLARATION["drain_ns"] + 1000

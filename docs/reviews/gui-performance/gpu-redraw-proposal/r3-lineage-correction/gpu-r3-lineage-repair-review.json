@@ -1,0 +1,62 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only stopped-startup source/evidence review; no tests/builds/native runs; recommendation not approval",
+  "pins": {
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": "c1d9d3d33fbfddf9007f1737bcefcf3c55f693b9183d36a5ebf59486bcce6b98",
+    "crates/gui-render/src/render/session_frame.rs": "710fb72f37a9c56c6c3b004ab4bd3c9397015c0d1dba2b69f869103b766f6255",
+    "crates/gui-render/src/render/render_session.rs": "59486d5d81662f0fd22116897b5054551a18c06abae4db4be8e0d6c65852fe1b",
+    "crates/gui-render/src/render/gpu_frame_target.rs": "eeccee68bf780b5cffed057639a5d29357d3762040ea74d3b44637b375690f9a",
+    "crates/gui-app/src/native_surface_transaction.rs": "080bc9691dba7732a5f8f12f56ae437ec4973c24f612d120fcd02d1c2314cb21",
+    "scripts/gpu_r3_receipts.py": "fd21be43431576451d4ac823d29bd32a00ce667a93eb5883cbbdd50f0469d770",
+    "/tmp/gpu-r3-0-candidate-gpu-cw750hyg/result.json": "70339e5bc338be34464982936757b313cd75b7c056f07bbad009a54ccc33a643",
+    "/tmp/gpu-r3-0-candidate-gpu-cw750hyg/stderr.log": "6329c79dc8540ae50c03224fad9cbc327708df633753a305fb1fe271605f8ea1",
+    "/tmp/gpu-r3-0-candidate-gpu-cw750hyg/native.log": "406552efec3d1300362311fee8a31389992cf400ee673c337ae490299828682a",
+    "target/gpu-r3-proof/campaign-state.json": "3b320358ae259d10ae79e2830cc4279b805ac35eb59b6ff56773486b451e05cc"
+  },
+  "evidence": {
+    "status": "invalid startup, producer not launched, no numeric GPU sample",
+    "preserved_submission": [
+      1,
+      "world",
+      [
+        1,
+        1,
+        5,
+        5,
+        1,
+        1,
+        1
+      ]
+    ],
+    "diagnostic_limit": "Rejected tuple not logged. Cannot identify exact differing field."
+  },
+  "findings": [
+    {
+      "id": "LINEAGE-01",
+      "severity": "blocking receipt method",
+      "source": "gpu_measurement_timeline.rs:52 and scripts/gpu_r3_receipts.py:118",
+      "detail": "Preparation equality is stricter than renderer contract: upload-only attempts return deferred while later input/preparation can change preparation generation before final rendering. Shared install_prepared advances generation monotonically. A bounded transaction must preserve all actual submitted work rather than reset on supersession.",
+      "recommendation": "Permit nondecreasing attempt/revision/preparation, retain immutable per-submission tuple, maintain constant renderer owner/queue host/device/workload epoch, phase union, full first-to-last span and fixed capacity. Mirror validator."
+    },
+    {
+      "id": "LINEAGE-02",
+      "severity": "scope caution",
+      "source": "native_surface_transaction.rs:287",
+      "detail": "Configuration generation changes on actual successful surface.configure, not mere source preparation. No rejected tuple establishes such a transition here.",
+      "recommendation": "Keep configuration equality for current fixed-target bounded experiment. A future multi-configuration measurement may be valid on one queue if every configuration/attachment lifetime is identified and qualified, but monotonic counter alone is not that evidence."
+    },
+    {
+      "id": "LINEAGE-03",
+      "severity": "diagnostic gap",
+      "source": "gpu_measurement_timeline.rs:54",
+      "detail": "Generic lineage error cannot distinguish preparation supersession from foreign target.",
+      "recommendation": "Log previous/current immutable tuples and failed field for remaining errors; preserve first submitted cancellation lineage."
+    }
+  ],
+  "proof_recommendation": [
+    "Source/offline positive: preparation supersedes between uploaded and final boundaries and both tuples remain; active phase survives later still/close final demand.",
+    "Offline negatives: foreign owner/host/device, reversed attempt/revision/preparation, changed configuration under retained equality, changed/unknown workload epoch, capacity overflow, missing prior work.",
+    "Any real GPU supersession control and fresh campaign need specific owner approval. Existing campaign remains stopped; no failed-run replacement inferred."
+  ],
+  "disposition": "Support minimal preparation-monotonic repair; do not relax configuration solely on this log. This does not identify the exact historical failing field or demonstrate runtime repair."
+}
