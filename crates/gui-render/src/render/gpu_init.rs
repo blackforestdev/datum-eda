@@ -96,10 +96,16 @@ impl Renderer {
         let text_buffers = text_buffer_cache::TextBufferCache::new()?;
         let resource_host = crate::text_gpu::allocation_host::Host::new();
         let _resource_scope = resource_host.enter();
+        let damage_masks = renderer_state::damage::Masks::new(
+            device,
+            screen_budget.clone(),
+            previous.map(|p| &p.damage_masks),
+        )?;
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-gui-render-shader"),
             source: wgpu::ShaderSource::Wgsl(
-                r#"
+                renderer_state::damage::shader(
+                    r#"
 struct ScreenUniform {
     resolution: vec2<f32>,
     _pad: vec2<f32>,
@@ -140,9 +146,12 @@ fn srgb_to_linear(c: vec3<f32>) -> vec3<f32> {
 
 @fragment
 fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
+    if !datum_damaged(in.position) { discard; }
     return vec4<f32>(srgb_to_linear(in.color), 1.0);
 }
-"#
+"#,
+                    1,
+                )
                 .into(),
             ),
         });
@@ -197,7 +206,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-gui-render-pipeline-layout"),
-            bind_group_layouts: &[&uniform_bind_group_layout],
+            bind_group_layouts: &[&uniform_bind_group_layout, &damage_masks.layout],
             immediate_size: 0,
         });
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -267,6 +276,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let menu_overlay_text_renderer =
             text_renderer.new_batch_owner(previous.map(|old| &old.menu_overlay_text_renderer));
         Ok(Self {
+            damage_masks,
             render_session: Default::default(),
             resource_host,
             frame_consumers: Default::default(),

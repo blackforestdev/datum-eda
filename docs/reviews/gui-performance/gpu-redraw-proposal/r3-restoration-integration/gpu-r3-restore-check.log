@@ -1,0 +1,67 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.4 GiB target_free=166.1 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.4 GiB used; soft limit 20.0 GiB
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+error[E0599]: no method named `pop_error_scope` found for reference `&wgpu::Device` in the current scope
+   --> crates/gui-render/src/render/gpu_damage_restore.rs:97:38
+    |
+ 97 |         if pollster::block_on(device.pop_error_scope()).is_some() {
+    |                                      ^^^^^^^^^^^^^^^
+    |
+help: there is a method `push_error_scope` with a similar name, but with different arguments
+   --> /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-28.0.0/src/api/device.rs:445:5
+    |
+445 |     pub fn push_error_scope(&self, filter: ErrorFilter) -> ErrorScopeGuard {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0716]: temporary value dropped while borrowed
+   --> crates/gui-render/src/render/gpu_prefix_images.rs:191:18
+    |
+164 |           let texture = device.create_texture(&wgpu::TextureDescriptor {
+    |  ______________________________________________-
+165 | |             label: Some(if copy_source {
+166 | |                 "datum-retained-prefix"
+167 | |             } else {
+...   |
+191 | |                 &[key.format.remove_srgb_suffix()]
+    | |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-
+    | |                  |                               |
+    | |                  |                               temporary value is freed at the end of this statement
+    | |                  creates a temporary value which is freed while still in use
+...   |
+194 | |             },
+195 | |         });
+    | |_________- borrow later used here
+    |
+    = note: consider using a `let` binding to create a longer lived value
+
+error[E0716]: temporary value dropped while borrowed
+   --> crates/gui-render/src/render/gpu_surface.rs:230:22
+    |
+212 |               let texture = device.create_texture(&wgpu::TextureDescriptor {
+    |  __________________________________________________-
+213 | |                 label: Some("datum-gui-render-msaa"),
+214 | |                 size: wgpu::Extent3d {
+215 | |                     width: key.extent.0,
+...   |
+230 | |                     &[key.format.remove_srgb_suffix()]
+    | |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-
+    | |                      |                               |
+    | |                      |                               temporary value is freed at the end of this statement
+    | |                      creates a temporary value which is freed while still in use
+...   |
+233 | |                 },
+234 | |             });
+    | |_____________- borrow later used here
+    |
+    = note: consider using a `let` binding to create a longer lived value
+
+Some errors have detailed explanations: E0599, E0716.
+For more information about an error, try `rustc --explain E0599`.
+error: could not compile `datum-gui-render` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `datum-gui-render` (lib test) due to 3 previous errors

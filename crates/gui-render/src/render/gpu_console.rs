@@ -13,9 +13,11 @@ impl Renderer {
         pass: &mut wgpu::RenderPass<'pass>,
         vertices: &[Vertex],
         prepared: &PreparedScene,
+        damage: &wgpu::BindGroup,
     ) {
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+        pass.set_bind_group(1, damage, &[]);
         if let Some(layout) =
             self.console_gpu
                 .draw(pass, vertices, prepared.console_overlay_layout())

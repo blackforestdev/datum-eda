@@ -169,6 +169,7 @@ impl Runtime {
             config.format,
             select_msaa_samples(&adapter, config.format),
         )?;
+        pollster::block_on(renderer.admit_damage_restoration(&device, &adapter));
         let measurements =
             native_gpu_measurements::Host::new(&mut renderer, &device, &queue, &self.window, None)?;
         anyhow::ensure!(

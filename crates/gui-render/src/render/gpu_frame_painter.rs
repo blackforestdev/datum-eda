@@ -14,6 +14,7 @@ impl Renderer {
         pass.set_scissor_rect(0, 0, width, height);
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+        pass.set_bind_group(1, &self.damage_masks.unrestricted.group, &[]);
         if !panel_vertices.is_empty() {
             pass.set_vertex_buffer(
                 0,
@@ -75,6 +76,7 @@ impl Renderer {
         prepared: &PreparedScene,
         width: u32,
         height: u32,
+        damage: &wgpu::BindGroup,
     ) -> anyhow::Result<std::time::Duration> {
         let schematic_overlay_vertices = prepared.schematic_overlay_vertices();
         let viewport_overlay_vertices = prepared.viewport_overlay_vertices();
@@ -84,6 +86,7 @@ impl Renderer {
         pass.set_scissor_rect(0, 0, width, height);
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+        pass.set_bind_group(1, damage, &[]);
         // Interaction chrome stays above schematic world geometry.
         if !schematic_overlay_vertices.is_empty()
             && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)
@@ -149,30 +152,31 @@ impl Renderer {
             );
         }
         self.terminal_graphics
-            .draw_layer(pass, &self.uniform_bind_group, false);
+            .draw_layer(pass, &self.uniform_bind_group, false, damage);
         let text_encode_started = std::time::Instant::now();
         if prepared.has_workspace_text() {
             pass.set_scissor_rect(0, 0, width, height);
             self.text_renderer
-                .render_layer(&self.atlas, pass, Some(TextLayer::Workspace))
+                .render_layer(&self.atlas, pass, Some(TextLayer::Workspace), damage)
                 .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
         let mut text_encode_elapsed = text_encode_started.elapsed();
-        self.draw_console(pass, console_overlay_vertices, prepared);
+        self.draw_console(pass, console_overlay_vertices, prepared, damage);
         if prepared.has_workspace_text() {
             let foreground_started = std::time::Instant::now();
             pass.set_scissor_rect(0, 0, width, height);
             self.text_renderer
-                .render_layer(&self.atlas, pass, Some(TextLayer::Foreground))
+                .render_layer(&self.atlas, pass, Some(TextLayer::Foreground), damage)
                 .map_err(|error| anyhow::anyhow!("render foreground GUI text: {error}"))?;
             text_encode_elapsed += foreground_started.elapsed();
         }
         self.terminal_graphics
-            .draw_layer(pass, &self.uniform_bind_group, true);
+            .draw_layer(pass, &self.uniform_bind_group, true, damage);
         // The card must occlude workspace text as well as geometry.
         if !menu_overlay_vertices.is_empty() {
             pass.set_pipeline(&self.pipeline);
             pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            pass.set_bind_group(1, damage, &[]);
             pass.set_scissor_rect(0, 0, width, height);
             pass.set_vertex_buffer(
                 0,
@@ -190,7 +194,7 @@ impl Renderer {
             if prepared.has_overlay_text() {
                 pass.set_scissor_rect(0, 0, width, height);
                 self.menu_overlay_text_renderer
-                    .render(&self.atlas, pass)
+                    .render(&self.atlas, pass, damage)
                     .map_err(|error| anyhow::anyhow!("render menu overlay text: {error}"))?;
             }
         }

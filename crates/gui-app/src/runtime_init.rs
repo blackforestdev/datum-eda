@@ -67,6 +67,7 @@ impl Runtime {
         let renderer_started = std::time::Instant::now();
         append_gui_diagnostic_line("renderer init begin");
         let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples)?;
+        pollster::block_on(renderer.admit_damage_restoration(&device, &adapter));
         let measurements =
             native_gpu_measurements::Host::new(&mut renderer, &device, &queue, &window, None)?;
         append_gui_diagnostic_line("renderer init end");

@@ -3,12 +3,17 @@ use super::*;
 use crate::render_input::{PointerUpdate, SourceEpoch};
 
 fn capture8() -> OffscreenRenderer {
-    capture8_with_preference(wgpu::PowerPreference::HighPerformance)
+    capture8_with_preference(wgpu::PowerPreference::HighPerformance).0
 }
 pub(super) fn reference_capture8() -> OffscreenRenderer {
+    reference_capture8_with_adapter().0
+}
+pub(super) fn reference_capture8_with_adapter() -> (OffscreenRenderer, wgpu::Adapter) {
     capture8_with_preference(wgpu::PowerPreference::LowPower)
 }
-fn capture8_with_preference(preference: wgpu::PowerPreference) -> OffscreenRenderer {
+fn capture8_with_preference(
+    preference: wgpu::PowerPreference,
+) -> (OffscreenRenderer, wgpu::Adapter) {
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends: wgpu::Backends::VULKAN,
         ..Default::default()
@@ -42,14 +47,18 @@ fn capture8_with_preference(preference: wgpu::PowerPreference) -> OffscreenRende
         ..Default::default()
     }))
     .unwrap();
-    let renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, 8).unwrap();
-    OffscreenRenderer {
-        device,
-        queue,
-        renderer,
-        width: 640,
-        height: 480,
-    }
+    let mut renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, 8).unwrap();
+    pollster::block_on(renderer.admit_damage_restoration(&device, &adapter));
+    (
+        OffscreenRenderer {
+            device,
+            queue,
+            renderer,
+            width: 640,
+            height: 480,
+        },
+        adapter,
+    )
 }
 
 pub(super) fn prepare(
@@ -109,18 +118,22 @@ pub(super) fn full_reference(c: &mut OffscreenRenderer) -> RgbaImage {
     let schematic = c.renderer.render_session().schematic().cloned();
     let target = target(c);
     let view = target.create_view(&Default::default());
-    c.renderer
-        .render(
-            &c.device,
-            &c.queue,
-            &view,
-            &prepared,
-            &board,
-            schematic.as_ref(),
-            c.width,
-            c.height,
-        )
-        .unwrap();
+    // The oracle must never write or discard the candidate's retained B.
+    let candidate_images = std::mem::take(&mut c.renderer.surface_attachments);
+    let candidate_prefix = std::mem::take(&mut c.renderer.render_session.prefix);
+    let rendered = c.renderer.render(
+        &c.device,
+        &c.queue,
+        &view,
+        &prepared,
+        &board,
+        schematic.as_ref(),
+        c.width,
+        c.height,
+    );
+    c.renderer.surface_attachments = candidate_images;
+    c.renderer.render_session.prefix = candidate_prefix;
+    rendered.unwrap();
     target.hold_submission(&c.queue);
     c.read_texture(&target).unwrap()
 }

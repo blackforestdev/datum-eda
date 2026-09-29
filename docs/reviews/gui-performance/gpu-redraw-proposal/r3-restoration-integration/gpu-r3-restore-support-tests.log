@@ -1,0 +1,43 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.4 GiB target_free=166.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.4 GiB used; soft limit 20.0 GiB
+warning: method `submission_ref` is never used
+   --> crates/gui-render/src/render/gpu_surface.rs:362:12
+    |
+361 |     impl SurfaceAttachments {
+    |     ----------------------- method in this implementation
+362 |         fn submission_ref(&self) -> Option<SubmissionRef> {
+    |            ^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: variants `MissingCopy` and `PrematureResolve` are never constructed
+  --> crates/gui-render/src/render/prefix_negative_control.rs:9:5
+   |
+ 5 | pub(crate) enum Fault {
+   |                 ----- variants in this enum
+...
+ 9 |     MissingCopy,
+   |     ^^^^^^^^^^^
+10 |     PrematureResolve,
+   |     ^^^^^^^^^^^^^^^^
+   |
+   = note: `Fault` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+
+warning: function `set` is never used
+  --> crates/gui-render/src/render/prefix_negative_control.rs:15:15
+   |
+15 | pub(crate) fn set(fault: Fault) {
+   |               ^^^
+
+warning: `datum-gui-render` (lib test) generated 3 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-a9a942f6552ff861)
+
+running 4 tests
+test renderer_state::render_session::session_prefix::damage::tests::direct_full_render_invalidates_presented_composition ... ok
+test renderer_state::render_session::session_prefix::damage::tests::presented_support_survives_coalescing_and_uncertain_frames_fail_closed ... ok
+test renderer_state::render_session::session_prefix::damage::tests::real_pointer_triangles_keep_thin_support_and_cover_enter_move_leave ... ok
+test renderer_state::render_session::session_prefix::damage::tests::rectangles_reject_unknown_geometry_and_bounded_union_overflow ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 410 filtered out; finished in 0.40s
+

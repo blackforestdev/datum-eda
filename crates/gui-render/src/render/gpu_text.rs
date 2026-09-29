@@ -104,6 +104,7 @@ impl Renderer {
     ) {
         self.surface_attachments.mark_submission(images);
         let mut resources = self.vertex_submission_refs();
+        resources.push(self.damage_masks.unrestricted.submission_ref());
         if let Some(images) = images {
             resources.extend(images.submission_refs());
         } else {

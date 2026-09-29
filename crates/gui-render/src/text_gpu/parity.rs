@@ -39,6 +39,12 @@ fn owned_draw_matches_installed_text_renderer() {
         );
         let mut atlas = Atlas::new(&device);
         let screen_budget = super::budget::Budget::new(16 * 1024 * 1024);
+        let damage = crate::renderer_state::damage::Masks::new(
+            &device,
+            super::budget::Budget::new(1024),
+            None,
+        )
+        .unwrap();
         let mut draw = Draw::new(&device, &atlas, format, samples, screen_budget.clone());
         for scale in [1.0, 1.25, 2.0] {
             for face in [crate::TextFace::Ui, crate::TextFace::Terminal] {
@@ -209,7 +215,8 @@ fn owned_draw_matches_installed_text_renderer() {
                         baseline.render(&baseline_atlas, &viewport, pass).unwrap()
                     });
                     let actual = pixels(&device, &queue, format, samples, |pass| {
-                        draw.render(&atlas, pass).unwrap()
+                        draw.render(&atlas, pass, &damage.unrestricted.group)
+                            .unwrap()
                     });
                     let allocation = atlas
                         .owner

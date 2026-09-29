@@ -198,18 +198,30 @@ impl Renderer {
             .prefix
             .requested()
             .then(|| {
+                self.damage_masks.restoration.as_ref()?;
                 self.surface_attachments
                     .prefix_images(device, measurement.is_some())
             })
             .flatten();
         self.publish_resource_consumers();
-        let reuse = images
-            .as_ref()
-            .is_some_and(|images| self.render_session.prefix.reusable(images.identity));
         #[cfg(test)]
         let fault = crate::gpu_surface::prefix_negative_control::take();
+        let damage = images.as_ref().and_then(|images| {
+            self.damage_masks.restoration.as_ref()?;
+            images.restoration_views()?;
+            self.render_session.prefix.damage(images.identity)
+        });
+        #[cfg(test)]
+        let damage =
+            damage.filter(|_| fault == crate::gpu_surface::prefix_negative_control::Fault::None);
+        let mask =
+            damage.and_then(|pixels| self.damage_masks.restricted(device, pixels.rectangles()));
+        let damage = damage.filter(|_| mask.is_some());
+        let reuse = damage.is_some();
         #[cfg(test)]
         let reuse = reuse || fault == crate::gpu_surface::prefix_negative_control::Fault::StaleKey;
+        let suffix_mask = mask.as_ref().unwrap_or(&self.damage_masks.unrestricted);
+        suffix_mask.set_consumers(self.frame_consumers.all());
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
         });
@@ -220,7 +232,27 @@ impl Renderer {
             a: 1.0,
         });
         if let Some(images) = &images {
-            if reuse {
+            if let Some(damage) = &damage {
+                if !damage.rectangles().is_empty() {
+                    let (source, destination) =
+                        images.restoration_views().expect("admitted alias views");
+                    self.damage_masks
+                        .restoration
+                        .as_ref()
+                        .expect("admitted restoration")
+                        .encode(
+                            device,
+                            &mut encoder,
+                            source,
+                            destination,
+                            damage.rectangles(),
+                            measurement
+                                .as_mut()
+                                .map(|m| m.pass("restore"))
+                                .transpose()?,
+                        );
+                }
+            } else if reuse {
                 // Timestamp the queue interval before copy, not just suffix draw.
                 // This 1x1 attachment is charged and held through submission.
                 if let Some(marker) = images.marker_view()
@@ -258,18 +290,20 @@ impl Renderer {
                 });
                 self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
             }
-            #[cfg(not(test))]
-            images.copy(&mut encoder);
-            #[cfg(test)]
-            fault.copy(
-                device,
-                &mut encoder,
-                images,
-                &msaa_view,
-                width,
-                height,
-                self.msaa_format,
-            );
+            if damage.is_none() {
+                #[cfg(not(test))]
+                images.copy(&mut encoder);
+                #[cfg(test)]
+                fault.copy(
+                    device,
+                    &mut encoder,
+                    images,
+                    &msaa_view,
+                    width,
+                    height,
+                    self.msaa_format,
+                );
+            }
         }
         let text_encode_elapsed;
         {
@@ -285,7 +319,11 @@ impl Renderer {
                         } else {
                             clear
                         },
-                        store: wgpu::StoreOp::Discard,
+                        store: if images.is_some() && self.damage_masks.restoration.is_some() {
+                            wgpu::StoreOp::Store
+                        } else {
+                            wgpu::StoreOp::Discard
+                        },
                     },
                 })],
                 timestamp_writes: measurement
@@ -297,7 +335,11 @@ impl Renderer {
             if images.is_none() {
                 self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
             }
-            text_encode_elapsed = self.draw_frame_suffix(&mut pass, prepared, width, height)?;
+            text_encode_elapsed = if damage.is_some_and(|d| d.rectangles().is_empty()) {
+                std::time::Duration::ZERO
+            } else {
+                self.draw_frame_suffix(&mut pass, prepared, width, height, &suffix_mask.group)?
+            };
         }
         let encode_elapsed = encode_started.elapsed().saturating_sub(text_encode_elapsed);
 
@@ -316,6 +358,9 @@ impl Renderer {
                 .chain([command_buffer]),
         );
         self.hold_frame_submission(queue, images.as_ref());
+        if let Some(mask) = &mask {
+            crate::text_gpu::hold_until_done(queue, vec![mask.submission_ref()]);
+        }
         if let Some(batch) = uploads {
             batch.hold(queue);
         }
@@ -323,9 +368,15 @@ impl Renderer {
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(queue, measurement)?;
         if let Some(images) = images {
-            self.render_session
-                .prefix
-                .encoded(images.identity, reuse, images.logical_copy_bytes());
+            self.render_session.prefix.encoded(
+                images.identity,
+                reuse,
+                if damage.is_some() {
+                    0
+                } else {
+                    images.logical_copy_bytes()
+                },
+            );
         }
         let submit_elapsed = submit_started.elapsed();
         if let Some(finish_elapsed) = finish_elapsed {

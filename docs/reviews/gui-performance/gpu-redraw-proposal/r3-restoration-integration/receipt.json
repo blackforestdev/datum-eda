@@ -1,0 +1,67 @@
+{
+  "base": "fd44d37c01726c13e1cbe130db1fc1895520ed05",
+  "step": "GPI-S4",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "scope": "Approved r3 GPU restoration and shared mask implementation checkpoint; no native run or GPU qualification yet.",
+  "changes": [
+    "Capability-admitted exact8x UNORM aliases and per-sample scissored restoration; immutable per-submission accounted mask uniform.",
+    "Shared screen/glyph/terminal predicate, unchanged suffix order and terminal derivative sampling; retained B Store and resolve-only empty damage.",
+    "Uncertain and direct full-render validity fails closed; refusal reconstructs fully. Independent oracle attachments protect candidate B. Actual adapter re-admission on native device recovery."
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/native_device_recovery.rs": "f4b07c6a54fde53d1fdb16d9494988f237137c6531f697cc6e6a8a27f3135842",
+    "crates/gui-app/src/runtime_init.rs": "9b58c2d705b8adf81e72af4c5c96698575f50a85473afe8f3ef7f780e712d1fd",
+    "crates/gui-render/src/render/gpu_console.rs": "2ec5653c024c87a83c016ea7bbceadf1f02f828f449d88343d58d88c54b5364a",
+    "crates/gui-render/src/render/gpu_frame.rs": "48f82590b07d9f4c402c9b6f0a2274434402dd886f6d0f651c625a22830c0b0c",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "151688a18a5ca66d8045d3fc6f921ef216a5dd5e2d23b4589004d3fea9613122",
+    "crates/gui-render/src/render/gpu_init.rs": "ce5ca437070da6f35bbb6d55e39648eff2b474718bb04399ebf30175d1e9a1dd",
+    "crates/gui-render/src/render/gpu_overlay.rs": "7c748d80ff63825b29594d86580014ba41ec1172e34c97f73d9f9d7bdaa3ed59",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "41e8f520a58d56d22972d8ea546232589fe3fb1dcc943db5db0ea5d782b98186",
+    "crates/gui-render/src/render/gpu_surface.rs": "035860a3340672dddabcca20b00d9103e98b8823da6db37dc290fd90a7f21bfe",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "ab23ff8d658667c0e2a83a4cec7d166c5691b05e9bdffdcca8660bf62243ec98",
+    "crates/gui-render/src/render/gpu_text.rs": "4ee8af658e97e5cb6912f8b21a173ed65b399612f7f5bba1367a3678054d4bdd",
+    "crates/gui-render/src/render/prefix_graph_tests.rs": "f914726091bee8e0844ac2bb1b824b352811b0bc1cad4a3ddc8e3187c5d420fb",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "b43abb5326a7f553a25f5b5b64806fc6a08368b209bdae3e8605eeec1e065add",
+    "crates/gui-render/src/render/renderer_state.rs": "a1e7635c7cda1f98975c045b3dd9ca81bfd1c993c16f09b8743f546860bc709e",
+    "crates/gui-render/src/render/resource_consumers.rs": "cac68e3bec4c1b4dd762b6b56cf0b8cb0793e4eb11e572ada152d973b961a576",
+    "crates/gui-render/src/render/session_damage_tests.rs": "5e11b3b08c007026f7f35db8aaaf39f2ae7cacbf650577e383b0333fad4c952e",
+    "crates/gui-render/src/render/session_prefix.rs": "3014b13553f197f830d63a1ad327fa6662800deccf4ff0b702c36a4d75dd2374",
+    "crates/gui-render/src/render/terminal_graphics.rs": "c8f42946a642e21d114bc946732f8ebf93761b32129ab415f5a3616a06d2e861",
+    "crates/gui-render/src/text_gpu/draw.rs": "40cfe3aa87f4f4d87fee6bd5b89fc2d4be44cbbb9edc43eb570e6d12c71aea91",
+    "crates/gui-render/src/text_gpu/glyph.wgsl": "c9ae0b55abafdc05ed7718150b580f49341bef73f9fe0bef74246dfb37c3f0f6",
+    "crates/gui-render/src/text_gpu/parity.rs": "869229ad5695d1b95e0b89c85e84a819a985c63a20441c43732e44595c9e2934",
+    "crates/gui-render/src/render/gpu_damage.rs": "94e4425d886ed2046b76abb2964e267bec7cf11e7216df40ba7ed0647251c592",
+    "crates/gui-render/src/render/gpu_damage_restore.rs": "4aec288e1ff56ae0056ba3976b617902744abc38790d1de8f0567db5e6d6077f",
+    "crates/gui-render/src/render/gpu_damage_restore.wgsl": "6cd797e043d21350c485b15fb247931a0bf895f13ec13652f1928f7cecfad803",
+    "crates/gui-render/src/render/gpu_damage_sample_tests.rs": "d90640873a5aef64a55f7893bf2e41749d062993cddd82b685856c952920a9ec"
+  },
+  "proof": {
+    "offline_shaders": "1 passed, validates all affected WGSL through existing Naga API.",
+    "damage_support": "4 passed including direct full-render invalidation.",
+    "clippy": "Render/app all-target visual -D warnings passed; subsequent explicit unrestricted grid binding is identical to inherited prefix binding and covered by compile gate before GPU proof.",
+    "source_health": "2629 files passed; 13 policy controls passed.",
+    "dependency_authority": "Passed, no new dependency or license change. Async renderer initialization avoids extending optional pollster to production library.",
+    "initial_compile": "Failed on error-scope API and temporary format slice lifetimes; corrected, raw logs retained.",
+    "review": "Read-only review.json updated after async admission, empty-pass skip and independent oracle attachment changes. No production blocker; GPU sample/output/resource and timing proof still outstanding.",
+    "full_drift": "Not rerun at this pre-GPU checkpoint: it includes native captures outside the fixed batch; existing unrelated menu/private-writer blockers remain dat-menu-csv-parity-block-p6fz."
+  },
+  "remaining": [
+    "Complete multi-submission timer and semantic workload/frame attribution offline controls before GPU batch.",
+    "Finish bounded P630 batch negative/mixed/pressure coverage; new sample oracle and aggregate are prepared but unexecuted.",
+    "Exact output/sample/resources and timing conformance, then one declared bounded performance sequence.",
+    "Complete DRM duty observer remains separately unapproved; S4/S5 and GPU issue stay open."
+  ],
+  "artifacts_sha256": {
+    "gpu-r3-restore-check-2.log": "5e22c5578531b43427e196b8b1008b8a62325941bac3933833a06c726551f331",
+    "gpu-r3-restore-check.log": "2539290c5deddca595d2e157fcd8d94919f03d83bd230f45d97b1da699bf85e2",
+    "gpu-r3-restore-clippy-final.log": "5c64eaa1b4d4b9573e89fc408c6724b5a710a4d6f009408b4b57c3dfba9c1d82",
+    "gpu-r3-restore-clippy.log": "5b79c750de5248cf55135ef862abb9c1367c1664b4ea4fab3c7fdac68e4def4a",
+    "gpu-r3-restore-dependencies.log": "3ab8cf4207b6ef2e266d07d0d9ad4f9d9d94a1f5676f6c1378acb9b52c128139",
+    "gpu-r3-restore-policy.log": "4557fa8df8c747e9f8712301ed03eef6a65a80ce4b33f72f74993a49cedf564c",
+    "gpu-r3-restore-source-health-final.log": "7fb809fa93084aeb352b11fe8acf74cafb752936eba67dcc0e7bf02a9e5fb98f",
+    "gpu-r3-restore-source-health.log": "d4458b2e4d2252fb39acea1cebc6bc6b4668cad5d17b079fae524026012a776d",
+    "gpu-r3-restore-support-tests.log": "439c4e920fa60344cacee17cbc4c5e38e075bf16c2a6067b7031f8f9fd617c27",
+    "gpu-r3-shaders-offline.log": "d7edeb8570a4ee1cae31f347cd08bcda6a39e92d7fb1447e5a59cb20b7a634b2",
+    "review.json": "91f22daf55dec1eb3d68f568bf1949ac7694864b91feb9a590974569b7f2581d"
+  }
+}

@@ -45,6 +45,7 @@ pub struct SurfaceAttachmentSnapshot {
 struct AttachmentImage {
     texture: wgpu::Texture,
     view: wgpu::TextureView,
+    unorm_view: Option<wgpu::TextureView>,
 }
 
 #[derive(Clone)]
@@ -61,6 +62,7 @@ pub(crate) struct SurfaceAttachment {
 /// retain the same tracked allocation until the queue reports completion;
 /// replacement and close are not themselves completion signals.
 pub(crate) struct SurfaceAttachments {
+    damage_views: bool,
     owner: Owner,
     generations: Arc<crate::text_gpu::budget::Budget>,
     allocations: u64,
@@ -79,6 +81,7 @@ impl Default for SurfaceAttachments {
 impl SurfaceAttachments {
     fn with_generations(generations: Arc<crate::text_gpu::budget::Budget>) -> Self {
         Self {
+            damage_views: false,
             owner: Owner::new(),
             generations,
             allocations: 0,
@@ -93,6 +96,11 @@ impl SurfaceAttachments {
     }
 }
 impl SurfaceAttachments {
+    pub(crate) fn admit_damage_views(&mut self, admitted: bool) {
+        assert!(self.current.is_none());
+        self.damage_views = admitted;
+    }
+
     pub(super) fn replacement(&self) -> Self {
         Self::with_generations(self.generations.clone())
     }
@@ -201,6 +209,7 @@ impl SurfaceAttachments {
                 anyhow::anyhow!("attachment generation limit reached: one current and one retiring")
             })?);
             let reservation = GpuReservation::new(bytes, vec![])?;
+            let alias_formats = [key.format.remove_srgb_suffix()];
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("datum-gui-render-msaa"),
                 size: wgpu::Extent3d {
@@ -218,7 +227,11 @@ impl SurfaceAttachments {
                     } else {
                         wgpu::TextureUsages::empty()
                     },
-                view_formats: &[],
+                view_formats: if self.damage_views && prefix_images::eligible(key) {
+                    &alias_formats
+                } else {
+                    &[]
+                },
             });
             self.allocations = self
                 .allocations
@@ -226,13 +239,23 @@ impl SurfaceAttachments {
                 .expect("attachment allocation exhausted");
             anyhow::ensure!(healthy(), "surface attachment allocation failed");
             let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+            let unorm_view = (self.damage_views && prefix_images::eligible(key)).then(|| {
+                texture.create_view(&wgpu::TextureViewDescriptor {
+                    format: Some(key.format.remove_srgb_suffix()),
+                    ..Default::default()
+                })
+            });
             let replacement = SurfaceAttachment {
                 key,
                 allocation: self.allocations,
                 image: Arc::new(
                     self.owner
                         .track_reserved(
-                            AttachmentImage { texture, view },
+                            AttachmentImage {
+                                texture,
+                                view,
+                                unorm_view,
+                            },
                             self.allocations,
                             Kind::Attachment,
                             reservation,
