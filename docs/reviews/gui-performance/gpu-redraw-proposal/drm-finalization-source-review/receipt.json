@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "scope": "Source-only feasibility gate for unaccepted DRM supervisor; no tracing, ptrace, ioctl, native run, build, dependency adoption or system tuning.",
+  "status": "Current GEM_BUSY-to-final-fdinfo rule is insufficient; do not spend proposed conformance/calibration runs on this draft.",
+  "host": {
+    "uname_release": "6.12.107+deb13-amd64",
+    "installed_package": "linux-image-6.12.107+deb13-amd64",
+    "package_version": "6.12.107-1",
+    "limitation": "Read-only identity only. Upstream v6.12.107 files are pinned feasibility sources, not proof of exact Debian module equivalence or active submission backend. Sysfs enable_guc was unreadable without privilege; no elevation attempted."
+  },
+  "review_finding": "DRM-METHOD-03 from r3-review/drm-method-review.json",
+  "chain": [
+    {
+      "source": "gem/i915_gem_busy.c; i915_request.h",
+      "symbols": [
+        "__busy_set_if_active",
+        "i915_request_completed",
+        "__i915_request_is_complete"
+      ],
+      "finding": "Busy uses request signaled/HW sequence completion, and ignores foreign fences. It does not invoke an engine-accounting retirement barrier."
+    },
+    {
+      "source": "i915_drm_client.c; gt/intel_context.c",
+      "symbols": [
+        "show_client_class",
+        "busy_add",
+        "intel_context_get_total_runtime_ns"
+      ],
+      "finding": "Fdinfo sums past_runtime and runtime of contexts still on ctx_list. Runtime uses accumulated values plus active estimate, with optional backend update_stats. It does not itself wait for stale engine retirement."
+    },
+    {
+      "source": "gem/i915_gem_context.c",
+      "symbols": [
+        "context_close",
+        "engines_idle_release",
+        "engines_notify",
+        "accumulate_runtime"
+      ],
+      "finding": "Context close replaces engines with NULL and removes ctx_list membership. Engine release can await active schedule-out/retirement asynchronously; its FENCE_COMPLETE callback transfers runtime to past_runtime. Context destroy returns after context_close, without an explicit wait for this accounting callback."
+    },
+    {
+      "source": "gt/intel_execlists_submission.c; gt/intel_lrc.h; gt/intel_lrc.c",
+      "symbols": [
+        "process_csb",
+        "lrc_runtime_stop",
+        "lrc_update_runtime",
+        "execlists_context_ops"
+      ],
+      "finding": "Execlists updates accumulated hardware runtime at context status processing/schedule-out. Its inspected ops table has no update_stats callback. Hardware sequence completion therefore is not the same observed condition as that accounting update."
+    },
+    {
+      "source": "i915_active.c; i915_sw_fence.c; i915_sw_fence.h; gem/i915_gem_context.c",
+      "symbols": [
+        "__await_barrier",
+        "await_active",
+        "i915_sw_fence_await_active",
+        "i915_sw_fence_commit",
+        "kill_context",
+        "i915_sw_fence_await",
+        "i915_sw_fence_complete",
+        "i915_sw_fence_wait"
+      ],
+      "finding": "The active barrier registers a wait-queue callback and increments pending completion. Software fence commit releases its initial pending count; it is not a synchronous wait for all registered completions. This corroborates the possible deferred accounting transfer. The subsequent kill_context path brackets kill_engines with pending-count await/complete operations, not the separate synchronous i915_sw_fence_wait primitive. It does not establish the missing accounting-finalization postcondition."
+    }
+  ],
+  "inference": {
+    "scenario": [
+      "A workload request reaches HW completion while context schedule-out/retirement processing remains pending.",
+      "GEM_BUSY can report idle from request completion.",
+      "Explicit context destruction removes the context from current fdinfo enumeration; pending retirement has not yet transferred its runtime to past_runtime.",
+      "Reading fdinfo at this point can miss that pending accounting. Retaining a duplicate DRM file preserves the file/client, not an independently destroyed context in the enumerated context list."
+    ],
+    "strength": "Source-supported allowed interleaving in inspected upstream code, not a reproduced event or an assertion that every host read is incomplete. It is enough to reject busy-idle as the proposed completeness proof.",
+    "not_claimed": "No hardware infeasibility, Wayland defect, renderer cause, observed counter loss, or impossibility of another complete observer."
+  },
+  "disposition": [
+    "The unaccepted draft must not be promoted unchanged. No new observer execution packet yet.",
+    "Before any conformance run, identify a source-backed observable accounting-finalization barrier covering explicit context/engine replacement and destruction as well as every submitted object. A final fence or GEM_BUSY idle alone is insufficient for the demonstrated distinction.",
+    "Do not use repeated equal samples/quiet time as proof. Do not drain or hold clients in ways that dilute the active-window denominator or silently change lifetime behavior.",
+    "An alternative kernel accounting/event mechanism would require its exact privilege, coverage, loss/retirement semantics and overhead scope separately proposed and owner approved. No such implementation is selected here.",
+    "Continue the independently scoped renderer repair. Complete DRM duty remains unavailable and blocks final qualification; the separately proposed crosshair replay can diagnose correctness without it."
+  ],
+  "remaining": "Other DRM-METHOD-01/02/04/05/06 findings remain open. Exact Debian source/config reconciliation and all native observer conformance/calibration remain unperformed.",
+  "sources_sha256": "86f1406923196645e668c6877b63af625c3b1fdd057cfa0fb31686c322b9052d",
+  "independent_review": {
+    "path": "independent-review.json",
+    "sha256": "772ccfd452b22f84bf8f0999023b041f07e1bebf8815a3fd94ea0da5d4e2deba",
+    "disposition": "Source chain corroborated, no logical blocker; advisory only, no execution authority."
+  }
+}

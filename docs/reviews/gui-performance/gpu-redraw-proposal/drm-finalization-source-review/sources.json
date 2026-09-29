@@ -1,0 +1,58 @@
+{
+  "i915_drm_client.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/i915_drm_client.c",
+    "sha256": "abba5ff0d6726e44e99fef83f3d5e50bdb015e2090e2f97580bc5d43c138ed70"
+  },
+  "gem/i915_gem_busy.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_busy.c",
+    "sha256": "d51878d1021f3e17af0c3646f3a16d2719a334bfd6883659f54f6006dcbbb0d9"
+  },
+  "gt/intel_context.h": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gt/intel_context.h",
+    "sha256": "5b6d15d8cd56cf5607c6310d9a1a6ceed941c27020336fc56679d51fd94da33e"
+  },
+  "gt/intel_context.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gt/intel_context.c",
+    "sha256": "8ab3e70aae0dd95b3f58eff080e714af67d466649c99afe3569db60c8dac8540"
+  },
+  "i915_request.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/i915_request.c",
+    "sha256": "00b822bc1a88f59aa295900ee3105392a316fb53e1b408e42032b1ff22d639df"
+  },
+  "gt/intel_execlists_submission.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gt/intel_execlists_submission.c",
+    "sha256": "ea1066b5929887ff62d9cab96d3c794fd0ded3a1882f269e6be8a5cef1b616d4"
+  },
+  "gem/i915_gem_context.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_context.c",
+    "sha256": "ebdc51ee2747d985ba6a56c493fc1daa8390464a1d7c5e223098c1bef684d284"
+  },
+  "gt/intel_context_types.h": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gt/intel_context_types.h",
+    "sha256": "3005e008c5976116eb6da8cc2f5c361b3a8bda4b623bf4da2689cee712da3bca"
+  },
+  "gt/intel_lrc.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gt/intel_lrc.c",
+    "sha256": "1a6b084d63b46b0399c60b2f96846c1719497287f968330ba0c2fc189ec0bd43"
+  },
+  "gt/intel_lrc.h": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gt/intel_lrc.h",
+    "sha256": "e71534746b6f6720c978c0096316c51873f5afc2974d94cd4979303384a6f5b3"
+  },
+  "i915_request.h": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/i915_request.h",
+    "sha256": "b505d2ccc389104f5454c5ccd15f2a369cab598a0c1198dbf049b23383b4b162"
+  },
+  "i915_active.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/i915_active.c",
+    "sha256": "beee07ef77fb11a52d7050ceba8496e2dab97aa9628ec985b7ac1893c234fa17"
+  },
+  "i915_sw_fence.c": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/i915_sw_fence.c",
+    "sha256": "4876074a64e975fd4823d4f442aab9c5a30f857f0ec9b970abea77c84c5491e9"
+  },
+  "i915_sw_fence.h": {
+    "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/i915_sw_fence.h",
+    "sha256": "df626823e143b10f17be5c410011c6a74bac74b0f4cff7c750128546b091357d"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only pinned upstream source feasibility review; no tracing/ioctl/build/native execution or repository edits",
+  "pins": {
+    "docs/reviews/gui-performance/gpu-redraw-proposal/drm-finalization-source-review/receipt.json": "137e98038e52d61b1c1954f017d9c78b210602c858c4e9dcf2ed5663b72be0c4",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/drm-finalization-source-review/sources.json": "86f1406923196645e668c6877b63af625c3b1fdd057cfa0fb31686c322b9052d"
+  },
+  "source_hashes_match": {
+    "i915_drm_client.c": true,
+    "gem/i915_gem_busy.c": true,
+    "gt/intel_context.h": true,
+    "gt/intel_context.c": true,
+    "i915_request.c": true,
+    "gt/intel_execlists_submission.c": true,
+    "gem/i915_gem_context.c": true,
+    "gt/intel_context_types.h": true,
+    "gt/intel_lrc.c": true,
+    "gt/intel_lrc.h": true,
+    "i915_request.h": true,
+    "i915_active.c": true,
+    "i915_sw_fence.c": true,
+    "i915_sw_fence.h": true
+  },
+  "blocking_findings": [],
+  "disposition": "Source-supported accounting-finalization counterexample; GEM_BUSY idle alone does not establish final fdinfo accounting. Do not execute/promote unchanged unaccepted supervisor draft.",
+  "source_chain": [
+    {
+      "source": "gem/i915_gem_busy.c:41; i915_request.h:606",
+      "finding": "Native busy test observes signaled/request HW sequence completion without accounting finalization."
+    },
+    {
+      "source": "gem/i915_gem_context.c:1467,1524,1062,1082",
+      "finding": "Engine pointer removed and context list entry deleted while active engines may retain awaited retirement dependencies. FENCE_COMPLETE transfers runtime to client past totals."
+    },
+    {
+      "source": "gem/i915_gem_context.c:1440; i915_sw_fence.c:191,222,263; i915_active.c:673,756",
+      "finding": "Checked potential overlooked kill_context barrier: await increments pending and complete decrements; callback fires only when all pending counts release. Active barrier registers callback. kill_context therefore is not generally synchronous accounting finalization."
+    },
+    {
+      "source": "i915_drm_client.c:119,136; gt/intel_context.c:597",
+      "finding": "Read sums past_runtime plus current context engines; it does not traverse pending stale engines or wait for transfer."
+    },
+    {
+      "source": "gt/intel_execlists_submission.c:2039,2692; gt/intel_lrc.h:129",
+      "finding": "Inspected execlists accounting updates on context switch processing; no update_stats callback makes fdinfo itself flush this state."
+    },
+    {
+      "source": "i915_sw_fence.h:111",
+      "finding": "Actual synchronous i915_sw_fence_wait calls wait_event; context_close/kill_context inspected path instead uses await/complete pending operations."
+    }
+  ],
+  "wording_assessment": "Receipt correctly labels allowed upstream interleaving, not installed Debian/backend equivalence, observed host counter loss, hardware limitation, or impossibility of other observers. Retained drm_file alias preserves client lifetime but does not undo explicit GEM-context destruction.",
+  "remaining": "Exact installed source/backend reconciliation and a source-backed observable final-accounting mechanism remain open; no alternative mechanism selected or approved."
+}
