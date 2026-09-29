@@ -626,3 +626,15 @@ qualification but not the specifically limited experiment proposed in r3.
 
 Requested response: `approve GPU damage-restoration proposal r3` or
 `revise GPU damage-restoration proposal r3 — <required changes>`.
+
+## GPU damage-restoration r3 owner approval
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-OWNER-APPROVAL-R3 -->
+
+The owner replied `approve GPU damage-restoration proposal r3`; the immutable
+proposal pin and disposition are recorded in
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r3.json`.
+Product Mechanics050 ratifies the exact changed renderer/measurement mechanism
+and bounded proof. GPI-S4-APPROVAL-R3 is complete; GPI-S4 resumes execution.
+R2's failed declaration remains stopped. No S4/S5 completion, CPU optimization,
+DRM observer execution, raised budget or new dependency is authorized.
