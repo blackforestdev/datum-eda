@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU r3 lineage corrective validation",
+  "recorded_at": "2026-09-29T05:06:25Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/r3-lineage-correction/validation-proposal.json",
+    "sha256": "90813f6f13adba8b4292643bbd4d6f3affd64c81dcb56c0f15da7352832784b3",
+    "commit": "25eae813af07fbf42c6fc9e06e10a8eb12605dc2"
+  },
+  "disposition": "Approve the pinned single90s GPU lineage case once and, only on pass, the new fixed bounded native declaration at target/gpu-r3-lineage-proof. Original stopped campaign remains unchanged; exact source/build/fixture/stop/reuse/exclusion rules apply. No DRM/CPU authority or numerical acceptance.",
+  "previous_campaign_sha256": "3b320358ae259d10ae79e2830cc4279b805ac35eb59b6ff56773486b451e05cc",
+  "claim": "Same actual session retains synchronized Frontier/beads ownership."
+}

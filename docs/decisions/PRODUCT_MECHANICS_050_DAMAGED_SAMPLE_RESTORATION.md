@@ -69,3 +69,14 @@ are in `gpu-redraw-proposal/owner-approval-r3-corrective.json` under
 `docs/reviews/gui-performance/`. The four-case correction validation preserves
 the first-failure stop, earlier evidence and all original numerical/DRM/CPU
 boundaries. It ratifies no different rendering mechanism.
+
+## R3 lineage corrective validation disposition
+
+The owner explicitly replied `approve GPU r3 lineage corrective validation`.
+The pinned packet and disposition are recorded in
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r3-lineage.json`.
+Execute its one named GPU case once; only on pass proceed to the new fixed
+bounded native declaration. The earlier stopped campaign stays unchanged.
+Preparation may advance while immutable submitted lineage and strict target
+identity remain intact. No new renderer mechanism, DRM execution, CPU work,
+numerical acceptance or S4/S5/issue closure is authorized.
