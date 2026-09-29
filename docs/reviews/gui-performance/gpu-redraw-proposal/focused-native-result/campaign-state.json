@@ -1,0 +1,14 @@
+{
+  "status": "diagnostic_complete",
+  "declaration_sha256": "4f234a6061b87f515b1842f6df90af6c5bf7bde84f6f2f50d93a19f0215174e5",
+  "results": [
+    {
+      "index": 0,
+      "status": "valid_output_diagnostic",
+      "exit_code": 0,
+      "receipt": "/tmp/gpu-r3-0-candidate-output-diagnostic-87uk_tb8/result.json"
+    }
+  ],
+  "reserved_index": 0,
+  "reserved_ns": 1790665454307248461
+}
