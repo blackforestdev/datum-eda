@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-sample-readback.json",
+  "candidate_commit": "453cd9f2",
+  "status": "valid_budget_failure; campaign permanently stopped after1of12",
+  "prerequisites": [
+    "../sample-readback-validation/receipt.json",
+    "../painter-hover-timed-preparation/receipt.json"
+  ],
+  "execution": {
+    "gpu_replay": 1,
+    "candidate_release_builds": 1,
+    "baseline_builds": 0,
+    "native_trials": 1,
+    "retries": 0,
+    "remaining11": "not run; unspent slots do not authorize resumption of stopped campaign"
+  },
+  "gpu": {
+    "n": 1277,
+    "p95_ms": 4.330583465492248,
+    "p99_ms": 5.701750174003601,
+    "max_ms": 5.964166848678589
+  },
+  "pass_p95_ms": {
+    "upload-leading": 0.023000000701904298,
+    "restore": 0.19883333940124512,
+    "suffix": 3.9252501197891236,
+    "outside_passes": 0.14083333763122557
+  },
+  "evidence": {
+    "readiness_changed_pixels": "0",
+    "final_changed_pixels": "0",
+    "final_image_review": "Inspected final.png; full crosshair visible, matching pinned reference.",
+    "input": {
+      "scheduled": 3600,
+      "integer_changes": 1280,
+      "same_position_requests": 2320,
+      "received": 1280,
+      "completed_viewport_routes": 1280,
+      "producer_duration_ns": 30000564702,
+      "send_lateness_ns": {
+        "p95": 286222,
+        "p99": 327673,
+        "max": 1381889
+      },
+      "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+    },
+    "observer_records": 2573,
+    "observer_limit": 4096,
+    "observer_overflow": false,
+    "complete_gpu_frames": 1281,
+    "frame_phases": {
+      "startup": 3,
+      "active": 1277,
+      "close": 1
+    },
+    "active_frames": 1277,
+    "active_world_submissions": 0,
+    "active_pass_sets": {
+      "['upload-leading', 'restore', 'suffix']": 1277
+    },
+    "all14_old_hover_transitions_recurred": true,
+    "exit_code": 0,
+    "survivors": "",
+    "forced_cleanup": false,
+    "binary_unchanged": true
+  },
+  "source_assessment": [
+    "The shared actual-pad dependency corrected the observed non-pad cold invalidations. All14same transitions now occur within restoration/suffix work; no active world upload/prefix/copy graph.",
+    "Warm p95 remains over budget. Suffix source retains one full-target exact8 resolve with working attachment load/store. It traverses the ordered suffix per disjoint rectangle; text draws prepared layer instance ranges per traversal. Scissors restrict rasterization but do not remove all vertex/draw work.",
+    "Existing timestamps combine those suffix responsibilities; neither draw replay nor attachment/resolve is independently attributable from this evidence. No new hardware, Wayland or legacy-editor defect is established. Do not choose another algorithm or repeat the candidate on a guessed attribution."
+  ],
+  "limits": [
+    "One candidate trial only; no baseline or quiet trial and no relative speedup/on-off inference. Prior candidate comparison is descriptive, not a matched experiment.",
+    "Quantiles are not additive. No filtering, outlier removal, tolerance, sample reduction or budget change.846of1277active spans exceed4ms; none exceed8ms.",
+    "Full DRM duty25%, other camera/resource/observer-overhead/endurance/independent requirements remain open. CPU optimization deferred. GPU issue and S4/S5 not closed.",
+    "Approved packet ends with this report and source assessment. Further implementation/build/native work requires a new concrete owner-approved scope."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "97fc66812cffde6137699073e3c5a1cd44668b04b49d0b392e045e654ab85c90",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "879f6164cb6e585059b4f1d3c4554e9775fc392ddcc26745d04f79bde08f8fb0",
+    "crates/gui-render/src/render/gpu_damage_restore.rs": "4aec288e1ff56ae0056ba3976b617902744abc38790d1de8f0567db5e6d6077f",
+    "crates/gui-render/src/text_gpu/draw.rs": "40cfe3aa87f4f4d87fee6bd5b89fc2d4be44cbbb9edc43eb570e6d12c71aea91",
+    "crates/gui-render/src/render/session_hover.rs": "303bdb2b67ee0e82c0d4d2c6a85a8bf7f7d9245bbd5f5d97fc6030ac030bca14",
+    "crates/gui-render/src/render/retained_scene_history.rs": "7804659419a6a2d0d45f1d34eb2534b7bb60da005fdbc5b2297022ca4d0d6622"
+  },
+  "artifacts_sha256": {
+    "analyze.py": "dae7074937f7121ec778fcb62c070db4d0444f596760a2ed32173fe44499ec7c",
+    "campaign-state.json": "d8cfae544a99ce84821b953e7c395eec5a2d6d2935975c7ff6a8241955aea5c6",
+    "cost-analysis.json": "efe7e8a4204e9016f7a3f00a268683efa26ade399fb525df1aafca3feae90068",
+    "declaration.json": "093c3fd967b64a3ce3a071563879b157241d59dcefd01b7afcf13fd343e3ffc6",
+    "diagnosis.json": "6b288ef85c1ea2dbdd7bdf55df3d7638f568814c285c6254a57865333c991239",
+    "final.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "native-raw.tar.gz": "0793ffffe903ffa661e51d8847a2dd1a2a132eb7a04154892b6b7b1fb4c8df00",
+    "result.json": "c9845bb7ddec6fd6d1f56924c3569c2e94dd7c829d42fa4df973bbef171882f7",
+    "warm.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622"
+  },
+  "report_sha256": "21002c338ba60a5da17675d3aaee0836462bae1470fd1b056fbc8bc8435916b3"
+}

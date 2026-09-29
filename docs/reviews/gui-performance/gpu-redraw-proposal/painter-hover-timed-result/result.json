@@ -1,0 +1,463 @@
+{
+  "run_index": 0,
+  "spec": {
+    "role": "candidate",
+    "mode": "gpu",
+    "pair": 1,
+    "workload": "W-POINTER"
+  },
+  "declaration_sha256": "093c3fd967b64a3ce3a071563879b157241d59dcefd01b7afcf13fd343e3ffc6",
+  "binary_sha256": "d9dca5333098eaf48ed77ec60238fdbfc09b12bd5d36267f8796f37573889360",
+  "status": "valid_budget_failure",
+  "gpu_duty": "unavailable: complete DRM lifetime observer absent",
+  "limits": [
+    "Descriptive bounded experiment only; not S4 qualification or formal relative inference.",
+    "Matched bounded causal/semantic observer in both modes; overhead is not subtracted.",
+    "No CPU/action, uninstrumented CPU/resource or physical presentation latency acceptance."
+  ],
+  "workload": {
+    "epoch": 1965265570656442488,
+    "warmup_ns": 1430138563151276,
+    "active_ns": 1430143563151276,
+    "still_ns": 1430173563151276,
+    "drain_ns": 1430178563151276
+  },
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/gpu-painter-hover-timed-proof/candidate-453cd9f2-painter-hover-datum-gui",
+    "--project-root",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "observer_storage_limit_records": 4096,
+  "cpu_samples": [
+    {
+      "monotonic_ns": 1430098563726451,
+      "cpu_stat": {
+        "usage_usec": 0,
+        "user_usec": 0,
+        "system_usec": 0,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": []
+    },
+    {
+      "monotonic_ns": 1430138563791179,
+      "cpu_stat": {
+        "usage_usec": 2270162,
+        "user_usec": 1634353,
+        "system_usec": 635808,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": [
+        "1558852",
+        "1558916"
+      ]
+    },
+    {
+      "monotonic_ns": 1430143563654396,
+      "cpu_stat": {
+        "usage_usec": 2272168,
+        "user_usec": 1634353,
+        "system_usec": 637814,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": [
+        "1558852",
+        "1558916"
+      ]
+    },
+    {
+      "monotonic_ns": 1430173649417739,
+      "cpu_stat": {
+        "usage_usec": 7335978,
+        "user_usec": 5021227,
+        "system_usec": 2314750,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": [
+        "1558852",
+        "1558916"
+      ]
+    },
+    {
+      "monotonic_ns": 1430178563880062,
+      "cpu_stat": {
+        "usage_usec": 7337945,
+        "user_usec": 5022574,
+        "system_usec": 2315371,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": [
+        "1558852",
+        "1558916"
+      ]
+    },
+    {
+      "monotonic_ns": 1430178887559870,
+      "cpu_stat": {
+        "usage_usec": 7338010,
+        "user_usec": 5022618,
+        "system_usec": 2315391,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": [
+        "1558852",
+        "1558916"
+      ]
+    },
+    {
+      "monotonic_ns": 1430178985614515,
+      "cpu_stat": {
+        "usage_usec": 7440975,
+        "user_usec": 5093901,
+        "system_usec": 2347073,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": [
+        "1558852"
+      ]
+    },
+    {
+      "monotonic_ns": 1430179441984022,
+      "cpu_stat": {
+        "usage_usec": 7557842,
+        "user_usec": 5165118,
+        "system_usec": 2392723,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": []
+    },
+    {
+      "monotonic_ns": 1430179442661302,
+      "cpu_stat": {
+        "usage_usec": 7557842,
+        "user_usec": 5165118,
+        "system_usec": 2392723,
+        "nice_usec": 4000,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": []
+    }
+  ],
+  "cpu_before_spawn": {
+    "monotonic_ns": 1430098563726451,
+    "cpu_stat": {
+      "usage_usec": 0,
+      "user_usec": 0,
+      "system_usec": 0,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": []
+  },
+  "owned_cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/datum-gpu-r3-5f2e5d68aaad49ac807d9f6463b88d19",
+  "pid": 1558852,
+  "window": 29360132,
+  "geometry": {
+    "WINDOW": "29360132",
+    "X": "319",
+    "Y": "154",
+    "WIDTH": "1280",
+    "HEIGHT": "800",
+    "SCREEN": "0"
+  },
+  "readiness_pixel_difference": "0",
+  "identity_lines": [
+    "[SystemTime { tv_sec: 1790698404, tv_nsec: 964700233 }] surface identity window=WindowId(29360132) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+    "[SystemTime { tv_sec: 1790698405, tv_nsec: 15760820 }] initial surface configuration requested 1280x800 format=Bgra8UnormSrgb present=Fifo msaa=8"
+  ],
+  "warmup_start": {
+    "monotonic_ns": 1430138563791179,
+    "cpu_stat": {
+      "usage_usec": 2270162,
+      "user_usec": 1634353,
+      "system_usec": 635808,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": [
+      "1558852",
+      "1558916"
+    ]
+  },
+  "active_start": {
+    "monotonic_ns": 1430143563654396,
+    "cpu_stat": {
+      "usage_usec": 2272168,
+      "user_usec": 1634353,
+      "system_usec": 637814,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": [
+      "1558852",
+      "1558916"
+    ]
+  },
+  "active_end": {
+    "monotonic_ns": 1430173649417739,
+    "cpu_stat": {
+      "usage_usec": 7335978,
+      "user_usec": 5021227,
+      "system_usec": 2314750,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": [
+      "1558852",
+      "1558916"
+    ]
+  },
+  "tail_end": {
+    "monotonic_ns": 1430178563880062,
+    "cpu_stat": {
+      "usage_usec": 7337945,
+      "user_usec": 5022574,
+      "system_usec": 2315371,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": [
+      "1558852",
+      "1558916"
+    ]
+  },
+  "final_capture_started_ns": 1430178573245454,
+  "final_capture_finished_ns": 1430178788306426,
+  "final_pixel_difference": "0",
+  "drain_start": {
+    "monotonic_ns": 1430178887559870,
+    "cpu_stat": {
+      "usage_usec": 7338010,
+      "user_usec": 5022618,
+      "system_usec": 2315391,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": [
+      "1558852",
+      "1558916"
+    ]
+  },
+  "shutdown_receipt": {
+    "phase": "drained_device_live",
+    "pid": 1558852,
+    "device_epoch": 1
+  },
+  "drain_end": {
+    "monotonic_ns": 1430178985614515,
+    "cpu_stat": {
+      "usage_usec": 7440975,
+      "user_usec": 5093901,
+      "system_usec": 2347073,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": [
+      "1558852"
+    ]
+  },
+  "exit_code": 0,
+  "diagnosis": {
+    "input": {
+      "scheduled": 3600,
+      "integer_changes": 1280,
+      "same_position_requests": 2320,
+      "received": 1280,
+      "completed_viewport_routes": 1280,
+      "producer_duration_ns": 30000564702,
+      "send_lateness_ns": {
+        "p95": 286222,
+        "p99": 327673,
+        "max": 1381889
+      },
+      "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+    },
+    "capture_state": {
+      "camera_center_nm": [
+        151634208.0,
+        95122896.0
+      ],
+      "camera_zoom": 1.0,
+      "cursor": [
+        300.0,
+        150.0
+      ],
+      "device_epoch": 1,
+      "extent": [
+        1280,
+        800
+      ],
+      "hover_surface": null,
+      "hover_utf8": "",
+      "native_cursor": [
+        300.0,
+        150.0
+      ],
+      "pan_active": false,
+      "render_activity": [
+        1292,
+        1281
+      ],
+      "render_revision": 1292,
+      "scale": 1.0,
+      "truncated": false,
+      "window_focused": true
+    },
+    "expected_last_pointer_state": {
+      "camera_center_nm": [
+        151634208.0,
+        95122896.0
+      ],
+      "camera_zoom": 1.0,
+      "cursor": [
+        300.0,
+        150.0
+      ],
+      "device_epoch": 1,
+      "extent": [
+        1280,
+        800
+      ],
+      "hover_surface": null,
+      "hover_utf8": "",
+      "native_cursor": [
+        300.0,
+        150.0
+      ],
+      "pan_active": false,
+      "render_activity": [
+        1292,
+        1280
+      ],
+      "render_revision": 1292,
+      "scale": 1.0,
+      "truncated": false,
+      "window_focused": true
+    },
+    "capture_state_matches": true,
+    "transitions_after_last_pointer": [],
+    "limits": "Native output diagnosis only; no GPU performance, original failure resolution or DRM qualification."
+  },
+  "input_storage_bytes": 2490368,
+  "gpu": {
+    "n": 1277,
+    "p95_ms": 4.330583465492248,
+    "p99_ms": 5.701750174003601,
+    "max_ms": 5.964166848678589
+  },
+  "gpu_pass_names": {
+    "['upload-leading', 'restore', 'suffix']": 1277
+  },
+  "candidate_threshold_exceeded": true,
+  "budget_stop": true,
+  "post_export_cpu": {
+    "monotonic_ns": 1430179441984022,
+    "cpu_stat": {
+      "usage_usec": 7557842,
+      "user_usec": 5165118,
+      "system_usec": 2392723,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": []
+  },
+  "remaining_before_cleanup": "",
+  "cpu_after_cleanup": {
+    "monotonic_ns": 1430179442661302,
+    "cpu_stat": {
+      "usage_usec": 7557842,
+      "user_usec": 5165118,
+      "system_usec": 2392723,
+      "nice_usec": 4000,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": []
+  },
+  "binary_unchanged": true
+}

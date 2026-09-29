@@ -1,0 +1,137 @@
+{
+  "metrics": {
+    "frame_span": {
+      "n": 1277,
+      "min_ms": 3.256666766052246,
+      "median_ms": 4.122916792488098,
+      "p95_ms": 4.330583465492248,
+      "p99_ms": 5.701750174003601,
+      "max_ms": 5.964166848678589
+    },
+    "own_pass_sum": {
+      "n": 1277,
+      "min_ms": 3.153000096221924,
+      "median_ms": 3.987666788360596,
+      "p95_ms": 4.155833460159302,
+      "p99_ms": 5.54266683581543,
+      "max_ms": 5.837750178153992
+    },
+    "outside_passes": {
+      "n": 1277,
+      "min_ms": 0.09066666943359375,
+      "median_ms": 0.13533333746337892,
+      "p95_ms": 0.14083333763122557,
+      "p99_ms": 0.3312500101089478,
+      "max_ms": 1.781083387687683
+    },
+    "upload-leading": {
+      "n": 1277,
+      "min_ms": 0.013666667083740234,
+      "median_ms": 0.019583333930969237,
+      "p95_ms": 0.023000000701904298,
+      "p99_ms": 0.2129166731643677,
+      "max_ms": 1.6020833822250367
+    },
+    "restore": {
+      "n": 1277,
+      "min_ms": 0.08000000244140625,
+      "median_ms": 0.17958333881378175,
+      "p95_ms": 0.19883333940124512,
+      "p99_ms": 0.23308334044647216,
+      "max_ms": 1.4109167097244262
+    },
+    "suffix": {
+      "n": 1277,
+      "min_ms": 2.9945000913848876,
+      "median_ms": 3.7830834487838745,
+      "p95_ms": 3.9252501197891236,
+      "p99_ms": 5.3323334960632325,
+      "max_ms": 5.621250171546936
+    }
+  },
+  "over_4ms": 846,
+  "over_8ms": 0,
+  "total_gpu_frames": 1281,
+  "active_gpu_frames": 1277,
+  "input_records": 2573,
+  "input_limit": 4096,
+  "input_overflow": false,
+  "active_world_submissions": 0,
+  "active_pass_sets": {
+    "['upload-leading', 'restore', 'suffix']": 1277
+  },
+  "hover_transitions": [
+    {
+      "demand": 120,
+      "before": "",
+      "after": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8"
+    },
+    {
+      "demand": 142,
+      "before": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+      "after": ""
+    },
+    {
+      "demand": 148,
+      "before": "",
+      "after": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d"
+    },
+    {
+      "demand": 493,
+      "before": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+      "after": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016"
+    },
+    {
+      "demand": 621,
+      "before": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+      "after": ""
+    },
+    {
+      "demand": 629,
+      "before": "",
+      "after": "track:1905e10a-4f11-5286-abe4-4f04b8051563"
+    },
+    {
+      "demand": 639,
+      "before": "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+      "after": ""
+    },
+    {
+      "demand": 667,
+      "before": "",
+      "after": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a"
+    },
+    {
+      "demand": 1438,
+      "before": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+      "after": ""
+    },
+    {
+      "demand": 1482,
+      "before": "",
+      "after": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016"
+    },
+    {
+      "demand": 1702,
+      "before": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+      "after": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d"
+    },
+    {
+      "demand": 1953,
+      "before": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+      "after": ""
+    },
+    {
+      "demand": 1961,
+      "before": "",
+      "after": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8"
+    },
+    {
+      "demand": 1983,
+      "before": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+      "after": ""
+    }
+  ],
+  "matches_all14_previous_transitions": true,
+  "limits": "Every active sample retained; nearest-rank quantiles match fixed runner. Pass quantiles are not additive. Suffix includes clipped drawing, attachment load/store and full exact8 resolve; existing timestamps cannot separate those costs. No matched baseline or quiet trial ran; no speedup, on/off overhead, DRM duty or full qualification inference."
+}
