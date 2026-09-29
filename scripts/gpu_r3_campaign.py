@@ -9,7 +9,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORY = ROOT / 'target/gpu-r3-proof'
+DIRECTORY = ROOT / 'target/gpu-r3-lineage-proof'
 STATE = DIRECTORY / 'campaign-state.json'
 
 
