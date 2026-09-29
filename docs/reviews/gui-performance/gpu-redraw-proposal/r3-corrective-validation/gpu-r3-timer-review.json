@@ -1,0 +1,81 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "head": "365ea26cd21fd3b0bc4f771463b961afd658757c",
+  "scope": "Read-only source review of proposed five-case unspent r3 timer batch. No builds/tests/native runs or production edits. Only this advisory written.",
+  "pins": {
+    "crates/gui-render/src/render/gpu_submission_conformance_tests.rs": "dc115cfe50c2d15182507ac87ba0ae71919dbe7601539cc815fd735060365d13",
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": "28eecc6e1206fb165593ad66c5abd929dd92e37287a3e11d2c37994aa81b9a67",
+    "crates/gui-render/src/render/gpu_measurement_resource_tests.rs": "97470fc41070a981aeae82cb1b1bd153c7d50e41e0003822a4c83c219beaffe4",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "ae866f85afe44699c7e9177f5608b4976b397d72675843585d13e2acbd53a8b1",
+    "crates/gui-render/src/render/prefix_graph_tests.rs": "9e3faf6fe0e07bb302205aab5e96e4d39ede83d340fc8d28ffcd1c974bcadce6",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "aad9fa8c6d8c29db4540546d49b2d4799d4db23c627a6f4cdcb1653ea0e44a6e",
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": "ea484441414d0925476b552f408e406b20a0449d347977b0abae757f036f598f",
+    "crates/gui-render/src/render/gpu_measurements.rs": "88685822f3af72bdd31ce09dc10fb1b951408b43aa816b4ddfcf88b3fb505872"
+  },
+  "disposition": "No remaining identified source gap in stated bounded five-case timer component batch. Advisory only; compilation, actual selected-case execution and results remain parent proof work.",
+  "findings": [
+    {
+      "id": "TIMER01",
+      "severity": "medium proof gap",
+      "source": "prefix_graph_tests.rs exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery, corrupt frame polling",
+      "finding": "Measured exposure and recovered cold pass names are asserted, but warm restore sample is polled and discarded without assertion. Current proof can claim exercised restoration, not explicit complete warm-restore receipt conformance.",
+      "required": "Assert one warm sample with upload-leading/restore/suffix pass names and correct nonempty final submission manifest/span; reuse existing corrupt-A frame or add no new GPU frame.",
+      "status": "resolved by follow-up source inspection; GPU execution still pending"
+    },
+    {
+      "id": "TIMER02",
+      "severity": "medium proof gap",
+      "source": "gpu_measurement_resource_tests.rs and gpu_submission_conformance_tests.rs",
+      "finding": "Resource retirement case covers a submitted final compatibility frame. New continuation test only completes successfully. Neither proves cancellation/owner drop after an actual upload-only submission retains query/marker ownership and reports that submitted lineage.",
+      "required": "Add a bounded subcase within existing continuation component test: submit one real upload chunk, abandon/cancel owner, assert its id/attempt/workload in cancellation and resource accounting persists through a held submission until completion. No extra native workload/campaign or production change needed.",
+      "status": "resolved by follow-up source inspection; GPU execution still pending"
+    }
+  ],
+  "assessment": [
+    "World fixture220000 vertices forces actual >4MiB staging continuation; glyph case amplifies six real glyph raster requests through production atlas chunk submission. Submission callback count>1, final_upload.rendered true and nonzero buffer_copy_bytes prevent vacuous all-final case.",
+    "Each continuation/final manifest kind, monotonically ordered raw ticks, transfer interval and first-to-last whole span are checked. Six-attempt cap matches five continuations+final. Explicit local lineage/workload labels correctly make no native input-attribution claim.",
+    "Per-attempt bounded GPU waits intentionally insert possible idle/CPU gaps; observed frame span is component conformance evidence, not candidate performance. Positive interval assertion is not an isolated-bandwidth measurement.",
+    "Existing workspace/dialog/terminal parity checks compare measured output to prior output and require terminal+final submission kinds. Query-ring and retirement cases cover core query failures/resources; no redundant broad rerun requested.",
+    "Offline final-upload omission and causal late-active/close controls should remain pinned/reused. Native causal end-to-end evidence must still come from declared workload receipts, not synthetic local tags.",
+    "All actual executions must retain first-failure stopping and exact selected-test-count evidence. New timer results are absent at review time; owner r3 authority and correction approval are handled by parent.",
+    "Complete DRM duty and formal S4 qualification remain unavailable regardless of timer component pass."
+  ],
+  "review_history": [
+    {
+      "pins": {
+        "crates/gui-render/src/render/gpu_submission_conformance_tests.rs": "518b0ead2629e0b2e57ac2a321ff525663b217fbe270cc2004486b99d7fa1e36",
+        "crates/gui-render/src/render/gpu_measurements_tests.rs": "28eecc6e1206fb165593ad66c5abd929dd92e37287a3e11d2c37994aa81b9a67",
+        "crates/gui-render/src/render/gpu_measurement_resource_tests.rs": "97470fc41070a981aeae82cb1b1bd153c7d50e41e0003822a4c83c219beaffe4",
+        "crates/gui-render/src/render/gpu_overlay_tests.rs": "ae866f85afe44699c7e9177f5608b4976b397d72675843585d13e2acbd53a8b1",
+        "crates/gui-render/src/render/prefix_graph_tests.rs": "61e9b91d7dbe6da01aebf07ba2f5550dbd3a901c2c66fc42c8f5ba3f8c931179",
+        "crates/gui-render/src/render/gpu_measurement_api.rs": "aad9fa8c6d8c29db4540546d49b2d4799d4db23c627a6f4cdcb1653ea0e44a6e",
+        "crates/gui-render/src/render/gpu_measurement_frame.rs": "ea484441414d0925476b552f408e406b20a0449d347977b0abae757f036f598f",
+        "crates/gui-render/src/render/gpu_measurements.rs": "88685822f3af72bdd31ce09dc10fb1b951408b43aa816b4ddfcf88b3fb505872"
+      },
+      "findings": [
+        {
+          "id": "TIMER01",
+          "severity": "medium proof gap",
+          "source": "prefix_graph_tests.rs exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery, corrupt frame polling",
+          "finding": "Measured exposure and recovered cold pass names are asserted, but warm restore sample is polled and discarded without assertion. Current proof can claim exercised restoration, not explicit complete warm-restore receipt conformance.",
+          "required": "Assert one warm sample with upload-leading/restore/suffix pass names and correct nonempty final submission manifest/span; reuse existing corrupt-A frame or add no new GPU frame."
+        },
+        {
+          "id": "TIMER02",
+          "severity": "medium proof gap",
+          "source": "gpu_measurement_resource_tests.rs and gpu_submission_conformance_tests.rs",
+          "finding": "Resource retirement case covers a submitted final compatibility frame. New continuation test only completes successfully. Neither proves cancellation/owner drop after an actual upload-only submission retains query/marker ownership and reports that submitted lineage.",
+          "required": "Add a bounded subcase within existing continuation component test: submit one real upload chunk, abandon/cancel owner, assert its id/attempt/workload in cancellation and resource accounting persists through a held submission until completion. No extra native workload/campaign or production change needed."
+        }
+      ],
+      "disposition": "Planned bounded component batch is well targeted; add explicit measured-restore assertion and actual continuation-cancellation lifetime control before crediting full stated timer coverage. No production algorithm blocker found and no independent execution authorization supplied."
+    }
+  ],
+  "followup": [
+    "Already-produced warm restore sample now requires exactly one sample with upload-leading/restore/suffix, one final manifest, matching first/last/transfer endpoint and ordered ticks; no extra frame introduced.",
+    "New cancellation subcase executes one real world upload continuation, requires deferred outcome and one submit callback, retains actual pending FrameQueries across renderer owner close and bounded queue completion, checks one submitted world lineage/attempt and final id, four retiring query/resolve/readback/marker records and release after pending owner drops.",
+    "This is actual continuation cancellation/resource ownership proof design, not synthetic resource-hold substitution. Deliberately retained FrameQueries means test proves final-owner release semantics after completion, not precise pre-completion wall-clock residency.",
+    "No tests/builds/native commands executed by reviewer. Existing offline consumer controls remain reusable at pinned scope; native causal experiment and final duty qualification are not established by this component batch."
+  ]
+}

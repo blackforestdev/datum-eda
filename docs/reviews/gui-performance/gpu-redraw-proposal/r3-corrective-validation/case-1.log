@@ -1,0 +1,22 @@
+
+running 1 test
+test visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_doa_hover_composition_and_recovery ... exact8x adapter=AdapterInfo { name: "Intel(R) HD Graphics P630 (KBL GT2)", vendor: 32902, device: 22813, device_type: IntegratedGpu, device_pci_bus_id: "0000:00:02.0", driver: "Intel open-source Mesa driver", driver_info: "Mesa 25.0.7-2+deb13u1", backend: Vulkan, subgroup_min_size: 8, subgroup_max_size: 32, transient_saves_memory: false }, format=TextureFormatFeatures { allowed_usages: TextureUsages(COPY_SRC | COPY_DST | TEXTURE_BINDING | RENDER_ATTACHMENT | TRANSIENT), flags: TextureFormatFeatureFlags(FILTERABLE | MULTISAMPLE_X2 | MULTISAMPLE_X4 | MULTISAMPLE_X8 | MULTISAMPLE_X16 | MULTISAMPLE_RESOLVE | BLENDABLE) }
+datum-import warning [/tmp/gpu-prepared-native/board.kicad_pcb]: parsed KiCad board skeleton into canonical nets, packages, tracks, vias, zones, and stackup; full geometry and rule import is not implemented yet
+exact8x P630 case passed: F-DOA cold
+exact8x P630 case passed: pad hover strong invalidation
+exact8x P630 case passed: stable pad hover
+exact8x P630 case passed: cursorless hover to pointer restores old support
+exact8x P630 case passed: pad hover strong invalidation
+exact8x P630 case passed: stable pad hover
+exact8x P630 case passed: menu painter order
+exact8x P630 case passed: menu exposure
+exact8x P630 case passed: menu painter order
+exact8x P630 case passed: menu exposure
+exact8x P630 case passed: above optional image cap
+exact8x P630 case passed: return to admitted extent
+exact8x P630 case passed: replacement resources and preserved CPU session
+exact8x P630 case passed: recovered warm reuse
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 538 filtered out; finished in 3.45s
+

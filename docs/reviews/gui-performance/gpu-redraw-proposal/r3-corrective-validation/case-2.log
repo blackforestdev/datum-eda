@@ -1,0 +1,40 @@
+
+running 1 test
+test visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_terminal_layers_and_equal_length_replacement ... exact8x adapter=AdapterInfo { name: "Intel(R) HD Graphics P630 (KBL GT2)", vendor: 32902, device: 22813, device_type: IntegratedGpu, device_pci_bus_id: "0000:00:02.0", driver: "Intel open-source Mesa driver", driver_info: "Mesa 25.0.7-2+deb13u1", backend: Vulkan, subgroup_min_size: 8, subgroup_max_size: 32, transient_saves_memory: false }, format=TextureFormatFeatures { allowed_usages: TextureUsages(COPY_SRC | COPY_DST | TEXTURE_BINDING | RENDER_ATTACHMENT | TRANSIENT), flags: TextureFormatFeatureFlags(FILTERABLE | MULTISAMPLE_X2 | MULTISAMPLE_X4 | MULTISAMPLE_X8 | MULTISAMPLE_X16 | MULTISAMPLE_RESOLVE | BLENDABLE) }
+datum-import warning [/home/bfadmin/Documents/datum-eda/crates/gui-render/../engine/testdata/import/kicad/simple-demo.kicad_pcb]: parsed KiCad board skeleton into canonical nets, packages, tracks, vias, zones, and stackup; full geometry and rule import is not implemented yet
+datum-import warning [/home/bfadmin/Documents/datum-eda/crates/gui-render/../engine/testdata/import/kicad/simple-demo.kicad_pcb]: zone dddddddd-dddd-dddd-dddd-dddddddddddd on layer F.Cu: no filled polygon; rendering authored boundary template instead
+datum-import warning [/home/bfadmin/Documents/datum-eda/crates/gui-render/../engine/testdata/import/kicad/simple-demo.kicad_sch]: parsed KiCad schematic header and skeleton forms only; full symbol/connectivity import is not implemented yet
+exact8x P630 case passed: terminal text A
+exact8x P630 case passed: terminal and menu warm composition
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal text A
+exact8x P630 case passed: terminal and menu warm composition
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal text B
+exact8x P630 case passed: terminal and menu warm composition
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal text B
+exact8x P630 case passed: terminal and menu warm composition
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal background and foreground images
+exact8x P630 case passed: terminal and menu warm composition
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal background and foreground images
+exact8x P630 case passed: terminal and menu warm composition
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+exact8x P630 case passed: terminal and menu masked pointer frames
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 538 filtered out; finished in 1.57s
+
