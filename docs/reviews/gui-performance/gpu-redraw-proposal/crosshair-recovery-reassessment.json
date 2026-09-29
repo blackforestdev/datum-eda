@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "a617159167fec155796ce0e8bd3cdc8a39fd98b9",
+  "owner_direction": "Require a tighter recovery plan before approving observer expansion; compare smaller diagnosis and shortest path to one correct interpretable native result; DRM separate.",
+  "authorization": "Planning only; proposed implementation/offline proof/build/native packet remains unapproved.",
+  "decision": "Withdraw streaming observer from requested next scope. Recommend output-only diagnostic using existing4096-record buffer and semantic filtering, with GPU timers and causal workload tracing disabled, no new thread/journal/schema.",
+  "supersedes_pending_proposal": "docs/reviews/gui-performance/gpu-redraw-proposal/observer-correction-proposal.md",
+  "proposal": "docs/reviews/gui-performance/gpu-redraw-proposal/crosshair-recovery-plan.md",
+  "limits": "One output-only native run proposed after focused offline proof and one candidate build; no guarantee of reproduction or success, performance/DRM acceptance, CPU optimization or issue closure.",
+  "source_sha256": {
+    "docs/reviews/gui-performance/gpu-redraw-proposal/crosshair-recovery-plan.md": "03fe1125ceb7699b0dc2d8426cb5fb7ccf9f685858bbc3ae7bb17cc17251c5c1",
+    "crates/gui-app/src/native_input_observation.rs": "e84c2cd3325409cb261f2053f209f4c3c602dba7995140488ac273c47a3102aa",
+    "crates/gui-app/src/app_native_events.rs": "9c3cb879ce59180f9078a5bc107033654a1aaf7b550c8a4a1b5fa35aa94b5b24",
+    "crates/gui-app/src/native_measurement_shutdown.rs": "b7d8c2cfeb8a871ee9ab567634214909b1e4a6e2f63ede02ff55c4bd11f3c076",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "aad9fa8c6d8c29db4540546d49b2d4799d4db23c627a6f4cdcb1653ea0e44a6e",
+    "scripts/gpu_r3_native_trial.py": "f58054bf21e8af8ef72f92271d2734c59d74fc070f0b7302100c935afba8ed3e",
+    "scripts/gpu_r3_pointer_input.py": "d89acbc3f55d338755e2d86c99770759127957500cbfbf5ffabe14d1c479f74a"
+  }
+}
