@@ -206,6 +206,10 @@ impl Renderer {
         let reuse = images
             .as_ref()
             .is_some_and(|images| self.render_session.prefix.reusable(images.identity));
+        #[cfg(test)]
+        let fault = crate::gpu_surface::prefix_negative_control::take();
+        #[cfg(test)]
+        let reuse = reuse || fault == crate::gpu_surface::prefix_negative_control::Fault::StaleKey;
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
         });
@@ -254,7 +258,18 @@ impl Renderer {
                 });
                 self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
             }
+            #[cfg(not(test))]
             images.copy(&mut encoder);
+            #[cfg(test)]
+            fault.copy(
+                device,
+                &mut encoder,
+                images,
+                &msaa_view,
+                width,
+                height,
+                self.msaa_format,
+            );
         }
         let text_encode_elapsed;
         {
