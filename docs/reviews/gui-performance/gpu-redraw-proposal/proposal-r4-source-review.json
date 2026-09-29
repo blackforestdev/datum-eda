@@ -1,0 +1,52 @@
+{
+  "status": "source planning review only; independent review and owner ratification pending",
+  "source_head": "b546e3b4",
+  "proposal_sha256": "29bdc35a67735b095259515e0982b25697f5ce46c946798a60b55bca623e5509",
+  "selected_layout": {
+    "source_tile": [
+      32,
+      32
+    ],
+    "atlas": [
+      512,
+      512
+    ],
+    "slots": 256,
+    "source_id_storage_bytes": 1024
+  },
+  "reference_image_bytes": {
+    "B": 32768000,
+    "A": 32768000,
+    "C": 4096000,
+    "T": 8388608,
+    "R": 1048576
+  },
+  "optional_bytes": 46301184,
+  "one_generation_image_bytes": 79069184,
+  "two_generation_image_bytes": 158138368,
+  "optional_allowance_amendment": "Existing per-generation Budget::new(B payload) becomes aggregate45MiB forA+C+T+R; no process512MiB or metadata4KiB cap increase. Reference delta12.90625MiB per generation. All other GPU and uniform/staging allocations remain separately charged.",
+  "query_bound": {
+    "cold": 31,
+    "warm": 28,
+    "limit": 32
+  },
+  "reviewed_constraints": [
+    "Existing full-target resolve observation is one startup sample, not active percentile.",
+    "No partial multisampled copies or arbitrary rectangular attachment resolve in installed wgpu28.",
+    "Negative viewport origins are admitted within checked device bounds; exact raster equivalence remains required proof.",
+    "Entire selected tiles restored and repainted, rather than erasing suffix outside narrow strip predicate.",
+    "Explicit full texture COPY_DST target capability; unsupported target falls back.",
+    "Copies included before final marker/query resolution; baseline receives matching method change.",
+    "One current/one retiring coherent bundle, submitted references and failed/stale completion invalidation retained.",
+    "No old warm full-B restoration optimization alongside new graph.",
+    "One proposed layout, no tuning/retry campaign."
+  ],
+  "risks": [
+    "Exact raster/interpolation under integer atlas translation unproven; preserve sample checks and reject differences.",
+    "Up to256 suffix traversals may consume resolve savings; only complete-frame native budget decides.",
+    "Real hover rings may exceed tile capacity; fixed14transition preflight required.",
+    "Reference native COPY_DST capability unverified without approved device run.",
+    "4KiB metadata and all live/retiring resource accounting require implementation proof."
+  ],
+  "remaining": "Required independent review, owner-approved mechanism/admission amendment, implementation and bounded proof. Camera/resource/endurance/independent final and separately authorized complete DRM duty remain; no S4/S5 acceptance."
+}
