@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "approval": "../readback-owner-approval.json",
+  "status": "ended_inconclusive_at_native_scale_precondition",
+  "recorded_at": "2026-09-29T23:21:26.464804+00:00",
+  "source_head": "430151f88bed73cd3b3307f322b7c5fe7cb63268",
+  "binary": "/home/bfadmin/Documents/datum-eda/target/release/deps/datum_gui-2b88501e8cc7fcea",
+  "binary_sha256": "48b46328d255bc117d30936985c60386fcae75b399da2cce1ab51a5c475f2678",
+  "consumed": {
+    "optimized_builds": 1,
+    "scoped_cargo_checks": 1,
+    "native_processes": 1,
+    "gpu_observations": 0,
+    "conformance_observations": 0,
+    "correctness_observations": 0,
+    "measured_observations": 0,
+    "gpu_queue_submissions": 0
+  },
+  "checks": {
+    "optimized_build": "pass; newly compiled gui-render and gui-app, no compiler diagnostics",
+    "offline_negative_controls": "1 test passed; missing/reversed queries and duplicate/reordered sample IDs rejected",
+    "default_feature_release_check": "pass; diagnostic native entry excluded",
+    "source_health_policy": "pass plus13regressiontests",
+    "dependency_authority": "pass",
+    "cargo_resource_policy": "pass"
+  },
+  "native": {
+    "exit_code": 101,
+    "wall_seconds": 0.06434993515722454,
+    "error": "A1 scale changed",
+    "stage": "X11 window created; scale assertion before wgpu instance/adapter/device construction",
+    "actual_scale": "not recorded; assertion establishes only that it differed from1",
+    "timings": "none; process wall time is not GPU operation cost"
+  },
+  "root_cause": {
+    "classification": "new diagnostic launcher defect",
+    "finding": "A1 launcher omitted WINIT_X11_SCALE_FACTOR=1, explicitly present in the existing pinned native runner. Parent variable was absent. No system DPI change or hardware limitation was established.",
+    "source": "scripts/gpu_r3_native_trial.py:58",
+    "observed_scale_override": null,
+    "other_native_flags_inherited_from_prior_runner": false
+  },
+  "disposition": "First native prerequisite failure ends A1; no retry, replacement host/backend, extra build, optimization or automatic successor. Restore only this session diagnostic source edits after archiving exact compiled source; preserve production R4. Main GPU issue and S4/S5 remain open.",
+  "evidence_limits": [
+    "No adapter, native readback usage, timestamp conformance, D/P runtime equality, exact output, GPU resource cap or attribution result established by this process.",
+    "No backend-operation cost, marker perturbation or avoidable Datum overhead quantified.",
+    "Separate DRM qualification remains untouched."
+  ],
+  "artifacts_sha256": {
+    "diagnostic-source.patch": "9b265f5ab4cfc9c9a80db234593cf74d2da854113131c4d39c1d2301e21c1ac5",
+    "raw.tar.gz": "aca3555cfd782b40113e7aef595c8a1aeaf9c24dae35f5c290d0e609699fdba2",
+    "execution-state.json": "bbc05cad64736b0716a752eafdcb1e05761b1bd52ef4c29d6186f7042f6b2834"
+  },
+  "diagnostic_defect": "dat-gpu-a1-scale-l0g6",
+  "restoration": {
+    "production_source": "All21sealed source files archived; tracked source restored toHEAD and session-owned new files removed. Archived patch passes git apply --check.",
+    "production_binary_sha256": "5c1c8f35746b55397f95280799be3b7bc4f28984b76f94514aaac6ef4933816b",
+    "matches_preserved_r4": true
+  }
+}
