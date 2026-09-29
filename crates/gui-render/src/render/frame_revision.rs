@@ -1,5 +1,7 @@
 //! Coalesced rendering damage and linear completion receipts.
 //! Platform delivery damage remains owned by the native coordinator.
+#[path = "frame_workload.rs"]
+pub(crate) mod workload;
 use std::sync::{
     Arc,
     atomic::{AtomicU64, Ordering},
@@ -32,6 +34,17 @@ pub struct Receipt {
 }
 
 impl Receipt {
+    pub(super) fn measurement_attempt(&self, preparation: u64) -> [u64; 7] {
+        [
+            self.owner,
+            self.attempt,
+            self.revision,
+            preparation,
+            self.target.host,
+            self.target.device,
+            self.target.configuration,
+        ]
+    }
     pub(super) fn target(&self) -> Target {
         self.target
     }
@@ -57,6 +70,7 @@ struct Active {
 }
 
 pub struct Revisions {
+    workload: workload::Workload,
     owner: u64,
     revision: u64,
     acknowledged: u64,
@@ -82,6 +96,7 @@ impl Default for Revisions {
         let storage = crate::cpu_alloc::Scope::new("render-session-receipt");
         let mailbox = storage.with(|| Arc::new(AtomicU64::new(0)));
         Self {
+            workload: Default::default(),
             owner,
             revision: 1,
             acknowledged: 0,
@@ -94,6 +109,18 @@ impl Default for Revisions {
 }
 
 impl Revisions {
+    pub(super) fn workload_context(&mut self, context: [u64; 3]) -> anyhow::Result<()> {
+        self.workload.context(context)
+    }
+    pub(super) fn end_workload_context(&mut self, retain: bool) {
+        self.workload.end_context(retain);
+    }
+    pub(super) fn observation_activity(&self) -> [u64; 2] {
+        [self.revision, self.attempt]
+    }
+    pub(super) fn workload_tag(&self) -> [u64; 8] {
+        self.workload.pending(self.acknowledged)
+    }
     pub(super) fn owner(&self) -> u64 {
         self.owner
     }
@@ -102,6 +129,7 @@ impl Revisions {
             .revision
             .checked_add(1)
             .expect("render revisions exhausted");
+        self.workload.changed(self.revision);
         if change != Change::Interaction {
             self.strong_revision = self.revision;
         }

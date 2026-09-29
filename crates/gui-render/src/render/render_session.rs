@@ -55,6 +55,16 @@ pub struct RenderSession {
 }
 
 impl RenderSession {
+    /// Measurement-only causal context; cannot acknowledge or schedule a frame.
+    pub fn end_measurement_workload(&mut self, retain: bool) {
+        self.revisions.end_workload_context(retain);
+    }
+    pub fn measurement_activity(&self) -> [u64; 2] {
+        self.revisions.observation_activity()
+    }
+    pub fn set_measurement_workload(&mut self, context: [u64; 3]) -> anyhow::Result<()> {
+        self.revisions.workload_context(context)
+    }
     pub fn content_revision(&self) -> u64 {
         self.revisions.current()
     }

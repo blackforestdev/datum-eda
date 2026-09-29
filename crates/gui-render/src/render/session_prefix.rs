@@ -67,6 +67,11 @@ impl Prefix {
     pub(crate) fn requested(&self) -> bool {
         self.request.is_some()
     }
+    #[cfg(test)]
+    pub(crate) fn desired_support(&self) -> Option<Pixels> {
+        self.support
+    }
+
     pub(crate) fn damage(&self, pair: PairIdentity) -> Option<Pixels> {
         let valid = self.valid?;
         (Some(valid.key) == self.request && valid.pair == pair).then_some(())?;

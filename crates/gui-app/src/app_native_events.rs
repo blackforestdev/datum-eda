@@ -488,6 +488,7 @@ impl ApplicationHandler for App {
     }
 
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        self.begin_native_round_observation();
         let _cpu_probe = gui_runtime_support::phase_probe::Probe::start("event_round");
         // Reconcile close/open input before selecting surviving host tokens.
         if let Err(err) = self.sync_owned_product_windows(event_loop) {
@@ -535,6 +536,7 @@ impl ApplicationHandler for App {
         if let Err(err) = app_shell::private_text_measurements::poll() {
             fatal_gui_error(event_loop, "private text observation incomplete", err);
         }
+        self.end_native_round_observation();
         event_loop.set_control_flow(self.frames.take_control_flow());
     }
 }

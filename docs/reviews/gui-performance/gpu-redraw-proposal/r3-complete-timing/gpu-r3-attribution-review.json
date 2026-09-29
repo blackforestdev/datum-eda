@@ -1,0 +1,111 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "head": "f2e1c8eb93b5ff286f62d2e41f6e57edcd9e358d",
+  "scope": "Read-only source advisory before bounded r3 exact batch; no edits except this advisory, builds/tests/native runs, ratification or qualification.",
+  "pins": {
+    "scripts/gpu_r3_receipts.py": "856c69dbb28ba5461d016c3e241e6933e3f4e1dc682519756d674747dd0e89a4",
+    "scripts/test_gpu_r3_receipts.py": "20bf72d9a8a878677da8f44e62cef41f0a5cb87e23d3d7c824ad4c2bf8caf2d4",
+    "crates/gui-app/src/native_input_observation.rs": "e84c2cd3325409cb261f2053f209f4c3c602dba7995140488ac273c47a3102aa",
+    "crates/gui-app/src/native_workload_observation.rs": "5d11238c7debc0cea88e5e41ccf477619279d2310d4e42732051a6e7a419af74",
+    "crates/gui-app/src/native_gpu_measurements.rs": "24da3b59d64248ee95b9ff2bff71ea259dafee22b40e61fbb39251f2645f22f1",
+    "crates/gui-app/src/app_native_events.rs": "9c3cb879ce59180f9078a5bc107033654a1aaf7b550c8a4a1b5fa35aa94b5b24",
+    "crates/gui-render/src/render/frame_workload.rs": "43ed8346b180574c42e772cc7b92bced47de957ab3ff8416d2ae702cf4516fda",
+    "crates/gui-render/src/render/frame_revision.rs": "09bc88729a999d0d079218cc0294d42ad8942ef5300be48ace59857feb831523",
+    "crates/gui-render/src/render/session_frame.rs": "710fb72f37a9c56c6c3b004ab4bd3c9397015c0d1dba2b69f869103b766f6255",
+    "crates/gui-render/src/render/gpu_measurements.rs": "88685822f3af72bdd31ce09dc10fb1b951408b43aa816b4ddfcf88b3fb505872",
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": "ea484441414d0925476b552f408e406b20a0449d347977b0abae757f036f598f",
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": "c1d9d3d33fbfddf9007f1737bcefcf3c55f693b9183d36a5ebf59486bcce6b98",
+    "crates/gui-render/src/render/r3_damage_qualification.rs": "7cea547b1c30025329428c47f66a1e608a847a6c485ddb9e464737ecbb27ba21",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "68acccb84238bb7437d6d58f291d03007bf8153a1d97eabeb68227261952d5f4",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "aad9fa8c6d8c29db4540546d49b2d4799d4db23c627a6f4cdcb1653ea0e44a6e"
+  },
+  "disposition": "No remaining identified blocker in reviewed attribution/consumer corrections. Source advisory only; no conformance execution, exact-output result, performance acceptance or owner authority inferred.",
+  "findings": [
+    {
+      "id": "ATTR01",
+      "severity": "high",
+      "source": "native_input_observation.rs:handle_native_window_event; frame_workload.rs:context/changed; app_native_events.rs:about_to_wait",
+      "finding": "Workload context persists after WindowEvent. Background polling/lifecycle work can later update revisions under stale demand/phase rather than its actual producer. Revisions::update tags every change with that retained context.",
+      "required": "Scope native demand context; explicitly attribute background/lifecycle changes and render preparation to real causal demand, or fail closed on unknown/unscoped mutation during bounded workload. Preserve pending active work across later exposure/defer; do not optimize scheduling.",
+      "status": "resolved by follow-up source inspection"
+    },
+    {
+      "id": "ATTR02",
+      "severity": "medium",
+      "source": "scripts/gpu_r3_receipts.py:validate frame identity loop",
+      "finding": "Duplicate frames rejected but missing/noncontiguous per-host frame IDs accepted; consumer can validate a strict subset of complete GPU frames.",
+      "required": "Validate per-host/epoch frame sequence against independently emitted/drained final count or manifest; reject missing first/middle/tail receipts. If existing runner supplies coverage, make that required contract explicit and test it.",
+      "status": "resolved by follow-up source inspection"
+    },
+    {
+      "id": "ATTR03",
+      "severity": "medium",
+      "source": "scripts/gpu_r3_receipts.py:pass interval loop and final graph; gpu_measurements.rs:decode",
+      "finding": "Individual pass durations and submission endpoints are checked but final internal pass chronology is not. Leading[10,11],restore[20,80],suffix[40,50] with matching durations/span/manifests can pass despite overlapping/reversed ordered passes.",
+      "required": "Require flattened pass endpoints to be nondecreasing after nested scene removal, in producer and consumer or mandatory consumer; add overlap/reversal negative.",
+      "status": "resolved by follow-up source inspection"
+    }
+  ],
+  "assessment": [
+    "Cancellation receipts now preserve each submitted id/kind/attempt/workload from pending.timeline, which is updated after each continuation submit. Prior lost-lineage concern addressed.",
+    "Consumer now requires nonempty bounded submission manifest, explicit final command graph, leading/trailing upload intervals and matching raw boundaries. It correctly retains active phase in a union and ignores log-arrival time for attribution.",
+    "FramePlan snapshots workload tag; continuation manifests retain each submission tag rather than retroactively overwriting earlier causal work. Source/preparation/target lineage checks remain fail-closed.",
+    "r3_damage_qualification covers coalesced old/new support, menu overlap, mixed changes, omitted-old-damage/mask/stale-B faults, mask admission pressure and encoded-image eviction. Negatives explicitly require wrong output and exact full recovery; actual sensitivity remains unexecuted.",
+    "Mask lifetime control manually holds SubmissionRef, establishing ownership/accounting release semantics, not actual queued mask survival. Image lifetime control submits real copy and uses queue completion. Keep narrow claims and add real queued-mask evidence if claiming that acceptance predicate.",
+    "Exact aggregate reuses approved all-sample oracle and prior scene/terminal/Console cases; shared reference painter does not independently verify all scene-preparation semantics. Timing conformance/semantic coverage is separate.",
+    "Uninstrumented CPU, full DRM duty and final qualification remain excluded; no paused/stopped r2 run is reclassified or restarted."
+  ],
+  "review_history": [
+    {
+      "pins": {
+        "scripts/gpu_r3_receipts.py": "856c69dbb28ba5461d016c3e241e6933e3f4e1dc682519756d674747dd0e89a4",
+        "scripts/test_gpu_r3_receipts.py": "20bf72d9a8a878677da8f44e62cef41f0a5cb87e23d3d7c824ad4c2bf8caf2d4",
+        "crates/gui-app/src/native_input_observation.rs": "e7a48961341f05ba14666205fdb9dd6b6080006f219ed6ce66492f2934359cc5",
+        "crates/gui-app/src/native_workload_observation.rs": "e7cfe23600042d2162969d04d11608ce028ad17c1f57b9e1d8c96e5004dd400a",
+        "crates/gui-app/src/native_gpu_measurements.rs": "24da3b59d64248ee95b9ff2bff71ea259dafee22b40e61fbb39251f2645f22f1",
+        "crates/gui-app/src/app_native_events.rs": "3e7fdaea5d43286b9ac7f79f318c501d57ad447cf0720ec8b00dfe95d381cafe",
+        "crates/gui-render/src/render/frame_workload.rs": "cadb5bd52459a812d1dc6628a1dd36809b691dd4c048a1026e0ff348135a0aa0",
+        "crates/gui-render/src/render/frame_revision.rs": "7ed26d9252046a73bcca1f94b2938b01e2995df0f44f500269123b8239fa6a4a",
+        "crates/gui-render/src/render/session_frame.rs": "710fb72f37a9c56c6c3b004ab4bd3c9397015c0d1dba2b69f869103b766f6255",
+        "crates/gui-render/src/render/gpu_measurements.rs": "43e44506190435656c586001ba14bb40f6c44d323ef3af11c00133ea9fe10bc3",
+        "crates/gui-render/src/render/gpu_measurement_frame.rs": "ea484441414d0925476b552f408e406b20a0449d347977b0abae757f036f598f",
+        "crates/gui-render/src/render/gpu_measurement_timeline.rs": "c1d9d3d33fbfddf9007f1737bcefcf3c55f693b9183d36a5ebf59486bcce6b98",
+        "crates/gui-render/src/render/r3_damage_qualification.rs": "7cea547b1c30025329428c47f66a1e608a847a6c485ddb9e464737ecbb27ba21",
+        "crates/gui-render/src/render/prefix_qualification_tests.rs": "68acccb84238bb7437d6d58f291d03007bf8153a1d97eabeb68227261952d5f4"
+      },
+      "findings": [
+        {
+          "id": "ATTR01",
+          "severity": "high",
+          "source": "native_input_observation.rs:handle_native_window_event; frame_workload.rs:context/changed; app_native_events.rs:about_to_wait",
+          "finding": "Workload context persists after WindowEvent. Background polling/lifecycle work can later update revisions under stale demand/phase rather than its actual producer. Revisions::update tags every change with that retained context.",
+          "required": "Scope native demand context; explicitly attribute background/lifecycle changes and render preparation to real causal demand, or fail closed on unknown/unscoped mutation during bounded workload. Preserve pending active work across later exposure/defer; do not optimize scheduling."
+        },
+        {
+          "id": "ATTR02",
+          "severity": "medium",
+          "source": "scripts/gpu_r3_receipts.py:validate frame identity loop",
+          "finding": "Duplicate frames rejected but missing/noncontiguous per-host frame IDs accepted; consumer can validate a strict subset of complete GPU frames.",
+          "required": "Validate per-host/epoch frame sequence against independently emitted/drained final count or manifest; reject missing first/middle/tail receipts. If existing runner supplies coverage, make that required contract explicit and test it."
+        },
+        {
+          "id": "ATTR03",
+          "severity": "medium",
+          "source": "scripts/gpu_r3_receipts.py:pass interval loop and final graph; gpu_measurements.rs:decode",
+          "finding": "Individual pass durations and submission endpoints are checked but final internal pass chronology is not. Leading[10,11],restore[20,80],suffix[40,50] with matching durations/span/manifests can pass despite overlapping/reversed ordered passes.",
+          "required": "Require flattened pass endpoints to be nondecreasing after nested scene removal, in producer and consumer or mandatory consumer; add overlap/reversal negative."
+        }
+      ],
+      "disposition": "Three method correctness amendments remain before claiming complete attribution/conformance. No new identified renderer pixel mechanism blocker; independent exact batch usefulness does not imply method acceptance."
+    }
+  ],
+  "followup": [
+    "Native WindowEvent observation ends workload context after dispatch. Existing about_to_wait dispatch/background processing is enclosed by native_round context; rounds with no revision/attempt change are removed and previous context restored. No scheduling change found.",
+    "Unscoped revision changes latch invalid workload attribution; pending() returns zero tag and consumer rejects it. Pending active phase tags still survive subsequent still/drain/close round context until acknowledgement.",
+    "Receipt exports renderer drained host/device/next_frame manifest. Consumer restricts all frame identities to this range and requires exact count with unique IDs, preventing missing first/middle/tail samples for native u64 frame IDs. Quiet mode must keep separate no-GPU validation path, since this GPU consumer correctly requires nonempty complete frame range.",
+    "Consumer now requires flattened pass ticks nondecreasing, closing final internal overlap/reversal gap. Missing frame and overlapping pass negatives source-inspected.",
+    "Cancellation lineage and final upload bracketing remain as prior reviewed. New records count native events plus meaningful rounds against same4096 cap; capacity exhaustion remains explicit invalidity, not permission to retry.",
+    "Reviewer did not execute tests/builds/native runs. Existing new sample/resource controls remain unexecuted evidence until parent authorized bounded batch."
+  ]
+}

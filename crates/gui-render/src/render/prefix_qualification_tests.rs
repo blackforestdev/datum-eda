@@ -3,6 +3,8 @@ use super::prefix_graph_tests::*;
 use super::*;
 use crate::render_input::{PointerUpdate, SourceEpoch};
 use datum_gui_protocol::{CrosshairStyle, HoverTarget, PaneContent, ScreenPointPx};
+#[path = "r3_damage_qualification.rs"]
+mod r3;
 
 fn exact(c: &mut OffscreenRenderer, label: &str, reuse: bool) -> RgbaImage {
     let actual = frame(c, true);
@@ -229,6 +231,7 @@ fn p630_exact8_terminal_layers_and_equal_length_replacement() {
             }
             let image = exact(&mut c, label, false);
             exact(&mut c, "terminal and menu warm composition", true);
+            r3::motion(&mut c, "terminal and menu masked pointer frames");
             if state.ui.active_menu.is_none()
                 && let Some(old) = previous.replace(image)
             {
@@ -420,6 +423,7 @@ fn p630_exact8_console_covers_canvas_text_without_hiding_foreground() {
         .unwrap();
     let correct = exact(&mut c, "Console cold painter", false);
     assert!(exact(&mut c, "Console warm painter", true).as_raw() == correct.as_raw());
+    r3::motion(&mut c, "Console and text masked pointer frames");
     let scene = c.renderer.render_session().prepared().unwrap().clone();
     let history = scene
         .console_overlay_layout()
@@ -485,6 +489,7 @@ fn r3_p630_exact_output_batch() {
         let (c, adapter) = reference_capture8_with_adapter();
         crate::renderer_state::damage::restore::sample_tests::prove(&c.device, &c.queue, &adapter);
     }
+    r3::prove();
     p630_exact8_pointer_styles_across_board_and_schematic();
     p630_exact8_doa_hover_composition_and_recovery();
     p630_exact8_terminal_layers_and_equal_length_replacement();

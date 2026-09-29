@@ -1,0 +1,57 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "head": "f2e1c8eb93b5ff286f62d2e41f6e57edcd9e358d",
+  "scope": "Read-only timing-core source review; no builds/tests/native runs/source mutations. Only this advisory written. Semantic workload epoch and updated proof controls remain pending.",
+  "pins": {
+    "crates/gui-render/src/render/gpu_measurements.rs": "a739ed5973a7c59bd1f11633d7b4aa6b0294109c304190eb3ee01b05ebca17a9",
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": "266f90ae5440f614a76e7fcad27f9bf4667a94c28f65ed76bfa9046161128d89",
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": "cf00b095d12733b649d738fecf9123cf8083a2626742888ff78a0f86b8bd9350",
+    "crates/gui-render/src/render/gpu_measurement_resources.rs": "9469a38a8c6cf15e5f6c829d4e32682819d58499e689da15710486668156f18f",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "3fffeae42c22cabaf89733a285ba9d57d1459952b1ccc9d6910913da08a9b65e",
+    "crates/gui-render/src/render/gpu_frame.rs": "df673e22fa71959f2d85b62bccfb49d02f9c04fa7b12044444d680fc572d8cb2",
+    "crates/gui-render/src/render/gpu_overlay.rs": "9a97b5fb6af7912ad496c73b97ceef57d24067ed2ba19de94c4d019ea3bc356f",
+    "crates/gui-render/src/render/cold_world_upload.rs": "3aba7e9ac413412ac5a93e4eda51a3b40747d11803061b733414a8713d136458",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "f3517d565a65d66a730261ac0704818db2e6d6935dca1fef61aa2e185bdbf371",
+    "crates/gui-render/src/render/terminal_upload.rs": "82f0d3da0d17b78f3e7a3bda0ce879a14c1c36c926f40a7ec6bb9d702a1e5427",
+    "crates/gui-render/src/render/session_frame.rs": "6b9e57db900d316216e772cd3aec2b5d2bb81686874bbfa3f4462f8db73649b5",
+    "crates/gui-render/src/render/frame_revision.rs": "b99a14935996129841728e1c6bef3432a71dde4b2cc03a1528273a866783378b",
+    "crates/gui-render/src/render/gpu_frame_target.rs": "eeccee68bf780b5cffed057639a5d29357d3762040ea74d3b44637b375690f9a",
+    "crates/gui-render/src/render/gpu_surface.rs": "8a567027ecba0f74839d0a35c3fcbe23dc2e88655305c278d8c1659413f776b6",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "3af6c569a3815b2f687bb52698d57043e4d32c38498644e0a39bd637b2f079c1",
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": "706fb563e860878683fa0995bc31ee4717c66e6086481446571f1cd91ae3412a",
+    "crates/gui-app/src/native_gpu_measurements.rs": "e2768b7815d9a2b04da10d7031a60dde63a6827e119627b6c55cf41ff2a88dea"
+  },
+  "disposition": "No concrete blocking encoder-boundary or GPU-resource-lifetime flaw identified in this bounded core. Not complete method conformance, runtime proof, authority or acceptance.",
+  "findings": [],
+  "assessment": [
+    "World/glyph/terminal continuation commands are ordered leading marker, actual staging copy command, trailing marker in one queue submission. Finish bookkeeping follows real submit. Final Main and dialog commands are leading marker, optional flush_frame_uploads command, final painter/resolve command; final uploads no longer fall before the first marker.",
+    "One FrameQueries reservation persists through pending_measurement; continuation boundaries consume4queries, at most5 continuations, final at most6 plus3scene gives29 in existing32. Timeline reserves final sixth submission and rejects missing preceding completion/source-target change/reversed attempt lineage.",
+    "Final transfer_end is first final painter query index immediately after leading marker pair. First/last submission markers and transfer interval index arithmetic correctly account for nested scene markers without including them in pass sums. Raw queries decode manifest before extraction; flattened passes exclude scene markers.",
+    "Every continuation holds slot query/resolve/readback plus marker through queue completion; final holds prior frame resource refs before validation. Drop aborts unfinished measurement. Host cancellation invalidates pending slots and submitted holds outlive host. New marker is tracked4bytes and independent of optional prefix eviction.",
+    "Final query resolve/readback copy is instrumentation after final rendering boundary. This is not physical device duty or presentation latency, and marker/pass sums are not transfer intervals.",
+    "Actual native frame/capture adapters set immutable session attempt/preparation/target metadata before encoding. Continuations may advance attempt/revision with unchanged preparation/target, accommodating deferred attempts; changed source/preparation cancels rather than merging GPU work silently."
+  ],
+  "pending_controls": [
+    {
+      "id": "TIMING-P01",
+      "source": "gpu_measurement_frame.rs:finish_boundaries/finish_submission/decode_boundaries",
+      "requirement": "Low-level empty timeline compatibility remains accepted. Native complete-method consumer must require nonempty manifest, valid nonzero session lineage, final boundary, complete declared upload identities and independent host/epoch binding; pass-only samples cannot qualify."
+    },
+    {
+      "id": "TIMING-P02",
+      "source": "gpu_measurements.rs:continued/cancel; Pending timeline",
+      "requirement": "Pending cancellation receipt currently has last submission ID only; pending.timeline is populated only at final submit. Preserve earlier submitted identities/lineage in cancellation/demand manifest if the later semantic attribution contract requires accounting every submitted chunk. Current error still fails closed and must not be accepted as a complete sample."
+    },
+    {
+      "id": "TIMING-P03",
+      "source": "gpu_measurements_tests and new timeline tests",
+      "requirement": "Before GPU proof, add/update bounded controls for5 continuation+final query layout with3scene markers, final-upload omission, changed lineage, query/marker holds after cancellation/host drop, late active receipts versus close-only work. Source review alone supplies no GPU ordering/runtime result."
+    },
+    {
+      "id": "TIMING-P04",
+      "source": "gpu_measurement_timeline.rs IDs and native workload observers",
+      "requirement": "Generated submission IDs are measurement identities assigned before actual queue submit; require receipt/demand mapping to successful submissions, not equality with opaque wgpu SubmissionIndex. Semantic workload epoch attribution remains explicitly incomplete."
+    }
+  ]
+}

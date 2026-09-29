@@ -1,0 +1,51 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.5 GiB target_free=166.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.5 GiB used; soft limit 20.0 GiB
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error: enclosing `Ok` and `?` operator are unneeded
+  --> crates/gui-app/src/native_workload_observation.rs:71:5
+   |
+71 | /     Ok(u64::try_from(time.tv_sec)?
+72 | |         .checked_mul(1_000_000_000)
+73 | |         .and_then(|seconds| seconds.checked_add(time.tv_nsec as u64))
+74 | |         .context("workload monotonic clock overflow")?)
+   | |_______________________________________________________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#needless_question_mark
+   = note: `-D clippy::needless-question-mark` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::needless_question_mark)]`
+help: remove the enclosing `Ok` and `?` operator
+   |
+71 ~     u64::try_from(time.tv_sec)?
+72 |         .checked_mul(1_000_000_000)
+73 |         .and_then(|seconds| seconds.checked_add(time.tv_nsec as u64))
+74 ~         .context("workload monotonic clock overflow")
+   |
+
+error: this `if` statement can be collapsed
+   --> crates/gui-app/src/native_input_observation.rs:228:13
+    |
+228 | /             if tag[0] != 0
+229 | |                 && let Some(runtime) = &mut self.runtime
+230 | |             {
+231 | |                 if runtime
+...   |
+239 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+229 ~                 && let Some(runtime) = &mut self.runtime
+230 ~                 && runtime
+231 |                     .renderer
+...
+236 |                     observer.overflow = true;
+237 ~                 }
+    |
+
+error: could not compile `datum-gui-app` (bin "datum-gui") due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `datum-gui-app` (bin "datum-gui" test) due to 2 previous errors

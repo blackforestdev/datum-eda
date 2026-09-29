@@ -1,0 +1,66 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.1 GiB target_free=165.7 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.1 GiB used; soft limit 20.0 GiB
+   Compiling bytemuck v1.25.0
+   Compiling ahash v0.8.12
+   Compiling naga v28.0.0
+   Compiling exr v1.74.0
+   Compiling png v0.18.1
+   Compiling hashbrown v0.14.5
+   Compiling font-types v0.11.1
+   Compiling wgpu-types v28.0.0
+   Compiling font-types v0.10.1
+   Compiling qoi v0.4.1
+   Compiling read-fonts v0.35.0
+   Compiling read-fonts v0.37.0
+   Compiling hashlink v0.9.1
+   Compiling rusqlite v0.32.1
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling image v0.25.10
+   Compiling skrifa v0.37.0
+   Compiling harfrust v0.3.2
+   Compiling wgpu-hal v28.0.1
+   Compiling skrifa v0.40.0
+   Compiling wgpu-core-deps-windows-linux-android v28.0.0
+   Compiling wgpu-core v28.0.1
+   Compiling swash v0.2.7
+   Compiling cosmic-text v0.15.0
+   Compiling wgpu v28.0.0
+   Compiling glyphon v0.10.0
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 42s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 10 tests
+test gpu_measurements::frame::tests::five_uploads_final_mixed_upload_and_nested_markers_decode_one_span ... ok
+test gpu_measurements::frame::tests::truncated_reversed_and_missing_submission_timestamps_fail ... ok
+test gpu_measurements::resources::tests::query_resources_rollback_admission_and_survive_frame_and_submission_owners ... ignored, requires local timestamp GPU; shared measurement resource admission and retirement
+test gpu_measurements::tests::active_deadline_pauses_without_resetting_progress ... ok
+test gpu_measurements::tests::invalid_or_missing_measurements_are_never_zero_samples ... ok
+test gpu_measurements::tests::measured_pass_sum_excludes_gap_and_preserves_empty_pass ... ok
+test gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls ... ignored, requires real timestamp-capable GPU; explicit conformance run
+test gpu_measurements::tests::scene_markers_preserve_pass_totals_and_reject_missing_or_reversed_ticks ... ok
+test gpu_measurements::timeline::tests::all_continuations_and_final_upload_require_boundaries ... ok
+test gpu_measurements::timeline::tests::changed_source_and_lost_lineage_fail_before_submission ... ok
+
+test result: ok. 8 passed; 0 failed; 2 ignored; 0 measured; 525 filtered out; finished in 0.00s
+
+     Running unittests src/bin/datum_visual_fixture.rs (target/debug/deps/datum_visual_fixture-49463012cdb9f01a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/selection_ownership.rs (target/debug/deps/selection_ownership-0fee2cabaa93606c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/visual_goldens.rs (target/debug/deps/visual_goldens-7165af384ea526bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+

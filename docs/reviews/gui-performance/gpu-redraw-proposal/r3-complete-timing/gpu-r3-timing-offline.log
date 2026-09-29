@@ -1,0 +1,48 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.4 GiB target_free=166.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.4 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+warning: method `submission_ref` is never used
+   --> crates/gui-render/src/render/gpu_surface.rs:354:12
+    |
+353 |     impl SurfaceAttachments {
+    |     ----------------------- method in this implementation
+354 |         fn submission_ref(&self) -> Option<SubmissionRef> {
+    |            ^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: variants `MissingCopy` and `PrematureResolve` are never constructed
+  --> crates/gui-render/src/render/prefix_negative_control.rs:9:5
+   |
+ 5 | pub(crate) enum Fault {
+   |                 ----- variants in this enum
+...
+ 9 |     MissingCopy,
+   |     ^^^^^^^^^^^
+10 |     PrematureResolve,
+   |     ^^^^^^^^^^^^^^^^
+   |
+   = note: `Fault` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+
+warning: function `set` is never used
+  --> crates/gui-render/src/render/prefix_negative_control.rs:15:15
+   |
+15 | pub(crate) fn set(fault: Fault) {
+   |               ^^^
+
+warning: `datum-gui-render` (lib test) generated 3 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.86s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-a9a942f6552ff861)
+
+running 8 tests
+test gpu_measurements::frame::tests::five_uploads_final_mixed_upload_and_nested_markers_decode_one_span ... ok
+test gpu_measurements::frame::tests::truncated_reversed_and_missing_submission_timestamps_fail ... ok
+test gpu_measurements::tests::active_deadline_pauses_without_resetting_progress ... ok
+test gpu_measurements::tests::invalid_or_missing_measurements_are_never_zero_samples ... ok
+test gpu_measurements::tests::measured_pass_sum_excludes_gap_and_preserves_empty_pass ... ok
+test gpu_measurements::tests::scene_markers_preserve_pass_totals_and_reject_missing_or_reversed_ticks ... ok
+test gpu_measurements::timeline::tests::all_continuations_and_final_upload_require_boundaries ... ok
+test gpu_measurements::timeline::tests::changed_source_and_lost_lineage_fail_before_submission ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 410 filtered out; finished in 0.00s
+

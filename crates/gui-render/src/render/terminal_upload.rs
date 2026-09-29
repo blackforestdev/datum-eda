@@ -41,6 +41,7 @@ impl TerminalGraphicsRenderer {
         queue: &wgpu::Queue,
         atlas: &crate::text_gpu::Atlas,
         capacity: usize,
+        boundaries: Option<(wgpu::CommandBuffer, wgpu::CommandBuffer)>,
     ) -> anyhow::Result<Option<wgpu::SubmissionIndex>> {
         if capacity == 0 {
             return Ok(None);
@@ -74,7 +75,8 @@ impl TerminalGraphicsRenderer {
             return Ok(None);
         };
         drop(uploads);
-        let submission = queue.submit([batch.command()]);
+        let (before, after) = boundaries.map_or((None, None), |(a, b)| (Some(a), Some(b)));
+        let submission = queue.submit(before.into_iter().chain([batch.command()]).chain(after));
         batch.hold(queue);
         queue.on_submitted_work_done(move || drop(resources));
         for &(index, count) in counts.iter() {
@@ -98,17 +100,22 @@ impl crate::Renderer {
         self.release_text_scratch_for(
             CHUNK_BYTES as u64 + TerminalGraphicsRenderer::upload_metadata_bytes(capacity)?,
         );
-        let Some(submission) =
-            self.terminal_graphics
-                .upload_chunk(device, queue, &self.atlas, capacity)?
+        if capacity == 0 {
+            return Ok(false);
+        }
+        let boundaries = self.begin_upload_measurement(device, "terminal")?;
+        let Some(submission) = self.terminal_graphics.upload_chunk(
+            device,
+            queue,
+            &self.atlas,
+            capacity,
+            boundaries,
+        )?
         else {
             return Ok(false);
         };
         on_submitted(submission);
-        if let Some(measurements) = &mut self.measurements {
-            self.cold_world.measurement_frame =
-                Some(measurements.incomplete_upload_submission(self.cold_world.measurement_frame)?);
-        }
+        self.finish_upload_measurement(queue)?;
         Ok(true)
     }
 

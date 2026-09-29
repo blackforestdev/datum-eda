@@ -6,6 +6,14 @@ use super::{
 use std::time::Instant;
 
 impl Renderer {
+    /// Seals the full frame range after the existing controlled queue drain.
+    pub fn gpu_measurement_drained_manifest(&self) -> anyhow::Result<Option<[u64; 3]>> {
+        self.measurements
+            .as_ref()
+            .map(GpuMeasurements::drained_manifest)
+            .transpose()
+    }
+
     pub fn enable_gpu_measurements(
         &mut self,
         device: &wgpu::Device,
@@ -59,8 +67,8 @@ impl Renderer {
     }
 
     pub(super) fn begin_gpu_measurement(&mut self) -> anyhow::Result<Option<FrameQueries>> {
-        if self.cold_world.measurement_frame.is_some() {
-            return Ok(None);
+        if let Some(frame) = self.pending_measurement.take() {
+            return Ok(Some(frame));
         }
         self.measurements
             .as_mut()
@@ -84,14 +92,61 @@ impl Renderer {
         queue: &wgpu::Queue,
         frame: Option<FrameQueries>,
     ) -> anyhow::Result<()> {
-        if let Some(cold_frame) = self.cold_world.measurement_frame.take()
-            && let Some(m) = &mut self.measurements
-        {
-            m.incomplete_upload_submission(Some(cold_frame))?;
-        }
         if let (Some(m), Some(frame)) = (&mut self.measurements, frame) {
             m.submitted(queue, frame)?;
         }
         Ok(())
+    }
+}
+
+impl Renderer {
+    pub(crate) fn begin_upload_measurement(
+        &mut self,
+        device: &wgpu::Device,
+        kind: &'static str,
+    ) -> anyhow::Result<Option<(wgpu::CommandBuffer, wgpu::CommandBuffer)>> {
+        let Some(mut frame) = self.begin_gpu_measurement()? else {
+            return Ok(None);
+        };
+        let measurements = self.measurements.as_ref().expect("reserved measurement");
+        let before = measurements.leading(
+            device,
+            &mut frame,
+            kind,
+            self.measurement_attempt,
+            self.measurement_workload,
+            false,
+        )?;
+        let after = measurements.trailing(device, &mut frame)?;
+        self.pending_measurement = Some(frame);
+        Ok(Some((before, after)))
+    }
+    pub(crate) fn finish_upload_measurement(&mut self, queue: &wgpu::Queue) -> anyhow::Result<()> {
+        if let Some(measurements) = &mut self.measurements {
+            let frame = self
+                .pending_measurement
+                .as_mut()
+                .ok_or_else(|| anyhow::anyhow!("upload submitted without GPU boundary"))?;
+            measurements.continued(queue, frame)?;
+        }
+        Ok(())
+    }
+    pub(super) fn final_measurement_leading(
+        &self,
+        device: &wgpu::Device,
+        frame: &mut Option<FrameQueries>,
+    ) -> anyhow::Result<Option<wgpu::CommandBuffer>> {
+        if let (Some(measurements), Some(frame)) = (&self.measurements, frame) {
+            Ok(Some(measurements.leading(
+                device,
+                frame,
+                "final",
+                self.measurement_attempt,
+                self.measurement_workload,
+                true,
+            )?))
+        } else {
+            Ok(None)
+        }
     }
 }

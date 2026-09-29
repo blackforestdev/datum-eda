@@ -67,12 +67,12 @@ impl Renderer {
         self.release_text_scratch_for(self.atlas.chunk_staging_bytes(CHUNK_BYTES)?);
 
         self.publish_resource_consumers();
-        let submission = self.atlas.submit_chunk(device, queue, CHUNK_BYTES)?;
+        let boundaries = self.begin_upload_measurement(device, "glyph")?;
+        let submission = self
+            .atlas
+            .submit_chunk(device, queue, CHUNK_BYTES, boundaries)?;
+        self.finish_upload_measurement(queue)?;
         on_submitted(submission);
-        if let Some(measurements) = &mut self.measurements {
-            self.cold_world.measurement_frame =
-                Some(measurements.incomplete_upload_submission(self.cold_world.measurement_frame)?);
-        }
         Ok(true)
     }
 }

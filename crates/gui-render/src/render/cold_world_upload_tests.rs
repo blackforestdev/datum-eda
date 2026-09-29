@@ -113,21 +113,18 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
             + std::mem::size_of_val(retained.world_strokes().as_ref())) as u64
     );
     assert_eq!(renderer.world_upload_chunk_count(), 2);
-    assert!(
-        renderer.poll_gpu_measurements(&device).unwrap().is_empty(),
-        "partial cold timings must not become numeric frame samples"
+    let samples = renderer.poll_gpu_measurements(&device).unwrap();
+    assert_eq!(samples.len(), 1);
+    assert_eq!(samples[0].submission_manifest.len(), 3);
+    assert_eq!(
+        samples[0]
+            .submission_manifest
+            .iter()
+            .map(|s| s.kind)
+            .collect::<Vec<_>>(),
+        ["world", "world", "final"]
     );
-    {
-        let records = incomplete.lock().unwrap();
-        assert_eq!(records.len(), 3);
-        assert!(records.iter().all(|r| r.frame == records[0].frame
-            && r.reason == "cold_upload_multisubmission_timestamps_unqualified"));
-        assert!(
-            records
-                .windows(2)
-                .all(|p| p[0].submission < p[1].submission)
-        );
-    }
+    assert!(incomplete.lock().unwrap().is_empty());
     assert!(
         renderer
             .render_with_submission(

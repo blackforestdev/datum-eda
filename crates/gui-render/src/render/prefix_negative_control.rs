@@ -8,6 +8,9 @@ pub(crate) enum Fault {
     StaleKey,
     MissingCopy,
     PrematureResolve,
+    OldDamageMissing,
+    MissingSuffixMask,
+    StaleWorking,
 }
 thread_local! {
     static NEXT: std::cell::Cell<Fault> = const { std::cell::Cell::new(Fault::None) };
@@ -31,7 +34,11 @@ impl Fault {
         format: wgpu::TextureFormat,
     ) {
         match self {
-            Self::None | Self::StaleKey => images.copy(encoder),
+            Self::None
+            | Self::StaleKey
+            | Self::OldDamageMissing
+            | Self::MissingSuffixMask
+            | Self::StaleWorking => images.copy(encoder),
             Self::MissingCopy => {
                 // Deterministically initialize B; never rely on discarded GPU data.
                 let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {

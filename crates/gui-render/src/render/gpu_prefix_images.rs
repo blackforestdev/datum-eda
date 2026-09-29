@@ -40,31 +40,21 @@ impl PairIdentity {
 pub(crate) struct PrefixImages {
     prefix: SurfaceAttachment,
     working: SurfaceAttachment,
-    marker: Option<SurfaceAttachment>,
     pub identity: PairIdentity,
 }
 impl PrefixImages {
     pub(crate) fn submission_refs(&self) -> impl Iterator<Item = SubmissionRef> {
-        [
-            Some(&self.prefix),
-            Some(&self.working),
-            self.marker.as_ref(),
-        ]
-        .map(|image| image.map(|image| image.image.submission_ref()))
-        .into_iter()
-        .flatten()
+        [Some(&self.prefix), Some(&self.working), None]
+            .map(|image| image.map(|image| image.image.submission_ref()))
+            .into_iter()
+            .flatten()
     }
     pub(super) fn snapshots(
         &self,
         owner: u64,
         allocations_created: u64,
     ) -> [Option<SurfaceAttachmentSnapshot>; 3] {
-        [
-            Some(&self.working),
-            Some(&self.prefix),
-            self.marker.as_ref(),
-        ]
-        .map(|image| {
+        [Some(&self.working), Some(&self.prefix), None].map(|image| {
             image.map(|image| SurfaceAttachmentSnapshot {
                 owner,
                 allocations_created,
@@ -85,9 +75,6 @@ impl PrefixImages {
     }
     pub fn prefix_view(&self) -> &wgpu::TextureView {
         &self.prefix.image.view
-    }
-    pub fn marker_view(&self) -> Option<&wgpu::TextureView> {
-        self.marker.as_ref().map(|image| &image.image.view)
     }
     pub fn copy(&self, encoder: &mut wgpu::CommandEncoder) {
         encoder.copy_texture_to_texture(
@@ -112,7 +99,6 @@ impl PrefixImages {
 #[derive(Default)]
 pub(super) struct OptionalState {
     pub prefix: Option<SurfaceAttachment>,
-    pub marker: Option<SurfaceAttachment>,
     pub suppressed: bool,
     pub evicted: bool,
 }
@@ -120,10 +106,7 @@ pub(super) struct OptionalState {
 pub(super) struct Optional(pub std::sync::Mutex<OptionalState>);
 impl OptionalState {
     fn release(&mut self) {
-        for image in [self.prefix.take(), self.marker.take()]
-            .into_iter()
-            .flatten()
-        {
+        for image in [self.prefix.take()].into_iter().flatten() {
             image
                 .image
                 .retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
@@ -156,18 +139,13 @@ impl SurfaceAttachments {
         device: &wgpu::Device,
         key: AttachmentKey,
         generation: Arc<Permit>,
-        copy_source: bool,
         optional_bytes: Arc<crate::text_gpu::budget::Budget>,
     ) -> anyhow::Result<SurfaceAttachment> {
         let bytes = key.payload_bytes().unwrap();
         let reservation = GpuReservation::optional(bytes, vec![optional_bytes.reserve(bytes)?])?;
         let alias_formats = [key.format.remove_srgb_suffix()];
         let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some(if copy_source {
-                "datum-retained-prefix"
-            } else {
-                "datum-copy-timestamp-marker"
-            }),
+            label: Some("datum-retained-prefix"),
             size: wgpu::Extent3d {
                 width: key.extent.0,
                 height: key.extent.1,
@@ -178,17 +156,13 @@ impl SurfaceAttachments {
             dimension: wgpu::TextureDimension::D2,
             format: key.format,
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT
-                | if copy_source {
-                    wgpu::TextureUsages::COPY_SRC
-                        | if self.damage_views {
-                            wgpu::TextureUsages::TEXTURE_BINDING
-                        } else {
-                            wgpu::TextureUsages::empty()
-                        }
+                | wgpu::TextureUsages::COPY_SRC
+                | if self.damage_views {
+                    wgpu::TextureUsages::TEXTURE_BINDING
                 } else {
                     wgpu::TextureUsages::empty()
                 },
-            view_formats: if self.damage_views && copy_source {
+            view_formats: if self.damage_views {
                 &alias_formats
             } else {
                 &[]
@@ -199,7 +173,7 @@ impl SurfaceAttachments {
             .checked_add(1)
             .expect("attachment allocation exhausted");
         let view = texture.create_view(&Default::default());
-        let unorm_view = (self.damage_views && copy_source).then(|| {
+        let unorm_view = (self.damage_views).then(|| {
             texture.create_view(&wgpu::TextureViewDescriptor {
                 format: Some(key.format.remove_srgb_suffix()),
                 ..Default::default()
@@ -229,11 +203,7 @@ impl SurfaceAttachments {
 
     /// Refusal leaves the required target usable. Only supported exact8x formats
     /// receive copy usages; dialogs and non-session rendering never call this.
-    pub(crate) fn prefix_images(
-        &mut self,
-        device: &wgpu::Device,
-        measured: bool,
-    ) -> Option<PrefixImages> {
+    pub(crate) fn prefix_images(&mut self, device: &wgpu::Device) -> Option<PrefixImages> {
         if !eligible(self.current.as_ref()?.key) {
             self.release_prefix();
             return None;
@@ -258,31 +228,10 @@ impl SurfaceAttachments {
         let optional_bytes = current.optional_bytes.clone();
         if optional.prefix.is_none() {
             optional.prefix = self
-                .optional_image(
-                    device,
-                    key,
-                    generation.clone(),
-                    true,
-                    optional_bytes.clone(),
-                )
+                .optional_image(device, key, generation.clone(), optional_bytes.clone())
                 .ok();
         }
         optional.prefix.as_ref()?;
-        if measured && optional.marker.is_none() {
-            optional.marker = self
-                .optional_image(
-                    device,
-                    AttachmentKey::new(1, 1, wgpu::TextureFormat::Rgba8Unorm, 1),
-                    generation,
-                    false,
-                    optional_bytes,
-                )
-                .ok();
-            if optional.marker.is_none() {
-                optional.release();
-                return None;
-            }
-        }
         let working = self.current.as_ref()?.clone();
         let prefix = optional.prefix.as_ref()?.clone();
         Some(PrefixImages {
@@ -293,7 +242,6 @@ impl SurfaceAttachments {
             },
             working,
             prefix,
-            marker: optional.marker.clone(),
         })
     }
 }

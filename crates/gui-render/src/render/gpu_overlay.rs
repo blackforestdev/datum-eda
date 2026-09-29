@@ -69,6 +69,7 @@ impl Renderer {
             return Ok(false);
         };
         let mut measurement = self.begin_gpu_measurement()?;
+        let leading = self.final_measurement_leading(device, &mut measurement)?;
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-dialog-encoder"),
@@ -124,10 +125,9 @@ impl Renderer {
         self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
         let mut uploads = self.flush_frame_uploads(device, queue)?;
         let submission = queue.submit(
-            uploads
-                .as_mut()
-                .map(|batch| batch.command())
+            leading
                 .into_iter()
+                .chain(uploads.as_mut().map(|batch| batch.command()))
                 .chain([encoder.finish()]),
         );
         self.hold_frame_submission(queue, None);

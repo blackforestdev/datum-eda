@@ -110,21 +110,17 @@ impl SurfaceAttachments {
             attachment.image.set_consumers(consumers);
         }
         let optional = self.optional.0.lock().unwrap();
-        for attachment in optional.prefix.iter().chain(&optional.marker) {
+        for attachment in optional.prefix.iter() {
             attachment.image.set_consumers(consumers);
         }
     }
 
     pub(super) fn submission_refs(&self) -> impl Iterator<Item = SubmissionRef> {
         let optional = self.optional.0.lock().unwrap();
-        [
-            self.current.as_ref(),
-            optional.prefix.as_ref(),
-            optional.marker.as_ref(),
-        ]
-        .map(|image| image.map(|image| image.image.submission_ref()))
-        .into_iter()
-        .flatten()
+        [self.current.as_ref(), optional.prefix.as_ref(), None]
+            .map(|image| image.map(|image| image.image.submission_ref()))
+            .into_iter()
+            .flatten()
     }
 
     pub(crate) fn begin_attempt(&mut self) {
@@ -157,24 +153,20 @@ impl SurfaceAttachments {
     }
     fn snapshots(&self) -> impl Iterator<Item = SurfaceAttachmentSnapshot> {
         let optional = self.optional.0.lock().unwrap();
-        [
-            self.current.as_ref(),
-            optional.prefix.as_ref(),
-            optional.marker.as_ref(),
-        ]
-        .map(|image| {
-            image.map(|image| SurfaceAttachmentSnapshot {
-                owner: self.owner.id(),
-                allocation: image.allocation,
-                allocations_created: self.allocations,
-                extent: image.key.extent,
-                samples: image.key.samples,
-                format: image.key.format,
-                payload_bytes: image.key.payload_bytes(),
+        [self.current.as_ref(), optional.prefix.as_ref(), None]
+            .map(|image| {
+                image.map(|image| SurfaceAttachmentSnapshot {
+                    owner: self.owner.id(),
+                    allocation: image.allocation,
+                    allocations_created: self.allocations,
+                    extent: image.key.extent,
+                    samples: image.key.samples,
+                    format: image.key.format,
+                    payload_bytes: image.key.payload_bytes(),
+                })
             })
-        })
-        .into_iter()
-        .flatten()
+            .into_iter()
+            .flatten()
     }
 
     fn ensure(
@@ -263,7 +255,7 @@ impl SurfaceAttachments {
                         .with_shared_permit(generation.clone()),
                 ),
                 generation,
-                optional_bytes: crate::text_gpu::budget::Budget::new(bytes + 4),
+                optional_bytes: crate::text_gpu::budget::Budget::new(bytes),
             };
             // Backend error callbacks may report allocation/validation failure
             // during creation. Keep the old reference until this check passes;
@@ -332,7 +324,7 @@ impl Renderer {
     ) -> impl Iterator<Item = (SurfaceAttachmentSnapshot, bool)> {
         self.surface_attachments.usage().into_iter().flatten()
     }
-    /// Coherent currently referenced working, optional prefix and marker images.
+    /// Coherent currently referenced working and optional prefix images.
     /// Submitted-retiring storage remains in the allocation observer separately.
     pub fn surface_attachment_snapshots(&self) -> impl Iterator<Item = SurfaceAttachmentSnapshot> {
         self.surface_attachments.snapshots()

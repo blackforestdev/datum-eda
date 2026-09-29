@@ -42,6 +42,7 @@ pub(super) fn required_features(adapter: &wgpu::Adapter) -> Result<wgpu::Feature
 pub(super) struct Host {
     epoch: u64,
     enabled: bool,
+    workload_required: bool,
     drawable: bool,
     occluded: bool,
     suspended: bool,
@@ -68,13 +69,14 @@ impl Host {
         let host = Self {
             epoch,
             enabled,
+            workload_required: std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_some(),
             drawable: window.inner_size().width > 0 && window.inner_size().height > 0,
             occluded: false,
             suspended: false,
         };
         if enabled {
             renderer.enable_gpu_measurements(device, queue, id, epoch, Box::new(|cancelled| {
-                let record = serde_json::json!({"host":cancelled.host,"device_epoch":cancelled.device_epoch,"frame":cancelled.frame,"submission":cancelled.submission,"status":"incomplete","reason":cancelled.reason});
+                let record = serde_json::json!({"host":cancelled.host,"device_epoch":cancelled.device_epoch,"frame":cancelled.frame,"submission":cancelled.submission,"submitted_lineage":cancelled.submitted_lineage,"status":"incomplete","reason":cancelled.reason});
                 // Always leave a stderr receipt even if the diagnostic file is unavailable.
                 eprintln!("gpu_measurement_incomplete {record}");
                 let result = std::fs::OpenOptions::new().append(true).open(gui_runtime_support::gui_diagnostic_log_path())
@@ -114,6 +116,29 @@ impl Host {
             return Ok(None);
         }
         for sample in renderer.poll_gpu_measurements(device)? {
+            anyhow::ensure!(
+                !sample.submission_manifest.is_empty()
+                    && sample
+                        .submission_manifest
+                        .last()
+                        .is_some_and(|s| s.submission == sample.submission)
+                    && sample
+                        .submission_manifest
+                        .iter()
+                        .all(|s| s.attempt[..4].iter().all(|v| *v != 0)),
+                "native GPU sample has missing submission or render-attempt lineage"
+            );
+            anyhow::ensure!(
+                !self.workload_required
+                    || sample.submission_manifest.iter().all(|s| {
+                        let tag = s.workload;
+                        tag[0] != 0
+                            && tag[1] != 0
+                            && tag[1] & !63 == 0
+                            && (0..6).all(|phase| tag[1] & (1 << phase) == 0 || tag[phase + 2] != 0)
+                    }),
+                "native GPU sample has missing workload demand identity"
+            );
             // Existing native diagnostic output includes process and adapter identity.
             // A write error fails the trial instead of silently losing a sample.
             let mut file = std::fs::OpenOptions::new()
@@ -127,6 +152,7 @@ impl Host {
                     "frame": sample.frame, "submission": sample.submission,
                     "timestamp_period_ns": sample.period_ns, "raw_ticks": sample.raw_ticks,
                     "scene_marker_ticks": sample.scene_marker_ticks,
+                    "submission_manifest": sample.submission_manifest.iter().map(|s| serde_json::json!({"submission":s.submission,"kind":s.kind,"attempt":s.attempt,"workload":s.workload,"first_tick":s.first_tick,"last_tick":s.last_tick,"transfer_first_tick":s.transfer_first_tick,"transfer_last_tick":s.transfer_last_tick,"span_ns":s.span_ns,"transfer_interval_ns":s.transfer_interval_ns})).collect::<Vec<_>>(),
                     "passes_ns": sample.passes_ns, "own_pass_sum_ns": sample.own_pass_sum_ns,
                     "frame_span_ns": sample.frame_span_ns,
                 })

@@ -1,0 +1,46 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=36.8 GiB target_free=163.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 36.8 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 41.62s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-19c6acb98962ab73)
+
+running 1 test
+test app_shell::input_observation::workload::tests::declared_phases_and_explicit_close_are_not_log_arrival_times ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 404 filtered out; finished in 0.00s
+
+     Running tests/visual_shell.rs (target/debug/deps/visual_shell-d3e15376721934e7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-0523b4e5affb67c9)
+
+running 4 tests
+test renderer_state::render_session::frame_revision::workload::tests::active_demand_survives_late_drain_and_close_until_acknowledged ... ok
+test renderer_state::render_session::frame_revision::workload::tests::missing_reversed_or_changed_epoch_cannot_be_attributed ... ok
+test renderer_state::render_session::frame_revision::workload::tests::unchanged_native_round_restores_context_but_changed_round_owns_demand ... ok
+test renderer_state::render_session::frame_revision::workload::tests::unscoped_background_change_cannot_inherit_a_native_demand ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 533 filtered out; finished in 0.00s
+
+     Running unittests src/bin/datum_visual_fixture.rs (target/debug/deps/datum_visual_fixture-e86e033fd10b70ba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/selection_ownership.rs (target/debug/deps/selection_ownership-b87e468218b4955a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/visual_goldens.rs (target/debug/deps/visual_goldens-93a745382f67a2d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
