@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU attribution A1 readback correction",
+  "recorded_at": "2026-09-29T22:53:04Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/attribution-a1/readback-correction.md",
+    "sha256": "02944763da7fe574588a2dee74c11a8a5ac25d996b199ed5b2c3a81fcd77eb83",
+    "commit": "430151f88bed73cd3b3307f322b7c5fe7cb63268"
+  },
+  "disposition": "Approve diagnostic-only native COPY_SRC correction and resume the unused original A1 implementation/build/run allowance. One optimized build, at most two scoped Cargo checks, one300s GPU process,max646observations/2200submissions; first-failure stop and no automatic successor. No production optimization,CPU or DRM execution or qualification acceptance."
+}
