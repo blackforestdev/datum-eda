@@ -91,3 +91,25 @@ binary and fixed new campaign identity/cap1. Preserve any output failure while
 collecting bounded shutdown/input evidence. All prior campaigns remain stopped.
 No new build, renderer variant, further native trial, DRM/CPU execution, numerical
 acceptance or S4/S5/issue closure follows from this approval.
+
+## Shared painter and hover correction disposition
+
+The owner explicitly replied `approve GPU painter and hover correction`.
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-painter-hover.json`
+pins the exact proposal at SHA256 `470653c6e688be4ddd403156d677b2212784a8e2cf1121708c647697b7da84de`.
+
+Amend the warm suffix rule to bounded disjoint integer damage traversals inside
+one render pass: each damaged pixel receives the original painter order exactly
+once, with one final exact8 resolve. Every painter intersects its own clip with
+the shared region. Keep the32-rectangle cap, shared shader predicate, full fallback
+on normalization/admission refusal, immutable damage and submission lifetimes.
+
+The shared renderer classifies actual pad-dependent material/text hover from
+source-bound membership; non-pad hover does not invalidate retained world data.
+Real pad-material transitions remain cold. Metadata admission, accounting and
+retirement use existing document budgets; no new texture, query slot or raised cap.
+
+Execute only the pinned proposal's bounded implementation and proof scope. The
+previous timed campaign remains stopped. Preserve all original camera/resource,
+complete DRM duty and independent qualification obligations. No CPU event-loop
+optimization, DRM observer execution, dependency change or S4/S5 closure.

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU painter and hover correction",
+  "recorded_at": "2026-09-29T08:02:27Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/painter-hover-correction/proposal.md",
+    "sha256": "470653c6e688be4ddd403156d677b2212784a8e2cf1121708c647697b7da84de",
+    "commit": "6d2c5fb1"
+  },
+  "disposition": "Approve shared pad dependency and disjoint suffix clipping, PM050 amendment, focused offline controls, one four-group GPU correctness/resource batch with first-failure stop, one candidate release build and new fixed12pointer declaration after prerequisites. Reuse pinned baseline. No replacements, DRM execution, CPU optimization or qualification closure."
+}
