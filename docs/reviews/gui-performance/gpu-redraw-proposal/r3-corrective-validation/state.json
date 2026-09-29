@@ -1,0 +1,47 @@
+{
+  "source": "365ea26cd21fd3b0bc4f771463b961afd658757c",
+  "binary": "/home/bfadmin/Documents/datum-eda/target/debug/deps/datum_gui_render-ca0a5acac071f491",
+  "binary_sha256": "dd42c8242d59ffe5064e16bc581766524c61398f9b434277706ad9cd7bf085a9",
+  "proposal_sha256": "65096302dbd3d13cedf89bddee7000b52f61dbbd6b2a8db12e868b2f33798ad0",
+  "fixture": {
+    "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "authority": "p630-exact-output/receipt.json environment.fixture; verify bytes before use"
+  },
+  "tests": [
+    "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_doa_hover_composition_and_recovery",
+    "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_terminal_layers_and_equal_length_replacement",
+    "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_console_covers_canvas_text_without_hiding_foreground",
+    "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve"
+  ],
+  "timeout_seconds": 90,
+  "status": "passed",
+  "results": [
+    {
+      "test": "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_doa_hover_composition_and_recovery",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-1.log"
+    },
+    {
+      "test": "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_terminal_layers_and_equal_length_replacement",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-2.log"
+    },
+    {
+      "test": "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_console_covers_canvas_text_without_hiding_foreground",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-3.log"
+    },
+    {
+      "test": "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-4.log"
+    }
+  ],
+  "started_utc": "2026-09-29T04:14:02Z",
+  "finished_utc": "2026-09-29T04:14:12Z"
+}

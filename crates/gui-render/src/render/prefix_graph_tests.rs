@@ -168,7 +168,7 @@ pub(super) fn world_uploads(c: &OffscreenRenderer) -> Vec<(u64, u64, u64)> {
 #[test]
 #[ignore = "requires exact8x Vulkan output/readback; correctness and timer conformance, not performance"]
 fn exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery() {
-    let mut c = capture8();
+    let mut c = reference_capture8();
     let state = crate::gpu_surface_pass::board_fixture_state();
     let source = SourceEpoch::default();
     prepare(&mut c, &state, &source);
@@ -327,7 +327,24 @@ fn exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery() {
         corrupt.as_raw() != expected.as_raw(),
         "negative control failed to expose stale/corrupt prefix"
     );
-    c.renderer.poll_gpu_measurements(&c.device).unwrap();
+    let restore = c.renderer.poll_gpu_measurements(&c.device).unwrap();
+    assert_eq!(restore.len(), 1);
+    assert_eq!(
+        restore[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
+        ["upload-leading", "restore", "suffix"]
+    );
+    assert_eq!(restore[0].submission_manifest.len(), 1);
+    let boundary = &restore[0].submission_manifest[0];
+    assert_eq!(boundary.kind, "final");
+    assert_eq!(boundary.first_tick, restore[0].raw_ticks[0]);
+    assert_eq!(boundary.last_tick, *restore[0].raw_ticks.last().unwrap());
+    assert_eq!(boundary.transfer_last_tick, restore[0].raw_ticks[2]);
+    assert!(
+        restore[0]
+            .raw_ticks
+            .windows(2)
+            .all(|pair| pair[0] <= pair[1])
+    );
     // Failed completion forces a rebuild; no stale validity survives the failure.
     let recovered = frame(&mut c, true);
     assert!(!c.renderer.prefix_copy_work().0);

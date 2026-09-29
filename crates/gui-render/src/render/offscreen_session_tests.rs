@@ -151,3 +151,6 @@ fn shared_offscreen_snapshots_match_legacy_pixels_and_replace_terminal_rows() {
 mod prefix_graph_tests;
 #[path = "prefix_qualification_tests.rs"]
 mod prefix_qualification_tests;
+
+#[path = "gpu_submission_conformance_tests.rs"]
+mod submission_conformance;

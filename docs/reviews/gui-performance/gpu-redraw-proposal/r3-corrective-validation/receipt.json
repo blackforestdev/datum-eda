@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "owner-approval-r3-corrective.json; exact response approve GPU r3 corrective validation",
+  "source": "365ea26cd21fd3b0bc4f771463b961afd658757c",
+  "binary_sha256": "dd42c8242d59ffe5064e16bc581766524c61398f9b434277706ad9cd7bf085a9",
+  "fixture": {
+    "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "authority": "p630-exact-output/receipt.json environment.fixture; verify bytes before use"
+  },
+  "outcome": "Four approved corrective P630 cases passed once each. Corrected hover reuse and exact output demonstrated; proceed to unspent r3 timer conformance, not performance acceptance.",
+  "evidence": [
+    "F-DOA cold/strong-hover/stable-hover and cursorless-hover to pointer transition, menu exposure, optional-cap fallback, return-to-admitted extent and renderer resource recovery all match full8x output.",
+    "Terminal foreground/background graphics, equal-length replacement, menu/text overlap and intermediate masked pointer frames match full8x output.",
+    "Console ordering and masked pointer frames match full8x; old painter-order negative differs at82 interior pixels.",
+    "Stale/missing-copy, premature resolve and reduced4x negative graphs rejected, exact8x recovery verified."
+  ],
+  "reused": "Prior r3 all8 sample/all256 channel RGBA/BGRA restoration proof, damage/mask/lifetime and board/schematic crosshair checkpoints remain at original scope; failed setup and stable-hover runs remain archived unchanged.",
+  "remaining": [
+    "Single complete-timer conformance batch including actual continuation/final upload boundaries, invalid/cancelled work and reused causal consumer controls.",
+    "Source-bound matched baseline/candidate instrumentation and only then original bounded pointer/pan experiment.",
+    "Complete DRM observation remains separately unapproved; own-queue results cannot establish duty<=25% or close GPU issue/S4/S5."
+  ],
+  "artifacts_sha256": {
+    "state.json": "f336c9776cc1d4c5388b3fe87fbd58a8d5c1ed56926006395ee7522c8a1e0fad",
+    "test-list.txt": "78d4224bcec121d62714373978694980cad47c08989b4856ad1509a129f2c82c",
+    "case-2.log": "2a0f454e60bd07ff1f89c5743f31c38de98b79017ee2e9c7e27105a9782a7c95",
+    "case-4.log": "520b1f360aaff8fc6b737ca8fb1a126242c30ac373a20790325e593817ef7921",
+    "case-1.log": "382e57e075456dc4f8c882a60f45237d36174a89c79643d64e0aeeb94d0581a5",
+    "build.jsonl.gz": "4dd6286e60123ae6c2f355e1a1d8c0127c39c74c75239e69e92e5de489d7a10f",
+    "case-3.log": "12b21e2465fa0e3ccce82dbf28c51e17ec888fed32938dddb7ab8c05de66d017",
+    "build.log": "52b75893e22592fbcffe32232e981de533510b2e4c75d3b3ccb9098d00603060",
+    "gpu-r3-timer-review.json": "4a9b2b5f149f43fe1afebb5c245e37162e7ff6c821a74db3b6d7d4f5bf2df4e2",
+    "gpu-r3-timer-clippy-final.log": "22ce033309f950b8aceb1a779c2645cabe4cae3bb811be749f6e9d54250902b4",
+    "gpu-r3-timer-source-final.log": "3369a3e020242021b0c96a164203294aa064f09853ffdcedf5e7bec6279748e5"
+  },
+  "timer_preparation": {
+    "status": "Source preparation only; no timer GPU case executed.",
+    "cases": [
+      "gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls",
+      "gpu_measurements::resources::tests::query_resources_rollback_admission_and_survive_frame_and_submission_owners",
+      "visual::visual_capture::offscreen_session_tests::submission_conformance::world_and_glyph_submissions_include_transfer_and_final_graph",
+      "visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels",
+      "visual::visual_capture::offscreen_session_tests::prefix_graph_tests::exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery"
+    ],
+    "scope": "One serial approved timer batch, each case once,90s per case and first failure stop. Reuse offline omitted-final-boundary/overflow/late-active/close-only controls. Explicit synthetic component IDs are not native attribution proof.",
+    "source_sha256": {
+      "crates/gui-render/src/render/offscreen_session_tests.rs": "cb566e194227b5e3a912cd3080a9709bedd6d96ae34db666b491fcccc2b2bf2a",
+      "crates/gui-render/src/render/gpu_submission_conformance_tests.rs": "dc115cfe50c2d15182507ac87ba0ae71919dbe7601539cc815fd735060365d13",
+      "crates/gui-render/src/render/prefix_graph_tests.rs": "9e3faf6fe0e07bb302205aab5e96e4d39ede83d340fc8d28ffcd1c974bcadce6"
+    },
+    "review": "Two requested controls added: warm restore manifest bounds and real submitted-continuation cancellation lineage/lifetime; advisory recheck resolved both. Final visual all-target render Clippy and2637-source health pass."
+  }
+}
