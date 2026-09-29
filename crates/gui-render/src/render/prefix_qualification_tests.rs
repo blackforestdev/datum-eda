@@ -3,6 +3,8 @@ use super::prefix_graph_tests::*;
 use super::*;
 use crate::render_input::{PointerUpdate, SourceEpoch};
 use datum_gui_protocol::{CrosshairStyle, HoverTarget, PaneContent, ScreenPointPx};
+#[path = "painter_hover_qualification.rs"]
+mod painter_hover;
 #[path = "r3_damage_qualification.rs"]
 mod r3;
 

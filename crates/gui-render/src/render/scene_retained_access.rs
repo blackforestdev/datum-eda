@@ -318,8 +318,9 @@ impl RetainedScene {
             let world_hit_index =
                 Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
             Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
-            Self {
+            let mut scene = Self {
                 surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
+                hover_membership: Default::default(),
                 world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
                     world_vertices,
                     &state.scene.scene_id,
@@ -330,8 +331,15 @@ impl RetainedScene {
                 ),
                 draw_commands: draw_commands.into(),
                 world_hit_index: world_hit_index.into(),
-            }
-            .registered_cpu(&scope, limit)
+            };
+            scene.hover_membership = retained_scene_owner::hover_membership::Membership::build(
+                state,
+                &scene.world_hit_index,
+                &budget,
+                &scope,
+                limit,
+            );
+            scene.registered_cpu(&scope, limit)
         })
     }
 

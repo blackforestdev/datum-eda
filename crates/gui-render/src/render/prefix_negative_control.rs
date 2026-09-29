@@ -10,6 +10,8 @@ pub(crate) enum Fault {
     PrematureResolve,
     OldDamageMissing,
     MissingSuffixMask,
+    OverlappingSuffix,
+    DamageOverflow,
     StaleWorking,
 }
 thread_local! {
@@ -37,6 +39,8 @@ impl Fault {
             Self::None
             | Self::StaleKey
             | Self::OldDamageMissing
+            | Self::DamageOverflow
+            | Self::OverlappingSuffix
             | Self::MissingSuffixMask
             | Self::StaleWorking => images.copy(encoder),
             Self::MissingCopy => {

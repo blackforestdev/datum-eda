@@ -164,6 +164,7 @@ pub(super) fn observe(observer: RetainedGeometryObserver) -> RetainedGeometryObs
                 && existing.strokes.ptr_eq(&observer.strokes)
                 && existing.commands.ptr_eq(&observer.commands)
                 && existing.hits.ptr_eq(&observer.hits)
+                && existing.hover.same(&observer.hover)
         })
     {
         return existing.clone();

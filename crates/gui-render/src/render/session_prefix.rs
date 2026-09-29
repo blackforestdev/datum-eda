@@ -33,6 +33,11 @@ pub(crate) struct Prefix {
     world_bundles: std::cell::Cell<usize>,
 }
 impl Prefix {
+    #[cfg(all(test, feature = "visual"))]
+    pub(crate) fn fragmented_control(&self) -> Option<Pixels> {
+        Pixels::fragmented_control()
+    }
+
     pub(super) fn begin(&mut self, request: Option<Key>, support: Option<Pixels>, revision: u64) {
         self.support = support;
         self.revision = revision;
@@ -78,7 +83,7 @@ impl Prefix {
         if valid.revision == self.revision {
             Some(Pixels::default())
         } else {
-            valid.support?.union(self.support?)
+            valid.support?.union(self.support?)?.disjoint()
         }
     }
     pub(crate) fn encoded(&mut self, pair: PairIdentity, reused: bool, copy_bytes: u64) {

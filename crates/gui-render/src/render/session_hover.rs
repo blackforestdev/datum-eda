@@ -3,14 +3,14 @@ use super::*;
 use datum_gui_protocol::{HoverTarget, PaneContent, SelectionTarget};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub(super) enum BoardHover {
+pub(super) enum BoardHoverDependency {
     Disabled,
     None,
-    Region(usize),
+    Pad(usize),
     Unknown,
 }
 
-impl BoardHover {
+impl BoardHoverDependency {
     pub(super) fn capture(state: &ReviewWorkspaceState, retained: &RetainedScene) -> Self {
         if !matches!(state.selection, SelectionTarget::None) {
             Self::Disabled
@@ -20,6 +20,9 @@ impl BoardHover {
     }
 
     fn resolve(hover: Option<&HoverTarget>, retained: &RetainedScene) -> Self {
+        if !retained.hover_membership.available() {
+            return Self::Unknown;
+        }
         let Some(hover) = hover.filter(|h| h.surface == PaneContent::Board) else {
             return Self::None;
         };
@@ -33,7 +36,11 @@ impl BoardHover {
                 }
                 _ => false,
             })
-            .map_or(Self::Unknown, Self::Region)
+            .map_or(Self::Unknown, |i| match retained.hover_is_pad(i) {
+                Some(true) => Self::Pad(i),
+                Some(false) => Self::None,
+                None => Self::Unknown,
+            })
     }
 
     pub(super) fn permits_pointer(

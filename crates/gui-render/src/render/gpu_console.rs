@@ -14,18 +14,22 @@ impl Renderer {
         vertices: &[Vertex],
         prepared: &PreparedScene,
         damage: &wgpu::BindGroup,
+        clip: crate::renderer_state::damage::clip::Clip,
     ) {
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.uniform_bind_group, &[]);
         pass.set_bind_group(1, damage, &[]);
         if let Some(layout) =
             self.console_gpu
-                .draw(pass, vertices, prepared.console_overlay_layout())
+                .draw(pass, vertices, prepared.console_overlay_layout(), clip)
         {
             self.observe_screen_draw(
                 super::immediate_admission::screen_admission::ScreenGroup::Console,
                 vertices.len() as u32,
-                super::immediate_admission::screen_admission::scissor(layout.pane_body),
+                clip.intersect(super::immediate_admission::screen_admission::scissor(
+                    layout.pane_body,
+                ))
+                .expect("nonempty Console clip"),
             );
         }
     }
@@ -52,6 +56,7 @@ impl ConsoleGpuResources {
         pass: &mut wgpu::RenderPass<'pass>,
         vertices: &[Vertex],
         layout: Option<ConsoleOverlayLayout>,
+        clip: crate::renderer_state::damage::clip::Clip,
     ) -> Option<ConsoleOverlayLayout> {
         if vertices.is_empty() {
             return None;
@@ -59,12 +64,17 @@ impl ConsoleGpuResources {
         let layout = layout?;
         let buffer = self.vertices.buffer()?;
 
-        pass.set_scissor_rect(
-            layout.pane_body.x.max(0.0).floor() as u32,
-            layout.pane_body.y.max(0.0).floor() as u32,
-            layout.pane_body.width.max(1.0).ceil() as u32,
-            layout.pane_body.height.max(1.0).ceil() as u32,
-        );
+        if !clip.set(
+            pass,
+            [
+                layout.pane_body.x.max(0.0).floor() as u32,
+                layout.pane_body.y.max(0.0).floor() as u32,
+                layout.pane_body.width.max(1.0).ceil() as u32,
+                layout.pane_body.height.max(1.0).ceil() as u32,
+            ],
+        ) {
+            return None;
+        }
         pass.set_vertex_buffer(0, buffer.slice(..));
         pass.draw(0..vertices.len() as u32, 0..1);
         Some(layout)

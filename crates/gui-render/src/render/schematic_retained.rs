@@ -149,6 +149,7 @@ impl RetainedScene {
                     surface_size_independent: Self::scene_is_surface_size_independent(
                         schematic_scene,
                     ),
+                    hover_membership: Default::default(),
                     world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
                         world_vertices,
                         &schematic_scene.scene_id,

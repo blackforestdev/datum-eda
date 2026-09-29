@@ -6,6 +6,8 @@ use std::sync::Arc;
 #[path = "document_cpu.rs"]
 pub(crate) mod document_cpu;
 pub use document_cpu::DocumentCpuCharge;
+#[path = "hover_membership.rs"]
+pub(crate) mod hover_membership;
 
 thread_local! {
     /// Per-thread count of ACTUAL world-scene resolves — every time the retained
@@ -29,6 +31,7 @@ pub fn retained_scene_resolve_count() -> u64 {
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {
     pub(crate) surface_size_independent: bool,
+    pub(crate) hover_membership: hover_membership::Membership,
     pub(crate) world_vertices: gpu_data::shared_geometry::SharedGeometry<Vertex>,
     pub(crate) world_strokes: gpu_data::shared_geometry::SharedGeometry<WorldStrokeInstance>,
     pub(crate) draw_commands: Arc<Vec<RetainedDrawCommand>>,
@@ -45,6 +48,7 @@ pub struct RetainedGeometryObserver {
     commands: std::sync::Weak<Vec<RetainedDrawCommand>>,
     hits: std::sync::Weak<datum_gui_viewport::SpatialHitIndex<HitTarget>>,
     metadata_bytes: [usize; 2],
+    hover: hover_membership::Observer,
     document: Option<std::sync::Weak<crate::text_gpu::budget::Budget>>,
     lifetime: Option<Arc<ObserverLifetime>>,
 }
@@ -55,7 +59,8 @@ struct ObserverLifetime {
 
 impl RetainedGeometryObserver {
     pub fn is_live(&self) -> bool {
-        self.vertices.strong_count() != 0
+        self.hover.is_live()
+            || self.vertices.strong_count() != 0
             || self.strokes.strong_count() != 0
             || self.commands.strong_count() != 0
             || self.hits.strong_count() != 0
@@ -79,7 +84,11 @@ impl RetainedGeometryObserver {
         } else {
             0
         });
+        let mut hover = self.hover.bytes();
         for other in others {
+            if self.hover.same(&other.hover) {
+                hover = 0;
+            }
             if self.vertices.ptr_eq(&other.vertices) {
                 vertices = 0;
             }
@@ -97,6 +106,7 @@ impl RetainedGeometryObserver {
             .saturating_add(strokes)
             .saturating_add(commands)
             .saturating_add(hits)
+            .saturating_add(hover)
     }
 }
 
@@ -162,6 +172,7 @@ impl RetainedScene {
     pub fn geometry_observer(&self) -> RetainedGeometryObserver {
         document_cpu::observe(RetainedGeometryObserver {
             lifetime: None,
+            hover: self.hover_membership.observe(),
             document: self.world_vertices.document_budget().map(Arc::downgrade),
             vertices: self.world_vertices.downgrade(),
             strokes: self.world_strokes.downgrade(),
@@ -209,7 +220,8 @@ impl RetainedScene {
             .checked_add(self.command_bytes()?)?
             .checked_add(self.hit_bytes()?)?
             .checked_add(commands_container_bytes())?
-            .checked_add(hits_container_bytes())
+            .checked_add(hits_container_bytes())?
+            .checked_add(self.hover_membership.bytes())
     }
 }
 fn commands_container_bytes() -> usize {
