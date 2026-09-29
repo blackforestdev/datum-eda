@@ -1,0 +1,55 @@
+{
+  "source_before_correction": "d75d6de1f9d128d9acd4a9f2f89b7cecfffdeb07",
+  "step": "GPI-S4",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "status": "Stopped r3 correctness at real F-DOA stable-hover reuse failure; source correction/offline proof complete, GPU revalidation awaits explicit bounded approval. No timing-conformance or performance run.",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "executed_evidence": {
+    "aggregate": "One pinned aggregate invocation: sample oracle RGBA/BGRA all256 values/all8 samples and sample/sRGB negatives; damage/coalescing/mixed/menu/failure/mask pressure/A-B lifetime controls; board/schematic three crosshair styles. 35 exact case checkpoints passed. Aggregate then failed importing incorrectly supplied native JSON as an import fixture.",
+    "setup_correction": "Preserved initial failure. Verified existing approved F-DOA KiCad fixture exact SHA256. Continued only unexecuted cases with same binary; initial fully-qualified-name mistake selected zero tests, preserved separately. No completed rendering case was repeated. The locally overbroad stop declaration was corrected to controlling owner-approved first-mismatch rule for the setup-only failure.",
+    "actual_stop": "Correctly selected F-DOA case passed cold and strong pad-hover invalidation exact output, then failed stable pad-hover reuse (false vs expected true). Pixel comparison for that frame was not reached. No later test was executed.",
+    "partial_not_acceptance": "Sample-level restoration and recorded case checkpoints are bounded evidence. The failed batch is not a passing suite or correctness/performance acceptance.",
+    "timing_conformance_runs": 0,
+    "pointer_performance_runs": 0,
+    "pan_performance_runs": 0
+  },
+  "diagnosis": "Confirmed source mismatch: board painter falls back to scene_viewport with no cursor; Pixels::capture used interaction_viewport? and returned unknown support. Prefix::damage also demanded support before checking identical completed revision.",
+  "correction_source_sha256": {
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "50b20ca437856fa1538e6cfdcca02bf5f3ff399b802b7a59146140dfacb952a7",
+    "crates/gui-render/src/render/interaction_overlay.rs": "de0bb370bac2a3ddef5e4841374f490e4c06a7afd20617ccd9a01745669d3b32",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "f1bc981d8f74a2975d58a5a38cf896bcd34b683d58d5623723279209e572a73e",
+    "crates/gui-render/src/render/session_damage.rs": "9d786dd5ed3a71039260af9aa817dd688959ac62ca557c021ad6e98b0626aa4b",
+    "crates/gui-render/src/render/session_damage_tests.rs": "73fb847ae9d01a48ca181e0eda7e9ec276996bc50e53ce8f4653cae1ed8e4521",
+    "crates/gui-render/src/render/session_prefix.rs": "b5b8daed9e5a10c211d61a61164694a13b628873f0c88ef9685bc845087e53f9"
+  },
+  "proof": {
+    "offline": "6 damage controls passed, including real cursorless hover emitted geometry/support and unchanged/changed unknown-support revisions.",
+    "clippy": "Final render all-target visual -D warnings passed after added GPU transition control.",
+    "source_health": "2636 files passed.",
+    "review": "Advisory source review agrees with diagnosis and fix; recommends affected transition, now prepared but unexecuted. No reviewer ratification.",
+    "reused": "Unchanged timer/workload/consumer checks at r3-complete-timing; no new dependency/license or CPU scheduling changes."
+  },
+  "next_reviewable_scope": "corrective-validation.json",
+  "limitations": [
+    "GPU proof stopped; no further GPU/native run after actual stable-hover failure.",
+    "Source-only correction has not demonstrated corrected GPU reuse or remaining terminal/Console/recovery/negative requirements.",
+    "DRM observer execution remains separately unapproved; duty<=25%, S4/S5 and GPU issue unresolved.",
+    "Cargo target is 38.9GiB near40GiB hard limit; no cache deletion or policy bypass performed. Check idle owned artifacts before future build if guard refuses."
+  ],
+  "artifacts_sha256": {
+    "gpu-r3-hover-review.json": "4945809ad292b777fa48fe5c78b23b84450a98e3aa8d213674ea78f3af2a49ed",
+    "p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve-zero-tests.log": "e12726696f9e1364b7c0da12aec12af4b84e7c66353da188309284e3199b4dc0",
+    "p630_exact8_doa_hover_composition_and_recovery-zero-tests.log": "e12726696f9e1364b7c0da12aec12af4b84e7c66353da188309284e3199b4dc0",
+    "exact-batch.json": "be790ee9a6bf1dc88d67d82b48e27d5ec512892b329d826132937f20aa629153",
+    "gpu-r3-hover-correction-offline.log": "6980edbbd59d882e050b61662744754bbcc538586ce01db42b83a18950824c2e",
+    "exact-remaining.json": "6f88b534858e559f23314d33218dafded39d9e5e67c19c27c94f81de71758275",
+    "exact-batch.log": "39e072a34ea74795a92920b06f03e47db10406babd973f40fae958cc71017bdb",
+    "gpu-r3-hover-source.log": "ea3f6471e77c4a7b57f6e58ae24ab337d61112986bf1ee642811d85174a1a337",
+    "gpu-r3-hover-clippy-final.log": "03570cb4be3758ac1e5b491d6c3e51c227906e4c14b9b7af9bfb070158c6cf01",
+    "exact-remaining-zero-tests.json": "51ee9d2431b012580764181ae4bb206122be15df0a15a7fd87c90747fb172de9",
+    "corrective-validation.json": "65096302dbd3d13cedf89bddee7000b52f61dbbd6b2a8db12e868b2f33798ad0",
+    "p630_exact8_console_covers_canvas_text_without_hiding_foreground-zero-tests.log": "e12726696f9e1364b7c0da12aec12af4b84e7c66353da188309284e3199b4dc0",
+    "p630_exact8_doa_hover_composition_and_recovery.log": "fa63692a6f4bdc59d35d209bd6533ae2166c6388e48b51a76965e99fdc0d265d",
+    "p630_exact8_terminal_layers_and_equal_length_replacement-zero-tests.log": "e12726696f9e1364b7c0da12aec12af4b84e7c66353da188309284e3199b4dc0"
+  }
+}

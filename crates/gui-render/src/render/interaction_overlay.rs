@@ -39,6 +39,19 @@ impl PreparedScene {
             .map(|pass| pass.scene_viewport)
     }
 
+    /// Actual suffix clip, shared by drawing and damage support. Board hover
+    /// geometry can be present without a cursor; schematic drawing requires an
+    /// active schematic viewport.
+    pub(crate) fn painted_interaction_viewport(&self, surface: SceneSurface) -> Option<RectPx> {
+        match surface {
+            SceneSurface::Board => Some(
+                self.interaction_viewport(surface)
+                    .unwrap_or(self.scene_viewport),
+            ),
+            SceneSurface::Schematic => self.interaction_viewport(surface),
+        }
+    }
+
     /// Override the companion schematic pass camera while keeping its immediate
     /// grid and interaction buffers projected through the same warm camera.
     pub fn set_schematic_camera(&mut self, camera: CameraState) {

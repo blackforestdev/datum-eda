@@ -71,7 +71,10 @@ impl Pixels {
             if vertices.is_empty() {
                 continue;
             }
-            let viewport = scene.interaction_viewport(surface)?;
+            let Some(viewport) = scene.painted_interaction_viewport(surface) else {
+                // No schematic pass draws these vertices, so they damage no pixels.
+                continue;
+            };
             if ![viewport.x, viewport.y, viewport.width, viewport.height]
                 .iter()
                 .all(|v| v.is_finite())

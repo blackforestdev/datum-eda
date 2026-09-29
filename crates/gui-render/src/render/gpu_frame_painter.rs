@@ -89,7 +89,8 @@ impl Renderer {
         pass.set_bind_group(1, damage, &[]);
         // Interaction chrome stays above schematic world geometry.
         if !schematic_overlay_vertices.is_empty()
-            && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)
+            && let Some(scene_viewport) =
+                prepared.painted_interaction_viewport(SceneSurface::Schematic)
             && let Some(buffer) = self.schematic_overlay_gpu.buffer()
         {
             pass.set_scissor_rect(
@@ -129,8 +130,8 @@ impl Renderer {
         }
         if !board_interaction_vertices.is_empty() {
             let interaction_viewport = prepared
-                .interaction_viewport(SceneSurface::Board)
-                .unwrap_or(prepared.scene_viewport);
+                .painted_interaction_viewport(SceneSurface::Board)
+                .expect("board painter always has a viewport");
             pass.set_scissor_rect(
                 interaction_viewport.x.max(0.0).floor() as u32,
                 interaction_viewport.y.max(0.0).floor() as u32,

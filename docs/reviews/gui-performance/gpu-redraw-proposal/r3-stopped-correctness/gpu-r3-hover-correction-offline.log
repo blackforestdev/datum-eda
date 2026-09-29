@@ -1,0 +1,34 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=38.8 GiB target_free=161.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 38.8 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.40s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 6 tests
+test renderer_state::render_session::session_prefix::damage::tests::cursorless_hover_damage_uses_the_actual_painter_clip ... ok
+test renderer_state::render_session::session_prefix::damage::tests::direct_full_render_invalidates_presented_composition ... ok
+test renderer_state::render_session::session_prefix::damage::tests::presented_support_survives_coalescing_and_uncertain_frames_fail_closed ... ok
+test renderer_state::render_session::session_prefix::damage::tests::real_pointer_triangles_keep_thin_support_and_cover_enter_move_leave ... ok
+test renderer_state::render_session::session_prefix::damage::tests::rectangles_reject_unknown_geometry_and_bounded_union_overflow ... ok
+test renderer_state::render_session::session_prefix::damage::tests::unchanged_presented_revision_needs_no_geometry_support_but_changed_revision_does ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 533 filtered out; finished in 1.90s
+
+     Running unittests src/bin/datum_visual_fixture.rs (target/debug/deps/datum_visual_fixture-49463012cdb9f01a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/selection_ownership.rs (target/debug/deps/selection_ownership-0fee2cabaa93606c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/visual_goldens.rs (target/debug/deps/visual_goldens-7165af384ea526bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+

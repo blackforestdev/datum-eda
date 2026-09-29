@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "Proposal for explicit owner approval after stopped r3 correctness; advisory review does not authorize GPU execution. Existing approved r3 implementation authority covers the diagnosed source correction and offline controls.",
+  "owner_response": "approve GPU r3 corrective validation",
+  "problem": "Pinned d75d6de1 failed stable cursorless F-DOA pad-hover reuse. Drawing uses a fallback board viewport while damage capture required a cursor-selected viewport. Repeated full redraw occurs despite unchanged presented content. Failure precedes this frame pixel comparison, so no stable-hover exact-output claim.",
+  "correction": [
+    "One painted_interaction_viewport owns the existing board fallback and schematic no-pass semantics for both painter and pixel-support capture. Actual painter clipping/order unchanged.",
+    "After exact completed key/pair/revision identity, exposure resolves retained B with empty damage even if interaction support was unavailable. Changed revision still requires known old/new support, otherwise full fallback.",
+    "Offline real-fixture cursorless-hover support and unknown-support exposure/change controls pass. Add an unexecuted cursorless-hover to pointer transition with identical effective hover in the affected GPU case, as recommended by independent review."
+  ],
+  "scope": {
+    "build": "One source-bound corrected render test binary using the guarded Cargo runner; existing approved dependencies only. Validate correct imported F-DOA fixture SHA256 and fully qualified test names before GPU execution.",
+    "gpu_correctness": "One serial batch of the four named cases, each at most once; first failure/timeout/API/negative-control/graph/pixel mismatch stops all later cases and experiments. No format, sample, tolerance, algorithm or parameter variants.",
+    "tests": [
+      "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_doa_hover_composition_and_recovery",
+      "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_terminal_layers_and_equal_length_replacement",
+      "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_console_covers_canvas_text_without_hiding_foreground",
+      "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve"
+    ],
+    "per_case_timeout_seconds": 90,
+    "fixture": {
+      "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+      "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "authority": "p630-exact-output/receipt.json environment.fixture; verify bytes before use"
+    },
+    "reused": "R3 sample oracle, old/new/coalesced damage, mask negatives and pressure, A/B lifetime, and board/schematic crosshair checkpoints from unchanged restoration/mask mechanism retain their recorded scope. Original failed runs remain archived.",
+    "subsequent": "If these cases pass, resume the unspent r3 single complete-timer conformance batch, then its unchanged maximum12 pointer/conditional4 pan experiment. Matched baseline observer bridge must still be completed and reviewed before any experiment. No earlier run budget is reset.",
+    "excluded": "No CPU optimization, DRM observer execution, tolerance/golden change, full-drift native sweep, final duty acceptance, S4/S5 closure or GPU issue closure."
+  }
+}
