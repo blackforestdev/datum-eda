@@ -1,0 +1,5 @@
+{
+  "patch_sha256": "12514e0eda8f3450f028643764b5c4b2b9bc52f4c6a59aad630b5c752da82674",
+  "source_files": 31,
+  "result": "PASS: final patch applies to pristine997b618e sources and produces all pinned after hashes. Initial replay refused missing new-file mode headers; initial patch retained, no source/binary change. Disposable replay removed."
+}

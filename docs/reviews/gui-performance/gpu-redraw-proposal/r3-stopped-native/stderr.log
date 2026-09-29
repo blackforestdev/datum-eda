@@ -1,0 +1,3 @@
+datum-gui error: Rendering paused for native host WindowId(31457284): automatic recovery stopped. Press F5 to Retry, or close this window. Application state is retained.
+gpu_measurement_incomplete {"device_epoch":1,"frame":1,"host":1,"reason":"encoding_aborted","status":"incomplete","submission":1,"submitted_lineage":[[1,"world",[1,1,5,5,1,1,1],[2326302702124158179,1,3,0,0,0,0,0]]]}
+datum-gui error: GPU measurement incomplete: GPU measurement encoding aborted for host=1 frame=1; sample unavailable

@@ -1,0 +1,104 @@
+{
+  "run_index": 0,
+  "spec": {
+    "pair": 1,
+    "role": "candidate",
+    "mode": "gpu",
+    "workload": "W-POINTER"
+  },
+  "declaration_sha256": "f0ffae55a5fed6a1017f347deeaa9a9165500a6d74bf87745c161441106c3155",
+  "binary_sha256": "23222aa317180ccf3a5f596ee0e52563448153c070c12bb28ce967c13ca45677",
+  "status": "invalid",
+  "gpu_duty": "unavailable: complete DRM lifetime observer absent",
+  "limits": [
+    "Descriptive bounded experiment only; not S4 qualification or formal relative inference.",
+    "Minimal buffered input observer enabled in both modes; its overhead is not subtracted.",
+    "No CPU/action, uninstrumented CPU/resource or physical presentation latency acceptance."
+  ],
+  "workload": {
+    "epoch": 2326302702124158179,
+    "warmup_ns": 1389044339537079,
+    "active_ns": 1389049339537079,
+    "still_ns": 1389079339537079,
+    "drain_ns": 1389084339537079
+  },
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r3-proof/candidate-ffaf331b-r3-datum-gui",
+    "--project-root",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "observer_storage_limit_records": 4096,
+  "cpu_samples": [
+    {
+      "monotonic_ns": 1389004340241299,
+      "cpu_stat": {
+        "usage_usec": 0,
+        "user_usec": 0,
+        "system_usec": 0,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": []
+    },
+    {
+      "monotonic_ns": 1389008238859164,
+      "cpu_stat": {
+        "usage_usec": 2392055,
+        "user_usec": 1535199,
+        "system_usec": 856855,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": []
+    }
+  ],
+  "cpu_before_spawn": {
+    "monotonic_ns": 1389004340241299,
+    "cpu_stat": {
+      "usage_usec": 0,
+      "user_usec": 0,
+      "system_usec": 0,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": []
+  },
+  "owned_cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/datum-gpu-r3-f96a43f8dee2406db98b4fc744f4958d",
+  "pid": 1428549,
+  "error": "AssertionError(('startup exit', 1))",
+  "remaining_before_cleanup": "",
+  "cpu_after_cleanup": {
+    "monotonic_ns": 1389008238859164,
+    "cpu_stat": {
+      "usage_usec": 2392055,
+      "user_usec": 1535199,
+      "system_usec": 856855,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": []
+  },
+  "binary_unchanged": true
+}

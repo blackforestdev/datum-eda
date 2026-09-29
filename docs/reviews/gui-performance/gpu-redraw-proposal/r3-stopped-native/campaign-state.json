@@ -1,0 +1,14 @@
+{
+  "status": "stopped",
+  "declaration_sha256": "f0ffae55a5fed6a1017f347deeaa9a9165500a6d74bf87745c161441106c3155",
+  "results": [
+    {
+      "index": 0,
+      "status": "invalid",
+      "exit_code": 1,
+      "receipt": "/tmp/gpu-r3-0-candidate-gpu-cw750hyg/result.json"
+    }
+  ],
+  "reserved_index": 0,
+  "reserved_ns": 1790657308383322305
+}

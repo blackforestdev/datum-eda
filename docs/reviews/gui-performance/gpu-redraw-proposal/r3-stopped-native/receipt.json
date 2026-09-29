@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "owner-approved r3 corrective validation and original bounded r3 experiment",
+  "status": "STOPPED at first native candidate GPU startup; invalid, no replacement or remaining pointer/pan run authorized under this declaration",
+  "candidate_source": "ffaf331b",
+  "candidate_binary_sha256": "23222aa317180ccf3a5f596ee0e52563448153c070c12bb28ce967c13ca45677",
+  "observed": [
+    "First actual world-upload submission preserved host1/device1/frame1/submission1 and attempt [1,1,5,5,1,1,1], startup workload demand3.",
+    "Next measurement boundary rejected GPU transaction source or target lineage changed. Renderer paused, encoding-aborted cancellation emitted with submitted lineage, process exited1.",
+    "Runner observed startup exit before obtaining readiness; no producer/schedule/input-receipt or numeric GPU sample was produced. No p95/p99, output, duty or performance claim is available.",
+    "Canonical campaign state stopped at index0; no baseline/quiet/pan run. Cleanup found no surviving workload descendants; binary hash unchanged."
+  ],
+  "source_assessment": [
+    "Timeline::begin requires equal owner/preparation/host/device/configuration across all continuations. It permits increasing attempt/revision only. Consumer repeats this equality.",
+    "Shared RenderSession permits invalidation and new prepared projection between upload-only turns while the timer retains earlier actual submissions. Fixed preparation equality can therefore reject legitimate work.",
+    "The log omits the rejected tuple and field. It does not establish which equality failed; preparation change is a source-supported explanation, not a proven observed value. Further source/offline correction and a precise reviewed validation packet are needed before any new native trial."
+  ],
+  "reused": "Four corrective exact8 cases and five complete-timer component cases passed once; they do not cover native startup preparation changes. Earlier r2 and r3 failed receipts remain immutable.",
+  "remaining": "GPU repair/S4 remain open. Complete DRM duty still separately unapproved; CPU optimization deferred. No global tuning or dependency change.",
+  "artifacts_sha256": {
+    "baseline-patch-replay.json": "5d7369622c8afc940831825e4416025db56e861ac5ba68bd46ccc1535e77b192",
+    "campaign-state.json": "3b320358ae259d10ae79e2830cc4279b805ac35eb59b6ff56773486b451e05cc",
+    "candidate-build.json": "a9f492f610f8bd02791f527483f0768dc5053adfde4e217bdbd0185f993c7dc4",
+    "candidate-build.jsonl.gz": "a60259cf49878a3d4da65b7a07bc247c67b6293ed6f75d78609011cf2a674ea7",
+    "candidate-build.log": "536c23c9b065fdb715596fe62a7e5f8f287a5a3fc151a37e8faa58fc1dbc4011",
+    "declaration.json": "f0ffae55a5fed6a1017f347deeaa9a9165500a6d74bf87745c161441106c3155",
+    "native.log": "406552efec3d1300362311fee8a31389992cf400ee673c337ae490299828682a",
+    "result.json": "70339e5bc338be34464982936757b313cd75b7c056f07bbad009a54ccc33a643",
+    "run-0-launch.log": "e8422ccbff25aa317e8a352b47e853f518e91da17bcd4abf8506ad3eca06e20f",
+    "stderr.log": "6329c79dc8540ae50c03224fad9cbc327708df633753a305fb1fe271605f8ea1",
+    "workload.json": "2e39daf1c74f5ebcd9b75074e7a503f24e54b8317c2a904ffcddda508ebb4a50"
+  }
+}
