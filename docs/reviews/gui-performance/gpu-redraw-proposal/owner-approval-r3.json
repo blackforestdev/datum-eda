@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "issue_id": "dat-gui-performance-implementation-vkq",
+  "owner_response_exact": "approve GPU damage-restoration proposal r3",
+  "recorded_at": "2026-09-29T02:13:31Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r3.md",
+    "sha256": "716389b40bfafa5ebcbcf628af835d29309bf96c33b1091248871df6df6ac7b4",
+    "commit": "2627008aa8fae2e23bf4f157c15d58651595af20"
+  },
+  "disposition": "Explicit owner approval of pinned r3 renderer/measurement implementation and bounded correctness/resource/nonqualifying experiment scope. R2 experiment stays stopped; DRM observer execution remains separately scoped.",
+  "authority": "Owner response ratifies scope; advisory review supplies no owner authority. No S4/S5 closure or numerical acceptance.",
+  "claim_handoff": "Same actual session explicitly reacquires after its recorded r3-review/handoff.json self-release; no live claim or uncommitted implementation inherited.",
+  "route_before": "5306db32b7bf68cc14916fb0805fd83a23f9658ab83b28fa04d48872a2e73bf4"
+}
