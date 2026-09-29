@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source": "544dc61a8195fc9135b790bd682e9baded44e1ad",
+  "authority": "../owner-approval-r4.json",
+  "status": "One approved GPU batch passed, including native capability, in16.622453seconds. Conditional matched release builds and fixed12pointer campaign permitted; no runtime performance acceptance.",
+  "proof": [
+    "Exact eight-sample regional/full-painter equality including fractional geometry, all256cells, seams and edge padding; wrong-origin/sample and duplicate/missing-paint controls detected.",
+    "Common Console, terminal, text and menu resolved output; all14non-pad hover and real-pad transition fixtures; old presented damage and recovery.",
+    "Five-image current/retiring/submitted ownership, eviction/refusal/recreation, >256tile cold fallback; normal production usage groups retained.",
+    "Actual cold timing graph31/32queries; warm/empty/fallback final markers include copies; P630 Vulkan X11 surface COPY_DST and eight-sample capability."
+  ],
+  "limitations": [
+    "Test sample readback opt-in and scratch oracle excluded from production resource/performance claims.",
+    "No pointer timing, overhead, DRM duty, camera/endurance or full qualification claimed."
+  ],
+  "baseline_reconciliation": "Reuse997b618e and exact prior observer patch, verified file hashes. Only new source delta is attached final-marker patch in common measurement owner; no painter/renderer algorithm backport.",
+  "next": "One candidate and one matched baseline release, then fixed12pointer campaign; first failure stops, no replacement. Owner requests consolidated overall GPU completion assessment at disposition.",
+  "artifacts_sha256": {
+    "baseline-source.json": "87ef6ed73869e5a9106919c59a460b757bfec115e1a7fced89f46bb81e078718",
+    "baseline-final-marker.patch": "b3dbb4561ec79323ae1011dfa6da6eea81f2abcae895d7c2897e9d182e1609a0",
+    "batch-state.json": "d52effd1c539cfa13d2f7eefcb928fdf7b16198f391c8480d6da81ebbb49fb06",
+    "gpu-raw.tar.gz": "e6e42486425887daf38f2d001d42b2b1f5c6b0d62fd77fd823f5db060229a886"
+  }
+}
