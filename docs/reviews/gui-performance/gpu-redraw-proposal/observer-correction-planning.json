@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "owner_request_exact": "Please proceed per your recoemedations.",
+  "disposition": "Authorizes preparing the recommended concrete observer correction proposal only. No implementation/build/test/native authorization inferred.",
+  "base_commit": "5ab4803a",
+  "proposal": "docs/reviews/gui-performance/gpu-redraw-proposal/observer-correction-proposal.md",
+  "evidence": "docs/reviews/gui-performance/gpu-redraw-proposal/r3-crosshair-replay/receipt.json",
+  "prior_independent_review": "docs/reviews/gui-performance/gpu-redraw-proposal/r3-crosshair-replay/independent-review.json",
+  "review_scope": "Source/evidence reconciliation and proposal self-review; prior independent review covers defects, not approval of this new journal design.",
+  "decision": "Propose bounded streaming using recycled4096-slot pool, independent invalid evidence export, explicit admission failure, rejected sample preservation and child-exit-aware runner. Worker-I/O cost amendment explicit. Offline controls first; no native approval requested in this packet.",
+  "source_sha256": {
+    "crates/gui-app/src/native_input_observation.rs": "e84c2cd3325409cb261f2053f209f4c3c602dba7995140488ac273c47a3102aa",
+    "crates/gui-app/src/native_gpu_measurements.rs": "4e3e9e35353f2e6181db27b5a3668e108d4ca6ae5639117237c86aa8f6eb7cc2",
+    "crates/gui-app/src/native_measurement_shutdown.rs": "b7d8c2cfeb8a871ee9ab567634214909b1e4a6e2f63ede02ff55c4bd11f3c076",
+    "crates/gui-app/src/native_workload_observation.rs": "5d11238c7debc0cea88e5e41ccf477619279d2310d4e42732051a6e7a419af74",
+    "crates/gui-app/src/app_shell.rs": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2",
+    "crates/gui-app/src/app_native_events.rs": "9c3cb879ce59180f9078a5bc107033654a1aaf7b550c8a4a1b5fa35aa94b5b24",
+    "crates/gui-render/src/render/frame_workload.rs": "43ed8346b180574c42e772cc7b92bced47de957ab3ff8416d2ae702cf4516fda",
+    "scripts/gpu_r3_receipts.py": "f70fa03a9589f362b7a0689497500121a8bb664b3dfb01e2d09b5f7cee114b4f",
+    "scripts/gpu_r3_native_trial.py": "f58054bf21e8af8ef72f92271d2734c59d74fc070f0b7302100c935afba8ed3e",
+    "scripts/gpu_r3_pointer_input.py": "d89acbc3f55d338755e2d86c99770759127957500cbfbf5ffabe14d1c479f74a",
+    "scripts/gpu_r3_pointer_stream.py": "d8c998023a6ae0672320616cab3c140f688e57c672ac85526ac7a1f5a415856e",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/observer-correction-proposal.md": "62c8d0afa4a72f3e939e4792e627f0b9ba4be151b8ed40a278dd5c0c30dad9dd"
+  },
+  "preserved_boundaries": "No renderer mechanism, GPU lifetime policy, exact8/painter order, budget, dependency, prototype, DRM execution or CPU optimization change. S4/S5 and issue open."
+}
