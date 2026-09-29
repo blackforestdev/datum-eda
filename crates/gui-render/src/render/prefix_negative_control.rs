@@ -12,6 +12,7 @@ pub(crate) enum Fault {
     MissingSuffixMask,
     OverlappingSuffix,
     DamageOverflow,
+    TileOverflow,
     StaleWorking,
 }
 thread_local! {
@@ -40,6 +41,7 @@ impl Fault {
             | Self::StaleKey
             | Self::OldDamageMissing
             | Self::DamageOverflow
+            | Self::TileOverflow
             | Self::OverlappingSuffix
             | Self::MissingSuffixMask
             | Self::StaleWorking => images.copy(encoder),

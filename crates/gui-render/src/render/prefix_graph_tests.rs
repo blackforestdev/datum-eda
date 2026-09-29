@@ -459,8 +459,10 @@ fn encoded_images_survive_eviction_until_actual_submission_completion() {
 
 #[test]
 #[ignore = "GPU coherent pair retirement and recovery control; requires exact8x"]
-fn pair_generation_allowance_survives_replacement_and_device_recovery() {
-    let mut c = capture8();
+pub(super) fn pair_generation_allowance_survives_replacement_and_device_recovery() {
+    let mut c = reference_capture8();
+    c.width = 1280;
+    c.height = 800;
     let state = datum_gui_protocol::load_fixture_workspace_state();
     prepare(&mut c, &state, &SourceEpoch::default());
     frame(&mut c, true);
@@ -471,14 +473,18 @@ fn pair_generation_allowance_survives_replacement_and_device_recovery() {
         .prefix_images(&c.device)
         .unwrap();
     c.renderer
-        .prepare_surface_attachment(&c.device, 32, 64, || true)
+        .prepare_surface_attachment(&c.device, 1279, 800, || true)
         .unwrap();
     let second = c
         .renderer
         .surface_attachments
         .prefix_images(&c.device)
         .unwrap();
-    assert_eq!(observer.allocations().len(), 4);
+    assert_eq!(observer.allocations().len(), 10);
+    assert_eq!(
+        observer.allocations().iter().map(|a| a.bytes).sum::<u64>(),
+        158_083_968
+    );
     assert_eq!(c.renderer.surface_attachment_reserved_generations(), 2);
     let mut replacement = c
         .renderer
@@ -497,11 +503,11 @@ fn pair_generation_allowance_survives_replacement_and_device_recovery() {
     drop(c.renderer);
     assert_eq!(
         observer.allocations().len(),
-        4,
-        "close cannot release outstanding pair references"
+        10,
+        "close cannot release outstanding five-image bundle references"
     );
     drop(first);
-    assert_eq!(observer.allocations().len(), 2);
+    assert_eq!(observer.allocations().len(), 5);
     replacement
         .prepare_surface_attachment(&c.device, 64, 64, || true)
         .unwrap();
@@ -513,8 +519,8 @@ fn pair_generation_allowance_survives_replacement_and_device_recovery() {
 
 #[test]
 #[ignore = "GPU bounded optional-refusal fallback control; requires exact8x"]
-fn required_refusal_defers_once_then_propagates_without_recreating_prefix() {
-    let mut c = capture8();
+pub(super) fn required_refusal_defers_once_then_propagates_without_recreating_prefix() {
+    let mut c = reference_capture8();
     let state = datum_gui_protocol::load_fixture_workspace_state();
     prepare(&mut c, &state, &SourceEpoch::default());
     frame(&mut c, true);

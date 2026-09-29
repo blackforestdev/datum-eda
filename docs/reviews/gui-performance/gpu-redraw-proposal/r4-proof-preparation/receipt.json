@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source_base": "6f13bf1d",
+  "authority": "../owner-approval-r4.json",
+  "status": "Prepared exact bounded r4 GPU batch; no GPU execution yet.",
+  "owner_stop_boundary": "Complete the approved R4 scope and stop at its disposition. Then give me one consolidated GPU completion assessment, separating renderer defects, measured budget failures, and qualification gaps. Do not respond with another isolated proposal without explaining how it changes the overall path to completion. Identify anything whose feasibility is still unknown. I need an end-to-end status, not more commit counts.",
+  "changes": [
+    "Opt-in test-only atlas sample readback retains T after resolve. Production and groups2-4 keep original render-attachment usages and Discard. Group1 scratch/readback resources and altered storage are excluded from resource/performance claims.",
+    "Compare every selected T sample with a separate full-painter eight-sample target using original vertices/projections/painter. Cover fractional old/new crosshairs, glyph overlap, all256cells including first/last, partial edge/padding, and complete C/presented bytes. Clear unused/padded cells are checked. Existing shared shader has actual GPU wrong-origin and wrong-sample variants; duplicate/missing painter controls remain.",
+    "Reconcile lifecycle fixtures with all five images, four optional retirements, two near-reference generations totaling158083968bytes, required-refusal suppression, completion failure/coalescing and full fallback. Remove obsolete restricted-mask generation fixture and unused owner fields; no per-frame mapping GPU allocation exists.",
+    "Actual common encoder paths check five continuation markers plus cold graph at31/32queries, and warm/empty/full-fallback final markers. Draw-free continuation pressure is a capacity test, not transfer-performance evidence.",
+    "Group4 includes a second exact test executable for hidden native X11/Vulkan/P630 COPY_DST and8x-format capability. This is the pinned reference host integration prerequisite, not a pointer trial or extra native diagnostic campaign.",
+    "Partition overflow and >256tile refusal reconstruct cold without truncation. Diagnostic tests are one serial first-failure batch with one300s deadline across both executables."
+  ],
+  "offline_verification": {
+    "shader": "Shared suffix/restoration and both negative shader variants pass installed Naga parsing/validation offline.",
+    "builds": "Guarded offline test-only compilation completed: renderer1m50s, native2m04s. Exactly one intended test listed per executable; paths and hashes pinned in declaration. These are not candidate/baseline release builds.",
+    "lint": "Final default/visual gui-render/gui-app all-target Clippy pass with -D warnings.",
+    "policy": "Source2660,13source-policy controls,resource/dependency authority and20parity inventories pass. Prior metadata3936bytes and14transition/capacity controls reused unchanged.",
+    "scope": "No GPU/native execution or runtime acceptance; full native drift remains outside this bounded preflight."
+  },
+  "execution_consumed": {
+    "gpu_batches": 0,
+    "candidate_release_builds": 0,
+    "baseline_release_builds": 0,
+    "native_trials": 0
+  },
+  "next": "Run the single pinned300s batch. First API/exact/sample/negative/capacity/resource/capability failure permanently stops this attempt and conditional releases/native trials. Only full pass permits one candidate and one matched-baseline release plus fixed12pointer campaign. End at the approved R4 disposition with the requested consolidated completion assessment; no automatic new proposal/implementation campaign or issue closure.",
+  "source_sha256": {
+    "crates/gui-app/src/native_gpu.rs": "6d429ffd1e18cc35135ecea010b1dd5cf93bb721dc32a1044d50e2871a21b5f5",
+    "crates/gui-render/src/render/gpu_composition.rs": "9187dcc91afa21cc4eb873ed7a37b547331e68e5c83925485810ba500529d818",
+    "crates/gui-render/src/render/gpu_damage.rs": "179e930c77d2f4ef768397d6447f3e25e9f39eca06508e37031e73e764058ce0",
+    "crates/gui-render/src/render/gpu_damage_sample_tests.rs": "fc1582e58cd146cf9e2e29e78551f80c041f00bdb95432660d1d085a9aea268d",
+    "crates/gui-render/src/render/gpu_frame.rs": "6fc3a61c7b164660de6d1abe4ad5c157487de87a79df580fe3a7755077747c01",
+    "crates/gui-render/src/render/gpu_surface.rs": "84b6f94339e58b5c6ec47437b79dc85df4ca51f42e1ce0f6be359cca28e6e956",
+    "crates/gui-render/src/render/painter_hover_qualification.rs": "d616aff99351aca207dcff4e966797ad997f622366e9b2c8f694f27d6c1d51d1",
+    "crates/gui-render/src/render/prefix_graph_tests.rs": "412cfebe8a44df3b15b5ece46bec7e8fd2d9c38285d46af44f0f4611f9a7d6b7",
+    "crates/gui-render/src/render/prefix_negative_control.rs": "b043e56ecf90d0878bb66462388956dcabac4c483e0b220d663b653ac766fd01",
+    "crates/gui-render/src/render/r3_damage_qualification.rs": "b6ae12aff3a28130cc5800f5d9304b1f8e5420c3a5f5bc3f2948c781757f0851",
+    "crates/gui-render/src/render/session_prefix.rs": "f338abfd61cea165907f78017dcf7ea5d6db394c5d9512f831cb87621a337665",
+    "crates/gui-render/src/render/regional_sample_oracle.rs": "878580da8d925eaff4813d771858a7141d456068b20effe51e1c429f465dfab5"
+  },
+  "artifacts_sha256": {
+    "offline-logs.tar.gz": "a199be04b8ca21cf871f9888270b04dc2edd8148870d4c31981c757bc40bde63",
+    "gpu-batch-declaration.json": "cfec454925c1d3d5bc56a7c0b49846096eeacc309f78c66c9d9ab14e8b03369a"
+  }
+}

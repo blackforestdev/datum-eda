@@ -287,3 +287,68 @@ pub(crate) fn prove(device: &wgpu::Device, queue: &wgpu::Queue, _adapter: &wgpu:
         );
     }
 }
+
+/// R4 translation and sample-index negatives exercise the actual atlas shader.
+pub(crate) fn prove_regional(device: &wgpu::Device, queue: &wgpu::Queue) {
+    use crate::renderer_state::damage::regional::Plan;
+    for format in [
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        wgpu::TextureFormat::Bgra8UnormSrgb,
+    ] {
+        let alias = format.remove_srgb_suffix();
+        let source = texture(device, format);
+        let source_view = source.create_view(&wgpu::TextureViewDescriptor {
+            format: Some(alias),
+            ..Default::default()
+        });
+        let atlas = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("r4-known-atlas-samples"),
+            size: wgpu::Extent3d {
+                width: 512,
+                height: 512,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 8,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[alias],
+        });
+        let atlas_view = atlas.create_view(&wgpu::TextureViewDescriptor {
+            format: Some(alias),
+            ..Default::default()
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        initialize(device, &mut encoder, &source_view, alias);
+        queue.submit([encoder.finish()]);
+        let shader = include_str!("gpu_damage_restore.wgsl");
+        let origin_statement = "output.source = vec2(tile % columns, tile / columns) * 32u;";
+        assert!(shader.contains(origin_statement) && shader.contains("i32(sample)"));
+        for (label, source, should_match) in [
+            ("translated samples", shader.to_owned(), true),
+            ("wrong origin", shader.replace(origin_statement, "output.source = vec2(tile % columns, tile / columns) * 32u + vec2<u32>(32u, 0u);"), false),
+            ("wrong sample", shader.replace("i32(sample)", "0"), false),
+        ] {
+            let restoration = pollster::block_on(Restoration::create(device, alias, &source)).unwrap();
+            let plan = Plan::new([WIDTH, HEIGHT], &[[96, 0, 224, 2]]).unwrap();
+            let mut encoder = device.create_command_encoder(&Default::default());
+            restoration.encode_regional(device, &mut encoder, &source_view, &atlas_view, &plan, None);
+            queue.submit([encoder.finish()]);
+            let actual = read_samples(device, queue, &atlas_view, 512, 512);
+            let mut matches = true;
+            for tile in plan.tiles() {
+                for y in 0..tile.extent[1] {
+                    for x in 0..tile.extent[0] {
+                        for sample in 0..8 {
+                            let index = (((tile.atlas[1] + y) * 512 + tile.atlas[0] + x) * 8 + sample) as usize;
+                            matches &= actual[index] == expected(tile.source[0] + x, tile.source[1] + y, sample);
+                        }
+                    }
+                }
+            }
+            assert_eq!(matches, should_match, "{format:?}: {label}");
+            eprintln!("r4 sample primitive {format:?}: {label}, expected_match={should_match}");
+        }
+    }
+}

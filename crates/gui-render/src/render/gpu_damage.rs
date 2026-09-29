@@ -71,11 +71,7 @@ pub(crate) struct Masks {
     pub(crate) restoration: Option<Restoration>,
     pub(crate) unrestricted: Binding,
     pub(crate) layout: wgpu::BindGroupLayout,
-    #[cfg(all(test, feature = "visual"))]
-    screen: Arc<Budget>,
     fixed_generations: Arc<Budget>,
-    #[cfg(all(test, feature = "visual"))]
-    frame_generations: Arc<Budget>,
 }
 impl Masks {
     pub(crate) fn new(
@@ -86,38 +82,13 @@ impl Masks {
         let layout = layout(device);
         let fixed_generations =
             previous.map_or_else(|| Budget::new(2), |p| p.fixed_generations.clone());
-        #[cfg(all(test, feature = "visual"))]
-        let frame_generations =
-            previous.map_or_else(|| Budget::new(2), |p| p.frame_generations.clone());
         let unrestricted = Self::binding(device, &layout, &screen, &fixed_generations, None)?;
         Ok(Self {
             restoration: None,
             unrestricted,
             layout,
-            #[cfg(all(test, feature = "visual"))]
-            screen,
             fixed_generations,
-            #[cfg(all(test, feature = "visual"))]
-            frame_generations,
         })
-    }
-
-    /// Each queued frame owns a distinct immutable uniform. Admission refusal
-    /// chooses the full graph; it never overwrites a submitted generation.
-    #[cfg(all(test, feature = "visual"))]
-    pub(crate) fn restricted(
-        &self,
-        device: &wgpu::Device,
-        rectangles: &[[u32; 4]],
-    ) -> Option<Binding> {
-        Self::binding(
-            device,
-            &self.layout,
-            &self.screen,
-            &self.frame_generations,
-            Some(rectangles),
-        )
-        .ok()
     }
 
     fn binding(
@@ -200,6 +171,11 @@ mod tests {
             shader(include_str!("../text_gpu/glyph.wgsl"), 1),
             shader(raw(include_str!("terminal_graphics.rs")), 2),
             include_str!("gpu_damage_restore.wgsl").to_owned(),
+            include_str!("gpu_damage_restore.wgsl").replace("i32(sample)", "0"),
+            include_str!("gpu_damage_restore.wgsl").replace(
+                "output.source = vec2(tile % columns, tile / columns) * 32u;",
+                "output.source = vec2(tile % columns, tile / columns) * 32u + vec2<u32>(32u, 0u);",
+            ),
         ];
         for source in sources {
             let module = wgpu::naga::front::wgsl::parse_str(&source).unwrap();

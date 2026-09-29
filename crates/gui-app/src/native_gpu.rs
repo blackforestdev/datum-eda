@@ -76,3 +76,54 @@ pub(super) async fn create(window: std::sync::Arc<Window>) -> Result<Bundle> {
     append_gui_diagnostic_line("wgpu request device end");
     Ok((instance, surface, adapter, device, queue))
 }
+
+#[cfg(all(test, target_os = "linux"))]
+mod regional_capability_tests {
+    #[test]
+    #[ignore = "r4 group4 native X11/Vulkan copy-target capability; single approved batch only"]
+    #[allow(deprecated)] // Hidden capability fixture; production uses ActiveEventLoop.
+    fn regional_reference_surface_supports_copy_destination() {
+        use winit::platform::x11::EventLoopBuilderExtX11;
+        let event_loop = winit::event_loop::EventLoop::<()>::with_user_event()
+            .with_x11()
+            .with_any_thread(true)
+            .build()
+            .unwrap();
+        let window = std::sync::Arc::new(
+            event_loop
+                .create_window(
+                    winit::window::Window::default_attributes()
+                        .with_visible(false)
+                        .with_inner_size(winit::dpi::PhysicalSize::new(1280, 800)),
+                )
+                .unwrap(),
+        );
+        let (_instance, surface, adapter, _device, _queue) =
+            pollster::block_on(super::create(window.clone())).unwrap();
+        let identity = adapter.get_info();
+        assert!(identity.name.contains("P630"));
+        assert_eq!(identity.backend, wgpu::Backend::Vulkan);
+        let caps = surface.get_capabilities(&adapter);
+        assert!(
+            caps.usages.contains(wgpu::TextureUsages::COPY_DST),
+            "reference native surface refuses COPY_DST"
+        );
+        let config =
+            crate::gui_runtime_support::surface_configuration(&caps, window.inner_size(), None);
+        assert!(
+            config
+                .usage
+                .contains(wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::RENDER_ATTACHMENT)
+        );
+        assert!(
+            adapter
+                .get_texture_format_features(config.format)
+                .flags
+                .sample_count_supported(8)
+        );
+        eprintln!(
+            "r4 native capability passed: {:?}, {:?}, {:?}",
+            identity.name, config.format, config.usage
+        );
+    }
+}

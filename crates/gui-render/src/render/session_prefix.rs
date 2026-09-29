@@ -119,6 +119,20 @@ impl Prefix {
     }
 }
 
+#[cfg(all(test, feature = "visual", target_os = "linux"))]
+impl super::RenderSession {
+    pub(crate) fn regional_plan_for_proof(
+        &self,
+        previous: &crate::PreparedScene,
+        extent: [u32; 2],
+    ) -> crate::renderer_state::damage::regional::Plan {
+        let old = Pixels::capture(previous, extent).unwrap();
+        let new = Pixels::capture(self.prepared().unwrap(), extent).unwrap();
+        let union = old.union(new).unwrap().disjoint().unwrap();
+        crate::renderer_state::damage::regional::Plan::new(extent, union.rectangles()).unwrap()
+    }
+}
+
 // Include the linear receipt's key/completion fields, transient tile plan and
 // image-owner handle containers. Global allocation/queue-observer machinery has
 // its existing independent accounting; it is not hidden in a validity list.
