@@ -67,7 +67,7 @@ impl Prefix {
     pub(crate) fn requested(&self) -> bool {
         self.request.is_some()
     }
-    #[cfg(test)]
+    #[cfg(all(test, feature = "visual"))]
     pub(crate) fn desired_support(&self) -> Option<Pixels> {
         self.support
     }

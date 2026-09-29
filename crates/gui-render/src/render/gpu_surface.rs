@@ -350,6 +350,7 @@ impl Renderer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(all(feature = "visual", target_os = "linux"))]
     impl SurfaceAttachments {
         fn submission_ref(&self) -> Option<SubmissionRef> {
             self.current
@@ -598,6 +599,6 @@ mod tests {
 #[path = "attachment_cost_probe.rs"]
 mod attachment_cost_probe;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "visual"))]
 #[path = "prefix_negative_control.rs"]
 pub(crate) mod prefix_negative_control;
