@@ -1,0 +1,18 @@
+{
+  "changed_pixels": 2753,
+  "bounds": [
+    240,
+    75,
+    967,
+    725
+  ],
+  "changed_support": "All changes confined to full reference crosshair at x299/300 and y149/150; every other pixel identical. Final crosshair absent on visual inspection.",
+  "scheduled_requests": 3600,
+  "last_physical_position": [
+    300,
+    150
+  ],
+  "maximum_send_lateness_ns": 629512,
+  "producer_duration_ns": 30000506207,
+  "limitation": "Producer sends are not native receipt/application/presentation proof. No input receipt or complete drained GPU manifest survived forced cleanup."
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "status": "Proposal only; no new native run authorized",
+  "owner_response": "approve GPU r3 crosshair evidence replay",
+  "problem": "First lineage-corrected native trial lost only the crosshair. The old runner asserted pixel equality before controlled drain/export, destroying native state evidence; no unique renderer cause is established.",
+  "implemented_correction": [
+    "Latch a pixel mismatch as the first invalidity, preserve it through later cleanup errors, and complete the existing bounded shutdown/export before returning failure. Never turn a mismatch into a pass.",
+    "Record final screenshot start/end monotonic times to correlate image with existing before/after native demand states. No renderer, input workload, tolerance, golden, dependency or native observer change."
+  ],
+  "offline_proof": "Five runner controls passed, including output-failure persistence, later drain-error retention, and unchanged campaign/budget stops; source health2644 passed.",
+  "scope": {
+    "builds": "None. Reuse the newly built and independently source-bound candidate binary. Baseline also retained but not launched.",
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/candidate-26b51ded-r3-lineage-datum-gui",
+      "sha256": "21a01d41333b40a0fdd108e53ff75aa29d09f7951aa4ee2e7fd9cffe849937ee"
+    },
+    "fixture_and_method": "Same pinned project, CLI, referencePNG, P630/Vulkan exact8/Fifo,1280x800 and absolute40s startup+5s warmup+30s120Hz400x240pointer+5s still schedule as archived declaration.json. Same cadence bound; no rehearsal or parameter variant.",
+    "run_limit": "Exactly one candidate GPU diagnostic trial, maximum150s wall time including existing2s controlled-drain socket waits and bounded cleanup. No baseline/quiet/pan trial and no performance acceptance.",
+    "identity": "After approval only, set runner/guard canonical identity to target/gpu-r3-crosshair-proof and fixed run cap1; seal new declaration with corrected method/helper hashes and immutable binary/fixture pins. Existing r2/r3/lineage stopped states remain immutable. Spend index0 once; no replacement.",
+    "failure_evidence": "A completed final screenshot pixel mismatch remains fatal but healthy process completes the already bounded drain/export. Preserve raw native input/GPU logs before any semantic validators. Do not force a new frame, move pointer after workload, change application, or relabel mismatch. Drain/receipt failures remain additional invalidity.",
+    "decision": "Compare last acknowledged motion and every later before/after native state, including pre-close, against screenshot interval. Cleared cursor narrows to native/application state; correct cursor/camera/hover narrows to preparation/render/presentation. Generic event names cannot identify exact clearing event. If missing receipt, report unavailable; if image matches, prior failure remains unresolved rather than accepted.",
+    "stopping": "This one-shot diagnostic ends after preservation and source analysis regardless of pass/failure. No further native work follows by implication. No numerical qualification from this trial.",
+    "excluded": "No renderer variants, new Rust builds, GPU component reruns, DRM supervisor, CPU event-loop work, system tuning, acceptance or S4/S5 closure."
+  },
+  "source_sha256": {
+    "scripts/gpu_r3_native_trial.py": "249c99f603dcfc3e0337d80da248d9d684f9f9828930567f5544aca78964be46",
+    "scripts/gpu_r3_trial_outcome.py": "22b0b6d2aa1ca35ae54492dd30a8e1736aedc8a9aa634ecc6bd558b45c8eed2d",
+    "scripts/test_gpu_r3_runner.py": "d2f4ac16ccab86300e561ac0ff3d3e7ee6a97d07879dc8d53c4d8ac634072a3d"
+  },
+  "previous_campaign_sha256": "d2fede5f6d35391c2ceae2f2c312fac764124b3c16d5d516c70a94e19b7a4606",
+  "drm": "Complete DRM lifetime duty remains a separate final-qualification blocker; it does not prevent this narrowly scoped input/render diagnosis. Existing unaccepted DRM method review remains controlling for that unfinished work."
+}

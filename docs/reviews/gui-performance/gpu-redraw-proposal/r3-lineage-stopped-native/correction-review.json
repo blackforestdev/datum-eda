@@ -1,0 +1,27 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only correction/proposal review; no builds/tests/native execution; not owner approval",
+  "pins": {
+    "scripts/gpu_r3_native_trial.py": "249c99f603dcfc3e0337d80da248d9d684f9f9828930567f5544aca78964be46",
+    "scripts/gpu_r3_trial_outcome.py": "22b0b6d2aa1ca35ae54492dd30a8e1736aedc8a9aa634ecc6bd558b45c8eed2d",
+    "scripts/test_gpu_r3_runner.py": "d2f4ac16ccab86300e561ac0ff3d3e7ee6a97d07879dc8d53c4d8ac634072a3d",
+    "scripts/gpu_r3_campaign.py": "47be6ff9417b75f33d63b0b1cb1718b83af5a946bf4c4e29f0bf29d0e57b33c7",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/r3-lineage-stopped-native/diagnostic-proposal.json": "ea1c87f24655e1beb738e37ab8a93507d8effee427947492ccabbf4b42b5f1e1",
+    "target/gpu-r3-lineage-proof/campaign-state.json": "d2fede5f6d35391c2ceae2f2c312fac764124b3c16d5d516c70a94e19b7a4606"
+  },
+  "blocking_findings": [],
+  "verified": [
+    "Image mismatch latches invalidity and saves before requesting controlled shutdown. Exported receipt is read before semantic validation or rethrow of primary image failure. Raw receipt/log files remain available for diagnosis.",
+    "record_failure retains first error and appends additional failures; finish_result cannot override latched failure with valid outcome or budget status. Output mismatch never becomes accepted.",
+    "Screenshot monotonic begin/end markers are present. No pointer reposition, forced repaint, renderer mutation or tolerance change added.",
+    "Proposal source hashes match current files; previous stopped campaign hash matches current state. Current runner still points to stopped lineage campaign and cannot itself create the proposed new campaign.",
+    "Packet explicitly requests exactly one candidate GPU diagnostic using existing binary, no builds or replacement trial, and says matching image leaves prior failure unresolved. No performance acceptance or roadmap closure authorized."
+  ],
+  "remaining_execution_prerequisites": [
+    "Explicit exact owner approval first. Then implement and pin new canonical diagnostic directory, fixed cap 1 and diagnostic-only terminal outcome; current cap12 campaign helper is intentionally not yet that executor.",
+    "Preserve prior stopped directories. Diagnostic completion must not imply continuation even if image matches. Re-pin modified method and helper hashes before index0 reservation.",
+    "Record missing receipt/drain failure as additional invalidity. The controlled listener accept uses its existing 15s bound and connection reads 2s; proposal shorthand mentioning 2s socket waits is not the entire drain wait."
+  ],
+  "test_scope": "Five controls exercise failure state helpers and existing campaign/input validation; source inspection confirms orchestration order. Reviewer did not execute controls or infer integrated runtime validation.",
+  "disposition": "Correction and bounded proposal are reviewable without further source blocker. This recommendation grants no run authorization and does not establish crosshair root cause."
+}

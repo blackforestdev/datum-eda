@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "owner-approval-r3-lineage.json",
+  "status": "STOPPED at first native candidate GPU trial: final output mismatch; no further campaign quota or pan run available",
+  "component": "Single approved exact8 lineage case passed once; see r3-lineage-validation/receipt.json. Previous exact8 and timer controls retain their scoped validity.",
+  "builds": "Corrected candidate and observer-only baseline release builds passed serial guarded/offline compilation. App and render freshly compiled at actual source paths; exact binary/source/patch receipts archived. Isolated baseline target removed only after pinning binary/logs at compiler-idle boundary.",
+  "observed": [
+    "Startup exact0changedpixels on P630/Vulkan/Fifo exact8. Producer completed3600requests with finalphysical(300,150), maximumlateness0.629512ms.",
+    "Final screenshot differs2753pixels, confined exactly to absent reference crosshair; all other pixels identical.",
+    "281numeric GPU receipts emitted without the old lineage error, but final pixel assertion caused forced cleanup before native input export/controlled drain. No complete workload or performance result; do not compute qualifying percentiles from partial receipts.",
+    "Canonical new campaign stopped index0. No baseline, quiet or pan run executed. No surviving descendants; binary unchanged. Prior campaign hash unchanged."
+  ],
+  "source_assessment": "Independent read-only review confirms output assertion precedes evidence export. Source supports several possible clear paths and renderer paths; absent native input evidence prevents unique cause attribution. No speculative renderer change made.",
+  "correction": "Runner-only evidence preservation and timestamp changes, five offline controls passed. Stopped declaration cannot execute modified methods. New single diagnostic replay is only proposed; zero new runs.",
+  "remaining": "GPU repair/S4 remain open. Crosshair cause, native correctness/frame budgets, complete DRM duty and remaining S4/S5 proof outstanding. CPU deferred; no new dependency.",
+  "artifacts_sha256": {
+    "baseline-build.json": "8377bd8aaf144aa126ef010b66f33cbcda7d125d7e19a330665f69f6ca753497",
+    "baseline-build.jsonl.gz": "c73a62a0bddf5b4137b1ef0b917c237ddd51392eb542b993d4bfc9b17c2e58bc",
+    "baseline-build.log": "1722ce57ec67e8a1f76e4a256c71ff5789dd3cbf56cbdc9b8a9ba719e17f58b7",
+    "campaign-state.json": "d2fede5f6d35391c2ceae2f2c312fac764124b3c16d5d516c70a94e19b7a4606",
+    "candidate-0-raw.tar.gz": "2b6e5a37027b8824aeddc1d05f0692c0532ee6ff92fafce32a068bb5a4fcf166",
+    "candidate-build.json": "c0a4ae819a728e476146c1f9e5aac137eb97a88d523ad30290e02ef2e741500d",
+    "candidate-build.jsonl.gz": "83792660a4853aed9c8287cd50c23056fc90c9652626757256ef242258e5c349",
+    "candidate-build.log": "b979f70539eca3caf311225ec8b3eb3c5f971b07e0e407009f7bf978f02b4e04",
+    "declaration.json": "7e23a20089e190b4a0711608e5186bc6d5d1be084ab5144f17f2029cb31d3b26",
+    "diagnostic-proposal.json": "ea1c87f24655e1beb738e37ab8a93507d8effee427947492ccabbf4b42b5f1e1",
+    "executed-method.tar.gz": "629eac7cfeb5e1c94c766560783e59494fb61ccc8a8cc9dc8e3d8074bbbd219e",
+    "independent-analysis.json": "e7191e5be9fd90c6049e6799dd72764da004203c49674a61c1490beeb7b8540c",
+    "pixel-and-producer-analysis.json": "fd1b88243f08d8ab51ce8dbf6844318662d5e67cfb0fe95f70875034f8b6f099",
+    "result.json": "1e484d97b3830e2040b831b769e2603df9bc5910fd196108feae7dfa216fe968",
+    "run-0-launch.log": "edb120bd9789c697ec8bc161bd6c9f7d392917ff3632c27618a51b056634f949",
+    "runner-controls.log": "f8f7a0853021c3363bd248c7902de61ea7c54ea9ad81132e8a7ed07a4da8ab34",
+    "source-health.log": "ccb7f6592a140388cb94ea4da558c8b586de0718535fd831600eb8b4062dadd5",
+    "workload.json": "dd7d5b747e3ad9a800b1448c8435dcbef95d803acf48754ff2d4b770c75ad3ce",
+    "correction-review.json": "d62ab31e10b68e53fe4371fedd04ac8c104e179a4aae626854ef9b3fe3f1cfe6"
+  },
+  "independent_review": "No blocking findings in concrete correction/one-replay proposal. Advisory only; new native execution remains unapproved."
+}

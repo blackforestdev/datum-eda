@@ -1,0 +1,76 @@
+{
+  "source": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "source_patch_sha256": "a60d6661d6a5ab3cb0c577297545f02d1a03847fe07949bf1584530c8f6e3865",
+  "proof": "Guarded isolated offline release build. Actual observer-patched baseline GUI app/render source compiled fresh=false. All31 reviewed observer source hashes match.",
+  "artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/baseline-source/crates/gui-app#datum-gui-app@0.1.0",
+    "manifest_path": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/baseline-source/crates/gui-app/Cargo.toml",
+    "target": {
+      "kind": [
+        "bin"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "datum-gui",
+      "src_path": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/baseline-source/crates/gui-app/src/main.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [
+      "visual"
+    ],
+    "filenames": [
+      "/home/bfadmin/Documents/datum-eda-gpu-r3-lineage-baseline-target/release/datum-gui"
+    ],
+    "executable": "/home/bfadmin/Documents/datum-eda-gpu-r3-lineage-baseline-target/release/datum-gui",
+    "fresh": false
+  },
+  "render_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/baseline-source/crates/gui-render#datum-gui-render@0.1.0",
+    "manifest_path": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/baseline-source/crates/gui-render/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "datum_gui_render",
+      "src_path": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/baseline-source/crates/gui-render/src/lib.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [
+      "visual"
+    ],
+    "filenames": [
+      "/home/bfadmin/Documents/datum-eda-gpu-r3-lineage-baseline-target/release/deps/libdatum_gui_render-a718ae6fbca5a3c1.rlib",
+      "/home/bfadmin/Documents/datum-eda-gpu-r3-lineage-baseline-target/release/deps/libdatum_gui_render-a718ae6fbca5a3c1.rmeta"
+    ],
+    "executable": null,
+    "fresh": false
+  },
+  "executable": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/baseline-997b618e-r3-lineage-datum-gui",
+  "binary_sha256": "3f3ce59839e643b5087777837ff76fe9c39656ac606f3d490a79c3568b7b9bcf"
+}

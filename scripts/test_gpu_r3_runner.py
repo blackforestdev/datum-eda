@@ -7,12 +7,37 @@ import tarfile
 import unittest
 from gpu_r3_campaign import next_index
 from gpu_r3_pointer_input import pointer_input
+from gpu_r3_trial_outcome import record_failure, finish_result
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT/'docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2'
 
 
 class RunnerControls(unittest.TestCase):
+    def test_output_failure_survives_successful_evidence_collection(self):
+        report = {}
+        record_failure(report, AssertionError('changed final pixels'))
+        finish_result(report, False)
+        self.assertEqual(report['status'], 'invalid')
+        self.assertEqual(report['error'], "AssertionError('changed final pixels')")
+
+    def test_shutdown_failure_preserves_original_output_failure(self):
+        report = {}
+        record_failure(report, AssertionError('changed final pixels'))
+        record_failure(report, TimeoutError('controlled drain'))
+        record_failure(report, AssertionError('changed final pixels'))
+        finish_result(report, True)
+        self.assertEqual(report['status'], 'invalid')
+        self.assertEqual(report['failures'], ["AssertionError('changed final pixels')",
+                                            "TimeoutError('controlled drain')"])
+        self.assertEqual(report['error'], report['failures'][0])
+
+    def test_clean_result_still_enforces_budget_stop(self):
+        for stop, expected in [(False, 'valid_descriptive_run'), (True, 'valid_budget_failure')]:
+            report = {}
+            finish_result(report, stop)
+            self.assertEqual(report['status'], expected)
+
     def test_single_use_campaign_stops_and_binds_declaration(self):
         declaration = dict(run_cap=12, runs=[None]*12)
         state = dict(status='ready', declaration_sha256='pinned', results=[])

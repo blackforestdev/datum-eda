@@ -1,0 +1,38 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only advisory; no source changes/builds/tests/native runs",
+  "pins": {
+    "scripts/gpu_r3_native_trial.py": "2bfad9f9ed6baf2a9914990aa0347e7db575580c235a5619f375f05926f7a231",
+    "crates/gui-app/src/native_input_observation.rs": "e84c2cd3325409cb261f2053f209f4c3c602dba7995140488ac273c47a3102aa",
+    "crates/gui-app/src/app_native_events.rs": "9c3cb879ce59180f9078a5bc107033654a1aaf7b550c8a4a1b5fa35aa94b5b24",
+    "crates/gui-app/src/runtime_camera_pane.rs": "1a52e082baeb065fbb0842ed4ad55a8a08756c05ddd0b0c140e5d4217aa70af5",
+    "crates/gui-render/src/render/session_pointer.rs": "b570e692009e156822f19a385270d933f8ce29a2539064cd24cbe96159b56d2b",
+    "crates/gui-render/src/render/interaction_overlay.rs": "de0bb370bac2a3ddef5e4841374f490e4c06a7afd20617ccd9a01745669d3b32",
+    "crates/gui-render/src/render/session_prefix.rs": "b5b8daed9e5a10c211d61a61164694a13b628873f0c88ef9685bc845087e53f9",
+    "crates/gui-render/src/render/session_frame.rs": "710fb72f37a9c56c6c3b004ab4bd3c9397015c0d1dba2b69f869103b766f6255",
+    "/tmp/gpu-r3-0-candidate-gpu-lxolkpsh/result.json": "1e484d97b3830e2040b831b769e2603df9bc5910fd196108feae7dfa216fe968"
+  },
+  "observed": [
+    "Native trial invalid at final screenshot comparison; result reports 2753 changed pixels and forced cleanup. Parent pixel analysis localizes all changes to absent reference crosshair.",
+    "Input producer finished, but no exported app input receipt/drained GPU manifest survived. Sent requests do not prove received/applied final input."
+  ],
+  "concrete_finding": {
+    "id": "OUTPUT-01",
+    "source": "scripts/gpu_r3_native_trial.py final_pixel_difference assertion before close/ACK/export",
+    "severity": "blocking diagnostic completeness",
+    "detail": "Output mismatch triggers forced cleanup before existing bounded shutdown/export, discarding evidence needed to distinguish input state from renderer failure.",
+    "correction": "Latch primary output failure; if healthy, perform existing bounded controlled shutdown/ACK/export, retain raw receipt and samples before validators. Afterwards classify invalid and stop. Preserve primary failure even when drain/export also fails; never accept mismatch or resume quota."
+  },
+  "cause_disposition": "No unique renderer root cause established. Source explicitly clears cursor on focus loss, CursorLeft, nonauthoring route and unavailable preparation; these may produce absent crosshair. Retained restoration/suffix/prepared paths also remain candidates. Absence of receipt prevents selecting among them.",
+  "bounded_proposal": [
+    "One separately owner-approved diagnostic replay, unchanged source-bound binaries/fixture/scene/path and original stop conditions; new identity, no stopped-campaign quota or performance claim.",
+    "Record runner screenshot begin/end monotonic timestamps. Preserve native receipts before validation even on pixel mismatch. Inspect last pointer acknowledgement, subsequent before/after records and pre-close state against screenshot interval.",
+    "If cursor cleared in that interval, investigate corresponding app/native input path. If cursor remains expected with correct routing/camera/hover, narrow to prepared/render/presentation; receipt alone does not distinguish these layers.",
+    "Keep any cleanup failure and missing/truncated receipt explicit. Generic native_event kind prevents exact event-name attribution; do not infer it."
+  ],
+  "offline_scope": [
+    "Reuse existing final point/path and pointer triangle controls. Check real viewport point emits nonempty crosshair and old/new support covers full triangles through coalescing/repeated coordinates, using source/CPU evidence only if missing.",
+    "Reuse failed/deferred receipt support retention controls. Do not treat these offline invariants as proof of native delivery or repaint."
+  ],
+  "recommendation": "Correct evidence preservation and prepare narrowly bounded diagnostic approval packet; no speculative renderer edit justified by current evidence."
+}
