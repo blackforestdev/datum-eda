@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "status": "Source-reviewed bridge plan only; no baseline mutation, build, test or native run. GPU corrective approval remains outstanding.",
+  "baseline": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "candidate_inspected": "9c74d702f899b272cb994e966bbff6efb5967b4d",
+  "source_sha256": {
+    "crates/gui-app/src/runtime_state.rs": "91ed35eb3e2857e8b20acc59b5e39b39a3cf11f58f11ba220526cfab893d672f",
+    "crates/gui-app/src/interaction_refresh.rs": "46c04a3ba20dd0ec706e68f3b6d3fcfa9a1b8b774bdc8c1b5d76d1288ee9354d",
+    "crates/gui-app/src/runtime_present.rs": "1c9ec99e7f498b5c4adecc9a3ea5b5510098b5b9e58ba1ebef772f000aa04842",
+    "crates/gui-app/src/runtime_terminal_render.rs": "5103b6958c9a381fd0dacac2c14c7f527326416eb77dce1137cec363ed78be38",
+    "crates/gui-app/src/main.rs": "c2c52785b7d8fbfaad5080d216c9dbfd3a53c031f737a8c6ecd340ba1d3c7875",
+    "crates/gui-app/src/native_surface_transaction.rs": "24dc24021b3ce22066d0dd83f1bc8f1cfaaf491edf56548cddc747ebdae01df1",
+    "crates/gui-app/src/native_gpu_measurements.rs": "9ca9127bfb5f62c190d2c354bfe638a5e8ab7c035f8e6c23d7b2bf4097fca470",
+    "crates/gui-app/src/native_device_recovery.rs": "f5c8c91d3032c66d0869222b3102e35844563b50504231dbabd5d66fcb4c83ad",
+    "crates/gui-render/src/render/gpu_frame.rs": "0e7d6d1014ef5f4aac54a4f53b345226951d4092307e3a6dc9ac5bb01b2bd8af",
+    "crates/gui-render/src/render/gpu_measurements.rs": "75a0f87cc2965de1a351e0917723944631e99cbf59c11e0e680e4c9e6105b3d9"
+  },
+  "finding": "Baseline has Runtime-owned retained/prepared scenes and no RenderSession/FramePlan. Candidate workload hooks cannot be copied by importing the new rendering foundation into the baseline; that would confound the comparison.",
+  "bridge_boundary": "Measurement-only state observes existing baseline invalidation, preparation, attempt, target and successful presentation. It must not control scheduling, dirty flags, scene caching, drawing, resource admission, retries or presentation. Keep baseline full composed-scene rendering.",
+  "mapping": [
+    {
+      "file": "crates/gui-app/src/interaction_refresh.rs",
+      "symbols": [
+        "invalidate_scene_for_session_change",
+        "invalidate_scene",
+        "invalidate_surface_size",
+        "invalidate_frame",
+        "refresh_interaction_overlay"
+      ],
+      "observe": "Increment observer-owned content revision and record current scoped causal demand at all four invalidation paths and transient interaction refresh. Do not change existing None assignments, retention behavior or scene_dirty."
+    },
+    {
+      "file": "crates/gui-app/src/runtime_terminal_render.rs",
+      "symbols": [
+        "build_terminal_prepared_scene"
+      ],
+      "observe": "Advance preparation identity only on successful completed preparation. Central successful-return hook covers runtime_present, prepared_scene() and visual screenshot paths; patching runtime_present assignment alone misses two preparation callers. Failure preserves unknown/incomplete lineage."
+    },
+    {
+      "file": "crates/gui-app/src/runtime_present.rs",
+      "symbols": [
+        "render",
+        "present_native_frame"
+      ],
+      "observe": "Before each render_with_acquisition call snapshot observer owner/attempt/revision/preparation plus actual target identity into measurement state. Preserve upload-only false returns and retry lineage. Acknowledge a revision only after actual successful present_native_frame; errors/defer cannot clear active demand."
+    },
+    {
+      "file": "crates/gui-app/src/native_surface_transaction.rs",
+      "symbols": [
+        "queue_host",
+        "queue_owner",
+        "configuration_generation",
+        "begin_frame",
+        "present"
+      ],
+      "observe": "Expose read-only queue host/epoch/configuration identity using existing counters. Do not substitute an unrelated measurement host or manufacture constant configuration identity. Keep native transaction ownership untouched."
+    },
+    {
+      "file": "crates/gui-app/src/native_gpu_measurements.rs",
+      "symbols": [
+        "Host::new",
+        "Host::poll"
+      ],
+      "observe": "Backport complete manifest serialization/cancellation/drained counts and validation with identical core decoding and fixed query capacity. Use same semantic field definitions as candidate; numerical owner IDs need not equal across processes."
+    },
+    {
+      "file": "crates/gui-render/src/render/gpu_frame.rs",
+      "symbols": [
+        "flush_frame_uploads",
+        "queue.submit"
+      ],
+      "observe": "Same leading marker before final mixed uploads and final pass-end boundary; preserve baseline pass graph and upload-command ordering. Backport world/glyph/terminal continuation brackets at actual submissions, never only runtime-level render duration."
+    },
+    {
+      "file": "crates/gui-app/src/native_device_recovery.rs",
+      "symbols": [
+        "Host::new",
+        "commit_cpu_recovery_from"
+      ],
+      "observe": "Epoch replacement must retire old observer transactions with complete cancellation lineage, never silently restart attribution. A failed epoch invalidates the bounded experiment."
+    }
+  ],
+  "shared_observer_components": [
+    "GPU three-slot/32-query transaction and marker ownership, timeline decoding, cancellation lineage and drained frame range.",
+    "Monotonic 5s/30s/5s schedule, scoped native/window-round demand observation, 4096-record fixed cap and quiet/GPU mode separation.",
+    "Causal phase union across unacknowledged changes; unknown unscoped mutation invalidates work; shared receipt consumer retains late active work and validates complete frame coverage."
+  ],
+  "required_review_before_any_experiment": [
+    "Enumerate all remaining baseline writes to prepared/retained scenes and render routes; Main mapping here is not four-host parity proof. Fail on uninstrumented paths.",
+    "Review a diff restricted to observer state/hooks, query boundaries and receipt serialization. No shared-renderer implementation migration into baseline.",
+    "Prove identical observer semantics for deferred uploads, source changes, actual target changes, cancellation, late active work, quiet mode and close-only work. These are evidence requirements, not permission to spend additional native runs.",
+    "Source-bind baseline and candidate binaries independently; do not reuse the known shared-Cargo fingerprint collision. Preserve fixture hashes and producer/consumer versions."
+  ],
+  "authority": "Planning/source inspection is already authorized. This map adds no native execution, dependencies, CPU optimization, DRM observation or acceptance. The pending corrective-validation packet and existing r3 gates still govern when execution may resume."
+}
