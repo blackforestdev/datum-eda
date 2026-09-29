@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU r3 corrective validation",
+  "recorded_at": "2026-09-29T04:11:09Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/r3-stopped-correctness/corrective-validation.json",
+    "sha256": "65096302dbd3d13cedf89bddee7000b52f61dbbd6b2a8db12e868b2f33798ad0",
+    "commit": "6b0e3bdc16431fd5700562da94852441759c3d22"
+  },
+  "disposition": "Approve one source-bound corrected binary and serial four-case validation, once per case, first failure stops. On pass resume the unspent approved r3 timer conformance and conditional bounded experiment; original failures remain evidence. No DRM/CPU authority or numerical acceptance.",
+  "claim": "Same actual session retains its live synchronized Frontier/beads claim; no other session ownership inherited."
+}
