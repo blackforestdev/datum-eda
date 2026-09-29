@@ -13,56 +13,11 @@ use winit::window::WindowId;
 mod workload;
 
 const LIMIT: usize = 4096;
-const HOVER_BYTES: usize = 128;
-
-#[derive(Clone, Copy)]
-struct State {
-    cursor: Option<[f32; 2]>,
-    native_cursor: Option<(f32, f32)>,
-    center: [f32; 2],
-    zoom: f32,
-    pan: bool,
-    epoch: u64,
-    render_revision: u64,
-    render_activity: [u64; 2],
-    hover: [u8; HOVER_BYTES],
-    hover_len: usize,
-    hover_surface: Option<datum_gui_protocol::PaneContent>,
-    truncated: bool,
-}
-impl State {
-    fn capture(runtime: &Runtime) -> Self {
-        let ui = &runtime.workspace().ui;
-        let mut value = Self {
-            cursor: ui.cursor_pos.map(|p| [p.x, p.y]),
-            native_cursor: runtime.last_cursor_pos,
-            center: [runtime.camera.center_x_nm, runtime.camera.center_y_nm],
-            zoom: runtime.camera.zoom,
-            pan: runtime.pan_gesture.is_active(),
-            epoch: runtime.measurements.epoch(),
-            render_revision: runtime.renderer.render_session().content_revision(),
-            render_activity: runtime.renderer.render_session().measurement_activity(),
-            hover: [0; HOVER_BYTES],
-            hover_len: 0,
-            hover_surface: None,
-            truncated: false,
-        };
-        if let Some(hover) = &ui.hovered_object {
-            value.hover_len = hover.object_id.len().min(HOVER_BYTES);
-            value.hover[..value.hover_len]
-                .copy_from_slice(&hover.object_id.as_bytes()[..value.hover_len]);
-            value.hover_surface = Some(hover.surface);
-            value.truncated = hover.object_id.len() > HOVER_BYTES;
-        }
-        value
-    }
-    fn value(&self) -> Value {
-        json!({"cursor":self.cursor,"native_cursor":self.native_cursor,
-            "camera_center_nm":self.center,"camera_zoom":self.zoom,"pan_active":self.pan,
-            "device_epoch":self.epoch,"render_revision":self.render_revision,"hover_utf8":std::str::from_utf8(&self.hover[..self.hover_len]).ok(),
-            "hover_surface":self.hover_surface.map(|s|format!("{s:?}")),"truncated":self.truncated})
-    }
-}
+#[path = "native_input_state.rs"]
+mod state;
+use state::State;
+#[path = "native_output_diagnostic.rs"]
+mod diagnostic;
 
 struct Record {
     workload: [u64; 3],
@@ -79,6 +34,7 @@ struct Record {
 
 pub(crate) struct InputObservation {
     workload: Option<workload::Schedule>,
+    diagnostic: Option<diagnostic::Diagnostic>,
     path: PathBuf,
     started: Instant,
     monotonic_origin_ns: u64,
@@ -88,7 +44,9 @@ pub(crate) struct InputObservation {
 }
 impl InputObservation {
     pub(crate) fn from_environment() -> Result<Option<Self>> {
+        let diagnostic = diagnostic::enabled()?;
         let Some(path) = std::env::var_os("DATUM_INPUT_RECEIPT") else {
+            ensure!(!diagnostic, "output diagnostic requires input receipt");
             ensure!(
                 std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_none(),
                 "workload attribution requires input receipts"
@@ -114,6 +72,7 @@ impl InputObservation {
         );
         Ok(Some(Self {
             workload: workload::Schedule::from_environment()?,
+            diagnostic: diagnostic.then(diagnostic::Diagnostic::default),
             path: path.into(),
             started: Instant::now(),
             monotonic_origin_ns: ts.tv_sec as u64 * 1_000_000_000 + ts.tv_nsec as u64,
@@ -126,6 +85,9 @@ impl InputObservation {
         self.begin_demand(Some(event), before)
     }
     fn begin_demand(&mut self, event: Option<&WindowEvent>, before: State) -> bool {
+        if self.diagnostic.is_some() {
+            return self.begin_diagnostic(event, before);
+        }
         let (position, button) = match event {
             Some(WindowEvent::CursorMoved { position, .. }) => {
                 (Some([position.x, position.y]), None)
@@ -188,11 +150,21 @@ impl InputObservation {
         true
     }
     pub(crate) fn route(&mut self, route: &'static str) {
+        if let Some(diagnostic) = &mut self.diagnostic {
+            if let Some(record) = &mut diagnostic.pending {
+                record.route = route;
+            }
+            return;
+        }
         if let Some(index) = self.active {
             self.records[index].route = route;
         }
     }
     fn complete(&mut self, after: Option<State>) {
+        if self.diagnostic.is_some() {
+            self.complete_diagnostic(after);
+            return;
+        }
         if let Some(index) = self.active.take() {
             let record = &mut self.records[index];
             record.completed_ns = Some(self.started.elapsed().as_nanos());
@@ -200,7 +172,10 @@ impl InputObservation {
         }
     }
     fn complete_receipt(&self) -> bool {
-        !self.overflow
+        self.diagnostic
+            .as_ref()
+            .is_none_or(|d| d.failure.is_none() && d.pending.is_none())
+            && !self.overflow
             && self.active.is_none()
             && self.records.iter().all(|r| {
                 r.completed_ns.is_some()
@@ -212,11 +187,14 @@ impl InputObservation {
         let final_state = State::capture(runtime);
         let complete = self.complete_receipt() && !final_state.truncated;
         let state = runtime.workspace();
-        let records: Vec<_> = self.records.iter().enumerate().map(|(i,r)|json!({"sequence":i,
-            "workload":r.workload,"workload_ns":r.workload_ns,"demand_kind":r.demand_kind,"received_ns":r.received_ns,"completed_ns":r.completed_ns,"position":r.position,
-            "button":r.button,"route":r.route,"before":r.before.value(),"after":r.after.map(|s|s.value())})).collect();
+        let records: Vec<_> = self
+            .records
+            .iter()
+            .enumerate()
+            .map(|(i, r)| r.value(i))
+            .collect();
         let gpu_drained = runtime.renderer.gpu_measurement_drained_manifest()?;
-        let report = json!({"schema":"datum.input-receipt/v1","pid":std::process::id(),
+        let report = json!({"schema":"datum.input-receipt/v1","pid":std::process::id(),"mode":if self.diagnostic.is_some(){"output-diagnostic"}else{"causal-input"},
             "gpu_drained":gpu_drained,"workload_manifest":self.workload.as_ref().map(workload::Schedule::value),"monotonic_origin_ns":self.monotonic_origin_ns,"complete":complete,"overflow":self.overflow,
             "record_limit":LIMIT,"record_storage_bytes":self.records.capacity()*std::mem::size_of::<Record>(),
             "records":records,"final_state":final_state.value(),
@@ -230,7 +208,18 @@ impl InputObservation {
 }
 
 impl App {
-    pub(crate) fn begin_native_round_observation(&mut self) {
+    pub(crate) fn begin_native_round_observation(&mut self, event_loop: &ActiveEventLoop) {
+        if self
+            .input_observation
+            .as_ref()
+            .is_some_and(|o| o.diagnostic.is_some())
+        {
+            if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &self.runtime) {
+                observer.begin_demand(None, State::capture(runtime));
+            }
+            self.check_output_diagnostic(event_loop);
+            return;
+        }
         if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
             && observer.workload.is_some()
             && observer.begin_demand(None, State::capture(runtime))
@@ -246,7 +235,18 @@ impl App {
             }
         }
     }
-    pub(crate) fn end_native_round_observation(&mut self) {
+    pub(crate) fn end_native_round_observation(&mut self, event_loop: &ActiveEventLoop) {
+        if self
+            .input_observation
+            .as_ref()
+            .is_some_and(|o| o.diagnostic.is_some())
+        {
+            if let Some(observer) = &mut self.input_observation {
+                observer.complete(self.runtime.as_ref().map(State::capture));
+            }
+            self.check_output_diagnostic(event_loop);
+            return;
+        }
         if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
             && observer.workload.is_some()
             && let Some(index) = observer.active
@@ -275,7 +275,13 @@ impl App {
             }
             _ => false,
         };
-        if observed {
+        self.check_output_diagnostic(event_loop);
+        if observed
+            && self
+                .input_observation
+                .as_ref()
+                .is_none_or(|o| o.diagnostic.is_none())
+        {
             let observer = self.input_observation.as_mut().expect("active observer");
             let tag = observer.records.last().unwrap().workload;
             if tag[0] != 0
@@ -291,7 +297,12 @@ impl App {
         }
         self.dispatch_native_window_event(event_loop, window_id, event);
         if observed {
-            if let Some(runtime) = &mut self.runtime {
+            if self
+                .input_observation
+                .as_ref()
+                .is_none_or(|o| o.diagnostic.is_none())
+                && let Some(runtime) = &mut self.runtime
+            {
                 runtime
                     .renderer
                     .render_session_mut()
@@ -302,6 +313,7 @@ impl App {
                 .expect("active observer")
                 .complete(self.runtime.as_ref().map(State::capture));
         }
+        self.check_output_diagnostic(event_loop);
     }
     pub(crate) fn export_input_receipt(&self) -> Result<()> {
         if let Some(observer) = &self.input_observation {
@@ -324,7 +336,7 @@ pub(crate) fn mark(observer: &mut Option<InputObservation>, route: &'static str)
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn state() -> State {
+    pub(super) fn state() -> State {
         State {
             cursor: None,
             native_cursor: None,
@@ -334,15 +346,19 @@ mod tests {
             epoch: 1,
             render_revision: 1,
             render_activity: [1, 0],
-            hover: [0; HOVER_BYTES],
+            hover: [0; state::HOVER_BYTES],
             hover_len: 0,
             hover_surface: None,
             truncated: false,
+            focused: true,
+            extent: [1280, 800],
+            scale: 1.0,
         }
     }
-    fn observer() -> InputObservation {
+    pub(super) fn observer() -> InputObservation {
         InputObservation {
             workload: None,
+            diagnostic: None,
             path: PathBuf::new(),
             started: Instant::now(),
             monotonic_origin_ns: 0,
@@ -351,7 +367,7 @@ mod tests {
             active: None,
         }
     }
-    fn motion() -> WindowEvent {
+    pub(super) fn motion() -> WindowEvent {
         WindowEvent::CursorMoved {
             device_id: winit::event::DeviceId::dummy(),
             position: winit::dpi::PhysicalPosition::new(300.0, 150.0),

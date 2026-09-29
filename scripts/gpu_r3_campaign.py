@@ -9,7 +9,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORY = ROOT / 'target/gpu-r3-crosshair-proof'
+DIRECTORY = ROOT / 'target/gpu-crosshair-focused-proof'
 STATE = DIRECTORY / 'campaign-state.json'
 
 
@@ -60,7 +60,7 @@ def main():
         exit_code = 124 if timeout else completed.returncode
         state['results'].append(dict(index=index, status=result['status'], exit_code=exit_code,
                                      receipt=str(receipt)))
-        valid = exit_code == 0 and result['status'] == 'valid_descriptive_run'
+        valid = exit_code == 0 and result['status'] == 'valid_output_diagnostic'
         state['status'] = 'diagnostic_complete' if valid else 'stopped'
         STATE.write_text(json.dumps(state,indent=2)+'\n')
         print(json.dumps(state['results'][-1]))

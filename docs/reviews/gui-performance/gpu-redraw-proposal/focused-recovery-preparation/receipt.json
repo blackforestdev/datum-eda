@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-crosshair-focused.json",
+  "status": "Focused offline prerequisites passed; single candidate release build and native run not yet executed",
+  "changes": "Existing4096 buffer and one provisional semantic snapshot; timestamps/causal scopes disabled in output diagnostic; filtered no-op rounds, explicit capacity/gap errors, pre-drain incomplete snapshot and preserved focus/pixel failures. State capture extracted into real owner; no renderer algorithm or writer thread.",
+  "proof": [
+    "Seven selected Rust controls passed; one native test ignored. Initial filter selected zero and was corrected; zero-test run not proof.",
+    "Five focused Python controls and five existing runner/oracle controls passed. Initial synthetic fixture omissions (event label and nonoverlapping timestamps) corrected within offline preparation; failed outputs preserved. No production relaxation.",
+    "Default and visual app all-target Clippy passed with warnings denied. Source health2648, source policy13, resource policy, parity20, evidence28, governance377 and project state59 passed."
+  ],
+  "limitations": "Output diagnostic only. Capture-state match plus exact image and complete native input still required. Prior failures unresolved. No native quota spent, no performance/DRM/CPU or S4 acceptance.",
+  "source_sha256": {
+    "crates/gui-app/src/native_input_observation.rs": "3e9aa8f05a22b4495b36019bf6d75cd9945b0cd5753dc2da6ab2fb8277d04224",
+    "crates/gui-app/src/native_input_state.rs": "1a79bc9aae7088d047d6ce804fdd440ac3e4480af0a7adeef5f513288e8eee70",
+    "crates/gui-app/src/native_output_diagnostic.rs": "7fb95d4af64c538172a835327563255aafba5794854cde2c9c205782fa46357c",
+    "crates/gui-app/src/native_output_diagnostic_tests.rs": "02a0c043af71858818b26a4531aeba09dffb0ca4edff55f008869e1ff535b0c6",
+    "crates/gui-app/src/native_measurement_shutdown.rs": "87b3bb00760156bfd071a49cdaf1060d7c308ffe6b01fedffea4a37641632be5",
+    "crates/gui-app/src/app_native_events.rs": "c64f4f217a91f26cd4b14cf5438664057dba9e55726ec69caeff8164f25042b2",
+    "scripts/gpu_crosshair_diagnostic.py": "40750d4787038a5bf6b237a53aad3f063020aa074053cd01d81d69b2ee929bdd",
+    "scripts/test_gpu_crosshair_diagnostic.py": "49703bf8088d5303b72fcc06e54ddb3d23b89d3a3a428bf3fe05de623ac8670e",
+    "scripts/gpu_r3_native_trial.py": "68c833cd71dc49a9b2694771a8f8071065e82d196cd5770867ad4f0b9a5d7be3",
+    "scripts/gpu_r3_campaign.py": "1178526e0a81bdfb72e0ccfd1539486f4f50df548db9b69a5f384a28a271841c",
+    "scripts/gpu_r3_pointer_input.py": "66d32e9136c5a02cdca87b51b87b78234ff1b86c3cf9991312dac16366d85ae5",
+    "scripts/gpu_r3_pointer_stream.py": "196e8b5edd9574611aac4f47993c10628ac94663b5f99d80acf351994b8ececc"
+  },
+  "artifacts_sha256": {
+    "existing-runner-controls.log": "e99d1f023643f2af19a0b71d74e5b6e0852d14d749cc58c4417b68b716c3fbea",
+    "python-initial-fixture-errors.log": "f393066e65dda19a38285f0194f5e565969426833c9545ae8a69ec5da17f8775",
+    "source-policy.log": "112989280a1fdcefa4454d2090ad0c93183934d1c77a4d410fef9cebcccbf27e",
+    "python-controls.log": "afa208a142c275dd09a727c0fc4c11a688a402a772ea157b5da77d7e20174655",
+    "rust-initial-filter.log": "6d643dbd4fcba695f09bb46cf0c0d999ff9569423bad7119b73ca398c34a0a3b",
+    "rust-controls.log": "6bc840a0b5cc81d9fa26e19945c093a1f7af3fad73f03790eaece0b094ef8567",
+    "clippy-default.log": "bbe738f8658e807aa21ad791982a421d06941f9e7c3f35318e83c5bf45023a94",
+    "python-fixture-order-failure.log": "81a294eacef28ef63647f067fa1b25a61b58d6b9377f6696830798833527c9cd",
+    "clippy-visual.log": "cad9250fdbc6a02b1a4bbebe624e4dc4cf59d75f9395be8dea43bc4459259949",
+    "source-health.log": "ea32aa5110702e653ae2d64344250c76ace8175417d07e39fd8c5c8e410089c2"
+  }
+}

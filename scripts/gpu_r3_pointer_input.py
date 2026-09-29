@@ -1,9 +1,14 @@
 """R3 input validation: preserve full demand records, inspect actual pointer events."""
 import math
 
-def pointer_input(schedule, receipt, tail_end_ns, expected_context, max_lateness_ns):
+def pointer_input(schedule, receipt, tail_end_ns, expected_context, max_lateness_ns, *, diagnostic=False):
     """Require delivered path and completed viewport routing; no frame-count proxy."""
-    assert receipt['complete'] and not receipt['overflow']
+    assert not receipt['overflow']
+    if diagnostic:
+        assert receipt.get('mode') == 'output-diagnostic' and receipt.get('coverage_complete')
+        assert receipt['complete'] is False
+    else:
+        assert receipt['complete']
     rows = schedule['rows']
     assert len(rows) == schedule['scheduled_count'] == 3600
     assert [r['index'] for r in rows] == list(range(3600))
@@ -48,9 +53,10 @@ def pointer_input(schedule, receipt, tail_end_ns, expected_context, max_lateness
         assert after['device_epoch'] == epoch, 'device changed within stream'
     # Rendering revisions can advance for close/drain; cursor, camera, hover and
     # device identity must still equal the final applied pointer state.
-    semantic = lambda state: {k:v for k,v in state.items() if k != 'render_revision'}
-    assert semantic(receipt['final_state']) == semantic(active[-1]['after']), 'final input state changed after last acknowledged motion'
-    assert receipt['final_state']['cursor'] == expected[-1] == [300,150]
+    semantic = lambda state: {k:v for k,v in state.items() if k not in ('render_revision','render_activity')}
+    if not diagnostic:
+        assert semantic(receipt['final_state']) == semantic(active[-1]['after']), 'final input state changed after last acknowledged motion'
+        assert receipt['final_state']['cursor'] == expected[-1] == [300,150]
     assert set(expected_context) == {'final_selection','final_focus','final_focused_pane'}
     assert all(receipt[key] == value for key,value in expected_context.items()), 'unexpected final selection/focus/pane'
     return {'scheduled':3600,'integer_changes':1280,'same_position_requests':2320,
