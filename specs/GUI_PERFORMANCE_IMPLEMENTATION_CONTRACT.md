@@ -638,3 +638,16 @@ Product Mechanics050 ratifies the exact changed renderer/measurement mechanism
 and bounded proof. GPI-S4-APPROVAL-R3 is complete; GPI-S4 resumes execution.
 R2's failed declaration remains stopped. No S4/S5 completion, CPU optimization,
 DRM observer execution, raised budget or new dependency is authorized.
+
+## R3 corrective validation owner approval
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-CORRECTIVE-APPROVAL-R3 -->
+
+The owner replied `approve GPU r3 corrective validation`; the pinned packet is
+recorded in `docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r3-corrective.json`.
+This authorizes its one corrected binary and four named serial GPU cases, each
+at most once, with the first failure stopping further proof and experiments.
+The stopped stable-hover evidence remains intact. If the cases pass, resume the
+unspent r3 timer conformance and original bounded experiment after matched
+observer readiness. GPI-S4 remains in progress. CPU optimization, DRM observer
+execution, numerical acceptance and S4/S5/issue closure remain excluded.

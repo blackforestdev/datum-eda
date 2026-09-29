@@ -60,3 +60,12 @@ method and execution scope are approved and proven. This decision authorizes no
 ptrace, retained-fd observer, global tracing, system tuning or dependency change.
 CPU event-loop optimization stays deferred. S4/S5 and the GPU issue remain open
 until all required correctness, performance and resource evidence exists.
+
+## Corrective validation disposition
+
+After the r3 stable-hover reuse failure, the owner explicitly approved
+`approve GPU r3 corrective validation`. The source-pinned scope and response
+are in `gpu-redraw-proposal/owner-approval-r3-corrective.json` under
+`docs/reviews/gui-performance/`. The four-case correction validation preserves
+the first-failure stop, earlier evidence and all original numerical/DRM/CPU
+boundaries. It ratifies no different rendering mechanism.
