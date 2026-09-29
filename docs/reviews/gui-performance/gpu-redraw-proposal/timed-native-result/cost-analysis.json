@@ -1,0 +1,2062 @@
+{
+  "groups": {
+    "all": {
+      "frame_span": {
+        "n": 1265,
+        "min_ms": 1.9367500591049194,
+        "median_ms": 3.9611667875518797,
+        "p95_ms": 4.256333463226318,
+        "p99_ms": 16.539917171424865,
+        "max_ms": 34.95225106665802
+      },
+      "own_pass_sum": {
+        "n": 1265,
+        "min_ms": 1.8814167240829467,
+        "median_ms": 3.8265834501113893,
+        "p95_ms": 4.1130001255187985,
+        "p99_ms": 8.484833592269897,
+        "max_ms": 20.9194173050766
+      },
+      "outside_passes": {
+        "n": 1265,
+        "min_ms": 0.05533333502197266,
+        "median_ms": 0.1310833373336792,
+        "p95_ms": 0.14133333764648437,
+        "p99_ms": 9.90833363571167,
+        "max_ms": 17.820500543838502
+      },
+      "exceed_4ms": 537,
+      "exceed_8ms": 19,
+      "frame": {
+        "n": 1265,
+        "min_ms": 0.0,
+        "median_ms": 0.0,
+        "p95_ms": 0.0,
+        "p99_ms": 2.6960000822753907,
+        "max_ms": 13.441833743545532
+      },
+      "restore": {
+        "n": 1265,
+        "min_ms": 0.0,
+        "median_ms": 0.1917500058517456,
+        "p95_ms": 0.22591667356109618,
+        "p99_ms": 0.24525000748443604,
+        "max_ms": 4.141000126373291
+      },
+      "suffix": {
+        "n": 1265,
+        "min_ms": 1.819250055519104,
+        "median_ms": 3.6465001112823487,
+        "p95_ms": 3.868333451385498,
+        "p99_ms": 5.830000177917481,
+        "max_ms": 10.598916990119934
+      },
+      "upload-leading": {
+        "n": 1265,
+        "min_ms": 0.007583333564758301,
+        "median_ms": 0.018666667236328125,
+        "p95_ms": 0.02291666736602783,
+        "p99_ms": 0.039166667861938474,
+        "max_ms": 3.3168334345550536
+      },
+      "upload-trailing": {
+        "n": 1265,
+        "min_ms": 0.0,
+        "median_ms": 0.0,
+        "p95_ms": 0.0,
+        "p99_ms": 0.008916666938781738,
+        "max_ms": 0.019333333923339843
+      }
+    },
+    "restored": {
+      "frame_span": {
+        "n": 1251,
+        "min_ms": 1.9367500591049194,
+        "median_ms": 3.9577501207809447,
+        "p95_ms": 4.239250129371643,
+        "p99_ms": 4.595000140228271,
+        "max_ms": 8.388000255981446
+      },
+      "own_pass_sum": {
+        "n": 1251,
+        "min_ms": 1.8814167240829467,
+        "median_ms": 3.82491678339386,
+        "p95_ms": 4.0968334583587644,
+        "p99_ms": 4.245000129547119,
+        "max_ms": 8.257166918655395
+      },
+      "outside_passes": {
+        "n": 1251,
+        "min_ms": 0.05533333502197266,
+        "median_ms": 0.13091667066192628,
+        "p95_ms": 0.14000000427246093,
+        "p99_ms": 0.20450000624084472,
+        "max_ms": 4.062833457321167
+      },
+      "exceed_4ms": 523,
+      "exceed_8ms": 5,
+      "restore": {
+        "n": 1251,
+        "min_ms": 0.053750001640319824,
+        "median_ms": 0.1934166725692749,
+        "p95_ms": 0.22591667356109618,
+        "p99_ms": 0.24525000748443604,
+        "max_ms": 4.141000126373291
+      },
+      "suffix": {
+        "n": 1251,
+        "min_ms": 1.819250055519104,
+        "median_ms": 3.6457501112594604,
+        "p95_ms": 3.8585834510879518,
+        "p99_ms": 3.9930001218566895,
+        "max_ms": 8.022333578155518
+      },
+      "upload-leading": {
+        "n": 1251,
+        "min_ms": 0.007583333564758301,
+        "median_ms": 0.01858333390045166,
+        "p95_ms": 0.022666667358398437,
+        "p99_ms": 0.03266666766357422,
+        "max_ms": 3.3168334345550536
+      }
+    },
+    "cold": {
+      "frame_span": {
+        "n": 14,
+        "min_ms": 14.915500455184937,
+        "median_ms": 27.577292508258818,
+        "p95_ms": 34.95225106665802,
+        "p99_ms": 34.95225106665802,
+        "max_ms": 34.95225106665802
+      },
+      "own_pass_sum": {
+        "n": 14,
+        "min_ms": 5.007166819473267,
+        "median_ms": 13.178417068840027,
+        "p95_ms": 20.9194173050766,
+        "p99_ms": 20.9194173050766,
+        "max_ms": 20.9194173050766
+      },
+      "outside_passes": {
+        "n": 14,
+        "min_ms": 8.055083579154969,
+        "median_ms": 13.719583752021789,
+        "p95_ms": 17.820500543838502,
+        "p99_ms": 17.820500543838502,
+        "max_ms": 17.820500543838502
+      },
+      "exceed_4ms": 14,
+      "exceed_8ms": 14,
+      "frame": {
+        "n": 14,
+        "min_ms": 2.663583414619446,
+        "median_ms": 6.248083524009704,
+        "p95_ms": 13.441833743545532,
+        "p99_ms": 13.441833743545532,
+        "max_ms": 13.441833743545532
+      },
+      "suffix": {
+        "n": 14,
+        "min_ms": 2.3157500706710814,
+        "median_ms": 5.841041844921112,
+        "p95_ms": 10.598916990119934,
+        "p99_ms": 10.598916990119934,
+        "max_ms": 10.598916990119934
+      },
+      "upload-leading": {
+        "n": 14,
+        "min_ms": 0.019166667251586913,
+        "median_ms": 0.038666667846679686,
+        "p95_ms": 0.04266666796875,
+        "p99_ms": 0.04266666796875,
+        "max_ms": 0.04266666796875
+      },
+      "upload-trailing": {
+        "n": 14,
+        "min_ms": 0.008666666931152344,
+        "median_ms": 0.017666667205810546,
+        "p95_ms": 0.019333333923339843,
+        "p99_ms": 0.019333333923339843,
+        "max_ms": 0.019333333923339843
+      }
+    }
+  },
+  "slowest20": [
+    {
+      "device_epoch": 1,
+      "frame": 311,
+      "frame_span_ns": 34952251.06665802,
+      "host": 1,
+      "own_pass_sum_ns": 17684750.53969574,
+      "passes_ns": [
+        [
+          "upload-leading",
+          21166.66731262207
+        ],
+        [
+          "upload-trailing",
+          19333.333923339844
+        ],
+        [
+          "upload-leading",
+          21166.66731262207
+        ],
+        [
+          "frame",
+          13441833.743545532
+        ],
+        [
+          "suffix",
+          4181250.1276016235
+        ]
+      ],
+      "raw_ticks": [
+        43219398563,
+        43219398817,
+        43219407431,
+        43219407663,
+        43219489269,
+        43219489523,
+        43219490587,
+        43219651889,
+        43219767815,
+        43219817990
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 320,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            319,
+            360,
+            360,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43219398563,
+          "kind": "world",
+          "last_tick": 43219407663,
+          "span_ns": 758333.3564758301,
+          "submission": 319,
+          "transfer_first_tick": 43219398817,
+          "transfer_interval_ns": 717833.3552398682,
+          "transfer_last_tick": 43219407431,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            642,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            320,
+            361,
+            360,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43219489269,
+          "kind": "final",
+          "last_tick": 43219817990,
+          "span_ns": 27393417.5026474,
+          "submission": 320,
+          "transfer_first_tick": 43219489523,
+          "transfer_interval_ns": 88666.6693725586,
+          "transfer_last_tick": 43219490587,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            642,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 324,
+      "frame_span_ns": 34642334.39053345,
+      "host": 1,
+      "own_pass_sum_ns": 20919417.3050766,
+      "passes_ns": [
+        [
+          "upload-leading",
+          17666.667205810547
+        ],
+        [
+          "upload-trailing",
+          17166.667190551758
+        ],
+        [
+          "upload-leading",
+          19833.333938598633
+        ],
+        [
+          "frame",
+          10286833.647262573
+        ],
+        [
+          "suffix",
+          10577916.989479065
+        ]
+      ],
+      "raw_ticks": [
+        43222589902,
+        43222590114,
+        43222597996,
+        43222598202,
+        43222628292,
+        43222628530,
+        43222629532,
+        43222752974,
+        43222878675,
+        43223005610
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 334,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            333,
+            378,
+            378,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43222589902,
+          "kind": "world",
+          "last_tick": 43222598202,
+          "span_ns": 691666.6877746582,
+          "submission": 333,
+          "transfer_first_tick": 43222590114,
+          "transfer_interval_ns": 656833.3533782959,
+          "transfer_last_tick": 43222597996,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            670,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            334,
+            379,
+            378,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43222628292,
+          "kind": "final",
+          "last_tick": 43223005610,
+          "span_ns": 31443167.626235962,
+          "submission": 334,
+          "transfer_first_tick": 43222628530,
+          "transfer_interval_ns": 83500.00254821777,
+          "transfer_last_tick": 43222629532,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            670,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 709,
+      "frame_span_ns": 34447251.05124664,
+      "host": 1,
+      "own_pass_sum_ns": 20810750.63509369,
+      "passes_ns": [
+        [
+          "upload-leading",
+          19583.33393096924
+        ],
+        [
+          "upload-trailing",
+          17833.333877563477
+        ],
+        [
+          "upload-leading",
+          19583.33393096924
+        ],
+        [
+          "frame",
+          10277833.646987915
+        ],
+        [
+          "suffix",
+          10475916.986366272
+        ]
+      ],
+      "raw_ticks": [
+        43345401236,
+        43345401471,
+        43345409344,
+        43345409558,
+        43345444789,
+        43345445024,
+        43345445956,
+        43345569290,
+        43345688892,
+        43345814603
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 720,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            719,
+            768,
+            768,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43345401236,
+          "kind": "world",
+          "last_tick": 43345409558,
+          "span_ns": 693500.0211639404,
+          "submission": 719,
+          "transfer_first_tick": 43345401471,
+          "transfer_interval_ns": 656083.3533554077,
+          "transfer_last_tick": 43345409344,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1442,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            720,
+            769,
+            768,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43345444789,
+          "kind": "final",
+          "last_tick": 43345814603,
+          "span_ns": 30817834.27381897,
+          "submission": 720,
+          "transfer_first_tick": 43345445024,
+          "transfer_interval_ns": 77666.66903686523,
+          "transfer_last_tick": 43345445956,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1442,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 963,
+      "frame_span_ns": 33916084.368370056,
+      "host": 1,
+      "own_pass_sum_ns": 20199833.949783325,
+      "passes_ns": [
+        [
+          "upload-leading",
+          19166.667251586914
+        ],
+        [
+          "upload-trailing",
+          17416.667198181152
+        ],
+        [
+          "upload-leading",
+          19000.000579833984
+        ],
+        [
+          "frame",
+          10203583.644721985
+        ],
+        [
+          "suffix",
+          9940666.970031738
+        ]
+      ],
+      "raw_ticks": [
+        43403576553,
+        43403576783,
+        43403584367,
+        43403584576,
+        43403626155,
+        43403626383,
+        43403627475,
+        43403749918,
+        43403864258,
+        43403983546
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 977,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            976,
+            1038,
+            1038,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43403576553,
+          "kind": "world",
+          "last_tick": 43403584576,
+          "span_ns": 668583.3537368774,
+          "submission": 976,
+          "transfer_first_tick": 43403576783,
+          "transfer_interval_ns": 632000.0192871094,
+          "transfer_last_tick": 43403584367,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1957,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            977,
+            1040,
+            1038,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43403626155,
+          "kind": "final",
+          "last_tick": 43403983546,
+          "span_ns": 29782584.242225647,
+          "submission": 977,
+          "transfer_first_tick": 43403626383,
+          "transfer_interval_ns": 91000.00277709961,
+          "transfer_last_tick": 43403627475,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1958,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 304,
+      "frame_span_ns": 30898917.60962677,
+      "host": 1,
+      "own_pass_sum_ns": 16790583.845741272,
+      "passes_ns": [
+        [
+          "upload-leading",
+          19583.33393096924
+        ],
+        [
+          "upload-trailing",
+          18916.66724395752
+        ],
+        [
+          "upload-leading",
+          21083.333976745605
+        ],
+        [
+          "frame",
+          6132083.5204696655
+        ],
+        [
+          "suffix",
+          10598916.990119934
+        ]
+      ],
+      "raw_ticks": [
+        43217405905,
+        43217406140,
+        43217414788,
+        43217415015,
+        43217451659,
+        43217451912,
+        43217452936,
+        43217526521,
+        43217649505,
+        43217776692
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 311,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            310,
+            343,
+            343,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43217405905,
+          "kind": "world",
+          "last_tick": 43217415015,
+          "span_ns": 759166.6898345947,
+          "submission": 310,
+          "transfer_first_tick": 43217406140,
+          "transfer_interval_ns": 720666.688659668,
+          "transfer_last_tick": 43217414788,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            624,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            311,
+            344,
+            343,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43217451659,
+          "kind": "final",
+          "last_tick": 43217776692,
+          "span_ns": 27086084.159934998,
+          "submission": 311,
+          "transfer_first_tick": 43217451912,
+          "transfer_interval_ns": 85333.3359375,
+          "transfer_last_tick": 43217452936,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            624,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 838,
+      "frame_span_ns": 30470667.596557617,
+      "host": 1,
+      "own_pass_sum_ns": 12650167.052719116,
+      "passes_ns": [
+        [
+          "upload-leading",
+          21250.000648498535
+        ],
+        [
+          "upload-trailing",
+          19333.333923339844
+        ],
+        [
+          "upload-leading",
+          21416.667320251465
+        ],
+        [
+          "frame",
+          5992666.84954834
+        ],
+        [
+          "suffix",
+          6595500.2012786865
+        ]
+      ],
+      "raw_ticks": [
+        43375129181,
+        43375129436,
+        43375138094,
+        43375138326,
+        43375226958,
+        43375227215,
+        43375230830,
+        43375302742,
+        43375415683,
+        43375494829
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 851,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            850,
+            908,
+            908,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43375129181,
+          "kind": "world",
+          "last_tick": 43375138326,
+          "span_ns": 762083.356590271,
+          "submission": 850,
+          "transfer_first_tick": 43375129436,
+          "transfer_interval_ns": 721500.0220184326,
+          "transfer_last_tick": 43375138094,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1705,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            851,
+            909,
+            908,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43375226958,
+          "kind": "final",
+          "last_tick": 43375494829,
+          "span_ns": 22322584.014564514,
+          "submission": 851,
+          "transfer_first_tick": 43375227215,
+          "transfer_interval_ns": 301250.0091934204,
+          "transfer_last_tick": 43375230830,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1705,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 730,
+      "frame_span_ns": 28506000.869934082,
+      "host": 1,
+      "own_pass_sum_ns": 11522583.68497467,
+      "passes_ns": [
+        [
+          "upload-leading",
+          21250.000648498535
+        ],
+        [
+          "upload-trailing",
+          19333.333923339844
+        ],
+        [
+          "upload-leading",
+          20833.33396911621
+        ],
+        [
+          "frame",
+          5609083.504508972
+        ],
+        [
+          "suffix",
+          5852083.511924744
+        ]
+      ],
+      "raw_ticks": [
+        43350316969,
+        43350317224,
+        43350325880,
+        43350326112,
+        43350411971,
+        43350412221,
+        43350413206,
+        43350480515,
+        43350588816,
+        43350659041
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 742,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            741,
+            794,
+            794,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43350316969,
+          "kind": "world",
+          "last_tick": 43350326112,
+          "span_ns": 761916.6899185181,
+          "submission": 741,
+          "transfer_first_tick": 43350317224,
+          "transfer_interval_ns": 721333.3553466797,
+          "transfer_last_tick": 43350325880,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1486,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            742,
+            795,
+            794,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43350411971,
+          "kind": "final",
+          "last_tick": 43350659041,
+          "span_ns": 20589167.29499817,
+          "submission": 742,
+          "transfer_first_tick": 43350412221,
+          "transfer_interval_ns": 82083.33583831787,
+          "transfer_last_tick": 43350413206,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1486,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 975,
+      "frame_span_ns": 26648584.146583557,
+      "host": 1,
+      "own_pass_sum_ns": 13706667.084960938,
+      "passes_ns": [
+        [
+          "upload-leading",
+          19750.000602722168
+        ],
+        [
+          "upload-trailing",
+          19166.667251586914
+        ],
+        [
+          "upload-leading",
+          21083.333976745605
+        ],
+        [
+          "frame",
+          10168916.976997375
+        ],
+        [
+          "suffix",
+          3477750.1061325073
+        ]
+      ],
+      "raw_ticks": [
+        43406809239,
+        43406809476,
+        43406818131,
+        43406818361,
+        43406849915,
+        43406850168,
+        43406851214,
+        43406973241,
+        43407087289,
+        43407129022
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 991,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            990,
+            1061,
+            1061,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43406809239,
+          "kind": "world",
+          "last_tick": 43406818361,
+          "span_ns": 760166.6898651123,
+          "submission": 990,
+          "transfer_first_tick": 43406809476,
+          "transfer_interval_ns": 721250.0220108032,
+          "transfer_last_tick": 43406818131,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1986,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            991,
+            1062,
+            1061,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43406849915,
+          "kind": "final",
+          "last_tick": 43407129022,
+          "span_ns": 23258917.376472473,
+          "submission": 991,
+          "transfer_first_tick": 43406850168,
+          "transfer_interval_ns": 87166.66932678223,
+          "transfer_last_tick": 43406851214,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1986,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 57,
+      "frame_span_ns": 26565334.14404297,
+      "host": 1,
+      "own_pass_sum_ns": 14222667.100708008,
+      "passes_ns": [
+        [
+          "upload-leading",
+          19000.000579833984
+        ],
+        [
+          "upload-trailing",
+          17500.000534057617
+        ],
+        [
+          "upload-leading",
+          16833.3338470459
+        ],
+        [
+          "frame",
+          7081166.882766724
+        ],
+        [
+          "suffix",
+          7088166.882980347
+        ]
+      ],
+      "raw_ticks": [
+        43160996557,
+        43160996785,
+        43161005267,
+        43161005477,
+        43161047502,
+        43161047704,
+        43161048610,
+        43161133584,
+        43161230283,
+        43161315341
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 60,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            59,
+            76,
+            76,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43160996557,
+          "kind": "world",
+          "last_tick": 43161005477,
+          "span_ns": 743333.3560180664,
+          "submission": 59,
+          "transfer_first_tick": 43160996785,
+          "transfer_interval_ns": 706833.3549041748,
+          "transfer_last_tick": 43161005267,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            122,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            60,
+            78,
+            76,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43161047502,
+          "kind": "final",
+          "last_tick": 43161315341,
+          "span_ns": 22319917.347816467,
+          "submission": 60,
+          "transfer_first_tick": 43161047704,
+          "transfer_interval_ns": 75500.00230407715,
+          "transfer_last_tick": 43161048610,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            123,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 69,
+      "frame_span_ns": 25391917.441566467,
+      "host": 1,
+      "own_pass_sum_ns": 10489583.653450012,
+      "passes_ns": [
+        [
+          "upload-leading",
+          16583.333839416504
+        ],
+        [
+          "upload-trailing",
+          15250.000465393066
+        ],
+        [
+          "upload-leading",
+          16416.667167663574
+        ],
+        [
+          "frame",
+          4611333.474060059
+        ],
+        [
+          "suffix",
+          5830000.1779174805
+        ]
+      ],
+      "raw_ticks": [
+        43164102002,
+        43164102201,
+        43164109469,
+        43164109652,
+        43164182911,
+        43164183108,
+        43164183974,
+        43164239310,
+        43164336745,
+        43164406705
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 74,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            73,
+            98,
+            98,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43164102002,
+          "kind": "world",
+          "last_tick": 43164109652,
+          "span_ns": 637500.019454956,
+          "submission": 73,
+          "transfer_first_tick": 43164102201,
+          "transfer_interval_ns": 605666.6851501465,
+          "transfer_last_tick": 43164109469,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            150,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            74,
+            99,
+            98,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43164182911,
+          "kind": "final",
+          "last_tick": 43164406705,
+          "span_ns": 18649500.569137573,
+          "submission": 74,
+          "transfer_first_tick": 43164183108,
+          "transfer_interval_ns": 72166.66886901855,
+          "transfer_last_tick": 43164183974,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            150,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 241,
+      "frame_span_ns": 23036250.70301056,
+      "host": 1,
+      "own_pass_sum_ns": 9129500.27861023,
+      "passes_ns": [
+        [
+          "upload-leading",
+          20583.333961486816
+        ],
+        [
+          "upload-trailing",
+          18583.33390045166
+        ],
+        [
+          "upload-leading",
+          19166.667251586914
+        ],
+        [
+          "frame",
+          5587083.503837585
+        ],
+        [
+          "suffix",
+          3484083.4396591187
+        ]
+      ],
+      "raw_ticks": [
+        43203014610,
+        43203014857,
+        43203023100,
+        43203023323,
+        43203051344,
+        43203051574,
+        43203074492,
+        43203141537,
+        43203249236,
+        43203291045
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 247,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            246,
+            275,
+            275,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43203014610,
+          "kind": "world",
+          "last_tick": 43203023323,
+          "span_ns": 726083.3554916382,
+          "submission": 246,
+          "transfer_first_tick": 43203014857,
+          "transfer_interval_ns": 686916.6876296997,
+          "transfer_last_tick": 43203023100,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            496,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            247,
+            276,
+            275,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43203051344,
+          "kind": "final",
+          "last_tick": 43203291045,
+          "span_ns": 19975083.9429245,
+          "submission": 247,
+          "transfer_first_tick": 43203051574,
+          "transfer_interval_ns": 1909833.3916168213,
+          "transfer_last_tick": 43203074492,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            496,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 67,
+      "frame_span_ns": 21446833.987838745,
+      "host": 1,
+      "own_pass_sum_ns": 9683833.628860474,
+      "passes_ns": [
+        [
+          "upload-leading",
+          16500.00050354004
+        ],
+        [
+          "upload-trailing",
+          15083.333793640137
+        ],
+        [
+          "upload-leading",
+          15916.667152404785
+        ],
+        [
+          "frame",
+          6364083.527549744
+        ],
+        [
+          "suffix",
+          3272250.099861145
+        ]
+      ],
+      "raw_ticks": [
+        43163407943,
+        43163408141,
+        43163415344,
+        43163415525,
+        43163450188,
+        43163450379,
+        43163451216,
+        43163527585,
+        43163626038,
+        43163665305
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 71,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            70,
+            91,
+            91,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43163407943,
+          "kind": "world",
+          "last_tick": 43163415525,
+          "span_ns": 631833.3526153564,
+          "submission": 70,
+          "transfer_first_tick": 43163408141,
+          "transfer_interval_ns": 600250.0183181763,
+          "transfer_last_tick": 43163415344,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            144,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            71,
+            92,
+            91,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43163450188,
+          "kind": "final",
+          "last_tick": 43163665305,
+          "span_ns": 17926417.213737488,
+          "submission": 71,
+          "transfer_first_tick": 43163450379,
+          "transfer_interval_ns": 69750.00212860107,
+          "transfer_last_tick": 43163451216,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            144,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 965,
+      "frame_span_ns": 16539917.171424866,
+      "host": 1,
+      "own_pass_sum_ns": 8484833.592269897,
+      "passes_ns": [
+        [
+          "upload-leading",
+          9666.666961669922
+        ],
+        [
+          "upload-trailing",
+          8916.666938781738
+        ],
+        [
+          "upload-leading",
+          9833.333633422852
+        ],
+        [
+          "frame",
+          2696000.0822753906
+        ],
+        [
+          "suffix",
+          5760416.842460632
+        ]
+      ],
+      "raw_ticks": [
+        43404420561,
+        43404420677,
+        43404424397,
+        43404424504,
+        43404462870,
+        43404462988,
+        43404463447,
+        43404495799,
+        43404549915,
+        43404619040
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 980,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            979,
+            1046,
+            1046,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43404420561,
+          "kind": "world",
+          "last_tick": 43404424504,
+          "span_ns": 328583.3433609009,
+          "submission": 979,
+          "transfer_first_tick": 43404420677,
+          "transfer_interval_ns": 310000.0094604492,
+          "transfer_last_tick": 43404424397,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1964,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            980,
+            1047,
+            1046,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43404462870,
+          "kind": "final",
+          "last_tick": 43404619040,
+          "span_ns": 13014167.063827515,
+          "submission": 980,
+          "transfer_first_tick": 43404462988,
+          "transfer_interval_ns": 38250.00116729736,
+          "transfer_last_tick": 43404463447,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            1964,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 307,
+      "frame_span_ns": 14915500.455184937,
+      "host": 1,
+      "own_pass_sum_ns": 5007166.819473267,
+      "passes_ns": [
+        [
+          "upload-leading",
+          9333.333618164062
+        ],
+        [
+          "upload-trailing",
+          8666.666931152344
+        ],
+        [
+          "upload-leading",
+          9833.333633422852
+        ],
+        [
+          "frame",
+          2663583.414619446
+        ],
+        [
+          "suffix",
+          2315750.0706710815
+        ]
+      ],
+      "raw_ticks": [
+        43218393014,
+        43218393126,
+        43218396858,
+        43218396962,
+        43218454157,
+        43218454275,
+        43218454741,
+        43218486704,
+        43218544211,
+        43218572000
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 315,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            314,
+            351,
+            351,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43218393014,
+          "kind": "world",
+          "last_tick": 43218396962,
+          "span_ns": 329000.0100402832,
+          "submission": 314,
+          "transfer_first_tick": 43218393126,
+          "transfer_interval_ns": 311000.0094909668,
+          "transfer_last_tick": 43218396858,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            632,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "attempt": [
+            1,
+            315,
+            353,
+            351,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43218454157,
+          "kind": "final",
+          "last_tick": 43218572000,
+          "span_ns": 9820250.299690247,
+          "submission": 315,
+          "transfer_first_tick": 43218454275,
+          "transfer_interval_ns": 38833.33451843262,
+          "transfer_last_tick": 43218454741,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            633,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 443,
+      "frame_span_ns": 8388000.255981445,
+      "host": 1,
+      "own_pass_sum_ns": 8257166.9186553955,
+      "passes_ns": [
+        [
+          "upload-leading",
+          17666.667205810547
+        ],
+        [
+          "restore",
+          217166.67329406738
+        ],
+        [
+          "suffix",
+          8022333.578155518
+        ]
+      ],
+      "raw_ticks": [
+        43256576585,
+        43256576797,
+        43256578176,
+        43256580782,
+        43256580973,
+        43256677241
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 453,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            453,
+            499,
+            378,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43256576585,
+          "kind": "final",
+          "last_tick": 43256677241,
+          "span_ns": 8388000.255981445,
+          "submission": 453,
+          "transfer_first_tick": 43256576797,
+          "transfer_interval_ns": 114916.67017364502,
+          "transfer_last_tick": 43256578176,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            909,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 21,
+      "frame_span_ns": 8361000.255157471,
+      "host": 1,
+      "own_pass_sum_ns": 8220666.917541504,
+      "passes_ns": [
+        [
+          "upload-leading",
+          18166.667221069336
+        ],
+        [
+          "restore",
+          4141000.126373291
+        ],
+        [
+          "suffix",
+          4061500.1239471436
+        ]
+      ],
+      "raw_ticks": [
+        43152684183,
+        43152684401,
+        43152685877,
+        43152735569,
+        43152735777,
+        43152784515
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 23,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            23,
+            37,
+            18,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43152684183,
+          "kind": "final",
+          "last_tick": 43152784515,
+          "span_ns": 8361000.255157471,
+          "submission": 23,
+          "transfer_first_tick": 43152684401,
+          "transfer_interval_ns": 123000.00375366211,
+          "transfer_last_tick": 43152685877,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            49,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 1211,
+      "frame_span_ns": 8130250.24811554,
+      "host": 1,
+      "own_pass_sum_ns": 4067416.7907943726,
+      "passes_ns": [
+        [
+          "upload-leading",
+          19500.000595092773
+        ],
+        [
+          "restore",
+          306666.6760253906
+        ],
+        [
+          "suffix",
+          3741250.114173889
+        ]
+      ],
+      "raw_ticks": [
+        43487185271,
+        43487185505,
+        43487234042,
+        43487237722,
+        43487237939,
+        43487282834
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 1227,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            1227,
+            1298,
+            1061,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43487185271,
+          "kind": "final",
+          "last_tick": 43487282834,
+          "span_ns": 8130250.24811554,
+          "submission": 1227,
+          "transfer_first_tick": 43487185505,
+          "transfer_interval_ns": 4044750.123435974,
+          "transfer_last_tick": 43487234042,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            2458,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 1228,
+      "frame_span_ns": 8069916.912940979,
+      "host": 1,
+      "own_pass_sum_ns": 4040750.123313904,
+      "passes_ns": [
+        [
+          "upload-leading",
+          19000.000579833984
+        ],
+        [
+          "restore",
+          141666.67098999023
+        ],
+        [
+          "suffix",
+          3880083.4517440796
+        ]
+      ],
+      "raw_ticks": [
+        43493589151,
+        43493589379,
+        43493637526,
+        43493639226,
+        43493639429,
+        43493685990
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 1244,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            1244,
+            1315,
+            1061,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43493589151,
+          "kind": "final",
+          "last_tick": 43493685990,
+          "span_ns": 8069916.912940979,
+          "submission": 1244,
+          "transfer_first_tick": 43493589379,
+          "transfer_interval_ns": 4012250.122444153,
+          "transfer_last_tick": 43493637526,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            2492,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 1226,
+      "frame_span_ns": 8045750.245536804,
+      "host": 1,
+      "own_pass_sum_ns": 4043833.456741333,
+      "passes_ns": [
+        [
+          "upload-leading",
+          18750.00057220459
+        ],
+        [
+          "restore",
+          361333.34436035156
+        ],
+        [
+          "suffix",
+          3663750.111808777
+        ]
+      ],
+      "raw_ticks": [
+        43492788525,
+        43492788750,
+        43492836561,
+        43492840897,
+        43492841109,
+        43492885074
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 1242,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            1242,
+            1313,
+            1061,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43492788525,
+          "kind": "final",
+          "last_tick": 43492885074,
+          "span_ns": 8045750.245536804,
+          "submission": 1242,
+          "transfer_first_tick": 43492788750,
+          "transfer_interval_ns": 3984250.1215896606,
+          "transfer_last_tick": 43492836561,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            2488,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    },
+    {
+      "device_epoch": 1,
+      "frame": 1225,
+      "frame_span_ns": 7983166.910293579,
+      "host": 1,
+      "own_pass_sum_ns": 4042666.7900390625,
+      "passes_ns": [
+        [
+          "upload-leading",
+          18666.667236328125
+        ],
+        [
+          "restore",
+          144166.67106628418
+        ],
+        [
+          "suffix",
+          3879833.45173645
+        ]
+      ],
+      "raw_ticks": [
+        43492389418,
+        43492389642,
+        43492436725,
+        43492438455,
+        43492438658,
+        43492485216
+      ],
+      "rejection": null,
+      "scene_marker_ticks": null,
+      "submission": 1241,
+      "submission_manifest": [
+        {
+          "attempt": [
+            1,
+            1241,
+            1312,
+            1061,
+            1,
+            1,
+            1
+          ],
+          "first_tick": 43492389418,
+          "kind": "final",
+          "last_tick": 43492485216,
+          "span_ns": 7983166.910293579,
+          "submission": 1241,
+          "transfer_first_tick": 43492389642,
+          "transfer_interval_ns": 3923583.4530715942,
+          "transfer_last_tick": 43492436725,
+          "workload": [
+            1128466882464389532,
+            4,
+            0,
+            0,
+            2486,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "timestamp_period_ns": 83.33333587646484,
+      "truncated": false
+    }
+  ],
+  "scope": "Descriptive complete spans from one valid budget-failing trial; group quantiles are not additive and do not replace full workload thresholds.",
+  "definitions": "p95/p99: nearest-rank ceil(p*n); median: middle value, average of two middle values for even n. Per-pass distributions within group include zero when absent; quantiles are not additive."
+}

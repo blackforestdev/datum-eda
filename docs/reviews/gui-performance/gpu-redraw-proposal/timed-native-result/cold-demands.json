@@ -1,0 +1,357 @@
+[
+  {
+    "frame": 57,
+    "span_ms": 26.565334144042968,
+    "demands": [
+      {
+        "id": 122,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+        "after_hover": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+        "revision": [
+          73,
+          77
+        ]
+      },
+      {
+        "id": 123,
+        "kind": "pointer",
+        "route": "authoring_hover",
+        "before_hover": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+        "after_hover": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+        "revision": [
+          77,
+          78
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 121,
+      "before": "",
+      "after": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 67,
+    "span_ms": 21.446833987838744,
+    "demands": [
+      {
+        "id": 144,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "",
+        "after_hover": "",
+        "revision": [
+          88,
+          92
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 143,
+      "before": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+      "after": "",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 69,
+    "span_ms": 25.391917441566466,
+    "demands": [
+      {
+        "id": 150,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+        "after_hover": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+        "revision": [
+          95,
+          99
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 149,
+      "before": "",
+      "after": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 241,
+    "span_ms": 23.03625070301056,
+    "demands": [
+      {
+        "id": 496,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+        "after_hover": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+        "revision": [
+          272,
+          276
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 495,
+      "before": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+      "after": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 304,
+    "span_ms": 30.89891760962677,
+    "demands": [
+      {
+        "id": 624,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "",
+        "after_hover": "",
+        "revision": [
+          340,
+          344
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 623,
+      "before": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+      "after": "",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 307,
+    "span_ms": 14.915500455184937,
+    "demands": [
+      {
+        "id": 632,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+        "after_hover": "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+        "revision": [
+          348,
+          352
+        ]
+      },
+      {
+        "id": 633,
+        "kind": "pointer",
+        "route": "authoring_hover",
+        "before_hover": "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+        "after_hover": "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+        "revision": [
+          352,
+          353
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 631,
+      "before": "",
+      "after": "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 311,
+    "span_ms": 34.95225106665802,
+    "demands": [
+      {
+        "id": 642,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "",
+        "after_hover": "",
+        "revision": [
+          357,
+          361
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 641,
+      "before": "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+      "after": "",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 324,
+    "span_ms": 34.64233439053345,
+    "demands": [
+      {
+        "id": 670,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+        "after_hover": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+        "revision": [
+          375,
+          379
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 669,
+      "before": "",
+      "after": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 709,
+    "span_ms": 34.447251051246646,
+    "demands": [
+      {
+        "id": 1442,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "",
+        "after_hover": "",
+        "revision": [
+          765,
+          769
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 1441,
+      "before": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+      "after": "",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 730,
+    "span_ms": 28.50600086993408,
+    "demands": [
+      {
+        "id": 1486,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+        "after_hover": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+        "revision": [
+          791,
+          795
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 1485,
+      "before": "",
+      "after": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 838,
+    "span_ms": 30.470667596557618,
+    "demands": [
+      {
+        "id": 1705,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+        "after_hover": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+        "revision": [
+          905,
+          909
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 1704,
+      "before": "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+      "after": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 963,
+    "span_ms": 33.91608436837006,
+    "demands": [
+      {
+        "id": 1957,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "",
+        "after_hover": "",
+        "revision": [
+          1035,
+          1039
+        ]
+      },
+      {
+        "id": 1958,
+        "kind": "pointer",
+        "route": "authoring_hover",
+        "before_hover": "",
+        "after_hover": "",
+        "revision": [
+          1039,
+          1040
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 1956,
+      "before": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+      "after": "",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 965,
+    "span_ms": 16.539917171424865,
+    "demands": [
+      {
+        "id": 1964,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+        "after_hover": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+        "revision": [
+          1043,
+          1047
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 1963,
+      "before": "",
+      "after": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+      "distance_demands": 1
+    }
+  },
+  {
+    "frame": 975,
+    "span_ms": 26.648584146583556,
+    "demands": [
+      {
+        "id": 1986,
+        "kind": "native_round",
+        "route": "unhandled",
+        "before_hover": "",
+        "after_hover": "",
+        "revision": [
+          1058,
+          1062
+        ]
+      }
+    ],
+    "preceding_hover_transition": {
+      "id": 1985,
+      "before": "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+      "after": "",
+      "distance_demands": 1
+    }
+  }
+]
