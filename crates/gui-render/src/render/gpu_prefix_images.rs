@@ -24,6 +24,17 @@ pub(crate) struct PairIdentity {
     prefix: u64,
 }
 
+#[cfg(test)]
+impl PairIdentity {
+    pub(crate) fn test_identity(owner: u64) -> Self {
+        Self {
+            owner,
+            working: 1,
+            prefix: 2,
+        }
+    }
+}
+
 /// Handles and reservation ownership travel together, including encode failures.
 /// Texture and view aliases are one tracked allocation per image.
 pub(crate) struct PrefixImages {

@@ -1,0 +1,33 @@
+{
+  "base": "254cbe052b9cfac3a65283b7cd004fc9d9c1d79d",
+  "step": "GPI-S4",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "scope": "R3 renderer-owned conservative presented/desired support bookkeeping. GPU graph remains full-copy/discard; no performance or retained-B qualification.",
+  "source_sha256": {
+    "crates/gui-render/src/render/session_damage.rs": "9f44c023aaf8505d9367702bd2b367c50664223a340da00566ed04f91cc476eb",
+    "crates/gui-render/src/render/session_damage_tests.rs": "9fda1cb6f029f6a823ac7ea8e55894a4a605c0008f25204906aadc04db21aad4",
+    "crates/gui-render/src/render/session_prefix.rs": "7fc4fd3f0d8710524cfc2cd264bd2bf5999b435391d82d7533d8005e4f0ef976",
+    "crates/gui-render/src/render/session_frame.rs": "8fe6669a66eb21c51241fcf8aa0812fa1ce3cdd4caea1811b338566fa436b63d",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "78803d27162c23491e0893ccc6cbc9de7fd1219a8575ca9ed864a2f0a7b5d239"
+  },
+  "results": {
+    "focused_final": "3 passed",
+    "session_serial": "55 passed",
+    "session_concurrent": "53 passed, 2 unchanged history accounting failures; dat-retained-history-parallel-xp7n tracks isolation investigation. Serial replay on same source passed.",
+    "visual_lib_clippy": "Passed after chunks_exact_to_as_chunks correction; initial failure preserved.",
+    "initial_filter": "Matched zero tests; corrected filter and results preserved.",
+    "source_health": "2626 files passed"
+  },
+  "review": "review.json: no blocker in bookkeeping; subsequent mechanical as_chunks correction and stronger aggregate 4KiB assertion included in final test/Clippy pins.",
+  "remaining": "GPU UNORM sample restoration, suffix mask, complete transaction timing, exact-output/resource proof and bounded experiment remain. Complete DRM duty separately unapproved; issue remains open.",
+  "logs_sha256": {
+    "gpu-r3-damage-clippy-2.log": "9e4e3122f71e4c3d6fbcb88c8262dabae31906003c0ea19a2b20e4e8b7038224",
+    "gpu-r3-damage-clippy.log": "af7b1609f0aae1001fc73864ed5fae58ab79bf135a8c3cdb2a8fb54de1bb378d",
+    "gpu-r3-damage-tests-2.log": "e9fe30a89bf089aa207c4b57549efc980f2e05b8470e622ed0b6566dd4734f40",
+    "gpu-r3-damage-tests-final.log": "4722afae98f484cf8705bd23d5f3bf9a08029406e135138f2327a80eba1f8903",
+    "gpu-r3-damage-tests.log": "dc6d98a02462f7349f51f199e6a2dfa4efaf9b383ad7791213fe06f793ddc469",
+    "gpu-r3-session-tests-serial.log": "3d805ee0e972fdbb9c9a3463e5a615fa3db315128f26e206c89a19cc217e5d50",
+    "gpu-r3-session-tests.log": "1c7d3529fdca2e4e95a6e2f384013ff5f1c94afa8de71f1a0ee90f15ed2ad18b",
+    "review.json": "6785e17bc6fc8bf87307279c27d11caf3af128580df7a6bbefff7e3adfb403e1"
+  }
+}

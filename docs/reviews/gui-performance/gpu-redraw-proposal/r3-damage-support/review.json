@@ -1,0 +1,32 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "head": "254cbe052b9cfac3a65283b7cd004fc9d9c1d79d",
+  "scope": "Read-only first r3 support bookkeeping review. No builds/tests/native runs/production edits; only advisory file written. GPU restoration, B Store and measurement correction not implemented by this increment.",
+  "pins": {
+    "crates/gui-render/src/render/session_damage.rs": "3f2223a9286ae2777a8bd865f16bf18e204ffc343f28224794facba6381dfb86",
+    "crates/gui-render/src/render/session_damage_tests.rs": "3e486c6e6a0b8d16193ca50f39dea4339a028c3ee129d97c96a38dd6eaab2342",
+    "crates/gui-render/src/render/session_prefix.rs": "d6ce488f11d50a262a76e2d93f575e086b89989cf68d6802a277181307eff76c",
+    "crates/gui-render/src/render/session_frame.rs": "8fe6669a66eb21c51241fcf8aa0812fa1ce3cdd4caea1811b338566fa436b63d",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "78803d27162c23491e0893ccc6cbc9de7fd1219a8575ca9ed864a2f0a7b5d239",
+    "crates/gui-render/src/render/frame_revision.rs": "32f1980edaa5dd0905cf4343636f65b46c1e19760204a9419d3402cdd529e896",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "a89661171084b2e90b3a37b601cf84f361c9e7c170502cd64a89a2d5f3c66ac9",
+    "crates/gui-render/src/render/screen_admission.rs": "95ab740c1bb6946c4837f59bb8bc80ef5292d6420db1a19b99a3680b02b6dde7"
+  },
+  "disposition": "No concrete blocking correctness or lifetime regression identified in this bounded source delta. No performance, full r3 completion or owner ratification claim.",
+  "findings": [],
+  "analysis": [
+    "Pixels capture uses actual emitted board/schematic interaction triangles and the same integer scissor conversion used at draw sites. Outward floor/ceil plus one-pixel guard is conservative; extent clamping, checked scissor sums, nonfinite rejection and malformed triangle rejection fail closed.",
+    "Rectangles are exclusive-right/bottom, stored in32 inline slots, deduplicated exactly, empty clipped bounds skipped. Overlap is preserved for union; overflow rejects reuse. Two triangles of an axis-aligned quad share bounds, preserving thin crosshair arms rather than a full-pane box.",
+    "Presented Completed retains key/pair/support/revision. New begin replaces requested support but not presented support. Revision equality with matching strong/preparation/target/pair yields empty damage for exposure; changed revision unions old completed support with newest requested support. Unknown old/new support and overflow reject reuse.",
+    "finish_snapshot checks active receipt and actual target; current strong/preparation key rejects content/composition changes. A pointer update during an active frame may legitimately complete older displayed support; next frame unions against that actual completion. Failed attempts clear valid state. Dropped/superseded receipts force strong target revision on next begin, preventing abandoned encoded images from reuse.",
+    "Capture cannot acknowledge native damage; its completion changes strong target revision through existing receipt protocol, making captured validity unusable for subsequent native target reuse.",
+    "Prefix size has compile-time <=4096 assertion and all support records are inline. No new heap lists/cache/history or GPU resources introduced. Actual total process/resource accounting and queued-uniform ownership remain later GPU integration obligations.",
+    "Existing full-copy graph still overwrites B before suffix and discards B afterward. New damage metadata is not yet used to restore samples and cannot establish retained-B correctness.",
+    "Source tests cover coalescing, failure, pair/strong invalidation, exposure, unknown bounds, union overflow and real thin crosshair motion/leave; they are not GPU raster coverage or all-pane exactness proof. Required future exact8x/scissor/union boundary and multi-pane controls remain."
+  ],
+  "advisories": [
+    "When wiring GPU restoration, use rectangles as x,y,right-x,bottom-y scissors and the exact same integer union for suffix predicate; restore all samples and reset appropriate scissor/pipeline bindings before suffix.",
+    "Keep full fallback on unsupported/overflow support, rather than silently dropping strips. Current change makes prior A reuse conditional on support validity, conservatively adding cold work when support is unknown; do not claim unchanged full-copy performance."
+  ]
+}

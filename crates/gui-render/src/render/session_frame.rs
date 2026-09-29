@@ -172,7 +172,11 @@ impl Renderer {
             self.render_session.revisions.matches(&plan.receipt),
             "frame plan belongs to a retired or foreign rendering attempt"
         );
-        self.render_session.prefix.begin(plan.prefix_key);
+        self.render_session.prefix.begin(
+            plan.prefix_key,
+            session_prefix::damage::Pixels::capture(&plan.scene, plan.extent),
+            plan.receipt.revision(),
+        );
         let result = self.render_with_acquisition(
             device,
             queue,
@@ -207,7 +211,11 @@ impl Renderer {
             self.render_session.revisions.matches(&plan.receipt),
             "capture plan belongs to a retired or foreign rendering attempt"
         );
-        self.render_session.prefix.begin(plan.prefix_key);
+        self.render_session.prefix.begin(
+            plan.prefix_key,
+            session_prefix::damage::Pixels::capture(&plan.scene, plan.extent),
+            plan.receipt.revision(),
+        );
         let result = self.render(
             device,
             queue,
