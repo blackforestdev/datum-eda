@@ -1,0 +1,25 @@
+
+running 1 test
+test visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::painter_hover::painter_hover_p630_four_group_batch ... GROUP 1: crossing alpha, exact samples and overlapping/missing restrictions
+exact8x adapter=AdapterInfo { name: "Intel(R) HD Graphics P630 (KBL GT2)", vendor: 32902, device: 22813, device_type: IntegratedGpu, device_pci_bus_id: "0000:00:02.0", driver: "Intel open-source Mesa driver", driver_info: "Mesa 25.0.7-2+deb13u1", backend: Vulkan, subgroup_min_size: 8, subgroup_max_size: 32, transient_saves_memory: false }, format=TextureFormatFeatures { allowed_usages: TextureUsages(COPY_SRC | COPY_DST | TEXTURE_BINDING | RENDER_ATTACHMENT | TRANSIENT), flags: TextureFormatFeatureFlags(FILTERABLE | MULTISAMPLE_X2 | MULTISAMPLE_X4 | MULTISAMPLE_X8 | MULTISAMPLE_X16 | MULTISAMPLE_RESOLVE | BLENDABLE) }
+exact8x P630 case passed: crossing baseline
+exact8x P630 case passed: fractional crosshair enter
+
+thread 'visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::painter_hover::painter_hover_p630_four_group_batch' (1500771) panicked at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-28.0.0/src/backend/wgpu_core.rs:1254:26:
+wgpu error: Validation Error
+
+Caused by:
+  In Device::create_bind_group
+    Usage flags TextureUsages(COPY_DST | RENDER_ATTACHMENT) of TextureView with '' label do not contain required usage flags TextureUsages(TEXTURE_BINDING)
+
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::painter_hover::painter_hover_p630_four_group_batch
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 547 filtered out; finished in 7.12s
+

@@ -1,0 +1,20 @@
+{
+  "status": "sealed before single batch",
+  "commit": "7e7c644f35448a17511df7ba9c80e530a50611d3",
+  "authority": "docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-painter-hover.json",
+  "binary": "/home/bfadmin/Documents/datum-eda/target/gpu-painter-hover-proof/painter-hover-correctness",
+  "sha256": "40acb044a4018e93f64b685fafd3475cd0b5c8030c456cad89c10e798eb77028",
+  "test": "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::painter_hover::painter_hover_p630_four_group_batch",
+  "groups": [
+    "crossing alpha/exact samples/negative restrictions",
+    "Console/text/menu/terminal clips",
+    "native non-pad versus actual pad material/text",
+    "stale/failed/overflow/admission/retirement"
+  ],
+  "cap": 1,
+  "timeout_seconds": 300,
+  "failure": "stop all later GPU/build/native execution; source reassessment only",
+  "native_project": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+  "import_fixture": "/tmp/gpu-prepared-native/board.kicad_pcb",
+  "remaining": "No candidate release or native timing campaign has started."
+}

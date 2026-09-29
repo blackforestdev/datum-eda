@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-painter-hover.json",
+  "implementation_commit": "7e7c644f35448a17511df7ba9c80e530a50611d3",
+  "status": "single GPU batch stopped in group1; source reassessment complete; no release build or native timing trial",
+  "implementation": "Shared actual-pad hover membership and disjoint clipped suffix painter landed; correctness/performance qualification incomplete.",
+  "offline_proof": {
+    "pointer_dependency_controls": 7,
+    "archived_native_transitions": 14,
+    "archived_replay_tests": 1,
+    "damage_controls": 7,
+    "heap_controls": 3,
+    "membership_lifetime_controls": 1,
+    "painter_clip_controls": 1,
+    "clippy": "Default and visual all-targets, warnings denied, passed",
+    "governance": "Source health2654, resource policy, dependency authority, evidence28routes, spec governance389, parity20 and progress coverage passed",
+    "setup_failures": "Preserved in offline-logs.tar.gz: initial zero-test selection, module-path compilation failures, absent serde_json test dependency corrected without dependency addition, wrong board.json import path, imported-board/native-ID mismatch, chunks_exact lint. These are setup/code defects, not renderer findings."
+  },
+  "gpu_result": "P630/Vulkan/exact8: cold baseline and fractional crosshair-enter complete pixels matched full reference. First per-sample readback failed create_bind_group validation because B has RENDER_ATTACHMENT|COPY_DST but no TEXTURE_BINDING. No eight-sample comparison, overlap negative, group2/3/4 or performance result.",
+  "cause": "New test helper sampled the existing non-sampleable working image. A is sampleable for restoration; B is a destination. Aliased UNORM view creation does not confer texture usage. Production flags are intentional and not evidence of a renderer defect.",
+  "proposed_correction": "sample-readback-correction.patch; not applied, compiled or executed. Test-only explicit pre-allocation opt-in for B sampling in groups1/3. Groups2/4 and production default preserve original usage. No extra texture, dependency, observer, format/sample/tolerance or renderer algorithm change.",
+  "remaining": "Crosshair/hover exact samples, all four GPU groups and timing remain unqualified. Original camera/resource/endurance/independent/complete DRM qualification obligations unchanged. No S4/S5/issue closure.",
+  "artifacts_sha256": {
+    "gpu-batch-declaration.json": "12ab742ab707aae593b4b26e31ce73b60b05aec9da60a7cfd98505b3326836d9",
+    "gpu-batch-result.json": "4012e99f985eb7c629ae848e25ec7d6a2695b7c0c5babba2fba9848e41440d45",
+    "gpu-batch-started.json": "d49bc984df6097c322ee2872424a8b1ad2c894328c9f12712aef71b3006f3e9a",
+    "gpu-batch.log": "ca5331c0cfa0cb4fcbc5be1d2d2903d485be5790f62d3b0a1820f56aad6547c0",
+    "offline-logs.tar.gz": "9c348bc691987f87351e790c2681d1018eb331b9e46f7f8279dee722c78d27e4",
+    "sample-readback-correction.patch": "a49663254ebafe45f697283a4f356215b2d74378ae1ba09f386303f22a419e64"
+  },
+  "corrective_proposal_sha256": "6a0076b34297f19c93ea86313320df47631d8b5fe5a69307a40c20075bb11f77",
+  "patch_check": "git apply --check passed against7e7c644f; patch not applied"
+}
