@@ -33,7 +33,9 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
             upload_submitted: false,
         }
     }
-    pub(crate) fn acquire(&mut self) -> anyhow::Result<Option<wgpu::TextureView>> {
+    pub(crate) fn acquire(
+        &mut self,
+    ) -> anyhow::Result<Option<datum_gui_render::render_input::FrameTarget>> {
         assert!(
             self.frame.is_none(),
             "one acquisition per rendering attempt"
@@ -44,7 +46,18 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
             .acquire(self.surface, self.device, self.config, self.health);
         self.acquire_elapsed = start.elapsed();
         self.frame = result?;
-        Ok(self.frame.as_ref().map(NativeSurfaceFrame::view))
+        self.frame
+            .as_ref()
+            .map(|frame| {
+                datum_gui_render::render_input::FrameTarget::full_texture(
+                    &frame
+                        .texture
+                        .as_ref()
+                        .expect("unconsumed native frame")
+                        .texture,
+                )
+            })
+            .transpose()
     }
     pub(crate) fn submitted(&mut self, submission: wgpu::SubmissionIndex) {
         assert!(

@@ -161,13 +161,13 @@ impl Renderer {
     /// A deferred or failed encoder returns its snapshot to the shared owner and
     /// never issues a presentation capability or acknowledges terminal damage.
     #[allow(clippy::too_many_arguments)]
-    pub fn encode_frame<C>(
+    pub fn encode_frame<C, T: Into<super::render_input::FrameTarget>>(
         &mut self,
         mut plan: FramePlan,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         context: &mut C,
-        acquire: &mut impl FnMut(&mut C) -> anyhow::Result<Option<wgpu::TextureView>>,
+        acquire: &mut impl FnMut(&mut C) -> anyhow::Result<Option<T>>,
         submitted: &mut impl FnMut(&mut C, wgpu::SubmissionIndex),
     ) -> anyhow::Result<Option<SubmittedFrame>> {
         anyhow::ensure!(
@@ -211,7 +211,7 @@ impl Renderer {
         mut plan: FramePlan,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
-        target: &wgpu::TextureView,
+        target: impl Into<super::render_input::FrameTarget>,
     ) -> anyhow::Result<SubmittedFrame> {
         anyhow::ensure!(
             self.render_session.revisions.matches(&plan.receipt),

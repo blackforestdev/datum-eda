@@ -82,7 +82,7 @@ fn capture_retained(
         .render(
             &renderer.device,
             &renderer.queue,
-            &target.create_view(&wgpu::TextureViewDescriptor::default()),
+            target.create_view(&wgpu::TextureViewDescriptor::default()),
             prepared,
             retained,
             None,

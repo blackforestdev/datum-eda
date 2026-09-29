@@ -91,7 +91,7 @@ pub(super) fn target(c: &OffscreenRenderer) -> crate::capture_resource::CaptureT
 
 pub(super) fn frame(c: &mut OffscreenRenderer, presented: bool) -> RgbaImage {
     let target = target(c);
-    let view = target.create_view(&Default::default());
+    let view = crate::render_input::FrameTarget::full_texture(&target).unwrap();
     let plan = c
         .renderer
         .render_session_mut()

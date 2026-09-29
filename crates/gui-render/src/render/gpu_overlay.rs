@@ -65,9 +65,10 @@ impl Renderer {
         else {
             return Ok(false);
         };
-        let Some(view) = target.acquire()? else {
+        let Some(frame_target) = target.acquire()? else {
             return Ok(false);
         };
+        let view = frame_target.view();
         let mut measurement = self.begin_gpu_measurement()?;
         let leading = self.final_measurement_leading(device, &mut measurement)?;
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
@@ -79,7 +80,7 @@ impl Renderer {
                 label: Some("datum-dialog-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: Some(&view),
+                    resolve_target: Some(view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {

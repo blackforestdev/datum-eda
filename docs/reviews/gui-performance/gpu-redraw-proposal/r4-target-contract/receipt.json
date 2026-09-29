@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source_base": "121151b7",
+  "authority": "../owner-approval-r4.json",
+  "independent_review": "../independent-review-r4.json",
+  "status": "First r4 implementation unit: explicit full-texture target contract adopted; atlas graph not implemented yet.",
+  "changes": [
+    "FrameTarget carries an explicit full-texture COPY_DST capability with exact extent/format checks. Arbitrary views grant render-only access.",
+    "Shared acquisition/encode/capture paths preserve typed targets through upload deferral. Native adapter passes the actual acquired texture and requests COPY_DST only when supported.",
+    "Production capture targets carry COPY_DST usage and pass explicit full textures; existing capture admission/submission holds remain.",
+    "Raw-view component clients remain render-only; no inferred full-texture copy authority. Existing painter and image graph remain pending r4 replacement."
+  ],
+  "verification": {
+    "visual_all_target_clippy": "passed with -D warnings, guarded offline, gui-render and gui-app",
+    "default_all_target_clippy": "passed with -D warnings, guarded offline, gui-render and gui-app",
+    "source_health": "2656 source files passed against HEAD; no touched legacy source or ceiling amendment",
+    "source_policy_controls": "13 passed",
+    "cargo_resource_policy": "passed",
+    "dependency_authority": "passed",
+    "spec_parity": "20 inventories passed",
+    "initial_compile_repairs": "One ambiguous panic-only test closure gained an explicit return type; four temporary-view borrows removed for generic-argument lint. Original failed compile/lint logs preserved. No GPU/API/runtime failure or trial occurred.",
+    "drift_scope": "Full drift runner not executed: it includes native captures and separate terminal proof outside the pinned r4 GPU-batch scope. Scoped source/governance checks only; this receipt does not claim full drift or runtime acceptance."
+  },
+  "execution_consumed": {
+    "gpu_batches": 0,
+    "candidate_release_builds": 0,
+    "baseline_release_builds": 0,
+    "native_trials": 0
+  },
+  "remaining": "Regional layout, five-image admission/lifetimes, shader restoration and translated painter, retained-C validity/copies, complete timing and required bounded proof. Prior source/runtime evidence is not qualification of changed usage flags. Original S4/S5 and separate DRM obligations remain. No CPU optimization or issue closure.",
+  "source_sha256": {
+    "crates/gui-app/src/gui_runtime_support.rs": "2cfc7c2683fdc20cf4224d77be01da94fedbbbb34f9451f6cb35912def2a1a5c",
+    "crates/gui-app/src/native_render_target.rs": "3951394f4c299c11ad938716aaf2dbc3791869df91a90588ce1966b13a3e5566",
+    "crates/gui-app/src/runtime_capture.rs": "17c9ca187f266205c510b789746406e67f2b3521e6ca8dfc5978dedc74fc03ba",
+    "crates/gui-render/src/capture_resource.rs": "a530fc95be6d43162febc14ab311c88a3fc3b1245d218fbec01e70898e19666a",
+    "crates/gui-render/src/render/frame_observation_tests.rs": "4aac492592b93fcc5ce5e68fd76b3b8e1e21c9e8582b7a95ab25572c94722bbd",
+    "crates/gui-render/src/render/gpu_frame.rs": "326702dabb8c5286ed13d1743d56b3a7360bc92cc26055deb28eafa5be8db82a",
+    "crates/gui-render/src/render/gpu_frame_target.rs": "2a549ec77f090dcf4c6cfc1888604b1b9c4ff0ed13e0d569e40d800a4044e113",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "01c6e96dbdf872ff63129497d4a5a728074da1dd4e8f0fa2aabd21b0acde5fa0",
+    "crates/gui-render/src/render/gpu_overlay.rs": "ba7e448fcc072edfbb38311c0dd6bef034371691b4c090c5bd0cca760f8e3155",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "8e0d6c5a71e15c55759ad3ad47a501d591baa2607dac0dc41d0809607bfa8632",
+    "crates/gui-render/src/render/gpu_repreparation_conformance_tests.rs": "4eb7af7b995acdeb08dfea794bc6b2b1913724dfea3acdf167dbb2075391f07e",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "1a755baaf536affd45416a624d8230b6348483403a60ed7aea839d437936c9dd",
+    "crates/gui-render/src/render/prefix_graph_tests.rs": "48fe4902ef43f6688d62209cd7f14166c0a2e0177dfd3060619edcb25b35c869",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "84843ed59ab72c7004d26632edf5eec0f95078d79e2a91e96ef63f69c5adf406",
+    "crates/gui-render/src/render/session_frame.rs": "d5e725e987e7af3fca5d9fc24715af163d845f06557c291e250ae53d6951dce7",
+    "crates/gui-render/src/render/session_pointer.rs": "840292908f139c033ecc874453a865aa41b96c0b53e5dbf908716ebba0b2fc11",
+    "crates/gui-render/src/visual_capture.rs": "a2482f8d0a5689e9537e1d91a41343ef663a0fd225085629e8d804588cd6f668",
+    "crates/gui-render/src/render/frame_target.rs": "49fe878236a193514b38cf65cf7a4135fe93c9703009181dfdbd140f9285eef3"
+  },
+  "artifacts_sha256": {
+    "offline-logs.tar.gz": "03ab6fa51af0ae155a5f1ceac4887203593b2421a85a27e63f31fec2282294c1"
+  }
+}
