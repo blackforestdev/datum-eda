@@ -18,18 +18,18 @@ pub(super) fn eligible(key: AttachmentKey) -> bool {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct PairIdentity {
+pub(crate) struct CompositionIdentity {
     owner: u64,
-    working: u64,
+    composed: u64,
     prefix: u64,
 }
 
 #[cfg(test)]
-impl PairIdentity {
+impl CompositionIdentity {
     pub(crate) fn test_identity(owner: u64) -> Self {
         Self {
             owner,
-            working: 1,
+            composed: 1,
             prefix: 2,
         }
     }
@@ -41,7 +41,7 @@ pub(crate) struct PrefixImages {
     prefix: SurfaceAttachment,
     working: SurfaceAttachment,
     regional: [SurfaceAttachment; 3],
-    pub identity: PairIdentity,
+    pub identity: CompositionIdentity,
 }
 impl PrefixImages {
     fn images(&self) -> [Option<&SurfaceAttachment>; 5] {
@@ -80,8 +80,57 @@ impl PrefixImages {
     pub(crate) fn restoration_views(&self) -> Option<(&wgpu::TextureView, &wgpu::TextureView)> {
         Some((
             self.prefix.image.unorm_view.as_ref()?,
-            self.working.image.unorm_view.as_ref()?,
+            self.regional[1].image.unorm_view.as_ref()?,
         ))
+    }
+    pub(crate) fn composed_view(&self) -> &wgpu::TextureView {
+        &self.regional[0].image.view
+    }
+    pub(crate) fn atlas_view(&self) -> &wgpu::TextureView {
+        &self.regional[1].image.view
+    }
+    pub(crate) fn resolved_atlas_view(&self) -> &wgpu::TextureView {
+        &self.regional[2].image.view
+    }
+    pub(crate) fn compose_tiles(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        plan: &crate::renderer_state::damage::regional::Plan,
+    ) {
+        for tile in plan.tiles() {
+            let mut source = self.regional[2].image.texture.as_image_copy();
+            source.origin = wgpu::Origin3d {
+                x: tile.atlas[0],
+                y: tile.atlas[1],
+                z: 0,
+            };
+            let mut destination = self.regional[0].image.texture.as_image_copy();
+            destination.origin = wgpu::Origin3d {
+                x: tile.source[0],
+                y: tile.source[1],
+                z: 0,
+            };
+            encoder.copy_texture_to_texture(
+                source,
+                destination,
+                wgpu::Extent3d {
+                    width: tile.extent[0],
+                    height: tile.extent[1],
+                    depth_or_array_layers: 1,
+                },
+            );
+        }
+    }
+    pub(crate) fn present(&self, encoder: &mut wgpu::CommandEncoder, destination: &wgpu::Texture) {
+        encoder.copy_texture_to_texture(
+            self.regional[0].image.texture.as_image_copy(),
+            destination.as_image_copy(),
+            wgpu::Extent3d {
+                width: self.working.key.extent.0,
+                height: self.working.key.extent.1,
+                depth_or_array_layers: 1,
+            },
+        );
     }
     pub fn prefix_view(&self) -> &wgpu::TextureView {
         &self.prefix.image.view
@@ -198,9 +247,9 @@ impl SurfaceAttachments {
         let working = self.current.as_ref()?.clone();
         let prefix = optional.prefix.as_ref()?.clone();
         Some(PrefixImages {
-            identity: PairIdentity {
+            identity: CompositionIdentity {
                 owner: self.owner.id(),
-                working: working.allocation,
+                composed: optional.regional.as_ref()?[0].allocation,
                 prefix: prefix.allocation,
             },
             working,

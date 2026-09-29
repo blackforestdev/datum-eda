@@ -1,6 +1,6 @@
 //! Image validity follows immutable preparation and successful completion only.
 use super::frame_revision::Target;
-use crate::gpu_surface::PairIdentity;
+use crate::gpu_surface::CompositionIdentity;
 #[path = "session_damage.rs"]
 pub(crate) mod damage;
 use damage::Pixels;
@@ -15,7 +15,7 @@ pub(super) struct Key {
 #[derive(Clone, Copy)]
 pub(super) struct Completed {
     key: Key,
-    pair: PairIdentity,
+    composition: CompositionIdentity,
     support: Option<Pixels>,
     revision: u64,
 }
@@ -48,8 +48,8 @@ impl Prefix {
         self.world_bundles.set(0);
     }
     pub(crate) fn reset_work(&mut self) {
-        // A direct full render may overwrite/discard working B without a session
-        // receipt. Its old presented composition can no longer authorize reuse.
+        // A direct full render has no matching session receipt. It cannot
+        // authorize reuse of the previous successfully presented A/C pair.
         if self.request.is_none() {
             self.valid = None;
         }
@@ -77,19 +77,24 @@ impl Prefix {
         self.support
     }
 
-    pub(crate) fn damage(&self, pair: PairIdentity) -> Option<Pixels> {
+    pub(crate) fn damage(&self, composition: CompositionIdentity) -> Option<Pixels> {
         let valid = self.valid?;
-        (Some(valid.key) == self.request && valid.pair == pair).then_some(())?;
+        (Some(valid.key) == self.request && valid.composition == composition).then_some(())?;
         if valid.revision == self.revision {
             Some(Pixels::default())
         } else {
             valid.support?.union(self.support?)?.disjoint()
         }
     }
-    pub(crate) fn encoded(&mut self, pair: PairIdentity, reused: bool, copy_bytes: u64) {
+    pub(crate) fn encoded(
+        &mut self,
+        composition: CompositionIdentity,
+        reused: bool,
+        copy_bytes: u64,
+    ) {
         self.encoded = self.request.map(|key| Completed {
             key,
-            pair,
+            composition,
             support: self.support,
             revision: self.revision,
         });

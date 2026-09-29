@@ -2,7 +2,7 @@
 use super::*;
 
 pub(super) const OPTIONAL_BYTES: u64 = 45 * 1024 * 1024;
-const ATLAS: u32 = 512;
+const ATLAS: u32 = crate::renderer_state::damage::regional::ATLAS;
 
 struct Layout {
     keys: [AttachmentKey; 4],

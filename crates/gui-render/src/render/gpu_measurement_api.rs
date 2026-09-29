@@ -82,6 +82,9 @@ impl Renderer {
         encoder: &mut wgpu::CommandEncoder,
     ) -> anyhow::Result<()> {
         if let (Some(m), Some(frame)) = (&self.measurements, frame) {
+            // This marker follows the graph, including all presentation copies.
+            // Resolve queries only after its end timestamp has been encoded.
+            m.final_marker(frame, encoder)?;
             m.resolve(frame, encoder)?;
         }
         Ok(())

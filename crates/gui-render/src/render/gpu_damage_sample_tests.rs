@@ -177,7 +177,7 @@ pub(crate) fn read_samples(
     result
 }
 
-pub(crate) fn prove(device: &wgpu::Device, queue: &wgpu::Queue, adapter: &wgpu::Adapter) {
+pub(crate) fn prove(device: &wgpu::Device, queue: &wgpu::Queue, _adapter: &wgpu::Adapter) {
     for format in [
         wgpu::TextureFormat::Rgba8UnormSrgb,
         wgpu::TextureFormat::Bgra8UnormSrgb,
@@ -193,8 +193,12 @@ pub(crate) fn prove(device: &wgpu::Device, queue: &wgpu::Queue, adapter: &wgpu::
             format: Some(alias),
             ..Default::default()
         });
-        let restoration = pollster::block_on(Restoration::admit(device, adapter, format, 8))
-            .expect("P630 restoration capability required");
+        let restoration = pollster::block_on(Restoration::create(
+            device,
+            format.remove_srgb_suffix(),
+            include_str!("gpu_damage_restore_legacy_test.wgsl"),
+        ))
+        .expect("P630 restoration capability required");
         let mut encoder = device.create_command_encoder(&Default::default());
         initialize(device, &mut encoder, &source_view, alias);
         // Distinct destination state proves unscissored pixels remain untouched.
@@ -244,7 +248,8 @@ pub(crate) fn prove(device: &wgpu::Device, queue: &wgpu::Queue, adapter: &wgpu::
                 }
             }
         }
-        let wrong_shader = include_str!("gpu_damage_restore.wgsl").replace("i32(sample)", "0");
+        let wrong_shader =
+            include_str!("gpu_damage_restore_legacy_test.wgsl").replace("i32(sample)", "0");
         let wrong = pollster::block_on(Restoration::create(device, alias, &wrong_shader)).unwrap();
         let mut encoder = device.create_command_encoder(&Default::default());
         wrong.encode(
