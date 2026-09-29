@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU sample-readback corrective validation",
+  "recorded_at": "2026-09-29T15:59:01Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/painter-hover-stopped-validation/corrective-validation.md",
+    "sha256": "6a0076b34297f19c93ea86313320df47631d8b5fe5a69307a40c20075bb11f77",
+    "commit": "a011a808"
+  },
+  "patch": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/painter-hover-stopped-validation/sample-readback-correction.patch",
+    "sha256": "a49663254ebafe45f697283a4f356215b2d74378ae1ba09f386303f22a419e64"
+  },
+  "disposition": "Approve exact test-only opt-in correction, scoped offline preflight and one serial four-group P630/Vulkan/exact8 replay capped300s, first failure stops. If all pass, continue unspent one candidate release build and fixed12pointer campaign with pinned baseline. No baseline rebuild, observer expansion, CPU/DRM execution, retries or qualification closure."
+}

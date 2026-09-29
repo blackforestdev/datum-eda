@@ -63,6 +63,8 @@ pub(crate) struct SurfaceAttachment {
 /// replacement and close are not themselves completion signals.
 pub(crate) struct SurfaceAttachments {
     damage_views: bool,
+    #[cfg(all(test, feature = "visual"))]
+    sample_readback: bool,
     owner: Owner,
     generations: Arc<crate::text_gpu::budget::Budget>,
     allocations: u64,
@@ -82,6 +84,8 @@ impl SurfaceAttachments {
     fn with_generations(generations: Arc<crate::text_gpu::budget::Budget>) -> Self {
         Self {
             damage_views: false,
+            #[cfg(all(test, feature = "visual"))]
+            sample_readback: false,
             owner: Owner::new(),
             generations,
             allocations: 0,
@@ -96,6 +100,12 @@ impl SurfaceAttachments {
     }
 }
 impl SurfaceAttachments {
+    #[cfg(all(test, feature = "visual"))]
+    pub(crate) fn enable_sample_readback(&mut self) {
+        assert!(self.current.is_none());
+        self.sample_readback = true;
+    }
+
     pub(crate) fn admit_damage_views(&mut self, admitted: bool) {
         assert!(self.current.is_none());
         self.damage_views = admitted;
@@ -202,6 +212,19 @@ impl SurfaceAttachments {
             })?);
             let reservation = GpuReservation::new(bytes, vec![])?;
             let alias_formats = [key.format.remove_srgb_suffix()];
+            let usage = wgpu::TextureUsages::RENDER_ATTACHMENT
+                | if prefix_images::eligible(key) {
+                    wgpu::TextureUsages::COPY_DST
+                } else {
+                    wgpu::TextureUsages::empty()
+                };
+            #[cfg(all(test, feature = "visual"))]
+            let usage = if self.sample_readback {
+                assert!(prefix_images::eligible(key));
+                usage | wgpu::TextureUsages::TEXTURE_BINDING
+            } else {
+                usage
+            };
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("datum-gui-render-msaa"),
                 size: wgpu::Extent3d {
@@ -213,12 +236,7 @@ impl SurfaceAttachments {
                 sample_count: key.samples,
                 dimension: wgpu::TextureDimension::D2,
                 format: key.format,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
-                    | if prefix_images::eligible(key) {
-                        wgpu::TextureUsages::COPY_DST
-                    } else {
-                        wgpu::TextureUsages::empty()
-                    },
+                usage,
                 view_formats: if self.damage_views && prefix_images::eligible(key) {
                     &alias_formats
                 } else {
