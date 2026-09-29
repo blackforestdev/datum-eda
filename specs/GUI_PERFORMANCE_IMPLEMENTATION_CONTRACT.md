@@ -690,3 +690,13 @@ packet and its first-failure stops. No earlier stopped campaign resumes.
 Preserve all original correctness/resource/performance and S5 obligations,
 including separately scoped complete DRM duty. CPU optimization stays deferred;
 no issue closure or final acceptance follows from this approval.
+
+### R4 source/design review received
+
+The user supplied an independent review supporting the pinned r4 implementation
+and proof with no blocking design flaw. The preserved review and its limits are
+in `docs/reviews/gui-performance/gpu-redraw-proposal/independent-review-r4.json`.
+PM050 reconciles that prerequisite. GPI-S4 proceeds within the already approved
+r4 packet; exact translated samples, all painter clips, complete timing/query
+capacity, metadata and submitted/retiring lifetimes remain proof obligations.
+No runtime acceptance, extra experiment, CPU/DRM scope or closure is inferred.

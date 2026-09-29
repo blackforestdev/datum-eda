@@ -150,3 +150,19 @@ stops. All previous campaigns remain stopped. Exact output, performance,
 resource, camera, endurance and independent qualification remain unproven at
 their original scope. No CPU/DRM execution, dependency change, tolerance refresh,
 parameter sweep, S4/S5 acceptance or issue closure is authorized.
+
+### R4 independent review reconciliation
+
+The user supplied an independent source/design review of the pinned r4 proposal,
+with no blocking design finding and support for its bounded implementation/proof.
+`docs/reviews/gui-performance/gpu-redraw-proposal/independent-review-r4.json`
+preserves its provenance, exact disposition and implementation obligations.
+This completes the pre-implementation review prerequisite; the existing owner
+approval supplies execution authority, not the review itself.
+
+Carry exact per-sample translated rasterization, all-painter coordinate/clip
+consistency, complete cold/warm/empty/fallback timing and actual31/32query
+accounting, and full metadata/submitted/retiring resource accounting into the
+required proof. The supplied review's final metadata sentence was incomplete;
+no cap or lifetime requirement is waived or inferred from its missing ending.
+No runtime acceptance is claimed. The pinned r4 first-failure boundaries remain.
