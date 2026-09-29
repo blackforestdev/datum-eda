@@ -1,0 +1,28 @@
+{
+  "status": "Read-only incidence analysis of completed output diagnostic; not a native capacity guarantee",
+  "source_receipt": "../focused-native-result/receipt.json",
+  "retained_semantic_input_records": 1290,
+  "first_activity": [
+    10,
+    2
+  ],
+  "final_activity": [
+    1364,
+    1278
+  ],
+  "revision_and_attempt_deltas": [
+    1354,
+    1276
+  ],
+  "conservative_combined_count": 3920,
+  "existing_limit": 4096,
+  "argument": "For this observed single-session trace, each additional retained callback with changed revision/attempt consumes at least one monotonic increment; adding every increment to existing semantic/input records overcounts overlaps. It bounds a prospective activity-aware filter for this trace only. GPU timing may change incidence and must still fail explicitly on exhaustion.",
+  "causal_rule": "FramePlan latches workload at creation in session_frame.rs after begin_frame increments attempt. A callback which changes no semantics/revision/attempt and creates no new plan can discard its provisional scope; a continued existing plan retains its earlier immutable tag. Offline tests must establish discarded IDs never enter receipts.",
+  "sources_sha256": {
+    "crates/gui-render/src/render/frame_revision.rs": "09bc88729a999d0d079218cc0294d42ad8942ef5300be48ace59857feb831523",
+    "crates/gui-render/src/render/frame_workload.rs": "43ed8346b180574c42e772cc7b92bced47de957ab3ff8416d2ae702cf4516fda",
+    "crates/gui-render/src/render/session_frame.rs": "710fb72f37a9c56c6c3b004ab4bd3c9397015c0d1dba2b69f869103b766f6255",
+    "crates/gui-app/src/native_input_observation.rs": "3e9aa8f05a22b4495b36019bf6d75cd9945b0cd5753dc2da6ab2fb8277d04224",
+    "crates/gui-app/src/native_output_diagnostic.rs": "7fb95d4af64c538172a835327563255aafba5794854cde2c9c205782fa46357c"
+  }
+}
