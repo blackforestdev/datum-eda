@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "recorded_at": "2026-09-29T18:55:25Z",
+  "provenance": "Independent source/design review supplied directly by the user in this conversation; not a review performed by the implementation session. No separate reviewer identity was supplied.",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r4.md",
+    "sha256": "29bdc35a67735b095259515e0982b25697f5ce46c946798a60b55bca623e5509"
+  },
+  "disposition_exact": "Independent review: no blocking design flaw found in the pinned r4 proposal. I support proceeding to its bounded implementation and proof, subject to the required decision reconciliation. This is a source/design review, not runtime acceptance.",
+  "reviewed_scope": "Proposal, source assessment, owner approval, preserved timing report, relevant painter/shader code and installed wgpu validation, as stated by supplied review.",
+  "confirmed": [
+    "Draw-free observation supports investigating full-target multisample cost, not predicting speed.",
+    "Restore/repaint entire selected tiles; hardware resolve; present complete retained image; completion-dependent validity.",
+    "Final copies included in timing with matching baseline instrumentation.",
+    "44.15625MiB optional and150.8125MiB two-generation payload independently confirmed by supplied review.",
+    "Installed wgpu supports bounded negative viewport origins and forbids partial multisample copies."
+  ],
+  "implementation_obligations": [
+    "Exact translated rasterization: glyphs, fractional geometry, seams, edge padding, first/last atlas cells; integer/even origins are not proof.",
+    "All Console/terminal/text/menu coordinates and clips distinguish source and atlas consistently.",
+    "Cold/warm/empty/fallback final copies inside timing; actual encoder paths verify31of32query worst case.",
+    "Preserve complete metadata and current/submitted/retiring lifetime accounting under existing caps."
+  ],
+  "truncation_note": "Supplied message ends after: Metadata and lifetime accounting. The image arithmetic is sound,. No missing continuation is inferred and no existing accounting requirement is waived.",
+  "runtime_acceptance": false,
+  "authority": "Owner execution approval remains owner-approval-r4.json; this supplied review satisfies the independent source/design prerequisite only."
+}
