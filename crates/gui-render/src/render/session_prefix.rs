@@ -1,6 +1,9 @@
 //! Image validity follows immutable preparation and successful completion only.
 use super::frame_revision::Target;
 use crate::gpu_surface::PairIdentity;
+#[path = "session_damage.rs"]
+pub(crate) mod damage;
+use damage::Pixels;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) struct Key {
@@ -13,6 +16,8 @@ pub(super) struct Key {
 pub(super) struct Completed {
     key: Key,
     pair: PairIdentity,
+    support: Option<Pixels>,
+    revision: u64,
 }
 
 /// Fixed inline metadata; no per-frame lists, hashes, or unaccounted image history.
@@ -20,13 +25,17 @@ pub(super) struct Completed {
 pub(crate) struct Prefix {
     valid: Option<Completed>,
     request: Option<Key>,
+    support: Option<Pixels>,
+    revision: u64,
     encoded: Option<Completed>,
     reused: bool,
     copy_bytes: u64,
     world_bundles: std::cell::Cell<usize>,
 }
 impl Prefix {
-    pub(super) fn begin(&mut self, request: Option<Key>) {
+    pub(super) fn begin(&mut self, request: Option<Key>, support: Option<Pixels>, revision: u64) {
+        self.support = support;
+        self.revision = revision;
         self.request = request;
         self.encoded = None;
         self.reused = false;
@@ -54,11 +63,26 @@ impl Prefix {
         self.request.is_some()
     }
     pub(crate) fn reusable(&self, pair: PairIdentity) -> bool {
-        self.request
-            .is_some_and(|key| self.valid.is_some_and(|v| v.key == key && v.pair == pair))
+        self.damage(pair).is_some()
+    }
+    pub(crate) fn damage(&self, pair: PairIdentity) -> Option<Pixels> {
+        let valid = self.valid?;
+        (Some(valid.key) == self.request && valid.pair == pair).then_some(())?;
+        let old = valid.support?;
+        let new = self.support?;
+        if valid.revision == self.revision {
+            Some(Pixels::default())
+        } else {
+            old.union(new)
+        }
     }
     pub(crate) fn encoded(&mut self, pair: PairIdentity, reused: bool, copy_bytes: u64) {
-        self.encoded = self.request.map(|key| Completed { key, pair });
+        self.encoded = self.request.map(|key| Completed {
+            key,
+            pair,
+            support: self.support,
+            revision: self.revision,
+        });
         self.reused = reused;
         self.copy_bytes = copy_bytes;
     }
@@ -78,4 +102,5 @@ impl Prefix {
 }
 
 // Image validity metadata is fixed inline storage, with no owned lists.
-const _: () = assert!(std::mem::size_of::<Prefix>() <= 4096);
+const _: () =
+    assert!(std::mem::size_of::<Prefix>() + std::mem::size_of::<Option<Completed>>() <= 4096);
