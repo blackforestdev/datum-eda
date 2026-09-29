@@ -19,7 +19,7 @@ def finite(value):
     return isinstance(value, (int, float)) and math.isfinite(value)
 
 
-def validate(samples, receipt, declaration):
+def validate_demands(receipt, declaration):
     require(receipt.get("complete") and not receipt.get("overflow"), "incomplete input receipt")
     manifest = receipt.get("workload_manifest") or {}
     for field in ("epoch", "warmup_ns", "active_ns", "still_ns", "drain_ns"):
@@ -52,6 +52,11 @@ def validate(samples, receipt, declaration):
         require(tag[2] == len(demands) + 1, "missing native demand sequence")
         demands[tag[2]] = tag[1]
         revisions[tag[2]] = record["before"]["render_revision"]
+    return epoch, demands, revisions
+
+
+def validate(samples, receipt, declaration):
+    epoch, demands, revisions = validate_demands(receipt, declaration)
     seal = receipt.get("gpu_drained")
     require(isinstance(seal, list) and len(seal) == 3 and all(isinstance(v, int) and v > 0 for v in seal), "missing drained frame range")
     frames, submissions, output = set(), set(), []

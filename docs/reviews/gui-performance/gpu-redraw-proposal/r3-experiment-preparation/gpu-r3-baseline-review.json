@@ -1,0 +1,107 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "scope": "Read-only source advisory; no builds, tests, native runs or source edits; not approval or qualification",
+  "baseline": "997b618e",
+  "pins": {
+    "/tmp/gpu-r3-backport.py": "a0c66d19d76e88ac9bca35be54717e7979360d1147d057ca827d3b7dd3002b39",
+    "target/gpu-r3-proof/baseline-source/crates/gui-app/src/baseline_measurement_lineage.rs": "11d822b35270cd6a27c646a7e542caa74d78eb5ec475fb0816ff3fca0475342c",
+    "target/gpu-r3-proof/baseline-source/crates/gui-app/src/interaction_refresh.rs": "7a661a28a12aa7dde518704aea867f5882060bff80786d97fcc7b0f30417fd49",
+    "target/gpu-r3-proof/baseline-source/crates/gui-app/src/runtime_terminal_render.rs": "2e2c82408f746a94acc45345a6f48634d040789e95ca3d6b5264979090fd7cc0",
+    "target/gpu-r3-proof/baseline-source/crates/gui-app/src/runtime_present.rs": "fdc291a7d7d405049d501b02e9b0eae0bc6070db4021852e0a91f72d88506bef",
+    "target/gpu-r3-proof/baseline-source/crates/gui-app/src/main.rs": "bc0ebf9f101a992a40df6e227fc510c1c757f5be26ad9f3b22ff6e4ad44ee3d6",
+    "target/gpu-r3-proof/baseline-source/crates/gui-app/src/native_input_observation.rs": "f6f69bd59693b6bbb4e41d1917061aeae25e33c4b0cc9090f1456c6c8a0ae912",
+    "target/gpu-r3-proof/baseline-source/crates/gui-render/src/render/gpu_frame.rs": "b2e3c3fe5a9c25814aa45eaf81bf4ff5f97c15f0c71722db74b0eb623a2a72ba",
+    "target/gpu-r3-proof/baseline-source/crates/gui-render/src/render/gpu_overlay.rs": "3252261731944d1567984844bc942bce5733947afd5c3a2d083eb03dca8e11e4",
+    "scripts/gpu_r3_native_trial.py": "5f8ab07808fa96a135f7dd9847c1a89173afa47e71f0b1774bf6f3c08a48f18e",
+    "scripts/gpu_r3_pointer_stream.py": "d8c998023a6ae0672320616cab3c140f688e57c672ac85526ac7a1f5a415856e",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/input-observer.patch": "8723c3e05d3d251093b3be27bd77a91c0cd5c6fb47ea89c4e7f0e79445522b9a",
+    "scripts/gpu_r3_campaign.py": "24743bcc4c52079d0c1a4b0ce4b16fd71854cfa18d6c80929ca89882abbf4b84",
+    "scripts/gpu_r3_pointer_input.py": "d89acbc3f55d338755e2d86c99770759127957500cbfbf5ffabe14d1c479f74a",
+    "scripts/gpu_r3_receipts.py": "fd21be43431576451d4ac823d29bd32a00ce667a93eb5883cbbdd50f0469d770",
+    "crates/gui-app/src/native_gpu_measurements.rs": "4e3e9e35353f2e6181db27b5a3668e108d4ca6ae5639117237c86aa8f6eb7cc2",
+    "target/gpu-r3-proof/baseline-source/crates/gui-app/src/native_gpu_measurements.rs": "4e3e9e35353f2e6181db27b5a3668e108d4ca6ae5639117237c86aa8f6eb7cc2"
+  },
+  "findings": [
+    {
+      "id": "BASE-01",
+      "severity": "blocking receipt validity",
+      "status": "resolved in current baseline source",
+      "source": "baseline_measurement_lineage.rs Default",
+      "detail": "Initial revision zero failed required positive attempt lineage before any invalidation. Manual Default now initializes revision 1, preparation remains zero until common preparation succeeds."
+    },
+    {
+      "id": "BASE-02",
+      "severity": "blocking method scope",
+      "status": "resolved by source follow-up",
+      "source": "gui-app/src/main.rs:260, native_input_observation.rs:268 and owned dialog render entrypoints",
+      "detail": "Capture renders without baseline identity update; secondary windows have no causal bridge and are omitted from Main input records. GPU mode eventually rejects missing/foreign lineage, but quiet mode needs explicit fail-closed exclusion. Reject these alternate renderer routes while bounded observer enabled, preserving ordinary baseline behavior otherwise."
+    },
+    {
+      "id": "RUN-01",
+      "severity": "blocking runner validity",
+      "status": "resolved by source follow-up",
+      "source": "scripts/gpu_r3_native_trial.py:6,160",
+      "detail": "Import path currently names input-timer-conformance but gpu_r2_validate.py is archived under stopped-experiment-r2. Consumer emits singular phase and phase_union, while runner reads phases. Pin immutable import and select row.phase == active."
+    }
+  ],
+  "observations": [
+    "All five production scene_dirty=true sites are in interaction_refresh and increment lineage; remaining dirty=false sites only consume preparation. Common build_terminal_prepared_scene increments preparation for native, hit preparation, and capture paths. Recovery invokes instrumented invalidate_scene.",
+    "Pointer refresh retains historical cached preparation and existing baseline full-render strategy; observer revision changes do not implement candidate invalidation semantics.",
+    "Pristine997 comparison of copied glyph/terminal/atlas and edited world/final submission code shows measurement command wrappers/bookkeeping, not world/suffix reordering or retained rendering migration. Final leading command precedes actual final upload commands.",
+    "Measurement gate still must verify complete baseline receipts and pending-continuation accounting; source review is not baseline build or timer acceptance.",
+    "Runner is one declared run only; external declaration/controller must enforce aggregate order, finite budget and global stop. No inference of DRM duty, four-host parity, recovery parity or uninstrumented CPU acceptance.",
+    "Follow-up: Host::new rejects id != 1 when workload manifest is set before measurement-enabled branch, covering quiet and GPU secondary/recovery hosts identically. Baseline capture explicitly rejects manifest mode.",
+    "Runner imports immutable archived WM helper, uses local r3 pointer validator and singular phase; quiet validates full workload demands.",
+    "Campaign takes canonical exclusive lock, reserves before subprocess, fixes declaration digest, stops on nonzero/invalid/budget failure, and leaves interrupted running state non-restartable. Timeout uses persisted owned cgroup for workload kill.",
+    "Baseline provenance must be final applied source patch; obsolete generator is not the reproducible artifact."
+  ],
+  "recommendation": "No remaining critical source-level defect identified in this bounded Main observer/backport and runner follow-up. Recommendation only; final applied-patch/binary/declaration pins and complete receipts remain required. No build/native/test execution by reviewer; not owner approval or performance qualification.",
+  "review_history": [
+    {
+      "findings": [
+        {
+          "id": "BASE-01",
+          "severity": "blocking receipt validity",
+          "status": "resolved in current baseline source",
+          "source": "baseline_measurement_lineage.rs Default",
+          "detail": "Initial revision zero failed required positive attempt lineage before any invalidation. Manual Default now initializes revision 1, preparation remains zero until common preparation succeeds."
+        },
+        {
+          "id": "BASE-02",
+          "severity": "blocking method scope",
+          "status": "resolved by source follow-up",
+          "source": "gui-app/src/main.rs:260, native_input_observation.rs:268 and owned dialog render entrypoints",
+          "detail": "Capture renders without baseline identity update; secondary windows have no causal bridge and are omitted from Main input records. GPU mode eventually rejects missing/foreign lineage, but quiet mode needs explicit fail-closed exclusion. Reject these alternate renderer routes while bounded observer enabled, preserving ordinary baseline behavior otherwise."
+        },
+        {
+          "id": "RUN-01",
+          "severity": "blocking runner validity",
+          "status": "resolved by source follow-up",
+          "source": "scripts/gpu_r3_native_trial.py:6,160",
+          "detail": "Import path currently names input-timer-conformance but gpu_r2_validate.py is archived under stopped-experiment-r2. Consumer emits singular phase and phase_union, while runner reads phases. Pin immutable import and select row.phase == active."
+        }
+      ],
+      "pins": {
+        "/tmp/gpu-r3-backport.py": "a0c66d19d76e88ac9bca35be54717e7979360d1147d057ca827d3b7dd3002b39",
+        "target/gpu-r3-proof/baseline-source/crates/gui-app/src/baseline_measurement_lineage.rs": "11d822b35270cd6a27c646a7e542caa74d78eb5ec475fb0816ff3fca0475342c",
+        "target/gpu-r3-proof/baseline-source/crates/gui-app/src/interaction_refresh.rs": "7a661a28a12aa7dde518704aea867f5882060bff80786d97fcc7b0f30417fd49",
+        "target/gpu-r3-proof/baseline-source/crates/gui-app/src/runtime_terminal_render.rs": "2e2c82408f746a94acc45345a6f48634d040789e95ca3d6b5264979090fd7cc0",
+        "target/gpu-r3-proof/baseline-source/crates/gui-app/src/runtime_present.rs": "fdc291a7d7d405049d501b02e9b0eae0bc6070db4021852e0a91f72d88506bef",
+        "target/gpu-r3-proof/baseline-source/crates/gui-app/src/main.rs": "bc0ebf9f101a992a40df6e227fc510c1c757f5be26ad9f3b22ff6e4ad44ee3d6",
+        "target/gpu-r3-proof/baseline-source/crates/gui-app/src/native_input_observation.rs": "f6f69bd59693b6bbb4e41d1917061aeae25e33c4b0cc9090f1456c6c8a0ae912",
+        "target/gpu-r3-proof/baseline-source/crates/gui-render/src/render/gpu_frame.rs": "b2e3c3fe5a9c25814aa45eaf81bf4ff5f97c15f0c71722db74b0eb623a2a72ba",
+        "target/gpu-r3-proof/baseline-source/crates/gui-render/src/render/gpu_overlay.rs": "3252261731944d1567984844bc942bce5733947afd5c3a2d083eb03dca8e11e4",
+        "scripts/gpu_r3_native_trial.py": "5f8ab07808fa96a135f7dd9847c1a89173afa47e71f0b1774bf6f3c08a48f18e",
+        "scripts/gpu_r3_pointer_stream.py": "d8c998023a6ae0672320616cab3c140f688e57c672ac85526ac7a1f5a415856e",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/input-observer.patch": "8723c3e05d3d251093b3be27bd77a91c0cd5c6fb47ea89c4e7f0e79445522b9a",
+        "scripts/gpu_r3_campaign.py": "24743bcc4c52079d0c1a4b0ce4b16fd71854cfa18d6c80929ca89882abbf4b84",
+        "scripts/gpu_r3_pointer_input.py": "d89acbc3f55d338755e2d86c99770759127957500cbfbf5ffabe14d1c479f74a",
+        "scripts/gpu_r3_receipts.py": "fd21be43431576451d4ac823d29bd32a00ce667a93eb5883cbbdd50f0469d770",
+        "crates/gui-app/src/native_gpu_measurements.rs": "4e3e9e35353f2e6181db27b5a3668e108d4ca6ae5639117237c86aa8f6eb7cc2",
+        "target/gpu-r3-proof/baseline-source/crates/gui-app/src/native_gpu_measurements.rs": "4e3e9e35353f2e6181db27b5a3668e108d4ca6ae5639117237c86aa8f6eb7cc2"
+      },
+      "recommendation": "Finish pending explicit alternate-route refusal and runner corrections before any declared trial. No further renderer mechanism blocker identified in bounded Main backport inspection."
+    }
+  ]
+}
