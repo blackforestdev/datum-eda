@@ -1,0 +1,53 @@
+{
+  "source": "3443b6ac3c2efbf1b6ed7238be3864c2f721c86b",
+  "binary": "/home/bfadmin/Documents/datum-eda/target/debug/deps/datum_gui_render-ca0a5acac071f491",
+  "binary_sha256": "8023c16e059e186227362d30d81d889933e0d050132ec39c39ec81e796bc8403",
+  "fixture": {
+    "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "authority": "p630-exact-output/receipt.json environment.fixture; verify bytes before use"
+  },
+  "tests": [
+    "gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls",
+    "gpu_measurements::resources::tests::query_resources_rollback_admission_and_survive_frame_and_submission_owners",
+    "visual::visual_capture::offscreen_session_tests::submission_conformance::world_and_glyph_submissions_include_transfer_and_final_graph",
+    "visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels",
+    "visual::visual_capture::offscreen_session_tests::prefix_graph_tests::exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery"
+  ],
+  "timeout_seconds": 90,
+  "status": "passed",
+  "results": [
+    {
+      "test": "gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-1.log"
+    },
+    {
+      "test": "gpu_measurements::resources::tests::query_resources_rollback_admission_and_survive_frame_and_submission_owners",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-2.log"
+    },
+    {
+      "test": "visual::visual_capture::offscreen_session_tests::submission_conformance::world_and_glyph_submissions_include_transfer_and_final_graph",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-3.log"
+    },
+    {
+      "test": "visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-4.log"
+    },
+    {
+      "test": "visual::visual_capture::offscreen_session_tests::prefix_graph_tests::exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery",
+      "exit_code": 0,
+      "passed": true,
+      "log": "case-5.log"
+    }
+  ],
+  "started_utc": "2026-09-29T04:23:02Z",
+  "finished_utc": "2026-09-29T04:23:07Z"
+}

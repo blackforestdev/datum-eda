@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "owner-approval-r3-corrective.json; corrective-validation.json permits unspent r3 timer batch after corrective success",
+  "source": "3443b6ac3c2efbf1b6ed7238be3864c2f721c86b",
+  "binary_sha256": "8023c16e059e186227362d30d81d889933e0d050132ec39c39ec81e796bc8403",
+  "outcome": "Five timer-conformance cases passed once each, serially, within the predeclared 90-second bounds. No performance trial executed.",
+  "evidence": [
+    "Query ring completion, exhaustion, failure and resource rollback/lifetime controls passed.",
+    "Actual world and glyph continuation submissions and final graph include nonzero transfer intervals, ordered raw timestamps and complete first-to-last spans.",
+    "Actual submitted world-continuation cancellation retains submitted lineage and retiring query resources until pending measurement ownership releases.",
+    "Measurement-enabled production workspace, dialog and terminal output matches disabled output.",
+    "Warm retained-sample restoration includes upload-leading, restore and suffix timestamps and valid final submission manifest."
+  ],
+  "limitations": [
+    "Component pressure timings are not W-POINTER performance results. Synthetic component attempt IDs are not native input attribution proof.",
+    "Matched baseline observer bridge and fixed semantic workload runner must be completed before the approved bounded experiment.",
+    "Complete DRM observation remains separately unapproved; own-queue timing cannot establish duty<=25% or close S4/S5."
+  ],
+  "reused": "r3-complete-timing/receipt.json retains offline omitted-final-boundary, overflow, late-active and close-only controls; no redundant native observer rehearsal.",
+  "artifacts_sha256": {
+    "build.jsonl.gz": "537d155133258c6252466c91aa62f43716e3658f18ba9ca621076af606f5c134",
+    "build.log": "97ed28201378c240dc72bae04c452971de042385f422472f2123393d0417250c",
+    "case-1.log": "de044a234c57a711d8ef82e5e19b152e5d55b67551732f374a9b34916f862de7",
+    "case-2.log": "85df2891aaed2cfdbdff382453ad92b426c8a1bfe49140b6ee0e243bddf324bb",
+    "case-3.log": "8420a8f50e0871b255332c9ca925e745ae0607744ef76565d7809dd51cdc2c04",
+    "case-4.log": "363f08403b22787f78f0a1a9b573a00b2dab1f8533ae8b2e4de8ddae49bb30ed",
+    "case-5.log": "fca28bdce830ef4aabd64beb647f6987fc30324e77df9d8c4141c596908d1d68",
+    "state.json": "36c35db11c7147bd85cad8f480cf5ccc2dc4d2530a224e63abe973bab8ab860b",
+    "test-list.txt": "e3e4f99d43d248b6f3bf8ed2ce54424262a55d4cb4490c8606d9b1a76c22002d"
+  }
+}
