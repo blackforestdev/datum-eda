@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU r3 crosshair evidence replay",
+  "recorded_at": "2026-09-29T06:07:52Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/r3-lineage-stopped-native/diagnostic-proposal.json",
+    "sha256": "ea1c87f24655e1beb738e37ab8a93507d8effee427947492ccabbf4b42b5f1e1",
+    "commit": "0c5134dd"
+  },
+  "disposition": "Exactly one candidate GPU diagnostic replay using pinned existing binary, fixed new crosshair identity/cap1 and unchanged workload. Preserve failure through bounded drain/export. No new builds, baseline/quiet/pan trials, DRM/CPU execution, numerical acceptance or closure.",
+  "previous_campaign_sha256": "d2fede5f6d35391c2ceae2f2c312fac764124b3c16d5d516c70a94e19b7a4606"
+}

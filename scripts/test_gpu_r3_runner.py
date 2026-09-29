@@ -39,10 +39,10 @@ class RunnerControls(unittest.TestCase):
             self.assertEqual(report['status'], expected)
 
     def test_single_use_campaign_stops_and_binds_declaration(self):
-        declaration = dict(run_cap=12, runs=[None]*12)
+        declaration = dict(run_cap=1, runs=[None])
         state = dict(status='ready', declaration_sha256='pinned', results=[])
         self.assertEqual(next_index(state,declaration,'pinned'),0)
-        for status in ['running','stopped','pointer_complete']:
+        for status in ['running','stopped','diagnostic_complete']:
             with self.assertRaises(AssertionError):
                 next_index(dict(state,status=status),declaration,'pinned')
         with self.assertRaises(AssertionError):
@@ -51,7 +51,7 @@ class RunnerControls(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 next_index(dict(state,results=[dict(status=result)]),declaration,'pinned')
         with self.assertRaises(AssertionError):
-            next_index(dict(state,results=[dict(status='valid_descriptive_run')]*12),declaration,'pinned')
+            next_index(dict(state,results=[dict(status='valid_descriptive_run')]),declaration,'pinned')
 
     def test_mixed_native_demands_preserve_exact_archived_pointer_route(self):
         with tarfile.open(EVIDENCE/'candidate-0-raw.tar.gz') as archive:

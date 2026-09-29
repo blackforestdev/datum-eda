@@ -662,3 +662,14 @@ bounded native declaration. The earlier stopped campaign stays unchanged.
 Preparation may advance while immutable submitted lineage and strict target
 identity remain intact. No new renderer mechanism, DRM execution, CPU work,
 numerical acceptance or S4/S5/issue closure is authorized.
+
+## R3 crosshair evidence replay disposition
+
+The owner replied `approve GPU r3 crosshair evidence replay`. The pinned packet
+and exact disposition are recorded in
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r3-crosshair.json`.
+Authorize exactly one candidate diagnostic replay with the existing source-bound
+binary and fixed new campaign identity/cap1. Preserve any output failure while
+collecting bounded shutdown/input evidence. All prior campaigns remain stopped.
+No new build, renderer variant, further native trial, DRM/CPU execution, numerical
+acceptance or S4/S5/issue closure follows from this approval.
