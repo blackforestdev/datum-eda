@@ -1,4 +1,4 @@
-//! Output-only observation: retain inputs and semantic transitions, never GPU demand tags.
+//! Shared bounded provisional capture for output-only and causal input observation.
 use super::*;
 
 #[derive(Default)]
@@ -68,6 +68,30 @@ impl InputObservation {
         if d.last.is_some_and(|last| !last.semantic_eq(&before)) {
             d.failure = Some("unobserved semantic state transition");
         }
+        if self.workload.is_some()
+            && d.last
+                .is_some_and(|last| last.render_activity != before.render_activity)
+        {
+            d.failure.get_or_insert("unobserved render activity");
+        }
+        let (tag, workload_ns) = if let Some(schedule) = &mut self.workload {
+            match workload::monotonic_ns() {
+                Ok(now) => (
+                    schedule.demand(
+                        matches!(event, Some(WindowEvent::CloseRequested)),
+                        now,
+                        self.records.len() as u64 + 1,
+                    ),
+                    Some(now),
+                ),
+                Err(_) => {
+                    d.failure.get_or_insert("workload clock unavailable");
+                    ([0; 3], None)
+                }
+            }
+        } else {
+            ([0; 3], None)
+        };
         let (demand_kind, retain) = kind(event);
         let position = match event {
             Some(WindowEvent::CursorMoved { position, .. }) => Some([position.x, position.y]),
@@ -89,8 +113,8 @@ impl InputObservation {
         };
         d.retain = retain;
         d.pending = Some(Record {
-            workload: [0; 3],
-            workload_ns: None,
+            workload: tag,
+            workload_ns,
             demand_kind,
             received_ns: self.started.elapsed().as_nanos(),
             completed_ns: None,
@@ -110,23 +134,26 @@ impl InputObservation {
         }
         d.failure.is_none()
     }
-    pub(super) fn complete_diagnostic(&mut self, after: Option<State>) {
+    pub(super) fn complete_diagnostic(&mut self, after: Option<State>) -> bool {
         let d = self.diagnostic.as_mut().unwrap();
         let Some(mut record) = d.pending.take() else {
-            return;
+            return false;
         };
         record.completed_ns = Some(self.started.elapsed().as_nanos());
         record.after = after;
         let Some(after) = after else {
             d.failure.get_or_insert("diagnostic runtime lost");
             d.pending = Some(record);
-            return;
+            return false;
         };
         if after.truncated {
             d.failure.get_or_insert("truncated diagnostic state");
         }
         d.last = Some(after);
-        if d.retain || !record.before.semantic_eq(&after) {
+        let retain = d.retain
+            || !record.before.semantic_eq(&after)
+            || (self.workload.is_some() && record.before.render_activity != after.render_activity);
+        if retain {
             if self.records.len() == LIMIT {
                 self.overflow = true;
                 d.failure
@@ -136,15 +163,16 @@ impl InputObservation {
                 self.records.push(record);
             }
         }
+        retain
     }
     fn diagnostic_report(&self, final_state: Option<State>) -> Value {
         let d = self.diagnostic.as_ref().unwrap();
         let final_gap = final_state
             .zip(d.last)
             .is_some_and(|(a, b)| !a.semantic_eq(&b));
-        json!({"schema":"datum.input-receipt/v1","mode":"output-diagnostic","pid":std::process::id(),
+        json!({"schema":"datum.input-receipt/v1","mode":if self.workload.is_some(){"causal-input"}else{"output-diagnostic"},"pid":std::process::id(),
             "complete":false,"coverage_complete":self.complete_receipt() && final_state.is_some_and(|s|!s.truncated) && !final_gap,
-            "first_error":d.failure.or(if final_gap {Some("unobserved final state transition")}else{None}),
+            "workload_manifest":self.workload.as_ref().map(workload::Schedule::value),"first_error":d.failure.or(if final_gap {Some("unobserved final state transition")}else{None}),
             "gpu_drained":null,"drain_status":"not attempted: pre-drain diagnostic snapshot",
             "monotonic_origin_ns":self.monotonic_origin_ns,"snapshot_ns":self.started.elapsed().as_nanos(),
             "overflow":self.overflow,"record_limit":LIMIT,"record_count":self.records.len(),
@@ -170,6 +198,17 @@ impl App {
             o.write_diagnostic(self.runtime.as_ref().map(State::capture))?;
         }
         Ok(())
+    }
+    pub(crate) fn preserve_measurement_failure(&mut self) {
+        if let Some(o) = &mut self.input_observation
+            && let Some(d) = &mut o.diagnostic
+        {
+            d.failure
+                .get_or_insert("GPU measurement rejected; see rejected sample/native fatal");
+        }
+        if let Err(error) = self.export_output_diagnostic() {
+            eprintln!("input diagnostic export failed: {error:#}");
+        }
     }
     pub(crate) fn check_output_diagnostic(&self, event_loop: &ActiveEventLoop) {
         if let Some(error) = self

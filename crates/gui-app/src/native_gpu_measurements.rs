@@ -4,6 +4,8 @@ use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Instant;
 
+#[path = "native_gpu_sample_record.rs"]
+mod sample_record;
 #[path = "native_measurement_shutdown.rs"]
 mod shutdown;
 
@@ -120,47 +122,17 @@ impl Host {
             return Ok(None);
         }
         for sample in renderer.poll_gpu_measurements(device)? {
-            anyhow::ensure!(
-                !sample.submission_manifest.is_empty()
-                    && sample
-                        .submission_manifest
-                        .last()
-                        .is_some_and(|s| s.submission == sample.submission)
-                    && sample
-                        .submission_manifest
-                        .iter()
-                        .all(|s| s.attempt[..4].iter().all(|v| *v != 0)),
-                "native GPU sample has missing submission or render-attempt lineage"
-            );
-            anyhow::ensure!(
-                !self.workload_required
-                    || sample.submission_manifest.iter().all(|s| {
-                        let tag = s.workload;
-                        tag[0] != 0
-                            && tag[1] != 0
-                            && tag[1] & !63 == 0
-                            && (0..6).all(|phase| tag[1] & (1 << phase) == 0 || tag[phase + 2] != 0)
-                    }),
-                "native GPU sample has missing workload demand identity"
-            );
-            // Existing native diagnostic output includes process and adapter identity.
-            // A write error fails the trial instead of silently losing a sample.
-            let mut file = std::fs::OpenOptions::new()
+            let file = std::fs::OpenOptions::new()
                 .append(true)
-                .open(gui_runtime_support::gui_diagnostic_log_path())?;
-            writeln!(
-                file,
-                "gpu_measurement {}",
-                serde_json::json!({
-                    "host": sample.host, "device_epoch": sample.device_epoch,
-                    "frame": sample.frame, "submission": sample.submission,
-                    "timestamp_period_ns": sample.period_ns, "raw_ticks": sample.raw_ticks,
-                    "scene_marker_ticks": sample.scene_marker_ticks,
-                    "submission_manifest": sample.submission_manifest.iter().map(|s| serde_json::json!({"submission":s.submission,"kind":s.kind,"attempt":s.attempt,"workload":s.workload,"first_tick":s.first_tick,"last_tick":s.last_tick,"transfer_first_tick":s.transfer_first_tick,"transfer_last_tick":s.transfer_last_tick,"span_ns":s.span_ns,"transfer_interval_ns":s.transfer_interval_ns})).collect::<Vec<_>>(),
-                    "passes_ns": sample.passes_ns, "own_pass_sum_ns": sample.own_pass_sum_ns,
-                    "frame_span_ns": sample.frame_span_ns,
-                })
-            )?;
+                .open(gui_runtime_support::gui_diagnostic_log_path());
+            match file {
+                Ok(file) => sample_record::write(&sample, self.workload_required, file)?,
+                Err(error) => {
+                    let _ =
+                        sample_record::write(&sample, self.workload_required, std::io::stderr());
+                    return Err(error.into());
+                }
+            }
         }
         Ok(renderer.gpu_measurement_poll_deadline())
     }

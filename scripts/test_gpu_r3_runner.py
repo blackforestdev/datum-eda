@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import tarfile
 import unittest
-from gpu_r3_campaign import next_index
+from gpu_r3_campaign import next_index, ORDER
 from gpu_r3_pointer_input import pointer_input
 from gpu_r3_trial_outcome import record_failure, finish_result
 
@@ -39,19 +39,22 @@ class RunnerControls(unittest.TestCase):
             self.assertEqual(report['status'], expected)
 
     def test_single_use_campaign_stops_and_binds_declaration(self):
-        declaration = dict(run_cap=1, runs=[None])
+        declaration = dict(run_cap=12, runs=[dict(role=r,mode=m,pair=p) for r,m,p in ORDER])
         state = dict(status='ready', declaration_sha256='pinned', results=[])
         self.assertEqual(next_index(state,declaration,'pinned'),0)
-        for status in ['running','stopped','diagnostic_complete']:
+        for status in ['running','stopped','complete']:
             with self.assertRaises(AssertionError):
                 next_index(dict(state,status=status),declaration,'pinned')
         with self.assertRaises(AssertionError):
             next_index(state,declaration,'changed')
+        self.assertEqual(next_index(dict(state,results=[dict(status='valid_descriptive_run')]),declaration,'pinned'),1)
+        changed=copy.deepcopy(declaration);changed['runs'][0]['role']='baseline'
+        with self.assertRaises(AssertionError):next_index(state,changed,'pinned')
         for result in ['invalid','valid_budget_failure']:
             with self.assertRaises(AssertionError):
                 next_index(dict(state,results=[dict(status=result)]),declaration,'pinned')
         with self.assertRaises(AssertionError):
-            next_index(dict(state,results=[dict(status='valid_descriptive_run')]),declaration,'pinned')
+            next_index(dict(state,results=[dict(status='valid_descriptive_run')]*12),declaration,'pinned')
 
     def test_mixed_native_demands_preserve_exact_archived_pointer_route(self):
         with tarfile.open(EVIDENCE/'candidate-0-raw.tar.gz') as archive:

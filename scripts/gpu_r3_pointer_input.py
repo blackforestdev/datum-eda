@@ -5,7 +5,7 @@ def pointer_input(schedule, receipt, tail_end_ns, expected_context, max_lateness
     """Require delivered path and completed viewport routing; no frame-count proxy."""
     assert not receipt['overflow']
     if diagnostic:
-        assert receipt.get('mode') == 'output-diagnostic' and receipt.get('coverage_complete')
+        assert receipt.get('mode') in ('output-diagnostic','causal-input') and receipt.get('coverage_complete')
         assert receipt['complete'] is False
     else:
         assert receipt['complete']

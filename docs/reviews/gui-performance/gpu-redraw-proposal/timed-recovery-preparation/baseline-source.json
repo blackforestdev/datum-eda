@@ -1,0 +1,151 @@
+{
+  "baseline": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "files": {
+    "crates/gui-app/src/app_native_events.rs": {
+      "before": "ecb7560aeb60f20b2a67501496aafb2ec01ecef21d6b6974cf6779289c021716",
+      "after": "c64f4f217a91f26cd4b14cf5438664057dba9e55726ec69caeff8164f25042b2"
+    },
+    "crates/gui-app/src/app_shell.rs": {
+      "before": "cc3b2e5ef0d09346e30b09dfec8d744bb17b07d008f92a8cd86bad0f19098a5d",
+      "after": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2"
+    },
+    "crates/gui-app/src/baseline_frame_workload.rs": {
+      "before": null,
+      "after": "43ed8346b180574c42e772cc7b92bced47de957ab3ff8416d2ae702cf4516fda"
+    },
+    "crates/gui-app/src/baseline_measurement_lineage.rs": {
+      "before": null,
+      "after": "11d822b35270cd6a27c646a7e542caa74d78eb5ec475fb0816ff3fca0475342c"
+    },
+    "crates/gui-app/src/interaction_refresh.rs": {
+      "before": "46c04a3ba20dd0ec706e68f3b6d3fcfa9a1b8b774bdc8c1b5d76d1288ee9354d",
+      "after": "7a661a28a12aa7dde518704aea867f5882060bff80786d97fcc7b0f30417fd49"
+    },
+    "crates/gui-app/src/main.rs": {
+      "before": "c2c52785b7d8fbfaad5080d216c9dbfd3a53c031f737a8c6ecd340ba1d3c7875",
+      "after": "bc0ebf9f101a992a40df6e227fc510c1c757f5be26ad9f3b22ff6e4ad44ee3d6"
+    },
+    "crates/gui-app/src/native_gpu_measurements.rs": {
+      "before": "9ca9127bfb5f62c190d2c354bfe638a5e8ab7c035f8e6c23d7b2bf4097fca470",
+      "after": "e7d6fd8176fd8f77ae5c9f27eb16240071688ce6e55eee34e86787d2e711106d"
+    },
+    "crates/gui-app/src/native_gpu_sample_record.rs": {
+      "before": null,
+      "after": "fe889621af9af091b5c90e17b3fe01bb7eb4a2d8471f05e8243aa2053bd6b34a"
+    },
+    "crates/gui-app/src/native_input_observation.rs": {
+      "before": null,
+      "after": "98ec8d2331e9181fd1bbc8b313ca832333247b5d94e21192e2487ea66a27727c"
+    },
+    "crates/gui-app/src/native_input_state.rs": {
+      "before": null,
+      "after": "6fd52be93d7cd80f548e019524e7a22786ef67f1b5db70fd8e79b12066c64bb9"
+    },
+    "crates/gui-app/src/native_measurement_shutdown.rs": {
+      "before": "49fd5232b731fd7c0c5d1af491b3246489002cff8656b8324c9bef5e664ed88c",
+      "after": "87b3bb00760156bfd071a49cdaf1060d7c308ffe6b01fedffea4a37641632be5"
+    },
+    "crates/gui-app/src/native_output_diagnostic.rs": {
+      "before": null,
+      "after": "aa31fbdabeb1043986bfb25ffa4a2768a5ef5ed67d88c508a35f84f87d422f77"
+    },
+    "crates/gui-app/src/native_output_diagnostic_tests.rs": {
+      "before": null,
+      "after": "cfacd10424531dfecc7b383bc16c39462a6773900ec890141fd997e234dfcc73"
+    },
+    "crates/gui-app/src/native_surface_transaction.rs": {
+      "before": "24dc24021b3ce22066d0dd83f1bc8f1cfaaf491edf56548cddc747ebdae01df1",
+      "after": "28bd83581c372165729ec7090cf8810d67b8c16ce0a0adb051fb2718fc0a2704"
+    },
+    "crates/gui-app/src/native_workload_observation.rs": {
+      "before": null,
+      "after": "5d11238c7debc0cea88e5e41ccf477619279d2310d4e42732051a6e7a419af74"
+    },
+    "crates/gui-app/src/production_status_refresh.rs": {
+      "before": "d91bafc7d3ba11263cf7d02409149011e2b2424a16334d68d3fba29b4ccc98ad",
+      "after": "62dc54827b4f75136d3fbabd74e5794f922961131fc2c3192fa95c3267d836d8"
+    },
+    "crates/gui-app/src/runtime_init.rs": {
+      "before": "dc915dd824dc65d4618fada1dd063cae9aea0dc6d5618c91093786b41662faeb",
+      "after": "b11d2acd0849341030cc1e86ecc051d02288b0a56432ada80ca58baf7aa61e0b"
+    },
+    "crates/gui-app/src/runtime_present.rs": {
+      "before": "1c9ec99e7f498b5c4adecc9a3ea5b5510098b5b9e58ba1ebef772f000aa04842",
+      "after": "fdc291a7d7d405049d501b02e9b0eae0bc6070db4021852e0a91f72d88506bef"
+    },
+    "crates/gui-app/src/runtime_state.rs": {
+      "before": "91ed35eb3e2857e8b20acc59b5e39b39a3cf11f58f11ba220526cfab893d672f",
+      "after": "3e40627b54e97cd69008264df9b40d33dc2fff4dda626971257833e06ed329c4"
+    },
+    "crates/gui-app/src/runtime_terminal_render.rs": {
+      "before": "5103b6958c9a381fd0dacac2c14c7f527326416eb77dce1137cec363ed78be38",
+      "after": "2e2c82408f746a94acc45345a6f48634d040789e95ca3d6b5264979090fd7cc0"
+    },
+    "crates/gui-render/src/render/cold_world_upload.rs": {
+      "before": "421d62956845ed47e53f4a847ed2db9509a086433220225d109b7a2dc89e47c2",
+      "after": "8c842300a3903d9e8566f7921c79e3cb0d3ad1baf67fb326ea276d52b548254a"
+    },
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": {
+      "before": "1719bcbd4c18c4e73217f6c032c9aface0ebeacb2c27968f0acf98e8e39a4f2c",
+      "after": "f3517d565a65d66a730261ac0704818db2e6d6935dca1fef61aa2e185bdbf371"
+    },
+    "crates/gui-render/src/render/gpu_frame.rs": {
+      "before": "0e7d6d1014ef5f4aac54a4f53b345226951d4092307e3a6dc9ac5bb01b2bd8af",
+      "after": "b2e3c3fe5a9c25814aa45eaf81bf4ff5f97c15f0c71722db74b0eb623a2a72ba"
+    },
+    "crates/gui-render/src/render/gpu_frame_target.rs": {
+      "before": "0c0ba8b328066d223f7184bf56608f62150f0c48d7380f904021f1d091b0e297",
+      "after": "2c859c9abbd975ac7b7314288bfe7556b2822a86df54e33a2e51f1d6e6cb0821"
+    },
+    "crates/gui-render/src/render/gpu_init.rs": {
+      "before": "36412dec95cd58b847ca7bfbb2ae0f7c3aa1ad1c97b925f019e84a43bc32ff7b",
+      "after": "5f502c23edabfced30caefaa1d5557b0906cff23d1d305d2b4d80544aff80281"
+    },
+    "crates/gui-render/src/render/gpu_measurement_api.rs": {
+      "before": "eb6e6f585e54432cc034cb805bc9e9719677dad9f18f562ae68054c38f9fe45d",
+      "after": "64292f3d6688d31dd3661445f5d75771ba6299aa8ba702b76f3dc5b551ec53c5"
+    },
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": {
+      "before": null,
+      "after": "ea484441414d0925476b552f408e406b20a0449d347977b0abae757f036f598f"
+    },
+    "crates/gui-render/src/render/gpu_measurement_resource_tests.rs": {
+      "before": "1b8d70388ec5e9d80d4c5a373c3624e1bb35f8baf1a53e82bfa51005cc1082db",
+      "after": "97470fc41070a981aeae82cb1b1bd153c7d50e41e0003822a4c83c219beaffe4"
+    },
+    "crates/gui-render/src/render/gpu_measurement_resources.rs": {
+      "before": "7d2bbcfea4e5d633e3e19ada42d6733ddb40a8a64e8c0b4e329398ef0beed783",
+      "after": "9469a38a8c6cf15e5f6c829d4e32682819d58499e689da15710486668156f18f"
+    },
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": {
+      "before": null,
+      "after": "71b715f572dbe4e216702f30a373ee1fd661928175345ae136fc498d6fc4856f"
+    },
+    "crates/gui-render/src/render/gpu_measurements.rs": {
+      "before": "75a0f87cc2965de1a351e0917723944631e99cbf59c11e0e680e4c9e6105b3d9",
+      "after": "88685822f3af72bdd31ce09dc10fb1b951408b43aa816b4ddfcf88b3fb505872"
+    },
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": {
+      "before": "d77e347444e7b7dc2df185876312d182defd09c12265ebb97f09eaf47b2d322d",
+      "after": "28eecc6e1206fb165593ad66c5abd929dd92e37287a3e11d2c37994aa81b9a67"
+    },
+    "crates/gui-render/src/render/gpu_overlay.rs": {
+      "before": "d52345d959ce11db97b2ac7d57999ae89bc63077f1414048f2ca5f5c3460cbc5",
+      "after": "3252261731944d1567984844bc942bce5733947afd5c3a2d083eb03dca8e11e4"
+    },
+    "crates/gui-render/src/render/renderer_state.rs": {
+      "before": "35f5c556fc755d35d26185cee83dbfefc04fe67d6314669e236c1f78afdb653f",
+      "after": "5366efebd35f4b8bf8c288bb5a030f6416d999ad5466d50889e930bce93c9158"
+    },
+    "crates/gui-render/src/render/terminal_upload.rs": {
+      "before": "4515b8baeb2ffe2e819e7d1e1b208ae012c89f86c510fdd557e9902052b4426c",
+      "after": "82f0d3da0d17b78f3e7a3bda0ce879a14c1c36c926f40a7ec6bb9d702a1e5427"
+    },
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": {
+      "before": "f82ceac89578d697d41a12f16898d0ce7680c75b645151ac36ff8127ec1fe7f9",
+      "after": "706fb563e860878683fa0995bc31ee4717c66e6086481446571f1cd91ae3412a"
+    }
+  },
+  "patch_sha256": "dd60083e9eb2d8ff69f068c3256e798017d68c7fbc11c72452edd28e568456e6",
+  "renderer_delta": "Exactly identical to reviewed r3-lineage-validation baseline observer patch; no new renderer delta."
+}

@@ -147,3 +147,41 @@ fn equal_area_extent_change_and_missing_schematic_fail_closed() {
     assert!(session.prepared().is_some());
     assert!(session.has_pending_frame());
 }
+
+#[test]
+fn provisional_causal_contexts_cannot_leak_into_immutable_frame_plans() {
+    let mut session = RenderSession::default();
+    session.set_measurement_workload([7, 3, 1]).unwrap();
+    prepare(&mut session, false);
+    let before = session.measurement_activity();
+    let active = plan(&mut session, true);
+    assert_ne!(before, session.measurement_activity());
+    let active_tag = active.workload;
+    assert_eq!(active_tag[4], 1);
+    session.end_measurement_workload(true);
+    // An inert later-phase callback cannot own a pending active plan or consume ID2.
+    session.set_measurement_workload([7, 4, 2]).unwrap();
+    let unchanged = session.measurement_activity();
+    session.end_measurement_workload(false);
+    assert_eq!(session.measurement_activity(), unchanged);
+    assert_eq!(
+        active.workload, active_tag,
+        "continued plan keeps its original retained tag"
+    );
+    assert!(session.complete_submitted(SubmittedFrame(active), 1, 2, 3, true));
+    // Exposure creates a new attempt even with no content change; ID2 is now retained.
+    session.set_measurement_workload([7, 4, 2]).unwrap();
+    let before = session.measurement_activity();
+    let exposure = plan(&mut session, true);
+    assert_ne!(session.measurement_activity(), before);
+    assert_eq!(exposure.workload[5], 2);
+    session.end_measurement_workload(true);
+    drop(exposure);
+    // Interrupted plans need a new retained attempt; old IDs are never reissued.
+    session.set_measurement_workload([7, 4, 3]).unwrap();
+    prepare(&mut session, false);
+    let retry = plan(&mut session, true);
+    assert_eq!(retry.workload[5], 3);
+    session.end_measurement_workload(true);
+    assert!(session.complete_submitted(SubmittedFrame(retry), 1, 2, 3, true));
+}
