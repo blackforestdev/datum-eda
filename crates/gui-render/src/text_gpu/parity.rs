@@ -98,6 +98,7 @@ fn owned_draw_matches_installed_text_renderer() {
                     buffer.shape_until_scroll(&mut fonts, false);
                     let mut run = crate::TextRun {
                         origin: Default::default(),
+                        layer: Default::default(),
                         text: text.into(),
                         rich_spans: Vec::new(),
                         x: left,
@@ -420,6 +421,7 @@ fn owned_area<'a>(
     rich_spans: &'a [crate::TextRunSpan],
 ) -> super::Area<'a, crate::text_layout::Runs<'a>> {
     super::Area {
+        layer: Default::default(),
         rich_spans,
         rows: layout.layout_runs(),
         left: area.left,

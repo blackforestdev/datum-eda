@@ -60,6 +60,7 @@ pub(crate) fn draw_text(
 ) {
     out.push(TextRun {
         origin: Default::default(),
+        layer: Default::default(),
         text: text.to_string(),
         rich_spans: Vec::new(),
         x,
@@ -93,6 +94,7 @@ pub(crate) fn draw_rich_text(
     );
     out.push(TextRun {
         origin: Default::default(),
+        layer: Default::default(),
         text: text.to_string(),
         rich_spans: spans,
         x,
@@ -119,6 +121,7 @@ pub(crate) fn draw_text_clipped(
 ) {
     out.push(TextRun {
         origin: Default::default(),
+        layer: Default::default(),
         text: text.to_string(),
         rich_spans: Vec::new(),
         x,

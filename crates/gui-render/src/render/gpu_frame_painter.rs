@@ -148,17 +148,25 @@ impl Renderer {
                 immediate_admission::screen_admission::scissor(interaction_viewport),
             );
         }
-        self.draw_console(pass, console_overlay_vertices, prepared);
         self.terminal_graphics
             .draw_layer(pass, &self.uniform_bind_group, false);
         let text_encode_started = std::time::Instant::now();
         if prepared.has_workspace_text() {
             pass.set_scissor_rect(0, 0, width, height);
             self.text_renderer
-                .render(&self.atlas, pass)
+                .render_layer(&self.atlas, pass, Some(TextLayer::Workspace))
                 .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
-        let text_encode_elapsed = text_encode_started.elapsed();
+        let mut text_encode_elapsed = text_encode_started.elapsed();
+        self.draw_console(pass, console_overlay_vertices, prepared);
+        if prepared.has_workspace_text() {
+            let foreground_started = std::time::Instant::now();
+            pass.set_scissor_rect(0, 0, width, height);
+            self.text_renderer
+                .render_layer(&self.atlas, pass, Some(TextLayer::Foreground))
+                .map_err(|error| anyhow::anyhow!("render foreground GUI text: {error}"))?;
+            text_encode_elapsed += foreground_started.elapsed();
+        }
         self.terminal_graphics
             .draw_layer(pass, &self.uniform_bind_group, true);
         // The card must occlude workspace text as well as geometry.

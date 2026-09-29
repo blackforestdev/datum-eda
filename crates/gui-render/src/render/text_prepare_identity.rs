@@ -1,6 +1,32 @@
 //! Placement and paint identity, separate from shaping/layout ownership.
 use super::*;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct TextPrepareSignature {
+    pub(super) span_colors: Vec<(usize, [u32; 3])>,
+    pub(super) width: u32,
+    pub(super) height: u32,
+    pub(super) runs: Vec<TextPrepareRunKey>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct TextPrepareRunKey {
+    buffer_index: usize,
+    layer: TextLayer,
+    x_bits: u32,
+    y_bits: u32,
+    color_bits: [u32; 3],
+    clip_bounds: Option<RectBits>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct RectBits {
+    x_bits: u32,
+    y_bits: u32,
+    width_bits: u32,
+    height_bits: u32,
+}
+
 pub(super) fn text_prepare_signature(
     indices: &[usize],
     runs: &[TextRun],
@@ -22,6 +48,7 @@ pub(super) fn text_prepare_signature(
             .zip(runs.iter())
             .map(|(index, run)| TextPrepareRunKey {
                 buffer_index: *index,
+                layer: run.layer,
                 x_bits: run.x.to_bits(),
                 y_bits: run.y.to_bits(),
                 color_bits: run.color.map(f32::to_bits),

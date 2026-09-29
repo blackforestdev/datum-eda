@@ -679,13 +679,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 5973
+        "expanded_lines": 5948
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Retained resolve observation moves into retained_scene_owner.rs while narrow shared pointer input and hover dependency classification replace full-state pointer refresh. Remaining include debt stays frozen."
+      "note": "Text preparation signature types now live with their identity/admission behavior in text_prepare_identity.rs. Shared glyph painter stages preserve one resource owner and explicit Console occlusion. Remaining include debt stays frozen."
     },
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",

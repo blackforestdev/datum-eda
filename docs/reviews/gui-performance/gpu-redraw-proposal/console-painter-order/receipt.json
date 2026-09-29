@@ -1,0 +1,86 @@
+{
+  "status": "Console painter-order correction qualified at bounded source, P630 and native scope; GPU repair remains in progress.",
+  "issue": "dat-gpu-console-occlusion-ly6r",
+  "parent_issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "b5e563b9",
+  "authority": "Owner-approved shared-renderer r2 and PM049; PM033 opaque pane-local Console. Protected prototype inspected, unchanged.",
+  "rationale": "Common full and split painter shared an existing defect: workspace labels overpainted Console history. Add an independent occlusion oracle before performance measurement.",
+  "change": [
+    "Shared text preparation assigns workspace or foreground paint layer independently of shaping identity. Paint signature includes layer; one charged atlas/instance-buffer owner retains adjacent page/layer batches.",
+    "Suffix paints workspace glyphs before Console geometry and foreground glyphs afterward; restores screen pipeline/binding and scissor at stage boundaries. Existing terminal image and menu ordering retained.",
+    "Move text preparation signature types to their existing behavior owner; genuine root logical source ceiling reduction 5973 to 5948. No new GPU allocation, dependency, or cap."
+  ],
+  "verification": {
+    "renderer": "414 passed,109 ignored; initial unused import warning removed before final Clippy.",
+    "p630": "Four existing exact8x cases pass in p630-1.log. New Console control passes in p630-final.log: cold/warm exact with full graph; no canvas glyph leakage inside Console; old-order negative differs at82 interior pixels.",
+    "native": "Main and three-dialog hidden-work integration:1 passed. Intel P630 Vulkan Mesa25.0.7-2+deb13u1, Bgra8UnormSrgb8x,960x720.",
+    "native_visual_comparison": {
+      "prior": "../implementation-prefix-images/native-capture.png",
+      "changed_pixels": 1899,
+      "bounding_box_exclusive": [
+        264,
+        262,
+        401,
+        375
+      ],
+      "assessment": "Both captures visually inspected. Changes confined to Console history; no golden refresh."
+    },
+    "clippy": "Renderer/app all-targets visual -D warnings:pass",
+    "source_health_tests": 13,
+    "terminal_boundary_tests": 7
+  },
+  "preserved_failures": [
+    "p630-1: existing four cases passed; new negative was vacuous because no visible workspace label overlapped Console.",
+    "p630-2: imported silk geometry is not an active TextRun, so visible-label assertion failed.",
+    "Corrected setup selects an existing real netted pad and pans its normal label beneath history; no fabricated model or production label."
+  ],
+  "review": "review.json: advisory source/log review found no blocker. Native result completed after review and is separately evidenced.",
+  "fixture": {
+    "source_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "cli_sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+    "prior_receipt": "../p630-exact-output/receipt.json"
+  },
+  "limits": [
+    "No performance trials consumed; no GPU percentile/duty or full resource acceptance. CPU event-loop optimization deferred.",
+    "Offscreen reference shares prepared scene and painter; independent Console occlusion and old-order controls cover this defect only.",
+    "Known unrelated full drift blockers remain tracked in dat-menu-csv-parity-block-p6fz. No authority/prototype changes or global drift pass claimed.",
+    "GPI-S4 remains open pending required performance, recovery/input and complete DRM lifetime qualification."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/layout_scratch.rs": "d152344577ae146dac7f005d5d139395d46e59a97c3aa0b560c1ccdcdf0be9cd",
+    "crates/gui-render/src/render/frame_preparation.rs": "14d6b464927cf3c70faf67e5c06fde49cf147a24fcdb8772395f08ec63f4602a",
+    "crates/gui-render/src/render/gpu_console.rs": "8e366bac84b8f0492ac9dfe0179706fda07e9507ea63fc5b665895d1bf0e57d4",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "a89661171084b2e90b3a37b601cf84f361c9e7c170502cd64a89a2d5f3c66ac9",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "cd3c054ae065628b1e8f282478c29643e0406b21c156fe4acd2cd491c362c487",
+    "crates/gui-render/src/render/render_helpers.rs": "1a38fdf5193a14cb0127f68c6b7fbe3a6927b0644a564d9b73d43d326a0bd6dd",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "39a13f682a0cb3c42f893c53f75bf9a06655184adbc9d361b04b5991249084f8",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "632e44ff241b9272f3189fcc6f17ac1887fb60b056c216269aa51e9e1f7927d9",
+    "crates/gui-render/src/render/text_identity_tests.rs": "a9f3b4e44c3c33ec25d3c9d799d137770b5db4ebaa17d21d0c750b8aec9ca3a8",
+    "crates/gui-render/src/render/text_prepare_identity.rs": "9bacf278315b11c7592010ff0f1d71863cc4ba1617aecf988a842657f3a59371",
+    "crates/gui-render/src/render/text_run.rs": "1951b99adde22a4123374a48648e411dd59594ef7b8a3c077f5d0955a29786ff",
+    "crates/gui-render/src/render/types.rs": "6ec1386b7bfe18e7d37e65ea701791959451863cd4768f1ba73bc89540c6ab14",
+    "crates/gui-render/src/terminal_font_tests.rs": "87198d1314a1c118ff9be83686d6c89d2ce3d3682bba494b7c671edfc71be582",
+    "crates/gui-render/src/text_gpu/draw.rs": "4c1fb811ae76e55cc78a66d679ada1436e0f7fafbe9ce1f643d9e64d44ace6ab",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "6546ec1dc1fb112a45847feafc9e9362b71f87bdb1f03676dea59670aa4b6d02",
+    "crates/gui-render/src/text_gpu/parity.rs": "8c737866f4a1aee8604121f54a6fab41956d064c9e4bdd7604e9800df40c4ca2",
+    "crates/gui-render/src/text_layout_tests.rs": "28608c4187fce19dccf0c02203d047d31e9730813669d3fb5632f7151672e72b",
+    "specs/SPEC_PARITY.md": "d276cc01faa5f88498725ca0f35284284597da2d66ea159d19602a0d747dca03",
+    "specs/source_module_size_manifest.json": "253435c6e3550d323064d75855938eebdb86fae72f499b3da1ee0b76f1ca20d8"
+  },
+  "artifacts_sha256": {
+    "clippy.log": "8f5f0c88b0c39428baf9ea21c0f8c47b06a3ab55448c85b32a8e6b0a90584a76",
+    "native-capture.png": "5682f89271be2aa1e21fbb3621bb2ffa9ab6f10975b1beef2804ed297173056c",
+    "native-test.log": "e5b1bf171fc4c51f6086b98b98b77f0139ed659e5007bc7db834998a713918ef",
+    "native.log": "9a6dc0d00406c1de06c2c3a9d758c56c89f26769d41a9f03519026676bc2f78d",
+    "offscreen-capture.png": "69a51a9bb99dd1fe41cd8ed87643fab8f01e681c9722d6d889f59d6712c49211",
+    "p630-1.log": "e7107492e611592b4be81e70bb7812710ac728d522dff2663a889be0fb43821f",
+    "p630-2.log": "da58eb87785d7ef9acd105309561368f3b785851fa82d98e4caa0cc660023d4e",
+    "p630-final.log": "d7e06488af3470413e1c80e34e9f18197a9301f3b2cf0784f7af373ef2b6a4da",
+    "renderer.log": "11f4bc0a24022b8dfd2123f7b68908758118e1a12d50202557a0885c70c3c629",
+    "review.json": "5281b6388801b32889241a075625897e671a8375684e05fa6081ef72dcb8d9ae",
+    "source-health-tests.log": "dd56446ccf89bb078bce013febdf8a4ef767410fac8ae459af5779cf9d262ae0",
+    "terminal-boundary.log": "ec83b3c456c77fbfd941032cee006c132ed17c1cb01117189f1e28836e31cb7b"
+  }
+}

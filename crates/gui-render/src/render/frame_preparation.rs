@@ -402,6 +402,11 @@ impl PreparedScene {
             );
             // Application-modal preferences must be appended after every workspace
             // hit region so reverse-order hit testing cannot reach the obscured UI.
+            // Console and later foreground labels paint after the Console card;
+            // earlier canvas labels must be covered by that card.
+            for run in &mut text_runs[before_console_text..] {
+                run.layer = TextLayer::Foreground;
+            }
             let before_menu_overlay_quads = menu_overlay_quads.len();
             let before_menu_overlay_text_runs = menu_overlay_text_runs.len();
             let modal_consumer =

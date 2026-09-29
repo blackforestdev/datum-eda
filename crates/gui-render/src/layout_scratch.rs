@@ -156,6 +156,7 @@ mod tests {
         let mut scratch = LayoutScratch::default();
         let run = crate::TextRun {
             origin: Default::default(),
+            layer: Default::default(),
             text: "wrapped private scratch and surviving public glyphs ".repeat(40),
             rich_spans: Vec::new(),
             x: 0.0,
