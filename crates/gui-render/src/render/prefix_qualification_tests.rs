@@ -133,6 +133,33 @@ fn p630_exact8_doa_hover_composition_and_recovery() {
         prepare(&mut c, &state, &source);
         exact(&mut c, "pad hover strong invalidation", false);
         exact(&mut c, "stable pad hover", true);
+        if state.ui.hovered_object.is_some() {
+            let viewport = c
+                .renderer
+                .render_session()
+                .prepared()
+                .unwrap()
+                .surface_passes()
+                .iter()
+                .find(|p| p.surface == crate::SceneSurface::Board)
+                .unwrap()
+                .scene_viewport;
+            let session = c.renderer.render_session_mut();
+            assert!(session.update_pointer(PointerUpdate {
+                generation: session.pointer_generation(),
+                cursor: Some(ScreenPointPx {
+                    x: viewport.x + viewport.width * 0.45 + 0.375,
+                    y: viewport.y + viewport.height * 0.55 + 0.625
+                }),
+                hover: state.ui.hovered_object.as_ref(),
+                style: CrosshairStyle::Local,
+            }));
+            exact(
+                &mut c,
+                "cursorless hover to pointer restores old support",
+                true,
+            );
+        }
     }
     for menu in [Some("File".to_owned()), None] {
         state.ui.active_menu = menu;

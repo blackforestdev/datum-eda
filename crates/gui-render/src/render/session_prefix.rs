@@ -75,12 +75,10 @@ impl Prefix {
     pub(crate) fn damage(&self, pair: PairIdentity) -> Option<Pixels> {
         let valid = self.valid?;
         (Some(valid.key) == self.request && valid.pair == pair).then_some(())?;
-        let old = valid.support?;
-        let new = self.support?;
         if valid.revision == self.revision {
             Some(Pixels::default())
         } else {
-            old.union(new)
+            valid.support?.union(self.support?)
         }
     }
     pub(crate) fn encoded(&mut self, pair: PairIdentity, reused: bool, copy_bytes: u64) {

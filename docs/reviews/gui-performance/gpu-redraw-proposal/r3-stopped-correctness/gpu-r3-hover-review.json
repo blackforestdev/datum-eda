@@ -1,0 +1,37 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "head": "d75d6de1f9d128d9acd4a9f2f89b7cecfffdeb07",
+  "scope": "Read-only stopped-r3 proof diagnosis, source correction and proposed remaining validation review. No builds/tests/native runs or production edits. Owner approval required for any post-failure GPU validation.",
+  "pins": {
+    "crates/gui-render/src/render/interaction_overlay.rs": "de0bb370bac2a3ddef5e4841374f490e4c06a7afd20617ccd9a01745669d3b32",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "50b20ca437856fa1538e6cfdcca02bf5f3ff399b802b7a59146140dfacb952a7",
+    "crates/gui-render/src/render/session_damage.rs": "9d786dd5ed3a71039260af9aa817dd688959ac62ca557c021ad6e98b0626aa4b",
+    "crates/gui-render/src/render/session_prefix.rs": "b5b8daed9e5a10c211d61a61164694a13b628873f0c88ef9685bc845087e53f9",
+    "crates/gui-render/src/render/session_damage_tests.rs": "73fb847ae9d01a48ca181e0eda7e9ec276996bc50e53ce8f4653cae1ed8e4521",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "68acccb84238bb7437d6d58f291d03007bf8153a1d97eabeb68227261952d5f4",
+    "target/gpu-r3-proof/exact-batch.log": "39e072a34ea74795a92920b06f03e47db10406babd973f40fae958cc71017bdb",
+    "target/gpu-r3-proof/exact-remaining.json": "6f88b534858e559f23314d33218dafded39d9e5e67c19c27c94f81de71758275",
+    "target/gpu-r3-proof/p630_exact8_doa_hover_composition_and_recovery.log": "fa63692a6f4bdc59d35d209bd6533ae2166c6388e48b51a76965e99fdc0d265d"
+  },
+  "disposition": "No blocking source correctness issue identified. Recommend owner consider bounded remaining validation with one targeted cursorless-to-pointer transition inside affected F-DOA case; review is not approval.",
+  "findings": [],
+  "diagnosis": [
+    "Archived aggregate stopped at unsupported native board.json import after logging sample/damage/resource/styles successes. Aggregate test itself reports failure; only individually logged unchanged subcase results are reusable. Zero-test invocations supply no GPU evidence.",
+    "Correctly supplied F-DOA run passed cold and first pad-hover strong invalidation, then failed stable-pad-hover reuse assertion false versus true. This establishes failed reuse, not a pixel mismatch; failed stable case did not complete exact oracle comparison.",
+    "Board painter previously falls back scene_viewport when cursor-selected interaction_viewport is absent. Pixels::capture previously returned None in the same case, disabling reuse despite known painted hover geometry. Shared painted_interaction_viewport preserves existing board fallback and schematic no-cursor suppression.",
+    "Same-revision exposure now bypasses old/new geometry-support lookup only after matching completed key and physical pair. It resolves unchanged B; no restoration support is needed. Changed revisions still require both supports and bounded union, so unknown changes remain full reconstruction."
+  ],
+  "validation_recommendation": [
+    "Require explicit owner approval of post-failure bounded scope before GPU work; preserve original logs and failed aggregate/zero-test/failed reuse dispositions. No silent continuation or reset.",
+    "Run affected F-DOA case once on pinned corrected source/binary and real original fixture hash, then previously unexecuted terminal, Console and old negative cases once; stop first mismatch/invalidity. Reuse unchanged sample primitive, damage/fault/resource and pointer-style results at original source scope.",
+    "Include within affected F-DOA case one cursorless completed board-hover -> pointer movement with unchanged effective hover transition, checking reuse and exact full-reference output. Stable same-revision exposure alone now bypasses support lookup and cannot independently validate corrected partial restoration bounds.",
+    "Retain CPU real cursorless geometry/clipping and same-revision unknown-support controls; no new broad audit or parameter sweep.",
+    "No performance trial until complete timer/attribution gate; this correction and recommendation do not qualify device duty, S4 or performance."
+  ],
+  "limitations": [
+    "CPU controls source-inspected only; reviewer did not execute them.",
+    "Existing shared full-reference painter validates graph equivalence, not independent source-preparation truth.",
+    "Review does not retrospectively authorize fixture continuation; it describes preserved evidence and the now-proposed owner boundary."
+  ]
+}

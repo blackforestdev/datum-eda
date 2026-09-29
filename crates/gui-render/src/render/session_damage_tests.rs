@@ -190,3 +190,65 @@ fn direct_full_render_invalidates_presented_composition() {
         "raw painter discarded B without a session receipt"
     );
 }
+
+#[test]
+fn cursorless_hover_damage_uses_the_actual_painter_clip() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.selection = datum_gui_protocol::SelectionTarget::None;
+    state.ui.cursor_pos = None;
+    state.ui.hovered_object = Some(datum_gui_protocol::HoverTarget {
+        object_id: state.scene.pads.first().unwrap().object_id.clone(),
+        surface: datum_gui_protocol::PaneContent::Board,
+    });
+    let retained = crate::RetainedScene::from_workspace(&state, 1280, 800);
+    let scene = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        crate::CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    )
+    .unwrap();
+    assert!(
+        !scene.board_interaction_vertices().is_empty(),
+        "real cursorless hover geometry required"
+    );
+    assert!(scene.interaction_viewport(SceneSurface::Board).is_none());
+    let pixels = Pixels::capture(&scene, [1280, 800]).expect("painter fallback is known support");
+    assert!(!pixels.rectangles().is_empty());
+    for triangle in scene.board_interaction_vertices().as_chunks::<3>().0 {
+        let center = [
+            triangle.iter().map(|v| v.pos[0]).sum::<f32>() / 3.,
+            triangle.iter().map(|v| v.pos[1]).sum::<f32>() / 3.,
+        ];
+        assert!(contains(
+            &pixels,
+            center[0].floor() as u32,
+            center[1].floor() as u32
+        ));
+    }
+}
+
+#[test]
+fn unchanged_presented_revision_needs_no_geometry_support_but_changed_revision_does() {
+    let pair = PairIdentity::test_identity(1);
+    let key = Key {
+        preparation: 1,
+        strong_revision: 1,
+        target: Target {
+            host: 1,
+            device: 1,
+            configuration: 1,
+        },
+    };
+    let mut prefix = Prefix::default();
+    prefix.begin(Some(key), None, 1);
+    prefix.encoded(pair, false, 100);
+    let encoded = prefix.take_encoded();
+    prefix.complete(encoded, key, true);
+    prefix.begin(Some(key), None, 1);
+    assert!(prefix.damage(pair).unwrap().rectangles().is_empty());
+    assert!(prefix.damage(PairIdentity::test_identity(2)).is_none());
+    prefix.begin(Some(key), None, 2);
+    assert!(prefix.damage(pair).is_none());
+}

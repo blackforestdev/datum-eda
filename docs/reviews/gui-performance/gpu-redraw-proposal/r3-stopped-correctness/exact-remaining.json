@@ -1,0 +1,15 @@
+{
+  "source": "d75d6de1f9d128d9acd4a9f2f89b7cecfffdeb07",
+  "binary_sha256": "1d5b0674d17f71d2f2cc53d39ab26d59f2116dae90557c7e9bbcb72f01568277",
+  "fixture": "/tmp/gpu-prepared-native/board.kicad_pcb",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "status": "stopped",
+  "rationale": "Continue only unexecuted cases from the same approved exact batch. First aggregate failed fixture import, before any F-DOA render; no pixel mismatch or GPU API failure occurred. Prior sample/damage/lifetime/styles results retained; no repeated cases, new binary, optimization variant or budget reset. The overbroad locally written stop declaration is narrowed to the controlling owner-approved first-mismatch rule for this setup error.",
+  "results": [
+    {
+      "test": "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_doa_hover_composition_and_recovery",
+      "exit_code": 101,
+      "one_test_executed": true
+    }
+  ]
+}
