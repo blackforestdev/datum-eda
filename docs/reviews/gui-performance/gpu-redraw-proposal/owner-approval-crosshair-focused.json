@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU crosshair focused recovery plan",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "recorded_at": "2026-09-29T06:52:39Z",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/crosshair-recovery-plan.md",
+    "sha256": "03fe1125ceb7699b0dc2d8426cb5fb7ccf9f685858bbc3ae7bb17cc17251c5c1",
+    "commit": "35c4355388717bbfa26e848667537b4ac042cc98"
+  },
+  "disposition": "Approve exact focused observer/runner changes, offline prerequisites, one candidate release build then one fixed unchanged-workload output-only native run. Stop on first failed prerequisite/result. No GPU performance, DRM execution, CPU optimization, new renderer mechanism or closure."
+}

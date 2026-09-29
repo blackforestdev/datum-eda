@@ -1,0 +1,42 @@
+E/home/bfadmin/Documents/datum-eda/scripts/test_gpu_crosshair_diagnostic.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmprz49x_ak/stderr.log' mode='w' encoding='UTF-8'>
+  p=subprocess.Popen([sys.executable,'-c',"import sys; print('datum-gui error: original failure',file=sys.stderr); sys.exit(7)"],stderr=path.open('w'))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.EE
+======================================================================
+ERROR: test_cleared_cursor_is_reported_not_reclassified_as_correct_output (__main__.DiagnosticControls.test_cleared_cursor_is_reported_not_reclassified_as_correct_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bfadmin/Documents/datum-eda/scripts/test_gpu_crosshair_diagnostic.py", line 44, in test_cleared_cursor_is_reported_not_reclassified_as_correct_output
+    result=analyze(*args)
+  File "/home/bfadmin/Documents/datum-eda/scripts/gpu_crosshair_diagnostic.py", line 53, in analyze
+    transitions.append(dict(kind=record['demand_kind'],start_ns=received,end_ns=completed,
+                                 ~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'demand_kind'
+
+======================================================================
+ERROR: test_exact_archived_input_can_support_output_diagnosis_without_gpu_tags (__main__.DiagnosticControls.test_exact_archived_input_can_support_output_diagnosis_without_gpu_tags)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bfadmin/Documents/datum-eda/scripts/test_gpu_crosshair_diagnostic.py", line 33, in test_exact_archived_input_can_support_output_diagnosis_without_gpu_tags
+    result=analyze(*self.fixture())
+  File "/home/bfadmin/Documents/datum-eda/scripts/gpu_crosshair_diagnostic.py", line 53, in analyze
+    transitions.append(dict(kind=record['demand_kind'],start_ns=received,end_ns=completed,
+                                 ~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'demand_kind'
+
+======================================================================
+ERROR: test_missing_coverage_and_capture_transition_never_pass (__main__.DiagnosticControls.test_missing_coverage_and_capture_transition_never_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bfadmin/Documents/datum-eda/scripts/test_gpu_crosshair_diagnostic.py", line 56, in test_missing_coverage_and_capture_transition_never_pass
+    with self.assertRaises(AssertionError):analyze(*args)
+                                           ~~~~~~~^^^^^^^
+  File "/home/bfadmin/Documents/datum-eda/scripts/gpu_crosshair_diagnostic.py", line 53, in analyze
+    transitions.append(dict(kind=record['demand_kind'],start_ns=received,end_ns=completed,
+                                 ~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'demand_kind'
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.521s
+
+FAILED (errors=3)

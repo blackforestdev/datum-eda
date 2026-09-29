@@ -1,0 +1,18 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.2 GiB target_free=166.3 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.2 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.03s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-89f6505f70927b20)
+
+running 8 tests
+test app_shell::input_observation::diagnostic::tests::coverage_gap_and_option_conflicts_are_failures_not_gpu_contexts ... ok
+test app_shell::input_observation::diagnostic::tests::diagnostic_snapshot_requires_no_drain_or_runtime_and_survives_later_errors ... ok
+test app_shell::input_observation::diagnostic::tests::full_capacity_noop_succeeds_but_retained_input_and_round_fail_explicitly ... ok
+test app_shell::input_observation::diagnostic::tests::irrelevant_rounds_reuse_provisional_storage_and_real_transitions_survive ... ok
+test app_shell::input_observation::tests::duplicate_receipts_and_semantics_are_not_redraw_counts ... ok
+test app_shell::input_observation::tests::lost_completion_overflow_nesting_and_truncation_fail_closed ... ok
+test app_shell::input_observation::tests::native_pointer_receipts_follow_completed_dispatch_without_redraw_requirement ... ignored, native X11 input receipt conformance with pinned real board; run serially
+test app_shell::input_observation::workload::tests::declared_phases_and_explicit_close_are_not_log_arrival_times ... ok
+
+test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 400 filtered out; finished in 0.88s
+

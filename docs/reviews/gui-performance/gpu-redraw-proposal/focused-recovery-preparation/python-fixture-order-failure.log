@@ -1,0 +1,16 @@
+F...
+======================================================================
+FAIL: test_cleared_cursor_is_reported_not_reclassified_as_correct_output (__main__.DiagnosticControls.test_cleared_cursor_is_reported_not_reclassified_as_correct_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bfadmin/Documents/datum-eda/scripts/test_gpu_crosshair_diagnostic.py", line 46, in test_cleared_cursor_is_reported_not_reclassified_as_correct_output
+    result=analyze(*args)
+  File "/home/bfadmin/Documents/datum-eda/scripts/gpu_crosshair_diagnostic.py", line 48, in analyze
+    assert received <= completed and (previous is None or received >= previous)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.537s
+
+FAILED (failures=1)

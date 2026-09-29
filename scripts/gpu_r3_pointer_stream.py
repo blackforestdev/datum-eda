@@ -1,10 +1,12 @@
-import ctypes as c,time,json,sys
+import ctypes as c,time,json,sys,signal
 from pathlib import Path
 # Existing system XTest/Xlib ABI only; no application or dependency mutation.
 ox,oy=map(int,sys.argv[1:3]);path=Path(sys.argv[3]);x=c.CDLL('libX11.so.6');t=c.CDLL('libXtst.so.6')
 x.XOpenDisplay.argtypes=[c.c_char_p];x.XOpenDisplay.restype=c.c_void_p;x.XFlush.argtypes=[c.c_void_p];x.XCloseDisplay.argtypes=[c.c_void_p]
 t.XTestFakeMotionEvent.argtypes=[c.c_void_p,c.c_int,c.c_int,c.c_int,c.c_ulong];t.XTestFakeMotionEvent.restype=c.c_int
 d=x.XOpenDisplay(None);assert d
+def cancelled(signum,frame): raise SystemExit('producer cancelled')
+signal.signal(signal.SIGTERM,cancelled)
 rows=[];start=int(sys.argv[4]);wall=time.time_ns()
 assert time.monotonic_ns() < start, 'producer launched after declared active boundary'
 try:

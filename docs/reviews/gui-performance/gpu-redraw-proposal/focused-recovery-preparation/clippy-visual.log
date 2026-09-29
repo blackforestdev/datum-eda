@@ -1,0 +1,44 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.2 GiB target_free=166.2 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.2 GiB used; soft limit 20.0 GiB
+    Checking bytemuck v1.25.0
+    Checking ahash v0.8.12
+    Checking naga v28.0.0
+   Compiling thiserror-impl v1.0.69
+    Checking exr v1.74.0
+   Compiling clap_derive v4.6.0
+    Checking hashbrown v0.14.5
+    Checking wgpu-types v28.0.0
+    Checking font-types v0.11.1
+    Checking font-types v0.10.1
+    Checking read-fonts v0.35.0
+    Checking read-fonts v0.37.0
+    Checking hashlink v0.9.1
+    Checking rusqlite v0.32.1
+    Checking thiserror v1.0.69
+    Checking calloop v0.13.0
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking qoi v0.4.1
+    Checking calloop-wayland-source v0.3.0
+    Checking tiny-skia-path v0.11.4
+    Checking smithay-client-toolkit v0.19.2
+    Checking clap v4.6.0
+    Checking tiny-skia v0.11.4
+    Checking image v0.25.10
+    Checking sctk-adwaita v0.10.1
+    Checking winit v0.30.13
+    Checking skrifa v0.40.0
+    Checking skrifa v0.37.0
+    Checking harfrust v0.3.2
+    Checking arboard v3.6.1
+    Checking swash v0.2.7
+    Checking wgpu-hal v28.0.1
+    Checking cosmic-text v0.15.0
+    Checking wgpu-core-deps-windows-linux-android v28.0.0
+    Checking wgpu-core v28.0.1
+    Checking wgpu v28.0.0
+    Checking glyphon v0.10.0
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 47.56s

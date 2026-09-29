@@ -16,6 +16,7 @@ impl App {
         let Some(path) = std::env::var_os("DATUM_MEASUREMENT_SHUTDOWN_SOCKET") else {
             return Ok(());
         };
+        self.export_output_diagnostic()?;
         let runtime = self
             .runtime
             .as_ref()

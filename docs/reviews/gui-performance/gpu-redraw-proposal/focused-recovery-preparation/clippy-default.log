@@ -1,0 +1,20 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.2 GiB target_free=166.3 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.2 GiB used; soft limit 20.0 GiB
+    Checking getrandom v0.3.4
+    Checking naga v28.0.0
+    Checking ahash v0.8.12
+    Checking hashbrown v0.14.5
+    Checking winit v0.30.13
+    Checking hashlink v0.9.1
+    Checking rusqlite v0.32.1
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking wgpu-hal v28.0.1
+    Checking wgpu-core-deps-windows-linux-android v28.0.0
+    Checking wgpu-core v28.0.1
+    Checking wgpu v28.0.0
+    Checking glyphon v0.10.0
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 42.72s
