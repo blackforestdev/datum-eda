@@ -16,7 +16,8 @@
   "verification": [
     "Guarded isolated offline baseline release build passed without compiler warnings; compiled source path and final patched hashes verified.",
     "Three existing causal consumer controls passed after demand-validation extraction; two offline campaign/input controls passed using archived1280 completed pointer routes.",
-    "Source health2642 and dependency authority pass. Advisory review finds no remaining critical source defect; owner approval remains the authority."
+    "Source health2642 and dependency authority pass. Advisory review finds no remaining critical source defect; owner approval remains the authority.",
+    "Baseline patch replay initially refused missing new-file mode metadata. Corrected metadata reproduces all31 exact source hashes from pristine997b618e; initial patch retained, compiled source/binary unchanged."
   ],
   "limits": [
     "Own-queue descriptive experiment only; no duty<=25%, complete DRM lifetime, CPU or S4/S5 acceptance. DRM observation separately unapproved; CPU optimization deferred.",
@@ -32,10 +33,12 @@
     "scripts/test_gpu_r3_runner.py": "4f7c6c24eff0bfef58091116c5ad071b89d76920802929a7be666c8182b55f3f"
   },
   "artifacts_sha256": {
-    "baseline-build.json": "60135616c7450b7327888b61de1b0aa1c8ab70ce660c6f8b11a17e391540b96d",
+    "baseline-build.json": "a0c5c288a17cec99ac0bcfa10fc3fc2d6417ac1f012b95aebc27d0da215b1b87",
     "baseline-build.jsonl.gz": "2692a60345d510211ca0b40268b5c11e664a998ac98ab7e266eeaee224bbc46f",
-    "baseline-observer.patch": "df230a6e97f6e90daf687f2b7c8b803b1ba98e6b33d203cc28532cd60255a686",
-    "baseline-source.json": "0f93609d68dc1b0c6298c4d502cc0b88691c6cdc7863195d32eb7acf989e09eb",
+    "baseline-observer-before-replay.patch": "df230a6e97f6e90daf687f2b7c8b803b1ba98e6b33d203cc28532cd60255a686",
+    "baseline-observer.patch": "12514e0eda8f3450f028643764b5c4b2b9bc52f4c6a59aad630b5c752da82674",
+    "baseline-patch-replay.json": "5d7369622c8afc940831825e4416025db56e861ac5ba68bd46ccc1535e77b192",
+    "baseline-source.json": "caf0fb0fd223c87501e283ca1e93a8a4070c59381500e6596260dc5474711726",
     "gpu-r3-baseline-build.log": "62ac20d1b93a3ef2ec391b6f500b7e9d919530f948edfa2965c1fde3a214e8dd",
     "gpu-r3-baseline-review.json": "6bf343668d467905a725d41e44d401dd82bf851d83a49b097a1c5d5bfc42eb3f",
     "gpu-r3-consumer-controls.log": "199ba496f288116d36c62f29346d4fbf0bd75745a1c893abfcbdaa4c6d5b1033",

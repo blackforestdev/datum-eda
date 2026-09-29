@@ -1,6 +1,6 @@
 {
   "source": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
-  "source_patch_sha256": "df230a6e97f6e90daf687f2b7c8b803b1ba98e6b33d203cc28532cd60255a686",
+  "source_patch_sha256": "12514e0eda8f3450f028643764b5c4b2b9bc52f4c6a59aad630b5c752da82674",
   "executable": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-proof/baseline-997b618e-r3-datum-gui",
   "binary_sha256": "c48ab3216f97037de815b82b480239452047119c6df7dfc44c2a2cb9a5ff2119",
   "artifact": {
@@ -37,5 +37,6 @@
     "executable": "/home/bfadmin/Documents/datum-eda-gpu-r3-baseline-target/release/datum-gui",
     "fresh": false
   },
-  "proof": "guarded offline release build in isolated disk target; compiled GUI app source path baseline-source, fresh=false; final patched source hashes reverified"
+  "proof": "guarded offline release build in isolated disk target; compiled GUI app source path baseline-source, fresh=false; final patched source hashes reverified",
+  "patch_metadata_correction": "New-file mode headers added after first git-apply replay refused; compiled source bytes unchanged."
 }
