@@ -4,6 +4,8 @@ use crate::text_gpu::lifetime::{Kind, Observer, Owner, SubmissionRef, Tracked};
 use std::sync::Arc;
 #[path = "gpu_prefix_images.rs"]
 mod prefix_images;
+#[path = "gpu_regional_images.rs"]
+mod regional_images;
 pub(crate) use prefix_images::{PairIdentity, PrefixImages};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -42,6 +44,26 @@ pub struct SurfaceAttachmentSnapshot {
     pub payload_bytes: Option<u64>,
 }
 
+/// Current and submitted generations may temporarily be disjoint. Alias handles
+/// share allocation identity and must not duplicate resource incidence.
+fn merge_usage(
+    mut current: impl Iterator<Item = SurfaceAttachmentSnapshot>,
+    submitted: [Option<SurfaceAttachmentSnapshot>; 5],
+) -> [Option<(SurfaceAttachmentSnapshot, bool)>; 10] {
+    let mut usage = std::array::from_fn(|_| current.next().map(|image| (image, true)));
+    for submitted in submitted.into_iter().flatten() {
+        if !usage.iter().flatten().any(|(image, _)| {
+            image.owner == submitted.owner && image.allocation == submitted.allocation
+        }) {
+            *usage
+                .iter_mut()
+                .find(|slot| slot.is_none())
+                .expect("current and retiring coherent image bundles") = Some((submitted, false));
+        }
+    }
+    usage
+}
+
 struct AttachmentImage {
     texture: wgpu::Texture,
     view: wgpu::TextureView,
@@ -71,7 +93,7 @@ pub(crate) struct SurfaceAttachments {
     current: Option<SurfaceAttachment>,
     optional: Arc<prefix_images::Optional>,
     optional_registration: Option<crate::text_gpu::optional_residency::Registration>,
-    submitted: [Option<SurfaceAttachmentSnapshot>; 3],
+    submitted: [Option<SurfaceAttachmentSnapshot>; 5],
     #[cfg(all(test, feature = "visual", target_os = "linux"))]
     force_replacement: bool,
 }
@@ -93,7 +115,7 @@ impl SurfaceAttachments {
             optional: crate::cpu_alloc::Scope::new("prefix-image-metadata")
                 .with(|| Arc::new(prefix_images::Optional::default())),
             optional_registration: None,
-            submitted: [None; 3],
+            submitted: [None; 5],
             #[cfg(all(test, feature = "visual", target_os = "linux"))]
             force_replacement: false,
         }
@@ -120,63 +142,63 @@ impl SurfaceAttachments {
             attachment.image.set_consumers(consumers);
         }
         let optional = self.optional.0.lock().unwrap();
-        for attachment in optional.prefix.iter() {
+        for attachment in optional.images().into_iter().flatten() {
             attachment.image.set_consumers(consumers);
         }
     }
 
     pub(super) fn submission_refs(&self) -> impl Iterator<Item = SubmissionRef> {
         let optional = self.optional.0.lock().unwrap();
-        [self.current.as_ref(), optional.prefix.as_ref(), None]
-            .map(|image| image.map(|image| image.image.submission_ref()))
-            .into_iter()
-            .flatten()
+        [
+            self.current.as_ref(),
+            optional.images()[0],
+            optional.images()[1],
+            optional.images()[2],
+            optional.images()[3],
+        ]
+        .map(|image| image.map(|image| image.image.submission_ref()))
+        .into_iter()
+        .flatten()
     }
 
     pub(crate) fn begin_attempt(&mut self) {
-        self.submitted = [None; 3];
+        self.submitted = [None; 5];
     }
     pub(crate) fn mark_submission(&mut self, images: Option<&PrefixImages>) {
         self.submitted = if let Some(images) = images {
             images.snapshots(self.owner.id(), self.allocations)
         } else {
-            [self.snapshot(), None, None]
+            [self.snapshot(), None, None, None, None]
         };
     }
-    fn usage(&self) -> [Option<(SurfaceAttachmentSnapshot, bool)>; 3] {
-        let mut current = self.snapshots();
-        let mut usage = std::array::from_fn(|_| current.next().map(|s| (s, true)));
-        for submitted in self.submitted.into_iter().flatten() {
-            if !usage.iter().flatten().any(|(current, _)| {
-                current.owner == submitted.owner && current.allocation == submitted.allocation
-            }) {
-                *usage
-                    .iter_mut()
-                    .find(|slot| slot.is_none())
-                    .expect("one coherent submitted image pair") = Some((submitted, false));
-            }
-        }
-        usage
+    fn usage(&self) -> [Option<(SurfaceAttachmentSnapshot, bool)>; 10] {
+        merge_usage(self.snapshots(), self.submitted)
     }
     fn snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
         self.snapshots().next()
     }
     fn snapshots(&self) -> impl Iterator<Item = SurfaceAttachmentSnapshot> {
         let optional = self.optional.0.lock().unwrap();
-        [self.current.as_ref(), optional.prefix.as_ref(), None]
-            .map(|image| {
-                image.map(|image| SurfaceAttachmentSnapshot {
-                    owner: self.owner.id(),
-                    allocation: image.allocation,
-                    allocations_created: self.allocations,
-                    extent: image.key.extent,
-                    samples: image.key.samples,
-                    format: image.key.format,
-                    payload_bytes: image.key.payload_bytes(),
-                })
+        [
+            self.current.as_ref(),
+            optional.images()[0],
+            optional.images()[1],
+            optional.images()[2],
+            optional.images()[3],
+        ]
+        .map(|image| {
+            image.map(|image| SurfaceAttachmentSnapshot {
+                owner: self.owner.id(),
+                allocation: image.allocation,
+                allocations_created: self.allocations,
+                extent: image.key.extent,
+                samples: image.key.samples,
+                format: image.key.format,
+                payload_bytes: image.key.payload_bytes(),
             })
-            .into_iter()
-            .flatten()
+        })
+        .into_iter()
+        .flatten()
     }
 
     fn ensure(
@@ -273,7 +295,9 @@ impl SurfaceAttachments {
                         .with_shared_permit(generation.clone()),
                 ),
                 generation,
-                optional_bytes: crate::text_gpu::budget::Budget::new(bytes),
+                optional_bytes: crate::text_gpu::budget::Budget::new(
+                    regional_images::OPTIONAL_BYTES,
+                ),
             };
             // Backend error callbacks may report allocation/validation failure
             // during creation. Keep the old reference until this check passes;
@@ -286,7 +310,7 @@ impl SurfaceAttachments {
             }
             self.release_prefix();
             self.current = Some(replacement);
-            self.submitted = [None; 3];
+            self.submitted = [None; 5];
             let mut optional = self.optional.0.lock().unwrap();
             optional.suppressed = false;
             optional.evicted = false;
@@ -375,6 +399,29 @@ mod tests {
                 .as_ref()
                 .map(|attachment| attachment.image.submission_ref())
         }
+    }
+
+    #[test]
+    fn five_image_usage_covers_disjoint_generations_and_deduplicates_aliases() {
+        let images = |first| {
+            std::array::from_fn::<_, 5, _>(|i| SurfaceAttachmentSnapshot {
+                owner: 1,
+                allocation: first + i as u64,
+                allocations_created: 10,
+                extent: (1280, 800),
+                samples: 8,
+                format: wgpu::TextureFormat::Bgra8UnormSrgb,
+                payload_bytes: Some(32_768_000),
+            })
+        };
+        let current = images(1);
+        let retiring = images(6).map(Some);
+        let usage = merge_usage(current.into_iter(), retiring);
+        assert_eq!(usage.iter().flatten().count(), 10);
+        assert_eq!(usage.iter().flatten().filter(|(_, live)| *live).count(), 5);
+        let aliases = merge_usage(current.into_iter(), current.map(Some));
+        assert_eq!(aliases.iter().flatten().count(), 5);
+        assert!(aliases.iter().flatten().all(|(_, live)| *live));
     }
 
     #[test]
