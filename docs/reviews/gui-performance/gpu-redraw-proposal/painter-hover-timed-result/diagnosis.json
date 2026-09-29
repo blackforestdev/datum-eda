@@ -1,0 +1,81 @@
+{
+  "input": {
+    "scheduled": 3600,
+    "integer_changes": 1280,
+    "same_position_requests": 2320,
+    "received": 1280,
+    "completed_viewport_routes": 1280,
+    "producer_duration_ns": 30000564702,
+    "send_lateness_ns": {
+      "p95": 286222,
+      "p99": 327673,
+      "max": 1381889
+    },
+    "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+  },
+  "capture_state": {
+    "camera_center_nm": [
+      151634208.0,
+      95122896.0
+    ],
+    "camera_zoom": 1.0,
+    "cursor": [
+      300.0,
+      150.0
+    ],
+    "device_epoch": 1,
+    "extent": [
+      1280,
+      800
+    ],
+    "hover_surface": null,
+    "hover_utf8": "",
+    "native_cursor": [
+      300.0,
+      150.0
+    ],
+    "pan_active": false,
+    "render_activity": [
+      1292,
+      1281
+    ],
+    "render_revision": 1292,
+    "scale": 1.0,
+    "truncated": false,
+    "window_focused": true
+  },
+  "expected_last_pointer_state": {
+    "camera_center_nm": [
+      151634208.0,
+      95122896.0
+    ],
+    "camera_zoom": 1.0,
+    "cursor": [
+      300.0,
+      150.0
+    ],
+    "device_epoch": 1,
+    "extent": [
+      1280,
+      800
+    ],
+    "hover_surface": null,
+    "hover_utf8": "",
+    "native_cursor": [
+      300.0,
+      150.0
+    ],
+    "pan_active": false,
+    "render_activity": [
+      1292,
+      1280
+    ],
+    "render_revision": 1292,
+    "scale": 1.0,
+    "truncated": false,
+    "window_focused": true
+  },
+  "capture_state_matches": true,
+  "transitions_after_last_pointer": [],
+  "limits": "Native output diagnosis only; no GPU performance, original failure resolution or DRM qualification."
+}
