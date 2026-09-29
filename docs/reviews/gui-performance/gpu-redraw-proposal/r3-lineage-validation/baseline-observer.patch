@@ -1,0 +1,2543 @@
+diff --git a/crates/gui-app/src/app_native_events.rs b/crates/gui-app/src/app_native_events.rs
+--- a/crates/gui-app/src/app_native_events.rs
++++ b/crates/gui-app/src/app_native_events.rs
+@@ -1,5 +1,6 @@
+ //! Native input/event dispatch; input state is applied before redraw effects.
+ use super::*;
++use crate::app_shell::input_observation::mark;
+ 
+ #[path = "native_scroll_input.rs"]
+ pub(crate) mod scroll_input;
+@@ -66,7 +67,7 @@
+         }
+     }
+ 
+-    pub(super) fn handle_native_window_event(
++    pub(super) fn dispatch_native_window_event(
+         &mut self,
+         event_loop: &ActiveEventLoop,
+         window_id: WindowId,
+@@ -271,6 +272,7 @@
+                     runtime.last_cursor_pos = Some(next_pos);
+                     let terminal_hover_changed = runtime.update_terminal_tab_hover(next_pos);
+                     if runtime.terminal_tab_drag.is_some() {
++                        mark(&mut self.input_observation, "terminal_tab_drag");
+                         if runtime.advance_terminal_tab_drag(next_pos) || terminal_hover_changed {
+                             self.request_workspace_redraw();
+                         }
+@@ -278,6 +280,7 @@
+                         return;
+                     }
+                     if runtime.terminal_split_drag.is_some() {
++                        mark(&mut self.input_observation, "terminal_split_drag");
+                         let changed = runtime.advance_terminal_split_drag(next_pos);
+                         let icon = runtime
+                             .terminal_split_cursor_icon(next_pos)
+@@ -289,26 +292,33 @@
+                         return;
+                     }
+                     if runtime.terminal_clipboard_menu_active() {
++                        mark(&mut self.input_observation, "terminal_clipboard_menu");
+                         return;
+                     }
+                     if runtime.advance_terminal_text_selection(next_pos) {
++                        mark(&mut self.input_observation, "terminal_selection");
+                         self.apply_cursor_icon(winit::window::CursorIcon::Text);
+                         self.request_workspace_redraw();
+                         return;
+                     }
+                     if runtime.report_terminal_mouse_motion() {
++                        mark(&mut self.input_observation, "terminal_mouse");
+                         runtime.clear_interaction_overlay();
+                         self.request_workspace_redraw();
+                         return;
+                     }
+                     let mut changed = runtime.update_menu_hover(next_pos) || terminal_hover_changed;
+                     if runtime.dock_drag_active {
++                        mark(&mut self.input_observation, "dock_drag");
+                         changed = runtime.handle_dock_resize_drag(next_pos);
+                     } else if runtime.divider_drag.is_some() {
++                        mark(&mut self.input_observation, "divider_drag");
+                         changed = runtime.handle_divider_drag(next_pos);
+                     } else if runtime.marking_menu_active() {
++                        mark(&mut self.input_observation, "marking_menu");
+                         changed = runtime.update_marking_menu_preview(next_pos);
+                     } else if runtime.pan_gesture.is_active() {
++                        mark(&mut self.input_observation, "pan");
+                         changed = previous_pos.is_some_and(|previous| {
+                             runtime.advance_primary_pan(previous, next_pos)
+                         });
+@@ -318,6 +328,7 @@
+                         && !runtime.pan_gesture.is_active()
+                         && !runtime.marking_menu_active()
+                     {
++                        mark(&mut self.input_observation, "authoring_hover");
+                         changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
+                         changed = runtime.update_hover(next_pos) || changed;
+                     } else {
+@@ -343,6 +354,7 @@
+                 ..
+             } => {
+                 if let Some(runtime) = &mut self.runtime {
++                    mark(&mut self.input_observation, "auxiliary_button");
+                     if button == MouseButton::Right
+                         && state == ElementState::Pressed
+                         && runtime.cursor_in_dock()
+@@ -367,6 +379,7 @@
+                 button: MouseButton::Left,
+                 ..
+             } => {
++                mark(&mut self.input_observation, "primary_press");
+                 self.handle_primary_button_press();
+             }
+             WindowEvent::MouseInput {
+@@ -375,6 +388,7 @@
+                 ..
+             } => {
+                 if let Some(runtime) = &mut self.runtime {
++                    mark(&mut self.input_observation, "primary_release");
+                     if let Some(icon) = runtime.finish_dock_resize_drag() {
+                         self.apply_cursor_icon(icon);
+                         self.request_workspace_redraw();
+@@ -474,6 +488,7 @@
+     }
+ 
+     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
++        self.begin_native_round_observation();
+         let _cpu_probe = gui_runtime_support::phase_probe::Probe::start("event_round");
+         // Reconcile close/open input before selecting surviving host tokens.
+         if let Err(err) = self.sync_owned_product_windows(event_loop) {
+@@ -521,6 +536,7 @@
+         if let Err(err) = app_shell::private_text_measurements::poll() {
+             fatal_gui_error(event_loop, "private text observation incomplete", err);
+         }
++        self.end_native_round_observation();
+         event_loop.set_control_flow(self.frames.take_control_flow());
+     }
+ }
+diff --git a/crates/gui-app/src/app_shell.rs b/crates/gui-app/src/app_shell.rs
+--- a/crates/gui-app/src/app_shell.rs
++++ b/crates/gui-app/src/app_shell.rs
+@@ -1,12 +1,15 @@
+ use super::*;
+ #[path = "native_gpu_allocation_measurements.rs"]
+ pub(super) mod gpu_allocation_measurements;
++#[path = "native_input_observation.rs"]
++pub(super) mod input_observation;
+ #[path = "native_private_text_measurements.rs"]
+ pub(super) mod private_text_measurements;
+ #[path = "native_resource_measurements.rs"]
+ pub(super) mod resource_measurements;
+ 
+ pub(super) struct App {
++    pub(super) input_observation: Option<input_observation::InputObservation>,
+     pub(super) args: GuiArgs,
+     pub(super) device_recovery: native_device_recovery::DeviceRecovery,
+     pub(super) frames: native_frame_coordinator::NativeFrameCoordinator,
+@@ -31,6 +34,7 @@
+ 
+ impl App {
+     pub(super) fn run(mut self, event_loop: EventLoop<()>) -> Result<()> {
++        self.input_observation = input_observation::InputObservation::from_environment()?;
+         private_text_measurements::start()?;
+         gpu_allocation_measurements::start()?;
+         resource_measurements::start()?;
+@@ -72,6 +76,7 @@
+         terminal_event_proxy: winit::event_loop::EventLoopProxy<()>,
+     ) -> Self {
+         Self {
++            input_observation: None,
+             args,
+             frames: Default::default(),
+             device_recovery: Default::default(),
+diff --git a/crates/gui-app/src/baseline_frame_workload.rs b/crates/gui-app/src/baseline_frame_workload.rs
+new file mode 100644
+--- /dev/null
++++ b/crates/gui-app/src/baseline_frame_workload.rs
+@@ -0,0 +1,137 @@
++//! Opt-in causal workload tags. Log arrival time never determines GPU ownership.
++//! Epoch, pending phase bits, then the latest demand sequence for each phase.
++pub(crate) type Tag = [u64; 8];
++#[derive(Default)]
++pub(super) struct Workload {
++    context: [u64; 3],
++    scoped: bool,
++    previous_context: [u64; 3],
++    invalid: bool,
++    phases: [[u64; 2]; 6],
++}
++impl Workload {
++    pub(super) fn context(&mut self, context: [u64; 3]) -> anyhow::Result<()> {
++        anyhow::ensure!(
++            context[0] != 0 && (1..=6).contains(&context[1]),
++            "invalid workload epoch or phase"
++        );
++        anyhow::ensure!(
++            self.context[0] == 0 || self.context[0] == context[0],
++            "workload epoch changed within render session"
++        );
++        anyhow::ensure!(
++            context[2] >= self.context[2],
++            "workload demand sequence reversed"
++        );
++        self.previous_context = self.context;
++        self.context = context;
++        self.scoped = true;
++        Ok(())
++    }
++    pub(super) fn end_context(&mut self, retain: bool) {
++        if !retain {
++            self.context = self.previous_context;
++        }
++        self.scoped = false;
++    }
++    pub(super) fn changed(&mut self, revision: u64) {
++        if self.context[0] != 0 && !self.scoped {
++            self.invalid = true;
++        }
++        if self.context[0] != 0 {
++            self.phases[self.context[1] as usize - 1] = [revision, self.context[2]];
++        }
++    }
++    pub(super) fn pending(&self, acknowledged: u64) -> Tag {
++        let mut tag = [0; 8];
++        if self.invalid {
++            return tag;
++        }
++        tag[0] = self.context[0];
++        for (phase, &[revision, demand]) in self.phases.iter().enumerate() {
++            if revision > acknowledged {
++                tag[1] |= 1 << phase;
++                tag[2 + phase] = demand;
++            }
++        }
++        // Exposure-only demand belongs to its actual native event, while pending
++        // active work remains active through still/drain/close dispatch.
++        if tag[1] == 0 && tag[0] != 0 {
++            let phase = self.context[1] as usize - 1;
++            tag[1] = 1 << phase;
++            tag[2 + phase] = self.context[2];
++        }
++        tag
++    }
++}
++#[cfg(test)]
++mod tests {
++    use super::*;
++    #[test]
++    fn active_demand_survives_late_drain_and_close_until_acknowledged() {
++        let mut workload = Workload::default();
++        workload.context([7, 3, 20]).unwrap();
++        workload.changed(2);
++        let active = workload.pending(1);
++        workload.context([7, 5, 21]).unwrap();
++        assert_eq!(
++            workload.pending(1),
++            active,
++            "late active receipt is not drain work"
++        );
++        workload.context([7, 6, 22]).unwrap();
++        workload.changed(3);
++        assert_eq!(workload.pending(1)[1], (1 << 2) | (1 << 5));
++        assert_eq!(
++            workload.pending(2)[1],
++            1 << 5,
++            "only acknowledged active work can leave close-only demand"
++        );
++        assert_eq!(
++            workload.pending(3)[1],
++            1 << 5,
++            "exposure records explicit current phase"
++        );
++    }
++    #[test]
++    fn unchanged_native_round_restores_context_but_changed_round_owns_demand() {
++        let mut workload = Workload::default();
++        workload.context([7, 3, 1]).unwrap();
++        workload.changed(2);
++        workload.end_context(true);
++        workload.context([7, 4, 2]).unwrap();
++        workload.end_context(false);
++        assert_eq!(workload.pending(2)[4], 1);
++        workload.context([7, 4, 2]).unwrap();
++        workload.changed(3);
++        workload.end_context(true);
++        assert_eq!(workload.pending(1)[1], 12);
++        assert_eq!(workload.pending(2)[5], 2);
++    }
++    #[test]
++    fn unscoped_background_change_cannot_inherit_a_native_demand() {
++        let mut workload = Workload::default();
++        workload.context([7, 3, 20]).unwrap();
++        workload.changed(2);
++        workload.end_context(true);
++        assert_eq!(workload.pending(1)[1], 4);
++        workload.changed(3);
++        assert_eq!(workload.pending(1), [0; 8]);
++        workload.context([7, 6, 21]).unwrap();
++        assert_eq!(
++            workload.pending(1),
++            [0; 8],
++            "later demand cannot bless unattributed work"
++        );
++    }
++    #[test]
++    fn missing_reversed_or_changed_epoch_cannot_be_attributed() {
++        let mut workload = Workload::default();
++        assert_eq!(workload.pending(0), [0; 8]);
++        assert!(workload.context([0, 3, 1]).is_err());
++        assert!(workload.context([1, 7, 1]).is_err());
++        workload.context([1, 2, 2]).unwrap();
++        assert!(workload.context([2, 3, 3]).is_err());
++        assert!(workload.context([1, 3, 1]).is_err());
++    }
++}
+diff --git a/crates/gui-app/src/baseline_measurement_lineage.rs b/crates/gui-app/src/baseline_measurement_lineage.rs
+new file mode 100644
+--- /dev/null
++++ b/crates/gui-app/src/baseline_measurement_lineage.rs
+@@ -0,0 +1,70 @@
++//! Measurement-only baseline bridge. No scheduling, cache or presentation authority.
++#[path = "baseline_frame_workload.rs"]
++mod causal;
++pub(crate) struct Lineage {
++    revision: u64,
++    preparation: u64,
++    attempt: u64,
++    acknowledged: u64,
++    workload: causal::Workload,
++}
++impl Lineage {
++    pub(crate) fn content_revision(&self) -> u64 {
++        self.revision
++    }
++    pub(crate) fn measurement_activity(&self) -> [u64; 2] {
++        [self.revision, self.attempt]
++    }
++    pub(crate) fn set_measurement_workload(&mut self, value: [u64; 3]) -> anyhow::Result<()> {
++        self.workload.context(value)
++    }
++    pub(crate) fn end_measurement_workload(&mut self, retain: bool) {
++        self.workload.end_context(retain);
++    }
++    pub(crate) fn changed(&mut self) {
++        self.revision = self
++            .revision
++            .checked_add(1)
++            .expect("baseline revision overflow");
++        self.workload.changed(self.revision);
++    }
++    pub(crate) fn prepared(&mut self) {
++        self.preparation = self
++            .preparation
++            .checked_add(1)
++            .expect("baseline preparation overflow");
++    }
++    pub(crate) fn begin(&mut self, owner: u64, target: [u64; 3]) -> ([u64; 7], [u64; 8]) {
++        self.attempt = self
++            .attempt
++            .checked_add(1)
++            .expect("baseline attempt overflow");
++        (
++            [
++                owner,
++                self.attempt,
++                self.revision,
++                self.preparation,
++                target[0],
++                target[1],
++                target[2],
++            ],
++            self.workload.pending(self.acknowledged),
++        )
++    }
++    pub(crate) fn presented(&mut self) {
++        self.acknowledged = self.revision;
++    }
++}
++
++impl Default for Lineage {
++    fn default() -> Self {
++        Self {
++            revision: 1,
++            preparation: 0,
++            attempt: 0,
++            acknowledged: 0,
++            workload: Default::default(),
++        }
++    }
++}
+diff --git a/crates/gui-app/src/interaction_refresh.rs b/crates/gui-app/src/interaction_refresh.rs
+--- a/crates/gui-app/src/interaction_refresh.rs
++++ b/crates/gui-app/src/interaction_refresh.rs
+@@ -24,6 +24,7 @@
+         }
+         self.prepared_scene = None;
+         self.clear_schematic_retained_scene();
++        self.measurement_lineage.changed();
+         self.scene_dirty = true;
+         self.restore_cached_retained_scene();
+     }
+@@ -33,6 +34,7 @@
+         self.retained_scene_cache.clear();
+         self.prepared_scene = None;
+         self.clear_schematic_retained_scene();
++        self.measurement_lineage.changed();
+         self.scene_dirty = true;
+     }
+ 
+@@ -46,6 +48,7 @@
+         self.schematic_scene_accounting
+             .invalidate_surface_size(&mut self.schematic_retained_scene);
+         self.prepared_scene = None;
++        self.measurement_lineage.changed();
+         self.scene_dirty = true;
+     }
+ 
+@@ -54,6 +57,7 @@
+         // Camera/layout/chrome changes rebuild the prepared projection only.
+         // Schematic authored geometry is camera-independent retained world data,
+         // just like the board retained scene, and must stay warm here.
++        self.measurement_lineage.changed();
+         self.scene_dirty = true;
+         self.refresh_global_preferences_accessibility();
+         self.refresh_menu_accessibility();
+@@ -92,6 +96,7 @@
+         {
+             prepared.refresh_interaction(self.session.workspace(), retained);
+         }
++        self.measurement_lineage.changed();
+         self.scene_dirty = true;
+     }
+ }
+diff --git a/crates/gui-app/src/main.rs b/crates/gui-app/src/main.rs
+--- a/crates/gui-app/src/main.rs
++++ b/crates/gui-app/src/main.rs
+@@ -261,6 +261,10 @@
+ 
+     #[cfg(feature = "visual")]
+     fn capture_visual_screenshot(&mut self) -> Result<image::RgbaImage> {
++        anyhow::ensure!(
++            std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_none(),
++            "bounded Main workload cannot use offscreen capture"
++        );
+         let target = datum_gui_render::capture_resource::CaptureTarget::new(
+             &self.device,
+             wgpu::Extent3d {
+diff --git a/crates/gui-app/src/native_gpu_measurements.rs b/crates/gui-app/src/native_gpu_measurements.rs
+--- a/crates/gui-app/src/native_gpu_measurements.rs
++++ b/crates/gui-app/src/native_gpu_measurements.rs
+@@ -42,6 +42,7 @@
+ pub(super) struct Host {
+     epoch: u64,
+     enabled: bool,
++    workload_required: bool,
+     drawable: bool,
+     occluded: bool,
+     suspended: bool,
+@@ -64,17 +65,22 @@
+         let id = ID
+             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+             .map_err(|_| anyhow::anyhow!("native measurement identity exhausted"))?;
++        anyhow::ensure!(
++            std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_none() || id == 1,
++            "bounded Main workload cannot create another native host or device epoch"
++        );
+         let epoch = shared_epoch.unwrap_or(id);
+         let host = Self {
+             epoch,
+             enabled,
++            workload_required: std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_some(),
+             drawable: window.inner_size().width > 0 && window.inner_size().height > 0,
+             occluded: false,
+             suspended: false,
+         };
+         if enabled {
+             renderer.enable_gpu_measurements(device, queue, id, epoch, Box::new(|cancelled| {
+-                let record = serde_json::json!({"host":cancelled.host,"device_epoch":cancelled.device_epoch,"frame":cancelled.frame,"submission":cancelled.submission,"status":"incomplete","reason":cancelled.reason});
++                let record = serde_json::json!({"host":cancelled.host,"device_epoch":cancelled.device_epoch,"frame":cancelled.frame,"submission":cancelled.submission,"submitted_lineage":cancelled.submitted_lineage,"status":"incomplete","reason":cancelled.reason});
+                 // Always leave a stderr receipt even if the diagnostic file is unavailable.
+                 eprintln!("gpu_measurement_incomplete {record}");
+                 let result = std::fs::OpenOptions::new().append(true).open(gui_runtime_support::gui_diagnostic_log_path())
+@@ -114,6 +120,29 @@
+             return Ok(None);
+         }
+         for sample in renderer.poll_gpu_measurements(device)? {
++            anyhow::ensure!(
++                !sample.submission_manifest.is_empty()
++                    && sample
++                        .submission_manifest
++                        .last()
++                        .is_some_and(|s| s.submission == sample.submission)
++                    && sample
++                        .submission_manifest
++                        .iter()
++                        .all(|s| s.attempt[..4].iter().all(|v| *v != 0)),
++                "native GPU sample has missing submission or render-attempt lineage"
++            );
++            anyhow::ensure!(
++                !self.workload_required
++                    || sample.submission_manifest.iter().all(|s| {
++                        let tag = s.workload;
++                        tag[0] != 0
++                            && tag[1] != 0
++                            && tag[1] & !63 == 0
++                            && (0..6).all(|phase| tag[1] & (1 << phase) == 0 || tag[phase + 2] != 0)
++                    }),
++                "native GPU sample has missing workload demand identity"
++            );
+             // Existing native diagnostic output includes process and adapter identity.
+             // A write error fails the trial instead of silently losing a sample.
+             let mut file = std::fs::OpenOptions::new()
+@@ -127,6 +156,7 @@
+                     "frame": sample.frame, "submission": sample.submission,
+                     "timestamp_period_ns": sample.period_ns, "raw_ticks": sample.raw_ticks,
+                     "scene_marker_ticks": sample.scene_marker_ticks,
++                    "submission_manifest": sample.submission_manifest.iter().map(|s| serde_json::json!({"submission":s.submission,"kind":s.kind,"attempt":s.attempt,"workload":s.workload,"first_tick":s.first_tick,"last_tick":s.last_tick,"transfer_first_tick":s.transfer_first_tick,"transfer_last_tick":s.transfer_last_tick,"span_ns":s.span_ns,"transfer_interval_ns":s.transfer_interval_ns})).collect::<Vec<_>>(),
+                     "passes_ns": sample.passes_ns, "own_pass_sum_ns": sample.own_pass_sum_ns,
+                     "frame_span_ns": sample.frame_span_ns,
+                 })
+diff --git a/crates/gui-app/src/native_input_observation.rs b/crates/gui-app/src/native_input_observation.rs
+new file mode 100644
+--- /dev/null
++++ b/crates/gui-app/src/native_input_observation.rs
+@@ -0,0 +1,511 @@
++//! Bounded opt-in input receipts, exported only after the controlled workload.
++//! No event scheduling, per-event I/O, DRM observation or acceptance inference.
++use crate::{App, Runtime};
++use anyhow::{Context, Result, ensure};
++use serde_json::{Value, json};
++use std::path::PathBuf;
++use std::time::Instant;
++use winit::event::{ElementState, MouseButton, WindowEvent};
++use winit::event_loop::ActiveEventLoop;
++use winit::window::WindowId;
++
++#[path = "native_workload_observation.rs"]
++mod workload;
++
++const LIMIT: usize = 4096;
++const HOVER_BYTES: usize = 128;
++
++#[derive(Clone, Copy)]
++struct State {
++    cursor: Option<[f32; 2]>,
++    native_cursor: Option<(f32, f32)>,
++    center: [f32; 2],
++    zoom: f32,
++    pan: bool,
++    epoch: u64,
++    render_revision: u64,
++    render_activity: [u64; 2],
++    hover: [u8; HOVER_BYTES],
++    hover_len: usize,
++    hover_surface: Option<datum_gui_protocol::PaneContent>,
++    truncated: bool,
++}
++impl State {
++    fn capture(runtime: &Runtime) -> Self {
++        let ui = &runtime.workspace().ui;
++        let mut value = Self {
++            cursor: ui.cursor_pos.map(|p| [p.x, p.y]),
++            native_cursor: runtime.last_cursor_pos,
++            center: [runtime.camera.center_x_nm, runtime.camera.center_y_nm],
++            zoom: runtime.camera.zoom,
++            pan: runtime.pan_gesture.is_active(),
++            epoch: runtime.measurements.epoch(),
++            render_revision: runtime.measurement_lineage.content_revision(),
++            render_activity: runtime.measurement_lineage.measurement_activity(),
++            hover: [0; HOVER_BYTES],
++            hover_len: 0,
++            hover_surface: None,
++            truncated: false,
++        };
++        if let Some(hover) = &ui.hovered_object {
++            value.hover_len = hover.object_id.len().min(HOVER_BYTES);
++            value.hover[..value.hover_len]
++                .copy_from_slice(&hover.object_id.as_bytes()[..value.hover_len]);
++            value.hover_surface = Some(hover.surface);
++            value.truncated = hover.object_id.len() > HOVER_BYTES;
++        }
++        value
++    }
++    fn value(&self) -> Value {
++        json!({"cursor":self.cursor,"native_cursor":self.native_cursor,
++            "camera_center_nm":self.center,"camera_zoom":self.zoom,"pan_active":self.pan,
++            "device_epoch":self.epoch,"render_revision":self.render_revision,"hover_utf8":std::str::from_utf8(&self.hover[..self.hover_len]).ok(),
++            "hover_surface":self.hover_surface.map(|s|format!("{s:?}")),"truncated":self.truncated})
++    }
++}
++
++struct Record {
++    workload: [u64; 3],
++    workload_ns: Option<u64>,
++    demand_kind: &'static str,
++    received_ns: u128,
++    completed_ns: Option<u128>,
++    position: Option<[f64; 2]>,
++    button: Option<(u32, bool)>,
++    route: &'static str,
++    before: State,
++    after: Option<State>,
++}
++
++pub(crate) struct InputObservation {
++    workload: Option<workload::Schedule>,
++    path: PathBuf,
++    started: Instant,
++    monotonic_origin_ns: u64,
++    records: Vec<Record>,
++    overflow: bool,
++    active: Option<usize>,
++}
++impl InputObservation {
++    pub(crate) fn from_environment() -> Result<Option<Self>> {
++        let Some(path) = std::env::var_os("DATUM_INPUT_RECEIPT") else {
++            ensure!(
++                std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_none(),
++                "workload attribution requires input receipts"
++            );
++            return Ok(None);
++        };
++        ensure!(
++            std::env::var_os("DATUM_MEASUREMENT_SHUTDOWN_SOCKET").is_some(),
++            "input receipt requires controlled measurement shutdown"
++        );
++        let mut records = Vec::new();
++        records
++            .try_reserve_exact(LIMIT)
++            .context("reserve bounded input receipt")?;
++        let mut ts = libc::timespec {
++            tv_sec: 0,
++            tv_nsec: 0,
++        };
++        // SAFETY: CLOCK_MONOTONIC is valid and ts is writable for the call.
++        ensure!(
++            unsafe { libc::clock_gettime(libc::CLOCK_MONOTONIC, &mut ts) } == 0,
++            "input receipt clock unavailable"
++        );
++        Ok(Some(Self {
++            workload: workload::Schedule::from_environment()?,
++            path: path.into(),
++            started: Instant::now(),
++            monotonic_origin_ns: ts.tv_sec as u64 * 1_000_000_000 + ts.tv_nsec as u64,
++            records,
++            overflow: false,
++            active: None,
++        }))
++    }
++    fn begin(&mut self, event: &WindowEvent, before: State) -> bool {
++        self.begin_demand(Some(event), before)
++    }
++    fn begin_demand(&mut self, event: Option<&WindowEvent>, before: State) -> bool {
++        let (position, button) = match event {
++            Some(WindowEvent::CursorMoved { position, .. }) => {
++                (Some([position.x, position.y]), None)
++            }
++            Some(WindowEvent::MouseInput { button, state, .. }) => {
++                let button = match button {
++                    MouseButton::Left => 1,
++                    MouseButton::Middle => 2,
++                    MouseButton::Right => 3,
++                    MouseButton::Back => 4,
++                    MouseButton::Forward => 5,
++                    MouseButton::Other(n) => u32::from(*n) + 6,
++                };
++                (None, Some((button, *state == ElementState::Pressed)))
++            }
++            _ if self.workload.is_some() => (None, None),
++            _ => return false,
++        };
++        if self.active.is_some() || self.records.len() == LIMIT {
++            self.overflow = true;
++            return false;
++        }
++        let (workload, workload_ns) = if let Some(schedule) = &mut self.workload {
++            let Ok(now) = workload::monotonic_ns() else {
++                self.overflow = true;
++                return false;
++            };
++            (
++                schedule.demand(
++                    matches!(event, Some(WindowEvent::CloseRequested)),
++                    now,
++                    self.records.len() as u64 + 1,
++                ),
++                Some(now),
++            )
++        } else {
++            ([0; 3], None)
++        };
++        let demand_kind = match event {
++            Some(WindowEvent::CursorMoved { .. }) => "pointer",
++            Some(WindowEvent::MouseInput { .. }) => "button",
++            Some(WindowEvent::RedrawRequested) => "exposure",
++            Some(WindowEvent::CloseRequested) => "close",
++            None => "native_round",
++            _ => "native_event",
++        };
++        self.active = Some(self.records.len());
++        self.records.push(Record {
++            workload,
++            workload_ns,
++            demand_kind,
++            received_ns: self.started.elapsed().as_nanos(),
++            completed_ns: None,
++            position,
++            button,
++            route: "unhandled",
++            before,
++            after: None,
++        });
++        true
++    }
++    pub(crate) fn route(&mut self, route: &'static str) {
++        if let Some(index) = self.active {
++            self.records[index].route = route;
++        }
++    }
++    fn complete(&mut self, after: Option<State>) {
++        if let Some(index) = self.active.take() {
++            let record = &mut self.records[index];
++            record.completed_ns = Some(self.started.elapsed().as_nanos());
++            record.after = after;
++        }
++    }
++    fn complete_receipt(&self) -> bool {
++        !self.overflow
++            && self.active.is_none()
++            && self.records.iter().all(|r| {
++                r.completed_ns.is_some()
++                    && r.after.is_some_and(|s| !s.truncated)
++                    && !r.before.truncated
++            })
++    }
++    fn export(&self, runtime: &Runtime) -> Result<()> {
++        let final_state = State::capture(runtime);
++        let complete = self.complete_receipt() && !final_state.truncated;
++        let state = runtime.workspace();
++        let records: Vec<_> = self.records.iter().enumerate().map(|(i,r)|json!({"sequence":i,
++            "workload":r.workload,"workload_ns":r.workload_ns,"demand_kind":r.demand_kind,"received_ns":r.received_ns,"completed_ns":r.completed_ns,"position":r.position,
++            "button":r.button,"route":r.route,"before":r.before.value(),"after":r.after.map(|s|s.value())})).collect();
++        let gpu_drained = runtime.renderer.gpu_measurement_drained_manifest()?;
++        let report = json!({"schema":"datum.input-receipt/v1","pid":std::process::id(),
++            "gpu_drained":gpu_drained,"workload_manifest":self.workload.as_ref().map(workload::Schedule::value),"monotonic_origin_ns":self.monotonic_origin_ns,"complete":complete,"overflow":self.overflow,
++            "record_limit":LIMIT,"record_storage_bytes":self.records.capacity()*std::mem::size_of::<Record>(),
++            "records":records,"final_state":final_state.value(),
++            "final_selection":format!("{:?}",state.selection),"final_focus":format!("{:?}",state.ui.focus),
++            "final_focused_pane":state.ui.layout.focused.0,
++            "scope":"Main native receipt and completed routing, not display acknowledgement or CPU/action acceptance"});
++        std::fs::write(&self.path, serde_json::to_vec(&report)?).context("export input receipt")?;
++        ensure!(complete, "incomplete or overflowed input receipt");
++        Ok(())
++    }
++}
++
++impl App {
++    pub(crate) fn begin_native_round_observation(&mut self) {
++        if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
++            && observer.workload.is_some()
++            && observer.begin_demand(None, State::capture(runtime))
++        {
++            let tag = observer.records.last().unwrap().workload;
++            if runtime
++                .measurement_lineage
++                .set_measurement_workload(tag)
++                .is_err()
++            {
++                observer.overflow = true;
++            }
++        }
++    }
++    pub(crate) fn end_native_round_observation(&mut self) {
++        if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
++            && observer.workload.is_some()
++            && let Some(index) = observer.active
++        {
++            let after = State::capture(runtime);
++            let retain = observer.records[index].before.render_activity != after.render_activity;
++            runtime.measurement_lineage.end_measurement_workload(retain);
++            observer.complete(Some(after));
++            if !retain {
++                observer.records.pop();
++            }
++        }
++    }
++    pub(crate) fn handle_native_window_event(
++        &mut self,
++        event_loop: &ActiveEventLoop,
++        window_id: WindowId,
++        event: WindowEvent,
++    ) {
++        let observed = match (&mut self.input_observation, &self.runtime) {
++            (Some(observer), Some(runtime)) if runtime.window.id() == window_id => {
++                observer.begin(&event, State::capture(runtime))
++            }
++            _ => false,
++        };
++        if observed {
++            let observer = self.input_observation.as_mut().expect("active observer");
++            let tag = observer.records.last().unwrap().workload;
++            if tag[0] != 0
++                && let Some(runtime) = &mut self.runtime
++                && runtime
++                    .measurement_lineage
++                    .set_measurement_workload(tag)
++                    .is_err()
++            {
++                observer.overflow = true;
++            }
++        }
++        self.dispatch_native_window_event(event_loop, window_id, event);
++        if observed {
++            if let Some(runtime) = &mut self.runtime {
++                runtime.measurement_lineage.end_measurement_workload(true);
++            }
++            self.input_observation
++                .as_mut()
++                .expect("active observer")
++                .complete(self.runtime.as_ref().map(State::capture));
++        }
++    }
++    pub(crate) fn export_input_receipt(&self) -> Result<()> {
++        if let Some(observer) = &self.input_observation {
++            observer.export(
++                self.runtime
++                    .as_ref()
++                    .context("input receipt runtime absent")?,
++            )?;
++        }
++        Ok(())
++    }
++}
++
++pub(crate) fn mark(observer: &mut Option<InputObservation>, route: &'static str) {
++    if let Some(observer) = observer {
++        observer.route(route);
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    fn state() -> State {
++        State {
++            cursor: None,
++            native_cursor: None,
++            center: [0.0, 0.0],
++            zoom: 1.0,
++            pan: false,
++            epoch: 1,
++            render_revision: 1,
++            render_activity: [1, 0],
++            hover: [0; HOVER_BYTES],
++            hover_len: 0,
++            hover_surface: None,
++            truncated: false,
++        }
++    }
++    fn observer() -> InputObservation {
++        InputObservation {
++            workload: None,
++            path: PathBuf::new(),
++            started: Instant::now(),
++            monotonic_origin_ns: 0,
++            records: Vec::with_capacity(LIMIT),
++            overflow: false,
++            active: None,
++        }
++    }
++    fn motion() -> WindowEvent {
++        WindowEvent::CursorMoved {
++            device_id: winit::event::DeviceId::dummy(),
++            position: winit::dpi::PhysicalPosition::new(300.0, 150.0),
++        }
++    }
++    #[test]
++    fn duplicate_receipts_and_semantics_are_not_redraw_counts() {
++        let mut o = observer();
++        for route in ["authoring_hover", "terminal_clipboard_menu", "unhandled"] {
++            assert!(o.begin(&motion(), state()));
++            assert!(!o.complete_receipt(), "in-flight receipt is incomplete");
++            o.route(route);
++            let mut after = state();
++            after.cursor = Some([300.0, 150.0]);
++            o.complete(Some(after));
++        }
++        assert!(o.complete_receipt());
++        assert_eq!(o.records.len(), 3, "do not deduplicate native receipts");
++        assert_eq!(
++            o.records[2].route, "unhandled",
++            "not a semantic acknowledgement"
++        );
++        assert_eq!(o.records[0].after.unwrap().cursor, Some([300.0, 150.0]));
++        assert_eq!(o.records[0].position, o.records[1].position);
++        assert!(
++            o.records
++                .iter()
++                .all(|r| r.completed_ns.unwrap() >= r.received_ns)
++        );
++    }
++    #[test]
++    fn lost_completion_overflow_nesting_and_truncation_fail_closed() {
++        let mut o = observer();
++        for _ in 0..LIMIT {
++            assert!(o.begin(&motion(), state()));
++            o.complete(Some(state()));
++        }
++        let capacity = o.records.capacity();
++        assert!(o.complete_receipt());
++        assert!(!o.begin(&motion(), state()));
++        assert!(!o.complete_receipt());
++        assert_eq!(o.records.capacity(), capacity);
++        let mut o = observer();
++        assert!(o.begin(&motion(), state()));
++        o.complete(None);
++        assert!(!o.complete_receipt());
++        let mut o = observer();
++        assert!(o.begin(&motion(), state()));
++        assert!(!o.begin(&motion(), state()));
++        o.complete(Some(state()));
++        assert!(!o.complete_receipt());
++        let mut o = observer();
++        let mut truncated = state();
++        truncated.truncated = true;
++        assert!(o.begin(&motion(), truncated));
++        o.complete(Some(state()));
++        assert!(!o.complete_receipt());
++    }
++    #[test]
++    #[ignore = "native X11 input receipt conformance with pinned real board; run serially"]
++    #[allow(deprecated)]
++    fn native_pointer_receipts_follow_completed_dispatch_without_redraw_requirement() {
++        use clap::Parser;
++        use std::{sync::Arc, time::Duration};
++        use winit::platform::{pump_events::EventLoopExtPumpEvents, x11::EventLoopBuilderExtX11};
++        let board = std::env::var("DATUM_NATIVE_TEST_BOARD").expect("pinned real board");
++        let args = crate::GuiArgs::try_parse_from(["datum-gui", "--board", &board]).unwrap();
++        let mut events = winit::event_loop::EventLoop::<()>::with_user_event()
++            .with_x11()
++            .with_any_thread(true)
++            .build()
++            .unwrap();
++        let wake = events.create_proxy();
++        let window = Arc::new(
++            events
++                .create_window(
++                    winit::window::Window::default_attributes()
++                        .with_visible(false)
++                        .with_inner_size(winit::dpi::PhysicalSize::new(1280, 800)),
++                )
++                .unwrap(),
++        );
++        let launch = args.load_launch_state(Some(wake.clone())).unwrap();
++        let mut runtime = pollster::block_on(Runtime::new(
++            window.clone(),
++            launch,
++            Some(1.0),
++            wake.clone(),
++        ))
++        .unwrap();
++        runtime.session.workspace_mut().ui.active_dock_tab = None;
++        runtime.session.workspace_mut().ui.crosshair_style =
++            datum_gui_protocol::CrosshairStyle::None;
++        runtime.build_terminal_prepared_scene().unwrap();
++        let panes = runtime
++            .current_layout()
++            .viewport_panes(&runtime.workspace().ui.layout);
++        let rect = panes
++            .panes
++            .iter()
++            .find(|p| p.content == datum_gui_protocol::PaneContent::Board)
++            .unwrap()
++            .rect
++            .scene;
++        let before_selection = format!("{:?}", runtime.workspace().selection);
++        let mut app = App::new(args, wake);
++        app.window = Some(window.clone());
++        app.runtime = Some(runtime);
++        let mut observation = observer();
++        observation.path = std::env::temp_dir().join(format!(
++            "datum-input-conformance-{}.json",
++            std::process::id()
++        ));
++        app.input_observation = Some(observation);
++        for x in [rect.x + 10.0, rect.x + 12.0, rect.x + 12.0] {
++            let y = rect.y + 10.0;
++            let mut pending = Some(WindowEvent::CursorMoved {
++                device_id: winit::event::DeviceId::dummy(),
++                position: winit::dpi::PhysicalPosition::new(f64::from(x), f64::from(y)),
++            });
++            events.pump_events(Some(Duration::ZERO), |_, active| {
++                if let Some(event) = pending.take() {
++                    app.handle_native_window_event(active, window.id(), event);
++                }
++            });
++            assert!(pending.is_none());
++            let observed = app
++                .input_observation
++                .as_ref()
++                .unwrap()
++                .records
++                .last()
++                .unwrap();
++            assert_eq!(observed.route, "authoring_hover");
++            assert_eq!(observed.after.unwrap().cursor, Some([x, y]));
++            assert_eq!(observed.after.unwrap().native_cursor, Some((x, y)));
++            assert!(!observed.after.unwrap().pan);
++        }
++        let observation = app.input_observation.as_ref().unwrap();
++        assert_eq!(observation.records.len(), 3);
++        assert!(observation.complete_receipt());
++        let runtime = app.runtime.as_mut().unwrap();
++        assert_eq!(
++            format!("{:?}", runtime.workspace().selection),
++            before_selection
++        );
++        runtime.begin_application_terminal_shutdown();
++        let deadline = Instant::now() + Duration::from_secs(6);
++        while !runtime.application_terminal_shutdown_complete() {
++            runtime.poll_terminal_output();
++            assert!(Instant::now() < deadline);
++            std::thread::sleep(Duration::from_millis(10));
++        }
++        app.export_input_receipt().unwrap();
++        let path = &app.input_observation.as_ref().unwrap().path;
++        let value: Value = serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
++        assert_eq!(value["complete"], true);
++        assert_eq!(value["records"].as_array().unwrap().len(), 3);
++        eprintln!(
++            "input receipt conformance:3 supplied native-dispatch motions, repeated coordinate retained, canonical cursor/selection preserved; storage_bytes={}",
++            value["record_storage_bytes"]
++        );
++        std::fs::remove_file(path).unwrap();
++    }
++}
+diff --git a/crates/gui-app/src/native_measurement_shutdown.rs b/crates/gui-app/src/native_measurement_shutdown.rs
+--- a/crates/gui-app/src/native_measurement_shutdown.rs
++++ b/crates/gui-app/src/native_measurement_shutdown.rs
+@@ -40,7 +40,10 @@
+             "GPU measurement mappings remain pending after shutdown drain"
+         );
+         let mut stream = connect_observer(Path::new(&path))?;
+-        final_handoff(&mut stream, epoch, TIMEOUT)
++        final_handoff(&mut stream, epoch, TIMEOUT)?;
++        // Export after the observer closes its workload/drain accounting window.
++        // Export failure still makes the process/trial unsuccessful.
++        self.export_input_receipt()
+     }
+ }
+ 
+diff --git a/crates/gui-app/src/native_surface_transaction.rs b/crates/gui-app/src/native_surface_transaction.rs
+--- a/crates/gui-app/src/native_surface_transaction.rs
++++ b/crates/gui-app/src/native_surface_transaction.rs
+@@ -887,3 +887,13 @@
+ #[cfg(all(test, target_os = "linux"))]
+ #[path = "native_close_after_submit_tests.rs"]
+ mod close_after_submit_tests;
++
++impl SurfaceTransaction {
++    pub(crate) fn baseline_measurement_target(&self) -> [u64; 3] {
++        [
++            self.queue_host,
++            self.queue_owner.snapshot().0,
++            self.configuration_generation,
++        ]
++    }
++}
+diff --git a/crates/gui-app/src/native_workload_observation.rs b/crates/gui-app/src/native_workload_observation.rs
+new file mode 100644
+--- /dev/null
++++ b/crates/gui-app/src/native_workload_observation.rs
+@@ -0,0 +1,116 @@
++//! Declared monotonic workload phases for causal frame/submission attribution.
++//! Loaded once; no log-arrival classification, input scheduling or per-event I/O.
++use anyhow::{Context, Result, ensure};
++#[cfg(test)]
++use winit::event::WindowEvent;
++
++#[derive(Clone, Copy, serde::Deserialize)]
++pub(super) struct Schedule {
++    pub epoch: u64,
++    pub warmup_ns: u64,
++    pub active_ns: u64,
++    pub still_ns: u64,
++    pub drain_ns: u64,
++    #[serde(skip)]
++    closed: bool,
++}
++impl Schedule {
++    fn validate(self) -> Result<Self> {
++        ensure!(
++            self.epoch != 0 && self.warmup_ns != 0,
++            "workload epoch/start missing"
++        );
++        ensure!(
++            self.warmup_ns.checked_add(5_000_000_000) == Some(self.active_ns)
++                && self.active_ns.checked_add(30_000_000_000) == Some(self.still_ns)
++                && self.still_ns.checked_add(5_000_000_000) == Some(self.drain_ns),
++            "workload must declare exact 5s/30s/5s boundaries"
++        );
++        Ok(self)
++    }
++    pub(super) fn from_environment() -> Result<Option<Self>> {
++        std::env::var_os("DATUM_WORKLOAD_MANIFEST")
++            .map(|path| {
++                let bytes = std::fs::read(path).context("read declared workload manifest")?;
++                serde_json::from_slice::<Self>(&bytes)
++                    .context("decode workload manifest")?
++                    .validate()
++            })
++            .transpose()
++    }
++    #[cfg(test)]
++    pub(super) fn tag(&mut self, event: &WindowEvent, now: u64, sequence: u64) -> [u64; 3] {
++        self.demand(matches!(event, WindowEvent::CloseRequested), now, sequence)
++    }
++    pub(super) fn demand(&mut self, close: bool, now: u64, sequence: u64) -> [u64; 3] {
++        self.closed |= close;
++        let phase = if self.closed {
++            6
++        } else if now < self.warmup_ns {
++            1
++        } else if now < self.active_ns {
++            2
++        } else if now < self.still_ns {
++            3
++        } else if now < self.drain_ns {
++            4
++        } else {
++            5
++        };
++        [self.epoch, phase, sequence]
++    }
++    pub(super) fn value(&self) -> serde_json::Value {
++        serde_json::json!({"epoch":self.epoch,"warmup_ns":self.warmup_ns,"active_ns":self.active_ns,"still_ns":self.still_ns,"drain_ns":self.drain_ns,"phases":["startup","warmup","active","still","drain","close"],"clock":"CLOCK_MONOTONIC"})
++    }
++}
++pub(super) fn monotonic_ns() -> Result<u64> {
++    let mut time = libc::timespec {
++        tv_sec: 0,
++        tv_nsec: 0,
++    };
++    // SAFETY: CLOCK_MONOTONIC is valid and the initialized record is writable.
++    ensure!(
++        unsafe { libc::clock_gettime(libc::CLOCK_MONOTONIC, &mut time) } == 0,
++        "workload monotonic clock unavailable"
++    );
++    u64::try_from(time.tv_sec)?
++        .checked_mul(1_000_000_000)
++        .and_then(|seconds| seconds.checked_add(time.tv_nsec as u64))
++        .context("workload monotonic clock overflow")
++}
++#[cfg(test)]
++mod tests {
++    use super::*;
++    #[test]
++    fn declared_phases_and_explicit_close_are_not_log_arrival_times() {
++        let mut s = Schedule {
++            epoch: 1,
++            warmup_ns: 10,
++            active_ns: 5_000_000_010,
++            still_ns: 35_000_000_010,
++            drain_ns: 40_000_000_010,
++            closed: false,
++        }
++        .validate()
++        .unwrap();
++        for (now, phase) in [
++            (0, 1),
++            (10, 2),
++            (s.active_ns, 3),
++            (s.still_ns, 4),
++            (s.drain_ns, 5),
++        ] {
++            assert_eq!(s.tag(&WindowEvent::RedrawRequested, now, 2), [1, phase, 2]);
++        }
++        assert_eq!(
++            s.tag(&WindowEvent::CloseRequested, s.drain_ns + 1, 3),
++            [1, 6, 3]
++        );
++        assert_eq!(
++            s.tag(&WindowEvent::RedrawRequested, s.drain_ns + 2, 4),
++            [1, 6, 4]
++        );
++        s.active_ns += 1;
++        assert!(s.validate().is_err());
++    }
++}
+diff --git a/crates/gui-app/src/runtime_init.rs b/crates/gui-app/src/runtime_init.rs
+--- a/crates/gui-app/src/runtime_init.rs
++++ b/crates/gui-app/src/runtime_init.rs
+@@ -88,6 +88,7 @@
+             scale_factor,
+             renderer,
+             measurements,
++            measurement_lineage: Default::default(),
+             session: LiveDesignSession::new(state),
+             camera,
+             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),
+diff --git a/crates/gui-app/src/runtime_present.rs b/crates/gui-app/src/runtime_present.rs
+--- a/crates/gui-app/src/runtime_present.rs
++++ b/crates/gui-app/src/runtime_present.rs
+@@ -115,6 +115,12 @@
+         let renderer_started = std::time::Instant::now();
+         append_gui_verbose_diagnostic_line(|| "renderer render begin");
+         use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
++        let (attempt, workload) = self.measurement_lineage.begin(
++            self.renderer.resource_owner_id(),
++            self.surface_transaction.baseline_measurement_target(),
++        );
++        self.renderer
++            .set_baseline_measurement_identity(attempt, workload);
+         let mut target = NativeRenderTarget::new(
+             &mut self.surface_transaction,
+             &self.surface,
+@@ -180,6 +186,7 @@
+         append_gui_verbose_diagnostic_line(|| "frame present begin");
+         let first_device_frame = !self.surface_transaction.has_presented();
+         self.surface_transaction.present(frame, &self.window)?;
++        self.measurement_lineage.presented();
+         self.presented_console_layout = self
+             .prepared_scene
+             .as_ref()
+diff --git a/crates/gui-app/src/runtime_state.rs b/crates/gui-app/src/runtime_state.rs
+--- a/crates/gui-app/src/runtime_state.rs
++++ b/crates/gui-app/src/runtime_state.rs
+@@ -1,7 +1,10 @@
+ //! Live runtime state; GPU replacement never reconstructs the session or terminal registry.
+ use super::*;
+ 
++#[path = "baseline_measurement_lineage.rs"]
++mod measurement_lineage;
+ pub(super) struct Runtime {
++    pub(super) measurement_lineage: measurement_lineage::Lineage,
+     pub(super) instance: wgpu::Instance,
+     pub(super) adapter: wgpu::Adapter,
+     pub(super) surface: wgpu::Surface<'static>,
+diff --git a/crates/gui-app/src/runtime_terminal_render.rs b/crates/gui-app/src/runtime_terminal_render.rs
+--- a/crates/gui-app/src/runtime_terminal_render.rs
++++ b/crates/gui-app/src/runtime_terminal_render.rs
+@@ -74,6 +74,7 @@
+             )
+         });
+         self.presented_hits.mark_pending();
++        self.measurement_lineage.prepared();
+         Ok(prepared)
+     }
+ }
+diff --git a/crates/gui-render/src/render/cold_world_upload.rs b/crates/gui-render/src/render/cold_world_upload.rs
+--- a/crates/gui-render/src/render/cold_world_upload.rs
++++ b/crates/gui-render/src/render/cold_world_upload.rs
+@@ -6,7 +6,6 @@
+ #[derive(Default)]
+ pub(crate) struct ColdWorldUploads {
+     pub active: bool,
+-    pub measurement_frame: Option<u64>,
+     chunks: u64,
+     bytes: u64,
+ }
+@@ -108,7 +107,10 @@
+             self.schematic_world_vertices_gpu.submission_ref(),
+             self.schematic_world_strokes_gpu.submission_ref(),
+         ];
+-        let submission = queue.submit([batch.command()]);
++        let (before, after) = self
++            .begin_upload_measurement(device, "world")?
++            .map_or((None, None), |(a, b)| (Some(a), Some(b)));
++        let submission = queue.submit(before.into_iter().chain([batch.command()]).chain(after));
+         batch.hold(queue);
+         queue.on_submitted_work_done(move || drop(resources));
+         self.world_vertices_gpu.consume_chunk(counts[0]);
+@@ -120,10 +122,7 @@
+         self.cold_world.bytes += (CHUNK_BYTES - remaining) as u64;
+         on_submitted(submission);
+         // No partial multi-submission timing may masquerade as a complete sample.
+-        if let Some(measurements) = &mut self.measurements {
+-            self.cold_world.measurement_frame =
+-                Some(measurements.incomplete_upload_submission(self.cold_world.measurement_frame)?);
+-        }
++        self.finish_upload_measurement(queue)?;
+         Ok(())
+     }
+ 
+diff --git a/crates/gui-render/src/render/glyph_upload_continuation.rs b/crates/gui-render/src/render/glyph_upload_continuation.rs
+--- a/crates/gui-render/src/render/glyph_upload_continuation.rs
++++ b/crates/gui-render/src/render/glyph_upload_continuation.rs
+@@ -67,12 +67,12 @@
+         self.release_text_scratch_for(self.atlas.chunk_staging_bytes(CHUNK_BYTES)?);
+ 
+         self.publish_resource_consumers();
+-        let submission = self.atlas.submit_chunk(device, queue, CHUNK_BYTES)?;
++        let boundaries = self.begin_upload_measurement(device, "glyph")?;
++        let submission = self
++            .atlas
++            .submit_chunk(device, queue, CHUNK_BYTES, boundaries)?;
++        self.finish_upload_measurement(queue)?;
+         on_submitted(submission);
+-        if let Some(measurements) = &mut self.measurements {
+-            self.cold_world.measurement_frame =
+-                Some(measurements.incomplete_upload_submission(self.cold_world.measurement_frame)?);
+-        }
+         Ok(true)
+     }
+ }
+diff --git a/crates/gui-render/src/render/gpu_frame.rs b/crates/gui-render/src/render/gpu_frame.rs
+--- a/crates/gui-render/src/render/gpu_frame.rs
++++ b/crates/gui-render/src/render/gpu_frame.rs
+@@ -188,6 +188,7 @@
+             return Ok(false);
+         };
+         let mut measurement = self.begin_gpu_measurement()?;
++        let leading = self.final_measurement_leading(device, &mut measurement)?;
+         let encode_started = std::time::Instant::now();
+         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
+         self.publish_resource_consumers();
+@@ -511,10 +512,9 @@
+         let submit_started = std::time::Instant::now();
+         let mut uploads = self.flush_frame_uploads(device, queue)?;
+         let submission = queue.submit(
+-            uploads
+-                .as_mut()
+-                .map(|batch| batch.command())
++            leading
+                 .into_iter()
++                .chain(uploads.as_mut().map(|batch| batch.command()))
+                 .chain([command_buffer]),
+         );
+         self.hold_frame_submission(queue);
+diff --git a/crates/gui-render/src/render/gpu_frame_target.rs b/crates/gui-render/src/render/gpu_frame_target.rs
+--- a/crates/gui-render/src/render/gpu_frame_target.rs
++++ b/crates/gui-render/src/render/gpu_frame_target.rs
+@@ -69,6 +69,9 @@
+         self.atlas
+             .owner
+             .finish_upload_frame(result.as_ref().ok().copied());
++        if result.is_err() {
++            self.pending_measurement.take();
++        }
+         if result.is_err() && !self.text_preparation.is_continuing() {
+             self.text_buffers.finish_frame();
+             self.text_preparation.cancel();
+diff --git a/crates/gui-render/src/render/gpu_init.rs b/crates/gui-render/src/render/gpu_init.rs
+--- a/crates/gui-render/src/render/gpu_init.rs
++++ b/crates/gui-render/src/render/gpu_init.rs
+@@ -309,6 +309,9 @@
+         Ok(Self {
+             resource_host,
+             frame_consumers: Default::default(),
++            measurement_attempt: [0; 7],
++            measurement_workload: [0; 8],
++            pending_measurement: None,
+             measurements: None,
+             pipeline,
+             world_pipelines: std::sync::OnceLock::new(),
+diff --git a/crates/gui-render/src/render/gpu_measurement_api.rs b/crates/gui-render/src/render/gpu_measurement_api.rs
+--- a/crates/gui-render/src/render/gpu_measurement_api.rs
++++ b/crates/gui-render/src/render/gpu_measurement_api.rs
+@@ -6,6 +6,14 @@
+ use std::time::Instant;
+ 
+ impl Renderer {
++    /// Seals the full frame range after the existing controlled queue drain.
++    pub fn gpu_measurement_drained_manifest(&self) -> anyhow::Result<Option<[u64; 3]>> {
++        self.measurements
++            .as_ref()
++            .map(GpuMeasurements::drained_manifest)
++            .transpose()
++    }
++
+     pub fn enable_gpu_measurements(
+         &mut self,
+         device: &wgpu::Device,
+@@ -59,8 +67,8 @@
+     }
+ 
+     pub(super) fn begin_gpu_measurement(&mut self) -> anyhow::Result<Option<FrameQueries>> {
+-        if self.cold_world.measurement_frame.is_some() {
+-            return Ok(None);
++        if let Some(frame) = self.pending_measurement.take() {
++            return Ok(Some(frame));
+         }
+         self.measurements
+             .as_mut()
+@@ -84,14 +92,69 @@
+         queue: &wgpu::Queue,
+         frame: Option<FrameQueries>,
+     ) -> anyhow::Result<()> {
+-        if let Some(cold_frame) = self.cold_world.measurement_frame.take()
+-            && let Some(m) = &mut self.measurements
+-        {
+-            m.incomplete_upload_submission(Some(cold_frame))?;
+-        }
+         if let (Some(m), Some(frame)) = (&mut self.measurements, frame) {
+             m.submitted(queue, frame)?;
+         }
+         Ok(())
+     }
+ }
++
++impl Renderer {
++    pub(crate) fn begin_upload_measurement(
++        &mut self,
++        device: &wgpu::Device,
++        kind: &'static str,
++    ) -> anyhow::Result<Option<(wgpu::CommandBuffer, wgpu::CommandBuffer)>> {
++        let Some(mut frame) = self.begin_gpu_measurement()? else {
++            return Ok(None);
++        };
++        let measurements = self.measurements.as_ref().expect("reserved measurement");
++        let before = measurements.leading(
++            device,
++            &mut frame,
++            kind,
++            self.measurement_attempt,
++            self.measurement_workload,
++            false,
++        )?;
++        let after = measurements.trailing(device, &mut frame)?;
++        self.pending_measurement = Some(frame);
++        Ok(Some((before, after)))
++    }
++    pub(crate) fn finish_upload_measurement(&mut self, queue: &wgpu::Queue) -> anyhow::Result<()> {
++        if let Some(measurements) = &mut self.measurements {
++            let frame = self
++                .pending_measurement
++                .as_mut()
++                .ok_or_else(|| anyhow::anyhow!("upload submitted without GPU boundary"))?;
++            measurements.continued(queue, frame)?;
++        }
++        Ok(())
++    }
++    pub(super) fn final_measurement_leading(
++        &self,
++        device: &wgpu::Device,
++        frame: &mut Option<FrameQueries>,
++    ) -> anyhow::Result<Option<wgpu::CommandBuffer>> {
++        if let (Some(measurements), Some(frame)) = (&self.measurements, frame) {
++            Ok(Some(measurements.leading(
++                device,
++                frame,
++                "final",
++                self.measurement_attempt,
++                self.measurement_workload,
++                true,
++            )?))
++        } else {
++            Ok(None)
++        }
++    }
++}
++
++impl Renderer {
++    /// Instrumentation bridge for the historical baseline; never schedules work.
++    pub fn set_baseline_measurement_identity(&mut self, attempt: [u64; 7], workload: [u64; 8]) {
++        self.measurement_attempt = attempt;
++        self.measurement_workload = workload;
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_measurement_frame.rs b/crates/gui-render/src/render/gpu_measurement_frame.rs
+new file mode 100644
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_measurement_frame.rs
+@@ -0,0 +1,281 @@
++//! One query reservation spans bounded upload continuations and final rendering.
++use super::*;
++pub(crate) struct FrameQueries {
++    pub(super) timeline: timeline::Timeline,
++    pub(super) pass_indices: Vec<[u32; 2]>,
++    pub(super) scene_offset: Option<u32>,
++    pub(super) final_transfer_end: Option<u32>,
++    pub(super) slot: usize,
++    pub(super) epoch: u64,
++    pub(super) frame: u64,
++    pub(super) submission: u64,
++    pub(super) queries: wgpu::QuerySet,
++    pub(super) resources: Vec<SubmissionRef>,
++    pub(super) passes: Vec<&'static str>,
++    pub(super) query_count: u32,
++    pub(super) marker_count: u32,
++    pub(super) scene_markers_enabled: bool,
++    pub(super) signal: Arc<AtomicU8>,
++    pub(super) resolved: bool,
++    pub(super) submitted: bool,
++}
++
++impl FrameQueries {
++    pub(crate) fn pass(
++        &mut self,
++        name: &'static str,
++    ) -> anyhow::Result<wgpu::RenderPassTimestampWrites<'_>> {
++        anyhow::ensure!(
++            !self.resolved,
++            "GPU measurement pass after query resolution"
++        );
++        anyhow::ensure!(
++            self.query_count + 2 <= QUERIES,
++            "GPU measurement pass capacity exceeded"
++        );
++        let index = self.query_count;
++        self.query_count += 2;
++        self.passes.push(name);
++        self.pass_indices.push([index, index + 1]);
++        Ok(wgpu::RenderPassTimestampWrites {
++            query_set: &self.queries,
++            beginning_of_pass_write_index: Some(index),
++            end_of_pass_write_index: Some(index + 1),
++        })
++    }
++
++    pub(crate) fn mark_scene(
++        &mut self,
++        pass: &mut wgpu::RenderPass<'_>,
++        marker: u32,
++    ) -> anyhow::Result<()> {
++        if !self.scene_markers_enabled {
++            return Ok(());
++        }
++        anyhow::ensure!(
++            !self.resolved
++                && self.passes.last() == Some(&"frame")
++                && marker == self.marker_count
++                && marker < 3
++                && self.query_count < QUERIES,
++            "invalid GPU scene marker order or capacity"
++        );
++        if marker == 0 {
++            self.scene_offset = Some(self.query_count);
++        }
++        pass.write_timestamp(&self.queries, self.query_count);
++        self.query_count += 1;
++        self.marker_count += 1;
++        Ok(())
++    }
++}
++
++impl Drop for FrameQueries {
++    fn drop(&mut self) {
++        if !self.submitted {
++            self.signal.store(ABORTED, Ordering::Release);
++        }
++    }
++}
++
++#[derive(Debug)]
++pub struct SubmissionSample {
++    pub submission: u64,
++    pub kind: &'static str,
++    pub attempt: [u64; 7],
++    pub workload: [u64; 8],
++    pub first_tick: u64,
++    pub last_tick: u64,
++    pub transfer_first_tick: u64,
++    pub transfer_last_tick: u64,
++    pub span_ns: f64,
++    pub transfer_interval_ns: f64,
++}
++impl FrameQueries {
++    pub(super) fn leading(
++        &mut self,
++        device: &wgpu::Device,
++        view: &wgpu::TextureView,
++        kind: &'static str,
++        attempt: timeline::Attempt,
++        workload: [u64; 8],
++        final_submission: bool,
++    ) -> anyhow::Result<wgpu::CommandBuffer> {
++        if self.timeline.entries().next().is_some() {
++            self.submission = next_submission_id()?;
++        }
++        self.timeline.begin(
++            self.submission,
++            kind,
++            attempt,
++            self.query_count,
++            final_submission,
++        )?;
++        self.timeline.label(workload)?;
++        let command = self.marker(device, view, "upload-leading")?;
++        if final_submission {
++            self.final_transfer_end = Some(self.query_count);
++        }
++        Ok(command)
++    }
++    pub(super) fn trailing(
++        &mut self,
++        device: &wgpu::Device,
++        view: &wgpu::TextureView,
++    ) -> anyhow::Result<wgpu::CommandBuffer> {
++        let first = self.query_count;
++        let command = self.marker(device, view, "upload-trailing")?;
++        self.timeline.end(first + 1, first)?;
++        Ok(command)
++    }
++    fn marker(
++        &mut self,
++        device: &wgpu::Device,
++        view: &wgpu::TextureView,
++        name: &'static str,
++    ) -> anyhow::Result<wgpu::CommandBuffer> {
++        let mut encoder =
++            device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some(name) });
++        {
++            let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
++                label: Some(name),
++                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
++                    view,
++                    resolve_target: None,
++                    depth_slice: None,
++                    ops: wgpu::Operations {
++                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
++                        store: wgpu::StoreOp::Discard,
++                    },
++                })],
++                timestamp_writes: Some(self.pass(name)?),
++                ..Default::default()
++            });
++        }
++        Ok(encoder.finish())
++    }
++    pub(super) fn finish_boundaries(&mut self) -> anyhow::Result<()> {
++        if let Some(transfer_end) = self.final_transfer_end {
++            let last = self
++                .pass_indices
++                .last()
++                .ok_or_else(|| anyhow::anyhow!("missing final pass"))?[1];
++            self.timeline.end(last, transfer_end)?;
++        } else {
++            anyhow::ensure!(
++                self.timeline.entries().next().is_none(),
++                "upload transaction missing final submission"
++            );
++        }
++        Ok(())
++    }
++    pub(super) fn finish_submission(&mut self) -> anyhow::Result<()> {
++        if self.timeline.entries().next().is_some() {
++            self.timeline.submitted()?;
++            if self.final_transfer_end.is_some() {
++                self.timeline.complete()?;
++            }
++        }
++        Ok(())
++    }
++}
++pub(super) fn decode_boundaries(
++    timeline: &timeline::Timeline,
++    ticks: &[u64],
++    period: f64,
++) -> anyhow::Result<Vec<SubmissionSample>> {
++    if timeline.entries().next().is_none() {
++        return Ok(Vec::new());
++    }
++    timeline.complete()?;
++    let mut result = Vec::new();
++    let mut previous = None;
++    for boundary in timeline.entries() {
++        let get = |i: u32| {
++            ticks
++                .get(i as usize)
++                .copied()
++                .ok_or_else(|| anyhow::anyhow!("missing submission timestamp"))
++        };
++        let first = get(boundary.first)?;
++        let last = get(boundary.last)?;
++        let transfer_first = get(boundary.transfer_first)?;
++        let transfer_last = get(boundary.transfer_last)?;
++        anyhow::ensure!(
++            first <= transfer_first
++                && transfer_first <= transfer_last
++                && transfer_last <= last
++                && previous.is_none_or(|p| p <= first),
++            "reversed or overlapping GPU submission timestamps"
++        );
++        previous = Some(last);
++        result.push(SubmissionSample {
++            submission: boundary.id,
++            kind: boundary.kind,
++            attempt: boundary.attempt,
++            workload: boundary.workload,
++            first_tick: first,
++            last_tick: last,
++            transfer_first_tick: transfer_first,
++            transfer_last_tick: transfer_last,
++            span_ns: (last - first) as f64 * period,
++            transfer_interval_ns: (transfer_last - transfer_first) as f64 * period,
++        });
++    }
++    Ok(result)
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    #[test]
++    fn five_uploads_final_mixed_upload_and_nested_markers_decode_one_span() {
++        let mut timeline = timeline::Timeline::default();
++        for i in 0..5 {
++            timeline
++                .begin(i + 1, "world", [1; 7], i as u32 * 4, false)
++                .unwrap();
++            timeline.end(i as u32 * 4 + 3, i as u32 * 4 + 2).unwrap();
++            timeline.submitted().unwrap();
++        }
++        timeline.begin(6, "final", [1; 7], 20, true).unwrap();
++        timeline.end(28, 22).unwrap();
++        timeline.submitted().unwrap();
++        let mut ticks: Vec<u64> = (0..29).map(|i| i * 10).collect();
++        ticks[23] = 260;
++        ticks[24] = 230;
++        ticks[25] = 240;
++        ticks[26] = 250;
++        let records = decode_boundaries(&timeline, &ticks, 2.0).unwrap();
++        assert_eq!(records.len(), 6);
++        assert_eq!(records[0].span_ns, 60.0);
++        assert_eq!(records[5].span_ns, 160.0);
++        assert_eq!(records[5].transfer_interval_ns, 20.0);
++        let markers = extract_scene_markers_at(&mut ticks, 3, Some(24)).unwrap();
++        assert_eq!(markers, Some([230, 240, 250]));
++        let names = [
++            "leading", "trailing", "leading", "trailing", "leading", "trailing", "leading",
++            "trailing", "leading", "trailing", "leading", "frame", "suffix",
++        ];
++        let (_, sum, span) = decode(&names, &ticks, 2.0).unwrap();
++        assert_eq!(span, 560.0);
++        assert!(
++            sum < span,
++            "transfer intervals and queue gaps are not pass durations"
++        );
++    }
++    #[test]
++    fn truncated_reversed_and_missing_submission_timestamps_fail() {
++        let mut timeline = timeline::Timeline::default();
++        timeline.begin(1, "final", [1; 7], 0, true).unwrap();
++        timeline.end(5, 2).unwrap();
++        timeline.submitted().unwrap();
++        for ticks in [
++            &[0, 1][..],
++            &[0, 4, 2, 3, 4, 5][..],
++            &[6, 7, 8, 9, 10, 5][..],
++        ] {
++            assert!(decode_boundaries(&timeline, ticks, 1.0).is_err());
++        }
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_measurement_resource_tests.rs b/crates/gui-render/src/render/gpu_measurement_resource_tests.rs
+--- a/crates/gui-render/src/render/gpu_measurement_resource_tests.rs
++++ b/crates/gui-render/src/render/gpu_measurement_resource_tests.rs
+@@ -41,12 +41,12 @@
+         live.iter()
+             .all(|r| r.bytes == BYTES && r.generation == 2 && !r.retiring)
+     );
+-    assert_eq!(budget.used(), baseline + SLOTS as u64 * BYTES * 3);
++    assert_eq!(budget.used(), baseline + SLOTS as u64 * BYTES * 3 + 4);
+     let frame = measurements.begin().unwrap();
+     drop(measurements);
+     assert_eq!(
+         budget.used(),
+-        baseline + BYTES * 3,
++        baseline + BYTES * 3 + 4,
+         "encoding frame holds its slot through owner close"
+     );
+     assert!(records().iter().all(|r| r.retiring));
+@@ -73,7 +73,8 @@
+     let mut frame = measurements.begin().unwrap();
+     // Deterministically keep this submitted slot alive after asynchronous map
+     // cancellation, even if the tiny real GPU submission has already completed.
+-    let held = measurements.slots[frame.slot].submission_refs();
++    let mut held = measurements.slots[frame.slot].submission_refs();
++    held.push(measurements.marker.submission_ref());
+     let mut encoder = device.create_command_encoder(&Default::default());
+     {
+         let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+@@ -94,7 +95,7 @@
+     queue.submit([encoder.finish()]);
+     measurements.submitted(&queue, frame).unwrap();
+     drop(measurements);
+-    assert_eq!(budget.used(), baseline + BYTES * 3);
++    assert_eq!(budget.used(), baseline + BYTES * 3 + 4);
+     assert_eq!(records().len(), 3);
+     assert!(records().iter().all(|r| r.retiring));
+     drop(held);
+diff --git a/crates/gui-render/src/render/gpu_measurement_resources.rs b/crates/gui-render/src/render/gpu_measurement_resources.rs
+--- a/crates/gui-render/src/render/gpu_measurement_resources.rs
++++ b/crates/gui-render/src/render/gpu_measurement_resources.rs
+@@ -60,3 +60,41 @@
+ #[cfg(all(test, feature = "visual"))]
+ #[path = "gpu_measurement_resource_tests.rs"]
+ mod tests;
++
++pub(super) struct Marker {
++    _texture: wgpu::Texture,
++    pub view: wgpu::TextureView,
++}
++impl Marker {
++    pub(super) fn new(
++        device: &wgpu::Device,
++        owner: &Owner,
++        epoch: u64,
++    ) -> anyhow::Result<crate::text_gpu::lifetime::Tracked<Self>> {
++        let reservation = crate::text_gpu::budget::GpuReservation::new(4, Vec::new())?;
++        let texture = device.create_texture(&wgpu::TextureDescriptor {
++            label: Some("datum-shared-submission-timestamp-marker"),
++            size: wgpu::Extent3d {
++                width: 1,
++                height: 1,
++                depth_or_array_layers: 1,
++            },
++            mip_level_count: 1,
++            sample_count: 1,
++            dimension: wgpu::TextureDimension::D2,
++            format: wgpu::TextureFormat::Rgba8Unorm,
++            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
++            view_formats: &[],
++        });
++        let view = texture.create_view(&Default::default());
++        Ok(owner.track_reserved(
++            Self {
++                _texture: texture,
++                view,
++            },
++            epoch,
++            Kind::Attachment,
++            reservation,
++        ))
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_measurement_timeline.rs b/crates/gui-render/src/render/gpu_measurement_timeline.rs
+new file mode 100644
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_measurement_timeline.rs
+@@ -0,0 +1,209 @@
++//! Fixed-capacity submission lineage; no missing upload can become a zero sample.
++const SUBMISSIONS: usize = 6;
++
++/// Session owner, attempt, revision, preparation, host, device and configuration.
++pub(crate) type Attempt = [u64; 7];
++#[derive(Clone, Copy, Debug)]
++pub(crate) struct Boundary {
++    pub id: u64,
++    pub kind: &'static str,
++    pub attempt: Attempt,
++    pub workload: [u64; 8],
++    pub first: u32,
++    pub last: u32,
++    pub transfer_first: u32,
++    pub transfer_last: u32,
++    pub submitted: bool,
++}
++#[derive(Clone, Default)]
++pub(crate) struct Timeline {
++    entries: [Option<Boundary>; SUBMISSIONS],
++    count: usize,
++    final_started: bool,
++}
++impl Timeline {
++    pub(crate) fn entries(&self) -> impl Iterator<Item = &Boundary> {
++        self.entries[..self.count].iter().flatten()
++    }
++    pub(crate) fn begin(
++        &mut self,
++        id: u64,
++        kind: &'static str,
++        attempt: Attempt,
++        first: u32,
++        final_submission: bool,
++    ) -> anyhow::Result<()> {
++        anyhow::ensure!(!self.final_started, "submission after final boundary");
++        anyhow::ensure!(
++            self.count
++                < if final_submission {
++                    SUBMISSIONS
++                } else {
++                    SUBMISSIONS - 1
++                },
++            "GPU continuation limit exceeded"
++        );
++        if let Some(previous) = self.entries().last() {
++            anyhow::ensure!(
++                previous.submitted
++                    && previous.id < id
++                    && previous.last.checked_add(1) == Some(first),
++                "missing, duplicate or overlapping GPU submission boundary"
++            );
++            // Preparation can advance between upload-only turns. Earlier work
++            // stays in this transaction with its original immutable identity.
++            // The fixed-target observer still rejects foreign owners or targets.
++            for field in [0, 4, 5, 6] {
++                anyhow::ensure!(
++                    previous.attempt[field] == attempt[field],
++                    "GPU transaction owner or target lineage changed at field {field}: previous={:?} current={attempt:?}",
++                    previous.attempt
++                );
++            }
++            for field in [1, 2, 3] {
++                anyhow::ensure!(
++                    previous.attempt[field] <= attempt[field],
++                    "GPU transaction lineage reversed at field {field}: previous={:?} current={attempt:?}",
++                    previous.attempt
++                );
++            }
++        }
++        self.entries[self.count] = Some(Boundary {
++            id,
++            kind,
++            attempt,
++            workload: [0; 8],
++            first,
++            last: first,
++            transfer_first: first + 1,
++            transfer_last: first + 1,
++            submitted: false,
++        });
++        self.count += 1;
++        self.final_started = final_submission;
++        Ok(())
++    }
++    pub(crate) fn label(&mut self, tag: [u64; 8]) -> anyhow::Result<()> {
++        anyhow::ensure!(self.count != 0, "workload label without submission");
++        if self.count > 1 {
++            anyhow::ensure!(
++                self.entries[self.count - 2].as_ref().unwrap().workload[0] == tag[0],
++                "GPU submission workload epoch changed"
++            );
++        }
++        self.entries[self.count - 1].as_mut().unwrap().workload = tag;
++        Ok(())
++    }
++    pub(crate) fn end(&mut self, last: u32, transfer_last: u32) -> anyhow::Result<()> {
++        let current = self.entries[..self.count]
++            .last_mut()
++            .and_then(Option::as_mut)
++            .ok_or_else(|| anyhow::anyhow!("GPU submission missing leading boundary"))?;
++        anyhow::ensure!(
++            !current.submitted
++                && last > current.first
++                && transfer_last > current.transfer_first
++                && transfer_last <= last,
++            "GPU submission missing upload or trailing boundary"
++        );
++        current.last = last;
++        current.transfer_last = transfer_last;
++        Ok(())
++    }
++    pub(crate) fn submitted(&mut self) -> anyhow::Result<()> {
++        let current = self.entries[..self.count]
++            .last_mut()
++            .and_then(Option::as_mut)
++            .ok_or_else(|| anyhow::anyhow!("unmeasured GPU submission"))?;
++        anyhow::ensure!(
++            !current.submitted
++                && current.last > current.first
++                && current.transfer_last > current.transfer_first,
++            "duplicate or incomplete GPU submission"
++        );
++        current.submitted = true;
++        Ok(())
++    }
++    pub(crate) fn complete(&self) -> anyhow::Result<()> {
++        anyhow::ensure!(
++            self.final_started && self.count != 0 && self.entries().all(|e| e.submitted),
++            "incomplete GPU frame submission manifest"
++        );
++        Ok(())
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    const ATTEMPT: Attempt = [1, 2, 3, 4, 5, 6, 7];
++    #[test]
++    fn all_continuations_and_final_upload_require_boundaries() {
++        let mut timeline = Timeline::default();
++        for i in 0..5 {
++            timeline
++                .begin(i + 1, "world", ATTEMPT, i as u32 * 4, false)
++                .unwrap();
++            assert!(timeline.submitted().is_err());
++            timeline.end(i as u32 * 4 + 3, i as u32 * 4 + 2).unwrap();
++            timeline.submitted().unwrap();
++            assert!(timeline.submitted().is_err());
++        }
++        assert!(timeline.begin(6, "glyph", ATTEMPT, 20, false).is_err());
++        timeline.begin(6, "final", ATTEMPT, 20, true).unwrap();
++        assert!(
++            timeline.end(25, 21).is_err(),
++            "omitted final upload interval"
++        );
++        assert!(timeline.complete().is_err());
++        timeline.end(25, 22).unwrap();
++        timeline.submitted().unwrap();
++        timeline.complete().unwrap();
++        assert!(timeline.begin(7, "final", ATTEMPT, 26, true).is_err());
++    }
++    #[test]
++    fn preparation_advances_without_losing_submitted_or_foreign_lineage() {
++        let mut timeline = Timeline::default();
++        timeline.begin(1, "terminal", ATTEMPT, 0, false).unwrap();
++        assert!(timeline.begin(2, "final", ATTEMPT, 4, true).is_err());
++        timeline.end(3, 2).unwrap();
++        timeline.submitted().unwrap();
++        for field in [0, 4, 5, 6] {
++            let mut wrong = ATTEMPT;
++            wrong[field] += 1;
++            assert!(timeline.clone().begin(2, "final", wrong, 4, true).is_err());
++        }
++        for field in [1, 2, 3] {
++            let mut reversed = ATTEMPT;
++            reversed[field] -= 1;
++            assert!(
++                timeline
++                    .clone()
++                    .begin(2, "final", reversed, 4, true)
++                    .is_err()
++            );
++        }
++        assert!(
++            timeline
++                .clone()
++                .begin(1, "final", ATTEMPT, 4, true)
++                .is_err()
++        );
++        assert!(
++            timeline
++                .clone()
++                .begin(2, "final", ATTEMPT, 3, true)
++                .is_err()
++        );
++        let mut next = ATTEMPT;
++        next[1] += 1;
++        next[2] += 1;
++        next[3] += 1;
++        timeline.begin(2, "final", next, 4, true).unwrap();
++        let attempts: Vec<_> = timeline.entries().map(|entry| entry.attempt).collect();
++        assert_eq!(attempts, [ATTEMPT, next]);
++        timeline.end(7, 6).unwrap();
++        timeline.submitted().unwrap();
++        timeline.complete().unwrap();
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_measurements.rs b/crates/gui-render/src/render/gpu_measurements.rs
+--- a/crates/gui-render/src/render/gpu_measurements.rs
++++ b/crates/gui-render/src/render/gpu_measurements.rs
+@@ -1,8 +1,13 @@
+ //! Opt-in GPU-01..03 pass measurements. Never a presentation clock or scheduler.
+ //! Three slots own their query/resolve/readback resources until map completion.
+ use crate::text_gpu::lifetime::{SubmissionRef, Tracked};
++#[path = "gpu_measurement_frame.rs"]
++mod frame;
+ #[path = "gpu_measurement_resources.rs"]
+ mod resources;
++pub(crate) use frame::FrameQueries;
++#[path = "gpu_measurement_timeline.rs"]
++pub(crate) mod timeline;
+ use std::sync::{
+     Arc,
+     atomic::{AtomicU8, Ordering},
+@@ -21,6 +26,7 @@
+ 
+ #[derive(Debug)]
+ pub struct GpuFrameSample {
++    pub submission_manifest: Vec<frame::SubmissionSample>,
+     pub host: u64,
+     pub device_epoch: u64,
+     pub frame: u64,
+@@ -37,6 +43,7 @@
+ 
+ #[derive(Debug, Clone)]
+ pub struct GpuMeasurementCancellation {
++    pub submitted_lineage: Vec<(u64, &'static str, [u64; 7], [u64; 8])>,
+     pub reason: &'static str,
+     pub host: u64,
+     pub device_epoch: u64,
+@@ -51,6 +58,8 @@
+     submission: Option<u64>,
+     passes: Vec<&'static str>,
+     marker_count: u32,
++    scene_offset: Option<u32>,
++    timeline: timeline::Timeline,
+     signal: Arc<AtomicU8>,
+     active_start: Duration,
+ }
+@@ -60,76 +69,6 @@
+     resolve: Tracked<wgpu::Buffer>,
+     readback: Tracked<wgpu::Buffer>,
+     pending: Option<Pending>,
+-}
+-
+-pub(crate) struct FrameQueries {
+-    slot: usize,
+-    epoch: u64,
+-    frame: u64,
+-    submission: u64,
+-    queries: wgpu::QuerySet,
+-    resources: Vec<SubmissionRef>,
+-    passes: Vec<&'static str>,
+-    query_count: u32,
+-    marker_count: u32,
+-    scene_markers_enabled: bool,
+-    signal: Arc<AtomicU8>,
+-    resolved: bool,
+-    submitted: bool,
+-}
+-
+-impl FrameQueries {
+-    pub(crate) fn pass(
+-        &mut self,
+-        name: &'static str,
+-    ) -> anyhow::Result<wgpu::RenderPassTimestampWrites<'_>> {
+-        anyhow::ensure!(
+-            !self.resolved,
+-            "GPU measurement pass after query resolution"
+-        );
+-        anyhow::ensure!(
+-            self.query_count + 2 <= QUERIES,
+-            "GPU measurement pass capacity exceeded"
+-        );
+-        let index = self.query_count;
+-        self.query_count += 2;
+-        self.passes.push(name);
+-        Ok(wgpu::RenderPassTimestampWrites {
+-            query_set: &self.queries,
+-            beginning_of_pass_write_index: Some(index),
+-            end_of_pass_write_index: Some(index + 1),
+-        })
+-    }
+-
+-    pub(crate) fn mark_scene(
+-        &mut self,
+-        pass: &mut wgpu::RenderPass<'_>,
+-        marker: u32,
+-    ) -> anyhow::Result<()> {
+-        if !self.scene_markers_enabled {
+-            return Ok(());
+-        }
+-        anyhow::ensure!(
+-            !self.resolved
+-                && self.passes.as_slice() == ["frame"]
+-                && marker == self.marker_count
+-                && marker < 3
+-                && self.query_count < QUERIES,
+-            "invalid GPU scene marker order or capacity"
+-        );
+-        pass.write_timestamp(&self.queries, self.query_count);
+-        self.query_count += 1;
+-        self.marker_count += 1;
+-        Ok(())
+-    }
+-}
+-
+-impl Drop for FrameQueries {
+-    fn drop(&mut self) {
+-        if !self.submitted {
+-            self.signal.store(ABORTED, Ordering::Release);
+-        }
+-    }
+ }
+ 
+ /// Active time is paused by native drawable/occlusion/suspension notifications.
+@@ -161,12 +100,21 @@
+     scene_markers_enabled: bool,
+     next_frame: u64,
+     slots: Vec<Slot>,
++    marker: Tracked<resources::Marker>,
+     clock: ActiveClock,
+     cancelled: bool,
+     cancellation_observer: GpuCancellationObserver,
+ }
+ 
+ impl GpuMeasurements {
++    pub(crate) fn drained_manifest(&self) -> anyhow::Result<[u64; 3]> {
++        anyhow::ensure!(
++            !self.cancelled && self.slots.iter().all(|s| s.pending.is_none()),
++            "GPU frame manifest is not drained"
++        );
++        Ok([self.host, self.epoch, self.next_frame])
++    }
++
+     pub(crate) fn new(
+         device: &wgpu::Device,
+         queue: &wgpu::Queue,
+@@ -197,6 +145,7 @@
+                 .contains(wgpu::Features::TIMESTAMP_QUERY_INSIDE_PASSES),
+             next_frame: 0,
+             slots,
++            marker: resources::Marker::new(device, &owner, epoch)?,
+             clock: ActiveClock {
+                 previous: Instant::now(),
+                 elapsed: Duration::ZERO,
+@@ -207,30 +156,6 @@
+             cancelled: false,
+             cancellation_observer,
+         })
+-    }
+-
+-    pub(crate) fn incomplete_upload_submission(
+-        &mut self,
+-        frame: Option<u64>,
+-    ) -> anyhow::Result<u64> {
+-        anyhow::ensure!(!self.cancelled, "GPU measurement device epoch cancelled");
+-        let frame = if let Some(frame) = frame {
+-            frame
+-        } else {
+-            self.next_frame = self
+-                .next_frame
+-                .checked_add(1)
+-                .ok_or_else(|| anyhow::anyhow!("GPU measurement frame ID exhausted"))?;
+-            self.next_frame
+-        };
+-        (self.cancellation_observer)(GpuMeasurementCancellation {
+-            host: self.host,
+-            device_epoch: self.epoch,
+-            frame,
+-            submission: Some(next_submission_id()?),
+-            reason: "cold_upload_multisubmission_timestamps_unqualified",
+-        });
+-        Ok(frame)
+     }
+ 
+     pub(crate) fn begin(&mut self) -> anyhow::Result<FrameQueries> {
+@@ -259,16 +184,26 @@
+             submission: None,
+             passes: Vec::new(),
+             marker_count: 0,
++            scene_offset: None,
++            timeline: Default::default(),
+             signal: signal.clone(),
+             active_start: self.clock.elapsed,
+         });
+         Ok(FrameQueries {
++            timeline: Default::default(),
++            pass_indices: Vec::new(),
++            scene_offset: None,
++            final_transfer_end: None,
+             slot: index,
+             epoch: self.epoch,
+             frame: self.next_frame,
+             submission,
+             queries: (*slot.queries).clone(),
+-            resources: slot.submission_refs(),
++            resources: slot
++                .submission_refs()
++                .into_iter()
++                .chain([self.marker.submission_ref()])
++                .collect(),
+             passes: Vec::new(),
+             query_count: 0,
+             marker_count: 0,
+@@ -309,6 +244,7 @@
+             matches!(frame.marker_count, 0 | 3),
+             "incomplete GPU scene markers"
+         );
++        frame.finish_boundaries()?;
+         let count = frame.query_count;
+         encoder.resolve_query_set(&slot.queries, 0..count, &slot.resolve, 0);
+         encoder.copy_buffer_to_buffer(&slot.resolve, 0, &slot.readback, 0, u64::from(count) * 8);
+@@ -332,6 +268,9 @@
+         );
+         let slot = &mut self.slots[frame.slot];
+         let pending = slot.pending.as_mut().expect("validated reservation");
++        frame.finish_submission()?;
++        pending.timeline = frame.timeline.clone();
++        pending.scene_offset = frame.scene_offset;
+         pending.passes = std::mem::take(&mut frame.passes);
+         pending.marker_count = frame.marker_count;
+         pending.submission = Some(frame.submission);
+@@ -404,7 +343,7 @@
+                                 * 8,
+                         )
+                         .get_mapped_range();
+-                    let mut raw: Vec<u64> = view
++                    let raw_queries: Vec<u64> = view
+                         .as_chunks::<8>()
+                         .0
+                         .iter()
+@@ -413,10 +352,18 @@
+                     drop(view);
+                     slot.readback.unmap();
+                     let pending = slot.pending.take().expect("ready frame");
+-                    let scene_marker_ticks = extract_scene_markers(&mut raw, pending.marker_count)?;
++                    let mut raw = raw_queries.clone();
++                    let scene_marker_ticks = extract_scene_markers_at(
++                        &mut raw,
++                        pending.marker_count,
++                        pending.scene_offset,
++                    )?;
++                    let submission_manifest =
++                        frame::decode_boundaries(&pending.timeline, &raw_queries, self.period_ns)?;
+                     let (passes_ns, own_pass_sum_ns, frame_span_ns) =
+                         decode(&pending.passes, &raw, self.period_ns)?;
+                     samples.push(GpuFrameSample {
++                        submission_manifest,
+                         host: self.host,
+                         device_epoch: self.epoch,
+                         frame: pending.frame,
+@@ -434,11 +381,27 @@
+                     self.host,
+                     pending.frame
+                 ),
+-                ABORTED => anyhow::bail!(
+-                    "GPU measurement encoding aborted for host={} frame={}",
+-                    self.host,
+-                    pending.frame
+-                ),
++                ABORTED => {
++                    let aborted = slot.pending.take().expect("observed aborted frame");
++                    (self.cancellation_observer)(GpuMeasurementCancellation {
++                        submitted_lineage: aborted
++                            .timeline
++                            .entries()
++                            .filter(|e| e.submitted)
++                            .map(|e| (e.id, e.kind, e.attempt, e.workload))
++                            .collect(),
++                        reason: "encoding_aborted",
++                        host: self.host,
++                        device_epoch: self.epoch,
++                        frame: aborted.frame,
++                        submission: aborted.submission,
++                    });
++                    anyhow::bail!(
++                        "GPU measurement encoding aborted for host={} frame={}; sample unavailable",
++                        self.host,
++                        aborted.frame
++                    );
++                }
+                 _ => anyhow::ensure!(
+                     self.clock.elapsed.saturating_sub(pending.active_start) < DEADLINE,
+                     "GPU measurement exceeded two seconds active time; sample unavailable"
+@@ -453,6 +416,12 @@
+         for slot in &mut self.slots {
+             if let Some(pending) = slot.pending.take() {
+                 (self.cancellation_observer)(GpuMeasurementCancellation {
++                    submitted_lineage: pending
++                        .timeline
++                        .entries()
++                        .filter(|e| e.submitted)
++                        .map(|e| (e.id, e.kind, e.attempt, e.workload))
++                        .collect(),
+                     reason: "host_or_device_closed_before_collection",
+                     host: self.host,
+                     device_epoch: self.epoch,
+@@ -476,17 +445,29 @@
+ 
+ // Keep the ordinary pass-pair representation intact for existing consumers.
+ // Nested markers never contribute a second time to own_pass_sum_ns.
++#[cfg(test)]
+ fn extract_scene_markers(raw: &mut Vec<u64>, count: u32) -> anyhow::Result<Option<[u64; 3]>> {
++    extract_scene_markers_at(raw, count, (count != 0).then_some(2))
++}
++fn extract_scene_markers_at(
++    raw: &mut Vec<u64>,
++    count: u32,
++    offset: Option<u32>,
++) -> anyhow::Result<Option<[u64; 3]>> {
+     if count == 0 {
+         return Ok(None);
+     }
+-    anyhow::ensure!(count == 3 && raw.len() >= 5, "missing GPU scene markers");
+-    let markers = [raw[2], raw[3], raw[4]];
++    let offset = offset.ok_or_else(|| anyhow::anyhow!("missing scene marker offset"))? as usize;
+     anyhow::ensure!(
+-        raw[0] <= markers[0] && markers.is_sorted() && markers[2] <= raw[1],
++        count == 3 && offset >= 2 && raw.len() >= offset + 3,
++        "missing GPU scene markers"
++    );
++    let markers = [raw[offset], raw[offset + 1], raw[offset + 2]];
++    anyhow::ensure!(
++        raw[offset - 2] <= markers[0] && markers.is_sorted() && markers[2] <= raw[offset - 1],
+         "GPU scene markers outside ordered scene interval"
+     );
+-    raw.drain(2..5);
++    raw.drain(offset..offset + 3);
+     Ok(Some(markers))
+ }
+ 
+@@ -534,3 +515,55 @@
+         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+         .map_err(|_| anyhow::anyhow!("GPU submission identity exhausted"))
+ }
++
++impl GpuMeasurements {
++    pub(crate) fn leading(
++        &self,
++        device: &wgpu::Device,
++        frame: &mut FrameQueries,
++        kind: &'static str,
++        attempt: timeline::Attempt,
++        workload: [u64; 8],
++        final_submission: bool,
++    ) -> anyhow::Result<wgpu::CommandBuffer> {
++        self.validate(frame)?;
++        self.marker
++            .set_consumers(crate::text_gpu::allocation_host::consumers());
++        frame.leading(
++            device,
++            &self.marker.view,
++            kind,
++            attempt,
++            workload,
++            final_submission,
++        )
++    }
++    pub(crate) fn trailing(
++        &self,
++        device: &wgpu::Device,
++        frame: &mut FrameQueries,
++    ) -> anyhow::Result<wgpu::CommandBuffer> {
++        self.validate(frame)?;
++        frame.trailing(device, &self.marker.view)
++    }
++    pub(crate) fn continued(
++        &mut self,
++        queue: &wgpu::Queue,
++        frame: &mut FrameQueries,
++    ) -> anyhow::Result<()> {
++        // The query/marker holds follow each real queue submission, even if the
++        // logical frame or whole host is abandoned before final rendering.
++        let resources = self.slots[frame.slot]
++            .submission_refs()
++            .into_iter()
++            .chain([self.marker.submission_ref()])
++            .collect();
++        crate::text_gpu::hold_until_done(queue, resources);
++        self.validate(frame)?;
++        frame.finish_submission()?;
++        let pending = self.slots[frame.slot].pending.as_mut().unwrap();
++        pending.submission = Some(frame.submission);
++        pending.timeline = frame.timeline.clone();
++        Ok(())
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_measurements_tests.rs b/crates/gui-render/src/render/gpu_measurements_tests.rs
+--- a/crates/gui-render/src/render/gpu_measurements_tests.rs
++++ b/crates/gui-render/src/render/gpu_measurements_tests.rs
+@@ -272,6 +272,19 @@
+             .to_string()
+             .contains("aborted")
+     );
++    assert_eq!(
++        measurement
++            .slots
++            .iter()
++            .filter(|slot| slot.pending.is_none())
++            .count(),
++        1,
++        "aborted attempt is reported once and releases its ring slot"
++    );
++    assert_eq!(
++        cancellations.lock().unwrap().last().unwrap().reason,
++        "encoding_aborted"
++    );
+     measurement.cancel();
+     assert!(measurement.begin().is_err());
+     assert_eq!(cancellations.lock().unwrap().len(), 6);
+diff --git a/crates/gui-render/src/render/gpu_overlay.rs b/crates/gui-render/src/render/gpu_overlay.rs
+--- a/crates/gui-render/src/render/gpu_overlay.rs
++++ b/crates/gui-render/src/render/gpu_overlay.rs
+@@ -70,6 +70,7 @@
+             return Ok(false);
+         };
+         let mut measurement = self.begin_gpu_measurement()?;
++        let leading = self.final_measurement_leading(device, &mut measurement)?;
+         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
+         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+             label: Some("datum-dialog-encoder"),
+@@ -120,10 +121,9 @@
+         self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
+         let mut uploads = self.flush_frame_uploads(device, queue)?;
+         let submission = queue.submit(
+-            uploads
+-                .as_mut()
+-                .map(|batch| batch.command())
++            leading
+                 .into_iter()
++                .chain(uploads.as_mut().map(|batch| batch.command()))
+                 .chain([encoder.finish()]),
+         );
+         self.hold_frame_submission(queue);
+diff --git a/crates/gui-render/src/render/renderer_state.rs b/crates/gui-render/src/render/renderer_state.rs
+--- a/crates/gui-render/src/render/renderer_state.rs
++++ b/crates/gui-render/src/render/renderer_state.rs
+@@ -77,6 +77,9 @@
+     pub(super) surface_attachments: gpu_surface::SurfaceAttachments,
+     pub(super) msaa_format: wgpu::TextureFormat,
+     pub(super) msaa_samples: u32,
++    pub(super) measurement_attempt: [u64; 7],
++    pub(super) measurement_workload: [u64; 8],
++    pub(super) pending_measurement: Option<gpu_measurements::FrameQueries>,
+     pub(super) measurements: Option<gpu_measurements::GpuMeasurements>,
+ }
+ 
+diff --git a/crates/gui-render/src/render/terminal_upload.rs b/crates/gui-render/src/render/terminal_upload.rs
+--- a/crates/gui-render/src/render/terminal_upload.rs
++++ b/crates/gui-render/src/render/terminal_upload.rs
+@@ -41,6 +41,7 @@
+         queue: &wgpu::Queue,
+         atlas: &crate::text_gpu::Atlas,
+         capacity: usize,
++        boundaries: Option<(wgpu::CommandBuffer, wgpu::CommandBuffer)>,
+     ) -> anyhow::Result<Option<wgpu::SubmissionIndex>> {
+         if capacity == 0 {
+             return Ok(None);
+@@ -74,7 +75,8 @@
+             return Ok(None);
+         };
+         drop(uploads);
+-        let submission = queue.submit([batch.command()]);
++        let (before, after) = boundaries.map_or((None, None), |(a, b)| (Some(a), Some(b)));
++        let submission = queue.submit(before.into_iter().chain([batch.command()]).chain(after));
+         batch.hold(queue);
+         queue.on_submitted_work_done(move || drop(resources));
+         for &(index, count) in counts.iter() {
+@@ -98,17 +100,22 @@
+         self.release_text_scratch_for(
+             CHUNK_BYTES as u64 + TerminalGraphicsRenderer::upload_metadata_bytes(capacity)?,
+         );
+-        let Some(submission) =
+-            self.terminal_graphics
+-                .upload_chunk(device, queue, &self.atlas, capacity)?
++        if capacity == 0 {
++            return Ok(false);
++        }
++        let boundaries = self.begin_upload_measurement(device, "terminal")?;
++        let Some(submission) = self.terminal_graphics.upload_chunk(
++            device,
++            queue,
++            &self.atlas,
++            capacity,
++            boundaries,
++        )?
+         else {
+             return Ok(false);
+         };
+         on_submitted(submission);
+-        if let Some(measurements) = &mut self.measurements {
+-            self.cold_world.measurement_frame =
+-                Some(measurements.incomplete_upload_submission(self.cold_world.measurement_frame)?);
+-        }
++        self.finish_upload_measurement(queue)?;
+         Ok(true)
+     }
+ 
+diff --git a/crates/gui-render/src/text_gpu/atlas/chunks.rs b/crates/gui-render/src/text_gpu/atlas/chunks.rs
+--- a/crates/gui-render/src/text_gpu/atlas/chunks.rs
++++ b/crates/gui-render/src/text_gpu/atlas/chunks.rs
+@@ -40,6 +40,7 @@
+         device: &wgpu::Device,
+         queue: &wgpu::Queue,
+         limit: u64,
++        boundaries: Option<(wgpu::CommandBuffer, wgpu::CommandBuffer)>,
+     ) -> anyhow::Result<wgpu::SubmissionIndex> {
+         let (count, _) = self.chunk_plan(limit)?;
+         let mut remaining = limit;
+@@ -80,7 +81,8 @@
+         drop(uploads);
+         let mut resources = StagingVec::new(self.pages.len(), &self.staging_budget)?;
+         resources.extend(self.pages.iter().map(|page| page.texture.submission_ref()));
+-        let submission = queue.submit([batch.command()]);
++        let (before, after) = boundaries.map_or((None, None), |(a, b)| (Some(a), Some(b)));
++        let submission = queue.submit(before.into_iter().chain([batch.command()]).chain(after));
+         batch.hold(queue);
+         queue.on_submitted_work_done(move || drop(resources));
+         self.pending_copy_bytes -= limit - remaining;

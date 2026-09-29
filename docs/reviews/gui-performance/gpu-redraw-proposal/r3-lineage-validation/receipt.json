@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "owner-approval-r3-lineage.json",
+  "source": "26b51ded33c5db8398bf4daa94dc26a3801e5d40",
+  "binary_sha256": "1094db35bd385055d9b7096e58ade24c70465f9d085d7b1c13787da484eccdcb",
+  "outcome": "The single approved P630 exact8 lineage case passed once in2.36s, preserving two actual world/final submissions with advancing actual shared-session preparation in one complete span. Native validation is now permitted within the pinned new declaration scope.",
+  "proof": [
+    "Pinned F-DOA, fully qualified test name and binary hashes verified before execution. Actual shared prepare_frame/encode_frame, first world upload, menu/composition re-preparation, retained active demand and drained complete frame range passed.",
+    "Matched baseline backport changes only the measurement timeline relative to reviewed baseline observer; exact patch replay reproduces all31 changed source hashes. Production baseline rendering/cache/scheduling unchanged."
+  ],
+  "limitations": [
+    "This case is not native startup, frame-time, complete duty or S4 acceptance. It does not establish the exact field rejected by the old native trial.",
+    "Original stopped campaign stays unchanged; no new native trial yet. Source-bound release pair and sealed declaration remain required.",
+    "DRM observer execution separately unapproved; CPU deferred; issue remains open."
+  ],
+  "artifacts_sha256": {
+    "baseline-observer.patch": "a60d6661d6a5ab3cb0c577297545f02d1a03847fe07949bf1584530c8f6e3865",
+    "baseline-source.json": "041fd9ea09ee5570dc5a204caa9467f9eed489b7cbb1c96f756471e44dcb0807",
+    "component-build.jsonl.gz": "40a9cba2eeb1e9a56bb9d4dabfc6e44e210d8bd992a23f8a69a9351d1246ce7a",
+    "component-build.log": "8a562f693ba3a244a309ee3e4cc00fbd98bebcebd538babc35c3d7a3eeae7706",
+    "component-state.json": "15b01b1e17b12f8a3faffd1d728b0316eebc1023562175498f1b811163e32f4d",
+    "component-test-list.txt": "d848b2efa88baebf17334e90b823347c44d9beddf2d49df41c8a8c3d262837e4",
+    "component.log": "517db0b386bdb5236cc70257c670bf793d18abe352183ddd925dd3cf78e22f8b"
+  }
+}

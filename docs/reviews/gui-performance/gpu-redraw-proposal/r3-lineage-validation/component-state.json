@@ -1,0 +1,16 @@
+{
+  "source": "26b51ded33c5db8398bf4daa94dc26a3801e5d40",
+  "binary": "/home/bfadmin/Documents/datum-eda/target/debug/deps/datum_gui_render-ca0a5acac071f491",
+  "binary_sha256": "1094db35bd385055d9b7096e58ade24c70465f9d085d7b1c13787da484eccdcb",
+  "fixture": {
+    "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "test": "visual::visual_capture::offscreen_session_tests::repreparation_conformance::shared_repreparation_retains_complete_submitted_upload_lineage",
+  "timeout_seconds": 90,
+  "status": "passed",
+  "started_utc": "2026-09-29T05:09:25.466383+00:00",
+  "exit_code": 0,
+  "finished_utc": "2026-09-29T05:09:27.886583+00:00",
+  "binary_unchanged": true
+}
