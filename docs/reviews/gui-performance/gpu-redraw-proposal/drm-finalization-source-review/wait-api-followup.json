@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "scope": "Source-only followup; no ioctl, tracing, native run, build or dependency adoption.",
+  "prior": "receipt.json",
+  "sources": {
+    "i915_gem_throttle.c": {
+      "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_throttle.c",
+      "sha256": "29c43cde28059bd0e1b13b3c583748997bd6e0323e4fa4d122f393aa9422f2d5"
+    },
+    "i915_gem_wait.c": {
+      "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_wait.c",
+      "sha256": "208d87780df1176b999628d393e4508edd956b5bdb33b84ee50ab2f6b0dee2da"
+    }
+  },
+  "findings": {
+    "i915_gem_throttle.c": "Enumerates currently registered contexts and their engine timelines; selects an incomplete request older than20ms and waits for request completion. Recent requests are skipped. No demonstrated wait for previously removed contexts to transfer runtime into client past_runtime. Not a finalization barrier.",
+    "i915_gem_wait.c": "Object reservation fences are waited through i915_request_wait_timeout or dma_fence_wait_timeout. Already-signaled fences may return immediately. Wait reservation calls the boost prescan, which can invoke intel_rps_boost for requests not started. Neither the ioctl nor its inspected object-wait path establishes the required context accounting transfer postcondition."
+  },
+  "inference": "These APIs cannot supply the missing proof for the existing retained-fd draft. This does not establish that every runtime read loses counts or that no complete DRM method exists.",
+  "next_requirement": "Find an observable accounting-retirement completion mechanism covering explicit context replacement/destruction, with exact deployed-driver identity, client lifetime coverage, loss semantics and overhead. A kernel accounting/event approach remains unselected and would need its own privilege/coverage proposal; no execution authority.",
+  "qualification": "Complete duty remains unavailable. Painter-hover correction awaits separate owner approval; no relation between this source followup and renderer execution authority.",
+  "limitations": "Inspected upstream v6.12.107 remains a pinned feasibility source, not proof of exact installed Debian build or active backend equivalence."
+}
