@@ -1,0 +1,306 @@
+{
+  "cli": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284"
+  },
+  "project": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "copied_from": "/tmp/pm045-admission-hqugp169/project",
+    "excluded": "historical .datum/tool-sessions only",
+    "board_file_sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed"
+  },
+  "reference_png": {
+    "path": "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/reference.png",
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "provenance": "Exact archived baseline-1-gpu0.tar.gz final.png in implementation/S5/pointer-native-batch; reviewed visually, unchanged closed-Console scene. No golden update."
+  },
+  "input_driver": "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_stream.py",
+  "expected_context": {
+    "final_selection": "None",
+    "final_focus": "Editor(PaneId(0))",
+    "final_focused_pane": 0
+  },
+  "expected_context_authority": "app_bootstrap plain project view has selectionNone; workspace_layout default ApplicationFocus Editor(PaneId0); --initial-layout single focusedPane0; no focus/select launch overrides.",
+  "schedule": "Per trial CLOCK_MONOTONIC epoch and5s/30s/5s boundaries sealed before launch; fixed40s startup readiness allowance. Producer starts at absolute active_ns with unchanged3600requests/120Hz/400x240 rectangle. Missed boundaries invalidate; never shift schedule. Controlled drain follows still.",
+  "camera_scope": "No camera/pan trial authorized",
+  "system_changes": "None. Child native X11/scale1 launch options only; no display/driver settings, global tracing or DRM supervisor.",
+  "max_producer_lateness_ns": 8333334,
+  "cadence_rule": "Each actual send must be at or after its120Hz deadline and at most one nominal period late; producer duration30s through30s+oneperiod. Retain full actual lateness distribution; first violation invalidates run, no retry.",
+  "gpu_duty": "unavailable: full DRM accounting separate",
+  "candidate_commit": "544dc61a8195fc9135b790bd682e9baded44e1ad",
+  "runs": [
+    {
+      "role": "candidate",
+      "mode": "gpu",
+      "pair": 1,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "baseline",
+      "mode": "gpu",
+      "pair": 1,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "baseline",
+      "mode": "quiet",
+      "pair": 1,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "quiet",
+      "pair": 1,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "baseline",
+      "mode": "gpu",
+      "pair": 2,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "gpu",
+      "pair": 2,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "quiet",
+      "pair": 2,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "baseline",
+      "mode": "quiet",
+      "pair": 2,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "gpu",
+      "pair": 3,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "baseline",
+      "mode": "gpu",
+      "pair": 3,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "baseline",
+      "mode": "quiet",
+      "pair": 3,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "quiet",
+      "pair": 3,
+      "workload": "W-POINTER"
+    }
+  ],
+  "run_cap": 12,
+  "status": "sealed before fixed12pointer R4 campaign",
+  "mode_scope": "Matched causal/semantic observer in quiet and GPU modes. Quiet disables only GPU timestamp queries.",
+  "order_rationale": "Fixed owner-approved3matched pairs per mode; no adaptive order or replacement.",
+  "stop": "Any invalidity/correctness/capacity failure, or candidate p95>4ms/p99>8ms stops the whole declaration. Baseline numerical failures are reported.",
+  "qualification": "Descriptive only; no DRM duty, CPU, full resource or S4/S5 acceptance.",
+  "authority": "docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r4.json",
+  "proposal_sha256": "29bdc35a67735b095259515e0982b25697f5ce46c946798a60b55bca623e5509",
+  "method_sha256": {
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_native_trial.py": "930254b8bb9b08cc2ce1f94cef9de8ef7c2bdbd32804a6383ffca70755db9756",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_stream.py": "196e8b5edd9574611aac4f47993c10628ac94663b5f99d80acf351994b8ececc",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_input.py": "0cc18c51fd1a9e39e44d71bf9a011d846ac63c7010f33472a209df4d1f732817",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_receipts.py": "396a2eb122941b75143ed386efd070829045d760785a6e2a541e55b20d775763",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_campaign.py": "821d6d41eba861f7d9580eb2565c403c1c1742225c84b3e158d12e9939e24940",
+    "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/gpu_r2_wm_close.py": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_trial_outcome.py": "22b0b6d2aa1ca35ae54492dd30a8e1736aedc8a9aa634ecc6bd558b45c8eed2d",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_crosshair_diagnostic.py": "ee7c5c7eb7b8ff57846790fa206c9660bf6f061c9ab542d45ac388cdb4060229"
+  },
+  "prior_campaign_state_sha256": {
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r3-proof/campaign-state.json": "3b320358ae259d10ae79e2830cc4279b805ac35eb59b6ff56773486b451e05cc",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/campaign-state.json": "d2fede5f6d35391c2ceae2f2c312fac764124b3c16d5d516c70a94e19b7a4606",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r3-crosshair-proof/campaign-state.json": "0fac93de785f8784fb7f3b517ddac190dfee4e2b2cd637c13601a1a8d113a571",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-crosshair-focused-proof/campaign-state.json": "addecf17fd4553f3d843f8e17f3a9b986c203ceaa7a2070322a9ceccba383f43",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-timed-recovery-proof/campaign-state.json": "14725496ef24c7ecb1470fe92cb0237ed0e0a4081f4006b4643006bc5779cac1",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-painter-hover-timed-proof/campaign-state.json": "d8cfae544a99ce84821b953e7c395eec5a2d6d2935975c7ff6a8241955aea5c6"
+  },
+  "binaries": {
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/candidate-544dc61a-r4-datum-gui",
+      "sha256": "b2da0cfb4a2d7018e64c6db9f8c7ebc7afde51065642c924bd490da85c0ef6bf"
+    },
+    "baseline": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/baseline-997b618e-r4-marker-datum-gui",
+      "sha256": "2deffa9dd50b615d1f4c334398ad78e164e10889a05eeb6c57a06252c6340649"
+    }
+  },
+  "baseline_source": {
+    "base": {
+      "baseline": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+      "files": {
+        "crates/gui-app/src/app_native_events.rs": {
+          "before": "ecb7560aeb60f20b2a67501496aafb2ec01ecef21d6b6974cf6779289c021716",
+          "after": "c64f4f217a91f26cd4b14cf5438664057dba9e55726ec69caeff8164f25042b2"
+        },
+        "crates/gui-app/src/app_shell.rs": {
+          "before": "cc3b2e5ef0d09346e30b09dfec8d744bb17b07d008f92a8cd86bad0f19098a5d",
+          "after": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2"
+        },
+        "crates/gui-app/src/baseline_frame_workload.rs": {
+          "before": null,
+          "after": "43ed8346b180574c42e772cc7b92bced47de957ab3ff8416d2ae702cf4516fda"
+        },
+        "crates/gui-app/src/baseline_measurement_lineage.rs": {
+          "before": null,
+          "after": "11d822b35270cd6a27c646a7e542caa74d78eb5ec475fb0816ff3fca0475342c"
+        },
+        "crates/gui-app/src/interaction_refresh.rs": {
+          "before": "46c04a3ba20dd0ec706e68f3b6d3fcfa9a1b8b774bdc8c1b5d76d1288ee9354d",
+          "after": "7a661a28a12aa7dde518704aea867f5882060bff80786d97fcc7b0f30417fd49"
+        },
+        "crates/gui-app/src/main.rs": {
+          "before": "c2c52785b7d8fbfaad5080d216c9dbfd3a53c031f737a8c6ecd340ba1d3c7875",
+          "after": "bc0ebf9f101a992a40df6e227fc510c1c757f5be26ad9f3b22ff6e4ad44ee3d6"
+        },
+        "crates/gui-app/src/native_gpu_measurements.rs": {
+          "before": "9ca9127bfb5f62c190d2c354bfe638a5e8ab7c035f8e6c23d7b2bf4097fca470",
+          "after": "e7d6fd8176fd8f77ae5c9f27eb16240071688ce6e55eee34e86787d2e711106d"
+        },
+        "crates/gui-app/src/native_gpu_sample_record.rs": {
+          "before": null,
+          "after": "fe889621af9af091b5c90e17b3fe01bb7eb4a2d8471f05e8243aa2053bd6b34a"
+        },
+        "crates/gui-app/src/native_input_observation.rs": {
+          "before": null,
+          "after": "98ec8d2331e9181fd1bbc8b313ca832333247b5d94e21192e2487ea66a27727c"
+        },
+        "crates/gui-app/src/native_input_state.rs": {
+          "before": null,
+          "after": "6fd52be93d7cd80f548e019524e7a22786ef67f1b5db70fd8e79b12066c64bb9"
+        },
+        "crates/gui-app/src/native_measurement_shutdown.rs": {
+          "before": "49fd5232b731fd7c0c5d1af491b3246489002cff8656b8324c9bef5e664ed88c",
+          "after": "87b3bb00760156bfd071a49cdaf1060d7c308ffe6b01fedffea4a37641632be5"
+        },
+        "crates/gui-app/src/native_output_diagnostic.rs": {
+          "before": null,
+          "after": "aa31fbdabeb1043986bfb25ffa4a2768a5ef5ed67d88c508a35f84f87d422f77"
+        },
+        "crates/gui-app/src/native_output_diagnostic_tests.rs": {
+          "before": null,
+          "after": "cfacd10424531dfecc7b383bc16c39462a6773900ec890141fd997e234dfcc73"
+        },
+        "crates/gui-app/src/native_surface_transaction.rs": {
+          "before": "24dc24021b3ce22066d0dd83f1bc8f1cfaaf491edf56548cddc747ebdae01df1",
+          "after": "28bd83581c372165729ec7090cf8810d67b8c16ce0a0adb051fb2718fc0a2704"
+        },
+        "crates/gui-app/src/native_workload_observation.rs": {
+          "before": null,
+          "after": "5d11238c7debc0cea88e5e41ccf477619279d2310d4e42732051a6e7a419af74"
+        },
+        "crates/gui-app/src/production_status_refresh.rs": {
+          "before": "d91bafc7d3ba11263cf7d02409149011e2b2424a16334d68d3fba29b4ccc98ad",
+          "after": "62dc54827b4f75136d3fbabd74e5794f922961131fc2c3192fa95c3267d836d8"
+        },
+        "crates/gui-app/src/runtime_init.rs": {
+          "before": "dc915dd824dc65d4618fada1dd063cae9aea0dc6d5618c91093786b41662faeb",
+          "after": "b11d2acd0849341030cc1e86ecc051d02288b0a56432ada80ca58baf7aa61e0b"
+        },
+        "crates/gui-app/src/runtime_present.rs": {
+          "before": "1c9ec99e7f498b5c4adecc9a3ea5b5510098b5b9e58ba1ebef772f000aa04842",
+          "after": "fdc291a7d7d405049d501b02e9b0eae0bc6070db4021852e0a91f72d88506bef"
+        },
+        "crates/gui-app/src/runtime_state.rs": {
+          "before": "91ed35eb3e2857e8b20acc59b5e39b39a3cf11f58f11ba220526cfab893d672f",
+          "after": "3e40627b54e97cd69008264df9b40d33dc2fff4dda626971257833e06ed329c4"
+        },
+        "crates/gui-app/src/runtime_terminal_render.rs": {
+          "before": "5103b6958c9a381fd0dacac2c14c7f527326416eb77dce1137cec363ed78be38",
+          "after": "2e2c82408f746a94acc45345a6f48634d040789e95ca3d6b5264979090fd7cc0"
+        },
+        "crates/gui-render/src/render/cold_world_upload.rs": {
+          "before": "421d62956845ed47e53f4a847ed2db9509a086433220225d109b7a2dc89e47c2",
+          "after": "8c842300a3903d9e8566f7921c79e3cb0d3ad1baf67fb326ea276d52b548254a"
+        },
+        "crates/gui-render/src/render/glyph_upload_continuation.rs": {
+          "before": "1719bcbd4c18c4e73217f6c032c9aface0ebeacb2c27968f0acf98e8e39a4f2c",
+          "after": "f3517d565a65d66a730261ac0704818db2e6d6935dca1fef61aa2e185bdbf371"
+        },
+        "crates/gui-render/src/render/gpu_frame.rs": {
+          "before": "0e7d6d1014ef5f4aac54a4f53b345226951d4092307e3a6dc9ac5bb01b2bd8af",
+          "after": "b2e3c3fe5a9c25814aa45eaf81bf4ff5f97c15f0c71722db74b0eb623a2a72ba"
+        },
+        "crates/gui-render/src/render/gpu_frame_target.rs": {
+          "before": "0c0ba8b328066d223f7184bf56608f62150f0c48d7380f904021f1d091b0e297",
+          "after": "2c859c9abbd975ac7b7314288bfe7556b2822a86df54e33a2e51f1d6e6cb0821"
+        },
+        "crates/gui-render/src/render/gpu_init.rs": {
+          "before": "36412dec95cd58b847ca7bfbb2ae0f7c3aa1ad1c97b925f019e84a43bc32ff7b",
+          "after": "5f502c23edabfced30caefaa1d5557b0906cff23d1d305d2b4d80544aff80281"
+        },
+        "crates/gui-render/src/render/gpu_measurement_api.rs": {
+          "before": "eb6e6f585e54432cc034cb805bc9e9719677dad9f18f562ae68054c38f9fe45d",
+          "after": "64292f3d6688d31dd3661445f5d75771ba6299aa8ba702b76f3dc5b551ec53c5"
+        },
+        "crates/gui-render/src/render/gpu_measurement_frame.rs": {
+          "before": null,
+          "after": "ea484441414d0925476b552f408e406b20a0449d347977b0abae757f036f598f"
+        },
+        "crates/gui-render/src/render/gpu_measurement_resource_tests.rs": {
+          "before": "1b8d70388ec5e9d80d4c5a373c3624e1bb35f8baf1a53e82bfa51005cc1082db",
+          "after": "97470fc41070a981aeae82cb1b1bd153c7d50e41e0003822a4c83c219beaffe4"
+        },
+        "crates/gui-render/src/render/gpu_measurement_resources.rs": {
+          "before": "7d2bbcfea4e5d633e3e19ada42d6733ddb40a8a64e8c0b4e329398ef0beed783",
+          "after": "9469a38a8c6cf15e5f6c829d4e32682819d58499e689da15710486668156f18f"
+        },
+        "crates/gui-render/src/render/gpu_measurement_timeline.rs": {
+          "before": null,
+          "after": "71b715f572dbe4e216702f30a373ee1fd661928175345ae136fc498d6fc4856f"
+        },
+        "crates/gui-render/src/render/gpu_measurements.rs": {
+          "before": "75a0f87cc2965de1a351e0917723944631e99cbf59c11e0e680e4c9e6105b3d9",
+          "after": "88685822f3af72bdd31ce09dc10fb1b951408b43aa816b4ddfcf88b3fb505872"
+        },
+        "crates/gui-render/src/render/gpu_measurements_tests.rs": {
+          "before": "d77e347444e7b7dc2df185876312d182defd09c12265ebb97f09eaf47b2d322d",
+          "after": "28eecc6e1206fb165593ad66c5abd929dd92e37287a3e11d2c37994aa81b9a67"
+        },
+        "crates/gui-render/src/render/gpu_overlay.rs": {
+          "before": "d52345d959ce11db97b2ac7d57999ae89bc63077f1414048f2ca5f5c3460cbc5",
+          "after": "3252261731944d1567984844bc942bce5733947afd5c3a2d083eb03dca8e11e4"
+        },
+        "crates/gui-render/src/render/renderer_state.rs": {
+          "before": "35f5c556fc755d35d26185cee83dbfefc04fe67d6314669e236c1f78afdb653f",
+          "after": "5366efebd35f4b8bf8c288bb5a030f6416d999ad5466d50889e930bce93c9158"
+        },
+        "crates/gui-render/src/render/terminal_upload.rs": {
+          "before": "4515b8baeb2ffe2e819e7d1e1b208ae012c89f86c510fdd557e9902052b4426c",
+          "after": "82f0d3da0d17b78f3e7a3bda0ce879a14c1c36c926f40a7ec6bb9d702a1e5427"
+        },
+        "crates/gui-render/src/text_gpu/atlas/chunks.rs": {
+          "before": "f82ceac89578d697d41a12f16898d0ce7680c75b645151ac36ff8127ec1fe7f9",
+          "after": "706fb563e860878683fa0995bc31ee4717c66e6086481446571f1cd91ae3412a"
+        }
+      },
+      "patch_sha256": "dd60083e9eb2d8ff69f068c3256e798017d68c7fbc11c72452edd28e568456e6",
+      "renderer_delta": "Exactly identical to reviewed r3-lineage-validation baseline observer patch; no new renderer delta."
+    },
+    "added_files": {
+      "crates/gui-render/src/render/gpu_measurement_frame.rs": "349339da4849fef99b7ce9799d248e8aaece20a228a9a89dbfadde2400c1d6f1",
+      "crates/gui-render/src/render/gpu_measurement_api.rs": "de401fb84ce85b98d15d7a4ee20451250e69cf9c9365bed0d427c244ca6d63bf"
+    }
+  },
+  "gpu_prerequisite": {
+    "receipt": "docs/reviews/gui-performance/gpu-redraw-proposal/r4-gpu-proof/receipt.json",
+    "sha256": "8578374784a2561bee166d9c774c34483a1c5318eebbe95a9ecef73a904e214b",
+    "result": "one four-group exact8 batch plus native COPY_DST capability passed16.62s"
+  },
+  "final_copy_marker": true,
+  "sealed_unix_ns": 1790712847886765970
+}

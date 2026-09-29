@@ -1,0 +1,14 @@
+{
+  "status": "stopped",
+  "declaration_sha256": "75deede68160eae2803934f6b573a957f7d1239142da51c6105a6e65288786da",
+  "results": [
+    {
+      "index": 0,
+      "status": "invalid",
+      "exit_code": 1,
+      "receipt": "/tmp/gpu-r3-0-candidate-gpu-0yf8ubdc/result.json"
+    }
+  ],
+  "reserved_index": 0,
+  "reserved_ns": 1790712847953444958
+}

@@ -1,0 +1,82 @@
+{
+  "candidate": {
+    "status": "complete",
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/candidate-544dc61a-r4-datum-gui",
+    "sha256": "b2da0cfb4a2d7018e64c6db9f8c7ebc7afde51065642c924bd490da85c0ef6bf",
+    "artifact": {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///home/bfadmin/Documents/datum-eda/crates/gui-app#datum-gui-app@0.1.0",
+      "manifest_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "datum-gui",
+        "src_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/src/main.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "visual"
+      ],
+      "filenames": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui"
+      ],
+      "executable": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "fresh": false
+    },
+    "finished_ns": 1790712755353303069
+  },
+  "baseline": {
+    "status": "complete",
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/baseline-997b618e-r4-marker-datum-gui",
+    "sha256": "2deffa9dd50b615d1f4c334398ad78e164e10889a05eeb6c57a06252c6340649",
+    "artifact": {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/baseline-source/crates/gui-app#datum-gui-app@0.1.0",
+      "manifest_path": "/home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/baseline-source/crates/gui-app/Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "datum-gui",
+        "src_path": "/home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/baseline-source/crates/gui-app/src/main.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "visual"
+      ],
+      "filenames": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui"
+      ],
+      "executable": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "fresh": false
+    },
+    "finished_ns": 1790712847886126516
+  }
+}
