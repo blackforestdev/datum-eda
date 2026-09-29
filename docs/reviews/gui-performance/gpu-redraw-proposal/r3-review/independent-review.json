@@ -1,0 +1,72 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "scope": "Read-only independent r3 design review. No production edits, builds, tests, native trials or observer execution. R2 globally stopped; review does not ratify r3.",
+  "pins": {
+    "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r3.md": "716389b40bfafa5ebcbcf628af835d29309bf96c33b1091248871df6df6ac7b4",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md": "c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+    "docs/decisions/PRODUCT_MECHANICS_049_SHARED_RENDER_SESSION.md": "f84593fd6709bbb574c40b3e45733afd5cb9fcb6220b1925346e166982f5f3af",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/diagnostic-analysis.json": "3eabd2e0501b6f88bc864c91cc200e0889a92e19e440ddeb33c4c996832174d7",
+    "crates/gui-render/src/render/gpu_frame.rs": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685",
+    "crates/gui-render/src/render/gpu_measurements.rs": "ba2f06f5c6c6c88d4bf9cf43eb3f85ccf3369dc77433ccdebcf531e981d33e0e",
+    "crates/gui-render/src/render/cold_world_upload.rs": "f697b132af9c5b90c5181ce4a19878d0d04f727332f1c8511deb07b08805427c",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "1719bcbd4c18c4e73217f6c032c9aface0ebeacb2c27968f0acf98e8e39a4f2c",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d"
+  },
+  "disposition": "No remaining identified blocking design issue in revised proposal. Mechanism remains a bounded candidate requiring owner ratification, exact-sample/resource/measurement proof and fresh bounded experiment authorization. No implementation or performance acceptance.",
+  "findings": [
+    {
+      "id": "R3-01",
+      "severity": "high",
+      "source": "proposal-r3.md:136-152; gpu_frame.rs:310-316",
+      "finding": "New 6*4 upload +4 final +3 scene=31 query plan does not explain how final flush_frame_uploads command batch, submitted before final command_buffer, is included. Prefix/restore and suffix consume four final queries already. A leading marker before final upload adds two, exceeding32 at six continuation submissions.",
+      "required": "Specify concrete command-buffer ordering and query map that starts before final flush upload, ends after final resolve, and fits32. Example: cap continuation uploads at5 and use leading marker before final upload, then two final render passes (20+6+3=29). If a separate trailing marker is required, count its additional pair explicitly. Add negative where final flush upload is outside interval; retain fail-closed capacity behavior.",
+      "status": "resolved by explicit final marker-before-upload ordering and reduced continuation bound"
+    }
+  ],
+  "assessment": [
+    "Evidence faithfully preserves invalid r2 status and 1241 partial warm spans; no new baseline comparison inferred. Existing r2 declaration remains stopped.",
+    "UNORM alias + multisampled textureLoad with sample_index is a plausible sample-preserving restoration mechanism. No full guarantee of byte equality follows from API plausibility; explicit all-sample 256-value/asymmetric controls required. Matching alias/sample/usage features must be admitted before selection.",
+    "Old presented/new desired support union, fixed32 rectangle fallback, restoration of all eight samples and one masked suffix pass avoid repeated blend outside damage. Fullscreen invocation and full resolve/load/store costs remain, so reduction is not demonstrated speed.",
+    "Every suffix pipeline including glyph/color-glyph/menu and terminal must use predicate; terminal sampling stays before conditional discard. Prefix and dialogs must bind unrestricted mask explicitly. Masked text coverage/partial primitives must be covered by exact output controls.",
+    "Retained B requires Store, exact matching successful native receipt and invalidation after any failed/uncertain attempt; queued B writes can exist despite failed presentation. Existing A may survive but B must be fully reconstructed. Proposed failure rule is correct.",
+    "Optional alias/view/pipeline/uniform admission must retain required fallback and current+retiring aggregate limits. Uniform generation cannot be mutated under queued work. Keep optional usage changes from starving required B.",
+    "Hover/material changes stay cold under current shared ownership. No path or slow-frame exclusion is authorized.",
+    "Three-slot bounded query lifetime must span continuations without query reuse, release on cancellation only after actual submitted work, and retain immutable frame/host/submission lineage. Arrival-time log slicing is correctly retired.",
+    "sRGB negative correctly reclassified as source/API rejection rather than guaranteed differing output. Readback controls must compare per-sample expected bytes, not only resolved averages.",
+    "Owner ratification of changed mechanism/measurement and governed numbered decision remains necessary before implementation/proof. Complete DRM duty qualification remains separate and unapproved."
+  ],
+  "primary_reference": "https://www.w3.org/TR/WGSL/#builtin-values",
+  "review_history": [
+    {
+      "pins": {
+        "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r3.md": "e76d5565f7424431d401ab7bf1c9f2028999251560506679becd6b389a6136b2",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r2.md": "c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+        "docs/decisions/PRODUCT_MECHANICS_049_SHARED_RENDER_SESSION.md": "f84593fd6709bbb574c40b3e45733afd5cb9fcb6220b1925346e166982f5f3af",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/diagnostic-analysis.json": "3eabd2e0501b6f88bc864c91cc200e0889a92e19e440ddeb33c4c996832174d7",
+        "crates/gui-render/src/render/gpu_frame.rs": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685",
+        "crates/gui-render/src/render/gpu_measurements.rs": "ba2f06f5c6c6c88d4bf9cf43eb3f85ccf3369dc77433ccdebcf531e981d33e0e",
+        "crates/gui-render/src/render/cold_world_upload.rs": "f697b132af9c5b90c5181ce4a19878d0d04f727332f1c8511deb07b08805427c",
+        "crates/gui-render/src/render/glyph_upload_continuation.rs": "1719bcbd4c18c4e73217f6c032c9aface0ebeacb2c27968f0acf98e8e39a4f2c",
+        "crates/gui-render/src/render/gpu_prefix_images.rs": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d"
+      },
+      "findings": [
+        {
+          "id": "R3-01",
+          "severity": "high",
+          "source": "proposal-r3.md:136-152; gpu_frame.rs:310-316",
+          "finding": "New 6*4 upload +4 final +3 scene=31 query plan does not explain how final flush_frame_uploads command batch, submitted before final command_buffer, is included. Prefix/restore and suffix consume four final queries already. A leading marker before final upload adds two, exceeding32 at six continuation submissions.",
+          "required": "Specify concrete command-buffer ordering and query map that starts before final flush upload, ends after final resolve, and fits32. Example: cap continuation uploads at5 and use leading marker before final upload, then two final render passes (20+6+3=29). If a separate trailing marker is required, count its additional pair explicitly. Add negative where final flush upload is outside interval; retain fail-closed capacity behavior."
+        }
+      ],
+      "disposition": "Renderer mechanism is plausible and conservatively bounded; amend exact final-submission timing/query layout before owner packet. No performance or sample-exactness acceptance inferred."
+    }
+  ],
+  "followup": [
+    "Five continuation submissions consume20queries; final leading marker before mixed uploads plus prefix/restore and suffix consume6; optional3scene =29. Final end boundary must include resolve; omitted-final-flush negative remains part of required complete-timing controls.",
+    "Restoration now uses at most32 integer-scissored fullscreen triangle draws. Overlap is idempotent without blending, and prefix/world/common suffix are not replayed per rectangle. This removes full-viewport per-sample restore invocation; suffix remains once under union predicate.",
+    "Require identical integer pixel union for restore scissors and suffix predicate, clipped to extent with empty rectangles skipped; boundary/offscreen/overlap proof belongs to proposed exact-output batch.",
+    "The generic phrase trailing marker for every submission should be read with concrete final six-query layout: suffix-end is final end boundary, not an uncounted extra marker pass. If a dedicated final trailing marker is added, charge its two queries (31total) and keep declared bounds explicit.",
+    "Independent review is advisory only. Existing r2 sequence stays globally stopped. No builds/tests/native work executed."
+  ]
+}

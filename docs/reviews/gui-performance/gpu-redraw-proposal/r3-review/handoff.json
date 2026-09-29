@@ -1,0 +1,35 @@
+{
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "disposition": "Explicit self-release at concrete r3 owner boundary after r2 failed-trial stop. No outgoing implementation changes; production source remains6704c1e0. Not a silent reassignment.",
+  "prior_claim": {
+    "agent": "codex",
+    "claimed_at": "2026-09-28T02:26:03Z",
+    "expires_at": "2026-09-29T07:24:00Z",
+    "harness": "codex-cli",
+    "head": "dd10d2ab67ff948a4db12f6da964f0afae918163",
+    "heartbeat_at": "2026-09-28T23:24:00Z",
+    "scope": [
+      "crates/gui-render",
+      "crates/gui-app",
+      "docs/reviews/gui-performance/gpu-redraw-proposal",
+      "docs/decisions/PRODUCT_MECHANICS_049_SHARED_RENDER_SESSION.md",
+      "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+      "specs/active_frontier.json",
+      "specs/PROGRESS.md",
+      "specs/spec_governance_manifest.json",
+      "specs/evidence_traceability_manifest.json",
+      "docs/SOURCE_HEALTH_POLICY.md",
+      ".beads/issues.jsonl",
+      "specs/source_module_size_manifest.json",
+      "specs/SPEC_PARITY.md",
+      "scripts/check_gui_agent_terminal_convergence.py",
+      "scripts/check_terminal_core_renderer_boundary.py",
+      "scripts/test_terminal_core_renderer_boundary.py"
+    ],
+    "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+    "worktree": "/home/bfadmin/Documents/datum-eda"
+  },
+  "prior_authorization": "execution: immutable r2 only",
+  "next_boundary": "GPI-S4-APPROVAL-R3",
+  "execution": "No r3 execution until explicit owner disposition and synchronized claim/governance; GPU issue open."
+}

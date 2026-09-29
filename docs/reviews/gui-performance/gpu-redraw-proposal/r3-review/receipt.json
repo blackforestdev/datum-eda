@@ -1,0 +1,50 @@
+{
+  "status": "Reviewed proposal only; no r3 execution or ratification.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "source_base": "6704c1e051bbbc7bff096a09a1ffd16250a4e23f",
+  "stopped_experiment_commit": "7ae75ed3",
+  "proposal_sha256": "716389b40bfafa5ebcbcf628af835d29309bf96c33b1091248871df6df6ac7b4",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "a89661171084b2e90b3a37b601cf84f361c9e7c170502cd64a89a2d5f3c66ac9",
+    "crates/gui-render/src/render/session_prefix.rs": "71b11addf27584e18dc0a3c430b10f46bdfd650caf9deabdc04a6f2f14b49b56",
+    "crates/gui-render/src/render/session_pointer.rs": "b570e692009e156822f19a385270d933f8ce29a2539064cd24cbe96159b56d2b",
+    "crates/gui-render/src/render/session_hover.rs": "ca740ec74233c3488b937079d446fe8c4cd1a3b76794262de426e476fa2c2247",
+    "crates/gui-render/src/render/interaction_overlay.rs": "0fb813342a117588a16862a2ac9cfab3fa503614a189c9c117e79c66493dbd0d",
+    "crates/gui-render/src/render/retained.rs": "d8f2d7df2c524c06218f878ed87a4622d14bd9e7117e3a309ed080d962c04a9b",
+    "crates/gui-render/src/render/scene_visibility.rs": "f0ff0676db3b66bb7fddcc7e4ac2d5dbe80cca480c3f047b49499fd7a8153d79",
+    "crates/gui-render/src/render/cold_world_upload.rs": "f697b132af9c5b90c5181ce4a19878d0d04f727332f1c8511deb07b08805427c",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "eb6e6f585e54432cc034cb805bc9e9719677dad9f18f562ae68054c38f9fe45d",
+    "crates/gui-render/src/render/gpu_measurements.rs": "ba2f06f5c6c6c88d4bf9cf43eb3f85ccf3369dc77433ccdebcf531e981d33e0e",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d",
+    "crates/gui-render/src/render/gpu_init.rs": "38227ffdd16deac8dd7110ac2b51b6db272c21518991fccb41bf3da2cb97bfa6",
+    "crates/gui-render/src/render/terminal_graphics.rs": "a95fa985eea8f9b08064cc1f72a2490eea16dd6c56886b793caefab5b67f01d8",
+    "crates/gui-render/src/render/gpu_text.rs": "db3e68887c2021343faa3317f8166867e61c7c561afa398dcee10c6f1e48dab0",
+    "crates/gui-render/src/text_gpu/glyph.wgsl": "e014266c7282cb05a23fe649d917f9138f1b1c21c0d0d07ecbef426a689228f0",
+    "Cargo.lock": "0cee76a3005add00e0a63311e937ed7e15d54c0ec57627849b4cb4e756b7387c",
+    "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-core-28.0.1/src/device/resource.rs": "99ddb1d8e2a65e54e84833b82e0e7c1587f8f78c35539ed7546b46d3112c017b",
+    "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-core-28.0.1/src/command/transfer.rs": "ce36f5bfaf289ad467c4a7a39a7e47bc1050b28784ad4d6cd84c1b6d7f74aa27"
+  },
+  "review": "independent-review.json: one timing/query-capacity blocker resolved; recommendation only, no owner authority.",
+  "rationale": "Remove demonstrated full8xcopy on warm pointer frames while preserving shared ownership, all samples/painter order and bounded lifetime; complete missing GPU upload attribution before a new bounded candidate. No hardware feasibility claim.",
+  "superseded_only_if_approved": [
+    "warm full A-to-B copy",
+    "discard of eligible composed B after each frame",
+    "unrestricted suffix writes for eligible warm pointer update",
+    "incomplete-only continuation timing and arrival-offset workload attribution"
+  ],
+  "preserved": [
+    "Cold material-hover semantics and all slow frames remain in scope",
+    "Full graph and copy fallback",
+    "Original CPU/GPU/resource budgets and all225requirements",
+    "No CPU optimization or new dependency",
+    "S4/S5 issue remains open; complete DRM duty still blocks qualification"
+  ],
+  "drm_design_archive": "Unaccepted syscall-supervision draft and blocking review retained for continuity, not selected implementation or approved execution. R3 does not authorize it.",
+  "artifacts_sha256": {
+    "independent-review.json": "c27efc0ecc0175d0e952ef973b223d3b7c4a5063d30447453745601401a5814b",
+    "drm-method-unaccepted.txt": "c9937ce5155fec8681219bdfe1eac715cf59a2248712d74eac4d024f6265f58d",
+    "drm-method-review.json": "ae9a23f7c4d1f6de2156a5eabf5fdf25e80c5ec70398db581ef96b41f38f6375"
+  }
+}

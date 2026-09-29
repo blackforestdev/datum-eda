@@ -1,0 +1,83 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "reviewer_session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "scope": "Independent read-only method review. Draft and linked primary interfaces/kernel source inspected. No observer implementation, tracing, ptrace, builds or native runs.",
+  "draft_sha256": "c9937ce5155fec8681219bdfe1eac715cf59a2248712d74eac4d024f6265f58d",
+  "disposition": "Revise before governed owner packet. Plausible bounded feasibility candidate, not yet established complete-duty method. No authorization inferred from r2 or this review.",
+  "blocking_amendments": [
+    {
+      "id": "DRM-METHOD-01",
+      "severity": "high",
+      "topic": "Trace coverage and bootstrap",
+      "finding": "Draft names families of calls but does not define complete intercepted/allowed/rejected routes or filter bootstrap protocol. Outbound SCM_RIGHTS can leak workload DRM open descriptions to unsupervised tasks; observing receipts alone does not establish exclusive workload ownership. Threads with unshared file tables require duplication from the exact table owner, not assumed leader PID.",
+      "amendment": "Specify pre-exec handshake, inherited-fd baseline, no_new_privs/filter installation and ptrace options, x86-64/x32 rejection, exact syscall/ioctl tables, outbound sendmsg/sendmmsg and PRIME/sync fd disposition, and verified per-task pidfd/table targeting. Unsupported routes must be detected before claiming completeness; no tracing before owner approval."
+    },
+    {
+      "id": "DRM-METHOD-02",
+      "severity": "high",
+      "topic": "Quiescence, TOCTOU and progress",
+      "finding": "Stopping supervised threads does not alone prove all argument memory stable: external shared mappings, already-running kernel IO, GPU/userptr writes and restart paths need disposition. All-stop held through blocking recvmsg/open/exec can prevent a cooperating traced sender or exec sibling from progressing. Timeout makes that run unavailable but does not show method feasible for actual workload.",
+      "amendment": "Define a syscall stop/resume state machine, signal/restart behavior and clone/exec reconciliation; specify which memory is proven stable and fail closed for unprovable writers. Give progress policy for blocking fd transfers and thread teardown without silently changing workload behavior. Include concrete cases within existing finite batch."
+    },
+    {
+      "id": "DRM-METHOD-03",
+      "severity": "high",
+      "topic": "Drain and counter finalization proof",
+      "finding": "Native GEM_BUSY can only report tracked native fences; draft correctly states foreign fences are excluded but has not yet established every admitted exec mode leaves an observable fence until completion or that busy-idle implies final client fdinfo accounting has been materialized. The latter is distinct from request completion.",
+      "amendment": "Before native conformance, source-pin an explicit admitted ioctl/flag/extension matrix and prove submission->reservation/native fence->GEM_BUSY->client runtime accounting, covering GEM_CLOSE/context/VM destruction, exec replacement and resets. Identify an observable foreign/import rejection predicate. If unavailable, return source-only infeasibility result instead of consuming calibration runs."
+    },
+    {
+      "id": "DRM-METHOD-04",
+      "severity": "high",
+      "topic": "Duty interval and observer perturbation",
+      "finding": "Keeping accounting window open through synchronous drains can dilute duty if added stopped/drain wall time enters the denominator. Repeated pre-GEM_CLOSE drains serialize workload, and retained aliases defer file/context cleanup; these alter more than timer overhead.",
+      "amendment": "Define action-window numerator/denominator, queued-tail attribution, warmup/still/drain counters separately, engine capacity normalization and cross-device aggregation before execution. Never use observer-added wall time to make duty pass. Name exact off/on metrics available without the observer; off runs cannot supply complete client-duty truth by assumption. Compare delivered work, queue backlog/retirement and hold effects, not only a timing ratio."
+    },
+    {
+      "id": "DRM-METHOD-05",
+      "severity": "medium",
+      "topic": "Bounds and negative cases",
+      "finding": "12 cases and14 calibration runs are bounded, but case labels leave clone/unshare/outbound transfer/restart/handle reuse/teardown coverage ambiguous. Two-second drains plus30-second case deadlines need explicit relationship; end-to-end memory bound is not implied solely by log cap.",
+      "amendment": "Enumerate exactly12 case recipes and required expected outcomes, slot reuse/epoch/tombstone policy, resident storage bounds and what first failure cancels. Keep unsupported-driver/probe clients as unavailable. No replacement native runs under same approval."
+    },
+    {
+      "id": "DRM-METHOD-06",
+      "severity": "medium",
+      "topic": "Approval and feasibility staging",
+      "finding": "Current prose calls this selected mechanism while central feasibility proofs remain conditions. Owner should approve bounded development/conformance with explicit possibility of no usable method, not an implied qualifying observer.",
+      "amendment": "Add source-only feasibility gate before first trace and explicit source-review gate before calibration. Owner response authorizes only named method implementation and max12+14 runs at fixed pins; no root/system tuning, wider tracing, retry campaign or final acceptance. Keep separately approved renderer/own-queue work independent."
+    }
+  ],
+  "positive_notes": [
+    "Same-open-description alias retention addresses ephemeral DRM clients in principle, with deliberate lifetime extension disclosed.",
+    "No plateau heuristic, no GEM_WAIT boost, finite caps, unavailable on foreign/unsupported devices and invalid incomplete samples are appropriate fail-closed boundaries.",
+    "Current policy conservatively invalidates counter regressions; DRM stats permit temporary regressions, so this may reduce availability but does not itself falsely qualify a result.",
+    "Reference kernel version is correctly treated as feasibility source until installed Debian driver build/pins are reconciled."
+  ],
+  "sources": [
+    {
+      "url": "https://man7.org/linux/man-pages/man2/ptrace.2.html",
+      "supports": "per-thread tracing, clone/exec/exit event semantics and syscall stop complexity"
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/seccomp.2.html",
+      "supports": "filter inheritance and unprivileged no_new_privs prerequisite"
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/pidfd_getfd.2.html",
+      "supports": "shared open-file-description semantics and ptrace permission check"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_busy.c",
+      "supports": "native fence reporting and explicit exclusion of foreign fences"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c",
+      "supports": "submission construction requires exact admitted-mode analysis; not itself complete accounting proof"
+    },
+    {
+      "url": "https://docs.kernel.org/gpu/drm-usage-stats.html",
+      "supports": "per-client engine busy units, capacity and temporary counter regressions"
+    }
+  ]
+}
