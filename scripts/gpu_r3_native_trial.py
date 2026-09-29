@@ -6,6 +6,7 @@ sys.path.insert(0,str(ROOT/'docs/reviews/gui-performance/gpu-redraw-proposal/sto
 from gpu_r3_pointer_input import pointer_input
 sys.path.insert(0, str(ROOT / "scripts"))
 from gpu_r3_receipts import validate as validate_gpu, validate_demands
+from gpu_r3_trial_outcome import record_failure, finish_result
 from gpu_r2_wm_close import close_window
 
 declaration = json.loads(Path(sys.argv[1]).read_text())
@@ -127,10 +128,17 @@ try:
     wait_until(workload['drain_ns'])
     report['tail_end']=cpu()
     assert int(xd('getwindowfocus'))==main
+    report['final_capture_started_ns']=time.monotonic_ns()
     subprocess.run(['import','-window',str(main),str(out/'final.png')],check=True,timeout=10)
+    report['final_capture_finished_ns']=time.monotonic_ns()
     comparison=subprocess.run(['compare','-metric','AE',declaration['reference_png']['path'],str(out/'final.png'),'null:'],capture_output=True,text=True,timeout=10)
     report['final_pixel_difference']=comparison.stderr
-    assert comparison.returncode==0,'changed final pixels'
+    assert comparison.returncode in (0,1), 'final image comparison failed'
+    if comparison.returncode:
+        # A mismatch remains fatal, but must not destroy the native input state
+        # needed to diagnose it. Finish only the existing bounded drain/export.
+        record_failure(report, AssertionError('changed final pixels'))
+        save()
     report['drain_start']=cpu();close_window(main)
     connection,_=listener.accept();connection.settimeout(2)
     with connection:
@@ -145,6 +153,8 @@ try:
     p.wait(timeout=10);report['exit_code']=p.returncode;assert p.returncode==0
     # The observer exports AFTER endpoint acknowledgement; now require the file.
     receipt=json.loads((out/'input-receipt.json').read_text())
+    if report.get('failures'):
+        raise AssertionError('changed final pixels')
     schedule=json.loads((out/'schedule.json').read_text())
     assert schedule['started_ns']==workload['active_ns'], 'producer moved declared active boundary'
     report['input']=pointer_input(schedule,receipt,report['tail_end']['monotonic_ns'],declaration['expected_context'],declaration['max_producer_lateness_ns'])
@@ -178,17 +188,17 @@ try:
     else:
         assert not samples and receipt['gpu_drained'] is None
         report['gpu']='disabled';report['budget_stop']=False
-    report['status']='valid_budget_failure' if report['budget_stop'] else 'valid_descriptive_run'
+    finish_result(report, report['budget_stop'])
     report['post_export_cpu']=cpu()
     assert sha(project/'board/board.json')==declaration['project']['board_file_sha256'],'authored fixture changed'
 except BaseException as error:
-    report['status']='invalid';report['error']=repr(error)
+    record_failure(report, error)
 finally:
     if producer is not None and producer.poll() is None:
         producer.terminate()
         try: producer.wait(timeout=2)
         except subprocess.TimeoutExpired: producer.kill();producer.wait(timeout=2)
-        report['status']='invalid';report['error']='input producer required forced cleanup'
+        record_failure(report, RuntimeError('input producer required forced cleanup'))
     if p is not None and p.poll() is None:
         os.killpg(p.pid,signal.SIGTERM)
         try:p.wait(timeout=5)
@@ -196,7 +206,7 @@ finally:
         report['forced_cleanup']=True
     remaining=(group/'cgroup.procs').read_text().strip();report['remaining_before_cleanup']=remaining
     if remaining:
-        report['status']='invalid';report['error']='workload descendants survived controlled root exit'
+        record_failure(report, RuntimeError('workload descendants survived controlled root exit'))
         (group/'cgroup.kill').write_text('1')
         deadline=time.monotonic()+5
         while (group/'cgroup.procs').read_text().strip() and time.monotonic()<deadline:time.sleep(.01)
@@ -204,7 +214,7 @@ finally:
     if not (group/'cgroup.procs').read_text().strip():group.rmdir()
     listener.close();(out/'observer.sock').unlink(missing_ok=True)
     report['binary_unchanged']=sha(binary)==report['binary_sha256']
-    if not report['binary_unchanged']: report['status']='invalid';report['error']='binary changed'
+    if not report['binary_unchanged']: record_failure(report, RuntimeError('binary changed'))
     save()
 print(report['status'],report.get('gpu'),report.get('error'),flush=True)
 raise SystemExit(1 if report['status']=='invalid' else 2 if report['budget_stop'] else 0)

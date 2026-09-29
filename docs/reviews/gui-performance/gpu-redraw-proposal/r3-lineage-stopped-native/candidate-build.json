@@ -1,0 +1,76 @@
+{
+  "source": "26b51ded33c5db8398bf4daa94dc26a3801e5d40",
+  "head_at_completion": "60fead8a7c408926784ddc3d062cdf9f1694d7ae",
+  "proof": "Guarded offline release build. Actual workspace GUI app and render compiled fresh=false. Only documentation and runner path changes after source pin; production source unchanged.",
+  "artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/bfadmin/Documents/datum-eda/crates/gui-app#datum-gui-app@0.1.0",
+    "manifest_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/Cargo.toml",
+    "target": {
+      "kind": [
+        "bin"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "datum-gui",
+      "src_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/src/main.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [
+      "visual"
+    ],
+    "filenames": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui"
+    ],
+    "executable": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "fresh": false
+  },
+  "render_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/bfadmin/Documents/datum-eda/crates/gui-render#datum-gui-render@0.1.0",
+    "manifest_path": "/home/bfadmin/Documents/datum-eda/crates/gui-render/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "datum_gui_render",
+      "src_path": "/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [
+      "visual"
+    ],
+    "filenames": [
+      "/home/bfadmin/Documents/datum-eda/target/release/deps/libdatum_gui_render-a718ae6fbca5a3c1.rlib",
+      "/home/bfadmin/Documents/datum-eda/target/release/deps/libdatum_gui_render-a718ae6fbca5a3c1.rmeta"
+    ],
+    "executable": null,
+    "fresh": false
+  },
+  "executable": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-lineage-proof/candidate-26b51ded-r3-lineage-datum-gui",
+  "binary_sha256": "21a01d41333b40a0fdd108e53ff75aa29d09f7951aa4ee2e7fd9cffe849937ee"
+}
