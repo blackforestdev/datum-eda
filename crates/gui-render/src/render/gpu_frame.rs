@@ -1,5 +1,7 @@
 //! Full-frame GPU encoding and submission; resource lifetime lives on Renderer.
 use super::*;
+#[path = "gpu_composition.rs"]
+mod composition;
 #[path = "gpu_frame_painter.rs"]
 mod painter;
 #[path = "gpu_frame_target.rs"]
@@ -190,7 +192,6 @@ impl Renderer {
         let Some(frame_target) = target.acquire()? else {
             return Ok(false);
         };
-        let view = frame_target.view();
         let mut measurement = self.begin_gpu_measurement()?;
         let leading = self.final_measurement_leading(device, &mut measurement)?;
         let encode_started = std::time::Instant::now();
@@ -231,165 +232,27 @@ impl Renderer {
             }
             _ => None,
         };
-        let mask =
-            damage.and_then(|pixels| self.damage_masks.restricted(device, pixels.rectangles()));
-        let damage = damage.filter(|_| mask.is_some());
-        let reuse = damage.is_some();
-        #[cfg(all(test, feature = "visual"))]
-        let reuse = reuse || fault == crate::gpu_surface::prefix_negative_control::Fault::StaleKey;
-        let suffix_mask = mask.as_ref().unwrap_or(&self.damage_masks.unrestricted);
-        #[cfg(all(test, feature = "visual"))]
-        let suffix_mask =
-            if fault == crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask {
-                &self.damage_masks.unrestricted
-            } else {
-                suffix_mask
-            };
-        #[cfg(all(test, feature = "visual"))]
-        let restore_samples =
-            fault != crate::gpu_surface::prefix_negative_control::Fault::StaleWorking;
-        #[cfg(not(all(test, feature = "visual")))]
-        let restore_samples = true;
-        suffix_mask.set_consumers(self.frame_consumers.all());
+        let plan = damage.and_then(|pixels| {
+            crate::renderer_state::damage::regional::Plan::new([width, height], pixels.rectangles())
+        });
+        let reuse = plan.is_some();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
         });
-        let clear = wgpu::LoadOp::Clear(wgpu::Color {
-            r: APP_BG[0] as f64,
-            g: APP_BG[1] as f64,
-            b: APP_BG[2] as f64,
-            a: 1.0,
-        });
-        if let Some(images) = &images {
-            if let Some(damage) = &damage {
-                if !damage.rectangles().is_empty() && restore_samples {
-                    let (source, destination) =
-                        images.restoration_views().expect("admitted alias views");
-                    self.damage_masks
-                        .restoration
-                        .as_ref()
-                        .expect("admitted restoration")
-                        .encode(
-                            device,
-                            &mut encoder,
-                            source,
-                            destination,
-                            damage.rectangles(),
-                            measurement
-                                .as_mut()
-                                .map(|m| m.pass("restore"))
-                                .transpose()?,
-                        );
-                }
-            } else if !reuse {
-                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                    label: Some("datum-retained-prefix"),
-                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                        view: images.prefix_view(),
-                        resolve_target: None,
-                        depth_slice: None,
-                        ops: wgpu::Operations {
-                            load: clear,
-                            store: wgpu::StoreOp::Store,
-                        },
-                    })],
-                    timestamp_writes: measurement.as_mut().map(|m| m.pass("frame")).transpose()?,
-                    ..Default::default()
-                });
-                self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
-            }
-            if damage.is_none() {
-                #[cfg(not(all(test, feature = "visual")))]
-                images.copy(&mut encoder);
-                #[cfg(all(test, feature = "visual"))]
-                fault.copy(
-                    device,
-                    &mut encoder,
-                    images,
-                    &msaa_view,
-                    width,
-                    height,
-                    self.msaa_format,
-                );
-            }
-        }
-        let text_encode_elapsed;
-        {
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("datum-gui-final-resolve"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &msaa_view,
-                    resolve_target: Some(view),
-                    depth_slice: None,
-                    ops: wgpu::Operations {
-                        load: if images.is_some() {
-                            wgpu::LoadOp::Load
-                        } else {
-                            clear
-                        },
-                        store: if images.is_some() && self.damage_masks.restoration.is_some() {
-                            wgpu::StoreOp::Store
-                        } else {
-                            wgpu::StoreOp::Discard
-                        },
-                    },
-                })],
-                timestamp_writes: measurement
-                    .as_mut()
-                    .map(|m| m.pass(if images.is_some() { "suffix" } else { "frame" }))
-                    .transpose()?,
-                ..Default::default()
-            });
-            if images.is_none() {
-                self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
-            }
-            // The missing-restriction control must omit both protections now.
+        let text_encode_elapsed = self.encode_composition(
+            device,
+            &mut encoder,
+            &frame_target,
+            &msaa_view,
+            prepared,
+            width,
+            height,
+            images.as_ref(),
+            plan.as_ref(),
+            &mut measurement,
             #[cfg(all(test, feature = "visual"))]
-            let painter_damage =
-                if fault == crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask {
-                    None
-                } else {
-                    damage
-                };
-            #[cfg(not(all(test, feature = "visual")))]
-            let painter_damage = damage;
-            text_encode_elapsed = if let Some(damage) = painter_damage {
-                let mut elapsed = std::time::Duration::ZERO;
-                for &region in damage.rectangles() {
-                    elapsed += self.draw_frame_suffix(
-                        &mut pass,
-                        prepared,
-                        width,
-                        height,
-                        &suffix_mask.group,
-                        crate::renderer_state::damage::clip::Clip(region),
-                    )?;
-                    #[cfg(all(test, feature = "visual"))]
-                    if fault
-                        == crate::gpu_surface::prefix_negative_control::Fault::OverlappingSuffix
-                    {
-                        elapsed += self.draw_frame_suffix(
-                            &mut pass,
-                            prepared,
-                            width,
-                            height,
-                            &suffix_mask.group,
-                            crate::renderer_state::damage::clip::Clip(region),
-                        )?;
-                    }
-                }
-                elapsed
-            } else {
-                self.draw_frame_suffix(
-                    &mut pass,
-                    prepared,
-                    width,
-                    height,
-                    &suffix_mask.group,
-                    crate::renderer_state::damage::clip::Clip::full(width, height),
-                )?
-            };
-        }
+            fault,
+        )?;
         let encode_elapsed = encode_started.elapsed().saturating_sub(text_encode_elapsed);
 
         let trace_enabled = std::env::var_os("DATUM_TRACE_TIMING").is_some();
@@ -406,9 +269,6 @@ impl Renderer {
                 .chain([command_buffer]),
         );
         self.hold_frame_submission(queue, images.as_ref());
-        if let Some(mask) = &mask {
-            crate::text_gpu::hold_until_done(queue, vec![mask.submission_ref()]);
-        }
         if let Some(batch) = uploads {
             batch.hold(queue);
         }
@@ -419,7 +279,7 @@ impl Renderer {
             self.render_session.prefix.encoded(
                 images.identity,
                 reuse,
-                if damage.is_some() {
+                if reuse {
                     0
                 } else {
                     images.logical_copy_bytes()

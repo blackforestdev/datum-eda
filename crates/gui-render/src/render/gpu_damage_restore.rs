@@ -53,7 +53,7 @@ impl Restoration {
             label: Some("datum-sample-restoration-layout"),
             entries: &[wgpu::BindGroupLayoutEntry {
                 binding: 0,
-                visibility: wgpu::ShaderStages::FRAGMENT,
+                visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
                 ty: wgpu::BindingType::Texture {
                     sample_type: wgpu::TextureSampleType::Float { filterable: false },
                     view_dimension: wgpu::TextureViewDimension::D2,
@@ -108,6 +108,48 @@ impl Restoration {
         Some(Self { pipeline, layout })
     }
 
+    pub(crate) fn encode_regional(
+        &self,
+        device: &wgpu::Device,
+        encoder: &mut wgpu::CommandEncoder,
+        source: &wgpu::TextureView,
+        destination: &wgpu::TextureView,
+        plan: &super::regional::Plan,
+        timestamps: Option<wgpu::RenderPassTimestampWrites<'_>>,
+    ) {
+        let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("datum-regional-sample-source"),
+            layout: &self.layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: wgpu::BindingResource::TextureView(source),
+            }],
+        });
+        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("datum-regional-sample-restoration"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: destination,
+                resolve_target: None,
+                depth_slice: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT),
+                    store: wgpu::StoreOp::Store,
+                },
+            })],
+            timestamp_writes: timestamps,
+            ..Default::default()
+        });
+        pass.set_pipeline(&self.pipeline);
+        pass.set_bind_group(0, &binding, &[]);
+        for tile in plan.tiles() {
+            pass.set_scissor_rect(tile.atlas[0], tile.atlas[1], tile.extent[0], tile.extent[1]);
+            // The source ID is captured by the command buffer. No mutable GPU
+            // mapping, unmeasured upload, or per-tile buffer allocation is needed.
+            pass.draw(0..3, tile.id..tile.id + 1);
+        }
+    }
+
+    #[cfg(all(test, feature = "visual", target_os = "linux"))]
     pub(crate) fn encode(
         &self,
         device: &wgpu::Device,

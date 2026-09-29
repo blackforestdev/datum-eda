@@ -136,6 +136,15 @@ impl FrameQueries {
     ) -> anyhow::Result<wgpu::CommandBuffer> {
         let mut encoder =
             device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some(name) });
+        self.encode_marker(&mut encoder, view, name)?;
+        Ok(encoder.finish())
+    }
+    fn encode_marker(
+        &mut self,
+        encoder: &mut wgpu::CommandEncoder,
+        view: &wgpu::TextureView,
+        name: &'static str,
+    ) -> anyhow::Result<()> {
         {
             let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some(name),
@@ -152,7 +161,7 @@ impl FrameQueries {
                 ..Default::default()
             });
         }
-        Ok(encoder.finish())
+        Ok(())
     }
     pub(super) fn finish_boundaries(&mut self) -> anyhow::Result<()> {
         if let Some(transfer_end) = self.final_transfer_end {
@@ -177,6 +186,15 @@ impl FrameQueries {
             }
         }
         Ok(())
+    }
+}
+impl GpuMeasurements {
+    pub(crate) fn final_marker(
+        &self,
+        frame: &mut FrameQueries,
+        encoder: &mut wgpu::CommandEncoder,
+    ) -> anyhow::Result<()> {
+        frame.encode_marker(encoder, &self.marker.view, "frame-trailing")
     }
 }
 pub(super) fn decode_boundaries(

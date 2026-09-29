@@ -1,7 +1,7 @@
 use super::super::super::frame_revision::Target;
 use super::super::{Key, Prefix};
 use super::*;
-use crate::gpu_surface::PairIdentity;
+use crate::gpu_surface::CompositionIdentity;
 
 fn contains(pixels: &Pixels, x: u32, y: u32) -> bool {
     pixels
@@ -17,7 +17,7 @@ fn support(x: u32) -> Pixels {
 
 #[test]
 fn presented_support_survives_coalescing_and_uncertain_frames_fail_closed() {
-    let pair = PairIdentity::test_identity(1);
+    let pair = CompositionIdentity::test_identity(1);
     let key = Key {
         preparation: 1,
         strong_revision: 1,
@@ -39,7 +39,11 @@ fn presented_support_survives_coalescing_and_uncertain_frames_fail_closed() {
     let damage = prefix.damage(pair).unwrap();
     assert!(contains(&damage, 10, 5) && contains(&damage, 40, 5));
     assert!(!contains(&damage, 25, 5));
-    assert!(prefix.damage(PairIdentity::test_identity(2)).is_none());
+    assert!(
+        prefix
+            .damage(CompositionIdentity::test_identity(2))
+            .is_none()
+    );
     prefix.encoded(pair, true, 0);
     let encoded = prefix.take_encoded();
     prefix.complete(encoded, key, false);
@@ -168,7 +172,7 @@ fn real_pointer_triangles_keep_thin_support_and_cover_enter_move_leave() {
 
 #[test]
 fn direct_full_render_invalidates_presented_composition() {
-    let pair = PairIdentity::test_identity(1);
+    let pair = CompositionIdentity::test_identity(1);
     let key = Key {
         preparation: 1,
         strong_revision: 1,
@@ -231,7 +235,7 @@ fn cursorless_hover_damage_uses_the_actual_painter_clip() {
 
 #[test]
 fn unchanged_presented_revision_needs_no_geometry_support_but_changed_revision_does() {
-    let pair = PairIdentity::test_identity(1);
+    let pair = CompositionIdentity::test_identity(1);
     let key = Key {
         preparation: 1,
         strong_revision: 1,
@@ -248,7 +252,11 @@ fn unchanged_presented_revision_needs_no_geometry_support_but_changed_revision_d
     prefix.complete(encoded, key, true);
     prefix.begin(Some(key), None, 1);
     assert!(prefix.damage(pair).unwrap().rectangles().is_empty());
-    assert!(prefix.damage(PairIdentity::test_identity(2)).is_none());
+    assert!(
+        prefix
+            .damage(CompositionIdentity::test_identity(2))
+            .is_none()
+    );
     prefix.begin(Some(key), None, 2);
     assert!(prefix.damage(pair).is_none());
 }

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source_base": "149f0ba6",
+  "authority": "../owner-approval-r4.json",
+  "status": "Third r4 implementation unit: regional frame graph replaces production warm B restoration; offline checks only, GPU entry prerequisites still pending.",
+  "changes": [
+    "Fixed32px source tiles deduplicated/sorted into256slots with checked capacity/extent rejection; source clips intersect before translation to512px atlas cells. The original vertices, projections and painter order are unchanged.",
+    "Restore each whole selected tile from A through UNORM sample loads. Source tile ID travels as the immutable first-instance draw argument and a flat integer shader varying; atlas-local pixel derives from position modulo32. No per-frame GPU mapping buffer or mapping upload exists, so no mapping allocation or submission lifetime is omitted. CPU source ID storage remains fixed1KiB plus bounded header.",
+    "One T suffix pass and hardware T-to-R resolve, valid-cell R-to-C copies, then complete C-to-target copy. Empty warm frames copy C only. Cold frames reconstruct A/B/C and discard B; unsupported targets retain full fallback. Production full-size warm B restoration and restricted strip-uniform allocation are removed.",
+    "Successful completion identity now names A/C allocations. Existing stale/failure/coalescing handling remains the sole validity authority. B remains allocated, charged and included in coherent five-image submission holds.",
+    "A final bounded timestamp marker is encoded after each complete graph and before query resolution, including all presentation copies. Existing prefix-copy counter still specifically describes A-to-B logical bytes, not total regional/presentation transfer bytes.",
+    "The former restoration primitive and restricted-mask helpers remain test-only for historical component fixtures. They are not production alternate graphs or current regional qualification. Existing GPU fixture expectations still need adaptation before the new approved batch."
+  ],
+  "verification": {
+    "rationale": "Tile coverage/refusal, translated clip bounds, shader validity and completion invalidation decide readiness for the bounded GPU proof; lint checks affected default and visual consumers without starting GPU work.",
+    "offline_controls": "3regional tests (including2prior bundle tests),4damage-owner tests (one repeated tile test),7completion/support tests passed. No adapter/device/native calls in these selected tests.",
+    "lint": "Default and visual gui-render/gui-app all-target Clippy pass with -D warnings, serial guarded offline Cargo. First visual attempt found the now-test-only screen budget field unused; corrected with matching test-only ownership, no lint suppression.",
+    "policy": "Source health2659,13source-policy tests,cargo-resource/dependency authority and20parity inventories passed.",
+    "scope": "No GPU batch, release build, native trial or full native drift battery. Exact translated raster, runtime lifetime/performance and full metadata acceptance remain unproven."
+  },
+  "remaining": "Before GPU entry: complete4KiB metadata accounting; adapt all-sample, painter/seam, negative-control and resource fixtures; review14transition tile capacities; verify actual encoder query bound and timing receipt/baseline matching. Then only the already-approved one four-group batch and conditional build/campaign scope. Original S4/S5,camera,endurance,independent final and separate DRM duties remain open.",
+  "execution_consumed": {
+    "gpu_batches": 0,
+    "candidate_release_builds": 0,
+    "baseline_release_builds": 0,
+    "native_trials": 0
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_damage.rs": "d5a1ddb8b35cafbadd944c1dd0941a434138cdde45c3f304558cf132d46fac7c",
+    "crates/gui-render/src/render/gpu_damage_restore.rs": "4ce0c44576e3d508165dce345013f11cc0f6fa7ea83aba017a6f14d7712a7800",
+    "crates/gui-render/src/render/gpu_damage_restore.wgsl": "6b49342fb46076dbc4b24d15b7821a459708071dfac0c78fda24850fa56298a4",
+    "crates/gui-render/src/render/gpu_damage_sample_tests.rs": "d1253a8c4029a6a7c472b5bab896c443b01c1fedb970022defa8baa97eb57b00",
+    "crates/gui-render/src/render/gpu_frame.rs": "038af02ab2fdce8407dbc334cc7a9922143e62d550eb55a85a4229e85f29886f",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "5cec2921cf90a5679e4e853ff2c1fcd049c2ac6226df06efd48af230dcf1929d",
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": "349339da4849fef99b7ce9799d248e8aaece20a228a9a89dbfadde2400c1d6f1",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "6f0a77141da7d07f3aacc343723145723c280a5c09a40e76f4b9a04ae13fcf77",
+    "crates/gui-render/src/render/gpu_regional_images.rs": "a8f4a4e40638ecf1efeb46aa9f7602cf8a89b4912c3de9bac484c4db4c24593f",
+    "crates/gui-render/src/render/gpu_surface.rs": "cc69a96247e1ec30dd365689899692f5ec3e22bbb12918e212509c1813cfeba7",
+    "crates/gui-render/src/render/painter_clip.rs": "91d25672ee431fbdc5ee07e65e65310647220ba8b2b2fb826c26c904e6e43d85",
+    "crates/gui-render/src/render/session_damage_tests.rs": "2805fa15d0502b60634d4ab3ac9f1208a4cb409fd175f83d6bead38258fbaefa",
+    "crates/gui-render/src/render/session_prefix.rs": "f191eee7159b9bc4ad21918fc858c02aeacdb1c40cfe10ae89140f815c16446b",
+    "crates/gui-render/src/render/gpu_composition.rs": "e4e7ef39b2ec881b11fbdf84654e555deb7e1d0c07865e18a8c4db715b345dd1",
+    "crates/gui-render/src/render/regional_plan.rs": "d103cfc84de908f5dafbbec3a4ca71c95a3b6aec984dfa1705821bb1bb978083",
+    "crates/gui-render/src/render/gpu_damage_restore_legacy_test.wgsl": "6cd797e043d21350c485b15fb247931a0bf895f13ec13652f1928f7cecfad803"
+  },
+  "artifacts_sha256": {
+    "offline-logs.tar.gz": "c608aaf79c45ee18ee4e9333d65dd2642d0a91197223def88a18e1aa9856f4eb"
+  }
+}

@@ -6,7 +6,7 @@ use std::sync::Arc;
 mod prefix_images;
 #[path = "gpu_regional_images.rs"]
 mod regional_images;
-pub(crate) use prefix_images::{PairIdentity, PrefixImages};
+pub(crate) use prefix_images::{CompositionIdentity, PrefixImages};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct AttachmentKey {

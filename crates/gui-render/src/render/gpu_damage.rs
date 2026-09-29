@@ -9,6 +9,9 @@ use restore::Restoration;
 #[path = "painter_clip.rs"]
 pub(crate) mod clip;
 
+#[path = "regional_plan.rs"]
+pub(crate) mod regional;
+
 const RECTANGLES: usize = 32;
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -68,8 +71,10 @@ pub(crate) struct Masks {
     pub(crate) restoration: Option<Restoration>,
     pub(crate) unrestricted: Binding,
     pub(crate) layout: wgpu::BindGroupLayout,
+    #[cfg(all(test, feature = "visual"))]
     screen: Arc<Budget>,
     fixed_generations: Arc<Budget>,
+    #[cfg(all(test, feature = "visual"))]
     frame_generations: Arc<Budget>,
 }
 impl Masks {
@@ -81,6 +86,7 @@ impl Masks {
         let layout = layout(device);
         let fixed_generations =
             previous.map_or_else(|| Budget::new(2), |p| p.fixed_generations.clone());
+        #[cfg(all(test, feature = "visual"))]
         let frame_generations =
             previous.map_or_else(|| Budget::new(2), |p| p.frame_generations.clone());
         let unrestricted = Self::binding(device, &layout, &screen, &fixed_generations, None)?;
@@ -88,14 +94,17 @@ impl Masks {
             restoration: None,
             unrestricted,
             layout,
+            #[cfg(all(test, feature = "visual"))]
             screen,
             fixed_generations,
+            #[cfg(all(test, feature = "visual"))]
             frame_generations,
         })
     }
 
     /// Each queued frame owns a distinct immutable uniform. Admission refusal
     /// chooses the full graph; it never overwrites a submitted generation.
+    #[cfg(all(test, feature = "visual"))]
     pub(crate) fn restricted(
         &self,
         device: &wgpu::Device,
