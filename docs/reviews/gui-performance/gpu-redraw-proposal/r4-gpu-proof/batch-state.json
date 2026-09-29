@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "head": "544dc61a8195fc9135b790bd682e9baded44e1ad",
+  "started_at": "2026-09-29T20:04:38.129806+00:00",
+  "results": [
+    {
+      "kind": "render",
+      "exit_code": 0,
+      "elapsed_seconds": 16.407584284897894
+    },
+    {
+      "kind": "native",
+      "exit_code": 0,
+      "elapsed_seconds": 16.6224489598535
+    }
+  ],
+  "elapsed_seconds": 16.622452950803563
+}
