@@ -1,0 +1,116 @@
+{
+  "run_index": 0,
+  "spec": {
+    "role": "candidate",
+    "mode": "gpu",
+    "pair": 1,
+    "workload": "W-POINTER"
+  },
+  "declaration_sha256": "75deede68160eae2803934f6b573a957f7d1239142da51c6105a6e65288786da",
+  "binary_sha256": "b2da0cfb4a2d7018e64c6db9f8c7ebc7afde51065642c924bd490da85c0ef6bf",
+  "status": "invalid",
+  "gpu_duty": "unavailable: complete DRM lifetime observer absent",
+  "limits": [
+    "Descriptive bounded experiment only; not S4 qualification or formal relative inference.",
+    "Matched bounded causal/semantic observer in both modes; overhead is not subtracted.",
+    "No CPU/action, uninstrumented CPU/resource or physical presentation latency acceptance."
+  ],
+  "workload": {
+    "epoch": 449705184528787750,
+    "warmup_ns": 1444583889687096,
+    "active_ns": 1444588889687096,
+    "still_ns": 1444618889687096,
+    "drain_ns": 1444623889687096
+  },
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/gpu-regional-r4-proof/candidate-544dc61a-r4-datum-gui",
+    "--project-root",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "--initial-layout",
+    "single",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "observer_storage_limit_records": 4096,
+  "cpu_samples": [
+    {
+      "monotonic_ns": 1444543890514987,
+      "cpu_stat": {
+        "usage_usec": 0,
+        "user_usec": 0,
+        "system_usec": 0,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": []
+    },
+    {
+      "monotonic_ns": 1444547865613472,
+      "cpu_stat": {
+        "usage_usec": 2359033,
+        "user_usec": 1652521,
+        "system_usec": 706512,
+        "nice_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "members": []
+    }
+  ],
+  "cpu_before_spawn": {
+    "monotonic_ns": 1444543890514987,
+    "cpu_stat": {
+      "usage_usec": 0,
+      "user_usec": 0,
+      "system_usec": 0,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": []
+  },
+  "owned_cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/datum-gpu-r3-b99b20a793b74914ac8f301746a0c9a2",
+  "pid": 1643194,
+  "window": 27262980,
+  "geometry": {
+    "WINDOW": "27262980",
+    "X": "319",
+    "Y": "154",
+    "WIDTH": "1280",
+    "HEIGHT": "800",
+    "SCREEN": "0"
+  },
+  "failures": [
+    "AssertionError()"
+  ],
+  "error": "AssertionError()",
+  "remaining_before_cleanup": "",
+  "cpu_after_cleanup": {
+    "monotonic_ns": 1444547865613472,
+    "cpu_stat": {
+      "usage_usec": 2359033,
+      "user_usec": 1652521,
+      "system_usec": 706512,
+      "nice_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "members": []
+  },
+  "binary_unchanged": true
+}

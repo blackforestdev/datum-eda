@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "defect_issue": "dat-r4-native-attachment-capacity-uquy",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-r4.json",
+  "candidate_source": "544dc61a8195fc9135b790bd682e9baded44e1ad",
+  "method_source": "81614624",
+  "status": "R4 stopped at first native failure; overall GPU repair incomplete. Owner-requested disposition reached, no replacement or successor execution.",
+  "execution_consumed": {
+    "gpu_batches": 1,
+    "gpu_batch_result": "pass16.622453seconds",
+    "candidate_release_builds": 1,
+    "baseline_release_builds": 1,
+    "native_trials_attempted": 1,
+    "native_trials_valid": 0,
+    "pointer_workloads_started": 0,
+    "remaining_trials_cancelled": 11
+  },
+  "first_failure": {
+    "location": "crates/gui-app/src/native_attachment_ledger.rs:50",
+    "error": "index out of bounds: len3,index3",
+    "cause": "Unconditional native accounting consumer retains fixed3 current slots while R4 exposes5current images and up to10current/submitted union entries.",
+    "classification": "New repair integration defect in production native lifetime-accounting path, not legacy renderer discovery, observer record exhaustion, measured numerical failure or hardware/Wayland limitation.",
+    "follow_on": "SwapchainAcquireSemaphore in-use destruction panic, poisoned ledger, destructor abort and incomplete GPU frame occurred after the ledger panic; no independent root cause established."
+  },
+  "result_limits": [
+    "Startup/readiness failed before declared warmup/active pointer phase. No valid native reference pixels, complete frame seal, p95/p99, input performance or overhead result.",
+    "GPU proof remains valid at bounded offscreen/source scope. Native capability test did not exercise the attachment bridge. Renderer resource proof is not complete native resource acceptance.",
+    "No full DRM method, engine-duty result, camera/endurance or final independent acceptance."
+  ],
+  "cleanup": "Trial-owned cgroup empty after process abort; no forced process cleanup reported. Binary hash unchanged. Diagnostic warm.png is black and is not accepted output.",
+  "prior_valid_budget": {
+    "candidate": "453cd9f2",
+    "active_frames": 1277,
+    "p95_ms": 4.330583,
+    "p95_limit_ms": 4,
+    "p99_ms": 5.70175,
+    "p99_limit_ms": 8,
+    "meaning": "Prior candidate numerical failure; not a measurement of R4 and not a paired comparison."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/native_attachment_ledger.rs": "23d30900fcb0e53764244c64e7792761554555bcd90b61c40f445a45315a56c3",
+    "crates/gui-app/src/native_queue_owner.rs": "b70184394617ead58ce31e69c5f6726b504e962d72bbc6fb32c90dcc2f339d00",
+    "crates/gui-app/src/native_surface_transaction.rs": "080bc9691dba7732a5f8f12f56ae437ec4973c24f612d120fcd02d1c2314cb21",
+    "crates/gui-app/src/native_render_target.rs": "3951394f4c299c11ad938716aaf2dbc3791869df91a90588ce1966b13a3e5566",
+    "crates/gui-render/src/render/gpu_surface.rs": "84b6f94339e58b5c6ec47437b79dc85df4ca51f42e1ce0f6be359cca28e6e956",
+    "crates/gui-render/src/render/gpu_composition.rs": "9187dcc91afa21cc4eb873ed7a37b547331e68e5c83925485810ba500529d818"
+  },
+  "artifacts_sha256": {
+    "build-state.json": "0e95a7259678536f1842aecb60d4ed120567139820c22c22cefe0b3a5c83b24e",
+    "declaration.json": "75deede68160eae2803934f6b573a957f7d1239142da51c6105a6e65288786da",
+    "native-result.json": "4c2286f8851b84ebe331d228310168de9548be7136daca6dc14feb25353db106",
+    "native-raw.tar.gz": "0d3f2dec2455dba4edd3f86d677f2922eaf7b21c1a6e0e148285fa0786c4528e",
+    "campaign-state.json": "7a9460756b8642cf6b32784e036e090cd056c962ff668f5fdafe0bfcde6a5a25"
+  }
+}
