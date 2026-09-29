@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source_base": "ddf7a375",
+  "authority": "../owner-approval-r4.json",
+  "status": "Offline metadata/capacity/timing-method readiness; GPU fixture and actual encoder proof still pending.",
+  "changes": [
+    "Completed snapshot is built from the immutable current request/support/revision when its linear receipt takes the encoded A/C identity. Remove duplicate inline storage of the same request/support; begin/reset still cancel encoded state and successful matching completion alone publishes validity.",
+    "Compile-time4KiB bound now includes Prefix, receipt key/completion, fixed tile Plan, SurfaceAttachments, optional container/Arc control counters and transient five-image handle bundle. Default measured size3936bytes; default and visual compile-time bounds pass. Common tracked allocation/queue-observer metadata retains its separate existing accounting and runtime qualification obligation; this is not total renderer RSS or backend residency.",
+    "All14preserved native non-pad before/after hover fixtures replay offline against the pinned81pad board and derive old/new support through production Pixels and Plan. Tile counts0,44,0,40,45,0,12,0,31,0,45,40,0,44. These are the existing cursorless hover fixtures, not a replay of every native pointer position.",
+    "A separate conservative full1280x800 old/new crosshair seam case uses244tiles. Combined pointer/hover damage still may refuse256slot admission and must reconstruct cold; no universal warm-path capacity claim.",
+    "GPU receipt validator accepts r4 only with an explicit final-copy-marker method flag and requires frame-trailing after cold/warm/empty/fallback graphs. Native runner reads that flag from the pinned declaration; historical declarations remain under their original method. New r4 declaration and baseline backport remain pending; stopped campaigns are not reopened."
+  ],
+  "verification": {
+    "rationale": "Expanded metadata bound, completion cancellation,14fixture capacity and final-copy receipt negatives must hold before spending the bounded GPU batch. These are offline controls only.",
+    "controls": "8metadata/completion tests,1archived14transition replay,2tile/capacity tests,5receipt tests and5runner tests pass. Preserved fixture board SHA256 unchanged. No GPU/device or native workload in these selected runs.",
+    "lint": "Default and visual gui-render/gui-app all-target Clippy pass with -D warnings through serial offline guard. Initial visual lint rejected a redundant runtime assertion on a compile-time constant; changed to const assertion without weakening the bound.",
+    "policy": "Source2659,13source-policy controls,resource/dependency authority and20parity inventories pass. Governed receipt reconciled with unchanged reviewed route.",
+    "scope": "No new GPU batch, release build, native trial, full native drift or performance/resource acceptance."
+  },
+  "remaining": "Adapt exact all-sample/painter/seam/edge/full-capacity/negative-control and five-image lifetime fixtures. Verify31/32queries through actual encoder paths and complete timing on all graphs in approved GPU proof, then conditional matched builds/campaign only. Existing metadata layout proof does not replace runtime allocation/lifetime or separate DRM qualification. All S4/S5/endurance/independent requirements remain open.",
+  "execution_consumed": {
+    "gpu_batches": 0,
+    "candidate_release_builds": 0,
+    "baseline_release_builds": 0,
+    "native_trials": 0
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_surface.rs": "383ba49adaa9f4615a4e6e72b9f8fd9f27900a5ecbcd5b271669dbcf753a4b70",
+    "crates/gui-render/src/render/regional_plan.rs": "e506731c9ccae055e3b87dc3ffb597c3027a9647e18afa6e34c7f927f07fbd27",
+    "crates/gui-render/src/render/session_pointer_tests.rs": "52c3b52e0eaa4500f3ec451414183fc3ef76f54e275e03fc89fe2d8266f52084",
+    "crates/gui-render/src/render/session_prefix.rs": "36b1cad472981d572a18b7444752af39ddb7355fd7567a8d1c5de5e6ae5f4915",
+    "scripts/gpu_r3_native_trial.py": "d73aa07cd1628ea1cd339436684e18eb8e597806ac25c96183a884bd95fe5360",
+    "scripts/gpu_r3_receipts.py": "396a2eb122941b75143ed386efd070829045d760785a6e2a541e55b20d775763",
+    "scripts/test_gpu_r3_receipts.py": "9db8ac5a95e94ec8ba5ed51384db8e630797451671e29b6e7be800d69dd21661"
+  },
+  "artifacts_sha256": {
+    "offline-logs.tar.gz": "5d552e29911ff108ac84a0506df4a9cd11a701c411aa26251f802afa07258bb3"
+  }
+}

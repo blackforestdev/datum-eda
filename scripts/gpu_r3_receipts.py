@@ -55,7 +55,7 @@ def validate_demands(receipt, declaration):
     return epoch, demands, revisions
 
 
-def validate(samples, receipt, declaration):
+def validate(samples, receipt, declaration, *, final_copy_marker=False):
     epoch, demands, revisions = validate_demands(receipt, declaration)
     seal = receipt.get("gpu_drained")
     require(isinstance(seal, list) and len(seal) == 3 and all(isinstance(v, int) and v > 0 for v in seal), "missing drained frame range")
@@ -98,7 +98,12 @@ def validate(samples, receipt, declaration):
             require(cursor + 1 < len(names), "missing transfer or final graph")
             transfer_last = ticks[(cursor + 1) * 2]
             if final:
-                require(names[cursor + 1:] in (["frame"], ["dialog"], ["suffix"], ["frame", "suffix"], ["restore", "suffix"]), "incomplete final graph boundary")
+                graph = names[cursor + 1:]
+                if final_copy_marker:
+                    require(graph[-1:] == ["frame-trailing"], "missing final copy boundary")
+                    graph = graph[:-1]
+                allowed = (["frame"], ["dialog"], ["suffix"], ["frame", "suffix"], ["restore", "suffix"])
+                require(graph in allowed or (final_copy_marker and not graph), "incomplete final graph boundary")
                 last = ticks[-1]
                 cursor = len(names)
             else:

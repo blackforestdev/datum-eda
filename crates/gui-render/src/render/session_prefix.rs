@@ -27,7 +27,7 @@ pub(crate) struct Prefix {
     request: Option<Key>,
     support: Option<Pixels>,
     revision: u64,
-    encoded: Option<Completed>,
+    encoded: Option<CompositionIdentity>,
     reused: bool,
     copy_bytes: u64,
     world_bundles: std::cell::Cell<usize>,
@@ -92,18 +92,21 @@ impl Prefix {
         reused: bool,
         copy_bytes: u64,
     ) {
-        self.encoded = self.request.map(|key| Completed {
-            key,
-            composition,
-            support: self.support,
-            revision: self.revision,
-        });
+        // Request/support/revision are already owned by this immutable attempt.
+        // Store only the new image identity until the linear receipt takes it.
+        self.encoded = self.request.map(|_| composition);
         self.reused = reused;
         self.copy_bytes = copy_bytes;
     }
     pub(super) fn take_encoded(&mut self) -> Option<Completed> {
-        self.request = None;
-        self.encoded.take()
+        let key = self.request.take();
+        let composition = self.encoded.take();
+        Some(Completed {
+            key: key?,
+            composition: composition?,
+            support: self.support,
+            revision: self.revision,
+        })
     }
     pub(super) fn complete(&mut self, candidate: Option<Completed>, key: Key, success: bool) {
         self.valid = candidate.filter(|c| success && c.key == key);
@@ -116,6 +119,24 @@ impl Prefix {
     }
 }
 
-// Image validity metadata is fixed inline storage, with no owned lists.
-const _: () =
-    assert!(std::mem::size_of::<Prefix>() + std::mem::size_of::<Option<Completed>>() <= 4096);
+// Include the linear receipt's key/completion fields, transient tile plan and
+// image-owner handle containers. Global allocation/queue-observer machinery has
+// its existing independent accounting; it is not hidden in a validity list.
+const IMAGE_METADATA_BYTES: usize = std::mem::size_of::<Prefix>()
+    + std::mem::size_of::<Option<Completed>>()
+    + std::mem::size_of::<Option<Key>>()
+    + std::mem::size_of::<crate::renderer_state::damage::regional::Plan>()
+    + crate::gpu_surface::IMAGE_HANDLE_METADATA_BYTES;
+const _: () = assert!(IMAGE_METADATA_BYTES <= 4096);
+
+#[cfg(test)]
+mod metadata_tests {
+    #[test]
+    fn regional_image_metadata_includes_receipt_plan_and_handles() {
+        const { assert!(super::IMAGE_METADATA_BYTES <= 4096) };
+        eprintln!(
+            "regional image metadata: {} bytes",
+            super::IMAGE_METADATA_BYTES
+        );
+    }
+}

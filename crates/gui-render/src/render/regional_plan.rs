@@ -105,6 +105,23 @@ impl Tile {
 mod tests {
     use super::*;
     #[test]
+    fn old_and_new_full_viewport_crosshairs_fit_at_worst_tile_seams() {
+        // Two guarded vertical and two guarded horizontal strips; each straddles
+        // a different tile seam. This covers the whole reference target, larger
+        // than its actual board viewport, without assuming a particular pointer.
+        let plan = Plan::new(
+            [1280, 800],
+            &[
+                [31, 0, 34, 800],
+                [95, 0, 98, 800],
+                [0, 31, 1280, 34],
+                [0, 95, 1280, 98],
+            ],
+        )
+        .unwrap();
+        assert_eq!(plan.tiles().count(), 4 * 25 + 4 * 40 - 16);
+    }
+    #[test]
     fn deduplication_seams_padding_and_capacity_are_exact() {
         let plan = Plan::new(
             [65, 34],

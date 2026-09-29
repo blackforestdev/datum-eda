@@ -391,6 +391,11 @@ fn archived_fourteen_non_pad_transitions_keep_shared_content() {
         )
         .unwrap();
         session.install_prepared(scene, preparation);
+        let old_support = super::super::session_prefix::damage::Pixels::capture(
+            session.prepared().unwrap(),
+            [1280, 800],
+        )
+        .unwrap();
         let plan = session.prepare_frame(1, 1, 1, true, 1280, 800).unwrap();
         assert!(session.complete_frame(plan, 1, 1, 1, true));
         let before = session.board().unwrap().clone();
@@ -414,5 +419,18 @@ fn archived_fourteen_non_pad_transitions_keep_shared_content() {
         assert_eq!(session.board().unwrap(), &before);
         assert_eq!(crate::retained_scene_resolve_count(), resolves);
         assert!(session.interaction_only_damage());
+        let support = super::super::session_prefix::damage::Pixels::capture(
+            session.prepared().unwrap(),
+            [1280, 800],
+        )
+        .unwrap();
+        let union = old_support.union(support).unwrap().disjoint().unwrap();
+        let tiles =
+            crate::renderer_state::damage::regional::Plan::new([1280, 800], union.rectangles())
+                .expect("archived non-pad transition exceeds regional tile capacity");
+        eprintln!(
+            "archived non-pad transition {ordinal}: {} tiles",
+            tiles.tiles().count()
+        );
     }
 }

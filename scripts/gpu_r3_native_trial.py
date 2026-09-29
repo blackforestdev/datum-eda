@@ -184,7 +184,7 @@ try:
         assert epochs=={expected_epoch} and len(hosts)==1
         bindings=re.findall(r'gpu_measurement_host host=(\d+) epoch=(\d+) window=WindowId\((\d+)\)',raw.decode())
         assert len(bindings)==1 and tuple(map(int,bindings[0]))==(next(iter(hosts)),expected_epoch,main),'foreign GPU host/window binding'
-        classified=validate_gpu(samples,receipt,workload)
+        classified=validate_gpu(samples,receipt,workload, final_copy_marker=declaration.get("final_copy_marker", False))
         (out/'classified-gpu.json').write_text(json.dumps(classified,indent=2)+'\n')
         active_ids={tuple(row['identity']) for row in classified if row['phase'] == 'active'}
         timed=[s for s in samples if (s['host'],s['device_epoch'],s['frame']) in active_ids]
