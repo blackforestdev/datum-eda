@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU attribution study a1",
+  "recorded_at": "2026-09-29T22:37:35Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/attribution-a1/packet.md",
+    "sha256": "808f9220527ce2f53a0695f70d09fe0d89be0e1763f3ffbcf1112381c8b083c4",
+    "commit": "c6d28b4ad641d78caa72c4869612bed67b3bef32"
+  },
+  "disposition": "Approve only the pinned A1 diagnostic implementation, bounded build/check/process and report scope. Preserve all preflight, first-failure and inconclusive stop rules; no redesign, sweep, CPU or DRM execution, acceptance or automatic successor."
+}

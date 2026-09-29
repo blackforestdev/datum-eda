@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source": "c6d28b4ad641d78caa72c4869612bed67b3bef32",
+  "owner_approval": "owner-approval.json",
+  "status": "stopped_before_implementation_and_gpu_entry",
+  "result": "inconclusive; no measured attribution",
+  "stop_reason": "Required acquired-target byte readback needs COPY_SRC; fixed production surface configuration does not request it. Do not change usages or substitute capture/C readback without changing the approved method.",
+  "defect_class": "diagnostic packet readiness; not runtime renderer/backend failure",
+  "source_sha256": {
+    "crates/gui-app/src/gui_runtime_support.rs": "2cfc7c2683fdc20cf4224d77be01da94fedbbbb34f9451f6cb35912def2a1a5c",
+    "crates/gui-render/src/render/frame_target.rs": "49fe878236a193514b38cf65cf7a4135fe93c9703009181dfdbd140f9285eef3",
+    "crates/gui-render/src/capture_resource.rs": "a530fc95be6d43162febc14ab311c88a3fc3b1245d218fbec01e70898e19666a",
+    "crates/gui-render/src/visual_capture.rs": "a2482f8d0a5689e9537e1d91a41343ef663a0fd225085629e8d804588cd6f668",
+    "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-core-28.0.1/src/command/transfer.rs": "ce36f5bfaf289ad467c4a7a39a7e47bc1050b28784ad4d6cd84c1b6d7f74aa27"
+  },
+  "input_pin_checks": {
+    "cli": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+      "sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+      "matches_pin": true
+    },
+    "reference_png": {
+      "path": "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/reference.png",
+      "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+      "matches_pin": true
+    },
+    "board": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project/board/board.json",
+      "sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+      "matches_pin": true
+    }
+  },
+  "consumed": {
+    "diagnostic_implementation_edits": 0,
+    "optimized_builds": 0,
+    "cargo_checks": 0,
+    "gpu_processes": 0,
+    "gpu_observations": 0,
+    "queue_submissions": 0
+  },
+  "not_performed": [
+    "D/P upload and operation manifest parity",
+    "timer conformance",
+    "native target correctness",
+    "runtime resource accounting",
+    "marker and backend-operation measurements"
+  ],
+  "successor_authorized": false,
+  "gpu_issue_closed": false
+}
