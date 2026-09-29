@@ -1,0 +1,138 @@
+{
+  "status": "source and existing-evidence assessment only; no new execution authority",
+  "source_head": "896aa441",
+  "evidence": "../painter-hover-timed-result/receipt.json and native-raw.tar.gz",
+  "frame": {
+    "device_epoch": 1,
+    "frame": 2,
+    "frame_span_ns": 3728666.780456543,
+    "host": 1,
+    "own_pass_sum_ns": 3683916.7790908813,
+    "passes_ns": [
+      [
+        "upload-leading",
+        18000.000549316406
+      ],
+      [
+        "suffix",
+        3665916.778541565
+      ]
+    ],
+    "raw_ticks": [
+      66478128930,
+      66478129146,
+      66478129683,
+      66478173674
+    ],
+    "rejection": null,
+    "scene_marker_ticks": null,
+    "submission": 3,
+    "submission_manifest": [
+      {
+        "attempt": [
+          1,
+          3,
+          10,
+          10,
+          1,
+          1,
+          1
+        ],
+        "first_tick": 66478128930,
+        "kind": "final",
+        "last_tick": 66478173674,
+        "span_ns": 3728666.780456543,
+        "submission": 3,
+        "transfer_first_tick": 66478129146,
+        "transfer_interval_ns": 44750.00136566162,
+        "transfer_last_tick": 66478129683,
+        "workload": [
+          1965265570656442488,
+          1,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "timestamp_period_ns": 83.33333587646484,
+    "truncated": false
+  },
+  "input": {
+    "after": {
+      "camera_center_nm": [
+        151634208.0,
+        95122896.0
+      ],
+      "camera_zoom": 1.0,
+      "cursor": null,
+      "device_epoch": 1,
+      "extent": [
+        1280,
+        800
+      ],
+      "hover_surface": null,
+      "hover_utf8": "",
+      "native_cursor": null,
+      "pan_active": false,
+      "render_activity": [
+        10,
+        3
+      ],
+      "render_revision": 10,
+      "scale": 1.0,
+      "truncated": false,
+      "window_focused": false
+    },
+    "before": {
+      "camera_center_nm": [
+        151634208.0,
+        95122896.0
+      ],
+      "camera_zoom": 1.0,
+      "cursor": null,
+      "device_epoch": 1,
+      "extent": [
+        1280,
+        800
+      ],
+      "hover_surface": null,
+      "hover_utf8": "",
+      "native_cursor": null,
+      "pan_active": false,
+      "render_activity": [
+        10,
+        2
+      ],
+      "render_revision": 10,
+      "scale": 1.0,
+      "truncated": false,
+      "window_focused": false
+    },
+    "button": null,
+    "completed_ns": 3232507232,
+    "demand_kind": "native_round",
+    "position": null,
+    "received_ns": 3231579277,
+    "route": "unhandled",
+    "sequence": 4,
+    "workload": [
+      1965265570656442488,
+      1,
+      5
+    ],
+    "workload_ns": 1430101869053267
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "97fc66812cffde6137699073e3c5a1cd44668b04b49d0b392e045e654ab85c90",
+    "crates/gui-render/src/render/session_prefix.rs": "c3b75b8816128312769d26bee7e31c5d8bfcb1ecc308c903820a99d5c2248c40"
+  },
+  "installed_wgpu_core_28_0_1_sha256": {
+    "render.rs": "fdd6907ad22555e0410a6d129ef4dcb6fb8b4b6c5c729a758953f9eaaee47e7a",
+    "transfer.rs": "ce36f5bfaf289ad467c4a7a39a7e47bc1050b28784ad4d6cd84c1b6d7f74aa27"
+  },
+  "limits": "One startup sample; not an active percentile, measured causal fraction, hardware limit or performance qualification. No new native/GPU execution, build, observer change, dependency or DRM/CPU work."
+}
