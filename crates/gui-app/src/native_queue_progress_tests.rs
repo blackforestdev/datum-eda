@@ -265,3 +265,68 @@ fn unadmitted_retry_yields_without_renewing_active_budget() {
     recovery.defer(RetryReason::Queue, at(start, 2001));
     assert_eq!(recovery.poll_admitted(at(start, 2003), true), (true, None));
 }
+
+#[test]
+fn regional_image_union_retires_only_after_last_native_submission() {
+    let owner = QueueOwner::default();
+    let host = owner.register();
+    let (first, completion) = owner.submission_receipt();
+    owner.observe_attachments(host, (1..=5).map(|id| (7, id, Some(1024), true)), first);
+    let (second, _) = owner.submission_receipt();
+    // Five replacement images are current; the five evicted images were used
+    // again by the second submission. The production bridge supplies this union.
+    assert_eq!(
+        datum_gui_render::Renderer::SURFACE_ATTACHMENT_USAGE_CAPACITY,
+        10
+    );
+    owner.observe_attachments(host, (1..=10).map(|id| (7, id, Some(1024), id > 5)), second);
+    let snapshot = owner.with_attachments(|ledger, n| ledger.snapshot(n));
+    assert_eq!(snapshot.allocations.len(), 10);
+    assert_eq!(snapshot.current_payload_bytes, 5 * 1024);
+    assert_eq!(snapshot.retiring_payload_bytes, 5 * 1024);
+    assert_eq!(snapshot.peak_payload_bytes, 10 * 1024);
+    assert!(
+        snapshot
+            .allocations
+            .iter()
+            .all(|a| a.last_submission == second)
+    );
+    completion.store(first, Ordering::Release);
+    assert_eq!(
+        owner
+            .with_attachments(|ledger, n| ledger.snapshot(n))
+            .allocations
+            .len(),
+        10
+    );
+    completion.store(second, Ordering::Release);
+    let snapshot = owner.with_attachments(|ledger, n| ledger.snapshot(n));
+    assert_eq!(snapshot.completed_retirements, 5);
+    assert_eq!(snapshot.current_payload_bytes, 5 * 1024);
+    assert_eq!(snapshot.retiring_payload_bytes, 0);
+    owner.close_host(host);
+    assert!(
+        owner
+            .with_attachments(|ledger, n| ledger.snapshot(n))
+            .allocations
+            .is_empty()
+    );
+}
+
+#[test]
+fn regional_bundle_close_keeps_all_images_until_device_loss() {
+    let lost = Arc::new(AtomicBool::new(false));
+    let owner = QueueOwner::with_device_loss(lost.clone());
+    let host = owner.register();
+    let (serial, _) = owner.submission_receipt();
+    owner.observe_attachments(host, (1..=5).map(|id| (7, id, Some(1024), true)), serial);
+    owner.close_host(host);
+    let snapshot = owner.with_attachments(|ledger, n| ledger.snapshot(n));
+    assert_eq!(snapshot.retiring_payload_bytes, 5 * 1024);
+    assert_eq!(snapshot.completed_retirements, 0);
+    lost.store(true, Ordering::Release);
+    let snapshot = owner.with_attachments(|ledger, n| ledger.snapshot(n));
+    assert!(snapshot.allocations.is_empty());
+    assert_eq!(snapshot.device_loss_retirements, 5);
+    assert_eq!(snapshot.completed_retirements, 0);
+}

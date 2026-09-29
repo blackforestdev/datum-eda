@@ -43,7 +43,7 @@ impl Ledger {
         completed: u64,
     ) {
         self.reap(completed);
-        let mut current = [None; 3];
+        let mut current = [None; datum_gui_render::Renderer::SURFACE_ATTACHMENT_USAGE_CAPACITY];
         for (index, allocation) in allocations.into_iter().enumerate() {
             assert_eq!(allocation.host, host);
             let key = (allocation.owner, allocation.allocation);
@@ -65,7 +65,7 @@ impl Ledger {
             }
         }
         // Observe the coherent image set before retiring missing references. A
-        // second image in the same pair does not supersede the first image.
+        // later image in the same bundle does not supersede an earlier image.
         self.peak_payload_bytes = self.peak_payload_bytes.max(self.known_payload());
         for (id, previous) in &mut self.records {
             if previous.host == host
