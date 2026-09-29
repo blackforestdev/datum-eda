@@ -9,7 +9,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORY = ROOT / 'target/gpu-timed-recovery-proof'
+DIRECTORY = ROOT / 'target/gpu-painter-hover-timed-proof'
 STATE = DIRECTORY / 'campaign-state.json'
 ORDER = [('candidate','gpu',1),('baseline','gpu',1),('baseline','quiet',1),('candidate','quiet',1),
          ('baseline','gpu',2),('candidate','gpu',2),('candidate','quiet',2),('baseline','quiet',2),

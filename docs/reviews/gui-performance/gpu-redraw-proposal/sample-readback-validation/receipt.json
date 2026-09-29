@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-sample-readback.json",
+  "source_commit": "453cd9f2",
+  "status": "single authorized four-group GPU replay passed; release/timing results not yet available",
+  "offline": "Exact approved patch, default and visual all-target Clippy with warnings denied, source health2654 and13policy controls, resource/dependency/parity/evidence/spec/project gates passed. Guarded test build and exact test listing passed. Fixed readback dispatch/sample/storage bounds reviewed; previous20offline renderer controls reused unchanged. Five runner controls passed after changing only the new campaign directory pins.",
+  "gpu": {
+    "runs": 1,
+    "seconds": 16.841872638091445,
+    "exit_code": 0,
+    "host": "Intel HD Graphics P630, Vulkan, Mesa25.0.7-2+deb13u1",
+    "samples": 8,
+    "pixel_checkpoints": 81,
+    "per_sample_comparisons": 6,
+    "groups": [
+      "Old/new fractional crosshair alpha: exact pixels and all8samples; deliberately overlapping suffix and omitted shared restrictions rejected.",
+      "Console/text/menu/terminal image clips and painter order: exact output; old Console painter order rejected.",
+      "All14 archived actual native non-pad hover transitions retained world with no upload increase; real pad enter/change/leave retained cold material/text behavior and exact samples.",
+      "Coalescing, stale/failed presentation, old support omission, partition overflow, optional-mask admission refusal, current/retiring images and submitted mask/image lifetime passed."
+    ],
+    "binary_unchanged": true
+  },
+  "diagnostic_boundary": "Groups1/3 explicitly enable test-only B texture sampling for exact sample comparison; no resource/performance acceptance from these groups. Groups2/4 retain production usage flags. Readback buffers are diagnostic scratch. No extra production texture or observer.",
+  "visual_review": "console.png inspected: intentional panned-label occlusion fixture, not native startup or performance evidence.",
+  "remaining": "This is bounded correctness/resource component proof, not S4/S5 qualification. One candidate release build and fixed12pointer campaign are next within existing approval. Camera/resource/observer-overhead/endurance/independent and complete DRM lifetime obligations remain; no CPU/DRM execution or issue closure.",
+  "artifacts_sha256": {
+    "console.png": "0720b1e5db6ce64c2e54c0a8ae2dbb18cedc0862e346a2a5e9c7b2dc7eac490f",
+    "gpu-batch-declaration.json": "80de9f1f9c73ec84c1369551b7df9897352c075d0ce75094efd1836bbd5b28f8",
+    "gpu-batch-result.json": "e122835fb42b25552a9b2c7341db7d5831acc5b9256fddc800a2f1e8c51fc67f",
+    "gpu-batch-started.json": "2a010a4833d51ec7b01dba95b278a1430382fe7a2004cd8389a3d7d3bd5d6a37",
+    "gpu-batch.log": "338810a2e6bd7d6c679b7e399998ad917bfa6689d237c5a7c9fbb4bfff261b50",
+    "offline-logs.tar.gz": "0aa07aa1736b4b8e7e3301de4861179e8dff05740b758684eebc628fcc38d13f",
+    "preflight.json": "b575da3d5115c6acfccc451c727775791d5f4204fb8ad8d4a7a6dceae53e009a"
+  }
+}

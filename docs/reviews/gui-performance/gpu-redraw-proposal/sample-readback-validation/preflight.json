@@ -1,0 +1,19 @@
+{
+  "status": "offline preflight; test executable compiling; zero GPU executions",
+  "authority": "docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-sample-readback.json",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_surface.rs": "ab9581d81db626b28076b7e89bc46eedb7419d9e64809d58f38d8077507ba12c",
+    "crates/gui-render/src/render/painter_hover_qualification.rs": "2094c39a22706e93e66a4b8077ea0609489568d1b6c17a0febaa969b2f9d7c65",
+    "crates/gui-render/src/render/gpu_damage_sample_tests.rs": "3dd243c465b914b58c58d04e3b97d30ac348749c464180913456f90654c19e6b",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "3af6c569a3815b2f687bb52698d57043e4d32c38498644e0a39bd637b2f079c1",
+    "crates/gui-render/src/render/gpu_frame.rs": "97fc66812cffde6137699073e3c5a1cd44668b04b49d0b392e045e654ab85c90"
+  },
+  "review": [
+    "Exact approved patch applied; reverse apply --check passed. Only groups1/3 call enable_sample_readback before allocation. Flag/setter/shadow usage compile only under test+visual, default false; groups2/4 retain normal usage.",
+    "B UNORM alias inherits additional sampling usage only when explicitly enabled. A and all formats, samples, masks, passes, resource caps and retirement remain unchanged.",
+    "At1280x800x8, readback/storage each32768000bytes. Dispatch1280x800 workgroups of8x1 spans exactly8192000 u32 records. Each global invocation maps to one valid pixel and sample0..7. Both dispatch dimensions below65535; storage below default128MiB binding cap.",
+    "Warm sample capture precedes forced-cold frame. Original full painter pixel comparison remains separate. Temporary full-reference attachments are restored before B sample inspection. Diagnostic scratch excluded from resource/performance claims."
+  ],
+  "reused": "Previous20offline controls and fixed source/fixture evidence retain scope; no production algorithm changed. Default/visual all-target Clippy passed.",
+  "prior_stopped_batch_sha256": "4012e99f985eb7c629ae848e25ec7d6a2695b7c0c5babba2fba9848e41440d45"
+}

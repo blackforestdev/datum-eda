@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-sample-readback.json",
+  "status": "one candidate release built and fixed12pointer declaration sealed; zero native trials",
+  "candidate_source": "453cd9f2",
+  "gpu_prerequisite": "../sample-readback-validation/receipt.json",
+  "baseline": "Existing997b618e timed binary hash and36source pins verified; original observer/backport review reused; no rebuild. All candidate gui-app sources and renderer measurement/query modules unchanged from b67568ae. Same Rust1.98.0 compiler identity verified in baseline and candidate ELF.",
+  "method": "Only three directory literals in two existing runner files changed to target/gpu-painter-hover-timed-proof. Five offline runner controls passed. Order, cadence, readiness, drain, validation and candidate numerical stop unchanged. Prior campaigns remain stopped with sealed hashes.",
+  "proof": "One guarded release build succeeded, opt3/debug0/testfalse/featuresvisual; exact artifact hash sealed. Full four-group correctness/resource prerequisite passed. No new observer, dependency, system tuning, native rehearsal or replacement.",
+  "limits": "Native results pending. S4/S5, complete DRM duty, camera/resource/observer overhead/endurance/independent qualification remain open; CPU optimization deferred.",
+  "artifacts_sha256": {
+    "baseline-reuse.json": "bfb87234b71e635d824fe9bd078d274b7196fb27eff7c404a63f5353894fd163",
+    "build-state.json": "8df93e5c4cede3bd8e3f85dbf73468b729363dc3057f86ad509658e6fff59030",
+    "candidate-build.jsonl.gz": "c0ac2c263de07db580505c301b326487aed9ceac4956b7c5a312083370ab0059",
+    "candidate-build.log": "e498ba5384a0b243dfec95706d39ec41d4435e9bf7bce008c08c0ab9b86a49cd",
+    "candidate-toolchain.txt": "b3195b22f2f1fdb12a7373712ef7fcc8fe3f10fbdd3f7bea545340eff1911d0f",
+    "declaration.json": "093c3fd967b64a3ce3a071563879b157241d59dcefd01b7afcf13fd343e3ffc6",
+    "runner-controls.log": "98d610beee6b1efba3e75d90e4d987999afbcf2e01a1403d4a39efd2cfff61c5"
+  }
+}

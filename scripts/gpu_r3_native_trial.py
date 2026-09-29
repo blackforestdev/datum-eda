@@ -11,8 +11,8 @@ from gpu_r2_wm_close import close_window
 
 declaration = json.loads(Path(sys.argv[1]).read_text())
 index = int(sys.argv[2]); spec = declaration['runs'][index]
-assert Path(sys.argv[1]).resolve() == ROOT/'target/gpu-timed-recovery-proof/declaration.json'
-campaign=json.loads((ROOT/'target/gpu-timed-recovery-proof/campaign-state.json').read_text())
+assert Path(sys.argv[1]).resolve() == ROOT/'target/gpu-painter-hover-timed-proof/declaration.json'
+campaign=json.loads((ROOT/'target/gpu-painter-hover-timed-proof/campaign-state.json').read_text())
 assert campaign['status']=='running' and campaign['reserved_index']==index
 assert campaign['declaration_sha256']==hashlib.sha256(Path(sys.argv[1]).read_bytes()).hexdigest()
 
