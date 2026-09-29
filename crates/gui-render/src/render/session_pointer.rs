@@ -1,7 +1,10 @@
 //! Pointer-only input cannot carry source, camera, pane or chrome replacement.
+#[path = "frame_target.rs"]
+mod frame_target;
 pub use super::session_sources::{SourceEpoch, SourceRevision};
 use super::*;
 use datum_gui_protocol::{CrosshairStyle, HoverTarget, PaneContent, ScreenPointPx};
+pub use frame_target::FrameTarget;
 
 /// Capability for one shared prepared projection, not a caller-supplied revision.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

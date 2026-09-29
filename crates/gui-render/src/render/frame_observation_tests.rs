@@ -78,7 +78,7 @@ fn frame_observation_delivers_reused_frames_without_changing_pixels_and_propagat
     let result = gpu.renderer.render(
         &gpu.device,
         &gpu.queue,
-        &target.create_view(&wgpu::TextureViewDescriptor::default()),
+        target.create_view(&wgpu::TextureViewDescriptor::default()),
         &prepared,
         &RetainedScene::empty(),
         None,

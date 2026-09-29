@@ -30,7 +30,7 @@ impl Runtime {
             },
             self.config.format,
         )?;
-        let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
+        let target_view = datum_gui_render::render_input::FrameTarget::full_texture(&target)?;
         self.renderer.render_session_mut().retry_content();
         if self.renderer.render_session().prepared().is_none() {
             self.build_terminal_prepared_scene()?;

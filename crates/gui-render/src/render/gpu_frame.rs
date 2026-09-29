@@ -11,20 +11,21 @@ impl Renderer {
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
-        target: &wgpu::TextureView,
+        target: impl Into<crate::render_input::FrameTarget>,
         prepared: &PreparedScene,
         retained: &RetainedScene,
         schematic_retained: Option<&RetainedScene>,
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
+        let target = target.into();
         // Synchronous convenience for offscreen/capture clients. Native hosts use
         // render_with_acquisition and yield to the coordinator between chunks.
         loop {
             if self.render_with_submission(
                 device,
                 queue,
-                target,
+                &target,
                 prepared,
                 retained,
                 schematic_retained,
@@ -46,7 +47,7 @@ impl Renderer {
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
-        target: &wgpu::TextureView,
+        target: impl Into<crate::render_input::FrameTarget>,
         prepared: &PreparedScene,
         retained: &RetainedScene,
         schematic_retained: Option<&RetainedScene>,
@@ -54,6 +55,7 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        let target = target.into();
         self.render_with_acquisition(
             device,
             queue,
@@ -185,9 +187,10 @@ impl Renderer {
             return Ok(false);
         };
         let text_prepare_elapsed = text_prepare_started.elapsed();
-        let Some(view) = target.acquire()? else {
+        let Some(frame_target) = target.acquire()? else {
             return Ok(false);
         };
+        let view = frame_target.view();
         let mut measurement = self.begin_gpu_measurement()?;
         let leading = self.final_measurement_leading(device, &mut measurement)?;
         let encode_started = std::time::Instant::now();
@@ -315,7 +318,7 @@ impl Renderer {
                 label: Some("datum-gui-final-resolve"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
-                    resolve_target: Some(&view),
+                    resolve_target: Some(view),
                     depth_slice: None,
                     ops: wgpu::Operations {
                         load: if images.is_some() {

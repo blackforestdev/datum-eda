@@ -197,7 +197,8 @@ pub(crate) fn surface_configuration(
         .find(|mode| *mode == wgpu::PresentMode::Fifo)
         .unwrap_or(caps.present_modes[0]);
     wgpu::SurfaceConfiguration {
-        usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT
+            | (caps.usages & wgpu::TextureUsages::COPY_DST),
         format,
         width: size.width.max(1),
         height: size.height.max(1),

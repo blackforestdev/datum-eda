@@ -132,7 +132,7 @@ impl OffscreenRenderer {
             self.extent(),
             OUTPUT_FORMAT,
         )?;
-        let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
+        let target_view = crate::render_input::FrameTarget::full_texture(&target)?;
         // This legacy visual API accepts arbitrary immutable workspace values,
         // not an editor revision stream. Treat each as replacement input; never
         // infer equality from a reused address, length or previous warm call.

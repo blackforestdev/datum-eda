@@ -1,8 +1,9 @@
 //! Acquire presentation storage only after every upload-only exit has passed.
 use super::*;
+use crate::render_input::FrameTarget;
 
 pub(crate) trait Target {
-    fn acquire(&mut self) -> anyhow::Result<Option<wgpu::TextureView>>;
+    fn acquire(&mut self) -> anyhow::Result<Option<FrameTarget>>;
     fn submitted(&mut self, submission: wgpu::SubmissionIndex);
 }
 
@@ -13,10 +14,10 @@ struct Callbacks<'a, C, A, S> {
 }
 impl<C, A, S> Target for Callbacks<'_, C, A, S>
 where
-    A: FnMut(&mut C) -> anyhow::Result<Option<wgpu::TextureView>>,
+    A: FnMut(&mut C) -> anyhow::Result<Option<FrameTarget>>,
     S: FnMut(&mut C, wgpu::SubmissionIndex),
 {
-    fn acquire(&mut self) -> anyhow::Result<Option<wgpu::TextureView>> {
+    fn acquire(&mut self) -> anyhow::Result<Option<FrameTarget>> {
         (self.acquire)(self.context)
     }
     fn submitted(&mut self, submission: wgpu::SubmissionIndex) {
@@ -31,7 +32,7 @@ impl Renderer {
     /// Acquisition may itself defer (None), also retaining pending damage.
     /// One context serializes both callbacks without interior mutability.
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn render_with_acquisition<C>(
+    pub(crate) fn render_with_acquisition<C, T: Into<FrameTarget>>(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -41,7 +42,7 @@ impl Renderer {
         width: u32,
         height: u32,
         context: &mut C,
-        acquire: &mut impl FnMut(&mut C) -> anyhow::Result<Option<wgpu::TextureView>>,
+        acquire: &mut impl FnMut(&mut C) -> anyhow::Result<Option<T>>,
         submitted: &mut impl FnMut(&mut C, wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
         self.render_session.prefix.reset_work();
@@ -54,12 +55,14 @@ impl Renderer {
         }
         self.grid_admission = None;
         let text_serial_before = self.text_admission.serial();
+        let mut typed_acquire =
+            |context: &mut C| acquire(context).map(|target| target.map(Into::into));
         let mut result = self.render_submission_inner(
             device,
             queue,
             &mut Callbacks {
                 context,
-                acquire,
+                acquire: &mut typed_acquire,
                 submitted,
             },
             prepared,

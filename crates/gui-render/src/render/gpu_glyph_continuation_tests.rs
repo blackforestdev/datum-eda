@@ -117,7 +117,9 @@ fn oversized_atlas_uploads_yield_preserve_preparation_and_render_latest_text() {
                     960,
                     720,
                     &mut (),
-                    &mut |_| panic!("refused upload acquired a swapchain image"),
+                    &mut |_| -> anyhow::Result<Option<wgpu::TextureView>> {
+                        panic!("refused upload acquired a swapchain image")
+                    },
                     &mut |_, _| panic!("refused copy submitted")
                 )
                 .is_err()

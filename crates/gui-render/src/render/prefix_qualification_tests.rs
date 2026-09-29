@@ -467,7 +467,7 @@ fn p630_exact8_console_covers_canvas_text_without_hiding_foreground() {
             .render(
                 &c.device,
                 &c.queue,
-                &target.create_view(&Default::default()),
+                target.create_view(&Default::default()),
                 scene,
                 &board,
                 schematic.as_ref(),

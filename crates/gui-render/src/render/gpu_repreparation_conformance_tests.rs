@@ -27,7 +27,7 @@ fn shared_repreparation_retains_complete_submitted_upload_lineage() {
         .unwrap();
     prepare(&mut c, &state, &source);
     let target = target(&c);
-    let view = target.create_view(&Default::default());
+    let view = crate::render_input::FrameTarget::full_texture(&target).unwrap();
     let mut submissions = 0;
     let mut original = None;
     let mut complete = false;

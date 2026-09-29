@@ -594,7 +594,7 @@ fn failed_dialog_releases_excess_labels_and_retry_matches_fresh_pixels() {
         .render(
             &host.device,
             &host.queue,
-            &target.create_view(&Default::default()),
+            target.create_view(&Default::default()),
             &oversized,
             &RetainedScene::empty(),
             None,
