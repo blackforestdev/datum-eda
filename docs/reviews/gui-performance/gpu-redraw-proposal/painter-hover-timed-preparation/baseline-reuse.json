@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-timed-recovery-proof/baseline-997b618e-timed-datum-gui",
+    "sha256": "50f7fecb60437a703a65adf37645dc4da0404139bf9e9e32a9ed20f31fc41d53"
+  },
+  "prior_declaration_sha256": "cdbde268ef9b4c453b212cf324961724cb10db99643020628241edbc4bd8878b",
+  "prior_baseline_source_sha256": "0655b20142b22b1c31cc9d8e19d2c771c5b919a1aac75fd7fae6faa61fa3fd8a",
+  "app_observer_comparison": "All gui-app files identical to b67568ae; prior seven-file observer adaptation review reused. No renderer timing/query source changes. New gpu_frame changes only clip traversal and test-only fault branches within existing single suffix timer scope.",
+  "renderer_observer_sha256": {
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "aad9fa8c6d8c29db4540546d49b2d4799d4db23c627a6f4cdcb1653ea0e44a6e",
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": "ea484441414d0925476b552f408e406b20a0449d347977b0abae757f036f598f",
+    "crates/gui-render/src/render/gpu_measurement_resource_tests.rs": "97470fc41070a981aeae82cb1b1bd153c7d50e41e0003822a4c83c219beaffe4",
+    "crates/gui-render/src/render/gpu_measurement_resources.rs": "9469a38a8c6cf15e5f6c829d4e32682819d58499e689da15710486668156f18f",
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": "71b715f572dbe4e216702f30a373ee1fd661928175345ae136fc498d6fc4856f",
+    "crates/gui-render/src/render/gpu_measurements.rs": "88685822f3af72bdd31ce09dc10fb1b951408b43aa816b4ddfcf88b3fb505872",
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": "28eecc6e1206fb165593ad66c5abd929dd92e37287a3e11d2c37994aa81b9a67"
+  },
+  "baseline_rebuilt": false,
+  "observer_behavior_changed": false,
+  "baseline_source_files_verified": 36,
+  "baseline_patch_sha256": "dd60083e9eb2d8ff69f068c3256e798017d68c7fbc11c72452edd28e568456e6"
+}

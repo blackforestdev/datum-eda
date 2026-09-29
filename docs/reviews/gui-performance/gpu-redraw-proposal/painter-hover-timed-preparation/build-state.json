@@ -1,0 +1,48 @@
+{
+  "candidate": {
+    "status": "complete",
+    "commit": "453cd9f285defb471a82e16e5e0b942e6167ed0f",
+    "started_ns": 1790697908300965359,
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-painter-hover-timed-proof/candidate-453cd9f2-painter-hover-datum-gui",
+    "sha256": "d9dca5333098eaf48ed77ec60238fdbfc09b12bd5d36267f8796f37573889360",
+    "artifact": {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///home/bfadmin/Documents/datum-eda/crates/gui-app#datum-gui-app@0.1.0",
+      "manifest_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "datum-gui",
+        "src_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/src/main.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "visual"
+      ],
+      "filenames": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui"
+      ],
+      "executable": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "fresh": false
+    },
+    "finished_ns": 1790698312322822480
+  },
+  "baseline": {
+    "status": "reuse_only",
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-timed-recovery-proof/baseline-997b618e-timed-datum-gui"
+  }
+}

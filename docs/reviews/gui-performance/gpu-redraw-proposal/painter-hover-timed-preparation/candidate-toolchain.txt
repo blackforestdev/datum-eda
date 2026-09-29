@@ -1,0 +1,6 @@
+
+String dump of section '.comment':
+  [     0]  Linker: LLD 22.1.8 (/checkout/src/llvm-project/llvm 52ed14fcd56afc30f9cccd8ca8ce237c2eef7e04)
+  [    5e]  GCC: (Debian 14.2.0-19) 14.2.0
+  [    7e]  rustc version 1.98.0 (88d9e12ae 2026-08-18)
+
