@@ -1,0 +1,126 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only P630 exact-output qualification/control review after 6ddfa1ac. Source and existing logs inspected; no builds/tests/native runs performed. Independent recommendation only.",
+  "disposition": "Prior oracle sensitivity finding resolved for pinned P630 overlap case. All four targeted wrong graphs rejected in inspected negative-3 log; cohesive four-test batch remains pending as reported by parent. No new concrete flaw identified in this delta.",
+  "findings": [
+    {
+      "id": "P630-01",
+      "severity": "high for claimed oracle qualification",
+      "status": "resolved by source and existing negative-3 log inspection",
+      "source": "prefix_qualification_tests.rs::p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve; /tmp/gpu-p630-negative-2.log",
+      "finding": "PrematureResolve returned byte-identical output and assertion failed. Current changed-camera F-DOA case does not deliberately overlap partially covered suffix geometry with partially covered prefix edges; resolving samples early can be equivalent when suffix is disjoint or fully covered. Reduced-samples branch comes later and was not executed.",
+      "required": "Retain failure evidence. Add a bounded deterministic fractional prefix/suffix overlap case that distinguishes per-sample coverage, then complete remaining negative controls. This is oracle sensitivity failure, not demonstrated failure of correct prefix copy.",
+      "resolution": "Negative case now projects an actual F-DOA pad center through changed fractional camera and places a fractional full-viewport crosshair there; checks visible pad and nonempty suffix geometry. Existing negative-3 log reports 1 test passed, with differing channels stale335658, missing3061676, premature605, reduced4x50849; all three correct8x recovery comparisons exact. Prior insensitive control remains preserved in review_history and negative-2 log pin."
+    }
+  ],
+  "observations": [
+    "Fault enum/module and injection branches are cfg(test), one-shot thread-local controls. MissingCopy deterministically clears B red, avoiding dependence on undefined discarded contents. StaleKey deliberately bypasses key matching; PrematureResolve resolves A to one pixel then expands it identically to 8 samples before original suffix.",
+    "Existing negative log rejects stale key (336044 differing channels) and missing copy (3062477 differing channels), with correct-graph recovery after each.",
+    "F-DOA log reports all 13 labeled cases and one test passed. Earlier combined small-fixture log reports terminal test passed but pointer/hover combined test failed due unsuitable no-pad fixture; preserve partial status.",
+    "Byte comparisons use the same current prepared snapshot and full shared painter, so they test graph/sample/order equivalence rather than independently validating scene preparation semantics.",
+    "Warm pointer cases assert zero world bundle execution and stable world upload identities/counters; these are useful mechanism checks, not timing/performance evidence.",
+    "Test recovery recreates renderer resources on the same device and transfers CPU session. It is not native device-loss, actual surface acquire/present, or replacement-device qualification; frame helper uses synthetic native receipt over offscreen capture.",
+    "Pinned fixture file currently matches manifest SHA256 7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d. doa() itself only asserts pad count81; execution evidence must preserve supplied path/hash rather than treating pad count as identity proof.",
+    "The fractional crosshair-over-real-pad case makes partial suffix/prefix coverage observable without production mechanism changes. The 605-channel difference supports rejection of this premature-resolve graph, not universal sample-equivalence proof."
+  ],
+  "limitations": [
+    "No performance trials or DRM duty qualification claimed.",
+    "Final native correctness coverage, fixture completeness and owner acceptance are outside these bounded source/log recommendations."
+  ],
+  "pins": [
+    {
+      "path": "crates/gui-render/src/render/prefix_negative_control.rs",
+      "sha256": "b629a02099b8379b97e67b40304f7b8e64bda31f8e382763a4d39a5def6f8629"
+    },
+    {
+      "path": "crates/gui-render/src/render/prefix_qualification_tests.rs",
+      "sha256": "33cd7c1b58db90321540cc0bf35f0ec62f0df9cb9c88769eefc238703fa05e42"
+    },
+    {
+      "path": "crates/gui-render/src/render/prefix_graph_tests.rs",
+      "sha256": "0af500adcc5beab70ee86b8d1fe94a19df13cebbdb52b2425af2b687ae10fdc4"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "sha256": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface.rs",
+      "sha256": "eb7983d64c99a26a588b1b0e01139009e0602311da8f862e0d3f82a846d90682"
+    },
+    {
+      "path": "/tmp/gpu-prepared-native/fixture.json",
+      "sha256": "19f00183f0fdfcd8bb700a876370f473eea7f58ca1714f2a835d6f06ef027d68"
+    },
+    {
+      "path": "/tmp/gpu-p630-qualification-1.log",
+      "sha256": "3d596eb1d3ed007ef0283cb351e672acadd8a39388c67ab806b310b2751a11d9"
+    },
+    {
+      "path": "/tmp/gpu-p630-qualification-doa.log",
+      "sha256": "d3bdf261e0a5743b446f0ce333b3459ddf9829c4ef50fc19808c98709c7d6cba"
+    },
+    {
+      "path": "/tmp/gpu-p630-negative-2.log",
+      "sha256": "56da3f124cb425d78b8628b4ba857a7ff7a1a043160fdb3ec8c25616bd3b64ec"
+    },
+    {
+      "path": "/tmp/gpu-p630-negative-3.log",
+      "sha256": "792ab5dfc718e065087090a1256c9a4cfe40da17af43ebc0b91a6a7b2109c151"
+    }
+  ],
+  "review_history": [
+    {
+      "disposition": "Positive comparisons support bounded graph-equivalence claims; premature-resolve oracle control remains failing, and reduced-sample control not reached in inspected run. Do not claim completed four-negative-control qualification.",
+      "findings": [
+        {
+          "id": "P630-01",
+          "severity": "high for claimed oracle qualification",
+          "status": "resolved by source and existing negative-3 log inspection",
+          "source": "prefix_qualification_tests.rs::p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve; /tmp/gpu-p630-negative-2.log",
+          "finding": "PrematureResolve returned byte-identical output and assertion failed. Current changed-camera F-DOA case does not deliberately overlap partially covered suffix geometry with partially covered prefix edges; resolving samples early can be equivalent when suffix is disjoint or fully covered. Reduced-samples branch comes later and was not executed.",
+          "required": "Retain failure evidence. Add a bounded deterministic fractional prefix/suffix overlap case that distinguishes per-sample coverage, then complete remaining negative controls. This is oracle sensitivity failure, not demonstrated failure of correct prefix copy.",
+          "resolution": "Negative case now projects an actual F-DOA pad center through changed fractional camera and places a fractional full-viewport crosshair there; checks visible pad and nonempty suffix geometry. Existing negative-3 log reports 1 test passed, with differing channels stale335658, missing3061676, premature605, reduced4x50849; all three correct8x recovery comparisons exact. Prior insensitive control remains preserved in review_history and negative-2 log pin."
+        }
+      ],
+      "pins": [
+        {
+          "path": "crates/gui-render/src/render/prefix_negative_control.rs",
+          "sha256": "b629a02099b8379b97e67b40304f7b8e64bda31f8e382763a4d39a5def6f8629"
+        },
+        {
+          "path": "crates/gui-render/src/render/prefix_qualification_tests.rs",
+          "sha256": "049e201126c9739fba86fd893fdb59cd8ad5cc79a7b8a8003fc1fa72550f5242"
+        },
+        {
+          "path": "crates/gui-render/src/render/prefix_graph_tests.rs",
+          "sha256": "0af500adcc5beab70ee86b8d1fe94a19df13cebbdb52b2425af2b687ae10fdc4"
+        },
+        {
+          "path": "crates/gui-render/src/render/gpu_frame.rs",
+          "sha256": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685"
+        },
+        {
+          "path": "crates/gui-render/src/render/gpu_surface.rs",
+          "sha256": "eb7983d64c99a26a588b1b0e01139009e0602311da8f862e0d3f82a846d90682"
+        },
+        {
+          "path": "/tmp/gpu-prepared-native/fixture.json",
+          "sha256": "19f00183f0fdfcd8bb700a876370f473eea7f58ca1714f2a835d6f06ef027d68"
+        },
+        {
+          "path": "/tmp/gpu-p630-qualification-1.log",
+          "sha256": "3d596eb1d3ed007ef0283cb351e672acadd8a39388c67ab806b310b2751a11d9"
+        },
+        {
+          "path": "/tmp/gpu-p630-qualification-doa.log",
+          "sha256": "d3bdf261e0a5743b446f0ce333b3459ddf9829c4ef50fc19808c98709c7d6cba"
+        },
+        {
+          "path": "/tmp/gpu-p630-negative-2.log",
+          "sha256": "56da3f124cb425d78b8628b4ba857a7ff7a1a043160fdb3ec8c25616bd3b64ec"
+        }
+      ]
+    }
+  ]
+}

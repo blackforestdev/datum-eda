@@ -1,0 +1,83 @@
+{
+  "status": "Bounded P630 exact8x graph qualification passed; native performance and complete DRM duty remain pending. GPU issue stays open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "6ddfa1ac",
+  "authority": "Owner-approved r2/PM049; no expanded runtime observer scope.",
+  "rationale": "Exercise the missing reference-adapter graph equivalence and demonstrate sensitivity to each required wrong-graph control before timing experiments.",
+  "environment": {
+    "adapter": "Intel HD Graphics P630 (KBL GT2)",
+    "pci": "0000:00:02.0",
+    "backend": "Vulkan",
+    "driver": "Mesa25.0.7-2+deb13u1",
+    "format": "Rgba8UnormSrgb",
+    "samples": 8,
+    "extent": [
+      1280,
+      800
+    ],
+    "fixture": {
+      "source": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+      "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "cli": "target/release/datum-eda",
+      "cli_sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+      "prior_method": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json"
+    },
+    "fixture_verified_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "verification": {
+    "focused_tests": {
+      "passed": 4,
+      "failed": 0,
+      "log": "qualification-final.log"
+    },
+    "clippy": "all-targets visual datum-gui-render, -D warnings: pass; clippy-final.log",
+    "cases": [
+      "Board/schematic pointer enter/move/leave, FullViewport/Local/None at fractional positions: exact full/split pixels; warm zero world bundle execution and unchanged real world allocation/upload counters. Existing checked-in simple-demo import is supplemental schematic coverage, not full schematic qualification.",
+      "F-DOA effective pad-hover enter/leave forces preparation and retained dependency rebuild; stable hover reuses. Menu open/close/exposure exact. 1600x1000 exceeds optional cap and uses full graph; returning to1280x800 admits a fresh pair. Same-device Renderer resource replacement and CPU-session transfer rebuild correctly, then warm reuse.",
+      "Equal-length terminal AAAA/BBBB snapshots visibly differ; terminal foreground SIXEL and background Kitty placements, with/without File menu, full/split exact.",
+      "Stale key, deterministic missing copy, valid early-resolve-and-expand and4x sample reduction all rejected. Correct8x recovery exact after each fault. Fractional crosshair crosses projected real pad location to expose sample coverage loss."
+    ],
+    "negative_differing_channels": {
+      "stale_key": 335658,
+      "missing_copy": 3061676,
+      "premature_resolve": 605,
+      "reduced_samples": 50849
+    }
+  },
+  "preserved_failures": [
+    "Initial combined simple-demo pointer/hover test passed its18pointer cases but then failed because that fixture contains no pads; split pointer coverage and required pinned F-DOA for hover. Terminal test independently passed.",
+    "Negative helper first failed compilation because installed wgpu names multiview_mask, corrected before execution.",
+    "First early-resolve control had no fractional suffix crossing and was byte-identical: failed oracle sensitivity, not production defect. Added projected real-pad fractional crosshair; all4negative controls now detected.",
+    "Source-health check initially treated early cfg(test) module declaration as start of entire test tail; moved test module declaration to normal trailing test section, no policy/ratchet changes.",
+    "Initial Clippy caught nested test-only if; collapsed condition. Final Clippy passes; no runtime behavior change."
+  ],
+  "review": "review.json: P630-01 resolved at pinned fractional-overlap scope; source/log review only. Final cohesive batch subsequently4pass. Postreview edit only collapses test conditional forClippy.",
+  "limits": [
+    "Offscreen GPU readbacks simulate matching native completion receipts; not real acquire/present or replacement-device/device-loss evidence.",
+    "Full reference shares current prepared scene and ordered painter. Equivalence does not independently validate preparation semantics or clear existing Console occlusion defect dat-gpu-console-occlusion-ly6r.",
+    "Negative scratch image/pipeline exists only in test binaries and is not resource/performance evidence. Production graph unchanged by this unit.",
+    "Zero focused performance runs consumed. No GPU percentile, total-duty, CPU, full resource, S4/S5 or owner product acceptance claim. Reuse prior lifetime/pressure/component evidence at its recorded scope. CPU event-loop optimization deferred."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685",
+    "crates/gui-render/src/render/gpu_surface.rs": "eb7983d64c99a26a588b1b0e01139009e0602311da8f862e0d3f82a846d90682",
+    "crates/gui-render/src/render/offscreen_session_tests.rs": "7a01d5c2aec7a8778a4cc1ea99ef28fcc5626333689686c3e839821bbbe1ebd9",
+    "crates/gui-render/src/render/prefix_graph_tests.rs": "0af500adcc5beab70ee86b8d1fe94a19df13cebbdb52b2425af2b687ae10fdc4",
+    "crates/gui-render/src/render/prefix_negative_control.rs": "b629a02099b8379b97e67b40304f7b8e64bda31f8e382763a4d39a5def6f8629",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "b6512f99324a912fd55870f45a0276b8e919520d9f3e5c527d00e2e3ad455d43"
+  },
+  "artifacts_sha256": {
+    "clippy-final.log": "351c2911544d4553d669df0a5e105ff1fa415b3f35bc7a5611a1bd1225e6099a",
+    "clippy.log": "7bad0edf7fce75a0fecb1d12192529e8b9a3f42261671edbc12f7d75f6defdf7",
+    "negative-1.log": "7dc6d83e97b0b933a2b061f2d023d23bf861f44ad511526b5358944ca2a279d4",
+    "negative-2.log": "56da3f124cb425d78b8628b4ba857a7ff7a1a043160fdb3ec8c25616bd3b64ec",
+    "negative-3.log": "792ab5dfc718e065087090a1256c9a4cfe40da17af43ebc0b91a6a7b2109c151",
+    "qualification-1.log": "3d596eb1d3ed007ef0283cb351e672acadd8a39388c67ab806b310b2751a11d9",
+    "qualification-doa.log": "d3bdf261e0a5743b446f0ce333b3459ddf9829c4ef50fc19808c98709c7d6cba",
+    "qualification-final.log": "321dc6ffd4a0072544275bde82436d248f1613afe19560a9d8a0f1ab13f4ce25",
+    "review.json": "91c41e6bf82438b35a94742ece3cdbd23b32e2b2ba26138516b7b00f00c80f7f"
+  }
+}

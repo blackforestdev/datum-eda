@@ -1,0 +1,26 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.6 GiB target_free=168.9 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.6 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.77s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 1 test
+test visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::p630_exact8_doa_hover_composition_and_recovery ... exact8x adapter=AdapterInfo { name: "Intel(R) HD Graphics P630 (KBL GT2)", vendor: 32902, device: 22813, device_type: IntegratedGpu, device_pci_bus_id: "0000:00:02.0", driver: "Intel open-source Mesa driver", driver_info: "Mesa 25.0.7-2+deb13u1", backend: Vulkan, subgroup_min_size: 8, subgroup_max_size: 32, transient_saves_memory: false }, format=TextureFormatFeatures { allowed_usages: TextureUsages(COPY_SRC | COPY_DST | TEXTURE_BINDING | RENDER_ATTACHMENT | TRANSIENT), flags: TextureFormatFeatureFlags(FILTERABLE | MULTISAMPLE_X2 | MULTISAMPLE_X4 | MULTISAMPLE_X8 | MULTISAMPLE_X16 | MULTISAMPLE_RESOLVE | BLENDABLE) }
+datum-import warning [/tmp/gpu-prepared-native/board.kicad_pcb]: parsed KiCad board skeleton into canonical nets, packages, tracks, vias, zones, and stackup; full geometry and rule import is not implemented yet
+exact8x P630 case passed: F-DOA cold
+exact8x P630 case passed: pad hover strong invalidation
+exact8x P630 case passed: stable pad hover
+exact8x P630 case passed: pad hover strong invalidation
+exact8x P630 case passed: stable pad hover
+exact8x P630 case passed: menu painter order
+exact8x P630 case passed: menu exposure
+exact8x P630 case passed: menu painter order
+exact8x P630 case passed: menu exposure
+exact8x P630 case passed: above optional image cap
+exact8x P630 case passed: return to admitted extent
+exact8x P630 case passed: replacement resources and preserved CPU session
+exact8x P630 case passed: recovered warm reuse
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 520 filtered out; finished in 3.13s
+

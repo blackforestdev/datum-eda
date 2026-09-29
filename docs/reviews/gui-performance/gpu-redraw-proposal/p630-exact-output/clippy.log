@@ -1,0 +1,31 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.6 GiB target_free=168.9 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.6 GiB used; soft limit 20.0 GiB
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+error: this `if` statement can be collapsed
+   --> crates/gui-render/src/render/prefix_qualification_tests.rs:226:13
+    |
+226 | /             if state.ui.active_menu.is_none() {
+227 | |                 if let Some(old) = previous.replace(image) {
+228 | |                     assert!(
+229 | |                         old.as_raw() != previous.as_ref().unwrap().as_raw(),
+...   |
+233 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+226 ~             if state.ui.active_menu.is_none()
+227 ~                 && let Some(old) = previous.replace(image) {
+228 |                     assert!(
+...
+231 |                     );
+232 ~                 }
+    |
+
+error: could not compile `datum-gui-render` (lib test) due to 1 previous error

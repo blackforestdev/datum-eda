@@ -582,3 +582,7 @@ mod tests {
 #[cfg(all(test, feature = "visual", target_os = "linux"))]
 #[path = "attachment_cost_probe.rs"]
 mod attachment_cost_probe;
+
+#[cfg(test)]
+#[path = "prefix_negative_control.rs"]
+pub(crate) mod prefix_negative_control;

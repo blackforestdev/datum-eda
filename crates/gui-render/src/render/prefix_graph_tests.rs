@@ -3,15 +3,27 @@ use super::*;
 use crate::render_input::{PointerUpdate, SourceEpoch};
 
 fn capture8() -> OffscreenRenderer {
+    capture8_with_preference(wgpu::PowerPreference::HighPerformance)
+}
+pub(super) fn reference_capture8() -> OffscreenRenderer {
+    capture8_with_preference(wgpu::PowerPreference::LowPower)
+}
+fn capture8_with_preference(preference: wgpu::PowerPreference) -> OffscreenRenderer {
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends: wgpu::Backends::VULKAN,
         ..Default::default()
     });
     let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
-        power_preference: wgpu::PowerPreference::HighPerformance,
+        power_preference: preference,
         ..Default::default()
     }))
     .unwrap();
+    if preference == wgpu::PowerPreference::LowPower {
+        assert!(
+            adapter.get_info().name.contains("P630"),
+            "reference proof requires pinned Intel P630"
+        );
+    }
     let format = adapter.get_texture_format_features(OUTPUT_FORMAT);
     assert!(
         format.flags.sample_count_supported(8),
@@ -40,7 +52,11 @@ fn capture8() -> OffscreenRenderer {
     }
 }
 
-fn prepare(c: &mut OffscreenRenderer, state: &ReviewWorkspaceState, source: &SourceEpoch) {
+pub(super) fn prepare(
+    c: &mut OffscreenRenderer,
+    state: &ReviewWorkspaceState,
+    source: &SourceEpoch,
+) {
     c.renderer
         .prepare_session_workspace(
             state,
@@ -60,11 +76,11 @@ fn prepare(c: &mut OffscreenRenderer, state: &ReviewWorkspaceState, source: &Sou
         .unwrap();
 }
 
-fn target(c: &OffscreenRenderer) -> crate::capture_resource::CaptureTarget {
+pub(super) fn target(c: &OffscreenRenderer) -> crate::capture_resource::CaptureTarget {
     crate::capture_resource::CaptureTarget::new(&c.device, c.extent(), OUTPUT_FORMAT).unwrap()
 }
 
-fn frame(c: &mut OffscreenRenderer, presented: bool) -> RgbaImage {
+pub(super) fn frame(c: &mut OffscreenRenderer, presented: bool) -> RgbaImage {
     let target = target(c);
     let view = target.create_view(&Default::default());
     let plan = c
@@ -87,7 +103,7 @@ fn frame(c: &mut OffscreenRenderer, presented: bool) -> RgbaImage {
     image
 }
 
-fn full_reference(c: &mut OffscreenRenderer) -> RgbaImage {
+pub(super) fn full_reference(c: &mut OffscreenRenderer) -> RgbaImage {
     let prepared = c.renderer.render_session().prepared().unwrap().clone();
     let board = c.renderer.render_session().board().unwrap().clone();
     let schematic = c.renderer.render_session().schematic().cloned();
@@ -109,7 +125,7 @@ fn full_reference(c: &mut OffscreenRenderer) -> RgbaImage {
     c.read_texture(&target).unwrap()
 }
 
-fn world_uploads(c: &OffscreenRenderer) -> Vec<(u64, u64, u64)> {
+pub(super) fn world_uploads(c: &OffscreenRenderer) -> Vec<(u64, u64, u64)> {
     let ids: Vec<_> = [
         c.renderer.world_vertices_gpu.submission_ref(),
         c.renderer.world_strokes_gpu.submission_ref(),
