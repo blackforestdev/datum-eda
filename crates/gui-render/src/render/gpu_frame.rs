@@ -204,14 +204,14 @@ impl Renderer {
             })
             .flatten();
         self.publish_resource_consumers();
-        #[cfg(test)]
+        #[cfg(all(test, feature = "visual"))]
         let fault = crate::gpu_surface::prefix_negative_control::take();
         let damage = images.as_ref().and_then(|images| {
             self.damage_masks.restoration.as_ref()?;
             images.restoration_views()?;
             self.render_session.prefix.damage(images.identity)
         });
-        #[cfg(test)]
+        #[cfg(all(test, feature = "visual"))]
         let damage = match fault {
             crate::gpu_surface::prefix_negative_control::Fault::None
             | crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask => damage,
@@ -225,20 +225,20 @@ impl Renderer {
             damage.and_then(|pixels| self.damage_masks.restricted(device, pixels.rectangles()));
         let damage = damage.filter(|_| mask.is_some());
         let reuse = damage.is_some();
-        #[cfg(test)]
+        #[cfg(all(test, feature = "visual"))]
         let reuse = reuse || fault == crate::gpu_surface::prefix_negative_control::Fault::StaleKey;
         let suffix_mask = mask.as_ref().unwrap_or(&self.damage_masks.unrestricted);
-        #[cfg(test)]
+        #[cfg(all(test, feature = "visual"))]
         let suffix_mask =
             if fault == crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask {
                 &self.damage_masks.unrestricted
             } else {
                 suffix_mask
             };
-        #[cfg(test)]
+        #[cfg(all(test, feature = "visual"))]
         let restore_samples =
             fault != crate::gpu_surface::prefix_negative_control::Fault::StaleWorking;
-        #[cfg(not(test))]
+        #[cfg(not(all(test, feature = "visual")))]
         let restore_samples = true;
         suffix_mask.set_consumers(self.frame_consumers.all());
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
@@ -289,9 +289,9 @@ impl Renderer {
                 self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
             }
             if damage.is_none() {
-                #[cfg(not(test))]
+                #[cfg(not(all(test, feature = "visual")))]
                 images.copy(&mut encoder);
-                #[cfg(test)]
+                #[cfg(all(test, feature = "visual"))]
                 fault.copy(
                     device,
                     &mut encoder,
