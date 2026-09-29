@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU timed recovery packet",
+  "recorded_at": "2026-09-29T07:22:43Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/timed-recovery/plan.md",
+    "sha256": "51aa4219dec265009e283bf0b3ec6b682499ea9c2b48f18b62f7ea106ec32167",
+    "commit": "0b0add787a853b61100d8ff1af9628d76de250e5"
+  },
+  "disposition": "Approve exact existing-buffer causal correction, focused offline proof, one candidate and one matched baseline release build, fixed12pointer trials. Candidate-only numerical stop amendment approved; any invalidity/correctness failure stops both roles. No DRM execution, CPU optimization, renderer variants, replacement native trials or qualification closure."
+}

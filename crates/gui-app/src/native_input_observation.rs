@@ -70,9 +70,10 @@ impl InputObservation {
             unsafe { libc::clock_gettime(libc::CLOCK_MONOTONIC, &mut ts) } == 0,
             "input receipt clock unavailable"
         );
+        let workload = workload::Schedule::from_environment()?;
         Ok(Some(Self {
-            workload: workload::Schedule::from_environment()?,
-            diagnostic: diagnostic.then(diagnostic::Diagnostic::default),
+            diagnostic: (diagnostic || workload.is_some()).then(diagnostic::Diagnostic::default),
+            workload,
             path: path.into(),
             started: Instant::now(),
             monotonic_origin_ns: ts.tv_sec as u64 * 1_000_000_000 + ts.tv_nsec as u64,
@@ -103,29 +104,12 @@ impl InputObservation {
                 };
                 (None, Some((button, *state == ElementState::Pressed)))
             }
-            _ if self.workload.is_some() => (None, None),
             _ => return false,
         };
         if self.active.is_some() || self.records.len() == LIMIT {
             self.overflow = true;
             return false;
         }
-        let (workload, workload_ns) = if let Some(schedule) = &mut self.workload {
-            let Ok(now) = workload::monotonic_ns() else {
-                self.overflow = true;
-                return false;
-            };
-            (
-                schedule.demand(
-                    matches!(event, Some(WindowEvent::CloseRequested)),
-                    now,
-                    self.records.len() as u64 + 1,
-                ),
-                Some(now),
-            )
-        } else {
-            ([0; 3], None)
-        };
         let demand_kind = match event {
             Some(WindowEvent::CursorMoved { .. }) => "pointer",
             Some(WindowEvent::MouseInput { .. }) => "button",
@@ -136,8 +120,8 @@ impl InputObservation {
         };
         self.active = Some(self.records.len());
         self.records.push(Record {
-            workload,
-            workload_ns,
+            workload: [0; 3],
+            workload_ns: None,
             demand_kind,
             received_ns: self.started.elapsed().as_nanos(),
             completed_ns: None,
@@ -160,16 +144,16 @@ impl InputObservation {
             self.records[index].route = route;
         }
     }
-    fn complete(&mut self, after: Option<State>) {
+    fn complete(&mut self, after: Option<State>) -> bool {
         if self.diagnostic.is_some() {
-            self.complete_diagnostic(after);
-            return;
+            return self.complete_diagnostic(after);
         }
         if let Some(index) = self.active.take() {
             let record = &mut self.records[index];
             record.completed_ns = Some(self.started.elapsed().as_nanos());
             record.after = after;
         }
+        true
     }
     fn complete_receipt(&self) -> bool {
         self.diagnostic
@@ -194,7 +178,7 @@ impl InputObservation {
             .map(|(i, r)| r.value(i))
             .collect();
         let gpu_drained = runtime.renderer.gpu_measurement_drained_manifest()?;
-        let report = json!({"schema":"datum.input-receipt/v1","pid":std::process::id(),"mode":if self.diagnostic.is_some(){"output-diagnostic"}else{"causal-input"},
+        let report = json!({"schema":"datum.input-receipt/v1","pid":std::process::id(),"mode":if self.workload.is_some(){"causal-input"}else{"output-diagnostic"},
             "gpu_drained":gpu_drained,"workload_manifest":self.workload.as_ref().map(workload::Schedule::value),"monotonic_origin_ns":self.monotonic_origin_ns,"complete":complete,"overflow":self.overflow,
             "record_limit":LIMIT,"record_storage_bytes":self.records.capacity()*std::mem::size_of::<Record>(),
             "records":records,"final_state":final_state.value(),
@@ -208,31 +192,42 @@ impl InputObservation {
 }
 
 impl App {
-    pub(crate) fn begin_native_round_observation(&mut self, event_loop: &ActiveEventLoop) {
-        if self
-            .input_observation
-            .as_ref()
-            .is_some_and(|o| o.diagnostic.is_some())
-        {
-            if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &self.runtime) {
-                observer.begin_demand(None, State::capture(runtime));
-            }
-            self.check_output_diagnostic(event_loop);
-            return;
-        }
-        if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
-            && observer.workload.is_some()
-            && observer.begin_demand(None, State::capture(runtime))
-        {
-            let tag = observer.records.last().unwrap().workload;
-            if runtime
+    fn start_input_scope(&mut self, event_loop: &ActiveEventLoop) {
+        if let (Some(o), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
+            && o.workload.is_some()
+            && let Some(d) = &mut o.diagnostic
+            && d.failure.is_none()
+            && let Some(record) = &d.pending
+            && runtime
                 .renderer
                 .render_session_mut()
-                .set_measurement_workload(tag)
+                .set_measurement_workload(record.workload)
                 .is_err()
+        {
+            d.failure = Some("workload context rejected");
+        }
+        self.check_output_diagnostic(event_loop);
+    }
+    fn finish_input_scope(&mut self, event_loop: &ActiveEventLoop) {
+        if let Some(o) = &mut self.input_observation {
+            let retain = o.complete(self.runtime.as_ref().map(State::capture));
+            if o.workload.is_some()
+                && let Some(runtime) = &mut self.runtime
             {
-                observer.overflow = true;
+                runtime
+                    .renderer
+                    .render_session_mut()
+                    .end_measurement_workload(retain);
             }
+        }
+        self.check_output_diagnostic(event_loop);
+    }
+    pub(crate) fn begin_native_round_observation(&mut self, event_loop: &ActiveEventLoop) {
+        if let (Some(o), Some(runtime)) = (&mut self.input_observation, &self.runtime)
+            && o.diagnostic.is_some()
+        {
+            o.begin_demand(None, State::capture(runtime));
+            self.start_input_scope(event_loop);
         }
     }
     pub(crate) fn end_native_round_observation(&mut self, event_loop: &ActiveEventLoop) {
@@ -241,26 +236,7 @@ impl App {
             .as_ref()
             .is_some_and(|o| o.diagnostic.is_some())
         {
-            if let Some(observer) = &mut self.input_observation {
-                observer.complete(self.runtime.as_ref().map(State::capture));
-            }
-            self.check_output_diagnostic(event_loop);
-            return;
-        }
-        if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
-            && observer.workload.is_some()
-            && let Some(index) = observer.active
-        {
-            let after = State::capture(runtime);
-            let retain = observer.records[index].before.render_activity != after.render_activity;
-            runtime
-                .renderer
-                .render_session_mut()
-                .end_measurement_workload(retain);
-            observer.complete(Some(after));
-            if !retain {
-                observer.records.pop();
-            }
+            self.finish_input_scope(event_loop);
         }
     }
     pub(crate) fn handle_native_window_event(
@@ -270,50 +246,19 @@ impl App {
         event: WindowEvent,
     ) {
         let observed = match (&mut self.input_observation, &self.runtime) {
-            (Some(observer), Some(runtime)) if runtime.window.id() == window_id => {
-                observer.begin(&event, State::capture(runtime))
+            (Some(o), Some(runtime)) if runtime.window.id() == window_id => {
+                o.begin(&event, State::capture(runtime))
             }
             _ => false,
         };
         self.check_output_diagnostic(event_loop);
-        if observed
-            && self
-                .input_observation
-                .as_ref()
-                .is_none_or(|o| o.diagnostic.is_none())
-        {
-            let observer = self.input_observation.as_mut().expect("active observer");
-            let tag = observer.records.last().unwrap().workload;
-            if tag[0] != 0
-                && let Some(runtime) = &mut self.runtime
-                && runtime
-                    .renderer
-                    .render_session_mut()
-                    .set_measurement_workload(tag)
-                    .is_err()
-            {
-                observer.overflow = true;
-            }
+        if observed {
+            self.start_input_scope(event_loop);
         }
         self.dispatch_native_window_event(event_loop, window_id, event);
         if observed {
-            if self
-                .input_observation
-                .as_ref()
-                .is_none_or(|o| o.diagnostic.is_none())
-                && let Some(runtime) = &mut self.runtime
-            {
-                runtime
-                    .renderer
-                    .render_session_mut()
-                    .end_measurement_workload(true);
-            }
-            self.input_observation
-                .as_mut()
-                .expect("active observer")
-                .complete(self.runtime.as_ref().map(State::capture));
+            self.finish_input_scope(event_loop);
         }
-        self.check_output_diagnostic(event_loop);
     }
     pub(crate) fn export_input_receipt(&self) -> Result<()> {
         if let Some(observer) = &self.input_observation {

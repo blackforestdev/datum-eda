@@ -114,3 +114,71 @@ fn diagnostic_snapshot_requires_no_drain_or_runtime_and_survives_later_errors() 
     assert_eq!(missing["complete"], false);
     std::fs::remove_dir_all(o.path.parent().unwrap()).unwrap();
 }
+
+#[test]
+fn causal_filter_commits_real_revision_activity_and_reuses_only_discarded_ids() {
+    let mut o = diagnostic();
+    let now = workload::monotonic_ns().unwrap();
+    o.workload = Some(
+        serde_json::from_value(json!({"epoch":7,"warmup_ns":now-5_000_000_000,
+        "active_ns":now,"still_ns":now+30_000_000_000,"drain_ns":now+35_000_000_000}))
+        .unwrap(),
+    );
+    let mut session = datum_gui_render::RenderSession::default();
+    let mut current = state();
+    current.render_activity = session.measurement_activity();
+    current.render_revision = session.content_revision();
+    for _ in 0..LIMIT + 10 {
+        assert!(o.begin_demand(None, current));
+        let tag = o
+            .diagnostic
+            .as_ref()
+            .unwrap()
+            .pending
+            .as_ref()
+            .unwrap()
+            .workload;
+        assert_eq!(tag[2], 1);
+        session.set_measurement_workload(tag).unwrap();
+        let retain = o.complete(Some(current));
+        assert!(!retain);
+        session.end_measurement_workload(retain);
+    }
+    for expected in 1..=2 {
+        assert!(o.begin_demand(None, current));
+        let tag = o
+            .diagnostic
+            .as_ref()
+            .unwrap()
+            .pending
+            .as_ref()
+            .unwrap()
+            .workload;
+        session.set_measurement_workload(tag).unwrap();
+        session.composition_changed();
+        current.render_activity = session.measurement_activity();
+        current.render_revision = session.content_revision();
+        let retain = o.complete(Some(current));
+        assert!(retain);
+        session.end_measurement_workload(retain);
+        assert_eq!(o.records.last().unwrap().workload, [7, 3, expected]);
+    }
+    assert!(o.complete_receipt());
+    assert_eq!(o.records.len(), 2);
+    while o.records.len() < LIMIT {
+        assert!(o.begin(&motion(), current));
+        assert!(o.complete(Some(current)));
+    }
+    assert!(o.begin_demand(None, current));
+    assert!(!o.complete(Some(current)));
+    assert!(o.complete_receipt());
+    assert!(o.begin_demand(None, current));
+    session.composition_changed();
+    current.render_activity = session.measurement_activity();
+    current.render_revision = session.content_revision();
+    assert!(o.complete(Some(current)));
+    assert_eq!(o.records.len(), LIMIT);
+    assert!(o.overflow);
+    assert!(!o.complete_receipt());
+    assert!(!o.diagnostic_report(Some(current))["pending"].is_null());
+}

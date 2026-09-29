@@ -9,16 +9,20 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORY = ROOT / 'target/gpu-crosshair-focused-proof'
+DIRECTORY = ROOT / 'target/gpu-timed-recovery-proof'
 STATE = DIRECTORY / 'campaign-state.json'
+ORDER = [('candidate','gpu',1),('baseline','gpu',1),('baseline','quiet',1),('candidate','quiet',1),
+         ('baseline','gpu',2),('candidate','gpu',2),('candidate','quiet',2),('baseline','quiet',2),
+         ('candidate','gpu',3),('baseline','gpu',3),('baseline','quiet',3),('candidate','quiet',3)]
 
 
 def next_index(state, declaration, digest):
-    assert declaration['run_cap'] == 1 and len(declaration['runs']) == 1
+    assert declaration['run_cap'] == 12 and len(declaration['runs']) == 12
+    assert [(r['role'],r['mode'],r['pair']) for r in declaration['runs']] == ORDER
     assert state['declaration_sha256'] == digest, 'declaration changed'
     assert state['status'] == 'ready', 'campaign is stopped, running or complete'
     index = len(state['results'])
-    assert index < 1, 'pointer run cap exhausted'
+    assert index < 12, 'pointer run cap exhausted'
     assert all(row['status'] == 'valid_descriptive_run' for row in state['results'])
     return index
 
@@ -60,8 +64,8 @@ def main():
         exit_code = 124 if timeout else completed.returncode
         state['results'].append(dict(index=index, status=result['status'], exit_code=exit_code,
                                      receipt=str(receipt)))
-        valid = exit_code == 0 and result['status'] == 'valid_output_diagnostic'
-        state['status'] = 'diagnostic_complete' if valid else 'stopped'
+        valid = exit_code == 0 and result['status'] == 'valid_descriptive_run'
+        state['status'] = ('complete' if len(state['results']) == 12 else 'ready') if valid else 'stopped'
         STATE.write_text(json.dumps(state,indent=2)+'\n')
         print(json.dumps(state['results'][-1]))
         return 0 if valid else 1

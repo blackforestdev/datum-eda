@@ -133,7 +133,10 @@ impl App {
         self.frames.wake_at(surface_due);
         match self.service_gpu_measurements() {
             Ok(due) => self.frames.wake_at(due),
-            Err(err) => super::fatal_gui_error(event_loop, "GPU measurement incomplete", err),
+            Err(err) => {
+                self.preserve_measurement_failure();
+                super::fatal_gui_error(event_loop, "GPU measurement incomplete", err)
+            }
         }
         self.frames.wake_at(device_due);
     }

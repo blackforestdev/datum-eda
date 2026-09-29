@@ -1,22 +1,23 @@
 """One predeclared r3 W-POINTER run. Never retries a trial or launches a campaign."""
-import hashlib, json, os, signal, socket, subprocess, sys, tempfile, time, uuid
+import hashlib, json, math, os, re, signal, socket, subprocess, sys, tempfile, time, uuid
 from pathlib import Path
 ROOT = Path('/home/bfadmin/Documents/datum-eda')
 sys.path.insert(0,str(ROOT/'docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2'))
 sys.path.insert(0, str(ROOT / "scripts"))
 from gpu_crosshair_diagnostic import analyze, ensure_alive, wait_until as diagnostic_wait
-from gpu_r3_trial_outcome import record_failure
+from gpu_r3_trial_outcome import record_failure, finish_result
+from gpu_r3_receipts import validate as validate_gpu, validate_demands
 from gpu_r2_wm_close import close_window
 
 declaration = json.loads(Path(sys.argv[1]).read_text())
 index = int(sys.argv[2]); spec = declaration['runs'][index]
-assert Path(sys.argv[1]).resolve() == ROOT/'target/gpu-crosshair-focused-proof/declaration.json'
-campaign=json.loads((ROOT/'target/gpu-crosshair-focused-proof/campaign-state.json').read_text())
+assert Path(sys.argv[1]).resolve() == ROOT/'target/gpu-timed-recovery-proof/declaration.json'
+campaign=json.loads((ROOT/'target/gpu-timed-recovery-proof/campaign-state.json').read_text())
 assert campaign['status']=='running' and campaign['reserved_index']==index
 assert campaign['declaration_sha256']==hashlib.sha256(Path(sys.argv[1]).read_bytes()).hexdigest()
 
 assert spec['workload'] == 'W-POINTER'
-role,mode = spec['role'],spec['mode']; assert role == 'candidate' and mode == 'output-diagnostic'
+role,mode = spec['role'],spec['mode']; assert role in ('candidate','baseline') and mode in ('gpu','quiet')
 sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
 for path,digest in declaration['method_sha256'].items(): assert sha(path)==digest,path
 binary=Path(declaration['binaries'][role]['path']); assert sha(binary)==declaration['binaries'][role]['sha256']
@@ -33,7 +34,7 @@ out=Path(tempfile.mkdtemp(prefix=f'gpu-r3-{index}-{role}-{mode}-'));print(out,fl
 report={'run_index':index,'spec':spec,'declaration_sha256':sha(sys.argv[1]),'binary_sha256':sha(binary),
         'status':'started','gpu_duty':'unavailable: complete DRM lifetime observer absent',
         'limits':['Descriptive bounded experiment only; not S4 qualification or formal relative inference.',
-                  'Bounded semantic input diagnostic; GPU timestamp and causal tracing disabled.',
+                  'Matched bounded causal/semantic observer in both modes; overhead is not subtracted.',
                   'No CPU/action, uninstrumented CPU/resource or physical presentation latency acceptance.']}
 # Absolute schedule is sealed before process launch. Startup has a bounded 40s
 # readiness allowance; the producer cannot move these boundaries after launch.
@@ -57,7 +58,7 @@ for key in ('WAYLAND_DISPLAY','LD_AUDIT','LD_PRELOAD'):env.pop(key,None)
 env.update(WINIT_UNIX_BACKEND='x11',WINIT_X11_SCALE_FACTOR='1',
     XDG_CONFIG_HOME=str(out/'config'),XDG_CACHE_HOME=str(out/'cache'),
     XDG_DATA_HOME=str(out/'data'),XDG_STATE_HOME=str(out/'state'),
-    DATUM_GUI_LOG=str(log),DATUM_GPU_MEASUREMENTS='0',DATUM_OUTPUT_DIAGNOSTIC='1',
+    DATUM_GUI_LOG=str(log),DATUM_GPU_MEASUREMENTS='1' if mode=='gpu' else '0',DATUM_WORKLOAD_MANIFEST=str(out/'workload.json'),
     DATUM_INPUT_RECEIPT=str(out/'input-receipt.json'),
     EDA_CLI_BIN=declaration['cli']['path'])
 listener=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
@@ -162,16 +163,44 @@ try:
     snapshot=json.loads((out/'input-diagnostic.json').read_text())
     schedule=json.loads((out/'schedule.json').read_text())
     assert receipt['pid']==p.pid and receipt['complete'] and not receipt['overflow']
-    assert receipt['mode']=='output-diagnostic' and receipt['gpu_drained'] is None
-    assert 'gpu_measurement ' not in log.read_text(), 'unexpected GPU timestamp samples'
-    diagnosis=analyze(snapshot,schedule,report,declaration,receipt)
+    assert receipt['mode']=='causal-input'
+    assert snapshot['records']==receipt['records'], 'input history changed after pre-drain snapshot'
+    diagnosis=analyze(snapshot,schedule,report,declaration,receipt,causal=True)
     (out/'diagnosis.json').write_text(json.dumps(diagnosis,indent=2)+'\n')
     report['diagnosis']=diagnosis
     if not diagnosis['capture_state_matches']:
         record_failure(report, AssertionError('capture state differs from last applied pointer'))
-    report['budget_stop']=False
-    report['gpu']='disabled: output-only diagnosis'
-    report['status']='invalid' if report.get('failures') else 'valid_output_diagnostic'
+    expected_epoch=report['shutdown_receipt']['device_epoch']
+    assert receipt['final_state']['device_epoch']==expected_epoch
+    assert all(r[s]['device_epoch']==expected_epoch for r in receipt['records'] for s in ('before','after'))
+    validate_demands(receipt,workload)
+    report['input_storage_bytes']=receipt['record_storage_bytes']
+    raw=log.read_bytes();lines=raw.decode().splitlines()
+    assert not any('gpu_measurement_incomplete ' in line or 'gpu_measurement_log_failed ' in line or 'gpu_measurement_rejected ' in line for line in lines)
+    samples=[json.loads(line.split('gpu_measurement ',1)[1]) for line in lines if line.startswith('gpu_measurement ')]
+    if mode=='gpu':
+        assert samples,'missing GPU samples'
+        epochs={s['device_epoch'] for s in samples};hosts={s['host'] for s in samples}
+        assert epochs=={expected_epoch} and len(hosts)==1
+        bindings=re.findall(r'gpu_measurement_host host=(\d+) epoch=(\d+) window=WindowId\((\d+)\)',raw.decode())
+        assert len(bindings)==1 and tuple(map(int,bindings[0]))==(next(iter(hosts)),expected_epoch,main),'foreign GPU host/window binding'
+        classified=validate_gpu(samples,receipt,workload)
+        (out/'classified-gpu.json').write_text(json.dumps(classified,indent=2)+'\n')
+        active_ids={tuple(row['identity']) for row in classified if row['phase'] == 'active'}
+        timed=[s for s in samples if (s['host'],s['device_epoch'],s['frame']) in active_ids]
+        assert timed, 'no causally active GPU frames'
+        spans=[s['frame_span_ns']/1e6 for s in timed]
+        ordered=sorted(spans)
+        stats={'n':len(spans),'p95_ms':ordered[math.ceil(.95*len(ordered))-1],
+               'p99_ms':ordered[math.ceil(.99*len(ordered))-1],'max_ms':ordered[-1]}
+        report['gpu']=stats;report['gpu_pass_names']={str(names):sum([p[0] for p in s['passes_ns']]==names for s in timed)
+            for names in [list(names) for names in sorted({tuple(p[0] for p in s['passes_ns']) for s in timed})]}
+        report['candidate_threshold_exceeded']=stats['p95_ms']>4 or stats['p99_ms']>8
+        report['budget_stop']=role=='candidate' and report['candidate_threshold_exceeded']
+    else:
+        assert not samples and receipt['gpu_drained'] is None
+        report['gpu']='disabled';report['budget_stop']=False
+    finish_result(report,report['budget_stop'])
     report['post_export_cpu']=cpu()
     assert sha(project/'board/board.json')==declaration['project']['board_file_sha256'],'authored fixture changed'
 except BaseException as error:

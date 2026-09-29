@@ -26,9 +26,9 @@ def semantic(state):
     return {k:v for k,v in state.items() if k not in ('render_revision','render_activity')}
 
 
-def analyze(snapshot, schedule, report, declaration, receipt):
+def analyze(snapshot, schedule, report, declaration, receipt, *, causal=False):
     assert snapshot['schema'] == 'datum.input-receipt/v1'
-    assert snapshot['mode'] == 'output-diagnostic' and snapshot['complete'] is False
+    assert snapshot['mode'] == ('causal-input' if causal else 'output-diagnostic') and snapshot['complete'] is False
     assert snapshot['pid'] == report['pid']
     assert snapshot['coverage_complete'] and not snapshot['overflow'] and not snapshot['first_error']
     assert snapshot['pending'] is None and snapshot['gpu_drained'] is None
@@ -48,7 +48,8 @@ def analyze(snapshot, schedule, report, declaration, receipt):
         assert received <= completed and (previous is None or received >= previous)
         previous = completed
         assert after is not None and not before['truncated'] and not after['truncated']
-        assert record['workload'] == [0,0,0], 'causal tracing unexpectedly enabled'
+        if not causal:
+            assert record['workload'] == [0,0,0], 'causal tracing unexpectedly enabled'
         if semantic(before) != semantic(after):
             transitions.append(dict(kind=record['demand_kind'],start_ns=received,end_ns=completed,
                                     before=before,after=after))

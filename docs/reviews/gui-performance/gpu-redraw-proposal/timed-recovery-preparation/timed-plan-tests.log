@@ -1,0 +1,55 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=34.4 GiB target_free=166.0 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 34.4 GiB used; soft limit 20.0 GiB
+   Compiling num-traits v0.2.19
+   Compiling bytemuck v1.25.0
+   Compiling ahash v0.8.12
+   Compiling hashbrown v0.14.5
+   Compiling wgpu-types v28.0.0
+   Compiling font-types v0.11.1
+   Compiling font-types v0.10.1
+   Compiling read-fonts v0.35.0
+   Compiling read-fonts v0.37.0
+   Compiling euclid v0.22.14
+   Compiling half v2.7.1
+   Compiling ordered-float v4.6.0
+   Compiling hashlink v0.9.1
+   Compiling naga v28.0.0
+   Compiling rusqlite v0.32.1
+   Compiling lyon_geom v1.0.19
+   Compiling etagere v0.2.15
+   Compiling lyon_path v1.0.19
+   Compiling lyon_tessellation v1.0.20
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+   Compiling skrifa v0.40.0
+   Compiling skrifa v0.37.0
+   Compiling harfrust v0.3.2
+   Compiling swash v0.2.7
+   Compiling wgpu-hal v28.0.1
+   Compiling cosmic-text v0.15.0
+   Compiling wgpu-core-deps-windows-linux-android v28.0.0
+   Compiling wgpu-core v28.0.1
+   Compiling wgpu v28.0.0
+   Compiling glyphon v0.10.0
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 25s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-a9a942f6552ff861)
+
+running 1 test
+test renderer_state::render_session::session_frame::tests::provisional_causal_contexts_cannot_leak_into_immutable_frame_plans ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 2.18s
+
+     Running tests/selection_ownership.rs (target/debug/deps/selection_ownership-7fa8849dcb053bdc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/visual_goldens.rs (target/debug/deps/visual_goldens-27626273087efb09)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
