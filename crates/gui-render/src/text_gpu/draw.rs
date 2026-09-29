@@ -64,11 +64,16 @@ impl Draw {
     ) -> Self {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-glyph-shader"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("glyph.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(
+                crate::renderer_state::damage::shader(include_str!("glyph.wgsl"), 1).into(),
+            ),
         });
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-glyph-pipeline-layout"),
-            bind_group_layouts: &[&atlas.layout],
+            bind_group_layouts: &[
+                &atlas.layout,
+                &crate::renderer_state::damage::layout(device),
+            ],
             immediate_size: 0,
         });
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -371,8 +376,13 @@ impl Draw {
         self.instances.as_ref().map(Tracked::submission_ref)
     }
 
-    pub fn render(&self, atlas: &Atlas, pass: &mut wgpu::RenderPass<'_>) -> anyhow::Result<()> {
-        self.render_layer(atlas, pass, None)
+    pub fn render(
+        &self,
+        atlas: &Atlas,
+        pass: &mut wgpu::RenderPass<'_>,
+        damage: &wgpu::BindGroup,
+    ) -> anyhow::Result<()> {
+        self.render_layer(atlas, pass, None, damage)
     }
 
     pub fn render_layer(
@@ -380,6 +390,7 @@ impl Draw {
         atlas: &Atlas,
         pass: &mut wgpu::RenderPass<'_>,
         layer: Option<crate::TextLayer>,
+        damage: &wgpu::BindGroup,
     ) -> anyhow::Result<()> {
         anyhow::ensure!(
             self.generation == Some(atlas.generation),
@@ -387,6 +398,7 @@ impl Draw {
         );
         if let Some(instances) = &self.instances {
             pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(1, damage, &[]);
             pass.set_vertex_buffer(0, instances.slice(..));
             for (page, batch_layer, range) in self.batches.iter() {
                 if layer.is_some_and(|layer| layer != *batch_layer) {

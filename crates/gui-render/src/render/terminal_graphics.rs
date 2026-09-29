@@ -151,13 +151,18 @@ impl TerminalGraphicsRenderer {
     ) -> wgpu::RenderPipeline {
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("datum-terminal-graphic-pipeline-layout"),
-            bind_group_layouts: &[screen_layout, texture_layout],
+            bind_group_layouts: &[
+                screen_layout,
+                texture_layout,
+                &crate::renderer_state::damage::layout(device),
+            ],
             immediate_size: 0,
         });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-terminal-graphic-shader"),
             source: wgpu::ShaderSource::Wgsl(
-                r#"
+                crate::renderer_state::damage::shader(
+                    r#"
 struct ScreenUniform { resolution: vec2<f32>, _pad: vec2<f32> };
 @group(0) @binding(0) var<uniform> screen: ScreenUniform;
 @group(1) @binding(0) var image: texture_2d<f32>;
@@ -187,9 +192,13 @@ fn vs_main(input: VertexInput) -> VertexOutput {
 
 @fragment
 fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
-    return textureSample(image, image_sampler, input.uv);
+    let sampled = textureSample(image, image_sampler, input.uv);
+    if !datum_damaged(input.position) { discard; }
+    return sampled;
 }
-"#
+"#,
+                    2,
+                )
                 .into(),
             ),
         });
@@ -418,6 +427,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         pass: &mut wgpu::RenderPass<'pass>,
         screen_bind_group: &'pass wgpu::BindGroup,
         foreground: bool,
+        damage: &wgpu::BindGroup,
     ) {
         if !self.has_layer(foreground) {
             return;
@@ -428,6 +438,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
                 .expect("drawable terminal image prepared"),
         );
         pass.set_bind_group(0, screen_bind_group, &[]);
+        pass.set_bind_group(2, damage, &[]);
         for draw in self
             .draws
             .iter()

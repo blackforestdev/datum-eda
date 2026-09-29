@@ -43,6 +43,11 @@ impl Prefix {
         self.world_bundles.set(0);
     }
     pub(crate) fn reset_work(&mut self) {
+        // A direct full render may overwrite/discard working B without a session
+        // receipt. Its old presented composition can no longer authorize reuse.
+        if self.request.is_none() {
+            self.valid = None;
+        }
         self.encoded = None;
         self.reused = false;
         self.copy_bytes = 0;
@@ -61,9 +66,6 @@ impl Prefix {
     }
     pub(crate) fn requested(&self) -> bool {
         self.request.is_some()
-    }
-    pub(crate) fn reusable(&self, pair: PairIdentity) -> bool {
-        self.damage(pair).is_some()
     }
     pub(crate) fn damage(&self, pair: PairIdentity) -> Option<Pixels> {
         let valid = self.valid?;

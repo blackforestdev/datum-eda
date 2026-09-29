@@ -165,3 +165,28 @@ fn real_pointer_triangles_keep_thin_support_and_cover_enter_move_leave() {
         assert!(previous.rectangles().is_empty(), "leave has no new pixels");
     }
 }
+
+#[test]
+fn direct_full_render_invalidates_presented_composition() {
+    let pair = PairIdentity::test_identity(1);
+    let key = Key {
+        preparation: 1,
+        strong_revision: 1,
+        target: Target {
+            host: 1,
+            device: 1,
+            configuration: 1,
+        },
+    };
+    let mut prefix = Prefix::default();
+    prefix.begin(Some(key), Some(support(10)), 1);
+    prefix.encoded(pair, false, 100);
+    let encoded = prefix.take_encoded();
+    prefix.complete(encoded, key, true);
+    prefix.reset_work();
+    prefix.begin(Some(key), Some(support(20)), 2);
+    assert!(
+        prefix.damage(pair).is_none(),
+        "raw painter discarded B without a session receipt"
+    );
+}

@@ -201,6 +201,7 @@ impl crate::Renderer {
         self.schematic_world_strokes_gpu
             .set_consumers(frame.get(Stream::SchematicWorld));
         self.uniform_buffer.set_consumers(frame.all());
+        self.damage_masks.unrestricted.set_consumers(frame.all());
         self.surface_attachments.set_consumers(frame.all());
         self.text_renderer.set_consumers(frame.get(Stream::Text));
         self.menu_overlay_text_renderer

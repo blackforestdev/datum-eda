@@ -26,6 +26,7 @@ fn linear(c: vec3<f32>) -> vec3<f32> {
     return output;
 }
 @fragment fn fragment(input: Output) -> @location(0) vec4<f32> {
+    if !datum_damaged(input.position) { discard; }
     let texel = textureLoad(glyph_page, vec2<i32>(input.tex), 0);
     if input.is_color != 0u { return texel; }
     return vec4(input.color.rgb, input.color.a * texel.r);

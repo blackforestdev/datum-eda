@@ -77,6 +77,12 @@ impl PrefixImages {
         })
     }
 
+    pub(crate) fn restoration_views(&self) -> Option<(&wgpu::TextureView, &wgpu::TextureView)> {
+        Some((
+            self.prefix.image.unorm_view.as_ref()?,
+            self.working.image.unorm_view.as_ref()?,
+        ))
+    }
     pub fn prefix_view(&self) -> &wgpu::TextureView {
         &self.prefix.image.view
     }
@@ -155,6 +161,7 @@ impl SurfaceAttachments {
     ) -> anyhow::Result<SurfaceAttachment> {
         let bytes = key.payload_bytes().unwrap();
         let reservation = GpuReservation::optional(bytes, vec![optional_bytes.reserve(bytes)?])?;
+        let alias_formats = [key.format.remove_srgb_suffix()];
         let texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some(if copy_source {
                 "datum-retained-prefix"
@@ -173,23 +180,42 @@ impl SurfaceAttachments {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT
                 | if copy_source {
                     wgpu::TextureUsages::COPY_SRC
+                        | if self.damage_views {
+                            wgpu::TextureUsages::TEXTURE_BINDING
+                        } else {
+                            wgpu::TextureUsages::empty()
+                        }
                 } else {
                     wgpu::TextureUsages::empty()
                 },
-            view_formats: &[],
+            view_formats: if self.damage_views && copy_source {
+                &alias_formats
+            } else {
+                &[]
+            },
         });
         self.allocations = self
             .allocations
             .checked_add(1)
             .expect("attachment allocation exhausted");
         let view = texture.create_view(&Default::default());
+        let unorm_view = (self.damage_views && copy_source).then(|| {
+            texture.create_view(&wgpu::TextureViewDescriptor {
+                format: Some(key.format.remove_srgb_suffix()),
+                ..Default::default()
+            })
+        });
         Ok(SurfaceAttachment {
             key,
             allocation: self.allocations,
             image: Arc::new(
                 self.owner
                     .track_reserved(
-                        AttachmentImage { texture, view },
+                        AttachmentImage {
+                            texture,
+                            view,
+                            unorm_view,
+                        },
                         self.allocations,
                         Kind::Attachment,
                         reservation,

@@ -8,6 +8,11 @@ fn exact(c: &mut OffscreenRenderer, label: &str, reuse: bool) -> RgbaImage {
     let actual = frame(c, true);
     assert_eq!(c.renderer.prefix_copy_work().0, reuse, "{label}: reuse");
     if reuse {
+        assert_eq!(
+            c.renderer.prefix_copy_work().1,
+            0,
+            "warm frame copied entire image"
+        );
         assert_eq!(c.renderer.world_bundle_execution_count(), 0, "{label}");
     }
     let reference = full_reference(c);
@@ -98,7 +103,7 @@ fn doa() -> ReviewWorkspaceState {
 #[test]
 #[ignore = "bounded P630 exact8x F-DOA hover, invalidation and recovery qualification"]
 fn p630_exact8_doa_hover_composition_and_recovery() {
-    let mut c = reference_capture8();
+    let (mut c, adapter) = reference_capture8_with_adapter();
     c.width = 1280;
     c.height = 800;
     let mut state = doa();
@@ -147,6 +152,7 @@ fn p630_exact8_doa_hover_composition_and_recovery() {
         .renderer
         .recreate_for_device(&c.device, &c.queue, OUTPUT_FORMAT, 8)
         .unwrap();
+    pollster::block_on(replacement.admit_damage_restoration(&c.device, &adapter));
     replacement.commit_cpu_recovery_from(&mut c.renderer);
     c.renderer = replacement;
     prepare(&mut c, &state, &source);
@@ -470,4 +476,18 @@ fn p630_exact8_console_covers_canvas_text_without_hiding_foreground() {
     if let Some(path) = std::env::var_os("DATUM_CONSOLE_CAPTURE_OUT") {
         correct.save(path).unwrap();
     }
+}
+
+#[test]
+#[ignore = "r3 single P630 exact-output batch; run only after complete offline measurement controls"]
+fn r3_p630_exact_output_batch() {
+    {
+        let (c, adapter) = reference_capture8_with_adapter();
+        crate::renderer_state::damage::restore::sample_tests::prove(&c.device, &c.queue, &adapter);
+    }
+    p630_exact8_pointer_styles_across_board_and_schematic();
+    p630_exact8_doa_hover_composition_and_recovery();
+    p630_exact8_terminal_layers_and_equal_length_replacement();
+    p630_exact8_console_covers_canvas_text_without_hiding_foreground();
+    p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve();
 }

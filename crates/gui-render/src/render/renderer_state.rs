@@ -1,5 +1,7 @@
 //! Renderer-owned resources shared by full-scene and auxiliary rendering.
 use super::*;
+#[path = "gpu_damage.rs"]
+pub(crate) mod damage;
 #[path = "render_session.rs"]
 mod render_session;
 pub use render_session::{
@@ -29,6 +31,7 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
+    pub(super) damage_masks: damage::Masks,
     pub(super) render_session: RenderSession,
     pub(super) screen_admission: std::cell::Cell<
         Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 7]>,

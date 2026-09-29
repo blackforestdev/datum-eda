@@ -1,0 +1,114 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "head": "fd44d37c01726c13e1cbe130db1fc1895520ed05",
+  "scope": "Read-only r3 GPU restoration/mask source review. No builds/tests/native runs or production edits. No owner ratification, exactness or performance qualification.",
+  "pins": {
+    "crates/gui-render/src/render/gpu_damage.rs": "94e4425d886ed2046b76abb2964e267bec7cf11e7216df40ba7ed0647251c592",
+    "crates/gui-render/src/render/gpu_damage_restore.rs": "4aec288e1ff56ae0056ba3976b617902744abc38790d1de8f0567db5e6d6077f",
+    "crates/gui-render/src/render/gpu_damage_restore.wgsl": "6cd797e043d21350c485b15fb247931a0bf895f13ec13652f1928f7cecfad803",
+    "crates/gui-render/src/render/gpu_frame.rs": "48f82590b07d9f4c402c9b6f0a2274434402dd886f6d0f651c625a22830c0b0c",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "151688a18a5ca66d8045d3fc6f921ef216a5dd5e2d23b4589004d3fea9613122",
+    "crates/gui-render/src/render/gpu_surface.rs": "035860a3340672dddabcca20b00d9103e98b8823da6db37dc290fd90a7f21bfe",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "41e8f520a58d56d22972d8ea546232589fe3fb1dcc943db5db0ea5d782b98186",
+    "crates/gui-render/src/render/gpu_init.rs": "ce5ca437070da6f35bbb6d55e39648eff2b474718bb04399ebf30175d1e9a1dd",
+    "crates/gui-render/src/render/gpu_overlay.rs": "7c748d80ff63825b29594d86580014ba41ec1172e34c97f73d9f9d7bdaa3ed59",
+    "crates/gui-render/src/render/gpu_text.rs": "4ee8af658e97e5cb6912f8b21a173ed65b399612f7f5bba1367a3678054d4bdd",
+    "crates/gui-render/src/render/gpu_console.rs": "2ec5653c024c87a83c016ea7bbceadf1f02f828f449d88343d58d88c54b5364a",
+    "crates/gui-render/src/render/session_prefix.rs": "3014b13553f197f830d63a1ad327fa6662800deccf4ff0b702c36a4d75dd2374",
+    "crates/gui-render/src/render/gpu_frame_target.rs": "b4870cf912fe909728034a861e37f407a0a17c848ffd56224c1aab265a196aef",
+    "crates/gui-render/src/render/terminal_graphics.rs": "c8f42946a642e21d114bc946732f8ebf93761b32129ab415f5a3616a06d2e861",
+    "crates/gui-render/src/render/resource_consumers.rs": "cac68e3bec4c1b4dd762b6b56cf0b8cb0793e4eb11e572ada152d973b961a576",
+    "crates/gui-render/src/text_gpu/draw.rs": "40cfe3aa87f4f4d87fee6bd5b89fc2d4be44cbbb9edc43eb570e6d12c71aea91",
+    "crates/gui-render/src/text_gpu/glyph.wgsl": "c9ae0b55abafdc05ed7718150b580f49341bef73f9fe0bef74246dfb37c3f0f6",
+    "crates/gui-app/src/runtime_init.rs": "9b58c2d705b8adf81e72af4c5c96698575f50a85473afe8f3ef7f780e712d1fd",
+    "crates/gui-app/src/native_device_recovery.rs": "f4b07c6a54fde53d1fdb16d9494988f237137c6531f697cc6e6a8a27f3135842",
+    "crates/gui-render/src/render/prefix_graph_tests.rs": "f914726091bee8e0844ac2bb1b824b352811b0bc1cad4a3ddc8e3187c5d420fb",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "b43abb5326a7f553a25f5b5b64806fc6a08368b209bdae3e8605eeec1e065add",
+    "crates/gui-render/src/render/gpu_damage_sample_tests.rs": "d90640873a5aef64a55f7893bf2e41749d062993cddd82b685856c952920a9ec",
+    "crates/gui-render/src/render/session_damage_tests.rs": "5e11b3b08c007026f7f35db8aaaf39f2ae7cacbf650577e383b0333fad4c952e"
+  },
+  "disposition": "No remaining identified blocker in reviewed production restoration/mask delta. Test additions are prepared, not executed; remaining r3 negatives and complete measurement controls must precede authorized bounded GPU batch.",
+  "findings": [],
+  "resolved_during_review": [
+    {
+      "id": "RESTORE01",
+      "origin": "Parent independently identified oracle/raw-render hazard",
+      "finding": "Direct full renders overwrite/discard retained B without native session completion. Previous validity must not survive. Existing full_reference also shared B and could destroy candidate state between comparisons.",
+      "status": "Resolved by source inspection: raw reset_work invalidates B when request=None; full_reference temporarily swaps separate attachment owner and saves/restores candidate Prefix. Candidate B is not overwritten/discarded by full oracle."
+    }
+  ],
+  "advisories": [
+    {
+      "id": "RESTORE02",
+      "source": "gpu_frame.rs restoration branch",
+      "severity": "low",
+      "finding": "Empty damage encodes a no-draw restore Load/Store pass, then resolve-only suffix. Proposal calls for resolve retained B without restoration.",
+      "recommendation": "Skip restoration encode for empty union; retain resolve-only pass and identity/timing bookkeeping. This is unnecessary full attachment work, not an identified pixel defect.",
+      "status": "resolved: restoration encode skipped for empty rectangle union"
+    }
+  ],
+  "assessment": [
+    "Admission checks actual device adapter-specific features, 8x support and matching UNORM alias usage plus multisampled shading/view formats. Restore pipeline validation refusal prevents optional prefix strategy. Native Main initialization/recovery explicitly admit; unsupported/capture consumers use shared full fallback.",
+    "A gains sampled usage and matching UNORM alias; required B has UNORM render alias. Views share tracked allocations. Restore shader textureLoad addresses integer framebuffer pixel and actual sample_index, with no blend, full write mask, no alpha-to-coverage. Scissors repeat only idempotent restore draw.",
+    "Shared predicate is generated once and binds screen/glyph at group1 and terminal at group2. Console/menu rebinding is explicit. Glyph color early return still follows predicate; terminal textureSample precedes conditional discard, preserving derivative control flow. Prefix/dialog paths explicitly use unrestricted uniform.",
+    "Admitted B now stores final samples; full cold reconstruction remains unrestricted. Restricted mask refusal selects full reconstruction. Session matching-completion metadata governs reuse; later exact8x proof must cover failed submitted attempts and dropped/superseded receipts.",
+    "Restricted buffer is immutable mapped-at-creation, not queue.write_buffer; tracked528-byte allocation reserves screen/process/generation budgets before construction. Two queued generations share budget across replacement. Queue completion holds restricted buffer and unrestricted buffer plus exact encoded A/B aliases. No mutable in-flight uniform write found.",
+    "Mask binding/layout compatibility is structural across independently created explicit layouts with identical entries. Common painter order preserved.",
+    "Observed no new source dependency, cap increase, global tuning or per-rectangle world/suffix replay. New allocation/metadata churn and backend performance are unmeasured.",
+    "Timing still excludes final upload and multi-submission work until later approved correction; current source must not be used to qualify complete frame time. Existing query test names/old negative controls need r3 conformance updates before credit.",
+    "Native resource stream/refusal expectations and exact all-sample/oracle controls are parent verification work; reviewer has executed none."
+  ],
+  "review_history": [
+    {
+      "pins": {
+        "crates/gui-render/src/render/gpu_damage.rs": "836faba9b4f42a9ee23f9f9790313e03fd253e77358cc4fe5cffb6a93060c8e0",
+        "crates/gui-render/src/render/gpu_damage_restore.rs": "02921b18c0aed87b1a7a234925b9a3dbbdf426500309f16406e4080b59f45087",
+        "crates/gui-render/src/render/gpu_damage_restore.wgsl": "6cd797e043d21350c485b15fb247931a0bf895f13ec13652f1928f7cecfad803",
+        "crates/gui-render/src/render/gpu_frame.rs": "255df35e2fe78a82fb74abbb5ad76723570b18f2870d6b635a6e4027652aee66",
+        "crates/gui-render/src/render/gpu_frame_painter.rs": "151688a18a5ca66d8045d3fc6f921ef216a5dd5e2d23b4589004d3fea9613122",
+        "crates/gui-render/src/render/gpu_surface.rs": "035860a3340672dddabcca20b00d9103e98b8823da6db37dc290fd90a7f21bfe",
+        "crates/gui-render/src/render/gpu_prefix_images.rs": "41e8f520a58d56d22972d8ea546232589fe3fb1dcc943db5db0ea5d782b98186",
+        "crates/gui-render/src/render/gpu_init.rs": "ce5ca437070da6f35bbb6d55e39648eff2b474718bb04399ebf30175d1e9a1dd",
+        "crates/gui-render/src/render/gpu_overlay.rs": "7c748d80ff63825b29594d86580014ba41ec1172e34c97f73d9f9d7bdaa3ed59",
+        "crates/gui-render/src/render/gpu_text.rs": "4ee8af658e97e5cb6912f8b21a173ed65b399612f7f5bba1367a3678054d4bdd",
+        "crates/gui-render/src/render/gpu_console.rs": "2ec5653c024c87a83c016ea7bbceadf1f02f828f449d88343d58d88c54b5364a",
+        "crates/gui-render/src/render/session_prefix.rs": "3014b13553f197f830d63a1ad327fa6662800deccf4ff0b702c36a4d75dd2374",
+        "crates/gui-render/src/render/gpu_frame_target.rs": "b4870cf912fe909728034a861e37f407a0a17c848ffd56224c1aab265a196aef",
+        "crates/gui-render/src/render/terminal_graphics.rs": "c8f42946a642e21d114bc946732f8ebf93761b32129ab415f5a3616a06d2e861",
+        "crates/gui-render/src/render/resource_consumers.rs": "cac68e3bec4c1b4dd762b6b56cf0b8cb0793e4eb11e572ada152d973b961a576",
+        "crates/gui-render/src/text_gpu/draw.rs": "40cfe3aa87f4f4d87fee6bd5b89fc2d4be44cbbb9edc43eb570e6d12c71aea91",
+        "crates/gui-render/src/text_gpu/glyph.wgsl": "c9ae0b55abafdc05ed7718150b580f49341bef73f9fe0bef74246dfb37c3f0f6",
+        "crates/gui-app/src/runtime_init.rs": "dcfd146b16e232402f3a81a383be87cf7b5f03286cf976fc4f4586e690e9d52f",
+        "crates/gui-app/src/native_device_recovery.rs": "0b8ca24b62a456047d799eb041ac5e6c640722ac25d464fc87da039ddb7d0683"
+      },
+      "disposition": "No additional blocking production-source issue identified after parent raw-render validity correction. Exact-sample, fallback/lifetime GPU proof and timing correction remain prerequisites.",
+      "advisories": [
+        {
+          "id": "RESTORE02",
+          "source": "gpu_frame.rs restoration branch",
+          "severity": "low",
+          "finding": "Empty damage encodes a no-draw restore Load/Store pass, then resolve-only suffix. Proposal calls for resolve retained B without restoration.",
+          "recommendation": "Skip restoration encode for empty union; retain resolve-only pass and identity/timing bookkeeping. This is unnecessary full attachment work, not an identified pixel defect."
+        }
+      ],
+      "resolved_during_review": [
+        {
+          "id": "RESTORE01",
+          "origin": "Parent independently identified oracle/raw-render hazard",
+          "finding": "Direct full renders overwrite/discard retained B without native session completion. Previous validity must not survive. Existing full_reference also shared B and could destroy candidate state between comparisons.",
+          "status": "Resolved by source inspection: raw reset_work invalidates B when request=None; full_reference temporarily swaps separate attachment owner and saves/restores candidate Prefix. Candidate B is not overwritten/discarded by full oracle."
+        }
+      ]
+    }
+  ],
+  "followup": [
+    "Restoration admission/create are async in gui-render; app uses its existing pollster facility for initialization. No new dependency introduced.",
+    "Empty-damage branch no longer encodes restore pass; final loaded B resolve remains, suffix draw omitted.",
+    "Source-inspected sample oracle checks asymmetric all8 samples over256 x coordinates, alpha/channel data, overlapping scissors and untouched second-row region for RGBA/BGRA aliases. Wrong sample-zero shader and incompatible sRGB destination validation controls present. Scratch resources are explicitly excluded from candidate resource-budget evidence.",
+    "Independent oracle save/swap isolates B and preserves candidate prefix state. Oracle shares current source/preparation/painter, so agreement alone cannot independently validate preparation semantics.",
+    "Existing aggregate remains ignored. Omitted-old-damage, omitted-suffix-mask, stale-B negatives and multi-submission/final-upload timing proof still pending per parent; old r2 negatives do not silently satisfy new r3 faults.",
+    "Sample helper currently waits indefinitely for GPU readback; prefer a bounded poll/receive or an explicit enclosing proof timeout when executing the one bounded batch. This does not affect production rendering.",
+    "No build/test/native execution by reviewer; parent-reported offline/support/Clippy results not independently rerun. No performance, qualification or owner authority inferred."
+  ]
+}

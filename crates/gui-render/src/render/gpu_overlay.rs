@@ -96,6 +96,7 @@ impl Renderer {
                 multiview_mask: None,
             });
             pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(1, &self.damage_masks.unrestricted.group, &[]);
             pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             pass.set_vertex_buffer(
                 0,
@@ -112,7 +113,11 @@ impl Renderer {
             );
             if has_text {
                 self.menu_overlay_text_renderer
-                    .render(&self.atlas, &mut pass)
+                    .render(
+                        &self.atlas,
+                        &mut pass,
+                        &self.damage_masks.unrestricted.group,
+                    )
                     .map_err(|error| anyhow::anyhow!("render dialog text: {error}"))?;
             }
         }
