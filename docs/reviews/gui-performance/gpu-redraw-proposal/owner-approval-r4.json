@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "owner_response_exact": "approve GPU regional-composition proposal r4",
+  "recorded_at": "2026-09-29T18:50:55Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r4.md",
+    "sha256": "29bdc35a67735b095259515e0982b25697f5ce46c946798a60b55bca623e5509",
+    "commit": "7d58e6df352ca74827fdebd0db89546d4893504b"
+  },
+  "disposition": "Approve the pinned fixed32px/256slot/512px exact8 regional-composition proposal and explicit optional-admission amendment, with independent design review and numbered-decision reconciliation before implementation. Focused offline preflight, one300s four-group GPU batch, then conditional one candidate/one matched-baseline release build and fixed12pointer campaign. Preserve first-failure stops, prior stopped campaigns, original numerical/metadata/process caps and CPU/DRM exclusions. No issue or S4/S5 closure.",
+  "independent_review": "pending; owner approval is recorded, not substituted for independent evidence",
+  "execution_consumed": {
+    "gpu_batches": 0,
+    "candidate_release_builds": 0,
+    "baseline_release_builds": 0,
+    "native_trials": 0
+  }
+}
