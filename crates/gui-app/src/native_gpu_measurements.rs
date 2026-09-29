@@ -65,6 +65,10 @@ impl Host {
         let id = ID
             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
             .map_err(|_| anyhow::anyhow!("native measurement identity exhausted"))?;
+        anyhow::ensure!(
+            std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_none() || id == 1,
+            "bounded Main workload cannot create another native host or device epoch"
+        );
         let epoch = shared_epoch.unwrap_or(id);
         let host = Self {
             epoch,

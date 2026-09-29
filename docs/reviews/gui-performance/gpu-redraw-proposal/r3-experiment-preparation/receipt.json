@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "owner-approval-r3-corrective.json; four corrective cases and five complete-timer cases passed once; unspent original bounded r3 experiment remains authorized",
+  "status": "Matched baseline compiled; fixed runner prepared and source-reviewed; no performance trial executed. Candidate source-bound build and sealed declaration remain before execution.",
+  "baseline": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "scope": [
+    "Patch backports complete query transaction, actual world/glyph/terminal/final upload brackets and cancellation/drain export. It preserves baseline full composed-scene rendering, legacy draw routes and cache/scheduling behavior.",
+    "Measurement-only baseline state observes five actual dirty paths, central successful preparation, actual target/attempt, and successful presentation acknowledgement. Pure causal phase union matches candidate. Recovery changes epoch and invalidates trial.",
+    "Manifest mode rejects any second native host/device epoch in both builds including quiet. Baseline offscreen capture refuses the bounded workload. No four-host parity claim.",
+    "Prelaunch CLOCK_MONOTONIC schedule reserves40s startup readiness then unchanged5s warmup/30s120Hz rectangle/5s still. Producer uses absolute active start; misses fail rather than shifting workload.",
+    "Full native demand records stay intact; input validation selects actual pointer events. GPU consumer retains late active work through drain/close and demands full frame coverage.",
+    "Canonical campaign state reserves each index once, max12, first invalid/budget failure stops both modes/roles without replacements. Original conditional max4pan remains contingent; no pan runner execution authorized by this receipt."
+  ],
+  "verification": [
+    "Guarded isolated offline baseline release build passed without compiler warnings; compiled source path and final patched hashes verified.",
+    "Three existing causal consumer controls passed after demand-validation extraction; two offline campaign/input controls passed using archived1280 completed pointer routes.",
+    "Source health2642 and dependency authority pass. Advisory review finds no remaining critical source defect; owner approval remains the authority."
+  ],
+  "limits": [
+    "Own-queue descriptive experiment only; no duty<=25%, complete DRM lifetime, CPU or S4/S5 acceptance. DRM observation separately unapproved; CPU optimization deferred.",
+    "Historical failed runs remain unchanged. Reuse passing corrective/timer GPU results; no additional GPU conformance or native rehearsal."
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/native_gpu_measurements.rs": "4e3e9e35353f2e6181db27b5a3668e108d4ca6ae5639117237c86aa8f6eb7cc2",
+    "scripts/gpu_r3_receipts.py": "fd21be43431576451d4ac823d29bd32a00ce667a93eb5883cbbdd50f0469d770",
+    "scripts/gpu_r3_native_trial.py": "5f8ab07808fa96a135f7dd9847c1a89173afa47e71f0b1774bf6f3c08a48f18e",
+    "scripts/gpu_r3_pointer_stream.py": "d8c998023a6ae0672320616cab3c140f688e57c672ac85526ac7a1f5a415856e",
+    "scripts/gpu_r3_pointer_input.py": "d89acbc3f55d338755e2d86c99770759127957500cbfbf5ffabe14d1c479f74a",
+    "scripts/gpu_r3_campaign.py": "24743bcc4c52079d0c1a4b0ce4b16fd71854cfa18d6c80929ca89882abbf4b84",
+    "scripts/test_gpu_r3_runner.py": "4f7c6c24eff0bfef58091116c5ad071b89d76920802929a7be666c8182b55f3f"
+  },
+  "artifacts_sha256": {
+    "baseline-build.json": "60135616c7450b7327888b61de1b0aa1c8ab70ce660c6f8b11a17e391540b96d",
+    "baseline-build.jsonl.gz": "2692a60345d510211ca0b40268b5c11e664a998ac98ab7e266eeaee224bbc46f",
+    "baseline-observer.patch": "df230a6e97f6e90daf687f2b7c8b803b1ba98e6b33d203cc28532cd60255a686",
+    "baseline-source.json": "0f93609d68dc1b0c6298c4d502cc0b88691c6cdc7863195d32eb7acf989e09eb",
+    "gpu-r3-baseline-build.log": "62ac20d1b93a3ef2ec391b6f500b7e9d919530f948edfa2965c1fde3a214e8dd",
+    "gpu-r3-baseline-review.json": "6bf343668d467905a725d41e44d401dd82bf851d83a49b097a1c5d5bfc42eb3f",
+    "gpu-r3-consumer-controls.log": "199ba496f288116d36c62f29346d4fbf0bd75745a1c893abfcbdaa4c6d5b1033",
+    "gpu-r3-method-dependency.log": "3ab8cf4207b6ef2e266d07d0d9ad4f9d9d94a1f5676f6c1378acb9b52c128139",
+    "gpu-r3-method-source.log": "250c4b687c41c031c4789ee213c9a2dbb4926ed1abf57d198f0d8c3237be002e",
+    "gpu-r3-runner-controls.log": "0893ddc6cde557204f6d39a28d24f130f932ddc88fa883d02cba37acd41c7039"
+  }
+}
