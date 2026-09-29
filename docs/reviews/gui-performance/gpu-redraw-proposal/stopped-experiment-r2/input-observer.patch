@@ -1,0 +1,154 @@
+diff --git a/crates/gui-app/src/app_native_events.rs b/crates/gui-app/src/app_native_events.rs
+index 9016b0b7..0e65e125 100644
+--- a/crates/gui-app/src/app_native_events.rs
++++ b/crates/gui-app/src/app_native_events.rs
+@@ -1,5 +1,6 @@
+ //! Native input/event dispatch; input state is applied before redraw effects.
+ use super::*;
++use crate::app_shell::input_observation::mark;
+ 
+ #[path = "native_scroll_input.rs"]
+ pub(crate) mod scroll_input;
+@@ -66,7 +67,7 @@ impl App {
+         }
+     }
+ 
+-    pub(super) fn handle_native_window_event(
++    pub(super) fn dispatch_native_window_event(
+         &mut self,
+         event_loop: &ActiveEventLoop,
+         window_id: WindowId,
+@@ -271,6 +272,7 @@ impl App {
+                     runtime.last_cursor_pos = Some(next_pos);
+                     let terminal_hover_changed = runtime.update_terminal_tab_hover(next_pos);
+                     if runtime.terminal_tab_drag.is_some() {
++                        mark(&mut self.input_observation, "terminal_tab_drag");
+                         if runtime.advance_terminal_tab_drag(next_pos) || terminal_hover_changed {
+                             self.request_workspace_redraw();
+                         }
+@@ -278,6 +280,7 @@ impl App {
+                         return;
+                     }
+                     if runtime.terminal_split_drag.is_some() {
++                        mark(&mut self.input_observation, "terminal_split_drag");
+                         let changed = runtime.advance_terminal_split_drag(next_pos);
+                         let icon = runtime
+                             .terminal_split_cursor_icon(next_pos)
+@@ -289,26 +292,33 @@ impl App {
+                         return;
+                     }
+                     if runtime.terminal_clipboard_menu_active() {
++                        mark(&mut self.input_observation, "terminal_clipboard_menu");
+                         return;
+                     }
+                     if runtime.advance_terminal_text_selection(next_pos) {
++                        mark(&mut self.input_observation, "terminal_selection");
+                         self.apply_cursor_icon(winit::window::CursorIcon::Text);
+                         self.request_workspace_redraw();
+                         return;
+                     }
+                     if runtime.report_terminal_mouse_motion() {
++                        mark(&mut self.input_observation, "terminal_mouse");
+                         runtime.clear_interaction_overlay();
+                         self.request_workspace_redraw();
+                         return;
+                     }
+                     let mut changed = runtime.update_menu_hover(next_pos) || terminal_hover_changed;
+                     if runtime.dock_drag_active {
++                        mark(&mut self.input_observation, "dock_drag");
+                         changed = runtime.handle_dock_resize_drag(next_pos);
+                     } else if runtime.divider_drag.is_some() {
++                        mark(&mut self.input_observation, "divider_drag");
+                         changed = runtime.handle_divider_drag(next_pos);
+                     } else if runtime.marking_menu_active() {
++                        mark(&mut self.input_observation, "marking_menu");
+                         changed = runtime.update_marking_menu_preview(next_pos);
+                     } else if runtime.pan_gesture.is_active() {
++                        mark(&mut self.input_observation, "pan");
+                         changed = previous_pos.is_some_and(|previous| {
+                             runtime.advance_primary_pan(previous, next_pos)
+                         });
+@@ -318,6 +328,7 @@ impl App {
+                         && !runtime.pan_gesture.is_active()
+                         && !runtime.marking_menu_active()
+                     {
++                        mark(&mut self.input_observation, "authoring_hover");
+                         changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
+                         changed = runtime.update_hover(next_pos) || changed;
+                     } else {
+@@ -343,6 +354,7 @@ impl App {
+                 ..
+             } => {
+                 if let Some(runtime) = &mut self.runtime {
++                    mark(&mut self.input_observation, "auxiliary_button");
+                     if button == MouseButton::Right
+                         && state == ElementState::Pressed
+                         && runtime.cursor_in_dock()
+@@ -367,6 +379,7 @@ impl App {
+                 button: MouseButton::Left,
+                 ..
+             } => {
++                mark(&mut self.input_observation, "primary_press");
+                 self.handle_primary_button_press();
+             }
+             WindowEvent::MouseInput {
+@@ -375,6 +388,7 @@ impl App {
+                 ..
+             } => {
+                 if let Some(runtime) = &mut self.runtime {
++                    mark(&mut self.input_observation, "primary_release");
+                     if let Some(icon) = runtime.finish_dock_resize_drag() {
+                         self.apply_cursor_icon(icon);
+                         self.request_workspace_redraw();
+diff --git a/crates/gui-app/src/app_shell.rs b/crates/gui-app/src/app_shell.rs
+index 9d9f32fa..4e25074c 100644
+--- a/crates/gui-app/src/app_shell.rs
++++ b/crates/gui-app/src/app_shell.rs
+@@ -1,12 +1,15 @@
+ use super::*;
+ #[path = "native_gpu_allocation_measurements.rs"]
+ pub(super) mod gpu_allocation_measurements;
++#[path = "native_input_observation.rs"]
++pub(super) mod input_observation;
+ #[path = "native_private_text_measurements.rs"]
+ pub(super) mod private_text_measurements;
+ #[path = "native_resource_measurements.rs"]
+ pub(super) mod resource_measurements;
+ 
+ pub(super) struct App {
++    pub(super) input_observation: Option<input_observation::InputObservation>,
+     pub(super) args: GuiArgs,
+     pub(super) device_recovery: native_device_recovery::DeviceRecovery,
+     pub(super) frames: native_frame_coordinator::NativeFrameCoordinator,
+@@ -31,6 +34,7 @@ pub(super) struct App {
+ 
+ impl App {
+     pub(super) fn run(mut self, event_loop: EventLoop<()>) -> Result<()> {
++        self.input_observation = input_observation::InputObservation::from_environment()?;
+         private_text_measurements::start()?;
+         gpu_allocation_measurements::start()?;
+         resource_measurements::start()?;
+@@ -72,6 +76,7 @@ impl App {
+         terminal_event_proxy: winit::event_loop::EventLoopProxy<()>,
+     ) -> Self {
+         Self {
++            input_observation: None,
+             args,
+             frames: Default::default(),
+             device_recovery: Default::default(),
+diff --git a/crates/gui-app/src/native_measurement_shutdown.rs b/crates/gui-app/src/native_measurement_shutdown.rs
+index 7baf86f3..43a6dd3f 100644
+--- a/crates/gui-app/src/native_measurement_shutdown.rs
++++ b/crates/gui-app/src/native_measurement_shutdown.rs
+@@ -40,7 +40,10 @@ impl App {
+             "GPU measurement mappings remain pending after shutdown drain"
+         );
+         let mut stream = connect_observer(Path::new(&path))?;
+-        final_handoff(&mut stream, epoch, TIMEOUT)
++        final_handoff(&mut stream, epoch, TIMEOUT)?;
++        // Export after the observer closes its workload/drain accounting window.
++        // Export failure still makes the process/trial unsuccessful.
++        self.export_input_receipt()
+     }
+ }
+ 

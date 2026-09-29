@@ -1,0 +1,130 @@
+{
+  "created_unix_ns": 1790646387320140457,
+  "status": "pre-execution declaration; no trials yet",
+  "proposal_sha256": "c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "candidate_commit": "6704c1e0",
+  "baseline_commit": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "binaries": {
+    "baseline": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/baseline-997b618e-input-datum-gui",
+      "sha256": "8024d3e990331c67f4d72fb4c2ce3164dc53b9267649dfddb5fdf5897b654aa6"
+    },
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/candidate-6704c1e0-input-datum-gui",
+      "sha256": "50c88d68fa111c732ea8da8c39ee65030f3ef77d6c56fb4c6c0957f020c6fbf7"
+    }
+  },
+  "matched_input_observer": "baseline-observer.json; exact same new module and corresponding native dispatch/shutdown hooks",
+  "cli": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284"
+  },
+  "project": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "copied_from": "/tmp/pm045-admission-hqugp169/project",
+    "excluded": "historical .datum/tool-sessions only",
+    "board_file_sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed"
+  },
+  "reference_png": {
+    "path": "/tmp/pm045-pointer-native-emp4nxo2/final.png",
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "provenance": "Exact archived baseline-1-gpu0.tar.gz final.png in implementation/S5/pointer-native-batch; reviewed visually, unchanged closed-Console scene. No golden update."
+  },
+  "input_driver": "/tmp/gpu-r2-pointer-stream.py",
+  "method_sha256": {
+    "/tmp/gpu-r2-native.py": "627a9244814e10b49797802575562d0c532cc8ef6728ef737207e8629382780f",
+    "/tmp/gpu-r2-pointer-stream.py": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "/tmp/gpu_r2_wm_close.py": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/validate.py": "629888f65a127ec32bb7483da5e302d0db208e96ea867df2b8db6b1d0aa34802"
+  },
+  "expected_context": {
+    "final_selection": "None",
+    "final_focus": "Editor(PaneId(0))",
+    "final_focused_pane": 0
+  },
+  "expected_context_authority": "app_bootstrap plain project view has selectionNone; workspace_layout default ApplicationFocus Editor(PaneId0); --initial-layout single focusedPane0; no focus/select launch overrides.",
+  "runs": [
+    {
+      "pair": 1,
+      "role": "candidate",
+      "mode": "gpu",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 1,
+      "role": "baseline",
+      "mode": "gpu",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 1,
+      "role": "candidate",
+      "mode": "quiet",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 1,
+      "role": "baseline",
+      "mode": "quiet",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 2,
+      "role": "baseline",
+      "mode": "gpu",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 2,
+      "role": "candidate",
+      "mode": "gpu",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 2,
+      "role": "baseline",
+      "mode": "quiet",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 2,
+      "role": "candidate",
+      "mode": "quiet",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 3,
+      "role": "candidate",
+      "mode": "gpu",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 3,
+      "role": "baseline",
+      "mode": "gpu",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 3,
+      "role": "candidate",
+      "mode": "quiet",
+      "workload": "W-POINTER"
+    },
+    {
+      "pair": 3,
+      "role": "baseline",
+      "mode": "quiet",
+      "workload": "W-POINTER"
+    }
+  ],
+  "run_cap": 12,
+  "schedule": "5s warmup after exact readiness;30s120Hz400x240 rectangle four7.5s edges;5s still; identical controlled drain. Integer duplicates preserved.",
+  "order_rationale": "GPU mode and candidate first establish the primary target before spending quiet pairs; BA/AB/BA alternation in each mode. Order fixed before execution.",
+  "stop": "First invalid/method/output failure or GPU p95>4ms/p99>8ms stops all remaining pointer runs. Apply literal r2 stop conservatively to either role. No replacement runs/rehearsals; neither remaining cap nor a fresh directory permits restart.",
+  "camera_scope": "Approved maximum4 W-PAN runs remain unconsumed and require their own source-bound input/final-camera predicate before execution; cannot run after a pointer stop.",
+  "mode_scope": "Quiet disables GPU timestamps, verbose and resource traces; identical minimal buffered input recorder remains on. GPU timing includes prefix-copy marker through suffix. No overhead subtraction, uninstrumented CPU/resource acceptance or complete-duty claim.",
+  "gpu_duty": "unavailable",
+  "qualification": false,
+  "system_changes": "None. Child native X11/scale1 launch options only; no display/driver settings, global tracing or DRM supervisor."
+}

@@ -1,0 +1,8 @@
+{
+  "source_commit": "fdc10853",
+  "head_at_finish": "0d9210ef1bdff37b1514a4d89f57de0045f07f7b",
+  "binary_sha256": "a9583e9d824b2bb7c3b2196c8c3a8bcdffe53c3597158856ab5466b779adce6f",
+  "build": "guarded offline release datum-gui-app visual",
+  "log": "/tmp/gpu-r2-candidate-build.log",
+  "purpose": "Source-bound architecture build; input observer conformance still pending; no performance trial"
+}

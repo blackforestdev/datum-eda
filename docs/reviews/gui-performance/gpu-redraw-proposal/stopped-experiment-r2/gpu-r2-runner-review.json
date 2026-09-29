@@ -1,0 +1,76 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "scope": "Read-only runner/declaration/source review; no script execution, builds, input injection or native trials. Only this /tmp advisory written.",
+  "pins": {
+    "/tmp/gpu-r2-native.py": "5543525e81fad0cb6c0e105aaa359310a3c87dfd3be74458ccca4f510175ca4a",
+    "/tmp/gpu-r2-pointer-stream.py": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "/tmp/gpu_r2_wm_close.py": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/declaration.json": "70519270403dd7fb75331b73eb3fc8ce00563a213d9fce4d3e5a90083024530b",
+    "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/validate.py": "629888f65a127ec32bb7483da5e302d0db208e96ea867df2b8db6b1d0aa34802",
+    "/tmp/gpu_r2_validate.py": "4aa76af2c0369d339ba387577e1ee86506749853372faecd681c6263d6b1ac21",
+    "/tmp/gpu-r2-input-controls.py": "1bbe5cd141fe8fcc0e43febc3ea0241e1b451709142a7c7038b33a6bb559099b"
+  },
+  "disposition": "No remaining identified blocker in the reviewed bounded runner method after cadence/identity amendments. Advisory source-only recommendation; not owner authority, runtime validation, performance acceptance or complete S4 qualification.",
+  "findings": [
+    {
+      "id": "RUNNER01",
+      "severity": "medium",
+      "source": "gpu-r2-pointer-stream.py actual/scheduled times; validate.py:pointer_input; gpu-r2-native.py producer subprocess",
+      "finding": "Consumer validates scheduled deadlines, but does not validate sent_ns or finished_ns. A delayed/catch-up producer can deliver the whole ordered path while failing the intended fixed temporal workload and still pass. 35-second process timeout is insufficient 120 Hz schedule conformance.",
+      "required": "Declare finite sent-deadline lateness and active duration tolerances before execution; validate monotonic actual send times, actual duration and lateness, retain distribution. Reject first timing invalidity without retry. Cross-check stream interval with active CPU interval. No producer rehearsal required.",
+      "status": "resolved by final source inspection"
+    },
+    {
+      "id": "RUNNER02",
+      "severity": "medium",
+      "source": "gpu-r2-native.py GPU epoch collection and gpu_sample calls",
+      "finding": "Expected GPU epoch is taken from the sample set itself. All GPU samples may coherently name an epoch different from the live-device drain/input receipt, and pass current validation.",
+      "required": "Cross-check the singleton GPU epoch against shutdown_receipt.device_epoch and recorded input epoch/final state; validate input receipt PID equals launched PID. Pass independently observed epoch into gpu_sample.",
+      "status": "resolved by final source inspection"
+    }
+  ],
+  "observations": [
+    "Declaration fixes one candidate, bounded 12-run order and failure stop. Runner executes exactly requested index; parent must enforce durable global run order/cap/stop across invocations because this runner does not enforce campaign ledger itself.",
+    "Five-second warmup and still tail surround 30-second producer; cgroup tracks workload descendants, excluding driver/observer. Export occurs after final accounting acknowledgement and success requires process/receipt completion.",
+    "Exact startup/final PNG checks preserve archived reference; sample gaps/incompletes/late post-tail receipts fail. Shared-source static fidelity is separate from actual intermediate frame output evidence.",
+    "Scope explicitly excludes complete DRM duty, formal relative inference, uninstrumented acceptance and CPU/action claims. These limits do not authorize waiving other r2 requirements.",
+    "Source-order validator remains pinned-source regression evidence, not arbitrary control-flow proof. Quiet mode includes matched minimal recorder; actual GPU/quiet overhead belongs to same bounded runs.",
+    "Baseline matched patch/build provenance supplied by parent; reviewer has not built binaries or reproduced native controls.",
+    "Assertions are fail-closed only when Python optimization is disabled; invoke under ordinary Python without -O/PYTHONOPTIMIZE. No new dependency or tracing method introduced."
+  ],
+  "review_history": [
+    {
+      "pins": {
+        "/tmp/gpu-r2-native.py": "627a9244814e10b49797802575562d0c532cc8ef6728ef737207e8629382780f",
+        "/tmp/gpu-r2-pointer-stream.py": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+        "/tmp/gpu_r2_wm_close.py": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+        "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/declaration.json": "81ee6c9389afe1d8a1d8f119a34c5698a75d2e31bf27766cde94d2764af369ce",
+        "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/validate.py": "629888f65a127ec32bb7483da5e302d0db208e96ea867df2b8db6b1d0aa34802"
+      },
+      "disposition": "Amend two method predicates before first trial; no expanded observation or additional rehearsal requested.",
+      "findings": [
+        {
+          "id": "RUNNER01",
+          "severity": "medium",
+          "source": "gpu-r2-pointer-stream.py actual/scheduled times; validate.py:pointer_input; gpu-r2-native.py producer subprocess",
+          "finding": "Consumer validates scheduled deadlines, but does not validate sent_ns or finished_ns. A delayed/catch-up producer can deliver the whole ordered path while failing the intended fixed temporal workload and still pass. 35-second process timeout is insufficient 120 Hz schedule conformance.",
+          "required": "Declare finite sent-deadline lateness and active duration tolerances before execution; validate monotonic actual send times, actual duration and lateness, retain distribution. Reject first timing invalidity without retry. Cross-check stream interval with active CPU interval. No producer rehearsal required."
+        },
+        {
+          "id": "RUNNER02",
+          "severity": "medium",
+          "source": "gpu-r2-native.py GPU epoch collection and gpu_sample calls",
+          "finding": "Expected GPU epoch is taken from the sample set itself. All GPU samples may coherently name an epoch different from the live-device drain/input receipt, and pass current validation.",
+          "required": "Cross-check the singleton GPU epoch against shutdown_receipt.device_epoch and recorded input epoch/final state; validate input receipt PID equals launched PID. Pass independently observed epoch into gpu_sample."
+        }
+      ]
+    }
+  ],
+  "followup": [
+    "Actual send lateness is constrained to 0..8333334ns, sends monotonic, duration 30s..30s+8333334ns. Raw schedule plus summary lag distribution preserved; no adaptive retry.",
+    "Input receipt PID matches child; every input before/after/final epoch matches shutdown live-device epoch. GPU sample singleton epoch must equal that independent epoch; host/epoch/window log tuple must bind actual Main window.",
+    "Read existing /tmp/gpu-r2-input-controls.log reporting cadence/final-state negative controls passing; reviewer executed none.",
+    "Cumulative run order/cap/stop remains parent responsibility. Any method failure including cadence refusal consumes/stops declared sequence; source approval does not permit replacement."
+  ]
+}

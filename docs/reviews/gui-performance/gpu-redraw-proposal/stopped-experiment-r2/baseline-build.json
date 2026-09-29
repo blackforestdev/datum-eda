@@ -1,0 +1,7 @@
+{
+  "binary_sha256": "8024d3e990331c67f4d72fb4c2ce3164dc53b9267649dfddb5fdf5897b654aa6",
+  "source_commit": "997b618e8369e327f9d5ee2d30e8019c9c4c6ef9",
+  "instrumentation": "baseline-observer.json",
+  "log": "/tmp/gpu-r2-baseline-build.log",
+  "result": "guarded offline release build passed; zero native trials"
+}
