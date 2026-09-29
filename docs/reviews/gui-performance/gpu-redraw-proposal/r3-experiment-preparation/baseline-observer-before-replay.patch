@@ -151,7 +151,6 @@ diff --git a/crates/gui-app/src/app_shell.rs b/crates/gui-app/src/app_shell.rs
              frames: Default::default(),
              device_recovery: Default::default(),
 diff --git a/crates/gui-app/src/baseline_frame_workload.rs b/crates/gui-app/src/baseline_frame_workload.rs
-new file mode 100644
 --- /dev/null
 +++ b/crates/gui-app/src/baseline_frame_workload.rs
 @@ -0,0 +1,137 @@
@@ -293,7 +292,6 @@ new file mode 100644
 +    }
 +}
 diff --git a/crates/gui-app/src/baseline_measurement_lineage.rs b/crates/gui-app/src/baseline_measurement_lineage.rs
-new file mode 100644
 --- /dev/null
 +++ b/crates/gui-app/src/baseline_measurement_lineage.rs
 @@ -0,0 +1,70 @@
@@ -498,7 +496,6 @@ diff --git a/crates/gui-app/src/native_gpu_measurements.rs b/crates/gui-app/src/
                      "frame_span_ns": sample.frame_span_ns,
                  })
 diff --git a/crates/gui-app/src/native_input_observation.rs b/crates/gui-app/src/native_input_observation.rs
-new file mode 100644
 --- /dev/null
 +++ b/crates/gui-app/src/native_input_observation.rs
 @@ -0,0 +1,511 @@
@@ -1046,7 +1043,6 @@ diff --git a/crates/gui-app/src/native_surface_transaction.rs b/crates/gui-app/s
 +    }
 +}
 diff --git a/crates/gui-app/src/native_workload_observation.rs b/crates/gui-app/src/native_workload_observation.rs
-new file mode 100644
 --- /dev/null
 +++ b/crates/gui-app/src/native_workload_observation.rs
 @@ -0,0 +1,116 @@
@@ -1437,7 +1433,6 @@ diff --git a/crates/gui-render/src/render/gpu_measurement_api.rs b/crates/gui-re
 +    }
 +}
 diff --git a/crates/gui-render/src/render/gpu_measurement_frame.rs b/crates/gui-render/src/render/gpu_measurement_frame.rs
-new file mode 100644
 --- /dev/null
 +++ b/crates/gui-render/src/render/gpu_measurement_frame.rs
 @@ -0,0 +1,281 @@
@@ -1805,7 +1800,6 @@ diff --git a/crates/gui-render/src/render/gpu_measurement_resources.rs b/crates/
 +    }
 +}
 diff --git a/crates/gui-render/src/render/gpu_measurement_timeline.rs b/crates/gui-render/src/render/gpu_measurement_timeline.rs
-new file mode 100644
 --- /dev/null
 +++ b/crates/gui-render/src/render/gpu_measurement_timeline.rs
 @@ -0,0 +1,186 @@
