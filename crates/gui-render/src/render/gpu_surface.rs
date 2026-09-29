@@ -97,6 +97,14 @@ pub(crate) struct SurfaceAttachments {
     #[cfg(all(test, feature = "visual", target_os = "linux"))]
     force_replacement: bool,
 }
+// Fixed owner and optional container, one transient encoded bundle and the
+// optional Arc's strong/weak counters. Texture aliases reside in the common
+// tracked allocation owner, whose allocation/observer metadata is separate.
+pub(crate) const IMAGE_HANDLE_METADATA_BYTES: usize = std::mem::size_of::<SurfaceAttachments>()
+    + std::mem::size_of::<prefix_images::Optional>()
+    + std::mem::size_of::<PrefixImages>()
+    + 2 * std::mem::size_of::<usize>();
+
 impl Default for SurfaceAttachments {
     fn default() -> Self {
         Self::with_generations(crate::text_gpu::budget::Budget::new(2))

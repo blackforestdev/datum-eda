@@ -19,6 +19,31 @@ def fixtures():
 
 
 class Receipts(unittest.TestCase):
+    def test_final_copy_boundary_covers_every_regional_graph(self):
+        for graph in ([], ["frame"], ["dialog"], ["suffix"], ["frame", "suffix"], ["restore", "suffix"]):
+            receipt, sample = fixtures()
+            names = ["upload-leading"] + graph + ["frame-trailing"]
+            ticks = [value for i in range(len(names)) for value in (10 + i * 20, 11 + i * 20)]
+            sample.update(raw_ticks=ticks, passes_ns=[[name, 1] for name in names],
+                          frame_span_ns=ticks[-1] - ticks[0], own_pass_sum_ns=len(names))
+            record = sample["submission_manifest"][0]
+            record.update(first_tick=ticks[0], last_tick=ticks[-1], transfer_first_tick=ticks[1],
+                          transfer_last_tick=ticks[2], span_ns=ticks[-1] - ticks[0],
+                          transfer_interval_ns=ticks[2] - ticks[1])
+            result = validate([sample], receipt, DECLARATION, final_copy_marker=True)[0]
+            self.assertEqual(result["frame_span_ns"], ticks[-1] - ticks[0])
+            self.assertGreater(sample["frame_span_ns"], sample["own_pass_sum_ns"])
+            # A marker before the final draw cannot stand in for copy completion.
+            bad = copy.deepcopy(sample)
+            bad["passes_ns"][-1][0] = "suffix"
+            with self.assertRaises(ValueError):
+                validate([bad], receipt, DECLARATION, final_copy_marker=True)
+            # Old source evidence remains readable only under its older method.
+            with self.assertRaises(ValueError): validate([sample], receipt, DECLARATION)
+        receipt, old = fixtures()
+        with self.assertRaises(ValueError):
+            validate([old], receipt, DECLARATION, final_copy_marker=True)
+
     def test_repreparation_keeps_earlier_active_uploads_in_the_complete_span(self):
         receipt, sample = fixtures()
         old = [1, 1, 1, 1, 1, 1, 0]
