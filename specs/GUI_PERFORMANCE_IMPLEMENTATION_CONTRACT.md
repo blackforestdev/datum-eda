@@ -597,3 +597,32 @@ render-session adoption, legacy retirement, exact8xcopy and bounded proof.
 Incomplete DRM duty remains unavailable in the permitted focused experiment;
 complete qualification and a concrete observer execution scope remain required.
 No GPU issue closure, S4/S5 completion or CPU optimization is authorized.
+
+## R2 stopped experiment and r3 owner amendment
+
+R2's first candidate GPU trial is preserved at
+`docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/receipt.json`
+(commit `7ae75ed3`). Input and endpoint output passed; incomplete multi-submission
+timing invalidated the run. One candidate GPU run was consumed; the declared
+sequence is stopped, with no baseline/quiet/W-PAN or replacement runs. Partial
+warm spans are diagnostic, not workload qualification or hardware limits.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-APPROVAL-R3 -->
+<!-- OWNER:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-APPROVAL-R3:GPI-S4-APPROVAL-R3 -->
+
+**GPI-S4-APPROVAL-R3.** Owner disposition on
+`docs/reviews/gui-performance/gpu-redraw-proposal/proposal-r3.md`, SHA256
+`716389b40bfafa5ebcbcf628af835d29309bf96c33b1091248871df6df6ac7b4`.
+The proposal retains the shared renderer, restores only damaged 8x samples into
+retained composition, masks the ordered suffix once, and completes submission
+timing/semantic attribution before a newly bounded experiment. Advisory review
+at `r3-review/independent-review.json` resolved its timing-capacity finding;
+this is not owner ratification. R3 implementation/build/test/native execution
+requires explicit approval and numbered-decision governance. The r2 declaration
+is permanently stopped. Preserve all credited S4 evidence and pending S4/S5
+obligations; no CPU optimization, budget waiver, DRM-observer execution, new
+dependency or issue closure. Complete DRM accounting still blocks final duty
+qualification but not the specifically limited experiment proposed in r3.
+
+Requested response: `approve GPU damage-restoration proposal r3` or
+`revise GPU damage-restoration proposal r3 — <required changes>`.

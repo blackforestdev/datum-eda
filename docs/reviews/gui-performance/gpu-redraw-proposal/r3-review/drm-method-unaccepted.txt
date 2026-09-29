@@ -1,0 +1,148 @@
+# GPU workload DRM lifetime observer: proposed bounded execution scope
+
+Status: proposal for owner review, not implementation or execution authority.
+Related: GPI-S4 / dat-gui-performance-implementation-vkq / approved GPU r2.
+
+The shared-renderer correction and separately approved own-queue experiment can
+continue. Final S4 duty qualification still needs complete workload-client
+lifetimes. This packet selects a concrete method to implement and test; it does
+not assert that the host supports it or that its overhead is acceptable.
+
+## Selected mechanism
+
+Use a Datum-owned Linux x86-64 launcher/supervisor, implemented with Python's
+standard library and the existing libc/kernel ABI. Launch only the disposable
+Datum workload and its cooperating descendants. Seize it before exec; install
+an inherited seccomp TRACE filter before any loader/driver code runs. Use ptrace
+syscall-entry/exit and clone/fork/vfork/exec/exit events to maintain process
+(PID/start-time), shared fd-table, open-description, device/client and lifecycle
+epoch identities. No attach to an existing user application, global trace,
+root/capability request, sysctl, scheduler, clock, display or driver tuning.
+
+The Linux interfaces support per-thread tracing, inherited syscall filtering,
+and duplication of a tracee descriptor subject to ptrace access checks. A
+duplicate shares the open file description; it is not a new DRM client.
+[ptrace](https://man7.org/linux/man-pages/man2/ptrace.2.html),
+[seccomp](https://man7.org/linux/man-pages/man2/seccomp.2.html),
+[pidfd_getfd](https://man7.org/linux/man-pages/man2/pidfd_getfd.2.html).
+
+Observe successful descriptor acquisition/replacement before releasing the
+creating thread. Duplicate each newly identified DRM open description with
+pidfd_getfd and retain that observer alias until its original aliases end and
+its final counters are captured after drain. The held alias deliberately extends
+file lifetime: record its payload/lifetime and never report it as ordinary
+application residency. Early short-lived clients cannot disappear between two
+endpoint samples. Deduplicate using physical-device identity plus DRM client ID
+and lifecycle epoch; keep raw aliases and explicit missing fields.
+[DRM fdinfo semantics](https://docs.kernel.org/gpu/drm-usage-stats.html).
+
+Trap open/openat/openat2/creat, dup/dup2/dup3, fcntl duplication/CLOEXEC changes,
+close/close_range, exec/exit, clone variants and fd-table unshare. Also cover fd
+receipt through recvmsg/recvmmsg, pidfd_getfd, and DRM/ioctl-created descriptors.
+Track CLONE_FILES sharing and implicit CLOEXEC/exit replacement. An unimplemented
+fd-creation/transfer route (including io_uring), ABI transition, unexpected
+external shared DRM client, lost event or undecodable ioctl makes completeness
+unavailable; it is never treated as absence of GPU work. Reject rather than
+silently disable an unsupported route.
+
+At fd-mutating or relevant DRM ioctl boundaries, quiesce the supervised thread
+set before inspecting arguments and keep arguments stable until the actual
+syscall has returned. Serialize relevant mutations so another thread cannot
+close/reuse an fd or rewrite an exec-object array between inspection and kernel
+consumption. Reconcile threads at clone/exec events. Ordinary nonintercepted
+syscalls run normally. Timeouts/deadlocks invalidate the attempt; do not change
+workload logic or synthesize successful syscalls to escape them.
+
+## Drain and counter epochs
+
+Reference support is intentionally driver-specific: Intel P630, i915, current
+host kernel 6.12.107+deb13-amd64 and Mesa25.0.7. Pin exact installed headers,
+module/build identity and Debian-versus-upstream source differences before
+implementation qualification. Upstream stable source is a feasibility reference,
+not proof that an arbitrary installed driver matches it.
+
+Decode successful i915 execbuffer2 submissions and every referenced GEM handle,
+its generation, creation/import and close. Record context/reset identities and
+all relevant submission modes; unsupported legacy/parallel/extension paths fail
+closed. Before a submitted handle can disappear, and before final original-fd
+release, stop new workload submissions and require bounded i915 GEM_BUSY queries
+on every tracked submitted object to report idle. Finish normal app queue drain
+first at controlled shutdown. Keep the same accounting window open throughout.
+Capture final fdinfo, then release the observer alias. A client with no submitted
+work still needs a complete decoded lifetime, not an assumed zero.
+
+The stable i915 busy implementation inspects native i915 request fences and
+explicitly excludes foreign fences. This supports a narrowly pinned native-i915
+completion check only; it does not establish generic cross-driver drain.
+[stable busy implementation](https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_busy.c).
+Do not substitute GEM_WAIT: its implementation can boost requests, adding an
+unwanted performance intervention.
+[stable wait implementation](https://raw.githubusercontent.com/gregkh/linux/v6.12.107/drivers/gpu/drm/i915/gem/i915_gem_wait.c).
+
+Implementation review must establish that each admitted submission mode retains
+an observable native fence on a tracked object until completion; handle/VM/context
+teardown cannot invalidate that proof. If it cannot, the method remains
+unavailable and returns a specific gap, without a native performance campaign.
+No plateau heuristic, pre-close sample alone, or app device epoch substitutes
+for this requirement. Other encountered GPUs/DRM clients need supported complete
+counters and drain semantics too; they cannot be omitted because P630 renders
+the visible frame. Missing NVIDIA/probe-client support is unavailable, not zero
+and not a finding that the rendering repair is infeasible.
+
+Record action start/end, drain start/end, observer holds, original fd close,
+final sample and last observer close. Aggregate per-engine counter deltas once
+per client epoch over the common observation interval. Counter regression,
+reset, missing final value, unexpected submission after drain, lost child,
+crash or observer failure invalidates the affected total. Preserve partial data.
+Per-client residency endpoints remain distinct from instantaneous aggregate peak;
+this method does not silently close every ACC/MEM requirement.
+
+## Requested bounded implementation and proof
+
+1. Implement only this workload-scoped supervisor, decoder, records and offline
+   conformance tests. No product rendering changes or new dependency. Review the
+   concrete source and pins before its first tracing run.
+2. One capability/conformance batch: up to12 isolated child cases covering
+   open/dup/fcntl; shared-thread fd tables; close/reuse; close_range; fork and exec
+   CLOEXEC; earlier exit; successful queued i915 work and drain; alias dedup;
+   counter-reset/missing-final negatives; unsupported ioctl/fd-transfer negative;
+   observer death/lost-event negative; normal application Main/dialog teardown.
+   Each case runs once, with a2s individual drain and30s case deadline. Preserve
+   the first failure and stop the affected batch. No automatic replacement runs.
+   Pure offline controls may correct implementation defects before a reviewed
+   source-bound retry; a new native retry requires a revised bounded packet.
+3. Only after complete conformance: seven fixed alternating observer-off/on
+   W-POINTER pairs on one pinned corrected candidate, maximum14native runs.
+   Each uses5s warmup,30s120Hz400x240pointer rectangle,5sstill and identical normal
+   drain. Identical output/input accounting; no display-scale tuning. Timestamp
+   mode identical within a pair; report supervisor CPU and tracee-family CPU
+   separately, then combined observation cost. Record actual stop durations,
+   fd-retention overlap and required synchronous drains. These are observer
+   calibration runs, separate from r2's maximum12baseline/candidate experiment.
+4. Stop at the first invalid sample/output/input failure or candidate GPU p95>4ms
+   /p99>8ms. No replacement runs or parameter sweeps. Apply fixed STAT-01 paired
+   inference to observer overhead; >5% unexplained regression, materially changed
+   delivered work or retirement, and an interval that cannot exclude material
+   perturbation keep the method unqualified. Never subtract a guessed overhead.
+   A small timing ratio alone cannot bless changed resource lifetimes.
+
+Bound observer storage before launch:256MiB log cap,64simultaneous DRM clients,
+4096fd aliases,256tasks and65536tracked GEM handles. Exhaustion records unavailable
+and stops cleanly; no cap expansion during a run. Two-second drain expiry stops
+observation as incomplete. Cleanup resumes/stops only supervised children,
+closes all observer aliases and records forced cleanup; it never counts forced
+cleanup as a normal final reading.
+
+The maximum native request is12conformance cases plus14calibration runs. Offline
+implementation/build work is separately justified by those controls. No final S5
+endurance/independent replay or CPU optimization is included. Reuse any valid
+candidate evidence after calibration only at matching pins and scope.
+
+Owner response requested after independent method review:
+`approve GPU workload DRM observer scope r1`
+
+This approval would authorize this method's implementation and bounded proof,
+including workload-only ptrace/seccomp and deliberate temporary fd retention.
+It would not ratify a passing result, waive duty/lifetime obligations, or close
+GPI-S4. A privilege denial, unsupported driver path or unacceptable observer
+perturbation returns an unavailable result and a concrete revised proposal.
