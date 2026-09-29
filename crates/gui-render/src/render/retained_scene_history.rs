@@ -593,19 +593,8 @@ impl RetainedSceneCacheKey {
                 .map(|(key, value)| (key.clone(), *value))
                 .collect(),
             selection: retained_selection_cache_key(workspace, &workspace.selection),
-            board_hover: matches!(
-                workspace.selection,
-                datum_gui_protocol::SelectionTarget::None
-            )
-            .then(|| {
-                workspace
-                    .ui
-                    .hovered_object
-                    .as_ref()
-                    .filter(|h| h.surface == datum_gui_protocol::PaneContent::Board)
-                    .map(|h| h.object_id.clone())
-            })
-            .flatten(),
+            board_hover: crate::retained_scene_owner::hover_membership::material_id(workspace)
+                .map(str::to_owned),
         }
     }
 }

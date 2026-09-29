@@ -213,7 +213,13 @@ impl Renderer {
         });
         #[cfg(all(test, feature = "visual"))]
         let damage = match fault {
+            crate::gpu_surface::prefix_negative_control::Fault::DamageOverflow => {
+                let refused = self.render_session.prefix.fragmented_control();
+                assert!(refused.is_none());
+                refused
+            }
             crate::gpu_surface::prefix_negative_control::Fault::None
+            | crate::gpu_surface::prefix_negative_control::Fault::OverlappingSuffix
             | crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask => damage,
             crate::gpu_surface::prefix_negative_control::Fault::OldDamageMissing
             | crate::gpu_surface::prefix_negative_control::Fault::StaleWorking => {
@@ -333,10 +339,51 @@ impl Renderer {
             if images.is_none() {
                 self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
             }
-            text_encode_elapsed = if damage.is_some_and(|d| d.rectangles().is_empty()) {
-                std::time::Duration::ZERO
+            // The missing-restriction control must omit both protections now.
+            #[cfg(all(test, feature = "visual"))]
+            let painter_damage =
+                if fault == crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask {
+                    None
+                } else {
+                    damage
+                };
+            #[cfg(not(all(test, feature = "visual")))]
+            let painter_damage = damage;
+            text_encode_elapsed = if let Some(damage) = painter_damage {
+                let mut elapsed = std::time::Duration::ZERO;
+                for &region in damage.rectangles() {
+                    elapsed += self.draw_frame_suffix(
+                        &mut pass,
+                        prepared,
+                        width,
+                        height,
+                        &suffix_mask.group,
+                        crate::renderer_state::damage::clip::Clip(region),
+                    )?;
+                    #[cfg(all(test, feature = "visual"))]
+                    if fault
+                        == crate::gpu_surface::prefix_negative_control::Fault::OverlappingSuffix
+                    {
+                        elapsed += self.draw_frame_suffix(
+                            &mut pass,
+                            prepared,
+                            width,
+                            height,
+                            &suffix_mask.group,
+                            crate::renderer_state::damage::clip::Clip(region),
+                        )?;
+                    }
+                }
+                elapsed
             } else {
-                self.draw_frame_suffix(&mut pass, prepared, width, height, &suffix_mask.group)?
+                self.draw_frame_suffix(
+                    &mut pass,
+                    prepared,
+                    width,
+                    height,
+                    &suffix_mask.group,
+                    crate::renderer_state::damage::clip::Clip::full(width, height),
+                )?
             };
         }
         let encode_elapsed = encode_started.elapsed().saturating_sub(text_encode_elapsed);

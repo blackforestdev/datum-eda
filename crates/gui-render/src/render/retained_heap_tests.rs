@@ -6,6 +6,7 @@ fn complete_scene_owned_capacities_match_allocator_and_weak_release() {
     let scope = crate::cpu_alloc::Scope::new("retained-scene-heap-proof");
     let scene = scope.with(|| RetainedScene {
         surface_size_independent: true,
+        hover_membership: Default::default(),
         world_vertices: vec![
             Vertex {
                 pos: [1.0; 2],

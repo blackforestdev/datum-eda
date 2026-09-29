@@ -1,6 +1,8 @@
 //! Bounded pixel support of the actual immediate interaction triangles.
 //! A union is kept as separate strips, never a viewport-sized crosshair box.
 use crate::{PreparedScene, SceneSurface, Vertex};
+#[path = "damage_partition.rs"]
+mod partition;
 
 pub(crate) const MAX_RECTS: usize = 32;
 
@@ -11,6 +13,18 @@ pub(crate) struct Pixels {
     count: usize,
 }
 impl Pixels {
+    #[cfg(all(test, feature = "visual"))]
+    pub(crate) fn fragmented_control() -> Option<Self> {
+        let mut pixels = Self::default();
+        for i in 0..16 {
+            pixels.push([0, i * 2, 32, i * 2 + 1])?;
+        }
+        for i in 0..16 {
+            pixels.push([i * 2, 0, i * 2 + 1, 32])?;
+        }
+        pixels.disjoint()
+    }
+
     pub(crate) fn rectangles(&self) -> &[[u32; 4]] {
         &self.rects[..self.count]
     }

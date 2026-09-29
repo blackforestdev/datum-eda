@@ -4,7 +4,6 @@ use super::Restoration;
 
 const WIDTH: u32 = 256;
 const HEIGHT: u32 = 2;
-const BYTES: u64 = (WIDTH * HEIGHT * 8 * 4) as u64;
 
 fn expected(x: u32, y: u32, sample: u32) -> u32 {
     let channels = [
@@ -98,15 +97,26 @@ fn initialize(
 }
 
 fn samples(device: &wgpu::Device, queue: &wgpu::Queue, view: &wgpu::TextureView) -> Vec<u32> {
+    read_samples(device, queue, view, WIDTH, HEIGHT)
+}
+
+pub(crate) fn read_samples(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    view: &wgpu::TextureView,
+    width: u32,
+    height: u32,
+) -> Vec<u32> {
+    let bytes = u64::from(width) * u64::from(height) * 8 * 4;
     let output = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("r3-sample-oracle-output"),
-        size: BYTES,
+        size: bytes,
         usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: false,
     });
     let readback = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("r3-sample-oracle-readback"),
-        size: BYTES,
+        size: bytes,
         usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
@@ -116,10 +126,10 @@ fn samples(device: &wgpu::Device, queue: &wgpu::Queue, view: &wgpu::TextureView)
 @group(0) @binding(0) var image: texture_multisampled_2d<f32>;
 @group(0) @binding(1) var<storage, read_write> output: array<u32>;
 @compute @workgroup_size(8, 1, 1) fn main(@builtin(global_invocation_id) p: vec3<u32>) {
-    let pixel = p.x / 8u; let sample = p.x % 8u;
-    output[p.x] = pack4x8unorm(textureLoad(image, vec2<i32>(i32(pixel % 256u), i32(pixel / 256u)), i32(sample)));
+    let pixel = p.x / 8u + p.y * 256u; let sample = p.x % 8u;
+    output[pixel * 8u + sample] = pack4x8unorm(textureLoad(image, vec2<i32>(i32(pixel % 256u), i32(pixel / 256u)), i32(sample)));
 }
-"#.into()),
+"#.replace("256u", &format!("{width}u")).into()),
     });
     let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
         label: Some("r3-read-samples-pipeline"),
@@ -148,9 +158,9 @@ fn samples(device: &wgpu::Device, queue: &wgpu::Queue, view: &wgpu::TextureView)
         let mut pass = encoder.begin_compute_pass(&Default::default());
         pass.set_pipeline(&pipeline);
         pass.set_bind_group(0, &binding, &[]);
-        pass.dispatch_workgroups(WIDTH * HEIGHT, 1, 1);
+        pass.dispatch_workgroups(width, height, 1);
     }
-    encoder.copy_buffer_to_buffer(&output, 0, &readback, 0, BYTES);
+    encoder.copy_buffer_to_buffer(&output, 0, &readback, 0, bytes);
     queue.submit([encoder.finish()]);
     let (sender, receiver) = std::sync::mpsc::channel();
     readback

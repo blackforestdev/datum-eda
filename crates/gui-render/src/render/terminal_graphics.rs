@@ -428,6 +428,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         screen_bind_group: &'pass wgpu::BindGroup,
         foreground: bool,
         damage: &wgpu::BindGroup,
+        clip: crate::renderer_state::damage::clip::Clip,
     ) {
         if !self.has_layer(foreground) {
             return;
@@ -451,7 +452,9 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             else {
                 continue;
             };
-            pass.set_scissor_rect(draw.clip.0, draw.clip.1, draw.clip.2, draw.clip.3);
+            if !clip.set(pass, [draw.clip.0, draw.clip.1, draw.clip.2, draw.clip.3]) {
+                continue;
+            }
             pass.set_bind_group(1, &texture.bind_group, &[]);
             pass.set_vertex_buffer(
                 0,

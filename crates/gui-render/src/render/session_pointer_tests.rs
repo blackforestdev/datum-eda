@@ -248,6 +248,8 @@ fn effective_board_hover_transitions_require_full_content_and_text_preparation()
 #[test]
 fn retained_history_keys_distinguish_equal_length_effective_board_hover() {
     let mut state = workspace();
+    state.scene.pads[0].object_id = "pad:a".into();
+    state.scene.pads[1].object_id = "pad:b".into();
     state.selection = datum_gui_protocol::SelectionTarget::None;
     state.ui.hovered_object = Some(HoverTarget {
         object_id: "pad:a".into(),
@@ -264,4 +266,153 @@ fn retained_history_keys_distinguish_equal_length_effective_board_hover() {
         disabled,
         RetainedSceneCacheKey::for_workspace(&state, 1600, 1000, 1.0)
     );
+}
+
+#[test]
+fn non_pad_dependencies_retain_world_and_unknown_membership_refuses() {
+    let mut state = workspace();
+    state.selection = datum_gui_protocol::SelectionTarget::None;
+    state.ui.hovered_object = None;
+    let mut session = RenderSession::default();
+    install(&mut session, &state);
+    acknowledge(&mut session);
+    let generation = session.pointer_generation();
+    let world = session.board().unwrap().world_vertices.clone();
+    let before_key = RetainedSceneCacheKey::for_workspace(&state, 1600, 1000, 1.0);
+    let before_count = crate::retained_scene_resolve_count();
+    let targets: Vec<_> = session
+        .board()
+        .unwrap()
+        .world_hit_index
+        .regions()
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| session.board().unwrap().hover_is_pad(*i) == Some(false))
+        .filter_map(|(_, r)| match &r.target {
+            crate::HitTarget::AuthoredObject(id) => Some(id.clone()),
+            _ => None,
+        })
+        .collect();
+    assert!(!targets.is_empty());
+    for id in targets {
+        state.ui.hovered_object = Some(HoverTarget {
+            object_id: id,
+            surface: PaneContent::Board,
+        });
+        assert!(session.update_pointer(PointerUpdate {
+            generation,
+            cursor: Some(ScreenPointPx { x: 300., y: 200. }),
+            hover: state.ui.hovered_object.as_ref(),
+            style: CrosshairStyle::FullViewport
+        }));
+        assert_eq!(
+            before_key,
+            RetainedSceneCacheKey::for_workspace(&state, 1600, 1000, 1.0)
+        );
+        assert_eq!(session.board().unwrap().world_vertices, world);
+        assert_eq!(crate::retained_scene_resolve_count(), before_count);
+    }
+    state.ui.hovered_object = Some(HoverTarget {
+        object_id: "missing-source-object".into(),
+        surface: PaneContent::Board,
+    });
+    assert!(!session.update_pointer(PointerUpdate {
+        generation,
+        cursor: None,
+        hover: state.ui.hovered_object.as_ref(),
+        style: CrosshairStyle::Local
+    }));
+    assert!(session.board().is_none());
+    state.ui.hovered_object = None;
+    install(&mut session, &state);
+    session.board.as_mut().unwrap().hover_membership = Default::default();
+    assert!(!session.update_pointer(PointerUpdate {
+        generation: session.pointer_generation(),
+        cursor: None,
+        hover: None,
+        style: CrosshairStyle::Local
+    }));
+    assert!(session.board().is_none());
+}
+
+#[test]
+#[ignore = "offline replay requires pinned F-DOA native board"]
+fn archived_fourteen_non_pad_transitions_keep_shared_content() {
+    let project = std::path::PathBuf::from(std::env::var_os("DATUM_NATIVE_TEST_PROJECT").unwrap());
+    let mut state = datum_gui_protocol::load_board_editor_workspace_state(
+        &datum_gui_protocol::LiveReviewRequest {
+            project_root: project,
+            board_file: None,
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+            kicad_board_source: None,
+        },
+    )
+    .unwrap();
+    assert_eq!(state.scene.pads.len(), 81);
+    state.selection = datum_gui_protocol::SelectionTarget::None;
+    // Consume the frozen archive's exact before/after strings; no new JSON dependency.
+    let archive = include_str!(
+        "../../../../docs/reviews/gui-performance/gpu-redraw-proposal/timed-native-result/cold-demands.json"
+    );
+    let ids: Vec<_> = archive
+        .lines()
+        .filter_map(|line| {
+            let line = line.trim();
+            line.strip_prefix("\"before\": \"")
+                .or_else(|| line.strip_prefix("\"after\": \""))
+                .and_then(|value| value.strip_suffix("\","))
+        })
+        .collect();
+    assert_eq!(ids.len(), 28);
+    for (ordinal, pair) in ids.as_chunks::<2>().0.iter().enumerate() {
+        let hover = |index: usize| {
+            let id = pair[index];
+            (!id.is_empty()).then(|| HoverTarget {
+                object_id: id.into(),
+                surface: PaneContent::Board,
+            })
+        };
+        state.ui.hovered_object = hover(0);
+        let mut session = RenderSession::default();
+        assert!(session.ensure_board(&state, 1280, 800, 1.0));
+        let retained = session.board().unwrap();
+        let preparation = Preparation::workspace(&state, retained, [1280, 800]);
+        let scene = PreparedScene::from_workspace_for_surface(
+            &state,
+            1280,
+            800,
+            1.0,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            retained,
+        )
+        .unwrap();
+        session.install_prepared(scene, preparation);
+        let plan = session.prepare_frame(1, 1, 1, true, 1280, 800).unwrap();
+        assert!(session.complete_frame(plan, 1, 1, 1, true));
+        let before = session.board().unwrap().clone();
+        let key = RetainedSceneCacheKey::for_workspace(&state, 1280, 800, 1.0);
+        let resolves = crate::retained_scene_resolve_count();
+        state.ui.hovered_object = hover(1);
+        assert!(
+            session.update_pointer(PointerUpdate {
+                generation: session.pointer_generation(),
+                cursor: None,
+                hover: state.ui.hovered_object.as_ref(),
+                style: CrosshairStyle::FullViewport,
+            }),
+            "archived frame {}",
+            ordinal
+        );
+        assert_eq!(
+            RetainedSceneCacheKey::for_workspace(&state, 1280, 800, 1.0),
+            key
+        );
+        assert_eq!(session.board().unwrap(), &before);
+        assert_eq!(crate::retained_scene_resolve_count(), resolves);
+        assert!(session.interaction_only_damage());
+    }
 }

@@ -6,6 +6,8 @@ use wgpu::util::DeviceExt;
 #[path = "gpu_damage_restore.rs"]
 pub(crate) mod restore;
 use restore::Restoration;
+#[path = "painter_clip.rs"]
+pub(crate) mod clip;
 
 const RECTANGLES: usize = 32;
 #[repr(C)]
