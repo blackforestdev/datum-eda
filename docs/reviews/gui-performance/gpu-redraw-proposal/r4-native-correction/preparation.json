@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "defect": "dat-r4-native-attachment-capacity-uquy",
+  "step": "GPI-S4",
+  "authority": "owner-direction.json",
+  "status": "Native ledger uses shared existing10entry capacity; focused offline proof passes; candidate/native pending.",
+  "change": "Expose existing renderer current/submitted union bound through Renderer::SURFACE_ATTACHMENT_USAGE_CAPACITY; use same bound in renderer return arrays and native temporary current IDs. No image graph, sampler, mask, shader, scene, observer format/capacity or numerical limit change. Native stack scratch grows112bytes (3to10Option<(u64,u64)> entries); no new retained or GPU allocation.",
+  "proof": {
+    "native_owner": "23tests pass; new5current+5submitted,last-use completion,close and device-loss controls exercise QueueOwner-to-Ledger production bridge. Original crash is preserved negative evidence.",
+    "lint": "gui-render/gui-app all-target visual and default Clippy pass -D warnings.",
+    "governance": "Source2660,13source-policy controls,10runner controls,20parityinventories,resource/dependency/evidence/spec/progress/Frontier checks pass.",
+    "reused": "R4 exact8 four-group GPU proof remains at544dc61a; unchanged raster and image lifetimes. Existing baseline binary hash verified against sealed prior declaration."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_surface.rs": "9253edb1a7b277afd63561d15d1a56180bdf029708900c722b1977f9745ce356",
+    "crates/gui-app/src/native_attachment_ledger.rs": "d48a664ab2071d6a0d8bf5294ea821ff8ef6e20a0d34566e09711cfb69718010",
+    "crates/gui-app/src/native_queue_progress_tests.rs": "52eaa0ac467ef47f712fb2f4a98b54bbe587e133831fe1bca2375117b4a7ba9f",
+    "scripts/gpu_r3_campaign.py": "e39130e2e5e1516b57a19007442f5fcf913981f70a48a6c74c15d40858a75020",
+    "scripts/gpu_r3_native_trial.py": "e443253e70597b94e532dcf444532e73bf149a7f6bbef38dfaeddd9e86c2d2b7"
+  },
+  "next": "One corrected candidate release; fresh original fixed12pointer campaign, first-failure stop. Assess first valid result and repeatability if subsequent runs permitted by numerical/correctness outcome.",
+  "artifacts_sha256": {
+    "offline-logs.tar.gz": "a1f9e3f4c270ddbe565e8a5187894d08d7a7bfc427f06d893d973a022de15d2f"
+  }
+}

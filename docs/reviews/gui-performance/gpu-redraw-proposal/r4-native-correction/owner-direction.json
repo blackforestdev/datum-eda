@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "defect": "dat-r4-native-attachment-capacity-uquy",
+  "step": "GPI-S4",
+  "owner_response_exact": "The appropriate direction is to preserve R4, repair the demonstrated defect, and obtain its first valid native result. Then assess its stability and performance on evidence.",
+  "recorded_at": "2026-09-29T20:30:31.924533+00:00",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "disposition": "Resume execution for demonstrated native attachment capacity correction, focused shared/native accounting proof and one corrected candidate release. Reuse unchanged R4 GPU proof and pinned matched baseline. Fresh fixed12pointer declaration uses original R4 order/method and first-failure stop; first valid result then repeated/matched evidence if numerical limits pass. Preserve historical stopped declaration. No renderer redesign, observer expansion, DRM/CPU execution or qualification waiver.",
+  "correction": "Expose existing bounded current/submitted capacity from shared renderer and use it in native ledger; test five-current/ten-union membership, last-use retirement and close/device-loss.",
+  "proof_rationale": "The crash is deterministic native metadata indexing; focused native owner tests cover affected bridge and retirement, unchanged raster proof is reused. New native pointer result tests actual presentation/input and full GPU span; original fixed campaign can assess repeatability/overhead if first candidate passes.",
+  "prior": "../r4-disposition/receipt.json",
+  "scope_limits": "This owner direction supersedes the prior stop for this bounded correction. R4 numerical/correctness/resource limits and all incomplete S4/S5/DRM obligations remain."
+}

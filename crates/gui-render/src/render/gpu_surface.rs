@@ -44,12 +44,19 @@ pub struct SurfaceAttachmentSnapshot {
     pub payload_bytes: Option<u64>,
 }
 
+impl Renderer {
+    /// Maximum distinct images reported by `surface_attachment_usage`: five
+    /// current images plus five submitted images whose references were evicted.
+    /// Native lifetime accounting must accept the entire coherent set.
+    pub const SURFACE_ATTACHMENT_USAGE_CAPACITY: usize = 2 * 5;
+}
+
 /// Current and submitted generations may temporarily be disjoint. Alias handles
 /// share allocation identity and must not duplicate resource incidence.
 fn merge_usage(
     mut current: impl Iterator<Item = SurfaceAttachmentSnapshot>,
     submitted: [Option<SurfaceAttachmentSnapshot>; 5],
-) -> [Option<(SurfaceAttachmentSnapshot, bool)>; 10] {
+) -> [Option<(SurfaceAttachmentSnapshot, bool)>; Renderer::SURFACE_ATTACHMENT_USAGE_CAPACITY] {
     let mut usage = std::array::from_fn(|_| current.next().map(|image| (image, true)));
     for submitted in submitted.into_iter().flatten() {
         if !usage.iter().flatten().any(|(image, _)| {
@@ -187,7 +194,10 @@ impl SurfaceAttachments {
             [self.snapshot(), None, None, None, None]
         };
     }
-    fn usage(&self) -> [Option<(SurfaceAttachmentSnapshot, bool)>; 10] {
+    fn usage(
+        &self,
+    ) -> [Option<(SurfaceAttachmentSnapshot, bool)>; Renderer::SURFACE_ATTACHMENT_USAGE_CAPACITY]
+    {
         merge_usage(self.snapshots(), self.submitted)
     }
     fn snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
