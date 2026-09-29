@@ -90,6 +90,7 @@ fn reject(c: &mut OffscreenRenderer, fault: Fault) {
 
 fn crossings() {
     let mut c = reference_capture8();
+    c.renderer.surface_attachments.enable_sample_readback();
     c.width = 1280;
     c.height = 800;
     let mut state = native_doa();
@@ -107,6 +108,7 @@ fn crossings() {
 
 fn hover_dependencies() {
     let mut c = reference_capture8();
+    c.renderer.surface_attachments.enable_sample_readback();
     c.width = 1280;
     c.height = 800;
     let mut state = native_doa();
