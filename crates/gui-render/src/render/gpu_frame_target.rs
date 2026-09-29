@@ -68,6 +68,9 @@ impl Renderer {
             width,
             height,
         );
+        if result.is_err() {
+            self.pending_measurement.take();
+        }
         if result.is_err() && !self.text_preparation.is_continuing() {
             self.text_buffers.finish_frame();
             self.text_preparation.cancel();

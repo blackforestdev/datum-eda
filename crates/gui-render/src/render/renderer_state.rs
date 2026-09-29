@@ -83,6 +83,9 @@ pub struct Renderer {
     pub(super) surface_attachments: gpu_surface::SurfaceAttachments,
     pub(super) msaa_format: wgpu::TextureFormat,
     pub(super) msaa_samples: u32,
+    pub(super) measurement_workload: [u64; 8],
+    pub(super) measurement_attempt: gpu_measurements::timeline::Attempt,
+    pub(super) pending_measurement: Option<gpu_measurements::FrameQueries>,
     pub(super) measurements: Option<gpu_measurements::GpuMeasurements>,
 }
 

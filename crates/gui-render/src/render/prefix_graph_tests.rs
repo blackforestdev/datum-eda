@@ -265,7 +265,7 @@ fn exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery() {
             Box::new(|event| panic!("unexpected cancellation: {event:?}")),
         )
         .unwrap();
-    let measured = frame(&mut c, true);
+    let _measured = frame(&mut c, true);
     assert!(
         c.renderer.prefix_copy_work().0,
         "exposure should reuse successfully completed prefix"
@@ -274,7 +274,7 @@ fn exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery() {
     assert_eq!(samples.len(), 1);
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["copy-start", "suffix"]
+        ["upload-leading", "suffix"]
     );
     assert!(samples[0].frame_span_ns >= samples[0].own_pass_sum_ns);
     assert!(
@@ -283,15 +283,15 @@ fn exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery() {
     );
     assert_eq!(
         observer.allocations().len(),
-        3,
-        "one charged 1x1 marker joins the pair"
+        2,
+        "measurement marker belongs to the query owner, not A/B"
     );
     assert_eq!(c.renderer.surface_attachment_reserved_generations(), 1);
     // Deliberately corrupt the retained pixels: the exact comparator must catch it.
     let images = c
         .renderer
         .surface_attachments
-        .prefix_images(&c.device, true)
+        .prefix_images(&c.device)
         .unwrap();
     let mut encoder = c.device.create_command_encoder(&Default::default());
     {
@@ -310,21 +310,33 @@ fn exact8_prefix_copy_matches_full_output_and_preserves_failure_recovery() {
     }
     c.queue.submit([encoder.finish()]);
     c.renderer.hold_frame_submission(&c.queue, Some(&images));
+    let session = c.renderer.render_session_mut();
+    assert!(session.update_pointer(PointerUpdate {
+        generation: session.pointer_generation(),
+        cursor: Some(datum_gui_protocol::ScreenPointPx {
+            x: viewport.x + viewport.width * 0.4,
+            y: viewport.y + viewport.height * 0.3,
+        }),
+        hover: None,
+        style: datum_gui_protocol::CrosshairStyle::FullViewport,
+    }));
+    let expected = full_reference(&mut c);
+    c.renderer.poll_gpu_measurements(&c.device).unwrap();
     let corrupt = frame(&mut c, false);
     assert!(
-        corrupt.as_raw() != measured.as_raw(),
+        corrupt.as_raw() != expected.as_raw(),
         "negative control failed to expose stale/corrupt prefix"
     );
     c.renderer.poll_gpu_measurements(&c.device).unwrap();
     // Failed completion forces a rebuild; no stale validity survives the failure.
     let recovered = frame(&mut c, true);
     assert!(!c.renderer.prefix_copy_work().0);
-    assert!(recovered.as_raw() == measured.as_raw());
+    assert!(recovered.as_raw() == expected.as_raw());
     let samples = c.renderer.poll_gpu_measurements(&c.device).unwrap();
     assert_eq!(samples.len(), 1);
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["frame", "suffix"]
+        ["upload-leading", "frame", "suffix"]
     );
     assert!(samples[0].scene_marker_ticks.is_some());
     drop(images);
@@ -349,7 +361,7 @@ fn required_other_host_storage_evicts_optional_prefix_without_releasing_live_hol
     let held = c
         .renderer
         .surface_attachments
-        .prefix_images(&c.device, false)
+        .prefix_images(&c.device)
         .unwrap();
     let process = gpu_process();
     let filler = process.reserve(process.available()).unwrap();
@@ -383,7 +395,7 @@ fn required_other_host_storage_evicts_optional_prefix_without_releasing_live_hol
 #[test]
 #[ignore = "GPU encode-to-submit eviction lifetime control; requires exact8x"]
 fn encoded_images_survive_eviction_until_actual_submission_completion() {
-    let mut c = capture8();
+    let mut c = reference_capture8();
     let state = datum_gui_protocol::load_fixture_workspace_state();
     prepare(&mut c, &state, &SourceEpoch::default());
     frame(&mut c, true);
@@ -391,15 +403,16 @@ fn encoded_images_survive_eviction_until_actual_submission_completion() {
     let images = c
         .renderer
         .surface_attachments
-        .prefix_images(&c.device, true)
+        .prefix_images(&c.device)
         .unwrap();
+    let held: Vec<_> = images.submission_refs().collect();
     let mut encoder = c.device.create_command_encoder(&Default::default());
     images.copy(&mut encoder);
     crate::text_gpu::optional_residency::evict_all();
     assert_eq!(c.renderer.surface_attachment_snapshots().count(), 1);
     assert_eq!(
         observer.allocations().len(),
-        3,
+        2,
         "local encoding references remain charged"
     );
     // A successful required allocation after eviction must not lose submitted A.
@@ -407,19 +420,20 @@ fn encoded_images_survive_eviction_until_actual_submission_completion() {
     c.queue.submit([encoder.finish()]);
     c.renderer.hold_frame_submission(&c.queue, Some(&images));
     let used: Vec<_> = c.renderer.surface_attachment_usage().collect();
-    assert_eq!(used.len(), 3);
-    assert_eq!(used.iter().filter(|(_, current)| !current).count(), 2);
+    assert_eq!(used.len(), 2);
+    assert_eq!(used.iter().filter(|(_, current)| !current).count(), 1);
     drop(images);
     assert_eq!(
         observer.allocations().len(),
-        3,
-        "queue callback owns evicted images after local handles drop"
+        2,
+        "explicit submission holds keep evicted images charged after handles drop"
     );
     c.device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    drop(held);
     assert_eq!(
         observer.allocations().len(),
         1,
-        "completion releases A and marker only"
+        "completion releases A only"
     );
     drop(required);
     drop(c);
@@ -437,7 +451,7 @@ fn pair_generation_allowance_survives_replacement_and_device_recovery() {
     let first = c
         .renderer
         .surface_attachments
-        .prefix_images(&c.device, false)
+        .prefix_images(&c.device)
         .unwrap();
     c.renderer
         .prepare_surface_attachment(&c.device, 32, 64, || true)
@@ -445,7 +459,7 @@ fn pair_generation_allowance_survives_replacement_and_device_recovery() {
     let second = c
         .renderer
         .surface_attachments
-        .prefix_images(&c.device, false)
+        .prefix_images(&c.device)
         .unwrap();
     assert_eq!(observer.allocations().len(), 4);
     assert_eq!(c.renderer.surface_attachment_reserved_generations(), 2);

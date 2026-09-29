@@ -5,6 +5,7 @@ use crate::{PreparedScene, Renderer};
 /// One immutable revision/target snapshot. No editor can mutate its scene or
 /// replace a retained source between planning and encoding. Dropping fails closed.
 pub struct FramePlan {
+    workload: [u64; 8],
     receipt: Receipt,
     scene: PreparedScene,
     board: RetainedScene,
@@ -69,6 +70,7 @@ impl RenderSession {
                 target: receipt.target(),
             });
         Ok(FramePlan {
+            workload: self.revisions.workload_tag(),
             receipt,
             prefix_key,
             encoded_prefix: None,
@@ -172,6 +174,10 @@ impl Renderer {
             self.render_session.revisions.matches(&plan.receipt),
             "frame plan belongs to a retired or foreign rendering attempt"
         );
+        self.measurement_workload = plan.workload;
+        self.measurement_attempt = plan
+            .receipt
+            .measurement_attempt(self.render_session.preparation_generation);
         self.render_session.prefix.begin(
             plan.prefix_key,
             session_prefix::damage::Pixels::capture(&plan.scene, plan.extent),
@@ -211,6 +217,10 @@ impl Renderer {
             self.render_session.revisions.matches(&plan.receipt),
             "capture plan belongs to a retired or foreign rendering attempt"
         );
+        self.measurement_workload = plan.workload;
+        self.measurement_attempt = plan
+            .receipt
+            .measurement_attempt(self.render_session.preparation_generation);
         self.render_session.prefix.begin(
             plan.prefix_key,
             session_prefix::damage::Pixels::capture(&plan.scene, plan.extent),

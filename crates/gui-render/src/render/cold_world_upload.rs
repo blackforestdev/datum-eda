@@ -6,7 +6,6 @@ const CHUNK_BYTES: usize = 4 * 1024 * 1024;
 #[derive(Default)]
 pub(crate) struct ColdWorldUploads {
     pub active: bool,
-    pub measurement_frame: Option<u64>,
     chunks: u64,
     bytes: u64,
 }
@@ -104,7 +103,10 @@ impl Renderer {
             self.schematic_world_vertices_gpu.submission_ref(),
             self.schematic_world_strokes_gpu.submission_ref(),
         ];
-        let submission = queue.submit([batch.command()]);
+        let (before, after) = self
+            .begin_upload_measurement(device, "world")?
+            .map_or((None, None), |(a, b)| (Some(a), Some(b)));
+        let submission = queue.submit(before.into_iter().chain([batch.command()]).chain(after));
         batch.hold(queue);
         queue.on_submitted_work_done(move || drop(resources));
         self.world_vertices_gpu.consume_chunk(counts[0]);
@@ -115,11 +117,7 @@ impl Renderer {
         self.cold_world.chunks += 1;
         self.cold_world.bytes += (CHUNK_BYTES - remaining) as u64;
         on_submitted(submission);
-        // No partial multi-submission timing may masquerade as a complete sample.
-        if let Some(measurements) = &mut self.measurements {
-            self.cold_world.measurement_frame =
-                Some(measurements.incomplete_upload_submission(self.cold_world.measurement_frame)?);
-        }
+        self.finish_upload_measurement(queue)?;
         Ok(())
     }
 

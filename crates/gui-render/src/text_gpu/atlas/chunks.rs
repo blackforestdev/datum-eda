@@ -40,6 +40,7 @@ impl Atlas {
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         limit: u64,
+        boundaries: Option<(wgpu::CommandBuffer, wgpu::CommandBuffer)>,
     ) -> anyhow::Result<wgpu::SubmissionIndex> {
         let (count, _) = self.chunk_plan(limit)?;
         let mut remaining = limit;
@@ -80,7 +81,8 @@ impl Atlas {
         drop(uploads);
         let mut resources = StagingVec::new(self.pages.len(), &self.staging_budget)?;
         resources.extend(self.pages.iter().map(|page| page.texture.submission_ref()));
-        let submission = queue.submit([batch.command()]);
+        let (before, after) = boundaries.map_or((None, None), |(a, b)| (Some(a), Some(b)));
+        let submission = queue.submit(before.into_iter().chain([batch.command()]).chain(after));
         batch.hold(queue);
         queue.on_submitted_work_done(move || drop(resources));
         self.pending_copy_bytes -= limit - remaining;

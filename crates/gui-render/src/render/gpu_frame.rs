@@ -189,6 +189,7 @@ impl Renderer {
             return Ok(false);
         };
         let mut measurement = self.begin_gpu_measurement()?;
+        let leading = self.final_measurement_leading(device, &mut measurement)?;
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         self.publish_resource_consumers();
@@ -199,8 +200,7 @@ impl Renderer {
             .requested()
             .then(|| {
                 self.damage_masks.restoration.as_ref()?;
-                self.surface_attachments
-                    .prefix_images(device, measurement.is_some())
+                self.surface_attachments.prefix_images(device)
             })
             .flatten();
         self.publish_resource_consumers();
@@ -212,8 +212,15 @@ impl Renderer {
             self.render_session.prefix.damage(images.identity)
         });
         #[cfg(test)]
-        let damage =
-            damage.filter(|_| fault == crate::gpu_surface::prefix_negative_control::Fault::None);
+        let damage = match fault {
+            crate::gpu_surface::prefix_negative_control::Fault::None
+            | crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask => damage,
+            crate::gpu_surface::prefix_negative_control::Fault::OldDamageMissing
+            | crate::gpu_surface::prefix_negative_control::Fault::StaleWorking => {
+                self.render_session.prefix.desired_support()
+            }
+            _ => None,
+        };
         let mask =
             damage.and_then(|pixels| self.damage_masks.restricted(device, pixels.rectangles()));
         let damage = damage.filter(|_| mask.is_some());
@@ -221,6 +228,18 @@ impl Renderer {
         #[cfg(test)]
         let reuse = reuse || fault == crate::gpu_surface::prefix_negative_control::Fault::StaleKey;
         let suffix_mask = mask.as_ref().unwrap_or(&self.damage_masks.unrestricted);
+        #[cfg(test)]
+        let suffix_mask =
+            if fault == crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask {
+                &self.damage_masks.unrestricted
+            } else {
+                suffix_mask
+            };
+        #[cfg(test)]
+        let restore_samples =
+            fault != crate::gpu_surface::prefix_negative_control::Fault::StaleWorking;
+        #[cfg(not(test))]
+        let restore_samples = true;
         suffix_mask.set_consumers(self.frame_consumers.all());
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
@@ -233,7 +252,7 @@ impl Renderer {
         });
         if let Some(images) = &images {
             if let Some(damage) = &damage {
-                if !damage.rectangles().is_empty() {
+                if !damage.rectangles().is_empty() && restore_samples {
                     let (source, destination) =
                         images.restoration_views().expect("admitted alias views");
                     self.damage_masks
@@ -252,28 +271,7 @@ impl Renderer {
                                 .transpose()?,
                         );
                 }
-            } else if reuse {
-                // Timestamp the queue interval before copy, not just suffix draw.
-                // This 1x1 attachment is charged and held through submission.
-                if let Some(marker) = images.marker_view()
-                    && let Some(m) = &mut measurement
-                {
-                    let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                        label: Some("datum-prefix-copy-start"),
-                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                            view: marker,
-                            resolve_target: None,
-                            depth_slice: None,
-                            ops: wgpu::Operations {
-                                load: clear,
-                                store: wgpu::StoreOp::Discard,
-                            },
-                        })],
-                        timestamp_writes: Some(m.pass("copy-start")?),
-                        ..Default::default()
-                    });
-                }
-            } else {
+            } else if !reuse {
                 let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                     label: Some("datum-retained-prefix"),
                     color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -351,10 +349,9 @@ impl Renderer {
         let submit_started = std::time::Instant::now();
         let mut uploads = self.flush_frame_uploads(device, queue)?;
         let submission = queue.submit(
-            uploads
-                .as_mut()
-                .map(|batch| batch.command())
+            leading
                 .into_iter()
+                .chain(uploads.as_mut().map(|batch| batch.command()))
                 .chain([command_buffer]),
         );
         self.hold_frame_submission(queue, images.as_ref());

@@ -1,8 +1,13 @@
 //! Opt-in GPU-01..03 pass measurements. Never a presentation clock or scheduler.
 //! Three slots own their query/resolve/readback resources until map completion.
 use crate::text_gpu::lifetime::{SubmissionRef, Tracked};
+#[path = "gpu_measurement_frame.rs"]
+mod frame;
 #[path = "gpu_measurement_resources.rs"]
 mod resources;
+pub(crate) use frame::FrameQueries;
+#[path = "gpu_measurement_timeline.rs"]
+pub(crate) mod timeline;
 use std::sync::{
     Arc,
     atomic::{AtomicU8, Ordering},
@@ -21,6 +26,7 @@ const ABORTED: u8 = 4;
 
 #[derive(Debug)]
 pub struct GpuFrameSample {
+    pub submission_manifest: Vec<frame::SubmissionSample>,
     pub host: u64,
     pub device_epoch: u64,
     pub frame: u64,
@@ -37,6 +43,7 @@ pub struct GpuFrameSample {
 
 #[derive(Debug, Clone)]
 pub struct GpuMeasurementCancellation {
+    pub submitted_lineage: Vec<(u64, &'static str, [u64; 7], [u64; 8])>,
     pub reason: &'static str,
     pub host: u64,
     pub device_epoch: u64,
@@ -51,6 +58,8 @@ struct Pending {
     submission: Option<u64>,
     passes: Vec<&'static str>,
     marker_count: u32,
+    scene_offset: Option<u32>,
+    timeline: timeline::Timeline,
     signal: Arc<AtomicU8>,
     active_start: Duration,
 }
@@ -60,76 +69,6 @@ struct Slot {
     resolve: Tracked<wgpu::Buffer>,
     readback: Tracked<wgpu::Buffer>,
     pending: Option<Pending>,
-}
-
-pub(crate) struct FrameQueries {
-    slot: usize,
-    epoch: u64,
-    frame: u64,
-    submission: u64,
-    queries: wgpu::QuerySet,
-    resources: Vec<SubmissionRef>,
-    passes: Vec<&'static str>,
-    query_count: u32,
-    marker_count: u32,
-    scene_markers_enabled: bool,
-    signal: Arc<AtomicU8>,
-    resolved: bool,
-    submitted: bool,
-}
-
-impl FrameQueries {
-    pub(crate) fn pass(
-        &mut self,
-        name: &'static str,
-    ) -> anyhow::Result<wgpu::RenderPassTimestampWrites<'_>> {
-        anyhow::ensure!(
-            !self.resolved,
-            "GPU measurement pass after query resolution"
-        );
-        anyhow::ensure!(
-            self.query_count + 2 <= QUERIES,
-            "GPU measurement pass capacity exceeded"
-        );
-        let index = self.query_count;
-        self.query_count += 2;
-        self.passes.push(name);
-        Ok(wgpu::RenderPassTimestampWrites {
-            query_set: &self.queries,
-            beginning_of_pass_write_index: Some(index),
-            end_of_pass_write_index: Some(index + 1),
-        })
-    }
-
-    pub(crate) fn mark_scene(
-        &mut self,
-        pass: &mut wgpu::RenderPass<'_>,
-        marker: u32,
-    ) -> anyhow::Result<()> {
-        if !self.scene_markers_enabled {
-            return Ok(());
-        }
-        anyhow::ensure!(
-            !self.resolved
-                && self.passes.as_slice() == ["frame"]
-                && marker == self.marker_count
-                && marker < 3
-                && self.query_count < QUERIES,
-            "invalid GPU scene marker order or capacity"
-        );
-        pass.write_timestamp(&self.queries, self.query_count);
-        self.query_count += 1;
-        self.marker_count += 1;
-        Ok(())
-    }
-}
-
-impl Drop for FrameQueries {
-    fn drop(&mut self) {
-        if !self.submitted {
-            self.signal.store(ABORTED, Ordering::Release);
-        }
-    }
 }
 
 /// Active time is paused by native drawable/occlusion/suspension notifications.
@@ -161,12 +100,21 @@ pub(crate) struct GpuMeasurements {
     scene_markers_enabled: bool,
     next_frame: u64,
     slots: Vec<Slot>,
+    marker: Tracked<resources::Marker>,
     clock: ActiveClock,
     cancelled: bool,
     cancellation_observer: GpuCancellationObserver,
 }
 
 impl GpuMeasurements {
+    pub(crate) fn drained_manifest(&self) -> anyhow::Result<[u64; 3]> {
+        anyhow::ensure!(
+            !self.cancelled && self.slots.iter().all(|s| s.pending.is_none()),
+            "GPU frame manifest is not drained"
+        );
+        Ok([self.host, self.epoch, self.next_frame])
+    }
+
     pub(crate) fn new(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -197,6 +145,7 @@ impl GpuMeasurements {
                 .contains(wgpu::Features::TIMESTAMP_QUERY_INSIDE_PASSES),
             next_frame: 0,
             slots,
+            marker: resources::Marker::new(device, &owner, epoch)?,
             clock: ActiveClock {
                 previous: Instant::now(),
                 elapsed: Duration::ZERO,
@@ -207,30 +156,6 @@ impl GpuMeasurements {
             cancelled: false,
             cancellation_observer,
         })
-    }
-
-    pub(crate) fn incomplete_upload_submission(
-        &mut self,
-        frame: Option<u64>,
-    ) -> anyhow::Result<u64> {
-        anyhow::ensure!(!self.cancelled, "GPU measurement device epoch cancelled");
-        let frame = if let Some(frame) = frame {
-            frame
-        } else {
-            self.next_frame = self
-                .next_frame
-                .checked_add(1)
-                .ok_or_else(|| anyhow::anyhow!("GPU measurement frame ID exhausted"))?;
-            self.next_frame
-        };
-        (self.cancellation_observer)(GpuMeasurementCancellation {
-            host: self.host,
-            device_epoch: self.epoch,
-            frame,
-            submission: Some(next_submission_id()?),
-            reason: "cold_upload_multisubmission_timestamps_unqualified",
-        });
-        Ok(frame)
     }
 
     pub(crate) fn begin(&mut self) -> anyhow::Result<FrameQueries> {
@@ -259,16 +184,26 @@ impl GpuMeasurements {
             submission: None,
             passes: Vec::new(),
             marker_count: 0,
+            scene_offset: None,
+            timeline: Default::default(),
             signal: signal.clone(),
             active_start: self.clock.elapsed,
         });
         Ok(FrameQueries {
+            timeline: Default::default(),
+            pass_indices: Vec::new(),
+            scene_offset: None,
+            final_transfer_end: None,
             slot: index,
             epoch: self.epoch,
             frame: self.next_frame,
             submission,
             queries: (*slot.queries).clone(),
-            resources: slot.submission_refs(),
+            resources: slot
+                .submission_refs()
+                .into_iter()
+                .chain([self.marker.submission_ref()])
+                .collect(),
             passes: Vec::new(),
             query_count: 0,
             marker_count: 0,
@@ -309,6 +244,7 @@ impl GpuMeasurements {
             matches!(frame.marker_count, 0 | 3),
             "incomplete GPU scene markers"
         );
+        frame.finish_boundaries()?;
         let count = frame.query_count;
         encoder.resolve_query_set(&slot.queries, 0..count, &slot.resolve, 0);
         encoder.copy_buffer_to_buffer(&slot.resolve, 0, &slot.readback, 0, u64::from(count) * 8);
@@ -332,6 +268,9 @@ impl GpuMeasurements {
         );
         let slot = &mut self.slots[frame.slot];
         let pending = slot.pending.as_mut().expect("validated reservation");
+        frame.finish_submission()?;
+        pending.timeline = frame.timeline.clone();
+        pending.scene_offset = frame.scene_offset;
         pending.passes = std::mem::take(&mut frame.passes);
         pending.marker_count = frame.marker_count;
         pending.submission = Some(frame.submission);
@@ -404,7 +343,7 @@ impl GpuMeasurements {
                                 * 8,
                         )
                         .get_mapped_range();
-                    let mut raw: Vec<u64> = view
+                    let raw_queries: Vec<u64> = view
                         .as_chunks::<8>()
                         .0
                         .iter()
@@ -413,10 +352,18 @@ impl GpuMeasurements {
                     drop(view);
                     slot.readback.unmap();
                     let pending = slot.pending.take().expect("ready frame");
-                    let scene_marker_ticks = extract_scene_markers(&mut raw, pending.marker_count)?;
+                    let mut raw = raw_queries.clone();
+                    let scene_marker_ticks = extract_scene_markers_at(
+                        &mut raw,
+                        pending.marker_count,
+                        pending.scene_offset,
+                    )?;
+                    let submission_manifest =
+                        frame::decode_boundaries(&pending.timeline, &raw_queries, self.period_ns)?;
                     let (passes_ns, own_pass_sum_ns, frame_span_ns) =
                         decode(&pending.passes, &raw, self.period_ns)?;
                     samples.push(GpuFrameSample {
+                        submission_manifest,
                         host: self.host,
                         device_epoch: self.epoch,
                         frame: pending.frame,
@@ -437,6 +384,12 @@ impl GpuMeasurements {
                 ABORTED => {
                     let aborted = slot.pending.take().expect("observed aborted frame");
                     (self.cancellation_observer)(GpuMeasurementCancellation {
+                        submitted_lineage: aborted
+                            .timeline
+                            .entries()
+                            .filter(|e| e.submitted)
+                            .map(|e| (e.id, e.kind, e.attempt, e.workload))
+                            .collect(),
                         reason: "encoding_aborted",
                         host: self.host,
                         device_epoch: self.epoch,
@@ -463,6 +416,12 @@ impl GpuMeasurements {
         for slot in &mut self.slots {
             if let Some(pending) = slot.pending.take() {
                 (self.cancellation_observer)(GpuMeasurementCancellation {
+                    submitted_lineage: pending
+                        .timeline
+                        .entries()
+                        .filter(|e| e.submitted)
+                        .map(|e| (e.id, e.kind, e.attempt, e.workload))
+                        .collect(),
                     reason: "host_or_device_closed_before_collection",
                     host: self.host,
                     device_epoch: self.epoch,
@@ -486,17 +445,29 @@ impl Drop for GpuMeasurements {
 
 // Keep the ordinary pass-pair representation intact for existing consumers.
 // Nested markers never contribute a second time to own_pass_sum_ns.
+#[cfg(test)]
 fn extract_scene_markers(raw: &mut Vec<u64>, count: u32) -> anyhow::Result<Option<[u64; 3]>> {
+    extract_scene_markers_at(raw, count, (count != 0).then_some(2))
+}
+fn extract_scene_markers_at(
+    raw: &mut Vec<u64>,
+    count: u32,
+    offset: Option<u32>,
+) -> anyhow::Result<Option<[u64; 3]>> {
     if count == 0 {
         return Ok(None);
     }
-    anyhow::ensure!(count == 3 && raw.len() >= 5, "missing GPU scene markers");
-    let markers = [raw[2], raw[3], raw[4]];
+    let offset = offset.ok_or_else(|| anyhow::anyhow!("missing scene marker offset"))? as usize;
     anyhow::ensure!(
-        raw[0] <= markers[0] && markers.is_sorted() && markers[2] <= raw[1],
+        count == 3 && offset >= 2 && raw.len() >= offset + 3,
+        "missing GPU scene markers"
+    );
+    let markers = [raw[offset], raw[offset + 1], raw[offset + 2]];
+    anyhow::ensure!(
+        raw[offset - 2] <= markers[0] && markers.is_sorted() && markers[2] <= raw[offset - 1],
         "GPU scene markers outside ordered scene interval"
     );
-    raw.drain(2..5);
+    raw.drain(offset..offset + 3);
     Ok(Some(markers))
 }
 
@@ -543,4 +514,56 @@ fn next_submission_id() -> anyhow::Result<u64> {
     SUBMISSION
         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
         .map_err(|_| anyhow::anyhow!("GPU submission identity exhausted"))
+}
+
+impl GpuMeasurements {
+    pub(crate) fn leading(
+        &self,
+        device: &wgpu::Device,
+        frame: &mut FrameQueries,
+        kind: &'static str,
+        attempt: timeline::Attempt,
+        workload: [u64; 8],
+        final_submission: bool,
+    ) -> anyhow::Result<wgpu::CommandBuffer> {
+        self.validate(frame)?;
+        self.marker
+            .set_consumers(crate::text_gpu::allocation_host::consumers());
+        frame.leading(
+            device,
+            &self.marker.view,
+            kind,
+            attempt,
+            workload,
+            final_submission,
+        )
+    }
+    pub(crate) fn trailing(
+        &self,
+        device: &wgpu::Device,
+        frame: &mut FrameQueries,
+    ) -> anyhow::Result<wgpu::CommandBuffer> {
+        self.validate(frame)?;
+        frame.trailing(device, &self.marker.view)
+    }
+    pub(crate) fn continued(
+        &mut self,
+        queue: &wgpu::Queue,
+        frame: &mut FrameQueries,
+    ) -> anyhow::Result<()> {
+        // The query/marker holds follow each real queue submission, even if the
+        // logical frame or whole host is abandoned before final rendering.
+        let resources = self.slots[frame.slot]
+            .submission_refs()
+            .into_iter()
+            .chain([self.marker.submission_ref()])
+            .collect();
+        crate::text_gpu::hold_until_done(queue, resources);
+        self.validate(frame)?;
+        frame.finish_submission()?;
+        let pending = self.slots[frame.slot].pending.as_mut().unwrap();
+        pending.submission = Some(frame.submission);
+        pending.timeline = frame.timeline.clone();
+        Ok(())
+    }
 }

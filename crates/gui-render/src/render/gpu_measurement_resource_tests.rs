@@ -41,12 +41,12 @@ fn query_resources_rollback_admission_and_survive_frame_and_submission_owners() 
         live.iter()
             .all(|r| r.bytes == BYTES && r.generation == 2 && !r.retiring)
     );
-    assert_eq!(budget.used(), baseline + SLOTS as u64 * BYTES * 3);
+    assert_eq!(budget.used(), baseline + SLOTS as u64 * BYTES * 3 + 4);
     let frame = measurements.begin().unwrap();
     drop(measurements);
     assert_eq!(
         budget.used(),
-        baseline + BYTES * 3,
+        baseline + BYTES * 3 + 4,
         "encoding frame holds its slot through owner close"
     );
     assert!(records().iter().all(|r| r.retiring));
@@ -73,7 +73,8 @@ fn query_resources_rollback_admission_and_survive_frame_and_submission_owners() 
     let mut frame = measurements.begin().unwrap();
     // Deterministically keep this submitted slot alive after asynchronous map
     // cancellation, even if the tiny real GPU submission has already completed.
-    let held = measurements.slots[frame.slot].submission_refs();
+    let mut held = measurements.slots[frame.slot].submission_refs();
+    held.push(measurements.marker.submission_ref());
     let mut encoder = device.create_command_encoder(&Default::default());
     {
         let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -94,7 +95,7 @@ fn query_resources_rollback_admission_and_survive_frame_and_submission_owners() 
     queue.submit([encoder.finish()]);
     measurements.submitted(&queue, frame).unwrap();
     drop(measurements);
-    assert_eq!(budget.used(), baseline + BYTES * 3);
+    assert_eq!(budget.used(), baseline + BYTES * 3 + 4);
     assert_eq!(records().len(), 3);
     assert!(records().iter().all(|r| r.retiring));
     drop(held);

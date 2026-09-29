@@ -9,6 +9,9 @@ use winit::event::{ElementState, MouseButton, WindowEvent};
 use winit::event_loop::ActiveEventLoop;
 use winit::window::WindowId;
 
+#[path = "native_workload_observation.rs"]
+mod workload;
+
 const LIMIT: usize = 4096;
 const HOVER_BYTES: usize = 128;
 
@@ -20,6 +23,8 @@ struct State {
     zoom: f32,
     pan: bool,
     epoch: u64,
+    render_revision: u64,
+    render_activity: [u64; 2],
     hover: [u8; HOVER_BYTES],
     hover_len: usize,
     hover_surface: Option<datum_gui_protocol::PaneContent>,
@@ -35,6 +40,8 @@ impl State {
             zoom: runtime.camera.zoom,
             pan: runtime.pan_gesture.is_active(),
             epoch: runtime.measurements.epoch(),
+            render_revision: runtime.renderer.render_session().content_revision(),
+            render_activity: runtime.renderer.render_session().measurement_activity(),
             hover: [0; HOVER_BYTES],
             hover_len: 0,
             hover_surface: None,
@@ -52,12 +59,15 @@ impl State {
     fn value(&self) -> Value {
         json!({"cursor":self.cursor,"native_cursor":self.native_cursor,
             "camera_center_nm":self.center,"camera_zoom":self.zoom,"pan_active":self.pan,
-            "device_epoch":self.epoch,"hover_utf8":std::str::from_utf8(&self.hover[..self.hover_len]).ok(),
+            "device_epoch":self.epoch,"render_revision":self.render_revision,"hover_utf8":std::str::from_utf8(&self.hover[..self.hover_len]).ok(),
             "hover_surface":self.hover_surface.map(|s|format!("{s:?}")),"truncated":self.truncated})
     }
 }
 
 struct Record {
+    workload: [u64; 3],
+    workload_ns: Option<u64>,
+    demand_kind: &'static str,
     received_ns: u128,
     completed_ns: Option<u128>,
     position: Option<[f64; 2]>,
@@ -68,6 +78,7 @@ struct Record {
 }
 
 pub(crate) struct InputObservation {
+    workload: Option<workload::Schedule>,
     path: PathBuf,
     started: Instant,
     monotonic_origin_ns: u64,
@@ -78,6 +89,10 @@ pub(crate) struct InputObservation {
 impl InputObservation {
     pub(crate) fn from_environment() -> Result<Option<Self>> {
         let Some(path) = std::env::var_os("DATUM_INPUT_RECEIPT") else {
+            ensure!(
+                std::env::var_os("DATUM_WORKLOAD_MANIFEST").is_none(),
+                "workload attribution requires input receipts"
+            );
             return Ok(None);
         };
         ensure!(
@@ -98,6 +113,7 @@ impl InputObservation {
             "input receipt clock unavailable"
         );
         Ok(Some(Self {
+            workload: workload::Schedule::from_environment()?,
             path: path.into(),
             started: Instant::now(),
             monotonic_origin_ns: ts.tv_sec as u64 * 1_000_000_000 + ts.tv_nsec as u64,
@@ -107,9 +123,14 @@ impl InputObservation {
         }))
     }
     fn begin(&mut self, event: &WindowEvent, before: State) -> bool {
+        self.begin_demand(Some(event), before)
+    }
+    fn begin_demand(&mut self, event: Option<&WindowEvent>, before: State) -> bool {
         let (position, button) = match event {
-            WindowEvent::CursorMoved { position, .. } => (Some([position.x, position.y]), None),
-            WindowEvent::MouseInput { button, state, .. } => {
+            Some(WindowEvent::CursorMoved { position, .. }) => {
+                (Some([position.x, position.y]), None)
+            }
+            Some(WindowEvent::MouseInput { button, state, .. }) => {
                 let button = match button {
                     MouseButton::Left => 1,
                     MouseButton::Middle => 2,
@@ -120,14 +141,42 @@ impl InputObservation {
                 };
                 (None, Some((button, *state == ElementState::Pressed)))
             }
+            _ if self.workload.is_some() => (None, None),
             _ => return false,
         };
         if self.active.is_some() || self.records.len() == LIMIT {
             self.overflow = true;
             return false;
         }
+        let (workload, workload_ns) = if let Some(schedule) = &mut self.workload {
+            let Ok(now) = workload::monotonic_ns() else {
+                self.overflow = true;
+                return false;
+            };
+            (
+                schedule.demand(
+                    matches!(event, Some(WindowEvent::CloseRequested)),
+                    now,
+                    self.records.len() as u64 + 1,
+                ),
+                Some(now),
+            )
+        } else {
+            ([0; 3], None)
+        };
+        let demand_kind = match event {
+            Some(WindowEvent::CursorMoved { .. }) => "pointer",
+            Some(WindowEvent::MouseInput { .. }) => "button",
+            Some(WindowEvent::RedrawRequested) => "exposure",
+            Some(WindowEvent::CloseRequested) => "close",
+            None => "native_round",
+            _ => "native_event",
+        };
         self.active = Some(self.records.len());
         self.records.push(Record {
+            workload,
+            workload_ns,
+            demand_kind,
             received_ns: self.started.elapsed().as_nanos(),
             completed_ns: None,
             position,
@@ -164,10 +213,11 @@ impl InputObservation {
         let complete = self.complete_receipt() && !final_state.truncated;
         let state = runtime.workspace();
         let records: Vec<_> = self.records.iter().enumerate().map(|(i,r)|json!({"sequence":i,
-            "received_ns":r.received_ns,"completed_ns":r.completed_ns,"position":r.position,
+            "workload":r.workload,"workload_ns":r.workload_ns,"demand_kind":r.demand_kind,"received_ns":r.received_ns,"completed_ns":r.completed_ns,"position":r.position,
             "button":r.button,"route":r.route,"before":r.before.value(),"after":r.after.map(|s|s.value())})).collect();
+        let gpu_drained = runtime.renderer.gpu_measurement_drained_manifest()?;
         let report = json!({"schema":"datum.input-receipt/v1","pid":std::process::id(),
-            "monotonic_origin_ns":self.monotonic_origin_ns,"complete":complete,"overflow":self.overflow,
+            "gpu_drained":gpu_drained,"workload_manifest":self.workload.as_ref().map(workload::Schedule::value),"monotonic_origin_ns":self.monotonic_origin_ns,"complete":complete,"overflow":self.overflow,
             "record_limit":LIMIT,"record_storage_bytes":self.records.capacity()*std::mem::size_of::<Record>(),
             "records":records,"final_state":final_state.value(),
             "final_selection":format!("{:?}",state.selection),"final_focus":format!("{:?}",state.ui.focus),
@@ -180,6 +230,39 @@ impl InputObservation {
 }
 
 impl App {
+    pub(crate) fn begin_native_round_observation(&mut self) {
+        if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
+            && observer.workload.is_some()
+            && observer.begin_demand(None, State::capture(runtime))
+        {
+            let tag = observer.records.last().unwrap().workload;
+            if runtime
+                .renderer
+                .render_session_mut()
+                .set_measurement_workload(tag)
+                .is_err()
+            {
+                observer.overflow = true;
+            }
+        }
+    }
+    pub(crate) fn end_native_round_observation(&mut self) {
+        if let (Some(observer), Some(runtime)) = (&mut self.input_observation, &mut self.runtime)
+            && observer.workload.is_some()
+            && let Some(index) = observer.active
+        {
+            let after = State::capture(runtime);
+            let retain = observer.records[index].before.render_activity != after.render_activity;
+            runtime
+                .renderer
+                .render_session_mut()
+                .end_measurement_workload(retain);
+            observer.complete(Some(after));
+            if !retain {
+                observer.records.pop();
+            }
+        }
+    }
     pub(crate) fn handle_native_window_event(
         &mut self,
         event_loop: &ActiveEventLoop,
@@ -192,8 +275,28 @@ impl App {
             }
             _ => false,
         };
+        if observed {
+            let observer = self.input_observation.as_mut().expect("active observer");
+            let tag = observer.records.last().unwrap().workload;
+            if tag[0] != 0
+                && let Some(runtime) = &mut self.runtime
+                && runtime
+                    .renderer
+                    .render_session_mut()
+                    .set_measurement_workload(tag)
+                    .is_err()
+            {
+                observer.overflow = true;
+            }
+        }
         self.dispatch_native_window_event(event_loop, window_id, event);
         if observed {
+            if let Some(runtime) = &mut self.runtime {
+                runtime
+                    .renderer
+                    .render_session_mut()
+                    .end_measurement_workload(true);
+            }
             self.input_observation
                 .as_mut()
                 .expect("active observer")
@@ -229,6 +332,8 @@ mod tests {
             zoom: 1.0,
             pan: false,
             epoch: 1,
+            render_revision: 1,
+            render_activity: [1, 0],
             hover: [0; HOVER_BYTES],
             hover_len: 0,
             hover_surface: None,
@@ -237,6 +342,7 @@ mod tests {
     }
     fn observer() -> InputObservation {
         InputObservation {
+            workload: None,
             path: PathBuf::new(),
             started: Instant::now(),
             monotonic_origin_ns: 0,

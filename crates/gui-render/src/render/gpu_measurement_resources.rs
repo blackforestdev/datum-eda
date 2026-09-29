@@ -60,3 +60,41 @@ impl Slot {
 #[cfg(all(test, feature = "visual"))]
 #[path = "gpu_measurement_resource_tests.rs"]
 mod tests;
+
+pub(super) struct Marker {
+    _texture: wgpu::Texture,
+    pub view: wgpu::TextureView,
+}
+impl Marker {
+    pub(super) fn new(
+        device: &wgpu::Device,
+        owner: &Owner,
+        epoch: u64,
+    ) -> anyhow::Result<crate::text_gpu::lifetime::Tracked<Self>> {
+        let reservation = crate::text_gpu::budget::GpuReservation::new(4, Vec::new())?;
+        let texture = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("datum-shared-submission-timestamp-marker"),
+            size: wgpu::Extent3d {
+                width: 1,
+                height: 1,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8Unorm,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let view = texture.create_view(&Default::default());
+        Ok(owner.track_reserved(
+            Self {
+                _texture: texture,
+                view,
+            },
+            epoch,
+            Kind::Attachment,
+            reservation,
+        ))
+    }
+}

@@ -283,7 +283,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     assert!(samples[0].scene_marker_ticks.is_some());
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["frame"]
+        ["upload-leading", "frame"]
     );
     let measured_dialog = capture(&mut renderer, &dialog);
     assert!(
@@ -298,7 +298,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     assert!(samples[0].scene_marker_ticks.is_none());
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["dialog"]
+        ["upload-leading", "dialog"]
     );
     let measured_terminal = renderer
         .render_workspace_with_terminal_snapshot(&terminal_workspace, &snapshot, 1.0)
@@ -307,24 +307,20 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
         expected_terminal == measured_terminal,
         "measurement changed terminal pixels"
     );
-    assert!(
-        renderer
-            .renderer
-            .poll_gpu_measurements(&renderer.device)
-            .unwrap()
-            .is_empty()
+    let samples = renderer
+        .renderer
+        .poll_gpu_measurements(&renderer.device)
+        .unwrap();
+    assert_eq!(samples.len(), 1);
+    assert_eq!(
+        samples[0]
+            .submission_manifest
+            .iter()
+            .map(|s| s.kind)
+            .collect::<Vec<_>>(),
+        ["terminal", "final"]
     );
-    {
-        let records = incomplete.lock().unwrap();
-        assert_eq!(records.len(), 2, "cold terminal upload plus final render");
-        assert!(
-            records
-                .iter()
-                .all(|r| r.reason == "cold_upload_multisubmission_timestamps_unqualified")
-        );
-        assert_eq!(records[0].frame, records[1].frame);
-        assert!(records[0].submission < records[1].submission);
-    }
+    assert!(incomplete.lock().unwrap().is_empty());
     assert!(
         expected_terminal
             == renderer
@@ -338,7 +334,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     assert_eq!(samples.len(), 1);
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["frame"]
+        ["upload-leading", "frame"]
     );
     let measured_menu = renderer.render_workspace(&menu_workspace, None).unwrap();
     assert!(
@@ -352,7 +348,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     assert_eq!(samples.len(), 1);
     assert_eq!(
         samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
-        ["frame"]
+        ["upload-leading", "frame"]
     );
     assert!(renderer.renderer.gpu_measurement_poll_deadline().is_none());
 }
