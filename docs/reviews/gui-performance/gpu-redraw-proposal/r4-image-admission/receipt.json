@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source_base": "e91e8717",
+  "authority": "../owner-approval-r4.json",
+  "status": "Second r4 implementation unit: coherent five-image ownership and atomic aggregate optional admission; atlas rendering still pending.",
+  "changes": [
+    "Reserve A+C+T+R aggregate against45MiB optional and512MiB process budgets before any texture creation; split one coherent reservation across tracked images.",
+    "At reference extent optional payload46,301,184bytes and current+retiring image payload158,138,368bytes; required B remains charged.",
+    "Publish/evict optional images coherently, suppress allocation retries after refusal, and retain common generation permits plus all five submitted references.",
+    "Snapshot capacity covers five current and five retiring allocations; alias identities deduplicate.",
+    "Require the explicit matching COPY_DST target capability before optional image retention; unsupported targets use full fallback."
+  ],
+  "verification": {
+    "offline_controls": "Three passed: exact bundle payload/admission rejection; atomic refusal and reservation retention through final hold; five-current/five-retiring snapshot merge and alias deduplication. No GPU/device calls in these controls.",
+    "lint": "Default and visual gui-render/gui-app all-target Clippy passed with -D warnings through serial Cargo guard.",
+    "policy": "Source health2657 againstHEAD,13source-policy controls,resource/dependency authority and20parity inventories passed.",
+    "scope": "No GPU/native run, candidate/baseline release build or full native drift battery. Reservation bookkeeping is not runtime allocation/metadata, backend retirement or DRM qualification."
+  },
+  "remaining": "Tile planning, atlas sample restoration and translated painter, retained C validity/copies and complete GPU timing. The existing warm B graph is not yet replaced; extra regional images are now owned/accounted but not yet used to render. Complete4KiB metadata, resource failure/retirement and exact-sample/output proof remain for the approved batch. No numerical acceptance, CPU/DRM execution or S4/S5 closure.",
+  "execution_consumed": {
+    "gpu_batches": 0,
+    "candidate_release_builds": 0,
+    "baseline_release_builds": 0,
+    "native_trials": 0
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "2c2616adbd53828f7a86eb1d01f53515da9f92fd7a032e66e0a014e88b4a5730",
+    "crates/gui-render/src/render/gpu_surface.rs": "432e16ba72108ff116b69b0eedd06859167a381e38e15c60ef6fb66858e8111b",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "2561a4ea9a5ebf48c5639b13dde337701de6fcc6467636556559228a27a7bfd3",
+    "crates/gui-render/src/render/gpu_regional_images.rs": "70eb0c41d6d65756eae60d9f56bfdf02afe4d7946f0642cab7eae4c3e1fd2a50"
+  },
+  "artifacts_sha256": {
+    "offline-logs.tar.gz": "b6e03579ca3c04c051541e30324ef9141c8eeb671c224def1ff0b66be9d42958"
+  }
+}

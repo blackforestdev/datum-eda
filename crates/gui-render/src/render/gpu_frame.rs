@@ -202,6 +202,7 @@ impl Renderer {
             .prefix
             .requested()
             .then(|| {
+                frame_target.copy_destination([width, height], self.msaa_format)?;
                 self.damage_masks.restoration.as_ref()?;
                 self.surface_attachments.prefix_images(device)
             })

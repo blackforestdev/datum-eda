@@ -40,11 +40,21 @@ impl PairIdentity {
 pub(crate) struct PrefixImages {
     prefix: SurfaceAttachment,
     working: SurfaceAttachment,
+    regional: [SurfaceAttachment; 3],
     pub identity: PairIdentity,
 }
 impl PrefixImages {
+    fn images(&self) -> [Option<&SurfaceAttachment>; 5] {
+        [
+            Some(&self.working),
+            Some(&self.prefix),
+            Some(&self.regional[0]),
+            Some(&self.regional[1]),
+            Some(&self.regional[2]),
+        ]
+    }
     pub(crate) fn submission_refs(&self) -> impl Iterator<Item = SubmissionRef> {
-        [Some(&self.prefix), Some(&self.working), None]
+        self.images()
             .map(|image| image.map(|image| image.image.submission_ref()))
             .into_iter()
             .flatten()
@@ -53,8 +63,8 @@ impl PrefixImages {
         &self,
         owner: u64,
         allocations_created: u64,
-    ) -> [Option<SurfaceAttachmentSnapshot>; 3] {
-        [Some(&self.working), Some(&self.prefix), None].map(|image| {
+    ) -> [Option<SurfaceAttachmentSnapshot>; 5] {
+        self.images().map(|image| {
             image.map(|image| SurfaceAttachmentSnapshot {
                 owner,
                 allocations_created,
@@ -99,14 +109,28 @@ impl PrefixImages {
 #[derive(Default)]
 pub(super) struct OptionalState {
     pub prefix: Option<SurfaceAttachment>,
+    pub regional: Option<[SurfaceAttachment; 3]>,
     pub suppressed: bool,
     pub evicted: bool,
 }
 #[derive(Default)]
 pub(super) struct Optional(pub std::sync::Mutex<OptionalState>);
 impl OptionalState {
+    pub(super) fn images(&self) -> [Option<&SurfaceAttachment>; 4] {
+        [
+            self.prefix.as_ref(),
+            self.regional.as_ref().map(|r| &r[0]),
+            self.regional.as_ref().map(|r| &r[1]),
+            self.regional.as_ref().map(|r| &r[2]),
+        ]
+    }
     fn release(&mut self) {
-        for image in [self.prefix.take()].into_iter().flatten() {
+        for image in self
+            .prefix
+            .take()
+            .into_iter()
+            .chain(self.regional.take().into_iter().flatten())
+        {
             image
                 .image
                 .retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
@@ -134,73 +158,6 @@ impl SurfaceAttachments {
         self.optional.0.lock().unwrap().release();
     }
 
-    fn optional_image(
-        &mut self,
-        device: &wgpu::Device,
-        key: AttachmentKey,
-        generation: Arc<Permit>,
-        optional_bytes: Arc<crate::text_gpu::budget::Budget>,
-    ) -> anyhow::Result<SurfaceAttachment> {
-        let bytes = key.payload_bytes().unwrap();
-        let reservation = GpuReservation::optional(bytes, vec![optional_bytes.reserve(bytes)?])?;
-        let alias_formats = [key.format.remove_srgb_suffix()];
-        let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("datum-retained-prefix"),
-            size: wgpu::Extent3d {
-                width: key.extent.0,
-                height: key.extent.1,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: 1,
-            sample_count: key.samples,
-            dimension: wgpu::TextureDimension::D2,
-            format: key.format,
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT
-                | wgpu::TextureUsages::COPY_SRC
-                | if self.damage_views {
-                    wgpu::TextureUsages::TEXTURE_BINDING
-                } else {
-                    wgpu::TextureUsages::empty()
-                },
-            view_formats: if self.damage_views {
-                &alias_formats
-            } else {
-                &[]
-            },
-        });
-        self.allocations = self
-            .allocations
-            .checked_add(1)
-            .expect("attachment allocation exhausted");
-        let view = texture.create_view(&Default::default());
-        let unorm_view = (self.damage_views).then(|| {
-            texture.create_view(&wgpu::TextureViewDescriptor {
-                format: Some(key.format.remove_srgb_suffix()),
-                ..Default::default()
-            })
-        });
-        Ok(SurfaceAttachment {
-            key,
-            allocation: self.allocations,
-            image: Arc::new(
-                self.owner
-                    .track_reserved(
-                        AttachmentImage {
-                            texture,
-                            view,
-                            unorm_view,
-                        },
-                        self.allocations,
-                        Kind::Attachment,
-                        reservation,
-                    )
-                    .with_shared_permit(generation.clone()),
-            ),
-            generation,
-            optional_bytes,
-        })
-    }
-
     /// Refusal leaves the required target usable. Only supported exact8x formats
     /// receive copy usages; dialogs and non-session rendering never call this.
     pub(crate) fn prefix_images(&mut self, device: &wgpu::Device) -> Option<PrefixImages> {
@@ -223,13 +180,19 @@ impl SurfaceAttachments {
             optional.release();
             return None;
         }
-        let key = current.key;
-        let generation = current.generation.clone();
-        let optional_bytes = current.optional_bytes.clone();
+        let parent = current.clone();
         if optional.prefix.is_none() {
-            optional.prefix = self
-                .optional_image(device, key, generation.clone(), optional_bytes.clone())
-                .ok();
+            match self.optional_bundle(device, &parent) {
+                Ok([prefix, composition, atlas, resolve]) => {
+                    optional.prefix = Some(prefix);
+                    optional.regional = Some([composition, atlas, resolve]);
+                }
+                Err(_) => {
+                    optional.release();
+                    optional.suppressed = true;
+                    return None;
+                }
+            }
         }
         optional.prefix.as_ref()?;
         let working = self.current.as_ref()?.clone();
@@ -242,6 +205,7 @@ impl SurfaceAttachments {
             },
             working,
             prefix,
+            regional: optional.regional.as_ref()?.clone(),
         })
     }
 }
