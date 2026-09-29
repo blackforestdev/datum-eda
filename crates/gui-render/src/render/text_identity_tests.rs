@@ -5,6 +5,7 @@ use glyphon::Weight;
 fn text_buffer_key_ignores_position_and_color_but_tracks_content() {
     let base = TextRun {
         origin: Default::default(),
+        layer: Default::default(),
         text: "PROJECT".to_string(),
         rich_spans: Vec::new(),
         x: 12.0,
@@ -65,6 +66,7 @@ fn conformance_medium_type_tiers_resolve_to_medium_weight() {
 fn text_prepare_signature_tracks_render_relevant_inputs() {
     let run = TextRun {
         origin: Default::default(),
+        layer: Default::default(),
         text: "TERMINAL".to_string(),
         rich_spans: Vec::new(),
         x: 12.0,
@@ -77,6 +79,16 @@ fn text_prepare_signature_tracks_render_relevant_inputs() {
     };
     let base = text_prepare_signature(&[4], std::slice::from_ref(&run), 1280, 768);
     let mut moved = run.clone();
+    moved.layer = TextLayer::Foreground;
+    assert_eq!(
+        text_buffer_key(&run, 1280, 768),
+        text_buffer_key(&moved, 1280, 768)
+    );
+    assert_ne!(
+        base,
+        text_prepare_signature(&[4], std::slice::from_ref(&moved), 1280, 768)
+    );
+    moved.layer = run.layer;
     moved.x += 1.0;
     assert_ne!(
         base,

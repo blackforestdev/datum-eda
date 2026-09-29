@@ -1,0 +1,120 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only Console occlusion correction after b5e563b9 for dat-gpu-console-occlusion-ly6r; no builds/tests/native runs or repository edits.",
+  "disposition": "No blocker identified. Corrected control now provides nonvacuous Console occlusion evidence for pinned P630 scene; native integration remains separate.",
+  "findings": [],
+  "observations": [
+    "TextLayer is independent of TextOrigin and shaping identity. Placement/paint signature includes layer, preventing unchanged text/position from reusing outdated draw-stage batches.",
+    "Draw batch tuple carries page/layer/range; only adjacent glyphs with matching page and layer coalesce. Filtering preserves relative order within each layer while sharing the same instance buffer, atlas and generation lifetime. StagingVec charges actual tuple storage.",
+    "Console and later marking labels become Foreground; earlier scene/chrome/terminal text remain Workspace. Painter draws terminal background graphics and workspace glyphs before opaque Console geometry, foreground glyphs afterward, then existing terminal foreground graphics and menu/modal overlay stages. Existing terminal image-versus-text and menu-over-everything relations remain.",
+    "draw_console restores screen pipeline/bind group before binding screen vertices after text rendering; each glyph stage resets whole-target scissor and uses existing clipped glyph geometry.",
+    "PM033 establishes pane-local Console; controlling prototype .histpanel is opaque. This correction changes shared suffix painter, not prototype authority.",
+    "New pixel control compares Console interior with/without canvas text and requires old-order negative to differ. Cold/warm exact graph comparisons remain shared-painter equivalence tests; this independent occlusion comparison adds coverage the previous shared reference lacked.",
+    "Inspected existing /tmp/gpu-console-renderer-1.log reports 414 passed, 0 failed, 109 ignored. Reviewer did not execute the suite."
+  ],
+  "limitations": [
+    "Reviewer inspected source and existing logs only, ran no builds/tests/native capture.",
+    "P630 result establishes history-interior label occlusion and exact cold/warm graph equivalence for selected fixture/camera, not exhaustive all-surface overlap coverage.",
+    "Native Main/three-dialog proof reported running by parent; no result certified here.",
+    "No performance or complete GPU duty qualification claim."
+  ],
+  "pins": [
+    {
+      "path": "crates/gui-render/src/render/frame_preparation.rs",
+      "sha256": "14d6b464927cf3c70faf67e5c06fde49cf147a24fcdb8772395f08ec63f4602a"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame_painter.rs",
+      "sha256": "a89661171084b2e90b3a37b601cf84f361c9e7c170502cd64a89a2d5f3c66ac9"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_console.rs",
+      "sha256": "8e366bac84b8f0492ac9dfe0179706fda07e9507ea63fc5b665895d1bf0e57d4"
+    },
+    {
+      "path": "crates/gui-render/src/render/text_run.rs",
+      "sha256": "1951b99adde22a4123374a48648e411dd59594ef7b8a3c077f5d0955a29786ff"
+    },
+    {
+      "path": "crates/gui-render/src/render/text_prepare_identity.rs",
+      "sha256": "9bacf278315b11c7592010ff0f1d71863cc4ba1617aecf988a842657f3a59371"
+    },
+    {
+      "path": "crates/gui-render/src/render/text_buffer_cache.rs",
+      "sha256": "39a13f682a0cb3c42f893c53f75bf9a06655184adbc9d361b04b5991249084f8"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/draw.rs",
+      "sha256": "4c1fb811ae76e55cc78a66d679ada1436e0f7fafbe9ce1f643d9e64d44ace6ab"
+    },
+    {
+      "path": "crates/gui-render/src/render/prefix_qualification_tests.rs",
+      "sha256": "cd3c054ae065628b1e8f282478c29643e0406b21c156fe4acd2cd491c362c487"
+    },
+    {
+      "path": "/tmp/gpu-console-renderer-1.log",
+      "sha256": "11f4bc0a24022b8dfd2123f7b68908758118e1a12d50202557a0885c70c3c629"
+    },
+    {
+      "path": "/tmp/gpu-console-p630-1.log",
+      "sha256": "e7107492e611592b4be81e70bb7812710ac728d522dff2663a889be0fb43821f"
+    },
+    {
+      "path": "/tmp/gpu-console-p630-2.log",
+      "sha256": "da58eb87785d7ef9acd105309561368f3b785851fa82d98e4caa0cc660023d4e"
+    },
+    {
+      "path": "/tmp/gpu-console-p630-3.log",
+      "sha256": "d7e06488af3470413e1c80e34e9f18197a9301f3b2cf0784f7af373ef2b6a4da"
+    }
+  ],
+  "review_history": [
+    {
+      "disposition": "No concrete correctness, cache-identity or lifetime blocker found in inspected delta. Targeted GPU/native evidence remains required for visual acceptance.",
+      "pins": [
+        {
+          "path": "crates/gui-render/src/render/frame_preparation.rs",
+          "sha256": "14d6b464927cf3c70faf67e5c06fde49cf147a24fcdb8772395f08ec63f4602a"
+        },
+        {
+          "path": "crates/gui-render/src/render/gpu_frame_painter.rs",
+          "sha256": "a89661171084b2e90b3a37b601cf84f361c9e7c170502cd64a89a2d5f3c66ac9"
+        },
+        {
+          "path": "crates/gui-render/src/render/gpu_console.rs",
+          "sha256": "8e366bac84b8f0492ac9dfe0179706fda07e9507ea63fc5b665895d1bf0e57d4"
+        },
+        {
+          "path": "crates/gui-render/src/render/text_run.rs",
+          "sha256": "1951b99adde22a4123374a48648e411dd59594ef7b8a3c077f5d0955a29786ff"
+        },
+        {
+          "path": "crates/gui-render/src/render/text_prepare_identity.rs",
+          "sha256": "9bacf278315b11c7592010ff0f1d71863cc4ba1617aecf988a842657f3a59371"
+        },
+        {
+          "path": "crates/gui-render/src/render/text_buffer_cache.rs",
+          "sha256": "39a13f682a0cb3c42f893c53f75bf9a06655184adbc9d361b04b5991249084f8"
+        },
+        {
+          "path": "crates/gui-render/src/text_gpu/draw.rs",
+          "sha256": "4c1fb811ae76e55cc78a66d679ada1436e0f7fafbe9ce1f643d9e64d44ace6ab"
+        },
+        {
+          "path": "crates/gui-render/src/render/prefix_qualification_tests.rs",
+          "sha256": "e35171e21ec29e1a33b07f0995bdc9d9d14930d56c2cd6f9dd3c01abbe91f5b3"
+        },
+        {
+          "path": "/tmp/gpu-console-renderer-1.log",
+          "sha256": "11f4bc0a24022b8dfd2123f7b68908758118e1a12d50202557a0885c70c3c629"
+        }
+      ],
+      "limitations": [
+        "No targeted P630 Console/native result inspected yet; parent reports pending.",
+        "This increment preserves existing marking/terminal/menu relationships; it is not a broader audit or acceptance of every possible overlapping UI surface.",
+        "No GPU performance or complete-duty claim."
+      ]
+    }
+  ],
+  "followup": "Source/log reviewed: control now selects real netted pad to emit a workspace glyph label and pans camera to place it inside Console history. No synthetic production label or independent painter added. Existing P630-3 log reports cold/warm full8x comparison exact and old-order negative differs at82 interior pixels, with1 test passed. P630-1 preserves initial vacuous-negative failure alongside4 existing passing tests; P630-2 preserves no-visible-label setup failure."
+}

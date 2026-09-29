@@ -265,7 +265,7 @@ struct TextRunSpan {
 
 #[path = "text_run.rs"]
 mod text_run;
-use text_run::{TextOrigin, TextRun};
+use text_run::{TextLayer, TextOrigin, TextRun};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct TextBufferSpanKey {
@@ -288,31 +288,6 @@ struct TextBufferKey {
 struct TextBufferCacheStats {
     hits: usize,
     misses: usize,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct TextPrepareSignature {
-    span_colors: Vec<(usize, [u32; 3])>,
-    width: u32,
-    height: u32,
-    runs: Vec<TextPrepareRunKey>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct TextPrepareRunKey {
-    buffer_index: usize,
-    x_bits: u32,
-    y_bits: u32,
-    color_bits: [u32; 3],
-    clip_bounds: Option<RectBits>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct RectBits {
-    x_bits: u32,
-    y_bits: u32,
-    width_bits: u32,
-    height_bits: u32,
 }
 
 const APP_BG: [f32; 3] = design_tokens::chrome::BG_BASE;

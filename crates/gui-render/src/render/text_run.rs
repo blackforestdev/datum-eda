@@ -10,9 +10,18 @@ pub enum TextOrigin {
     TerminalLeaf(usize),
 }
 
+/// Ordered glyph stage, independent of document/pane ownership and shaping.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) enum TextLayer {
+    #[default]
+    Workspace,
+    Foreground,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct TextRun {
     pub(crate) origin: TextOrigin,
+    pub(crate) layer: TextLayer,
     pub(crate) text: String,
     pub(crate) rich_spans: Vec<TextRunSpan>,
     pub(crate) x: f32,

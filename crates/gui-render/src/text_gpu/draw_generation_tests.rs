@@ -27,6 +27,7 @@ fn prepare(
         raster,
         [4096, 4096],
         [Area {
+            layer: Default::default(),
             rich_spans: &[],
             rows: buffer.layout_runs(),
             left: 0.0,

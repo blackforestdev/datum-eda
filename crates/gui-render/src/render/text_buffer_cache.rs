@@ -30,6 +30,7 @@ pub(super) fn build_text_areas<'a>(
     runs: &'a [TextRun],
 ) -> impl Iterator<Item = Area<'a, crate::text_layout::Runs<'a>>> {
     indices.iter().zip(runs.iter()).map(|(index, run)| Area {
+        layer: run.layer,
         rows: cache[*index].buffer.layout_runs(),
         rich_spans: &run.rich_spans,
         left: run.x,

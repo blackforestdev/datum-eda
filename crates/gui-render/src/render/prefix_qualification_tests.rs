@@ -338,3 +338,136 @@ fn p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve(
     assert!(changed > 0, "oracle failed to reject reduced samples");
     eprintln!("negative rejected: reduced samples 4x; differing channels={changed}");
 }
+
+#[test]
+#[ignore = "P630 Console occlusion regression and exact8x full/split painter proof"]
+fn p630_exact8_console_covers_canvas_text_without_hiding_foreground() {
+    use datum_gui_protocol::{ConsoleFeedbackDraft, ConsoleFeedbackSource};
+    let mut c = reference_capture8();
+    c.width = 960;
+    c.height = 720;
+    let mut state = doa();
+    state.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(
+        state
+            .scene
+            .pads
+            .iter()
+            .find(|pad| pad.net_uuid.is_some())
+            .unwrap()
+            .object_id
+            .clone(),
+    );
+    state.ui.console.publish(ConsoleFeedbackDraft::action_echo(
+        ConsoleFeedbackSource::Viewport,
+        42,
+        "Board review ready",
+    ));
+    state.ui.console.set_history_expanded(true);
+    let source = SourceEpoch::default();
+    prepare(&mut c, &state, &source);
+    // Pan an existing board label underneath history so the occlusion oracle
+    // cannot pass vacuously when this fixture's initial camera misses the card.
+    let initial = c.renderer.render_session().prepared().unwrap();
+    let history = initial
+        .console_overlay_layout()
+        .unwrap()
+        .history_panel
+        .unwrap();
+    let pane = initial
+        .surface_passes()
+        .iter()
+        .find(|p| p.surface == crate::SceneSurface::Board)
+        .unwrap();
+    let label = initial
+        .text_runs
+        .iter()
+        .find(|run| {
+            run.origin == crate::TextOrigin::Viewport(pane.pane_id)
+                && run.layer == crate::TextLayer::Workspace
+                && pane.scene_viewport.contains(run.x, run.y)
+        })
+        .expect("visible real board label");
+    let mut camera = pane.camera;
+    let projection = crate::Projection::new(
+        crate::inset_rect(pane.scene_viewport, 10.0, 10.0, 10.0, 10.0),
+        &pane.bounds,
+        camera,
+    );
+    camera.center_x_nm += (label.x - history.x - 20.0) / projection.scale;
+    camera.center_y_nm += (label.y - history.y - history.height * 0.6) / projection.scale;
+    c.renderer
+        .prepare_session_workspace(
+            &state,
+            WorkspaceView {
+                source_revision: Some(source.revision()),
+                width: c.width,
+                height: c.height,
+                scale: 1.0,
+                camera,
+                schematic_camera: None,
+                include_preferences_overlay: false,
+                single_terminal_snapshot: true,
+                pane_cameras: &[],
+            },
+            &[],
+        )
+        .unwrap();
+    let correct = exact(&mut c, "Console cold painter", false);
+    assert!(exact(&mut c, "Console warm painter", true).as_raw() == correct.as_raw());
+    let scene = c.renderer.render_session().prepared().unwrap().clone();
+    let history = scene
+        .console_overlay_layout()
+        .unwrap()
+        .history_panel
+        .unwrap();
+    let board = c.renderer.render_session().board().unwrap().clone();
+    let schematic = c.renderer.render_session().schematic().cloned();
+    let render = |c: &mut OffscreenRenderer, scene: &crate::PreparedScene| {
+        let target = target(c);
+        c.renderer
+            .render(
+                &c.device,
+                &c.queue,
+                &target.create_view(&Default::default()),
+                scene,
+                &board,
+                schematic.as_ref(),
+                c.width,
+                c.height,
+            )
+            .unwrap();
+        target.hold_submission(&c.queue);
+        c.read_texture(&target).unwrap()
+    };
+    let mut without_canvas_text = scene.clone();
+    without_canvas_text.text_runs.retain(|run| {
+        !(matches!(run.origin, crate::TextOrigin::Viewport(_))
+            && run.layer == crate::TextLayer::Workspace)
+    });
+    assert!(without_canvas_text.text_runs.len() < scene.text_runs.len());
+    let hidden = render(&mut c, &without_canvas_text);
+    let mut old_order = scene.clone();
+    for run in &mut old_order.text_runs {
+        run.layer = crate::TextLayer::Foreground;
+    }
+    let wrong = render(&mut c, &old_order);
+    let mut wrong_pixels = 0;
+    for y in (history.y.ceil() as u32 + 2)..((history.y + history.height).floor() as u32 - 2) {
+        for x in (history.x.ceil() as u32 + 2)..((history.x + history.width).floor() as u32 - 2) {
+            assert_eq!(
+                correct.get_pixel(x, y),
+                hidden.get_pixel(x, y),
+                "canvas text leaked at {x},{y}"
+            );
+            wrong_pixels += usize::from(correct.get_pixel(x, y) != wrong.get_pixel(x, y));
+        }
+    }
+    assert!(
+        wrong_pixels > 0,
+        "old painter order negative must expose covered canvas labels"
+    );
+    eprintln!("Console old-order negative differs at {wrong_pixels} interior pixels");
+    if let Some(path) = std::env::var_os("DATUM_CONSOLE_CAPTURE_OUT") {
+        correct.save(path).unwrap();
+    }
+}

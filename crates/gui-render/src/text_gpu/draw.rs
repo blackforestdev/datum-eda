@@ -9,6 +9,7 @@ use super::atlas::Atlas;
 use super::lifetime::{Kind, RetirementReason, SubmissionRef, Tracked};
 
 pub(crate) struct Area<'a, R> {
+    pub layer: crate::TextLayer,
     pub rich_spans: &'a [crate::TextRunSpan],
     pub rows: R,
     pub left: f32,
@@ -45,7 +46,7 @@ pub(crate) struct Draw {
     generation_budget: std::sync::Arc<super::budget::Budget>,
     pipeline: wgpu::RenderPipeline,
     instances: Option<Tracked<wgpu::Buffer>>,
-    batches: StagingVec<(usize, Range<u32>)>,
+    batches: StagingVec<(usize, crate::TextLayer, Range<u32>)>,
     snapshot: StagingVec<Instance>,
     pending_instances: Option<StagingVec<Instance>>,
     generation: Option<u64>,
@@ -233,15 +234,17 @@ impl Draw {
                     )?;
                     // Only adjacent glyphs are batched; overlapping text retains
                     // the caller's painter order even across mask/color pages.
-                    if let Some((_, range)) = self
+                    if let Some((_, _, range)) = self
                         .batches
                         .last_mut()
-                        .filter(|(page, _)| *page == location.page)
+                        .filter(|(page, layer, _)| *page == location.page && *layer == area.layer)
                     {
                         range.end = index + 1;
                     } else {
-                        self.batches
-                            .try_push((location.page, index..index + 1), &atlas.staging_budget)?;
+                        self.batches.try_push(
+                            (location.page, area.layer, index..index + 1),
+                            &atlas.staging_budget,
+                        )?;
                     }
                 }
             }
@@ -369,6 +372,15 @@ impl Draw {
     }
 
     pub fn render(&self, atlas: &Atlas, pass: &mut wgpu::RenderPass<'_>) -> anyhow::Result<()> {
+        self.render_layer(atlas, pass, None)
+    }
+
+    pub fn render_layer(
+        &self,
+        atlas: &Atlas,
+        pass: &mut wgpu::RenderPass<'_>,
+        layer: Option<crate::TextLayer>,
+    ) -> anyhow::Result<()> {
         anyhow::ensure!(
             self.generation == Some(atlas.generation),
             "stale or failed glyph preparation"
@@ -376,7 +388,10 @@ impl Draw {
         if let Some(instances) = &self.instances {
             pass.set_pipeline(&self.pipeline);
             pass.set_vertex_buffer(0, instances.slice(..));
-            for (page, range) in self.batches.iter() {
+            for (page, batch_layer, range) in self.batches.iter() {
+                if layer.is_some_and(|layer| layer != *batch_layer) {
+                    continue;
+                }
                 pass.set_bind_group(0, &atlas.pages[*page].bind_group, &[]);
                 pass.draw(0..6, range.clone());
             }
