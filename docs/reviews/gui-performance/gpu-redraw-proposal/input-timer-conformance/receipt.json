@@ -1,0 +1,58 @@
+{
+  "status": "Bounded input/timer prerequisite correction; no performance runs and no S4 qualification.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "0d9210ef",
+  "authority": "Approved r2 existing-observer input/copy-inclusive timer conformance. No DRM observer, CPU optimization, new dependency or expanded campaign.",
+  "rationale": "Quiet native runner lacked received/semantic path receipts; timing labels alone could miss a marker placed after the copy. Close these prerequisites before consuming bounded trials.",
+  "changes": [
+    "Optional App-owned4096-record input observer preallocates1900544 bytes before event loop. Captures received order, actual route and post-dispatch cursor/camera/hover/epoch through early returns. Repeated coordinates retained. No per-event I/O or redraw/poll policy change; ordinary launches allocate no record storage.",
+    "Export canonical final selection/focus/pane and state only after existing controlled-drain observer acknowledgement closes common accounting window. Missing completion/runtime, overflow or hover truncation invalidates receipt; export failure invalidates process/trial. Receipt completeness is distinct from accepted viewport semantics.",
+    "Source-bound timer validator checks actual marker-pass/copy/final-resolve encoding order and full-image copy source/destination. A mutant moving actual marker after copy, omitted marker and suffix-only timing must fail. Reuse existing real-GPU copy/query-ring proof; source controls are narrow regression checks, not a new hardware timing result.",
+    "Input consumer validates exact30s120Hz400x240 four-edge recipe,3600scheduled/1280changed/2320same-integer requests, ordered receipts and completed viewport state. Final state must match last acknowledgement; selection/focus/pane expectations are mandatory independently pinned runner inputs."
+  ],
+  "verification": {
+    "unit": "2 passed; 1 native test ignored in default filtered batch",
+    "native": "1 passed: three supplied events through real native entry/active X11 loop, including duplicate position with crosshairNone; actual cursor/selection preserved. Not OS-generated input or a performance rehearsal.",
+    "shutdown": "3 passed, including lost/invalid/unresponsive observer controls",
+    "clippy": "app all-targets visual -Dwarnings passed after export-order amendment",
+    "offline": "Timer ordering/arithmetic negatives and input lost/reordered/routing/epoch/truncation/final-context negatives pass.",
+    "source_health": "2619 files, no legacy debt touched; gate passes."
+  },
+  "preserved_failures": [
+    "First compile used i64/f64 for existing f32 camera fields; corrected to exact source types.",
+    "Initial test filter native_input_observation matched zero tests; preserved filter-1.log. Correct input_observation filter ran2tests.",
+    "Review found final-state truncation absent from completeness and export inside accounting interval; both corrected. Then consumer final-context gap corrected with negative controls."
+  ],
+  "review": "review.json: all three findings source-resolved; advisory only. Native test precedes export-order/final-completeness-only amendment; shutdown tests and Clippy follow it.",
+  "baseline": "Identical new observer module and corresponding three-file patch apply cleanly to997b618e. Matched baseline build is separate; no claim of pristine baseline or trial readiness from this receipt.",
+  "limits": [
+    "Minimal recorder is enabled identically in both future quiet/GPU modes; quiet means verbose/resource/GPU diagnostics off, not zero observer cost. Recorder overhead is not subtracted or accepted as uninstrumented CPU/resource evidence.",
+    "Raw received routes and cursor states do not prove physical presentation, complete input-to-display latency, or acknowledged CPU/action denominators. Existing output/hit proof and per-trial final pixels remain required.",
+    "No complete DRM lifetime/duty result; reviewed method execution still requires exact owner scope. No performance trials consumed; GPI-S4 remains selected.",
+    "Unrelated broad-drift failures remain dat-menu-csv-parity-block-p6fz; focused required gates reused/run at affected scope, no global drift pass."
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "3e7fdaea5d43286b9ac7f79f318c501d57ad447cf0720ec8b00dfe95d381cafe",
+    "crates/gui-app/src/app_shell.rs": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2",
+    "crates/gui-app/src/native_measurement_shutdown.rs": "b7d8c2cfeb8a871ee9ab567634214909b1e4a6e2f63ede02ff55c4bd11f3c076",
+    "crates/gui-app/src/native_input_observation.rs": "3501e2a72103d745eced80d5b5026f11d97a4b3ba6106ba871fa6946b64baaf4",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/validate.py": "629888f65a127ec32bb7483da5e302d0db208e96ea867df2b8db6b1d0aa34802",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/input_controls.py": "4523d0f51cf29b0be84a3e1d7bd209b11575a16c0dbeee252b52ee01fa844b28"
+  },
+  "artifacts_sha256": {
+    "clippy.log": "fd251d08f4f660794a306761915d3ebfac5450fe0e39b8cf5fb7cb94afc92e35",
+    "compile-1.log": "60bd73dc2d60adc00afcd7d37bd35fc71cf81959afa755d4594c99f1bb5ab78b",
+    "filter-1.log": "11143cb8d04bb57b9e4c4fda68b684f42c8bb123b877812471e2e2d5379c72b0",
+    "input-controls.log": "40b8e268a3b6d429898a5c2aba9d4b9f47abef0cdea7eb110725f642ed6ceb5b",
+    "input_controls.py": "4523d0f51cf29b0be84a3e1d7bd209b11575a16c0dbeee252b52ee01fa844b28",
+    "native-app.log": "c47443f4b6af00da036b81dce2429b8b87f5947a7fa5d756c281a9b7b59d18e4",
+    "native.log": "2479ef1d7847ef9469e085319931fa11cb81075ca2df0d6c9f169f80d4768ffc",
+    "review.json": "b23cd0cc62bb6c3a6f2f538cbcef8ae0d9f0375c0e20b24ed5a29e54a51f734b",
+    "shutdown.log": "9635d49b3b7a4b090ee05af8f29483dc8644ceaef9c12f6922083555e39278a3",
+    "timer-controls.log": "552d9af3b8445c772ca98c0870e6509e9a90cd6432fdbe5d2016a9837823d0c8",
+    "unit.log": "c4fbe64143d8f59a902f006eaed025c3b0fac1d79793cdbad634ad022d9c697a",
+    "validate.py": "629888f65a127ec32bb7483da5e302d0db208e96ea867df2b8db6b1d0aa34802"
+  }
+}

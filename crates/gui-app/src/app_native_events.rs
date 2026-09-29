@@ -1,5 +1,6 @@
 //! Native input/event dispatch; input state is applied before redraw effects.
 use super::*;
+use crate::app_shell::input_observation::mark;
 
 #[path = "native_scroll_input.rs"]
 pub(crate) mod scroll_input;
@@ -66,7 +67,7 @@ impl App {
         }
     }
 
-    pub(super) fn handle_native_window_event(
+    pub(super) fn dispatch_native_window_event(
         &mut self,
         event_loop: &ActiveEventLoop,
         window_id: WindowId,
@@ -271,6 +272,7 @@ impl App {
                     runtime.last_cursor_pos = Some(next_pos);
                     let terminal_hover_changed = runtime.update_terminal_tab_hover(next_pos);
                     if runtime.terminal_tab_drag.is_some() {
+                        mark(&mut self.input_observation, "terminal_tab_drag");
                         if runtime.advance_terminal_tab_drag(next_pos) || terminal_hover_changed {
                             self.request_workspace_redraw();
                         }
@@ -278,6 +280,7 @@ impl App {
                         return;
                     }
                     if runtime.terminal_split_drag.is_some() {
+                        mark(&mut self.input_observation, "terminal_split_drag");
                         let changed = runtime.advance_terminal_split_drag(next_pos);
                         let icon = runtime
                             .terminal_split_cursor_icon(next_pos)
@@ -289,26 +292,33 @@ impl App {
                         return;
                     }
                     if runtime.terminal_clipboard_menu_active() {
+                        mark(&mut self.input_observation, "terminal_clipboard_menu");
                         return;
                     }
                     if runtime.advance_terminal_text_selection(next_pos) {
+                        mark(&mut self.input_observation, "terminal_selection");
                         self.apply_cursor_icon(winit::window::CursorIcon::Text);
                         self.request_workspace_redraw();
                         return;
                     }
                     if runtime.report_terminal_mouse_motion() {
+                        mark(&mut self.input_observation, "terminal_mouse");
                         runtime.clear_interaction_overlay();
                         self.request_workspace_redraw();
                         return;
                     }
                     let mut changed = runtime.update_menu_hover(next_pos) || terminal_hover_changed;
                     if runtime.dock_drag_active {
+                        mark(&mut self.input_observation, "dock_drag");
                         changed = runtime.handle_dock_resize_drag(next_pos);
                     } else if runtime.divider_drag.is_some() {
+                        mark(&mut self.input_observation, "divider_drag");
                         changed = runtime.handle_divider_drag(next_pos);
                     } else if runtime.marking_menu_active() {
+                        mark(&mut self.input_observation, "marking_menu");
                         changed = runtime.update_marking_menu_preview(next_pos);
                     } else if runtime.pan_gesture.is_active() {
+                        mark(&mut self.input_observation, "pan");
                         changed = previous_pos.is_some_and(|previous| {
                             runtime.advance_primary_pan(previous, next_pos)
                         });
@@ -318,6 +328,7 @@ impl App {
                         && !runtime.pan_gesture.is_active()
                         && !runtime.marking_menu_active()
                     {
+                        mark(&mut self.input_observation, "authoring_hover");
                         changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
                         changed = runtime.update_hover(next_pos) || changed;
                     } else {
@@ -343,6 +354,7 @@ impl App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    mark(&mut self.input_observation, "auxiliary_button");
                     if button == MouseButton::Right
                         && state == ElementState::Pressed
                         && runtime.cursor_in_dock()
@@ -367,6 +379,7 @@ impl App {
                 button: MouseButton::Left,
                 ..
             } => {
+                mark(&mut self.input_observation, "primary_press");
                 self.handle_primary_button_press();
             }
             WindowEvent::MouseInput {
@@ -375,6 +388,7 @@ impl App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    mark(&mut self.input_observation, "primary_release");
                     if let Some(icon) = runtime.finish_dock_resize_drag() {
                         self.apply_cursor_icon(icon);
                         self.request_workspace_redraw();

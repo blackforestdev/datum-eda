@@ -1,12 +1,15 @@
 use super::*;
 #[path = "native_gpu_allocation_measurements.rs"]
 pub(super) mod gpu_allocation_measurements;
+#[path = "native_input_observation.rs"]
+pub(super) mod input_observation;
 #[path = "native_private_text_measurements.rs"]
 pub(super) mod private_text_measurements;
 #[path = "native_resource_measurements.rs"]
 pub(super) mod resource_measurements;
 
 pub(super) struct App {
+    pub(super) input_observation: Option<input_observation::InputObservation>,
     pub(super) args: GuiArgs,
     pub(super) device_recovery: native_device_recovery::DeviceRecovery,
     pub(super) frames: native_frame_coordinator::NativeFrameCoordinator,
@@ -31,6 +34,7 @@ pub(super) struct App {
 
 impl App {
     pub(super) fn run(mut self, event_loop: EventLoop<()>) -> Result<()> {
+        self.input_observation = input_observation::InputObservation::from_environment()?;
         private_text_measurements::start()?;
         gpu_allocation_measurements::start()?;
         resource_measurements::start()?;
@@ -72,6 +76,7 @@ impl App {
         terminal_event_proxy: winit::event_loop::EventLoopProxy<()>,
     ) -> Self {
         Self {
+            input_observation: None,
             args,
             frames: Default::default(),
             device_recovery: Default::default(),

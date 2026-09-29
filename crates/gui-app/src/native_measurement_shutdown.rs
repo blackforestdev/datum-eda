@@ -40,7 +40,10 @@ impl App {
             "GPU measurement mappings remain pending after shutdown drain"
         );
         let mut stream = connect_observer(Path::new(&path))?;
-        final_handoff(&mut stream, epoch, TIMEOUT)
+        final_handoff(&mut stream, epoch, TIMEOUT)?;
+        // Export after the observer closes its workload/drain accounting window.
+        // Export failure still makes the process/trial unsuccessful.
+        self.export_input_receipt()
     }
 }
 
