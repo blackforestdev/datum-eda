@@ -1,0 +1,15 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.6 GiB target_free=168.9 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.6 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.75s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 5 tests
+test gpu_surface::tests::actual_attachment_reuse_replacement_and_negative_control_have_stable_ids ... ok
+test gpu_surface::tests::attachment_identity_uses_physical_extent_format_and_sample_count ... ok
+test gpu_surface::tests::attachment_retirement_reconciles_submission_completion_and_close ... ok
+test gpu_surface::tests::reported_replacement_failure_keeps_old_attachment_and_allows_fresh_retry ... ok
+test gpu_surface::tests::third_attachment_generation_waits_for_retirement_even_after_recovery ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 508 filtered out; finished in 0.80s
+

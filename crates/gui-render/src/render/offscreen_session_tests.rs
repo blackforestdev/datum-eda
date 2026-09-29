@@ -146,3 +146,6 @@ fn shared_offscreen_snapshots_match_legacy_pixels_and_replace_terminal_rows() {
         }
     }
 }
+
+#[path = "prefix_graph_tests.rs"]
+mod prefix_graph_tests;

@@ -36,33 +36,42 @@ pub(super) struct Snapshot {
 }
 
 impl Ledger {
-    pub(super) fn observe(&mut self, mut allocation: Allocation, completed: u64) {
+    pub(super) fn observe_host(
+        &mut self,
+        host: u64,
+        allocations: impl IntoIterator<Item = Allocation>,
+        completed: u64,
+    ) {
         self.reap(completed);
-        let key = (allocation.owner, allocation.allocation);
-        if let Some(previous) = self.records.get_mut(&key) {
-            assert_eq!(
-                previous.host, allocation.host,
-                "native attachment changed host"
-            );
-            assert_eq!(previous.payload_bytes, allocation.payload_bytes);
-            assert!(
-                previous.release_reason.is_none(),
-                "retired attachment reused"
-            );
-            previous.last_submission = previous.last_submission.max(allocation.last_submission);
-            return;
+        let mut current = [None; 3];
+        for (index, allocation) in allocations.into_iter().enumerate() {
+            assert_eq!(allocation.host, host);
+            let key = (allocation.owner, allocation.allocation);
+            current[index] = allocation.release_reason.is_none().then_some(key);
+            if let Some(previous) = self.records.get_mut(&key) {
+                assert_eq!(previous.host, host, "native attachment changed host");
+                assert_eq!(previous.payload_bytes, allocation.payload_bytes);
+                assert!(
+                    allocation.release_reason.is_some() || previous.release_reason.is_none(),
+                    "retired attachment made current again"
+                );
+                previous.last_submission = previous.last_submission.max(allocation.last_submission);
+            } else {
+                self.records.insert(key, allocation);
+                self.observed = self
+                    .observed
+                    .checked_add(1)
+                    .expect("attachment count exhausted");
+            }
         }
-        allocation.release_reason = None;
-        self.records.insert(key, allocation);
-        self.observed = self
-            .observed
-            .checked_add(1)
-            .expect("attachment count exhausted");
-        // Allocation precedes replacement of the old CPU view. Include both in
-        // peak referenced payload even if the old GPU use already completed.
+        // Observe the coherent image set before retiring missing references. A
+        // second image in the same pair does not supersede the first image.
         self.peak_payload_bytes = self.peak_payload_bytes.max(self.known_payload());
         for (id, previous) in &mut self.records {
-            if previous.host == allocation.host && *id != key && previous.release_reason.is_none() {
+            if previous.host == host
+                && !current.contains(&Some(*id))
+                && previous.release_reason.is_none()
+            {
                 previous.release_reason = Some("replacement");
             }
         }
@@ -147,6 +156,49 @@ impl Ledger {
 #[cfg(test)]
 mod tests {
     use super::*;
+    impl Ledger {
+        fn observe(&mut self, allocation: Allocation, completed: u64) {
+            self.observe_host(allocation.host, [allocation], completed);
+        }
+    }
+    #[test]
+    fn coherent_pair_observation_retires_only_missing_images() {
+        let mut ledger = Ledger::default();
+        let mut a = allocation(1, Some(1024), 1);
+        let mut b = allocation(2, Some(1024), 1);
+        ledger.observe_host(a.host, [a, b], 0);
+        let both = ledger.snapshot(0);
+        assert_eq!(both.current_payload_bytes, 2048);
+        assert_eq!(both.retiring_payload_bytes, 0);
+        b.last_submission = 2;
+        ledger.observe_host(b.host, [b], 0);
+        let evicted = ledger.snapshot(0);
+        assert_eq!(evicted.current_payload_bytes, 1024);
+        assert_eq!(evicted.retiring_payload_bytes, 1024);
+        assert_eq!(ledger.snapshot(1).completed_retirements, 1);
+        a.allocation = 3;
+        a.last_submission = 3;
+        b.last_submission = 3;
+        ledger.observe_host(b.host, [a, b], 1);
+        assert_eq!(ledger.snapshot(1).current_payload_bytes, 2048);
+        ledger.close(b.host, 2);
+        assert_eq!(ledger.snapshot(2).retiring_payload_bytes, 2048);
+        assert!(ledger.snapshot(3).allocations.is_empty());
+    }
+    #[test]
+    fn evicted_image_used_by_new_submission_updates_retirement_serial() {
+        let mut ledger = Ledger::default();
+        let mut a = allocation(1, Some(1024), 1);
+        let mut b = allocation(2, Some(1024), 1);
+        ledger.observe_host(a.host, [a, b], 0);
+        a.last_submission = 3;
+        a.release_reason = Some("optional_evicted_before_submission");
+        b.last_submission = 3;
+        ledger.observe_host(a.host, [a, b], 1);
+        assert_eq!(ledger.snapshot(2).retiring_payload_bytes, 1024);
+        assert_eq!(ledger.snapshot(3).completed_retirements, 1);
+        assert_eq!(ledger.snapshot(3).current_payload_bytes, 1024);
+    }
     fn allocation(id: u64, bytes: Option<u64>, submission: u64) -> Allocation {
         Allocation {
             host: 1,

@@ -272,6 +272,19 @@ fn real_gpu_query_ring_completion_and_failure_controls() {
             .to_string()
             .contains("aborted")
     );
+    assert_eq!(
+        measurement
+            .slots
+            .iter()
+            .filter(|slot| slot.pending.is_none())
+            .count(),
+        1,
+        "aborted attempt is reported once and releases its ring slot"
+    );
+    assert_eq!(
+        cancellations.lock().unwrap().last().unwrap().reason,
+        "encoding_aborted"
+    );
     measurement.cancel();
     assert!(measurement.begin().is_err());
     assert_eq!(cancellations.lock().unwrap().len(), 6);

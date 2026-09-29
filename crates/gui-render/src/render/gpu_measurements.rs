@@ -434,11 +434,21 @@ impl GpuMeasurements {
                     self.host,
                     pending.frame
                 ),
-                ABORTED => anyhow::bail!(
-                    "GPU measurement encoding aborted for host={} frame={}",
-                    self.host,
-                    pending.frame
-                ),
+                ABORTED => {
+                    let aborted = slot.pending.take().expect("observed aborted frame");
+                    (self.cancellation_observer)(GpuMeasurementCancellation {
+                        reason: "encoding_aborted",
+                        host: self.host,
+                        device_epoch: self.epoch,
+                        frame: aborted.frame,
+                        submission: aborted.submission,
+                    });
+                    anyhow::bail!(
+                        "GPU measurement encoding aborted for host={} frame={}; sample unavailable",
+                        self.host,
+                        aborted.frame
+                    );
+                }
                 _ => anyhow::ensure!(
                     self.clock.elapsed.saturating_sub(pending.active_start) < DEADLINE,
                     "GPU measurement exceeded two seconds active time; sample unavailable"

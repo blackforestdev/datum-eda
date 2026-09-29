@@ -11,6 +11,8 @@ pub struct FramePlan {
     schematic: Option<RetainedScene>,
     extent: [u32; 2],
     publish_hits: bool,
+    prefix_key: Option<session_prefix::Key>,
+    encoded_prefix: Option<session_prefix::Completed>,
 }
 
 /// Only a successful full-frame encoder produces this presentation capability.
@@ -59,8 +61,17 @@ impl RenderSession {
         };
         // Validate before moving the pending projection: refusal keeps retryable input.
         let scene = self.prepared.take().expect("validated preparation");
+        let receipt = self.begin_frame(host, device, configuration, native);
+        let prefix_key =
+            (preparation.profile == PreparedProfile::Workspace).then(|| session_prefix::Key {
+                preparation: self.preparation_generation,
+                strong_revision: self.revisions.strong(),
+                target: receipt.target(),
+            });
         Ok(FramePlan {
-            receipt: self.begin_frame(host, device, configuration, native),
+            receipt,
+            prefix_key,
+            encoded_prefix: None,
             scene,
             board,
             schematic: self.schematic.clone(),
@@ -79,6 +90,19 @@ impl RenderSession {
         let restore = self.revisions.matches(&plan.receipt)
             && self.revisions.current() == revision
             && self.prepared.is_none();
+        let image_success =
+            self.revisions.matches(&plan.receipt) && plan.receipt.target() == actual && presented;
+        if self.revisions.matches(&plan.receipt) {
+            self.prefix.complete(
+                plan.encoded_prefix,
+                session_prefix::Key {
+                    preparation: self.preparation_generation,
+                    strong_revision: self.revisions.strong(),
+                    target: actual,
+                },
+                image_success,
+            );
+        }
         let accepted = self.revisions.complete(plan.receipt, actual, presented);
         if accepted {
             self.terminal_damage.presented(revision);
@@ -119,13 +143,25 @@ impl RenderSession {
 }
 
 impl Renderer {
+    /// Actual bundle executions in the last attempt; cached bundles are not draws.
+    pub fn world_bundle_execution_count(&self) -> usize {
+        self.render_session.prefix.world_executions()
+    }
+    /// Actual last encoded graph work. Logical read+write payload, not device bandwidth.
+    pub fn prefix_copy_work(&self) -> (bool, u64) {
+        (
+            self.render_session.prefix.reused(),
+            self.render_session.prefix.copy_bytes(),
+        )
+    }
+
     /// Late acquisition and queue submission remain native responsibilities.
     /// A deferred or failed encoder returns its snapshot to the shared owner and
     /// never issues a presentation capability or acknowledges terminal damage.
     #[allow(clippy::too_many_arguments)]
     pub fn encode_frame<C>(
         &mut self,
-        plan: FramePlan,
+        mut plan: FramePlan,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         context: &mut C,
@@ -136,6 +172,7 @@ impl Renderer {
             self.render_session.revisions.matches(&plan.receipt),
             "frame plan belongs to a retired or foreign rendering attempt"
         );
+        self.render_session.prefix.begin(plan.prefix_key);
         let result = self.render_with_acquisition(
             device,
             queue,
@@ -148,6 +185,7 @@ impl Renderer {
             acquire,
             submitted,
         );
+        plan.encoded_prefix = self.render_session.prefix.take_encoded();
         match result {
             Ok(true) => Ok(Some(SubmittedFrame(plan))),
             other => {
@@ -160,7 +198,7 @@ impl Renderer {
 
     pub fn encode_capture(
         &mut self,
-        plan: FramePlan,
+        mut plan: FramePlan,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         target: &wgpu::TextureView,
@@ -169,6 +207,7 @@ impl Renderer {
             self.render_session.revisions.matches(&plan.receipt),
             "capture plan belongs to a retired or foreign rendering attempt"
         );
+        self.render_session.prefix.begin(plan.prefix_key);
         let result = self.render(
             device,
             queue,
@@ -179,6 +218,7 @@ impl Renderer {
             plan.extent[0],
             plan.extent[1],
         );
+        plan.encoded_prefix = self.render_session.prefix.take_encoded();
         match result {
             Ok(()) => Ok(SubmittedFrame(plan)),
             Err(error) => {

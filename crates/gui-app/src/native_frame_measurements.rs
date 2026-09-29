@@ -47,9 +47,10 @@ impl Writer {
                 "source":pane.source.map(|s|json!({"scene_id":s.scene_id,"source_revision":s.source_revision})),
                 "counts":counts,"error":error,"ranges":ranges})
         }).collect();
-        // Only the composed path executes cached bundles. Upload-only, error
-        // and legacy fallback attempts must not publish stale cached draws.
+        // A warm prefix copy does not execute the retained world command bundles.
+        // Cached commands alone are not evidence of current GPU work.
         let encoded_world = (frame.submitted_frame == Some(true)
+            && frame.renderer.world_bundle_execution_count() != 0
             && !frame.prepared.surface_passes().is_empty()).then(|| {
             frame.renderer.encoded_world_admission().map(|pane| {
                 let mut vertices = 0_u64;
@@ -129,6 +130,7 @@ impl Writer {
         });
         self.line(json!({"phase":"frame","sequence":self.frames,"monotonic_ns":self.started.elapsed().as_nanos(),
             "renderer_id":frame.renderer.resource_owner_id(),"extent":frame.extent,
+            "world_bundle_executions":frame.renderer.world_bundle_execution_count(),"prefix_reused":frame.renderer.prefix_copy_work().0,"logical_prefix_copy_bytes":frame.renderer.prefix_copy_work().1,
             "submitted_frame":frame.submitted_frame,"render_error":frame.error.map(|e|format!("{e:#}")),
             "text_observation_attempted":frame.text_observation_attempted,"text_admission":text,"text_origins":text_origins,
             "text_admission_failed":frame.renderer.text_admission_observation_failed(),

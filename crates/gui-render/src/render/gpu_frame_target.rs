@@ -44,6 +44,8 @@ impl Renderer {
         acquire: &mut impl FnMut(&mut C) -> anyhow::Result<Option<wgpu::TextureView>>,
         submitted: &mut impl FnMut(&mut C, wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        self.render_session.prefix.reset_work();
+        self.surface_attachments.begin_attempt();
         self.frame_consumers = prepared.consumer_incidence();
         let _resource_scope = self.resource_host.enter_for(self.frame_consumers.all());
         self.atlas.owner.begin_upload_frame();
@@ -52,7 +54,7 @@ impl Renderer {
         }
         self.grid_admission = None;
         let text_serial_before = self.text_admission.serial();
-        let result = self.render_submission_inner(
+        let mut result = self.render_submission_inner(
             device,
             queue,
             &mut Callbacks {
@@ -66,15 +68,27 @@ impl Renderer {
             width,
             height,
         );
-        self.atlas
-            .owner
-            .finish_upload_frame(result.as_ref().ok().copied());
         if result.is_err() && !self.text_preparation.is_continuing() {
             self.text_buffers.finish_frame();
             self.text_preparation.cancel();
             self.text_renderer.cancel_preparation();
             self.menu_overlay_text_renderer.cancel_preparation();
         }
+        if result.as_ref().err().is_some_and(|error| {
+            error
+                .downcast_ref::<crate::text_gpu::budget::BudgetRefusal>()
+                .is_some()
+        }) && self.surface_attachments.evict_optional_for_required()
+        {
+            // Encoder locals have dropped, so optional aliases cannot release
+            // their accounting before unsubmitted commands. Submitted holds stay
+            // charged. Do not acquire or submit twice: yield the native turn.
+            self.render_session.prefix.reset_work();
+            result = Ok(false);
+        }
+        self.atlas
+            .owner
+            .finish_upload_frame(result.as_ref().ok().copied());
         if let Some(observer) = self.frame_observer {
             let observed = observer(crate::resource_observation::FrameObservation {
                 renderer: self,

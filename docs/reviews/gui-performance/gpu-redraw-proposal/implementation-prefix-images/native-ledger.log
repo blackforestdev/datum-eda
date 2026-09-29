@@ -1,0 +1,31 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.6 GiB target_free=168.9 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.6 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.91s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-19c6acb98962ab73)
+
+running 20 tests
+test gui_runtime_support::native_queue_owner::attachment::tests::coherent_pair_observation_retires_only_missing_images ... ok
+test gui_runtime_support::native_queue_owner::attachment::tests::completed_use_keeps_current_reference_and_unknown_bytes_stay_explicit ... ok
+test gui_runtime_support::native_queue_owner::attachment::tests::confirmed_device_loss_retires_only_dropped_references_without_faking_completion ... ok
+test gui_runtime_support::native_queue_owner::attachment::tests::preparation_abort_releases_unsubmitted_replacement_without_completing_old_work ... ok
+test gui_runtime_support::native_queue_owner::attachment::tests::replacement_and_close_preserve_bytes_until_their_own_gpu_completion ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::all_hosts_hidden_pause_polling_and_preserve_active_budget ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::diagnostic_retry_releases_only_delivered_receipts_and_keeps_future_callbacks_live ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::external_completion_renews_budget_and_reaps_before_poll_deadline ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::idle_completion_reaps_closed_host_without_another_submission ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::newer_submissions_do_not_extend_stalled_watermark_and_retry_is_explicit ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::poll_error_latches_failure_without_fabricating_completion ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::queue_retry_gate_preserves_fifo_and_does_not_create_tickets ... ok
+test gui_runtime_support::native_queue_owner::progress_tests::unadmitted_retry_yields_without_renewing_active_budget ... ok
+test gui_runtime_support::native_queue_owner::tests::backend_loss_retires_old_epoch_without_faking_or_advancing_new_completion ... ok
+test gui_runtime_support::native_queue_owner::tests::closed_attachment_retirement_cannot_release_a_later_host_submission ... ok
+test gui_runtime_support::native_queue_owner::tests::closed_host_releases_ticket_but_not_outstanding_gpu_ownership ... ok
+test gui_runtime_support::native_queue_owner::tests::completed_watermark_does_not_complete_later_submission ... ok
+test gui_runtime_support::native_queue_owner::tests::completion_callback_keeps_closed_host_accounting_until_gpu_completion ... ok
+test gui_runtime_support::native_queue_owner::tests::configuration_ticket_prevents_busy_host_overtaking_and_preserves_fifo ... ok
+test gui_runtime_support::native_queue_owner::tests::queue_epochs_distinguish_replacement_from_late_old_completion ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 380 filtered out; finished in 0.00s
+

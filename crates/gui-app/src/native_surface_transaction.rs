@@ -208,11 +208,11 @@ impl SurfaceTransaction {
                     .belongs_to(&self.texture_active, self.configuration_generation)
             );
         }
-        self.queue_owner.observe_attachment(
+        self.queue_owner.observe_attachments(
             self.queue_host,
-            attachment.owner,
-            attachment.allocation,
-            attachment.payload_bytes,
+            renderer.surface_attachment_usage().map(|(image, current)| {
+                (image.owner, image.allocation, image.payload_bytes, current)
+            }),
             submission,
         );
         if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_none() {
@@ -227,7 +227,11 @@ impl SurfaceTransaction {
                 "owner": attachment.owner, "allocation": attachment.allocation,
                 "allocations_created": attachment.allocations_created, "extent": attachment.extent,
                 "format": format!("{:?}", attachment.format), "samples": attachment.samples,
-                "payload_bytes": attachment.payload_bytes, "state": "current_renderer_reference",
+                "payload_bytes": attachment.payload_bytes,
+                "images": renderer.surface_attachment_snapshots().map(|image| serde_json::json!({
+                    "owner":image.owner, "allocation":image.allocation, "payload_bytes":image.payload_bytes,
+                    "extent":image.extent, "samples":image.samples,
+                })).collect::<Vec<_>>(), "state": "current_renderer_reference",
                 "gpu_retirement_qualified": false
             })
         ));

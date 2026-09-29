@@ -1,0 +1,12 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=31.6 GiB target_free=168.9 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 31.6 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.77s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-ca0a5acac071f491)
+
+running 1 test
+test visual::visual_capture::offscreen_session_tests::prefix_graph_tests::required_refusal_defers_once_then_propagates_without_recreating_prefix ... exact8x adapter=AdapterInfo { name: "Quadro M620", vendor: 4318, device: 5044, device_type: DiscreteGpu, device_pci_bus_id: "0000:01:00.0", driver: "NVIDIA", driver_info: "535.274.02", backend: Vulkan, subgroup_min_size: 32, subgroup_max_size: 32, transient_saves_memory: false }, format=TextureFormatFeatures { allowed_usages: TextureUsages(COPY_SRC | COPY_DST | TEXTURE_BINDING | RENDER_ATTACHMENT | TRANSIENT), flags: TextureFormatFeatureFlags(FILTERABLE | MULTISAMPLE_X2 | MULTISAMPLE_X4 | MULTISAMPLE_X8 | MULTISAMPLE_RESOLVE | BLENDABLE) }
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 517 filtered out; finished in 0.62s
+
