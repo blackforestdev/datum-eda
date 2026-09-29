@@ -1,0 +1,141 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "session": "01a0e531-9768-7411-8626-b9c238d0efa2",
+  "head": "0d9210ef1bdff37b1514a4d89f57de0045f07f7b",
+  "scope": "Read-only source/log advisory; no builds, tests, native runs, owner ratification or performance acceptance. Only this /tmp advisory written.",
+  "pins": {
+    "crates/gui-app/src/native_input_observation.rs": "3501e2a72103d745eced80d5b5026f11d97a4b3ba6106ba871fa6946b64baaf4",
+    "crates/gui-app/src/app_native_events.rs": "3e7fdaea5d43286b9ac7f79f318c501d57ad447cf0720ec8b00dfe95d381cafe",
+    "crates/gui-app/src/app_shell.rs": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2",
+    "crates/gui-app/src/native_measurement_shutdown.rs": "b7d8c2cfeb8a871ee9ab567634214909b1e4a6e2f63ede02ff55c4bd11f3c076",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/validate.py": "629888f65a127ec32bb7483da5e302d0db208e96ea867df2b8db6b1d0aa34802",
+    "crates/gui-render/src/render/gpu_frame.rs": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/input_controls.py": "4523d0f51cf29b0be84a3e1d7bd209b11575a16c0dbeee252b52ee01fa844b28"
+  },
+  "disposition": "No remaining identified blocker in reviewed bounded input/timer conformance delta. Matched baseline instrumentation and actual per-trial schedule/output/method predicates remain execution prerequisites; no acceptance or owner ratification.",
+  "findings": [
+    {
+      "id": "INPUT01",
+      "severity": "medium",
+      "source": "native_input_observation.rs:162-176",
+      "finding": "Receipt complete predicate ignores validity/truncation of separately captured final state. Final hover can change through an unrecorded event after the last pointer/button and export complete:true with truncated final state.",
+      "required": "Capture final State once, include its validity in complete, retain failed artifact and error.",
+      "status": "resolved by follow-up source inspection"
+    },
+    {
+      "id": "INPUT02",
+      "severity": "medium",
+      "source": "native_measurement_shutdown.rs:42-44; final_handoff documentation",
+      "finding": "Input JSON allocation/serialization/write occurs before final_handoff closes common process/resource measurement window. Post-workload observer export cost and temporary memory contaminate endpoint interval unless separately bounded/labeled.",
+      "required": "Close accounting endpoint before serialization (e.g. final_handoff acknowledgement then export while runtime remains live), and require successful export as a separate trial-validity predicate. Do not promote export-inflated endpoint interval into workload CPU duty.",
+      "status": "resolved by follow-up source inspection"
+    },
+    {
+      "id": "INPUT03",
+      "severity": "medium",
+      "status": "resolved by follow-up source inspection",
+      "source": "input-timer-conformance/validate.py:pointer_input final_state check",
+      "finding": "Only final cursor is checked; post-last-pointer camera, epoch, native cursor, pan, hover, selection or focus changes can pass current consumer.",
+      "required": "Compare final snapshot invariants against last acknowledged state and selection/focus/pane against pinned workload expectations, in this helper or an explicit required runner predicate. Add changed-final-camera/epoch negative. No additional runtime instrumentation required."
+    }
+  ],
+  "observations": [
+    "Preallocated bounded records preserve duplicate coordinates, event order, and completed dispatch across ordinary early returns. Overflow/nesting/missing after-state/truncated event state fail complete. No scheduling or DRM behavior introduced.",
+    "Route labels identify dispatch branches, not accepted semantic transitions. Consumer must validate expected route, state transitions, coalescing, final state and output; recorder complete alone is insufficient.",
+    "Only primary active camera and final selection/focus are captured. Restrict workload to pinned W-POINTER/W-PAN topology; do not infer arbitrary pane or terminal/action acknowledgement coverage.",
+    "Missing runtime at event entry currently silently skips begin; missing runtime at completion/export fails. If claiming loss-complete receipt for runtime-absent Main delivery, record explicit invalid state using Main window identity.",
+    "Timer checks detect exact moved-marker/omitted-marker mutations and suffix-only sample as designed, but lexical source assertions are not general control-flow or GPU scheduling proof. Keep exact source pins and manual source review; reuse actual GPU query/copy evidence.",
+    "Sample validator permits frame-only fallback appropriately; correlate actual graph classification if claiming prefix reuse for a frame. Validator has no received-input comparison yet.",
+    "Native test log reports 1 passing test with 3 injected native-dispatch motions, including repeated coordinate and no-crosshair cursor update. It does not prove X11 producer delivery or per-trial counts.",
+    "Equivalent baseline instrumentation, semantic/path/final-output validation, method interval reconciliation, and required timer control execution remain parent prerequisites; no trials authorized by this advisory."
+  ],
+  "review_history": [
+    {
+      "pins": {
+        "crates/gui-app/src/native_input_observation.rs": "3501e2a72103d745eced80d5b5026f11d97a4b3ba6106ba871fa6946b64baaf4",
+        "crates/gui-app/src/app_native_events.rs": "3e7fdaea5d43286b9ac7f79f318c501d57ad447cf0720ec8b00dfe95d381cafe",
+        "crates/gui-app/src/app_shell.rs": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2",
+        "crates/gui-app/src/native_measurement_shutdown.rs": "b7d8c2cfeb8a871ee9ab567634214909b1e4a6e2f63ede02ff55c4bd11f3c076",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/validate.py": "e7815f8559e1836c8c7f6b7cc881564ab2e30fd7ed15f5581b5d70a2c93dbc74",
+        "crates/gui-render/src/render/gpu_frame.rs": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685",
+        "crates/gui-render/src/render/gpu_prefix_images.rs": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/input_controls.py": "bca858ad4061643e89ef3e8bb29e97fa7bc93b265b70c2bfb183ec58e15bae72"
+      },
+      "disposition": "Two bounded amendments before trials; timer source control is useful narrowly pinned regression evidence; full input/output trial validation and matched baseline patch remain prerequisites.",
+      "findings": [
+        {
+          "id": "INPUT01",
+          "severity": "medium",
+          "source": "native_input_observation.rs:162-176",
+          "finding": "Receipt complete predicate ignores validity/truncation of separately captured final state. Final hover can change through an unrecorded event after the last pointer/button and export complete:true with truncated final state.",
+          "required": "Capture final State once, include its validity in complete, retain failed artifact and error.",
+          "status": "resolved by source inspection: final capture now checked; export follows acknowledged accounting endpoint"
+        },
+        {
+          "id": "INPUT02",
+          "severity": "medium",
+          "source": "native_measurement_shutdown.rs:42-44; final_handoff documentation",
+          "finding": "Input JSON allocation/serialization/write occurs before final_handoff closes common process/resource measurement window. Post-workload observer export cost and temporary memory contaminate endpoint interval unless separately bounded/labeled.",
+          "required": "Close accounting endpoint before serialization (e.g. final_handoff acknowledgement then export while runtime remains live), and require successful export as a separate trial-validity predicate. Do not promote export-inflated endpoint interval into workload CPU duty.",
+          "status": "resolved by source inspection: final capture now checked; export follows acknowledged accounting endpoint"
+        },
+        {
+          "id": "INPUT03",
+          "severity": "medium",
+          "status": "open consumer validation prerequisite",
+          "source": "input-timer-conformance/validate.py:pointer_input final_state check",
+          "finding": "Only final cursor is checked; post-last-pointer camera, epoch, native cursor, pan, hover, selection or focus changes can pass current consumer.",
+          "required": "Compare final snapshot invariants against last acknowledged state and selection/focus/pane against pinned workload expectations, in this helper or an explicit required runner predicate. Add changed-final-camera/epoch negative. No additional runtime instrumentation required."
+        }
+      ]
+    },
+    {
+      "pins": {
+        "crates/gui-app/src/native_input_observation.rs": "3501e2a72103d745eced80d5b5026f11d97a4b3ba6106ba871fa6946b64baaf4",
+        "crates/gui-app/src/app_native_events.rs": "3e7fdaea5d43286b9ac7f79f318c501d57ad447cf0720ec8b00dfe95d381cafe",
+        "crates/gui-app/src/app_shell.rs": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2",
+        "crates/gui-app/src/native_measurement_shutdown.rs": "b7d8c2cfeb8a871ee9ab567634214909b1e4a6e2f63ede02ff55c4bd11f3c076",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/validate.py": "e7815f8559e1836c8c7f6b7cc881564ab2e30fd7ed15f5581b5d70a2c93dbc74",
+        "crates/gui-render/src/render/gpu_frame.rs": "b77fb609c5fdd4450f6c3fa1972db2de4afd6f733caa0f2387a18c9d475a1685",
+        "crates/gui-render/src/render/gpu_prefix_images.rs": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d",
+        "docs/reviews/gui-performance/gpu-redraw-proposal/input-timer-conformance/input_controls.py": "bca858ad4061643e89ef3e8bb29e97fa7bc93b265b70c2bfb183ec58e15bae72"
+      },
+      "disposition": "Prior two recorder findings resolved. Final-state consumer validation still incomplete; baseline match/build and per-trial output predicates remain prerequisites. Advisory only.",
+      "findings": [
+        {
+          "id": "INPUT01",
+          "severity": "medium",
+          "source": "native_input_observation.rs:162-176",
+          "finding": "Receipt complete predicate ignores validity/truncation of separately captured final state. Final hover can change through an unrecorded event after the last pointer/button and export complete:true with truncated final state.",
+          "required": "Capture final State once, include its validity in complete, retain failed artifact and error.",
+          "status": "resolved by source inspection: final capture now checked; export follows acknowledged accounting endpoint"
+        },
+        {
+          "id": "INPUT02",
+          "severity": "medium",
+          "source": "native_measurement_shutdown.rs:42-44; final_handoff documentation",
+          "finding": "Input JSON allocation/serialization/write occurs before final_handoff closes common process/resource measurement window. Post-workload observer export cost and temporary memory contaminate endpoint interval unless separately bounded/labeled.",
+          "required": "Close accounting endpoint before serialization (e.g. final_handoff acknowledgement then export while runtime remains live), and require successful export as a separate trial-validity predicate. Do not promote export-inflated endpoint interval into workload CPU duty.",
+          "status": "resolved by source inspection: final capture now checked; export follows acknowledged accounting endpoint"
+        },
+        {
+          "id": "INPUT03",
+          "severity": "medium",
+          "status": "open consumer validation prerequisite",
+          "source": "input-timer-conformance/validate.py:pointer_input final_state check",
+          "finding": "Only final cursor is checked; post-last-pointer camera, epoch, native cursor, pan, hover, selection or focus changes can pass current consumer.",
+          "required": "Compare final snapshot invariants against last acknowledged state and selection/focus/pane against pinned workload expectations, in this helper or an explicit required runner predicate. Add changed-final-camera/epoch negative. No additional runtime instrumentation required."
+        }
+      ]
+    }
+  ],
+  "followup": [
+    "Verified final_handoff acknowledgement precedes receipt serialization; export failure still propagates.",
+    "Verified single captured final state participates in complete via truncation check.",
+    "Verified injective u32 button representation.",
+    "Offline pointer consumer validates pinned 3600-row recipe, 1280 coordinate changes, ordered delivery and completed active cursor/camera/epoch invariants; current exact-count rule intentionally rejects additional coalescing rather than silently qualifying it.",
+    "No build/test/native execution by reviewer. Reported logs remain parent evidence; no performance or owner acceptance claim.",
+    "Final source check: pointer_input requires exact final_state equality to last acknowledged after snapshot and mandatory three-field expected selection/focus/pane context. Added final-state negatives source-inspected; /tmp/gpu-input-consumer-controls-final.log reports both control groups passing. Reviewer performed no execution. Runner must supply independently pinned expectations rather than derive them from received receipt."
+  ]
+}

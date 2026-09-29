@@ -1,0 +1,13 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=32.7 GiB target_free=167.8 GiB tmp_free=6.4 GiB
+warning: Cargo target exceeds soft limit: 32.7 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.82s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-19c6acb98962ab73)
+
+running 3 tests
+test native_gpu_measurements::shutdown::tests::final_receipt_precedes_release_and_requires_acknowledgement ... ok
+test native_gpu_measurements::shutdown::tests::lost_invalid_and_unresponsive_observers_fail ... ok
+test native_gpu_measurements::shutdown::tests::observer_connect_is_explicit_and_missing_endpoint_fails ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 401 filtered out; finished in 0.02s
+

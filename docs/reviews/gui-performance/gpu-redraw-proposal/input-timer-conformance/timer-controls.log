@@ -1,0 +1,1 @@
+PASS: actual marker/copy/resolve source order; moved-marker, omitted-marker, suffix-only, epoch, reversed and pass-sum-substitution negatives rejected. No native run.
