@@ -1,0 +1,41 @@
+{
+  "source": "ffaf331b",
+  "head_at_completion": "7d802b79389ceb81503d8130f852d8de0068b0d6",
+  "proof": "Guarded isolated offline release build, compiled actual workspace source fresh=false; production source diff from ffaf331b empty. Documentation-only patch replay commit advanced HEAD during build.",
+  "artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/bfadmin/Documents/datum-eda/crates/gui-app#datum-gui-app@0.1.0",
+    "manifest_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/Cargo.toml",
+    "target": {
+      "kind": [
+        "bin"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "datum-gui",
+      "src_path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/src/main.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [
+      "visual"
+    ],
+    "filenames": [
+      "/home/bfadmin/Documents/datum-eda-gpu-r3-candidate-target/release/datum-gui"
+    ],
+    "executable": "/home/bfadmin/Documents/datum-eda-gpu-r3-candidate-target/release/datum-gui",
+    "fresh": false
+  },
+  "executable": "/home/bfadmin/Documents/datum-eda/target/gpu-r3-proof/candidate-ffaf331b-r3-datum-gui",
+  "binary_sha256": "23222aa317180ccf3a5f596ee0e52563448153c070c12bb28ce967c13ca45677"
+}
