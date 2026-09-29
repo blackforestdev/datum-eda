@@ -1,0 +1,7 @@
+
+running 1 test
+test gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls ... adapter=AdapterInfo { name: "Intel(R) HD Graphics P630 (KBL GT2)", vendor: 32902, device: 22813, device_type: IntegratedGpu, device_pci_bus_id: "0000:00:02.0", driver: "Intel open-source Mesa driver", driver_info: "Mesa 25.0.7-2+deb13u1", backend: Vulkan, subgroup_min_size: 8, subgroup_max_size: 32, transient_saves_memory: false } sample=GpuFrameSample { submission_manifest: [], host: 1, device_epoch: 1, frame: 1, submission: 1, period_ns: 83.33333587646484, raw_ticks: [36026092412, 36026092505, 36026092708, 36026093085], scene_marker_ticks: None, passes_ns: [("empty", 7750.0002365112305), ("draw", 31416.667625427246)], own_pass_sum_ns: 39166.66786193848, frame_span_ns: 56083.33504486084 }
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 539 filtered out; finished in 0.21s
+
