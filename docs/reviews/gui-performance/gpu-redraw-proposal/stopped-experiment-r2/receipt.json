@@ -1,0 +1,65 @@
+{
+  "status": "First r2 candidate trial invalid; entire declared sequence stopped. GPU repair and GPI-S4 remain incomplete.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "source_commit": "6704c1e051bbbc7bff096a09a1ffd16250a4e23f",
+  "authority": "Pinned owner-approved r2 bounded experiment; no replacement runs or changed candidate authorized by this receipt.",
+  "consumed": {
+    "candidate_gpu": 1,
+    "baseline": 0,
+    "quiet": 0,
+    "W-PAN": 0,
+    "stop": true
+  },
+  "result": {
+    "input": "3600 scheduled requests;1280 changed positions all received and completed in order;2320 repeated-position requests; cadence and final context passed.",
+    "pixels": "Readiness and final AE=0 against frozen historical reference. Intermediate frames are not established by endpoint images.",
+    "timing": "28 incomplete upload-submission receipts on14frames make whole-workload GPU timing unavailable. Original runner fails its incomplete-receipt assertion. One further sample after still boundary would independently fail its attribution predicate.",
+    "shutdown": "Controlled normal exit0, no remaining workload descendants, binary unchanged.",
+    "partial_diagnostic": "1241 captured warm spans: median10.2163ms, p9515.9394ms, p9918.3097ms. These exclude incomplete cold work and are NOT workload percentiles, acceptance or a hardware limit. Between-pass intervals include copy/barriers/gaps, not isolated bandwidth."
+  },
+  "source_findings": [
+    "gpu_frame.rs copies full8x A to B on every warm frame and draws the whole suffix, including unchanged text; world prefix draws are skipped.",
+    "session_pointer.rs deliberately invalidates retained content across BoardHover region transitions to preserve legacy pad material/hovered-label semantics; cold_world_upload.rs reports its multi-submission work as unqualified. No missing samples may be discarded.",
+    "The stopped runner attributes by log offsets; it needs semantic workload/close frame attribution before any future experiment. No retroactive predicate change makes this run valid."
+  ],
+  "build_provenance": "Guarded serial offline release builds preserved. Shared Cargo cache returned baseline bytes for first candidate rebuild; caught before any trial, rejected and repaired with observed-idle selected-package clean/fresh compile. dat-baseline-cargo-cache-cvwr tracks prevention. Baseline explicitly includes matched input observer.",
+  "scope_limits": [
+    "No GPU performance acceptance, full duty result, CPU acceptance or S4/S5 closure. CPU optimization remains deferred.",
+    "Original declaration, pre-review declaration, runner, strengthened validators, advisory review and negative-control logs preserved byte-for-byte. Earlier committed conformance validator retains its original pin.",
+    "No baseline comparison or observer-mode calibration occurred; no relative improvement claim.",
+    "Complete DRM lifetime observer remains a separately reviewed execution scope; current design draft has unresolved feasibility/coverage findings.",
+    "Known unrelated broad drift failures remain dat-menu-csv-parity-block-p6fz."
+  ],
+  "next_action": "Source/evidence research and concrete owner-review amendment for demonstrated timing and remaining repeated GPU work; no retry, replacement or speculative build.",
+  "artifacts_sha256": {
+    "baseline-build.json": "dbc65ad181e9e4b70e14d4baff11c7096e83c7e9b6be4c38482bbc3a99cf172b",
+    "baseline-observer.json": "e3fa24cd7528583a2dd5fcd46b1ecc980ca30b708bf2cb9b3b6e1fb6863f847b",
+    "baseline-source.json": "cce76f910c0df35452b721031fa0f7c6f641c0ed5617db279856ed90ea2a8756",
+    "campaign-state.json": "bf98124b4b2786d2c62a8d76c426d21b26beb029946e19b82d0f9dfcb66bbb5a",
+    "candidate-0-raw.tar.gz": "8ef3889a8c540f415db8a9cd398e98a4f9392a3a498f85e5928abe09deeec9bd",
+    "candidate-build.json": "6c5ae7fc01c37b650e733bde292cb51ecb096bccebd9dcc35f6de94e145a425f",
+    "candidate-input-build.json": "d64e4ce29d3798872fa44718218b3700f50254151cf4f8bd7958bdae44342213",
+    "declaration-pre-review.json": "81ee6c9389afe1d8a1d8f119a34c5698a75d2e31bf27766cde94d2764af369ce",
+    "declaration.json": "70519270403dd7fb75331b73eb3fc8ce00563a213d9fce4d3e5a90083024530b",
+    "diagnostic-analysis.json": "3eabd2e0501b6f88bc864c91cc200e0889a92e19e440ddeb33c4c996832174d7",
+    "gpu-r2-baseline-build.log": "9f42d956bb073d7bab6d535e0caaf76a517ea75fb026744017df1d1cf1dd7a42",
+    "gpu-r2-cache-clean.log": "df62b73ec53c27f637c58c4ac8ddc340453c63f56927278e64b84d4377741b5d",
+    "gpu-r2-candidate-build.log": "abf02bb84fbfdc5359444f737c3fe0b8cd59e6190a06c9df437b44e38c2596ad",
+    "gpu-r2-candidate-input-build-2.log": "af2c9a0b5a9a8a0c16851cec4ad79d9f8dd665f39e0da4b32bb06186d6b7b5d1",
+    "gpu-r2-candidate-input-build.log": "0b036a708b0c05c4764a882f1fb96bc3a4ace25db4f5caab1b8f8e66553a9602",
+    "gpu-r2-input-controls.log": "ab9510a2aae5026083a97d89ce8b8236b43f9f45a132f8f4ad422d1ea29c2f0d",
+    "gpu-r2-input-controls.py": "1bbe5cd141fe8fcc0e43febc3ea0241e1b451709142a7c7038b33a6bb559099b",
+    "gpu-r2-native.py": "5543525e81fad0cb6c0e105aaa359310a3c87dfd3be74458ccca4f510175ca4a",
+    "gpu-r2-pointer-stream.py": "17c9b387dc1663913855135cd730770447b606069ab643faa62bd4f27d9fb800",
+    "gpu-r2-runner-review.json": "378190fcdf5c4b4bc2ad1b17512e5a3defe5457cbe1149c5060951f8ca69eccb",
+    "gpu-r2-timer-controls.log": "552d9af3b8445c772ca98c0870e6509e9a90cd6432fdbe5d2016a9837823d0c8",
+    "gpu_r2_validate.py": "4aa76af2c0369d339ba387577e1ee86506749853372faecd681c6263d6b1ac21",
+    "gpu_r2_wm_close.py": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "input-observer.patch": "8723c3e05d3d251093b3be27bd77a91c0cd5c6fb47ea89c4e7f0e79445522b9a",
+    "reference.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "result.json": "b9932e28dd8e0f722954968e76a31919cb0f7936388d6afa10de87b5e116d703",
+    "run-0-launch.log": "3316175e7e11adce71f2a0a7abc278aa9a70a9738067565f0930925a3fcf89d9"
+  }
+}

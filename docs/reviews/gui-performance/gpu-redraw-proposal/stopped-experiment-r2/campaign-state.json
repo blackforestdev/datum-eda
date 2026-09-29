@@ -1,0 +1,15 @@
+{
+  "declaration_sha256": "70519270403dd7fb75331b73eb3fc8ce00563a213d9fce4d3e5a90083024530b",
+  "runs": [
+    {
+      "index": 0,
+      "status": "finished",
+      "started_unix_ns": 1790646652397225514,
+      "returncode": 1,
+      "finished_unix_ns": 1790646695699029404,
+      "launch_log": "target/gpu-r2-proof/run-0-launch.log",
+      "directory": "/tmp/gpu-r2-0-candidate-gpu-be6oii_l"
+    }
+  ],
+  "stop": true
+}

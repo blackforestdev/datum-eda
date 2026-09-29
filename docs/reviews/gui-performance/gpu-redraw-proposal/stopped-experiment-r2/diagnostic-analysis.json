@@ -1,0 +1,83 @@
+{
+  "status": "Invalid first candidate GPU trial; stop remains in effect. Partial captured spans below are diagnostic only, not workload percentiles or acceptance.",
+  "run_directory": "/tmp/gpu-r2-0-candidate-gpu-be6oii_l",
+  "input": {
+    "scheduled": 3600,
+    "integer_changes": 1280,
+    "same_position_requests": 2320,
+    "received": 1280,
+    "completed_viewport_routes": 1280,
+    "producer_duration_ns": 30000451325,
+    "send_lateness_ns": {
+      "p95": 245170,
+      "p99": 318557,
+      "max": 2128784
+    },
+    "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+  },
+  "readiness_pixel_AE": "0",
+  "final_pixel_AE": "0",
+  "normal_exit": 0,
+  "incomplete_count": 28,
+  "incomplete_frames": [
+    56,
+    66,
+    69,
+    238,
+    298,
+    301,
+    305,
+    318,
+    700,
+    720,
+    828,
+    953,
+    956,
+    967
+  ],
+  "incomplete_reasons": {
+    "cold_upload_multisubmission_timestamps_unqualified": 28
+  },
+  "captured_samples": 1241,
+  "partial_groups": {
+    "['copy-start', 'suffix']": {
+      "span": {
+        "n": 1241,
+        "p50_ms": 10.216333645111083,
+        "p95_ms": 15.93941715309906,
+        "p99_ms": 18.30966722543335,
+        "max_ms": 21.235500648056032
+      },
+      "pass_sum": {
+        "n": 1241,
+        "p50_ms": 3.3297501016159057,
+        "p95_ms": 7.146250218086243,
+        "p99_ms": 9.632833627304077,
+        "max_ms": 11.108167005661011
+      },
+      "between_passes": {
+        "n": 1241,
+        "p50_ms": 6.378583527992249,
+        "p95_ms": 9.659333628112792,
+        "p99_ms": 10.322583648353577,
+        "max_ms": 10.41583365119934
+      }
+    },
+    "['frame', 'suffix']": {
+      "span": null,
+      "pass_sum": null,
+      "between_passes": null
+    },
+    "['frame']": {
+      "span": null,
+      "pass_sum": null,
+      "between_passes": null
+    }
+  },
+  "post_still_samples": 1,
+  "limits": [
+    "Incomplete multi-submission frames make whole-workload timing unavailable. Do not omit them or promote partial warm percentiles.",
+    "Between-pass interval includes copy, barriers and intervening GPU gaps; not an isolated transfer benchmark or a hardware ceiling.",
+    "One run consumed; no baseline/quiet/W-PAN trials and no replacement. Complete DRM duty unavailable. CPU optimization deferred."
+  ]
+}

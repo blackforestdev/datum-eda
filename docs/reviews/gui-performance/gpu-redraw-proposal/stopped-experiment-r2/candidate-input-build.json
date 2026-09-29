@@ -1,0 +1,8 @@
+{
+  "source_commit": "6704c1e0",
+  "binary_sha256": "50c88d68fa111c732ea8da8c39ee65030f3ef77d6c56fb4c6c0957f020c6fbf7",
+  "log": "/tmp/gpu-r2-candidate-input-build-2.log",
+  "source_cache_failure": "/tmp/gpu-r2-candidate-input-build.log reusedbaselinebytes; rejectedbeforetrial",
+  "remedy": "Observed noCargo/rustc; guarded cargo clean --release only gui-app/gui-render then fresh guarded root build. Original candidate fdc binary and baseline preserved.",
+  "identity_check": "Both input receipt and retained prefix markers present; hash differs from baseline8024d3e9."
+}

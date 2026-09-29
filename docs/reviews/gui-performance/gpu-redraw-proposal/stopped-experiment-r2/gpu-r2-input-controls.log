@@ -1,0 +1,3 @@
+PASS:3600 scheduled /1280 changed /2320 repeated positions reconciled; incomplete, overflow, missing route/completion, altered cursor/path, epoch, pan, truncation and lost-record controls rejected. No native input sent.
+PASS: final camera/epoch/native cursor/pan/hover and selection/focus/pane changes rejected.
+PASS: actual producer deadline, early termination and prolonged duration negatives rejected.
