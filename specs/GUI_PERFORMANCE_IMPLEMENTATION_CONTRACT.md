@@ -673,3 +673,20 @@ binary and fixed new campaign identity/cap1. Preserve any output failure while
 collecting bounded shutdown/input evidence. All prior campaigns remain stopped.
 No new build, renderer variant, further native trial, DRM/CPU execution, numerical
 acceptance or S4/S5/issue closure follows from this approval.
+
+## GPU regional-composition r4 owner approval
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-GPU-OWNER-APPROVAL-R4 -->
+
+The owner replied `approve GPU regional-composition proposal r4`.
+The exact response and approved proposal hash are recorded in
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r4.json`.
+PM050 records the regional-composition and aggregate optional-admission amendment.
+GPI-S4 remains in progress. Independent design review is still required before
+implementation; owner ratification does not manufacture that evidence.
+
+After that prerequisite, execute only the pinned r4 offline/GPU/build/native
+packet and its first-failure stops. No earlier stopped campaign resumes.
+Preserve all original correctness/resource/performance and S5 obligations,
+including separately scoped complete DRM duty. CPU optimization stays deferred;
+no issue closure or final acceptance follows from this approval.

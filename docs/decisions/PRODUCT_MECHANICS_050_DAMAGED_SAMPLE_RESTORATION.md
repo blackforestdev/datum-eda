@@ -113,3 +113,40 @@ Execute only the pinned proposal's bounded implementation and proof scope. The
 previous timed campaign remains stopped. Preserve all original camera/resource,
 complete DRM duty and independent qualification obligations. No CPU event-loop
 optimization, DRM observer execution, dependency change or S4/S5 closure.
+
+## Regional composition r4 owner disposition
+
+The owner explicitly replied `approve GPU regional-composition proposal r4`.
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r4.json` pins
+the approved proposal and exact response. Required independent design review
+remains a prerequisite to implementation; this disposition is owner ratification,
+not a claim that review or runtime proof has passed.
+
+Amend the warm graph as specified in the pinned r4 packet: shared RenderSession
+retains single-sample composed C, reconstructs conservative 32x32 source tiles
+in a fixed 512x512 exact8 atlas, paints the common ordered suffix once per tile,
+resolves the atlas once, and copies changed cells to C and all C to the acquired
+copyable target. Deduplicate at most256 tiles; preserve checked refusal/full
+fallback, exact sample/clip/painter semantics and completion-driven validity.
+Remove the competing warm full-size B restoration and exposure-resolve paths.
+Required B remains allocated and charged for the cold/full fallback graph.
+
+The optional per-generation allowance changes from one required-image payload
+to an aggregate45MiB for A+C+T+R. At1280x800, optional payload is44.15625MiB and
+the two-generation five-image payload is150.8125MiB. Preserve the512MiB process
+GPU cap,4KiB image-metadata cap, submitted references and one current/one retiring
+coherent bundle. All mapping/staging and other resources remain separately
+charged. No allocation or driver-residency reduction is implied by idle B.
+
+Use the explicit shared full-texture COPY_DST presentation contract with
+capability fallback. Include all atlas/composition/presentation copies before
+the final timestamp marker on candidate and matched baseline. Preserve existing
+3slots/32queries and input observation capacity; no new observer framework.
+
+Execute only the pinned packet after its review prerequisite: focused offline
+checks, one four-group GPU batch, conditional one candidate and one baseline
+release build, and one fixed twelve-trial pointer campaign with first-failure
+stops. All previous campaigns remain stopped. Exact output, performance,
+resource, camera, endurance and independent qualification remain unproven at
+their original scope. No CPU/DRM execution, dependency change, tolerance refresh,
+parameter sweep, S4/S5 acceptance or issue closure is authorized.
