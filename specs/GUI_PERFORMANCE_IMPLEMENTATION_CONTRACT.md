@@ -651,3 +651,14 @@ The stopped stable-hover evidence remains intact. If the cases pass, resume the
 unspent r3 timer conformance and original bounded experiment after matched
 observer readiness. GPI-S4 remains in progress. CPU optimization, DRM observer
 execution, numerical acceptance and S4/S5/issue closure remain excluded.
+
+## R3 lineage corrective validation disposition
+
+The owner explicitly replied `approve GPU r3 lineage corrective validation`.
+The pinned packet and disposition are recorded in
+`docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-r3-lineage.json`.
+Execute its one named GPU case once; only on pass proceed to the new fixed
+bounded native declaration. The earlier stopped campaign stays unchanged.
+Preparation may advance while immutable submitted lineage and strict target
+identity remain intact. No new renderer mechanism, DRM execution, CPU work,
+numerical acceptance or S4/S5/issue closure is authorized.
