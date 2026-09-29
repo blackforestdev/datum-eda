@@ -1,0 +1,84 @@
+{
+  "reviewer": "/root/gpu_r1_independent_review",
+  "scope": "Read-only source/evidence review; no changes/builds/tests/native runs",
+  "pins": {
+    "crates/gui-app/src/native_input_observation.rs": "e84c2cd3325409cb261f2053f209f4c3c602dba7995140488ac273c47a3102aa",
+    "crates/gui-app/src/native_gpu_measurements.rs": "4e3e9e35353f2e6181db27b5a3668e108d4ca6ae5639117237c86aa8f6eb7cc2",
+    "crates/gui-app/src/native_measurement_shutdown.rs": "b7d8c2cfeb8a871ee9ab567634214909b1e4a6e2f63ede02ff55c4bd11f3c076",
+    "crates/gui-app/src/app_shell.rs": "a7cde4ad7f5215da0bf53480a04b9160b880c4b2a6c8bc595095dfb4d070abd2",
+    "crates/gui-render/src/render/frame_workload.rs": "43ed8346b180574c42e772cc7b92bced47de957ab3ff8416d2ae702cf4516fda",
+    "/tmp/gpu-r3-0-candidate-gpu-_0q6eiwc/native.log": "9cddddc07dafe86692e8280662c5e483dc566a2c4ee383da2a53e225f46ab097",
+    "/tmp/gpu-r3-0-candidate-gpu-_0q6eiwc/stderr.log": "a9a9627932d95e4bb93b49e9febe9d443c952f89e1887d3891f35d9fecfda492",
+    "/tmp/gpu-r3-0-candidate-gpu-_0q6eiwc/result.json": "5d794ecaf9ce4998dfb119216132eb3a868484b54475f848da95115abde71043",
+    "target/gpu-r3-crosshair-proof/campaign-state.json": "0fac93de785f8784fb7f3b517ddac190dfee4e2b2cd637c13601a1a8d113a571"
+  },
+  "observed": {
+    "logged_gpu_samples": 493,
+    "last_workloads": [
+      [
+        3124419257990319485,
+        4,
+        0,
+        0,
+        4071,
+        0,
+        0,
+        0
+      ],
+      [
+        3124419257990319485,
+        4,
+        0,
+        0,
+        4082,
+        0,
+        0,
+        0
+      ],
+      [
+        3124419257990319485,
+        4,
+        0,
+        0,
+        4093,
+        0,
+        0,
+        0
+      ]
+    ],
+    "fatal": "native GPU sample has missing workload demand identity",
+    "campaign": "stopped index0",
+    "evidence_unavailable": "Rejected tuple/sample, buffered observer flag/count, final image, input export and complete drained manifest."
+  },
+  "inference": "Capacity exhaustion strongly fits last accepted demands4071/4082/4093 and LIMIT4096 with unconditional continued event dispatch on admission refusal. It is not direct evidence of actual overflow flag. Other unscoped revision/context failures can yield the same rejected workload tag.",
+  "findings": [
+    {
+      "id": "REPLAY-01",
+      "severity": "blocking observer feasibility",
+      "source": "native_input_observation.rs:149,269; frame_workload.rs:37",
+      "detail": "On cap or nested admission, begin_demand returns false; dispatch can still mutate renderer without scoped demand. At cap a provisional native round can overflow before it could later be dropped as unchanged.",
+      "obligation": "Specify capacity/admission semantics for complete Main window events plus meaningful rounds, not only3600 producer requests. Preserve fail-closed attribution and explicit first failure. Do not blindly increase cap or modify workload."
+    },
+    {
+      "id": "REPLAY-02",
+      "severity": "blocking diagnostic completeness",
+      "source": "native_gpu_measurements.rs:118",
+      "detail": "Invalid workload sample is rejected before serialization; its actual tuple/tag is lost.",
+      "obligation": "Persist bounded structured rejected-sample evidence and reason without treating it as a qualified GPU sample."
+    },
+    {
+      "id": "REPLAY-03",
+      "severity": "blocking diagnostic completeness",
+      "source": "native_input_observation.rs:218; native_measurement_shutdown.rs; app_shell.rs:200",
+      "detail": "Input export obtains drained manifest with ? before writing. Fatal measurement path exits directly, bypassing normal shutdown export; even adding export call would fail if drain seal unavailable.",
+      "obligation": "Separate invalid diagnostic export from strict completion receipt: complete=false, first failure and drain error/unavailable, retained bounded records, count/cap/overflow/active, current state if available. Emit before fatal exit; never fabricate seal or change validation acceptance."
+    }
+  ],
+  "offline_next_obligations": [
+    "Boundary controls at cap-1/cap/overflow and provisional no-op rounds; clock/context failure and nested admission controls as relevant. Verify incomplete records remain diagnostic and cannot validate.",
+    "Rejected-sample logging negative demonstrates invalid sample preserved before failure, no completed sample acceptance.",
+    "Failure export controls for unavailable drained manifest and failed observer handshake preserve first failure and buffered records without successful seal.",
+    "Derive any revised bounded storage/streaming design and observer cost explicitly before proposing builds/native use; match baseline instrumentation if later comparative work resumes."
+  ],
+  "disposition": "No numerical qualification or crosshair diagnosis possible. Existing one-shot campaign remains stopped. Source-supported observer repair obligations precede any fresh owner-approved validation proposal; no blind replay justified."
+}

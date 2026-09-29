@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-r3-crosshair.json",
+  "method_commit": "61a2d7a6",
+  "status": "STOPPED: single approved replay consumed; native measurement failure before final capture",
+  "binary": {
+    "source": "26b51ded33c5db8398bf4daa94dc26a3801e5d40",
+    "sha256": "21a01d41333b40a0fdd108e53ff75aa29d09f7951aa4ee2e7fd9cffe849937ee",
+    "existing_build_receipt": "../r3-lineage-stopped-native/candidate-build.json",
+    "new_build": false
+  },
+  "observed": [
+    "Startup reference difference zero; exact8 P630/Vulkan/Fifo, 1280x800.",
+    "Native fatal: GPU measurement incomplete: native GPU sample has missing workload demand identity. App exited before final capture. Runner later failed focus assertion; native fatal is the earlier specific failure.",
+    "493 accepted numeric GPU samples; final active demand identities 4071,4082,4093. Rejected sample and observer overflow flag were not exported.",
+    "No final screenshot, native input export, shutdown receipt or drained manifest. Producer sent3600 scheduled requests, but delivery/application after native exit is unproved. No qualifying statistics can be computed.",
+    "Campaign stopped at index0; no surviving descendants reported; pinned binary unchanged. No baseline, quiet, pan, DRM or CPU run."
+  ],
+  "source_assessment": {
+    "inference": "Observer capacity exhaustion strongly fits last accepted identity4093 and LIMIT4096, but missing flag/rejected tuple prevents proof; other unscoped changes or context errors can produce the same symptom. This does not explain the original crosshair mismatch.",
+    "chain": "native_input_observation::begin_demand refuses capacity/nested admission while handle_native_window_event still dispatches. A later unscoped renderer revision poisons frame_workload attribution. Host::poll rejects invalid tags before serializing the sample. fatal_gui_error calls process::exit(1), bypassing normal shutdown. Input export additionally requires successful drained_manifest before writing.",
+    "next_correction_obligations": [
+      "Persist bounded rejected-sample metadata and first failure before fatal exit, without accepting invalid samples.",
+      "Separate incomplete diagnostic export from strict qualification receipt: complete=false, explicit missing/failed drain, buffered records and count/cap/overflow/active; preserve first failure even when drain or handshake fails.",
+      "Specify bounded observer storage and admission for all main-window events and meaningful rounds. Derive event/byte bounds or bounded streaming costs; do not merely raise4096 or shorten the workload. Preserve native semantics and fail-closed attribution.",
+      "Offline controls must cover cap-1/cap/overflow, full-cap no-op provisional round, nested/context failure, invalid-sample preservation and export without a drain seal.",
+      "Runner should detect process exit before focus assertions and cease producer input on dead application; method change requires review before native use."
+    ]
+  },
+  "independent_review": "Agrees with strong capacity inference and three observer obligations. Advisory only; no owner ratification or crosshair/performance acceptance.",
+  "scope_disposition": "Approved replay ends with preservation and source analysis. No further native run, build, new candidate, numerical qualification or closure authorized by this packet. No production correction made.",
+  "remaining": "GPU repair/S4 remain open: observer reliability and original crosshair cause, native correctness/performance, full DRM lifetime duty and remaining S4/S5 proof. DRM finalization source finding remains unresolved; CPU optimization deferred. No dependency or prototype changes.",
+  "artifacts_sha256": {
+    "campaign-state.json": "0fac93de785f8784fb7f3b517ddac190dfee4e2b2cd637c13601a1a8d113a571",
+    "candidate-0-raw.tar.gz": "4e5cd85c4123674eb18763d6524f4d8aa5805b172402fcc1b4a6960a6d259e5a",
+    "declaration.json": "c65f0dd0f175b415e7f8fc2c5db6d55b9291c3cc965d0db6cf70f83961068ad9",
+    "executed-method.tar.gz": "b0d6ca61c8860dbbbcec28e3ab7580d47bc8bd4ed7c684f8aef020cfb1ec680b",
+    "independent-review.json": "b242e19d41c1dad612be69b8a6ecd739717cbaf9b73f60cd6612f2610f613298",
+    "result.json": "5d794ecaf9ce4998dfb119216132eb3a868484b54475f848da95115abde71043",
+    "run-0-launch.log": "b12714715b2645465ce31954516b8fd7a4c76f71484ec0396ef3e3bcdc162cb1",
+    "runner-controls.log": "5a0df550367bcff1da3a511cddb8f3e051f7e2c36fce0b03d796bf71a803248d"
+  }
+}
