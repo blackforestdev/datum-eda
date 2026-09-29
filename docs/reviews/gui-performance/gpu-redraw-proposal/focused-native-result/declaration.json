@@ -1,0 +1,66 @@
+{
+  "cli": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284"
+  },
+  "project": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "copied_from": "/tmp/pm045-admission-hqugp169/project",
+    "excluded": "historical .datum/tool-sessions only",
+    "board_file_sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed"
+  },
+  "reference_png": {
+    "path": "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/reference.png",
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "provenance": "Exact archived baseline-1-gpu0.tar.gz final.png in implementation/S5/pointer-native-batch; reviewed visually, unchanged closed-Console scene. No golden update."
+  },
+  "input_driver": "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_stream.py",
+  "expected_context": {
+    "final_selection": "None",
+    "final_focus": "Editor(PaneId(0))",
+    "final_focused_pane": 0
+  },
+  "expected_context_authority": "app_bootstrap plain project view has selectionNone; workspace_layout default ApplicationFocus Editor(PaneId0); --initial-layout single focusedPane0; no focus/select launch overrides.",
+  "schedule": "Per trial CLOCK_MONOTONIC epoch and5s/30s/5s boundaries sealed before launch; fixed40s startup readiness allowance. Producer starts at absolute active_ns with unchanged3600requests/120Hz/400x240 rectangle. Missed boundaries invalidate; never shift schedule. Controlled drain follows still.",
+  "camera_scope": "No camera/pan trial authorized",
+  "system_changes": "None. Child native X11/scale1 launch options only; no display/driver settings, global tracing or DRM supervisor.",
+  "max_producer_lateness_ns": 8333334,
+  "cadence_rule": "Each actual send must be at or after its120Hz deadline and at most one nominal period late; producer duration30s through30s+oneperiod. Retain full actual lateness distribution; first violation invalidates run, no retry.",
+  "created_unix_ns": 1790665449098265909,
+  "sealed_unix_ns": 1790665449098266283,
+  "status": "sealed before one output-only diagnostic",
+  "candidate_commit": "4d1e226e1e8209252f6009180b27b24c07854af1",
+  "binaries": {
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/gpu-crosshair-focused-proof/candidate-4d1e226e-focused-datum-gui",
+      "sha256": "67115404322733489969d858083634296ccfa1fd0a88994c6729ce413a6a10b9"
+    }
+  },
+  "runs": [
+    {
+      "role": "candidate",
+      "mode": "output-diagnostic",
+      "workload": "W-POINTER"
+    }
+  ],
+  "run_cap": 1,
+  "diagnostic_only": true,
+  "mode_scope": "GPU timestamps and causal workload observer disabled; semantic input output diagnosis only",
+  "order_rationale": "Exactly one approved candidate diagnostic; no baseline or repeated trial",
+  "stop": "One run; stop/preserve on first failure, no replacement",
+  "gpu_duty": "unavailable: full DRM accounting separate",
+  "qualification": "None: no GPU/CPU performance or issue acceptance",
+  "focused_authority": "docs/reviews/gui-performance/gpu-redraw-proposal/owner-approval-crosshair-focused.json",
+  "proposal_sha256": "03fe1125ceb7699b0dc2d8426cb5fb7ccf9f685858bbc3ae7bb17cc17251c5c1",
+  "method_sha256": {
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_native_trial.py": "68c833cd71dc49a9b2694771a8f8071065e82d196cd5770867ad4f0b9a5d7be3",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_stream.py": "196e8b5edd9574611aac4f47993c10628ac94663b5f99d80acf351994b8ececc",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_input.py": "66d32e9136c5a02cdca87b51b87b78234ff1b86c3cf9991312dac16366d85ae5",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_receipts.py": "f70fa03a9589f362b7a0689497500121a8bb664b3dfb01e2d09b5f7cee114b4f",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_campaign.py": "1178526e0a81bdfb72e0ccfd1539486f4f50df548db9b69a5f384a28a271841c",
+    "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/gpu_r2_wm_close.py": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_trial_outcome.py": "22b0b6d2aa1ca35ae54492dd30a8e1736aedc8a9aa634ecc6bd558b45c8eed2d",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_crosshair_diagnostic.py": "40750d4787038a5bf6b237a53aad3f063020aa074053cd01d81d69b2ee929bdd"
+  }
+}

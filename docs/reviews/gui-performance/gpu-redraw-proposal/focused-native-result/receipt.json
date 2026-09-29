@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-crosshair-focused.json",
+  "source": "4d1e226e",
+  "status": "One correct, interpretable native output diagnostic; approved one-run packet consumed",
+  "configuration": "P630/Vulkan/Fifo exact8,1280x800; original fixture,40s readiness,5s warmup,30s120Hz rectangle,5s still; GPU timestamps/causal tracing disabled",
+  "observed": {
+    "readiness_changed_pixels": 0,
+    "final_changed_pixels": 0,
+    "visual_inspection": "Crosshair visibly present in final.png; exact archived reference comparison passes.",
+    "scheduled_requests": 3600,
+    "expected_integer_changes": 1280,
+    "received_and_applied_changes": 1280,
+    "total_diagnostic_records": 1290,
+    "record_limit": 4096,
+    "record_storage_bytes": 2490368,
+    "coverage_complete": true,
+    "overflow": false,
+    "capture_cursor": [
+      300,
+      150
+    ],
+    "native_cursor": [
+      300,
+      150
+    ],
+    "window_focused": true,
+    "capture_interval_ns": [
+      1397230216452627,
+      1397230431735902
+    ],
+    "semantic_transitions_after_last_applied_motion": 0,
+    "exit_code": 0,
+    "forced_cleanup": false,
+    "surviving_descendants": false,
+    "binary_unchanged": true
+  },
+  "evidence_interpretation": "Final exact pixels and native input/state jointly establish bounded output correctness for this single timestamp-disabled diagnostic. Startup focus loss/gain precedes active input; there is no later cursor/semantic clearing event in this run. This is nonreproduction of the earlier missing-crosshair failure, not proof of its cause or proof that instrumentation caused it.",
+  "scope_disposition": "One candidate release build and one native run executed; no baseline or retry. All prior stopped campaigns remain byte-identical; current campaign terminal diagnostic_complete. Scope ends after preservation/source analysis.",
+  "remaining": "Original instrumented crosshair failure remains unexplained. Full GPU timestamp/causal observer validity and overhead, required correctness/resource coverage and performance budgets remain unqualified. Full DRM lifetime accounting/observer execution remains separate and unapproved. CPU deferred. S4/S5 and issue stay open.",
+  "artifacts_sha256": {
+    "campaign-state.json": "addecf17fd4553f3d843f8e17f3a9b986c203ceaa7a2070322a9ceccba383f43",
+    "candidate-0-raw.tar.gz": "97bfb22093a0d9a5aa163e0723fbcdd4bba0095776e7caf2870230c607ca0c4e",
+    "candidate-build-receipt.json": "44d2d6004cc43be7a5f351463fde51464bfefa72449a5b604284409cc212c7a5",
+    "candidate-build.jsonl.gz": "394599d182327cb3bded6ceb38b7e507f0f5ffc34ab00116d23c9bac7b33bd83",
+    "candidate-build.log": "222c2b75945c6d41239e71e400f74ae476251a4a59eec45d6027641978c86b98",
+    "declaration.json": "4f234a6061b87f515b1842f6df90af6c5bf7bde84f6f2f50d93a19f0215174e5",
+    "diagnosis.json": "40c578bf5b2e1463d69fd9aac55da81f41666c29e271fb0e049d1859437a96d3",
+    "executed-method.tar.gz": "aa78640b53bd522004a0b4e370acce8ec3e9f3425dfc6ebd23eb20459a86c2cf",
+    "final.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "prior-campaign-pins.json": "8b0b6ddc23f39142fe96af3e897e4aa0c33afee194e01156be354d0e403534d0",
+    "result.json": "7f4e4bdef37dde36ca2b0b18baf625e98b2b126a078f9770f913ca64dc218cb6",
+    "run-0-launch.log": "f6ca506b9b9e2bfb5c26bb70984b8698a841d4f4c06a0342365e1308be9fda5e"
+  }
+}
