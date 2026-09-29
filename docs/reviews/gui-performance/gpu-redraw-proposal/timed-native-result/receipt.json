@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "authority": "../owner-approval-timed-recovery.json",
+  "source_commit": "b67568aea80252103192f7f442f147af343969af",
+  "status": "Valid native pointer result; candidate GPU budgets failed. Fixed campaign permanently stopped after1of12; remaining11unspent and not reusable.",
+  "builds": "Exactly one candidate and one observer-matched baseline release build passed; archived Cargo artifacts verify distinct source paths/targets. No rebuild or native baseline trial.",
+  "declaration_sha256": "cdbde268ef9b4c453b212cf324961724cb10db99643020628241edbc4bd8878b",
+  "gpu": {
+    "n": 1265,
+    "p95_ms": 4.256333463226318,
+    "p99_ms": 16.539917171424865,
+    "max_ms": 34.95225106665802
+  },
+  "correctness": {
+    "readiness_changed_pixels": 0,
+    "final_changed_pixels": 0,
+    "crosshair": "visible; final.png inspected",
+    "capture_state_matches": true,
+    "pointer_changes_received_and_applied": 1280,
+    "requests": 3600,
+    "observer_records": 2577,
+    "record_limit": 4096,
+    "gpu_seal": [
+      1,
+      1,
+      1269
+    ],
+    "active_frames": 1265,
+    "exit_code": 0,
+    "forced_cleanup": false,
+    "surviving_processes": false,
+    "binary_unchanged": true
+  },
+  "findings": [
+    "1251 active frames used restore+suffix,14 used world upload+full prefix+copy+suffix. All14cold frames immediately followed a hover transition in causal records.",
+    "Restored-frame complete-span p95=4.239250ms, suffix p95=3.858583ms, restore p95=0.225917ms. Group/pass quantiles are descriptive and not additive.",
+    "Cold complete spans14.915500..34.952251ms. Complete spans include inter-submission intervals; neither these nor pass sums are total DRM busy duty.",
+    "Observer recovery succeeded at this trial scope. No repeat native campaign, hardware limitation, global correctness or qualification inference."
+  ],
+  "raw_source_path": "/tmp/gpu-r3-0-candidate-gpu-ddsqwxu5",
+  "raw_sha256": {
+    "cold-demands.json": "1b4c260cbfb8d72efde6c79bed0d7b0f5c22b8c2be53191a469e30fbbe0e781a",
+    "cost-analysis.json": "59357363e11c3c13a1427a9c5ea3dc33a3b9dbb25405b243175d847d1e802621",
+    "classified-gpu.json": "aab4176649bf11ddec087293e1beeca702d64e5353cd54f4c2d068f3fa0c40f8",
+    "diagnosis.json": "2de5e76a57cb8875e5685743109cccba2198c09d68bc8357310a60c04f295c0f",
+    "input-receipt.json": "50ecdbcfc943ff68b81f52fba87b10a2069b46a3ae48d8f13031cceee05131d2",
+    "input-diagnostic.json": "2581c14d12bc23cc0023a7c54de2e38a121846d237d0776413e785e126afb3b3",
+    "final.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "schedule.json": "3d805af818543f410f8a8a9c167f55cbe1eed23a654442763dc144078c50cba8",
+    "warm.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "result.json": "e13691aac031f2fc23b57dbfcf154bec744997ae4cf758630426609e046e42f3",
+    "native.log": "d87b40d589998ca2091a5995160f432ef0b07a6b64e4f8c12b6d58330af6c364",
+    "workload.json": "5b2a8b369d93f6599bcaa769aff51f66a8e425a2b49fc789f157753fb9885bd6"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/interaction_refresh.rs": "1d111fd05889abb308fcf06a33a448fe958c8dd7960b341da02ec511eebcc178",
+    "crates/gui-render/src/render/session_pointer.rs": "b570e692009e156822f19a385270d933f8ce29a2539064cd24cbe96159b56d2b",
+    "crates/gui-render/src/render/session_hover.rs": "ca740ec74233c3488b937079d446fe8c4cd1a3b76794262de426e476fa2c2247",
+    "crates/gui-render/src/render/render_session.rs": "59486d5d81662f0fd22116897b5054551a18c06abae4db4be8e0d6c65852fe1b",
+    "crates/gui-render/src/render/gpu_frame.rs": "e0fb71a4146d56c30d17b34ccd6372eeb7f1c7a3f9d9e2a857d9fa6e9b366805",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "50b20ca437856fa1538e6cfdcca02bf5f3ff399b802b7a59146140dfacb952a7",
+    "crates/gui-render/src/render/gpu_damage.rs": "94e4425d886ed2046b76abb2964e267bec7cf11e7216df40ba7ed0647251c592",
+    "crates/gui-render/src/render/gpu_damage_restore.rs": "4aec288e1ff56ae0056ba3976b617902744abc38790d1de8f0567db5e6d6077f",
+    "crates/gui-render/src/render/retained.rs": "d8f2d7df2c524c06218f878ed87a4622d14bd9e7117e3a309ed080d962c04a9b",
+    "crates/gui-render/src/text_gpu/glyph.wgsl": "c9ae0b55abafdc05ed7718150b580f49341bef73f9fe0bef74246dfb37c3f0f6"
+  },
+  "limits": [
+    "No baseline/quiet trial or matched-pair median/range/on-off comparison: stop rule prevented them.",
+    "No universal observer cost subtraction; no formal seven-pair inference.",
+    "No W-PAN, endurance, resource-off/on, complete DRM lifetime/duty or independent qualification.",
+    "Prior timestamp-enabled missing-crosshair failure remains historically unexplained; current valid exact result does not erase it.",
+    "No CPU optimization, native retry, parameter sweep, renderer algorithm change or issue closure."
+  ],
+  "artifacts_sha256": {
+    "build-state.json": "64c7be32f51b21b3dd55355d2099622fdcc1d6bc5d382206337d8d731299922f",
+    "declaration.json": "cdbde268ef9b4c453b212cf324961724cb10db99643020628241edbc4bd8878b",
+    "report.md": "7b5f5d76aa31e3214114e282285f3d8b583b29137a0d5a6d5065a4a4baecea36",
+    "final.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "native-raw.tar.gz": "22fc7795e5710dbf1741a1887509448f852dd370eed2648d2ed9366d1b569e3a",
+    "cold-demands.json": "1b4c260cbfb8d72efde6c79bed0d7b0f5c22b8c2be53191a469e30fbbe0e781a",
+    "diagnosis.json": "2de5e76a57cb8875e5685743109cccba2198c09d68bc8357310a60c04f295c0f",
+    "cost-analysis.json": "59357363e11c3c13a1427a9c5ea3dc33a3b9dbb25405b243175d847d1e802621",
+    "baseline-build.log": "dc62abf6ba007fb6a3c024a3efb5132b03041889b901652ed9c69eb047ad81fe",
+    "baseline-build.jsonl.gz": "6ae25667d01df0e2b9c02a3430c78184c45e73178184d2b0e890c7b3f6eef333",
+    "campaign-state.json": "14725496ef24c7ecb1470fe92cb0237ed0e0a4081f4006b4643006bc5779cac1",
+    "candidate-build.jsonl.gz": "24d32994452c031fd7d1b5ebd5c97ba5264e25a71df1b4be2a586d2d02807510",
+    "candidate-build.log": "a8ced7d0f74101ea23c6fe8aac3fdc6f0d3d12a4380cff98b48f3fb43113da77",
+    "warm.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "result.json": "e13691aac031f2fc23b57dbfcf154bec744997ae4cf758630426609e046e42f3"
+  }
+}
