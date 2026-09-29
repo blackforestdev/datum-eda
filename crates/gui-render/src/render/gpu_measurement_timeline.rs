@@ -50,16 +50,23 @@ impl Timeline {
                     && previous.last.checked_add(1) == Some(first),
                 "missing, duplicate or overlapping GPU submission boundary"
             );
-            for field in [0, 3, 4, 5, 6] {
+            // Preparation can advance between upload-only turns. Earlier work
+            // stays in this transaction with its original immutable identity.
+            // The fixed-target observer still rejects foreign owners or targets.
+            for field in [0, 4, 5, 6] {
                 anyhow::ensure!(
                     previous.attempt[field] == attempt[field],
-                    "GPU transaction source or target lineage changed"
+                    "GPU transaction owner or target lineage changed at field {field}: previous={:?} current={attempt:?}",
+                    previous.attempt
                 );
             }
-            anyhow::ensure!(
-                previous.attempt[1] <= attempt[1] && previous.attempt[2] <= attempt[2],
-                "GPU transaction attempt lineage reversed"
-            );
+            for field in [1, 2, 3] {
+                anyhow::ensure!(
+                    previous.attempt[field] <= attempt[field],
+                    "GPU transaction lineage reversed at field {field}: previous={:?} current={attempt:?}",
+                    previous.attempt
+                );
+            }
         }
         self.entries[self.count] = Some(Boundary {
             id,
@@ -155,16 +162,26 @@ mod tests {
         assert!(timeline.begin(7, "final", ATTEMPT, 26, true).is_err());
     }
     #[test]
-    fn changed_source_and_lost_lineage_fail_before_submission() {
+    fn preparation_advances_without_losing_submitted_or_foreign_lineage() {
         let mut timeline = Timeline::default();
         timeline.begin(1, "terminal", ATTEMPT, 0, false).unwrap();
         assert!(timeline.begin(2, "final", ATTEMPT, 4, true).is_err());
         timeline.end(3, 2).unwrap();
         timeline.submitted().unwrap();
-        for field in [0, 3, 4, 5, 6] {
+        for field in [0, 4, 5, 6] {
             let mut wrong = ATTEMPT;
             wrong[field] += 1;
             assert!(timeline.clone().begin(2, "final", wrong, 4, true).is_err());
+        }
+        for field in [1, 2, 3] {
+            let mut reversed = ATTEMPT;
+            reversed[field] -= 1;
+            assert!(
+                timeline
+                    .clone()
+                    .begin(2, "final", reversed, 4, true)
+                    .is_err()
+            );
         }
         assert!(
             timeline
@@ -181,6 +198,12 @@ mod tests {
         let mut next = ATTEMPT;
         next[1] += 1;
         next[2] += 1;
+        next[3] += 1;
         timeline.begin(2, "final", next, 4, true).unwrap();
+        let attempts: Vec<_> = timeline.entries().map(|entry| entry.attempt).collect();
+        assert_eq!(attempts, [ATTEMPT, next]);
+        timeline.end(7, 6).unwrap();
+        timeline.submitted().unwrap();
+        timeline.complete().unwrap();
     }
 }

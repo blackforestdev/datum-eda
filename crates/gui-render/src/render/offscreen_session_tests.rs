@@ -154,3 +154,6 @@ mod prefix_qualification_tests;
 
 #[path = "gpu_submission_conformance_tests.rs"]
 mod submission_conformance;
+
+#[path = "gpu_repreparation_conformance_tests.rs"]
+mod repreparation_conformance;

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "status": "Proposal: no new GPU/native run authorized by this document. Existing source/offline implementation authority used for the correction and controls.",
+  "owner_response": "approve GPU r3 lineage corrective validation",
+  "observed_failure": "r3-stopped-native/receipt.json: startup rejected a source/target lineage equality after actual world submission [1,1,5,5,1,1,1]. No rejected tuple, pointer producer or numeric sample. Exact failing field remains unconfirmed.",
+  "source_contract_defect": "Prepared projection generation may legitimately advance between upload-only turns. The timer and consumer demanded equality, incorrectly making an observer constrain valid renderer invalidation. Earlier component tests used constant preparation identity and did not cover this transition.",
+  "correction": [
+    "Retain each original immutable per-submission tuple and full first-upload-to-final span. Permit monotonic preparation, attempt and content revision within a transaction; never discard or restart already submitted work.",
+    "Keep renderer owner, queue host, device epoch, configuration and workload epoch equality. Fixed target configuration is not relaxed without specific evidence. Foreign or reversed identities, omissions, duplicates, capacity overflow and cancellation still fail closed.",
+    "Errors identify field plus previous/current tuple. Source-supported preparation mismatch is not asserted as the unobserved native rejected value. If another field fails in the approved run, stop and preserve it.",
+    "Mirror producer/consumer rules; preserve causal phase union so earlier active work stays active even when later preparation occurs during drain/close. No scheduler, rendering, painter, MSAA, resource-lifetime or dependency change."
+  ],
+  "completed_offline": [
+    "Two Rust timeline controls passed, including advancing preparation with both immutable tuples retained and foreign/reversed rejection.",
+    "Four receipt controls passed, including earlier active upload plus newer close preparation retaining full span and active attribution.",
+    "Render visual all-target Clippy -Dwarnings passed; proposed GPU test compiled but was not executed; source health2643 passed."
+  ],
+  "scope": {
+    "build": "One corrected test binary and source-bound baseline/candidate release pair through guarded Cargo. Backport identical timer/diagnostic changes to the reviewed observer-only baseline; no renderer migration or dependency change. Reuse existing build artifacts only with verified source binding.",
+    "gpu_case": "visual::visual_capture::offscreen_session_tests::repreparation_conformance::shared_repreparation_retains_complete_submitted_upload_lineage",
+    "gpu_execution": "Exactly one P630 exact8 case once,90s maximum. Use actual shared prepare_frame/encode_frame, pinned F-DOA first world continuation, actual menu/composition re-preparation before final submission, at most6 encoder turns,2s queue waits. Require at least one actual upload-only turn, advancing preparation, old/new immutable records, full ordered span and retained active demand. First mismatch/absence/timeout stops; no amplification or fixture variant fallback.",
+    "fixture": {
+      "path": "/tmp/gpu-prepared-native/board.kicad_pcb",
+      "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+    },
+    "native": "Only if that case passes, one new explicitly source-bound declaration: original same reference/1280x800/exact8/Fifo/5s warmup/30s120Hz400x240pointer/5s still/controlled drain; candidate GPU first; original alternating3pairs per quiet/GPU mode, max12pointer. Original conditional one pan pair per mode, max4, only if all pointer gates pass and its final-camera oracle is pinned. First invalidity/output/budget failure stops all later runs; no producer rehearsal or replacements.",
+    "campaign_identity": "New fixed target/gpu-r3-lineage-proof declaration/state, authorized only by this exact new owner response. Existing target/gpu-r3-proof campaign remains stopped and unchanged; its remaining quota cannot be used. Update runner canonical paths and pin method hashes only after approval.",
+    "baseline": "Same complete observers and monotonic-preparation consumer; preserve997b618e drawing/cache/scheduling behavior. Reproduce patched source hashes and bind fresh binaries independently.",
+    "reuse": "All passing exact8 restoration/output/resource cases and unrelated timer ring/transfer/cancellation controls remain at original scope. Do not rerun the earlier4corrective+5timer batch merely because source was handed off.",
+    "excluded": "No DRM observer execution, CPU optimization, format/tolerance/golden/algorithm variant, complete-duty claim or GPU/S4/S5 closure."
+  },
+  "decision": "Approval authorizes only the specific corrected component validation and new bounded declaration, not acceptance. If it passes, overall repair still requires separately approved complete DRM qualification and remaining S4/S5 obligations.",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": "71b715f572dbe4e216702f30a373ee1fd661928175345ae136fc498d6fc4856f",
+    "scripts/gpu_r3_receipts.py": "f70fa03a9589f362b7a0689497500121a8bb664b3dfb01e2d09b5f7cee114b4f",
+    "scripts/test_gpu_r3_receipts.py": "1c1678c7b033a054e0ca5d505b4749056ccbd9e8119311a9e61e3fb83a2a3efc",
+    "crates/gui-render/src/render/gpu_repreparation_conformance_tests.rs": "3ad41a98a2456c6d543115ca1bf3a221b4d885d8ca13a77b9a8ce54bb0d7fdf5",
+    "crates/gui-render/src/render/offscreen_session_tests.rs": "fbb990d6d22c6c5dd8dc89f73e33fb8ff41829e3c6989b4db6c8d50579cb73f1",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "254f978dcb4fad0bf7412ea3e0bbe836844d206bbe8ac5ad635c4181888c1d43"
+  }
+}

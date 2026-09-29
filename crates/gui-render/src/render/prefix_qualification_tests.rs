@@ -81,7 +81,7 @@ fn p630_exact8_pointer_styles_across_board_and_schematic() {
     }
 }
 
-fn doa() -> ReviewWorkspaceState {
+pub(super) fn doa() -> ReviewWorkspaceState {
     let board = std::path::PathBuf::from(
         std::env::var_os("DATUM_NATIVE_TEST_BOARD").expect("pinned F-DOA board is required"),
     );

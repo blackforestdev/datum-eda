@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "source_base": "9b3ce782",
+  "scope": "Source/offline correction after stopped native trial; no new GPU/native execution. Prepared one ignored real shared-session re-preparation case for proposed approval.",
+  "changes": [
+    "Retain each original immutable per-submission tuple and full first-upload-to-final span. Permit monotonic preparation, attempt and content revision within a transaction; never discard or restart already submitted work.",
+    "Keep renderer owner, queue host, device epoch, configuration and workload epoch equality. Fixed target configuration is not relaxed without specific evidence. Foreign or reversed identities, omissions, duplicates, capacity overflow and cancellation still fail closed.",
+    "Errors identify field plus previous/current tuple. Source-supported preparation mismatch is not asserted as the unobserved native rejected value. If another field fails in the approved run, stop and preserve it.",
+    "Mirror producer/consumer rules; preserve causal phase union so earlier active work stays active even when later preparation occurs during drain/close. No scheduler, rendering, painter, MSAA, resource-lifetime or dependency change."
+  ],
+  "proof": [
+    "Two Rust timeline controls passed, including advancing preparation with both immutable tuples retained and foreign/reversed rejection.",
+    "Four receipt controls passed, including earlier active upload plus newer close preparation retaining full span and active attribution.",
+    "Render visual all-target Clippy -Dwarnings passed; proposed GPU test compiled but was not executed; source health2643 passed.",
+    "Final read-only advisory review found no blocking findings in correction, real re-preparation case or proposed scope. This does not authorize execution."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_measurement_timeline.rs": "71b715f572dbe4e216702f30a373ee1fd661928175345ae136fc498d6fc4856f",
+    "scripts/gpu_r3_receipts.py": "f70fa03a9589f362b7a0689497500121a8bb664b3dfb01e2d09b5f7cee114b4f",
+    "scripts/test_gpu_r3_receipts.py": "1c1678c7b033a054e0ca5d505b4749056ccbd9e8119311a9e61e3fb83a2a3efc",
+    "crates/gui-render/src/render/gpu_repreparation_conformance_tests.rs": "3ad41a98a2456c6d543115ca1bf3a221b4d885d8ca13a77b9a8ce54bb0d7fdf5",
+    "crates/gui-render/src/render/offscreen_session_tests.rs": "fbb990d6d22c6c5dd8dc89f73e33fb8ff41829e3c6989b4db6c8d50579cb73f1",
+    "crates/gui-render/src/render/prefix_qualification_tests.rs": "254f978dcb4fad0bf7412ea3e0bbe836844d206bbe8ac5ad635c4181888c1d43"
+  },
+  "remaining": "Native failing field remains unconfirmed; proposed component and new declaration require explicit owner approval. Previous campaign stays stopped. GPU issue/S4 open; DRM unapproved, CPU deferred.",
+  "artifacts_sha256": {
+    "gpu-r3-lineage-repair-review.json": "3e73545d5b279d70053e3dd750a35a81578ff6e9edbe6a1c05ad63746662331a",
+    "gpu-r3-repreparation-clippy.log": "c3693e76ac8fdc6fd91a96b9096d4b59f25e14de000de55919272774e181bc0f",
+    "gpu-r3-repreparation-consumer.log": "d094b1bd2c8318c96097f80c50da282add5b2972970a77046de8db6c8935f6ca",
+    "gpu-r3-repreparation-source.log": "260001cc9ae0103d22f90551e1c7e5f77d75085ea43506cc22bd37c2602511d5",
+    "gpu-r3-repreparation-timeline.log": "d27eed5060c3f2d17910297292d9680c25c6acbf4916c13809062ae952ecbf04",
+    "validation-proposal.json": "90813f6f13adba8b4292643bbd4d6f3affd64c81dcb56c0f15da7352832784b3",
+    "gpu-r3-lineage-final-review.json": "49752f64c9bc82cd38e82a24c3397e590899ab57e66fa9ba113817302b90fe47"
+  }
+}
