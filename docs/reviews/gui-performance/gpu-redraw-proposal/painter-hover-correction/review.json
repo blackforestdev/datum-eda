@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "status": "Concrete proposal only; owner approval and numbered-decision amendment required before execution. Same-session source assessment, not independent review or ratification.",
+  "source_commit": "8309f687",
+  "proposal_sha256": "470653c6e688be4ddd403156d677b2212784a8e2cf1121708c647697b7da84de",
+  "evidence": "../timed-native-result/receipt.json",
+  "findings": [
+    "Hover paint reads resolve to retained pad copper/paste/mask styling and prepared pad net labels; non-pad immediate rings are separate. Both history key and pointer gate currently key all board hover IDs.",
+    "All14cold transitions use5distinct nonempty scene targets, verified against pinned native board track/zone/outline membership and disjoint from81pad identities using gui-protocol source mapping.",
+    "Suffix draw scissors are reset in the main painter, Console and terminal graphics; glyph draws inherit scissors. A single outer scissor without changing these consumers is insufficient.",
+    "Existing damage rectangles may overlap. Suffix replay requires exact disjoint union to avoid alpha double-blending; preserving32cap requires full fallback when normalization cannot fit."
+  ],
+  "fixture_sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+  "cold_scene_targets": [
+    "outline:44d937a6-9088-556b-94f6-7dc16e45fae8",
+    "track:1905e10a-4f11-5286-abe4-4f04b8051563",
+    "zone:6dbdc63c-3f6a-5552-9766-ff5515c78016",
+    "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+    "zone:bddd9739-252d-5af8-baf9-eec0be6b999d"
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/session_hover.rs": "ca740ec74233c3488b937079d446fe8c4cd1a3b76794262de426e476fa2c2247",
+    "crates/gui-render/src/render/session_pointer.rs": "b570e692009e156822f19a385270d933f8ce29a2539064cd24cbe96159b56d2b",
+    "crates/gui-render/src/render/session_dialog.rs": "14daac0ed463241f52e162880330a236cd8a40c46600501e18c9dd20e15c00bc",
+    "crates/gui-render/src/render/session_sources.rs": "9a4cdedb0411c684286f827dad2197f44b57944813e0b68f7de46955e2ecb457",
+    "crates/gui-render/src/render/retained_scene_history.rs": "fc570331d61166892b325d5f352b4deb9dcf680154cba522bb325635b082b67d",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "cc6cfec5d99f24c38e71e0ba8d5dc4f3f8e25438407c98f85cff4fb23e6ba900",
+    "crates/gui-render/src/render/retained.rs": "d8f2d7df2c524c06218f878ed87a4622d14bd9e7117e3a309ed080d962c04a9b",
+    "crates/gui-render/src/render/overlay.rs": "551d04b7040033792e5af12cbb03712edea91ea6a820a2166faa37a5abf5fb64",
+    "crates/gui-render/src/render/scene_visibility.rs": "f0ff0676db3b66bb7fddcc7e4ac2d5dbe80cca480c3f047b49499fd7a8153d79",
+    "crates/gui-render/src/render/session_damage.rs": "9d786dd5ed3a71039260af9aa817dd688959ac62ca557c021ad6e98b0626aa4b",
+    "crates/gui-render/src/render/gpu_frame.rs": "e0fb71a4146d56c30d17b34ccd6372eeb7f1c7a3f9d9e2a857d9fa6e9b366805",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "50b20ca437856fa1538e6cfdcca02bf5f3ff399b802b7a59146140dfacb952a7",
+    "crates/gui-render/src/render/gpu_console.rs": "2ec5653c024c87a83c016ea7bbceadf1f02f828f449d88343d58d88c54b5364a",
+    "crates/gui-render/src/render/terminal_graphics.rs": "c8f42946a642e21d114bc946732f8ebf93761b32129ab415f5a3616a06d2e861",
+    "crates/gui-render/src/text_gpu/draw.rs": "40cfe3aa87f4f4d87fee6bd5b89fc2d4be44cbbb9edc43eb570e6d12c71aea91",
+    "crates/gui-render/src/text_gpu/glyph.wgsl": "c9ae0b55abafdc05ed7718150b580f49341bef73f9fe0bef74246dfb37c3f0f6",
+    "crates/gui-protocol/src/lib.rs": "6c7701d97ffee7b510883606883ac876a784f050c82d508252a2b722bdc29e83"
+  },
+  "required_boundary": "PM050 amendment for disjoint per-region suffix traversals within one pass/resolve; exact8, original caps, failures, camera/resource/DRM and qualification obligations unchanged.",
+  "unproven": [
+    "Suffix resolve versus raster cost split; no predicted budget pass.",
+    "Correctness and allocation accounting of proposed metadata/clipping are specifications, not implemented proof.",
+    "Complete DRM accounting-finalization method remains separate; no execution scope inferred."
+  ],
+  "work_this_turn": "Source/history/evidence analysis and governed proposal only; zero production edits, builds, tests or native runs."
+}
