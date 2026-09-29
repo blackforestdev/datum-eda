@@ -4,6 +4,7 @@ mod atlas;
 pub(crate) mod budget;
 mod draw;
 pub(crate) mod lifetime;
+pub(crate) mod optional_residency;
 pub(crate) mod upload;
 pub(crate) mod upload_totals;
 

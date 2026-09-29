@@ -33,7 +33,7 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
             .vertex_submission_refs()
             .into_iter()
             .chain(renderer.renderer.uniform_submission_refs())
-            .chain(renderer.renderer.surface_attachments.submission_ref())
+            .chain(renderer.renderer.surface_attachments.submission_refs())
             .chain(renderer.renderer.atlas.submission_refs())
             .chain(renderer.renderer.text_renderer.submission_ref())
         {
@@ -476,7 +476,7 @@ fn control_retention_bypasses_full_cache_and_retires_after_submission() {
         .unwrap()
         .unwrap();
     host.queue.submit([batch.command()]);
-    host.renderer.hold_frame_submission(&host.queue);
+    host.renderer.hold_frame_submission(&host.queue, None);
     batch.hold(&host.queue);
     assert!(host.renderer.panel_gpu.buffer().is_some());
     assert!(host.renderer.menu_overlay_gpu.buffer().is_none());
@@ -505,7 +505,7 @@ fn control_retention_bypasses_full_cache_and_retires_after_submission() {
         .unwrap()
         .unwrap();
     host.queue.submit([batch.command()]);
-    host.renderer.hold_frame_submission(&host.queue);
+    host.renderer.hold_frame_submission(&host.queue, None);
     batch.hold(&host.queue);
     host.device
         .poll(wgpu::PollType::wait_indefinitely())
@@ -536,7 +536,7 @@ fn oversized_control_gpu_buffer_uploads_all_content_without_retention() {
         .unwrap()
         .unwrap();
     host.queue.submit([batch.command()]);
-    host.renderer.hold_frame_submission(&host.queue);
+    host.renderer.hold_frame_submission(&host.queue, None);
     batch.hold(&host.queue);
     assert!(host.renderer.panel_gpu.buffer().is_none());
     let target = host.device.create_buffer(&wgpu::BufferDescriptor {

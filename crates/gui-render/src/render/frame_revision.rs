@@ -117,6 +117,10 @@ impl Revisions {
             })
     }
 
+    pub(super) fn strong(&self) -> u64 {
+        self.strong_revision
+    }
+
     pub fn current(&self) -> u64 {
         self.revision
     }

@@ -113,6 +113,7 @@ impl Renderer {
         {
             set_scissor(pass, surface.scene_viewport);
             pass.execute_bundles(std::iter::once(&cached.bundle));
+            self.render_session.prefix.world_bundle_executed();
         }
     }
 }

@@ -1,5 +1,7 @@
 //! Full-frame GPU encoding and submission; resource lifetime lives on Renderer.
 use super::*;
+#[path = "gpu_frame_painter.rs"]
+mod painter;
 #[path = "gpu_frame_target.rs"]
 pub(crate) mod target;
 
@@ -100,6 +102,7 @@ impl Renderer {
         self.cancel_vertex_uploads();
         self.cancel_uniform_uploads();
         if prepared.is_overlay_only() {
+            self.surface_attachments.release_prefix();
             return self.render_overlay_only(device, queue, target, prepared, width, height);
         }
         self.prepare_world_pipelines(device);
@@ -190,197 +193,98 @@ impl Renderer {
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
-        // All layers share one attachment and retain their painter order. The
-        // resolved target is consumed only after submission; MSAA samples need
-        // not survive the final resolve because the next frame clears them.
-        let encode_elapsed;
-        let text_encode_elapsed;
+        let images = self
+            .render_session
+            .prefix
+            .requested()
+            .then(|| {
+                self.surface_attachments
+                    .prefix_images(device, measurement.is_some())
+            })
+            .flatten();
+        self.publish_resource_consumers();
+        let reuse = images
+            .as_ref()
+            .is_some_and(|images| self.render_session.prefix.reusable(images.identity));
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
         });
+        let clear = wgpu::LoadOp::Clear(wgpu::Color {
+            r: APP_BG[0] as f64,
+            g: APP_BG[1] as f64,
+            b: APP_BG[2] as f64,
+            a: 1.0,
+        });
+        if let Some(images) = &images {
+            if reuse {
+                // Timestamp the queue interval before copy, not just suffix draw.
+                // This 1x1 attachment is charged and held through submission.
+                if let Some(marker) = images.marker_view()
+                    && let Some(m) = &mut measurement
+                {
+                    let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                        label: Some("datum-prefix-copy-start"),
+                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                            view: marker,
+                            resolve_target: None,
+                            depth_slice: None,
+                            ops: wgpu::Operations {
+                                load: clear,
+                                store: wgpu::StoreOp::Discard,
+                            },
+                        })],
+                        timestamp_writes: Some(m.pass("copy-start")?),
+                        ..Default::default()
+                    });
+                }
+            } else {
+                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    label: Some("datum-retained-prefix"),
+                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                        view: images.prefix_view(),
+                        resolve_target: None,
+                        depth_slice: None,
+                        ops: wgpu::Operations {
+                            load: clear,
+                            store: wgpu::StoreOp::Store,
+                        },
+                    })],
+                    timestamp_writes: measurement.as_mut().map(|m| m.pass("frame")).transpose()?,
+                    ..Default::default()
+                });
+                self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
+            }
+            images.copy(&mut encoder);
+        }
+        let text_encode_elapsed;
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("datum-gui-render-pass"),
+                label: Some("datum-gui-final-resolve"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_view,
                     resolve_target: Some(&view),
                     depth_slice: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: APP_BG[0] as f64,
-                            g: APP_BG[1] as f64,
-                            b: APP_BG[2] as f64,
-                            a: 1.0,
-                        }),
+                        load: if images.is_some() {
+                            wgpu::LoadOp::Load
+                        } else {
+                            clear
+                        },
                         store: wgpu::StoreOp::Discard,
                     },
                 })],
-                depth_stencil_attachment: None,
-                occlusion_query_set: None,
-                timestamp_writes: measurement.as_mut().map(|m| m.pass("frame")).transpose()?,
-                multiview_mask: None,
+                timestamp_writes: measurement
+                    .as_mut()
+                    .map(|m| m.pass(if images.is_some() { "suffix" } else { "frame" }))
+                    .transpose()?,
+                ..Default::default()
             });
-            pass.set_pipeline(&self.pipeline);
-            pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            if !panel_vertices.is_empty() {
-                pass.set_vertex_buffer(
-                    0,
-                    self.panel_gpu
-                        .buffer()
-                        .expect("panel vertex buffer should exist")
-                        .slice(..),
-                );
-                pass.draw(0..panel_vertices.len() as u32, 0..1);
-                self.observe_screen_draw(
-                    immediate_admission::screen_admission::ScreenGroup::Panel,
-                    panel_vertices.len() as u32,
-                    [0, 0, width, height],
-                );
+            if images.is_none() {
+                self.draw_frame_prefix(&mut pass, prepared, width, height, &mut measurement)?;
             }
-            if prepared.surface_passes().is_empty() && !viewport_underlay_vertices.is_empty() {
-                pass.set_scissor_rect(
-                    prepared.scene_viewport.x.max(0.0).floor() as u32,
-                    prepared.scene_viewport.y.max(0.0).floor() as u32,
-                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                );
-                pass.set_vertex_buffer(
-                    0,
-                    self.viewport_underlay_gpu
-                        .buffer()
-                        .expect("viewport underlay vertex buffer should exist")
-                        .slice(..),
-                );
-                pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
-                self.observe_screen_draw(
-                    immediate_admission::screen_admission::ScreenGroup::Underlay,
-                    viewport_underlay_vertices.len() as u32,
-                    immediate_admission::screen_admission::scissor(prepared.scene_viewport),
-                );
-            }
-            if !prepared.surface_passes().is_empty()
-                && let Some(m) = &mut measurement
-            {
-                m.mark_scene(&mut pass, 0)?;
-            }
-            self.draw_surface_grids(&mut pass, &self.surface_grids.batches);
-            if !prepared.surface_passes().is_empty()
-                && let Some(m) = &mut measurement
-            {
-                m.mark_scene(&mut pass, 1)?;
-            }
-            self.draw_surface_world_passes(&mut pass, prepared);
-            if !prepared.surface_passes().is_empty()
-                && let Some(m) = &mut measurement
-            {
-                m.mark_scene(&mut pass, 2)?;
-            }
-            pass.set_pipeline(&self.pipeline);
-            pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            // Interaction chrome stays above schematic world geometry.
-            if !schematic_overlay_vertices.is_empty()
-                && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)
-                && let Some(buffer) = self.schematic_overlay_gpu.buffer()
-            {
-                pass.set_scissor_rect(
-                    scene_viewport.x.max(0.0).floor() as u32,
-                    scene_viewport.y.max(0.0).floor() as u32,
-                    scene_viewport.width.max(1.0).ceil() as u32,
-                    scene_viewport.height.max(1.0).ceil() as u32,
-                );
-                pass.set_vertex_buffer(0, buffer.slice(..));
-                pass.draw(0..schematic_overlay_vertices.len() as u32, 0..1);
-                self.observe_screen_draw(
-                    immediate_admission::screen_admission::ScreenGroup::SchematicOverlay,
-                    schematic_overlay_vertices.len() as u32,
-                    immediate_admission::screen_admission::scissor(scene_viewport),
-                );
-            }
-            if !viewport_overlay_vertices.is_empty() {
-                pass.set_scissor_rect(
-                    prepared.scene_viewport.x.max(0.0).floor() as u32,
-                    prepared.scene_viewport.y.max(0.0).floor() as u32,
-                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                );
-                pass.set_vertex_buffer(
-                    0,
-                    self.viewport_overlay_gpu
-                        .buffer()
-                        .expect("viewport overlay vertex buffer should exist")
-                        .slice(..),
-                );
-                pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
-                self.observe_screen_draw(
-                    immediate_admission::screen_admission::ScreenGroup::Overlay,
-                    viewport_overlay_vertices.len() as u32,
-                    immediate_admission::screen_admission::scissor(prepared.scene_viewport),
-                );
-            }
-            if !board_interaction_vertices.is_empty() {
-                let interaction_viewport = prepared
-                    .interaction_viewport(SceneSurface::Board)
-                    .unwrap_or(prepared.scene_viewport);
-                pass.set_scissor_rect(
-                    interaction_viewport.x.max(0.0).floor() as u32,
-                    interaction_viewport.y.max(0.0).floor() as u32,
-                    interaction_viewport.width.max(1.0).ceil() as u32,
-                    interaction_viewport.height.max(1.0).ceil() as u32,
-                );
-                pass.set_vertex_buffer(
-                    0,
-                    self.board_interaction_gpu
-                        .buffer()
-                        .expect("board interaction vertex buffer should exist")
-                        .slice(..),
-                );
-                pass.draw(0..board_interaction_vertices.len() as u32, 0..1);
-                self.observe_screen_draw(
-                    immediate_admission::screen_admission::ScreenGroup::BoardInteraction,
-                    board_interaction_vertices.len() as u32,
-                    immediate_admission::screen_admission::scissor(interaction_viewport),
-                );
-            }
-            self.draw_console(&mut pass, console_overlay_vertices, prepared);
-            self.terminal_graphics
-                .draw_layer(&mut pass, &self.uniform_bind_group, false);
-            encode_elapsed = encode_started.elapsed();
-            let text_encode_started = std::time::Instant::now();
-            if prepared.has_workspace_text() {
-                pass.set_scissor_rect(0, 0, width, height);
-                self.text_renderer
-                    .render(&self.atlas, &mut pass)
-                    .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
-            }
-            text_encode_elapsed = text_encode_started.elapsed();
-            self.terminal_graphics
-                .draw_layer(&mut pass, &self.uniform_bind_group, true);
-            // The card must occlude workspace text as well as geometry.
-            if !menu_overlay_vertices.is_empty() {
-                pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                pass.set_scissor_rect(0, 0, width, height);
-                pass.set_vertex_buffer(
-                    0,
-                    self.menu_overlay_gpu
-                        .buffer()
-                        .expect("menu overlay vertex buffer should exist")
-                        .slice(..),
-                );
-                pass.draw(0..menu_overlay_vertices.len() as u32, 0..1);
-                self.observe_screen_draw(
-                    immediate_admission::screen_admission::ScreenGroup::Menu,
-                    menu_overlay_vertices.len() as u32,
-                    [0, 0, width, height],
-                );
-                if prepared.has_overlay_text() {
-                    pass.set_scissor_rect(0, 0, width, height);
-                    self.menu_overlay_text_renderer
-                        .render(&self.atlas, &mut pass)
-                        .map_err(|error| anyhow::anyhow!("render menu overlay text: {error}"))?;
-                }
-            }
+            text_encode_elapsed = self.draw_frame_suffix(&mut pass, prepared, width, height)?;
         }
+        let encode_elapsed = encode_started.elapsed().saturating_sub(text_encode_elapsed);
 
         let trace_enabled = std::env::var_os("DATUM_TRACE_TIMING").is_some();
         let finish_started = trace_enabled.then(std::time::Instant::now);
@@ -396,13 +300,18 @@ impl Renderer {
                 .into_iter()
                 .chain([command_buffer]),
         );
-        self.hold_frame_submission(queue);
+        self.hold_frame_submission(queue, images.as_ref());
         if let Some(batch) = uploads {
             batch.hold(queue);
         }
         target.submitted(submission);
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(queue, measurement)?;
+        if let Some(images) = images {
+            self.render_session
+                .prefix
+                .encoded(images.identity, reuse, images.logical_copy_bytes());
+        }
         let submit_elapsed = submit_started.elapsed();
         if let Some(finish_elapsed) = finish_elapsed {
             trace_render_timing(|| {

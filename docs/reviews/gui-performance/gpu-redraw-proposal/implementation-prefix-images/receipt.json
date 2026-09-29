@@ -1,0 +1,518 @@
+{
+  "status": "Ordered unit3 exact8x retained-prefix strategy implemented with bounded correctness/lifetime proof. Integrated qualification, performance and complete duty remain pending; GPU repair stays open.",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "2ef09981b41150aa62108e6d77f8ff104583f291",
+  "authority": "PM049; approved proposal-r2.md c66c53938cbc9bc708b0132884f5d37eec5570e93f34acb21e74b6c8baafb784",
+  "changes": [
+    "Shared session preparation generation, strong revision and exact target combine with actual pair identities. Only matching successful completion publishes prefix validity. Failed/deferred/abandoned/old/foreign attempts cannot bless stale images; stronger changes dominate pointer hints.",
+    "Common prefix/suffix painters serve both full fallback and split rendering. Cold workspace renders prefix A then copies all8 samples to B; warm eligible frames copy A without panel/grid/world execution; suffix loads B and resolves once. Dialog-only rendering releases optional prefix and allocates none.",
+    "Texture and view aliases form one tracked image; A and B count separately. Existing current-plus-retiring generation allowance is shared by coherent pair, survives device replacement and includes actual queue holds. Optional A cap45MiB, actual-size allocation, fixed image-validity metadata <=4KiB, aggregate GPU cap512MiB unchanged; no cap increase.",
+    "Required process GPU admission can evict idle optional residency in any host through a bounded16-slot weak notice registry. Registry retains no GPU allocation. Optional admission never evicts. Live encoding/submission references remain charged. Typed budget refusal after local encode causes one deferred turn and suppresses optional re-admission for that B generation; genuine required fallback refusal propagates.",
+    "Submission captures exact encoded image holds and identities independently of current cache residency. Native ledger observes coherent current/submitted image sets and actual latest submission serial, including images evicted between encode and submit. No current-reference disappearance fabricates GPU completion.",
+    "Warm opt-in timing uses a charged1x1 marker pass before copy through suffix/resolve end; cold starts at actual prefix. frame_span_ns includes copy/barriers, own_pass_sum_ns does not. Aborted measurement slots report explicit cancellation/unavailable sample once; never become zero samples.",
+    "Actual execute_bundles sites count world executions; native telemetry separates cached commands from executed bundles and reports logical copy bytes. Logical transfer arithmetic is not measured device bandwidth or duty."
+  ],
+  "verification_rationale": "Changes affect painter equivalence, exact8x preservation, pointer work removal, failure publication, GPU admission/retirement across hosts and native lifetime observation. Focused exact-output/negative controls establish this component; common renderer, native queue and timestamp suites detect affected fallback/accounting regressions. Mandatory governance checks remain required.",
+  "verification": {
+    "default_renderer_tests_passed": 414,
+    "default_renderer_tests_ignored": 104,
+    "default_suite_scope": "Includes existing nonignored GPU attachment controls; not CPU-only or full visual qualification.",
+    "targeted_prefix_GPU_controls": 5,
+    "exact8_scope": "Checked-in simple-demo board/schematic fixture at640x480 on Quadro M620 Vulkan driver535.274.02, RGBA8 sRGB. Visible pointer suffix pixels differ from cold and match full8x byte-for-byte; world allocation IDs/source/transfer counters unchanged, actual world executions0, grid/panel prefix draws absent. Corrupt-prefix negative and failed-completion rebuild pass. No native performance acceptance.",
+    "timestamp_GPU_conformance": 1,
+    "native_queue_ledger_tests_passed": 21,
+    "native_Main_dialog_capture_control": 1,
+    "source_health_policy_tests": 13,
+    "terminal_boundary_mutation_controls": 7,
+    "affected_all_target_visual_clippy": "pass",
+    "optional_cap_boundary_control": "pass:1536x960 exact45MiB admitted;1537x960,4x and noneligible format refused",
+    "governance_frontier_trace_progress_source_health_parity_dependency": "pass"
+  },
+  "preserved_failures": [
+    "Initial generated graph edit had a delimiter error caught by exact-file rustfmt before proof; corrected extraction boundary. Initial compile also identified unused PrefixImages re-export, subsequently used by exact submission API.",
+    "First pressure build found release_prefix visibility too narrow for the common dialog graph; corrected crate-internal visibility.",
+    "Bounded refusal negative initially relied on off-pane pointer coordinates and warm spare staging capacity, so it did not force refusal. Corrected to an actual board-pane point, asserted nonempty interaction geometry, deliberately replaced the stream and filled its hard screen budget. Final control proves one defer, then genuine refusal, followed by full fallback after pressure release.",
+    "Generic workspace fixture had no world GPU buffers; strengthened world-upload assertions exposed that insufficient evidence. Final exact8 test uses existing checked-in simple-demo board/schematic import, asserts real retained GPU allocations, visible changed pixels and unchanged warm world upload counters.",
+    "Independent review found optional residency could starve required storage and that mid-encode eviction could omit exact submission holds/last-use ledger entries. Both corrected; preserved review and targeted retirement/pressure/ledger controls included."
+  ],
+  "review": {
+    "reviewer": "/root/gpu_r1_independent_review",
+    "scope": "Read-only r2 unit3 prefix-copy draft review; no edits/builds/tests/native runs.",
+    "disposition": "Both identified blockers resolved in inspected source. No additional concrete correctness/lifetime blocker found in final delta; native execution/measurement qualification not certified.",
+    "findings": [
+      {
+        "id": "PREFIX-01",
+        "severity": "high",
+        "status": "resolved by source inspection",
+        "source": "gpu_frame.rs::render_target; gpu_surface.rs::ensure_guarded; gpu_prefix_images.rs::prefix_images",
+        "finding": "Optional prefix release is only attempted when required target texture reservation fails. An existing A remains charged during subsequent required vertex/world/text/terminal allocation earlier in render_target, so those can fail due to optional residency. New A admission also precedes flush_frame_uploads; its required staging allocation can fail after A consumes remaining process allowance. Optional admission fail-open alone does not protect required work.",
+        "required": "Ensure required allocations can reclaim optional prefix capacity or safely retry without A, including required upload staging after candidate admission and retention across frames. Preserve submitted references until completion. Include pressure controls for both resident A and newly admitted A with required allocation demand.",
+        "resolution": "Required global GPU admission broadcasts bounded weak optional eviction and retries once. Optional admission cannot evict. Same-generation suppression plus outer typed-budget defer prevents admission loops while submitted/local holds remain charged."
+      },
+      {
+        "id": "PREFIX-02",
+        "severity": "high",
+        "status": "resolved by source inspection; new negative control not executed by reviewer",
+        "source": "gpu_frame.rs::flush_frame_uploads/hold_frame_submission; gpu_text.rs::hold_frame_submission; gpu_surface.rs::submission_refs; native_surface_transaction.rs::observe_attachment",
+        "finding": "Required admission may evict OptionalState A/marker while local PrefixImages still encodes/holds them, yet then succeed after another host frees headroom. hold_frame_submission enumerates now-empty OptionalState, omitting A/marker used by submitted commands. Local PrefixImages then drops before completion, releasing accounting prematurely. Native ledger likewise observes only current snapshots: evicted image current-use submission is absent, leaving old last_submission or no record.",
+        "required": "Carry exact encoded PrefixImages submission refs and image identities through queue submit and native observation, independent of current optional residency. Preserve current-vs-retiring reference status separately. Negative control should evict during successful encode-to-submit admission and verify reservation plus ledger last-use survives until that submission completes.",
+        "resolution": "hold_frame_submission receives exact local PrefixImages and takes submission refs from that immutable encoded set. mark_submission stores exact image identities; surface_attachment_usage merges current and submitted image identities with current flag, and native ledger updates actual last_submission for evicted images before marking them retiring. begin_attempt/new working image clears obsolete per-attempt snapshots. Added encoded_images_survive_eviction_until_actual_submission_completion control drives copy, eviction, submission hold, local drop, queue completion and close."
+      }
+    ],
+    "observations": [
+      "A/B textures and aliases are separately tracked allocations; PrefixImages holds handles across encoding and SurfaceAttachments submission_refs retains both through completion. Current/retiring pair generation permit and per-generation optional budget prevent accumulating arbitrary additional A allocations.",
+      "Warm graph copies full matching multisample texture extent before B Load; cold graph clears/stores A with no resolve, copies to B, executes common suffix and resolves once with B Discard. Full fallback shares painter functions.",
+      "Prefix validity combines preparation generation, strong revision, target identity and pair allocation identity. Completion checks active receipt/actual target and current key; stale/foreign/failed completion cannot bless the image.",
+      "Suffix explicitly initializes pipeline, bind group and full-target scissor after pass break. Ordered grids/world remain in prefix and text/menu/terminal/interaction remain in common suffix.",
+      "Measurement marker pass precedes copy; frame_span_ns spans first timestamp to suffix end and therefore includes copy/interpass work. own_pass_sum_ns only sums passes and excludes the copy gap; do not use it for complete frame performance.",
+      "Optional marker is separately tracked, counted and held. Unsupported sample count/format or capacity refusal uses full path; actual native full8x backend capability remains test evidence rather than source inference.",
+      "Weak registry snapshot releases registry mutex before callbacks; optional construction uses non-evicting reservation while its own mutex is held. No new registry/optional lock recursion identified. Bounded 16 slots fail closed to no prefix when full.",
+      "Weak registry owns no GPU images; only live optional owner references and exact local/submission holds carry payload charges. Registry lock is released before eviction callbacks. Current/submitted union is bounded to one working/prefix/marker set because same-generation optional suppression prevents replacement while encoded images exist."
+    ],
+    "limitations": [
+      "No native exactness or performance result reviewed. Parent reports exact8 test building only.",
+      "Broader full-duty/DRM qualification remains separate. No final issue completion/acceptance claim."
+    ],
+    "pins": [
+      {
+        "path": "crates/gui-render/src/render/gpu_surface.rs",
+        "sha256": "eab25438f7d0599c0a54214453ffabcc4121ba3cffd9a9c881e56dc85d4ed2ec"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_prefix_images.rs",
+        "sha256": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_prefix.rs",
+        "sha256": "5afd9f7078f7bd37f923ee811989ff983159ead87098f40e87a6715fbf978122"
+      },
+      {
+        "path": "crates/gui-render/src/render/session_frame.rs",
+        "sha256": "1ee1d43fcbf05280911746a3319ccdcc8a58fbff403a38cd234397e0ae59a20c"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_frame.rs",
+        "sha256": "34e1c332811296553d66fe811f68a38457f5c219e69efb0367d751cdb79ab27e"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_frame_painter.rs",
+        "sha256": "b88d1c75e451fddfeb03b21c4d1eeb13fee4b77522ab482f0109952ce74adec5"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_text.rs",
+        "sha256": "db3e68887c2021343faa3317f8166867e61c7c561afa398dcee10c6f1e48dab0"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_measurements.rs",
+        "sha256": "ba2f06f5c6c6c88d4bf9cf43eb3f85ccf3369dc77433ccdebcf531e981d33e0e"
+      },
+      {
+        "path": "crates/gui-app/src/native_frame_measurements.rs",
+        "sha256": "a5993f873036ae76964816acc2651ba41b6953147e025fc82c179cc7e4d6b925"
+      },
+      {
+        "path": "crates/gui-render/src/text_gpu/optional_residency.rs",
+        "sha256": "48bf5ed5f89a22c0396c8282d5dc31078644338f7f7b430c5c10e3f3c6671920"
+      },
+      {
+        "path": "crates/gui-render/src/text_gpu/budget.rs",
+        "sha256": "cc2c943ecb406903de232b406602a0b36eaa6a7922b0d56d5c27ce9630b65aaf"
+      },
+      {
+        "path": "crates/gui-render/src/render/gpu_frame_target.rs",
+        "sha256": "b4870cf912fe909728034a861e37f407a0a17c848ffd56224c1aab265a196aef"
+      },
+      {
+        "path": "crates/gui-app/src/native_attachment_ledger.rs",
+        "sha256": "aa49e3f3e10d9ad8d226a1ba339a5334c56ba5727e5f07b4fe778eb6b9ce6d06"
+      },
+      {
+        "path": "crates/gui-app/src/native_queue_owner.rs",
+        "sha256": "b70184394617ead58ce31e69c5f6726b504e962d72bbc6fb32c90dcc2f339d00"
+      },
+      {
+        "path": "crates/gui-app/src/native_surface_transaction.rs",
+        "sha256": "080bc9691dba7732a5f8f12f56ae437ec4973c24f612d120fcd02d1c2314cb21"
+      },
+      {
+        "path": "crates/gui-render/src/render/prefix_graph_tests.rs",
+        "sha256": "fc67e616f3b59f6a8fddca787a51bf86d69a09b6bf18051f6cd6c99c0a64008c"
+      }
+    ],
+    "review_history": [
+      {
+        "disposition": "One required-resource starvation blocker found; remaining inspected image identity/lifetime/painter/timing mechanics coherent at source level, not native acceptance.",
+        "findings": [
+          {
+            "id": "PREFIX-01",
+            "severity": "high",
+            "status": "resolved at admission policy level; exact encoded-image lifetime issue below must still be fixed",
+            "source": "gpu_frame.rs::render_target; gpu_surface.rs::ensure_guarded; gpu_prefix_images.rs::prefix_images",
+            "finding": "Optional prefix release is only attempted when required target texture reservation fails. An existing A remains charged during subsequent required vertex/world/text/terminal allocation earlier in render_target, so those can fail due to optional residency. New A admission also precedes flush_frame_uploads; its required staging allocation can fail after A consumes remaining process allowance. Optional admission fail-open alone does not protect required work.",
+            "required": "Ensure required allocations can reclaim optional prefix capacity or safely retry without A, including required upload staging after candidate admission and retention across frames. Preserve submitted references until completion. Include pressure controls for both resident A and newly admitted A with required allocation demand.",
+            "resolution": "Required global GPU admission broadcasts bounded weak optional eviction and retries once. Optional admission cannot evict. Same-generation suppression plus outer typed-budget defer prevents admission loops while submitted/local holds remain charged."
+          },
+          {
+            "id": "PREFIX-02",
+            "severity": "high",
+            "status": "open",
+            "source": "gpu_frame.rs::flush_frame_uploads/hold_frame_submission; gpu_text.rs::hold_frame_submission; gpu_surface.rs::submission_refs; native_surface_transaction.rs::observe_attachment",
+            "finding": "Required admission may evict OptionalState A/marker while local PrefixImages still encodes/holds them, yet then succeed after another host frees headroom. hold_frame_submission enumerates now-empty OptionalState, omitting A/marker used by submitted commands. Local PrefixImages then drops before completion, releasing accounting prematurely. Native ledger likewise observes only current snapshots: evicted image current-use submission is absent, leaving old last_submission or no record.",
+            "required": "Carry exact encoded PrefixImages submission refs and image identities through queue submit and native observation, independent of current optional residency. Preserve current-vs-retiring reference status separately. Negative control should evict during successful encode-to-submit admission and verify reservation plus ledger last-use survives until that submission completes."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/gpu_surface.rs",
+            "sha256": "a447272924ee8c914f58bcef425622e9716bc076ba8bf97881cd5aedd0fcbd1b"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_prefix_images.rs",
+            "sha256": "2b9400c4c60959d3ec67d0352e3099e70dfb6470c87d39f338f0dcc5a9028c0a"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_prefix.rs",
+            "sha256": "8bda5908f1f07e7e37473906314bb0894b00eb70dfdfc09b9d5f1ff8db72ad2a"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_frame.rs",
+            "sha256": "db5e09022d3eeb396cb0183ab1115b9beedebfdb9fe69182f8910bf610c7e59f"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_frame.rs",
+            "sha256": "1da8a7f236fb5c8aae2df98319aac005bc7cd8a596faacd43669e5f534283eb0"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_frame_painter.rs",
+            "sha256": "b88d1c75e451fddfeb03b21c4d1eeb13fee4b77522ab482f0109952ce74adec5"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_text.rs",
+            "sha256": "7f78cf32d7be257aa8c5da93fd071f1ca16bab842922cec07d3ac41a8af744cb"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_measurements.rs",
+            "sha256": "75a0f87cc2965de1a351e0917723944631e99cbf59c11e0e680e4c9e6105b3d9"
+          },
+          {
+            "path": "crates/gui-app/src/native_frame_measurements.rs",
+            "sha256": "1be711d938c877440329a05cd71000705356bb3d7e65f5f0bea13b50d0f96f2d"
+          }
+        ]
+      },
+      {
+        "disposition": "Admission starvation correction is sound at policy level, but encode-to-submit eviction reveals a concrete tracked-lifetime and native-ledger blocker (PREFIX-02).",
+        "findings": [
+          {
+            "id": "PREFIX-01",
+            "severity": "high",
+            "status": "resolved by source inspection",
+            "source": "gpu_frame.rs::render_target; gpu_surface.rs::ensure_guarded; gpu_prefix_images.rs::prefix_images",
+            "finding": "Optional prefix release is only attempted when required target texture reservation fails. An existing A remains charged during subsequent required vertex/world/text/terminal allocation earlier in render_target, so those can fail due to optional residency. New A admission also precedes flush_frame_uploads; its required staging allocation can fail after A consumes remaining process allowance. Optional admission fail-open alone does not protect required work.",
+            "required": "Ensure required allocations can reclaim optional prefix capacity or safely retry without A, including required upload staging after candidate admission and retention across frames. Preserve submitted references until completion. Include pressure controls for both resident A and newly admitted A with required allocation demand.",
+            "resolution": "Required global GPU admission broadcasts bounded weak optional eviction and retries once. Optional admission cannot evict. Same-generation suppression plus outer typed-budget defer prevents admission loops while submitted/local holds remain charged."
+          },
+          {
+            "id": "PREFIX-02",
+            "severity": "high",
+            "status": "resolved by source inspection; new negative control not executed by reviewer",
+            "source": "gpu_frame.rs::flush_frame_uploads/hold_frame_submission; gpu_text.rs::hold_frame_submission; gpu_surface.rs::submission_refs; native_surface_transaction.rs::observe_attachment",
+            "finding": "Required admission may evict OptionalState A/marker while local PrefixImages still encodes/holds them, yet then succeed after another host frees headroom. hold_frame_submission enumerates now-empty OptionalState, omitting A/marker used by submitted commands. Local PrefixImages then drops before completion, releasing accounting prematurely. Native ledger likewise observes only current snapshots: evicted image current-use submission is absent, leaving old last_submission or no record.",
+            "required": "Carry exact encoded PrefixImages submission refs and image identities through queue submit and native observation, independent of current optional residency. Preserve current-vs-retiring reference status separately. Negative control should evict during successful encode-to-submit admission and verify reservation plus ledger last-use survives until that submission completes.",
+            "resolution": "hold_frame_submission receives exact local PrefixImages and takes submission refs from that immutable encoded set. mark_submission stores exact image identities; surface_attachment_usage merges current and submitted image identities with current flag, and native ledger updates actual last_submission for evicted images before marking them retiring. begin_attempt/new working image clears obsolete per-attempt snapshots. Added encoded_images_survive_eviction_until_actual_submission_completion control drives copy, eviction, submission hold, local drop, queue completion and close."
+          }
+        ],
+        "pins": [
+          {
+            "path": "crates/gui-render/src/render/gpu_surface.rs",
+            "sha256": "2c012f7e2a58dfd2871e0aba322cbf65d965ab330965ca95c130019d33a4c971"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_prefix_images.rs",
+            "sha256": "6da930f8c63fa40f0fc17ccc8b12301e339c6da6fa47f3c07af95d045238694e"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_prefix.rs",
+            "sha256": "5afd9f7078f7bd37f923ee811989ff983159ead87098f40e87a6715fbf978122"
+          },
+          {
+            "path": "crates/gui-render/src/render/session_frame.rs",
+            "sha256": "1ee1d43fcbf05280911746a3319ccdcc8a58fbff403a38cd234397e0ae59a20c"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_frame.rs",
+            "sha256": "4635b817a2be1c811db62dd6b20303d634a93f75a03414c0ee9776eb14ee871e"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_frame_painter.rs",
+            "sha256": "b88d1c75e451fddfeb03b21c4d1eeb13fee4b77522ab482f0109952ce74adec5"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_text.rs",
+            "sha256": "7f78cf32d7be257aa8c5da93fd071f1ca16bab842922cec07d3ac41a8af744cb"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_measurements.rs",
+            "sha256": "ba2f06f5c6c6c88d4bf9cf43eb3f85ccf3369dc77433ccdebcf531e981d33e0e"
+          },
+          {
+            "path": "crates/gui-app/src/native_frame_measurements.rs",
+            "sha256": "a5993f873036ae76964816acc2651ba41b6953147e025fc82c179cc7e4d6b925"
+          },
+          {
+            "path": "crates/gui-render/src/text_gpu/optional_residency.rs",
+            "sha256": "48bf5ed5f89a22c0396c8282d5dc31078644338f7f7b430c5c10e3f3c6671920"
+          },
+          {
+            "path": "crates/gui-render/src/text_gpu/budget.rs",
+            "sha256": "cc2c943ecb406903de232b406602a0b36eaa6a7922b0d56d5c27ce9630b65aaf"
+          },
+          {
+            "path": "crates/gui-render/src/render/gpu_frame_target.rs",
+            "sha256": "dacf77df51ae99d0adad6e23421d0eb177c466b9a32b2ed2dcf0b9aa9b32131d"
+          },
+          {
+            "path": "crates/gui-app/src/native_attachment_ledger.rs",
+            "sha256": "ed00389ecf3d7f7c9fe8c51a6fbe1a794139e6362c4f53afad7fcf9a88b31c6b"
+          },
+          {
+            "path": "crates/gui-app/src/native_queue_owner.rs",
+            "sha256": "5d89240f437d0d38472a37e6584e03662d3252efff612ba69426a93b44c7e974"
+          },
+          {
+            "path": "crates/gui-app/src/native_surface_transaction.rs",
+            "sha256": "2ea7c6f2547bbdbc1ed916dac5c619c7f01df97ba3e323922afa779009794355"
+          }
+        ]
+      }
+    ]
+  },
+  "post_review": "Only further contract assertions/controls: inline4KiB metadata static bound, exact cap boundary checks, native last-use ledger negative, visible real-board pixel/world-upload assertions, and measurement aborted-slot availability assertion. No additional mechanism change after final review.",
+  "native_image": {
+    "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/native-capture.png",
+    "sha256": "5f93353f636b09550a6310d1e221dafc13fe3d392e00d7d56f5b7ec0532c734d",
+    "baseline_path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/native-capture.png",
+    "exact_file_match": true,
+    "visual_review": "Inspected; byte-identical baseline. Existing board-label/Console occlusion dat-gpu-console-occlusion-ly6r persists and is not accepted by this component proof."
+  },
+  "limits": [
+    "No timing budget, duty, whole-repair or S4 closure claim. Performance experiment runs consumed:0.",
+    "Full r2 integrated correctness/invalidation/recovery/resource and reference-host qualification remain pending. Complete DRM fd/client lifetime method execution still needs its separately approved concrete scope.",
+    "All225 original requirements, S5 broader qualification, CPU event-loop deferral, dependency/prototype/tuning boundaries and nonblocking exclusions remain unchanged.",
+    "Unrelated known broad-drift failures dat-menu-csv-parity-block-p6fz remain; no unrelated authority digest or golden refreshed."
+  ],
+  "pins": [
+    {
+      "path": "crates/gui-app/src/native_attachment_ledger.rs",
+      "sha256": "23d30900fcb0e53764244c64e7792761554555bcd90b61c40f445a45315a56c3"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_measurements.rs",
+      "sha256": "a5993f873036ae76964816acc2651ba41b6953147e025fc82c179cc7e4d6b925"
+    },
+    {
+      "path": "crates/gui-app/src/native_queue_owner.rs",
+      "sha256": "b70184394617ead58ce31e69c5f6726b504e962d72bbc6fb32c90dcc2f339d00"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "sha256": "080bc9691dba7732a5f8f12f56ae437ec4973c24f612d120fcd02d1c2314cb21"
+    },
+    {
+      "path": "crates/gui-render/src/render/frame_revision.rs",
+      "sha256": "32f1980edaa5dd0905cf4343636f65b46c1e19760204a9419d3402cdd529e896"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "sha256": "34e1c332811296553d66fe811f68a38457f5c219e69efb0367d751cdb79ab27e"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame_painter.rs",
+      "sha256": "b88d1c75e451fddfeb03b21c4d1eeb13fee4b77522ab482f0109952ce74adec5"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame_target.rs",
+      "sha256": "b4870cf912fe909728034a861e37f407a0a17c848ffd56224c1aab265a196aef"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements.rs",
+      "sha256": "ba2f06f5c6c6c88d4bf9cf43eb3f85ccf3369dc77433ccdebcf531e981d33e0e"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements_tests.rs",
+      "sha256": "28eecc6e1206fb165593ad66c5abd929dd92e37287a3e11d2c37994aa81b9a67"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_overlay.rs",
+      "sha256": "83b77f878f1adadf7c8908ce1bef0bba6382b29985d7b08f4ebe7fcc5a0c8b11"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_prefix_images.rs",
+      "sha256": "ed557ff90b041734d851529c84e298f6cdf9ca5042d4534248d82d1c4ead876d"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface.rs",
+      "sha256": "bbd498eb025f5c2209adce12e269bb3d54ff1e0a32c7f6580fc03f917d0e3164"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_surface_pass.rs",
+      "sha256": "938ef6da103486c8f562d3ddfba5de96ac41ab57d043af530be8a856ab328a04"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_text.rs",
+      "sha256": "db3e68887c2021343faa3317f8166867e61c7c561afa398dcee10c6f1e48dab0"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_uniform_tests.rs",
+      "sha256": "d953b45457dac9650869cd42f8816a339919a244d4b5967023fcd9d398b0015e"
+    },
+    {
+      "path": "crates/gui-render/src/render/offscreen_session_tests.rs",
+      "sha256": "e6742cb7bd1166ea17dd1a223d068e11b8020f0fda8bb1656ff53152555eb963"
+    },
+    {
+      "path": "crates/gui-render/src/render/prefix_graph_tests.rs",
+      "sha256": "b634391ca7067c2a1e81f660d3f8712c93670a2fc94b482cffd16a05f2c53bf3"
+    },
+    {
+      "path": "crates/gui-render/src/render/render_session.rs",
+      "sha256": "d7cd7538e7d6557a3afe18b4f092e342b60baa37a83a259bba63b2b9c70e4f81"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_frame.rs",
+      "sha256": "1ee1d43fcbf05280911746a3319ccdcc8a58fbff403a38cd234397e0ae59a20c"
+    },
+    {
+      "path": "crates/gui-render/src/render/session_prefix.rs",
+      "sha256": "71b11addf27584e18dc0a3c430b10f46bdfd650caf9deabdc04a6f2f14b49b56"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/budget.rs",
+      "sha256": "cc2c943ecb406903de232b406602a0b36eaa6a7922b0d56d5c27ce9630b65aaf"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/mod.rs",
+      "sha256": "b55b2ca981c5aee3e09031476f809f85bf3c7600f070e915519c7d5cafcb8c5e"
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/optional_residency.rs",
+      "sha256": "48bf5ed5f89a22c0396c8282d5dc31078644338f7f7b430c5c10e3f3c6671920"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/attachments.log",
+      "sha256": "2e8b897a917387210a3b31edf22c9e9381fc7b0aef564092b499c43364cf8599"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/check.log",
+      "sha256": "6abea5759187ecbeb2402e29e2f8947abcdef11aca82b2588f876272d2bb87d8"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/clippy.log",
+      "sha256": "ace8ee615159514173d91cc4fd75a66880c6ef257b4e7b2739870dd1c944809e"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/controls-r2.log",
+      "sha256": "3d2f5327dd3d33be7c7cf5637b54ed8c187aa392ec4f9d777f25aa4e639e8fd8"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/controls.log",
+      "sha256": "8468abb3fef3d7de09b68b10df61f14e3220ae800c1bc01c067136aa970daead"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/dependency.log",
+      "sha256": "3ab8cf4207b6ef2e266d07d0d9ad4f9d9d94a1f5676f6c1378acb9b52c128139"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/exact8-final.log",
+      "sha256": "720c14c8b71975067cbb54ee972af0c77ac33d045722df80e452e3494f0ed6d9"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/exact8-world.log",
+      "sha256": "5ecf1e3b5158d943e671545ffea9c23d82aa9d2736aeedbb1228d58dd18cb3e2"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/exact8.log",
+      "sha256": "b6dae31772edbad5b67a83df05b5776ea94e36b31dbddd9608e39301981cf41e"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/ledger-final.log",
+      "sha256": "bd00e6a2c5fcf32b7d175cca1733b7395a0cec9a20d501171f759e2104ec209c"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/measurement.log",
+      "sha256": "1b2e68370eec504be2dd57acdc40ea1df8c9187bf029e349f07b52b39c5ad404"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/native-ledger.log",
+      "sha256": "2a1af68ac9e647da69c76189ce08be73d6488ffae019b6cd06f3d26e29275b12"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/native.log",
+      "sha256": "94f2a463da4b15c3b2112281b0618758154454757d86496620c86f2340767073"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/parity.log",
+      "sha256": "5e151b406d2638305fcc6ad021efe7d5eaa1543f288523397bc00f12b39249d7"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/pressure-r2.log",
+      "sha256": "3e874832ce0b4e13580b9683f6679d4ec33b9f2ef0d60ea8b8a59a89d89b1d83"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/pressure.log",
+      "sha256": "b585d55fbee27c7ab9f8dba67767d4b6df90b6617096532152181c791d489720"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/refusal.log",
+      "sha256": "333481f80c39f2b621f49be5a4a9e3c4f48fb205331d7934f14c3088c5900dc5"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/renderer-final.log",
+      "sha256": "fe2568f376fa75c6163c213fbce8103e6f61b58de72e52251e894c04b48c54bc"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/renderer-suite.log",
+      "sha256": "3c4a0132820e62fe2ae00dcf0e92847632f7a08848eb84c681a6ab7ffe1827ee"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/source-policy.log",
+      "sha256": "9eb97ec36b8beedab444c0bee64322e27f6508231376fa15535973f33658f2ad"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/terminal-boundary.log",
+      "sha256": "3e5917dfc1786bd7a112da89dae00c8042e7da2032f142c53166e98151766c7c"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/cap.log",
+      "sha256": "58e1b9eaaeee11a98f2a9dcc4a898df832fef90d71ed8f548ad730afa95d756b"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/governance.log",
+      "sha256": "63b11e533959c1968006529a6a56e6c704e3fd5e971d45296e781179f57a0f7b"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/trace.log",
+      "sha256": "c2b3dfe2e22e73eb57eeb9b29882fcb2cb7523214d60a824786927b4bbf217d5"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/progress.log",
+      "sha256": "f07ed8cbef0008cf2e49929df40abeb60162fe4268f5fc93db04ffd2fb47e2f0"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/frontier.log",
+      "sha256": "3358d7d0e6a6564b9cc2b8b2587a42fd7d971c92e9282c55692ac75aa7ac4ec6"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/source-health.log",
+      "sha256": "7e4a5d9e4766f10e6a2f55e18b21f53165fb3be9188210e57f3cb474e6420fa7"
+    },
+    {
+      "path": "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/parity-final.log",
+      "sha256": "5e151b406d2638305fcc6ad021efe7d5eaa1543f288523397bc00f12b39249d7"
+    }
+  ]
+}

@@ -19,6 +19,8 @@ pub mod render_input;
 mod session_frame;
 #[path = "session_hover.rs"]
 mod session_hover;
+#[path = "session_prefix.rs"]
+mod session_prefix;
 #[path = "session_sources.rs"]
 mod session_sources;
 pub use session_frame::{FramePlan, SubmittedFrame};
@@ -34,6 +36,7 @@ use history::RetainedSceneHistory;
 #[derive(Default)]
 pub struct RenderSession {
     revisions: Revisions,
+    pub(crate) prefix: session_prefix::Prefix,
     sources: session_sources::Sources,
     prepared: Option<crate::PreparedScene>,
     prepared_revision: u64,

@@ -4,6 +4,22 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 
+#[derive(Debug)]
+pub(crate) struct BudgetRefusal {
+    requested: u64,
+    limit: u64,
+}
+impl std::fmt::Display for BudgetRefusal {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "GPU resource budget exhausted (requested {} bytes; limit {})",
+            self.requested, self.limit
+        )
+    }
+}
+impl std::error::Error for BudgetRefusal {}
+
 static NEXT_BUDGET: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Debug)]
@@ -65,10 +81,11 @@ impl Budget {
             Some(Permit::admitted(self.clone(), bytes))
         });
         admitted.ok_or_else(|| {
-            anyhow::anyhow!(
-                "GPU resource budget exhausted (requested {bytes} bytes; limit {})",
-                self.limit
-            )
+            BudgetRefusal {
+                requested: bytes,
+                limit: self.limit,
+            }
+            .into()
         })
     }
 }
@@ -115,6 +132,20 @@ pub(crate) struct GpuReservation {
 }
 impl GpuReservation {
     pub fn new(bytes: u64, mut permits: Vec<Permit>) -> anyhow::Result<Self> {
+        let process = gpu_process();
+        let permit = process.reserve(bytes).or_else(|_| {
+            super::optional_residency::evict_all();
+            process.reserve(bytes)
+        })?;
+        permits.push(permit);
+        Ok(Self {
+            bytes,
+            permits,
+            shared: None,
+        })
+    }
+    /// Optional retention cannot evict another host's useful cache to admit itself.
+    pub fn optional(bytes: u64, mut permits: Vec<Permit>) -> anyhow::Result<Self> {
         permits.push(gpu_process().reserve(bytes)?);
         Ok(Self {
             bytes,

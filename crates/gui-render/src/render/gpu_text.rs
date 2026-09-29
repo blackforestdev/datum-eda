@@ -97,9 +97,18 @@ impl Renderer {
         Ok(atlas_upload)
     }
 
-    pub(crate) fn hold_frame_submission(&mut self, queue: &wgpu::Queue) {
+    pub(crate) fn hold_frame_submission(
+        &mut self,
+        queue: &wgpu::Queue,
+        images: Option<&crate::gpu_surface::PrefixImages>,
+    ) {
+        self.surface_attachments.mark_submission(images);
         let mut resources = self.vertex_submission_refs();
-        resources.extend(self.surface_attachments.submission_ref());
+        if let Some(images) = images {
+            resources.extend(images.submission_refs());
+        } else {
+            resources.extend(self.surface_attachments.submission_refs());
+        }
         resources.extend(self.uniform_submission_refs());
         resources.extend(self.atlas.submission_refs());
         resources.extend(self.text_renderer.submission_ref());

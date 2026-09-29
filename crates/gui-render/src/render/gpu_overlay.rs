@@ -125,7 +125,7 @@ impl Renderer {
                 .into_iter()
                 .chain([encoder.finish()]),
         );
-        self.hold_frame_submission(queue);
+        self.hold_frame_submission(queue, None);
         if let Some(batch) = uploads {
             batch.hold(queue);
         }

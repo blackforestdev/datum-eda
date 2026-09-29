@@ -1,6 +1,10 @@
 use super::Renderer;
+use crate::text_gpu::budget::{GpuReservation, Permit};
 use crate::text_gpu::lifetime::{Kind, Observer, Owner, SubmissionRef, Tracked};
 use std::sync::Arc;
+#[path = "gpu_prefix_images.rs"]
+mod prefix_images;
+pub(crate) use prefix_images::{PairIdentity, PrefixImages};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct AttachmentKey {
@@ -38,11 +42,18 @@ pub struct SurfaceAttachmentSnapshot {
     pub payload_bytes: Option<u64>,
 }
 
+struct AttachmentImage {
+    texture: wgpu::Texture,
+    view: wgpu::TextureView,
+}
+
 #[derive(Clone)]
 pub(crate) struct SurfaceAttachment {
     key: AttachmentKey,
     allocation: u64,
-    view: Arc<Tracked<wgpu::TextureView>>,
+    image: Arc<Tracked<AttachmentImage>>,
+    generation: Arc<Permit>,
+    optional_bytes: Arc<crate::text_gpu::budget::Budget>,
 }
 
 /// Keep the resource and its exact reuse identity together. Native admission
@@ -54,6 +65,9 @@ pub(crate) struct SurfaceAttachments {
     generations: Arc<crate::text_gpu::budget::Budget>,
     allocations: u64,
     current: Option<SurfaceAttachment>,
+    optional: Arc<prefix_images::Optional>,
+    optional_registration: Option<crate::text_gpu::optional_residency::Registration>,
+    submitted: [Option<SurfaceAttachmentSnapshot>; 3],
     #[cfg(all(test, feature = "visual", target_os = "linux"))]
     force_replacement: bool,
 }
@@ -69,6 +83,10 @@ impl SurfaceAttachments {
             generations,
             allocations: 0,
             current: None,
+            optional: crate::cpu_alloc::Scope::new("prefix-image-metadata")
+                .with(|| Arc::new(prefix_images::Optional::default())),
+            optional_registration: None,
+            submitted: [None; 3],
             #[cfg(all(test, feature = "visual", target_os = "linux"))]
             force_replacement: false,
         }
@@ -81,27 +99,74 @@ impl SurfaceAttachments {
 
     pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
         if let Some(attachment) = &self.current {
-            attachment.view.set_consumers(consumers);
+            attachment.image.set_consumers(consumers);
+        }
+        let optional = self.optional.0.lock().unwrap();
+        for attachment in optional.prefix.iter().chain(&optional.marker) {
+            attachment.image.set_consumers(consumers);
         }
     }
 
-    pub(super) fn submission_ref(&self) -> Option<SubmissionRef> {
-        self.current
-            .as_ref()
-            .map(|attachment| attachment.view.submission_ref())
+    pub(super) fn submission_refs(&self) -> impl Iterator<Item = SubmissionRef> {
+        let optional = self.optional.0.lock().unwrap();
+        [
+            self.current.as_ref(),
+            optional.prefix.as_ref(),
+            optional.marker.as_ref(),
+        ]
+        .map(|image| image.map(|image| image.image.submission_ref()))
+        .into_iter()
+        .flatten()
     }
 
+    pub(crate) fn begin_attempt(&mut self) {
+        self.submitted = [None; 3];
+    }
+    pub(crate) fn mark_submission(&mut self, images: Option<&PrefixImages>) {
+        self.submitted = if let Some(images) = images {
+            images.snapshots(self.owner.id(), self.allocations)
+        } else {
+            [self.snapshot(), None, None]
+        };
+    }
+    fn usage(&self) -> [Option<(SurfaceAttachmentSnapshot, bool)>; 3] {
+        let mut current = self.snapshots();
+        let mut usage = std::array::from_fn(|_| current.next().map(|s| (s, true)));
+        for submitted in self.submitted.into_iter().flatten() {
+            if !usage.iter().flatten().any(|(current, _)| {
+                current.owner == submitted.owner && current.allocation == submitted.allocation
+            }) {
+                *usage
+                    .iter_mut()
+                    .find(|slot| slot.is_none())
+                    .expect("one coherent submitted image pair") = Some((submitted, false));
+            }
+        }
+        usage
+    }
     fn snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
-        let current = self.current.as_ref()?;
-        Some(SurfaceAttachmentSnapshot {
-            owner: self.owner.id(),
-            allocation: current.allocation,
-            allocations_created: self.allocations,
-            extent: current.key.extent,
-            samples: current.key.samples,
-            format: current.key.format,
-            payload_bytes: current.key.payload_bytes(),
+        self.snapshots().next()
+    }
+    fn snapshots(&self) -> impl Iterator<Item = SurfaceAttachmentSnapshot> {
+        let optional = self.optional.0.lock().unwrap();
+        [
+            self.current.as_ref(),
+            optional.prefix.as_ref(),
+            optional.marker.as_ref(),
+        ]
+        .map(|image| {
+            image.map(|image| SurfaceAttachmentSnapshot {
+                owner: self.owner.id(),
+                allocation: image.allocation,
+                allocations_created: self.allocations,
+                extent: image.key.extent,
+                samples: image.key.samples,
+                format: image.key.format,
+                payload_bytes: image.key.payload_bytes(),
+            })
         })
+        .into_iter()
+        .flatten()
     }
 
     fn ensure(
@@ -132,11 +197,10 @@ impl SurfaceAttachments {
             let bytes = key.payload_bytes().ok_or_else(|| {
                 anyhow::anyhow!("surface attachment extent or format cannot be accounted")
             })?;
-            let generation = self.generations.reserve(1).map_err(|_| {
+            let generation = Arc::new(self.generations.reserve(1).map_err(|_| {
                 anyhow::anyhow!("attachment generation limit reached: one current and one retiring")
-            })?;
-            let reservation =
-                crate::text_gpu::budget::GpuReservation::new(bytes, vec![generation])?;
+            })?);
+            let reservation = GpuReservation::new(bytes, vec![])?;
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("datum-gui-render-msaa"),
                 size: wgpu::Extent3d {
@@ -148,7 +212,12 @@ impl SurfaceAttachments {
                 sample_count: key.samples,
                 dimension: wgpu::TextureDimension::D2,
                 format: key.format,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
+                    | if prefix_images::eligible(key) {
+                        wgpu::TextureUsages::COPY_DST
+                    } else {
+                        wgpu::TextureUsages::empty()
+                    },
                 view_formats: &[],
             });
             self.allocations = self
@@ -157,18 +226,21 @@ impl SurfaceAttachments {
                 .expect("attachment allocation exhausted");
             anyhow::ensure!(healthy(), "surface attachment allocation failed");
             let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-            // The tracked view must be the final local handle before a later
-            // health failure can release its byte and generation reservations.
-            drop(texture);
             let replacement = SurfaceAttachment {
                 key,
                 allocation: self.allocations,
-                view: Arc::new(self.owner.track_reserved(
-                    view,
-                    self.allocations,
-                    Kind::Attachment,
-                    reservation,
-                )),
+                image: Arc::new(
+                    self.owner
+                        .track_reserved(
+                            AttachmentImage { texture, view },
+                            self.allocations,
+                            Kind::Attachment,
+                            reservation,
+                        )
+                        .with_shared_permit(generation.clone()),
+                ),
+                generation,
+                optional_bytes: crate::text_gpu::budget::Budget::new(bytes + 4),
             };
             // Backend error callbacks may report allocation/validation failure
             // during creation. Keep the old reference until this check passes;
@@ -176,15 +248,21 @@ impl SurfaceAttachments {
             anyhow::ensure!(healthy(), "surface attachment replacement failed");
             if let Some(previous) = &self.current {
                 previous
-                    .view
+                    .image
                     .retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
             }
+            self.release_prefix();
             self.current = Some(replacement);
+            self.submitted = [None; 3];
+            let mut optional = self.optional.0.lock().unwrap();
+            optional.suppressed = false;
+            optional.evicted = false;
         }
         Ok(&self
             .current
             .as_ref()
             .expect("MSAA attachment initialized")
+            .image
             .view)
     }
 }
@@ -224,6 +302,19 @@ impl Renderer {
         Ok(self.surface_attachments.allocations != previous)
     }
 
+    /// Current references plus exact images used by this attempt's submission.
+    /// The boolean distinguishes current from already-evicted submitted images.
+    pub fn surface_attachment_usage(
+        &self,
+    ) -> impl Iterator<Item = (SurfaceAttachmentSnapshot, bool)> {
+        self.surface_attachments.usage().into_iter().flatten()
+    }
+    /// Coherent currently referenced working, optional prefix and marker images.
+    /// Submitted-retiring storage remains in the allocation observer separately.
+    pub fn surface_attachment_snapshots(&self) -> impl Iterator<Item = SurfaceAttachmentSnapshot> {
+        self.surface_attachments.snapshots()
+    }
+
     pub fn surface_attachment_snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
         self.surface_attachments.snapshot()
     }
@@ -244,11 +335,33 @@ impl Renderer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    impl SurfaceAttachments {
+        fn submission_ref(&self) -> Option<SubmissionRef> {
+            self.current
+                .as_ref()
+                .map(|attachment| attachment.image.submission_ref())
+        }
+    }
 
     #[test]
     fn attachment_identity_uses_physical_extent_format_and_sample_count() {
         let key = AttachmentKey::new(1200, 800, wgpu::TextureFormat::Bgra8UnormSrgb, 8);
         assert_eq!(key.payload_bytes(), Some(1200 * 800 * 4 * 8));
+        assert!(prefix_images::eligible(AttachmentKey::new(
+            1536, 960, key.format, 8
+        )));
+        assert!(!prefix_images::eligible(AttachmentKey::new(
+            1537, 960, key.format, 8
+        )));
+        assert!(!prefix_images::eligible(AttachmentKey::new(
+            1200, 800, key.format, 4
+        )));
+        assert!(!prefix_images::eligible(AttachmentKey::new(
+            32,
+            32,
+            wgpu::TextureFormat::Rgba16Float,
+            8
+        )));
         assert_ne!(key, AttachmentKey::new(800, 1200, key.format, 8));
         assert_ne!(key, AttachmentKey::new(1200, 800, key.format, 4));
         assert_ne!(

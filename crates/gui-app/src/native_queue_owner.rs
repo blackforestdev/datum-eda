@@ -247,25 +247,29 @@ impl QueueOwner {
     pub(super) fn cancel(&self, host: u64) {
         self.0.borrow_mut().tickets.retain(|id| *id != host);
     }
-    pub(super) fn observe_attachment(
+    pub(super) fn observe_attachments(
         &self,
         host: u64,
-        owner: u64,
-        allocation: u64,
-        payload_bytes: Option<u64>,
+        allocations: impl IntoIterator<Item = (u64, u64, Option<u64>, bool)>,
         submission: u64,
     ) {
         assert!(submission <= self.0.borrow().submitted);
         self.with_attachments(|ledger, completed| {
-            ledger.observe(
-                attachment::Allocation {
-                    host,
-                    owner,
-                    allocation,
-                    payload_bytes,
-                    last_submission: submission,
-                    release_reason: None,
-                },
+            ledger.observe_host(
+                host,
+                allocations
+                    .into_iter()
+                    .map(
+                        |(owner, allocation, payload_bytes, current)| attachment::Allocation {
+                            host,
+                            owner,
+                            allocation,
+                            payload_bytes,
+                            last_submission: submission,
+                            release_reason: (!current)
+                                .then_some("optional_evicted_before_submission"),
+                        },
+                    ),
                 completed,
             )
         });
@@ -460,6 +464,18 @@ mod progress_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+    impl QueueOwner {
+        pub(crate) fn observe_attachment(
+            &self,
+            host: u64,
+            owner: u64,
+            allocation: u64,
+            payload_bytes: Option<u64>,
+            submission: u64,
+        ) {
+            self.observe_attachments(host, [(owner, allocation, payload_bytes, true)], submission);
+        }
+    }
     #[test]
     fn backend_loss_retires_old_epoch_without_faking_or_advancing_new_completion() {
         let loss = Arc::new(AtomicBool::new(false));
