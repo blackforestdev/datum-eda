@@ -136,6 +136,14 @@ impl SurfaceAttachments {
         self.sample_readback = true;
     }
 
+    pub(crate) fn regional_store(&self) -> wgpu::StoreOp {
+        #[cfg(all(test, feature = "visual"))]
+        if self.sample_readback {
+            return wgpu::StoreOp::Store;
+        }
+        wgpu::StoreOp::Discard
+    }
+
     pub(crate) fn admit_damage_views(&mut self, admitted: bool) {
         assert!(self.current.is_none());
         self.damage_views = admitted;

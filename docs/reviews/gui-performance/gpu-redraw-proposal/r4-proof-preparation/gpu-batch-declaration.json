@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "proposal_sha256": "29bdc35a67735b095259515e0982b25697f5ce46c946798a60b55bca623e5509",
+  "max_seconds": 300,
+  "first_failure_stops": true,
+  "tests": [
+    {
+      "kind": "render",
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/deps/datum_gui_render-ca0a5acac071f491",
+      "sha256": "f5e8a79ddb96db9e7d0ade3a538b40b1ef6c23b24e335a90df7e7937dd0ca45f",
+      "test": "visual::visual_capture::offscreen_session_tests::prefix_qualification_tests::painter_hover::regional_p630_four_group_batch"
+    },
+    {
+      "kind": "native",
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/deps/datum_gui-19c6acb98962ab73",
+      "sha256": "02fe2aded1b84ea2e51901465381d3a40972cb08d0fb9bafa45ed4ba138df8a8",
+      "test": "native_gpu::regional_capability_tests::regional_reference_surface_supports_copy_destination"
+    }
+  ],
+  "environment": {
+    "DATUM_GPU_DIAGNOSTIC_BACKEND": "vulkan",
+    "DATUM_NATIVE_TEST_PROJECT": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "DATUM_NATIVE_TEST_BOARD": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "EDA_CLI_BIN": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda"
+  }
+}

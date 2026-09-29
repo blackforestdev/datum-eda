@@ -63,7 +63,7 @@ impl Renderer {
                             depth_slice: None,
                             ops: wgpu::Operations {
                                 load: wgpu::LoadOp::Load,
-                                store: wgpu::StoreOp::Discard,
+                                store: self.surface_attachments.regional_store(),
                             },
                         })],
                         timestamp_writes: measurement

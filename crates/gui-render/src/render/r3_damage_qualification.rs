@@ -58,7 +58,7 @@ pub(super) fn prove() {
     for (fault, label) in [
         (Fault::OldDamageMissing, "omitted old damage"),
         (Fault::MissingSuffixMask, "omitted shared suffix predicate"),
-        (Fault::StaleWorking, "unpresented stale B"),
+        (Fault::StaleWorking, "unrestored atlas"),
     ] {
         pointer(&mut c, Some((0.2, 0.3)));
         exact(&mut c, "negative old presented support", true);
@@ -79,56 +79,27 @@ pub(super) fn prove() {
             "oracle failed to reject {label}"
         );
         assert!(
-            exact(&mut c, "fault recovery reconstructs B", false).as_raw() == expected.as_raw()
+            exact(&mut c, "fault recovery reconstructs C", false).as_raw() == expected.as_raw()
         );
         eprintln!("r3 negative rejected: {label}");
     }
 
-    // Consume both admitted queued-mask generations. Refusal must reconstruct,
-    // preserving exact output without increasing the per-host allowance.
-    let first = c
-        .renderer
-        .damage_masks
-        .restricted(&c.device, &[[0, 0, 1, 1]])
-        .unwrap();
-    let second = c
-        .renderer
-        .damage_masks
-        .restricted(&c.device, &[[1, 0, 2, 1]])
-        .unwrap();
-    pointer(&mut c, Some((0.33, 0.4)));
-    exact(&mut c, "mask-generation pressure full fallback", false);
-    let held = first.submission_ref();
-    let allocation = held.allocation_id;
-    drop((first, second));
-    assert!(
-        Renderer::gpu_process_allocations()
-            .iter()
-            .any(|r| r.id == allocation
-                && r.retiring
-                && r.bytes == 528
-                && r.submission_references > 0),
-        "explicit submitted hold keeps retired mask accounted"
-    );
-    drop(held);
-    assert!(
-        !Renderer::gpu_process_allocations()
-            .iter()
-            .any(|r| r.id == allocation),
-        "last mask hold releases accounting"
-    );
-    pointer(&mut c, Some((0.65, 0.7)));
-    exact(&mut c, "mask pressure released", true);
+    // R4 has no per-frame mapping/mask allocation. Its source IDs are immutable
+    // draw arguments; admission and retirement concern the coherent five images.
     assert!(c.renderer.surface_attachment_reserved_generations() <= 2);
     let images = c
         .renderer
         .surface_attachment_snapshots()
         .collect::<Vec<_>>();
-    assert_eq!(images.len(), 2, "UNORM views must alias A/B allocations");
-    assert!(
+    assert_eq!(images.len(), 5, "UNORM aliases must not add allocations");
+    assert_eq!(images.iter().filter(|image| image.samples == 8).count(), 3);
+    assert_eq!(images.iter().filter(|image| image.samples == 1).count(), 2);
+    assert_eq!(
         images
             .iter()
-            .all(|image| image.samples == 8 && image.payload_bytes.unwrap() <= 45 * 1024 * 1024)
+            .map(|image| image.payload_bytes.unwrap())
+            .sum::<u64>(),
+        79_069_184
     );
     assert!(
         Renderer::gpu_process_allocations()
@@ -154,14 +125,14 @@ pub(super) fn image_lifetime(c: &mut OffscreenRenderer) {
     images.copy(&mut encoder);
     crate::text_gpu::optional_residency::evict_all();
     assert_eq!(c.renderer.surface_attachment_snapshots().count(), 1);
-    assert_eq!(observer.allocations().len(), 2);
+    assert_eq!(observer.allocations().len(), 5);
     c.queue.submit([encoder.finish()]);
     c.renderer.hold_frame_submission(&c.queue, Some(&images));
     drop(images);
-    assert_eq!(observer.allocations().len(), 2);
+    assert_eq!(observer.allocations().len(), 5);
     assert_eq!(
         observer.allocations().iter().filter(|a| a.retiring).count(),
-        1
+        4
     );
     c.device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
     drop(held);
@@ -172,5 +143,5 @@ pub(super) fn image_lifetime(c: &mut OffscreenRenderer) {
         actual.as_raw() == expected.as_raw(),
         "eviction fallback must preserve exact output"
     );
-    eprintln!("r3 A/B aliases, encoded eviction, queue holds and full fallback passed");
+    eprintln!("r4 five-image aliases, encoded eviction, queue holds and full fallback passed");
 }

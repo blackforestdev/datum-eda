@@ -7,6 +7,10 @@ mod painter;
 #[path = "gpu_frame_target.rs"]
 pub(crate) mod target;
 
+#[cfg(all(test, feature = "visual", target_os = "linux"))]
+#[path = "regional_sample_oracle.rs"]
+mod sample_oracle;
+
 impl Renderer {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn render(
@@ -235,6 +239,20 @@ impl Renderer {
         let plan = damage.and_then(|pixels| {
             crate::renderer_state::damage::regional::Plan::new([width, height], pixels.rectangles())
         });
+        #[cfg(all(test, feature = "visual"))]
+        let plan = if fault == crate::gpu_surface::prefix_negative_control::Fault::TileOverflow {
+            let refused = crate::renderer_state::damage::regional::Plan::new(
+                [width, height],
+                &[[0, 0, width, height]],
+            );
+            assert!(
+                refused.is_none(),
+                "tile overflow control must exceed256slots"
+            );
+            refused
+        } else {
+            plan
+        };
         let reuse = plan.is_some();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
