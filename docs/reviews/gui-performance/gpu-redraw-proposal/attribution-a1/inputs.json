@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "source_declaration": "docs/reviews/gui-performance/gpu-redraw-proposal/r4-native-result/declaration.json",
+  "source_declaration_sha256": "664eb72f774b7ea0b811cd7bf6e5e32ef83c9591bbb7570a442d82dc5952f977",
+  "archived_input": "docs/reviews/gui-performance/gpu-redraw-proposal/r4-native-result/raw.tar.gz:gpu-r3-0-candidate-gpu-j5sr6aeq/input-receipt.json",
+  "input_sha256": "2056f8c34abb3cfbfac38a268f1e29aa2016d6a334a2ffdbed68c4aaa65537f5",
+  "cli": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284"
+  },
+  "project": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "copied_from": "/tmp/pm045-admission-hqugp169/project",
+    "excluded": "historical .datum/tool-sessions only",
+    "board_file_sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed"
+  },
+  "reference_png": {
+    "path": "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/reference.png",
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "provenance": "Exact archived baseline-1-gpu0.tar.gz final.png in implementation/S5/pointer-native-batch; reviewed visually, unchanged closed-Console scene. No golden update."
+  },
+  "cases": [
+    {
+      "after": {
+        "camera_center_nm": [
+          151634208.0,
+          95122896.0
+        ],
+        "camera_zoom": 1.0,
+        "cursor": [
+          500.0,
+          150.0
+        ],
+        "device_epoch": 1,
+        "extent": [
+          1280,
+          800
+        ],
+        "hover_surface": "Board",
+        "hover_utf8": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+        "native_cursor": [
+          500.0,
+          150.0
+        ],
+        "pan_active": false,
+        "render_activity": [
+          212,
+          201
+        ],
+        "render_revision": 212,
+        "scale": 1.0,
+        "truncated": false,
+        "window_focused": true
+      },
+      "before": {
+        "camera_center_nm": [
+          151634208.0,
+          95122896.0
+        ],
+        "camera_zoom": 1.0,
+        "cursor": [
+          499.0,
+          150.0
+        ],
+        "device_epoch": 1,
+        "extent": [
+          1280,
+          800
+        ],
+        "hover_surface": "Board",
+        "hover_utf8": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+        "native_cursor": [
+          499.0,
+          150.0
+        ],
+        "pan_active": false,
+        "render_activity": [
+          211,
+          201
+        ],
+        "render_revision": 211,
+        "scale": 1.0,
+        "truncated": false,
+        "window_focused": true
+      },
+      "button": null,
+      "completed_ns": 48684688140,
+      "demand_kind": "pointer",
+      "position": [
+        500.0,
+        150.0
+      ],
+      "received_ns": 48684617380,
+      "route": "authoring_hover",
+      "sequence": 409,
+      "workload": [
+        3538480882726375558,
+        3,
+        410
+      ],
+      "workload_ns": 1445881676432619
+    },
+    {
+      "after": {
+        "camera_center_nm": [
+          151634208.0,
+          95122896.0
+        ],
+        "camera_zoom": 1.0,
+        "cursor": [
+          700.0,
+          270.0
+        ],
+        "device_epoch": 1,
+        "extent": [
+          1280,
+          800
+        ],
+        "hover_surface": "Board",
+        "hover_utf8": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+        "native_cursor": [
+          700.0,
+          270.0
+        ],
+        "pan_active": false,
+        "render_activity": [
+          532,
+          520
+        ],
+        "render_revision": 532,
+        "scale": 1.0,
+        "truncated": false,
+        "window_focused": true
+      },
+      "before": {
+        "camera_center_nm": [
+          151634208.0,
+          95122896.0
+        ],
+        "camera_zoom": 1.0,
+        "cursor": [
+          700.0,
+          269.0
+        ],
+        "device_epoch": 1,
+        "extent": [
+          1280,
+          800
+        ],
+        "hover_surface": "Board",
+        "hover_utf8": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+        "native_cursor": [
+          700.0,
+          269.0
+        ],
+        "pan_active": false,
+        "render_activity": [
+          531,
+          520
+        ],
+        "render_revision": 531,
+        "scale": 1.0,
+        "truncated": false,
+        "window_focused": true
+      },
+      "button": null,
+      "completed_ns": 56184702039,
+      "demand_kind": "pointer",
+      "position": [
+        700.0,
+        270.0
+      ],
+      "received_ns": 56184634766,
+      "route": "authoring_hover",
+      "sequence": 1048,
+      "workload": [
+        3538480882726375558,
+        3,
+        1049
+      ],
+      "workload_ns": 1445889176450024
+    }
+  ],
+  "selection": "None",
+  "focus": "Editor(PaneId(0))",
+  "layout": "single",
+  "selection_rule": "Midpoints of first horizontal and second vertical workload edges, chosen by coordinates before diagnostic timings; no ranking of GPU spans."
+}

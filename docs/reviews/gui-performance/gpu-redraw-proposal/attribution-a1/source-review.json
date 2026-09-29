@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "issue": "dat-gui-performance-implementation-vkq",
+  "source": "424beb32e5f6ce0c9392203df922208494814c0e",
+  "scope": "Source feasibility/self-review, not independent acceptance; no diagnostic implementation or execution.",
+  "packet_sha256": "808f9220527ce2f53a0695f70d09fe0d89be0e1763f3ffbcf1112381c8b083c4",
+  "inputs_sha256": "792bfec10c8e8b6729b8f4eb75d05f890018e398eb28fd9ce50bcd23d39233aa",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_composition.rs": "9187dcc91afa21cc4eb873ed7a37b547331e68e5c83925485810ba500529d818",
+    "crates/gui-render/src/render/gpu_damage_restore.rs": "4ce0c44576e3d508165dce345013f11cc0f6fa7ea83aba017a6f14d7712a7800",
+    "crates/gui-render/src/render/gpu_frame_painter.rs": "879f6164cb6e585059b4f1d3c4554e9775fc392ddcc26745d04f79bde08f8fb0",
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": "349339da4849fef99b7ce9799d248e8aaece20a228a9a89dbfadde2400c1d6f1",
+    "crates/gui-render/src/render/gpu_measurement_resources.rs": "9469a38a8c6cf15e5f6c829d4e32682819d58499e689da15710486668156f18f",
+    "crates/gui-render/src/render/regional_sample_oracle.rs": "878580da8d925eaff4813d771858a7141d456068b20effe51e1c429f465dfab5",
+    "crates/gui-render/src/render/regional_plan.rs": "e506731c9ccae055e3b87dc3ffb597c3027a9647e18afa6e34c7f927f07fbd27",
+    "crates/gui-app/src/native_gpu.rs": "6d429ffd1e18cc35135ecea010b1dd5cf93bb721dc32a1044d50e2871a21b5f5",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/r4-native-result/assessment.md": "2aad83d4f703eb91b8287387affa13b5a03f6ee0e0ace583d1ec76fb92496e8e",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/r4-native-result/analysis.json": "9d1736adef2b29e296aa69e7d88d83f946a9d58be38ca289dcc12626de2c7a64",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/resolve-source-assessment/assessment.md": "2757c2e43a14f5fb2bc7d93e8035f356c81d91c8ffce1ac88edffc4da3b72fd5",
+    "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-28.0.0/src/api/command_encoder.rs": "8668d189b7c7752ecd7a5080a5911ae8d8b24602c56b835c2d00c7e8bea3df69",
+    "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-hal-28.0.1/src/vulkan/command.rs": "d38772cdbaa63eb87a84b0b31ffec0848c70ffc8f26b2743ec7f9e51ed39db36",
+    "/home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wgpu-hal-28.0.1/src/vulkan/adapter.rs": "ad944471311577f1de081f21b1107cde35658c4fab10f6d33d730882eaca8f09"
+  },
+  "source_findings": [
+    "Existing common graph has distinct restore, suffix/resolve, tile composition and complete target-copy owners; controls preserve those owners and introduce no replacement shader.",
+    "Installed wgpu encoder timestamps require TIMESTAMP_QUERY_INSIDE_ENCODERS and explicitly warn about reordering. Vulkan adapter enables encoder/pass timestamp features together when timestamp_valid_bits>=36; actual enabled capability is checked once on diagnostic launch.",
+    "Installed Vulkan encoder uses BOTTOM_OF_PIPE timestamp writes. This supports whole-graph diagnostics but not treating timestamps as arbitrary memory barriers or proving zero perturbation. N/D/M completion controls are mandatory.",
+    "Frozen preparation control is accepted only with identical uploaded bytes and command manifest. Its implementation feasibility is a pre-GPU gate, not permission to duplicate the renderer.",
+    "Common preinitialized T/R make draw-free controls defined and mutually comparable, but initialization/serialized cadence can alter cache/scheduling. No literal historical percentile decomposition or universal hardware floor."
+  ],
+  "external_reference": {
+    "url": "https://docs.vulkan.org/refpages/latest/refpages/source/vkCmdWriteTimestamp.html",
+    "use": "Search result corroborates execution dependency description; full page retrieval was unavailable. Installed source and conservative public-wgpu warning control the proposed method; no stronger guarantee inferred."
+  },
+  "approval_response": "approve GPU attribution study a1",
+  "review_outcome": "Concrete bounded proposed experiment. Correctness, exact operation parity and timestamp support remain explicit post-approval prerequisites. Failure or inconclusive outcome ends the study; no redesign, alternate clock or extended sampling."
+}
