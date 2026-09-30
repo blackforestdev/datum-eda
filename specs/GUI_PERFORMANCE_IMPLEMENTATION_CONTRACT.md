@@ -1,10 +1,34 @@
 # Shared GUI performance implementation and adoption contract
 
-Status: PM045 ratified specification; the 2026-09-27 owner amendment reopens S4
-for GPU redraw architecture correction. Current authorization is solution
-discovery and specification only; a concrete proposal requires separate owner
-approval before implementation, builds or runtime experiments. The earlier
-2026-09-20 S0–S5 execution grant is suspended at this boundary. Runtime acceptance remains separate. Parent:
+## Current owner amendment — PM051
+
+[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md) withdraws GPU execution 4 ms p95 / 8 ms p99 as
+blocking acceptance criteria because their derivation was never validated.
+Historical measurements and their original scopes remain intact; exceedance alone
+is no longer a product defect. Replacement budgets are **undecided**. The distinct
+CPU 4/8 ms limits, GPU-duty and resource caps are unchanged pending their explicit
+provenance audit and owner disposition. All correctness, exact 8× rendering,
+painter order, invalidation/recovery and live/retiring resource obligations remain.
+
+The [baseline-and-budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md) schedules a pinned, representative,
+verified-input/output baseline with complete timing boundaries, instrumentation
+effects, per-trial distributions, counts and variability. Reuse adequate evidence;
+collect only missing evidence under its finite protocol. Observed performance does
+not define acceptability. Replacement binding budgets require an evidence-derived
+responsiveness/hardware/headroom rationale and explicit owner approval; unsupported
+numbers remain undecided. Future binding numerical performance requirements must
+cite derivation, supporting evidence, applicable configurations and review conditions.
+
+This amendment takes precedence over historical unchanged-budget and blanket
+performance-first sequencing clauses below. Functionality follows its own approval
+and correctness gates while baseline/budget and residual S4/S5 qualification remain
+explicitly scheduled; neither performance issue nor qualification is declared complete.
+
+Status: PM045 specification as amended by PM051. R4/A1 evidence remains at its
+recorded scope; GPI-S4-RECONCILE is selected for residual planning and S4/S5
+remain pending. Historical grants below are bounded completed packets, not a new
+runtime campaign. Baseline/budget work is separately scheduled; functionality
+follows its own Frontier approval gates. Runtime acceptance remains separate. Parent:
 `GUI_PERFORMANCE_RECOVERY_PLAN.md`; engineering: `GUI_SHARED_ENGINEERING_CONTRACT.md`;
 budgets and methods: `GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md`.
 
@@ -453,13 +477,14 @@ return the evidence for owner revision; do not waive limits or mark S4 complete.
 After approval, **GPI-S4 closure additionally requires** a production GPU redraw
 correction and bounded proof on pinned F-DOA, Intel P630, X11/Xwayland at 1x in
 the reference pointer configuration that exhibited the failure. Apply the
-unchanged W-POINTER recipe and MET/GPU/ACC/STAT methods: GPU p95 <=4 ms,
-p99 <=8 ms and engine duty <=25% per valid trial. Preserve exact reference
+W-POINTER recipe and MET/GPU/ACC/STAT methods. GPU execution p95/p99
+4/8 ms limits are withdrawn under PM051; engine duty <=25% remains unchanged
+pending the adjacent threshold audit. Preserve exact reference
 pixels, 8x antialiasing, painter order, input/final state, changed-dependency
 invalidation and recovery; account affected live/retiring resources under all
 applicable caps. Explain material CPU regressions without opening a separate
 CPU optimization workstream. Missing conformance, incomplete accounting or
-failed numerical/correctness proof cannot pass this bounded exit. No repeated
+failed correctness or non-withdrawn numerical proof cannot pass this bounded exit. No repeated
 unchanged campaign or speculative parameter sweep is authorized.
 
 The S4 table's original obligations remain; the paragraph above adds an exit
@@ -700,3 +725,16 @@ PM050 reconciles that prerequisite. GPI-S4 proceeds within the already approved
 r4 packet; exact translated samples, all painter clips, complete timing/query
 capacity, metadata and submitted/retiring lifetimes remain proof obligations.
 No runtime acceptance, extra experiment, CPU/DRM scope or closure is inferred.
+
+## Residual qualification reconciliation under PM051
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-RECONCILE -->
+**GPI-S4-RECONCILE (planning).** Reconcile remaining shared-renderer adoption,
+correctness, lifecycle/accounting and qualification obligations against preserved
+R4 and A1 evidence. Distinguish demonstrated renderer defects, non-withdrawn
+budget findings and qualification gaps. Identify a bounded next scope, if needed,
+without a renderer redesign or optimization campaign. GPU 4/8 ms exceedance is
+not a remaining defect. S4/S5 remain pending; this planning selection grants no
+new implementation, build or native-run authority. Baseline/budget derivation is
+separately scheduled in GUI-PERFORMANCE-BASELINE. Neither lane globally blocks
+functionality; actual affected correctness and owner-approval gates still apply.

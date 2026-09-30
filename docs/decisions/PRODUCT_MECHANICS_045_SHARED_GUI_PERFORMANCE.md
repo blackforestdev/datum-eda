@@ -1,5 +1,29 @@
 # Product Mechanics 045: Shared GUI performance and resource ownership
 
+## Current owner amendment — PM051
+
+[PM051](PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md) withdraws GPU execution 4 ms p95 / 8 ms p99 as
+blocking acceptance criteria because their derivation was never validated.
+Historical measurements and their original scopes remain intact; exceedance alone
+is no longer a product defect. Replacement budgets are **undecided**. The distinct
+CPU 4/8 ms limits, GPU-duty and resource caps are unchanged pending their explicit
+provenance audit and owner disposition. All correctness, exact 8× rendering,
+painter order, invalidation/recovery and live/retiring resource obligations remain.
+
+The [baseline-and-budget plan](../../specs/GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md) schedules a pinned, representative,
+verified-input/output baseline with complete timing boundaries, instrumentation
+effects, per-trial distributions, counts and variability. Reuse adequate evidence;
+collect only missing evidence under its finite protocol. Observed performance does
+not define acceptability. Replacement binding budgets require an evidence-derived
+responsiveness/hardware/headroom rationale and explicit owner approval; unsupported
+numbers remain undecided. Future binding numerical performance requirements must
+cite derivation, supporting evidence, applicable configurations and review conditions.
+
+This amendment takes precedence over historical unchanged-budget and blanket
+performance-first sequencing clauses below. Functionality follows its own approval
+and correctness gates while baseline/budget and residual S4/S5 qualification remain
+explicitly scheduled; neither performance issue nor qualification is declared complete.
+
 Status: **ratified specification doctrine** by the owner at GPS-C06.
 Issue: `dat-gui-performance-spec-u9n`. Implementation reservation:
 `dat-gui-performance-implementation-vkq` remains separately gated.
@@ -166,7 +190,8 @@ bounded execution scope. No stencil, image cache, renderer replacement or other
 new mechanism is ratified here. CPU event-loop optimization remains deferred.
 
 After approval, S4 requires the correction and bounded reference-host W-POINTER
-proof at unchanged GPU p95/p99 limits of 4/8 ms and 25% engine duty, with exact
+proof with GPU p95/p99 limits of 4/8 ms subsequently withdrawn by PM051;
+25% engine duty remains unchanged pending audit, with exact
 8x output, correct input/invalidation/recovery and affected resource bounds as
 specified in the implementation contract. Failure or insufficient feasibility
 evidence requires owner review, not a hardware-impossibility claim, silent

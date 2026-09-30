@@ -1,0 +1,58 @@
+{
+  "status": "historical observations reused; representative validated baseline remains incomplete",
+  "selection_rationale": "Use the preserved corrected R4 production candidate because it is the current architecture with exact output/input proof; do not select a faster historical candidate or favorable trials. Stability evidence covers a bounded 30-second trial, not endurance. Reconfirm source, binary and environment coherence in GBB-P01.",
+  "candidate": {
+    "source": "c3949e53ec7d68e70535892262024fa9f340c00f",
+    "binary": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "sha256": "5c1c8f35746b55397f95280799be3b7bc4f28984b76f94514aaac6ef4933816b",
+    "reference_host": "Intel HD Graphics P630 KBL GT2; Vulkan; Mesa 25.0.7-2+deb13u1; X11/Xwayland; 1280x800; scale 1; Bgra8UnormSrgb; exact 8x; Fifo",
+    "fixture": "F-DOA; original r4-native-result/declaration.json pins CLI/model/inputs"
+  },
+  "trials": [
+    {
+      "id": "R4-C-G1",
+      "source": "../gpu-redraw-proposal/r4-native-result/receipt.json",
+      "kind": "native 30-second W-POINTER",
+      "gpu_samples": 1275,
+      "complete_frames": 1278,
+      "p95_ms": 6.700166871139526,
+      "p99_ms": 10.205083644767761,
+      "max_ms": 12.937750394828797,
+      "input": "3600 requests, 1280 integer changes received/completed; exact readiness/final pixels",
+      "timing": "recorded copy-inclusive complete span; no matched quiet trial",
+      "variability": "one trial only; inter-trial variability unknown",
+      "reuse": "Native historical observation; not yet a sufficient representative baseline or instrumentation-effect proof",
+      "current_budget_disposition": "No defect established solely by exceeding withdrawn 4/8 ms figures.",
+      "percentile_method": "Archived reported estimator; preserve values. GBB-P01 must verify method compatibility before reuse in a common cell."
+    },
+    {
+      "id": "painter-hover-C-G1",
+      "source": "../gpu-redraw-proposal/painter-hover-timed-result/receipt.json",
+      "kind": "different candidate/method historical native pointer",
+      "gpu_samples": 1277,
+      "p95_ms": 4.330583465492248,
+      "p99_ms": 5.701750174003601,
+      "max_ms": 5.964166848678589,
+      "reuse": "Retain; do not pool with R4 or choose as baseline because faster",
+      "variability": "one trial only"
+    },
+    {
+      "id": "A1-corrected",
+      "source": "../gpu-redraw-proposal/attribution-a1/corrected-result/report.md",
+      "kind": "Two fixed resident transitions; diagnostic COPY_SRC, common reset and serialized readback",
+      "measured_samples": 560,
+      "reuse": "Reuse conformance, setup and marker-effect findings at their scope, not as native baseline percentiles",
+      "instrumentation": "Marker comparisons inconsistent; completion/GPU contradictions preclude universal overhead subtraction",
+      "native_p95_p99": "Not applicable; no fabricated native tails"
+    }
+  ],
+  "missing": [
+    "Repeatability and representative workload coverage on the same candidate",
+    "Matched complete instrumentation effects with verified delivered input/output",
+    "Demonstrated responsiveness independent of GPU timestamps",
+    "Supported hardware expectations beyond one reference host",
+    "Complete accounting for any CPU/duty/resource claim",
+    "Explicit budget/headroom rationale and owner disposition"
+  ],
+  "no_new_measurements": true
+}

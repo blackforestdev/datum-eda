@@ -1,10 +1,35 @@
 # GUI performance acceptance matrix
 
-Status: GPS-C03 reviewable acceptance specification; final independent packet
-review and owner ratification remain pending. No runtime qualification claimed.
+## Current owner amendment — PM051
+
+[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md) withdraws GPU execution 4 ms p95 / 8 ms p99 as
+blocking acceptance criteria because their derivation was never validated.
+Historical measurements and their original scopes remain intact; exceedance alone
+is no longer a product defect. Replacement budgets are **undecided**. The distinct
+CPU 4/8 ms limits, GPU-duty and resource caps are unchanged pending their explicit
+provenance audit and owner disposition. All correctness, exact 8× rendering,
+painter order, invalidation/recovery and live/retiring resource obligations remain.
+
+The [baseline-and-budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md) schedules a pinned, representative,
+verified-input/output baseline with complete timing boundaries, instrumentation
+effects, per-trial distributions, counts and variability. Reuse adequate evidence;
+collect only missing evidence under its finite protocol. Observed performance does
+not define acceptability. Replacement binding budgets require an evidence-derived
+responsiveness/hardware/headroom rationale and explicit owner approval; unsupported
+numbers remain undecided. Future binding numerical performance requirements must
+cite derivation, supporting evidence, applicable configurations and review conditions.
+
+This amendment takes precedence over historical unchanged-budget and blanket
+performance-first sequencing clauses below. Functionality follows its own approval
+and correctness gates while baseline/budget and residual S4/S5 qualification remain
+explicitly scheduled; neither performance issue nor qualification is declared complete.
+
+Status: specification ratified under PM045 and amended by PM051. Historical
+review milestones below do not establish runtime qualification.
 Parent: `GUI_PERFORMANCE_RECOVERY_PLAN.md`, R11–R20/R38/R40–R41.
 Engineering definitions: `GUI_SHARED_ENGINEERING_CONTRACT.md`, E01–E12.
-The numerical targets below are proposals for review, not measured achievements.
+The remaining ratified numerical limits are not measured achievements. The
+withdrawn GPU limits have no blocking authority; replacements remain undecided.
 
 ## Owner-approved initial qualification limits
 
@@ -127,17 +152,16 @@ fixture admission and rationale.
 | W-IDLE | 1% over 60 s | Not applicable: no actions | Zero Datum-attributed active delta within documented counter resolution | No application work |
 | W-CLAMP | 1% | 0.167 ms at 60/s | Zero camera-induced work during outward no-op window | No camera-induced work during outward no-op window |
 | T0 minimal/shell resize | 5% | 0.833 ms at 60/s | 5% | 0.8/1.6 ms |
-| T1 pointer/pan/zoom/resize | 10% | 1.667 ms at 60/s; 0.833 ms at 120/s | 25% | 4/8 ms |
+| T1 pointer/pan/zoom/resize | 10% | 1.667 ms at 60/s; 0.833 ms at 120/s | 25% | Withdrawn; replacement undecided (PM051) |
 | Preferences scroll/controls | 5% | 0.417 ms at 120/s; controls measured separately per completed transition | 10% | 1.6/3.2 ms |
-| W-PANES | 10% | 50 ms at 2 actions/s | 25% | 4/8 ms |
-| W-WINDOWS | Report duty over actual cycles | Warm open ≤50 ms CPU; close ≤20 ms CPU | 25% during active cycles | 4/8 ms |
-| W-MIXED T1 | 15% total | Report input and PTY-byte denominators separately | 30% | 5/8 ms |
+| W-PANES | 10% | 50 ms at 2 actions/s | 25% | Withdrawn; replacement undecided (PM051) |
+| W-WINDOWS | Report duty over actual cycles | Warm open ≤50 ms CPU; close ≤20 ms CPU | 25% during active cycles | Withdrawn; replacement undecided (PM051) |
+| W-MIXED T1 | 15% total | Report input and PTY-byte denominators separately | 30% | 5 ms p95 unchanged; 8 ms p99 withdrawn (PM051) |
 
 Controls without a fixed action rate use a proposed 5 ms CPU/transition ceiling;
 the duty ceiling applies to the timed stream, not an artificially extended idle
 denominator. Lifecycle failure workloads use REC bounded-work rules and idle
-limits while undrawable; recovery targets are defined in MEM-02; successful recovery uses the T1 4/8 ms
-GPU execution limits per submitted frame. Faults do not excuse unbounded retries.
+limits while undrawable; recovery targets are defined in MEM-02; the former T1 GPU execution 4/8 ms recovery limits are withdrawn by PM051; replacement limits remain undecided. Faults do not excuse unbounded retries.
 
 **MET-04.** DRM active nanoseconds / elapsed nanoseconds gives engine duty, not
 energy, frequency-normalized utilization or per-frame execution. Sum distinct
