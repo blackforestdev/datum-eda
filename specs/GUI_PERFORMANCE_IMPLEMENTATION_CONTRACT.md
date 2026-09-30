@@ -828,7 +828,7 @@ ordinary application cost from measurement overhead, and schedule only the missi
 work to establish the current issue. Do not infer persistent historical overruns
 or start optimization. S4 remains closed and GBB-P05 remains separate.
 
-## Deferred CPU obligation after S4 closure
+## Historical CPU reconciliation before the resize reset
 
 `docs/reviews/gui-performance/cpu-reconciliation/audit.md` completes GPI-CPU-AUDIT.
 CPU investigation is not completed or cancelled by S4 closure. The original open
@@ -858,7 +858,7 @@ CPU establishment packet or investigation. Reconstruct only supported arithmetic
 product rationale and evidence provenance; distinguish missing support and leave
 unsupported proposed budgets undecided. No runtime or optimization authority.
 
-## Derivation precedes CPU investigation
+## Historical derivation-first boundary (subsequently dispositioned)
 
 The owner's subsequent direction requires derivations before CPU work. The
 assessment in `docs/reviews/gui-performance/cpu-reconciliation/derivation.md`
@@ -873,3 +873,54 @@ withdrawn; unsupported replacement budgets remain undecided under PM051/GBB-P05.
 evidence before GPI-CPU-SCOPE. Require product/resource-sharing objectives,
 supported-hardware scope, justified metric mapping and feasibility evidence;
 leave numbers undecided when unsupported. No automatic measurement authority.
+
+## Owner reset: current-host horizontal and vertical resize CPU
+
+The exact subsequent owner direction in
+`docs/reviews/gui-performance/cpu-reconciliation/owner-direction.json` supplies
+investigation objectives and the current-host scope, leaves numerical budgets
+undecided and explicitly resets the CPU investigation to native window resizing.
+It supersedes the historical prerequisite for a validated numerical budget before
+descriptive investigation and the unrelated pointer/control recommendations above.
+The completed audit and derivation assessment are reused, not repeated.
+`ordinary-observation.json` records the separately approved one-launch idle/pointer
+observation without intermediate-path or overhead attribution; GPI-CPU-ESTABLISH
+closes only that narrowed observation, not resize or CPU acceptance.
+
+The bounded proposal is
+`docs/reviews/gui-performance/cpu-reconciliation/resize-investigation.md`.
+It follows the original open resize issue `dat-gui-vertical-resize-cpu-toj`,
+related to this implementation task. Historical kernel/driver suspicion is not
+a current cause. Resize resource/temporal qualification stays nonblocking for
+functionality. No CPU/GPU number gates this investigative packet or supplies
+its defect finding; replacement budgets stay undecided. Formal S5 correctness,
+resource and non-withdrawn qualification obligations remain separate. S4 stays
+closed, and no implementation, rebuild, native execution or new dependency is
+authorized by this planning amendment.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-RESIZE-PLAN -->
+**GPI-CPU-RESIZE-PLAN.** Reuse historical resize records and inspect current shared
+resize owners; reconcile owner direction, roadmap and original issue into one
+finite current-host reproduction/conditional diagnosis proposal. No new runs.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-RESIZE-SCOPE -->
+**GPI-CPU-RESIZE-SCOPE.** Owner disposition on the exact two-launch maximum packet,
+including only conditional existing-phase-clock diagnosis after reproduction.
+No runtime grant is inferred from planning completion or old pointer approval.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-RESIZE-INVESTIGATE -->
+**GPI-CPU-RESIZE-INVESTIGATE.** After approval, run only the finite ordinary resize
+observation and conditional diagnostic launch. Report per-axis CPU/user/system,
+actual geometry/timing, output and accounting, then a supported cause or explicit
+remaining cause gap. Preserve failed observations; no automatic extra campaign,
+optimization, numerical budget or acceptance.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-RESIZE-DISPOSITION -->
+**GPI-CPU-RESIZE-DISPOSITION.** Dispose the bounded resize result at its actual
+scope. Non-reproduction, a supported current cause and inconclusive attribution
+are distinct. Any repair or further investigation requires a concrete separate
+owner scope; no broad qualification or product closure is implied.
+
+<!-- OWNER:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-RESIZE-DISPOSITION:GPI-CPU-RESIZE-DISPOSITION -->
+Dispose the actual bounded result, preserving measured scope, inconclusive
+cause gaps and the requirement for separate concrete repair/further-work approval.

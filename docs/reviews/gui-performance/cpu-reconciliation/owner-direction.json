@@ -5,5 +5,32 @@
   "recorded_at": "2026-09-30T06:41:49Z",
   "scope": "CPU existing-evidence/provenance audit and scheduling only; no runtime or optimization",
   "owner_clarification": "lets not make the same mistake as the p95 or p99 baseline figure that were un substiantiated.",
-  "derivation_first_direction": "we need to establish the derverations prior to diving into THE CPU work."
+  "derivation_first_direction": "we need to establish the derverations prior to diving into THE CPU work.",
+  "subsequent_investigation_direction": {
+    "objectives_statement": "The objectives are to preserve correct, responsive interaction and determine whether the application performs unexplained or avoidable work, particularly when idle. These are investigation objectives, not new numerical acceptance criteria.",
+    "scope_statement": "For this investigation, propose scope limited to the existing reference host and current R4, ordinary pointer interaction and settled idle. Broader hardware policy, pan/zoom, concurrent workloads and replacement budgets remain undecided.",
+    "method_statement": "If comparable-work proof remains unavailable, omit the causal observer-overhead claim rather than treating all CPU observation as impossible.",
+    "ordinary_execution_approval": "Approve this bounded ordinary-mode CPU observation: one R4 launch, one 60-second idle interval, and one 30-second pointer interval. No rebuild, production change, profiling, budget change, or observer-overhead claim.",
+    "basis_disposition_marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:CPU-BASIS-DISPOSITION",
+    "ordinary_scope_marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:CPU-ORDINARY-SCOPE",
+    "disposition": "Investigation objectives/current-host scope supplied; numerical budgets undecided. Limited ordinary observation approved and completed separately, without overhead attribution. This supersedes the prior prerequisite for a ratified numerical basis before descriptive CPU observation."
+  },
+  "resize_reset": {
+    "owner_statement": "Reset this investigation around significant CPU usage during horizontal and vertical window resizing on my current host. Use the historical resize records and current source before proposing work. Reconcile the roadmap with that objective so it stops redirecting agents toward unsupported budgets or unrelated pointer tests. Keep numerical budgets undecided. Present one bounded plan to determine whether the resize problem persists and, if so, identify its cause. Do not create another general performance program.",
+    "recorded_at": "2026-09-30T13:52:43.490217Z",
+    "base_commit": "1c03104a6b7942b619626ab3890f982a56b4c536",
+    "marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:CPU-RESIZE-PLANNING-GRANT",
+    "authorized": "Historical/current-source review, one bounded resize investigation proposal and same-change roadmap/tracker/specification reconciliation.",
+    "excluded": [
+      "New measurements or profiling",
+      "Builds or production changes",
+      "Numerical budget ratification",
+      "Kernel/driver tuning or dependencies",
+      "Automatic optimization",
+      "Reopening S4 or accepting S5"
+    ],
+    "budgets": "undecided; no numerical threshold gates entry or determines an investigative defect finding",
+    "supersedes": "Selected CPU budget-basis/ordinary-pointer recommendations; resize qualification remains nonblocking for functionality. Existing audit/derivation and ordinary observation remain evidence, not repeat prerequisites.",
+    "issue": "dat-gui-vertical-resize-cpu-toj"
+  }
 }

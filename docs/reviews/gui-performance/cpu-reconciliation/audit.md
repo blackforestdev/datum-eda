@@ -1,5 +1,13 @@
 # Deferred CPU investigation after S4 closure
 
+Current scheduling disposition: this completed assessment is retained at its
+recorded scope. The subsequent owner reset and
+[resize investigation](resize-investigation.md) supersede its proposed
+pointer/control packet and numerical-basis prerequisite for descriptive
+investigation. Budgets remain undecided; no repeat audit, derivation or pointer
+trial is a resize prerequisite. See `owner-direction.json` → `resize_reset`.
+
+
 <!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:CPU-AUDITED -->
 Audit at 61be2e83, GUI source unchanged from corrected R4 c3949e53. No new runtime,
 production edit, build, profile or measurement. This explicitly retains the CPU
