@@ -4,7 +4,8 @@ Authority: PM051 and exact owner direction in
 `docs/reviews/gui-performance/baseline-budget/owner-direction.json`.
 Issue `dat-gui-baseline-budgets-j9w8`; Frontier GUI-PERFORMANCE-BASELINE.
 Status: bounded pointer assessment complete; representative baseline incomplete.
-GBB-P04 owner disposition pending; no established replacement acceptance budget.
+GBB-P04 accepted only the limited pointer assessment; replacement budgets remain
+undecided. Residual gaps are scheduled at GBB-P05, planning only and nonblocking.
 Replacement GPU p95/p99: **undecided**. Functionality follows its own Frontier.
 
 ## Evidence already available
@@ -148,3 +149,42 @@ representative baseline was obtained. Seven other workload families and total
 observer/display/hardware evidence remain unqualified. GBB-P04 may disposition
 this limited assessment or request revised scope; it cannot ratify a replacement
 number because none is proposed. No implicit further collection is authorized.
+
+## Owner disposition and scheduled residual gaps
+
+<!-- EVIDENCE:GUI-PERFORMANCE-BASELINE:GBB-P04-UNDECIDED -->
+The exact owner response in
+`docs/reviews/gui-performance/baseline-budget/pointer-owner-disposition.json`
+accepts the limited pointer assessment from commit 805fbb1e. It does not accept
+a representative baseline, ratify replacement numbers, close GPU qualification
+or authorize additional measurement or renderer optimization. Historical results,
+all correctness obligations and unchanged adjacent limits remain intact.
+
+<!-- REQ:GUI-PERFORMANCE-BASELINE:GBB-P05 -->
+**GBB-P05 — Preserve and scope unresolved baseline evidence (planning only).**
+Keep the following gaps scheduled without blocking functionality:
+
+| Gap | Existing evidence / missing requirement | Future planning outcome |
+|---|---|---|
+| Idle | Historical recipes; current causal schedule does not cover the 60-second recipe | Specify a valid duration/zero-work method and reuse credits |
+| Pan | Existing camera semantics; no reconciled held-pan input/camera oracle | Pin accepted gesture and camera/output oracle |
+| Zoom | Existing anchor semantics; receipt lacks fractional wheel deltas | Pin complete delivered-delta and output validation |
+| Preferences scroll/controls | Historical control proof; current observer is Main-only | Reconcile actual control state, host and timing boundaries |
+| Pane transitions | Historical sequence; incomplete per-pane state observation | Pin pane/focus/camera/lifecycle checks |
+| Native window lifecycle | Archived recipes; causal mode rejects another host/epoch | Specify complete host/epoch and lifecycle timing correlation |
+| Mixed interaction | Existing PTY recipe; missing byte/output oracle | Specify input conservation and terminal-output checks |
+| Total instrumentation effects | Timestamp-mode CPU effects measured; semantic observer common to both modes | Define a valid comparison or retain explicit uncertainty |
+| Displayed responsiveness | Exact endpoints are not continuous display evidence | Identify a validated displayed-output method and scope |
+| Supported-hardware expectations | One reference host does not establish product policy | Obtain explicit supported-configuration expectations and rationale |
+| Complete DRM/resource accounting | Full client/live/retiring coverage remains unresolved | Coordinate with residual S4/S5 accounting without duplicating qualification |
+
+Reuse `collection-protocol.md`, `pointer-report.md` and the adjacent threshold
+audit at their recorded scopes. Planning must identify exact missing evidence,
+method capability, finite resource/observation limits and decision value before
+requesting any future execution scope. This step authorizes no collection,
+rebuild, observer implementation, renderer optimization or CPU optimization.
+No automatic execution successor exists. Further execution requires explicit
+owner approval of its concrete scope and a synchronized Frontier update.
+Replacement budgets stay undecided until evidence supports a rationale and the
+owner separately approves making exact values binding. The baseline issue and
+GPU qualification remain open; canonical functionality selection is unchanged.

@@ -13,7 +13,7 @@ claim transferred. Existing S5A execution/acceptance owner boundaries remain.
 The main performance issue is still open, globally nonblocking, with residual
 correctness/adoption/qualification reconciliation selected as GPI-S4-RECONCILE.
 Baseline-and-budget work is explicitly scheduled on GUI-PERFORMANCE-BASELINE /
-`dat-gui-baseline-budgets-j9w8`, now GBB-P04 owner disposition of the limited
+`dat-gui-baseline-budgets-j9w8`, now GBB-P05 residual-gap planning after owner acceptance of the limited
 pointer assessment, nonblocking. Parallel
 lane flags do not authorize agents or simultaneous executions.
 
@@ -71,3 +71,14 @@ total instrumentation effects and displayed/hardware evidence remain gaps.
 The same actual session explicitly releases its synchronized baseline lease and
 beads assignment at GBB-P04. No uncommitted production implementation transfers.
 No further sampling, observer expansion or renderer optimization is automatic.
+
+## Owner disposition recorded
+
+`pointer-owner-disposition.json` accepts only the limited pointer assessment.
+GBB-P04 is complete; GBB-P05 keeps all seven workload families plus total
+instrumentation, displayed response, supported hardware and full DRM/resource
+accounting scheduled. The baseline issue stays open, planning only and unclaimed.
+Replacement budgets remain undecided. No additional measurement or renderer
+optimization is authorized. The prior bounded collection is finished; do not
+reuse its grant for new runs. Functionality stays unblocked under its own gates;
+UVT-S5A-BUILD / S5A-C01 remains canonical. S4/S5 are not resolved.

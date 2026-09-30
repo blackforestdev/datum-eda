@@ -1,5 +1,5 @@
 {
-  "status": "Historical observations retained; new bounded pointer subset complete, representative full baseline incomplete",
+  "status": "Limited pointer assessment accepted by owner; representative full baseline incomplete; residual gaps scheduled at GBB-P05, no new measurement authorized",
   "selection_rationale": "Use the preserved corrected R4 production candidate because it is the current architecture with exact output/input proof; do not select a faster historical candidate or favorable trials. Stability evidence covers a bounded 30-second trial, not endurance. Reconfirm source, binary and environment coherence in GBB-P01.",
   "candidate": {
     "source": "c3949e53ec7d68e70535892262024fa9f340c00f",
@@ -64,5 +64,6 @@
     "new_quiet_trials": 3,
     "representative_baseline_complete": false,
     "budgets": "undecided"
-  }
+  },
+  "owner_disposition": "pointer-owner-disposition.json"
 }

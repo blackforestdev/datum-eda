@@ -1,0 +1,29 @@
+{
+  "owner_statement": "GUI-PERFORMANCE-BASELINE: undecided \u2014 Accept the limited pointer assessment. Replacement budgets remain undecided because seven workload families, total instrumentation effects, displayed responsiveness, supported-hardware expectations, and complete DRM/resource accounting remain unresolved. Preserve these gaps as scheduled work without blocking functionality. No additional measurement or renderer optimization is authorized by this disposition.",
+  "disposition": "accept limited pointer assessment; replacement budgets undecided",
+  "assessment_commit": "805fbb1e",
+  "assessment_sha256": "bed7622eebef195db87c44b6d274f0dfaf99872dfde9c779715a26d95409f751",
+  "step": "GBB-P04",
+  "issue": "dat-gui-baseline-budgets-j9w8",
+  "remaining_workload_families": [
+    "idle",
+    "pan",
+    "zoom",
+    "Preferences scroll/controls",
+    "pane transitions",
+    "native window lifecycle",
+    "mixed interaction"
+  ],
+  "remaining_cross_cutting_gaps": [
+    "total instrumentation effects",
+    "displayed responsiveness",
+    "supported-hardware expectations",
+    "complete DRM/resource accounting"
+  ],
+  "scheduled_step": "GBB-P05",
+  "blocking_functionality": false,
+  "additional_measurement_authorized": false,
+  "renderer_optimization_authorized": false,
+  "representative_baseline_accepted": false,
+  "gpu_qualification_accepted": false
+}
