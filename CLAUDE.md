@@ -173,6 +173,48 @@ the higher layer wins and the lower doc is the one to fix):
 3. `docs/contracts/` — domain tool contracts
 4. `specs/PROGRESS.md` — status truth
 
+### Numerical performance requirements must have an evidentiary basis
+
+A measured baseline, an aspirational target, and a binding acceptance budget are
+different things. Label them explicitly. Never invent a number to complete a
+specification, present a proposed target as measured capability, or promote a
+guideline into a development gate merely through repetition, review or approval.
+
+Before a numerical performance threshold becomes blocking, its controlling
+specification must cite its derivation, supporting representative evidence,
+applicable hardware/backend/workload configurations, measurement limitations,
+and review conditions. Establish the observed baseline with a pinned stable
+candidate, verified input/output, complete metric boundaries, instrumentation
+effects, sample counts and per-trial variability. Reuse adequate evidence. Budget
+selection additionally needs a product rationale: responsiveness, supported-host
+expectations and explicit headroom or improvement assumptions. Neither observed
+performance alone nor owner approval supplies a missing technical derivation.
+If a defensible figure cannot be established, leave it undecided and nonblocking
+pending an explicit owner disposition; do not substitute another arbitrary value.
+
+Review the provenance of an existing threshold before organizing a repair around
+it. Missing provenance requires a specification correction and owner disposition,
+not silent relaxation or an assumption that implementation must eventually meet
+it. Preserve actual measurements and correctness obligations. Audit adjacent
+CPU/GPU/resource thresholds separately; discovery of one unsupported figure
+does not authorize changing all others.
+
+Investigations require a bounded effort and a product decision point. Repeated
+qualification failure must trigger review of both implementation and requirement
+feasibility, including the value of further work relative to deferred product
+functionality. Approval of successive bounded experiments must not become an
+unlimited optimization campaign. Inconclusive evidence is an allowed outcome,
+not automatic authorization for another experiment. Routine setup failures must
+remain distinguishable from measured results; execution recovery remains within
+the owner's actual authorized scope.
+
+Record corrections in the controlling decision/specifications, roadmap and
+active-agent handoff together. A historical numeric failure stays in the record,
+but its interpretation must follow corrected authority; do not claim a withdrawn
+threshold was met. See the
+[GUI budget provenance incident](docs/reviews/gui-performance/baseline-budget/budget-provenance-incident.md)
+for the motivating evidence, owner-reported impact and correction handoff.
+
 ## Current Status
 ### WDQ blocking enforcement retired
 
