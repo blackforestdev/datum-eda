@@ -1,0 +1,8 @@
+{
+  "scope": "S4 priority and closure planning only; no implementation/build/native execution",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "322d54ac52bcbd97e9aaa2a7fea8e4780166b070",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "step": "GPI-S4-RECONCILE",
+  "owner_statement": "Prioritize S4 completion. Reconcile every remaining S4 obligation against the committed implementation and existing proof, including the accepted pointer assessment.\n\nProduce a finite closure checklist identifying:\n\nRequirements already satisfied, with evidence.\nActual remaining S4 implementation or correctness gaps.\nQualification obligations that belong to S5.\nBaseline/budget work retained separately under GBB-P05.\n\nCite the controlling requirement for each claimed blocker. Do not reintroduce withdrawn 4/8 ms gates, restart optimization, or treat all unfinished qualification as S4 implementation work.\n\nReconcile the roadmap with this owner priority. Complete the authorized planning and present the smallest concrete residual implementation/proof scope needed to close S4. If existing evidence already satisfies an obligation, credit it rather than repeating it. Preserve explicit gaps; do not declare closure without evidence."
+}

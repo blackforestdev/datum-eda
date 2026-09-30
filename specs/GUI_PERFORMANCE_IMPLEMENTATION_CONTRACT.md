@@ -738,3 +738,33 @@ not a remaining defect. S4/S5 remain pending; this planning selection grants no
 new implementation, build or native-run authority. Baseline/budget derivation is
 separately scheduled in GUI-PERFORMANCE-BASELINE. Neither lane globally blocks
 functionality; actual affected correctness and owner-approval gates still apply.
+
+## Owner priority: reconcile S4 closure before successor work
+
+The exact owner direction in
+`docs/reviews/gui-performance/s4-closure/owner-direction.json` selects S4 closure
+planning ahead of the prior canonical functionality task. This explicitly
+supersedes that roadmap priority only; functionality remains globally unblocked,
+PM051 budgets stay undecided and no new execution is authorized.
+
+`docs/reviews/gui-performance/s4-closure/checklist.md` and its evidence JSON
+complete GPI-S4-RECONCILE. All 50 carried S2 implementation rows and original S4
+component credits remain usable at scope; shared-session/R4 proof and the corrected
+native attachment ledger supplement them. No demonstrated residual S4 production
+defect was found. Wider S5 and GBB-P05 obligations are preserved individually.
+
+The current reopened S4 paragraph still expressly retains the 25% engine-duty
+exit gate. Complete DRM duty evidence is absent. The checklist proposes explicit
+placement of complete duty/resource/method qualification at S5, retaining its
+unchanged limits and S4 application-owned admission/lifetime correctness. That
+boundary amendment is not effective until the owner approves it. The checklist
+does not itself close S4 or authorize another experiment.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4-CLOSURE-DISPOSITION -->
+**GPI-S4-CLOSURE-DISPOSITION.** Obtain owner disposition on the exact S4/S5
+boundary amendment and governance-only closure packet in the checklist. The
+recommended residual scope has zero production edits, builds and native/GPU runs;
+it reuses committed proof, verifies source/evidence continuity, and closes only
+S4 implementation after ratification. If the owner retains the existing duty gate,
+keep S4 open and request a separately bounded method scope; no method feasibility
+or execution authorization is inferred. S5 qualification and GBB-P05 remain open.

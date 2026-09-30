@@ -6059,6 +6059,12 @@
       "s4_implementation_exit": {
         "status": "Default implementation and bounded affected proof complete; full original qualification remains S5",
         "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json"
+      },
+      "s4_closure_credit": {
+        "implementation": "Bounded implementation credited by historical S4 readiness and shared-session native host/terminal proof",
+        "evidence": "docs/reviews/gui-performance/s4-closure/checklist.md",
+        "qualification_due": "S5",
+        "qualification_status": "Preserve original acceptance rule and partial/planned replay; no complete qualification inferred"
       }
     },
     {
@@ -6133,6 +6139,12 @@
       "s4_implementation_exit": {
         "status": "Default implementation and bounded affected proof complete; full original qualification remains S5",
         "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json"
+      },
+      "s4_closure_credit": {
+        "implementation": "Bounded implementation credited by historical S4 readiness and shared-session native host/terminal proof",
+        "evidence": "docs/reviews/gui-performance/s4-closure/checklist.md",
+        "qualification_due": "S5",
+        "qualification_status": "Preserve original acceptance rule and partial/planned replay; no complete qualification inferred"
       }
     },
     {
@@ -9775,6 +9787,12 @@
       "s4_implementation_exit": {
         "status": "Default implementation and bounded affected proof complete; full original qualification remains S5",
         "evidence": "docs/reviews/gui-performance/implementation/S4/readiness/result.json"
+      },
+      "s4_closure_credit": {
+        "implementation": "Bounded implementation credited by historical S4 readiness and shared-session native host/terminal proof",
+        "evidence": "docs/reviews/gui-performance/s4-closure/checklist.md",
+        "qualification_due": "S5",
+        "qualification_status": "Preserve original acceptance rule and partial/planned replay; no complete qualification inferred"
       }
     },
     {
@@ -39720,5 +39738,24 @@
       "Separate owner UX/product acceptance; CPU event-loop optimization deferred; PM047 unchanged.",
       "Nonblocking resize, temporal/T2/unadmitted schematic exclusions; no dependency/license/backend/prototype or numerical budget change."
     ]
+  },
+  "s4_closure_reconciliation": {
+    "status": "Planning complete; bounded implementation credits retained, proposed S4/S5 duty boundary awaits owner disposition; S4 not closed",
+    "evidence": "docs/reviews/gui-performance/s4-closure/checklist.md",
+    "inventory": "docs/reviews/gui-performance/s4-closure/evidence-reconciliation.json",
+    "credited_carried_rows": 50,
+    "demonstrated_residual_implementation_defects": [],
+    "current_contractual_blockers": [
+      {
+        "id": "C13",
+        "source": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+        "clause": "GPU redraw architecture S4 exit paragraph: engine duty <=25%; missing conformance/non-withdrawn numerical proof cannot pass",
+        "gap": "Complete DRM client/context lifetime duty unavailable",
+        "proposed_disposition": "Owner-ratified S5 qualification placement; unchanged duty limit, no measurement grant"
+      }
+    ],
+    "s5_qualification_preserved": true,
+    "baseline_budget_owner": "GUI-PERFORMANCE-BASELINE / GBB-P05",
+    "execution_authorized": false
   }
 }

@@ -1,0 +1,1900 @@
+{
+  "reviewed_head": "322d54ac52bcbd97e9aaa2a7fea8e4780166b070",
+  "current_gui_source": "c3949e53ec7d68e70535892262024fa9f340c00f",
+  "current_gui_diff_from_candidate": [],
+  "delta_since_r4_gpu_proof": [
+    "crates/gui-app/src/native_attachment_ledger.rs",
+    "crates/gui-app/src/native_queue_progress_tests.rs",
+    "crates/gui-render/src/render/gpu_surface.rs"
+  ],
+  "delta_proof": "c3949e53: 23 native queue/ledger tests, full union retirement/device loss; r4-native-result and accepted pointer trials cover actual native path",
+  "historical_s4_source_continuity": [
+    {
+      "path": "crates/gui-app/src/runtime_terminal_render.rs",
+      "prior_sha256": "5103b6958c9a381fd0dacac2c14c7f527326416eb77dce1137cec363ed78be38",
+      "current_sha256": "b12062e5868fa7f8822dc8e76e201820033228cfd93e81b1e9c64b10de102736",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-app/src/terminal_core_adapter.rs",
+      "prior_sha256": "ab775455c2504af8e98af045186586ebd57648bf23e86315f8edbc0e9d94281c",
+      "current_sha256": "db504a90bd081d5ee822b28582bed83dc70acb8457c29513a1f5849d096141fa",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-app/src/terminal_session_render.rs",
+      "prior_sha256": "14cf2250822f3ea7c911b062483fda0e093e2db42433942e9977ae1212e10ddb",
+      "current_sha256": "cc6fea4aa4488b30a23812a492c304ad4da5f00647421f54799532997cb8785a",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-app/src/native_dialog_hit_tests.rs",
+      "prior_sha256": "0d99b23b4dbaaab26f38c9c8db111f72ef0c2da116a099d7f3381336f4644084",
+      "current_sha256": "ee8ed3dcdb9477ee1ee77671d57c4ce5d17a995c1b60b92b4f443a4e9b18b226",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "prior_sha256": "b2d5aedcc458041e1fb26511b71933d308613f1e3b79dd0fc7cad5a67b50c950",
+      "current_sha256": "6fa5df85f6c209c60cc0ac85ab1825269183995cc87e80156ea5685265fef062",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-app/src/native_device_recovery.rs",
+      "prior_sha256": "b1cf04930825560600e121d82d40885c210879e8ad9eb7a6e28be1c5f2613fb3",
+      "current_sha256": "f4b07c6a54fde53d1fdb16d9494988f237137c6531f697cc6e6a8a27f3135842",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/slot_generations.rs",
+      "prior_sha256": "a1b292cbca1c8f82d9218c705303b14d82383a3162012e280ec7753a0205a9b6",
+      "current_sha256": "a1b292cbca1c8f82d9218c705303b14d82383a3162012e280ec7753a0205a9b6",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/render/terminal_texture_generations.rs",
+      "prior_sha256": "a009f7a401f756df1dbbaffd1b48c2d25814c70eb3dd540f257f70c0688eeea7",
+      "current_sha256": "a009f7a401f756df1dbbaffd1b48c2d25814c70eb3dd540f257f70c0688eeea7",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/lifetime.rs",
+      "prior_sha256": "edc7f7d1318ce74707bc29fc7ce516b06ea7dadb13b6ca4aed8ec7eb1230e662",
+      "current_sha256": "699bbc430ec214d51a64ddb35afeacef153d9765d559fb24dbe2eb6b9096b686",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/lifetime_state.rs",
+      "prior_sha256": "5b4a05b5fdc291b11c97a78eab4e7c1ed635123eb4500bd033316690d49fe481",
+      "current_sha256": "5b4a05b5fdc291b11c97a78eab4e7c1ed635123eb4500bd033316690d49fe481",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/render/resource_consumers.rs",
+      "prior_sha256": "0128bb6b96c3478729448efd747bcaf624481d278fcb56f2c989e71fe3fbbad7",
+      "current_sha256": "cac68e3bec4c1b4dd762b6b56cf0b8cb0793e4eb11e572ada152d973b961a576",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-render/src/text_gpu/allocation_host.rs",
+      "prior_sha256": "4ff9074b9e10b6fa191a41044da9cdbbfa87b1f95bd0c41e3d00e03b6fe0e910",
+      "current_sha256": "4ff9074b9e10b6fa191a41044da9cdbbfa87b1f95bd0c41e3d00e03b6fe0e910",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/private_text_call.rs",
+      "prior_sha256": "b228dfc6cfa029702e73b2e58175ac70cf6b2f47e217fbf88f62a0f211d9cefd",
+      "current_sha256": "7ad455766bad7cebb8f983f22011fc5693a1a07dc37a0ff435bbb7b39bf346e5",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-render/src/cpu_alloc.rs",
+      "prior_sha256": "f29abb79450266f85df732eb9f9f5cfb04705bfeb90759d23791d13165d9f8cc",
+      "current_sha256": "eccfc53450e2751a2ee30ce6273c5f0d646c24e8cfa2b382e0a5c584b2fd286b",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-render/src/font_owner.rs",
+      "prior_sha256": "c3719e300f67488634bb172289d10e54c4c3f9fbbb074e10ff6f3bc11e1affc3",
+      "current_sha256": "c3719e300f67488634bb172289d10e54c4c3f9fbbb074e10ff6f3bc11e1affc3",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/render/font_catalog.rs",
+      "prior_sha256": "0cb0213ff53ff937bbe6683a40a4d27338d49394f835dc61cfae8b9cd5bce9d8",
+      "current_sha256": "0cb0213ff53ff937bbe6683a40a4d27338d49394f835dc61cfae8b9cd5bce9d8",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/render/measurement_owner.rs",
+      "prior_sha256": "f0eed36b13293951cecf509e04a1cfbd6546814198528b7a35cf75816e9e0e20",
+      "current_sha256": "87b6731584b984b7779455ec1844df143bf1e10da8eb3876048f41f5da7e9e57",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-render/src/render/glyph_preparation.rs",
+      "prior_sha256": "46e0aa6e7fb73ee7e7a6c7d56b461a5c6cfa2d96d5a9c0160ca70d972a6b6cae",
+      "current_sha256": "46e0aa6e7fb73ee7e7a6c7d56b461a5c6cfa2d96d5a9c0160ca70d972a6b6cae",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/render/text_buffer_cache.rs",
+      "prior_sha256": "458d4adebd71c06f48d3dfd8b1b437683a7cdaecb40a2c7d429a52c7af25759e",
+      "current_sha256": "39a13f682a0cb3c42f893c53f75bf9a06655184adbc9d361b04b5991249084f8",
+      "unchanged": false
+    },
+    {
+      "path": "crates/gui-render/src/render/measurement_cache.rs",
+      "prior_sha256": "7cbe71947dbe951e2a181e649d65a4f50774f2659201fe1dda1cb94a9bacb65d",
+      "current_sha256": "7cbe71947dbe951e2a181e649d65a4f50774f2659201fe1dda1cb94a9bacb65d",
+      "unchanged": true
+    },
+    {
+      "path": "crates/gui-render/src/render/text_metrics.rs",
+      "prior_sha256": "72fc75280a17e62de4888cb0233daae009aa20c556fdefd603bf902658a73d76",
+      "current_sha256": "72fc75280a17e62de4888cb0233daae009aa20c556fdefd603bf902658a73d76",
+      "unchanged": true
+    }
+  ],
+  "carried_s2_count": 50,
+  "carried_s2_rows": [
+    {
+      "id": "AC-05",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "ACC-01"
+      },
+      "acceptance_rule": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
+      "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json",
+        "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP01-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP01 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E02"
+      },
+      "acceptance_rule": "Zero extra solves after warmup; cached and uncached hit geometry identical",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Zero extra solves after warmup; cached and uncached hit geometry identical",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP02-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP02 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E02"
+      },
+      "acceptance_rule": "Each changed key resolves correct geometry",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Each changed key resolves correct geometry",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP02-02",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP02 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E02"
+      },
+      "acceptance_rule": "Zero extra warm solves in supported set; bounded churn outside it",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Zero extra warm solves in supported set; bounded churn outside it",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP03-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP03 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "One parse per process owner lifetime; zero closed menu preparation",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "One parse per process owner lifetime; zero closed menu preparation",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP03-02",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP03 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "Availability current, other instance independent",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Availability current, other instance independent",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP04-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP04 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E09"
+      },
+      "acceptance_rule": "Exact identity/aliases preserved with zero candidate-string allocation/copy",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Exact identity/aliases preserved with zero candidate-string allocation/copy",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP06-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E03"
+      },
+      "acceptance_rule": "Zero eligible world re-encoding; current uniform/scissor",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Zero eligible world re-encoding; current uniform/scissor",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP06-02",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E03"
+      },
+      "acceptance_rule": "Affected encoding rebuilds and exact pixels remain correct",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Affected encoding rebuilds and exact pixels remain correct",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP07-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP07 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R07 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E03"
+      },
+      "acceptance_rule": "Painter/layer/primitive/triangle order exact; native pixel parity and draw counts",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Painter/layer/primitive/triangle order exact; native pixel parity and draw counts",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP08-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP08 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E03"
+      },
+      "acceptance_rule": "Zero world upload bytes",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Zero world upload bytes",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP08-02",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP08 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E03"
+      },
+      "acceptance_rule": "Correct new triangle and stroke bytes uploaded; no false identity",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Correct new triangle and stroke bytes uploaded; no false identity",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP08-03",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP08 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E03"
+      },
+      "acceptance_rule": "CPU/GPU lifetime and final resource content correct within budgets",
+      "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "CPU/GPU lifetime and final resource content correct within budgets",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP15-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP15 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "Warm zero shaping; miss correct changed key; uncached width parity",
+      "implementation_due": "Implemented at S4 for current shared width owner and mapped inspector consumer; original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_inspector_width_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Warm zero shaping; miss correct changed key; uncached width parity",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP15-02",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP15 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "Bounded key and payload memory; oversized bypass and ownership release",
+      "implementation_due": "Implemented at S4 for the E04 scalar measurement-cache owner; original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_width_completion_work",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Bounded key and payload memory; oversized bypass and ownership release",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP17-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP17 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "No missing/stale text; atlas generation correctly invalidates signature",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "No missing/stale text; atlas generation correctly invalidates signature",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "HP17-02",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP17 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "Existing bounded two-generation policy or independently proven equivalent",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Existing bounded two-generation policy or independently proven equivalent",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-WORLD-CPU",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: shared retained document CPU/history admission and lifetime ownership. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_construction_admission_work.lifetime_completion",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-WORLD-HISTORY",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: shared retained document CPU/history admission and lifetime ownership. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_construction_admission_work.lifetime_completion",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-SHAPED-LOCAL",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: shaped-payload construction, retained capacity and process-owner admission. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_text_owner_reconciliation.owner_admission_completion",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-SHAPED-TOTAL",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: shaped-payload construction, retained capacity and process-owner admission. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_text_owner_reconciliation.owner_admission_completion",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S4/shaped-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/text-process-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S4/private-text-heap/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-LABEL-ENTRIES",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "128 shaped buffers per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for shared native/composed label count and allocated key retention; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_composed_label_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "128 shaped buffers per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-LABEL-KEYS",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "32KiB label key text per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for shared native/composed label count and allocated key retention; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_composed_label_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "32KiB label key text per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-WIDTH-ENTRIES",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "256 width entries/thread with all owner threads enumerated; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for retained scalar-cache owner; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_width_cache_ownership_work",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "256 width entries/thread with all owner threads enumerated; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-WIDTH-KEYS",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "64KiB width key text/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for retained scalar-cache owner; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_width_cache_ownership_work",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "64KiB width key text/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-WIDTH-PAYLOAD",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "128KiB total owned width payload/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for retained scalar-cache owner; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_width_cache_ownership_work",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "128KiB total owned width payload/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-MESH-ENTRIES",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "256 mesh entries/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for retained control entry/CPU/GPU ownership and admission; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_control_retention_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "256 mesh entries/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-MESH-CPU",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "4MiB control mesh CPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for retained control entry/CPU/GPU ownership and admission; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_control_retention_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "4MiB control mesh CPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-MESH-GPU",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "4MiB control mesh GPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for retained control entry/CPU/GPU ownership and admission; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_control_retention_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "4MiB control mesh GPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-WORLD-GPU",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "64MiB GPU world/encoded-resource capacities per document; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for current document world-buffer capacities/admission and encoded shared-resource retention; original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_world_gpu_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "64MiB GPU world/encoded-resource capacities per document; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-SCREEN-GPU",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "16MiB host-local screen buffers; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for host screen/uniform/glyph-instance/terminal-quad allocation capacities, including replacement and retirement; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_host_buffer_admission_work",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "16MiB host-local screen buffers; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-REPLACEMENT",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "one old plus one new live cold replacement generation; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: retained GPU resource generation admission and replacement continuity. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_replacement_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "one old plus one new live cold replacement generation; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-ATLAS-LOCAL",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "32MiB atlas/renderer actual format/mips/extent; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for Datum-owned atlas texture capacities and live/retiring/shared ownership; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_resource_subcaps_work",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "32MiB atlas/renderer actual format/mips/extent; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-ATLAS-TOTAL",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "128MiB aggregate atlas; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4 for Datum-owned atlas texture capacities and live/retiring/shared ownership; full original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_resource_subcaps_work",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+        "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "128MiB aggregate atlas; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-STAGING-LOCAL",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-STAGING-TOTAL",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: complete shared resource ownership and PM047 guarded private text construction/default native refusal integration. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "MEM-GPU-TOTAL",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-02"
+      },
+      "acceptance_rule": "512MiB all application GPU allocations including attachments and shared resources counted once; aggregate and every subcap apply together; required content cannot be omitted.",
+      "implementation_due": "Implemented at S4: process GPU capacity admission and lifetime retention. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_resource_completion",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "512MiB all application GPU allocations including attachments and shared resources counted once; aggregate and every subcap apply together; required content cannot be omitted.",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "REUSE-SCREEN",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-01"
+      },
+      "acceptance_rule": "Only exact dirty ranges plus documented alignment uploaded",
+      "implementation_due": "Implemented at S4: exact screen snapshots, bounded upload receipts and production shared-resource consumer incidence. Original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_upload_frame_work.consumer_completion",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json",
+        "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/uniform-changed-ranges/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Only exact dirty ranges plus documented alignment uploaded",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "REUSE-WORLD-ALLOC",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+        "anchor": "MEM-01"
+      },
+      "acceptance_rule": "Zero new world-buffer allocations",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json",
+        "docs/reviews/gui-performance/implementation/S2/vertex-allocation/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Zero new world-buffer allocations",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "REUSE-TEXT-KEY",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "Shaping changes exactly when semantic shaping key changes",
+      "implementation_due": "Implemented at S4 for current production shaping/layout dependencies; original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_text_dependency_completion",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Shaping changes exactly when semantic shaping key changes",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "REUSE-TEXT-LAYOUT",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E04"
+      },
+      "acceptance_rule": "Layout correct; unchanged shaping reused; GPU placement/atlas/target current",
+      "implementation_due": "Implemented at S4 for current production shaping/layout dependencies; original qualification remains S5.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "s4_text_dependency_completion",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-relayout/result.json",
+        "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json",
+        "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-layout/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Layout correct; unchanged shaping reused; GPU placement/atlas/target current",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "REUSE-CONTROL-KEY",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "CTL-01"
+      },
+      "acceptance_rule": "Correct changed mesh, translated/scissored unchanged mesh reused",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/control-mesh/result.json",
+        "docs/reviews/gui-performance/implementation/S2/workspace-control-owner/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Correct changed mesh, translated/scissored unchanged mesh reused",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-GEOMETRY",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Geometry contributions and clear/load/store dependencies correctly represented once",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Geometry contributions and clear/load/store dependencies correctly represented once",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-BACKGROUND",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Background pass active only with contributing graphics, before main text",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Background pass active only with contributing graphics, before main text",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-TEXT",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Contributing text rendered after geometry/background; no unjustified empty stage",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Contributing text rendered after geometry/background; no unjustified empty stage",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-FOREGROUND",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Foreground active only for admitted graphics above text",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Foreground active only for admitted graphics above text",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-MENU-CARD",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Card occludes underlying geometry AND text in proper overlay order",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Card occludes underlying geometry AND text in proper overlay order",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-MENU-TEXT",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Menu text above card only when card and contributing text active",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json",
+        "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Menu text above card only when card and contributing text active",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-COUNTS",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Initial graph2+B+F+M+MT maximum6; remove noncontributing stages absent documented dependency; every retained extra stage names resource/ordering reason",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Initial graph2+B+F+M+MT maximum6; remove noncontributing stages absent documented dependency; every retained extra stage names resource/ordering reason",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    },
+    {
+      "id": "PASS-RESOLVE",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "PASS-01"
+      },
+      "acceptance_rule": "Exact load/store/resolve compatibility, existing sample quality and atlas lifetime; no painter/fractional-pixel change",
+      "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+      "recorded_implementation_gaps": [],
+      "credited_evidence": "Original row implementation credit retained by s4_readiness",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+      ],
+      "qualification_owner": "GPI-S5",
+      "qualification_predicate": "Exact load/store/resolve compatibility, existing sample quality and atlas lifetime; no painter/fractional-pixel change",
+      "disposition": "Credit recorded bounded implementation; do not invent a new code task or promote original qualification to passed."
+    }
+  ],
+  "explicit_s4_rows": [
+    {
+      "id": "HP09-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP09 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "acceptance_rule": "Zero hidden render snapshot/preparation/world copy",
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E02"
+      },
+      "test": {
+        "status": "planned; not executed",
+        "id": "proof_hp09_01",
+        "positive": "Zoom/hover with terminal/history closed",
+        "negative_control": "Snapshot hidden screen/history",
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+      }
+    },
+    {
+      "id": "HP09-02",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP09 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "acceptance_rule": "Current accumulated content shown, PTY bytes/state preserved",
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E02"
+      },
+      "test": {
+        "status": "planned; not executed",
+        "id": "proof_hp09_02",
+        "positive": "Continue PTY/feedback hidden then reopen",
+        "negative_control": "Stop hidden core or drop history",
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+      }
+    },
+    {
+      "id": "HP25-01",
+      "source_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP25 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        },
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R38 -->"
+        }
+      ],
+      "acceptance_rule": "Separate topology/environment/results; concurrent SIGSEGV dat-gpu-test-concurrency-6dt stays open",
+      "engineering_ref": {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "anchor": "E09"
+      },
+      "test": {
+        "status": "planned; not executed",
+        "id": "proof_hp25_01",
+        "positive": "Run serial shared-device multiwindow lifecycle scenario",
+        "negative_control": "Report serial pass as concurrent crash fix",
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+      }
+    }
+  ],
+  "evidence_sha256": {
+    "docs/reviews/gui-performance/implementation/S4/readiness/result.json": "6e01a81a9708d021470b8896ee63790b15ffee865548016949ae1c8b66543e80",
+    "docs/reviews/gui-performance/implementation/S4/guarded-native-layout/result.json": "473e633dd574abec0ff269e80fbf6cea3dde4cce5994c03b30265361d11e0545",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/receipt.json": "8a355b0f63274aa8e88eaf585b22964c2f88bf0751bcbcf483c31402c8a8c03f",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-prefix-images/native.log": "94f2a463da4b15c3b2112281b0618758154454757d86496620c86f2340767073",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-terminal-lease/receipt.json": "e932e91596a033b15a562a45ba89fef653fc2ccf42bdb44e6ce8e2eafa0df5d1",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-preparation-profile/receipt.json": "15b81917f1108565f2598a25bc7ddd287d87c1586b8cd8c0d9192f03e85ac02c",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-normalized-graph/receipt.json": "b4c18167d3c3d76a1e680c0d2a747d3e5a19f9263c3fb40c4f955ac4e4ca8d32",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/implementation-source-contract/receipt.json": "d196b4c6a58d8d0b4bc1d02cbfe526d893c9bd5490c7de2c0d157df1707f7f8a",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/r4-gpu-proof/receipt.json": "8578374784a2561bee166d9c774c34483a1c5318eebbe95a9ecef73a904e214b",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/r4-native-result/receipt.json": "e49a10478368784ab428f1b87bd3a37a0f3aaf2c56420a9fc2b17948454ef3de",
+    "docs/reviews/gui-performance/baseline-budget/pointer-report.md": "bed7622eebef195db87c44b6d274f0dfaf99872dfde9c779715a26d95409f751",
+    "docs/reviews/gui-performance/baseline-budget/pointer-receipt.json": "c09b52fd42e237be78b8de110d2084722eb94272de3b3c645dc27fecfc3c6f48",
+    "docs/reviews/gui-performance/baseline-budget/pointer-owner-disposition.json": "626dc9817976958d9b2a42100d259b5c3abfe7723ef6489a5156b22644ea86c0",
+    "docs/reviews/gui-performance/implementation/S5/console-reconciliation/result.json": "674d5976262ca5ca20edb547229770f9fc05106d32b99ac5faa4379e0daed1e3",
+    "docs/reviews/gui-performance/implementation/S5/device-cpu-cache-retention/result.json": "d372476f5e27feb6cd23b382a514e462cc96638182a5605093f914300883ea43",
+    "docs/reviews/gui-performance/implementation/S5/scoped-reallocation-peak/result.json": "6a74ab3f1862379d4543942736707bf2eb1fd5597370fdbf067d3f1e5248adfb",
+    "docs/reviews/gui-performance/implementation/S5/private-allocation-lifetimes/result.json": "b7c54a7e209cfe750cf78687e0e204564c0ef29911b6171f2e1b2087de2d1e8f"
+  },
+  "no_new_execution": true
+}
