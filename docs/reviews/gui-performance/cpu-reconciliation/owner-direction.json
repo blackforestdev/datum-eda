@@ -1,0 +1,8 @@
+{
+  "owner_statement": "The original repair included CPU investigation after GPU work. That work was deferred and remains unresolved. Reconcile it explicitly with the S4 closure: identify the controlling obligations, evidence credited, and where CPU investigation is scheduled. First audit existing CPU evidence and threshold provenance, separating ordinary application cost from measurement overhead. Define only the missing work needed to establish the current issue. Do not assume the historical overruns remain, start optimization automatically, or silently omit this part of the original task.",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "base_commit": "61be2e838f6d7c206f2d482145907bba9df25cdb",
+  "recorded_at": "2026-09-30T06:41:49Z",
+  "scope": "CPU existing-evidence/provenance audit and scheduling only; no runtime or optimization",
+  "owner_clarification": "lets not make the same mistake as the p95 or p99 baseline figure that were un substiantiated."
+}

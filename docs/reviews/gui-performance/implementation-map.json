@@ -39765,5 +39765,21 @@
     ],
     "baseline_budget_lane": "GBB-P05 separate, budgets undecided",
     "no_new_execution": true
+  },
+  "cpu_reconciliation": {
+    "status": "Audit complete; deferred original CPU issue explicitly scheduled; ordinary current cost/defect unresolved",
+    "evidence": "docs/reviews/gui-performance/cpu-reconciliation/audit.md",
+    "inventory": "docs/reviews/gui-performance/cpu-reconciliation/evidence.json",
+    "issue": "dat-gui-pointer-layout-x1r",
+    "steps": [
+      "GPI-CPU-AUDIT",
+      "GPI-CPU-SCOPE",
+      "GPI-CPU-ESTABLISH"
+    ],
+    "s4_remains_complete": true,
+    "historical_overruns_not_assumed_current": true,
+    "new_thresholds": [],
+    "execution_authorized": false,
+    "optimization_authorized": false
   }
 }

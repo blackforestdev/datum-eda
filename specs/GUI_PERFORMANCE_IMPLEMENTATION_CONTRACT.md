@@ -816,3 +816,38 @@ GBB-P05 and displayed responsiveness/budget derivation remain separate.
 **GPI-S5-PLAN-DISPOSITION.** Decide the finite plan's method-feasibility follow-up
 or defer S5. No execution grant is inferred from planning acceptance; production,
 dependency, build and native measurement scope must be concrete before approval.
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:CPU-AUDIT-GRANT -->
+The owner explicitly selects CPU evidence/provenance reconciliation after S4
+closure; exact direction is in `docs/reviews/gui-performance/cpu-reconciliation/owner-direction.json`.
+This is not approval of the pending S5 method-feasibility proposal or execution.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-AUDIT -->
+**GPI-CPU-AUDIT.** Audit existing CPU evidence and threshold provenance, separate
+ordinary application cost from measurement overhead, and schedule only the missing
+work to establish the current issue. Do not infer persistent historical overruns
+or start optimization. S4 remains closed and GBB-P05 remains separate.
+
+## Deferred CPU obligation after S4 closure
+
+`docs/reviews/gui-performance/cpu-reconciliation/audit.md` completes GPI-CPU-AUDIT.
+CPU investigation is not completed or cancelled by S4 closure. The original open
+`dat-gui-pointer-layout-x1r` is reconciled through the explicit steps below in
+`dat-gui-performance-implementation-vkq`. Current R4 quiet pointer evidence still
+includes semantic observation; historical overruns are not asserted to persist.
+No current ordinary-cost or event-loop defect is established. Existing CPU limits
+retain authority but lack validated derivations; no new threshold is proposed.
+GBB-P05 retains budget rationale, while S5 retains full CPU qualification.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-SCOPE -->
+**GPI-CPU-SCOPE.** Decide only the missing ordinary-mode harness/control and finite
+current-cost establishment packet, or explicit deferral. No runtime or optimization
+grant is inferred. The owner's caution against unsubstantiated budgets applies:
+observed cost, acceptable budget and optimization priority are distinct.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-ESTABLISH -->
+**GPI-CPU-ESTABLISH.** Only after explicit concrete execution approval, establish
+current ordinary CPU and measurement contribution using the bounded packet;
+report non-reproduction, measured concern or inconclusive method evidence. Do not
+assume historical overruns persist, invent a threshold or start optimization.
+This remains pending and unapproved; it is not a condition for reopening S4.
