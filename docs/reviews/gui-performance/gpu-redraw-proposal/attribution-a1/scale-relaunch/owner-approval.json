@@ -1,0 +1,8 @@
+{
+  "owner_statement": "Correct and verify A1\u2019s launcher against the established pinned environment. I authorize one relaunch of the unchanged, hash-verified diagnostic executable with the missing scale setting restored. Preserve the failed launch and original measurement limits. No rebuild, renderer change, new study, or additional sampling is authorized. Check all launch prerequisites before execution.",
+  "recorded_at": "2026-09-30T01:23:01Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "step": "GPI-S4",
+  "limits": "One additional launch; original300s/646observations/2200submissions/64MiB CPU/16MiB numeric/512MiB tracked GPU; first failure stops. No rebuild or source edits.",
+  "preserved_failure": "../readback-result/receipt.json"
+}

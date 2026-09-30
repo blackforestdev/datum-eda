@@ -1,0 +1,207 @@
+{
+  "status": "blocked_before_launch",
+  "missing_executable": "/home/bfadmin/Documents/datum-eda/target/release/deps/datum_gui-2b88501e8cc7fcea",
+  "required_sha256": "48b46328d255bc117d30936985c60386fcae75b399da2cce1ab51a5c475f2678",
+  "existing_executable_search": [
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-private-lifetimes-8247ef907e6a-datum-gui",
+      "sha256": "8247ef907e6a071f88cb12e141944a893d7e2435c102c1d0a3629f98eb35c625"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-damage-a8fbeed9eab0-datum-gui",
+      "sha256": "a8fbeed9eab03a18a1534bc25658654b61f6371322dc2620e9cb0feb2a600579"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-startup-35d413855bc1-datum-gui",
+      "sha256": "35d413855bc19cb12a8f69a2915003ed0b08403d92f4ccac8443c07149de1f6a"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-private-buffered-783c49452f9d-datum-gui",
+      "sha256": "783c49452f9d0c4727b17bf3195bbd6082aecb03a9cb426ae2b37d6690b6177e"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-idle-poll-daed651a1e74-datum-gui",
+      "sha256": "daed651a1e749005db75cdd71128c31455002ce0b17a7a1aadb109b6dcf421a8"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-callback-cpu-e439e76d2621-datum-gui",
+      "sha256": "e439e76d26219780e4c6c21677ea12c903e363e6e0535686149c50657fbed5d4"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-private-compact-a76381ff79c1-datum-gui",
+      "sha256": "a76381ff79c190b79e61428e355ca27c0a9747ea182c22089672ba28648ef142"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-scene-0ac241107753-datum-gui",
+      "sha256": "0ac241107753c254e8b2d4f92fe4423d51dbf540dd74c2cadd7b4f720115f92b"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-pass-2d7f8e4effe4-datum-gui",
+      "sha256": "2d7f8e4effe4b752af613fae6d63c71a33970bda4a0bb4514dbe9b9ba7fadd1c"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-datum-gui",
+      "sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-grid-reuse-8eff3ed55ae2-datum-gui",
+      "sha256": "8eff3ed55ae27d075dcfe49014166dba68b8277df65aa981732ef49eeaa7eee5"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-4d645582-datum-gui",
+      "sha256": "e8b7b5061ea381f749a70bf35117ed72db890f052f3fd272142d986f2d58c60e"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-ba24e35a-datum-gui",
+      "sha256": "05fbc6bc8e9e29c439f901ee6107c5c778ddaee1b8690d33840d52ab71e54b1b"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-portal-e2da5a3945b8-datum-gui",
+      "sha256": "e2da5a3945b814795f9d83501e22cf87d846ae63aa1b9a89c9a556565cfacb43"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-3cd685d2-datum-gui",
+      "sha256": "6d3db36c7060218f00c2751728b0bd5938799f4ac48b495c649b65d5a9edda9f"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/baseline-datum-gui",
+      "sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447"
+    },
+    {
+      "path": "target/pm045-independent-replay-artifacts/candidate-raw-input-6c5f3ef8d52f-datum-gui",
+      "sha256": "6c5f3ef8d52fdb1306213fa040e09a309c2a8b74df746832a55725a75f24ac83"
+    },
+    {
+      "path": "target/gpu-timed-recovery-proof/baseline-997b618e-timed-datum-gui",
+      "sha256": "50f7fecb60437a703a65adf37645dc4da0404139bf9e9e32a9ed20f31fc41d53"
+    },
+    {
+      "path": "target/gpu-timed-recovery-proof/candidate-b67568ae-timed-datum-gui",
+      "sha256": "c99846b73986f0806cfd0cdaacca14cfa404b4c77be2f34300e942cda1d294ab"
+    },
+    {
+      "path": "target/pm045-callback-candidate/datum-gui",
+      "sha256": "4dd3ea79b6875e789462fe4ba7566629e603f6b0c30923c689f5f007bebe6801"
+    },
+    {
+      "path": "target/gpu-regional-r4-native-correction/candidate-c3949e53-r4-corrected-datum-gui",
+      "sha256": "5c1c8f35746b55397f95280799be3b7bc4f28984b76f94514aaac6ef4933816b"
+    },
+    {
+      "path": "target/pm045-quad-baseline/datum-gui",
+      "sha256": "b8c1fa1bf390d0dd768554b7b86548a6dc9b9777d8f6fdb5a1c7107f8e7e2b5e"
+    },
+    {
+      "path": "target/pm045-s3-native-a7477cba/datum-gui",
+      "sha256": "465e2be2385ccc1dae0e3dbbe361effed20301dffa90a322059daeb88b1e582b"
+    },
+    {
+      "path": "target/release/datum-gui-resize-coalesce-only",
+      "sha256": "f2252d76991926e869526b7cd05304ed6c7662cce315a1f9144d58f9a90623da"
+    },
+    {
+      "path": "target/release/datum-gui-resize-recovery-baseline",
+      "sha256": "d95f213ee6c8141c87d0588176b91f95f20060c0e15c4ab0bf2134cfc0b0352f"
+    },
+    {
+      "path": "target/release/datum-gui-resize-coalesced-reuse",
+      "sha256": "ac778703a3d0deb1a1f848d8f529152f3f550eba53d8c94c98edb84c4e7206e6"
+    },
+    {
+      "path": "target/release/datum-gui-resize-baseline",
+      "sha256": "d476c5769b4d55ca2afae0ee71e0f701da753c8200d14fd851e7c73d3fff3042"
+    },
+    {
+      "path": "target/release/datum-gui",
+      "sha256": "5c1c8f35746b55397f95280799be3b7bc4f28984b76f94514aaac6ef4933816b"
+    },
+    {
+      "path": "target/gpu-timed-recovery-baseline-target/release/datum-gui",
+      "sha256": "50f7fecb60437a703a65adf37645dc4da0404139bf9e9e32a9ed20f31fc41d53"
+    },
+    {
+      "path": "target/gpu-painter-hover-timed-proof/candidate-453cd9f2-painter-hover-datum-gui",
+      "sha256": "d9dca5333098eaf48ed77ec60238fdbfc09b12bd5d36267f8796f37573889360"
+    },
+    {
+      "path": "target/gpu-r3-lineage-proof/candidate-26b51ded-r3-lineage-datum-gui",
+      "sha256": "21a01d41333b40a0fdd108e53ff75aa29d09f7951aa4ee2e7fd9cffe849937ee"
+    },
+    {
+      "path": "target/gpu-r3-lineage-proof/baseline-997b618e-r3-lineage-datum-gui",
+      "sha256": "3f3ce59839e643b5087777837ff76fe9c39656ac606f3d490a79c3568b7b9bcf"
+    },
+    {
+      "path": "target/debug/datum-gui",
+      "sha256": "cf3b55acd010a0a299b411e04ad07c11f2b1d48370c2b382eaba1de137a38856"
+    },
+    {
+      "path": "target/pm045-workspace-redraw-baseline/datum-gui",
+      "sha256": "5bcff23aeed9a916806165d57060823aef4588cbaa76e7fed1e8efd3cd97f43b"
+    },
+    {
+      "path": "target/gpu-regional-r4-proof/baseline-997b618e-r4-marker-datum-gui",
+      "sha256": "2deffa9dd50b615d1f4c334398ad78e164e10889a05eeb6c57a06252c6340649"
+    },
+    {
+      "path": "target/gpu-regional-r4-proof/candidate-544dc61a-r4-datum-gui",
+      "sha256": "b2da0cfb4a2d7018e64c6db9f8c7ebc7afde51065642c924bd490da85c0ef6bf"
+    },
+    {
+      "path": "target/gpu-r3-proof/baseline-997b618e-r3-datum-gui",
+      "sha256": "c48ab3216f97037de815b82b480239452047119c6df7dfc44c2a2cb9a5ff2119"
+    },
+    {
+      "path": "target/gpu-r3-proof/candidate-ffaf331b-r3-datum-gui",
+      "sha256": "23222aa317180ccf3a5f596ee0e52563448153c070c12bb28ce967c13ca45677"
+    },
+    {
+      "path": "target/pm045-msaa-baseline/datum-gui",
+      "sha256": "c425e0893d6853e17c47534a09fcc7be89e74e996bfa7b4448bd9d3bf464d447"
+    },
+    {
+      "path": "target/pm045-stroke-baseline/datum-gui",
+      "sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3"
+    },
+    {
+      "path": "target/pm045-quad-candidate/datum-gui",
+      "sha256": "d014e1aa94fe7f09c61d4c46237fb3563d47a74c55b3abb82692e259d21d89a5"
+    },
+    {
+      "path": "target/gpu-r2-proof/candidate-6704c1e0-input-datum-gui",
+      "sha256": "50c88d68fa111c732ea8da8c39ee65030f3ef77d6c56fb4c6c0957f020c6fbf7"
+    },
+    {
+      "path": "target/gpu-r2-proof/baseline-997b618e-input-datum-gui",
+      "sha256": "8024d3e990331c67f4d72fb4c2ce3164dc53b9267649dfddb5fdf5897b654aa6"
+    },
+    {
+      "path": "target/gpu-r2-proof/candidate-fdc10853-datum-gui",
+      "sha256": "a9583e9d824b2bb7c3b2196c8c3a8bcdffe53c3597158856ab5466b779adce6f"
+    },
+    {
+      "path": "target/pm045-callback-baseline/datum-gui",
+      "sha256": "d0777db0135a322bf6a9d9c576fd4a34a6a663e77133276254fca4b0a4ca28d3"
+    },
+    {
+      "path": "target/pm045-read-cache-baseline/datum-gui",
+      "sha256": "386babb1f1a13938a9336ecf34f79caf0a54d6a08520206b53bbb6f37445a1b9"
+    },
+    {
+      "path": "target/pm045-stroke-candidate/datum-gui",
+      "sha256": "972adccf30a7c022f1934ec443d57b387dc076f34342e2302a66802cc4df8cbf"
+    },
+    {
+      "path": "target/gpu-crosshair-focused-proof/candidate-4d1e226e-focused-datum-gui",
+      "sha256": "67115404322733489969d858083634296ccfa1fd0a88994c6729ce413a6a10b9"
+    }
+  ],
+  "matching_copies": [],
+  "failed_launch_archive": "preserved; all three recorded hashes verified",
+  "additional_launches": 0,
+  "additional_samples": 0,
+  "additional_builds": 0,
+  "production_changes": 0,
+  "prerequisites": "Executable availability failed first. Subsequent native prerequisites not executed; launcher contains fail-closed checks. No runtime correction proof.",
+  "limits": "Original limits unchanged; owner-authorized one relaunch remains unconsumed."
+}
