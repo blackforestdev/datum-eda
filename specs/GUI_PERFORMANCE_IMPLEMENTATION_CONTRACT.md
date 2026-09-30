@@ -792,3 +792,27 @@ The original planning checklist remains a historical pre-disposition record.
 execution. Reuse adequate existing proof and preserve checklist Q01–Q07 and
 GBB-P05 gaps. This closure grants no S5 build, test or native-run authority and
 no new renderer optimization. Functionality remains globally unblocked.
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S5-PLANNING-GRANT -->
+The owner authorized only the smallest finite S5 qualification plan. Exact scope:
+`docs/reviews/gui-performance/s5-qualification/owner-direction.json`.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5-PLAN -->
+**GPI-S5-PLAN.** Reconcile existing evidence, remaining acceptance gaps, method
+feasibility, required repetitions and stopping conditions. Keep GBB-P05 separate;
+no execution, production edits, builds or new measurements.
+
+## Finite S5 qualification planning disposition
+
+`docs/reviews/gui-performance/s5-qualification/plan.md` completes GPI-S5-PLAN;
+its inventory preserves all 225 rows and credits 46 existing completed groups.
+S4 remains complete. Complete DRM lifetime/retirement and instantaneous resource/
+observer conformance remain unresolved; pinned native Wayland fractional-line
+input lacks a qualifying path. No final campaign is ready or authorized.
+Original repetitions and stopping rules remain; obsolete 4/8 ms GPU gates do not.
+GBB-P05 and displayed responsiveness/budget derivation remain separate.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5-PLAN-DISPOSITION -->
+**GPI-S5-PLAN-DISPOSITION.** Decide the finite plan's method-feasibility follow-up
+or defer S5. No execution grant is inferred from planning acceptance; production,
+dependency, build and native measurement scope must be concrete before approval.
