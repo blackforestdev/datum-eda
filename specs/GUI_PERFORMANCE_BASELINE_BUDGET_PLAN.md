@@ -3,7 +3,8 @@
 Authority: PM051 and exact owner direction in
 `docs/reviews/gui-performance/baseline-budget/owner-direction.json`.
 Issue `dat-gui-baseline-budgets-j9w8`; Frontier GUI-PERFORMANCE-BASELINE.
-Status: scheduled nonblocking planning, not an established acceptance budget.
+Status: bounded pointer assessment complete; representative baseline incomplete.
+GBB-P04 owner disposition pending; no established replacement acceptance budget.
 Replacement GPU p95/p99: **undecided**. Functionality follows its own Frontier.
 
 ## Evidence already available
@@ -135,3 +136,15 @@ Existing broader qualification is neither waived nor relabeled as complete.
 
 See `docs/reviews/gui-performance/baseline-budget/handoff.md` for claim release,
 canonical functionality selection, evidence locations and forbidden inferences.
+
+## Bounded collection disposition
+
+The concrete `docs/reviews/gui-performance/baseline-budget/collection-protocol.md`
+freezes the complete admission matrix, including unavailable methods. Its five
+new pointer trials completed, with one archived GPU trial reused. The measured
+findings and undecided budget rationale are in `pointer-report.md` beside it.
+GBB-P02 completion means that frozen partial packet ended, not that the full
+representative baseline was obtained. Seven other workload families and total
+observer/display/hardware evidence remain unqualified. GBB-P04 may disposition
+this limited assessment or request revised scope; it cannot ratify a replacement
+number because none is proposed. No implicit further collection is authorized.

@@ -1,0 +1,77 @@
+{
+  "status": "complete",
+  "declaration_sha256": "1e25794256017985003fababf21c7b862b77ef669a1e74aa45b657432b0e2f82",
+  "attempts": [
+    {
+      "index": 0,
+      "spec": {
+        "role": "candidate",
+        "mode": "quiet",
+        "pair": 1,
+        "workload": "W-POINTER"
+      },
+      "started_unix_ns": 1790745036500392261,
+      "output": "/tmp/gpu-r3-0-candidate-quiet-jypbh36e",
+      "returncode": 0,
+      "elapsed_seconds": 81.2689752499573,
+      "outer_failure": null
+    },
+    {
+      "index": 1,
+      "spec": {
+        "role": "candidate",
+        "mode": "gpu",
+        "pair": 2,
+        "workload": "W-POINTER"
+      },
+      "started_unix_ns": 1790745117776087321,
+      "output": "/tmp/gpu-r3-1-candidate-gpu-opslhbmh",
+      "returncode": 0,
+      "elapsed_seconds": 81.46569349104539,
+      "outer_failure": null
+    },
+    {
+      "index": 2,
+      "spec": {
+        "role": "candidate",
+        "mode": "quiet",
+        "pair": 2,
+        "workload": "W-POINTER"
+      },
+      "started_unix_ns": 1790745199248775064,
+      "output": "/tmp/gpu-r3-2-candidate-quiet-gphm__mp",
+      "returncode": 0,
+      "elapsed_seconds": 81.2903097178787,
+      "outer_failure": null
+    },
+    {
+      "index": 3,
+      "spec": {
+        "role": "candidate",
+        "mode": "gpu",
+        "pair": 3,
+        "workload": "W-POINTER"
+      },
+      "started_unix_ns": 1790745280545767715,
+      "output": "/tmp/gpu-r3-3-candidate-gpu-25_z1yoy",
+      "returncode": 0,
+      "elapsed_seconds": 81.45049169100821,
+      "outer_failure": null
+    },
+    {
+      "index": 4,
+      "spec": {
+        "role": "candidate",
+        "mode": "quiet",
+        "pair": 3,
+        "workload": "W-POINTER"
+      },
+      "started_unix_ns": 1790745361997378516,
+      "output": "/tmp/gpu-r3-4-candidate-quiet-803k4jtl",
+      "returncode": 0,
+      "elapsed_seconds": 81.28924358193763,
+      "outer_failure": null
+    }
+  ],
+  "reserved_index": 4
+}

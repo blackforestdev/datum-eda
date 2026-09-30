@@ -1,0 +1,90 @@
+{
+  "cli": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284"
+  },
+  "project": {
+    "path": "/home/bfadmin/Documents/datum-eda/target/gpu-r2-proof/project",
+    "copied_from": "/tmp/pm045-admission-hqugp169/project",
+    "excluded": "historical .datum/tool-sessions only",
+    "board_file_sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+    "normalized_board_sha256": "33e62de1c1da2020f0608444a4802eac23fb97a9f56cc8cf87c844b6077499ed"
+  },
+  "reference_png": {
+    "path": "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/reference.png",
+    "sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "provenance": "Exact archived baseline-1-gpu0.tar.gz final.png in implementation/S5/pointer-native-batch; reviewed visually, unchanged closed-Console scene. No golden update."
+  },
+  "input_driver": "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_stream.py",
+  "expected_context": {
+    "final_selection": "None",
+    "final_focus": "Editor(PaneId(0))",
+    "final_focused_pane": 0
+  },
+  "expected_context_authority": "app_bootstrap plain project view has selectionNone; workspace_layout default ApplicationFocus Editor(PaneId0); --initial-layout single focusedPane0; no focus/select launch overrides.",
+  "schedule": "Per trial CLOCK_MONOTONIC epoch and5s/30s/5s boundaries sealed before launch; fixed40s startup readiness allowance. Producer starts at absolute active_ns with unchanged3600requests/120Hz/400x240 rectangle. Missed boundaries invalidate; never shift schedule. Controlled drain follows still.",
+  "max_producer_lateness_ns": 8333334,
+  "cadence_rule": "Each actual send must be at or after its120Hz deadline and at most one nominal period late; producer duration30s through30s+oneperiod. Retain full actual lateness distribution; first violation invalidates run, no retry.",
+  "gpu_duty": "unavailable: full DRM accounting separate",
+  "method_sha256": {
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_native_trial.py": "e443253e70597b94e532dcf444532e73bf149a7f6bbef38dfaeddd9e86c2d2b7",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_stream.py": "196e8b5edd9574611aac4f47993c10628ac94663b5f99d80acf351994b8ececc",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_pointer_input.py": "0cc18c51fd1a9e39e44d71bf9a011d846ac63c7010f33472a209df4d1f732817",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_receipts.py": "396a2eb122941b75143ed386efd070829045d760785a6e2a541e55b20d775763",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_campaign.py": "e39130e2e5e1516b57a19007442f5fcf913981f70a48a6c74c15d40858a75020",
+    "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2/gpu_r2_wm_close.py": "16f336510ab23a9db93fa131b3d096d468fcd1f83b1eebe92605d8ff50202cd0",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_r3_trial_outcome.py": "22b0b6d2aa1ca35ae54492dd30a8e1736aedc8a9aa634ecc6bd558b45c8eed2d",
+    "/home/bfadmin/Documents/datum-eda/scripts/gpu_crosshair_diagnostic.py": "ee7c5c7eb7b8ff57846790fa206c9660bf6f061c9ab542d45ac388cdb4060229",
+    "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/baseline-budget/pointer_trial.py": "a48c5955a055e8f2b796351d71ca2f1f78841a8c6cd1fb5217bf912f7d15c93d",
+    "/home/bfadmin/Documents/datum-eda/docs/reviews/gui-performance/baseline-budget/pointer_batch.py": "d81661a59c7fbe2f795e98cab5effa3e42813f965f086096ce5f00438e247005"
+  },
+  "candidate_commit": "c3949e53ec7d68e70535892262024fa9f340c00f",
+  "authority": "PM051; GUI_PERFORMANCE_BASELINE_BUDGET_PLAN; collection-protocol.md",
+  "runs": [
+    {
+      "role": "candidate",
+      "mode": "quiet",
+      "pair": 1,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "gpu",
+      "pair": 2,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "quiet",
+      "pair": 2,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "gpu",
+      "pair": 3,
+      "workload": "W-POINTER"
+    },
+    {
+      "role": "candidate",
+      "mode": "quiet",
+      "pair": 3,
+      "workload": "W-POINTER"
+    }
+  ],
+  "run_cap": 5,
+  "final_copy_marker": true,
+  "binaries": {
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "sha256": "5c1c8f35746b55397f95280799be3b7bc4f28984b76f94514aaac6ef4933816b"
+    }
+  },
+  "stop": "Any substantive correctness, method, capability or resource failure. GPU 4/8 ms never stops this baseline.",
+  "max_process_seconds": 300,
+  "max_run_evidence_bytes": 67108864,
+  "max_packet_evidence_bytes": 268435456,
+  "mode_scope": "Quiet disables GPU timing, retains semantic observer; not total observer overhead.",
+  "sealed_at": "2026-09-30T05:09:30.931694+00:00",
+  "protocol_sha256": "b8cea93a062ed37f7f91a7dc0c623edcca4c027fac098ea9d3da7b52962c8f92"
+}

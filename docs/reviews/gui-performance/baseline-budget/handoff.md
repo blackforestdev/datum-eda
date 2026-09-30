@@ -13,7 +13,8 @@ claim transferred. Existing S5A execution/acceptance owner boundaries remain.
 The main performance issue is still open, globally nonblocking, with residual
 correctness/adoption/qualification reconciliation selected as GPI-S4-RECONCILE.
 Baseline-and-budget work is explicitly scheduled on GUI-PERFORMANCE-BASELINE /
-`dat-gui-baseline-budgets-j9w8`, GBB-P01, also planning and nonblocking. Parallel
+`dat-gui-baseline-budgets-j9w8`, now GBB-P04 owner disposition of the limited
+pointer assessment, nonblocking. Parallel
 lane flags do not authorize agents or simultaneous executions.
 
 The outgoing actual session is recorded in owner-direction.json. Its performance
@@ -59,3 +60,14 @@ The concurrently landed prevention rule and
 [budget provenance incident](budget-provenance-incident.md) were reviewed and
 reconciled in PM051. This handoff supersedes their pending-reconciliation wording,
 not their historical evidence. No incident or qualification closure is implied.
+
+## Bounded pointer baseline handoff
+
+`pointer-report.md` and `pointer-receipt.json` preserve five new valid trials and
+the reused R4 observation. GBB-P01/P02/P03 record the finite protocol, completed
+pointer subset and evidence-based undecided budget rationale; they do not imply
+the representative multi-workload baseline is complete. Seven workload families,
+total instrumentation effects and displayed/hardware evidence remain gaps.
+The same actual session explicitly releases its synchronized baseline lease and
+beads assignment at GBB-P04. No uncommitted production implementation transfers.
+No further sampling, observer expansion or renderer optimization is automatic.
