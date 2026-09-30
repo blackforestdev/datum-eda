@@ -1,0 +1,200 @@
+{
+  "status": "pass_requested_setup_fields_only",
+  "archived_input_sha256": "2056f8c34abb3cfbfac38a268f1e29aa2016d6a334a2ffdbed68c4aaa65537f5",
+  "independent_reference_sha256": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+  "reference_board_outline_bbox": [
+    358,
+    84,
+    849,
+    576
+  ],
+  "cases": [
+    {
+      "case": 0,
+      "archived_sequence": 409,
+      "checks": [
+        {
+          "phase": "before",
+          "pointer": [
+            499,
+            150
+          ],
+          "camera_float32_exact_nm": [
+            151634208.0,
+            95122896.0
+          ],
+          "hover": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+          "image_sha256": "15db9d7ae3504f086585f68a3260b1be207c9ce7cca6ccf4302278ae0f1f482d",
+          "crosshair_arm_points": [
+            [
+              499,
+              80
+            ],
+            [
+              499,
+              720
+            ],
+            [
+              245,
+              150
+            ],
+            [
+              960,
+              150
+            ]
+          ],
+          "crosshair_rgba": [
+            82,
+            87,
+            97,
+            255
+          ],
+          "board_outline_bbox": [
+            358,
+            84,
+            849,
+            576
+          ]
+        },
+        {
+          "phase": "after",
+          "pointer": [
+            500,
+            150
+          ],
+          "camera_float32_exact_nm": [
+            151634208.0,
+            95122896.0
+          ],
+          "hover": "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
+          "image_sha256": "173c6b5eac6e4b7e518ec575156ff09823a9872486ad48f131f15ef37f85d1e7",
+          "crosshair_arm_points": [
+            [
+              500,
+              80
+            ],
+            [
+              500,
+              720
+            ],
+            [
+              245,
+              150
+            ],
+            [
+              960,
+              150
+            ]
+          ],
+          "crosshair_rgba": [
+            82,
+            87,
+            97,
+            255
+          ],
+          "board_outline_bbox": [
+            358,
+            84,
+            849,
+            576
+          ]
+        }
+      ]
+    },
+    {
+      "case": 1,
+      "archived_sequence": 1048,
+      "checks": [
+        {
+          "phase": "before",
+          "pointer": [
+            700,
+            269
+          ],
+          "camera_float32_exact_nm": [
+            151634208.0,
+            95122896.0
+          ],
+          "hover": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+          "image_sha256": "e82d835bfa8f513d9d850fbfd83e8428600e01b4a8b12f01fc8e1c8e40bb191c",
+          "crosshair_arm_points": [
+            [
+              700,
+              80
+            ],
+            [
+              700,
+              720
+            ],
+            [
+              245,
+              269
+            ],
+            [
+              960,
+              269
+            ]
+          ],
+          "crosshair_rgba": [
+            82,
+            87,
+            97,
+            255
+          ],
+          "board_outline_bbox": [
+            358,
+            84,
+            849,
+            576
+          ]
+        },
+        {
+          "phase": "after",
+          "pointer": [
+            700,
+            270
+          ],
+          "camera_float32_exact_nm": [
+            151634208.0,
+            95122896.0
+          ],
+          "hover": "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
+          "image_sha256": "b237e6265151c8fad5fab7022dd586588b27fcf3f5f7a6a2d45544a5f34d53a5",
+          "crosshair_arm_points": [
+            [
+              700,
+              80
+            ],
+            [
+              700,
+              720
+            ],
+            [
+              245,
+              270
+            ],
+            [
+              960,
+              270
+            ]
+          ],
+          "crosshair_rgba": [
+            82,
+            87,
+            97,
+            255
+          ],
+          "board_outline_bbox": [
+            358,
+            84,
+            849,
+            576
+          ]
+        }
+      ]
+    }
+  ],
+  "new_timing_samples": 0,
+  "scope": "State comparisons use original native receipt. Archived endpoint PNG independently anchors layout/static board geometry and crosshair pixel color; it is not an exactH/V image oracle. Diagnostic outputs differ intentionally in pointer/hover and also in terminal label/status chrome; full raster equivalence not established.",
+  "camera_serialization": "Rust f32 Display emits shortest roundtrip decimals151634200,95122900. Parsing at the source f32 type recovers exactly151634208,95122896; no epsilon or modified camera."
+}

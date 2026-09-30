@@ -1,0 +1,26 @@
+{
+  "reviewer_session": "/root/a1_setup_independent_review",
+  "requested_by": "Owner explicitly requested independent review before timing",
+  "mode": "read-only independent source/artifact review; no builds or native runs",
+  "disposition": "no blocker to requested setup correction",
+  "reviewed": [
+    "corrected common initializer",
+    "setup-only branch and launcher",
+    "all four before/after images",
+    "actual prepared-state receipts",
+    "original R4 native input receipt, command/declaration and historical reference image"
+  ],
+  "findings": [
+    "Single Board pane0,Editor0 focus,selectionNone,1280x800/scale1.",
+    "Actual camera equals archived151634208,95122896 atzoom1 after interpreting receipt at sourcef32 type; no tolerance.",
+    "H499,150\u2192500,150 andV700,269\u2192700,270 match original receipt sequences409/1048.",
+    "Both phases hit-test to original archived zone identities.",
+    "Both crosshair arms and expected board geometry visible in all four images.",
+    "Setup path returns before conformance/measurement loops; zero timing/conformance output."
+  ],
+  "limitations": [
+    "Terminal label and DRC status differ from archived endpoint, in addition to intentional pointer/hover differences. Requested setup fields verified, not full archived raster equivalence.",
+    "Not native regional correctness, attribution validity, S4/S5 acceptance or new timing authority. Existing560measurements remain invalid.",
+    "Original preflight prior_checks text is inherited; new executable had new successful build. Prior offline/default checks reused only at unaffected scope."
+  ]
+}

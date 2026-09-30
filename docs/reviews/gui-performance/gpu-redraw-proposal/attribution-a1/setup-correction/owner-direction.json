@@ -1,0 +1,5 @@
+{
+  "owner_statement": "Fix only the workload initialization. Before collecting any new timing samples, demonstrate that the diagnostic uses the pinned single-board layout, camera, selection, hover state, and pointer positions. Compare against independent archived workload evidence\u2014not references generated solely by the diagnostic under test. Produce and inspect both case images, including the crosshair. Obtain an independent review of that setup. Preserve existing measurements as invalid for the intended workload.",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "scope": "Initialization correction, setup-only image/state proof and independent review. Zero new timing samples; no control/renderer redesign. Prior646observations/560measured remain invalid and preserved."
+}
