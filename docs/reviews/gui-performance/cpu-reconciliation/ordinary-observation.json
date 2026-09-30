@@ -1,0 +1,91 @@
+{
+  "authorization": "One ordinary-mode R4 launch, one 60-second idle and one 30-second pointer interval; no rebuild, production change, profiling, budget change or observer-overhead claim.",
+  "outcome": "completed",
+  "observations": {
+    "idle": {
+      "status": "valid_at_declared_scope",
+      "elapsed_seconds": 60.000356241,
+      "cpu_ms": {
+        "usage_usec": 25.076,
+        "user_usec": 18.499,
+        "system_usec": 6.578
+      },
+      "percent_one_core": 0.04179308519315896
+    },
+    "pointer": {
+      "status": "valid_at_declared_scope",
+      "elapsed_seconds": 29.999965317,
+      "cpu_ms": {
+        "usage_usec": 5732.655,
+        "user_usec": 4788.573,
+        "system_usec": 944.081
+      },
+      "percent_one_core": 19.108872091767022
+    }
+  },
+  "accounting": {
+    "aggregate": "Owned cgroup cumulative user/system/total CPU; GUI and integrated bash present at both boundaries; descendants inherit membership and exited descendants remain in totals.",
+    "exit": "Application exit code 0; cgroup empty and counters retained before removal.",
+    "excluded": "Producer, controller, image capture and desktop services outside the application cgroup.",
+    "scope": "Complete aggregate for the launched inherited application group; no separate GUI/engine/thread attribution or independent full process-lifecycle trace.",
+    "throttling": "No cgroup CPU throttling recorded."
+  },
+  "checks": {
+    "pins": "Binary, CLI, fixture, reference and input-driver hashes match before and after.",
+    "images": {
+      "readiness": {
+        "pixel_difference": "0",
+        "exact": true
+      },
+      "idle-end": {
+        "pixel_difference": "0",
+        "exact": true
+      },
+      "pointer-end": {
+        "pixel_difference": "0",
+        "exact": true
+      }
+    },
+    "visual_inspection": "Pointer endpoint inspected; board scene and crosshair present.",
+    "producer": {
+      "scheduled": 3600,
+      "distinct_consecutive_changes": 1280,
+      "max_lateness_ns": 515763,
+      "min_lateness_ns": 73589,
+      "duration_ns": 30000443946,
+      "final_position": [
+        300,
+        150
+      ]
+    }
+  },
+  "limitations": [
+    "One trial per observation, no repeatability or intermittent-idle claim.",
+    "Readiness/endpoint images do not prove intermediate processing or displayed responsiveness.",
+    "No completed semantic-action counts or CPU/action inference.",
+    "No observer-overhead attribution or comparison with archived instrumented trials.",
+    "Actual pointer CPU window starts 0.386281 ms and ends 0.351598 ms after declared producer boundaries; counter read brackets are retained.",
+    "External controller and desktop activity can perturb scheduling despite exclusion from CPU totals.",
+    "Kernel user/system/total counters may differ by one microsecond from independent rounding."
+  ],
+  "setup_correction": "Before any GUI launch, optional delegated-parent cpuset metadata was unavailable. Corrected metadata handling to record unavailable; no system setting changed.",
+  "decision": "No sustained idle-cost concern was reproduced in this 60-second interval. Ordinary-mode pointer CPU cost is now observed at this scope, but unnecessary work and a root cause are not established. This packet supplies no basis for an idle repair or automatic optimization campaign.",
+  "marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:CPU-ORDINARY-OBSERVED",
+  "owner_approval_ref": "docs/reviews/gui-performance/cpu-reconciliation/owner-direction.json#subsequent_investigation_direction",
+  "raw_evidence": {
+    "target/cpu-ordinary-once-20260930/idle-end.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "target/cpu-ordinary-once-20260930/interpretation.json": "846e2d5322c0efc193660ba8c09f2c1e577f86807609dc099e8fcaf267631ebc",
+    "target/cpu-ordinary-once-20260930/launch-reserved.json": "0b810df1cb2148245ef325abba331ff7a08022ad4af1a3db0a89c93b7e6290bf",
+    "target/cpu-ordinary-once-20260930/launcher.py": "d9b9494189c0c2c9340a43fad5dee600e741b887c053a8724cb58342d240126c",
+    "target/cpu-ordinary-once-20260930/native.log": "b1050012cec7b0400ce2729daaa20ec64f7802b90cb70854286321ec48fb99f7",
+    "target/cpu-ordinary-once-20260930/pointer-end.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "target/cpu-ordinary-once-20260930/preflight.json": "6849a32d4eef7866ae8575a70caccd28213fc798ef1ca659acdc2f39464a00bd",
+    "target/cpu-ordinary-once-20260930/producer.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target/cpu-ordinary-once-20260930/producer.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target/cpu-ordinary-once-20260930/readiness.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "target/cpu-ordinary-once-20260930/result.json": "69fa93b77abbeecc0fcd45d0c3f7084101c14778332b525f7589dca57b321607",
+    "target/cpu-ordinary-once-20260930/schedule.json": "4a2753c55776e15f636808044cbdd72ef91a8e06a6400d2bac69014f32b0ea1b",
+    "target/cpu-ordinary-once-20260930/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "resize_scope": "No resize workload was measured. Do not treat this observation as resize evidence or repeat it for the resize investigation."
+}
