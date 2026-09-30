@@ -1,0 +1,220 @@
+--- original/crates/gui-app/src/gpu_attribution.rs
++++ corrected/crates/gui-app/src/gpu_attribution.rs
+@@ -118,25 +118,38 @@
+     pollster::block_on(renderer.admit_damage_restoration(&device, &adapter));
+     writer.record(serde_json::json!({"kind":"identity","adapter":format!("{identity:?}"),"usage":format!("{:?}",config.usage),"format":format!("{:?}",config.format)}))?;
+     check_storage(storage)?;
++    if std::env::var("DATUM_A1_SETUP_ONLY").as_deref() == Ok("1") {
++        let state = load_state()?;
++        anyhow::ensure!(state.scene.pads.len() == 81, "A1 fixture differs");
++        let root = std::path::PathBuf::from(
++            std::env::var_os("DATUM_A1_ARTIFACT_DIR").context("A1 setup directory")?,
++        );
++        let mut submissions = 0;
++        for case in 0..2 {
++            let mut fixture =
++                renderer.attribution_case(&device, &queue, &state, case, submissions)?;
++            check_storage(storage)?;
++            fixture.save_reference(&root.join(format!("case-{case}-after.png")))?;
++            fixture.save_setup_old(
++                &device,
++                &queue,
++                &root.join(format!("case-{case}-before.png")),
++            )?;
++            writer.record(serde_json::json!({"kind":"setup_case","case":case,"actual":serde_json::from_str::<serde_json::Value>(&fixture.setup_receipt)?,"submissions":fixture.submissions}))?;
++            submissions = fixture.submissions;
++        }
++        drop(renderer);
++        device.poll(wgpu::PollType::wait_indefinitely())?;
++        anyhow::ensure!(started.elapsed().as_secs_f64() < 300.0, "A1 setup deadline");
++        writer.record(serde_json::json!({"kind":"setup_complete","cases":2,"timing_samples":0,"conformance_observations":0,"submissions":submissions}))?;
++        return Ok(());
++    }
+     let mut observations = 0;
+     let mut submissions=renderer.attribution_conformance(&device,&queue,|repeat,case,ticks,period| {
+         observations+=1;
+         writer.record(serde_json::json!({"kind":"conformance","repeat":repeat,"case":case,"ticks":ticks,"period_ns":period}))
+     })?;
+-    let state = datum_gui_protocol::load_board_editor_workspace_state(
+-        &datum_gui_protocol::LiveReviewRequest {
+-            project_root: std::env::var_os("DATUM_NATIVE_TEST_PROJECT")
+-                .context("A1 pinned project missing")?
+-                .into(),
+-            board_file: None,
+-            artifact_path: None,
+-            net_uuid: None,
+-            from_anchor_pad_uuid: None,
+-            to_anchor_pad_uuid: None,
+-            profile: None,
+-            kicad_board_source: None,
+-        },
+-    )?;
++    let state = load_state()?;
+     anyhow::ensure!(state.scene.pads.len() == 81, "A1 fixture differs");
+     for (case, correctness) in [(0, true), (1, true), (0, false), (1, false)] {
+         let mut fixture = renderer.attribution_case(&device, &queue, &state, case, submissions)?;
+@@ -209,3 +222,21 @@
+     );
+     Ok(())
+ }
++
++fn load_state() -> Result<datum_gui_protocol::ReviewWorkspaceState> {
++    let state = datum_gui_protocol::load_board_editor_workspace_state(
++        &datum_gui_protocol::LiveReviewRequest {
++            project_root: std::env::var_os("DATUM_NATIVE_TEST_PROJECT")
++                .context("A1 pinned project missing")?
++                .into(),
++            board_file: None,
++            artifact_path: None,
++            net_uuid: None,
++            from_anchor_pad_uuid: None,
++            to_anchor_pad_uuid: None,
++            profile: None,
++            kicad_board_source: None,
++        },
++    )?;
++    Ok(state)
++}
+--- original/crates/gui-render/src/render/gpu_attribution.rs
++++ corrected/crates/gui-render/src/render/gpu_attribution.rs
+@@ -11,6 +11,8 @@
+ mod io;
+ #[path = "gpu_attribution_manifest.rs"]
+ mod manifest;
++#[path = "gpu_attribution_setup.rs"]
++mod setup;
+ 
+ const WIDTH: u32 = 1280;
+ const HEIGHT: u32 = 800;
+@@ -31,6 +33,7 @@
+     frozen_uploads: Option<Vec<(wgpu::Buffer, u64, Vec<u8>)>>,
+     pub submissions: usize,
+     pub manifest: String,
++    pub setup_receipt: String,
+ }
+ #[derive(Debug)]
+ pub struct AttributionObservation {
+@@ -98,6 +101,9 @@
+             object_id: id.into(),
+         };
+         let mut state = state.clone();
++        state.ui.layout = datum_gui_protocol::WorkspaceLayout::single();
++        state.ui.focus =
++            datum_gui_protocol::ApplicationFocus::Editor(datum_gui_protocol::PaneId(0));
+         state.selection = datum_gui_protocol::SelectionTarget::None;
+         state.ui.hovered_object = Some(hover.clone());
+         state.ui.cursor_pos = Some(ScreenPointPx {
+@@ -173,6 +179,7 @@
+         let plan = session.regional_plan_for_proof(&old, [WIDTH, HEIGHT]);
+         anyhow::ensure!(!plan.is_empty(), "A1 empty pointer plan");
+         let frozen = session.prepared().unwrap().clone();
++        let setup_receipt = setup::receipt(self, &state, &old, &frozen, case, &hover)?;
+         let images = self
+             .surface_attachments
+             .prefix_images(device)
+@@ -221,6 +228,7 @@
+             frozen_uploads: None,
+             submissions,
+             manifest: String::new(),
++            setup_receipt,
+         };
+         result.manifest = self.attribution_graph_manifest(&result.frozen, &result.plan)?;
+         result.reset(self, device, queue)?;
+@@ -244,6 +252,22 @@
+         io::save_image(path, &self.expected)
+     }
+ 
++    pub fn save_setup_old(
++        &mut self,
++        device: &wgpu::Device,
++        queue: &wgpu::Queue,
++        path: &std::path::Path,
++    ) -> anyhow::Result<()> {
++        let (bytes, _) = io::read(
++            device,
++            queue,
++            &self.old_target,
++            &self.readback,
++            &mut self.submissions,
++        )?;
++        io::save_image(path, &bytes)
++    }
++
+     fn reset(
+         &mut self,
+         renderer: &mut Renderer,
+diff --git a/crates/gui-render/src/render/gpu_attribution_setup.rs b/crates/gui-render/src/render/gpu_attribution_setup.rs
+new file mode 100644
+index 00000000..5f38e8fb
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution_setup.rs
+@@ -0,0 +1,69 @@
++//! Setup evidence from actual shared prepared state; no timing observations.
++use super::*;
++pub(super) fn receipt(
++    renderer: &Renderer,
++    state: &datum_gui_protocol::ReviewWorkspaceState,
++    before: &PreparedScene,
++    after: &PreparedScene,
++    case: usize,
++    hover: &datum_gui_protocol::HoverTarget,
++) -> anyhow::Result<String> {
++    anyhow::ensure!(
++        state.ui.layout == datum_gui_protocol::WorkspaceLayout::single(),
++        "A1 single layout"
++    );
++    let panes = after.layout.viewport_panes(&state.ui.layout);
++    anyhow::ensure!(
++        panes.panes.len() == 1 && panes.panes[0].content == datum_gui_protocol::PaneContent::Board,
++        "A1 sole board pane"
++    );
++    let mut observations = Vec::new();
++    for (phase, prepared) in [("before", before), ("after", after)] {
++        let (x, y) = prepared
++            .crosshair_cursor_screen
++            .ok_or_else(|| anyhow::anyhow!("A1 missing prepared crosshair"))?;
++        anyhow::ensure!(
++            prepared.scene_viewport.contains(x, y),
++            "A1 pointer outside board"
++        );
++        anyhow::ensure!(
++            prepared.schematic_scene_viewport.is_none(),
++            "A1 unexpected schematic pane"
++        );
++        let actual_hover = crate::resolve_pane_hover(
++            prepared,
++            renderer.render_session.board().unwrap(),
++            None,
++            state,
++            x,
++            y,
++        );
++        anyhow::ensure!(
++            actual_hover.hover.as_ref() == Some(hover),
++            "A1 hit-tested hover differs: {:?}",
++            actual_hover.hover
++        );
++        let rect = prepared.scene_viewport;
++        let hit = actual_hover.hover.as_ref().unwrap();
++        anyhow::ensure!(hit.object_id.is_ascii(), "A1 ASCII pinned identity");
++        observations.push(format!(
++            r#"{{"phase":{phase:?},"pointer":[{x},{y}],"hit_tested_hover":{id:?},"hover_surface":"{surface:?}","camera_center_nm":[{cx},{cy}],"camera_zoom":{zoom},"scene_viewport":{rect:?},"board_pane_id":{pane},"crosshair_style":"{style:?}","interaction_vertices":{vertices:?}}}"#,
++            id=hit.object_id, surface=hit.surface, cx=prepared.camera.center_x_nm,
++            cy=prepared.camera.center_y_nm, zoom=prepared.camera.zoom,
++            rect=[rect.x,rect.y,rect.width,rect.height], pane=prepared.board_pane_id.0,
++            style=prepared.crosshair_style,
++            vertices=prepared.board_interaction_vertices.iter().map(|v| v.pos).collect::<Vec<_>>()
++        ));
++    }
++    let frame = panes.panes[0].rect.frame;
++    Ok(format!(
++        r#"{{"case":{case},"layout":"single","pane_count":{count},"board_frame":{frame:?},"focus":"{focus:?}","focused_pane":{focused},"selection":"{selection:?}","assigned_hover":{hover:?},"observations":[{observations}]}}"#,
++        count = panes.panes.len(),
++        frame = [frame.x, frame.y, frame.width, frame.height],
++        focus = state.ui.focus,
++        focused = state.ui.layout.focused.0,
++        selection = state.selection,
++        hover = state.ui.hovered_object.as_ref().unwrap().object_id,
++        observations = observations.join(",")
++    ))
++}

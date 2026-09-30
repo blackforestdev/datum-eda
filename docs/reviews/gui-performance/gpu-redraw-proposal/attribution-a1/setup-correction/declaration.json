@@ -1,0 +1,62 @@
+{
+  "source_head": "430151f88bed73cd3b3307f322b7c5fe7cb63268",
+  "source_hashes": {
+    "crates/gui-app/Cargo.toml": "3f0cf5bc0b6bb9b0f97628b5cffb72fab6560e17d44d37242a532fb330aa449e",
+    "crates/gui-app/src/native_gpu.rs": "d3fbc0d6d04bc8ae18e75271b332bb4e1284b9ba6da12ce7dcc44e4908468ba2",
+    "crates/gui-render/Cargo.toml": "d10ab66855a33f7f603329e73775e2fa5252aac31ccff8d25717dc242db47637",
+    "crates/gui-render/src/render/gpu_composition.rs": "02cd29e23910b72fbf0ead2c73f00f918b095479a4486fc70f5dc8aebd3032a8",
+    "crates/gui-render/src/render/gpu_frame.rs": "cb426510266e0dfcb594ac5d674dcfbedeb05fbdeb597cdb7f756823fafbbb6f",
+    "crates/gui-render/src/render/gpu_measurement_frame.rs": "608e178a26578835f988e773f089dfa62a8a28d0daea3c0faf7d6b022df97d47",
+    "crates/gui-render/src/render/gpu_measurements.rs": "d886a1997c1d4f2b03e3eff7b3a2c81a635405a2e292aaabff95019a7667c96b",
+    "crates/gui-render/src/render/gpu_prefix_images.rs": "1e035da3886e52ea1bda8a003b567659de7d0b7fb152b4276d4591e38ec80b1c",
+    "crates/gui-render/src/render/gpu_text.rs": "c8062d082ec1b10cef0de8fb872139eb9ba516db2c55bb36211ee1be7f1674f9",
+    "crates/gui-render/src/render/regional_plan.rs": "54be0f72624279ee1e7466157fd9c837fac49704bc9cd3562d863f5115602e4c",
+    "crates/gui-render/src/render/session_prefix.rs": "004fd4be7f89ec30feafd48f41381f158c70fbf40f31de53fce6bf108c8b7e78",
+    "crates/gui-render/src/text_gpu/draw.rs": "aa4467a9f1c7329e88c3fa3729232743a5714d9a99fc211c69e9b4f18dc684ff",
+    "crates/gui-app/src/gpu_attribution.rs": "04b3b21c5200550f97796e96a777df545d12aa6bd7ae427be768200d093fad1f",
+    "crates/gui-app/src/gpu_attribution_schedule.rs": "0c53a864cee77238991f71d75f1bcf08565a5c4ab3f97a0ec5d4618a84625a7e",
+    "crates/gui-render/src/render/gpu_attribution.rs": "3de3077c91086de54dad05cc06940273d7c5c62ef103595f5242048a08159a18",
+    "crates/gui-render/src/render/gpu_attribution_conformance.rs": "869c904eb7d4519473698e4701ab165d78f3b8dafc47f6cbec41f8b6ee3008ab",
+    "crates/gui-render/src/render/gpu_attribution_io.rs": "9396e03923244cf1606920911122314179424c3d46b8e7a4a808922b0067324c",
+    "crates/gui-render/src/render/gpu_attribution_manifest.rs": "8d134c66d03413242138a3a50afa4e41d190cd5f0cf3f91743fcc9c58c2a4122",
+    "crates/gui-render/src/render/gpu_attribution_timer.rs": "6ed100d2c66d4366ddfc7ff9dcf5056efeb86ae983f6b1cbf6c7be697af072e1",
+    "crates/gui-render/src/render/gpu_attribution_uploads.rs": "0c78cbb9c0e63d2b34ddc54bd86ff204c2b54c3fa5e686db76c99438c043702f",
+    "crates/gui-render/src/render/gpu_regional_composition.rs": "16aa3e855edd48f5dd0ea949ddd10baae9bf459c2cd9b047dca34794ab13f03d",
+    "crates/gui-render/src/render/gpu_attribution_setup.rs": "9187399b2db9ac606704511d694bd5047fc5f7ee8fcf29bd1dcab5873567b7ad"
+  },
+  "binary": "/home/bfadmin/Documents/datum-eda-evidence/attribution-a1-setup/dac64a3f765f795d4cc161a2d228ed2b23a834663f82ec25ee6be0e7a00f91b8/datum-a1-setup-diagnostic",
+  "binary_sha256": "dac64a3f765f795d4cc161a2d228ed2b23a834663f82ec25ee6be0e7a00f91b8",
+  "approval": "docs/reviews/gui-performance/gpu-redraw-proposal/attribution-a1/setup-correction/owner-direction.json",
+  "sealed_at": "2026-09-29T23:19:22.300436+00:00",
+  "display": ":1",
+  "package_mesa": "25.0.7-2+deb13u1",
+  "limits": {
+    "gpu_processes": 1,
+    "seconds": 300,
+    "observations": 646,
+    "submissions": 2200,
+    "diagnostic_cpu_mib": 64,
+    "numeric_mib": 16,
+    "tracked_gpu_mib": 512
+  },
+  "source_review": {
+    "D_P": "Both feed the same shared regional encoder; immutable prepared payload, ordered tiles, per-painter bind/draw/clip/copy descriptors and exact buffer/offset/byte upload lists are checked before timing. Fixed fixture rejects unpinned terminal/menu/console/schematic paths. Zero upload continuations required in each sample.",
+    "resources": "One case, fixed query slot and bounded image readback; shared reservations cover diagnostic GPU allocations. Conservative scoped CPU peak checked against64MiB. All initialized T/R operations complete before measured graph;3submissions per sampled observation,1890total plus fixed conformance and bounded setup.",
+    "normal_configuration": "Ignored test entry is gated by test+gpu-attribution+linux; default release check passed. Native production configuration helper unchanged.",
+    "timing": "Common outer encoder bracket, M production marker/pass writes in original order, N no queries; query resolve after outer end, image readback after completion. Separate wall phases retained.",
+    "limits_of_evidence": "Source/self review only; no independent acceptance. Native COPY_SRC/cadence perturbation remains unmeasured."
+  },
+  "analysis_control_medians": {
+    "D-N:completion": "N",
+    "M-D:gpu": "D",
+    "M-D:completion": "D",
+    "D-P:preparation": "D",
+    "D-A:gpu": "D",
+    "A-B:gpu": "A",
+    "B-C:gpu": "B"
+  },
+  "analysis_sha256": "1c23c59960d795c30ec33b8df7b99961d6e52699324175a81e7cb13300d983b6",
+  "preserved_directory": "/home/bfadmin/Documents/datum-eda-evidence/attribution-a1-setup/dac64a3f765f795d4cc161a2d228ed2b23a834663f82ec25ee6be0e7a00f91b8",
+  "purpose": "setup_only_zero_timing",
+  "compiled_head": "5770b8c1d064ffb0b808e6d74e30658f8f6bb6d4"
+}
