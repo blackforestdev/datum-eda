@@ -1,0 +1,83 @@
+{
+  "base_commit": "61be2e838f6d7c206f2d482145907bba9df25cdb",
+  "gui_source_matches": "c3949e53",
+  "evidence_sha256": {
+    "docs/reviews/gui-performance/baseline-budget/pointer-report.md": "bed7622eebef195db87c44b6d274f0dfaf99872dfde9c779715a26d95409f751",
+    "docs/reviews/gui-performance/baseline-budget/pointer-analysis.json": "bb138a8eef4684154098035d5c312ca6ffd8a3dbdbaa9cbdb51207e165401e89",
+    "docs/reviews/gui-performance/baseline-budget/pointer-receipt.json": "c09b52fd42e237be78b8de110d2084722eb94272de3b3c645dc27fecfc3c6f48",
+    "docs/reviews/gui-performance/baseline-budget/pointer_trial.py": "a48c5955a055e8f2b796351d71ca2f1f78841a8c6cd1fb5217bf912f7d15c93d",
+    "docs/reviews/gui-performance/baseline-budget/threshold-audit.md": "0b0057210cfbb35588c6bd58fcb98ecac27b6265351b1022bf14960ce142d235",
+    "docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json": "f0181eb5ba31060758b6f816378d2d11a2f1c9dc1c1613f7be18a0692f42550b",
+    "docs/reviews/gui-performance/gpu-redraw-proposal/attribution-a1/corrected-result/report.md": "43d07a16b6a8595c6c802d9088c878d8f65b8d169631477468966a623b0b4cb6",
+    "docs/reviews/gui-performance/implementation/S5/pass-consolidation/native-performance/assessment.json": "5b467fda9936895a3a9903b5cb990427037b76ba266a3ef1109138cbd3c8eeb2",
+    "docs/reviews/gui-performance/implementation/S5/clamp-matched-batch/result.json": "cd802d33f7244ec7b525b19abdf2e11ba61595a99defa3a448aaf686875e3556",
+    "docs/reviews/gui-performance/implementation/S5/terminal-idle-poll/result.json": "e767061cf8a7e08093279d9dffd27345bf9ba98be9919d2e4cd32711b52221cc",
+    "docs/reviews/gui-performance/implementation/S5/lazy-terminal-pipeline/native-startup-batch/assessment.json": "65963201a56789ff49f23b09a36935316d2bd1b3792f9483b8bd0821c3e2169f",
+    "docs/reviews/gui-performance/implementation/S5/repeated-device-recovery/native20-ba24e35a/assessment.json": "3fb2ec048118cd77f1759be4ff157fd6de94cc3499ff017988be179981b7941f",
+    "docs/reviews/gui-performance/implementation/S5/window-endurance/native-60minute-4d645582/drift-analysis.json": "b0b77cbd69b89d584610a5894c3362248e06f5a84dce6676d352beec9cc9fcb1",
+    "crates/gui-app/src/native_input_observation.rs": "93e6c4aefddf954d576204c6b3b536c5c83fee752e0aa3614f6139af1774f43e",
+    "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md": "65468bf54a3d94ba90ab01869955c9a038084e82feb53e4f9e8113201e195d74",
+    "docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md": "f7ad4ee407cbb97fa050cf6737575366e23900004e2669fcb239e45ab0025376",
+    "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md": "ff157ac4c0eec74c1f337ba97401da10c57d6fa3adfb2e9784693bdbd2cebebf"
+  },
+  "current_pointer_cpu": [
+    {
+      "trial": "G1",
+      "cpu_active_ms": 7129.721,
+      "observed_active_seconds": 30.079098045,
+      "cpu_percent_one_core": 23.7032406667698
+    },
+    {
+      "trial": "Q1",
+      "cpu_active_ms": 5131.972,
+      "observed_active_seconds": 30.087278377,
+      "cpu_percent_one_core": 17.056949903195957
+    },
+    {
+      "trial": "G2",
+      "cpu_active_ms": 6514.215,
+      "observed_active_seconds": 30.038891009,
+      "cpu_percent_one_core": 21.685937067544423
+    },
+    {
+      "trial": "Q2",
+      "cpu_active_ms": 5202.786,
+      "observed_active_seconds": 30.085093188,
+      "cpu_percent_one_core": 17.293567839355166
+    },
+    {
+      "trial": "G3",
+      "cpu_active_ms": 6260.805,
+      "observed_active_seconds": 30.035206969,
+      "cpu_percent_one_core": 20.844887156802066
+    },
+    {
+      "trial": "Q3",
+      "cpu_active_ms": 4952.783,
+      "observed_active_seconds": 30.080238328,
+      "cpu_percent_one_core": 16.465238559595235
+    }
+  ],
+  "current_pointer_interpretation": "All observations instrumented, including quiet semantic-only. No current ordinary-cost or event-loop root-cause conclusion.",
+  "mode_contrasts": [
+    {
+      "pair": 2,
+      "gpu_minus_quiet_cpu_ms": 1311.429,
+      "gpu_minus_quiet_cpu_percentage_points": 4.392369228189256,
+      "gpu_elapsed_seconds": 30.038891009,
+      "quiet_elapsed_seconds": 30.085093188
+    },
+    {
+      "pair": 3,
+      "gpu_minus_quiet_cpu_ms": 1308.022,
+      "gpu_minus_quiet_cpu_percentage_points": 4.379648597206831,
+      "gpu_elapsed_seconds": 30.035206969,
+      "quiet_elapsed_seconds": 30.080238328
+    }
+  ],
+  "ordinary_mode_source": "InputObservation returns None without receipt, requiring workload manifest and output diagnostic absent. Existing launcher/validator requires records, so ordinary-mode harness adaptation needed.",
+  "threshold_status": "No new number proposed. Existing CPU limits unchanged but derivation unvalidated; PM051/GBB-P05 controls any future binding replacement.",
+  "original_issue": "dat-gui-pointer-layout-x1r",
+  "new_runs": 0,
+  "new_builds": 0
+}
