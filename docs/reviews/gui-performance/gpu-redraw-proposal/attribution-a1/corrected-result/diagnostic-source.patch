@@ -1,0 +1,1878 @@
+diff --git a/crates/gui-app/Cargo.toml b/crates/gui-app/Cargo.toml
+index 36bf7b57..5e7408f3 100644
+--- a/crates/gui-app/Cargo.toml
++++ b/crates/gui-app/Cargo.toml
+@@ -4,6 +4,7 @@ version.workspace = true
+ edition.workspace = true
+ 
+ [features]
++gpu-attribution = ["datum-gui-render/gpu-attribution"]
+ visual = ["dep:image", "datum-gui-render/visual"]
+ 
+ [[bin]]
+diff --git a/crates/gui-app/src/native_gpu.rs b/crates/gui-app/src/native_gpu.rs
+index 2875865b..bdc4fdfb 100644
+--- a/crates/gui-app/src/native_gpu.rs
++++ b/crates/gui-app/src/native_gpu.rs
+@@ -127,3 +127,7 @@ mod regional_capability_tests {
+         );
+     }
+ }
++
++#[cfg(all(test, feature = "gpu-attribution", target_os = "linux"))]
++#[path = "gpu_attribution.rs"]
++mod attribution;
+diff --git a/crates/gui-render/Cargo.toml b/crates/gui-render/Cargo.toml
+index dd827174..50680b99 100644
+--- a/crates/gui-render/Cargo.toml
++++ b/crates/gui-render/Cargo.toml
+@@ -4,6 +4,7 @@ version.workspace = true
+ edition.workspace = true
+ 
+ [features]
++gpu-attribution = ["visual"]
+ visual = ["dep:image", "dep:pollster"]
+ 
+ [dependencies]
+diff --git a/crates/gui-render/src/render/gpu_composition.rs b/crates/gui-render/src/render/gpu_composition.rs
+index f62d27dc..2c14e068 100644
+--- a/crates/gui-render/src/render/gpu_composition.rs
++++ b/crates/gui-render/src/render/gpu_composition.rs
+@@ -1,7 +1,10 @@
+ //! Shared cold, regional, empty and full-fallback image graphs.
+ use super::*;
++#[path = "gpu_regional_composition.rs"]
++mod regional;
+ use crate::gpu_surface::PrefixImages;
+ use crate::renderer_state::damage::{clip::Clip, regional::Plan};
++pub(super) use regional::RegionalControl;
+ 
+ impl Renderer {
+     #[allow(clippy::too_many_arguments)]
+@@ -30,87 +33,19 @@ impl Renderer {
+         mask.set_consumers(self.frame_consumers.all());
+         let mut elapsed = std::time::Duration::ZERO;
+         if let (Some(images), Some(plan)) = (images, plan) {
+-            if !plan.is_empty() {
+-                let (source, destination) = images.restoration_views().expect("admitted aliases");
++            elapsed += self.encode_regional_composition(
++                device,
++                encoder,
++                prepared,
++                width,
++                height,
++                images,
++                plan,
++                measurement,
++                RegionalControl::default(),
+                 #[cfg(all(test, feature = "visual"))]
+-                let restore =
+-                    fault != crate::gpu_surface::prefix_negative_control::Fault::StaleWorking;
+-                #[cfg(not(all(test, feature = "visual")))]
+-                let restore = true;
+-                if restore {
+-                    self.damage_masks
+-                        .restoration
+-                        .as_ref()
+-                        .expect("admitted restoration")
+-                        .encode_regional(
+-                            device,
+-                            encoder,
+-                            source,
+-                            destination,
+-                            plan,
+-                            measurement
+-                                .as_mut()
+-                                .map(|m| m.pass("restore"))
+-                                .transpose()?,
+-                        );
+-                }
+-                {
+-                    let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+-                        label: Some("datum-regional-suffix-resolve"),
+-                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+-                            view: images.atlas_view(),
+-                            resolve_target: Some(images.resolved_atlas_view()),
+-                            depth_slice: None,
+-                            ops: wgpu::Operations {
+-                                load: wgpu::LoadOp::Load,
+-                                store: self.surface_attachments.regional_store(),
+-                            },
+-                        })],
+-                        timestamp_writes: measurement
+-                            .as_mut()
+-                            .map(|m| m.pass("suffix"))
+-                            .transpose()?,
+-                        ..Default::default()
+-                    });
+-                    for tile in plan.tiles() {
+-                        tile.viewport(&mut pass, width, height);
+-                        let clip = tile.clip();
+-                        #[cfg(all(test, feature = "visual"))]
+-                        let clip = if fault
+-                            == crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask
+-                        {
+-                            Clip::full(
+-                                crate::renderer_state::damage::regional::ATLAS,
+-                                crate::renderer_state::damage::regional::ATLAS,
+-                            )
+-                        } else {
+-                            clip
+-                        };
+-                        elapsed += self.draw_frame_suffix(
+-                            &mut pass,
+-                            prepared,
+-                            width,
+-                            height,
+-                            &mask.group,
+-                            clip,
+-                        )?;
+-                        #[cfg(all(test, feature = "visual"))]
+-                        if fault
+-                            == crate::gpu_surface::prefix_negative_control::Fault::OverlappingSuffix
+-                        {
+-                            elapsed += self.draw_frame_suffix(
+-                                &mut pass,
+-                                prepared,
+-                                width,
+-                                height,
+-                                &mask.group,
+-                                clip,
+-                            )?;
+-                        }
+-                    }
+-                }
+-                images.compose_tiles(encoder, plan);
+-            }
++                fault,
++            )?;
+         } else {
+             if let Some(images) = images {
+                 #[cfg(all(test, feature = "visual"))]
+diff --git a/crates/gui-render/src/render/gpu_frame.rs b/crates/gui-render/src/render/gpu_frame.rs
+index 2a767ad2..d747e744 100644
+--- a/crates/gui-render/src/render/gpu_frame.rs
++++ b/crates/gui-render/src/render/gpu_frame.rs
+@@ -1,5 +1,8 @@
+ //! Full-frame GPU encoding and submission; resource lifetime lives on Renderer.
+ use super::*;
++#[cfg(feature = "gpu-attribution")]
++#[path = "gpu_attribution.rs"]
++mod attribution;
+ #[path = "gpu_composition.rs"]
+ mod composition;
+ #[path = "gpu_frame_painter.rs"]
+diff --git a/crates/gui-render/src/render/gpu_measurement_frame.rs b/crates/gui-render/src/render/gpu_measurement_frame.rs
+index 0ca0a1c5..1ce28c38 100644
+--- a/crates/gui-render/src/render/gpu_measurement_frame.rs
++++ b/crates/gui-render/src/render/gpu_measurement_frame.rs
+@@ -139,7 +139,7 @@ impl FrameQueries {
+         self.encode_marker(&mut encoder, view, name)?;
+         Ok(encoder.finish())
+     }
+-    fn encode_marker(
++    pub(super) fn encode_marker(
+         &mut self,
+         encoder: &mut wgpu::CommandEncoder,
+         view: &wgpu::TextureView,
+diff --git a/crates/gui-render/src/render/gpu_measurements.rs b/crates/gui-render/src/render/gpu_measurements.rs
+index f97be10a..16cd8bb4 100644
+--- a/crates/gui-render/src/render/gpu_measurements.rs
++++ b/crates/gui-render/src/render/gpu_measurements.rs
+@@ -1,6 +1,9 @@
+ //! Opt-in GPU-01..03 pass measurements. Never a presentation clock or scheduler.
+ //! Three slots own their query/resolve/readback resources until map completion.
+ use crate::text_gpu::lifetime::{SubmissionRef, Tracked};
++#[cfg(feature = "gpu-attribution")]
++#[path = "gpu_attribution_timer.rs"]
++pub(crate) mod attribution;
+ #[path = "gpu_measurement_frame.rs"]
+ mod frame;
+ #[path = "gpu_measurement_resources.rs"]
+diff --git a/crates/gui-render/src/render/gpu_prefix_images.rs b/crates/gui-render/src/render/gpu_prefix_images.rs
+index c15e4dca..368fa6c5 100644
+--- a/crates/gui-render/src/render/gpu_prefix_images.rs
++++ b/crates/gui-render/src/render/gpu_prefix_images.rs
+@@ -83,6 +83,22 @@ impl PrefixImages {
+             self.regional[1].image.unorm_view.as_ref()?,
+         ))
+     }
++    #[cfg(feature = "gpu-attribution")]
++    pub(crate) fn reset_composition(
++        &self,
++        encoder: &mut wgpu::CommandEncoder,
++        source: &wgpu::Texture,
++    ) {
++        encoder.copy_texture_to_texture(
++            source.as_image_copy(),
++            self.regional[0].image.texture.as_image_copy(),
++            source.size(),
++        );
++    }
++    #[cfg(feature = "gpu-attribution")]
++    pub(crate) fn composed_texture(&self) -> &wgpu::Texture {
++        &self.regional[0].image.texture
++    }
+     pub(crate) fn composed_view(&self) -> &wgpu::TextureView {
+         &self.regional[0].image.view
+     }
+diff --git a/crates/gui-render/src/render/gpu_text.rs b/crates/gui-render/src/render/gpu_text.rs
+index 4e48c222..82613e08 100644
+--- a/crates/gui-render/src/render/gpu_text.rs
++++ b/crates/gui-render/src/render/gpu_text.rs
+@@ -420,3 +420,7 @@ impl Renderer {
+ #[cfg(all(test, feature = "visual"))]
+ #[path = "private_text_guard_tests.rs"]
+ mod private_guard_tests;
++
++#[cfg(feature = "gpu-attribution")]
++#[path = "gpu_attribution_uploads.rs"]
++mod attribution_uploads;
+diff --git a/crates/gui-render/src/render/regional_plan.rs b/crates/gui-render/src/render/regional_plan.rs
+index c2bc420e..c85d21e0 100644
+--- a/crates/gui-render/src/render/regional_plan.rs
++++ b/crates/gui-render/src/render/regional_plan.rs
+@@ -3,6 +3,7 @@ pub(crate) const TILE: u32 = 32;
+ pub(crate) const ATLAS: u32 = 512;
+ const SLOTS: usize = 256;
+ 
++#[derive(Clone)]
+ pub(crate) struct Plan {
+     ids: [u32; SLOTS],
+     count: usize,
+diff --git a/crates/gui-render/src/render/session_prefix.rs b/crates/gui-render/src/render/session_prefix.rs
+index 5422e119..4229c0c3 100644
+--- a/crates/gui-render/src/render/session_prefix.rs
++++ b/crates/gui-render/src/render/session_prefix.rs
+@@ -119,7 +119,10 @@ impl Prefix {
+     }
+ }
+ 
+-#[cfg(all(test, feature = "visual", target_os = "linux"))]
++#[cfg(any(
++    feature = "gpu-attribution",
++    all(test, feature = "visual", target_os = "linux")
++))]
+ impl super::RenderSession {
+     pub(crate) fn regional_plan_for_proof(
+         &self,
+diff --git a/crates/gui-render/src/text_gpu/draw.rs b/crates/gui-render/src/text_gpu/draw.rs
+index 99fa79b1..26bc3552 100644
+--- a/crates/gui-render/src/text_gpu/draw.rs
++++ b/crates/gui-render/src/text_gpu/draw.rs
+@@ -376,6 +376,31 @@ impl Draw {
+         self.instances.as_ref().map(Tracked::submission_ref)
+     }
+ 
++    #[cfg(feature = "gpu-attribution")]
++    pub(crate) fn attribution_commands(
++        &self,
++        atlas: &Atlas,
++        layer: crate::TextLayer,
++    ) -> Vec<String> {
++        let mut result = Vec::new();
++        if let Some(instances) = &self.instances {
++            result.push(format!(
++                "glyph pipeline={:?};bind1=unrestricted;vertex0={}",
++                self.pipeline,
++                instances.submission_ref().allocation_id
++            ));
++            for (page, batch_layer, range) in self.batches.iter() {
++                if *batch_layer == layer {
++                    result.push(format!(
++                        "bind0={:?};draw=0..6;instances={:?}",
++                        atlas.pages[*page].bind_group, range
++                    ));
++                }
++            }
++        }
++        result
++    }
++
+     pub fn render(
+         &self,
+         atlas: &Atlas,
+diff --git a/crates/gui-app/src/gpu_attribution.rs b/crates/gui-app/src/gpu_attribution.rs
+new file mode 100644
+index 00000000..cdc7e50f
+--- /dev/null
++++ b/crates/gui-app/src/gpu_attribution.rs
+@@ -0,0 +1,242 @@
++//! Single approved native A1 process. No ordinary executable entry point.
++use anyhow::{Context, Result};
++use datum_gui_render::Renderer;
++use std::{fs::File, io::Write, sync::Arc, time::Instant};
++#[path = "gpu_attribution_schedule.rs"]
++mod schedule;
++struct Writer {
++    file: File,
++    bytes: usize,
++}
++impl Writer {
++    fn record(&mut self, value: serde_json::Value) -> Result<()> {
++        let bytes = serde_json::to_vec(&value)?;
++        anyhow::ensure!(
++            self.bytes + bytes.len() + 1 <= 16 * 1024 * 1024,
++            "A1 numeric output cap"
++        );
++        self.file.write_all(&bytes)?;
++        self.file.write_all(b"\n")?;
++        self.file.flush()?;
++        self.bytes += bytes.len() + 1;
++        Ok(())
++    }
++}
++#[test]
++#[ignore = "single owner-approved A1 attribution process, max300s, no retries"]
++fn attribution_native_study() {
++    let output = std::env::var_os("DATUM_A1_OUTPUT").expect("A1 output path");
++    let mut writer = Writer {
++        file: File::create(output).unwrap(),
++        bytes: 0,
++    };
++    let storage = datum_gui_render::cpu_alloc::Scope::new("a1-diagnostic-storage");
++    let result = storage.with(|| run(&mut writer, &storage));
++    if let Err(error) = &result {
++        writer
++            .record(serde_json::json!({"kind":"stopped","error":format!("{error:#}")}))
++            .unwrap();
++    }
++    result.unwrap();
++}
++#[allow(deprecated)]
++fn run(writer: &mut Writer, storage: &datum_gui_render::cpu_alloc::Scope) -> Result<()> {
++    use winit::platform::x11::EventLoopBuilderExtX11;
++    let started = Instant::now();
++    let event_loop = winit::event_loop::EventLoop::<()>::with_user_event()
++        .with_x11()
++        .with_any_thread(true)
++        .build()?;
++    let window = Arc::new(
++        event_loop.create_window(
++            winit::window::Window::default_attributes()
++                .with_title("Datum GPU attribution A1")
++                .with_visible(true)
++                .with_inner_size(winit::dpi::PhysicalSize::new(1280, 800)),
++        )?,
++    );
++    anyhow::ensure!(window.scale_factor() == 1.0, "A1 scale changed");
++    let instance = crate::gui_runtime_support::diagnostic_instance();
++    let surface = instance.create_surface(window.clone())?;
++    let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
++        power_preference: wgpu::PowerPreference::LowPower,
++        compatible_surface: Some(&surface),
++        force_fallback_adapter: false,
++    }))?;
++    let identity = adapter.get_info();
++    anyhow::ensure!(
++        identity.name.contains("P630") && identity.backend == wgpu::Backend::Vulkan,
++        "A1 host/backend differs"
++    );
++    anyhow::ensure!(
++        identity.driver_info.contains("25.0.7"),
++        "A1 driver differs: {}",
++        identity.driver_info
++    );
++    let caps = surface.get_capabilities(&adapter);
++    let usage = wgpu::TextureUsages::RENDER_ATTACHMENT
++        | wgpu::TextureUsages::COPY_DST
++        | wgpu::TextureUsages::COPY_SRC;
++    anyhow::ensure!(
++        caps.usages.contains(usage),
++        "A1 native COPY_SRC/COPY_DST capability absent"
++    );
++    let mut config =
++        crate::gui_runtime_support::surface_configuration(&caps, window.inner_size(), None);
++    anyhow::ensure!(
++        config.width == 1280
++            && config.height == 800
++            && config.format == wgpu::TextureFormat::Bgra8UnormSrgb
++            && config.present_mode == wgpu::PresentMode::Fifo,
++        "A1 surface identity differs"
++    );
++    config.usage |= wgpu::TextureUsages::COPY_SRC;
++    anyhow::ensure!(
++        adapter
++            .get_texture_format_features(config.format)
++            .flags
++            .sample_count_supported(8),
++        "A1 exact8 absent"
++    );
++    let features = wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES
++        | wgpu::Features::TIMESTAMP_QUERY
++        | wgpu::Features::TIMESTAMP_QUERY_INSIDE_ENCODERS
++        | wgpu::Features::TIMESTAMP_QUERY_INSIDE_PASSES;
++    anyhow::ensure!(
++        adapter.features().contains(features),
++        "A1 timestamp features absent"
++    );
++    let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
++        required_features: features,
++        ..Default::default()
++    }))?;
++    let health =
++        crate::native_device_recovery::DeviceHealth::observe(&device, event_loop.create_proxy());
++    let mut transaction =
++        crate::native_surface_transaction::SurfaceTransaction::new(&window, &health);
++    let mut renderer = Renderer::new(&device, &queue, config.format, 8)?;
++    pollster::block_on(renderer.admit_damage_restoration(&device, &adapter));
++    writer.record(serde_json::json!({"kind":"identity","adapter":format!("{identity:?}"),"usage":format!("{:?}",config.usage),"format":format!("{:?}",config.format)}))?;
++    check_storage(storage)?;
++    if std::env::var("DATUM_A1_SETUP_ONLY").as_deref() == Ok("1") {
++        let state = load_state()?;
++        anyhow::ensure!(state.scene.pads.len() == 81, "A1 fixture differs");
++        let root = std::path::PathBuf::from(
++            std::env::var_os("DATUM_A1_ARTIFACT_DIR").context("A1 setup directory")?,
++        );
++        let mut submissions = 0;
++        for case in 0..2 {
++            let mut fixture =
++                renderer.attribution_case(&device, &queue, &state, case, submissions)?;
++            check_storage(storage)?;
++            fixture.save_reference(&root.join(format!("case-{case}-after.png")))?;
++            fixture.save_setup_old(
++                &device,
++                &queue,
++                &root.join(format!("case-{case}-before.png")),
++            )?;
++            writer.record(serde_json::json!({"kind":"setup_case","case":case,"actual":serde_json::from_str::<serde_json::Value>(&fixture.setup_receipt)?,"submissions":fixture.submissions}))?;
++            submissions = fixture.submissions;
++        }
++        drop(renderer);
++        device.poll(wgpu::PollType::wait_indefinitely())?;
++        anyhow::ensure!(started.elapsed().as_secs_f64() < 300.0, "A1 setup deadline");
++        writer.record(serde_json::json!({"kind":"setup_complete","cases":2,"timing_samples":0,"conformance_observations":0,"submissions":submissions}))?;
++        return Ok(());
++    }
++    let mut observations = 0;
++    let mut submissions=renderer.attribution_conformance(&device,&queue,|repeat,case,ticks,period| {
++        observations+=1;
++        writer.record(serde_json::json!({"kind":"conformance","repeat":repeat,"case":case,"ticks":ticks,"period_ns":period}))
++    })?;
++    let state = load_state()?;
++    anyhow::ensure!(state.scene.pads.len() == 81, "A1 fixture differs");
++    for (case, correctness) in [(0, true), (1, true), (0, false), (1, false)] {
++        let mut fixture = renderer.attribution_case(&device, &queue, &state, case, submissions)?;
++        check_storage(storage)?;
++        if correctness {
++            let root =
++                std::env::var_os("DATUM_A1_ARTIFACT_DIR").context("A1 artifact directory")?;
++            fixture.save_reference(
++                &std::path::Path::new(&root).join(format!("reference-{case}.png")),
++            )?;
++        }
++        writer.record(serde_json::json!({"kind":"command_manifest","case":case,"correctness":correctness,"commands":fixture.manifest}))?;
++        for id in schedule::schedule(case, correctness) {
++            check_storage(storage)?;
++            anyhow::ensure!(
++                started.elapsed().as_secs_f64() < 300.0 && observations < 646,
++                "A1 process/observation cap"
++            );
++            device.poll(wgpu::PollType::Poll)?;
++            let mut native = crate::native_surface_transaction::NativeRenderTarget::new(
++                &mut transaction,
++                &surface,
++                &device,
++                &queue,
++                &config,
++                &health,
++            );
++            let acquired = Instant::now();
++            let target = native
++                .acquire()?
++                .context("A1 native acquisition deferred/failed")?;
++            let acquire_ms = acquired.elapsed().as_secs_f64() * 1000.0;
++            let texture = target
++                .copy_destination([1280, 800], config.format)
++                .context("A1 target copy capability")?;
++            anyhow::ensure!(texture.usage().contains(usage), "A1 acquired usage differs");
++            let result = fixture.observe(&mut renderer, &device, &queue, texture, id.condition)?;
++            schedule::validate(id, id, &result.ticks)?;
++            native.submitted(result.submission);
++            let (frame, _) = native.finish(&renderer);
++            let presentation = Instant::now();
++            transaction.present(frame.context("A1 missing native frame")?, &window)?;
++            let present_ms = presentation.elapsed().as_secs_f64() * 1000.0;
++            observations += 1;
++            writer.record(serde_json::json!({"kind":"sample","case":case,"phase":id.phase,"block":id.block,"cycle":id.cycle,"condition":id.condition.to_string(),"phases_ms":result.phases_ms,"ticks":result.ticks,"period_ns":result.period_ns,"upload_bytes":result.upload_bytes,"image_hash":result.image_hash,"gpu_bytes":result.gpu_bytes,"tiles":result.tiles,"acquire_ms":acquire_ms,"present_ms":present_ms,"submissions":fixture.submissions}))?;
++        }
++        submissions = fixture.submissions;
++        drop(fixture);
++    }
++    anyhow::ensure!(
++        observations == 646 && submissions <= 2200,
++        "A1 incomplete or over-cap study"
++    );
++    drop(renderer);
++    device.poll(wgpu::PollType::wait_indefinitely())?;
++    anyhow::ensure!(
++        started.elapsed().as_secs_f64() < 300.0,
++        "A1 cleanup deadline"
++    );
++    writer.record(serde_json::json!({"kind":"complete","observations":observations,"submissions":submissions,"seconds":started.elapsed().as_secs_f64()}))
++}
++
++fn check_storage(storage: &datum_gui_render::cpu_alloc::Scope) -> Result<()> {
++    let used = storage.usage();
++    anyhow::ensure!(
++        used.allocator_installed
++            && used.peak_payload_bytes + used.tracking_bytes + used.owner_metadata_bytes
++                <= 64 * 1024 * 1024,
++        "A1 diagnostic CPU storage cap: {used:?}"
++    );
++    Ok(())
++}
++
++fn load_state() -> Result<datum_gui_protocol::ReviewWorkspaceState> {
++    let state = datum_gui_protocol::load_board_editor_workspace_state(
++        &datum_gui_protocol::LiveReviewRequest {
++            project_root: std::env::var_os("DATUM_NATIVE_TEST_PROJECT")
++                .context("A1 pinned project missing")?
++                .into(),
++            board_file: None,
++            artifact_path: None,
++            net_uuid: None,
++            from_anchor_pad_uuid: None,
++            to_anchor_pad_uuid: None,
++            profile: None,
++            kicad_board_source: None,
++        },
++    )?;
++    Ok(state)
++}
+diff --git a/crates/gui-app/src/gpu_attribution_schedule.rs b/crates/gui-app/src/gpu_attribution_schedule.rs
+new file mode 100644
+index 00000000..96df967b
+--- /dev/null
++++ b/crates/gui-app/src/gpu_attribution_schedule.rs
+@@ -0,0 +1,92 @@
++//! Pinned A1 ordering and receipt validation, independent of a GPU.
++pub(super) const CONDITIONS: [char; 7] = ['N', 'D', 'M', 'P', 'A', 'B', 'C'];
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(super) struct Id {
++    pub case: usize,
++    pub phase: &'static str,
++    pub block: usize,
++    pub cycle: usize,
++    pub condition: char,
++}
++pub(super) fn schedule(case: usize, correctness: bool) -> Vec<Id> {
++    let mut result = Vec::new();
++    if correctness {
++        for condition in CONDITIONS {
++            result.push(Id {
++                case,
++                phase: "correctness",
++                block: 0,
++                cycle: 0,
++                condition,
++            });
++        }
++    } else {
++        for cycle in 0..4 {
++            for condition in CONDITIONS {
++                result.push(Id {
++                    case,
++                    phase: "warmup",
++                    block: 0,
++                    cycle,
++                    condition,
++                });
++            }
++        }
++        for block in 0..5 {
++            for cycle in 0..8 {
++                let mut order = CONDITIONS;
++                order.rotate_left((8 * block + cycle) % 7);
++                if (block + cycle) % 2 == 1 {
++                    order.reverse();
++                }
++                for condition in order {
++                    result.push(Id {
++                        case,
++                        phase: "measured",
++                        block,
++                        cycle,
++                        condition,
++                    });
++                }
++            }
++        }
++    }
++    result
++}
++pub(super) fn validate(expected: Id, actual: Id, ticks: &[u64]) -> anyhow::Result<()> {
++    anyhow::ensure!(
++        expected == actual,
++        "A1 reordered/mismatched/duplicate sample"
++    );
++    if actual.condition == 'N' {
++        anyhow::ensure!(ticks.is_empty(), "A1 N has queries");
++    } else {
++        anyhow::ensure!(
++            ticks.len() >= 2 && ticks.len() <= 32 && ticks.windows(2).all(|w| w[0] <= w[1]),
++            "A1 missing/reversed queries"
++        );
++    }
++    Ok(())
++}
++#[test]
++fn attribution_offline_negative_controls() {
++    let ids = schedule(0, false);
++    assert_eq!(ids.len(), 308);
++    let d = ids.iter().copied().find(|id| id.condition == 'D').unwrap();
++    assert!(validate(d, d, &[]).is_err());
++    assert!(validate(ids[0], ids[1], &[1, 2]).is_err());
++    assert!(validate(ids[1], ids[0], &[]).is_err());
++    assert!(validate(d, d, &[2, 1]).is_err());
++    assert!(validate(d, d, &[1, 2]).is_ok());
++    let all: Vec<_> = (0..2)
++        .flat_map(|case| {
++            schedule(case, true)
++                .into_iter()
++                .chain(schedule(case, false))
++        })
++        .collect();
++    assert_eq!(all.len() + 16, 646);
++    for (index, id) in all.iter().enumerate() {
++        assert!(!all[..index].contains(id));
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_attribution.rs b/crates/gui-render/src/render/gpu_attribution.rs
+new file mode 100644
+index 00000000..da586f8b
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution.rs
+@@ -0,0 +1,514 @@
++//! Fixed A1 case execution through the shared preparation, upload and painter owners.
++use super::*;
++use crate::capture_resource::{CaptureReadback, CaptureTarget};
++use crate::gpu_surface::PrefixImages;
++use crate::renderer_state::damage::regional::Plan;
++use gpu_measurements::attribution::Timer;
++use std::time::{Duration, Instant};
++#[path = "gpu_attribution_conformance.rs"]
++mod conformance;
++#[path = "gpu_attribution_io.rs"]
++mod io;
++#[path = "gpu_attribution_manifest.rs"]
++mod manifest;
++#[path = "gpu_attribution_setup.rs"]
++mod setup;
++
++const WIDTH: u32 = 1280;
++const HEIGHT: u32 = 800;
++const BYTES: u64 = WIDTH as u64 * HEIGHT as u64 * 4;
++
++pub struct AttributionCase {
++    old: PreparedScene,
++    frozen: PreparedScene,
++    plan: Plan,
++    old_target: CaptureTarget,
++    expected: Vec<u8>,
++    hybrid: Vec<u8>,
++    images: PrefixImages,
++    readback: CaptureReadback,
++    timer: Timer,
++    next: datum_gui_protocol::ScreenPointPx,
++    hover: datum_gui_protocol::HoverTarget,
++    frozen_uploads: Option<Vec<(wgpu::Buffer, u64, Vec<u8>)>>,
++    pub submissions: usize,
++    pub manifest: String,
++    pub setup_receipt: String,
++}
++#[derive(Debug)]
++pub struct AttributionObservation {
++    pub submission: wgpu::SubmissionIndex,
++    pub phases_ms: Vec<(&'static str, f64)>,
++    pub ticks: Vec<u64>,
++    pub period_ns: f64,
++    pub upload_bytes: usize,
++    pub image_hash: u64,
++    pub gpu_bytes: u64,
++    pub tiles: Vec<[u32; 7]>,
++}
++fn elapsed(start: Instant) -> f64 {
++    start.elapsed().as_secs_f64() * 1000.0
++}
++fn wait(device: &wgpu::Device) -> anyhow::Result<()> {
++    device.poll(wgpu::PollType::Wait {
++        submission_index: None,
++        timeout: Some(Duration::from_secs(2)),
++    })?;
++    Ok(())
++}
++fn submit(
++    queue: &wgpu::Queue,
++    commands: impl IntoIterator<Item = wgpu::CommandBuffer>,
++    count: &mut usize,
++) -> anyhow::Result<wgpu::SubmissionIndex> {
++    anyhow::ensure!(*count < 2200, "A1 submission capacity");
++    let receipt = queue.submit(commands);
++    *count += 1;
++    Ok(receipt)
++}
++fn extent() -> wgpu::Extent3d {
++    wgpu::Extent3d {
++        width: WIDTH,
++        height: HEIGHT,
++        depth_or_array_layers: 1,
++    }
++}
++impl Renderer {
++    pub fn attribution_case(
++        &mut self,
++        device: &wgpu::Device,
++        queue: &wgpu::Queue,
++        state: &datum_gui_protocol::ReviewWorkspaceState,
++        case: usize,
++        mut submissions: usize,
++    ) -> anyhow::Result<AttributionCase> {
++        use datum_gui_protocol::{CrosshairStyle, HoverTarget, PaneContent, ScreenPointPx};
++        let (old, next, id) = match case {
++            0 => (
++                [499.0, 150.0],
++                [500.0, 150.0],
++                "zone:bddd9739-252d-5af8-baf9-eec0be6b999d",
++            ),
++            1 => (
++                [700.0, 269.0],
++                [700.0, 270.0],
++                "zone:b3b2418a-f7a4-5848-aa64-eace29e3cb3a",
++            ),
++            _ => anyhow::bail!("invalid A1 case"),
++        };
++        let hover = HoverTarget {
++            surface: PaneContent::Board,
++            object_id: id.into(),
++        };
++        let mut state = state.clone();
++        state.ui.layout = datum_gui_protocol::WorkspaceLayout::single();
++        state.ui.focus =
++            datum_gui_protocol::ApplicationFocus::Editor(datum_gui_protocol::PaneId(0));
++        // Reproduce archived native closed-dock chrome, not the loader fallback.
++        state.ui.terminal.tabs = vec![datum_gui_protocol::TerminalTabState {
++            session_id: "a1-archived-shell1".into(),
++            previous_session_id: None,
++            label: "shell 1".into(),
++            event_log_path: String::new(),
++            activity_event_count: 0,
++            activity_summary: Vec::new(),
++            active: true,
++            attached: true,
++            status: "running".into(),
++            restart_count: 0,
++            unread_output: false,
++            unread_bell_count: 0,
++        }];
++        state.selection = datum_gui_protocol::SelectionTarget::None;
++        state.ui.hovered_object = Some(hover.clone());
++        state.ui.cursor_pos = Some(ScreenPointPx {
++            x: old[0],
++            y: old[1],
++        });
++        state.ui.crosshair_style = CrosshairStyle::FullViewport;
++        let source = crate::render_input::SourceEpoch::default();
++        self.prepare_session_workspace(
++            &state,
++            crate::WorkspaceView {
++                source_revision: Some(source.revision()),
++                width: WIDTH,
++                height: HEIGHT,
++                scale: 1.0,
++                camera: CameraState {
++                    center_x_nm: 151634208.0,
++                    center_y_nm: 95122896.0,
++                    zoom: 1.0,
++                },
++                schematic_camera: None,
++                include_preferences_overlay: false,
++                single_terminal_snapshot: true,
++                pane_cameras: &[],
++            },
++            &[],
++        )?;
++        let old_target = CaptureTarget::new(device, extent(), self.msaa_format)?;
++        loop {
++            anyhow::ensure!(submissions < 2200, "A1 setup capacity");
++            let plan = self
++                .render_session
++                .prepare_frame(1, 1, 1, true, WIDTH, HEIGHT)?;
++            let frame = self.encode_frame(
++                plan,
++                device,
++                queue,
++                &mut submissions,
++                &mut |_| {
++                    Ok(Some(crate::render_input::FrameTarget::full_texture(
++                        &old_target,
++                    )?))
++                },
++                &mut |count, _| {
++                    *count += 1;
++                },
++            )?;
++            wait(device)?;
++            if let Some(frame) = frame {
++                anyhow::ensure!(
++                    self.render_session.complete_submitted(frame, 1, 1, 1, true),
++                    "A1 initial completion"
++                );
++                break;
++            }
++        }
++        let old = self.render_session.prepared().unwrap().clone();
++        let next = ScreenPointPx {
++            x: next[0],
++            y: next[1],
++        };
++        let session = &mut self.render_session;
++        anyhow::ensure!(
++            session.update_pointer(crate::render_input::PointerUpdate {
++                generation: session.pointer_generation(),
++                cursor: Some(next),
++                hover: Some(&hover),
++                style: CrosshairStyle::FullViewport,
++            }),
++            "A1 source/hover changes cannot use warm pointer path"
++        );
++        anyhow::ensure!(session.interaction_only_damage(), "A1 strong invalidation");
++        let plan = session.regional_plan_for_proof(&old, [WIDTH, HEIGHT]);
++        anyhow::ensure!(!plan.is_empty(), "A1 empty pointer plan");
++        let frozen = session.prepared().unwrap().clone();
++        let setup_receipt = setup::receipt(self, &state, &old, &frozen, case, &hover)?;
++        let images = self
++            .surface_attachments
++            .prefix_images(device)
++            .ok_or_else(|| anyhow::anyhow!("A1 prefix images refused"))?;
++        let readback = CaptureReadback::new(device, BYTES)?;
++        let reference = CaptureTarget::new(device, extent(), self.msaa_format)?;
++        // Full reference uses a separate working attachment; it must not discard retained images.
++        let candidate = std::mem::take(&mut self.surface_attachments);
++        let prefix = std::mem::take(&mut self.render_session.prefix);
++        let board = self.render_session.board().unwrap().clone();
++        let schematic = self.render_session.schematic().cloned();
++        let view = reference.create_view(&Default::default());
++        let reference_result = self.render_with_submission(
++            device,
++            queue,
++            &view,
++            &frozen,
++            &board,
++            schematic.as_ref(),
++            WIDTH,
++            HEIGHT,
++            &mut |_| {
++                submissions += 1;
++            },
++        );
++        self.surface_attachments = candidate;
++        self.render_session.prefix = prefix;
++        anyhow::ensure!(
++            reference_result?,
++            "A1 reference unexpectedly needs cold uploads"
++        );
++        wait(device)?;
++        let (expected, _) = io::read(device, queue, &reference, &readback, &mut submissions)?;
++        let mut result = AttributionCase {
++            old,
++            frozen,
++            plan,
++            old_target,
++            expected,
++            hybrid: Vec::new(),
++            images,
++            readback,
++            timer: Timer::new(device, queue)?,
++            next,
++            hover,
++            frozen_uploads: None,
++            submissions,
++            manifest: String::new(),
++            setup_receipt,
++        };
++        result.manifest = self.attribution_graph_manifest(&result.frozen, &result.plan)?;
++        result.reset(self, device, queue)?;
++        let mut encoder = device.create_command_encoder(&Default::default());
++        result.images.compose_tiles(&mut encoder, &result.plan);
++        submit(queue, [encoder.finish()], &mut result.submissions)?;
++        wait(device)?;
++        // The ablation oracle is old composition with whole selected prefix tiles.
++        result.hybrid = io::read_composed(
++            device,
++            queue,
++            &result.images,
++            &result.readback,
++            &mut result.submissions,
++        )?;
++        Ok(result)
++    }
++}
++impl AttributionCase {
++    pub fn save_reference(&self, path: &std::path::Path) -> anyhow::Result<()> {
++        io::save_image(path, &self.expected)
++    }
++
++    pub fn save_setup_old(
++        &mut self,
++        device: &wgpu::Device,
++        queue: &wgpu::Queue,
++        path: &std::path::Path,
++    ) -> anyhow::Result<()> {
++        let (bytes, _) = io::read(
++            device,
++            queue,
++            &self.old_target,
++            &self.readback,
++            &mut self.submissions,
++        )?;
++        io::save_image(path, &bytes)
++    }
++
++    fn reset(
++        &mut self,
++        renderer: &mut Renderer,
++        device: &wgpu::Device,
++        queue: &wgpu::Queue,
++    ) -> anyhow::Result<()> {
++        let mut encoder = device.create_command_encoder(&Default::default());
++        self.images
++            .reset_composition(&mut encoder, &self.old_target);
++        renderer.encode_regional_composition(
++            device,
++            &mut encoder,
++            &self.frozen,
++            WIDTH,
++            HEIGHT,
++            &self.images,
++            &self.plan,
++            &mut None,
++            composition::RegionalControl {
++                omit: 1,
++                initialize: true,
++            },
++            #[cfg(all(test, feature = "visual"))]
++            crate::gpu_surface::prefix_negative_control::Fault::None,
++        )?;
++        let mut uploads = renderer.flush_frame_uploads(device, queue)?;
++        submit(
++            queue,
++            uploads
++                .as_mut()
++                .map(|b| b.command())
++                .into_iter()
++                .chain([encoder.finish()]),
++            &mut self.submissions,
++        )?;
++        if let Some(batch) = uploads {
++            batch.hold(queue);
++        }
++        renderer.hold_frame_submission(queue, Some(&self.images));
++        self.old_target.hold_submission(queue);
++        wait(device)
++    }
++    pub fn observe(
++        &mut self,
++        renderer: &mut Renderer,
++        device: &wgpu::Device,
++        queue: &wgpu::Queue,
++        target: &wgpu::Texture,
++        condition: char,
++    ) -> anyhow::Result<AttributionObservation> {
++        anyhow::ensure!(
++            matches!(condition, 'N' | 'D' | 'M' | 'P' | 'A' | 'B' | 'C'),
++            "A1 unknown condition"
++        );
++        let mut phases = Vec::with_capacity(8);
++        let started = Instant::now();
++        let (prepared, plan) = if condition == 'P' {
++            (self.frozen.clone(), self.plan.clone())
++        } else {
++            let session = renderer.render_session_mut();
++            let accepted = session.update_pointer(crate::render_input::PointerUpdate {
++                generation: session.pointer_generation(),
++                cursor: Some(self.next),
++                hover: Some(&self.hover),
++                style: datum_gui_protocol::CrosshairStyle::FullViewport,
++            });
++            anyhow::ensure!(accepted, "A1 pointer preparation refused");
++            (
++                session.prepared().unwrap().clone(),
++                session.regional_plan_for_proof(&self.old, [WIDTH, HEIGHT]),
++            )
++        };
++        phases.push(("preparation", elapsed(started)));
++        anyhow::ensure!(prepared == self.frozen, "A1 D/P prepared payload differs");
++        anyhow::ensure!(
++            plan.tiles().eq(self.plan.tiles()),
++            "A1 D/P ordered tile plan differs"
++        );
++        let board = renderer.render_session.board().unwrap().clone();
++        let schematic = renderer.render_session.schematic().cloned();
++        let started = Instant::now();
++        let mut upload_submissions = 0;
++        let mut acquired = false;
++        renderer.render_with_acquisition(
++            device,
++            queue,
++            &prepared,
++            &board,
++            schematic.as_ref(),
++            WIDTH,
++            HEIGHT,
++            &mut (),
++            &mut |_| {
++                acquired = true;
++                Ok(None::<crate::render_input::FrameTarget>)
++            },
++            &mut |_, _| {
++                upload_submissions += 1;
++            },
++        )?;
++        self.submissions += upload_submissions;
++        anyhow::ensure!(
++            acquired && upload_submissions == 0,
++            "A1 unexpected cold/upload continuation"
++        );
++        let uploads = renderer.attribution_upload_manifest();
++        let upload_bytes = uploads.iter().map(|(_, _, b)| b.len()).sum();
++        phases.push(("upload_api", elapsed(started)));
++        anyhow::ensure!(
++            renderer.attribution_graph_manifest(&prepared, &plan)? == self.manifest,
++            "A1 D/P commands/bindings changed"
++        );
++        if matches!(condition, 'D' | 'P') {
++            if let Some(previous) = &self.frozen_uploads {
++                anyhow::ensure!(
++                    &uploads == previous,
++                    "A1 D/P upload bytes/resources/offsets/order differ"
++                );
++            } else {
++                self.frozen_uploads = Some(uploads);
++            }
++        }
++        let started = Instant::now();
++        self.reset(renderer, device, queue)?;
++        phases.push(("reset", elapsed(started)));
++        let started = Instant::now();
++        let mut encoder = device.create_command_encoder(&Default::default());
++        self.timer.frame = None;
++        if condition != 'N' {
++            self.timer.start(&mut encoder, condition == 'M');
++        }
++        if condition == 'M' {
++            self.timer.marker(&mut encoder, "upload-leading")?;
++        }
++        renderer.encode_regional_composition(
++            device,
++            &mut encoder,
++            &prepared,
++            WIDTH,
++            HEIGHT,
++            &self.images,
++            &plan,
++            &mut self.timer.frame,
++            composition::RegionalControl {
++                omit: match condition {
++                    'A' => 1,
++                    'B' => 2,
++                    'C' => 3,
++                    _ => 0,
++                },
++                initialize: false,
++            },
++            #[cfg(all(test, feature = "visual"))]
++            crate::gpu_surface::prefix_negative_control::Fault::None,
++        )?;
++        self.images.present(&mut encoder, target);
++        if condition == 'M' {
++            self.timer.marker(&mut encoder, "frame-trailing")?;
++        }
++        if condition != 'N' {
++            self.timer.end(&mut encoder)?;
++        }
++        if condition != 'N' {
++            self.timer.resolve(&mut encoder);
++        }
++        phases.push(("encoding", elapsed(started)));
++        let started = Instant::now();
++        submit(queue, [encoder.finish()], &mut self.submissions)?;
++        renderer.hold_frame_submission(queue, Some(&self.images));
++        phases.push(("submit", elapsed(started)));
++        wait(device)?;
++        phases.push(("completion", elapsed(started)));
++        let started = Instant::now();
++        let ticks = if condition == 'N' {
++            Vec::new()
++        } else {
++            self.timer.read(device)?
++        };
++        phases.push(("query_readback", elapsed(started)));
++        let started = Instant::now();
++        let (bytes, submission) =
++            io::read(device, queue, target, &self.readback, &mut self.submissions)?;
++        phases.push(("image_readback", elapsed(started)));
++        let expected = if matches!(condition, 'A' | 'B' | 'C') {
++            &self.hybrid
++        } else {
++            &self.expected
++        };
++        if &bytes != expected {
++            let root = std::env::var_os("DATUM_A1_ARTIFACT_DIR")
++                .ok_or_else(|| anyhow::anyhow!("missing A1 failure artifact directory"))?;
++            io::save_image(
++                &std::path::Path::new(&root).join("first-failure.png"),
++                &bytes,
++            )?;
++            io::save_image(
++                &std::path::Path::new(&root).join("first-failure-expected.png"),
++                expected,
++            )?;
++            anyhow::bail!("A1 exact acquired-target mismatch in {condition}");
++        }
++        let gpu_bytes = Renderer::gpu_process_reserved_bytes();
++        anyhow::ensure!(gpu_bytes <= 512 * 1024 * 1024, "A1 tracked GPU cap");
++        Ok(AttributionObservation {
++            submission,
++            phases_ms: phases,
++            ticks,
++            period_ns: self.timer.period,
++            upload_bytes,
++            image_hash: io::hash(&bytes),
++            gpu_bytes,
++            tiles: self
++                .plan
++                .tiles()
++                .map(|t| {
++                    [
++                        t.id,
++                        t.source[0],
++                        t.source[1],
++                        t.atlas[0],
++                        t.atlas[1],
++                        t.extent[0],
++                        t.extent[1],
++                    ]
++                })
++                .collect(),
++        })
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_attribution_conformance.rs b/crates/gui-render/src/render/gpu_attribution_conformance.rs
+new file mode 100644
+index 00000000..60043cbf
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution_conformance.rs
+@@ -0,0 +1,174 @@
++//! The fixed sixteen A1 clock/operation observations, no alternate timing method.
++use super::*;
++use crate::text_gpu::budget::GpuReservation;
++use crate::text_gpu::lifetime::{Kind, Owner};
++use wgpu::util::DeviceExt;
++impl Renderer {
++    pub fn attribution_conformance(
++        &mut self,
++        device: &wgpu::Device,
++        queue: &wgpu::Queue,
++        mut emit: impl FnMut(usize, usize, Vec<u64>, f64) -> anyhow::Result<()>,
++    ) -> anyhow::Result<usize> {
++        let owner = Owner::new();
++        let mut submissions = 0;
++        let mut timer = Timer::new(device, queue)?;
++        let size = 4 * 1024 * 1024;
++        let source_charge = GpuReservation::new(size, vec![])?;
++        let source = owner.track_reserved(
++            device.create_buffer(&wgpu::BufferDescriptor {
++                label: Some("a1-known-copy-source"),
++                size,
++                usage: wgpu::BufferUsages::COPY_SRC,
++                mapped_at_creation: true,
++            }),
++            1,
++            Kind::Readback,
++            source_charge,
++        );
++        source.slice(..).get_mapped_range_mut().fill(0x5a);
++        source.unmap();
++        let middle_charge = GpuReservation::new(size, vec![])?;
++        let middle = owner.track_reserved(
++            device.create_buffer(&wgpu::BufferDescriptor {
++                label: Some("a1-known-copy-middle"),
++                size,
++                usage: wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST,
++                mapped_at_creation: false,
++            }),
++            1,
++            Kind::Readback,
++            middle_charge,
++        );
++        let buffer = CaptureReadback::new(device, size)?;
++        let target = CaptureTarget::new(device, extent(), self.msaa_format)?;
++        let working = self.ensure_msaa(device, WIDTH, HEIGHT)?.clone();
++        self.uniform_buffer.sync(
++            queue,
++            ScreenUniform {
++                resolution: [WIDTH as f32, HEIGHT as f32],
++                _pad: [0.0; 2],
++            },
++        );
++        let mut upload = self.flush_frame_uploads(device, queue)?;
++        if let Some(batch) = &mut upload {
++            submit(queue, [batch.command()], &mut submissions)?;
++        }
++        if let Some(batch) = upload {
++            batch.hold(queue);
++        }
++        wait(device)?;
++        let mut vertices: Vec<Vertex> = [
++            [0.0, 0.0],
++            [1280.0, 0.0],
++            [0.0, 800.0],
++            [0.0, 800.0],
++            [1280.0, 0.0],
++            [1280.0, 800.0],
++        ]
++        .into_iter()
++        .map(|position| Vertex {
++            pos: position,
++            color: [1.0, 0.0, 0.0],
++        })
++        .collect();
++        vertices.extend(vertices.clone().into_iter().map(|mut v| {
++            v.color = [0.0, 0.0, 1.0];
++            v
++        }));
++        let reservation =
++            GpuReservation::new(std::mem::size_of_val(vertices.as_slice()) as u64, vec![])?;
++        let quad = owner.track_reserved(
++            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
++                label: Some("a1-known-quad"),
++                contents: bytemuck::cast_slice(&vertices),
++                usage: wgpu::BufferUsages::VERTEX,
++            }),
++            1,
++            Kind::Readback,
++            reservation,
++        );
++        for repeat in 0..2 {
++            for case in 0..8 {
++                let mut encoder = device.create_command_encoder(&Default::default());
++                if case != 7 {
++                    timer.start(&mut encoder, case == 6);
++                }
++                match case {
++                    0 => (),
++                    1 | 4 | 5 => {
++                        for pass_index in 0..if case == 5 { 2 } else { 1 } {
++                            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
++                                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
++                                    view: &working,
++                                    resolve_target: Some(&target.create_view(&Default::default())),
++                                    depth_slice: None,
++                                    ops: wgpu::Operations {
++                                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
++                                        store: wgpu::StoreOp::Store,
++                                    },
++                                })],
++                                ..Default::default()
++                            });
++                            if case != 1 {
++                                pass.set_pipeline(&self.pipeline);
++                                pass.set_bind_group(0, &self.uniform_bind_group, &[]);
++                                pass.set_bind_group(1, &self.damage_masks.unrestricted.group, &[]);
++                                pass.set_vertex_buffer(0, quad.slice(..));
++                                pass.draw(pass_index * 6..pass_index * 6 + 6, 0..1);
++                            }
++                        }
++                    }
++                    2 | 7 => encoder.copy_buffer_to_buffer(&source, 0, &buffer, 0, size),
++                    3 => {
++                        encoder.copy_buffer_to_buffer(&source, 0, &middle, 0, size);
++                        encoder.copy_buffer_to_buffer(&middle, 0, &buffer, 0, size);
++                    }
++                    6 => timer.marker(&mut encoder, "a1-production-marker")?,
++                    _ => unreachable!(),
++                }
++                if case != 7 {
++                    timer.end(&mut encoder)?;
++                    timer.resolve(&mut encoder);
++                }
++                submit(queue, [encoder.finish()], &mut submissions)?;
++                wait(device)?;
++                let ticks = if case == 7 {
++                    Vec::new()
++                } else {
++                    timer.read(device)?
++                };
++                if matches!(case, 2 | 3 | 7) {
++                    let slice = buffer.slice(..);
++                    let (tx, rx) = std::sync::mpsc::channel();
++                    slice.map_async(wgpu::MapMode::Read, move |r| {
++                        let _ = tx.send(r);
++                    });
++                    wait(device)?;
++                    rx.recv_timeout(Duration::from_secs(2))??;
++                    anyhow::ensure!(
++                        slice.get_mapped_range().iter().all(|b| *b == 0x5a),
++                        "A1 conformance copy bytes"
++                    );
++                    buffer.unmap();
++                }
++                if matches!(case, 1 | 4 | 5) {
++                    let (bytes, _) = io::read(device, queue, &target, &buffer, &mut submissions)?;
++                    let expected = if case == 1 {
++                        [0, 0, 0, 255]
++                    } else if case == 5 {
++                        [255, 0, 0, 255]
++                    } else {
++                        [0, 0, 255, 255]
++                    };
++                    anyhow::ensure!(
++                        bytes.chunks_exact(4).all(|p| p == expected),
++                        "A1 exact8 conformance pixels"
++                    );
++                }
++                emit(repeat, case, ticks, timer.period)?;
++            }
++        }
++        Ok(submissions)
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_attribution_io.rs b/crates/gui-render/src/render/gpu_attribution_io.rs
+new file mode 100644
+index 00000000..d34bd1fa
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution_io.rs
+@@ -0,0 +1,71 @@
++//! Bounded exact raw-byte readback, outside the attributed graph interval.
++use super::*;
++pub(super) fn read(
++    device: &wgpu::Device,
++    queue: &wgpu::Queue,
++    texture: &wgpu::Texture,
++    buffer: &CaptureReadback,
++    submissions: &mut usize,
++) -> anyhow::Result<(Vec<u8>, wgpu::SubmissionIndex)> {
++    anyhow::ensure!(
++        texture.usage().contains(wgpu::TextureUsages::COPY_SRC),
++        "A1 target lacks COPY_SRC"
++    );
++    let mut encoder = device.create_command_encoder(&Default::default());
++    encoder.copy_texture_to_buffer(
++        texture.as_image_copy(),
++        wgpu::TexelCopyBufferInfo {
++            buffer,
++            layout: wgpu::TexelCopyBufferLayout {
++                offset: 0,
++                bytes_per_row: Some(WIDTH * 4),
++                rows_per_image: Some(HEIGHT),
++            },
++        },
++        extent(),
++    );
++    let submission = submit(queue, [encoder.finish()], submissions)?;
++    buffer.hold_submission(queue);
++    let slice = buffer.slice(..BYTES);
++    let (tx, rx) = std::sync::mpsc::channel();
++    slice.map_async(wgpu::MapMode::Read, move |r| {
++        let _ = tx.send(r);
++    });
++    wait(device)?;
++    rx.recv_timeout(Duration::from_secs(2))??;
++    let bytes = slice.get_mapped_range().to_vec();
++    buffer.unmap();
++    Ok((bytes, submission))
++}
++pub(super) fn read_composed(
++    device: &wgpu::Device,
++    queue: &wgpu::Queue,
++    images: &PrefixImages,
++    buffer: &CaptureReadback,
++    submissions: &mut usize,
++) -> anyhow::Result<Vec<u8>> {
++    Ok(read(
++        device,
++        queue,
++        images.composed_texture(),
++        buffer,
++        submissions,
++    )?
++    .0)
++}
++pub(super) fn hash(bytes: &[u8]) -> u64 {
++    bytes.iter().fold(0xcbf29ce484222325, |h, b| {
++        (h ^ u64::from(*b)).wrapping_mul(0x100000001b3)
++    })
++}
++
++pub(super) fn save_image(path: &std::path::Path, bytes: &[u8]) -> anyhow::Result<()> {
++    let mut rgba = bytes.to_vec();
++    for pixel in rgba.chunks_exact_mut(4) {
++        pixel.swap(0, 2);
++    }
++    image::RgbaImage::from_raw(WIDTH, HEIGHT, rgba)
++        .ok_or_else(|| anyhow::anyhow!("A1 reference image extent"))?
++        .save(path)?;
++    Ok(())
++}
+diff --git a/crates/gui-render/src/render/gpu_attribution_manifest.rs b/crates/gui-render/src/render/gpu_attribution_manifest.rs
+new file mode 100644
+index 00000000..0b12d8a5
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution_manifest.rs
+@@ -0,0 +1,84 @@
++//! Fixed-fixture command descriptors; every admitted painter path is explicit.
++use super::*;
++impl Renderer {
++    pub(super) fn attribution_graph_manifest(
++        &self,
++        prepared: &PreparedScene,
++        plan: &Plan,
++    ) -> anyhow::Result<String> {
++        anyhow::ensure!(
++            prepared.schematic_overlay_vertices().is_empty()
++                && prepared.console_overlay_vertices().is_empty()
++                && prepared.menu_overlay_vertices().is_empty()
++                && prepared.terminal_graphics.is_empty(),
++            "A1 fixture has an unpinned schematic/console/menu/terminal painter"
++        );
++        let mut commands = vec![
++            "restore:T clear0 store;prefix UNORM view;restoration pipeline;bind0=A".to_string(),
++        ];
++        for tile in plan.tiles() {
++            commands.push(format!(
++                "restore clip={:?}/{:?};draw=0..3;instance={}..{}",
++                tile.atlas,
++                tile.extent,
++                tile.id,
++                tile.id + 1
++            ));
++        }
++        commands.push("suffix:T load/resolveR/discard".into());
++        for tile in plan.tiles() {
++            let clip = tile.clip();
++            commands.push(format!("viewport={:?}->{:?}/1280x800;clip={:?};pipeline={:?};bind0={:?};bind1=unrestricted",
++                tile.source,tile.atlas,clip.intersect([0,0,WIDTH,HEIGHT]),self.pipeline,self.uniform_bind_group));
++            for (vertices, viewport, buffer) in [
++                (
++                    prepared.viewport_overlay_vertices(),
++                    Some(prepared.scene_viewport),
++                    self.viewport_overlay_gpu.buffer(),
++                ),
++                (
++                    prepared.board_interaction_vertices(),
++                    prepared.painted_interaction_viewport(SceneSurface::Board),
++                    self.board_interaction_gpu.buffer(),
++                ),
++            ] {
++                if let Some(viewport) = viewport
++                    && !vertices.is_empty()
++                    && let Some(clip) =
++                        clip.intersect(immediate_admission::screen_admission::scissor(viewport))
++                {
++                    commands.push(format!(
++                        "clip={clip:?};vertex0={buffer:?};draw=0..{};instances=0..1",
++                        vertices.len()
++                    ));
++                }
++            }
++            if prepared.has_workspace_text() {
++                commands.push(format!("clip={:?}", clip.intersect([0, 0, WIDTH, HEIGHT])));
++                commands.extend(
++                    self.text_renderer
++                        .attribution_commands(&self.atlas, TextLayer::Workspace),
++                );
++            }
++            commands.push(format!(
++                "console empty;pipeline={:?};bind0={:?};bind1=unrestricted",
++                self.pipeline, self.uniform_bind_group
++            ));
++            if prepared.has_workspace_text() {
++                commands.push(format!("clip={:?}", clip.intersect([0, 0, WIDTH, HEIGHT])));
++                commands.extend(
++                    self.text_renderer
++                        .attribution_commands(&self.atlas, TextLayer::Foreground),
++                );
++            }
++        }
++        for tile in plan.tiles() {
++            commands.push(format!(
++                "copy R{:?}->C{:?}:{:?}",
++                tile.atlas, tile.source, tile.extent
++            ));
++        }
++        commands.push("copy C[0,0,1280,800]->acquired[0,0,1280,800]".into());
++        Ok(commands.join("\n"))
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_attribution_setup.rs b/crates/gui-render/src/render/gpu_attribution_setup.rs
+new file mode 100644
+index 00000000..5f38e8fb
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution_setup.rs
+@@ -0,0 +1,69 @@
++//! Setup evidence from actual shared prepared state; no timing observations.
++use super::*;
++pub(super) fn receipt(
++    renderer: &Renderer,
++    state: &datum_gui_protocol::ReviewWorkspaceState,
++    before: &PreparedScene,
++    after: &PreparedScene,
++    case: usize,
++    hover: &datum_gui_protocol::HoverTarget,
++) -> anyhow::Result<String> {
++    anyhow::ensure!(
++        state.ui.layout == datum_gui_protocol::WorkspaceLayout::single(),
++        "A1 single layout"
++    );
++    let panes = after.layout.viewport_panes(&state.ui.layout);
++    anyhow::ensure!(
++        panes.panes.len() == 1 && panes.panes[0].content == datum_gui_protocol::PaneContent::Board,
++        "A1 sole board pane"
++    );
++    let mut observations = Vec::new();
++    for (phase, prepared) in [("before", before), ("after", after)] {
++        let (x, y) = prepared
++            .crosshair_cursor_screen
++            .ok_or_else(|| anyhow::anyhow!("A1 missing prepared crosshair"))?;
++        anyhow::ensure!(
++            prepared.scene_viewport.contains(x, y),
++            "A1 pointer outside board"
++        );
++        anyhow::ensure!(
++            prepared.schematic_scene_viewport.is_none(),
++            "A1 unexpected schematic pane"
++        );
++        let actual_hover = crate::resolve_pane_hover(
++            prepared,
++            renderer.render_session.board().unwrap(),
++            None,
++            state,
++            x,
++            y,
++        );
++        anyhow::ensure!(
++            actual_hover.hover.as_ref() == Some(hover),
++            "A1 hit-tested hover differs: {:?}",
++            actual_hover.hover
++        );
++        let rect = prepared.scene_viewport;
++        let hit = actual_hover.hover.as_ref().unwrap();
++        anyhow::ensure!(hit.object_id.is_ascii(), "A1 ASCII pinned identity");
++        observations.push(format!(
++            r#"{{"phase":{phase:?},"pointer":[{x},{y}],"hit_tested_hover":{id:?},"hover_surface":"{surface:?}","camera_center_nm":[{cx},{cy}],"camera_zoom":{zoom},"scene_viewport":{rect:?},"board_pane_id":{pane},"crosshair_style":"{style:?}","interaction_vertices":{vertices:?}}}"#,
++            id=hit.object_id, surface=hit.surface, cx=prepared.camera.center_x_nm,
++            cy=prepared.camera.center_y_nm, zoom=prepared.camera.zoom,
++            rect=[rect.x,rect.y,rect.width,rect.height], pane=prepared.board_pane_id.0,
++            style=prepared.crosshair_style,
++            vertices=prepared.board_interaction_vertices.iter().map(|v| v.pos).collect::<Vec<_>>()
++        ));
++    }
++    let frame = panes.panes[0].rect.frame;
++    Ok(format!(
++        r#"{{"case":{case},"layout":"single","pane_count":{count},"board_frame":{frame:?},"focus":"{focus:?}","focused_pane":{focused},"selection":"{selection:?}","assigned_hover":{hover:?},"observations":[{observations}]}}"#,
++        count = panes.panes.len(),
++        frame = [frame.x, frame.y, frame.width, frame.height],
++        focus = state.ui.focus,
++        focused = state.ui.layout.focused.0,
++        selection = state.selection,
++        hover = state.ui.hovered_object.as_ref().unwrap().object_id,
++        observations = observations.join(",")
++    ))
++}
+diff --git a/crates/gui-render/src/render/gpu_attribution_timer.rs b/crates/gui-render/src/render/gpu_attribution_timer.rs
+new file mode 100644
+index 00000000..f46dd4ce
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution_timer.rs
+@@ -0,0 +1,107 @@
++//! One bounded diagnostic query slot; reuses production resource and marker owners.
++use super::*;
++
++pub(crate) struct Timer {
++    slot: Slot,
++    marker: Tracked<resources::Marker>,
++    pub frame: Option<FrameQueries>,
++    count: u32,
++    pub period: f64,
++}
++impl Timer {
++    pub fn new(device: &wgpu::Device, queue: &wgpu::Queue) -> anyhow::Result<Self> {
++        let required =
++            wgpu::Features::TIMESTAMP_QUERY | wgpu::Features::TIMESTAMP_QUERY_INSIDE_ENCODERS;
++        anyhow::ensure!(
++            device.features().contains(required),
++            "A1 timestamp features absent"
++        );
++        let period = f64::from(queue.get_timestamp_period());
++        anyhow::ensure!(
++            period.is_finite() && period > 0.0,
++            "A1 invalid timestamp period"
++        );
++        let owner = crate::text_gpu::lifetime::Owner::new();
++        Ok(Self {
++            slot: Slot::new(device, &owner, 1)?,
++            marker: resources::Marker::new(device, &owner, 1)?,
++            frame: None,
++            count: 0,
++            period,
++        })
++    }
++    pub fn start(&mut self, encoder: &mut wgpu::CommandEncoder, markers: bool) {
++        self.count = 1;
++        self.frame = markers.then(|| FrameQueries {
++            timeline: Default::default(),
++            pass_indices: Vec::with_capacity(4),
++            scene_offset: None,
++            final_transfer_end: None,
++            slot: 0,
++            epoch: 1,
++            frame: 1,
++            submission: 1,
++            queries: (*self.slot.queries).clone(),
++            resources: self.slot.submission_refs(),
++            passes: Vec::with_capacity(4),
++            query_count: 1,
++            marker_count: 0,
++            scene_markers_enabled: false,
++            signal: Arc::new(AtomicU8::new(ENCODING)),
++            resolved: false,
++            submitted: true,
++        });
++        encoder.write_timestamp(&self.slot.queries, 0);
++    }
++    pub fn marker(
++        &mut self,
++        encoder: &mut wgpu::CommandEncoder,
++        name: &'static str,
++    ) -> anyhow::Result<()> {
++        self.frame
++            .as_mut()
++            .ok_or_else(|| anyhow::anyhow!("marker outside M"))?
++            .encode_marker(encoder, &self.marker.view, name)
++    }
++    pub fn end(&mut self, encoder: &mut wgpu::CommandEncoder) -> anyhow::Result<()> {
++        let index = self.frame.as_ref().map_or(1, |f| f.query_count);
++        anyhow::ensure!(index < QUERIES, "A1 query capacity");
++        encoder.write_timestamp(&self.slot.queries, index);
++        self.count = index + 1;
++        Ok(())
++    }
++    pub fn resolve(&self, encoder: &mut wgpu::CommandEncoder) {
++        encoder.resolve_query_set(&self.slot.queries, 0..self.count, &self.slot.resolve, 0);
++        encoder.copy_buffer_to_buffer(
++            &self.slot.resolve,
++            0,
++            &self.slot.readback,
++            0,
++            u64::from(self.count) * 8,
++        );
++    }
++    pub fn read(&self, device: &wgpu::Device) -> anyhow::Result<Vec<u64>> {
++        let bytes = self.slot.readback.slice(..u64::from(self.count) * 8);
++        let (tx, rx) = std::sync::mpsc::channel();
++        bytes.map_async(wgpu::MapMode::Read, move |r| {
++            let _ = tx.send(r);
++        });
++        device.poll(wgpu::PollType::Wait {
++            submission_index: None,
++            timeout: Some(Duration::from_secs(2)),
++        })?;
++        rx.recv_timeout(Duration::from_secs(2))??;
++        let mapped = bytes.get_mapped_range();
++        let ticks = mapped
++            .chunks_exact(8)
++            .map(|b| u64::from_le_bytes(b.try_into().unwrap()))
++            .collect::<Vec<_>>();
++        drop(mapped);
++        self.slot.readback.unmap();
++        anyhow::ensure!(
++            ticks.len() == self.count as usize && ticks.windows(2).all(|w| w[0] <= w[1]),
++            "A1 incomplete/reversed timestamps"
++        );
++        Ok(ticks)
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_attribution_uploads.rs b/crates/gui-render/src/render/gpu_attribution_uploads.rs
+new file mode 100644
+index 00000000..3b2b860e
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_attribution_uploads.rs
+@@ -0,0 +1,12 @@
++//! Exact upload replay descriptors from the shared producer enumeration.
++use super::*;
++impl Renderer {
++    pub(crate) fn attribution_upload_manifest(&self) -> Vec<(wgpu::Buffer, u64, Vec<u8>)> {
++        let mut buffers = Vec::new();
++        visit_frame_uploads!(self, buffers);
++        buffers
++            .into_iter()
++            .map(|b| (b.buffer.clone(), b.offset, b.bytes.to_vec()))
++            .collect()
++    }
++}
+diff --git a/crates/gui-render/src/render/gpu_regional_composition.rs b/crates/gui-render/src/render/gpu_regional_composition.rs
+new file mode 100644
+index 00000000..1e63d4fa
+--- /dev/null
++++ b/crates/gui-render/src/render/gpu_regional_composition.rs
+@@ -0,0 +1,159 @@
++//! One regional image graph shared by production and diagnostic ablations.
++use super::*;
++#[derive(Default)]
++pub(crate) struct RegionalControl {
++    #[cfg(feature = "gpu-attribution")]
++    pub omit: u8,
++    #[cfg(feature = "gpu-attribution")]
++    pub initialize: bool,
++}
++impl RegionalControl {
++    fn restore(&self) -> bool {
++        #[cfg(feature = "gpu-attribution")]
++        {
++            return self.omit < 2;
++        }
++        #[cfg(not(feature = "gpu-attribution"))]
++        {
++            true
++        }
++    }
++    fn resolve(&self) -> bool {
++        #[cfg(feature = "gpu-attribution")]
++        {
++            return self.omit < 3;
++        }
++        #[cfg(not(feature = "gpu-attribution"))]
++        {
++            true
++        }
++    }
++    fn suffix(&self) -> bool {
++        #[cfg(feature = "gpu-attribution")]
++        {
++            return self.omit == 0;
++        }
++        #[cfg(not(feature = "gpu-attribution"))]
++        {
++            true
++        }
++    }
++    fn initializing(&self) -> bool {
++        #[cfg(feature = "gpu-attribution")]
++        {
++            return self.initialize;
++        }
++        #[cfg(not(feature = "gpu-attribution"))]
++        {
++            false
++        }
++    }
++    fn store(&self, production: wgpu::StoreOp) -> wgpu::StoreOp {
++        #[cfg(feature = "gpu-attribution")]
++        if self.initialize {
++            return wgpu::StoreOp::Store;
++        }
++        production
++    }
++}
++impl Renderer {
++    #[allow(clippy::too_many_arguments)]
++    pub(crate) fn encode_regional_composition(
++        &self,
++        device: &wgpu::Device,
++        encoder: &mut wgpu::CommandEncoder,
++        prepared: &PreparedScene,
++        width: u32,
++        height: u32,
++        images: &PrefixImages,
++        plan: &Plan,
++        measurement: &mut Option<gpu_measurements::FrameQueries>,
++        control: RegionalControl,
++        #[cfg(all(test, feature = "visual"))]
++        fault: crate::gpu_surface::prefix_negative_control::Fault,
++    ) -> anyhow::Result<std::time::Duration> {
++        let mask = &self.damage_masks.unrestricted;
++        mask.set_consumers(self.frame_consumers.all());
++        let mut elapsed = std::time::Duration::ZERO;
++        if !plan.is_empty() {
++            let (source, destination) = images.restoration_views().expect("admitted aliases");
++            #[cfg(all(test, feature = "visual"))]
++            let restore = fault != crate::gpu_surface::prefix_negative_control::Fault::StaleWorking;
++            #[cfg(not(all(test, feature = "visual")))]
++            let restore = true;
++            if restore && control.restore() {
++                self.damage_masks
++                    .restoration
++                    .as_ref()
++                    .expect("admitted restoration")
++                    .encode_regional(
++                        device,
++                        encoder,
++                        source,
++                        destination,
++                        plan,
++                        measurement
++                            .as_mut()
++                            .map(|m| m.pass("restore"))
++                            .transpose()?,
++                    );
++            }
++            if control.resolve() {
++                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
++                    label: Some("datum-regional-suffix-resolve"),
++                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
++                        view: images.atlas_view(),
++                        resolve_target: Some(images.resolved_atlas_view()),
++                        depth_slice: None,
++                        ops: wgpu::Operations {
++                            load: wgpu::LoadOp::Load,
++                            store: control.store(self.surface_attachments.regional_store()),
++                        },
++                    })],
++                    timestamp_writes: measurement.as_mut().map(|m| m.pass("suffix")).transpose()?,
++                    ..Default::default()
++                });
++                for tile in plan.tiles().filter(|_| control.suffix()) {
++                    tile.viewport(&mut pass, width, height);
++                    let clip = tile.clip();
++                    #[cfg(all(test, feature = "visual"))]
++                    let clip = if fault
++                        == crate::gpu_surface::prefix_negative_control::Fault::MissingSuffixMask
++                    {
++                        Clip::full(
++                            crate::renderer_state::damage::regional::ATLAS,
++                            crate::renderer_state::damage::regional::ATLAS,
++                        )
++                    } else {
++                        clip
++                    };
++                    elapsed += self.draw_frame_suffix(
++                        &mut pass,
++                        prepared,
++                        width,
++                        height,
++                        &mask.group,
++                        clip,
++                    )?;
++                    #[cfg(all(test, feature = "visual"))]
++                    if fault
++                        == crate::gpu_surface::prefix_negative_control::Fault::OverlappingSuffix
++                    {
++                        elapsed += self.draw_frame_suffix(
++                            &mut pass,
++                            prepared,
++                            width,
++                            height,
++                            &mask.group,
++                            clip,
++                        )?;
++                    }
++                }
++            }
++            if !control.initializing() {
++                images.compose_tiles(encoder, plan);
++            }
++        }
++        Ok(elapsed)
++    }
++}
