@@ -39780,6 +39780,12 @@
     "historical_overruns_not_assumed_current": true,
     "new_thresholds": [],
     "execution_authorized": false,
-    "optimization_authorized": false
+    "optimization_authorized": false,
+    "derivation_first": {
+      "assessment": "docs/reviews/gui-performance/cpu-reconciliation/derivation.md",
+      "status": "Parent CPU duty/tail/transition derivations unvalidated; conditional arithmetic only",
+      "packet": "postponed pending derivation disposition",
+      "new_thresholds": []
+    }
   }
 }

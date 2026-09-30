@@ -851,3 +851,25 @@ current ordinary CPU and measurement contribution using the bounded packet;
 report non-reproduction, measured concern or inconclusive method evidence. Do not
 assume historical overruns persist, invent a threshold or start optimization.
 This remains pending and unapproved; it is not a condition for reopening S4.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-DERIVATION -->
+**GPI-CPU-DERIVATION.** The owner requires CPU threshold derivations before the
+CPU establishment packet or investigation. Reconstruct only supported arithmetic,
+product rationale and evidence provenance; distinguish missing support and leave
+unsupported proposed budgets undecided. No runtime or optimization authority.
+
+## Derivation precedes CPU investigation
+
+The owner's subsequent direction requires derivations before CPU work. The
+assessment in `docs/reviews/gui-performance/cpu-reconciliation/derivation.md`
+finds conditional per-action arithmetic but no validated parent duty or CPU
+latency/transition-budget rationale. GPI-CPU-DERIVATION is assessed, not numerical
+validation. The prior ordinary-mode packet recommendation is postponed. No CPU
+harness, measurement or optimization is authorized. CPU limits are not silently
+withdrawn; unsupported replacement budgets remain undecided under PM051/GBB-P05.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-CPU-DERIVATION-DISPOSITION -->
+**GPI-CPU-DERIVATION-DISPOSITION.** Resolve the CPU requirement basis and supporting
+evidence before GPI-CPU-SCOPE. Require product/resource-sharing objectives,
+supported-hardware scope, justified metric mapping and feasibility evidence;
+leave numbers undecided when unsupported. No automatic measurement authority.
