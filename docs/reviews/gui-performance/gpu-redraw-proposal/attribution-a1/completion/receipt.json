@@ -1,0 +1,51 @@
+{
+  "status": "substantive_workload_validity_failure_after_full_batch",
+  "issue": "dat-gui-performance-implementation-vkq",
+  "defect": "dat-gpu-a1-fixture-py2u",
+  "step": "GPI-S4",
+  "binary": "/home/bfadmin/Documents/datum-eda-evidence/attribution-a1/48b46328d255bc117d30936985c60386fcae75b399da2cce1ab51a5c475f2678/datum-a1-diagnostic",
+  "binary_sha256": "48b46328d255bc117d30936985c60386fcae75b399da2cce1ab51a5c475f2678",
+  "matches_original_executable": true,
+  "source": "All21 restored source hashes match archived declaration; restored toHEAD after successful build. No source edits remain.",
+  "recovery": {
+    "rebuilds": 1,
+    "build_result": "pass optimized offline guarded,7m03s,no compiler diagnostics",
+    "offline_negative_controls": "pass1test",
+    "launcher": "scale1,X11,Vulkan,pinned hashes/Mesa,clean Datum/loader flags,isolated XDG,displayauth,no competing compiler;complete config sealed before entry",
+    "setup_failures_this_attempt": 0,
+    "previous_setup_failures": "preserved unchanged in readback-result and scale-relaunch"
+  },
+  "execution": {
+    "native_processes": 1,
+    "exit_code": 0,
+    "observations": 646,
+    "conformance": 16,
+    "correctness": 14,
+    "warmup": 56,
+    "measured": 560,
+    "diagnostic_submission_counter": 1941,
+    "process_wall_seconds": 16.207240860909224,
+    "max_sampled_tracked_gpu_bytes": 90098524,
+    "numeric_bytes": 1524073,
+    "cpu_storage": "64MiB assertion passed;no numeric peak emitted",
+    "extra_sampling": 0
+  },
+  "validation": {
+    "internal": "All630sample comparisons passed against internally constructed reference/hybrid; all16conformance observations completed. Offline analyzer verified fixed sample order/count and bounded nonreversed timestamps.",
+    "independent_fixture": "FAIL: images show default Board+Schematic split, not pinned single. V x700 is outside board pane; no visible crosshair. Exact comparisons and command parity are internally consistent with wrong fixture.",
+    "cause": "archived gui-app/src/gpu_attribution.rs loads default workspace; archived gui-render/src/render/gpu_attribution.rs attribution_case never sets ui.layout. WorkspaceLayout::default()=board_schematic; normal app_bootstrap applies --initial-layout single but ignored test bypasses bootstrap.",
+    "scope": "New diagnostic fixture defect, not legacy renderer/hardware failure."
+  },
+  "disposition": "Stop substantive measurement/workload failure. Full560measured allowance consumed; no rerun, fix/build, new study or optimization. Raw timings retained but rejected as attribution for approved workload. No hardware feasibility/economic recommendation or S4/S5 closure.",
+  "artifacts_sha256": {
+    "raw.tar.gz": "6d652f072154f814fcf285381bcef4ca4c6878738b4034b5b9c7b94999e4416e",
+    "launcher.py": "b82289e7e0291b9b73990e155f6247430a48c4d5a9f016f35fea176ef44fcc78",
+    "declaration.json": "284319b2e2764db789f63065fdad8878d87bfec21815e671a1acd4b1121fa8b4",
+    "preflight.json": "cd4a2799682b143eb3819a66b14336f23c9f86801b712410df135aff2325d5ef",
+    "analysis.json": "f6c38b6690dc3253330905457fb0bb67a49e7661031a66af6b51e013ba93a71d",
+    "reference-0.png": "0f8a418930e139e026135f357102f02f9f6c930efaa4d2525fb5e6dab0da6dd5",
+    "reference-1.png": "d68a83ed0f4fabf509ac921df6547c7926e8a98a674a6479783f95209cf1e50d",
+    "execution-state.json": "3668e2e5a6cc975610e8058966e1cd84ca0083cc6418527c56e9399055ec1cde",
+    "offline-controls.log": "1c6a61a98fa9340a2b417f01d9c2a5c53dc9a00031396dabf7062cac4f4df8e7"
+  }
+}
