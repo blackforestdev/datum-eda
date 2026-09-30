@@ -123,3 +123,15 @@ are reconciled by this decision, the explicit baseline lane and the active-agent
 handoff. The incident records owner-reported impact separately from independently
 measured facts. Historical evidence is not rewritten; this governance correction
 does not itself close the remaining baseline, budget or runtime qualification work.
+
+## Recorded GBB-P04 disposition
+
+The owner accepts only the limited pointer assessment at commit 805fbb1e; exact
+response: `docs/reviews/gui-performance/baseline-budget/pointer-owner-disposition.json`.
+Replacement budgets remain **undecided**. Seven workload families, total
+instrumentation effects, displayed responsiveness, supported-hardware expectations
+and complete DRM/resource accounting remain unresolved and scheduled under
+GBB-P05, planning only, nonblocking for functionality. This disposition authorizes
+no additional measurement or renderer optimization and supersedes any earlier
+collection grant as a basis for new runs. It closes the assessment decision only;
+it does not accept a representative baseline or resolve S4/S5/GPU qualification.

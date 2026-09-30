@@ -2,6 +2,13 @@
 
 ## Current owner amendment — PM051
 
+GBB-P04 now records owner acceptance of the limited pointer assessment only.
+Replacement budgets remain undecided; the seven workload families and total
+instrumentation/display/hardware/DRM-resource gaps are scheduled at GBB-P05,
+nonblocking for functionality. No additional measurement or renderer optimization
+is authorized by that disposition. See
+`docs/reviews/gui-performance/baseline-budget/pointer-owner-disposition.json`.
+
 [PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md) withdraws GPU execution 4 ms p95 / 8 ms p99 as
 blocking acceptance criteria because their derivation was never validated.
 Historical measurements and their original scopes remain intact; exceedance alone
