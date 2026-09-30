@@ -1,0 +1,16 @@
+{
+  "owner_statement": "GUI-PERFORMANCE-IMPLEMENTATION: approve S4 closure boundary and governance-only closure",
+  "recorded_at": "2026-09-30T06:17:59Z",
+  "session": "01a0e510-a383-7931-86e3-7228ca0591e2",
+  "proposal_commit": "d680635c524d35c1e5ef1cbe67c58cc6d8475a46",
+  "proposal_sha256": "d8dad8a707a07d06790c04f25ef6fb4f2e166f50e791c92e8c4098cc79f9b97f",
+  "authorized": "Ratify exact S4/S5 boundary and governance-only S4 closure using credited evidence",
+  "excluded": [
+    "Production edits",
+    "Builds",
+    "New GPU/native measurements",
+    "S5 execution",
+    "Budget ratification",
+    "Overall issue closure"
+  ]
+}

@@ -190,3 +190,17 @@ accounting, and full metadata/submitted/retiring resource accounting into the
 required proof. The supplied review's final metadata sentence was incomplete;
 no cap or lifetime requirement is waived or inferred from its missing ending.
 No runtime acceptance is claimed. The pinned r4 first-failure boundaries remain.
+
+## Owner-ratified S4 closure boundary
+
+The owner explicitly approved S4 closure boundary and governance-only closure;
+see `docs/reviews/gui-performance/s4-closure/owner-approval.json` and `closure.md`
+in that directory for the exact scope and evidence. S4 is complete on shared
+implementation and bounded correctness, exact 8x/painter/invalidation/recovery,
+and application-owned resource admission/lifetime proof. Complete DRM/client
+duty, instantaneous/peak resource accounting and cross-configuration method
+conformance qualify unchanged requirements at S5, not as S4 exit prerequisites.
+The 25% duty limit is unchanged and not declared met. This supersedes historical
+S4-open/no-closure dispositions above only at this approved boundary. S5, the
+main issue and GBB-P05 remain open; no further implementation, build, native
+measurement, optimization or replacement budget is authorized.

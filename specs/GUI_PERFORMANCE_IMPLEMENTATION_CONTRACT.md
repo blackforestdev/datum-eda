@@ -479,16 +479,19 @@ correction and bounded proof on pinned F-DOA, Intel P630, X11/Xwayland at 1x in
 the reference pointer configuration that exhibited the failure. Apply the
 W-POINTER recipe and MET/GPU/ACC/STAT methods. GPU execution p95/p99
 4/8 ms limits are withdrawn under PM051; engine duty <=25% remains unchanged
-pending the adjacent threshold audit. Preserve exact reference
+pending the adjacent threshold audit; complete DRM/client duty qualification
+is assigned to S5 by the approved S4 closure boundary below. Preserve exact reference
 pixels, 8x antialiasing, painter order, input/final state, changed-dependency
 invalidation and recovery; account affected live/retiring resources under all
 applicable caps. Explain material CPU regressions without opening a separate
-CPU optimization workstream. Missing conformance, incomplete accounting or
-failed correctness or non-withdrawn numerical proof cannot pass this bounded exit. No repeated
+CPU optimization workstream. Failed bounded correctness or application-owned
+admission/lifetime proof cannot pass this exit. Complete DRM duty, instantaneous/
+peak resource accounting and cross-configuration measurement conformance remain
+S5 qualification obligations under unchanged limits, not S4 exit prerequisites. No repeated
 unchanged campaign or speculative parameter sweep is authorized.
 
 The S4 table's original obligations remain; the paragraph above adds an exit
-prerequisite rather than replacing them. GPI-S5 is pending behind reopened S4.
+prerequisite rather than replacing them. GPI-S4 is now complete under the owner-approved closure boundary; GPI-S5 remains pending.
 It retains complete admitted backend/scale/consumer qualification, all original
 CPU/GPU/resource requirements, endurance/recovery, distinct-reviewer native
 replay and separate owner UX/product disposition. Bounded S4 proof does not
@@ -768,3 +771,24 @@ it reuses committed proof, verifies source/evidence continuity, and closes only
 S4 implementation after ratification. If the owner retains the existing duty gate,
 keep S4 open and request a separately bounded method scope; no method feasibility
 or execution authorization is inferred. S5 qualification and GBB-P05 remain open.
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S4-CLOSURE-APPROVED -->
+The owner explicitly approved the S4 closure boundary and governance-only closure.
+Exact response and reviewed proposal pin: `docs/reviews/gui-performance/s4-closure/owner-approval.json`.
+No production, build, native-run or S5 execution authority is granted.
+
+## Ratified S4 closure and qualification handoff
+
+The owner approved the exact boundary in the S4 closure checklist. Its operative
+wording and source/evidence verification are recorded in
+`docs/reviews/gui-performance/s4-closure/closure.md`. GPI-S4 is complete on the
+credited bounded implementation and correctness proof. This supersedes prior
+statements keeping S4 open and the former S4 duty/method exit prerequisite only.
+All unchanged limits qualify at S5; no numerical or full product pass is claimed.
+The original planning checklist remains a historical pre-disposition record.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5-SCOPE -->
+**GPI-S5-SCOPE.** Obtain an explicit bounded S5 qualification scope before any
+execution. Reuse adequate existing proof and preserve checklist Q01–Q07 and
+GBB-P05 gaps. This closure grants no S5 build, test or native-run authority and
+no new renderer optimization. Functionality remains globally unblocked.
