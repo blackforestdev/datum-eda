@@ -4,5 +4,6 @@
   "base_commit": "61be2e838f6d7c206f2d482145907bba9df25cdb",
   "recorded_at": "2026-09-30T06:41:49Z",
   "scope": "CPU existing-evidence/provenance audit and scheduling only; no runtime or optimization",
-  "owner_clarification": "lets not make the same mistake as the p95 or p99 baseline figure that were un substiantiated."
+  "owner_clarification": "lets not make the same mistake as the p95 or p99 baseline figure that were un substiantiated.",
+  "derivation_first_direction": "we need to establish the derverations prior to diving into THE CPU work."
 }
