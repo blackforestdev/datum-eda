@@ -282,6 +282,15 @@ construction; the six completion questions and product acceptance remain open.
 
 ## GUI-PERFORMANCE-SPEC — performance-first shared GUI specification
 
+Governance correction: `CLAUDE.md` now requires evidence and derivation before
+numerical performance targets become blocking, and bounded review of both code
+and requirements after repeated failure. The
+[budget provenance incident](../docs/reviews/gui-performance/baseline-budget/budget-provenance-incident.md)
+records the unsupported GPU target's history and owner-reported impact. Its
+PM051/baseline-budget reconciliation is in progress under
+`dat-gui-baseline-budgets-j9w8`; this entry does not select work or claim that
+replacement budgets, performance qualification or incident closure are complete.
+
 | Deliverable | Current | Target |
 |---|---|---|
 | Specification-development brief | 42 requirements and 25 historical cases retained; GPS-C01 investigative evidence preserved; owner reopened global rendering scope after resize CPU/flicker QA; GPS-C01–GPS-C06 specification milestones complete and owner-ratified; GPS-C01R removed to separately pinned nonblocking investigation | Baseline-grounded buildable shared GUI specification, independent review with no unresolved critical/high findings, and owner-ratified numbered decision |
