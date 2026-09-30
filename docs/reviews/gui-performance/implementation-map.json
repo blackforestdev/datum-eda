@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "Ratified specification map; S0-S3 readiness retained. Owner reopened S4 for GPU redraw architecture correction; GPI-S4-DESIGN is planning-only and S5 is pending. Historical evidence remains scoped; all original full qualification and acceptance requirements remain.",
+  "status": "S0-S4 bounded implementation complete; owner-approved S4 closure reuses committed proof. Full S5 qualification and GBB-P05 remain open; no product or numerical acceptance inferred.",
   "parent_clause_count": 67,
   "consumers": [
     {
@@ -39740,22 +39740,16 @@
     ]
   },
   "s4_closure_reconciliation": {
-    "status": "Planning complete; bounded implementation credits retained, proposed S4/S5 duty boundary awaits owner disposition; S4 not closed",
+    "status": "S4 complete under owner-approved boundary; S5 qualification and GBB-P05 remain open",
     "evidence": "docs/reviews/gui-performance/s4-closure/checklist.md",
     "inventory": "docs/reviews/gui-performance/s4-closure/evidence-reconciliation.json",
     "credited_carried_rows": 50,
     "demonstrated_residual_implementation_defects": [],
-    "current_contractual_blockers": [
-      {
-        "id": "C13",
-        "source": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
-        "clause": "GPU redraw architecture S4 exit paragraph: engine duty <=25%; missing conformance/non-withdrawn numerical proof cannot pass",
-        "gap": "Complete DRM client/context lifetime duty unavailable",
-        "proposed_disposition": "Owner-ratified S5 qualification placement; unchanged duty limit, no measurement grant"
-      }
-    ],
+    "current_contractual_blockers": [],
     "s5_qualification_preserved": true,
     "baseline_budget_owner": "GUI-PERFORMANCE-BASELINE / GBB-P05",
-    "execution_authorized": false
+    "execution_authorized": false,
+    "closure_evidence": "docs/reviews/gui-performance/s4-closure/closure.md",
+    "duty_disposition": "Unchanged 25% criterion remains unqualified at S5; owner ratified placement, not a pass"
   }
 }
