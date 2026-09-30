@@ -1,5 +1,5 @@
 {
-  "status": "historical observations reused; representative validated baseline remains incomplete",
+  "status": "Historical observations retained; new bounded pointer subset complete, representative full baseline incomplete",
   "selection_rationale": "Use the preserved corrected R4 production candidate because it is the current architecture with exact output/input proof; do not select a faster historical candidate or favorable trials. Stability evidence covers a bounded 30-second trial, not endurance. Reconfirm source, binary and environment coherence in GBB-P01.",
   "candidate": {
     "source": "c3949e53ec7d68e70535892262024fa9f340c00f",
@@ -23,7 +23,7 @@
       "variability": "one trial only; inter-trial variability unknown",
       "reuse": "Native historical observation; not yet a sufficient representative baseline or instrumentation-effect proof",
       "current_budget_disposition": "No defect established solely by exceeding withdrawn 4/8 ms figures.",
-      "percentile_method": "Archived reported estimator; preserve values. GBB-P01 must verify method compatibility before reuse in a common cell."
+      "percentile_method": "Nearest rank independently reproduced from archived raw samples before the bounded baseline collection"
     },
     {
       "id": "painter-hover-C-G1",
@@ -54,5 +54,15 @@
     "Complete accounting for any CPU/duty/resource claim",
     "Explicit budget/headroom rationale and owner disposition"
   ],
-  "no_new_measurements": true
+  "no_new_measurements": false,
+  "followup": {
+    "report": "pointer-report.md",
+    "analysis": "pointer-analysis.json",
+    "receipt": "pointer-receipt.json",
+    "new_attempts": 5,
+    "new_gpu_trials": 2,
+    "new_quiet_trials": 3,
+    "representative_baseline_complete": false,
+    "budgets": "undecided"
+  }
 }

@@ -1,0 +1,224 @@
+{
+  "status": "complete",
+  "trials": [
+    {
+      "trial": "G1",
+      "historical": true,
+      "status": "valid_budget_failure",
+      "gpu": {
+        "n": 1275,
+        "p95_ms": 6.700166871139526,
+        "p99_ms": 10.205083644767761,
+        "max_ms": 12.937750394828797
+      },
+      "failures": [],
+      "cpu_active_ms": 7129.721,
+      "observed_active_seconds": 30.079098045,
+      "cpu_percent_one_core": 23.7032406667698,
+      "input": {
+        "scheduled": 3600,
+        "integer_changes": 1280,
+        "same_position_requests": 2320,
+        "received": 1280,
+        "completed_viewport_routes": 1280,
+        "producer_duration_ns": 30000545960,
+        "send_lateness_ns": {
+          "p95": 280622,
+          "p99": 336561,
+          "max": 1879727
+        },
+        "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+      },
+      "capture_state_matches": true,
+      "readiness_pixel_difference": "0",
+      "final_pixel_difference": "0"
+    },
+    {
+      "trial": "Q1",
+      "historical": false,
+      "status": "valid_descriptive_run",
+      "gpu": "disabled",
+      "failures": [],
+      "cpu_active_ms": 5131.972,
+      "observed_active_seconds": 30.087278377,
+      "cpu_percent_one_core": 17.056949903195957,
+      "input": {
+        "scheduled": 3600,
+        "integer_changes": 1280,
+        "same_position_requests": 2320,
+        "received": 1280,
+        "completed_viewport_routes": 1280,
+        "producer_duration_ns": 30000455266,
+        "send_lateness_ns": {
+          "p95": 300527,
+          "p99": 331344,
+          "max": 1862153
+        },
+        "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+      },
+      "capture_state_matches": true,
+      "readiness_pixel_difference": "0",
+      "final_pixel_difference": "0"
+    },
+    {
+      "trial": "G2",
+      "historical": false,
+      "status": "valid_descriptive_run",
+      "gpu": {
+        "n": 1280,
+        "p95_ms": 5.7241668413543705,
+        "p99_ms": 7.292250222541809,
+        "max_ms": 8.715000265960693
+      },
+      "failures": [],
+      "cpu_active_ms": 6514.215,
+      "observed_active_seconds": 30.038891009,
+      "cpu_percent_one_core": 21.685937067544423,
+      "input": {
+        "scheduled": 3600,
+        "integer_changes": 1280,
+        "same_position_requests": 2320,
+        "received": 1280,
+        "completed_viewport_routes": 1280,
+        "producer_duration_ns": 30000418021,
+        "send_lateness_ns": {
+          "p95": 307691,
+          "p99": 346157,
+          "max": 1063978
+        },
+        "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+      },
+      "capture_state_matches": true,
+      "readiness_pixel_difference": "0",
+      "final_pixel_difference": "0"
+    },
+    {
+      "trial": "Q2",
+      "historical": false,
+      "status": "valid_descriptive_run",
+      "gpu": "disabled",
+      "failures": [],
+      "cpu_active_ms": 5202.786,
+      "observed_active_seconds": 30.085093188,
+      "cpu_percent_one_core": 17.293567839355166,
+      "input": {
+        "scheduled": 3600,
+        "integer_changes": 1280,
+        "same_position_requests": 2320,
+        "received": 1280,
+        "completed_viewport_routes": 1280,
+        "producer_duration_ns": 30000476667,
+        "send_lateness_ns": {
+          "p95": 307921,
+          "p99": 334534,
+          "max": 551298
+        },
+        "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+      },
+      "capture_state_matches": true,
+      "readiness_pixel_difference": "0",
+      "final_pixel_difference": "0"
+    },
+    {
+      "trial": "G3",
+      "historical": false,
+      "status": "valid_descriptive_run",
+      "gpu": {
+        "n": 1280,
+        "p95_ms": 5.7602501757888795,
+        "p99_ms": 6.443500196640015,
+        "max_ms": 10.395916983924865
+      },
+      "failures": [],
+      "cpu_active_ms": 6260.805,
+      "observed_active_seconds": 30.035206969,
+      "cpu_percent_one_core": 20.844887156802066,
+      "input": {
+        "scheduled": 3600,
+        "integer_changes": 1280,
+        "same_position_requests": 2320,
+        "received": 1280,
+        "completed_viewport_routes": 1280,
+        "producer_duration_ns": 30000512422,
+        "send_lateness_ns": {
+          "p95": 304527,
+          "p99": 350430,
+          "max": 892015
+        },
+        "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+      },
+      "capture_state_matches": true,
+      "readiness_pixel_difference": "0",
+      "final_pixel_difference": "0"
+    },
+    {
+      "trial": "Q3",
+      "historical": false,
+      "status": "valid_descriptive_run",
+      "gpu": "disabled",
+      "failures": [],
+      "cpu_active_ms": 4952.783,
+      "observed_active_seconds": 30.080238328,
+      "cpu_percent_one_core": 16.465238559595235,
+      "input": {
+        "scheduled": 3600,
+        "integer_changes": 1280,
+        "same_position_requests": 2320,
+        "received": 1280,
+        "completed_viewport_routes": 1280,
+        "producer_duration_ns": 30000422717,
+        "send_lateness_ns": {
+          "p95": 301390,
+          "p99": 337060,
+          "max": 1929324
+        },
+        "limits": "Completed routing is not display acknowledgement or CPU/action acceptance."
+      },
+      "capture_state_matches": true,
+      "readiness_pixel_difference": "0",
+      "final_pixel_difference": "0"
+    }
+  ],
+  "gpu_trial_ranges": {
+    "n": {
+      "min": 1275,
+      "max": 1280
+    },
+    "p95_ms": {
+      "min": 5.7241668413543705,
+      "max": 6.700166871139526
+    },
+    "p99_ms": {
+      "min": 6.443500196640015,
+      "max": 10.205083644767761
+    },
+    "max_ms": {
+      "min": 8.715000265960693,
+      "max": 12.937750394828797
+    }
+  },
+  "contemporaneous_cpu_pairs": [
+    {
+      "pair": 2,
+      "gpu_minus_quiet_cpu_ms": 1311.429,
+      "gpu_minus_quiet_cpu_percentage_points": 4.392369228189256,
+      "gpu_elapsed_seconds": 30.038891009,
+      "quiet_elapsed_seconds": 30.085093188
+    },
+    {
+      "pair": 3,
+      "gpu_minus_quiet_cpu_ms": 1308.022,
+      "gpu_minus_quiet_cpu_percentage_points": 4.379648597206831,
+      "gpu_elapsed_seconds": 30.035206969,
+      "quiet_elapsed_seconds": 30.080238328
+    }
+  ],
+  "replacement_budgets": "undecided",
+  "limitations": [
+    "Pointer subset only; not representative all-workload baseline.",
+    "Quiet retains semantic observation. Contrasts measure enabling GPU timestamps/polling/logging, not total instrumentation overhead.",
+    "Two contemporary pairs maximum; archived G1 has no matched quiet trial.",
+    "No uninstrumented GPU tail, physical display latency, full DRM duty or complete resource qualification.",
+    "No significance claim, pooled quantiles, favorable-run selection or automatic further experiment."
+  ]
+}

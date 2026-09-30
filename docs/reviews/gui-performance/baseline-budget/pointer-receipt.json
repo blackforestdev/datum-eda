@@ -1,0 +1,102 @@
+{
+  "status": "bounded pointer subset complete; representative full baseline incomplete",
+  "source": "c3949e53ec7d68e70535892262024fa9f340c00f",
+  "new_attempts": 5,
+  "new_valid_attempts": 5,
+  "discarded_attempts": 0,
+  "setup_failures": 0,
+  "reused_gpu_trials": 1,
+  "new_gpu_trials": 2,
+  "new_quiet_trials": 3,
+  "renderer_changes": false,
+  "rebuilds": 0,
+  "visually_inspected": [
+    "Q1 final image",
+    "G3 final image",
+    "independent archived reference"
+  ],
+  "results": [
+    {
+      "index": 0,
+      "spec": {
+        "role": "candidate",
+        "mode": "quiet",
+        "pair": 1,
+        "workload": "W-POINTER"
+      },
+      "result_sha256": "ab6b76c9673ab00036019a27206e30a17c55ddcc60d193a13c48335c65130bc8",
+      "input_receipt_sha256": "d5ed214c73eebd17c24ac4a4455dd1e9b7bc24b7fbd09ed398f8826c62961c22",
+      "evidence_bytes": 7244263,
+      "pixel_difference": 0,
+      "received_completed_integer_changes": 1280
+    },
+    {
+      "index": 1,
+      "spec": {
+        "role": "candidate",
+        "mode": "gpu",
+        "pair": 2,
+        "workload": "W-POINTER"
+      },
+      "result_sha256": "ec91b47f8552d7e97b60ee0ebc16edec6b2f240012d427169b28620c7be3f6b4",
+      "input_receipt_sha256": "33a6bb40e200673027a9b582f0802d1d6833b748813704e105e1027cb54ce857",
+      "evidence_bytes": 8498550,
+      "pixel_difference": 0,
+      "received_completed_integer_changes": 1280
+    },
+    {
+      "index": 2,
+      "spec": {
+        "role": "candidate",
+        "mode": "quiet",
+        "pair": 2,
+        "workload": "W-POINTER"
+      },
+      "result_sha256": "6d6edc789edd6e8f61abad09abe55b386321f32767561e4ea7d688009a3f38af",
+      "input_receipt_sha256": "bcb4ddad0423955b258cef4386e4b0b61574084d5a323adc37f0b479953a2e2a",
+      "evidence_bytes": 7239109,
+      "pixel_difference": 0,
+      "received_completed_integer_changes": 1280
+    },
+    {
+      "index": 3,
+      "spec": {
+        "role": "candidate",
+        "mode": "gpu",
+        "pair": 3,
+        "workload": "W-POINTER"
+      },
+      "result_sha256": "2ff7101e07a1c283254bd9c299930f83279d76c41e9c4a07a945f47acb056f75",
+      "input_receipt_sha256": "8a63546a98683d77a5ba3bdd6437a603c05a29c9d4c21f72504c9274e1d3f90c",
+      "evidence_bytes": 8512221,
+      "pixel_difference": 0,
+      "received_completed_integer_changes": 1280
+    },
+    {
+      "index": 4,
+      "spec": {
+        "role": "candidate",
+        "mode": "quiet",
+        "pair": 3,
+        "workload": "W-POINTER"
+      },
+      "result_sha256": "4d7a9a5e1e95d2e7afaa4b279ee777f6fda21bb0bcc51ad45c7185b2d2665940",
+      "input_receipt_sha256": "b9b70a8214b631fbf212f931df0b176e2c1801bc0d0bec0e15ec1d23f003724a",
+      "evidence_bytes": 7242539,
+      "pixel_difference": 0,
+      "received_completed_integer_changes": 1280
+    }
+  ],
+  "artifacts_sha256": {
+    "collection-protocol.md": "b8cea93a062ed37f7f91a7dc0c623edcca4c027fac098ea9d3da7b52962c8f92",
+    "pointer-declaration.json": "1e25794256017985003fababf21c7b862b77ef669a1e74aa45b657432b0e2f82",
+    "pointer_trial.py": "a48c5955a055e8f2b796351d71ca2f1f78841a8c6cd1fb5217bf912f7d15c93d",
+    "pointer_batch.py": "d81661a59c7fbe2f795e98cab5effa3e42813f965f086096ce5f00438e247005",
+    "analyze_pointer.py": "0e48aeee5825ffe5752bf85d4edee6f27134adfb473f12eb6b57bdecc8624271",
+    "pointer-analysis.json": "bb138a8eef4684154098035d5c312ca6ffd8a3dbdbaa9cbdb51207e165401e89",
+    "pointer-state.json": "1a4dbed00b2d73344f0127c6f6ea367ba524a17a9c1f996a91156ed0255fd3e1",
+    "pointer-raw.tar.gz": "9119d2c0bef92f7431eba8c535078595f247b3663f7e3a18c4b8db46c785d5e1",
+    "pointer-final.png": "7a66641915cfad691783888a9a1685ebe9783a0e4432b0199e6525016890f622",
+    "pointer-report.md": "bed7622eebef195db87c44b6d274f0dfaf99872dfde9c779715a26d95409f751"
+  }
+}
