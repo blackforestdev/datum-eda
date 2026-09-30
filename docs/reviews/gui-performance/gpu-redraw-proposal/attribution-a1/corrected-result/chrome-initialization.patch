@@ -1,0 +1,24 @@
+--- reviewed-setup/crates/gui-render/src/render/gpu_attribution.rs
++++ corrected/crates/gui-render/src/render/gpu_attribution.rs
+@@ -104,6 +104,21 @@
+         state.ui.layout = datum_gui_protocol::WorkspaceLayout::single();
+         state.ui.focus =
+             datum_gui_protocol::ApplicationFocus::Editor(datum_gui_protocol::PaneId(0));
++        // Reproduce archived native closed-dock chrome, not the loader fallback.
++        state.ui.terminal.tabs = vec![datum_gui_protocol::TerminalTabState {
++            session_id: "a1-archived-shell1".into(),
++            previous_session_id: None,
++            label: "shell 1".into(),
++            event_log_path: String::new(),
++            activity_event_count: 0,
++            activity_summary: Vec::new(),
++            active: true,
++            attached: true,
++            status: "running".into(),
++            restart_count: 0,
++            unread_output: false,
++            unread_bell_count: 0,
++        }];
+         state.selection = datum_gui_protocol::SelectionTarget::None;
+         state.ui.hovered_object = Some(hover.clone());
+         state.ui.cursor_pos = Some(ScreenPointPx {

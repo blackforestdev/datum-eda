@@ -1,0 +1,8 @@
+{
+  "stage": "pre-timing chrome comparison",
+  "timing_samples": 0,
+  "first_setup_exit": 0,
+  "comparison": "failed1196pixels over4images (299each)",
+  "source_of_error": "Prior visual review misread shell1 versus actual shell 1 and misidentified DRC status as absent. Original diagnostic status strip is exact archived reference (0differing pixels); provisional removal introduced251different pixels perimage. Label spacing accounts48pixels.",
+  "correction": "Keep original loader finding_count68; initialize one shell 1 tab. Preserve firstsetup and logs. No control/timing change."
+}
