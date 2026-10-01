@@ -1,17 +1,19 @@
 //! One ordered painter implementation for full and retained-prefix graphs.
 use super::*;
 impl Renderer {
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn draw_frame_prefix<'a>(
         &'a self,
         pass: &mut wgpu::RenderPass<'a>,
         prepared: &PreparedScene,
         width: u32,
         height: u32,
+        clip: crate::renderer_state::damage::clip::Clip,
         measurement: &mut Option<gpu_measurements::FrameQueries>,
     ) -> anyhow::Result<()> {
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
-        pass.set_scissor_rect(0, 0, width, height);
+        clip.set(pass, [0, 0, width, height]);
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.uniform_bind_group, &[]);
         pass.set_bind_group(1, &self.damage_masks.unrestricted.group, &[]);
@@ -31,11 +33,14 @@ impl Renderer {
             );
         }
         if prepared.surface_passes().is_empty() && !viewport_underlay_vertices.is_empty() {
-            pass.set_scissor_rect(
-                prepared.scene_viewport.x.max(0.0).floor() as u32,
-                prepared.scene_viewport.y.max(0.0).floor() as u32,
-                prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                prepared.scene_viewport.height.max(1.0).ceil() as u32,
+            clip.set(
+                pass,
+                [
+                    prepared.scene_viewport.x.max(0.0).floor() as u32,
+                    prepared.scene_viewport.y.max(0.0).floor() as u32,
+                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
+                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
+                ],
             );
             pass.set_vertex_buffer(
                 0,
@@ -56,13 +61,13 @@ impl Renderer {
         {
             m.mark_scene(pass, 0)?;
         }
-        self.draw_surface_grids(pass, &self.surface_grids.batches);
+        self.draw_surface_grids(pass, &self.surface_grids.batches, clip);
         if !prepared.surface_passes().is_empty()
             && let Some(m) = measurement
         {
             m.mark_scene(pass, 1)?;
         }
-        self.draw_surface_world_passes(pass, prepared);
+        self.draw_surface_world_passes(pass, prepared, clip);
         if !prepared.surface_passes().is_empty()
             && let Some(m) = measurement
         {

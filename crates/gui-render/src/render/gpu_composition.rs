@@ -136,7 +136,14 @@ impl Renderer {
                             .transpose()?,
                         ..Default::default()
                     });
-                    self.draw_frame_prefix(&mut pass, prepared, width, height, measurement)?;
+                    self.draw_frame_prefix(
+                        &mut pass,
+                        prepared,
+                        width,
+                        height,
+                        Clip::full(width, height),
+                        measurement,
+                    )?;
                 }
                 #[cfg(not(all(test, feature = "visual")))]
                 images.copy(encoder);
@@ -173,7 +180,14 @@ impl Renderer {
                 ..Default::default()
             });
             if images.is_none() {
-                self.draw_frame_prefix(&mut pass, prepared, width, height, measurement)?;
+                self.draw_frame_prefix(
+                    &mut pass,
+                    prepared,
+                    width,
+                    height,
+                    Clip::resampled([width, height], target.raster_extent([width, height])),
+                    measurement,
+                )?;
             }
             elapsed += self.draw_frame_suffix(
                 &mut pass,
@@ -181,7 +195,7 @@ impl Renderer {
                 width,
                 height,
                 &mask.group,
-                Clip::full(width, height),
+                Clip::resampled([width, height], target.raster_extent([width, height])),
             )?;
         }
         if let Some(images) = images {

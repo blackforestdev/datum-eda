@@ -3,6 +3,7 @@
 pub struct FrameTarget {
     view: wgpu::TextureView,
     copy_destination: Option<wgpu::Texture>,
+    raster_extent: Option<[u32; 2]>,
 }
 
 impl FrameTarget {
@@ -20,6 +21,7 @@ impl FrameTarget {
             "frame target must be a single-layer, single-sample 2D render attachment"
         );
         Ok(Self {
+            raster_extent: None,
             view: texture.create_view(&wgpu::TextureViewDescriptor {
                 base_mip_level: 0,
                 mip_level_count: Some(1),
@@ -36,6 +38,18 @@ impl FrameTarget {
 
     pub fn view(&self) -> &wgpu::TextureView {
         &self.view
+    }
+
+    /// Explicit diagnostic permission for platform viewporter resampling.
+    /// Ordinary callers never infer this permission from a mismatched texture.
+    pub fn diagnostic_resampled_texture(texture: &wgpu::Texture) -> anyhow::Result<Self> {
+        let mut target = Self::full_texture(texture)?;
+        target.raster_extent = Some([texture.width(), texture.height()]);
+        Ok(target)
+    }
+
+    pub(crate) fn raster_extent(&self, prepared: [u32; 2]) -> [u32; 2] {
+        self.raster_extent.unwrap_or(prepared)
     }
 
     /// Copies must match the prepared target exactly; never scale, reinterpret
@@ -56,6 +70,7 @@ impl From<wgpu::TextureView> for FrameTarget {
         Self {
             view,
             copy_destination: None,
+            raster_extent: None,
         }
     }
 }

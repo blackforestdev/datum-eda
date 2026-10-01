@@ -32,5 +32,14 @@
     "budgets": "undecided; no numerical threshold gates entry or determines an investigative defect finding",
     "supersedes": "Selected CPU budget-basis/ordinary-pointer recommendations; resize qualification remains nonblocking for functionality. Existing audit/derivation and ordinary observation remain evidence, not repeat prerequisites.",
     "issue": "dat-gui-vertical-resize-cpu-toj"
+  },
+  "resize_repair_goal": {
+    "owner_statement": "I need you ro keep oing untill we have a sloution. this is your new goal. resolve the excessive harware rewource consumption in datum during window resize.",
+    "recorded_at": "2026-10-01T02:03:53.562144Z",
+    "session": "01a0f11a-0913-7cb1-a089-87734c8e9182",
+    "base_commit": "a73b8cde3da414e0207c9132cd9e9884108455ec",
+    "scope": "Current-host horizontal/vertical resize investigation and evidence-supported current-codebase repair; bounded justified verification, preserve failures, no numerical budget or broad qualification. Explicit earlier proceed directions authorize the executed diagnostic sequence; this new direction authorizes continuing toward a solution.",
+    "preserved": "S4 stays closed; S5 and hardware policy remain separate; dependencies, tuning and broad renderer redesign not authorized.",
+    "record": "docs/reviews/gui-performance/cpu-reconciliation/resize-repair.md"
   }
 }

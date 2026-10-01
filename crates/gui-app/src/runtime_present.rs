@@ -59,10 +59,11 @@ impl Runtime {
             });
             return Ok(true);
         }
+        let [raster_width, raster_height] = self.surface_transaction.render_extent(&self.config);
         self.renderer.prepare_surface_attachment(
             &self.device,
-            self.config.width,
-            self.config.height,
+            raster_width,
+            raster_height,
             || !self.device_health.failed(),
         )?;
         let scene_started = std::time::Instant::now();

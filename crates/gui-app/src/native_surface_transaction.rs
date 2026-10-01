@@ -5,8 +5,11 @@ use std::{cell::Cell, rc::Rc, time::Instant};
 #[path = "native_render_target.rs"]
 mod render_target;
 pub(crate) use render_target::NativeRenderTarget;
+#[path = "native_resize_allocation.rs"]
+mod resize_allocation;
 
 pub(crate) struct SurfaceTransaction {
+    resize_allocation: resize_allocation::ResizeAllocation,
     window: winit::window::WindowId,
     injected_fault: Option<InjectedFault>,
     queue_owner: super::native_queue_owner::QueueOwner,
@@ -142,6 +145,7 @@ impl SurfaceTransaction {
             other => panic!("invalid DATUM_DIAGNOSTIC_SURFACE_FAULT: {other:?}"),
         };
         Self {
+            resize_allocation: resize_allocation::ResizeAllocation::new(window),
             window: window.id(),
             injected_fault,
             queue_owner,
@@ -238,6 +242,8 @@ impl SurfaceTransaction {
     }
 
     pub(crate) fn resize(&mut self, width: u32, height: u32) {
+        self.resize_allocation
+            .resized([width, height], Instant::now());
         // Native coordinator owns occlusion/suspend; zero extent is also safe
         // for direct diagnostic callers outside native dispatch.
         if width == 0 || height == 0 {
@@ -259,6 +265,9 @@ impl SurfaceTransaction {
 
     pub(crate) fn set_drawable(&mut self, drawable: bool) {
         self.drawable = drawable;
+        if !drawable {
+            self.resize_allocation.cancel();
+        }
         self.recovery
             .borrow_mut()
             .set_drawable(drawable, Instant::now());
@@ -413,6 +422,14 @@ impl SurfaceTransaction {
         if health.failed() {
             return Ok(false);
         }
+        let logical = [config.width, config.height];
+        let extent = self.render_extent(config);
+        let physical_config = (extent != [config.width, config.height]).then(|| {
+            let mut physical = config.clone();
+            [physical.width, physical.height] = extent;
+            physical
+        });
+        let config = physical_config.as_ref().unwrap_or(config);
         match self.queue_owner.admit(
             self.queue_host,
             self.configured != Some((config.width, config.height)),
@@ -424,6 +441,7 @@ impl SurfaceTransaction {
                 return Ok(false);
             }
             super::native_queue_owner::Admission::Configure => {
+                self.resize_allocation.configured(logical, extent);
                 if !self.configure(surface, device, config, health) {
                     return Ok(false);
                 }

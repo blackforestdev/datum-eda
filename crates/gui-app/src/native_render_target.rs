@@ -49,13 +49,23 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
         self.frame
             .as_ref()
             .map(|frame| {
-                datum_gui_render::render_input::FrameTarget::full_texture(
-                    &frame
-                        .texture
-                        .as_ref()
-                        .expect("unconsumed native frame")
-                        .texture,
-                )
+                let texture = &frame
+                    .texture
+                    .as_ref()
+                    .expect("unconsumed native frame")
+                    .texture;
+                let extent = self.transaction.render_extent(self.config);
+                anyhow::ensure!(
+                    [texture.width(), texture.height()] == extent,
+                    "acquired extent differs from configured diagnostic extent"
+                );
+                if extent != [self.config.width, self.config.height] {
+                    datum_gui_render::render_input::FrameTarget::diagnostic_resampled_texture(
+                        texture,
+                    )
+                } else {
+                    datum_gui_render::render_input::FrameTarget::full_texture(texture)
+                }
             })
             .transpose()
     }
