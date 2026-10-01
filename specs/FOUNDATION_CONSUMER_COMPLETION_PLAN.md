@@ -417,6 +417,40 @@ acceptance dependency with finite derivation or exact supported-domain amendment
 options; general arc CAM cannot be declared ready by accepting safe refusal.
 No build, fixture, runtime, dependency or native experiment was performed.
 
+### Renewed independent A1-03 review — 2026-10-01
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A1-R-RESEARCH-REVIEW -->
+
+The separately assigned independent foundation review session
+(`/root/foundation_independent_review`), distinct from researcher and specification
+integrator, returned this exact-candidate review under the owner's authorized
+research/reconciliation workflow:
+
+- Candidate commit: `3730cf16f4ca44f37c85bbd011e73bd9ac6e347d`.
+- Packet: `S5A-DERIVED-A1-03`; Git blob
+  `7e712f81156da247fa09ffc2e3a2b86ee554c2d4`.
+- Research dossier blob: `0299cefa4517609bc9e61f3ca0a5e3e6ef956a78`.
+- Outcome: **PASS for research-backed proposal readiness for consolidated owner
+  disposition only**. No remaining mandatory proposal corrections identified.
+- Finding `IR-A1-03-01`: Bus lifecycle ambiguity resolved in C03/F04. Ordinary
+  member edits retain declared identity; explicit split names the old-ID survivor
+  and new IDs; merge records retirement; zero-projection declarations survive.
+- M1 remains explicitly unresolved: general arc manufacturing output needs a
+  justified manufacturing-error policy or explicit supported-domain scope
+  amendment. Required rational-center T04 coverage is not passed by safe refusal.
+- Review inspected the proposed clauses, primary/code evidence and proof
+  requirements. It ran no builds or native experiments, edited no implementation
+  and accepted no runtime, foundation or native S5A behavior.
+
+Record this completed independent review directly; the owner need not relay it
+again merely to establish its receipt. DA-A1-R completes and DA-A1-D is the
+remaining consolidated owner ratification/engine-scope boundary. No current
+mechanism becomes ratified, no M1 numeric allowance is invented, and no full
+A2/A3 execution readiness is claimed. The exact reviewed packet and dossier
+remain unchanged by this review record. Original S5A approval, partial U1,
+rendering/resize work and C05 remain preserved. Tracker is open/unassigned,
+planning claim released, issue not closed.
+
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
 
