@@ -455,3 +455,43 @@ UVT-S5A-BUILD planning lane designated by PM051 before the owner-directed CPU
 interruption. Its authorization remains planning; no successor work is started
 and no owner decision or implementation boundary is advanced. The original
 GUI-PERFORMANCE-IMPLEMENTATION record and S4 closure are unchanged.
+
+
+## Owner-directed default activation
+
+The owner reports further practical improvement with the ordinary opt-in launch:
+btop global CPU peaked at2.7% during rapid resize and application content appeared
+smoother. This is positive qualitative/manual QA; no controlled cadence, interval
+CPU total or numerical acceptance claim is inferred. The owner then explicitly
+directs that no special launch code should be needed and this should be the
+default rendering path. PM052 records that amendment and RZ-C06 authorizes its
+implementation and one no-option visible check. Ordinary launch state selects
+the same retained-buffer policy automatically when no diagnostic override exists.
+Previous explicit option remains compatible; explicit diagnostic exact/quantized/
+retained selection remains authoritative. Unsupported prerequisites still select
+exact storage. Shared rendering/engine mutation ownership is unchanged.
+
+Pre-verification setup: the owner's live guarded cargo-run session held the build
+lock, so focused tests waited for that session to close. No owner window was
+closed by the agent and no measured interval began. No new resource sampling
+is planned; existing resource evidence is adequate for this unchanged algorithm.
+
+
+<!-- EVIDENCE:GUI-RESIZE-REPAIR:DEFAULT-REUSE -->
+
+RZ-C06 verification: focused resize tests13passed, guarded release build passed,
+GUI-app all-target Clippy with warnings denied passed. One no-option/no-allocation
+or backend-override launch completed both588request geometry sequences in
+`target/cpu-resize-default-reuse-smoke-20261001`. Full board visible; native logs
+demonstrate retained raster storage. All five captures match the prior ordinary
+opt-in launch exactly, including exact restored images. Exit0, empty descendant
+group, unchanged input pins. Packet/source/binary sealed. No new resource
+interval; the allocation algorithm and prior measured resource evidence are
+unchanged. Default selection and explicit diagnostic override behavior are tested.
+
+Normal main workspace launches now use the approved buffer-reuse path without
+`--reuse-resize-buffers` or a diagnostic setting. The existing option remains
+compatible; explicitly exported diagnostic settings still override the default.
+Unsupported prerequisites retain exact allocation. Temporary resize resampling,
+exact settled output, current-host evidence scope, undecided budgets and closed
+S4/broad qualification remain as ratified.

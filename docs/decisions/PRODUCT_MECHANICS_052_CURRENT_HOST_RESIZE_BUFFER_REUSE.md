@@ -13,8 +13,8 @@ Provide an ordinary `--reuse-resize-buffers` launch option selecting the tested
 retained-peak allocation policy. The owner can use this option in their normal
 release/direct-board launch on the current reference host. Preserve the existing
 `quantized` and `quantized-retained` diagnostics and their successful executables.
-The omitted option retains exact allocation; no automatic all-hardware default
-or production preference UI is proposed.
+The original opt-in disposition is superseded by the owner default-path amendment
+below. No production preference UI is introduced.
 
 The selected policy grows presentation storage in32physical-pixel increments
 only on growing axes, retains peak storage during one active resize sequence,
@@ -79,3 +79,26 @@ resize qualification and all numerical budgets remain separate and undecided.
 
 Owner approved the proposal verbatim; RZ-C05 integration is authorized within
 the stated current-host scope. No default activation or broad acceptance follows.
+
+## Owner amendment: default workspace rendering path
+
+<!-- REQ:GUI-RESIZE-REPAIR:RZ-C06 -->
+<!-- EVIDENCE:GUI-RESIZE-REPAIR:DEFAULT-APPROVAL -->
+
+Exact owner direction: `idealy this is not initiated with a special launch code.
+this should be the default rendering path`. Recorded in owner-direction.json.
+This authorizes default retained-buffer reuse in ordinary main native workspace
+launches, through the same shared surface/render services. No special launch
+option is needed. Preserve the previous explicit option for launch compatibility
+and both diagnostics; an explicit diagnostic override remains authoritative.
+Unsupported Wayland/fractional-scale/output-refresh prerequisites retain exact
+allocation. Temporary resize resampling and exact settled output have the same
+ratified boundary. Default activation is a policy choice, not broader hardware
+qualification; evidence remains current-host/backend/workload scoped. Owned
+product-dialog integration and broad UI qualification are unchanged.
+
+Verification earns its cost: test default selection and explicit overrides, reuse
+existing fallback/state-transition tests, guarded release build and affected
+Clippy. One no-option, no-diagnostic ordinary launch verifies visible readiness,
+horizontal/vertical growth/restoration and exact settled pixels, using the existing
+controller without resource intervals. No new CPU campaign or budget.
