@@ -667,14 +667,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 4660,
+        "pre_test_lines": 4525,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "Board materialization and managed import-container initialization extracted to kicad_board_materialization.rs with its stable-name and isolated-parent regressions; remaining production and test debt stays frozen."
+      "note": "Selection vocabulary and existing workspace selection entry/navigation methods extracted into normal modules for S5A U1; remaining production/test debt stays frozen."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

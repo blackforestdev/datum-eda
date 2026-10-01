@@ -24,6 +24,7 @@ pub mod hit;
 pub mod interaction;
 pub mod profile;
 pub mod scroll;
+pub mod selection_lifetime;
 pub mod stroke;
 pub mod terminal_grid_geometry;
 
