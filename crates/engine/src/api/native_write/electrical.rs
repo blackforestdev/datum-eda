@@ -184,6 +184,8 @@ mod projection_tests;
 #[cfg(test)]
 mod tests;
 #[cfg(test)]
+mod topology_tests;
+#[cfg(test)]
 mod transition_tests;
 
 mod bus_transition;
@@ -201,3 +203,14 @@ pub use adoption::{PlacedPinAdoption, build_adopt_pin_correspondence};
 
 mod projection_lifecycle;
 pub(super) use projection_lifecycle::projection_removals;
+
+/// Explicitly adopt all currently resolved schematic Net groups. Reads allocate
+/// nothing; this authored command preserves source IDs and existing Net owners.
+pub fn build_adopt_schematic_net_identities(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+) -> Result<PreparedWrite, EngineError> {
+    BatchComposer::compose(model, provenance)
+        .push_ops(crate::substrate::electrical_adoption_operations(model)?)
+        .finish()
+}

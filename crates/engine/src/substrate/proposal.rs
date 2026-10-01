@@ -9,9 +9,8 @@ use super::proposal_validation::{is_sha256_fingerprint, proposal_payload_schema_
 use super::{
     CommitDiff, CommitProvenance, CommitReport, CommitSource, DesignModel, ModelRevision, ObjectId,
     Operation, OperationBatch, ResolveDiagnostic, SourceShardKind, SourceShardRef, read_json_value,
-    sort_source_shards, source_shard::validate_source_shard_schema_version,
-    source_shard_ref_builders::source_shard_ref_for_bytes, stage_operation_shard_writes,
-    update_staged_source_hashes,
+    source_shard::validate_source_shard_schema_version,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 use crate::error::EngineError;
 
@@ -222,6 +221,8 @@ pub fn create_draft_proposal_from_batch(
     // proposal_batch_policy_blockers; the direct-commit source policy must
     // not apply to a draft preview (a preview is not a commit — matches the
     // preview sites below).
+    let batch =
+        super::electrical_transaction::compose(model, batch, super::TransactionKind::Normal)?;
     let mut preview = model.clone();
     let preview_report = preview.commit_without_direct_policy(batch.clone())?;
     let mut affected_objects = preview_report.transaction.diff.created;
@@ -381,13 +382,8 @@ pub fn preview_proposal_diff_journaled(
         .proposals
         .get(&proposal_id)
         .ok_or_else(|| EngineError::Validation(format!("proposal {proposal_id} not found")))?;
-    let staged_writes = stage_operation_shard_writes(project_root, model, &proposal.batch)?;
-    let mut preview = model.clone();
-    update_staged_source_hashes(&mut preview.source_shards, &staged_writes)?;
-    sort_source_shards(&mut preview.source_shards);
-    let report = preview.commit_without_direct_policy(proposal.batch.clone());
-    cleanup_stage_dir(project_root, proposal.batch.batch_id);
-    proposal_preview_from_report(model, proposal, report?)
+    let report = super::proposal_source_preview::report(model, project_root, &proposal.batch)?;
+    proposal_preview_from_report(model, proposal, report)
 }
 
 fn proposal_preview_from_report(
@@ -499,22 +495,11 @@ pub(crate) fn predict_journaled_transaction_id(
     project_root: &Path,
     batch: &OperationBatch,
 ) -> Result<Uuid, EngineError> {
-    let staged_writes = stage_operation_shard_writes(project_root, model, batch)?;
-    let mut committed = model.clone();
-    update_staged_source_hashes(&mut committed.source_shards, &staged_writes)?;
-    sort_source_shards(&mut committed.source_shards);
-    let report = committed.commit_without_direct_policy(batch.clone());
-    cleanup_stage_dir(project_root, batch.batch_id);
-    Ok(report?.transaction.transaction_id)
-}
-
-fn cleanup_stage_dir(project_root: &Path, batch_id: Uuid) {
-    let stage_dir = project_root.join(".datum/stage").join(batch_id.to_string());
-    match std::fs::remove_dir_all(&stage_dir) {
-        Ok(()) => {}
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-        Err(_) => {}
-    }
+    Ok(
+        super::proposal_source_preview::report(model, project_root, batch)?
+            .transaction
+            .transaction_id,
+    )
 }
 
 fn validate_proposal_acceptance_policy(

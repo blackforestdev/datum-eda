@@ -95,12 +95,22 @@ fn anchor_loss_merge_and_binding_are_one_atomic_replayable_write() {
         },
     ];
     let before = model.clone();
+    let mut wrong_relation = relation.clone();
+    wrong_relation.object_revision = ObjectRevision(1);
+    if let ElectricalIdentity::NetRelationship { logical_net, .. } = &mut wrong_relation.identity {
+        *logical_net = Uuid::nil();
+    }
+    let mut refused_operations = topology.clone();
+    refused_operations.push(Operation::SetElectricalIdentity {
+        previous: Box::new(relation.clone()),
+        record: wrong_relation,
+    });
     let write =
-        build_net_identity_transition(&model, provenance(), transition.clone(), topology.clone())
+        build_net_identity_transition(&model, provenance(), transition.clone(), refused_operations)
             .unwrap();
     assert!(
         commit_prepared(&mut model, &root, write).is_err(),
-        "retired binding must be reconciled"
+        "explicit invalid binding refuses atomically"
     );
     assert_eq!(model, before);
     let mut next_relation = relation.clone();

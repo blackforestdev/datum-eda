@@ -1815,7 +1815,7 @@ distinct from recomputable graph/projection geometry. Canonical writes and repla
 retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
 support, selection mutation or native acceptance is ratified by this amendment.
 
-### Current bounded E1 primitives — PM053 / DA-A2-E1
+### Initial bounded E1 primitives — historical source-unit boundary
 
 The existing substrate/resolver/native-write owners now expose typed electrical
 identity records in `DesignModel.electrical_identities`, a pure final-partition
@@ -1853,3 +1853,48 @@ Canonical schematic label/port/Bus/entry deletion reconciles Bus projections
 without retiring the semantic declaration. Remaining interface dependencies
 require explicit same-batch reconciliation; automatic semantic interface deletion
 is not inferred. Net topology transitions still require the complete graph basis.
+
+Owner-authorized E1 sequencing amendment permits the minimum internal complete
+occurrence pre/final partition producer and canonical same-batch identity/binding
+composition. The earlier source-unit producer exclusion is superseded only at
+this internal boundary; public query expansion/new geometry remain outside scope.
+
+
+### Internal E1 producer and transaction integration — PM053 / DA-A2-E1
+
+`connectivity::occurrence_partition` now materializes complete scalar electrical
+partitions from authored wires, pins, junctions, labels and ports, qualified by
+ordered SheetInstance UUID paths. It reuses existing segment and label laws;
+local labels isolate occurrences, globals union them, and explicit parent-port /
+unique child hierarchical-label bindings connect only the parent occurrence.
+Missing, multiply mapped, cyclic or unreachable hierarchy refuses; source display
+names do not replace instance identity. Bus-container display syntax is recognized
+without enumerating its range and is not scalar membership authority.
+
+The canonical source owner builds immutable pre/final inputs using materialized
+source and the complete operation batch. Normal adopted-source topology commits
+compose PM053 nomination, final allocations, retirements and affected bindings
+before staging. A fresh allocation is authored once from batch UUID plus ordered
+allocation ordinal; no member/name/coordinate digest becomes a NetId. Explicit
+transition records must agree with the complete final partition. Explicit invalid
+bindings are never silently repaired. Repeated composition agrees with recorded
+operations; undo/redo use recorded operations without new allocation.
+
+Topology changes mark affected implemented correspondence Pending, retain board
+source, prune deleted terminal evidence, and rebind retired nominees to their
+surviving Net. Complete deletion may retain an existing retired Net history endpoint
+in a Pending/Mismatch relation; it cannot certify active or complete cross-domain
+selection. Existing Bus scalar roles and interface maps follow recorded Net
+successors/removal in the same batch without splitting a semantic Bus or assigning
+one old board ownership to multiple new logical Nets. Explicitly edited bindings
+must already satisfy the final source and refuse otherwise.
+
+Old source acquires identity only through the explicit native adoption builder;
+reads and ordinary unadopted edits allocate nothing. Retired schematic Net history
+retains that adoption boundary when all members disappear; later authored source
+receives fresh identity. Stage validation uses preimage hashes until application
+finishes; commit and journaled proposal preview/prediction then use final hashes
+for the same revision and recorded transaction identity. No public membership
+query, new geometry, renderer identity, startup migration, dependency or
+C04–C07/E2–E4/manufacturing work is introduced. Independent E1 review and full
+foundation/S5A acceptance remain separate.

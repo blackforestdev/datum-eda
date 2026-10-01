@@ -34,6 +34,7 @@ impl DesignModel {
             TransactionKind::Normal,
             CommitPolicyContext::Direct,
         )?;
+        let batch = super::electrical_transaction::compose(self, batch, TransactionKind::Normal)?;
         super::electrical_history::validate(self, &batch.operations, TransactionKind::Normal)?;
         self.commit_without_direct_policy(batch)
     }
@@ -181,6 +182,8 @@ impl DesignModel {
             )));
         }
 
+        let batch = super::electrical_transaction::compose(self, batch, transaction_kind)?;
+        super::electrical_history::validate(self, &batch.operations, transaction_kind)?;
         let _write_lease = ProjectWriteLease::acquire(project_root)?;
 
         if revision_input.related_transaction.is_none() {
@@ -210,8 +213,13 @@ impl DesignModel {
         let staged_writes = stage_operation_shard_writes(project_root, self, &batch)?;
         let mut committed = self.clone();
         update_staged_source_hashes(&mut committed.source_shards, &staged_writes)?;
+        // Validation overlays the batch on immutable preimages. Existing shards
+        // must retain their preimage hashes until source operations are applied;
+        // otherwise materialization replays old history onto current disk bytes.
+        super::electrical_transaction::retain_preimage_hashes(self, &mut committed);
         sort_source_shards(&mut committed.source_shards);
         let mut report = committed.commit_without_direct_policy(batch)?;
+        update_staged_source_hashes(&mut committed.source_shards, &staged_writes)?;
         report.transaction.transaction_kind = transaction_kind;
         report.transaction.undo_of = undo_of;
         report.transaction.redo_of = redo_of;
@@ -399,7 +407,7 @@ fn validate_agent_commit_provenance(provenance: &AgentCommitProvenance) -> Resul
     Ok(())
 }
 
-fn refresh_journaled_report_revision(
+pub(super) fn refresh_journaled_report_revision(
     committed: &mut DesignModel,
     report: &mut CommitReport,
     after_model_revision_override: Option<ModelRevision>,

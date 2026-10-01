@@ -693,7 +693,8 @@ The unchanged private-writer gate fails because project/roots.rs delegates
 bootstrap rather than containing the gate's expected call; tracked as dat-7unq.
 No gate PASS or foundation/S5A acceptance is inferred.
 
-**Remaining technical boundary:** connectivity::schematic_net_info groups by source
+**Historical source-unit technical boundary (superseded by the amendment below):**
+connectivity::schematic_net_info groups by source
 sheet UUID, exposes summary counts/pins/ports and derives UUIDs from names/union
 root coordinates. It supplies neither complete source-member occurrences nor
 independent reused-SheetInstance partitions. It is insufficient for C01's full
@@ -706,7 +707,7 @@ and independent candidate review remain pending. Do not mint scene identities,
 reuse the summary hash, weaken F01–F06, advance DA-A2-E1-R as passed, or restore S5A.
 E2–E4/C04–C07/M1 remain outside the grant; partial U1 and S5A approval are retained.
 
-Independent partial-candidate review handoff: review E1-ID-SOURCE-01 at the
+Historical partial-candidate review handoff: review E1-ID-SOURCE-01 at the
 commit containing this record, including preceding 720929ed. Replay the focused
 commands above and inspect exact source/journal preimages, identities, occurrence
 references, retirement, Bus distributions and library certification. F02 has
@@ -722,3 +723,16 @@ and physical geometry remain separate E3/E2 work; neither summary IDs nor contex
 lists can substitute. Resolve this producer/execution sequencing boundary before
 expanding beyond the recorded E1 source unit. No renewed C01–C03 ratification or
 unchanged E1 authorization is requested.
+
+### DA-A2-E1 sequencing amendment — owner authorization
+
+The owner authorizes the minimum existing-connectivity-owner internal producer
+necessary for E1: complete occurrence-qualified immutable pre/final partitions
+and automatic identity transition composition with affected bindings in the same
+canonical batch. Actual topology edits, repeated-sheet isolation, identity
+preservation/retirement, atomic refusal and undo/replay/reopen must be proved.
+This resolves the E1/E3 sequencing boundary recorded above; that prior missing
+producer is no longer an execution blocker. Existing E1 ownership, C01–C03
+ratification/review, source work and independent candidate reviewer are retained.
+Public membership-query expansion, new geometry, manufacturing policy and
+C04–C07/E2–E4 remain outside this grant. No foundation/S5A acceptance is inferred.

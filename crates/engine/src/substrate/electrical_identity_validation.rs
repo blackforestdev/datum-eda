@@ -18,6 +18,10 @@ pub(super) fn validate_operations(
         return Ok(());
     }
     let basis = super::electrical_basis::ElectricalBasis::new(model, operations)?;
+    if model.electrical_identities.values().any(|r| matches!(&r.identity, ElectricalIdentity::Net {anchor,retired:false,..} if super::electrical_transaction::schematic_class(&anchor.class))) {
+        let groups=super::electrical_topology_source::partitions(model,operations)?;
+        super::electrical_transaction::previous(model,&groups)?;
+    }
     let mut owners = BTreeMap::new();
     let mut net_anchors = BTreeMap::new();
     for record in model.electrical_identities.values() {
@@ -66,7 +70,22 @@ pub(super) fn validate_operations(
                 intent,
                 evidence,
             } => {
-                net(model, *logical_net)?;
+                if matches!(
+                    intent,
+                    NetRelationshipIntent::Pending | NetRelationshipIntent::Mismatch
+                ) {
+                    if !matches!(
+                        model
+                            .electrical_identities
+                            .get(logical_net)
+                            .map(|r| &r.identity),
+                        Some(ElectricalIdentity::Net { .. })
+                    ) {
+                        return Err(invalid("missing historical logical Net"));
+                    }
+                } else {
+                    net(model, *logical_net)?;
+                }
                 if let Some(reference) = board_net {
                     let object = model
                         .objects

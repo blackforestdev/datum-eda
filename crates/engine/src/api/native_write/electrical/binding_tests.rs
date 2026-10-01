@@ -261,4 +261,57 @@ fn explicit_pinned_pin_pad_correspondence_reopen_and_refusal() {
         net_correspondence_status(&model, logical),
         NetCorrespondenceStatus::Complete
     );
+    // A real topology edit invalidates correspondence in the same transaction;
+    // physical board source is retained exactly and undo restores certification.
+    let board_before = model
+        .materialized_source_shard_value_by_relative_path("board/board.json")
+        .unwrap();
+    let wire = crate::schematic::SchematicWire {
+        uuid: Uuid::new_v4(),
+        from: Point::new(0, 0),
+        to: Point::new(10, 0),
+    };
+    let prepared = super::super::schematic_connectivity::build_create_schematic_wire(
+        &model,
+        provenance(),
+        sheet,
+        &wire,
+    )
+    .unwrap();
+    let before = model.electrical_identities.clone();
+    let report = commit_prepared(&mut model, &root, prepared).unwrap();
+    assert!(matches!(
+        model.electrical_identities[&relationship.id].identity,
+        ElectricalIdentity::NetRelationship {
+            intent: NetRelationshipIntent::Pending,
+            ..
+        }
+    ));
+    assert!(report.transaction.operations.iter().any(|op| matches!(op,Operation::SetElectricalIdentity {record,..} if record.id == relationship.id)));
+    assert_eq!(
+        model
+            .materialized_source_shard_value_by_relative_path("board/board.json")
+            .unwrap(),
+        board_before
+    );
+    let after = model.electrical_identities.clone();
+    assert_eq!(
+        ProjectResolver::new(&root)
+            .resolve()
+            .unwrap()
+            .electrical_identities,
+        after
+    );
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(model.electrical_identities, before);
+    assert_eq!(
+        net_correspondence_status(&model, logical),
+        NetCorrespondenceStatus::Complete
+    );
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(model.electrical_identities, after);
 }
