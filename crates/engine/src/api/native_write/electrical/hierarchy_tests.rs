@@ -63,7 +63,17 @@ fn occurrence_qualified_bus_identity_and_interface_reopen() {
     let prepared = build_create_schematic_bus(&model, provenance(), sheet, &drawing).unwrap();
     commit_prepared(&mut model, &root, prepared).unwrap();
     let n = Uuid::new_v4();
-    create(&mut model, &root, net(n, anchor));
+    create(
+        &mut model,
+        &root,
+        net(
+            n,
+            ElectricalOccurrence {
+                instance_path: vec![paths[0]],
+                ..anchor
+            },
+        ),
+    );
     let a = ElectricalOccurrence {
         class: "buses".into(),
         source_id: drawing.uuid,

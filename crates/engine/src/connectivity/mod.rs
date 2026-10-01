@@ -1,3 +1,7 @@
+mod label_semantics;
+mod occurrence_partition;
+use label_semantics::*;
+pub(crate) use occurrence_partition::partitions;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 use uuid::Uuid;
@@ -729,63 +733,6 @@ fn preferred_name(labels: &[LabelRef], ports: &[PortRef]) -> Option<String> {
         })
         .map(|label| label.name.clone())
         .or_else(|| ports.first().map(|port| port.name.clone()))
-}
-
-fn canonical_label_name(name: &str) -> String {
-    parse_scalar_bus_member_name(name).unwrap_or_else(|| name.to_string())
-}
-
-fn is_bus_container_label(label: &NetLabel) -> bool {
-    parse_bus_range_members(&label.name).is_some()
-}
-
-fn has_bus_syntax(name: &str) -> bool {
-    name.contains('[') || name.contains(']')
-}
-
-fn parse_scalar_bus_member_name(name: &str) -> Option<String> {
-    let open = name.rfind('[')?;
-    let close = name.rfind(']')?;
-    if close <= open + 1 || close != name.len() - 1 {
-        return None;
-    }
-    let base = name[..open].trim();
-    if base.is_empty() {
-        return None;
-    }
-    let body = &name[open + 1..close];
-    if body.contains("..") || body.contains(',') {
-        return None;
-    }
-    let index = body.trim().parse::<i32>().ok()?;
-    Some(format!("{base}{index}"))
-}
-
-fn parse_bus_range_members(name: &str) -> Option<Vec<String>> {
-    let open = name.rfind('[')?;
-    let close = name.rfind(']')?;
-    if close <= open + 1 || close != name.len() - 1 {
-        return None;
-    }
-    let base = name[..open].trim();
-    if base.is_empty() {
-        return None;
-    }
-    let body = &name[open + 1..close];
-    let (start_text, end_text) = body.split_once("..")?;
-    let start = start_text.trim().parse::<i32>().ok()?;
-    let end = end_text.trim().parse::<i32>().ok()?;
-    let step = if start <= end { 1 } else { -1 };
-    let mut members = Vec::new();
-    let mut index = start;
-    loop {
-        members.push(format!("{base}{index}"));
-        if index == end {
-            break;
-        }
-        index += step;
-    }
-    Some(members)
 }
 
 #[cfg(test)]

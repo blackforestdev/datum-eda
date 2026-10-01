@@ -27,6 +27,9 @@ mod electrical_identity;
 mod electrical_identity_operations;
 mod electrical_identity_store;
 mod electrical_identity_validation;
+mod electrical_topology_source;
+mod electrical_transaction;
+mod electrical_transaction_bindings;
 mod electrical_transition;
 mod forward_annotation_review_journal_ops;
 mod generated_evidence;
@@ -59,6 +62,7 @@ mod project_resolver;
 mod proposal;
 mod proposal_journal_ops;
 mod proposal_policy;
+mod proposal_source_preview;
 mod proposal_validation;
 mod relationship;
 mod relationship_journal_ops;
@@ -108,7 +112,6 @@ pub use import_map::{
 pub use journal::transaction_journal_path;
 use journal::{
     canonical_json_hash, materialized_shard_value, replay_journal_shard_value, sort_source_shards,
-    stage_operation_shard_writes, update_staged_source_hashes,
 };
 pub use operation::{Operation, SchematicMarkerKind};
 use operation_application::apply_operation;
@@ -126,6 +129,7 @@ pub use zone_fill::{
 
 pub use electrical_identity::*;
 pub use electrical_identity_validation::net_correspondence_status;
+pub(crate) use electrical_transaction::adoption as electrical_adoption_operations;
 pub use electrical_transition::plan_net_identity_transition;
 
 pub type ObjectId = Uuid;
@@ -685,6 +689,9 @@ fn sha256_digest_hex(bytes: &[u8]) -> String {
     }
     output
 }
+
+#[cfg(test)]
+pub(crate) use electrical_topology_source::partitions as electrical_test_partitions;
 
 #[cfg(test)]
 mod tests;
