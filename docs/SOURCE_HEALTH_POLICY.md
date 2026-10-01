@@ -293,3 +293,12 @@ editor-facing history-key exports. Ordered pane descriptors own grid/world
 admission and encoding. Renderer root expansion falls from5,975 to5,973 lines
 and its exact ceiling ratchets down; the root itself also shrinks. Normal
 budgets and retained source/resource caps are unchanged.
+
+S5A-C03 U1 extracts the existing singleton selection vocabulary and workspace
+selection/navigation methods from `gui-protocol/src/lib.rs` into normal
+`selection_subject.rs` and `workspace_selection.rs` owners. Protocol production
+falls from 4,660 to 4,525 lines, with the exact downward ceiling ratcheted in
+the same change; the 1,835-line legacy test tail remains open. New typed subject,
+resolution and viewport lifetime modules stay below normal budgets. Focused
+selection regressions verify the extraction; this partial foundation does not
+claim complete native selection or resolve absent engine Net/Bus authority.
