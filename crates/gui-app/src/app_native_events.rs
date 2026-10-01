@@ -495,6 +495,7 @@ impl ApplicationHandler for App {
             fatal_gui_error(event_loop, "synchronize owned product window", err);
         }
         // Native tokens, rather than this callback's frequency, drive rendering.
+        self.service_resize_allocation();
         self.dispatch_native_frame_round(event_loop);
         // Include retries created by this round in the single wait decision.
         // Terminal wakes only make this round runnable. Acknowledge and drain

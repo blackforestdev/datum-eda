@@ -23,6 +23,7 @@ impl Renderer {
         &'a self,
         pass: &mut wgpu::RenderPass<'a>,
         batches: &[surface_grid_pass::SurfaceGridBatch],
+        clip: crate::renderer_state::damage::clip::Clip,
     ) {
         // Empty geometry releases its upload owner and has nothing to bind.
         if batches.is_empty() {
@@ -36,7 +37,9 @@ impl Renderer {
         pass.set_bind_group(1, &self.damage_masks.unrestricted.group, &[]);
         pass.set_vertex_buffer(0, buffer.slice(..));
         for (index, batch) in batches.iter().enumerate() {
-            set_scissor(pass, batch.viewport);
+            if !set_scissor(pass, batch.viewport, clip) {
+                continue;
+            }
             pass.draw(batch.vertices.clone(), 0..1);
             if let Some(observation) = self.grid_admission.as_ref().and_then(|g| g.get(index)) {
                 observation.encoded.set(true);
@@ -106,26 +109,36 @@ impl Renderer {
         &'a self,
         pass: &mut wgpu::RenderPass<'a>,
         prepared: &PreparedScene,
+        clip: crate::renderer_state::damage::clip::Clip,
     ) {
         for (surface, cached) in prepared
             .surface_passes()
             .iter()
             .zip(&self.surface_world_bundles)
         {
-            set_scissor(pass, surface.scene_viewport);
+            if !set_scissor(pass, surface.scene_viewport, clip) {
+                continue;
+            }
             pass.execute_bundles(std::iter::once(&cached.bundle));
             self.render_session.prefix.world_bundle_executed();
         }
     }
 }
 
-fn set_scissor(pass: &mut wgpu::RenderPass<'_>, viewport: RectPx) {
-    pass.set_scissor_rect(
-        viewport.x.max(0.0).floor() as u32,
-        viewport.y.max(0.0).floor() as u32,
-        viewport.width.max(1.0).ceil() as u32,
-        viewport.height.max(1.0).ceil() as u32,
-    );
+fn set_scissor(
+    pass: &mut wgpu::RenderPass<'_>,
+    viewport: RectPx,
+    clip: crate::renderer_state::damage::clip::Clip,
+) -> bool {
+    clip.set(
+        pass,
+        [
+            viewport.x.max(0.0).floor() as u32,
+            viewport.y.max(0.0).floor() as u32,
+            viewport.width.max(1.0).ceil() as u32,
+            viewport.height.max(1.0).ceil() as u32,
+        ],
+    )
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

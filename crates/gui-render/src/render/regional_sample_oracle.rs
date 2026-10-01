@@ -47,8 +47,15 @@ impl Renderer {
                 ..Default::default()
             });
             let prepared = self.render_session.prepared().unwrap();
-            self.draw_frame_prefix(&mut pass, prepared, width, height, &mut None)
-                .unwrap();
+            self.draw_frame_prefix(
+                &mut pass,
+                prepared,
+                width,
+                height,
+                Clip::full(width, height),
+                &mut None,
+            )
+            .unwrap();
             self.draw_frame_suffix(
                 &mut pass,
                 prepared,

@@ -199,7 +199,10 @@ impl Renderer {
         let mut measurement = self.begin_gpu_measurement()?;
         let leading = self.final_measurement_leading(device, &mut measurement)?;
         let encode_started = std::time::Instant::now();
-        let msaa_view = self.ensure_msaa(device, width, height)?.clone();
+        let [raster_width, raster_height] = frame_target.raster_extent([width, height]);
+        let msaa_view = self
+            .ensure_msaa(device, raster_width, raster_height)?
+            .clone();
         self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
         let images = self

@@ -261,7 +261,7 @@ impl SurfaceAttachments {
             let reservation = GpuReservation::new(bytes, vec![])?;
             let alias_formats = [key.format.remove_srgb_suffix()];
             let usage = wgpu::TextureUsages::RENDER_ATTACHMENT
-                | if prefix_images::eligible(key) {
+                | if self.damage_views && prefix_images::eligible(key) {
                     wgpu::TextureUsages::COPY_DST
                 } else {
                     wgpu::TextureUsages::empty()
