@@ -6,6 +6,9 @@ use super::*;
 
 impl Runtime {
     pub(super) fn resize(&mut self, width: u32, height: u32) {
+        if self.surface_transaction.refresh_resize_output(&self.window) {
+            self.invalidate_surface_size();
+        }
         self.surface_transaction.resize(width, height);
         if width != 0 && height != 0 {
             self.apply_resize(width, height);
@@ -21,6 +24,7 @@ impl Runtime {
             "scale factor apply {:.4} -> {:.4}",
             self.scale_factor, next
         ));
+        self.surface_transaction.reset_resize_output();
         self.scale_factor = next;
         self.presented_console_layout = None;
         self.presented_hits.clear();

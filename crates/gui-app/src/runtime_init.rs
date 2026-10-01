@@ -10,6 +10,7 @@ impl Runtime {
     ) -> Result<Self> {
         let runtime_started = std::time::Instant::now();
         let LaunchState {
+            reuse_resize_buffers,
             request: _request,
             mut state,
             camera,
@@ -75,7 +76,10 @@ impl Runtime {
             "renderer init {}ms",
             renderer_started.elapsed().as_millis()
         ));
-        let surface_transaction = SurfaceTransaction::new(&window, &device_health);
+        let mut surface_transaction = SurfaceTransaction::new(&window, &device_health);
+        if reuse_resize_buffers {
+            surface_transaction.enable_resize_buffer_reuse();
+        }
         let mut runtime = Self {
             window,
             instance,

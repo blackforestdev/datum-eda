@@ -106,6 +106,11 @@ pub(super) struct GuiArgs {
     pub(super) layers_scroll_end: bool,
     #[arg(long = "window-size", default_value = "1280x768")]
     pub(super) window_size: String,
+    #[arg(
+        long,
+        help = "Reuse presentation buffers during resize; temporarily resamples, then restores exact output (PM052)"
+    )]
+    pub(super) reuse_resize_buffers: bool,
     #[arg(long = "screenshot-out")]
     pub(super) screenshot_out: Option<PathBuf>,
     #[arg(long = "exit-after-screenshot", default_value_t = false)]
@@ -122,6 +127,7 @@ pub(super) struct GuiArgs {
     pub(super) kwin_lifecycle_smoke: bool,
 }
 pub(super) struct LaunchState {
+    pub(super) reuse_resize_buffers: bool,
     pub(super) request: LiveReviewRequest,
     pub(super) state: datum_gui_protocol::ReviewWorkspaceState,
     pub(super) camera: CameraState,
@@ -139,6 +145,10 @@ impl GuiArgs {
     }
 
     pub(super) fn validate_visual_args(&self) -> Result<()> {
+        validate_resize_reuse(
+            self.reuse_resize_buffers,
+            std::env::var_os("DATUM_DIAGNOSTIC_RESIZE_ALLOCATION").is_some(),
+        )?;
         if self.fixture_revision_surface.is_some() && !self.visual_test {
             anyhow::bail!("--fixture-revision-surface requires --visual-test");
         }
@@ -414,6 +424,7 @@ impl GuiArgs {
         ));
 
         Ok(LaunchState {
+            reuse_resize_buffers: self.reuse_resize_buffers,
             request,
             state,
             camera,
@@ -570,5 +581,25 @@ mod initial_layout_tests {
         let before = layout.clone();
         args.apply_initial_layout(&mut layout);
         assert_eq!(layout, before);
+    }
+}
+
+fn validate_resize_reuse(ordinary: bool, diagnostic: bool) -> Result<()> {
+    anyhow::ensure!(
+        !ordinary || !diagnostic,
+        "--reuse-resize-buffers conflicts with DATUM_DIAGNOSTIC_RESIZE_ALLOCATION; unset the diagnostic override"
+    );
+    Ok(())
+}
+#[cfg(test)]
+mod resize_reuse_args_tests {
+    use super::*;
+    #[test]
+    fn ordinary_option_is_explicit_and_rejects_diagnostic_override() {
+        assert!(!GuiArgs::parse_from(["datum-gui"]).reuse_resize_buffers);
+        assert!(GuiArgs::parse_from(["datum-gui", "--reuse-resize-buffers"]).reuse_resize_buffers);
+        assert!(validate_resize_reuse(true, true).is_err());
+        assert!(validate_resize_reuse(true, false).is_ok());
+        assert!(validate_resize_reuse(false, true).is_ok());
     }
 }

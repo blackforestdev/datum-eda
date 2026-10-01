@@ -393,3 +393,56 @@ adoption is incomplete; this evidence report does not close the owner goal.
 The concrete opt-in integration decision is proposed in PM052, RZ-C04; bounded
 integration after owner disposition is RZ-C05. No automatic hardware policy or
 new performance campaign is selected.
+
+
+## Approved ordinary-option integration
+
+<!-- EVIDENCE:GUI-RESIZE-REPAIR:ORDINARY-REUSE -->
+
+The owner approved PM052 verbatim (`owner-direction.json`). Ordinary
+`--reuse-resize-buffers` selects the successful retained-peak policy. An omitted
+option preserves exact allocation; conflicting diagnostic overrides give a clear
+launch error. Both diagnostic selections and successful archived executables
+remain. Missing Wayland/fractional-scale/output-refresh prerequisites use exact
+allocation. Output/scale changes cancel stale peak state and refresh association;
+device recreation inherits the selected allocation policy with fresh output state.
+Logical/input/design ownership, full8x graph and lifetime owners remain unchanged.
+
+Focused resize tests13passed, guarded release build passed, GUI-app all-target
+Clippy with warnings denied passed, source-health and dependency-authority gates
+passed. One ordinary-option native launch, sealed in
+`target/cpu-resize-ordinary-reuse-smoke-20261001`, visibly displayed the full board
+and completed588geometry requests per axis. Both changed endpoints correct; both
+restored images equal readiness exactly. Native logs demonstrate physical/logical
+storage differences during active reuse. Exit0, empty descendant cgroup, unchanged
+pins. No resource intervals or phase CPU probe in this integration check.
+
+The retained allocation algorithm is unchanged; reuse its measured width/height
+CPU21.84%/19.70% of one core, fewer configurations and lower GPU engine activity
+than the initial successful quantized mode. Do not label these new binary timings:
+there were no new CPU measurements. Context-refresh/fallback checks are new
+integration safeguards, not a separate optimization claim. Endpoint observations
+do not prove continuous displayed-frame/input processing or all-host correctness.
+
+Completion audit: the excessive repeated presentation allocation has a current-
+codebase opt-in remedy, verified on the requested host in both resize directions.
+The first win is retained, the further retained-peak correction is implemented,
+exact post-resize pixels and quiet idle are evidenced, owner approves temporary
+resampling, and the ordinary feature is integrated with safe prerequisite/reset
+behavior. All failures remain preserved. No numerical acceptance budget is set.
+S4 stays closed; full S5/resize qualification, broader hardware policy and resource
+acceptance remain on their existing separate lane. No further performance campaign
+is needed to finish this bounded current-host repair.
+
+Normal release launch:
+
+```bash
+python3 scripts/run_cargo_guarded.py --workload proof -- \
+cargo run --release -p datum-gui-app --bin datum-gui -- \
+--reuse-resize-buffers \
+--board "$HOME/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb"
+```
+
+Unset `DATUM_DIAGNOSTIC_RESIZE_ALLOCATION` first if previously exported. The
+ordinary integration smoke used automatic backend selection and verified Vulkan
+on this host; it did not require a backend diagnostic override.
