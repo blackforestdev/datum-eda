@@ -446,3 +446,12 @@ cargo run --release -p datum-gui-app --bin datum-gui -- \
 Unset `DATUM_DIAGNOSTIC_RESIZE_ALLOCATION` first if previously exported. The
 ordinary integration smoke used automatic backend selection and verified Vulkan
 on this host; it did not require a backend diagnostic override.
+
+
+Repair landed in3f9603ab. All five bounded repair steps are complete and the
+current-host bug is closed at that opt-in scope; broad qualification is not closed.
+The explicit Frontier reconciliation returns canonical selection to the existing
+UVT-S5A-BUILD planning lane designated by PM051 before the owner-directed CPU
+interruption. Its authorization remains planning; no successor work is started
+and no owner decision or implementation boundary is advanced. The original
+GUI-PERFORMANCE-IMPLEMENTATION record and S4 closure are unchanged.
