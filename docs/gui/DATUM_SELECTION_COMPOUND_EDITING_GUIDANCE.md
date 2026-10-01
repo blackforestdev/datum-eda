@@ -27,6 +27,12 @@ surface.
    per revision. The complete authoritative resolution, never a capped context
    list, determines membership (owner-approved D4; PM026 and UVT §2.2.2/§2.2.20).
    This selection refusal neither builds nor invokes an engine mutation guard.
+   Owner-resolved S5A-IR-01 gates electrical acquisition on an eligible origin,
+   then includes complete derived membership even if another member was hidden
+   or class-filtered before acquisition. Hidden projections remain absent;
+   filtered but rendered members retain selection treatment and all members
+   remain disclosed. UVT §2.2.8/PM026 controls this rule; D4 candidates still
+   qualify by ordinary eligibility before complete-membership comparison.
 3. The Inspector keeps canvas membership intact while exposing `All N` and
    explicit per-type scopes. Scope changes are view/target declarations, not
    hidden reselection.
