@@ -1,7 +1,8 @@
 # Foundation consumer completion contracts
 
-Status: consumer completion requirements; S5A execution authorization recorded
-below. Other consumer execution boundaries remain unchanged.
+Status: consumer completion requirements; S5A execution authorization retained,
+dependent implementation paused for the owner-requested foundation-gap amendment
+review/disposition below. Other consumer execution boundaries remain unchanged.
 Tracking: FOUNDATION-WORKFLOW-SPEC / WDQ-F01,
 `dat-manual-foundation-contracts-fsw`; repair intake
 `dat-foundation-consumer-plans-9at`.
@@ -229,6 +230,29 @@ environment binding and owner-mediated return to the reviewer. C04–C06 remain
 pending; the build issue stays open and cross-probe is neither selected nor
 authorized. Changed scope or unresolved mandatory implementation findings retain
 the normal disposition requirement; no independent reviewer result is fabricated.
+
+### Foundation-gap amendment and dependent implementation pause — 2026-10-01
+
+The owner authorizes investigation/planning reconciliation of
+`dat-s5a-derived-authority-hhsw` only, with independent amendment review and owner
+approval before expanding engine implementation scope. Preserve partial U1 at
+`a4537277`, C01/C02 completion and the unchanged approved packet/execution grant.
+No native acceptance is claimed. C03 returns to pending resumption; temporary
+G01 planning and G02 owner-disposition steps precede it. The canonical G02 boundary
+pauses dependent implementation without revoking C02 or promoting an engine
+prerequisite before its disposition.
+
+Requirements/evidence for G01 and requirements/owner requests for G02 are in
+`docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, packet
+`S5A-FOUNDATION-GAP-01`: existing owner mapping, exposure versus semantic gaps,
+proposed bounded prerequisite A1–A4, focused F01–F06 and exact resumption condition.
+Its proposed new `S5A-DERIVED-AUTHORITY` uses the existing gap issue and existing
+connectivity/substrate owners, with a related NCC specification handoff, not a
+reopening of completed foundations. No new hard edge, product decision, engine
+execution or reviewer availability is inferred by drafting it. Independent
+review precedes owner approval; C05 remains reserved and separate. After approval,
+promote/reconcile only the exact agreed prerequisite, its planning/decision/
+execution gates and explicit eventual handoff to C03 in the same transaction.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
