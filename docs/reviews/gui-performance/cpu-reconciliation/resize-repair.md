@@ -240,3 +240,70 @@ and GPU work alongside CPU. Higher GPU activity with more completed frames is a
 tradeoff to explain, not sufficient evidence to discard the CPU improvement.
 Default activation and production-quality acceptance are not asserted by retention.
 No numerical budget, dependency adoption, tuning, S4 reopening or S5 acceptance.
+
+
+## Next bounded correction: retain peak storage through one resize
+
+Existing candidate evidence shows53/61configurations despite454/433completed
+presentation calls. The source rounds the current extent in both directions,
+so each descent through a32pixel boundary recreates storage already allocated
+on ascent. Next opt-in variant `quantized-retained` retains the largest required
+physical extent until the existing three-display-interval quiet deadline; grow
+only axes whose current requirement exceeds capacity, using the same32pixel
+allocation granularity. Static axes remain exact. Logical/input sizes remain
+immediate; required full8x rendering and existing viewporter resampling continue.
+No additional delay, frame cap, policy threshold, dependency or protocol client.
+Quiet, hidden and zero-size paths release peak state and restore exact storage.
+The previous `quantized` implementation/flag and successful binary stay available.
+
+This correction targets repeated downsizing allocation and unnecessary static-axis
+raster expansion. Peak storage may render more pixels while shrinking, so report
+GPU activity and transient-quality limits, not just CPU. The finite method is:
+focused state-transition tests, one guarded optimized build, then one Vulkan
+candidate launch with one10s width and one10s height observation using the same
+fixture, sizes,17ms cadence, FIFO/8x, readiness inspection and process accounting.
+Compare the sealed successful quantized observation; do not repeat it. Stop and
+preserve any substantive output/accounting failure, no interval replacement.
+Inspect all endpoint images and require restored pixels equal to ready. Changes
+in API work counts remain explicit; no complete-path or observer-overhead claim.
+Lower configuration work and CPU without a substantive correctness failure
+support retaining this variant for further repair; no broad acceptance follows.
+
+
+## Retained-peak result
+
+Sealed packet: `target/cpu-resize-peak-retained-20260930-candidate`. Both measured
+intervals completed, GUI exited0, final cgroup empty and pinned inputs unchanged.
+Ready pixels match the successful quantized control exactly; both restored images
+match own readiness exactly. All endpoints visually correct at expected sizes.
+No measured retry. State-transition tests2passed; optimized build and GUI-app
+all-target Clippy with warnings denied passed.
+
+| Axis | Elapsed s | CPU s | User s | System s | CPU % one core | Configurations | API presentation completions | App GPU engine s | KWin CPU % one core |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Width |10.091409|2.203981|1.723704|0.480277|21.840|13|434|3.103528|24.575|
+| Height |10.165668|2.002469|1.582630|0.419839|19.698|8|369|3.178182|22.232|
+
+Relative to the successful quantized packet, CPU percentage fell19.55%/24.37%,
+configuration count53/61fell to13/8, and app GPU engine activity fell from
+42.76%/44.09% to30.75%/31.26% of actual interval elapsed. API completion counts
+also fell454/433to434/369; no identical delivered-work or causal CPU/GPU partition.
+Same geometry588requests/17ms, same capture and descendant accounting method.
+Retain this as the next demonstrated improvement without discarding `quantized`.
+One mid-width exact reset appears in the native log; review before changing the
+settling rule, rather than inventing another timer. No acceptance budget or
+continuous quality/idle/input qualification is inferred.
+
+## Owner manual QA of successful quantized mode
+
+The owner first reported improved responsiveness from a development-profile
+`--board` launch without explicit diagnostic flags; attribute that only as manual
+ordinary-launch evidence, inherited environment not established. Subsequently the
+owner ran the supplied release/direct-board command explicitly selecting
+`quantized` and Vulkan and reported much better resizing, faster zooming and a
+CPU display below4.4% during heavy abuse. Exact statement and command are saved
+in `target/cpu-resize-repair-20260930/owner-quantized-manual-qa.json`.
+This is practical positive evidence for retaining the first win. CPU display
+normalization/tool/cadence are unknown; do not compare4.4% directly with controlled
+one-core figures or turn it into a numerical budget. Zoom was an owner observation,
+not a new automated qualification scope. Preserve both successful candidates.
