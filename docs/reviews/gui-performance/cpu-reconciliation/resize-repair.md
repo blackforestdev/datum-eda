@@ -205,10 +205,12 @@ substantially and configuration count dropped. This is not a complete CPU
 partition or an overall-resource solution. GPU engine activity increased from
 about23% to43–44% of interval elapsed as more full frames were rendered, and
 transient exact pixels are not preserved. Keep the prototype disabled by default;
-no production-quality, numerical-budget, S4/S5 or resize closure claim. The owner
-has been given this concrete result and asked whether transient resampling is an
-acceptable option under unchanged exact-output requirements. Continuing repair
-goal remains active; no automatic general campaign follows from this packet.
+no production-quality, numerical-budget, S4/S5 or resize closure claim. The
+initial owner question incorrectly framed retaining the CPU gain and preserving
+quality as opposing choices. The owner's subsequent explicit clarification
+supersedes that interpretation: retain this successful candidate and use it as
+the baseline for further resize CPU improvements. It is not rejected. Continuing
+repair remains limited to this current-host issue; no general campaign follows.
 
 Focused verification for this checkpoint: mapped-output lifecycle test1passed;
 raster-clip tests3passed; existing attachment tests6passed; optimized GUI build
@@ -217,3 +219,24 @@ Project-state, evidence, spec governance/parity, progress coverage, source healt
 dependency-authority and Cargo-resource-policy checks passed. A mistyped
 `check_project_state.py` invocation named a nonexistent script; corrected to
 `project_status.py check`, which passed. No full UI qualification was run or claimed.
+
+
+## Owner clarification: retain the first CPU gain
+
+The owner explicitly directs retention and further improvement; verbatim direction
+is in `owner-direction.json`. The earlier option selection must not be read as
+rejection, nor as authorization to remove the prototype. No removal occurred.
+Commit86228807 retains the active diagnostic source; the sealed measured candidate
+has SHA256 `b0c291a45086fe9b066be46ff2e35ce0832bfb62d65393469a48c910a5bedb12`.
+Both match the evidence record. Treat the measured30–32% CPU reduction as the
+first demonstrated improvement and preserve it as the development baseline.
+
+RZ-C02 now continues from this candidate: identify remaining avoidable work using
+existing source and phase evidence first, then record one justified bounded
+correction and comparison before execution. Compare future candidates with this
+preserved successful executable, rather than discarding the gain or rerunning old
+controls by default. Preserve exact settled output; investigate transient quality
+and GPU work alongside CPU. Higher GPU activity with more completed frames is a
+tradeoff to explain, not sufficient evidence to discard the CPU improvement.
+Default activation and production-quality acceptance are not asserted by retention.
+No numerical budget, dependency adoption, tuning, S4 reopening or S5 acceptance.

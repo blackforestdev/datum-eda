@@ -199,7 +199,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
-   Explicit owner repair goal: fix demonstrated fallback failure, compare working backend resize behavior and verify one supported current-host correction. S4 remains closed; no new numerical budget, broad qualification, dependency or driver tuning. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   Owner directs retaining the demonstrated 30–32% allocation-reuse CPU gain as the development baseline and seeking further resize improvements. Preserve measured evidence, output-quality review and resource accounting; no numerical budget, S4 reopening, broad qualification, dependency or driver tuning. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/reviews/gui-performance/cpu-reconciliation/resize-repair.md`, `docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->

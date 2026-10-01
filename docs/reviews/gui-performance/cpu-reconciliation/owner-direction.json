@@ -40,6 +40,11 @@
     "base_commit": "a73b8cde3da414e0207c9132cd9e9884108455ec",
     "scope": "Current-host horizontal/vertical resize investigation and evidence-supported current-codebase repair; bounded justified verification, preserve failures, no numerical budget or broad qualification. Explicit earlier proceed directions authorize the executed diagnostic sequence; this new direction authorizes continuing toward a solution.",
     "preserved": "S4 stays closed; S5 and hardware policy remain separate; dependencies, tuning and broad renderer redesign not authorized.",
-    "record": "docs/reviews/gui-performance/cpu-reconciliation/resize-repair.md"
+    "record": "docs/reviews/gui-performance/cpu-reconciliation/resize-repair.md",
+    "candidate_retention_clarification": {
+      "owner_statement": "undo undo undo. I selected the option to preserve the win and look for more avenues for imporvment. that was a poorly worded question. we shoul have been locking that shit in and using this initial sucess as a springboard to find more sucess in cpu reduction during resize...",
+      "recorded_at": "2026-10-01T03:28:51.181037+00:00",
+      "disposition": "Retain the measured allocation-reuse candidate as the next development baseline and seek additional resize CPU improvements. Earlier preserve-exact selection is not rejection or authorization to remove the prototype. Preserve exact settled output, record transient quality and GPU activity honestly; numerical budgets and broad qualification remain undecided. This is continued development authorization, not a claim of completed production quality or overall-resource acceptance."
+    }
   }
 }
