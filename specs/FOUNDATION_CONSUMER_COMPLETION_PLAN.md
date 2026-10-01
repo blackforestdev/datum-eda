@@ -69,7 +69,8 @@ selection visuals or this completion plan is not execution authorization.
 S5A-C01 reconciliation is recorded in
 `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` under
 `S5A-C01-PACKET`: current owners/classes, U1–U5, native N01–N17, evidence reuse
-and recorded D1–D4 dispositions plus pending D5. Its completion is planning only.
+and recorded D1–D4 dispositions. D5 reservation is recorded below; independent
+specification review remains pending. Its completion is planning only.
 Actual fixture/handler bindings and
 native evidence are future execution outputs, not fabricated C01 receipts.
 PM044 retired WDQ enrollment/source-promotion prerequisites; no replacement
@@ -107,10 +108,44 @@ revision cases. This product-rule approval grants no implementation execution;
 C02 remains pending for the remaining dispositions and exact authorization.
 
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:REVIEW-PROVISION -->
-Resolve D5: name an available independent reviewer/session and replay arrangement
-for the exact U1–U5/N01–N17 packet. No availability or reservation is claimed.
-Approve only after required dispositions/reconciliation, or revise/defer with
-precise corrections. Authorization does not accept implementation or advance C06.
+D5 owner reservation is recorded (2026-10-01): the existing owner-facing
+audit/review session is the independent S5A reviewer, separate from the
+implementing S5A agent and outside implementation ownership. The pinned review
+baseline remains commit `465f2b471d4fb64c6ec2c518b511b12f0aba1cc5`, packet
+`S5A-C02-PACKET-D1-D4` in
+`docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` (Git blob
+`6bc6ab7f2108c2e93136e9812eeb186448c2a9c7`). This later reservation records
+availability and scope; it does not alter that pinned specification packet.
+
+The reserved review scope is:
+
+1. Before execution authorization, independently review the complete pinned
+   specification packet, U1–U5, N01–N17 and recorded D1–D4 dispositions.
+2. At C05, review the exact implemented candidate and independently replay the
+   applicable board/schematic proof cases under the authorized execution scope.
+   Bind results to the candidate, fixtures, binary and environment.
+3. Verify identity and membership, acquisition/refusal/cancellation, lifecycle,
+   inspection outputs, accessibility, non-mutation, rendering integration and
+   preservation of PM026/049/051/052.
+4. Reuse adequate existing evidence. Keep deferred editor rows explicitly
+   unverified and latency budgets undecided. Report unresolved mandatory failures
+   without treating them as passes.
+
+The owner will return the pinned candidate and evidence to the reserved review
+session; no automatic cross-session coordination is assumed. The owner's reading
+confirms the reservation scope only, not approval of the complete packet.
+Specification review has not passed, execution is not authorized and
+implementation acceptance remains separate.
+
+<!-- OWNER:UVT-S5A-BUILD:S5A-C02:SPECIFICATION-REVIEW -->
+Obtain the reserved independent session's specification review outcome and
+findings for the exact pinned packet before owner execution authorization.
+Resolve mandatory findings through their owning routes; a reservation or the
+implementer's own review cannot stand in for this independent review. C02 stays
+pending. After independent specification review and required reconciliation,
+present the exact reviewed packet for explicit bounded owner execution
+authorization, or revise/defer with precise corrections. Execution authorization
+does not accept implementation or advance C06.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
