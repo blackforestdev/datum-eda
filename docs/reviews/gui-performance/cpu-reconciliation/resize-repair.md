@@ -495,3 +495,10 @@ compatible; explicitly exported diagnostic settings still override the default.
 Unsupported prerequisites retain exact allocation. Temporary resize resampling,
 exact settled output, current-host evidence scope, undecided budgets and closed
 S4/broad qualification remain as ratified.
+
+
+Default-path amendment landed ina89f94b2; RZ-C06 complete. The bounded repair
+issue closes again at that amended scope. Canonical selection returns to the
+existing UVT-S5A-BUILD planning lane without starting successor work or advancing
+its authorization. Original GUI-PERFORMANCE-IMPLEMENTATION and S4 closure stay
+unchanged; no further performance campaign is selected.
