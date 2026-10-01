@@ -736,3 +736,106 @@ producer is no longer an execution blocker. Existing E1 ownership, C01–C03
 ratification/review, source work and independent candidate reviewer are retained.
 Public membership-query expansion, new geometry, manufacturing policy and
 C04–C07/E2–E4 remain outside this grant. No foundation/S5A acceptance is inferred.
+
+### E1-ID-INTEGRATION-01 — exact candidate and reserved review handoff
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A2-E1-INTEGRATION -->
+
+Implemented source candidate: `10581b43b712c93a1cd16a122649efc352d7669f`,
+following `720929ed` and `ed976069`. This packet's pin is the commit/blob containing
+this record; its changes after the source candidate are governance/evidence only.
+Owner amendment above corrects E1/E3 sequencing; PM053 C01–C03 and A1-03's exact
+ratification/review are retained. DA-A2-E1 implementation and focused proof are
+complete for this bounded candidate; DA-A2-E1-R independent review is pending.
+Neither foundation closure, feasibility of remaining work nor S5A acceptance is
+established. The historical partial producer blocker above is superseded.
+
+**Ownership and integration.** Existing connectivity owns internal complete
+occurrence partitions (`connectivity/occurrence_partition.rs`); substrate source
+and commit owners materialize immutable inputs, compose identity and reconcile
+bindings (`electrical_topology_source.rs`, `electrical_transaction.rs`,
+`electrical_transaction_bindings.rs`, `commit.rs`). Native-write owns explicit
+adoption and authored records. Public summary IDs/counts remain diagnostic and
+are never stable identity authority. There is no public membership-query expansion,
+renderer identity or competing editor selection system. Board local UUIDs and
+explicit pin/pad provenance remain authoritative; board copper is untouched.
+
+The producer enumerates whole authored scalar member occurrences, including
+ordered nested instance paths, before any identity allocation. It uses existing
+endpoint/junction/attachment and label rules; complete groups have no context cap.
+Local occurrences isolate, globals union and explicit parent interfaces bind only
+that occurrence. Malformed hierarchy refuses. A normal adopted topology batch
+records final nominees, new UUIDs, retired IDs and affected bindings atomically.
+Allocation is batch-provenance UUID plus sorted final allocation ordinal, never a
+member/name/coordinate digest. Explicit invalid authority refuses rather than being
+repaired. Source adoption is explicit; reads and unadopted edits do not migrate.
+Retired history retains adoption after complete deletion. Pending/Mismatch may
+retain a retired historical endpoint without certifying any active Global Net.
+Bus roles/interfaces follow Net successors/removal, without Bus splitting or board
+ownership duplication. Canonical undo/redo/reopen reuse recorded identities.
+
+**Demonstrated staging defect and bounded remedy.** Nested occurrence-copy proof
+failed because existing source hashes were replaced with staged postimage hashes
+before final validation read preimage files; materialization then replayed historical
+sheet creation onto current source. Retain preimage hashes during application,
+then publish final hashes/revision. Journaled proposal preview/prediction uses the
+same basis and composed operations. No broad connectivity or persistence rewrite.
+
+**Focused proof and independent replay scope.** New topology fixtures use native
+genesis plus canonical native-write operations; existing regression fixtures retain
+classified test support. Expected membership sets are authored explicitly from
+known source UUIDs/paths, independent of the producer; identity lookups are checked
+against those complete sets. Test paths below are relative to
+`crates/engine/src/api/native_write/electrical/`.
+
+| Decision enabled | Exact proof/oracle | Result |
+| --- | --- | --- |
+| Complete native split/merge and deleted-anchor fallback | `topology_tests.rs`: delete/recreate actual bridge; exact pre/final sets, anchor/fallback survivor, one fresh split identity, lowest merge nominee, retirement, undo/redo/reopen | PASS |
+| Final-state composition rather than intermediate allocation | `topology_atomic_tests.rs`: simultaneous split/merge in equivalent operation orders with same batch UUID; exactly one recorded allocation and losing nominee retirement; crossed actual source groups preserve both anchors without allocation | PASS |
+| Complete deletion does not recycle identity | Same module: no members retires old Net, relation becomes Pending historical endpoint; later source at identical coordinates gets fresh ID; undo/redo/reopen | PASS |
+| Complete occurrence authority | `topology_tests.rs` and `topology_hierarchy_tests.rs`: local reused sheets isolate; global labels union exact qualified members; nested parent-port/child-label sets, missing interface atomic refusal, copied instance fresh ID, existing IDs retained | PASS |
+| Atomic affected bindings and lawful incomplete board state | `binding_tests.rs`: actual pin-connected wire edit changes Complete to Pending in same batch, board source equal, undo restores Complete; atomic module: Bus scalars/identity interface follow merge; explicit malformed map refuses unchanged model/journal | PASS |
+| Refusal, proposal and persistence parity | Stale source and forged final identity refuse unchanged model/journal; proposal draft/preview preserves live source, accepted apply matches preview postimage revision; recorded IDs survive undo/redo/reopen | PASS |
+| Deterministic complete work and no read allocation | Atomic module: exact 257-wire membership exceeds context cap; repeated reopen/read preserves identity/journal; full i32 display range recognized without materializing billions of members | PASS |
+| Prior E1 source/binding/Bus obligations | Reuse existing retirement, malformed/stale reference, source revision, explicit Bus split/merge/interface, zero-drawing projection, pin/pad adoption/certification and pool-leaf lifecycle cases | PASS, bounded E1 only |
+
+Verification batches each enable the decision above or check the changed source
+staging path: guarded `cargo test -p eda-engine api::native_write::electrical --lib`
+**31 passed**; `connectivity::tests` **16 passed** for shared label/segment laws;
+`substrate::tests::journal` **24 passed** and `substrate::tests::proposal`
+**17 passed** for preimage staging/replay/preview; `api::native_write::library`
+**17 passed** for the affected canonical multi-source path. Guarded
+`cargo clippy -p eda-engine -p datum-eda-cli --all-targets -- -D warnings` passed.
+Reuse earlier 21 CLI symbol/query/materialization/ERC results for unchanged pin
+presentation; no new native GUI/performance campaign or numerical target.
+
+Proof capture: `/tmp/datum-e1-integration-proof/`, 2026-10-01T23:20:18Z;
+Linux x86_64, rustc/cargo 1.98.0, guarded proof workload. Engine test binary
+`target/debug/deps/eda_engine-5b3bfac123e4e569` SHA256
+`5d7999936eee27c19195dfdd8a43abd35f14ac3e0d4e3cd8cbcdd0f204320daf`.
+`environment.json` binds source candidate/tree, toolchain and binary (SHA256
+`c28f6635c4b3aaadf769433c644273e2a093e89890c62f5d3d107ba7301a4ba8`);
+`fixtures.json` binds the eleven new native fixture roots and their file hashes
+(SHA256 `6c104aa941fd678aaf73346885d931ab9485b8013c49b59f041e5a8a3f42b43a`);
+`results.json` binds exact commands/results (SHA256
+`6225e7e040646792564ac6dffb65ea70b2a56f42dc647f71f4bd73396fa82d74`).
+Local artifacts are replay aids, not durable replacement for committed oracles.
+Replay creates fresh fixture UUIDs and records its own candidate/binary/environment
+bindings; it must check these same identity/membership/source invariants.
+
+Traceability, source health, parity/classification, progress coverage, dependency
+and Cargo policy, raw-load/daemon parity, staged lane/rustfmt and diff checks pass.
+Unchanged private-writer bootstrap-pattern failure remains **dat-7unq**, unpassed;
+no renderer-marker or unrelated gate waiver is inferred. No new dependencies or
+license obligations; PM026/049/051/052, rendering/resize and partial U1 preserved.
+
+**Reserved independent boundary.** Return this exact source candidate and packet
+pin to the existing owner-facing independent audit session; reviewer stays outside
+implementation ownership. Independently inspect C01–C03 source/identity/query
+boundaries and replay the focused commands/oracles above, including preimage
+staging, explicit invalid binding refusal and persistence. Bind findings to candidate,
+fixtures, binary and environment. Report unresolved mandatory failures honestly;
+no automatic session notification or reviewer PASS is assumed. Canonical next is
+DA-A2-E1-R. Full F01–F06, public derived membership, geometry/CAM, M1 and remaining
+C04–C07/E2–E4 are unverified and retain their later gates. Dependent S5A U1 work
+stays paused; U2–U5 and native acceptance remain pending under retained C02/C05.
