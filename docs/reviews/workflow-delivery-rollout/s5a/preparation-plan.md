@@ -1,6 +1,7 @@
 # S5A selection execution and native-proof packet
 
-Status: D1–D4 reconciled; S5A-C02 pending D5 reservation and pinned-packet review.
+Status: D1–D4 and S5A-IR-01 reconciled; D5 reserved; independent revised-packet
+review and S5A-C02 execution authorization pending.
 Frontier: UVT-S5A-BUILD / S5A-C01; `dat-uvt-s5a-build-1wv`.
 Owning route: `workflow-delivery-cohort-preparation`.
 Basis: `runtime-readiness-audit.json` at `7ab093c2` and
@@ -26,7 +27,7 @@ The original proposal alone did not complete S5A-C01. The reconciled packet
 below now accounts for complete domain scope, actual existing fixture inputs,
 production integration, numerical provenance and review arrangements. Future
 fixture/handler outputs remain unbuilt. D1–D4 are recorded and reconciled;
-D5 reviewer reservation and review of this pinned packet remain required before
+D5 is reserved; independent review of this revised pinned packet remains required before
 explicit C02 execution authorization.
 The six historical readiness questions are mapped, not represented as proof.
 
@@ -142,8 +143,8 @@ native acceptance, a new dependency, a numerical performance budget or promotion
    proof nor completion of S5A-C01's entire contract or WDQ adoption.
 
 Fixture construction and dispatch-evidence preparation have owner approval.
-The former installed preparation/landing obstacle is retired. D1–D4 dispositions are now recorded below; reviewer reservation and exact
-pinned-packet review remain at C02.
+The former installed preparation/landing obstacle is retired. D1–D4 dispositions are recorded below; D5 is reserved and independent revised-
+packet review remains at C02.
 No native readiness, implementation or acceptance is asserted.
 
 ## Reconciled S5A-C01 execution packet — 2026-09-30
@@ -288,11 +289,11 @@ accessible-state and non-mutation evidence. Reopen resolves authoritative source
 | N02/S01 | Rightward rectangle/leftward lasso, locked shape; additive/subtractive; 1px clipped dashed boundary, reduced motion stops animation; Space before press pans, Space after activation cannot steal | Establish gesture grammar without authored drag/move, A1/A4/B1 |
 | N03/S01/S06 | SOIC eight anchors 4 fail/5 pass; symbol fourteen 7 fail/8 pass; pinless/padless; straight 1/2 fail, 2/2 pass, curve 2/3; rotated text below/exactly/above half; all-island versus missing-island fill; even-odd self-intersecting lasso, zero area | Independent per-class oracle, A3/A6/V4 |
 | N04/S01/S06 | Edge/corner auto-pan in 24px band, stop/diagonal; equal final world regions by distinct pan/zoom paths; small AABB in 100k design; release under pressure evaluates across frames, no partial commit | Prove exactness and pruning, A1–5; no camera/preview-dependent membership |
-| N05/S01/S03 | Hidden/class filters reject new canvas/menu/electrical acquisition; dim visible and locked remain eligible; hide/show committed member preserves identity; Ctrl+A includes hidden/filtered authored geometry, parent collapse, excludes all non-authored/airwires | Prove eligibility and honest global counts, A7/O4 |
+| N05/S01/S03 | Hidden/class filters reject new canvas/menu candidates and electrical origins; eligible origins acquire full derived membership including pre-hidden/filtered members (IR-01 oracles below); dim visible and locked remain eligible; hide/show committed member preserves identity; Ctrl+A includes hidden/filtered authored geometry, parent collapse, excludes all non-authored/airwires | Prove eligibility and honest global counts, A7/O4 |
 | N06/S01/S03 | Deterministic overlapping candidates, Select menu labels/order, preview and Select All; dismiss outside/Escape preserves prior; every seam disabled with reason | Manual ambiguity resolution, B1–3; full menu build remains separate |
 | N07/S02/S03 | Revision survivor updates; deleted member drop/report, delete+recreate new ID not selected; undo old ID not resurrected; loss of focus leaves none; stale restored/context IDs drop/report | Lifetime identity, L1–4/L6/L8; source setup deltas distinct |
 | N08/S02/S03 | Close pane, swap content/sheet, replace Project, missing scene; committed set survives pane loss, gesture cancels, Project replacement clears; duplicate panes have independent cameras, full equal cues only where resolvable | Scope/lifecycle/partial projection, L7/L9/I2/I3 |
-| N09/S01/S02 | Conductive origin section/via/zone ladder; pads/labels explicit Select Net; disconnected same-net run and scalar/bus distinctions; D4 positive/refusal/no-op and revise membership/remove origin/semantic ID below | Deterministic authoritative derived sets and D4 transition, L5/I4; no label/pixel connectivity |
+| N09/S01/S02 | Conductive origin section/via/zone ladder; pads/labels explicit Select Net; disconnected same-net run and scalar/bus distinctions; pre-acquisition hidden/filter origin versus membership oracles below; D4 positive/refusal/no-op and revise membership/remove origin/semantic ID below | Deterministic authoritative derived sets and D4 transition, L5/I4; no label/pixel connectivity |
 | N10/S02/S04 | Proposal/Review equal action ID but distinct kinds; explicit Diagnostic fingerprint; commit/discard/check invalidation dissolves/report, equal new fingerprint survives; region/Ctrl+A exclude; no mixed non-authored compound | Artifact lifecycle and nine-kind parity, A7/I1/O5 |
 | N11/S04 | Singleton then homogeneous/mixed compounds; All N/per-type switch preserves membership/focus; Common vs Mixed exact canonical quantities 5080000/5080001nm despite equal rounded display; absent/incompatible field Unavailable with reason | Full typed output oracle and scope, O1–4/O6–7 |
 | N12/S04/S05 | 256 and 257 enumerated AND derived members; origin/semantic identity/focus retained, list omitted only above cap; Inspector/Console/terminal-AI round-trip agree on revision/kind/totals/reasons | Bounded transport without membership loss, O5/I1 |
@@ -301,6 +302,41 @@ accessible-state and non-mutation evidence. Reopen resolves authoritative source
 | N15/S06 | Whole-owned symbol/footprint and glyph/point silhouettes, hidden no cue, locked grey+approved padlock, selection beats hover, optional focus no extra persistent cue; all eight same/related mappings, channel collisions | V1–5/I2–3, native goldens + HUMAN panels 1–7/9; verify static bytes/uploads/CAM, not appearance alone |
 | N16/S06 | 100k authored objects with separate primitive count, sub-2px cues, exactly 65,536 versus overflow; whole-pane exact union, no omitted members, maximal proposal/finding collision; repeated warm select/deselect/cancel/reopen | D1–2, bounded capacity/work and preserved channels; HUMAN panels 8/9 |
 | N17/S01–06 | Keyboard-only Ctrl+A/Escape/menu and Inspector scope/inventory; terminal/text owns keys; focused versus pointer pane; accessible names, selected/focus/count/Mixed/Unavailable/hidden/locked/dropped states; grayscale/CVD/high contrast/reduced motion | Programmatic and non-color parity; unavailable native accessibility route blocks this row |
+
+**S5A-IR-01 — owner-resolved pre-acquisition eligibility oracles (future proof).**
+Observed specification defect: §2.2.8/B-HL and the wire matrix prohibited hidden/
+filtered electrical expansion, while complete derived identity required every
+resolved member. This is a contract contradiction, not a reproduced runtime bug.
+Owner disposition, 2026-10-01: gate origin A; acquire the complete derived subject
+including pre-hidden/filtered B, keep hidden B unrendered and disclose membership.
+PM026 and UVT §2.2.8/B-HL/§2.2.20 now record that controlling interpretation.
+No inferred product choice, connectivity approximation or implementation repair
+is credited. U1 resolves full membership; U2 gates origination and qualified D4
+candidates; U3 discloses the full inventory/summary; U4 suppresses only hidden
+projections. Those remain the existing shared owners, with no competing system.
+
+For N05/N09, configure visibility/class filters **before** each acquisition and
+freeze the independent complete membership oracle at that model revision. Repeat
+for board copper Run/Global Net and schematic wire Run/Global Net plus bus Run/
+semantic Bus. Bus has no board projection; no board Bus pass is manufactured.
+Use the ratified ladder and applicable explicit Select Net origin route, with
+normal parent/child acquisition and separately recorded prior selection P.
+
+| Existing cases | Pre-acquisition input | Exact positive/negative oracle |
+| --- | --- | --- |
+| N05/N09 hidden member | Eligible visible A; resolved member B already on a hidden layer; include an A–B–C physical Run with hidden intermediate B. Acquire from A. | Acquire the same typed derived identity and complete set as the all-visible resolver oracle, including B and C: no Run split, pruning, Compound conversion or whole-acquisition refusal. Hidden B has no canvas cue; complete inventory and hidden/per-type/total summaries include it. Visible resolving members receive full pane treatment. |
+| N05/N09 filtered member | Eligible A; B's class excluded by a selection filter before acquisition, with B still rendered. Acquire from A. | Complete derived identity/set includes B. Selection-class eligibility does not hide geometry: B receives full governed selection treatment where rendered. Inventory/summary still includes B; do not invent a hidden count for a visible filtered member. |
+| N05/N09 ineligible origin | Hide A, then separately exclude A's class before click/ladder/applicable local Select Net acquisition; keep other members eligible. Include filtered/hidden local-menu and rectangle/lasso candidates. | A cannot originate new acquisition; no derived subject or member set is acquired through A and no hidden candidate is exposed by the menu. Prior selection P remains under existing empty/ineligible/no-op rules. Rectangle/lasso never acquires derived scope. Eligibility is not bypassed by reachable eligible members. |
+| N05/N09 eligible controls | Dim A while visible; separately use a typed locked eligible origin; restore visibility/remove the class filter on B after successful derived acquisition. | Dim/locked origins retain ordinary inspection eligibility. Restoring B changes eligible acquisition/projection as applicable, never subject membership/identity or authored state. Later model revisions re-derive full membership, not a visibility-filtered cache. |
+| N05/N09 with N12/N17 | Repeat member-hidden/member-filtered cases with complete 256 and 257+ sets, duplicate/mixed panes and keyboard invocation of the same applicable semantic action. Observe Inspector/Console/context and accessible selection/count/hidden state. | Membership and acquisition result match full authoritative resolution regardless of omitted context list. Consumer summaries agree, hidden projection stays absent, filtered-rendered projection stays selected, accessible information discloses membership without color or screenshot-only evidence. |
+
+All these subcases observe zero authored Operations/source-shard/journal delta.
+Post-acquisition hide/show alone cannot pass these pre-acquisition rows. D4 still
+qualifies modified-acquisition candidates first, then tests its no-op/refusal
+against complete membership; hidden/filtered member presence adds no mutation
+permission or exception. These are bounded additions to N05/N09 and existing
+output/accessibility batches, enabling independent review of eligibility versus
+membership; no new harness platform, build, fixture or native result is supplied.
 
 **D4 expansion of existing cases (future proof, not executed).** Run these
 for every applicable derived kind: board copper Run/Global Net and schematic
@@ -475,14 +511,23 @@ Membership still follows current connectivity after refusal, and missing
 origin/semantic identity follows the existing drop/report law. Decisions use
 complete authoritative resolution, never the 256-ID envelope.
 
-**D5 — independent reviewer and bounded execution.** No reviewer is reserved
-or availability asserted. C02 must name an available reviewer/session independent
-of the implementer, replay arrangement and scope; Claude owns any prototype
-reconciliation. Reviewer validates production/native inputs, full ID/value oracles,
-source/journal non-mutation, unavailable rows, numerical provenance and all
-negative cases against the exact candidate. Findings receive fixed/not-reproduced/
-expected/insufficient-evidence/no-change-needed dispositions with evidence;
-mandatory unresolved failures block C06. No additional agent is spawned here.
+**D5 — reserved independent reviewer; specification review not passed.** Owner
+reservation, 2026-10-01: the existing owner-facing audit/review session remains
+outside implementing-agent ownership. Independently review the complete revised
+pinned packet, U1–U5, N01–N17, D1–D4 and S5A-IR-01 before execution authorization.
+At C05, review the exact implemented candidate and independently replay applicable
+board/schematic cases under the authorized scope, binding results to candidate,
+fixtures, binary and environment. Verify identity/membership, acquisition/refusal/
+cancellation, lifecycle, outputs, accessibility, non-mutation, rendering integration
+and PM026/049/051/052. Reuse adequate evidence; deferred editor rows remain
+unverified, latency undecided and mandatory unresolved failures blocking. The
+owner returns the pinned packet/candidate/evidence to that session; no automatic
+cross-session coordination or additional agent is assumed. The reservation was
+initially against `465f2b47` / `S5A-C02-PACKET-D1-D4`; IR-01 requires independent
+review of this new revision, not reuse of an approval. Findings receive explicit
+evidence-backed dispositions. Reservation availability/scope, specification review,
+execution authorization and implementation acceptance remain separate; none of
+the latter three is passed here. Claude retains prototype ownership.
 
 Claude reconciliation list (not sent or edited by this session):
 `docs/gui/prototypes/selection-study.html`, title tag/statusmark near h1:
@@ -509,7 +554,7 @@ governance (501 classified), parity (20 inventories), progress coverage, source
 health (2672 files) and diff whitespace checks passed. These check specification
 integration only; no build, native run or D4 implementation proof occurred.
 
-**Pinned execution packet:** `S5A-C02-PACKET-D1-D4`, in this single existing
+**Pinned execution packet:** `S5A-C02-PACKET-IR01`, in this single existing
 artifact. Its immutable Git commit and blob identity are returned at landing;
 review that exact revision, including the complete original seven fixture
 families, requirement/owner/class tables, U1–U5, N01–N17 and D4 expansion,
@@ -526,7 +571,8 @@ Five complete evidence routes are reconciled; all existing documents retain
 classification. Two deferred editor proof intakes preserve re-entry obligations;
 no existing dependency, editor work or successor is claimed/authorized. C01 is
 complete planning; return the temporary amendment claim to pending C02. D5
-reservation and review of this exact packet are the remaining owner questions.
+reservation is now recorded; independent review of the revised exact packet and
+execution authorization remain pending.
 No prototype, runtime, fixture, dependency, build or native experiment changes.
 Non-compiling reconciliation checks passed: project-state (61 items), generated
 projection, traceability (28 routes/124 artifacts), governance (501 classified),
@@ -540,7 +586,8 @@ and no claim. These results prove governance integration, not feature acceptance
 fixture-family table, requirements/owners and N01–N17, U1–U5 boundaries,
 PM026/PM049/PM051/PM052 preservation, D1–D5, unavailable scenario accounting and
 no enrollment/trust change. D1–D4 are resolved specification dispositions;
-D5 and exact packet review remain pending. The older six draft readiness questions map here:
+D5 is reserved; independent revised-packet review and execution authorization
+remain pending. The older six draft readiness questions map here:
 complete routes/classes → authority/class tables; dispatch → U2/U3/U5;
 fixture closure → U5; foundation/dimensions → N01–N17; mechanisms/prerequisites
 → discrepancy dispositions/D1–D4; independent review → D5. Null historical
@@ -549,6 +596,26 @@ C01 completion records reconciliation and this decision packet only. C02 remains
 pending owner_decision; C03–C06 remain pending. The build issue stays open,
 and cross-probe is neither selected nor authorized.
 
+
+### S5A-IR-01 revision handoff — 2026-10-01
+
+This packet supersedes `465f2b47` / `S5A-C02-PACKET-D1-D4` for the next independent
+specification review. The previous pin remains historical, not a reviewed current
+candidate. S5A-IR-01 is reconciled specification-only under the explicit owner
+answer; independent confirmation of the correction and the complete revised
+packet remains pending. D1–D4, U1–U5, N01–N17, original fixture families, shared
+ownership, PM026/049/051/052, non-mutation and deferred/unverified editor obligations
+remain; the bounded N05/N09 additions above do not authorize execution.
+
+Carry forward the complete unchanged C01/D1–D4 route reviews, with focused
+rereview of both selection research sources/guidance, all affected UVT clauses,
+Selection Study DOM/CSS and Rendering Book, all cohort preparation consumers and
+the foundation route. Reconcile selection/prototype/preparation/foundation digests
+for authorized document edits only. No prototype/runtime/dependency/fixture/build/
+native experiment or new performance campaign; existing resize/renderer proof is
+reused. The temporary synchronized amendment claim returns to C02 owner_decision
+with C01 planning complete and C03–C06 pending. Landing supplies the immutable
+commit/blob pin for the single packet, not a second execution plan.
 
 ### Planning verification record
 

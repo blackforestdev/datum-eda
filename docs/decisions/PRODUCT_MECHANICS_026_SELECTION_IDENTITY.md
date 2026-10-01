@@ -63,6 +63,28 @@ is consumer selection behavior; it introduces no engine mutation guard.
 This owner approval is product/specification authority only, explicitly **not
 S5A implementation execution authorization**. S5A-C02 remains pending.
 
+## Owner-approved acquisition/membership clarification — S5A-IR-01, 2026-10-01
+
+The owner explicitly selected: "Gate origin A; acquire the complete derived
+subject including B, keep hidden B unrendered and disclose its membership."
+This reconciles UVT §2.2.8/B-HL's electrical-expansion eligibility wording with
+§2.2.13/§2.2.18/§2.2.20's complete derived identity through the owning selection
+route. Eligibility applies to the acquisition origin/candidate; it never filters
+Run/Global Net/Bus membership. Members hidden or class-filtered before acquisition
+remain in the complete authoritative resolution. Hidden members emit no canvas
+cue; a selection-class filter does not hide a still-rendered member, which keeps
+its full selection treatment. Complete inspection inventory/summary discloses
+membership without relying on the 256-ID transport list.
+
+An ineligible origin cannot acquire a derived subject. Existing origination
+classes, parent/child granularity, click ladder/explicit verbs, D4 refusal/no-op,
+revision/lifetime, pane projection and non-mutation laws remain. `Ctrl+A` remains
+the sole ordinary authored-acquisition eligibility bypass. No additional hidden
+mutation authority, engine guard, subject kind or identity mapping is introduced.
+Packet N05/N09 supplies explicit pre-acquisition hidden/filter oracles. This is
+product/specification authority only; independent review of the revised packet
+and S5A-C02 execution authorization remain pending.
+
 ## Owner-approved S5A native acceptance scope amendment — D2, 2026-09-30
 
 This delivery's native acceptance is limited to **board and schematic**.
@@ -87,7 +109,7 @@ Board/schematic acceptance cannot be described as acceptance of all four editors
 Under PM051, S5A latency budgets remain **undecided**. Preserve deterministic
 work, correctness and resource obligations. The packet's bounded diagnostic
 observations are approved in scope but are not numerical acceptance criteria;
-collection remains behind S5A-C02 execution authorization and D5 reservation.
+collection remains behind S5A-C02 execution authorization and independent review.
 No adjacent resource/CPU requirement or separate performance S5 scope changes.
 
 PM026's read-only precedence governs conformance §8: mutation batch-guard
@@ -95,7 +117,7 @@ R1–R4 are future S5B-or-later mutation proof. S5A proves selection-acquisition
 refusal, disabled mutation seams, exact blocker disclosure and zero authored
 mutation, without building mutation infrastructure or claiming R1–R4 passed.
 D1–D4 specification reconciliation does not complete S5A-C02; execution remains
-pending reviewer reservation and review of the pinned packet.
+pending independent review of the revised pinned packet and exact authorization.
 
 ## What This Decision Does NOT Do
 

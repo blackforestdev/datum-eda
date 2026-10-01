@@ -69,7 +69,8 @@ selection visuals or this completion plan is not execution authorization.
 S5A-C01 reconciliation is recorded in
 `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` under
 `S5A-C01-PACKET`: current owners/classes, U1–U5, native N01–N17, evidence reuse
-and recorded D1–D4 dispositions. D5 reservation is recorded below; independent
+and recorded D1–D4 dispositions plus owner-resolved S5A-IR-01 in revised packet
+`S5A-C02-PACKET-IR01`. D5 reservation is recorded below; independent
 specification review remains pending. Its completion is planning only.
 Actual fixture/handler bindings and
 native evidence are future execution outputs, not fabricated C01 receipts.
@@ -111,11 +112,13 @@ C02 remains pending for the remaining dispositions and exact authorization.
 D5 owner reservation is recorded (2026-10-01): the existing owner-facing
 audit/review session is the independent S5A reviewer, separate from the
 implementing S5A agent and outside implementation ownership. The pinned review
-baseline remains commit `465f2b471d4fb64c6ec2c518b511b12f0aba1cc5`, packet
+baseline was commit `465f2b471d4fb64c6ec2c518b511b12f0aba1cc5`, packet
 `S5A-C02-PACKET-D1-D4` in
 `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` (Git blob
 `6bc6ab7f2108c2e93136e9812eeb186448c2a9c7`). This later reservation records
-availability and scope; it does not alter that pinned specification packet.
+availability and scope; it did not alter that pinned specification packet. The
+owner subsequently requested S5A-IR-01 reconciliation; the revised packet below
+is the next review baseline, with the same independent reviewer and scope.
 
 The reserved review scope is:
 
@@ -137,9 +140,29 @@ confirms the reservation scope only, not approval of the complete packet.
 Specification review has not passed, execution is not authorized and
 implementation acceptance remains separate.
 
+<!-- OWNER:UVT-S5A-BUILD:S5A-C02:ACQUISITION-MEMBERSHIP -->
+S5A-IR-01 owner disposition is recorded (2026-10-01): gate eligible origin A;
+acquire the complete derived Run/Global Net/Bus including member B hidden or
+class-filtered before acquisition. Keep hidden B unrendered and disclose its
+membership; a class-selection filter does not hide a rendered member. PM026 and
+UVT §2.2.8/B-HL/§2.2.20 reconcile the controlling rule through the selection route.
+N05/N09 now include explicit positive/ineligible-origin pre-acquisition oracles,
+hidden intermediate Runs, filtered-rendered projection, complete 256/257+ sets
+and accessibility/non-mutation. This resolves the specification contradiction
+only; independent review has not passed and no implementation is authorized.
+
+The revised single execution packet is `S5A-C02-PACKET-IR01` in
+`docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`; its exact Git
+blob is `a5d31274d41fec30458d8d51af825815124eb0d6`. Its landing commit is returned to the owner.
+The previous `465f2b47` pin is historical and cannot supply review approval for
+this revision. The owner returns this revised pin to the reserved session for
+complete independent specification review under the existing D5 scope.
+
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:SPECIFICATION-REVIEW -->
 Obtain the reserved independent session's specification review outcome and
-findings for the exact pinned packet before owner execution authorization.
+findings for the revised exact `S5A-C02-PACKET-IR01` pin before owner execution
+authorization. Include S5A-IR-01 correction confirmation and full U1–U5/N01–N17,
+D1–D4 review; the prior finding does not pass the revised packet.
 Resolve mandatory findings through their owning routes; a reservation or the
 implementer's own review cannot stand in for this independent review. C02 stays
 pending. After independent specification review and required reconciliation,

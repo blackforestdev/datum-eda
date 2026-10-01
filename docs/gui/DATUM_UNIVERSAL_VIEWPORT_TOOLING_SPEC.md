@@ -438,10 +438,11 @@ partial edit. Selection never unlocks an object implicitly.
 
 #### 2.2.8 Hidden geometry and layer visibility
 
-- Geometry on a hidden layer cannot be newly selected by primary click,
-  rectangle, lasso, conflict-menu `Select All`, or electrical selection
-  expansion. Objects excluded by an active object-class selection filter are
-  likewise ineligible.
+- Geometry on a hidden layer cannot originate new selection by primary click,
+  rectangle, lasso, or conflict-menu `Select All`. Objects excluded by an active
+  object-class selection filter are likewise ineligible acquisition candidates.
+  Electrical ladder/explicit Select Net acquisition gates its origin by these
+  same rules, then acquires the complete derived subject as specified below.
 - Dimmed but still-visible geometry remains eligible unless its object class is
   filtered out. Hidden and locked are distinct states: locked objects remain
   available for inspection, while hidden objects cannot be acquired from the
@@ -459,6 +460,29 @@ partial edit. Selection never unlocks an object implicitly.
   `Ctrl+A` global-selection scope in §2.2.9 is the sole exception. Hidden members
   may be removed explicitly through a non-canvas selection consumer, or the
   complete selection may be cleared with `Escape`.
+
+**Origin eligibility versus derived membership (owner-resolved S5A-IR-01,
+2026-10-01; PM026).** Eligibility gates the acquisition origin/candidate, not
+membership of a Run, Global Net or Bus. From a visible, class-eligible origin A,
+acquire the complete authoritative derived subject even when member B was hidden
+or class-filtered **before** acquisition. Do not prune membership, split a Run at
+hidden intermediate geometry, convert to Compound, or refuse the derived subject
+because a different member is hidden/filtered. A hidden or class-filtered origin
+cannot acquire the subject. Apply normal parent/child granularity and the existing
+ratified ladder/explicit verbs; this grants no new origination class or verb.
+
+Hidden members emit no canvas projection or selection cue and remain disclosed
+in the complete inventory and hidden counts. An object-class **selection** filter
+restricts acquisition, not authored visibility: a filtered but still-rendered
+member receives the ordinary full selection projection. Inspector, Console and
+context retain truthful complete membership/summary; the capped context list is
+never the membership source. Visibility/filter changes after acquisition do not
+prune the subject, and revision re-derivation remains complete. D4 tests only
+eligible modified-acquisition candidates against that complete membership.
+`Ctrl+A` remains the sole bypass of ordinary authored acquisition eligibility;
+this derived-identity rule adds no hidden-member mutation authority or S5B
+exception. S5A stays read-only. N05/N09 bind pre-acquisition positive and negative
+oracles; no native pass or execution authorization is claimed.
 
 **Field visibility and definition-child lock (owner-resolved, S5-C01A /
 OPEN-13, 2026-08-14):** field visibility is an **authored, journaled design
@@ -815,8 +839,8 @@ are diagnostic, not numerical acceptance criteria, and collection still awaits
 execution authorization. Conformance R1–R4 engine mutation proof lands with
 future S5B-or-later mutation work. S5A proves acquisition refusal, exact blocker
 disclosure, disabled mutation seams and zero authored mutation; it builds no
-mutation guard. D5 reviewer reservation and review of the pinned packet remain
-required at S5A-C02. No implementation execution is granted by these dispositions.
+mutation guard. D5 is reserved; independent review of the revised pinned packet
+and explicit execution authorization remain required at S5A-C02. No implementation execution is granted by these dispositions.
 
 `Compound Selection` is reserved for ephemeral selection/session state;
 `Group <name>` is reserved for a persistent authored object created explicitly.
@@ -1061,8 +1085,11 @@ open — such cells carry `OPEN-n` markers regardless.
   candidate; overlap resolves through the right-button-drag local Select menu
   with user-legible labels; no ambiguity popup, no click-cycling.
 - **B-HL** (UVT §2.2.7/2.2.8/2.2.9): hidden-layer or class-filtered geometry
-  is ineligible for NEW selection by click, region, menu Select All, or
-  electrical expansion; hiding an already-selected object preserves selection
+  is ineligible as a NEW click, region, menu Select All or electrical-acquisition
+  origin/candidate. An eligible origin acquires complete Run/Global Net/Bus
+  membership, including pre-hidden/filtered members (S5A-IR-01); hidden members
+  emit no cue, filtered but rendered members retain full selection treatment.
+  Hiding an already-selected object preserves selection
   identity and the Inspector reports hidden members; locked objects stay
   selectable + inspectable, never modifiable — slight neutral greying, full
   selection treatment retained, no transform handles, whole-selection refusal
@@ -1364,8 +1391,9 @@ open — such cells carry `OPEN-n` markers regardless.
   disconnected cross-sheet occurrences joined by the same resolved label
   (UVT §2.2.5). *Projection:* exact authored path; same-identity Global Net
   member; named P2.3 cross-probe highlight target (RB §2.1/2.2; P2).
-  *Hidden/locked:* B-HL — electrical expansion cannot newly select hidden
-  geometry (UVT §2.2.8). *Overlay:* B-OV + B-LOD. *Inspector:* B-INS; wires
+  *Hidden/locked:* B-HL — electrical acquisition requires an eligible origin;
+  complete derived membership includes pre-hidden/filtered geometry, with hidden
+  projections suppressed (UVT §2.2.8, S5A-IR-01). *Overlay:* B-OV + B-LOD. *Inspector:* B-INS; wires
   carry NO generic common properties — topology-aware operations are
   dedicated tools (COMP); net-tier selection projects the Net/Members/Checks
   view (P2). *Scene authority:* `SchematicHitKind::Wire`, polyline hit
@@ -2015,7 +2043,9 @@ membership at each revision; enumerated subjects store identities and drop
 what stops resolving. Both obey the same §2.2.18 lifetime law. Additive and
 subtractive authored acquisition on derived subjects follows the explicit
 preserve-and-refuse/no-op rule in §2.2.2; it cannot implicitly change subject
-kind or establish persistent membership exceptions.
+kind or establish persistent membership exceptions. Origin eligibility never
+filters derived membership (§2.2.8, owner-resolved S5A-IR-01); the complete
+resolution includes members hidden/class-filtered before acquisition.
 
 **D4 proof obligation (TO-ENFORCE; no native proof claimed).** For Run,
 Global Net and Bus, exercise positive explicit acquisition/replacement, click
