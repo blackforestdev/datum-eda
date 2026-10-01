@@ -199,8 +199,8 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
-   Owner directs retaining the demonstrated 30–32% allocation-reuse CPU gain as the development baseline and seeking further resize improvements. Preserve measured evidence, output-quality review and resource accounting; no numerical budget, S4 reopening, broad qualification, dependency or driver tuning. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/reviews/gui-performance/cpu-reconciliation/resize-repair.md`, `docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
+   Two measured allocation-reuse wins and exact post-resize quiet idle are preserved. Concrete ordinary opt-in adoption awaits owner transient-resampling disposition; no new budget, general hardware policy, S4 reopening or broad qualification. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/reviews/gui-performance/cpu-reconciliation/resize-repair.md`, `docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/decisions/PRODUCT_MECHANICS_052_CURRENT_HOST_RESIZE_BUFFER_REUSE.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 

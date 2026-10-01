@@ -375,3 +375,21 @@ quiet-idle evidence. Ordinary default still uses exact-sized allocation; diagnos
 retention is not silent production adoption. Remaining integration must explicitly
 address the transient resampling boundary and current-host scope; no broader
 hardware policy, new CPU budget, S4 reopening or broad UI acceptance follows.
+
+
+<!-- EVIDENCE:GUI-RESIZE-REPAIR:RETAINED-CORRECTION -->
+
+RZ-C02 completion evidence: commit79f2b230 implements retained peak storage;
+its focused tests, width/height captures and resource observations establish the
+further bounded correction without discarding the first quantized win.
+
+<!-- EVIDENCE:GUI-RESIZE-REPAIR:REPAIR-REPORT -->
+
+RZ-C03 completion evidence: this record reports the two successful corrections,
+all prior failures, differing work counts, CPU/user/system/elapsed, available GPU
+activity, exact restored output and post-resize quiet idle. Commits86228807,
+79f2b230 and442d7aa7 preserve implementation and verification. Production
+adoption is incomplete; this evidence report does not close the owner goal.
+The concrete opt-in integration decision is proposed in PM052, RZ-C04; bounded
+integration after owner disposition is RZ-C05. No automatic hardware policy or
+new performance campaign is selected.
