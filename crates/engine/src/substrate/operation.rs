@@ -5,6 +5,16 @@ use super::{ObjectId, ObjectRevision};
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Operation {
+    CreateElectricalIdentity {
+        record: super::ElectricalIdentityRecord,
+    },
+    SetElectricalIdentity {
+        previous: Box<super::ElectricalIdentityRecord>,
+        record: super::ElectricalIdentityRecord,
+    },
+    DeleteElectricalIdentity {
+        record: super::ElectricalIdentityRecord,
+    },
     GuardObjectRevision {
         object_id: ObjectId,
         expected_object_revision: ObjectRevision,

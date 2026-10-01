@@ -67,7 +67,8 @@ pub(crate) fn materialize_pool_symbol_pins(
             .and_then(serde_json::Value::as_str)
             .unwrap_or("Passive");
         pins.push(SymbolPin {
-            uuid: pin_id,
+            library_pin: Some(pin_id),
+            uuid: Uuid::new_v4(),
             number: name.clone(),
             name,
             electrical_type: pool_pin_electrical_type_to_schematic(electrical_type),

@@ -100,6 +100,8 @@ fn object_revision_guard_with_revision(
 
 fn existing_object_guard_target(operation: &Operation) -> Option<ObjectId> {
     match operation {
+        Operation::SetElectricalIdentity { record, .. }
+        | Operation::DeleteElectricalIdentity { record } => Some(record.id),
         Operation::DeleteBoardPackage { package_id, .. }
         | Operation::SetBoardPackagePart { package_id, .. }
         | Operation::SetBoardPackagePackage { package_id, .. }

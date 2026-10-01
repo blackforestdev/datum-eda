@@ -41,6 +41,9 @@ pub(super) fn stage_non_core_operation(
     operation: &Operation,
     staged: &mut Vec<StagedShardWrite>,
 ) -> Result<(), EngineError> {
+    if let Some(write) = super::electrical_identity_store::stage(project_root, batch, operation)? {
+        staged.push(write);
+    }
     if let Some(write) = stage_production_operation(project_root, batch, operation)? {
         staged.push(write);
     }
@@ -60,6 +63,7 @@ pub(super) fn inverse_non_core_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) {
+    super::electrical_identity_store::inverse(operation, inverse_operations);
     inverse_production_operation(operation, inverse_operations);
     inverse_relationship_operation(operation, inverse_operations);
     inverse_pool_operation(operation, inverse_operations);
@@ -76,7 +80,7 @@ pub(super) fn apply_non_core_shard_operation(
     value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<bool, EngineError> {
-    let mut changed = false;
+    let mut changed = super::electrical_identity_store::apply_shard(shard_kind, value, operation)?;
     if matches!(
         shard_kind,
         SourceShardKind::ManufacturingPlan

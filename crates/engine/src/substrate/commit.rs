@@ -34,6 +34,7 @@ impl DesignModel {
             TransactionKind::Normal,
             CommitPolicyContext::Direct,
         )?;
+        super::electrical_history::validate(self, &batch.operations, TransactionKind::Normal)?;
         self.commit_without_direct_policy(batch)
     }
 
@@ -157,6 +158,7 @@ impl DesignModel {
         mut revision_input: RevisionDesignCommitInput,
     ) -> Result<CommitReport, EngineError> {
         validate_direct_commit_proposal_policy(&batch, transaction_kind, policy_context)?;
+        super::electrical_history::validate(self, &batch.operations, transaction_kind)?;
         validate_non_empty_operation_batch(&batch)?;
         validate_object_revision_guards(self, &batch.operations)?;
         let batch = batch_without_object_revision_guards(batch)?;

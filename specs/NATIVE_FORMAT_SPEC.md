@@ -900,3 +900,39 @@ as complete cross-domain Net selection. Authored identity/binding source is
 distinct from recomputable graph/projection geometry. Canonical writes and replay
 retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
 support, selection mutation or native acceptance is ratified by this amendment.
+
+### Current E1 source schema (partial implementation under PM053)
+
+`.datum/electrical_identities/<id>.json` has closed fields `schema_version: 1`
+and `record: { id, object_revision, identity }`. Identity is a closed tagged
+Net, Bus, NetRelationship or BusInterface value. Missing directory means no
+adopted authority, not an empty proved connectivity result. Unknown versions,
+unknown fields, nil/path-mismatched IDs and collisions refuse. This optional
+source partition is resolved into the existing DesignModel; it owns no renderer
+or competing connectivity system. Old board/schematic UUIDs are not rewritten.
+
+Net source records retain anchor occurrence, `anchor_reason` (Authored,
+UnclaimedFinalGroup, SurvivingAnchor or DeletedAnchorFallback), retirement and predecessor
+provenance. Complete membership and graph partitions remain derived inputs. Bus
+records retain name, scalar Net IDs, occurrence-qualified representation ownership
+and retirement. Net relationships retain logical/board references, explicit
+Implemented/BoardOnly/SchematicOnly/Pending/Mismatch intent and revision-bound
+ComponentInstance/PinPadMap/placed-terminal evidence. The optional `library_pad`
+reference explicitly names the PinPadMap cell; optional `library_pin` adopts an
+explicit legacy terminal/library-pin pair in the same source relationship. Neither
+is recovered from names.
+Bus interfaces retain same-declaration full identity or distinct related subjects
+and explicit scalar mappings. Canonical Create/Set/DeleteElectricalIdentity
+operations stage source bytes and exact inverses; normal semantic deletion keeps
+retirement records, whereas undo/redo restores recorded history. No read allocates
+identity. Source/history and Bus distribution proof do not certify graph membership.
+
+Placed SymbolPin adds optional `library_pin` UUID, omitted when absent. New native
+placements use distinct authored pin UUIDs and preserve the reusable pin reference.
+Import/old-project pins keep existing UUIDs and absent provenance; no load-time
+repair. `build_adopt_pin_correspondence` adopts proved references in canonical relationship
+source without changing placed IDs or representation bytes. Missing/ambiguous provenance stays unverified. An Implemented
+relation needs the exact map cell, source terminal library reference/gate and
+ComponentInstance placement ownership before binding certification; this does not
+establish complete Global Net membership. No general migration or E1 completion
+is asserted by installing this schema.

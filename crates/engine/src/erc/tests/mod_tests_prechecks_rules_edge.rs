@@ -113,6 +113,7 @@ fn erc_findings_include_pin_taxonomy_and_symbol_binding_evidence() {
                         value: "10k".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: pin_uuid,
                             number: "1".into(),
                             name: "~".into(),
@@ -197,6 +198,7 @@ fn passive_biased_input_net_becomes_info_not_hard_undriven_warning() {
                             value: "Q".into(),
                             fields: Vec::new(),
                             pins: vec![SymbolPin {
+                                library_pin: None,
                                 uuid: Uuid::new_v4(),
                                 number: "1".into(),
                                 name: "B".into(),
@@ -224,6 +226,7 @@ fn passive_biased_input_net_becomes_info_not_hard_undriven_warning() {
                             value: "10k".into(),
                             fields: Vec::new(),
                             pins: vec![SymbolPin {
+                                library_pin: None,
                                 uuid: Uuid::new_v4(),
                                 number: "1".into(),
                                 name: "~".into(),
@@ -303,6 +306,7 @@ fn does_not_duplicate_dangling_input_pin_with_unconnected_component_pin() {
                         value: "MCU".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: Uuid::new_v4(),
                             number: "3".into(),
                             name: "SCL".into(),
@@ -365,6 +369,7 @@ fn reports_noconnect_connected_when_marker_pin_is_on_connected_net() {
                         value: "10k".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: pin_uuid,
                             number: "1".into(),
                             name: "~".into(),
@@ -511,6 +516,7 @@ fn schematic_with_pins_on_named_net(
                                 value: "T".into(),
                                 fields: Vec::new(),
                                 pins: vec![SymbolPin {
+                                    library_pin: None,
                                     uuid: Uuid::new_v4(),
                                     number: number.into(),
                                     name: name.into(),
@@ -584,6 +590,7 @@ fn schematic_with_dangling_pin(
                         value: "T".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: Uuid::new_v4(),
                             number: number.into(),
                             name: name.into(),

@@ -285,9 +285,9 @@ implementation/execution remains unauthorized. The build issue stays open.
 
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
-| `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` | S5A-C01 reconciled execution packet, owning-route review and source audit | S5A-C02 exact dispositions/reviewer/execution required; no implementation or native acceptance | `dat-uvt-s5a-build-1wv`, S5A-C01 |
-| `specs/S5A_DERIVED_AUTHORITY_PLAN.md` | A1-03 research-backed proposed C01–C07 owning-clause edits and revised proof matrix; historical A1-02 retained | Renewed independent review and owner ratification/execution pending; M1 manufacturing-policy dependency explicit | `dat-s5a-derived-authority-hhsw`, DA-A1-RESEARCH |
-| `docs/reviews/workflow-delivery-rollout/s5a/derived-authority-research.md` | Substantive five-domain EDA/CAD research with cited primary evidence and workflow/oracle matrix | DA-A1-RESEARCH reconciliation and renewed review pending; no ratification or engine execution | `dat-s5a-derived-authority-hhsw` |
+| `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` | S5A-C01/C02 pinned packet approved; partial U1 retained | C03 waits for complete accepted derived authority; C05 independent review reserved; no native acceptance | `dat-uvt-s5a-build-1wv`, S5A-C03 |
+| `specs/S5A_DERIVED_AUTHORITY_PLAN.md` | A1-03 pin unchanged; C01–C03 ratified in PM053, independent specification review reused; bounded E1 execution in progress | Exact E1 candidate review remains reserved; full foundation/S5A proof pending; C04–C07/E2–E4 and M1 remain outside execution | `dat-s5a-derived-authority-hhsw`, DA-A2-E1 |
+| `docs/reviews/workflow-delivery-rollout/s5a/derived-authority-research.md` | Substantive five-domain research retained at its reviewed pin | C01–C03 ratified in PM053/E1 in progress; remaining mechanisms and complete foundation proof pending | `dat-s5a-derived-authority-hhsw` |
 | `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md` | Structured pending completion plans added for UVT-S5A-BUILD, GUI-WRITE-PATH and NATIVE-AUTHORING; acceptance IDs and tracker-backed successor IDs reconciled | Each consumer retains preflight, explicit execution authorization, implementation, native proof, independent replay and exact owner acceptance; no readiness or product delivery asserted | `dat-foundation-consumer-plans-9at`, WDQ-F01; consumer ownership, existing dependencies and global selection unchanged |
 
 ## WORKFLOW-DELIVERY-ROLLOUT — broader enforcement and adoption preparation
@@ -3054,6 +3054,11 @@ MCP query aliases, and importer/exporter handlers remain pending.
 
 ## ENGINE_SPEC.md — Core Types
 
+PM053 / DA-A2-E1: typed source identity, canonical persistence, Bus semantic
+distribution and binding diagnostics are partial implementation. Complete graph
+producer/automatic topology transitions, adoption coverage and independent E1
+review remain pending; no full foundation or S5A acceptance.
+
 ### §1.1 Geometry Primitives
 
 | Type | Status |
@@ -3302,6 +3307,9 @@ Status: [x] Closed for scoped M4 slice
 ## NATIVE_FORMAT_SPEC.md
 
 Status: [x] Closed for scoped M4 slice
+- PM053 / DA-A2-E1 adds optional schema-1 electrical identity partitions and
+  optional placed-pin library references. Canonical source/history proof is
+  bounded; adoption and complete derived authority remain unfinished.
 - Native project scaffold, deterministic file layout, and first native
   read/query/check surfaces are implemented in the current M4 slice.
 - Remaining native-format contract areas (full schema coverage, migration

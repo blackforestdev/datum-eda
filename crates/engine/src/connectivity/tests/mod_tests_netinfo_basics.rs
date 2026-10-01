@@ -91,6 +91,7 @@ fn attaches_midwire_label_to_connected_pin_net() {
                         value: "10k".into(),
                         fields: Vec::new(),
                         pins: vec![crate::schematic::SymbolPin {
+                            library_pin: None,
                             uuid: pin_uuid,
                             number: "1".into(),
                             name: "~".into(),

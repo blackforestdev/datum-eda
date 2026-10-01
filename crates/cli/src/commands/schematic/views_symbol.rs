@@ -62,6 +62,7 @@ pub(crate) struct NativeProjectSymbolFieldMutationReportView {
 pub(crate) struct NativeProjectSymbolPinInfoView {
     pub(crate) symbol_uuid: String,
     pub(crate) pin_uuid: String,
+    pub(crate) library_pin_uuid: Option<String>,
     pub(crate) number: String,
     pub(crate) name: String,
     pub(crate) electrical_type: String,

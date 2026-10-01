@@ -11,6 +11,11 @@ pub(super) fn apply_operation_to_objects(
     diff: Option<&mut CommitDiff>,
 ) -> Result<(), EngineError> {
     match operation {
+        Operation::CreateElectricalIdentity { .. }
+        | Operation::SetElectricalIdentity { .. }
+        | Operation::DeleteElectricalIdentity { .. } => {
+            super::electrical_identity_operations::apply_objects(objects, diff, operation)
+        }
         Operation::GuardObjectRevision {
             object_id,
             expected_object_revision,
@@ -57,7 +62,7 @@ pub(super) fn apply_operation_to_objects(
             package_id,
             relative_path,
             package,
-        } => create_pool_object(
+        } => super::operation_application_pool_objects::create(
             objects,
             diff,
             *package_id,
@@ -72,7 +77,7 @@ pub(super) fn apply_operation_to_objects(
             padstack_id,
             relative_path,
             padstack,
-        } => create_pool_object(
+        } => super::operation_application_pool_objects::create(
             objects,
             diff,
             *padstack_id,
@@ -88,7 +93,7 @@ pub(super) fn apply_operation_to_objects(
             relative_path,
             object_kind,
             object,
-        } => create_pool_object(
+        } => super::operation_application_pool_objects::create(
             objects,
             diff,
             *object_id,
@@ -96,15 +101,27 @@ pub(super) fn apply_operation_to_objects(
             object,
             object_kind,
         ),
-        Operation::SetPoolLibraryObject { object_id, .. } => {
-            bump_existing_object(objects, *object_id, diff)
-        }
+        Operation::SetPoolLibraryObject {
+            object_id,
+            relative_path,
+            object_kind,
+            previous_object,
+            object,
+        } => super::operation_application_pool_objects::set(
+            objects,
+            diff,
+            *object_id,
+            relative_path,
+            previous_object,
+            object,
+            object_kind,
+        ),
         Operation::AttachPoolPartModel { part_id, .. }
         | Operation::DetachPoolPartModel { part_id, .. } => {
             bump_existing_object(objects, *part_id, diff)
         }
         Operation::DeletePoolLibraryObject { object_id, .. } => {
-            delete_object(objects, diff, *object_id)
+            super::operation_application_pool_objects::delete(objects, diff, *object_id)
         }
         Operation::CreateBoardPackage { .. }
         | Operation::DeleteBoardPackage { .. }
@@ -238,44 +255,6 @@ pub(super) fn apply_operation_to_objects(
         }
         _ => Ok(()),
     }
-}
-
-fn create_pool_object(
-    objects: &mut BTreeMap<ObjectId, DomainObject>,
-    diff: Option<&mut CommitDiff>,
-    object_id: ObjectId,
-    relative_path: &str,
-    value: &serde_json::Value,
-    kind: &str,
-) -> Result<(), EngineError> {
-    if objects.contains_key(&object_id) {
-        return Err(EngineError::Validation(format!(
-            "pool object {object_id} already exists"
-        )));
-    }
-    let shard_id = uuid::Uuid::new_v5(
-        &uuid::Uuid::NAMESPACE_URL,
-        format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-    );
-    objects.insert(
-        object_id,
-        DomainObject {
-            object_id,
-            object_revision: ObjectRevision(
-                value
-                    .get("object_revision")
-                    .and_then(serde_json::Value::as_u64)
-                    .unwrap_or(0),
-            ),
-            source_shard_id: shard_id,
-            domain: "pool".to_string(),
-            kind: kind.to_string(),
-        },
-    );
-    if let Some(diff) = diff {
-        diff.created.push(object_id);
-    }
-    Ok(())
 }
 
 fn delete_object(

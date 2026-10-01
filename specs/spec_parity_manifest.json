@@ -181,6 +181,78 @@
         "ConsumerAdoption",
         "PreparedExecutionCompletion"
       ]
+    },
+    {
+      "id": "electrical_identity_kinds",
+      "kind": "rust_enum_variants",
+      "path": "crates/engine/src/substrate/electrical_identity.rs",
+      "enum": "ElectricalIdentity",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "electrical_net_intents",
+      "kind": "rust_enum_variants",
+      "path": "crates/engine/src/substrate/electrical_identity.rs",
+      "enum": "NetRelationshipIntent",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "electrical_bus_interfaces",
+      "kind": "rust_enum_variants",
+      "path": "crates/engine/src/substrate/electrical_identity.rs",
+      "enum": "BusInterfaceEquivalence",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "electrical_source_shard_kinds",
+      "kind": "rust_enum_variants",
+      "path": "crates/engine/src/substrate/mod.rs",
+      "enum": "SourceShardKind",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "electrical_source_shard_taxa",
+      "kind": "rust_enum_variants",
+      "path": "crates/engine/src/substrate/mod.rs",
+      "enum": "SourceShardTaxon",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "canonical_operation_kinds",
+      "kind": "rust_enum_variants",
+      "path": "crates/engine/src/substrate/operation.rs",
+      "enum": "Operation",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "electrical_identity_source_schema",
+      "kind": "file_glob",
+      "glob": "crates/engine/src/substrate/electrical_identity.rs",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md",
+      "planned_shapes": [
+        "ElectricalIdentityShard",
+        "ElectricalIdentityRecord",
+        "ElectricalOccurrence",
+        "NetCorrespondence",
+        "DesignModel.electrical_identities",
+        "NetIdentityTransition",
+        "ResolvedNetIdentity",
+        "PreviousNetGroup",
+        "BusDistribution",
+        "NetCorrespondence.library_pin",
+        "NetCorrespondence.library_pad",
+        "PlacedPinAdoption",
+        "SymbolPin.library_pin",
+        "NativeProjectSymbolPinInfoView.library_pin_uuid"
+      ],
+      "notes": "File and enum inventory does not certify identities, membership, connectivity or binding. Version/closed-shape validation and focused native-write/reopen proof remain required."
+    },
+    {
+      "id": "electrical_net_anchor_reasons",
+      "kind": "rust_enum_variants",
+      "path": "crates/engine/src/substrate/electrical_identity.rs",
+      "enum": "NetAnchorReason",
+      "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
     }
   ]
 }

@@ -113,6 +113,7 @@ fn project_query_erc_reports_native_precheck_findings() {
                     value: "10k".into(),
                     fields: Vec::new(),
                     pins: vec![SymbolPin {
+                        library_pin: None,
                         uuid: passive_pin_uuid,
                         number: "1".into(),
                         name: "~".into(),
@@ -141,6 +142,7 @@ fn project_query_erc_reports_native_precheck_findings() {
                     value: "VCC".into(),
                     fields: Vec::new(),
                     pins: vec![SymbolPin {
+                        library_pin: None,
                         uuid: power_pin_uuid,
                         number: "1".into(),
                         name: "VCC".into(),
@@ -273,6 +275,7 @@ fn project_query_erc_honors_native_authored_waiver() {
                 value: "10k".into(),
                 fields: Vec::new(),
                 pins: vec![SymbolPin {
+                    library_pin: None,
                     uuid: passive_pin_uuid,
                     number: "1".into(),
                     name: "~".into(),

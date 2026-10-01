@@ -33,6 +33,7 @@ fn reports_unconnected_component_pin() {
                         value: "10k".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: Uuid::new_v4(),
                             number: "1".into(),
                             name: "~".into(),
@@ -164,6 +165,7 @@ fn finding_ids_are_stable_for_same_input() {
                         value: "10k".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: Uuid::new_v4(),
                             number: "1".into(),
                             name: "~".into(),
@@ -227,6 +229,7 @@ fn ignores_pin_on_named_net() {
                         value: "10k".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: Uuid::new_v4(),
                             number: "1".into(),
                             name: "~".into(),

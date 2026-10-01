@@ -20,6 +20,14 @@ mod check_run;
 mod commit;
 mod component_instance;
 mod component_instance_journal_ops;
+mod electrical_basis;
+mod electrical_correspondence;
+mod electrical_history;
+mod electrical_identity;
+mod electrical_identity_operations;
+mod electrical_identity_store;
+mod electrical_identity_validation;
+mod electrical_transition;
 mod forward_annotation_review_journal_ops;
 mod generated_evidence;
 mod generated_evidence_journal_ops;
@@ -36,6 +44,7 @@ mod operation_application_component_instance;
 mod operation_application_dispatch;
 mod operation_application_object_revision;
 mod operation_application_objects;
+mod operation_application_pool_objects;
 mod operation_application_production;
 mod operation_application_relationship;
 mod operation_application_schematic;
@@ -54,6 +63,7 @@ mod proposal_validation;
 mod relationship;
 mod relationship_journal_ops;
 mod replay;
+mod replay_authored_context;
 mod replay_forward_annotation;
 mod replay_generated_evidence;
 mod replay_objects;
@@ -114,6 +124,10 @@ pub use zone_fill::{
     compute_bounded_zone_fill, zone_fill_copper_projection_zones,
 };
 
+pub use electrical_identity::*;
+pub use electrical_identity_validation::net_correspondence_status;
+pub use electrical_transition::plan_net_identity_transition;
+
 pub type ObjectId = Uuid;
 pub type ComponentInstanceId = Uuid;
 pub type ImportKey = String;
@@ -135,6 +149,7 @@ pub enum SourceShardKind {
     Pool,
     Relationship,
     ComponentInstance,
+    ElectricalIdentity,
     VariantOverlay,
     ImportMap,
     ManufacturingPlan,
@@ -171,6 +186,7 @@ pub enum SourceShardDirtyState {
 #[serde(rename_all = "snake_case")]
 pub enum SourceShardTaxon {
     ComponentInstance,
+    ElectricalIdentity,
     Relationship,
     VariantOverlay,
     PoolUnit,
@@ -415,6 +431,8 @@ pub struct DesignModel {
     pub model_revision: ModelRevision,
     pub source_shards: Vec<SourceShardRef>,
     pub objects: BTreeMap<ObjectId, DomainObject>,
+    #[serde(default)]
+    pub electrical_identities: BTreeMap<ObjectId, ElectricalIdentityRecord>,
     pub component_instances: BTreeMap<ComponentInstanceId, ComponentInstance>,
     pub relationships: BTreeMap<ObjectId, Relationship>,
     pub relationship_statuses: BTreeMap<ObjectId, DerivedRelationshipStatus>,
@@ -577,6 +595,7 @@ pub(super) fn domain_for_shard_kind(kind: &SourceShardKind) -> &'static str {
         SourceShardKind::RulesRoot => "rules",
         SourceShardKind::Pool => "pool",
         SourceShardKind::Relationship => "relationship",
+        SourceShardKind::ElectricalIdentity => "electrical_identity",
         SourceShardKind::ComponentInstance => "component_instance",
         SourceShardKind::VariantOverlay => "variant",
         SourceShardKind::ImportMap => "import",
@@ -603,6 +622,7 @@ pub(super) fn source_shard_authority_for_kind(kind: &SourceShardKind) -> SourceS
         | SourceShardKind::Pool
         | SourceShardKind::Relationship
         | SourceShardKind::ComponentInstance
+        | SourceShardKind::ElectricalIdentity
         | SourceShardKind::VariantOverlay
         | SourceShardKind::ManufacturingPlan
         | SourceShardKind::PanelProjection
