@@ -158,17 +158,33 @@ The previous `465f2b47` pin is historical and cannot supply review approval for
 this revision. The owner returns this revised pin to the reserved session for
 complete independent specification review under the existing D5 scope.
 
+### Received execution authorization — 2026-10-01
+
+The owner twice supplied `UVT-S5A-BUILD: authorize execution` after presentation
+of commit `0ef0efc745c8296b12e5027d7039303018d345a8`, packet
+`S5A-C02-PACKET-IR01`, blob `a5d31274d41fec30458d8d51af825815124eb0d6`.
+Record that instruction against this presented scope; do not request the same
+execution authorization again merely because it lacked the printed suffix.
+It supplies no independent review result and does not expressly waive the
+owner's earlier independent-review-before-execution requirement. Consequently
+C02 remains pending that review result and mandatory finding dispositions;
+operational execution authority has not advanced. No review pass is inferred.
+After the exact packet's independent review requirement is satisfied, reconcile
+C02 and Frontier execution authority using this recorded authorization. A changed
+packet or unresolved mandatory finding requires its normal owner disposition.
+The pin is unchanged, D5 remains reserved and implementation acceptance is separate.
+
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:SPECIFICATION-REVIEW -->
 Obtain the reserved independent session's specification review outcome and
-findings for the revised exact `S5A-C02-PACKET-IR01` pin before owner execution
-authorization. Include S5A-IR-01 correction confirmation and full U1–U5/N01–N17,
+findings for the revised exact `S5A-C02-PACKET-IR01` pin to satisfy the required
+review before operational execution. Include S5A-IR-01 correction confirmation and full U1–U5/N01–N17,
 D1–D4 review; the prior finding does not pass the revised packet.
 Resolve mandatory findings through their owning routes; a reservation or the
 implementer's own review cannot stand in for this independent review. C02 stays
-pending. After independent specification review and required reconciliation,
-present the exact reviewed packet for explicit bounded owner execution
-authorization, or revise/defer with precise corrections. Execution authorization
-does not accept implementation or advance C06.
+pending until independent specification review and required reconciliation
+satisfy the outstanding prerequisite. The received authorization above applies
+to the unchanged presented packet; it does not accept implementation or advance
+C06. Return revised scope or unresolved mandatory findings for owner disposition.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
