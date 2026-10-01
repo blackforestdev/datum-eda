@@ -1,6 +1,7 @@
 # Foundation consumer completion contracts
 
-Status: scheduled planning requirements; no consumer execution authorization.
+Status: consumer completion requirements; S5A execution authorization recorded
+below. Other consumer execution boundaries remain unchanged.
 Tracking: FOUNDATION-WORKFLOW-SPEC / WDQ-F01,
 `dat-manual-foundation-contracts-fsw`; repair intake
 `dat-foundation-consumer-plans-9at`.
@@ -185,6 +186,49 @@ pending until independent specification review and required reconciliation
 satisfy the outstanding prerequisite. The received authorization above applies
 to the unchanged presented packet; it does not accept implementation or advance
 C06. Return revised scope or unresolved mandatory findings for owner disposition.
+
+### Independent specification review and C02 disposition — 2026-10-01
+
+<!-- EVIDENCE:UVT-S5A-BUILD:S5A-C02-AUTHORIZED -->
+
+Owner-returned independent review record:
+
+- Reviewer: the reserved owner-facing audit/review session, separate from the
+  implementing S5A agent.
+- Reviewed commit: `0ef0efc745c8296b12e5027d7039303018d345a8`.
+- Packet: `S5A-C02-PACKET-IR01`; Git blob
+  `a5d31274d41fec30458d8d51af825815124eb0d6`.
+- Outcome: **PASS for specification readiness**; no remaining blocking findings
+  identified. S5A-IR-01 is corrected and independently confirmed: PM026, UVT and
+  N05/N09 distinguish acquisition-origin eligibility, complete derived membership
+  and visibility-limited rendering, including pre-acquisition hidden/filter cases.
+- Review covers U1–U5, N01–N17, D1–D4, deferred editor obligations and
+  PM026/049/051/052 preservation.
+
+The owner explicitly directed recording this review alongside the already-recorded
+execution authorization for the unchanged packet, without requesting that
+execution authorization again. The reported review satisfies the outstanding
+C02 prerequisite; **S5A-C02 is complete** and **S5A-C03 is the selected pending
+execution step**. Frontier state is ready with execution authorization and no
+live implementation claim. Earlier pending-review/authorization statements in
+this document and the pinned packet record their prior state and are superseded
+operationally by this disposition; the reviewed packet bytes stay unchanged.
+
+Execution scope is exactly the pinned U1–U5 implementation and N01–N17 proof
+contract, limited to board/schematic native acceptance. Preserve PM026 read-only
+selection, full authoritative identities/membership, D4, PM049/052 rendering and
+resize integration, PM051 undecided latency, deterministic correctness/work/
+resource obligations, and explicitly deferred/unverified definition-editor rows.
+The implementer must establish its own synchronized claim before C03 work; this
+governance transaction performs no implementation, fixture build or native proof.
+
+This is specification approval and execution authorization, **not implementation
+acceptance or completed native proof**. D5 independent exact-candidate review and
+board/schematic replay remain reserved for C05, with candidate/fixture/binary/
+environment binding and owner-mediated return to the reviewer. C04–C06 remain
+pending; the build issue stays open and cross-probe is neither selected nor
+authorized. Changed scope or unresolved mandatory implementation findings retain
+the normal disposition requirement; no independent reviewer result is fabricated.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
