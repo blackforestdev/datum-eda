@@ -801,6 +801,23 @@ engine does not possess:
   hierarchy-, annotation-, padstack-, zone-, track/via-, production-, and
   copy/delete-closure surfaces classified by the research-derived guidance.
 
+**Current delivery acceptance (owner D1–D3, 2026-09-30; PM026 amendment).**
+Native S5A acceptance covers board and schematic only. Footprint/Symbol Editor
+rows in §2.2.16 retain their complete product contracts and remain unverified,
+tracked for their respective editor work by `dat-footprint-selection-native-6hfa` and
+`dat-symbol-selection-native-euub`. No new editor or substitute native pass is authorized;
+shared selection is still built once and configured by editors. Dimensions and
+hierarchical-sheet exclusions remain unchanged.
+
+Preserve deterministic work/correctness/resource requirements; S5A latency
+budgets stay undecided under PM051. The packet's approved bounded observations
+are diagnostic, not numerical acceptance criteria, and collection still awaits
+execution authorization. Conformance R1–R4 engine mutation proof lands with
+future S5B-or-later mutation work. S5A proves acquisition refusal, exact blocker
+disclosure, disabled mutation seams and zero authored mutation; it builds no
+mutation guard. D5 reviewer reservation and review of the pinned packet remain
+required at S5A-C02. No implementation execution is granted by these dispositions.
+
 `Compound Selection` is reserved for ephemeral selection/session state;
 `Group <name>` is reserved for a persistent authored object created explicitly.
 S5A MUST retain typed extension seams for S5B/later without presenting those

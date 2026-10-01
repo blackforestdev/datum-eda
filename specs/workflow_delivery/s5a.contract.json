@@ -6,8 +6,8 @@
   "category": "product",
   "consuming_workflow": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection.",
   "intent": "Deliver the complete authorized native cohort with actual input/state proof, independent replay and exact owner acceptance.",
-  "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection. Draft preparation only; complete consumer/fixture expansion remains C01 work.",
-  "exclusions": "No scope reduction, runtime execution authorization, native proof, owner acceptance, Global Preferences takeover or prototype edit. No disabled-only substitute for required enabled behavior.",
+  "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection. Owner D2/PM026 amendment limits this delivery native acceptance to board/schematic; unavailable Footprint/Symbol Editor native rows remain unverified and deferred to dat-footprint-selection-native-6hfa and dat-symbol-selection-native-euub. Pinned planning packet S5A-C02-PACKET-D1-D4; execution awaits D5 reservation and packet review.",
+  "exclusions": "No runtime execution authorization, native proof, owner acceptance, Global Preferences takeover or prototype edit. No mutation batch guard or R1-R4 mutation proof in S5A. PM026 D2 changes native acceptance scope only; deferred editor obligations, original shared model and board/schematic required enabled behavior remain. Latency budgets are undecided under PM051; approved bounded diagnostics are not numerical acceptance criteria.",
   "authority_refs": [
     {
       "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
@@ -96,7 +96,7 @@
     },
     "selection_identity": {
       "disposition": "required",
-      "reason": "Required across all six groups: the nine PM026 subjects map one-to-one; Object/Compound enumerate stable authored identities, Run retains typed origin and derives membership per revision, and Global Net/Bus remain semantic identities. Proposal and Review stay distinct. Verify focus membership, no auto-promotion, stale drop/report, no substitution/resurrection, exact same-identity projection and related-only baseline. The 256-id envelope cap never truncates subject identity or membership truth. Owner-approved D4: derived Run/Global Net/Bus subjects preserve identity and explicitly refuse membership-changing additive/subtractive click or marquee acquisition as a whole; existing no-ops and lifetime laws remain. Resolve complete authoritative membership, never the capped context envelope. No implicit Compound conversion or engine mutation guard.",
+      "reason": "Required across all six groups: the nine PM026 subjects map one-to-one; Object/Compound enumerate stable authored identities, Run retains typed origin and derives membership per revision, and Global Net/Bus remain semantic identities. Proposal and Review stay distinct. Verify focus membership, no auto-promotion, stale drop/report, no substitution/resurrection, exact same-identity projection and related-only baseline. The 256-id envelope cap never truncates subject identity or membership truth. Owner-approved D4: derived Run/Global Net/Bus subjects preserve identity and explicitly refuse membership-changing additive/subtractive click or marquee acquisition as a whole; existing no-ops and lifetime laws remain. Resolve complete authoritative membership, never the capped context envelope. No implicit Compound conversion or engine mutation guard. Owner D2 limits this delivery native acceptance to board/schematic; definition-editor rows remain explicitly unverified under PM026 with tracked re-entry. No shared selection owner or identity mapping changes.",
       "authority_refs": [
         {
           "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
@@ -1355,11 +1355,11 @@
       ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Accessibility and realistic performance. This draft is not ready.",
       "inputs": [
-        "Replay keyboard-only and non-color states and realistic dense-selection populations under the owner-ratified measurement method.",
+        "Replay keyboard-only/non-color states and realistic dense-selection populations under the D1-approved bounded diagnostic method after C02 execution authorization; no numerical latency acceptance threshold.",
         "Replay accessible D4 refusal/no-op states and exact complete-membership outcomes at 256 and 257+ members, hidden/cross-pane coverage; context list omission changes no acquisition result."
       ],
-      "expected_visible": "Accessible focus/value/identity information matches native behavior; actual latency and resource evidence use approved budgets.",
-      "expected_state": "Native keyboard/focus and non-color states convey the same subject, counts and reasons as pointer/visual behavior. Dense selection follows the 65536 primitive cap and exact union-mask fallback with channel identity preserved; 100k maximal-collision cases keep exact membership. Retained-buffer and CAM invariance and 2-physical-pixel cue hold across zoom/device scale. Bind exact fixture, environment and owner-approved measurement budgets before readiness.",
+      "expected_visible": "Accessible focus/value/identity information matches native behavior; diagnostic latency observations remain non-qualifying while deterministic correctness/work/resource requirements remain binding.",
+      "expected_state": "Native keyboard/focus and non-color states convey the same subject, counts and reasons as pointer/visual behavior. Dense selection follows the 65536 primitive cap and exact union-mask fallback with channel identity preserved; 100k maximal-collision cases keep exact membership. Retained-buffer and CAM invariance and 2-physical-pixel cue hold across zoom/device scale. Bind exact fixture/environment and the D1-approved bounded diagnostic method before collection under C02; latency remains undecided and is not an acceptance gate. Preserve deterministic correctness/work/resource requirements.",
       "dimensions": {
         "normal": {
           "disposition": "required",

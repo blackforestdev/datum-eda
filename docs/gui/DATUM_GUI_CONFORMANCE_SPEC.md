@@ -208,7 +208,7 @@ here: golden capture framing (item 1) and overlay-text overflow (item 2).
 | Global Net is one semantic subject whose complete visible electrical projection glows across schematic/PCB; connected parent bodies remain related | selected `SPI2_SCK` wire/label and cross-probed PCB copper | typed global-net projection over visible wire/label/port/pin-terminal/track/via/pad/zone/airwire roles | S5 | TO-ENFORCE / HUMAN | ledger §8.1 I4 + L5 + O4; `selection-study.png` panel 6 (§8.2) |
 | Related objects keep exact authored appearance; explicit relationship view may dim only unrelated context | related parent remains baseline; no second accent vocabulary | retire via-coloured `AUTHOR_RELATED`; governed legible unrelated-dim channel + Inspector relationship explanation | S5 | TO-ENFORCE / HUMAN | ledger §8.1 I3; `selection-study.png` panel 6 (§8.2) |
 | Optional compound focus member has no stronger/different persistent canvas visual | n/a (compound deferred in prototype) | equal member selection overlays; focus only in Inspector/session; command-owned temporary reference marker | S5 | TO-ENFORCE / HUMAN | ledger §8.1 L6 + O3; `selection-study.png` panel 2 (§8.2) |
-| Locked selection = slight neutral greying + normal selection + no handles + governed anchor padlock/cursor | not yet in prototype | typed lock channel; padlock blocked on icon_set declaration/contact-sheet entry/HUMAN review; dense compounds use Inspector count | S5 | TO-ENFORCE / HUMAN | ledger §8.1 R1/R3 + B3; icon gate CLOSED (declared+sheet+approved); `selection-study.png` panel 3 (§8.2) |
+| Locked selection = slight neutral greying + normal selection + no handles + governed anchor padlock/cursor | not yet in prototype | typed lock channel; padlock blocked on icon_set declaration/contact-sheet entry/HUMAN review; dense compounds use Inspector count | S5 | TO-ENFORCE / HUMAN | ledger §8.1 O4 + B2/B3 (read-only); future R1/R3 §8.1.1; icon gate CLOSED (declared+sheet+approved); `selection-study.png` panel 3 (§8.2) |
 | Authored/proposal/selection/diagnostic collision preserves every channel; semantic marker topmost | proposal ghost and warn glyph visual vocabulary | ordered orthogonal overlays; selected proposal/diagnostic retains proposal/severity core plus selection cue | S5 | TO-ENFORCE / HUMAN | ledger §8.1 D2; `selection-study.png` panels 4+9 (§8.2) |
 | Bus scope expands section → connected run → hierarchical bus; owned spine/name/entries glow, scalar member nets do not | selected bus spine/name visual | typed Bus selection projection distinct from scalar Global Net | S5 | TO-ENFORCE / HUMAN | ledger §8.1 I4 + A6; `selection-study.png` panel 6 (§8.2) |
 | Text uses glyph selection without persistent bbox; junction/via/no-connect/pin preserve semantic silhouette/core with crisp tiny-object fallback | Rendering Study whole-symbol text/terminal treatment | typed glyph/path/ring overlays; text handles only in edit tool; Symbol Editor child-pin scope | S5 | TO-ENFORCE / HUMAN | ledger §8.1 A6 + V4/V5; `selection-study.png` panels 7+9 (§8.2) |
@@ -498,7 +498,9 @@ matrix. Whole-shell parity does not redefine the Console acceptance boundary.
 
 Every S5 claim closes here with exactly one honest disposition. Machine
 claims are **TO-ENFORCE**: each names its exact future test home and
-assertion, landing with the S5A build slice; a test-home relocation requires
+assertion, landing with its applicable delivery slice. PM026's owner D2/D3
+amendment limits current S5A native acceptance to board/schematic and reserves
+R1–R4 for future S5B-or-later mutation proof; a test-home relocation requires
 updating this ledger in the same change. HUMAN claims are **CLOSED for the
 specification phase**: each cites the committed reference
 `docs/gui/reference/selection-study.png` (owner-approved 2026-08-14, review
@@ -508,7 +510,20 @@ cross-engine pixel-diff). The `selection-lock-anchor` icon gate is closed:
 declared in `icon_set.json`, on the contact sheet, design owner-approved
 (asset `to_author`, lands with S5A).
 
-### 8.1 Machine assertions (TO-ENFORCE, land with S5A)
+### 8.1 S5A machine assertions (TO-ENFORCE; board/schematic native acceptance)
+
+Owner D1–D3 reconciliation, 2026-09-30: preserve deterministic correctness/work/
+resource criteria. Latency is undecided under PM051; bounded packet diagnostics
+are not numerical acceptance gates. Native definition-editor obligations stay
+unverified under `dat-footprint-selection-native-6hfa` and `dat-symbol-selection-native-euub`.
+Shared profile/board-parent tests do not close them. All in-scope board/schematic
+cases remain mandatory, including refusal, blocker disclosure and zero authored
+Operations/shard/journal delta (B1–B3/O4/O7 and packet N13).
+
+D4 acquisition refusal/no-op/accessibility/revision proof remains required under
+UVT §2.2.2/§2.2.20 and packet N01/N02/N09/N12/N13/N17. It is consumer selection
+behavior, distinct from the future mutation batch guard. No assertion is marked
+passed by this governance correction; candidate/native proof remains pending.
 
 | ID | Assertion (governing §) | Test home |
 |---|---|---|
@@ -538,10 +553,6 @@ declared in `icon_set.json`, on the contact sheet, design owner-approved
 | B1 | No code path from any selection surface to an Operation — §2.2.14 | `crates/gui-app/src/main_tests/boundary.rs::boundary_no_mutation_entry` |
 | B2 | S5B seams render disabled-with-reason — §2.2.14 | `crates/gui-app/src/main_tests/boundary.rs::boundary_seams_disabled_with_reason` |
 | B3 | No transform-handle geometry in S5A — §2.2.14 | `crates/gui-render/src/render/overlay.rs::boundary_no_handles_in_s5a` |
-| R1 | Any of five blocker kinds ⇒ whole refusal, zero journal — §2.2.14 atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_whole_operation_no_journal` |
-| R2 | Refusal report matches §2.2.19 blocker vocabulary — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_report_matches_outputs` |
-| R3 | Refusal never implicitly repairs selection/locks — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_no_implicit_repair` |
-| R4 | GUI/CLI/MCP refusal parity — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_surface_parity` |
 | V1 | Zero retained-resolve on any selection state change — UVT §4.4 | `crates/gui-render/src/render/overlay.rs::overlay_zero_retained_resolve_on_selection` |
 | V2 | Static buffers static across select/deselect — §4.4 | `crates/gui-render/src/render/overlay.rs::overlay_static_buffers_across_selection` |
 | V3 | CAM/export byte-identical under selection — §4.4 / Law 1 | `crates/gui-render/src/render/overlay.rs::overlay_cam_byte_identity` |
@@ -554,6 +565,22 @@ declared in `icon_set.json`, on the contact sheet, design owner-approved
 | I5 | P2.3 cross-probe consumes the typed vocabulary (structural) — §2.2.20 | `crates/gui-app/src/main_tests/boundary.rs::identity_p23_consumes_vocabulary` |
 | D1 | Dense cap/union-mask determinism, warm capacity, full membership (100k fixture) — §2.2.13/RB §2.8 | `crates/gui-render/src/render/visual_runner.rs::dense_cap_union_mask_determinism` |
 | D2 | Maximal-collision dense variant preserves channel identity — OPEN-14 | `crates/gui-render/src/render/visual_runner.rs::dense_maximal_collision_channels` |
+
+#### 8.1.1 Future mutation assertions (TO-ENFORCE; S5B-or-later)
+
+These four original assertions are retained, not waived or relabeled passed.
+Their engine batch-guard homes apply only to future authorized mutation work.
+They are not S5A implementation tasks or acceptance prerequisites; S5A cannot
+invoke a mutation merely to prove its refusal. The original inventory remains
+42 machine assertions split across the current read-only and future mutation
+boundaries. D4 proof is additionally bound by the packet above.
+
+| ID | Assertion (governing §) | Test home |
+|---|---|---|
+| R1 | Any of five blocker kinds ⇒ whole refusal, zero journal — §2.2.14 atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_whole_operation_no_journal` |
+| R2 | Refusal report matches §2.2.19 blocker vocabulary — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_report_matches_outputs` |
+| R3 | Refusal never implicitly repairs selection/locks — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_no_implicit_repair` |
+| R4 | GUI/CLI/MCP refusal parity — atomic law | `crates/engine/src/api/native_write/batch_guard.rs::refusal_surface_parity` |
 
 ### 8.2 HUMAN claims (closed for the specification phase)
 
