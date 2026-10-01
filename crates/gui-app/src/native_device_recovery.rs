@@ -176,7 +176,8 @@ impl Runtime {
             !health.failed(),
             "replacement device failed during renderer initialization"
         );
-        let transaction = SurfaceTransaction::new(&self.window, &health);
+        let mut transaction = SurfaceTransaction::new(&self.window, &health);
+        transaction.inherit_resize_allocation_policy(&self.surface_transaction);
         Ok(PreparedDevice {
             renderer,
             transaction,

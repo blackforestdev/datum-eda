@@ -1,6 +1,7 @@
 # Product Mechanics 052: Current-host resize buffer reuse
 
-Status: proposed, awaiting owner disposition; no production authority yet.
+Status: ratified owner decision. Exact response: `GUI-RESIZE-REPAIR: approve PM052 opt-in reuse`.
+Recorded in `docs/reviews/gui-performance/cpu-reconciliation/owner-direction.json`.
 Tracking: GUI-RESIZE-REPAIR / dat-gui-vertical-resize-cpu-toj.
 
 ## Concrete adoption proposal
@@ -21,7 +22,7 @@ and restores exact storage after the existing three-current-output-refresh-inter
 quiet rule. Logical dimensions, input and design state update immediately. Full
 8x rendering, painter order and resource lifetime ownership remain required.
 While storage and window dimensions differ, Wayland viewporter presentation
-resamples the rendered image. Exact settled pixels remain required. This proposed
+resamples the rendered image. Exact settled pixels remain required. This ratified
 narrow transient-output exception does not claim pixel-exact intermediate frames.
 
 Adoption is evidenced only on the current Debian/KDE Wayland, Vulkan/i915 P630,
@@ -73,3 +74,8 @@ with exact settled captures and clean exit. No additional CPU sampling is needed
 unless integration changes the tested allocation algorithm or accounting basis.
 Update the repair record, Frontier and tracker with the supported result. Broader
 resize qualification and all numerical budgets remain separate and undecided.
+
+<!-- EVIDENCE:GUI-RESIZE-REPAIR:OPT-IN-APPROVAL -->
+
+Owner approved the proposal verbatim; RZ-C05 integration is authorized within
+the stated current-host scope. No default activation or broad acceptance follows.
