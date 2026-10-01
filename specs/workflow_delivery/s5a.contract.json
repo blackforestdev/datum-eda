@@ -96,7 +96,7 @@
     },
     "selection_identity": {
       "disposition": "required",
-      "reason": "Required across all six groups: the nine PM026 subjects map one-to-one; Object/Compound enumerate stable authored identities, Run retains typed origin and derives membership per revision, and Global Net/Bus remain semantic identities. Proposal and Review stay distinct. Verify focus membership, no auto-promotion, stale drop/report, no substitution/resurrection, exact same-identity projection and related-only baseline. The 256-id envelope cap never truncates subject identity or membership truth.",
+      "reason": "Required across all six groups: the nine PM026 subjects map one-to-one; Object/Compound enumerate stable authored identities, Run retains typed origin and derives membership per revision, and Global Net/Bus remain semantic identities. Proposal and Review stay distinct. Verify focus membership, no auto-promotion, stale drop/report, no substitution/resurrection, exact same-identity projection and related-only baseline. The 256-id envelope cap never truncates subject identity or membership truth. Owner-approved D4: derived Run/Global Net/Bus subjects preserve identity and explicitly refuse membership-changing additive/subtractive click or marquee acquisition as a whole; existing no-ops and lifetime laws remain. Resolve complete authoritative membership, never the capped context envelope. No implicit Compound conversion or engine mutation guard.",
       "authority_refs": [
         {
           "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
@@ -418,14 +418,15 @@
       ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Native pointer, keyboard and marquee selection. This draft is not ready.",
       "inputs": [
-        "Select and extend/reduce selections with pointer and keyboard; exercise all approved marquee qualification variants."
+        "Select and extend/reduce selections with pointer and keyboard; exercise all approved marquee qualification variants.",
+        "For Run/Global Net/Bus: positive explicit acquisition/replacement; Shift outside/Ctrl selected authored click and rectangle/lasso whole-result refusal; Shift existing/Ctrl outside, additive all-members/subtractive no-members and empty-region no-ops; preserve workspace acquisition granularity and focus."
       ],
       "expected_visible": "Exact selected membership and visual qualification agree across native board and schematic.",
-      "expected_state": "Exact membership follows the ratified per-class predicates over the final world region and revision: no partial set under query pressure, no non-authored region acquisition, correct parent collapse and distinct bus Object/Run/Bus tiers. Shift adds, Ctrl removes, and cancellation preserves prior membership. Bind actual fixture ids and every required class subcase before readiness.",
+      "expected_state": "Exact membership follows the ratified per-class predicates over the final world region and revision: no partial set under query pressure, no non-authored region acquisition, correct parent collapse and distinct bus Object/Run/Bus tiers. For enumerated authored subjects Shift adds and Ctrl removes; for derived subjects apply the approved D4 refusal/no-op rule. Cancellation preserves prior membership. Bind actual fixture ids and every required class subcase before readiness. Owner-approved D4: derived Run/Global Net/Bus subjects preserve identity and explicitly refuse membership-changing additive/subtractive click or marquee acquisition as a whole; existing no-ops and lifetime laws remain. Resolve complete authoritative membership, never the capped context envelope. No implicit Compound conversion or engine mutation guard.",
       "dimensions": {
         "normal": {
           "disposition": "required",
-          "reason": "Acquire each ratified class and ladder tier with exact expected ids. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "reason": "Acquire each ratified class and ladder tier with exact expected ids. Exact fixture/input bindings and observed proof remain required before readiness/acceptance. Include D4 positive and no-op transitions without derived-to-Compound conversion or invented focus.",
           "authority_refs": [
             {
               "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
@@ -443,7 +444,7 @@
         },
         "invalid": {
           "disposition": "required",
-          "reason": "Point at empty/ineligible geometry and use zero-area regions; preserve selection or return the ratified empty query result. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "reason": "Point at empty/ineligible geometry and use zero-area regions; preserve selection or return the ratified empty query result. Exact fixture/input bindings and observed proof remain required before readiness/acceptance. D4 membership-changing acquisition refuses the whole result with action/kind explanation and unchanged current subject/membership.",
           "authority_refs": [
             {
               "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
@@ -551,7 +552,7 @@
         },
         "accessibility": {
           "disposition": "required",
-          "reason": "Exercise required keyboard entry/focus and non-color marquee/selection states. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "reason": "Exercise required keyboard entry/focus and non-color marquee/selection states. Exact fixture/input bindings and observed proof remain required before readiness/acceptance. D4 refusal is exposed in Inspector and programmatically, including keyboard invocation of the same acquisition action; announce completed refusal, never continuous hover or no-op outcomes. No status-bar or color-only dependency.",
           "authority_refs": [
             {
               "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
@@ -609,10 +610,11 @@
       ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Stable identity and stale subjects. This draft is not ready.",
       "inputs": [
-        "Change context or delete/stale a selected subject through the authorized fixture setup, then inspect selection resolution."
+        "Change context or delete/stale a selected subject through the authorized fixture setup, then inspect selection resolution.",
+        "After D4 refusal/no-op, change connectivity through separate authorized fixture history; verify connect/disconnect, surviving semantic rename, missing Run origin/net/bus ID and revision during region evaluation obey current re-resolution and cancellation."
       ],
       "expected_visible": "Surviving identities remain selected; missing identities drop with notice, without substitution or resurrection. Derived subjects re-resolve at the current revision.",
-      "expected_state": "Surviving enumerated identities remain selected; missing identities drop with reported counts; recreated ids never substitute and undo never resurrects dropped selection. Derived Run/Net/Bus membership re-derives per revision and dissolves when its identity no longer resolves. Dropped focus clears with no auto-promotion. Bind exact before/after ids and revisions before readiness.",
+      "expected_state": "Surviving enumerated identities remain selected; missing identities drop with reported counts; recreated ids never substitute and undo never resurrects dropped selection. Derived Run/Net/Bus membership re-derives per revision and dissolves when its identity no longer resolves. Dropped focus clears with no auto-promotion. Bind exact before/after ids and revisions before readiness. D4 refusal never freezes derived membership or overrides drop/report, no substitution/resurrection, focus or cancellation laws.",
       "dimensions": {
         "normal": {
           "disposition": "required",
@@ -1353,7 +1355,8 @@
       ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Accessibility and realistic performance. This draft is not ready.",
       "inputs": [
-        "Replay keyboard-only and non-color states and realistic dense-selection populations under the owner-ratified measurement method."
+        "Replay keyboard-only and non-color states and realistic dense-selection populations under the owner-ratified measurement method.",
+        "Replay accessible D4 refusal/no-op states and exact complete-membership outcomes at 256 and 257+ members, hidden/cross-pane coverage; context list omission changes no acquisition result."
       ],
       "expected_visible": "Accessible focus/value/identity information matches native behavior; actual latency and resource evidence use approved budgets.",
       "expected_state": "Native keyboard/focus and non-color states convey the same subject, counts and reasons as pointer/visual behavior. Dense selection follows the 65536 primitive cap and exact union-mask fallback with channel identity preserved; 100k maximal-collision cases keep exact membership. Retained-buffer and CAM invariance and 2-physical-pixel cue hold across zoom/device scale. Bind exact fixture, environment and owner-approved measurement budgets before readiness.",
@@ -1486,7 +1489,7 @@
         },
         "accessibility": {
           "disposition": "required",
-          "reason": "Replay keyboard-only, focus, reduced-motion and non-color information with exact subject/value parity. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "reason": "Replay keyboard-only, focus, reduced-motion and non-color information with exact subject/value parity. Exact fixture/input bindings and observed proof remain required before readiness/acceptance. Include D4 accessible action/kind/reason and unchanged subject/count/focus across pointer and keyboard invocation; preserve non-color and reduced-motion meaning.",
           "authority_refs": [
             {
               "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",

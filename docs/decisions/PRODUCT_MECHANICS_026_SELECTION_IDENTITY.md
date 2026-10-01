@@ -49,6 +49,20 @@ batch guard: a locked, stale, incompatible, constrained, or invalid member
 refuses the whole operation with an explained blocker report identical across
 GUI, CLI, and MCP — no silent skip, no partial mutation, no implicit repair.
 
+## Owner-approved D4 clarification — 2026-09-30
+
+The owner approved preserving derived Run/Global Net/Bus subjects and explicitly
+refusing membership-changing additive/subtractive authored acquisition,
+including marquee, while preserving existing no-op and lifetime behavior.
+UVT §2.2.2 and §2.2.20 record the exact interaction and proof contract. No
+implicit Compound conversion, member exceptions, or capped-context membership
+source is permitted. This resolves `dat-selection-derived-modifier-caa8`
+through the existing selection route without changing the vocabulary,
+parent/child granularity, same-identity mappings or revision law. The refusal
+is consumer selection behavior; it introduces no engine mutation guard.
+This owner approval is product/specification authority only, explicitly **not
+S5A implementation execution authorization**. S5A-C02 remains pending.
+
 ## What This Decision Does NOT Do
 
 **It authorizes no implementation.** S5A execution remains separately

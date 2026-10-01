@@ -179,6 +179,47 @@ are prohibited:
 `Shift`+`Ctrl` is not a third selection operation. `Escape` clears the complete
 selection rather than removing one member at a time.
 
+**Derived-subject modifiers (owner-approved D4, 2026-09-30).** With an active
+Run, Global Net, or Bus, additive/subtractive authored acquisition MUST preserve
+that derived subject and explicitly refuse any membership-changing result.
+This applies to Shift/Ctrl primary clicks and additive/subtractive rectangle or
+lasso acquisition. It never converts the subject to an enumerated Compound,
+replaces it implicitly, adds exceptions to connectivity, or partially applies a
+region result. This is a selection-acquisition refusal in consumer state, not
+the later S5B engine mutation/batch guard.
+
+Normal workspace eligibility and parent/child acquisition granularity apply
+first. At the current model revision, compare the qualified authored candidate
+identities against the complete authoritative derived membership: additive
+acquisition changes membership if any candidate is outside it; subtractive
+acquisition changes membership if any candidate is inside it. The bounded
+context envelope and visible/capped inventories MUST NOT supply this test.
+
+Existing no-ops remain no-ops: Shift-click an already-selected authored member,
+Ctrl-click an unselected object, additive region containing only selected
+members, subtractive region containing no selected members, or an empty region.
+They preserve the derived subject and do not manufacture compound focus or
+announce a refusal. A mixed region with even one membership-changing candidate
+refuses the whole result. Independently unselectable pad/pin/entry projections
+never gain authored-member acquisition authority through this rule.
+
+On refusal, preserve subject identity, membership, selection focus and full
+pane projections at the current revision. Explain the attempted add/remove and
+subject kind in the Inspector, for example: "Cannot remove one member from a
+Global Net selection. Membership follows connectivity." Explain that plain
+object selection starts an explicit authored selection; expose the reason
+programmatically and announce the completed refusal without requiring color,
+hover, continuous pointer announcements, a status bar, or a modal dialog.
+Keyboard invocation of the same acquisition action obeys the same reducer rule.
+
+Plain replacement, explicit semantic acquisition, Ctrl+A, Escape and gesture
+cancellation keep their existing contracts. Revision changes still re-resolve
+the subject under §2.2.18/§2.2.20: refusal never freezes membership, restores
+stale geometry, preserves a missing origin/identity, or resurrects a dropped
+selection. A committed region is assessed against the current revision under
+the existing exactness/cancellation rules, not a stale gesture-start list.
+This approval grants no S5A implementation execution.
+
 Selection-region activation uses a **4 physical-device-pixel** movement
 threshold. Below the threshold the input remains a modified click; at or beyond
 the threshold it becomes a region gesture. The initial direction locks the
@@ -1954,7 +1995,20 @@ subject at a time, drawn from a closed typed vocabulary:
 Enumerated (Object/Compound) and derived (Run/Global Net/Bus) subjects
 differ in exactly one way: derived subjects store an identity and re-derive
 membership at each revision; enumerated subjects store identities and drop
-what stops resolving. Both obey the same §2.2.18 lifetime law.
+what stops resolving. Both obey the same §2.2.18 lifetime law. Additive and
+subtractive authored acquisition on derived subjects follows the explicit
+preserve-and-refuse/no-op rule in §2.2.2; it cannot implicitly change subject
+kind or establish persistent membership exceptions.
+
+**D4 proof obligation (TO-ENFORCE; no native proof claimed).** For Run,
+Global Net and Bus, exercise positive explicit acquisition/replacement, click
+and rectangle/lasso whole-result refusal, all no-op cases, unchanged focus and
+pane projection, accessible explained refusal, and fresh revision derivation
+including missing origin/semantic identity. Use independently resolved complete
+membership above and below the 256-ID transport boundary; observe zero authored
+operations, shard and journal delta. S5A packet N01/N02/N09/N12/N13/N17 binds
+these cases. The existing 42-assertion ledger remains required for its scope
+and does not constitute proof of this later rule.
 
 **2. Same-identity vs merely-related — the formal distinction.**
 

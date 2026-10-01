@@ -94,11 +94,14 @@ S5A proves disabled seams/non-mutation/blocker disclosure without adding a guard
 or claiming future R1–R4 mutation proof passed.
 
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:DERIVED-MODIFIERS -->
-Resolve D4 through the selection route: define the transition when additive or
-subtractive authored acquisition is invoked with an active Run/Global Net/Bus.
-The contract does not explicitly choose conversion to enumerated Compound versus
-replacement/refusal; no implicit conversion from capped context lists is allowed.
-Preserve PM026 identity or amend it explicitly if the selected rule changes it.
+D4 is owner-approved and reconciled (2026-09-30): preserve derived Run/Global
+Net/Bus and explicitly refuse membership-changing additive/subtractive authored
+acquisition, including marquee. Existing no-ops and revision/lifetime behavior
+remain. PM026 and UVT §2.2.2/§2.2.20 own this rule; complete authoritative
+membership, never the capped envelope, determines the result. Packet
+N01/N02/N09/N12/N13/N17 covers positive, refusal, no-op, accessibility and
+revision cases. This product-rule approval grants no implementation execution;
+C02 remains pending for the remaining dispositions and exact authorization.
 
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:REVIEW-PROVISION -->
 Resolve D5: name an available independent reviewer/session and replay arrangement
