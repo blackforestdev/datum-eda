@@ -91,7 +91,7 @@
    Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* dat-native-authoring-depth-sf9, dat-sheet-interaction-reentry-9ee. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`, `specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
-   Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `specified`; authorization `planning`; **CANONICAL NEXT**.*
+   Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
@@ -269,15 +269,20 @@ exact fixtures, class/input expansion, production handlers, environment/budgets
 and independent review still prevent a readiness claim. No cohort is enrolled
 by this specification refinement (`dat-uvt-s5a-build-1wv`, S5A-C01).
 
-`docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` is the pending
-S5A-C01 fixture/dispatch proposal: seven explicit fixture families, actual
-integration sites, exact identity/oracle recording and bounded construction/
-landing/reviewer requirements. Fixture aliases are proposals, not persisted
-objects. The planning lease does not claim production files or authorize fixture
-construction; the six completion questions and product acceptance remain open.
+`docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` now carries the
+reconciled S5A-C01 packet at baseline 1fd5193b: complete class/owner mapping,
+U1–U5, N01–N17 native proof matrix, original seven fixture families and evidence
+reuse. The Run envelope discrepancy was already repaired in a30cbcfe; runtime
+migration remains. PM044 retires the old WDQ preparation obstacle. PM052 default
+resize and bounded S4 closure remain preserved. C02 must disposition D1 missing
+latency provenance, D2 unavailable definition-editor native proof, D3 future
+refusal-ledger boundary, D4 derived-subject modifiers and D5 independent review.
+No fixture, production handler, candidate, native proof or acceptance is invented;
+implementation/execution remains unauthorized. The build issue stays open.
 
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
+| `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` | S5A-C01 reconciled execution packet, owning-route review and source audit | S5A-C02 exact dispositions/reviewer/execution required; no implementation or native acceptance | `dat-uvt-s5a-build-1wv`, S5A-C01 |
 | `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md` | Structured pending completion plans added for UVT-S5A-BUILD, GUI-WRITE-PATH and NATIVE-AUTHORING; acceptance IDs and tracker-backed successor IDs reconciled | Each consumer retains preflight, explicit execution authorization, implementation, native proof, independent replay and exact owner acceptance; no readiness or product delivery asserted | `dat-foundation-consumer-plans-9at`, WDQ-F01; consumer ownership, existing dependencies and global selection unchanged |
 
 ## WORKFLOW-DELIVERY-ROLLOUT — broader enforcement and adoption preparation

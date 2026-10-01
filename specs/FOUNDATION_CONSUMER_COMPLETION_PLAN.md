@@ -65,6 +65,47 @@ unresolved decisions and any proposed delivery enrollment/trust change. Obtain
 explicit bounded execution authorization before implementing. Approval of
 selection visuals or this completion plan is not execution authorization.
 
+S5A-C01 reconciliation is recorded in
+`docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` under
+`S5A-C01-PACKET`: current owners/classes, U1–U5, native N01–N17, evidence reuse
+and D1–D5. Its completion is planning only. Actual fixture/handler bindings and
+native evidence are future execution outputs, not fabricated C01 receipts.
+PM044 retired WDQ enrollment/source-promotion prerequisites; no replacement
+trust ceremony is requested. PM026/051/052 remain controlling.
+
+<!-- OWNER:UVT-S5A-BUILD:S5A-C02:PERFORMANCE-PROVENANCE -->
+Resolve D1: the packet found no derived S5A fixture latency budget. Disposition
+execution with retained deterministic correctness/work/resource criteria and
+bounded missing-only observations while latency remains undecided, or require
+an evidence-backed budget proposal first. No unsupported numerical gate is
+silently waived, promoted or claimed met.
+
+<!-- OWNER:UVT-S5A-BUILD:S5A-C02:UNAVAILABLE-NATIVE-ROWS -->
+Resolve D2: native Footprint/Symbol Editor scenarios are unavailable. Specify
+how their outstanding proof affects the exact board/schematic execution and
+acceptance scope; shared profile tests do not replace native editor proof.
+Any change to ratified obligations requires the applicable numbered amendment.
+
+<!-- OWNER:UVT-S5A-BUILD:S5A-C02:REFUSAL-BOUNDARY -->
+Resolve D3: the conformance ledger labels future engine refusal assertions as
+S5A landings, while PM026 reserves mutation/batch guard for S5B. Confirm the
+higher read-only boundary and authorize the owning conformance reconciliation;
+S5A proves disabled seams/non-mutation/blocker disclosure without adding a guard
+or claiming future R1–R4 mutation proof passed.
+
+<!-- OWNER:UVT-S5A-BUILD:S5A-C02:DERIVED-MODIFIERS -->
+Resolve D4 through the selection route: define the transition when additive or
+subtractive authored acquisition is invoked with an active Run/Global Net/Bus.
+The contract does not explicitly choose conversion to enumerated Compound versus
+replacement/refusal; no implicit conversion from capped context lists is allowed.
+Preserve PM026 identity or amend it explicitly if the selected rule changes it.
+
+<!-- OWNER:UVT-S5A-BUILD:S5A-C02:REVIEW-PROVISION -->
+Resolve D5: name an available independent reviewer/session and replay arrangement
+for the exact U1–U5/N01–N17 packet. No availability or reservation is claimed.
+Approve only after required dispositions/reconciliation, or revise/defer with
+precise corrections. Authorization does not accept implementation or advance C06.
+
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
 
