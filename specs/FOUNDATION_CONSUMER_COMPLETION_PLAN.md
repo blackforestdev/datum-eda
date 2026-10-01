@@ -365,6 +365,14 @@ Read-only investigation requires no implementation claim. Tracked research and
 specification reconciliation require the normal synchronized planning claim and
 complete owning-route review before edits.
 
+Substantive research evidence is now preserved in
+`docs/reviews/workflow-delivery-rollout/s5a/derived-authority-research.md`: primary
+sources, inherited/proposed distinctions, five-domain findings, workflow oracles
+and compatibility impacts. It is not completed specification reconciliation or a
+new readiness PASS. The owner subsequently directed completion of integration
+in this planning session; the external S5A handoff is no longer a prerequisite
+for that authorized work. Product ratification and engine execution stay separate.
+
 **Handoff and completion:** the dedicated researcher returns evidence and
 recommendations; the S5A integrator reconciles the existing owning specifications
 and A1 coordination packet into one revised candidate, marking proposed changes
