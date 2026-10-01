@@ -254,6 +254,43 @@ review precedes owner approval; C05 remains reserved and separate. After approva
 promote/reconcile only the exact agreed prerequisite, its planning/decision/
 execution gates and explicit eventual handoff to C03 in the same transaction.
 
+### Derived-authority A1 independent specification review — 2026-10-01
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A1-R-PASS -->
+
+The owner returned the reserved independent owner-facing audit/review session's
+review, separate from implementation:
+
+- Packet: `S5A-DERIVED-A1-02`.
+- Reviewed commit: `c1929bc94a8c408e9e09196b3096b56c3ff97ced`.
+- Packet Git blob: `8c6025e15cb93dad4cdfd0f214a051fda0deb5a1` in
+  `specs/S5A_DERIVED_AUTHORITY_PLAN.md`; keep its bytes unchanged.
+- Outcome: **PASS for specification review**, no blocking findings identified
+  and no mandatory review corrections outstanding.
+- Scope: inherited-versus-proposed clauses, Q1–Q4, Z1/Z2/T1, identity/transaction/
+  query boundaries, E1–E5, F01–F06 including Z01–Z05/T01–T04, compatibility
+  safeguards and S5A resumption.
+
+This explicit review record completes **DA-A1-R only**. Select **DA-A1-D** as
+pending owner ratification and separate engine execution/reviewer disposition;
+retain owner_decision authorization, open/unassigned tracker state and no claim.
+Recording an owner-returned decision is its governance transaction, not an
+implementation claim or authority to claim the next owner-decision step.
+Zone component acquisition/successor behavior, Track encoding and the other
+proposed mechanics still require the planned numbered ratification and actual
+owning-specification reconciliation. The PASS does not authorize implementation,
+establish feasibility or accept foundation/native S5A proof. No numbered decision
+or proposed record/geometry mechanism becomes ratified by this record.
+
+Retain S5A C02 approval and partial U1; dependent C03 stays blocked on
+`dat-s5a-derived-authority-hhsw`. Engine A2/A3 remain pending, candidate independent
+review/replay must be separately reserved before execution, and S5A C05 stays
+reserved and separate. Preserve PM026/049/051/052, deferred unverified editors,
+undecided latency budgets and exact eventual foundation resumption conditions.
+No implementation, prototype, fixture, build or native experiment accompanies
+this review transition; the reviewed A1, S5A and foundation-amendment pins remain
+unchanged. The gap issue advances but does not close.
+
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
 
