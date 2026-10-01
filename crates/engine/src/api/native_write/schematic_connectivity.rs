@@ -71,6 +71,9 @@ pub fn build_delete_schematic_label(
             label_id: label.uuid,
             label: serde_json::to_value(label)?,
         })
+        .push_ops(super::electrical::projection_removals(
+            model, label.uuid, "labels",
+        )?)
         .primary_object(label.uuid)
         .finish()
 }
@@ -214,6 +217,9 @@ pub fn build_delete_schematic_port(
             port_id: port.uuid,
             port: serde_json::to_value(port)?,
         })
+        .push_ops(super::electrical::projection_removals(
+            model, port.uuid, "ports",
+        )?)
         .primary_object(port.uuid)
         .finish()
 }
@@ -268,6 +274,9 @@ pub fn build_delete_schematic_bus(
             bus_id: bus.uuid,
             bus: serde_json::to_value(bus)?,
         })
+        .push_ops(super::electrical::projection_removals(
+            model, bus.uuid, "buses",
+        )?)
         .primary_object(bus.uuid)
         .finish()
 }
@@ -303,6 +312,11 @@ pub fn build_delete_schematic_bus_entry(
             bus_entry_id: bus_entry.uuid,
             bus_entry: serde_json::to_value(bus_entry)?,
         })
+        .push_ops(super::electrical::projection_removals(
+            model,
+            bus_entry.uuid,
+            "bus_entries",
+        )?)
         .primary_object(bus_entry.uuid)
         .finish()
 }

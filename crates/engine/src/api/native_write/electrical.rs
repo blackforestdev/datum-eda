@@ -180,6 +180,8 @@ mod hierarchy_tests;
 #[cfg(test)]
 mod pool_reference_tests;
 #[cfg(test)]
+mod projection_tests;
+#[cfg(test)]
 mod tests;
 #[cfg(test)]
 mod transition_tests;
@@ -196,3 +198,6 @@ fn next_revision(revision: ObjectRevision) -> Result<u64, EngineError> {
 
 mod adoption;
 pub use adoption::{PlacedPinAdoption, build_adopt_pin_correspondence};
+
+mod projection_lifecycle;
+pub(super) use projection_lifecycle::projection_removals;

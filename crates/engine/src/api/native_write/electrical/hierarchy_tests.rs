@@ -1,5 +1,7 @@
 use super::super::commit_prepared;
-use super::super::schematic_connectivity::build_create_schematic_bus;
+use super::super::schematic_connectivity::{
+    build_create_schematic_bus, build_delete_schematic_bus,
+};
 use super::super::schematic_sheets::{
     build_create_schematic_definition, build_create_schematic_sheet_instance,
 };
@@ -133,6 +135,45 @@ fn occurrence_qualified_bus_identity_and_interface_reopen() {
     );
     let prepared = build_create_electrical_identity(&model, provenance(), invalid).unwrap();
     assert!(commit_prepared(&mut model, &root, prepared).is_err());
+    // Deleting a reused source removes both projections but must not silently
+    // remove its explicit semantic interface. Refuse until the caller does so.
+    let before = model.clone();
+    let deletion = build_delete_schematic_bus(&model, provenance(), sheet, &drawing).unwrap();
+    assert!(commit_prepared(&mut model, &root, deletion).is_err());
+    assert_eq!(model, before);
+    let deletion = build_delete_schematic_bus(&model, provenance(), sheet, &drawing).unwrap();
+    let interface_deletion =
+        build_delete_electrical_identity(&model, provenance(), interface).unwrap();
+    let write = BatchComposer::compose(&model, provenance())
+        .push_ops(deletion.batch.operations)
+        .push_ops(interface_deletion.batch.operations)
+        .finish()
+        .unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    assert!(
+        matches!(&model.electrical_identities[&id].identity, ElectricalIdentity::Bus { representations, retired: false, .. } if representations.is_empty())
+    );
+    assert_eq!(
+        ProjectResolver::new(&root)
+            .resolve()
+            .unwrap()
+            .electrical_identities,
+        model.electrical_identities
+    );
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(model.electrical_identities, before.electrical_identities);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(
+        ProjectResolver::new(&root)
+            .resolve()
+            .unwrap()
+            .electrical_identities,
+        model.electrical_identities
+    );
 }
 fn anchor_from(model: &DesignModel, id: Uuid) -> ElectricalOccurrence {
     let ElectricalIdentity::Net { anchor, .. } = &model.electrical_identities[&id].identity else {
