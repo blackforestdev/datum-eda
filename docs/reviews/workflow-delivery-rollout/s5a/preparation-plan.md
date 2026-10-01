@@ -1,6 +1,6 @@
 # S5A selection execution and native-proof packet
 
-Status: S5A-C01 reconciled planning packet; S5A-C02 owner disposition pending.
+Status: D1–D4 reconciled; S5A-C02 pending D5 reservation and pinned-packet review.
 Frontier: UVT-S5A-BUILD / S5A-C01; `dat-uvt-s5a-build-1wv`.
 Owning route: `workflow-delivery-cohort-preparation`.
 Basis: `runtime-readiness-audit.json` at `7ab093c2` and
@@ -9,9 +9,10 @@ native proof. The current delivery contract supplies the inherited behavior.
 
 ## Purpose and limits
 
-Produce actual, reviewable inputs for S5A readiness. This is not permission to
-enable selection capabilities, amend PM026, build an editor, change Preferences,
-modify a Claude prototype, add dependencies or install/promote delivery trust.
+Provide the reconciled S5A execution packet. This records the owner's D1–D4
+specification dispositions, including the PM026 native acceptance scope amendment.
+It grants no permission to enable selection capabilities, build an editor, change
+Preferences, modify a Claude prototype, add dependencies or promote delivery trust.
 The owner approved this bounded preparation at commit `6ece73ed`; the exact
 response and approved document hash are retained in
 `preparation-owner-20260910.json`. Do not request this approval again.
@@ -24,9 +25,9 @@ bounded preparation approval is preserved, not treated as full S5A execution.
 The original proposal alone did not complete S5A-C01. The reconciled packet
 below now accounts for complete domain scope, actual existing fixture inputs,
 production integration, numerical provenance and review arrangements. Future
-fixture/handler outputs remain unbuilt. D4 is now owner-approved specification
-only; remaining C02 dispositions/reconciliations and execution authorization
-remain required.
+fixture/handler outputs remain unbuilt. D1–D4 are recorded and reconciled;
+D5 reviewer reservation and review of this pinned packet remain required before
+explicit C02 execution authorization.
 The six historical readiness questions are mapped, not represented as proof.
 
 ## Existing inputs and their permitted interpretation
@@ -62,12 +63,13 @@ Keep baseline and each revision variant distinct and hash their inputs.
 | `dense-and-cancel` | The ratified 100k population, exact membership oracle, small-query pruning and a maximal-channel-collision variant. Exercise the 65,536 detailed-selection-primitive boundary and union-mask fallback, cancellation during evaluation and equal final regions reached by different pan paths. Record authored-object count separately from rendered primitive count. | S01, S05, S06 |
 | `scope-and-reopen` | Two separately identified Projects with preconfigured quantity contexts, duplicate/mixed panes, hidden selected members and per-type Inspector scopes. Source/journal baselines establish that focus, visibility, inspection and cancel do not author changes. Project replacement clears scoped selection; reopen never treats a workspace snapshot as design authority. | S02, S03, S04, S05, S06 |
 
-Definition-editor obligations in the UVT class matrix remain visible. The packet
-must identify which cases can exercise shared typed/profile services and which
-require unavailable native editor surfaces. Such cases stay unverified; neither
-the read-only board/schematic delivery boundary nor the unavailable editor is a
-silent waiver. Board dimensions and hierarchical sheets retain their ratified
-deferrals and existing re-entry beads, not completed capability claims.
+The PM026 D2 scope amendment limits this delivery's native acceptance to board/
+schematic. Definition-editor rows in the complete UVT class matrix remain
+explicitly unverified and deferred to `dat-footprint-selection-native-6hfa` and
+`dat-symbol-selection-native-euub`. Shared profile checks are supporting evidence, not
+native editor passes. Board dimensions and hierarchical sheets retain their
+separate ratified deferrals and re-entry beads. No editor is built by this scope
+amendment, and no full-four-editor acceptance may be claimed.
 
 ## Dispatch and observation plan
 
@@ -132,15 +134,16 @@ native acceptance, a new dependency, a numerical performance budget or promotion
    product routes in the existing delivery contract. Preserve failed attempts,
    deferred editor cases and the independent review boundary.
 5. Resolve the measurement contract: hardware/backend/toolchain, viewport/device
-   scale, sample count, cold/warm conditions, timing endpoints and owner-ratified
-   limits. This proposal invents no latency target or feasibility result.
+   scale, sample count, cold/warm conditions and timing endpoints under the
+   D1-approved diagnostic boundary. Preserve work/resource obligations; latency
+   stays undecided, with no invented target or feasibility result.
 6. Present actual preparation outputs and independent readiness review for the
    S5A execution packet. A successful fixture validator is neither native GUI
    proof nor completion of S5A-C01's entire contract or WDQ adoption.
 
 Fixture construction and dispatch-evidence preparation have owner approval.
-The former installed preparation/landing obstacle is retired. Measurement
-provenance and reviewer provision remain for the explicit C02 disposition below.
+The former installed preparation/landing obstacle is retired. D1–D4 dispositions are now recorded below; reviewer reservation and exact
+pinned-packet review remain at C02.
 No native readiness, implementation or acceptance is asserted.
 
 ## Reconciled S5A-C01 execution packet — 2026-09-30
@@ -221,8 +224,8 @@ row without replacing its predicates.
 | Junction/no-connect | Connection anchor; dot or complete X; junction is Net member, no-connect object-only | Typed hits, selection unwired; U1/U2/U4 |
 | Schematic text/drawing | Text layout predicate/glyph cue; strokes path rule, fills complete area; independent drawings | Text/drawing hit-kind gaps, U1/U2/U4 |
 | Hierarchical sheet body | Inert selection; double-click reserved for descend; navigation not implemented by S5A | Ratified exclusion `dat-sheet-interaction-reentry-9ee` |
-| Footprint Editor pad/owned text/graphics | Pad anchor incl. number; all other owned text independent; path/fill rules; definitions merely related to instances | Native editor unavailable. Typed profile/oracle tests possible; native rows unverified, C02 disposition D2 |
-| Symbol Editor pin/owned text/graphics | Pin connection anchor incl. stub/terminal/name/number; other text independent; body fill independent | Native editor unavailable; same D2, never claim placed-pin proof substitutes |
+| Footprint Editor pad/owned text/graphics | Pad anchor incl. number; all other owned text independent; path/fill rules; definitions merely related to instances | Outside current native acceptance by PM026 D2 amendment; unavailable/unverified, deferred `dat-footprint-selection-native-6hfa`. Profile tests are supporting only. |
+| Symbol Editor pin/owned text/graphics | Pin connection anchor incl. stub/terminal/name/number; other text independent; body fill independent | Outside current native acceptance by PM026 D2 amendment; unavailable/unverified, deferred `dat-symbol-selection-native-euub`. Placed-pin proof cannot substitute. |
 | Proposal | Explicit whole action from overlay/lane, not primitive; region/Ctrl+A exclude | Route-action path exists; distinct Proposal type/lifetime U1/U2 |
 | Review | Same action ID with Review kind, lane/evidence surface; evidence child never independent | Evidence rendering exists; kind/acquisition U1/U2 |
 | Diagnostic | Fingerprint from marker/checks/lane; target merely related; matching new fingerprint survives | Type/Inspector exists; marker pointer gap U1/U2/U4 |
@@ -325,8 +328,8 @@ undo-redo/save-reopen/accessibility/failure-recovery are exercised by the cases
 above and the existing nine-dimension rows, not erased by a happy-path screenshot.
 Undo-redo means external authorized fixture history plus zero selection history;
 no S5A edit engine is built to test it. Definition-editor native rows remain
-unavailable; board/schematic child collapse and pure profile tests do not close
-them. Full hierarchical-sheet selection and dimensions retain only their already
+unavailable/unverified and outside this delivery's native acceptance under PM026
+D2; board/schematic child collapse and pure profile tests do not close them. Full hierarchical-sheet selection and dimensions retain only their already
 ratified exclusions. Missing proposal/diagnostic marker or semantic connectivity
 metadata is implementation work inside the selected scope, not accepted absence.
 
@@ -338,7 +341,7 @@ metadata is implementation work inside the selected scope, not accepted absence.
 | 256 context IDs | UVT 2.2.19, `a30cbcfe`; binding serialization bound, not selection membership or performance acceptance. |
 | 4096 point-query candidates | Existing `hit.rs` constant and S3 reference in UVT 2.2.17. Point-query work bound only; no provenance authorizes copying it as a region completion bound. Region chunk constant/preview tuning must be explicit and tested for exactness/cancel; no latency inferred. |
 | 4px activation/24px edge/1px marquee/2px crisp cue | Ratified interaction/visual geometry, not timing budgets. Apply in physical device pixels across live camera/scale, retaining PM052 transient resize exception. |
-| Fixture-specific S5A latency | Foundation plan asks for controlling budgets; preparation/S06 defer actual numbers. No derived S5A numerical latency criterion or populated selection timing baseline found in these sources. Missing provenance D1, not silently satisfied or substituted with performance S5 GPU figures. |
+| Fixture-specific S5A latency | Foundation plan asks for controlling budgets; preparation/S06 defer actual numbers. No derived S5A numerical latency criterion or populated selection timing baseline found in these sources. Owner D1 keeps latency undecided; no substitution of performance S5 GPU figures or numerical acceptance gate. |
 
 PM051 withdraws GPU 4/8ms blocking gates only. Adjacent CPU/duty/resource
 thresholds keep their authority; no cap is changed by this plan. No observed
@@ -347,12 +350,12 @@ percentages and the accepted limited pointer assessment are scoped observations,
 not selection responsiveness baselines. Review affected local resource admission
 with existing owners; do not open DRM qualification or target chasing.
 
-At C04, proposed bounded functionality timing is one cold and one warm replay
+At C04, D1-approved bounded diagnostic timing is one cold and one warm replay
 per board/schematic dense case on one pinned reference configuration, plus one
-repeat to reveal variability, with exact N/method/input/output and per-trial
-results; setup failure or correctness loss stops the affected batch for
-assessment. This is a proposed collection boundary subject to C02, not a budget
-or campaign grant. Do not invent percentile confidence from that small sample.
+warm repeat to reveal variability (three attempts per dense board/schematic case,
+no automatic retries), with exact N/method/input/output and per-trial results; setup failure or correctness loss stops the affected batch for
+assessment. D1 approves this diagnostic collection boundary; actual collection remains
+subject to C02 execution authorization, not a budget or performance campaign. Do not invent percentile confidence from that small sample.
 Record input-to-committed-subject, evaluation frame work, overlay preparation and
 observed presentation separately where observable; unavailable display timing
 stays unmeasured. Instrumented/uninstrumented observer effects must be identified;
@@ -416,28 +419,37 @@ relocation in that owning lane when implemented. No speculative harness platform
 or general test ledger is proposed. Required affected governance/contract gates
 run per commit; compiling proof uses run_cargo_guarded.py, serially.
 
-**D1 — missing latency provenance.** Owner must disposition whether execution
-proceeds with deterministic work/correctness/resource criteria and the bounded
-missing-only timing observations above while latency stays undecided. This is
-an explicit specification disposition, not a silently waived controlling budget.
-Any new binding time threshold needs PM051 derivation/evidence/rationale and
-owner ratification before enforcement. No benchmark collection now.
+**D1 — latency disposition: recorded, specification only.** Owner direction:
+keep S5A latency budgets undecided under PM051; preserve deterministic work,
+correctness and resource obligations; approve this packet's bounded diagnostic
+observations without turning them into numerical acceptance criteria. Scope
+approval does not start collection: D5 and exact C02 execution authorization
+remain required. No baseline, binding latency target or feasibility result is
+claimed. New thresholds still require PM051 evidence/derivation/rationale and
+owner ratification; adjacent resource/CPU obligations and performance S5 remain
+unchanged. The diagnostic method above is approved at its finite scope.
 
-**D2 — unavailable definition-editor native rows.** Exact board/schematic scope
-is executable without building new editors; shared definition profile predicates
-remain testable, but native Footprint/Symbol Editor proof cannot currently run.
-Owner must record treatment of these outstanding rows before claiming complete
-acceptance. A scope deferral changing PM026 obligations requires its numbered
-amendment; this packet grants no automatic waiver or new editor execution.
+**D2 — native acceptance scope: recorded and numbered amendment reconciled.**
+The owner limits this delivery's native acceptance to board and schematic. PM026
+now records the amendment; UVT 2.2.14 and conformance 8.1 carry it through.
+Footprint/Symbol Editor native rows stay explicitly unverified, deferred and
+tracked respectively by `dat-footprint-selection-native-6hfa` / `dat-symbol-selection-native-euub`,
+related to `dat-symbol-footprint-editor-design-5gs`. Their complete requirements
+remain in the matrix. Re-entry requires the corresponding normal native editor
+and its own authorized implementation/proof packet. Shared profile tests support
+one configured backbone but never pass absent native rows. No new editor
+execution, whole-four-editor acceptance or disappearance of obligations follows.
 
-**D3 — conformance refusal ledger boundary.** Intake
-`dat-s5a-refusal-ledger-8fhn` (related to the build; no execution claim). Conformance §8 names engine
-batch-guard R1–R4 as landing with S5A, whereas PM026/UVT 2.2.14 explicitly
-reserve mutation/batch guard for S5B. Higher doctrine controls: implement no
-mutation guard or operation path in S5A. S5A proves disabled seams, zero dispatch
-and exact blocker disclosure; R1–R4 engine mutation proof remains future work.
-Obtain explicit disposition and owning conformance-route reconciliation before
-marking that ledger complete; no R assertion is labeled passed here.
+**D3 — conformance refusal boundary: recorded and reconciled.** Owner direction
+preserves PM026 read-only precedence. The complete owning conformance route
+(editor shell/pane prototypes, design/conformance specs, PM019/021 and Publish
+brief) was reviewed. Conformance §8.1.1 now retains R1–R4 as TO-ENFORCE future
+S5B-or-later mutation proof; the S5A table and locked-selection reference no
+longer demand that engine guard. S5A proves acquisition refusal (D4), disabled
+mutation seams, exact blocker disclosure and zero authored Operations/shard/
+journal delta. The original 42 assertions are retained across both phases, with
+none marked passed here. `dat-s5a-refusal-ledger-8fhn` resolves only this
+specification contradiction after landing; it does not close mutation proof.
 
 **D4 — derived-subject modifier transition: resolved, specification only.**
 Owner approval, 2026-09-30: "preserve derived Run/Global Net/Bus subjects and
@@ -497,10 +509,38 @@ governance (501 classified), parity (20 inventories), progress coverage, source
 health (2672 files) and diff whitespace checks passed. These check specification
 integration only; no build, native run or D4 implementation proof occurred.
 
+**Pinned execution packet:** `S5A-C02-PACKET-D1-D4`, in this single existing
+artifact. Its immutable Git commit and blob identity are returned at landing;
+review that exact revision, including the complete original seven fixture
+families, requirement/owner/class tables, U1–U5, N01–N17 and D4 expansion,
+PM026 scope amendment, conformance phase split, D1 diagnostic boundary,
+evidence-reuse/negative/unavailable cases and D5 arrangements. A later content
+change requires review of the new packet revision; there is no second competing
+execution plan. This is a pinned specification candidate, not a built binary or
+executed proof. Fixture/handler/environment IDs and native results remain future
+outputs to bind under the authorized units, never invented during planning.
+
+**D1–D3 same-change record.** Owner dispositions are recorded in PM026, UVT,
+conformance, foundation requirements, this packet and the S5A draft contract.
+Five complete evidence routes are reconciled; all existing documents retain
+classification. Two deferred editor proof intakes preserve re-entry obligations;
+no existing dependency, editor work or successor is claimed/authorized. C01 is
+complete planning; return the temporary amendment claim to pending C02. D5
+reservation and review of this exact packet are the remaining owner questions.
+No prototype, runtime, fixture, dependency, build or native experiment changes.
+Non-compiling reconciliation checks passed: project-state (61 items), generated
+projection, traceability (28 routes/124 artifacts), governance (501 classified),
+parity (20 inventories), progress coverage, source health (2672 files) and
+whitespace. A direct inventory review preserved all 42 original machine assertion
+IDs, moved only R1–R4 to future mutation scope, retained six scenario groups/54
+dimensions, and confirmed only the S5A Frontier record changed with C02 pending
+and no claim. These results prove governance integration, not feature acceptance.
+
 **Exact C02 presentation scope:** this committed packet, complete original
 fixture-family table, requirements/owners and N01–N17, U1–U5 boundaries,
 PM026/PM049/PM051/PM052 preservation, D1–D5, unavailable scenario accounting and
-no enrollment/trust change. The older six draft readiness questions map here:
+no enrollment/trust change. D1–D4 are resolved specification dispositions;
+D5 and exact packet review remain pending. The older six draft readiness questions map here:
 complete routes/classes → authority/class tables; dispatch → U2/U3/U5;
 fixture closure → U5; foundation/dimensions → N01–N17; mechanisms/prerequisites
 → discrepancy dispositions/D1–D4; independent review → D5. Null historical

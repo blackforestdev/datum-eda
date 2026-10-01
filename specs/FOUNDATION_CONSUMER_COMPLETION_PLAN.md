@@ -53,7 +53,8 @@ Resolve the tracked Run/context-envelope discrepancy
 implementing that vocabulary. Preserve PM026 identity/granularity and the
 read-only boundary. Identify native board and schematic scenarios, keyboard,
 focus, accessibility/non-color, dense-selection and deterministic performance
-proof with the controlling fixture budgets. Record any unavailable scenario
+proof with controlling deterministic work/resource requirements; D1 keeps latency
+budgets undecided. Record any unavailable scenario
 honestly; do not waive it because the current renderer cannot demonstrate it.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C02 -->
@@ -68,30 +69,32 @@ selection visuals or this completion plan is not execution authorization.
 S5A-C01 reconciliation is recorded in
 `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` under
 `S5A-C01-PACKET`: current owners/classes, U1–U5, native N01–N17, evidence reuse
-and D1–D5. Its completion is planning only. Actual fixture/handler bindings and
+and recorded D1–D4 dispositions plus pending D5. Its completion is planning only.
+Actual fixture/handler bindings and
 native evidence are future execution outputs, not fabricated C01 receipts.
 PM044 retired WDQ enrollment/source-promotion prerequisites; no replacement
 trust ceremony is requested. PM026/051/052 remain controlling.
 
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:PERFORMANCE-PROVENANCE -->
-Resolve D1: the packet found no derived S5A fixture latency budget. Disposition
-execution with retained deterministic correctness/work/resource criteria and
-bounded missing-only observations while latency remains undecided, or require
-an evidence-backed budget proposal first. No unsupported numerical gate is
-silently waived, promoted or claimed met.
+D1 owner disposition is recorded (2026-09-30): keep S5A latency budgets
+undecided under PM051, preserving deterministic work/correctness/resource
+obligations. The packet's bounded diagnostic observations are approved in scope
+without becoming numerical acceptance criteria. Collection still awaits C02
+execution authorization; no budget or observed capability is fabricated.
 
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:UNAVAILABLE-NATIVE-ROWS -->
-Resolve D2: native Footprint/Symbol Editor scenarios are unavailable. Specify
-how their outstanding proof affects the exact board/schematic execution and
-acceptance scope; shared profile tests do not replace native editor proof.
-Any change to ratified obligations requires the applicable numbered amendment.
+D2 owner disposition and PM026 numbered scope amendment are recorded
+(2026-09-30): native acceptance for this delivery covers board/schematic only.
+Footprint/Symbol Editor rows remain explicitly unverified, deferred and tracked
+by `dat-footprint-selection-native-6hfa` / `dat-symbol-selection-native-euub` for their editor work.
+Shared profile/placed-parent tests never pass those rows; the complete matrix,
+shared ownership and original product obligations remain preserved.
 
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:REFUSAL-BOUNDARY -->
-Resolve D3: the conformance ledger labels future engine refusal assertions as
-S5A landings, while PM026 reserves mutation/batch guard for S5B. Confirm the
-higher read-only boundary and authorize the owning conformance reconciliation;
-S5A proves disabled seams/non-mutation/blocker disclosure without adding a guard
-or claiming future R1–R4 mutation proof passed.
+D3 owner disposition is reconciled (2026-09-30): PM026 read-only precedence
+controls. Conformance §8.1.1 retains R1–R4 as future S5B-or-later mutation proof;
+S5A proves acquisition refusal, disabled seams, exact blocker disclosure and zero
+authored mutation. No mutation guard/infrastructure or R1–R4 pass is claimed.
 
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:DERIVED-MODIFIERS -->
 D4 is owner-approved and reconciled (2026-09-30): preserve derived Run/Global

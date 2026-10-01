@@ -63,6 +63,40 @@ is consumer selection behavior; it introduces no engine mutation guard.
 This owner approval is product/specification authority only, explicitly **not
 S5A implementation execution authorization**. S5A-C02 remains pending.
 
+## Owner-approved S5A native acceptance scope amendment — D2, 2026-09-30
+
+This delivery's native acceptance is limited to **board and schematic**.
+Unavailable native Footprint/Symbol Editor rows in UVT §2.2.16 remain explicitly
+**unverified**, deferred to their respective editor work, not passed or deleted.
+Footprint Editor proof is tracked by `dat-footprint-selection-native-6hfa`; Symbol Editor
+proof by `dat-symbol-selection-native-euub`, both related to the existing editor-persona
+design intake `dat-symbol-footprint-editor-design-5gs`. Re-entry requires the
+normal native editor persona and its own explicitly authorized implementation/
+proof packet. No reviewer availability or editor execution is asserted.
+
+This numbered amendment changes the current native acceptance boundary only.
+The complete specification/class matrix and shared owner/configuration seams
+remain binding; board/schematic parent acquisition, all identity mappings,
+read-only scope and future editor obligations remain unchanged. Pure profile
+checks and placed-parent proof cannot pass unavailable native editor rows.
+Dimensions and hierarchical sheets retain their separately ratified exclusions.
+Board/schematic acceptance cannot be described as acceptance of all four editors.
+
+## Owner-recorded S5A D1/D3 dispositions — 2026-09-30
+
+Under PM051, S5A latency budgets remain **undecided**. Preserve deterministic
+work, correctness and resource obligations. The packet's bounded diagnostic
+observations are approved in scope but are not numerical acceptance criteria;
+collection remains behind S5A-C02 execution authorization and D5 reservation.
+No adjacent resource/CPU requirement or separate performance S5 scope changes.
+
+PM026's read-only precedence governs conformance §8: mutation batch-guard
+R1–R4 are future S5B-or-later mutation proof. S5A proves selection-acquisition
+refusal, disabled mutation seams, exact blocker disclosure and zero authored
+mutation, without building mutation infrastructure or claiming R1–R4 passed.
+D1–D4 specification reconciliation does not complete S5A-C02; execution remains
+pending reviewer reservation and review of the pinned packet.
+
 ## What This Decision Does NOT Do
 
 **It authorizes no implementation.** S5A execution remains separately
