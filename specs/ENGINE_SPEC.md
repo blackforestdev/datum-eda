@@ -1795,3 +1795,22 @@ Target parity note: later milestones still expand the write surface, native
 save/export, and richer normalized query contracts. The current implemented
 API reflects the active `M2` slice; see `specs/PROGRAM_SPEC.md` and
 `specs/MCP_API_SPEC.md`.
+
+## PM053 C01–C03 owning reconciliation — 2026-10-01
+
+[PM053](/docs/decisions/PRODUCT_MECHANICS_053_ELECTRICAL_IDENTITY_AUTHORITY.md) ratifies stable NetId final-state atomic nomination/fallback,
+explicit logical-to-board identity relationships (pending/mismatch are lawful
+incomplete states), and semantic Bus declarations with occurrence-qualified
+bindings. These clauses control conflicting earlier summaries in this document:
+read/cache/reopen never allocate identity; display rename preserves identity,
+while a label edit changing electrical groups follows recorded transitions.
+Bus drawing split/member reorder does not split its declaration; semantic split/
+merge explicitly records survivor and complete redistribution. A declaration
+can resolve with zero drawings. Full interface equality differs from related
+subset/remapping; names/member equality never establishes Bus identity and Bus
+has no board projection. Occurrence identity is source plus stable instance path.
+Malformed references refuse atomically; pending/mismatch must never be published
+as complete cross-domain Net selection. Authored identity/binding source is
+distinct from recomputable graph/projection geometry. Canonical writes and replay
+retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
+support, selection mutation or native acceptance is ratified by this amendment.
