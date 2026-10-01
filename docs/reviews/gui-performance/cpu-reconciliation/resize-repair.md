@@ -307,3 +307,71 @@ This is practical positive evidence for retaining the first win. CPU display
 normalization/tool/cadence are unknown; do not compare4.4% directly with controlled
 one-core figures or turn it into a numerical budget. Zoom was an owner observation,
 not a new automated qualification scope. Preserve both successful candidates.
+
+
+## One remaining-cost localization observation
+
+Current retained-candidate wall logs round most upload/encode/preparation values
+to zero milliseconds. They do not partition remaining CPU. Existing opt-in
+`DATUM_RESIZE_CPU_PROBE` provides process/main-thread CPU windows for configure,
+prepare, acquire, renderer, present and enclosing event rounds. Reuse it unchanged:
+one current retained-candidate Vulkan launch, one10s horizontal observation with
+same fixture/geometry/cadence, readiness/output checks and cgroup boundaries.
+No new build, profiler, dependency, vertical repeat or modified rendering policy.
+Preserve the outcome; no replacement interval or extra sampling. This diagnostic
+identifies the dominant remaining phase and whether work is on the main thread,
+not another comparative speedup or causal observer-overhead assessment. Process
+phase clocks exclude descendants, overlap child scopes, and include activity from
+all application threads; never sum inclusive event-round/renderer/acquire windows
+or equate them to complete cgroup accounting. Log overhead and scope gaps remain
+explicit. Only a supported concrete avoidable-work finding warrants a next correction.
+
+
+Remaining-cost observation completed and sealed in
+`target/cpu-resize-retained-phase-20260930`. Cgroup CPU2.661838s over10.164072s;
+383API presentations,7configurations,577native resize applications. Main-thread
+CPU windows: renderer1.093864s, prepare0.182305s, configure0.017740s,
+present0.060857s. Acquire0.062657s is nested in renderer; enclosing event_round
+1.723960s overlaps those windows. Process CPU nearly matches main-thread windows.
+Do not sum inclusive scopes, infer observer overhead or compare this logged
+packet as another speedup. Ready/changed/restored captures match the retained
+control; restored equals own ready. Exit0, empty group, unchanged pins.
+
+This localizes most observed remaining phase work to main-thread rendering,
+not configuration or scene preparation. It does not yet identify an avoidable
+inner renderer operation. Internal wall labels truncate to whole milliseconds;
+CPU accounting uses microsecond cgroup counters and nanosecond phase clocks.
+The measured CPU reductions are not artifacts of those wall-label roundings.
+
+
+## Post-resize quiet-idle verification
+
+One current retained-candidate launch, no build: use the existing controller and
+accounting, readiness inspection and restored-pixel checks. Two unmeasured owned
+window geometry requests grow width by180logical pixels then restore it. After
+three seconds and the existing exact-extent settling check, observe one five-second
+idle interval. Disable the phase CPU probe; retain existing presentation logging.
+Report CPU/user/system/elapsed, compositor and available GPU counters separately.
+No replacement interval, new resize comparison or numerical acceptance criterion.
+This checks whether retained allocation returns to exact quiet storage without
+recurring configuration or presentation work after interaction. It does not
+qualify long-duration idle, continuous output or all event paths.
+
+
+Post-resize idle packet `target/cpu-resize-retained-idle-20260930` completed once.
+Actual elapsed5.036309s; application/descendant CPU0.001696s, user0.001286s,
+system0.000411s (independent counter rounding accounts for1microsecond sum
+difference),0.033675% of one core. No applied resize, configuration or API
+presentation completions during the interval. Available app DRM engine counters
+unchanged. Ready/setup-restored/idle-restored images identical; exit0, final
+cgroup empty, pins unchanged. KWin CPU0.370s (user0.250,system0.120),7.346650%
+of one core covers the whole desktop, not work attributed to Datum; KWin GPU
+counters permission-denied. This supports correct return to quiet exact storage
+after this resize. It does not establish long-duration idle or observer overhead.
+
+Both allocation-reuse wins remain in the codebase and archived executables. The
+retained variant now has width/height resource evidence and post-resize exact
+quiet-idle evidence. Ordinary default still uses exact-sized allocation; diagnostic
+retention is not silent production adoption. Remaining integration must explicitly
+address the transient resampling boundary and current-host scope; no broader
+hardware policy, new CPU budget, S4 reopening or broad UI acceptance follows.
