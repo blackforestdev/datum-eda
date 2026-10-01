@@ -373,6 +373,14 @@ new readiness PASS. The owner subsequently directed completion of integration
 in this planning session; the external S5A handoff is no longer a prerequisite
 for that authorized work. Product ratification and engine execution stay separate.
 
+The research-backed revision is now `S5A-DERIVED-A1-03` in
+`specs/S5A_DERIVED_AUTHORITY_PLAN.md`: proposed C01–C07 owning-clause
+replacements, E1–E5 scope, F01–F06/Z01–Z05/T01–T04 and explicit M1
+manufacturing-policy dependency. Product owners remain unchanged; proposed
+clauses are not applied to controlling product rules before ratification.
+The proposal is reviewable, not a claim that every execution prerequisite
+is resolved or that any numerical policy has been approved.
+
 **Handoff and completion:** the dedicated researcher returns evidence and
 recommendations; the S5A integrator reconciles the existing owning specifications
 and A1 coordination packet into one revised candidate, marking proposed changes
@@ -395,6 +403,19 @@ integrator obtains its own planning claim before tracked reconciliation. A
 research-session assignment does not establish a live Frontier implementation
 claim. No duplicate approval is needed to continue within this authorized
 research/planning scope; actual scope changes retain normal owner disposition.
+
+### Research-backed proposal completion — 2026-10-01
+
+DA-A1-RESEARCH is complete as a research-backed proposed reconciliation:
+`S5A-DERIVED-A1-03`, its cited dossier, C01–C07 exact proposed owning-clause
+replacements and revised F01–F06/Z/T oracles. This records the owner's direction
+to finish integration in this session rather than require another external-agent
+handoff first. Historical A1-02 is retained in Git; no proposal becomes ratified.
+The planning claim is released and DA-A1-R is selected for renewed independent
+review. M1 manufacturing-error policy remains an explicit mandatory execution/
+acceptance dependency with finite derivation or exact supported-domain amendment
+options; general arc CAM cannot be declared ready by accepting safe refusal.
+No build, fixture, runtime, dependency or native experiment was performed.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
