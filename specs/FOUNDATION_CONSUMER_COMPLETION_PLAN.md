@@ -621,3 +621,30 @@ independent replay and defect dispositions. Obtain owner acceptance before
 claiming delivery or closing the issue. Record any explicit scope disposition
 truthfully; do not imply full native authoring from an accepted partial unit.
 No other task is automatically selected or authorized.
+
+## Bounded E1 ratification and execution disposition — 2026-10-01
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A1-D-E1-AUTHORIZED -->
+The owner ratified C01–C03 at 3730cf16 / S5A-DERIVED-A1-03 / blob
+7e712f81156da247fa09ffc2e3a2b86ee554c2d4 and authorized E1 only. PM053 and
+owning specifications record those rules. Reuse 2a294c16 independent review.
+Reserve the existing owner-facing independent audit session for exact E1
+candidate/replay of identity, binding, Bus and persistence proofs; no fabricated
+review PASS, foundation acceptance or substitution for later complete reviews.
+M1/C04–C07/E2–E4 stay outside execution. Retain S5A C02/partial U1/C05/PM049/052.
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-A2-E1 -->
+Implement C01–C03 through substrate/resolver/native-write owners: versioned source
+identity/bindings, explicit adoption, final-state Net transitions, Bus semantic
+split/merge, canonical operation/inverse/undo/replay/reopen and focused proof.
+Claim this bounded execution step, not full A2 or geometry/query implementation.
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-A2-E1-R -->
+<!-- OWNER:S5A-DERIVED-AUTHORITY:DA-A2-E1-R:E1-REVIEW -->
+Return reserved independent audit of exact E1 candidate and applicable proof;
+identify all unresolved mandatory findings. E1 does not close the prerequisite.
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-A2-D -->
+<!-- OWNER:S5A-DERIVED-AUTHORITY:DA-A2-D:REMAINING-AUTHORITY -->
+Disposition remaining C04–C07/M1 and E2–E4 through their owning routes before
+full A2/A3 execution; no tolerance, acceptance reduction or execution implied.
