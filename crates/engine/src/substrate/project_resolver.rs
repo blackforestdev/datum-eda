@@ -231,6 +231,9 @@ impl ProjectResolver {
         ) = read_component_instance_shards(&self.project_root, &mut objects);
         shards.extend(component_instance_shards);
         diagnostics.extend(component_instance_diagnostics);
+        let (electrical_shards, mut electrical_identities) =
+            super::electrical_identity_store::read(&self.project_root, &mut objects)?;
+        shards.extend(electrical_shards);
         let (relationship_shards, relationships, relationship_statuses, relationship_diagnostics) =
             read_relationship_shards(&self.project_root, &mut objects);
         shards.extend(relationship_shards);
@@ -315,6 +318,19 @@ impl ProjectResolver {
         let (journal_cursor, cursor_diagnostics) =
             read_journal_cursor(&self.project_root, journal.len());
         diagnostics.extend(cursor_diagnostics);
+        for transaction in &journal {
+            for operation in &transaction.operations {
+                if let Some((id, record, delete)) =
+                    super::electrical_identity_store::write(operation)
+                {
+                    if delete {
+                        electrical_identities.remove(&id);
+                    } else {
+                        electrical_identities.insert(id, record.clone());
+                    }
+                }
+            }
+        }
         let mut persisted_component_instances = persisted_component_instances;
         apply_component_instance_journal_to_map(&journal, &mut persisted_component_instances)?;
         apply_import_map_journal_to_map(&journal, &mut import_map)?;
@@ -360,6 +376,7 @@ impl ProjectResolver {
             source_shards: shards,
             objects,
             component_instances,
+            electrical_identities,
             relationships,
             relationship_statuses,
             variants,
@@ -379,6 +396,7 @@ impl ProjectResolver {
             diagnostics,
         };
         model.zone_fills = super::derive_model_zone_fills(&model, persisted_zone_fills)?;
+        super::electrical_identity_validation::validate(&model)?;
         validate_run_evidence_links(&mut model);
         Ok(model)
     }

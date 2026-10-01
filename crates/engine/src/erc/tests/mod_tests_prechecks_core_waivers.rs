@@ -102,6 +102,7 @@ fn authored_waiver_marks_matching_object_finding_as_waived() {
                         value: "10k".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: pin_uuid,
                             number: "1".into(),
                             name: "~".into(),
@@ -168,6 +169,7 @@ fn extra_waiver_matches_rule_objects_independent_of_order() {
                             value: "BUF".into(),
                             fields: Vec::new(),
                             pins: vec![SymbolPin {
+                                library_pin: None,
                                 uuid: pin_a_uuid,
                                 number: "1".into(),
                                 name: "OUT".into(),
@@ -195,6 +197,7 @@ fn extra_waiver_matches_rule_objects_independent_of_order() {
                             value: "BUF".into(),
                             fields: Vec::new(),
                             pins: vec![SymbolPin {
+                                library_pin: None,
                                 uuid: pin_b_uuid,
                                 number: "1".into(),
                                 name: "OUT".into(),

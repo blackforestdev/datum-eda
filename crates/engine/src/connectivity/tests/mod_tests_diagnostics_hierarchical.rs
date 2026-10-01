@@ -35,6 +35,7 @@ fn reports_connectivity_diagnostics_for_dangling_and_anonymous_nets() {
                             fields: Vec::new(),
                             pins: vec![
                                 crate::schematic::SymbolPin {
+                                    library_pin: None,
                                     uuid: pin_a_uuid,
                                     number: "1".into(),
                                     name: "~".into(),
@@ -42,6 +43,7 @@ fn reports_connectivity_diagnostics_for_dangling_and_anonymous_nets() {
                                     position: Point::new(5, 5),
                                 },
                                 crate::schematic::SymbolPin {
+                                    library_pin: None,
                                     uuid: pin_b_uuid,
                                     number: "2".into(),
                                     name: "~".into(),
@@ -71,6 +73,7 @@ fn reports_connectivity_diagnostics_for_dangling_and_anonymous_nets() {
                             value: "10k".into(),
                             fields: Vec::new(),
                             pins: vec![crate::schematic::SymbolPin {
+                                library_pin: None,
                                 uuid: pin_c_uuid,
                                 number: "1".into(),
                                 name: "~".into(),
@@ -201,6 +204,7 @@ fn disconnected_anonymous_nets_get_distinct_names_and_ids() {
                             value: "10k".into(),
                             fields: Vec::new(),
                             pins: vec![crate::schematic::SymbolPin {
+                                library_pin: None,
                                 uuid: Uuid::new_v4(),
                                 number: "1".into(),
                                 name: "~".into(),
@@ -229,6 +233,7 @@ fn disconnected_anonymous_nets_get_distinct_names_and_ids() {
                             value: "10k".into(),
                             fields: Vec::new(),
                             pins: vec![crate::schematic::SymbolPin {
+                                library_pin: None,
                                 uuid: Uuid::new_v4(),
                                 number: "1".into(),
                                 name: "~".into(),

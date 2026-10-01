@@ -96,6 +96,7 @@ fn project_query_nets_reports_native_connectivity_inventory() {
                 value: "10k".into(),
                 fields: Vec::new(),
                 pins: vec![SymbolPin {
+                    library_pin: None,
                     uuid: pin_uuid,
                     number: "1".into(),
                     name: "~".into(),
@@ -192,6 +193,7 @@ fn project_query_diagnostics_reports_native_connectivity_findings() {
                     value: "10k".into(),
                     fields: Vec::new(),
                     pins: vec![SymbolPin {
+                        library_pin: None,
                         uuid: pin_a_uuid,
                         number: "1".into(),
                         name: "~".into(),
@@ -220,6 +222,7 @@ fn project_query_diagnostics_reports_native_connectivity_findings() {
                     value: "10k".into(),
                     fields: Vec::new(),
                     pins: vec![SymbolPin {
+                        library_pin: None,
                         uuid: pin_b_uuid,
                         number: "1".into(),
                         name: "~".into(),
@@ -248,6 +251,7 @@ fn project_query_diagnostics_reports_native_connectivity_findings() {
                     value: "10k".into(),
                     fields: Vec::new(),
                     pins: vec![SymbolPin {
+                        library_pin: None,
                         uuid: pin_c_uuid,
                         number: "1".into(),
                         name: "~".into(),

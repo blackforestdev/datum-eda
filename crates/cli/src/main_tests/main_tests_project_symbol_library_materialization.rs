@@ -421,7 +421,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     let output_pin_uuid = output_pin_id.to_string();
     let output_pin = pin_entries
         .iter()
-        .find(|pin| pin["pin_uuid"].as_str() == Some(output_pin_uuid.as_str()))
+        .find(|pin| pin["library_pin_uuid"].as_str() == Some(output_pin_uuid.as_str()))
         .expect("output pin should be present");
     assert_eq!(output_pin["number"], "OUT");
     assert_eq!(output_pin["electrical_type"], "Output");
@@ -433,7 +433,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     let power_pin_uuid = power_pin_id.to_string();
     let power_pin = pin_entries
         .iter()
-        .find(|pin| pin["pin_uuid"].as_str() == Some(power_pin_uuid.as_str()))
+        .find(|pin| pin["library_pin_uuid"].as_str() == Some(power_pin_uuid.as_str()))
         .expect("power pin should be present");
     assert_eq!(power_pin["number"], "VCC");
     assert_eq!(power_pin["electrical_type"], "PowerIn");
@@ -445,7 +445,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     let open_collector_pin_uuid = open_collector_pin_id.to_string();
     let open_collector_pin = pin_entries
         .iter()
-        .find(|pin| pin["pin_uuid"].as_str() == Some(open_collector_pin_uuid.as_str()))
+        .find(|pin| pin["library_pin_uuid"].as_str() == Some(open_collector_pin_uuid.as_str()))
         .expect("open-collector pin should be present");
     assert_eq!(open_collector_pin["number"], "FAULT");
     assert_eq!(open_collector_pin["electrical_type"], "OpenCollector");
@@ -467,7 +467,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         serde_json::from_str(&nets_output).expect("nets JSON should parse");
     assert!(nets.as_array().unwrap().iter().any(|net| {
         net["pins"].as_array().unwrap().iter().any(|pin| {
-            pin["uuid"] == power_pin_id.to_string()
+            pin["uuid"] == power_pin["pin_uuid"]
                 && pin["component"] == "U1"
                 && pin["pin"] == "VCC"
                 && pin["electrical_type"] == "PowerIn"
@@ -475,7 +475,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     }));
     assert!(nets.as_array().unwrap().iter().any(|net| {
         net["pins"].as_array().unwrap().iter().any(|pin| {
-            pin["uuid"] == open_collector_pin_id.to_string()
+            pin["uuid"] == open_collector_pin["pin_uuid"]
                 && pin["component"] == "U1"
                 && pin["pin"] == "FAULT"
                 && pin["electrical_type"] == "OpenCollector"
@@ -502,7 +502,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
             .iter()
             .any(|entry| {
                 entry["code"] == "power_in_without_source"
-                    && entry["object_uuids"] == serde_json::json!([power_pin_id.to_string()])
+                    && entry["object_uuids"] == serde_json::json!([power_pin["pin_uuid"]])
             })
     );
     let _ = std::fs::remove_dir_all(&root);

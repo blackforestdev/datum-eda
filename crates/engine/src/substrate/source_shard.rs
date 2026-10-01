@@ -136,6 +136,12 @@ pub(super) fn source_shard_taxon_for_path(
     relative_path: &str,
 ) -> Option<SourceShardTaxon> {
     match kind {
+        SourceShardKind::ElectricalIdentity
+            if relative_path.starts_with(".datum/electrical_identities/")
+                && relative_path.ends_with(".json") =>
+        {
+            Some(SourceShardTaxon::ElectricalIdentity)
+        }
         SourceShardKind::Relationship
             if relative_path.starts_with(".datum/relationships/")
                 && relative_path.ends_with(".json") =>
@@ -258,6 +264,10 @@ pub(super) fn validate_source_shard_ownership_path(
             relative_path.starts_with("pool/")
                 && relative_path.ends_with(".json")
                 && pool_source_shard_subdir(relative_path).is_some()
+        }
+        SourceShardKind::ElectricalIdentity => {
+            relative_path.starts_with(".datum/electrical_identities/")
+                && relative_path.ends_with(".json")
         }
         SourceShardKind::Relationship => {
             relative_path.starts_with(".datum/relationships/") && relative_path.ends_with(".json")

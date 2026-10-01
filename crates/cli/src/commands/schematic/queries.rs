@@ -144,10 +144,11 @@ pub(crate) fn query_native_project_symbol_pins(
                 .pin_overrides
                 .iter()
                 .find(|entry| entry.pin == pin.uuid);
-            let anchor_style = anchor_styles.get(&pin.uuid);
+            let anchor_style = anchor_styles.get(&pin.library_pin.unwrap_or(pin.uuid));
             NativeProjectSymbolPinInfoView {
                 symbol_uuid: symbol_uuid.to_string(),
                 pin_uuid: pin.uuid.to_string(),
+                library_pin_uuid: pin.library_pin.map(|id| id.to_string()),
                 number: pin.number,
                 name: pin.name,
                 electrical_type: format!("{:?}", pin.electrical_type),

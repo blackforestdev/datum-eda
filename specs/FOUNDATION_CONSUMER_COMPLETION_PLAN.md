@@ -648,3 +648,54 @@ identify all unresolved mandatory findings. E1 does not close the prerequisite.
 <!-- OWNER:S5A-DERIVED-AUTHORITY:DA-A2-D:REMAINING-AUTHORITY -->
 Disposition remaining C04–C07/M1 and E2–E4 through their owning routes before
 full A2/A3 execution; no tolerance, acceptance reduction or execution implied.
+
+### DA-A2-E1 current implementation — E1-ID-SOURCE-01 (partial)
+
+PM053 C01–C03 ratification/execution remains recorded above; the immutable A1-03
+packet and reused independent review are unchanged. The implemented source unit
+adds closed schema-1 Net/Bus/relationship/interface records, canonical typed
+operations, normal-history retirement protection, revision guards, final-state
+validation, staged source writes and exact recorded inverse/undo/redo/reopen.
+Net nomination records its anchor reason, predecessor IDs and allocations from
+one immutable supplied pre/final partition. Semantic Bus split/merge requires
+complete explicit distribution and interface rebindings, including zero drawings.
+Occurrence source/instance ancestry and unique representation ownership are checked.
+
+Pin/pad certification uses explicit ComponentInstance placement ownership and its
+pinned PinPadMap cell, current library references and source gate/terminal evidence.
+Missing lineage is Unverified; Pending/Mismatch remain lawful, and certification
+is only a binding diagnostic, never complete Global Net membership. Explicit old
+pin adoption changes only relationship provenance; native new pin placement gives
+each placed pin its own UUID and retains the reusable library-pin reference.
+Imports keep existing IDs. A demonstrated live/reopen pool-leaf indexing gap was
+repaired in the existing canonical object owner; source IDs are not regenerated.
+
+Focused verification for the source unit: 20 electrical
+planner/source/history/binding/Bus tests, 17 existing native library tests and 21
+CLI symbol/query/materialization/ERC tests. The native atomic transition fixture
+proves anchor deletion/fallback, merge retirement, required binding reconciliation
+and exact undo/redo/reopen; its partition is supplied by the fixture and does not
+prove a graph producer. Independent review/replay is still reserved and unperformed.
+Commands (each Cargo command uses `scripts/run_cargo_guarded.py --workload proof`):
+`cargo test -p eda-engine api::native_write::electrical --lib` (20 passed),
+`cargo test -p eda-engine api::native_write::library --lib` (17 passed),
+`cargo test -p datum-eda-cli main_tests_project_symbol --bin datum-eda` (21 passed),
+and `cargo clippy -p eda-engine -p datum-eda-cli --all-targets -- -D warnings`.
+These are source-unit tests using canonical native-write fixture authoring and
+existing test support; they are not complete generated native acceptance proof.
+The unchanged private-writer gate fails because project/roots.rs delegates
+bootstrap rather than containing the gate's expected call; tracked as dat-7unq.
+No gate PASS or foundation/S5A acceptance is inferred.
+
+**Remaining technical boundary:** connectivity::schematic_net_info groups by source
+sheet UUID, exposes summary counts/pins/ports and derives UUIDs from names/union
+root coordinates. It supplies neither complete source-member occurrences nor
+independent reused-SheetInstance partitions. It is insufficient for C01's full
+immutable pre/final basis. The source unit therefore does not install an automatic
+editor topology transition or certify arbitrary partitions. The complete
+occurrence-aware topology producer is assigned to E3 in A1-03, whereas the current
+DA-A2-E1 authorization explicitly excludes geometry/query implementation.
+DA-A2-E1 stays in progress: complete producer-backed transition/adoption evidence
+and independent candidate review remain pending. Do not mint scene identities,
+reuse the summary hash, weaken F01–F06, advance DA-A2-E1-R as passed, or restore S5A.
+E2–E4/C04–C07/M1 remain outside the grant; partial U1 and S5A approval are retained.

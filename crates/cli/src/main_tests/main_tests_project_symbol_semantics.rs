@@ -84,6 +84,7 @@ fn seed_native_symbol_with_pins(root: &Path, sheet_uuid: Uuid) -> Uuid {
         fields: Vec::new(),
         pins: vec![
             SymbolPin {
+                library_pin: None,
                 uuid: pin_a_uuid,
                 number: "1".to_string(),
                 name: "OUT_A".to_string(),
@@ -91,6 +92,7 @@ fn seed_native_symbol_with_pins(root: &Path, sheet_uuid: Uuid) -> Uuid {
                 position: Point { x: 10, y: 20 },
             },
             SymbolPin {
+                library_pin: None,
                 uuid: pin_b_uuid,
                 number: "2".to_string(),
                 name: "IN-_A".to_string(),

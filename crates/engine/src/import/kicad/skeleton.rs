@@ -78,6 +78,7 @@ pub(super) fn parse_schematic_skeleton(
                     .iter()
                     .enumerate()
                     .map(|(index, template)| SymbolPin {
+                        library_pin: None,
                         uuid: import_uuid(
                             &namespace_kicad(),
                             &format!("schematic-symbol-pin/{uuid}/{index}/{}", template.number),

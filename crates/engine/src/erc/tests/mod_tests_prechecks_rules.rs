@@ -123,6 +123,7 @@ fn reports_output_to_output_conflict() {
                             value: "BUF".into(),
                             fields: Vec::new(),
                             pins: vec![SymbolPin {
+                                library_pin: None,
                                 uuid: Uuid::new_v4(),
                                 number: "1".into(),
                                 name: "OUT".into(),
@@ -150,6 +151,7 @@ fn reports_output_to_output_conflict() {
                             value: "BUF".into(),
                             fields: Vec::new(),
                             pins: vec![SymbolPin {
+                                library_pin: None,
                                 uuid: Uuid::new_v4(),
                                 number: "1".into(),
                                 name: "OUT".into(),
@@ -224,6 +226,7 @@ fn reports_power_in_without_source() {
                         value: "IC".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: Uuid::new_v4(),
                             number: "8".into(),
                             name: "VCC".into(),
@@ -296,6 +299,7 @@ fn reports_undriven_input_pin() {
                         value: "MCU".into(),
                         fields: Vec::new(),
                         pins: vec![SymbolPin {
+                            library_pin: None,
                             uuid: Uuid::new_v4(),
                             number: "3".into(),
                             name: "SCL".into(),

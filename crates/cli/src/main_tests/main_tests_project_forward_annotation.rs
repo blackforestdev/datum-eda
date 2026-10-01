@@ -95,6 +95,7 @@ fn project_query_forward_annotation_audit_reports_native_reference_alignment() {
                     value: "10k".into(),
                     fields: Vec::new(),
                     pins: vec![SymbolPin {
+                        library_pin: None,
                         uuid: Uuid::new_v4(),
                         number: "1".into(),
                         name: "~".into(),

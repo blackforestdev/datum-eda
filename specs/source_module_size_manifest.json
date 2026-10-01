@@ -301,17 +301,6 @@
       "status": "decomposition-required",
       "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
     },
-    "crates/cli/src/main_tests/main_tests_project_check.rs": {
-      "kind": "rust-test",
-      "limits": {
-        "file_lines": 704
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
-    },
     "crates/cli/src/main_tests/main_tests_project_manufacturing_export.rs": {
       "kind": "rust-test",
       "limits": {

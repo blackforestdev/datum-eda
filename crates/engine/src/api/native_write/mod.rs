@@ -26,6 +26,7 @@ pub mod board_layout;
 pub mod board_routing;
 pub mod component_instances;
 pub mod context;
+pub mod electrical;
 pub mod forward_annotation;
 pub mod genesis;
 pub mod guards;

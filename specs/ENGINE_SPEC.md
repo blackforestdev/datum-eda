@@ -1814,3 +1814,37 @@ as complete cross-domain Net selection. Authored identity/binding source is
 distinct from recomputable graph/projection geometry. Canonical writes and replay
 retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
 support, selection mutation or native acceptance is ratified by this amendment.
+
+### Current bounded E1 primitives — PM053 / DA-A2-E1
+
+The existing substrate/resolver/native-write owners now expose typed electrical
+identity records in `DesignModel.electrical_identities`, a pure final-partition
+nomination planner, canonical identity builders and explicit Bus distribution
+split/merge. Final-state validation, revision guards, staged writes, inverse,
+undo/redo and reopen share the existing transaction path. Native pin materialization
+separates placed identity from optional library-pin reference; pin queries retain
+authored `pin_uuid` and additionally disclose `library_pin_uuid`, using the library
+reference for anchor presentation. Old imported IDs and absent provenance remain.
+
+`net_correspondence_status` reports Complete only for current explicit local intent
+and, for Implemented, certified pin/pad evidence; it also reports Unverified,
+Pending, Mismatch, Stale and Absent. Complete here certifies binding records, not
+a complete derived Global Net membership set. No renderer or selection consumer
+may substitute this diagnostic for the pending complete query producer.
+
+The transition planner requires immutable complete pre/final groups supplied by
+the connectivity owner. It checks nomination/allocation determinism but does not
+resolve topology or certify arbitrary caller partitions. No automatic editor
+transition integration or complete query/adoption campaign is claimed. E1 remains
+in progress; E2–E4, foundation acceptance and native S5A acceptance are separate.
+
+E1 explicit pin adoption writes only the electrical relationship provenance; it
+retains placed IDs and representation bytes. Canonical pool object operations now
+expose nested pins/pads through the same source-owned object index as reopen,
+including bounded update/delete/inverse handling. No source identity is minted
+by indexing. Pending/stale/unverified bindings do not acquire complete membership.
+
+The recorded Net anchor reason distinguishes explicit authoring, unclaimed final
+allocation, surviving anchor and deleted-anchor fallback. Two active Net records
+cannot own one anchor occurrence. See the bounded E1 source/proof/remaining
+producer boundary in FOUNDATION_CONSUMER_COMPLETION_PLAN.md (E1-ID-SOURCE-01).

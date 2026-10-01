@@ -96,6 +96,9 @@ pub struct SymbolField {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SymbolPin {
     pub uuid: Uuid,
+    /// Explicit reusable pin reference; placed UUID remains source identity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub library_pin: Option<Uuid>,
     pub number: String,
     pub name: String,
     pub electrical_type: PinElectricalType,

@@ -15,6 +15,9 @@ pub(super) fn apply_pre_match_operation(
     operation: &Operation,
     diff: &mut CommitDiff,
 ) -> Result<bool, EngineError> {
+    if super::electrical_identity_operations::apply(model, operation, diff)? {
+        return Ok(true);
+    }
     if apply_project_root_operation(model, operation, diff)? {
         return Ok(true);
     }
