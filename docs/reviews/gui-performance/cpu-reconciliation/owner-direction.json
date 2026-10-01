@@ -51,6 +51,12 @@
       "recorded_at": "2026-10-01T04:15:35.497859+00:00",
       "decision": "docs/decisions/PRODUCT_MECHANICS_052_CURRENT_HOST_RESIZE_BUFFER_REUSE.md",
       "scope": "Ratify stated ordinary opt-in retained-buffer adoption and bounded RZ-C05 implementation; exact settled output, both wins retained, no budget/default hardware-policy/S4 change."
+    },
+    "default_adoption": {
+      "owner_statement": "idealy this is not initiated with a special launch code. this should be the default rendering path",
+      "recorded_at": "2026-10-01T04:42:26.848963+00:00",
+      "decision": "docs/decisions/PRODUCT_MECHANICS_052_CURRENT_HOST_RESIZE_BUFFER_REUSE.md",
+      "scope": "Default primary native workspace retained-buffer rendering through existing shared services, preserving prerequisites/exact fallback, diagnostic overrides and exact settled output; no expanded qualification or budget."
     }
   }
 }

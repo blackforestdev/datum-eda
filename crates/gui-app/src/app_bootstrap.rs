@@ -108,7 +108,7 @@ pub(super) struct GuiArgs {
     pub(super) window_size: String,
     #[arg(
         long,
-        help = "Reuse presentation buffers during resize; temporarily resamples, then restores exact output (PM052)"
+        help = "Resize buffer reuse (enabled by default); temporarily resamples, then restores exact output"
     )]
     pub(super) reuse_resize_buffers: bool,
     #[arg(long = "screenshot-out")]
@@ -424,7 +424,10 @@ impl GuiArgs {
         ));
 
         Ok(LaunchState {
-            reuse_resize_buffers: self.reuse_resize_buffers,
+            reuse_resize_buffers: ordinary_resize_reuse(
+                self.reuse_resize_buffers,
+                std::env::var_os("DATUM_DIAGNOSTIC_RESIZE_ALLOCATION").is_some(),
+            ),
             request,
             state,
             camera,
@@ -584,6 +587,10 @@ mod initial_layout_tests {
     }
 }
 
+fn ordinary_resize_reuse(explicit: bool, diagnostic_override: bool) -> bool {
+    explicit || !diagnostic_override
+}
+
 fn validate_resize_reuse(ordinary: bool, diagnostic: bool) -> Result<()> {
     anyhow::ensure!(
         !ordinary || !diagnostic,
@@ -595,8 +602,11 @@ fn validate_resize_reuse(ordinary: bool, diagnostic: bool) -> Result<()> {
 mod resize_reuse_args_tests {
     use super::*;
     #[test]
-    fn ordinary_option_is_explicit_and_rejects_diagnostic_override() {
-        assert!(!GuiArgs::parse_from(["datum-gui"]).reuse_resize_buffers);
+    fn ordinary_reuse_is_default_and_preserves_diagnostic_overrides() {
+        let ordinary = GuiArgs::parse_from(["datum-gui"]);
+        assert!(ordinary_resize_reuse(ordinary.reuse_resize_buffers, false));
+        assert!(!ordinary_resize_reuse(ordinary.reuse_resize_buffers, true));
+        assert!(ordinary_resize_reuse(true, false));
         assert!(GuiArgs::parse_from(["datum-gui", "--reuse-resize-buffers"]).reuse_resize_buffers);
         assert!(validate_resize_reuse(true, true).is_err());
         assert!(validate_resize_reuse(true, false).is_ok());
