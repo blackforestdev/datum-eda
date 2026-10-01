@@ -660,6 +660,10 @@ Net nomination records its anchor reason, predecessor IDs and allocations from
 one immutable supplied pre/final partition. Semantic Bus split/merge requires
 complete explicit distribution and interface rebindings, including zero drawings.
 Occurrence source/instance ancestry and unique representation ownership are checked.
+Canonical label/port/Bus/entry deletion removes all source-bound Bus projections
+in the same batch while preserving declaration/scalars. Unreconciled interfaces
+refuse atomically; explicit caller removal/rebinding is required. Last-drawing
+deletion, reused source occurrences and exact undo/redo/reopen are covered.
 
 Pin/pad certification uses explicit ComponentInstance placement ownership and its
 pinned PinPadMap cell, current library references and source gate/terminal evidence.
@@ -670,17 +674,19 @@ each placed pin its own UUID and retains the reusable library-pin reference.
 Imports keep existing IDs. A demonstrated live/reopen pool-leaf indexing gap was
 repaired in the existing canonical object owner; source IDs are not regenerated.
 
-Focused verification for the source unit: 20 electrical
+Focused verification for the source unit: 21 electrical
 planner/source/history/binding/Bus tests, 17 existing native library tests and 21
 CLI symbol/query/materialization/ERC tests. The native atomic transition fixture
 proves anchor deletion/fallback, merge retirement, required binding reconciliation
 and exact undo/redo/reopen; its partition is supplied by the fixture and does not
 prove a graph producer. Independent review/replay is still reserved and unperformed.
 Commands (each Cargo command uses `scripts/run_cargo_guarded.py --workload proof`):
-`cargo test -p eda-engine api::native_write::electrical --lib` (20 passed),
+`cargo test -p eda-engine api::native_write::electrical --lib` (21 passed),
 `cargo test -p eda-engine api::native_write::library --lib` (17 passed),
 `cargo test -p datum-eda-cli main_tests_project_symbol --bin datum-eda` (21 passed),
 and `cargo clippy -p eda-engine -p datum-eda-cli --all-targets -- -D warnings`.
+The Bus-projection follow-up additionally passes the 5 existing schematic
+connectivity builder tests and engine all-targets Clippy with warnings denied.
 These are source-unit tests using canonical native-write fixture authoring and
 existing test support; they are not complete generated native acceptance proof.
 The unchanged private-writer gate fails because project/roots.rs delegates
@@ -699,3 +705,20 @@ DA-A2-E1 stays in progress: complete producer-backed transition/adoption evidenc
 and independent candidate review remain pending. Do not mint scene identities,
 reuse the summary hash, weaken F01–F06, advance DA-A2-E1-R as passed, or restore S5A.
 E2–E4/C04–C07/M1 remain outside the grant; partial U1 and S5A approval are retained.
+
+Independent partial-candidate review handoff: review E1-ID-SOURCE-01 at the
+commit containing this record, including preceding 720929ed. Replay the focused
+commands above and inspect exact source/journal preimages, identities, occurrence
+references, retirement, Bus distributions and library certification. F02 has
+planner plus supplied-fixture atomic persistence proof; F03/F04 have bounded
+source/binding/Bus proof; read-byte checks cover the E1 portion of F06. F01
+geometry, complete F02 graph-backed native transitions, complete F03/F04 derived
+membership and full F05/F06 publication/resource/consumer proof are unverified.
+Do not convert unit-test PASS into complete F01–F06 or E1/foundation acceptance.
+The minimum missing integration is an existing-connectivity-owner internal full
+pre/final occurrence partition and canonical transition composition, with affected
+bindings reconciled in the same final batch. Public complete membership exposure
+and physical geometry remain separate E3/E2 work; neither summary IDs nor context
+lists can substitute. Resolve this producer/execution sequencing boundary before
+expanding beyond the recorded E1 source unit. No renewed C01–C03 ratification or
+unchanged E1 authorization is requested.

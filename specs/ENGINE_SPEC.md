@@ -1848,3 +1848,8 @@ The recorded Net anchor reason distinguishes explicit authoring, unclaimed final
 allocation, surviving anchor and deleted-anchor fallback. Two active Net records
 cannot own one anchor occurrence. See the bounded E1 source/proof/remaining
 producer boundary in FOUNDATION_CONSUMER_COMPLETION_PLAN.md (E1-ID-SOURCE-01).
+
+Canonical schematic label/port/Bus/entry deletion reconciles Bus projections
+without retiring the semantic declaration. Remaining interface dependencies
+require explicit same-batch reconciliation; automatic semantic interface deletion
+is not inferred. Net topology transitions still require the complete graph basis.
