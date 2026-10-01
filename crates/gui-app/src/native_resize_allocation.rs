@@ -4,6 +4,8 @@ use std::time::{Duration, Instant};
 
 pub(super) struct ResizeAllocation {
     enabled: bool,
+    retain_peak: bool,
+    peak_extent: Option<[u32; 2]>,
     last_extent: [u32; 2],
     quiet: Option<Duration>,
     deadline: Option<Instant>,
@@ -11,11 +13,13 @@ pub(super) struct ResizeAllocation {
 
 impl ResizeAllocation {
     pub(super) fn new(window: &winit::window::Window) -> Self {
-        let enabled = match std::env::var("DATUM_DIAGNOSTIC_RESIZE_ALLOCATION").as_deref() {
-            Err(std::env::VarError::NotPresent) | Ok("exact") => false,
-            Ok("quantized") => true,
-            other => panic!("invalid DATUM_DIAGNOSTIC_RESIZE_ALLOCATION: {other:?}"),
-        };
+        let (enabled, retain_peak) =
+            match std::env::var("DATUM_DIAGNOSTIC_RESIZE_ALLOCATION").as_deref() {
+                Err(std::env::VarError::NotPresent) | Ok("exact") => (false, false),
+                Ok("quantized") => (true, false),
+                Ok("quantized-retained") => (true, true),
+                other => panic!("invalid DATUM_DIAGNOSTIC_RESIZE_ALLOCATION: {other:?}"),
+            };
         if enabled {
             use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
             assert!(matches!(
@@ -30,6 +34,8 @@ impl ResizeAllocation {
         let size = window.inner_size();
         Self {
             enabled,
+            retain_peak,
+            peak_extent: None,
             last_extent: [size.width, size.height],
             quiet: None,
             deadline: None,
@@ -51,9 +57,10 @@ impl ResizeAllocation {
         assert!(refresh != 0);
         self.quiet = Some(Duration::from_nanos(3_000_000_000_000 / u64::from(refresh)));
         super::super::append_gui_diagnostic_line(format!(
-            "DIAGNOSTIC resize allocation quantum=32 refresh_millihertz={refresh} quiet_display_intervals=3 scale={} monitor={:?}",
+            "DIAGNOSTIC resize allocation quantum=32 refresh_millihertz={refresh} quiet_display_intervals=3 scale={} monitor={:?} retain_peak={}",
             window.scale_factor(),
-            monitor.name()
+            monitor.name(),
+            self.retain_peak
         ));
     }
 
@@ -64,6 +71,15 @@ impl ResizeAllocation {
             && self.enabled
             && let Some(quiet) = self.quiet
         {
+            if self.retain_peak {
+                let mut peak = self.peak_extent.unwrap_or(self.last_extent);
+                for axis in 0..2 {
+                    if extent[axis] > peak[axis] {
+                        peak[axis] = round_storage(extent[axis]);
+                    }
+                }
+                self.peak_extent = Some(peak);
+            }
             self.deadline = Some(now + quiet);
         }
         self.last_extent = extent;
@@ -71,11 +87,12 @@ impl ResizeAllocation {
 
     pub(super) fn extent(&self, logical: [u32; 2]) -> [u32; 2] {
         if self.deadline.is_some() {
-            logical.map(|v| {
-                v.div_ceil(32)
-                    .checked_mul(32)
-                    .expect("resize extent overflow")
-            })
+            if let Some(peak) = self.peak_extent {
+                assert!(peak[0] >= logical[0] && peak[1] >= logical[1]);
+                peak
+            } else {
+                logical.map(round_storage)
+            }
         } else {
             logical
         }
@@ -96,6 +113,7 @@ impl ResizeAllocation {
 
     pub(super) fn cancel(&mut self) {
         self.deadline = None;
+        self.peak_extent = None;
     }
 
     pub(super) fn configured(&self, logical: [u32; 2], physical: [u32; 2]) {
@@ -106,6 +124,13 @@ impl ResizeAllocation {
             ));
         }
     }
+}
+
+fn round_storage(value: u32) -> u32 {
+    value
+        .div_ceil(32)
+        .checked_mul(32)
+        .expect("resize extent overflow")
 }
 
 impl super::SurfaceTransaction {
@@ -151,6 +176,8 @@ mod tests {
         let now = Instant::now();
         let mut state = ResizeAllocation {
             enabled: true,
+            retain_peak: false,
+            peak_extent: None,
             last_extent: [1344, 840],
             quiet: Some(Duration::from_millis(50)),
             deadline: None,
@@ -168,5 +195,33 @@ mod tests {
         state.resized([1358, 840], now);
         state.resized([0, 0], now);
         assert!(state.deadline().is_none());
+    }
+    #[test]
+    fn peak_storage_reuses_shrink_and_preserves_static_axis_then_releases() {
+        let now = Instant::now();
+        let mut state = ResizeAllocation {
+            enabled: true,
+            retain_peak: true,
+            peak_extent: None,
+            last_extent: [1344, 840],
+            quiet: Some(Duration::from_millis(50)),
+            deadline: None,
+        };
+        state.resized([1339, 840], now);
+        assert_eq!(state.extent(state.last_extent), [1344, 840]);
+        state.resized([1400, 840], now + Duration::from_millis(1));
+        assert_eq!(state.extent(state.last_extent), [1408, 840]);
+        state.resized([1347, 840], now + Duration::from_millis(2));
+        assert_eq!(state.extent(state.last_extent), [1408, 840]);
+        state.resized([1347, 900], now + Duration::from_millis(3));
+        assert_eq!(state.last_extent, [1347, 900]);
+        assert_eq!(state.extent(state.last_extent), [1408, 928]);
+        assert!(state.settle(now + Duration::from_millis(53)));
+        assert_eq!(state.extent(state.last_extent), [1347, 900]);
+        assert!(state.peak_extent.is_none());
+        state.resized([1348, 900], now + Duration::from_millis(54));
+        assert_eq!(state.extent(state.last_extent), [1376, 900]);
+        state.resized([0, 0], now + Duration::from_millis(55));
+        assert!(state.peak_extent.is_none() && state.deadline().is_none());
     }
 }
