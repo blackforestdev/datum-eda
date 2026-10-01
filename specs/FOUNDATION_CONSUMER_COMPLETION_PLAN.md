@@ -1,8 +1,8 @@
 # Foundation consumer completion contracts
 
 Status: consumer completion requirements; S5A execution authorization retained,
-dependent implementation paused for the owner-requested foundation-gap amendment
-review/disposition below. Other consumer execution boundaries remain unchanged.
+dependent implementation paused for owner-authorized research-backed foundation
+reconciliation below. Other consumer execution boundaries remain unchanged.
 Tracking: FOUNDATION-WORKFLOW-SPEC / WDQ-F01,
 `dat-manual-foundation-contracts-fsw`; repair intake
 `dat-foundation-consumer-plans-9at`.
@@ -290,6 +290,103 @@ undecided latency budgets and exact eventual foundation resumption conditions.
 No implementation, prototype, fixture, build or native experiment accompanies
 this review transition; the reviewed A1, S5A and foundation-amendment pins remain
 unchanged. The gap issue advances but does not close.
+
+### Research-first correction and handoff — 2026-10-01
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A1-RESEARCH-DIRECTION -->
+
+The owner rejected the adequacy of A1-02's domain basis across the **whole**
+foundation specification, not Q4 alone, and explicitly directed research before
+implementation. After the proposed dedicated-research / S5A-integration /
+independent-review workflow, the owner instructed: “i need you to roll this out
+as you have suggested. let get moving.” This is the required **revise** disposition
+at DA-A1-D and authorization for research/planning reconciliation. It ratifies
+none of Q1–Q4 and grants no engine execution, new dependency, fixture production,
+build, native experiment or numerical acceptance requirement.
+
+The reserved review session withdrew its A1-02 readiness recommendation as
+premature. The earlier DA-A1-R PASS above, recorded in `d898b082`, is preserved
+as historical evidence and **superseded for readiness** by this correction; it
+cannot advance engine authorization. Retain unchanged A1-02 at
+`c1929bc94a8c408e9e09196b3096b56c3ff97ced`, packet blob
+`8c6025e15cb93dad4cdfd0f214a051fda0deb5a1`, as an unratified research input,
+not conclusions to defend. This supplemental disposition controls its operational
+status; the immutable packet's previous next-step prose is historical.
+
+DA-A1 remains complete only as production of that historical planning packet.
+Select new **DA-A1-RESEARCH** with planning authorization; return DA-A1-R to
+pending renewed independent review after research-backed reconciliation.
+DA-A1-D remains pending for future ratification/execution disposition of the
+revised exact candidate. No owner ratification is inferred from the instruction
+to research. Original S5A C02 approval, partial U1 `a4537277`, PM026/049/051/052,
+C05 and deferred editor/latency obligations remain unchanged. Dependent C03 and
+engine A2/A3 stay paused; completed rendering/resize phases stay closed.
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-A1-RESEARCH -->
+#### DA-A1-RESEARCH — investigate and reconcile the complete EDA foundation
+
+Use concrete workflows to establish contracts before choosing record layouts:
+rename, split/reconnect copper, instantiate a sheet twice, refill a multi-region
+Zone, move curved copper, undo/replay and reopen. For each, identify source and
+occurrence identity, logical versus physical connectivity, visible selection,
+failure behavior and DRC/CAM consequences. Cover all Q1–Q4:
+
+- Electrical identity, names, anchors and persistence/transaction lifetime.
+- Hierarchy definition versus occurrence, local/global scope, ports, Bus/member
+  relations and schematic-to-board binding.
+- Physical copper connectivity and assigned electrical intent, pads/vias/tracks/
+  arcs/current fill, disconnected regions, stale fill and conflicting assignments.
+- Authored geometry, robust contact/qualification, precision, transformations,
+  interchange and consistent display/check/manufacturing consumers.
+- Selection origins and semantic/physical subjects across revisions, keyboard
+  and pointer interaction, accessible refusal and understandable lifetime.
+
+Begin with Datum doctrine, existing owning contracts, historical M7/engine/native
+format/connectivity work, prior research and present implementation. Classify
+established authority, contradictory clauses, missing implementation and genuinely
+new product choices separately. Research mature EDA/CAD primary documentation
+and relevant implementation evidence; cite exact sources/versions where available,
+limitations and which precedents fit Datum rather than copying another product's
+semantics. Runtime behavior cannot override ratified authority. Treat A1's records,
+Zone successor rule, Track encoding and all other proposals as hypotheses.
+
+The research result must provide a workflow/edge-case matrix, evidence-linked
+recommendations, alternatives/tradeoffs, compatibility and feasibility risks,
+minimum necessary architecture/dependencies, and specific unresolved product
+choices. Missing evidence stays explicit. A checkpoint exposes major findings
+and scope risks before broad rewriting; it is not a new approval gate for every
+research step or permission for an open-ended EDA redesign. Limit the inquiry
+to the foundation required by approved S5A and its affected shared consumers.
+
+Research may inspect source and primary external material, without copying or
+adopting third-party implementation dependencies. No production edits, compiling
+prototypes, fixtures, hardware studies or native campaigns are authorized here.
+Read-only investigation requires no implementation claim. Tracked research and
+specification reconciliation require the normal synchronized planning claim and
+complete owning-route review before edits.
+
+**Handoff and completion:** the dedicated researcher returns evidence and
+recommendations; the S5A integrator reconciles the existing owning specifications
+and A1 coordination packet into one revised candidate, marking proposed changes
+unratified until the owner decision. Do not create a competing source of product
+truth or silently narrow S5A acceptance. Record source-to-clause traceability,
+resolved/unresolved findings, implementation dependencies and proof oracles.
+DA-A1-RESEARCH completes only when this research-backed reconciliation is ready
+for renewed independent review; this rollout is not research completion.
+
+The owner-facing review session challenges the revised candidate separately from
+implementation. Its coordination of the research is disclosed; no claim of
+independence from research authorship or completed review is made. The existing
+candidate implementation/replay reservations are preserved, not expanded by this
+handoff. After review and mandatory finding disposition, return one consolidated
+owner ratification and bounded engine execution/reviewer decision at DA-A1-D.
+
+The external S5A session is **not automatically notified or claimed** by this
+record. The owner conveys this disposition and subsequent evidence to it; that
+integrator obtains its own planning claim before tracked reconciliation. A
+research-session assignment does not establish a live Frontier implementation
+claim. No duplicate approval is needed to continue within this authorized
+research/planning scope; actual scope changes retain normal owner disposition.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C03 -->
 ### S5A-C03 — implement the shared read-only selection backbone
