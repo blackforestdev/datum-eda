@@ -21,20 +21,26 @@ surface.
 
 1. A temporary multi-selection is a compound Inspector subject, not an authored
    group. Reserve `Group <name>` for an explicitly created persistent object.
-2. The Inspector keeps canvas membership intact while exposing `All N` and
+2. Derived Run/Global Net/Bus subjects retain their identity: membership-changing
+   additive/subtractive click or marquee acquisition refuses with an accessible
+   explanation; existing no-ops preserve the subject. Membership still re-derives
+   per revision. The complete authoritative resolution, never a capped context
+   list, determines membership (owner-approved D4; PM026 and UVT §2.2.2/§2.2.20).
+   This selection refusal neither builds nor invokes an engine mutation guard.
+3. The Inspector keeps canvas membership intact while exposing `All N` and
    explicit per-type scopes. Scope changes are view/target declarations, not
    hidden reselection.
-3. Common values render normally, divergent values render `Mixed`, and
+4. Common values render normally, divergent values render `Mixed`, and
    unavailable properties explain incompatibility. Compatibility is typed
    semantic identity plus value domain/units/verb, never display-label equality.
-4. Every batch edit states its exact affected set, preflights the complete
+5. Every batch edit states its exact affected set, preflights the complete
    declared scope, and commits all-or-nothing through one typed operation batch
    and one undo step. Locked, stale, invalid, constrained, or incompatible
    members are never silently skipped.
-5. Derived properties—bounds, coverage, effective rules, connectivity,
+6. Derived properties—bounds, coverage, effective rules, connectivity,
    population, checks, provenance—remain inspectable but are not written back as
    aggregate member values.
-6. Connectivity-, hierarchy-, rule-, library-, variant-, manufacturing-, or
+7. Connectivity-, hierarchy-, rule-, library-, variant-, manufacturing-, or
    generated-geometry consequences route to dedicated domain tools rather than
    a generic property field.
 

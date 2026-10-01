@@ -24,7 +24,9 @@ bounded preparation approval is preserved, not treated as full S5A execution.
 The original proposal alone did not complete S5A-C01. The reconciled packet
 below now accounts for complete domain scope, actual existing fixture inputs,
 production integration, numerical provenance and review arrangements. Future
-fixture/handler outputs remain unbuilt; D1–D5 require explicit C02 disposition.
+fixture/handler outputs remain unbuilt. D4 is now owner-approved specification
+only; remaining C02 dispositions/reconciliations and execution authorization
+remain required.
 The six historical readiness questions are mapped, not represented as proof.
 
 ## Existing inputs and their permitted interpretation
@@ -287,7 +289,7 @@ accessible-state and non-mutation evidence. Reopen resolves authoritative source
 | N06/S01/S03 | Deterministic overlapping candidates, Select menu labels/order, preview and Select All; dismiss outside/Escape preserves prior; every seam disabled with reason | Manual ambiguity resolution, B1–3; full menu build remains separate |
 | N07/S02/S03 | Revision survivor updates; deleted member drop/report, delete+recreate new ID not selected; undo old ID not resurrected; loss of focus leaves none; stale restored/context IDs drop/report | Lifetime identity, L1–4/L6/L8; source setup deltas distinct |
 | N08/S02/S03 | Close pane, swap content/sheet, replace Project, missing scene; committed set survives pane loss, gesture cancels, Project replacement clears; duplicate panes have independent cameras, full equal cues only where resolvable | Scope/lifecycle/partial projection, L7/L9/I2/I3 |
-| N09/S01/S02 | Conductive origin section/via/zone ladder; pads/labels explicit Select Net; disconnected same-net run and scalar/bus distinctions; revise membership and remove origin/semantic ID | Deterministic authoritative derived sets, L5/I4; no label/pixel connectivity |
+| N09/S01/S02 | Conductive origin section/via/zone ladder; pads/labels explicit Select Net; disconnected same-net run and scalar/bus distinctions; D4 positive/refusal/no-op and revise membership/remove origin/semantic ID below | Deterministic authoritative derived sets and D4 transition, L5/I4; no label/pixel connectivity |
 | N10/S02/S04 | Proposal/Review equal action ID but distinct kinds; explicit Diagnostic fingerprint; commit/discard/check invalidation dissolves/report, equal new fingerprint survives; region/Ctrl+A exclude; no mixed non-authored compound | Artifact lifecycle and nine-kind parity, A7/I1/O5 |
 | N11/S04 | Singleton then homogeneous/mixed compounds; All N/per-type switch preserves membership/focus; Common vs Mixed exact canonical quantities 5080000/5080001nm despite equal rounded display; absent/incompatible field Unavailable with reason | Full typed output oracle and scope, O1–4/O6–7 |
 | N12/S04/S05 | 256 and 257 enumerated AND derived members; origin/semantic identity/focus retained, list omitted only above cap; Inspector/Console/terminal-AI round-trip agree on revision/kind/totals/reasons | Bounded transport without membership loss, O5/I1 |
@@ -296,6 +298,27 @@ accessible-state and non-mutation evidence. Reopen resolves authoritative source
 | N15/S06 | Whole-owned symbol/footprint and glyph/point silhouettes, hidden no cue, locked grey+approved padlock, selection beats hover, optional focus no extra persistent cue; all eight same/related mappings, channel collisions | V1–5/I2–3, native goldens + HUMAN panels 1–7/9; verify static bytes/uploads/CAM, not appearance alone |
 | N16/S06 | 100k authored objects with separate primitive count, sub-2px cues, exactly 65,536 versus overflow; whole-pane exact union, no omitted members, maximal proposal/finding collision; repeated warm select/deselect/cancel/reopen | D1–2, bounded capacity/work and preserved channels; HUMAN panels 8/9 |
 | N17/S01–06 | Keyboard-only Ctrl+A/Escape/menu and Inspector scope/inventory; terminal/text owns keys; focused versus pointer pane; accessible names, selected/focus/count/Mixed/Unavailable/hidden/locked/dropped states; grayscale/CVD/high contrast/reduced motion | Programmatic and non-color parity; unavailable native accessibility route blocks this row |
+
+**D4 expansion of existing cases (future proof, not executed).** Run these
+for every applicable derived kind: board copper Run/Global Net and schematic
+wire/bus Run/Global Net/Bus. Semantic Bus has no board projection; that expected
+absence is not a native board Bus pass. Bind actual IDs and independently
+resolved complete membership, including hidden/cross-pane members.
+
+| Existing cases | Concrete D4 inputs and oracle | Decision enabled |
+| --- | --- | --- |
+| N01/N09 positive | Acquire Run/Global Net/Bus through its ratified ladder or explicit verb; plain-click an eligible authored object replaces normally; Ctrl+A and idle Escape retain their contracts. Then create an authored Compound using normal Shift/Ctrl grammar. | Derived preservation does not disable ordinary explicit acquisition or invent a mixed-subject kind. |
+| N01/N02/N09 refusal | On A–B–C derived membership, Shift-click outside D and Ctrl-click selected independent B; repeat Shift/Ctrl rectangle and lasso, including a mixture of no-op and membership-changing candidates. Observe whole-result refusal, identical subject/focus/member IDs and pane projections at the same revision, with explained add/remove and kind. | No partial change, conversion, member exception or enlarged pad/pin/entry authority. |
+| N01/N02/N09 no-op | Shift-click existing member; Ctrl-click outside object; additive region containing only members; subtractive region containing no members; empty result. Check no manufactured focus, no refusal announcement and unchanged subject. | Existing idempotence survives the new rule. |
+| N02/N09 revision/cancel | Using separately authorized fixture history, connect E, disconnect B, rename surviving semantic ID, delete Run origin or semantic ID; after a refusal verify fresh complete derivation or dissolve/report. Include undo/recreate under existing lifetime rules, revision during region evaluation, and Escape/focus/capture/content cancellation. | Refusal cannot pin stale membership, resurrect selection or override cancellation/revision exactness. |
+| N09/N12 completeness | Repeat refusal/no-op predicates with 256 and 257+ authoritative members, hidden members and cross-pane projections; omitted context list must not change the outcome. Bus scalar member nets and net parent bodies remain merely-related. | Transport truncation and projection cannot determine membership or violate PM026 mappings. |
+| N13/N17 accessibility/non-mutation | Native modified pointer and keyboard invocation of the same acquisition action, keyboard access to Inspector explanation, programmatic reason/action/kind, unchanged accessible selection/count/focus, grayscale/high contrast/reduced motion and no status bar. Announce completed refusal, not pointer-motion updates or no-ops. All cases observe zero Operations, source-shard and journal delta. | One shared reducer and accessible refusal without design writes, mutation guard or screenshot-only acceptance. |
+
+No new harness platform or verification campaign is required: these are bounded
+extensions to the existing acquisition, lifecycle, output and accessible native
+batches. Cancelling before commit produces the existing cancellation outcome,
+not a committed D4 refusal. Any unavailable keyboard/accessibility observation
+remains explicitly unverified and blocks that affected proof row.
 
 Every S01–S06 dimension remains required: normal/invalid/cancel/scope/precision/
 undo-redo/save-reopen/accessibility/failure-recovery are exercised by the cases
@@ -416,16 +439,29 @@ and exact blocker disclosure; R1–R4 engine mutation proof remains future work.
 Obtain explicit disposition and owning conformance-route reconciliation before
 marking that ledger complete; no R assertion is labeled passed here.
 
-**D4 — derived-subject modifier transition.** Intake
-`dat-selection-derived-modifier-caa8` (related; owner specification question). The reviewed contract defines
-add/remove authored members and distinguishes enumerated Compound from derived
-Run/Net/Bus, but does not explicitly say whether modified acquisition while a
-derived subject is active converts it into an enumerated compound or replaces/
-refuses it. No new runtime reproduction is needed to establish this missing
-transition rule. Owner must select that behavior through the selection route
-(and amend PM026 if its identity law changes); do not implement implicit
-conversion from displayed/capped member lists. Normal authored-member grammar
-and explicit semantic acquisition remain ratified.
+**D4 — derived-subject modifier transition: resolved, specification only.**
+Owner approval, 2026-09-30: "preserve derived Run/Global Net/Bus subjects and
+explicitly refuse membership-changing additive/subtractive acquisition,
+including marquee, while preserving existing no-op and lifetime behavior."
+The owner explicitly withheld S5A implementation execution. PM026 and UVT
+§2.2.2/§2.2.20 now record this rule through the selection route;
+`dat-selection-derived-modifier-caa8` closes only the missing product rule.
+Normal authored-member acquisition/granularity and explicit semantic acquisition
+remain ratified. No derived subject becomes a Compound or gains member
+exceptions; no engine mutation guard is introduced.
+
+For a Run through sections A–B–C, Shift-click outside section D refuses addition;
+Ctrl-click B refuses removal. The same applies to a Global Net and semantic Bus.
+Shift-click an existing independently selectable member and Ctrl-click an
+unselected object are no-ops, without compound focus or refusal announcement.
+Normal parent acquisition still applies to pads/pins/owned entries. For marquee,
+any candidate that would change membership refuses the whole result; additive
+all-already-selected and subtractive no-selected-member results are no-ops.
+Inspector/programmatic refusal explains action and subject kind and how to start
+an explicit authored selection; no modal/status-bar/color-only dependency.
+Membership still follows current connectivity after refusal, and missing
+origin/semantic identity follows the existing drop/report law. Decisions use
+complete authoritative resolution, never the 256-ID envelope.
 
 **D5 — independent reviewer and bounded execution.** No reviewer is reserved
 or availability asserted. C02 must name an available reviewer/session independent
@@ -445,6 +481,21 @@ This cosmetic historical label does not reopen approved construction or block
 planning. Approved lock SVG candidate remains to_author in icon_set.json; U4
 may author the code-native asset against that design, not redesign the prototype.
 No other HTML change is required by this packet.
+
+**D4 same-change governance record.** This amendment reuses the complete route
+review from the unchanged committed C01 baseline, with focused rereview of the
+selection sources/guidance, UVT, Selection Study DOM/CSS and Rendering Book;
+all preparation-route consumers and the foundation completion source/consumer
+remain reviewed. Selection/prototype/preparation/foundation route digests are
+updated only for these authorized specification changes. No prototype HTML,
+runtime, fixture, dependency or resize/performance behavior is changed. PM026
+records the owner's rule without reclassifying identity or granting execution.
+The temporary planning claim covers this amendment only; it is released back
+to pending S5A-C02 after specification reconciliation. Non-compiling project-state
+(61 items), generated projection, traceability (28 routes/124 artifacts),
+governance (501 classified), parity (20 inventories), progress coverage, source
+health (2672 files) and diff whitespace checks passed. These check specification
+integration only; no build, native run or D4 implementation proof occurred.
 
 **Exact C02 presentation scope:** this committed packet, complete original
 fixture-family table, requirements/owners and N01–N17, U1–U5 boundaries,
