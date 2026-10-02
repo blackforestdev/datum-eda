@@ -1745,3 +1745,48 @@ dat-7unq and full foundation/S5A acceptance pending. E1 and nominal PASS,
 E1-IR-01/02 resolution, retained S5A approval/partial U1/C05 and PM026/049/051/052
 are preserved. Release implementation claim/beads together; no later engine or
 S5A work is selected by this bounded delivery.
+
+
+### DA-M1-R — returned independent policy-independent PASS
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-M1-R-PASS -->
+The owner returned **PASS** from the reserved independent owner-facing audit
+session `/root`, separate from implementation. Source:
+`9a3e8e8d499bfc161a90daa794ac5460e78cc102`; packet
+**S5A-DERIVED-M1-CANDIDATE-01**, commit
+`fbb6b1491f99f3290a7db78c5d5ffa4d7dbf174d`, Git blob
+`1f2ffa0624622a427768c4b1fe93382c5142c26e`. No mandatory findings.
+The reviewed source and historical packet remain unchanged.
+
+Independent source review and hash-verified direct replay passed **40 distinct
+cases**: 33 export, two native manufacturing and five CLI tests. The separately
+replayed CLI arc test overlaps those five and is not counted twice. Independent
+Fraction determinant calculations, without production geometry or the producer
+oracle, confirm T04's **1/3 nm center error** and **2/3 nm occupied-deviation
+bound**. Exact circular output, source-bound diagnostics and refusal preserving
+existing artifacts passed. Ordinary unequal-radius construction remains unavailable.
+
+Evidence: `target/s5a-m1-independent-fbb6b149/review.json`, SHA-256
+`97b337db123072a23cf6994a9dabfa124bd5b5c3431de529cbf9f51aaa0f9825`.
+Recording verified the packet Git blob, two binary hashes, four recipe hashes,
+six review-artifact hashes and the primary Gerber PDF hash against this record.
+No compilation or replay was repeated. The reviewer used pinned unoptimized
+binaries on Linux 6.12.107+deb13-amd64 x86_64, Rust 1.98.0, fixture TMPDIR
+`target/s5a-nominal-proof/run-fixtures`. An initial direct CLI invocation omitted
+repository-configured `RUST_MIN_STACK` and overflowed its test-thread stack;
+that setup run is uncredited. Both CLI filters passed with the configured
+16 MiB stack. The retained logs record the failure and corrected replay separately.
+Producer 1,149-engine-test and engine/CLI Clippy evidence, prior E1/nominal PASS
+and adequate rendering/resize evidence were reused at their existing scope.
+
+**Complete DA-M1-R only; select DA-M1-D, open/unclaimed owner decision.**
+This PASS covers policy-independent implementation, not a nonzero manufacturing
+allowance. Positive rational-center CAM/T04 remains unpassed; refusal does not
+satisfy it. The packet's missing supported process/reader error allocation still
+prevents a defensible nonzero recommendation. Unequal-radius/fuzzy construction,
+complete connected-job topology, unsupported geometry/process/pool/materialization
+and dat-7unq remain unverified. Complete foundation F01–F06 and S5A U2–U5/N01–N17
+acceptance remain pending. E1-IR-01/02 resolution, nominal PASS, retained S5A
+approval/partial U1/C05 and PM026/049/051/052 are preserved. No production,
+prototype, dependency or renderer/resize changes accompany this review receipt;
+no additional implementation authorization or repeated unchanged review is sought.
