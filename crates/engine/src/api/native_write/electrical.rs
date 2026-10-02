@@ -214,3 +214,8 @@ pub fn build_adopt_schematic_net_identities(
         .push_ops(crate::substrate::electrical_adoption_operations(model)?)
         .finish()
 }
+
+#[cfg(test)]
+mod binding_fixture;
+#[cfg(test)]
+mod binding_membership_tests;

@@ -1898,3 +1898,14 @@ for the same revision and recorded transaction identity. No public membership
 query, new geometry, renderer identity, startup migration, dependency or
 C04–C07/E2–E4/manufacturing work is introduced. Independent E1 review and full
 foundation/S5A acceptance remain separate.
+
+E1-IR-01/02 implementation corrections enforce these existing PM053 laws at
+unchanged-connectivity and identity-only write boundaries too: adopted schematic
+Net identity, surviving anchor and recorded transition provenance cannot be
+replaced by incompatible explicit writes; revision-only writes remain lawful.
+Recorded undo/redo retains its history exemption. Complete-capable correspondence
+validates each terminal against its logical Net's complete current/final occurrence
+partition, including the ordered instance path. Diagnostics report Mismatch for
+a terminal outside that partition and Unverified if authority is unavailable;
+Pending/Mismatch remain explicitly incomplete and do not certify historical or
+contradictory evidence. This uses the internal producer, not public query expansion.

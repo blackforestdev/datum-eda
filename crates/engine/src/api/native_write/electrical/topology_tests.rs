@@ -322,3 +322,6 @@ fn forged_transition_and_stale_source_batch_refuse_without_authored_mutation() {
 mod atomic;
 #[path = "topology_hierarchy_tests.rs"]
 mod hierarchy;
+
+#[path = "topology_identity_write_tests.rs"]
+mod identity_writes;

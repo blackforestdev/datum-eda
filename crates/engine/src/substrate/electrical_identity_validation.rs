@@ -18,10 +18,7 @@ pub(super) fn validate_operations(
         return Ok(());
     }
     let basis = super::electrical_basis::ElectricalBasis::new(model, operations)?;
-    if model.electrical_identities.values().any(|r| matches!(&r.identity, ElectricalIdentity::Net {anchor,retired:false,..} if super::electrical_transaction::schematic_class(&anchor.class))) {
-        let groups=super::electrical_topology_source::partitions(model,operations)?;
-        super::electrical_transaction::previous(model,&groups)?;
-    }
+    let membership = super::electrical_net_membership::index(model, operations)?;
     let mut owners = BTreeMap::new();
     let mut net_anchors = BTreeMap::new();
     for record in model.electrical_identities.values() {
@@ -131,6 +128,18 @@ pub(super) fn validate_operations(
                         return Err(invalid("PinPadMap not pinned by ComponentInstance"));
                     }
                     source_basis.occurrence(model, &basis.schematic_terminal)?;
+                    if !matches!(
+                        intent,
+                        NetRelationshipIntent::Pending | NetRelationshipIntent::Mismatch
+                    ) && !membership
+                        .get(logical_net)
+                        .is_some_and(|members| members.contains(&basis.schematic_terminal))
+                    {
+                        return Err(invalid(
+                            "correspondence terminal is outside logical Net occurrence membership",
+                        ));
+                    }
+
                     let pad = model
                         .objects
                         .get(&basis.board_pad.object_id)
@@ -231,6 +240,7 @@ pub fn net_correspondence_status(model: &DesignModel, net_id: Uuid) -> NetCorres
     let mut found = false;
     let mut unverified = false;
     let source_basis = super::electrical_basis::ElectricalBasis::new(model, &[]);
+    let membership = super::electrical_net_membership::index(model, &[]);
     let mut board_owners = std::collections::BTreeSet::new();
     for record in model.electrical_identities.values() {
         if let ElectricalIdentity::NetRelationship {
@@ -261,6 +271,16 @@ pub fn net_correspondence_status(model: &DesignModel, net_id: Uuid) -> NetCorres
                 if model.electrical_identities.values().any(|r| matches!(&r.identity, ElectricalIdentity::NetRelationship { logical_net: other, board_net: Some(b), intent: NetRelationshipIntent::Implemented, .. } if *other != net_id && b.object_id == reference.object_id)) { return NetCorrespondenceStatus::Mismatch }
             }
             for basis in evidence {
+                // A reusable pin UUID alone cannot certify another occurrence or Net.
+                match membership
+                    .as_ref()
+                    .ok()
+                    .and_then(|index| index.get(logical_net))
+                {
+                    Some(members) if members.contains(&basis.schematic_terminal) => {}
+                    Some(_) => return NetCorrespondenceStatus::Mismatch,
+                    None => return NetCorrespondenceStatus::Unverified,
+                }
                 if !current(model, &basis.component_instance)
                     || !current(model, &basis.pin_pad_map)
                     || !current(model, &basis.board_pad)

@@ -11,7 +11,12 @@ pub(super) fn compose(
     mut batch: OperationBatch,
     kind: TransactionKind,
 ) -> Result<OperationBatch, EngineError> {
-    if kind != TransactionKind::Normal || !batch.operations.iter().any(topology_edit) {
+    if kind != TransactionKind::Normal
+        || !batch
+            .operations
+            .iter()
+            .any(|op| topology_edit(op) || net_write(model, op))
+    {
         return Ok(batch);
     }
     // Old projects require explicit adoption; reading or editing unadopted source
@@ -21,7 +26,33 @@ pub(super) fn compose(
     let after = super::electrical_topology_source::partitions(model, &batch.operations)?;
     let previous = previous(model, &before)?;
     if before == after {
+        // No connectivity change can authorize reanchoring, retirement or invented
+        // transition provenance. Revision-only writes are lawful and preserve IDs.
+        for old in model
+            .electrical_identities
+            .values()
+            .filter(|r| schematic_net(&r.identity))
+        {
+            if batch
+                .operations
+                .iter()
+                .filter_map(super::electrical_identity_store::write)
+                .any(|(id, _, _)| id == old.id)
+            {
+                let mut expected = old.clone();
+                expected.object_revision = next(old.object_revision)?;
+                require_record(&batch.operations, &expected)?;
+            }
+        }
         return Ok(batch);
+    }
+    // Retired source history is immutable even while unrelated topology changes.
+    for old in model.electrical_identities.values().filter(|r| matches!(&r.identity, ElectricalIdentity::Net { anchor, retired: true, .. } if schematic_class(&anchor.class))) {
+        if batch.operations.iter().filter_map(super::electrical_identity_store::write).any(|(id,_,_)| id == old.id) {
+            let mut expected = old.clone();
+            expected.object_revision = next(old.object_revision)?;
+            require_record(&batch.operations, &expected)?;
+        }
     }
     let unclaimed: Vec<_> = after
         .iter()
@@ -217,6 +248,18 @@ pub(super) fn next(revision: ObjectRevision) -> Result<ObjectRevision, EngineErr
 }
 pub(super) fn schematic_class(class: &str) -> bool {
     matches!(class, "wires" | "labels" | "junctions" | "ports" | "pins")
+}
+fn schematic_net(identity: &ElectricalIdentity) -> bool {
+    matches!(identity, ElectricalIdentity::Net { anchor, .. } if schematic_class(&anchor.class))
+}
+fn net_write(model: &DesignModel, op: &Operation) -> bool {
+    super::electrical_identity_store::write(op).is_some_and(|(id, record, _)| {
+        schematic_net(&record.identity)
+            || model
+                .electrical_identities
+                .get(&id)
+                .is_some_and(|old| schematic_net(&old.identity))
+    })
 }
 fn topology_edit(op: &Operation) -> bool {
     matches!(

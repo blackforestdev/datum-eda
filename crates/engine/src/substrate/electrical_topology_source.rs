@@ -20,7 +20,33 @@ pub(super) fn schematic(
         ) {
             continue;
         }
-        let mut value = super::journal::materialized_shard_value(model, shard)?;
+        // Final validation includes newly staged shard references whose files and
+        // journal entries do not exist yet. Read their canonical batch preimages.
+        let pending_create = operations.iter().find_map(|operation| match operation {
+            Operation::CreateSchematicSheet {
+                relative_path,
+                sheet,
+                ..
+            } if shard.kind == SourceShardKind::SchematicSheet
+                && shard.relative_path == format!("schematic/{relative_path}") =>
+            {
+                Some(sheet.clone())
+            }
+            Operation::CreateSchematicDefinition {
+                relative_path,
+                definition,
+                ..
+            } if shard.kind == SourceShardKind::SchematicDefinition
+                && shard.relative_path == format!("schematic/{relative_path}") =>
+            {
+                Some(definition.clone())
+            }
+            _ => None,
+        });
+        let mut value = match pending_create {
+            Some(value) => value,
+            None => super::journal::materialized_shard_value(model, shard)?,
+        };
         for operation in operations {
             match shard.kind {
                 SourceShardKind::SchematicRoot => {

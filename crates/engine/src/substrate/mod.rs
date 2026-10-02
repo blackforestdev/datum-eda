@@ -27,6 +27,7 @@ mod electrical_identity;
 mod electrical_identity_operations;
 mod electrical_identity_store;
 mod electrical_identity_validation;
+mod electrical_net_membership;
 mod electrical_topology_source;
 mod electrical_transaction;
 mod electrical_transaction_bindings;
