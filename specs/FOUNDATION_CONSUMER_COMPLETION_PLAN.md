@@ -1198,3 +1198,44 @@ were swept. Source-health, dependency authority and Cargo resource-policy gates
 pass; normal module budgets and the existing 77-entry debt inventory are unchanged.
 DA-A2 stays claimed/in progress. E1 PASS, PM026/049/051/052, partial S5A approval,
 reserved independent review and all recorded unresolved gates remain preserved.
+
+
+### DA-A2 bounded board Run acquisition unit
+
+Source baseline `c5a0d4dd`. Immutable snapshot queries now use the existing
+connectivity owner's complete nominal same-Net board graph. Results carry
+project/revision/source basis, exact authored occurrences, connected current
+Zone cells counted once and separate cross-Net contact evidence. Native
+acquisition refuses absent/unknown assignment, invalid occurrence/revision,
+unavailable geometry/fill, ambiguous nonpoint Zone and hits outside occupied
+copper. Arc bulges, drill exclusions and actual conductive via spans determine
+contact; source names, numeric layer order, authored outlines, screen geometry,
+context caps and visibility never do. Unknown contacting assignment refuses the
+Run; unavailable foreign geometry cannot become short-free contact evidence.
+Multi-layer pad apertures still lack certified barrel exposure and remain
+explicitly unavailable, not completed F01 coverage or a plating assumption.
+
+Focused native proof passes **5 tests**, `target/s5a-board-run-native-tests.log`:
+branched same-Net versus disconnected/foreign copper, exact authored fault pairs,
+arc versus chord, actual via span and empty drill center, Zone C1/C2 hit/nonpoint
+qualification, external same-Net bridge, stale/missing/Unsupported versus current
+Filled-empty, 257-member completeness, revision/path refusal, immutable authored
+and journal bytes, canonical topology edit/undo and reopen. Final broader
+regression passes **1,116 engine tests** in
+`target/s5a-board-run-engine-replay.log`. The isolated freshly built test binary
+`target/s5a-nominal-proof/debug/deps/eda_engine-5b3bfac123e4e569` has SHA-256
+`0a3e6456e68ddfa8925035a36b89726887637553154aa2bbbb9f3454130a3d7a`.
+The proof uses a disk-backed owned fixture TMPDIR; the Cargo target and resource
+guard retain their required policy. Real PM022 extraction moves existing label
+name preference to `label_semantics`, connectivity root 722→709 pre-test lines;
+its exact ceiling ratchets. Source-health and all 13 policy regressions pass.
+Guarded final engine Clippy passes with warnings denied in
+`target/s5a-board-run-lint-final.log`; three test-only slice-clone lints were
+corrected after the recorded broader replay without changing production behavior.
+
+This unit proves acquisition, not persistent Zone component qualification or
+successor lineage. Those, physical Bus Runs, shared adapters and current-fill DRC
+remain mandatory DA-A2 work. No independent PASS, full foundation/S5A acceptance,
+T04/C07/M1 allowance, renderer/resize change or new dependency is inferred.
+DA-A2 remains claimed/in progress, with all prior approvals and unresolved gates
+preserved.

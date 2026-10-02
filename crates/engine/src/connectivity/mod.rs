@@ -1,3 +1,8 @@
+mod board_physical;
+pub(crate) use board_physical::{BoardCopperSource, board_run};
+pub use board_physical::{
+    BoardRunMembership, CrossNetContact, PhysicalQueryFailure, ZoneCopperProjection,
+};
 mod segment_geometry;
 use segment_geometry::point_on_wire_segment;
 mod label_semantics;
@@ -701,24 +706,6 @@ fn child_hierarchical_labels_by_name(
         grouped.entry(label.name.clone()).or_default().push(label);
     }
     grouped
-}
-
-fn preferred_name(labels: &[LabelRef], ports: &[PortRef]) -> Option<String> {
-    labels
-        .iter()
-        .find(|label| matches!(label.kind, LabelKind::Global))
-        .or_else(|| {
-            labels
-                .iter()
-                .find(|label| matches!(label.kind, LabelKind::Hierarchical))
-        })
-        .or_else(|| {
-            labels
-                .iter()
-                .find(|label| matches!(label.kind, LabelKind::Local))
-        })
-        .map(|label| label.name.clone())
-        .or_else(|| ports.first().map(|port| port.name.clone()))
 }
 
 #[cfg(test)]

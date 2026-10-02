@@ -62,6 +62,54 @@ pub fn validate_track(track: &Track) -> Result<()> {
     Ok(())
 }
 
+pub fn validate_pad(pad: &PlacedPad) -> Result<()> {
+    RoundedBox::pad(pad)?;
+    Ok(())
+}
+pub fn validate_via(via: &Via) -> Result<()> {
+    RoundedBox::via(via)?;
+    Ok(())
+}
+pub fn validate_polygon(polygon: &Polygon) -> Result<()> {
+    polygon_vertices(polygon)?;
+    Ok(())
+}
+fn box_contains_point(shape: RoundedBox, p: Point) -> Result<bool> {
+    let p = point(p);
+    let closest = [
+        max(
+            shape.min[0],
+            if lt(shape.max[0], p[0])? {
+                shape.max[0]
+            } else {
+                p[0]
+            },
+        )?,
+        max(
+            shape.min[1],
+            if lt(shape.max[1], p[1])? {
+                shape.max[1]
+            } else {
+                p[1]
+            },
+        )?,
+    ];
+    Ok(
+        norm(sub(p, closest)?)?.compare(shape.radius.square()?)? != Ordering::Greater
+            && norm(sub(p, shape.center)?)?.compare(shape.hole.square()?)? != Ordering::Less,
+    )
+}
+pub fn pad_contains_point(pad: &PlacedPad, p: Point) -> Result<bool> {
+    box_contains_point(RoundedBox::pad(pad)?, p)
+}
+pub fn via_contains_point(via: &Via, p: Point) -> Result<bool> {
+    box_contains_point(RoundedBox::via(via)?, p)
+}
+pub fn conductive_layer(stackup: &Stackup, id: LayerId) -> Result<()> {
+    layer_index(stackup, id)?;
+    Ok(())
+}
+
 fn track_half(track: &Track) -> Result<R> {
     if track.width <= 0 {
         return Err(GeometryError::InvalidWidth);

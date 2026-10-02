@@ -131,6 +131,13 @@ an i64 determinant. Both remaining legacy ceilings ratchet; no normal budget or
 exception changes. Public selection queries remain a child of the existing
 membership owner, with separate native occurrence/binding/completeness proofs.
 
+PM054 board Run query integration moves the existing label-name preference
+behavior into the shared `label_semantics` owner. The connectivity root decreases
+from 722 to 709 pre-test lines; its exact ceiling ratchets downward. The new
+board physical-component owner and native acquisition proof module remain within
+normal budgets. This preserves summary behavior and does not move geometry or
+selection authority into a scene consumer. Remaining legacy debt stays open.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

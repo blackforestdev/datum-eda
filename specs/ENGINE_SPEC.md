@@ -2019,3 +2019,18 @@ is contact but not a strict minimum-clearance violation. The Board-only DRC path
 still lacks certified current-fill authority and refuses relevant arc/Zone pairs;
 current-fill integration remains mandatory DA-A2 work. No outline, screen path,
 manufacturing approximation or generated semantic identity supplies that authority.
+
+The snapshot now exposes `board_run` through the existing connectivity owner.
+It returns the complete same-Net physical component on actual conductive layers,
+source-qualified members counted once, and connected current Zone copper cells.
+Disconnected same-Net members stay outside Run; foreign-Net contacts are separate
+source-pair evidence and never join it. Unknown contacting assignment refuses the
+Run. Unavailable foreign geometry makes contact evidence explicitly unavailable,
+not short-free. Acquisition checks occupied copper, including arc locus and drill
+exclusions; nonpoint multi-component Zone acquisition refuses rather than choosing
+an array entry. Current successful empty fill contributes zero copper; absent or
+stale fill cannot be replaced by its outline. All queries remain immutable and
+expected-revision-bound. Multi-layer placed pad apertures without certified barrel
+authority remain unavailable; aperture list, source UUID, Net and drill alone
+cannot establish plating. Zone successor qualification, shared adapters and
+current-fill DRC remain pending; these limits do not waive required acceptance.
