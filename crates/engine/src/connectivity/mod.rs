@@ -1,3 +1,5 @@
+mod bus_physical;
+pub(crate) use bus_physical::bus_physical;
 mod board_physical;
 pub(crate) use board_physical::successor as board_physical_successor;
 pub(crate) use board_physical::{BoardCopperSource, board_run};
@@ -11,7 +13,7 @@ mod label_semantics;
 mod occurrence_partition;
 use label_semantics::*;
 pub(crate) use occurrence_partition::{
-    partitions, physical_partitions, representation_occurrences,
+    occurrence_sheet, partitions, physical_partitions, representation_occurrences,
 };
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 

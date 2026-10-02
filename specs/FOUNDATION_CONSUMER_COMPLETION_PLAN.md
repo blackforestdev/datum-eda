@@ -1324,3 +1324,36 @@ separation reference remains consistent; no Claude HTML change is required.
 Focused candidate oracles in PM055 preserve repeated occurrences, completeness,
 non-mutation and rederivation. This records the decision, not its implementation
 or independent acceptance. All deferred M1/foundation/S5A boundaries remain.
+
+
+### DA-A2 bounded physical Bus Run unit
+
+Source baseline `d5d8a38b` (PM055 owner reconciliation). Immutable snapshot now
+exposes physical Bus Runs within one origin declaration and occurrence, including
+all connected spine source identities, their owned names and attached entries/
+labels. BusEntry.bus supplies an explicit existing source association, not a
+scalar-name inference or selection-triggered binding writer. Conflicting ownership
+refuses. Foreign declaration contact is complete separate source-pair evidence;
+equal names/scalar sets do not enlarge selection. Full semantic Bus membership
+still widens to disconnected and repeated-sheet representations; related interface
+and scalar projections remain separate. No Bus-to-board projection is invented.
+
+Four canonical on-disk focused tests pass in
+`target/s5a-bus-run-native-tests.log`: connected/disconnected spines, equal-name/
+scalar-set foreign contacts, exact member/contact sets, actual owned entries versus
+scalar wires, revision/origin/assignment/path refusal, immutable source/journal
+bytes, topology edit/undo/reopen, 257-source completeness and repeated sheets with
+an explicit related interface. Final regression passes **1,132 engine tests**,
+including a full-i64-domain contact/crossing/overlap/gap geometry oracle, in
+`target/s5a-bus-run-engine-replay.log`. Isolated engine test binary SHA-256:
+`05de9667ff803afc48d577df6c5f8cbcbdfe474ffbc36a64ad8f0aa50b6dbe04`,
+`target/s5a-nominal-proof/debug/deps/eda_engine-5b3bfac123e4e569`. Guarded
+all-target engine Clippy with warnings denied is recorded in
+`target/s5a-bus-run-lint.log`. Source health retains 76 debt entries and the normal
+connectivity root budget; no dependency, geometry approximation or latency budget.
+
+PM055 decision intake `dat-s5a-bus-run-contact-pnze` closes by reconciliation in
+`d5d8a38b`, not by claiming foundation/S5A acceptance. DA-A2 remains claimed and
+requires shared adapter/lifetime adoption, certified pad barrel exposure and
+remaining nominal connectivity integration. C07/M1, mandatory T04, reserved
+independent candidate review and prior S5A/rendering/resize boundaries remain.

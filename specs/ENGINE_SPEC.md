@@ -2069,3 +2069,17 @@ Legacy raw fill maps cannot certify that basis. Existing waiver/fingerprint
 finalization and the established straight-geometry checking path remain shared.
 This does not certify unresolved nominal connectivity, unsupported geometry,
 manufacturing approximation, complete foundation acceptance or S5A native proof.
+
+
+PM055 physical Bus Run queries now constrain complete local path connectivity
+to the origin's explicit semantic declaration and stable SheetInstance path.
+Closed authored path incidence uses full-integer-domain signed-product comparison,
+not display names, equal scalar sets, view geometry or interface unions. Results
+retain project/revision/source basis, typed origin and separate exact foreign-Bus
+contact pairs. Semantic Bus widening includes disconnected/cross-sheet bound
+representations. BusEntry.bus is explicit source ownership of attached geometry;
+queries include those entries without redundant binding writes and refuse a
+conflicting declaration. Scalar wires/Nets and related Bus interfaces remain
+related only. Invalid occurrences, ambiguous/missing declaration and unavailable
+authored paths return typed failures; queries allocate no authored identity.
+Shared consumer adoption and remaining pad/connectivity capabilities are pending.

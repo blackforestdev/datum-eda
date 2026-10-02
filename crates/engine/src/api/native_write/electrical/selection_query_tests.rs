@@ -345,3 +345,6 @@ fn binding_failure_is_subject_local_and_cross_domain_membership_never_prunes_boa
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[path = "bus_run_query_tests.rs"]
+mod bus_run_query_tests;

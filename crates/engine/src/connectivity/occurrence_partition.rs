@@ -165,6 +165,25 @@ pub(crate) fn representation_occurrences(
     Ok(result)
 }
 
+pub(crate) fn occurrence_sheet<'a>(
+    schematic: &'a Schematic,
+    origin: &ElectricalOccurrence,
+) -> Result<&'a Sheet, EngineError> {
+    let found: Vec<_> = contexts(schematic)?
+        .into_iter()
+        .filter(|c| {
+            c.path == origin.instance_path
+                && schematic.sheets[&c.sheet]
+                    .buses
+                    .contains_key(&origin.source_id)
+        })
+        .collect();
+    if found.len() != 1 {
+        return Err(invalid("Bus origin has no unique sheet occurrence"));
+    }
+    Ok(&schematic.sheets[&found[0].sheet])
+}
+
 fn finish(mut groups: Groups) -> Vec<BTreeSet<ElectricalOccurrence>> {
     let mut result = BTreeMap::<ElectricalOccurrence, BTreeSet<ElectricalOccurrence>>::new();
     for member in groups.parent.keys().cloned().collect::<Vec<_>>() {
