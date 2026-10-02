@@ -182,10 +182,8 @@ fn canonical_identity_create_set_undo_replay_reopen() {
     create(&mut model, &root, net(id, anchor));
     let reopened = ProjectResolver::new(&root).resolve().unwrap();
     assert_eq!(reopened.electrical_identities, model.electrical_identities);
-    let mut changed = model.electrical_identities[&id].clone();
-    if let ElectricalIdentity::Net { predecessors, .. } = &mut changed.identity {
-        predecessors.insert(Uuid::new_v4());
-    }
+    let changed = model.electrical_identities[&id].clone();
+    // A revision-only write is lawful; fabricated transition provenance is not.
     let prepared = build_set_electrical_identity(&model, provenance(), changed.clone()).unwrap();
     commit_prepared(&mut model, &root, prepared).unwrap();
     assert_eq!(
@@ -473,9 +471,21 @@ fn bus_split_refuses_missing_distribution_or_reused_identity() {
 fn retirement_preserves_provenance_and_only_history_can_restore() {
     let (root, mut model, anchor) = model_with_wire("electrical_retirement");
     let id = Uuid::new_v4();
-    create(&mut model, &root, net(id, anchor));
+    create(&mut model, &root, net(id, anchor.clone()));
     let active = model.electrical_identities[&id].clone();
-    let prepared = build_delete_electrical_identity(&model, provenance(), id).unwrap();
+    let source = model
+        .materialized_source_shard_value(crate::substrate::SourceShardKind::SchematicSheet)
+        .unwrap();
+    let sheet: Uuid = serde_json::from_value(source["uuid"].clone()).unwrap();
+    let wire: SchematicWire =
+        serde_json::from_value(source["wires"][anchor.source_id.to_string()].clone()).unwrap();
+    let prepared = super::super::schematic_connectivity::build_delete_schematic_wire(
+        &model,
+        provenance(),
+        sheet,
+        &wire,
+    )
+    .unwrap();
     commit_prepared(&mut model, &root, prepared).unwrap();
     assert!(matches!(
         model.electrical_identities[&id].identity,

@@ -839,3 +839,25 @@ no automatic session notification or reviewer PASS is assumed. Canonical next is
 DA-A2-E1-R. Full F01–F06, public derived membership, geometry/CAM, M1 and remaining
 C04–C07/E2–E4 are unverified and retain their later gates. Dependent S5A U1 work
 stays paused; U2–U5 and native acceptance remain pending under retained C02/C05.
+
+### E1 independent review REVISE — corrective execution
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:E1-IR-REVISE -->
+
+The reserved independent owner-facing audit session reviewed source `10581b43`
+and packet `c7f60839`, blob `1b4d870283bd2ece54c1d1093599171c50ad6ace`.
+Outcome **REVISE**, 2026-10-01T23:53:35.476935Z; evidence
+`target/e1-independent-c7f60839/review.json` and isolated reproductions alongside.
+Submitted focused tests/governance replayed successfully, but two independent
+negative tests failed: E1-IR-01 permits swapping stable Net identities through
+explicit writes during unchanged-connectivity display rename; E1-IR-02 permits
+certifying pin/pad evidence outside its relationship logical Net. Both are
+mandatory open findings; the prior packet is insufficient for acceptance.
+
+Owner directs repairs and permanent regression coverage within existing E1
+authorization, including atomic refusal, unchanged-connectivity identity writes,
+occurrence-qualified final binding membership and undo/reopen. Return to
+DA-A2-E1 corrective implementation under a synchronized fresh claim; DA-A2-E1-R
+remains pending re-review. No renewed product ratification/research, public query,
+geometry, manufacturing, dependency or foundation/S5A acceptance grant. Preserve
+prior candidate/proof pins as historical evidence and all later review boundaries.
