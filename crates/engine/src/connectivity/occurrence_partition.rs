@@ -165,6 +165,41 @@ pub(crate) fn representation_occurrences(
     Ok(result)
 }
 
+/// Actual source identities in complete hierarchy contexts, including parents
+/// and nonconductive authored presentation objects. No definition UUID is an
+/// instance occurrence and no scene primitive supplies identity.
+pub(crate) fn authored_occurrences(
+    schematic: &Schematic,
+) -> Result<BTreeSet<ElectricalOccurrence>, EngineError> {
+    let mut result = BTreeSet::new();
+    for context in contexts(schematic)? {
+        let sheet = &schematic.sheets[&context.sheet];
+        for (class, ids) in [
+            ("symbols", sheet.symbols.keys().copied().collect::<Vec<_>>()),
+            (
+                "pins",
+                sheet
+                    .symbols
+                    .values()
+                    .flat_map(|s| s.pins.iter().map(|p| p.uuid))
+                    .collect(),
+            ),
+            ("wires", sheet.wires.keys().copied().collect()),
+            ("junctions", sheet.junctions.keys().copied().collect()),
+            ("labels", sheet.labels.keys().copied().collect()),
+            ("buses", sheet.buses.keys().copied().collect()),
+            ("bus_entries", sheet.bus_entries.keys().copied().collect()),
+            ("ports", sheet.ports.keys().copied().collect()),
+            ("noconnects", sheet.noconnects.keys().copied().collect()),
+            ("texts", sheet.texts.keys().copied().collect()),
+            ("drawings", sheet.drawings.keys().copied().collect()),
+        ] {
+            result.extend(ids.into_iter().map(|id| reference(&context, class, id)));
+        }
+    }
+    Ok(result)
+}
+
 pub(crate) fn occurrence_sheet<'a>(
     schematic: &'a Schematic,
     origin: &ElectricalOccurrence,

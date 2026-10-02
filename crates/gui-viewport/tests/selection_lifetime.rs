@@ -14,6 +14,7 @@ fn id(n: u64) -> Identity {
     Identity {
         class: Class::Wire,
         id: uuid(n),
+        instance_path: vec![],
     }
 }
 
@@ -61,7 +62,7 @@ fn surviving_derived_identity_rederives_wholly_and_missing_origin_dissolves() {
     let full = BTreeSet::from([id(1), id(3), id(4)]);
     next.runs.as_mut().unwrap().insert(id(1), full.clone());
     next.nets.as_mut().unwrap().insert(uuid(800), full.clone());
-    for subject in [Subject::Run(id(1)), Subject::GlobalNet(uuid(800))] {
+    for subject in [Subject::Run(id(1).into()), Subject::GlobalNet(uuid(800))] {
         let changed = reconcile_selection(&subject, next.project, &next).unwrap();
         assert_eq!(changed.subject, subject);
         assert_eq!(changed.members, full);
@@ -69,7 +70,7 @@ fn surviving_derived_identity_rederives_wholly_and_missing_origin_dissolves() {
     }
     next.authored.remove(&id(1));
     assert!(
-        reconcile_selection(&Subject::Run(id(1)), next.project, &next)
+        reconcile_selection(&Subject::Run(id(1).into()), next.project, &next)
             .unwrap()
             .dissolved
     );
@@ -120,10 +121,10 @@ fn project_replacement_and_artifact_expiration_cannot_leak_selection() {
 #[test]
 fn incomplete_authority_refuses_reconciliation_instead_of_partial_selection() {
     let mut next = model();
-    let prior = Subject::Run(id(1));
+    let prior = Subject::Run(id(1).into());
     next.runs.as_mut().unwrap().remove(&id(1));
     assert!(reconcile_selection(&prior, next.project, &next).is_err());
-    assert_eq!(prior, Subject::Run(id(1)));
+    assert_eq!(prior, Subject::Run(id(1).into()));
 }
 
 #[test]

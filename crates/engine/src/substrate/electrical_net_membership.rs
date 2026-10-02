@@ -1,9 +1,6 @@
 #[path = "electrical_selection_query.rs"]
 mod query;
-pub use query::{
-    BusRunMembership, CrossBusContact, ElectricalMembership, ElectricalQueryFailure,
-    ElectricalSelectionSnapshot, SelectionSourceBasis,
-};
+pub use query::*;
 // Internal current/final occurrence authority shared by writes and diagnostics.
 use super::{DesignModel, ElectricalIdentity, ElectricalOccurrence, EngineError, Operation};
 use std::collections::{BTreeMap, BTreeSet};

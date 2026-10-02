@@ -12,6 +12,7 @@ fn id(n: u128) -> Identity {
     Identity {
         class: Class::Wire,
         id: Uuid::from_u128(n),
+        instance_path: vec![],
     }
 }
 
@@ -40,9 +41,9 @@ fn nine_kinds_round_trip_without_collapsing_run_bus_or_review() {
     };
     let values = [
         Subject::None,
-        Subject::Object(bus_origin),
+        Subject::Object(bus_origin.clone()),
         Subject::Compound(CompoundSelection::new([id(1), id(2)], Some(id(2))).unwrap()),
-        Subject::Run(bus_origin),
+        Subject::Run(bus_origin.into()),
         Subject::GlobalNet(Uuid::from_u128(800)),
         Subject::Bus(Uuid::from_u128(700)),
         Subject::Proposal("same-action".into()),
@@ -91,7 +92,7 @@ fn compound_is_canonical_and_rejects_focus_outside_membership() {
 fn full_derived_resolution_is_independent_of_transport_or_view_subset() {
     let model = resolution();
     for subject in [
-        Subject::Run(id(1)),
+        Subject::Run(id(1).into()),
         Subject::GlobalNet(Uuid::from_u128(800)),
     ] {
         let full = model.members(&subject).unwrap();
@@ -116,7 +117,7 @@ fn missing_or_inconsistent_derivation_never_silently_truncates() {
     );
     model.authored.remove(&id(257));
     assert_eq!(
-        model.members(&Subject::Run(id(1))),
+        model.members(&Subject::Run(id(1).into())),
         Err(SelectionResolutionError::UnresolvedDerivedMember(id(257)))
     );
     let pad = Identity {
@@ -124,7 +125,7 @@ fn missing_or_inconsistent_derivation_never_silently_truncates() {
         ..id(1)
     };
     assert_eq!(
-        model.members(&Subject::Run(pad)),
+        model.members(&Subject::Run(pad.into())),
         Err(SelectionResolutionError::InvalidSubject(
             SelectionSubjectError::InvalidRunOrigin
         ))

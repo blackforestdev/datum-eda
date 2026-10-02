@@ -1357,3 +1357,51 @@ PM055 decision intake `dat-s5a-bus-run-contact-pnze` closes by reconciliation in
 requires shared adapter/lifetime adoption, certified pad barrel exposure and
 remaining nominal connectivity integration. C07/M1, mandatory T04, reserved
 independent candidate review and prior S5A/rendering/resize boundaries remain.
+
+
+### DA-A2 bounded shared adapter and Zone lifetime unit
+
+Source baseline `003f593a`. Existing gui-protocol resolver now captures one
+immutable native source authority per model basis and resolves derived subjects
+on demand. Shared identities preserve stable occurrence paths and source domains;
+qualified Zone Run payloads retain engine-issued basis tokens. Full electrical/
+Board/Bus projection evidence, related identities and separate contact results
+remain available without a scene lookup, visibility filter or context envelope.
+Bus entries stay owned presentation and are not additional enumerated members.
+The existing viewport lifetime owner consumes certified successor/split/unknown/
+suspension/empty/deletion dispositions with exact source evidence and programmatic
+explanations. Suspension requires retaining the last certified qualifier basis;
+cleared subjects never resurrect. The active predecessor application selection
+path and renderer/resize buffers are unchanged; S5A U2–U5 do not resume here.
+
+Eight new on-disk native adapter/lifetime tests pass in
+`target/s5a-shared-selection-native-tests.log`, plus the nine existing identity/
+lifetime tests in `target/s5a-shared-selection-existing-tests.log`. Final three-
+package regression passes **1,340 tests across 12 binaries**, including **1,132
+engine tests**, in `target/s5a-shared-selection-package-replay.log`. Guarded
+engine/protocol/viewport all-target Clippy with warnings denied passes in
+`target/s5a-shared-selection-lint.log`; source-health and dependency/resource gates
+pass. Fixtures use actual native genesis/builders/canonical batches, fixed source
+identities, complete expected sets and byte-preservation assertions. Binary pins:
+
+- `native_selection-e10665e58b41c02b`: SHA-256
+  `069c9c3e07e3090deab3740067c0b56e32b26c9b9538a27007964ce4824c5a29`.
+- `native_selection_lifetime-8f1591adc012840a`: SHA-256
+  `a7791e7deaaa3df540b5af26183a4fb5fe3b7472158f1d8a316587ed8fedc8b8`.
+- `eda_engine-5b3bfac123e4e569`: SHA-256
+  `77bfa50f55ed236e40a4eccbf359d2bb62136b702b70f09b904018a229e5cef6`.
+
+All are under `target/s5a-nominal-proof/debug/deps`; recipe sources are protocol
+`tests/native_selection.rs`, shared `tests/support/native_selection_fixture.rs`
+and viewport `tests/native_selection_lifetime.rs`. Broader package feature union
+changed the focused test executable filenames; credited pins come from the final
+actual replay log and current binary hashes. Test-only viewport dependencies
+reuse the existing Datum engine and already-authorized serde_json; no new third-
+party component/version/license or production dependency is introduced.
+
+Native artifact-lifecycle authority and unavailable authored graphics are not
+certified by this derived adapter; existing S5A/provider seams remain pending.
+Pad barrel exposure and remaining nominal connectivity still require DA-A2 work.
+No full F01–F06, independent PASS, foundation/S5A acceptance, latency criterion or
+M1/T04 allowance is inferred. Prior partial S5A approval/C05, rendering/resize
+behavior and all recorded unresolved gates remain preserved.
