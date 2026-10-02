@@ -861,3 +861,88 @@ DA-A2-E1 corrective implementation under a synchronized fresh claim; DA-A2-E1-R
 remains pending re-review. No renewed product ratification/research, public query,
 geometry, manufacturing, dependency or foundation/S5A acceptance grant. Preserve
 prior candidate/proof pins as historical evidence and all later review boundaries.
+
+### E1-ID-INTEGRATION-02 — corrected candidate for independent re-review
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A2-E1-CORRECTED -->
+
+Corrected source candidate: `5998da49bf50de119d82e2405777ae28aa36f661`.
+This packet is pinned by the commit/blob containing this record; subsequent
+changes in that commit are governance/evidence only. The earlier independent
+REVISE of `10581b43` / `c7f60839` is recorded above and remains historical evidence.
+The owner authorized these implementation corrections under existing E1; no new
+product ratification or specification research was performed. E1-IR-01/02 repairs
+and focused proof are implemented; independent finding disposition is still pending
+DA-A2-E1-R re-review. No implementing-agent PASS closes either review finding.
+
+| Mandatory finding | Concrete cause and correction | Permanent proof |
+| --- | --- | --- |
+| E1-IR-01 | Composition skipped identity-only batches and returned early when partitions were equal. Normal adopted schematic Net writes now preserve the immutable identity, surviving anchor and recorded provenance on unchanged topology; incompatible reanchor, retirement, provenance or type changes refuse. Revision-only writes and recorded undo/redo remain lawful. | `electrical/topology_identity_write_tests.rs`: swap attempts with and without display edit, same-group reanchor, premature retirement, invented predecessors and type conversion refuse; lawful display/revision writes retain identity through undo/redo/reopen. |
+| E1-IR-02 | Placement/PinPadMap certification omitted logical Net membership. The existing internal complete occurrence producer now supplies one current/final Net-member index shared by write validation and diagnostics. Complete-capable evidence outside its logical partition refuses; diagnostics return Mismatch, or Unverified when authority is unavailable. Pending/Mismatch remain honestly incomplete. | `electrical/binding_membership_tests.rs`: wrong-Net create/update, reusable pin UUID with wrong instance path, and pre-valid evidence outside the final split partition refuse. Explicit Pending remains incomplete; corrected correspondence certifies and survives undo/redo/reopen. |
+
+All refusal oracles compare the complete live model, exact bytes of every authored
+source shard and journal, plus reopen identity/membership. Repeated-sheet proof
+constructs independent exact pin occurrence sets. The final-split case uses actual
+canonical wire edits: the retained remote anchor has no pin after splitting, so
+an explicit Implemented binding valid before the edit refuses the entire final
+batch. Ordinary splitting remains lawful Pending; explicit correct rebind restores
+Complete without changing board ownership. Existing binding fixture setup was
+extracted for reuse. Prior tests permitting invented predecessor metadata or
+premature live-Net retirement were corrected to revision-only persistence and
+actual all-member source deletion; those invalid writes now have refusal coverage.
+
+The repeated-instance case also exposed a bounded source-materialization defect:
+final validation saw a newly staged definition reference before its file/journal
+create existed. The canonical source owner now obtains that pending sheet/definition
+preimage from the same batch payload, as the existing source basis already does.
+This preserves complete final authority without private fixture writes or new
+geometry/query work. Full occurrence creation, refusal and persistence pass.
+
+Focused batches: guarded electrical suite **36 passed, 0 failed** (prior 31 plus
+five permanent regressions); guarded proposal suite **17 passed, 0 failed** verifies
+composition on the existing draft/preview/apply boundary. Guarded engine/CLI
+all-targets Clippy passes with warnings denied. Reuse the independently replayed
+prior 16 connectivity, 24 journal and 17 native-library results for unchanged
+owners, and the earlier CLI pin presentation proof. No broader native/performance
+rerun, public membership API, numerical acceptance or dependency was added.
+
+Proof is in `target/e1-ir-corrected-proof/`. Each Cargo command uses
+`python3 scripts/run_cargo_guarded.py --workload proof --target-dir
+/home/bfadmin/Documents/datum-eda/target/e1-ir-corrected --` followed by:
+`cargo test -p eda-engine api::native_write::electrical --lib`,
+`cargo test -p eda-engine substrate::tests::proposal --lib`, or
+`cargo clippy -p eda-engine -p datum-eda-cli --all-targets -- -D warnings`.
+The disk-backed target is owned by this correcting session and retained for the
+reserved audit. A shared-cache invocation returned the isolated review's earlier
+33-test binary despite changed canonical source and was rejected as correction
+proof; underlying freshness cause is unresolved intake **dat-proof-cache-origin-gw6l**.
+No shared cache sweep or acceptance waiver was performed.
+
+Captured 2026-10-02T00:15:58.461715Z, Linux x86_64, rustc/cargo 1.98.0.
+Corrected engine test binary SHA256:
+`d8bccc84ea48ef68d6c080243a7a47370f6c5b08293714c98ea482baac2635ff`.
+`environment.json` binds candidate/tree, canonical manifest, toolchain, binary and
+original independent review (SHA256
+`9b955377bf7d0ffb916705675c1959f533f594a4104d919ca382b492f88177e3`);
+`fixtures.json` binds the five regression roots and file hashes (SHA256
+`34e96b989185b09286a439e2e1d8f464788f112c42a48d4e9833ca1b5b706a5e`);
+`results.json` binds commands/counts and raw log hashes (SHA256
+`a7f69bee3ec68a04eed4f5d89cb96c9c600ca58f9511fad9cf9adecc1d21508d`).
+Local artifacts aid replay; committed source/oracles are the durable authority.
+
+Governance/traceability/parity, source health, progress/project-state, dependency
+and Cargo policy, raw-load/daemon, staged lane/rustfmt and diff checks pass.
+Unchanged private-writer failure **dat-7unq** remains unpassed; no unrelated gate
+or renderer/performance acceptance is inferred. PM026/049/051/052 and retained
+S5A approval/partial U1/C05 are preserved.
+
+**Reserved re-review request:** independently review this exact corrected source
+and packet, replay permanent E1-IR-01/02 cases and the focused suites, check the
+unchanged-topology guard, current/final occurrence membership, actual source bytes
+and undo/reopen behavior, and explicitly disposition both mandatory findings.
+Bind results to candidate, fixtures, binary and environment. Return reviewer,
+exact pin, outcome and unresolved mandatory failures. DA-A2-E1-R remains the
+canonical owner boundary; the prerequisite issue stays open/unassigned. Full
+foundation F01–F06, remaining C04–C07/E2–E4/M1 and S5A acceptance stay pending;
+dependent S5A implementation remains paused. No automatic review notification,
+independent PASS, new ratification or execution grant is assumed.
