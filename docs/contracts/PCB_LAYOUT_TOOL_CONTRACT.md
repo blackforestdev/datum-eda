@@ -920,3 +920,39 @@ as complete cross-domain Net selection. Authored identity/binding source is
 distinct from recomputable graph/projection geometry. Canonical writes and replay
 retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
 support, selection mutation or native acceptance is ratified by this amendment.
+
+
+## PM054 C04–C06 owning reconciliation
+
+The owner-ratified [PM054](../decisions/PRODUCT_MECHANICS_054_NOMINAL_COPPER_DERIVED_AUTHORITY.md)
+controls conflicting earlier contact/Run, Zone qualification and Track summaries
+in this document. A Run is complete within its origin's resolved Net assignment
+on actual conductive layers/current geometry; foreign-Net contacts remain separate
+fault evidence. Unknown assignment or required geometry is typed unavailable.
+
+One authored Zone identity has an engine-owned revision/basis-bound component
+qualifier. Acquisition uses occupied copper and refuses ambiguous nonpoint origin.
+Exact unchanged-region equivalence or validated generator/transaction lineage
+can prove a unique successor; overlap/proximity/source survival alone cannot.
+Split or verified deletion clears; current Unknown requests reacquisition; missing,
+stale or unsupported basis suspends rather than proves deletion. Current solved
+empty fill clears. Undo does not resurrect dissolved selection. Object projection
+remains one authored Zone; Run projects only its acquired connected copper.
+
+Generated ZoneFill version 2 permits successful Filled with zero islands, retaining
+nonempty provenance and exact model/source-zone basis. Version 1 nonempty Filled
+retains meaning; omitted version is legacy 1; old Unsupported is never empty.
+New producers write version 2, and incompatible readers refuse explicitly.
+
+Track may store an optional integer-nm on-arc midpoint; absence preserves straight
+source. Distinct noncollinear start/mid/end define the directed locus, including
+major sweeps, with existing UUID/Net/layer/width. Canonical writes, inverse, undo/
+replay/reopen preserve these anchors. Nominal copper uses width/2 including half-
+nm radii, certified pair predicates and checked arithmetic; rendering/chords/
+rounded graphic angles cannot establish geometry or membership. Invalid source
+refuses atomically; unsupported consumers disclose source-bound capability.
+
+E2–E4 nominal execution and focused independent review are owner-authorized.
+C07/M1 manufacturing policy and mandatory rational-center CAM/T04 remain deferred
+and unpassed. This amendment supplies no approximation allowance, general CAM
+claim, full foundation/S5A acceptance or selection-triggered design mutation.
