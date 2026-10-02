@@ -1,7 +1,8 @@
 # S5A derived-selection authority prerequisite
 
-Status: research-backed A1-03 proposal; independent review and owner disposition
-pending. Engine implementation and feasibility unproved.
+Status: ratified bounded PM053/054/055 authority; DA-A3 producer candidate
+ready for reserved independent DA-A4-R review and later DA-A4-D acceptance.
+Historical A1 proposals below retain their original disposition at their pins.
 Frontier: `S5A-DERIVED-AUTHORITY`; issue: `dat-s5a-derived-authority-hhsw`.
 Owning route: `foundation-consumer-completion`.
 
@@ -542,3 +543,18 @@ at their exact scopes. The existing independent audit session is reserved for
 the amended candidate at DA-A4-R; owner acceptance at DA-A4-D precedes explicit
 S5A-C03 resumption under unchanged S5A approval. Do not claim full manufacturing
 completion when closing only the accepted amended selection prerequisite.
+
+
+## DA-A3 candidate return
+
+The consolidated current packet is S5A-SELECTION-FOUNDATION-CANDIDATE-02 in
+`specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, source `91b569576f329eca92b04e60a4f87e4b433df3c9`.
+It replaces the partial DA-A3 corner-refusal record with positively certified
+complete membership and binds F01-F06/Z/T routes, 1,179 producer Rust passes,
+Clippy, reused independent evidence and explicit domain/capability limitations.
+DA-A3 producer delivery is complete; DA-A4-R must independently audit/replay the
+exact candidate and every mandatory obligation, with REVISE for any required
+unverified positive case. No capability limitation waives a requirement.
+DA-A4-D acceptance and explicit S5A resumption remain pending. Positive CAM/T04
+is separately open manufacturing work; all selection-critical authority and
+non-mutation laws stay intact. No renewed unchanged-scope execution permission.

@@ -1874,3 +1874,105 @@ nominal packet remain unchanged, not automatically deferred. Manufacturing
 S5A approval/partial U1/C05 and PM026/049/051/052 remain preserved; no dependency,
 prototype or renderer/resize changes accompany this unit. Existing execution
 authorization remains valid; no repeated owner authorization is requested.
+
+
+### DA-A3 — pinned selection-foundation candidate for independent review
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A3-CANDIDATE-02 -->
+Packet: **S5A-SELECTION-FOUNDATION-CANDIDATE-02**. Source:
+`91b569576f329eca92b04e60a4f87e4b433df3c9`. This supersedes the preceding partial
+integration packet only for
+its resolved rotated-corner obstacle and completed producer proof. It does not
+supply independent PASS, owner foundation acceptance, S5A resumption or general
+manufacturing acceptance. All historical review/packet pins remain unchanged.
+
+The owner directed continuation under the recorded DA-A3 execution grant,
+resolution of `dat-rotated-pad-selection-7pe8`, required positive contact plus
+tangency/separation/complete membership, and reuse of adequate proof. No new
+permission, product mechanism, dependency, tolerance or acceptance reduction.
+Implemented units: `b347b988` canonical origin Net/Bus widening and shared
+certificates, `c6e75b3b` required bootstrap guard repair, and `91b569576f329eca92b04e60a4f87e4b433df3c9`
+exact occupied-pad boundary correction and permanent native/read-boundary proof.
+The source commit resolves the known bug; this packet closes only that issue and
+completes DA-A3 producer delivery, selecting reserved independent DA-A4-R.
+
+**Geometry authority and independent oracles.** Existing board occupied-copper
+owner now transforms query features exactly into odd-eighth-turn pad coordinates
+in Q(sqrt(2)); no pose, source coordinates or source identities are rewritten.
+Rect/Oval/RoundRect cores plus their actual corner radii support point and
+straight/circular Track contact and clearance. Directed-arc features include
+endpoints, radial extrema and line/circle intersection candidates, with exact
+sweep qualification; a chord is never an authority. Same contained drill hole
+and inclusive-contact/strict-clearance law remain. The origin's 45-degree 2 mm
+square corner witness is independently y²/2 = 0.98 mm² < 1 mm². Native query now
+returns exactly **Track1 + Pad2**, not refusal. Canonical deletion, undo/reopen
+and reordered source-shard capture preserve expected identities and projections.
+
+Checked reduced i128 rational field operations retain typed range refusal. For
+sign(a+b sqrt(2)), opposite-signed coefficients compare a² and 2b² using nine
+u64 limbs: four u128 factors and factor 2 require at most 513 bits. Nested radical
+signs compare squares only after sign qualification. Exact equality, rational
+bounds bracketing sqrt(2), full coefficient range, one-billionth perturbations
+and denominator-zero/range controls have permanent proof. This arithmetic bound
+is implementation evidence, not a coordinate budget or manufacturing allowance.
+
+| Required route | Producer evidence / exact outcome for reserved review |
+| --- | --- |
+| F01 physical versus logical | Engine `board_selection_query_tests`, `pad_connection_tests`, `nominal_connectivity_tests`, occupied-copper/predicates and new `eighth_turn_tests`; native `native_selection`/`native_selection_widening`. Exact same-Net branch sets exclude disconnected assigned copper and foreign contacts; explicit process/span/layer, hole/current-fill and arc-locus authority. Positive rotated corner, reversed circular corner bulge with separated endpoints, true tangent/positive gap and strict clearance are proved. Native tangent/gap fixtures independently use radius 5 + Track half 1 =6 and exact branch sets. |
+| F02 stable Net transitions | Reuse independent E1 PASS plus current complete engine replay of `topology_tests`, `topology_atomic_tests`, `topology_identity_write_tests`, transition and canonical history. Actual final-state crossed and mixed partitions, anchor fallback, rename/no allocation, retirement/recreation, atomic refusal and undo/replay/reopen. No scene/member/name identity substitution. |
+| F03 complete binding | `binding_membership_tests`, `binding_tests`, `selection_query_tests`, native adapter/widening. Canonical logical versus board-local IDs, occurrence-qualified Pin/Pad membership, actual pending/unverified/contradictory refusal, unrelated valid subjects, old immutable snapshot and undo/reopen. No names, prefix or board-local UUID fallback. |
+| F04 Bus/hierarchy | Existing independent E1/nominal PASS plus current `hierarchy_tests`, `topology_hierarchy_tests`, `projection_tests`, Bus lifecycle and `bus_run_query_tests`; native Bus/source-occurrence tests. Repeated occurrences remain distinct; declared interface versus subset relation, origin-Bus-constrained Run/foreign contact, complete owned entry geometry, 257 spines, split/merge distributions and last-drawing deletion with surviving declaration. No board Bus projection. |
+| F05 complete inventory | Current engine complete 257-branch logical and board/Bus membership, stable repeated paths and native full owned projection. Source and occurrence sets precede any pane/class/visibility/context projection: none is a query input. Pre-hidden/filter origin eligibility, visible-only rendering and accessible disclosure remain the approved S5A N05/N09 consumer obligations; no engine test is credited as native UI acceptance. |
+| F06 coherent failure/non-mutation | Current capture/basis/assignment/binding/geometry negative controls and new native read-boundary test. Cyclic ordered occurrence path, missing source and invalid path refuse InvalidOccurrence; stale expected revision differs from absent semantic ID; actual deleted source yields verified empty Object. Unavailable artifacts remain MissingArtifactAuthority, not verified deletion. No partial member publication; exact source/journal bytes, deterministic reordered capture, prior immutable snapshot and undo/reopen are asserted. |
+| Z01-Z02 | `board_selection_query_tests` and `zone_region_query_tests`: actual occupied C1/C2 acquisition, source counted once, qualified projections, nonpoint ambiguity, winding/order/decomposition equivalence and external physical bridge. Current fill/geometry, not outline/polygon index or old hit, owns the result. |
+| Z03-Z04 | Native writer empty-fill/schema/history and `zone_region_query_tests`/viewport `native_selection_lifetime`: certified current-empty versus Missing/Unfilled/Stale/Unsupported, source/basis validation, canonical transform/unique merge, all split tokens, Unknown/current-empty/deletion clearing, stale suspension, no selection resurrection on undo. |
+| Z05 | Complete native engine inventory and source-qualified Zone region projection remain independent of pane hiding/filtering. S5A N05/N09 owns actual eligibility/visibility/accessibility proof and is not marked passed here. |
+| T01-T03 | Canonical Track source/schema/history, nominal geometry/predicates/occupied copper, new eighth-turn math, actual current-fill DRC and native selection. Straight compatibility, three anchors/UUID, reverse/major/minor/mirror/odd width, invalid source before mutation, directed bulge rather than chord and exact strict clearance. Display flattening/zoom never enters query authority. |
+| T04 manufacturing boundary | Current native rational-center Run/complete Net selection succeeds while reviewed nonzero manufacturing output refuses with its source witness. Positive rational-center CAM stays open in `dat-rational-center-cam-ir1t`; refusal is not its positive acceptance. |
+
+**Focused guarded proof, source-bound.** 1,160 engine tests, protocol native 4 + widening/
+read-boundary 6, viewport native lifetime 4 + shared lifetime 5: **1,179 distinct Rust
+passes, zero final failures**. The 17 focused occupied-geometry tests overlap the
+engine total and are not added again. Engine/protocol/viewport all-target Clippy
+with warnings denied passes. Exact five binary, 18 recipe and four credited-log
+SHA-256 pins (27 total) are in
+`target/s5a-selection-foundation-candidate-02/candidate.json`, SHA-256
+`efdd045d2bc3104508f8ff62764bd659d657f77dc7235c2de8eadde0620ddfcd`; all 18 recipe pins
+match the source Git blobs. Reuse independent E1/nominal/M1 PASS at their exact
+scopes, and unchanged PM049/052 rendering/resize closure. No new independent
+review, CLI replay, UI/GPU campaign, latency requirement or artifact tolerance.
+
+Linux 6.12.107+deb13-amd64 x86_64, Rust 1.98.0, unoptimized serial proof guard,
+`target/s5a-nominal-proof`, incremental disabled, 16 MiB test stack and `/tmp`
+fixtures with TMPDIR unset. Preserve initial 14-pass/1-ArithmeticRange geometry
+failure; bounded exact sign arithmetic fixes its demonstrated cause. Preserve
+native guard-reserve refusal before compilation/tests. Only 124 native-write
+fixture roots born inside this completed exclusively guarded engine run were
+preserved on disk to restore reserve, with exact relocation manifest; no unrelated
+cleanup, policy weakening or shared-target sweep. Intermediate passes overlap.
+
+**Retained capability limits and review obligations.** Exact quarter-turn/circle
+paths remain; new odd-eighth-turn boundary applies to point and Track/Pad, not
+unclaimed general angular/pair geometry. Other poses/pairs keep reviewed exact or
+subset/superset certificates; truly unresolved geometry remains unavailable,
+never assumed separation. Unknown legacy process, missing aperture/span or
+edge-reaching/non-contained holes retain explicit refusal and their owning
+qualification obligations. Pool legacy in-memory pad regeneration, authored
+net-tie exemption and native artifact/graphics authority are not fabricated or
+claimed newly implemented. These historical follow-ups are not silently deferred
+or counted as positive proof: DA-A4-R must audit applicability against every
+mandatory oracle and return REVISE for any required unsupported positive case.
+The known 45-degree corner requirement is positively resolved, not placed in this
+limitation list. No full-angle, full-pool or full-editor qualification is asserted.
+
+Return this exact source and packet through the already-reserved independent
+owner-facing audit session. Review math/certified-domain limits, complete
+F01-F06/Z01-Z05/T01-T03 authority and adapter/lifetime proof; replay applicable
+actual native identity/member/refusal/history cases, pinned to reviewed source,
+fixtures, binary and environment. Reuse adequate prior independent proof. Report
+mandatory failures as failures, not passes. No implementer self-review or
+additional agent is substituted. DA-A4-D owner acceptance remains after PASS;
+only it may close the prerequisite and explicitly resume S5A-C03 under retained
+approval. S5A U2-U5/N01-N17, C05 review, definition-editor deferred rows, latency
+and complete manufacturing acceptance remain separate. PM026/049/051/052 and
+rendering/resize behavior remain preserved.

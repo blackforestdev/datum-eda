@@ -166,3 +166,19 @@ repairs and focused verification. Reuse E1/nominal/M1 independent review at
 recorded scope; reserve the existing independent audit session for the amended
 candidate. Independent DA-A4-R and owner DA-A4-D acceptance precede S5A
 resumption; unchanged S5A execution authorization is preserved.
+
+
+## DA-A3 rotated boundary implementation evidence
+
+Source `91b569576f329eca92b04e60a4f87e4b433df3c9` resolves the required 45-degree corner contact through the
+existing occupied-copper authority, with exact Q(sqrt(2)) query-frame geometry.
+Odd-eighth-turn Rect/Oval/RoundRect point and straight/circular Track boundaries
+now qualify complete positive membership, tangency, gap and strict clearance;
+source pose/UUID/width/drill remain immutable. Checked i128 field arithmetic and
+bounded 513-bit final sign comparison retain explicit range failure. Other poses
+and pair families retain reviewed authority/certificates and genuine unresolved
+refusal; no general angular or pool-geometry support is claimed. The current
+DA-A3 packet binds domain, independent mathematical oracles, native history and
+1,179 distinct producer tests. It awaits reserved DA-A4-R review and DA-A4-D
+owner acceptance; no product-law, dependency, rendering/resize, positive CAM/T04
+or S5A acceptance amendment is inferred from implementation evidence.
