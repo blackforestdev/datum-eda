@@ -822,7 +822,7 @@
     "scripts/check_schematic_private_writers.py": {
       "kind": "python-production",
       "limits": {
-        "file_lines": 1004
+        "file_lines": 987
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

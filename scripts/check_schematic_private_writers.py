@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import private_writer_bootstrap_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -490,12 +491,6 @@ REQUIRED_FORWARD_ANNOTATION_STATE_PATTERNS = [
     "commit_prepared(",
 ]
 
-REQUIRED_PROJECT_BOOTSTRAP_PATTERNS = [
-    "bootstrap_native_project(",
-    "GenesisSpec {",
-    "use eda_engine::api::native_write::genesis::",
-]
-
 REQUIRED_ROUTE_STRATEGY_FIXTURE_PATTERNS = [
     "write_route_strategy_batch_requests_manifest(",
     "route_proposal::build_route_strategy_fixture_board_write(",
@@ -574,19 +569,7 @@ def main() -> int:
         if not path.exists():
             failures.append(f"missing project bootstrap file: {relative}")
             continue
-        text = path.read_text()
-        require_patterns(
-            failures, relative, text, REQUIRED_PROJECT_BOOTSTRAP_PATTERNS, "project bootstrap"
-        )
-        write_count = count_pattern(path, "write_canonical_json(")
-        if write_count != 0:
-            failures.append(
-                f"{relative}: expected 0 project bootstrap write_canonical_json calls (genesis is engine-owned), found {write_count}"
-            )
-        for line, pattern, text_line in matching_lines(path, ["std::fs::write("]):
-            failures.append(
-                f"{relative}:{line}: forbidden project bootstrap writer `{pattern}`: {text_line}"
-            )
+        failures.extend(private_writer_bootstrap_policy.check_project_bootstrap(relative, path.read_text()))
 
     for relative in ROUTE_STRATEGY_FIXTURE_FILES:
         path = ROOT / relative
