@@ -369,3 +369,12 @@ checks from `check_schematic_private_writers.py` into the normal
 verify units-aware engine delegation and rejection of substituted calls/imports,
 private JSON serialization and direct filesystem writes. No source-health limit,
 exception or canonical writer boundary is weakened; remaining debt stays open.
+
+
+S5A-C03 consumer integration extracts the unchanged shared `LiveDesignSession`
+command dispatcher into the normal `live_design_session` module. Protocol
+production decreases from 4,466 to 4,184 lines; its exact legacy ceiling
+ratchets downward while the 1,835-line inline test tail remains open. Native
+source projection and typed source bindings occupy normal modules. Guarded
+protocol regressions and consumer tests verify the boundary; this extraction
+adds no independent editor selection owner, writer, dependency or new limit.

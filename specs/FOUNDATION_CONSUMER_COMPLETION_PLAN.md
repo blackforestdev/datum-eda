@@ -2006,3 +2006,44 @@ geometry/editor support, manufacturing completion, S5A UI implementation or
 native acceptance. Board/schematic C04 proof, reserved independent C05 candidate
 review/replay and final C06 owner acceptance remain separate. PM026/049/051/052,
 non-mutation, deferred unverified editors and undecided latency remain binding.
+
+
+<!-- EVIDENCE:UVT-S5A-BUILD:S5A-C03-U1-CONSUMERS -->
+### S5A-C03 partial U1 consumer implementation
+
+The shared `gui-viewport::selection_acquisition` reducer now handles qualified
+explicit replacement/addition/subtraction and derived modifier refusal/no-op
+against complete current authority membership. Its refusal reason is available
+to both visible and programmatic consumers. Native source metadata bindings
+reject scene-only identities, collapse owned pad/pin hits to authoritative
+parents, and preserve distinct Port identities. Native schematic projection
+uses the current immutable engine source/revision; external import retains its
+existing projection. Shared session dispatch moves unchanged into a normal
+module, shrinking the protocol production root to 4184 lines.
+
+Focused guarded proof: six acquisition and two native source/binding tests pass,
+including 257-member uncapped refusal, revision refresh, unavailable-subject
+replacement, atomic invalid-candidate rejection and unchanged source/journal
+bytes. Protocol library verification passed 121 tests initially; two
+materialization cases initially lacked the candidate CLI. After guarded CLI
+build, all six materialization tests passed (four overlap), yielding 123 distinct
+protocol passes across those runs. Final focused logs are
+`target/s5a-c03-acquisition-final.log` and
+`target/s5a-c03-materialization-proof.log`; final Clippy evidence is
+`target/s5a-c03-clippy-final.log`. These are consumer proofs, not C04 native
+pointer/keyboard/accessibility acceptance.
+
+U1 remains partial. Native independent/filled board graphics have no authored
+engine source collection, canonical adoption/fixture operation or persisted
+identity: Board/GenesisBoardRoot and native scene loading expose only outline
+projection; PCB contract explicitly defers generic graphics. Required positive
+N03 cases therefore cannot use an outline segment or a renderer-generated ID.
+Track `dat-s5a-board-graphic-authority-h8xm` under existing board/substrate
+owners; recommend a bounded source/adoption/query prerequisite planning
+amendment if no existing authority is identified. This is not a reopening of
+accepted derived authority. No prerequisite promotion, new engine source model,
+reduced acceptance or expanded execution grant is inferred. Source-dependent
+input migration remains paused; existing selection/render paths are preserved.
+U2–U5, C04 proof, reserved C05 independent review and C06 acceptance remain
+pending. PM026/049/051/052, open manufacturing CAM/T04, deferred editor rows and
+undecided latency remain unchanged.

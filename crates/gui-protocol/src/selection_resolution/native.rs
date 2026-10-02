@@ -54,6 +54,10 @@ impl NativeSelectionResolution {
         }
         Ok(Self { snapshot, authored })
     }
+    pub fn authored_identities(&self) -> &BTreeSet<AuthoredSelectionIdentity> {
+        &self.authored
+    }
+
     pub fn snapshot(&self) -> &ElectricalSelectionSnapshot {
         &self.snapshot
     }

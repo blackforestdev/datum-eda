@@ -221,7 +221,8 @@ pub(crate) fn schematic_hit_regions(
                 let width = graphic.width_nm.unwrap_or(100_000) as f32;
                 let shape = match kind {
                     datum_gui_protocol::SchematicHitKind::Symbol
-                    | datum_gui_protocol::SchematicHitKind::Label => {
+                    | datum_gui_protocol::SchematicHitKind::Label
+                    | datum_gui_protocol::SchematicHitKind::Port => {
                         Shape::Rect(bounding_rect_nm(&graphic.path).expect("non-empty path"))
                     }
                     datum_gui_protocol::SchematicHitKind::Junction if graphic.path.len() >= 3 => {

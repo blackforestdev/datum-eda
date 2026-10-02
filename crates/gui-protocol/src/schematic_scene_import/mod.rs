@@ -30,6 +30,7 @@ pub enum SchematicHitKind {
     Wire,
     Bus,
     Label,
+    Port,
     Junction,
     NoConnect,
 }
@@ -42,6 +43,7 @@ impl BoardGraphicPrimitive {
             "schematic_wire" => Some(SchematicHitKind::Wire),
             "schematic_bus" => Some(SchematicHitKind::Bus),
             "schematic_label" => Some(SchematicHitKind::Label),
+            "schematic_port" => Some(SchematicHitKind::Port),
             "schematic_junction" => Some(SchematicHitKind::Junction),
             "schematic_no_connect" => Some(SchematicHitKind::NoConnect),
             _ => None,
@@ -96,7 +98,17 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
         report.warnings.len()
     ));
 
-    let root_sheet = root_sheet(&schematic).context("imported schematic has no root sheet")?;
+    Ok((
+        project_schematic_source(&schematic, schematic_file)?,
+        schematic_file.to_path_buf(),
+    ))
+}
+
+pub(crate) fn project_schematic_source(
+    schematic: &Schematic,
+    schematic_file: &Path,
+) -> Result<BoardReviewSceneV1> {
+    let root_sheet = root_sheet(schematic).context("imported schematic has no root sheet")?;
     let project_name = schematic_file
         .file_stem()
         .and_then(|value| value.to_str())
@@ -120,13 +132,7 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
     let mut graphics = Vec::new();
     let mut points = Vec::new();
     let mut text = SchematicTextSink::default();
-    push_root_sheet_graphics(
-        root_sheet,
-        &schematic,
-        &mut graphics,
-        &mut points,
-        &mut text,
-    );
+    push_root_sheet_graphics(root_sheet, schematic, &mut graphics, &mut points, &mut text);
     tag_schematic_hit_kinds(root_sheet, &mut graphics);
     let (board_texts, board_text_geometries, glyph_mesh_assets) = text.into_parts();
     // P2.2f: the schematic pane has NO sheet border (the prototype draws none), so
@@ -163,7 +169,7 @@ pub(crate) fn load_scene_from_kicad_schematic_import(
     scene.board_name = root_sheet.name.clone();
     scene.source_revision = format!("schematic:{project_uuid}:sheet:{sheet_uuid}");
     scene.layers = schematic_scene_layers();
-    Ok((scene, schematic_file.to_path_buf()))
+    Ok(scene)
 }
 
 /// Attach explicit interaction metadata while the typed schematic model is still
@@ -186,7 +192,7 @@ fn tag_schematic_hit_kinds(sheet: &Sheet, graphics: &mut [BoardGraphicPrimitive]
         kinds.insert(label.uuid.to_string(), "schematic_label");
     }
     for port in sheet.ports.values() {
-        kinds.insert(port.uuid.to_string(), "schematic_label");
+        kinds.insert(port.uuid.to_string(), "schematic_port");
     }
     for junction in sheet.junctions.values() {
         kinds.insert(junction.uuid.to_string(), "schematic_junction");

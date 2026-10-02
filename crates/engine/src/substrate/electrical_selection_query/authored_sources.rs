@@ -13,6 +13,11 @@ pub struct AuthoredSelectionSource {
 }
 
 impl ElectricalSelectionSnapshot {
+    /// Immutable materialized schematic from this same captured source basis.
+    pub fn schematic_source(&self) -> Option<&crate::schematic::Schematic> {
+        self.schematic.as_ref()
+    }
+
     pub fn project_id(&self) -> Uuid {
         self.model.project.project_id
     }
