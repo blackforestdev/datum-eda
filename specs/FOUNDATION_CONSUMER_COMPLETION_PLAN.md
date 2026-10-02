@@ -1605,3 +1605,30 @@ Select DA-M1-D, still an open/unclaimed owner-decision boundary. This returned
 review grants no manufacturing implementation or additional execution scope.
 No production, prototype, dependency or rendering/resize changes accompany this
 record; the reviewed candidate and historical packet stay pinned unchanged.
+
+
+### Bounded policy-independent M1 execution authorization
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-M1-E -->
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-M1-E-AUTHORIZED -->
+The owner explicitly authorizes a bounded evidence-and-implementation workstream
+before final M1 ratification and its minimum roadmap amendment. Implement through
+existing manufacturing/geometry owners: source-bound exact-authored-arc witnesses
+on the existing 1 nm output grid; primitive/endpoints/sweep validation; certified
+occupied-region deviation; relevant width/clearance/topology checks; exact
+representable output and explicit refusal where allowance or construction is
+unavailable. Exercise exact and ordinary rational centers including T04, with
+independent error calculation. Reuse research/nominal proof, no new dependency,
+chord substitution, invented tolerance or full T04/foundation acceptance.
+Return coherent implementation/proof and one primary-evidence-based policy
+recommendation, or a precise unsupported-process/evidence explanation. A nonzero
+allowance still requires owner ratification before it enables output.
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-M1-R -->
+<!-- OWNER:S5A-DERIVED-AUTHORITY:DA-M1-R:M1-REVIEW -->
+The existing independent owner-facing audit session is reserved for the exact
+bounded M1 candidate and focused replay. Return source/packet/blob, witness and
+primitive/error/constraint proof, outcome and findings. No automatic coordination
+or independent PASS is assumed. This review precedes retained DA-M1-D; it does
+not ratify a tolerance or complete foundation/S5A acceptance. E1/nominal PASS,
+S5A approval, rendering/resize and every unsupported obligation remain preserved.
