@@ -1566,3 +1566,42 @@ bounded implementation, while independent boundary/qualification disposition
 moves to this explicit review gate. On REVISE, return necessary unchanged-scope
 corrections to DA-A2 under the retained grant. Implementation lease and beads
 claim are released together; no review session inherits implementation ownership.
+
+
+### DA-A2-NOMINAL-R — returned independent PASS
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A2-NOMINAL-R-PASS -->
+The owner returned **PASS** from the reserved independent owner-facing audit
+session `/root`, separate from implementation, for supported nominal
+C04–C06/PM054/PM055 only. Source:
+`dd88510504af0d16ef22b54c38948b1308ba8855`; packet
+`S5A-DERIVED-NOMINAL-CANDIDATE-01`, commit
+`89ae50074b19b29e53a4bdca8b3d9a894c21bd35`, document blob
+`c55d2f120de92c36ecad38814cf8e29bed13f694`. No mandatory findings;
+E1-IR-01/02 remain resolved. This completes DA-A2-NOMINAL-R, not the entire
+foundation or S5A acceptance.
+
+Independent source inspection and guarded serial replay passed **300 tests,
+zero failures**: 64 electrical, 200 board, 13 canonical routing/schema/history,
+15 DRC, 4 native selection and 4 selection-lifetime. Detailed review, exact
+binary/fixture-recipe hashes and environment are recorded in
+`target/s5a-nominal-independent-89ae5007/review.json`, SHA-256
+`ae72f11003f98259dcee3f58c9f52be747b7520d0b58a46ee0ed7a4a2349436a`.
+Recording verified the historical packet blob and all 23 recipe and three
+independent binary hashes against that record; no build or replay was repeated.
+Independent fixtures used system temporary storage rather than the producer's
+run-fixtures TMPDIR; compiled artifacts remained on disk under the proof guard.
+
+Producer CLI/Clippy evidence is reused at its recorded scope; **no independent
+CLI replay is claimed**, and its historical executable is absent. Independent
+replay is not the complete producer suite or complete F01–F06. Unsupported
+geometry/process/span, pool/native materialization, dat-7unq, native net-tie/
+artifact/graphics authority and all other unverified rows above stay unverified.
+C07/M1 and mandatory rational-center CAM/T04 remain pending without approximation
+allowance or acceptance waiver. PM026/049/051/052, partial S5A U1 and its existing
+approval, later foundation review/acceptance and S5A C05 remain preserved.
+
+Select DA-M1-D, still an open/unclaimed owner-decision boundary. This returned
+review grants no manufacturing implementation or additional execution scope.
+No production, prototype, dependency or rendering/resize changes accompany this
+record; the reviewed candidate and historical packet stay pinned unchanged.
