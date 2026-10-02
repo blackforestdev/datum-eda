@@ -1,6 +1,9 @@
 //! Certified occupied copper shared by physical membership and nominal DRC.
 //! Orthogonal pads have exact rational boundaries. Rotation-invariant subset/
 //! superset certificates settle some other poses; unresolved boundaries refuse.
+mod eighth_turn;
+mod quadratic;
+mod quadratic_sign;
 mod rotation_bounds;
 use super::nominal_geometry::{
     CertifiedArc, DistanceBoundary, GeometryError, Rational as R, Result, cross, norm,
@@ -102,6 +105,9 @@ fn box_contains_point(shape: RoundedBox, p: Point) -> Result<bool> {
     )
 }
 pub fn pad_contains_point(pad: &PlacedPad, p: Point) -> Result<bool> {
+    if pad.shape != PadShape::Circle && pad.rotation.rem_euclid(90) == 45 {
+        return eighth_turn::contains(pad, p);
+    }
     certify_pad(pad, |shape| box_contains_point(shape, p))
 }
 pub fn via_contains_point(via: &Via, p: Point) -> Result<bool> {
@@ -329,6 +335,9 @@ pub fn track_pad_within(
     extra: i64,
     boundary: DistanceBoundary,
 ) -> Result<bool> {
+    if pad.shape != PadShape::Circle && pad.rotation.rem_euclid(90) == 45 {
+        return eighth_turn::track(pad, track, extra, boundary);
+    }
     certify_pad(pad, |shape| track_box(track, shape, extra, boundary))
 }
 pub fn track_via_within(

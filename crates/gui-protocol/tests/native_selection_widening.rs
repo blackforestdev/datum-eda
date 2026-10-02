@@ -176,7 +176,7 @@ fn rotated_square_inner_witness_certifies_complete_run_without_rounding_pose() {
 }
 
 #[test]
-fn rotated_corner_contact_is_still_unresolved_and_cannot_publish_partial_run() {
+fn rotated_corner_contact_publishes_complete_run_and_survives_reopen_and_undo() {
     let mut f = Fixture::new("selection-rotated-corner-gap");
     f.line(id(1), Point::new(0, 1_400_000), Point::new(0, 1_400_001));
     let pad: PlacedPad = serde_json::from_value(serde_json::json!({
@@ -196,12 +196,82 @@ fn rotated_corner_contact_is_still_unresolved_and_cannot_publish_partial_run() {
     assert!(1_400_000_i128.pow(2) < 2 * 1_000_000_i128.pow(2));
     let files = f.source_bytes();
     let native = Native::capture(&f.model).unwrap();
+    let before = f.model.clone();
+    let origin = Identity {
+        class: Class::Track,
+        id: id(1),
+        instance_path: vec![],
+    };
+    let subject = native.acquire_run(origin.clone(), None).unwrap();
+    let expected = BTreeSet::from([
+        origin.clone(),
+        Identity {
+            class: Class::Pad,
+            id: id(2),
+            instance_path: vec![],
+        },
+    ]);
+    assert_eq!(native.members(&subject).unwrap(), expected);
+    let mut reordered = f.model.clone();
+    reordered.source_shards.reverse();
+    assert_eq!(
+        Native::capture(&reordered)
+            .unwrap()
+            .resolve(&subject)
+            .unwrap(),
+        native.resolve(&subject).unwrap()
+    );
+    assert_eq!(f.model, before);
+    Fixture::assert_bytes(&files);
+    assert_eq!(
+        Native::capture(&f.reopen())
+            .unwrap()
+            .members(&subject)
+            .unwrap(),
+        expected
+    );
+    // A canonical deletion changes actual topology; undo restores the exact
+    // authored rotation and source identities, not a rounded geometry surrogate.
+    f.commit([Operation::DeleteBoardPad {
+        pad_id: id(2),
+        pad: serde_json::to_value(&pad).unwrap(),
+    }]);
+    let deleted = Native::capture(&f.model).unwrap();
+    let one = deleted.acquire_run(origin.clone(), None).unwrap();
+    assert_eq!(
+        deleted.members(&one).unwrap(),
+        BTreeSet::from([origin.clone()])
+    );
+    f.undo();
+    let restored = Native::capture(&f.reopen()).unwrap();
+    let again = restored.acquire_run(origin, None).unwrap();
+    assert_eq!(restored.members(&again).unwrap(), expected);
+}
+
+#[test]
+fn genuinely_unresolved_rotation_refuses_atomically_without_partial_run() {
+    let mut f = Fixture::new("selection-unresolved-pose");
+    f.line(id(1), Point::new(0, 1_200_000), Point::new(0, 1_200_001));
+    let pad: PlacedPad = serde_json::from_value(serde_json::json!({
+        "uuid":id(2),"package":Id::nil(),"name":"P","net":f.net,
+        "position":{"x":0,"y":0},"layer":1,"shape":"rect",
+        "width":2_000_000,"height":2_000_000,"rotation":37,
+        "layer_connection":{"kind":"separate"}
+    }))
+    .unwrap();
+    f.commit([Operation::CreateBoardPad {
+        pad_id: pad.uuid,
+        pad: serde_json::to_value(pad).unwrap(),
+    }]);
+    let files = f.source_bytes();
+    let before = f.model.clone();
+    let native = Native::capture(&f.model).unwrap();
     assert!(matches!(
         native.acquire_run(
             Identity {
                 class: Class::Track,
                 id: id(1),
-                instance_path: vec![],
+                instance_path: vec![]
             },
             None
         ),
@@ -209,6 +279,180 @@ fn rotated_corner_contact_is_still_unresolved_and_cannot_publish_partial_run() {
             ElectricalQueryFailure::Physical(PhysicalQueryFailure::UnavailableGeometry { .. })
         ))
     ));
+    assert_eq!(f.model, before);
     Fixture::assert_bytes(&files);
-    // Refusal honesty passes; positive {Track1, Pad2} is still an open oracle.
+}
+
+#[test]
+fn native_rotated_pad_tangency_and_gap_publish_exact_uncapped_branch_membership() {
+    for (y, tangent) in [(6, true), (7, false)] {
+        let mut f = Fixture::new("rotated-tangent-gap-complete-run");
+        f.line(id(1), Point::new(-10, y), Point::new(10, y));
+        f.line(id(3), Point::new(-10, y), Point::new(-12, y));
+        f.line(id(4), Point::new(100, y), Point::new(110, y));
+        let pad: PlacedPad = serde_json::from_value(serde_json::json!({
+            "uuid":id(2),"package":Id::nil(),"name":"P","net":f.net,
+            "position":{"x":0,"y":0},"layer":1,"shape":"oval",
+            "width":10,"height":10,"rotation":45,
+            "layer_connection":{"kind":"separate"}
+        }))
+        .unwrap();
+        f.commit([Operation::CreateBoardPad {
+            pad_id: pad.uuid,
+            pad: serde_json::to_value(pad).unwrap(),
+        }]);
+        // Independent circle/capsule oracle: radius5 + track half1 =6.
+        // y=6 is exact tangency; y=7 has positive gap. Track4 is disconnected.
+        assert_eq!(y <= 6, tangent);
+        let files = f.source_bytes();
+        let before = f.model.clone();
+        let native = Native::capture(&f.model).unwrap();
+        let ident = |class, n| Identity {
+            class,
+            id: id(n),
+            instance_path: vec![],
+        };
+        let origin = ident(Class::Track, 1);
+        let subject = native.acquire_run(origin, None).unwrap();
+        let mut expected = BTreeSet::from([ident(Class::Track, 1), ident(Class::Track, 3)]);
+        if tangent {
+            expected.insert(ident(Class::Pad, 2));
+        }
+        assert_eq!(native.members(&subject).unwrap(), expected);
+        assert_eq!(f.model, before);
+        Fixture::assert_bytes(&files);
+        let reopened = Native::capture(&f.reopen()).unwrap();
+        assert_eq!(reopened.members(&subject).unwrap(), expected);
+    }
+}
+
+#[test]
+fn occurrence_cycle_dangling_source_stale_basis_and_deleted_identity_stay_distinct() {
+    let mut f = Fixture::new("selection-read-boundary-failures");
+    let wire = eda_engine::schematic::SchematicWire {
+        uuid: id(600),
+        from: Point::zero(),
+        to: Point::new(10, 0),
+    };
+    f.commit([Operation::CreateSchematicWire {
+        sheet_id: f.sheet,
+        wire_id: wire.uuid,
+        wire: serde_json::to_value(&wire).unwrap(),
+    }]);
+    let definition = eda_engine::schematic::SheetDefinition {
+        uuid: id(700),
+        root_sheet: f.sheet,
+        name: "Reusable".into(),
+    };
+    let write = native_write::schematic_sheets::build_create_schematic_definition(
+        &f.model,
+        provenance(),
+        f.schematic,
+        definition.uuid,
+        "definitions/failures.json",
+        serde_json::to_value(definition).unwrap(),
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let instance = eda_engine::schematic::SheetInstance {
+        uuid: id(701),
+        definition: id(700),
+        parent_sheet: None,
+        name: "I".into(),
+        position: Point::zero(),
+        ports: vec![],
+    };
+    let write = native_write::schematic_sheets::build_create_schematic_sheet_instance(
+        &f.model,
+        provenance(),
+        f.schematic,
+        instance.uuid,
+        serde_json::to_value(instance).unwrap(),
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let write = electrical::build_adopt_schematic_net_identities(&f.model, provenance()).unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let files = f.source_bytes();
+    let before = f.model.clone();
+    let native = Native::capture(&f.model).unwrap();
+    let origin = Identity {
+        class: Class::Wire,
+        id: wire.uuid,
+        instance_path: vec![id(701)],
+    };
+    let subject = native.acquire_run(origin.clone(), None).unwrap();
+    assert_eq!(
+        native.members(&subject).unwrap(),
+        BTreeSet::from([origin.clone()])
+    );
+    for (source, path) in [
+        (wire.uuid, vec![id(701), id(701)]),
+        (wire.uuid, vec![id(999)]),
+        (id(999), vec![id(701)]),
+    ] {
+        assert!(matches!(
+            native.acquire_run(
+                Identity {
+                    class: Class::Wire,
+                    id: source,
+                    instance_path: path
+                },
+                None
+            ),
+            Err(SelectionResolutionError::Engine(
+                ElectricalQueryFailure::InvalidOccurrence { .. }
+            ))
+        ));
+    }
+    let occurrence = ElectricalOccurrence {
+        class: "wires".into(),
+        source_id: wire.uuid,
+        instance_path: vec![id(701)],
+    };
+    assert_eq!(
+        native
+            .snapshot()
+            .schematic_run(&ModelRevision("stale".into()), &occurrence),
+        Err(ElectricalQueryFailure::StaleRevision)
+    );
+    assert_eq!(
+        native.snapshot().global_net(native.revision(), Id::nil()),
+        Err(ElectricalQueryFailure::AbsentIdentity { id: Id::nil() })
+    );
+    assert!(
+        !native
+            .derived_exists(&Subject::GlobalNet(Id::nil()))
+            .unwrap()
+    );
+    assert!(matches!(
+        native.members(&Subject::Proposal("not-an-authored-selection-id".into())),
+        Err(SelectionResolutionError::MissingArtifactAuthority)
+    ));
+    assert_eq!(f.model, before);
+    Fixture::assert_bytes(&files);
+    f.commit([Operation::DeleteSchematicWire {
+        sheet_id: f.sheet,
+        wire_id: wire.uuid,
+        wire: serde_json::to_value(&wire).unwrap(),
+    }]);
+    let deleted = Native::capture(&f.reopen()).unwrap();
+    assert!(!deleted.authored_contains(&origin));
+    assert!(
+        deleted
+            .members(&Subject::Object(origin.clone()))
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(
+        native.members(&subject).unwrap(),
+        BTreeSet::from([origin.clone()])
+    );
+    f.undo();
+    let restored = Native::capture(&f.reopen()).unwrap();
+    let restored_subject = restored.acquire_run(origin.clone(), None).unwrap();
+    assert_eq!(
+        restored.members(&restored_subject).unwrap(),
+        BTreeSet::from([origin])
+    );
 }
