@@ -3,9 +3,17 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum ExportError {
     #[error(
-        "Track {source_id} requires deferred C07/M1 manufacturing authority; no chord output is permitted"
+        "Track {source_id} manufacturing refused: {witness:?}; nonzero-deviation allowance or certified construction unavailable; no chord output is permitted"
     )]
-    DeferredArcManufacturing { source_id: uuid::Uuid },
+    DeferredArcManufacturing {
+        source_id: uuid::Uuid,
+        witness: Box<super::ArcOutputWitness>,
+    },
+    #[error("Track {source_id} manufacturing witness failed: {reason:?}")]
+    InvalidArcManufacturing {
+        source_id: uuid::Uuid,
+        reason: super::ArcWitnessError,
+    },
     #[error("board outline export requires at least two vertices")]
     OutlineTooShort,
     #[error("outline aperture diameter must be positive")]

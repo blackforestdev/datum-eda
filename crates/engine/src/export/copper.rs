@@ -10,10 +10,21 @@ pub fn render_rs274x_copper_layer(
     zones: &[Zone],
     vias: &[Via],
 ) -> Result<String, ExportError> {
-    if let Some(track) = tracks.iter().find(|track| track.midpoint.is_some()) {
-        return Err(ExportError::DeferredArcManufacturing {
-            source_id: track.uuid,
-        });
+    // Preflight every arc before publishing any layer bytes. Nonzero output
+    // remains forbidden without M1 ratification, even when format-valid.
+    for track in tracks.iter().filter(|t| t.midpoint.is_some()) {
+        let witness = super::arc_output_witness(track).map_err(|reason| {
+            ExportError::InvalidArcManufacturing {
+                source_id: track.uuid,
+                reason,
+            }
+        })?;
+        if witness.disposition() != super::ArcOutputDisposition::Exact {
+            return Err(ExportError::DeferredArcManufacturing {
+                source_id: track.uuid,
+                witness: Box::new(witness),
+            });
+        }
     }
     if tracks.iter().any(|track| track.width <= 0) {
         return Err(ExportError::InvalidTrackWidth);
@@ -99,11 +110,41 @@ pub fn render_rs274x_copper_layer(
             format_coord(track.from.x),
             format_coord(track.from.y)
         ));
-        lines.push(format!(
-            "X{}Y{}D01*",
-            format_coord(track.to.x),
-            format_coord(track.to.y)
-        ));
+        if track.midpoint.is_some() {
+            let witness = super::arc_output_witness(&track).map_err(|reason| {
+                ExportError::InvalidArcManufacturing {
+                    source_id: track.uuid,
+                    reason,
+                }
+            })?;
+            lines.push(format!(
+                "G04 Track {} certified zero-deviation arc; grid 1 nm; {} circular primitive(s)*",
+                track.uuid,
+                witness.output_primitives().len()
+            ));
+            lines.push(String::from("G75*"));
+            for primitive in witness.output_primitives() {
+                lines.push(String::from(if primitive.counterclockwise {
+                    "G03*"
+                } else {
+                    "G02*"
+                }));
+                lines.push(format!(
+                    "X{}Y{}I{}J{}D01*",
+                    format_coord(primitive.to.x),
+                    format_coord(primitive.to.y),
+                    format_coord(primitive.center_offset.x),
+                    format_coord(primitive.center_offset.y)
+                ));
+            }
+            lines.push(String::from("G01*"));
+        } else {
+            lines.push(format!(
+                "X{}Y{}D01*",
+                format_coord(track.to.x),
+                format_coord(track.to.y)
+            ));
+        }
     }
 
     let mut ordered_vias = vias.to_vec();

@@ -279,26 +279,24 @@ fn render_rs274x_copper_layer_rejects_non_positive_rectangular_pad_height() {
 }
 
 #[test]
-fn deferred_manufacturing_refuses_integer_and_rational_center_arcs_by_source() {
-    for midpoint in [Point::new(5, 5), Point::new(1, 3)] {
-        let source_id = uuid::Uuid::from_u128(123);
-        let mut track = Track::straight(
-            source_id,
-            uuid::Uuid::nil(),
-            Point::new(0, 0),
-            if midpoint.x == 5 {
-                Point::new(10, 0)
-            } else {
-                Point::new(3, 0)
-            },
-            1,
-            1,
-        );
-        track.midpoint = Some(midpoint);
-        let err = render_rs274x_copper_layer(1, &[], &[track], &[], &[]).unwrap_err();
-        assert!(
-            matches!(err, ExportError::DeferredArcManufacturing { source_id: id } if id == source_id)
-        );
+fn rational_center_refusal_carries_source_bound_error_witness() {
+    let mut track = Track::straight(
+        uuid::Uuid::from_u128(123),
+        uuid::Uuid::nil(),
+        Point::new(0, 0),
+        Point::new(3, 0),
+        1,
+        1,
+    );
+    track.midpoint = Some(Point::new(1, 3));
+    let err = render_rs274x_copper_layer(1, &[], &[track.clone()], &[], &[]).unwrap_err();
+    match err {
+        ExportError::DeferredArcManufacturing { source_id, witness } => {
+            assert_eq!(source_id, track.uuid);
+            assert_eq!(witness.source(), &track);
+            assert_ne!(witness.disposition(), ArcOutputDisposition::Exact);
+        }
+        other => panic!("unexpected {other:?}"),
     }
-    // This refusal is a compatibility guard, not the mandatory positive T04 proof.
+    // Refusal remains unpassed mandatory positive T04 coverage.
 }

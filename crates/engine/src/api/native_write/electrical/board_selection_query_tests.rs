@@ -1,6 +1,8 @@
 //! Native PM054 C04/C05 acquisition, source conservation and refusal oracles.
 #[path = "current_fill_drc_tests.rs"]
 mod current_fill_drc_tests;
+#[path = "manufacturing_witness_tests.rs"]
+mod manufacturing_witness_tests;
 #[path = "nominal_connectivity_tests.rs"]
 mod nominal_connectivity_tests;
 #[path = "pad_connection_tests.rs"]

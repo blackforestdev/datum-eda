@@ -1,3 +1,6 @@
+mod arc_constraints;
+mod arc_native;
+mod arc_witness;
 mod copper;
 mod excellon;
 mod export_error;
@@ -15,3 +18,6 @@ use outline::DEFAULT_OUTLINE_APERTURE_MM;
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod arc_manufacturing_tests;

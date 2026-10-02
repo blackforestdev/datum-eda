@@ -1,3 +1,5 @@
+#[path = "main_tests_project_gerber_arc_witness.rs"]
+mod arc_witness;
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 
