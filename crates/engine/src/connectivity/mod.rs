@@ -13,7 +13,8 @@ mod label_semantics;
 mod occurrence_partition;
 use label_semantics::*;
 pub(crate) use occurrence_partition::{
-    occurrence_sheet, partitions, physical_partitions, representation_occurrences,
+    authored_occurrences, occurrence_sheet, partitions, physical_partitions,
+    representation_occurrences,
 };
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 

@@ -43,14 +43,16 @@ pub enum AuthoredSelectionClass {
     SchematicGraphic,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct AuthoredSelectionIdentity {
     pub class: AuthoredSelectionClass,
     pub id: ObjectId,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub instance_path: Vec<ObjectId>,
 }
 
 impl AuthoredSelectionIdentity {
-    pub fn can_originate_run(self) -> bool {
+    pub fn can_originate_run(&self) -> bool {
         matches!(
             self.class,
             AuthoredSelectionClass::Track
@@ -85,10 +87,31 @@ impl CompoundSelection {
         if self.members.is_empty() {
             return Err(SelectionSubjectError::EmptyCompound);
         }
-        if self.focus.is_some_and(|id| !self.members.contains(&id)) {
+        if self
+            .focus
+            .as_ref()
+            .is_some_and(|id| !self.members.contains(id))
+        {
             return Err(SelectionSubjectError::FocusOutsideMembership);
         }
         Ok(())
+    }
+}
+
+/// A stable derivation origin. Zone qualification is engine-issued and bound to
+/// captured source/model basis, never a retained hit point or polygon index.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RunSelectionIdentity {
+    pub origin: AuthoredSelectionIdentity,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub zone_region: Option<eda_engine::connectivity::ZoneRegionQualifier>,
+}
+impl From<AuthoredSelectionIdentity> for RunSelectionIdentity {
+    fn from(origin: AuthoredSelectionIdentity) -> Self {
+        Self {
+            origin,
+            zone_region: None,
+        }
     }
 }
 
@@ -101,7 +124,7 @@ pub enum SelectionSubject {
     None,
     Object(AuthoredSelectionIdentity),
     Compound(CompoundSelection),
-    Run(AuthoredSelectionIdentity),
+    Run(RunSelectionIdentity),
     GlobalNet(ObjectId),
     Bus(ObjectId),
     Proposal(String),
@@ -114,6 +137,7 @@ pub enum SelectionSubjectError {
     EmptyCompound,
     FocusOutsideMembership,
     InvalidRunOrigin,
+    InvalidRegionQualifier,
 }
 
 impl SelectionSubject {
@@ -134,8 +158,18 @@ impl SelectionSubject {
     pub fn validate(&self) -> Result<(), SelectionSubjectError> {
         match self {
             Self::Compound(value) => value.validate(),
-            Self::Run(origin) if !origin.can_originate_run() => {
+            Self::Run(run) if !run.origin.can_originate_run() => {
                 Err(SelectionSubjectError::InvalidRunOrigin)
+            }
+            Self::Run(run)
+                if run.zone_region.as_ref().is_some_and(|q| {
+                    run.origin.class != AuthoredSelectionClass::Zone
+                        || q.source().source_id != run.origin.id
+                        || q.source().class != "zones"
+                        || q.source().instance_path != run.origin.instance_path
+                }) =>
+            {
+                Err(SelectionSubjectError::InvalidRegionQualifier)
             }
             _ => Ok(()),
         }

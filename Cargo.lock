@@ -769,6 +769,8 @@ name = "datum-gui-viewport"
 version = "0.1.0"
 dependencies = [
  "datum-gui-protocol",
+ "eda-engine",
+ "serde_json",
 ]
 
 [[package]]

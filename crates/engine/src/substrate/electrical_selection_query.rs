@@ -1,5 +1,7 @@
 //! Immutable public selection queries. Members come from canonical engine owners,
 //! never pane visibility, display names, hit primitives or a context envelope.
+#[path = "electrical_selection_query/authored_sources.rs"]
+mod authored_sources;
 #[path = "electrical_selection_query/bus_run.rs"]
 mod bus_run;
 use super::*;
@@ -7,6 +9,7 @@ use crate::substrate::{
     DesignModel, ElectricalIdentity, ElectricalOccurrence, ModelRevision, NetCorrespondenceStatus,
     SourceShardKind,
 };
+pub use authored_sources::{AuthoredSelectionSource, SelectionSourceDomain};
 pub use bus_run::{BusRunMembership, CrossBusContact};
 use serde::{Deserialize, Serialize};
 

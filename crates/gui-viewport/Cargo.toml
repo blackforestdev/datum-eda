@@ -5,3 +5,7 @@ edition.workspace = true
 
 [dependencies]
 datum-gui-protocol = { path = "../gui-protocol" }
+
+[dev-dependencies]
+eda-engine = { path = "../engine" }
+serde_json.workspace = true

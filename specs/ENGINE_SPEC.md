@@ -2033,8 +2033,7 @@ an array entry. Current successful empty fill contributes zero copper; absent or
 stale fill cannot be replaced by its outline. All queries remain immutable and
 expected-revision-bound. Multi-layer placed pad apertures without certified barrel
 authority remain unavailable; aperture list, source UUID, Net and drill alone
-cannot establish plating. Zone successor qualification, shared adapters and
-remaining current-fill predicates remain pending; these limits do not waive required acceptance.
+cannot establish plating. Remaining pad/span and current-fill predicates remain pending; these limits do not waive required acceptance.
 
 
 PM054 Zone qualifiers now bind an authored Zone occurrence to the exact captured
@@ -2083,3 +2082,26 @@ conflicting declaration. Scalar wires/Nets and related Bus interfaces remain
 related only. Invalid occurrences, ambiguous/missing declaration and unavailable
 authored paths return typed failures; queries allocate no authored identity.
 Shared consumer adoption and remaining pad/connectivity capabilities are pending.
+
+
+The existing gui-protocol selection resolver now has one immutable native engine
+adapter, shared by board/schematic consumers on model-basis changes. It queries
+complete derived subjects on demand and retains full source-qualified electrical,
+Board Run and Bus Run projection evidence, including Zone copper/qualifiers and
+foreign contacts. Authored identities carry the actual SheetInstance path and
+source domain; same-named Board/schematic text and repeated source UUIDs remain
+distinct. Source inventories validate captured canonical maps/arrays, not scene
+keys. The Board outline reuses its real Board owner UUID with a typed source-slot
+class; no generated authored identity is allocated. Owned Bus entries remain
+projection geometry and are not separately acquired/counted through a Bus subject.
+
+The shared viewport lifetime service consumes old/new-basis Zone succession:
+unique successors rederive, splits/unknown/current-empty/deletion clear with
+distinct programmatic explanations, and unavailable basis retains explicitly
+stale previous members and the last certified basis. It never replays an old hit
+or resurrects cleared selection on undo. A missing binding refuses subject-local
+resolution instead of supplying an empty/pruned result. Existing supplied read
+projections implement the same resolver interface. The native adapter does not
+claim artifact-lifecycle authority, absent authored graphics, active S5A GUI entry,
+complete overlay/accessibility acceptance or missing geometry. Those existing
+S5A/provider seams remain explicit, not independently implemented selection stores.

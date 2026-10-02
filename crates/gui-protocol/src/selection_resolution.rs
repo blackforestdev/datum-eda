@@ -3,6 +3,12 @@
 //! Callers supply engine-resolved identities at one model revision. This module
 //! never reconstructs connectivity from scene names, prefixes or pixel geometry.
 
+mod native;
+pub use eda_engine::connectivity::{
+    PhysicalQueryFailure, ZoneClearReason, ZoneRegionQualifier, ZoneRegionSuccessor,
+};
+pub use native::{NativeSelectionProjection, NativeSelectionResolution};
+
 use crate::selection_subject::{
     AuthoredSelectionIdentity, SelectionSubject, SelectionSubjectError,
 };
@@ -31,6 +37,9 @@ pub enum SelectionResolutionError {
     MissingDerivedAuthority,
     MissingDerivedIdentity,
     UnresolvedDerivedMember(AuthoredSelectionIdentity),
+    Engine(eda_engine::substrate::ElectricalQueryFailure),
+    UnsupportedEngineClass(String),
+    MissingArtifactAuthority,
 }
 
 impl SelectionResolution {
@@ -44,11 +53,15 @@ impl SelectionResolution {
             .validate()
             .map_err(SelectionResolutionError::InvalidSubject)?;
         let derived = match subject {
-            SelectionSubject::Run(origin) => self
-                .runs
-                .as_ref()
-                .ok_or(SelectionResolutionError::MissingDerivedAuthority)?
-                .get(origin),
+            SelectionSubject::Run(run) => {
+                if run.zone_region.is_some() {
+                    return Err(SelectionResolutionError::MissingDerivedAuthority);
+                }
+                self.runs
+                    .as_ref()
+                    .ok_or(SelectionResolutionError::MissingDerivedAuthority)?
+                    .get(&run.origin)
+            }
             SelectionSubject::GlobalNet(id) => self
                 .nets
                 .as_ref()
@@ -63,7 +76,7 @@ impl SelectionResolution {
                 return Ok(self
                     .authored
                     .contains(id)
-                    .then_some(*id)
+                    .then_some(id.clone())
                     .into_iter()
                     .collect());
             }
@@ -71,15 +84,77 @@ impl SelectionResolution {
                 return Ok(value
                     .members
                     .intersection(&self.authored)
-                    .copied()
+                    .cloned()
                     .collect());
             }
             _ => return Ok(BTreeSet::new()),
         }
         .ok_or(SelectionResolutionError::MissingDerivedIdentity)?;
         if let Some(id) = derived.difference(&self.authored).next() {
-            return Err(SelectionResolutionError::UnresolvedDerivedMember(*id));
+            return Err(SelectionResolutionError::UnresolvedDerivedMember(
+                id.clone(),
+            ));
         }
         Ok(derived.clone())
+    }
+}
+
+/// One shared resolver boundary for revision lifecycle. Native implementations
+/// resolve on demand from immutable engine authority; the table is a supplied
+/// complete read projection, never a scene connectivity implementation.
+pub trait SelectionAuthority {
+    fn project(&self) -> ObjectId;
+    fn revision(&self) -> &SelectionModelRevision;
+    fn authored_contains(&self, id: &AuthoredSelectionIdentity) -> bool;
+    fn derived_exists(&self, subject: &SelectionSubject) -> Result<bool, SelectionResolutionError>;
+    fn artifact_exists(&self, subject: &SelectionSubject)
+    -> Result<bool, SelectionResolutionError>;
+    fn members(
+        &self,
+        subject: &SelectionSubject,
+    ) -> Result<BTreeSet<AuthoredSelectionIdentity>, SelectionResolutionError>;
+}
+impl SelectionAuthority for SelectionResolution {
+    fn project(&self) -> ObjectId {
+        self.project
+    }
+    fn revision(&self) -> &SelectionModelRevision {
+        &self.revision
+    }
+    fn authored_contains(&self, id: &AuthoredSelectionIdentity) -> bool {
+        self.authored.contains(id)
+    }
+    fn derived_exists(&self, subject: &SelectionSubject) -> Result<bool, SelectionResolutionError> {
+        let exists = match subject {
+            SelectionSubject::GlobalNet(id) => self
+                .nets
+                .as_ref()
+                .ok_or(SelectionResolutionError::MissingDerivedAuthority)?
+                .contains_key(id),
+            SelectionSubject::Bus(id) => self
+                .buses
+                .as_ref()
+                .ok_or(SelectionResolutionError::MissingDerivedAuthority)?
+                .contains_key(id),
+            _ => true,
+        };
+        Ok(exists)
+    }
+    fn artifact_exists(
+        &self,
+        subject: &SelectionSubject,
+    ) -> Result<bool, SelectionResolutionError> {
+        Ok(match subject {
+            SelectionSubject::Proposal(id) => self.proposals.contains(id),
+            SelectionSubject::Review(id) => self.reviews.contains(id),
+            SelectionSubject::Diagnostic(id) => self.diagnostics.contains(id),
+            _ => true,
+        })
+    }
+    fn members(
+        &self,
+        subject: &SelectionSubject,
+    ) -> Result<BTreeSet<AuthoredSelectionIdentity>, SelectionResolutionError> {
+        SelectionResolution::members(self, subject)
     }
 }
