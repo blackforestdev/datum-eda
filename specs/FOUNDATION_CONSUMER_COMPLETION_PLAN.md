@@ -1632,3 +1632,116 @@ primitive/error/constraint proof, outcome and findings. No automatic coordinatio
 or independent PASS is assumed. This review precedes retained DA-M1-D; it does
 not ratify a tolerance or complete foundation/S5A acceptance. E1/nominal PASS,
 S5A approval, rendering/resize and every unsupported obligation remain preserved.
+
+
+### S5A-DERIVED-M1-CANDIDATE-01 — bounded implementation and policy evidence
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-M1-E-CANDIDATE -->
+**Source:** `9a3e8e8d499bfc161a90daa794ac5460e78cc102`.
+**Authorization/scheduling:** `4cf0b512`, the owner's policy-independent M1 grant.
+**Packet pin:** this document's Git blob in the governance landing commit; return
+that commit/blob alongside the exact source. DA-M1-E delivers only this bounded
+candidate. Reserved independent DA-M1-R review and final DA-M1-D remain pending.
+No approximation allowance or mandatory rational-center CAM/T04 success is claimed.
+
+| Implemented owner | Behavior and permanent proof |
+| --- | --- |
+| Existing export/certified geometry: `export/arc_witness.rs` | Immutable full Track-bound witness; exact rational center/radius, nearest signed I/J on 1 nm grid, endpoint/width/direction, sweep/range and short-endpoint checks. Zero, nonzero allowance-required and uncertified construction are distinct. No tolerance-acceptance API. |
+| Existing copper renderer: `export/copper.rs` | All arcs preflight before publishing bytes. Exact-representable stable circular output uses G75/G02/G03, original shared endpoints and exact aperture. Major arcs split at the grid-exact antipode into a semicircle plus remaining arc; G01 resets afterward. Nonzero/uncertified output refuses with source/witness, never a chord. CLI existing-artifact refusal is permanent proof. |
+| Existing nominal predicates: `export/arc_constraints.rs` | Width inner-tube guarantee and pairwise clearance/topology against computed deviation; conservative integer ceiling for existing predicates is an observation, not an allowance. Uses actual stackup Pad/Via span owners. Same UUID with altered source refuses. Uncertified neighbour serialization is unavailable. |
+| Existing immutable model/fill owner: `export/arc_native.rs` | Capture once, bind project/revision/source hashes, inspect actual complete local copper inventory and only current certified Zone fill. Missing/stale/unsupported fill refuses; current successful empty proves no Zone contact. No outline substitution, query writes or nominal DRC changes. |
+| Permanent recipes | `export/arc_manufacturing_tests.rs`, native electrical `manufacturing_witness_tests.rs`, CLI `main_tests_project_gerber_arc_witness.rs`. Exact/reverse/mirror/translation/major, ordinary rational centers, primitive/range/stability/source refusal, width/clearance/topology, native fill, source/journal conservation, canonical undo/redo/reopen and preserved CLI output. |
+
+#### Certified construction and independently calculated observations
+
+Equal-radius output circles through the unchanged endpoints share a chord; their
+centers differ only along its perpendicular bisector. From the chord midpoint,
+a ray intersects the selected half-plane arc at
+`h*s + sqrt(a² + h²*s²)`, with half-chord `a > 0` and unit-ray projection
+`|s| <= 1`. The derivative in `h` has magnitude at most two. Matching rays give
+symmetric centerline Hausdorff distance at most twice the center displacement,
+bounded by **2 × L1 center error**. The identical circular width/2 aperture does
+not enlarge that envelope. Equal radii, preserved direction/sweep and endpoints
+are checked before claiming this construction. Unequal-radii Gerber fuzziness
+has no certified construction here; it is explicitly unavailable.
+
+| Authored example (nm unless stated) | Independently checked observation | Output disposition |
+| --- | --- | --- |
+| Exact center: (-3,4), (0,-5), (3,4) mm | Center (0,0), radius² 25 mm²; zero deviation, major direction and exact shared antipodal split | Positive exact circular output. No downstream fabrication acceptance claim. |
+| Required T04: (0,0), (1,3), (3,0) mm | Center (1,500,000; 3,500,000/3) nm. Rounded center (1,500,000; 1,166,667). Center L1 error 1/3 nm; occupied envelope 2/3 nm. Both output radius² values 3,611,111,888,889 nm²; source radius² 32,500,000,000,000/9 nm². Real top-point displacement about 0.537980223 nm, despite zero endpoint-radius mismatch. | **Refused: nonzero allowance unratified. Positive T04 CAM remains unpassed.** |
+| Ordinary variant: end (3,000,001;0), midpoint (1,000,000;3,000,000) | Exact center (1,500,000.5;1,166,666.5); rounded (1,500,001;1,166,667). Center L1 error 1 nm; start/end radius² differ by 3,000,001 nm². | Uncertified construction; occupied envelope unavailable, not a guessed 2 nm qualification. |
+
+`target/s5a-m1-evidence/error_oracle.py` independently derives perpendicular
+bisectors with stdlib Fraction and certifies Decimal-proposed root brackets by
+exact rational squaring; it calls no Datum geometry. Its JSON records all values
+and the strict T04 top-displacement bracket inside 2/3 nm. This methodological
+independence is **not** the reserved independent candidate review. Oracle source
+SHA-256 `bf3d0c1b86b2be78b5171415c5058805f6822f72159c236c17472d59c9a7b94c`;
+JSON SHA-256 `2c24f6400b43d3ac8a5a0aba0c0f72aa2a9f89aebb203a257982db2a651face4`.
+
+#### Manufacturing policy recommendation and precise unresolved basis
+
+**Recommend retaining zero intentional deviation until a supported downstream
+process/profile supplies a defensible error allocation. No nonzero numerical
+allowance can currently be recommended.** The repository search and inherited
+C07 investigation identify no adopted fabrication/profile tolerance allocation,
+qualified reader/imager accuracy or etch-compensation basis from which to charge
+serialization error. A small calculated error does not establish that allocation.
+
+Primary evidence is [Ucamco Gerber 2026.05](https://www.ucamco.com/files/downloads/file_en/554/gerber-layer-format-specification-revision-2026-05_en.pdf),
+§§4.7.2/4.14, downloaded unchanged to `target/s5a-m1-evidence/gerber-2026-05.pdf`,
+SHA-256 `ac9e9899f573d69e472b2112f1ae879c70f6cd13e17db41a1c885caf69961662`.
+It distinguishes exact circles from unequal-radius interpretations and warns
+about short/nearly-full arcs. Its image-processing perturbation guidance and
+visualization/device dependence do not allocate fabrication error to Datum.
+The implemented 1 µm endpoint-separation check follows that format guidance;
+it is neither an invented manufacturing budget nor an S5A latency requirement.
+
+A future defensible allowance needs a stated supported reader/process accuracy
+and feature requirements, an explicit serialization allocation, complete output
+construction/primitive validation and per-job width/clearance/topology reserve.
+This candidate's 2×L1 witness is an upper error observation, never automatic
+permission. The inner-width report describes a conservatively retained nominal
+tube, not a changed aperture or proof of an actual violation. Pairwise separated
+sources can be protected by summed error envelopes; nonzero-bound nominal
+contacts remain at risk without connection/overlap proof. Complete connected
+manufacturing topology, arbitrary fuzzy arcs, reader perturbations, etch/drill
+conformance and unsupported aperture/process cases are not certified here.
+Nominal DRC cannot be waived by output conformance. These limits prevent a
+credible general allowance without selecting new product/process assumptions.
+
+#### Exact focused proof and independent handoff
+
+Final guarded engine replay: **1,149 passed, zero failures** in
+`target/s5a-m1-final-engine-tests.log`. CLI new exact/refusal case: **1 passed**
+in `target/s5a-m1-cli-arc-tests.log`; existing copper exports: **4 passed** in
+`target/s5a-m1-cli-copper-regressions.log`. Engine/CLI all-target Clippy with
+warnings denied passed in `target/s5a-m1-final-clippy.log`. Source-health policy
+suite: **13 passed**; source health, formatting, dependency/resource, project
+state, parity/classification and coverage gates passed. Early shared-target
+resource refusal and corrected doc-comment setup failure are not credited.
+No GUI/native S5A replay, broad performance campaign or independent PASS occurred.
+
+Binary SHA-256 pins:
+- Engine `eda_engine-5b3bfac123e4e569`:
+  `f0889f2356b07791358c1e04fdc0f24b49d508eefd7e4c1e1d8af21fa0424587`.
+- CLI `datum_eda-8806a01442a6ca8d`:
+  `6cb7ddcc227845d1516425c9c37020e62879a68242023e8aa66bc7d96808c161`.
+
+`target/s5a-m1-evidence/candidate.json` binds source, recipe/log/binary hashes,
+primary PDF, oracle and environment; SHA-256
+`7e5f2777eb9de699e9bce748443c97e55a553ed8e632f9ccacc4b3628e833381`.
+Linux 6.12.107+deb13-amd64 x86_64; Rust/Cargo 1.98.0; unoptimized, serial proof
+guard, incremental disabled, disk target `target/s5a-nominal-proof`, fixture
+TMPDIR `target/s5a-nominal-proof/run-fixtures`. Native fixture UUIDs are allocated
+once and compared exactly per invocation; no renderer-generated identities.
+
+Return this exact source/packet/blob through the reserved owner-facing audit
+session at DA-M1-R for implementation review and focused replay of witnesses,
+actual output/refusal, source/binary/fixture basis, constraints and native
+history/non-mutation. No automatic cross-session coordination. Review must keep
+T04 rational-center positive CAM, final M1 allowance, unsupported obligations,
+dat-7unq and full foundation/S5A acceptance pending. E1 and nominal PASS,
+E1-IR-01/02 resolution, retained S5A approval/partial U1/C05 and PM026/049/051/052
+are preserved. Release implementation claim/beads together; no later engine or
+S5A work is selected by this bounded delivery.
