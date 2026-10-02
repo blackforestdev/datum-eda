@@ -540,7 +540,7 @@ fn resolver_rejects_invalid_filled_zone_fill_generated_evidence() {
         .resolve()
         .expect("project resolves");
     let invalid = ZoneFill {
-        schema_version: ZONE_FILL_SCHEMA_VERSION,
+        schema_version: 1,
         zone_id,
         state: ZoneFillState::Filled,
         source_zone_revision: ObjectRevision(0),

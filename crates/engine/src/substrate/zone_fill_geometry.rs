@@ -215,7 +215,7 @@ pub(super) fn rectangular_cutout_islands(
             Point::new(clipped.max.x, zone_bounds.max.y),
         ),
     );
-    (!islands.is_empty()).then_some((islands, clipped_obstacle))
+    Some((islands, clipped_obstacle))
 }
 
 pub(super) fn rectangular_multi_cutout_islands(
@@ -262,7 +262,7 @@ pub(super) fn rectangular_multi_cutout_islands(
             push_rect_island(&mut islands, cell);
         }
     }
-    (!islands.is_empty()).then_some((islands, merged_obstacles, clipped_obstacles))
+    Some((islands, merged_obstacles, clipped_obstacles))
 }
 
 fn merge_overlapping_or_touching_rects(mut rects: Vec<Rect>) -> Vec<Rect> {
