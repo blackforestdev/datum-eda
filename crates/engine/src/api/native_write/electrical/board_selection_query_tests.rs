@@ -1,4 +1,6 @@
 //! Native PM054 C04/C05 acquisition, source conservation and refusal oracles.
+#[path = "zone_region_query_tests.rs"]
+mod zone_region_query_tests;
 use super::super::{board_routing::*, commit_prepared, test_support::*};
 use super::tests::provenance;
 use super::*;

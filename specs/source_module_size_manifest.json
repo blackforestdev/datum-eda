@@ -477,17 +477,6 @@
       "status": "decomposition-required",
       "note": "Dedicated Rust test module exceeds the normal authored test-file limit. PM054 Track source adoption extracts cohesive command/fixture/preservation-test ownership; exact ceiling ratcheted downward. Remaining debt stays open."
     },
-    "crates/engine/src/connectivity/mod.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 709
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
     "crates/engine/src/import/kicad/parser_helpers.rs": {
       "kind": "rust-production",
       "limits": {

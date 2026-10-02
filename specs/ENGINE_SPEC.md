@@ -2034,3 +2034,22 @@ expected-revision-bound. Multi-layer placed pad apertures without certified barr
 authority remain unavailable; aperture list, source UUID, Net and drill alone
 cannot establish plating. Zone successor qualification, shared adapters and
 current-fill DRC remain pending; these limits do not waive required acceptance.
+
+
+PM054 Zone qualifiers now bind an authored Zone occurrence to the exact captured
+project/revision/source basis and an opaque engine component token. Succession
+validates that old token against its original complete physical graph and a
+canonical journal-prefix/revision relationship before comparing current copper.
+Exact equality compares occupied sides of all rationally split boundary segments;
+winding, cell order, decomposition and overlapping redundant cells are immaterial.
+No renderer index, generated semantic UUID, overlap, proximity or old hit point
+establishes lifetime. Unchanged complete Zone copper certifies mappings through
+external same-Net component joins/splits; an exactly unchanged selected region
+also qualifies independently. One canonical pure source translation can supply
+lineage only when both source endpoints and complete translated fill are verified.
+Unique successors rederive complete Runs, splits disclose all successor tokens,
+current changed unproved copper returns Unknown, stale/unavailable basis suspends,
+and certified current empty or canonical deletion clears. Queries do not themselves
+select or resurrect anything; the shared selection lifetime owner must consume
+these dispositions. This bounded transform witness does not promise general CAD
+lineage, arbitrary rotations or complete nominal foundation acceptance.

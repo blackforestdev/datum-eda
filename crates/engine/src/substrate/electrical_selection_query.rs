@@ -147,6 +147,33 @@ impl ElectricalSelectionSnapshot {
                 origin: origin.clone(),
             }
         })?;
+        let source = self.board_source()?;
+        crate::connectivity::board_run(&source, &self.model, origin, hit, &self.source_basis)
+            .map_err(ElectricalQueryFailure::Physical)
+    }
+
+    pub fn zone_region_successor(
+        &self,
+        expected: &ModelRevision,
+        previous: &Self,
+        qualifier: &crate::connectivity::ZoneRegionQualifier,
+    ) -> Result<crate::connectivity::ZoneRegionSuccessor, ElectricalQueryFailure> {
+        self.require_revision(expected)?;
+        crate::connectivity::board_physical_successor(
+            &previous.board_source()?,
+            &previous.model,
+            &previous.source_basis,
+            &self.board_source()?,
+            &self.model,
+            &self.source_basis,
+            qualifier,
+        )
+        .map_err(ElectricalQueryFailure::Physical)
+    }
+
+    fn board_source(
+        &self,
+    ) -> Result<crate::connectivity::BoardCopperSource, ElectricalQueryFailure> {
         let roots: Vec<_> = self
             .model
             .source_shards
@@ -174,8 +201,7 @@ impl ElectricalSelectionSnapshot {
                 reason: "board root identity does not match the captured model".into(),
             });
         }
-        crate::connectivity::board_run(&source, &self.model, origin, hit, &self.source_basis)
-            .map_err(ElectricalQueryFailure::Physical)
+        Ok(source)
     }
 
     pub fn revision(&self) -> &ModelRevision {

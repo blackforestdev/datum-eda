@@ -1,7 +1,9 @@
 mod board_physical;
+pub(crate) use board_physical::successor as board_physical_successor;
 pub(crate) use board_physical::{BoardCopperSource, board_run};
 pub use board_physical::{
-    BoardRunMembership, CrossNetContact, PhysicalQueryFailure, ZoneCopperProjection,
+    BoardRunMembership, CrossNetContact, PhysicalQueryFailure, ZoneClearReason,
+    ZoneCopperProjection, ZoneRegionQualifier, ZoneRegionSuccessor,
 };
 mod segment_geometry;
 use segment_geometry::point_on_wire_segment;
@@ -17,7 +19,7 @@ use uuid::Uuid;
 
 use crate::ir::geometry::Point;
 use crate::schematic::{
-    ConnectivityDiagnosticInfo, HierarchicalLinkInfo, LabelKind, NetLabel, NetPinRef, Schematic,
+    ConnectivityDiagnosticInfo, HierarchicalLinkInfo, LabelKind, NetPinRef, Schematic,
     SchematicNetInfo,
 };
 
@@ -687,23 +689,6 @@ fn parent_ports_for_instance<'a>(
         if let Some(port) = parent_sheet.ports.get(&port_uuid) {
             grouped.entry(port.name.clone()).or_default().push(port);
         }
-    }
-    grouped
-}
-
-fn child_hierarchical_labels_by_name(
-    child_sheet: &crate::schematic::Sheet,
-) -> BTreeMap<String, Vec<&NetLabel>> {
-    let mut grouped: BTreeMap<String, Vec<&NetLabel>> = BTreeMap::new();
-    let mut labels: Vec<_> = child_sheet
-        .labels
-        .values()
-        .filter(|label| matches!(label.kind, LabelKind::Hierarchical))
-        .filter(|label| !is_bus_container_label(label))
-        .collect();
-    labels.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
-    for label in labels {
-        grouped.entry(label.name.clone()).or_default().push(label);
     }
     grouped
 }

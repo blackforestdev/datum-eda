@@ -12,6 +12,9 @@ use crate::substrate::{
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use uuid::Uuid;
+mod zone_regions;
+pub(crate) use zone_regions::successor;
+pub use zone_regions::{ZoneClearReason, ZoneRegionQualifier, ZoneRegionSuccessor};
 
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct BoardCopperSource {
@@ -25,6 +28,7 @@ pub(crate) struct BoardCopperSource {
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PhysicalQueryFailure {
+    InvalidQualifier,
     AbsentSource {
         source_id: Uuid,
     },
@@ -69,6 +73,7 @@ pub struct BoardRunMembership {
     pub board_net: Uuid,
     pub members: BTreeSet<ElectricalOccurrence>,
     pub zone_copper: Vec<ZoneCopperProjection>,
+    pub zone_regions: Vec<ZoneRegionQualifier>,
     pub contact_evidence: Result<Vec<CrossNetContact>, PhysicalQueryFailure>,
 }
 #[derive(Clone)]
@@ -155,6 +160,17 @@ struct Graph {
     unavailable: Vec<Unavailable>,
     groups: Vec<Vec<usize>>,
 }
+fn current_fill(model: &DesignModel, id: Uuid) -> Option<&crate::substrate::ZoneFill> {
+    model.zone_fills.get(&id).filter(|f| {
+        f.zone_id == id
+            && f.state == ZoneFillState::Filled
+            && f.model_revision == model.model_revision
+            && model
+                .objects
+                .get(&id)
+                .is_some_and(|o| o.object_revision == f.source_zone_revision)
+    })
+}
 impl Graph {
     fn build(
         source: &BoardCopperSource,
@@ -223,15 +239,7 @@ impl Graph {
             }
             let layers =
                 copper::conductive_layer(&source.stackup, zone.layer).map(|_| vec![zone.layer]);
-            let current = model.zone_fills.get(id).filter(|f| {
-                f.zone_id == *id
-                    && f.state == ZoneFillState::Filled
-                    && f.model_revision == model.model_revision
-                    && model
-                        .objects
-                        .get(id)
-                        .is_some_and(|o| o.object_revision == f.source_zone_revision)
-            });
+            let current = current_fill(model, *id);
             let Some(fill) = current else {
                 graph.unavailable.push(Unavailable {
                     net: Some(zone.net),
@@ -450,7 +458,18 @@ pub(crate) fn board_run(
             source_id: origin.source_id,
         });
     };
-    let group = &graph.groups[*index];
+    membership(source, model, origin, &graph, *index, source_basis)
+}
+fn membership(
+    source: &BoardCopperSource,
+    model: &DesignModel,
+    origin: &ElectricalOccurrence,
+    graph: &Graph,
+    index: usize,
+    source_basis: &[SelectionSourceBasis],
+) -> Result<BoardRunMembership, PhysicalQueryFailure> {
+    let net = assignment(source, origin)?;
+    let group = &graph.groups[index];
     let mut members = BTreeSet::new();
     let mut regions = BTreeMap::<Uuid, ZoneCopperProjection>::new();
     for i in group {
@@ -481,6 +500,10 @@ pub(crate) fn board_run(
         origin: origin.clone(),
         board_net: net,
         members,
+        zone_regions: regions
+            .keys()
+            .map(|id| zone_regions::qualifier(model, source_basis, *id, index))
+            .collect(),
         zone_copper: regions.into_values().collect(),
         contact_evidence: contacts,
     })
