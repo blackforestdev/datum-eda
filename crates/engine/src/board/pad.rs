@@ -29,10 +29,32 @@ pub enum PadAperture {
     Rect { width_nm: i64, height_nm: i64 },
 }
 
+/// Explicit inherited padstack process/span fact. Aperture presence and drill
+/// alone never prove a barrel; legacy unknown remains unavailable when needed.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum PadLayerConnection {
+    #[default]
+    Unknown,
+    Separate,
+    PlatedThrough,
+    PlatedSpan {
+        start_layer: LayerId,
+        end_layer: LayerId,
+    },
+}
+impl PadLayerConnection {
+    fn is_unknown(&self) -> bool {
+        matches!(self, Self::Unknown)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PlacedPad {
     pub uuid: Uuid,
     pub package: Uuid,
+    #[serde(default, skip_serializing_if = "PadLayerConnection::is_unknown")]
+    pub layer_connection: PadLayerConnection,
     pub name: String,
     pub net: Option<Uuid>,
     pub position: Point,

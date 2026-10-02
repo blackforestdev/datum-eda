@@ -265,6 +265,7 @@ fn board_net_info_counts_tracks_and_vias() {
             (
                 Uuid::new_v4(),
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: Uuid::new_v4(),
                     package: pkg_a,
                     name: "1".into(),
@@ -289,6 +290,7 @@ fn board_net_info_counts_tracks_and_vias() {
             (
                 Uuid::new_v4(),
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: Uuid::new_v4(),
                     package: pkg_b,
                     name: "2".into(),

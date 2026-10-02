@@ -1,3 +1,5 @@
+#[path = "board_pad_source.rs"]
+pub(super) mod board_pad_source;
 #[path = "board_track_source.rs"]
 pub(super) mod board_track_source;
 use uuid::Uuid;
@@ -18,6 +20,9 @@ pub(super) fn apply_board_operation(
     board_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<bool, EngineError> {
+    if let Some(applied) = board_pad_source::apply(board_value, operation)? {
+        return Ok(applied);
+    }
     if let Some(applied) = board_track_source::apply(board_value, operation)? {
         return Ok(applied);
     }
@@ -95,18 +100,6 @@ pub(super) fn apply_board_operation(
             set_board_package_bool_field(board_value, *package_id, "locked", *locked)?;
             Ok(true)
         }
-        Operation::CreateBoardPad { pad_id, pad } => {
-            insert_board_map_value(board_value, "pads", *pad_id, pad.clone())?;
-            Ok(true)
-        }
-        Operation::SetBoardPad { pad_id, pad } => {
-            replace_board_map_value(board_value, "pads", *pad_id, pad.clone())?;
-            Ok(true)
-        }
-        Operation::DeleteBoardPad { pad_id, .. } => {
-            remove_board_map_value(board_value, "pads", *pad_id)?;
-            Ok(true)
-        }
         Operation::CreateBoardVia { via_id, via } => {
             insert_board_map_value(board_value, "vias", *via_id, via.clone())?;
             Ok(true)
@@ -170,6 +163,9 @@ pub(super) fn inverse_board_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<(), EngineError> {
+    if board_pad_source::inverse(board_value, operation, inverse_operations)? {
+        return Ok(());
+    }
     if board_track_source::inverse(board_value, operation, inverse_operations)? {
         return Ok(());
     }
@@ -298,29 +294,6 @@ pub(super) fn inverse_board_operation(
                 locked: previous,
             });
             set_board_package_bool_field(board_value, *package_id, "locked", *locked)?;
-        }
-        Operation::CreateBoardPad { pad_id, pad } => {
-            inverse_operations.push(Operation::DeleteBoardPad {
-                pad_id: *pad_id,
-                pad: pad.clone(),
-            });
-            insert_board_map_value(board_value, "pads", *pad_id, pad.clone())?;
-        }
-        Operation::SetBoardPad { pad_id, pad } => {
-            let previous = board_map_value(board_value, "pads", *pad_id)?.clone();
-            inverse_operations.push(Operation::SetBoardPad {
-                pad_id: *pad_id,
-                pad: previous,
-            });
-            replace_board_map_value(board_value, "pads", *pad_id, pad.clone())?;
-        }
-        Operation::DeleteBoardPad { pad_id, .. } => {
-            let previous = board_map_value(board_value, "pads", *pad_id)?.clone();
-            inverse_operations.push(Operation::CreateBoardPad {
-                pad_id: *pad_id,
-                pad: previous,
-            });
-            remove_board_map_value(board_value, "pads", *pad_id)?;
         }
         Operation::CreateBoardVia { via_id, via } => {
             inverse_operations.push(Operation::DeleteBoardVia {

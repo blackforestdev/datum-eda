@@ -2105,3 +2105,22 @@ projections implement the same resolver interface. The native adapter does not
 claim artifact-lifecycle authority, absent authored graphics, active S5A GUI entry,
 complete overlay/accessibility acceptance or missing geometry. Those existing
 S5A/provider seams remain explicit, not independently implemented selection stores.
+
+
+PM054 pad source now retains explicit inherited layer-connection facts:
+Unknown (legacy omitted), Separate, PlatedThrough and PlatedSpan with actual
+stackup endpoints. Imported KiCad pad kind supplies this fact; drill, aperture
+list, same Net or UUID never substitutes for plating. Canonical create/set,
+identity validation, inverse/replay and reopen preserve the exact typed source.
+Known facts adopt BoardRoot feature schema 3 forward-only; later arc writes
+preserve the highest adopted feature version. Malformed plated source refuses
+atomically. Legacy unknown remains readable without manufactured process facts.
+
+The shared physical graph partitions Separate apertures by actual conductive
+layer. A plated group requires positive drill and complete aperture basis for
+its declared ordered stackup span; incomplete/unknown span is unavailable.
+Run membership counts each source once and also returns exact per-source copper
+layer projections. A shared pad UUID cannot join disconnected aperture groups.
+No numeric layer ranges, filled drill centers or inferred intermediate copper
+establish contact. Unsupported geometry remains explicit; this does not approve
+manufacturing approximation, unrestricted pool materialization or full S5A proof.

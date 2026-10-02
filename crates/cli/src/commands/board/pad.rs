@@ -133,6 +133,7 @@ pub(crate) fn place_native_project_board_pad(
         .transpose()?
         .unwrap_or(PadShape::Circle);
     let pad = PlacedPad {
+        layer_connection: Default::default(),
         uuid: pad_uuid,
         package: package_uuid,
         name,

@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 76 legacy source entries remain. UNIT-I03B moved
+Current debt inventory: 75 legacy source entries remain. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
@@ -352,3 +352,11 @@ from 709 to below the normal 700-line budget; its legacy ledger entry is removed
 The exact occupied-region comparator, Zone qualifier/successor owner and native
 succession proofs are real normal modules. No include/forwarding split, increased
 ceiling, exception or geometry-to-renderer ownership transfer is introduced.
+
+DA-A2 pad-source exposure extracts actual imported pad construction into
+`placed_pads`, route fixture pads into `proposal_pad_fixture`, and layer-balance
+policy fixtures into their own child. Import skeleton production drops 1,057 to
+934 lines; CLI route proposal drops 3,124 to 3,095; policy fixture root drops
+811 to 672 and leaves the legacy ledger. All children use normal budgets; no
+ceiling grows and existing parsing/fixture assertions remain owned by their
+original routes.

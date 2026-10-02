@@ -192,6 +192,7 @@ fn process_aperture_check_reports_inherited_mask_and_paste() {
     board.pads.insert(
         pad_uuid,
         PlacedPad {
+            layer_connection: Default::default(),
             uuid: pad_uuid,
             package: package_uuid,
             name: "1".into(),
@@ -267,6 +268,7 @@ fn process_aperture_check_reports_peer_footprint_policy_inconsistency() {
         board.pads.insert(
             uuid,
             PlacedPad {
+                layer_connection: Default::default(),
                 uuid,
                 package: package_uuid,
                 name: name.into(),

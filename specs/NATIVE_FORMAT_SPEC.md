@@ -796,17 +796,26 @@ Rules:
 - an unknown future version is a load error with a clear message
 
 > **Code status (PM054 nominal source unit):** shard/pool readers retain the
-> unknown-future-version load gate. BoardRoot supports feature schema 2 for
-> authored Track midpoint; ZoneFill supports schema 2 for successful current
+> unknown-future-version load gate. BoardRoot supports feature schema 3 for
+> explicit placed-pad layer connection and feature schema 2 for authored Track
+> midpoint; ZoneFill supports schema 2 for successful current
 > empty fill. Other native kinds still support schema 1. A BoardRoot declaring
 > legacy schema 1 (or an omitted legacy declaration) cannot carry an arc midpoint;
 > it refuses by source instead of loading a chord. The first canonical arc write
 > explicitly adopts BoardRoot 2 in the same staged Track transaction; adoption
 > is forward-only and remains after undo of the authored curve. Straight-only
 > legacy source remains in its existing profile until this feature is adopted.
-> All later Track writes preserve adopted 2. Curve anchors and UUID invert exactly;
+> All later Track writes preserve the highest adopted version, including 3.
+> Curve anchors and UUID invert exactly;
 > schema adoption is format metadata, not a second geometry mutation path.
-> This implements only the two bounded feature transitions. General migration
+> Explicit placed-pad `layer_connection` encodes Unknown (omitted legacy),
+> Separate, PlatedThrough, or PlatedSpan with actual layer endpoints. Aperture
+> layers and drill alone cannot supply that process fact. The first canonical
+> known connection write adopts BoardRoot 3; undo restores the exact source
+> fact while retaining format adoption. Undeclared connection source refuses;
+> schema 4 remains unknown. KiCad import retains the actual parsed pad kind as
+> the process fact, rather than inferring plating from a drill.
+> This implements only these bounded feature transitions. General migration
 > machinery and the `material_db` example below remain spec-ahead-of-code.
 
 General migration implementation requirements (target — bounded PM054 feature

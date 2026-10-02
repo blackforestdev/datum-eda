@@ -227,7 +227,7 @@
     "crates/cli/src/commands/route/proposal.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3124
+        "pre_test_lines": 3095
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -466,17 +466,6 @@
       "status": "decomposition-required",
       "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
-    "crates/engine/src/board/tests/mod_tests_route_path_candidate_authored_copper_graph_policy.rs": {
-      "kind": "rust-test",
-      "limits": {
-        "file_lines": 811
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit. PM054 Track source adoption extracts cohesive command/fixture/preservation-test ownership; exact ceiling ratcheted downward. Remaining debt stays open."
-    },
     "crates/engine/src/import/kicad/parser_helpers.rs": {
       "kind": "rust-production",
       "limits": {
@@ -491,7 +480,7 @@
     "crates/engine/src/import/kicad/skeleton.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1058
+        "pre_test_lines": 934
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

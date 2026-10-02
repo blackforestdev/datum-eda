@@ -561,6 +561,7 @@ fn placed_component(part: uuid::Uuid, package: uuid::Uuid, value: &str) -> Place
 
 fn placed_pad(uuid: uuid::Uuid, name: &str, net: Option<uuid::Uuid>) -> PlacedPad {
     PlacedPad {
+        layer_connection: Default::default(),
         uuid,
         package: COMPONENT_ID,
         name: name.to_string(),

@@ -125,6 +125,7 @@ fn board_diagnostics_report_partially_routed_net() {
             (
                 Uuid::new_v4(),
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: Uuid::new_v4(),
                     package: pkg_a,
                     name: "1".into(),
@@ -149,6 +150,7 @@ fn board_diagnostics_report_partially_routed_net() {
             (
                 Uuid::new_v4(),
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: Uuid::new_v4(),
                     package: pkg_b,
                     name: "1".into(),
@@ -302,6 +304,7 @@ fn board_unrouted_computes_airwires_from_pad_endpoints() {
             (
                 pad_a,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: pad_a,
                     package: pkg_a,
                     name: "1".into(),
@@ -326,6 +329,7 @@ fn board_unrouted_computes_airwires_from_pad_endpoints() {
             (
                 pad_b,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: pad_b,
                     package: pkg_b,
                     name: "1".into(),
@@ -425,6 +429,7 @@ fn board_unrouted_treats_multilayer_pads_as_connected_on_bottom_copper() {
             (
                 pad_a,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: pad_a,
                     package: pkg_a,
                     name: "1".into(),
@@ -449,6 +454,7 @@ fn board_unrouted_treats_multilayer_pads_as_connected_on_bottom_copper() {
             (
                 pad_b,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: pad_b,
                     package: pkg_b,
                     name: "1".into(),
@@ -560,6 +566,7 @@ fn board_unrouted_treats_track_endpoint_inside_rotated_rect_pad_as_connected() {
             (
                 pad_a,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: pad_a,
                     package: pkg_a,
                     name: "1".into(),
@@ -584,6 +591,7 @@ fn board_unrouted_treats_track_endpoint_inside_rotated_rect_pad_as_connected() {
             (
                 pad_b,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: pad_b,
                     package: pkg_b,
                     name: "1".into(),

@@ -110,7 +110,7 @@ fn native_schema_refuses_undeclared_arc_and_future_source_versions() {
     let path = root.join("board/board.json");
     let mut value: serde_json::Value =
         serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
-    for version in [1, 3] {
+    for version in [1, 4] {
         value["schema_version"] = serde_json::json!(version);
         std::fs::write(&path, serde_json::to_vec_pretty(&value).unwrap()).unwrap();
         assert!(ProjectResolver::new(&root).resolve().is_err());

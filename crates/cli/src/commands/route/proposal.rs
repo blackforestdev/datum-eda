@@ -800,38 +800,9 @@ fn route_strategy_fixture_net(uuid: Uuid, name: &str, class: Uuid) -> Net {
     }
 }
 
-/// One circular anchor pad (parses back to the same `PlacedPad` facts the
-/// historical hand-written fixture pads produced).
-fn route_strategy_fixture_pad(
-    uuid: Uuid,
-    package: Uuid,
-    net: Uuid,
-    position: Point,
-    layer: i32,
-    diameter: i64,
-) -> PlacedPad {
-    PlacedPad {
-        uuid,
-        package,
-        name: "1".to_string(),
-        net: Some(net),
-        position,
-        layer,
-        copper_layers: Vec::new(),
-        shape: PadShape::Circle,
-        diameter,
-        width: 0,
-        height: 0,
-        drill: 0,
-        rotation: 0,
-        roundrect_rratio_ppm: 250_000,
-        mask_layers: Vec::new(),
-        paste_layers: Vec::new(),
-        solder_mask_margin_nm: 0,
-        solder_paste_margin_nm: 0,
-        solder_paste_margin_ratio_ppm: 0,
-    }
-}
+#[path = "proposal_pad_fixture.rs"]
+mod proposal_pad_fixture;
+use proposal_pad_fixture::route_strategy_fixture_pad;
 
 /// Copper(1) / Dielectric / Copper(3) — the cross-layer fixture stackup.
 fn route_strategy_fixture_three_layer_stackup() -> Vec<StackupLayer> {

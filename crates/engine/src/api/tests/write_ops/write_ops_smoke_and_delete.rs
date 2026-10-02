@@ -70,6 +70,7 @@ fn run_drc_does_not_count_unfilled_authored_zone_as_copper() {
                 pads: HashMap::from([(
                     pad,
                     crate::board::PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: pad,
                         package,
                         name: "1".into(),

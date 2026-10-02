@@ -33,6 +33,7 @@ pub(super) fn read_source_shard(
     validate_source_shard_schema_version(&kind, relative_path, schema_version)?;
     if kind == SourceShardKind::BoardRoot {
         super::board_journal_ops::board_track_source::validate_native(value)?;
+        super::board_journal_ops::board_pad_source::validate_native(value)?;
     }
     Ok(SourceShardRef {
         shard_id: Uuid::new_v5(
@@ -364,7 +365,7 @@ pub(super) fn validate_source_shard_schema_version(
     let supported_schema_version = if *kind == SourceShardKind::ZoneFill {
         super::zone_fill::ZONE_FILL_SCHEMA_VERSION
     } else if *kind == SourceShardKind::BoardRoot {
-        super::board_journal_ops::board_track_source::BOARD_ARC_SCHEMA_VERSION
+        super::board_journal_ops::board_pad_source::BOARD_PAD_SCHEMA_VERSION
     } else {
         1
     };

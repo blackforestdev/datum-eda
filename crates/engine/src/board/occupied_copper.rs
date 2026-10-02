@@ -583,45 +583,10 @@ pub fn polygons_within(
     Ok(false)
 }
 
-fn layer_index(stackup: &Stackup, id: LayerId) -> Result<usize> {
-    let indices: Vec<_> = stackup
-        .layers
-        .iter()
-        .enumerate()
-        .filter(|(_, l)| l.id == id && l.layer_type == StackupLayerType::Copper)
-        .map(|(i, _)| i)
-        .collect();
-    if indices.len() != 1 {
-        return Err(GeometryError::UnknownConductiveLayer);
-    }
-    Ok(indices[0])
-}
-pub fn track_layers(stackup: &Stackup, track: &Track) -> Result<Vec<LayerId>> {
-    layer_index(stackup, track.layer)?;
-    Ok(vec![track.layer])
-}
-pub fn pad_layers(stackup: &Stackup, pad: &PlacedPad) -> Result<Vec<LayerId>> {
-    let mut layers = if pad.copper_layers.is_empty() {
-        vec![pad.layer]
-    } else {
-        pad.copper_layers.clone()
-    };
-    for id in &layers {
-        layer_index(stackup, *id)?;
-    }
-    layers.sort();
-    layers.dedup();
-    Ok(layers)
-}
-pub fn via_layers(stackup: &Stackup, via: &Via) -> Result<Vec<LayerId>> {
-    let a = layer_index(stackup, via.from_layer)?;
-    let b = layer_index(stackup, via.to_layer)?;
-    Ok(stackup.layers[a.min(b)..=a.max(b)]
-        .iter()
-        .filter(|l| l.layer_type == StackupLayerType::Copper)
-        .map(|l| l.id)
-        .collect())
-}
+#[path = "copper_layers.rs"]
+mod copper_layers;
+use copper_layers::layer_index;
+pub use copper_layers::{pad_layer_groups, pad_layers, track_layers, via_layers};
 
 #[cfg(test)]
 #[path = "occupied_copper_tests.rs"]

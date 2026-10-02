@@ -29,6 +29,7 @@ pub(super) fn resolve_native_project_copper_layer_context(
         })?;
         pads.extend(component_pads.iter().filter_map(|pad| {
             pad.shape.map(|shape| PlacedPad {
+                layer_connection: Default::default(),
                 uuid: pad.uuid,
                 package: component_uuid,
                 name: pad.name.clone(),

@@ -87,6 +87,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     anchor_top_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_top_uuid,
                         package: Uuid::from_u128(0xf20),
                         name: "1".into(),
@@ -111,6 +112,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     anchor_bottom_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_bottom_uuid,
                         package: Uuid::from_u128(0xf21),
                         name: "1".into(),
