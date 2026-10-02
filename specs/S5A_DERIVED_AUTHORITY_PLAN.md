@@ -98,7 +98,8 @@ acceptance still requires the retained later gates.
 ### DA-A3 — expose and prove the complete read boundary
 
 Provide coherent project/revision/source-bound typed membership and occurrences,
-origin bindings and distinct failure states. Prove all required F01–F06 cases,
+origin bindings and distinct failure states. Prove all selection-critical F01–F06 cases
+under the PM054 zero-deviation/prerequisite amendment below,
 exact identity/sets, replay/reopen and zero query-induced authored mutation with
 candidate/fixture/binary/environment binding. No reduced S5A acceptance, context
 cap truncation or invented latency budget. Use guarded serial builds; reuse proof.
@@ -513,3 +514,31 @@ This completes a research-backed **proposal**, not integration of ratified produ
 rules. The exact proposed edits name their owning clauses so ratification can
 apply them in one traceable transaction; existing authority still governs until
 then. Dependency ownership, candidate proof and S5A resumption remain explicit.
+
+
+## Ratified manufacturing policy and read-only prerequisite amendment
+
+The owner's explicit DA-M1-D disposition ratifies the reviewed zero-intentional-
+deviation policy from source `9a3e8e8d499bfc161a90daa794ac5460e78cc102`, packet
+`fbb6b1491f99f3290a7db78c5d5ffa4d7dbf174d`, blob
+`1f2ffa0624622a427768c4b1fe93382c5142c26e`. PM054 records the numbered decision;
+the manufacturing contract owns output behavior. Exact certified output is
+permitted; nonzero or uncertified output refuses. No fabrication allowance exists.
+
+This explicit amendment supersedes only the earlier assertion that positive
+rational-center CAM/T04 blocks read-only selection-foundation acceptance. T04
+remains an open manufacturing obligation in `dat-rational-center-cam-ir1t`, not
+passed, waived or complete; full manufacturing foundation is not accepted.
+Historical A1-03/review/implementation packets remain pinned unchanged. F06's
+requirement to include all Z/T rows now separates mandatory selection-critical
+Z01–Z05/T01–T03 and honest manufacturing capability/refusal from still-open T04
+positive output. Current-fill authority and non-mutation remain mandatory for
+selection; removing positive CAM does not remove these or any other unresolved
+selection-critical geometry, identity, membership, lifetime or binding obligation.
+
+DA-A3 is authorized for remaining selection-foundation integration, necessary
+code repairs and focused verification. Reuse independent E1, nominal and M1 PASS
+at their exact scopes. The existing independent audit session is reserved for
+the amended candidate at DA-A4-R; owner acceptance at DA-A4-D precedes explicit
+S5A-C03 resumption under unchanged S5A approval. Do not claim full manufacturing
+completion when closing only the accepted amended selection prerequisite.

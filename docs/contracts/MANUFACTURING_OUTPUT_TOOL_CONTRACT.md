@@ -505,3 +505,20 @@ fabricating a KiCad zone.
    the daemon (CLI-bridged only today, no `dispatch.rs` entries), or is
    CLI-bridged projection the intended permanent architecture for
    read-only outputs?
+
+
+## Authored Track arc output policy — PM054 C07
+
+The owner-ratified zero-intentional-deviation policy permits exact certified
+output on the existing 1 nm grid. The manufacturing owner derives primitive,
+endpoint/sweep and occupied-deviation witnesses from exact authored geometry,
+with source identity and relevant width/clearance/topology checks. Nonzero or
+uncertified output refuses before replacing artifacts; never substitute chords.
+Format conformance and error observations do not allocate fabrication tolerance.
+
+Positive rational-center CAM/T04 remains open in `dat-rational-center-cam-ir1t`;
+safe refusal does not satisfy it. By explicit prerequisite-scope amendment it
+does not block read-only S5A selection/inspection. This is not full manufacturing
+acceptance and does not defer any selection-critical current-fill, geometry,
+identity, membership, lifetime or non-mutation obligation. See PM054 and the
+current S5A derived-authority plan for the controlling disposition and proof pins.

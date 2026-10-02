@@ -1790,3 +1790,27 @@ acceptance remain pending. E1-IR-01/02 resolution, nominal PASS, retained S5A
 approval/partial U1/C05 and PM026/049/051/052 are preserved. No production,
 prototype, dependency or renderer/resize changes accompany this review receipt;
 no additional implementation authorization or repeated unchanged review is sought.
+
+
+### DA-M1-D — ratified zero deviation and amended selection prerequisite
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-M1-D-ZERO-AUTHORIZED -->
+The owner explicitly confirms approval and execution authorization, correcting
+the reviewer explanatory sentence in the preceding message. Ratify the reviewed
+zero-intentional-deviation policy for source9a3e8e8d / packetfbb6b149/blob1f2ffa06:
+exact certified output permitted, nonzero/uncertified output refuses. PM054 C07
+and the manufacturing contract record this law without inventing a tolerance.
+
+Explicit prerequisite-scope amendment: positive rational-center CAM/T04 remains
+open manufacturing work (`dat-rational-center-cam-ir1t`), but no longer blocks
+read-only S5A selection-foundation acceptance. Neither T04 nor full manufacturing
+foundation is complete. All other selection-critical F01–F06/Z01–Z05/T01–T03,
+identity, membership, geometry, lifetime and non-mutation obligations remain.
+
+Complete DA-M1-D and select authorized DA-A3. The owner grants remaining selection-
+foundation integration, necessary repairs and focused verification, reusing E1,
+nominal and M1 reviews. Existing independent audit session reserved for amended
+candidate DA-A4-R; final owner acceptance DA-A4-D still precedes S5A resumption.
+Preserve unchanged S5A authorization/partial U1/C05 and PM026/049/051/052.
+Synchronized new session Frontier/beads claim establishes implementation ownership;
+this receipt is not independent candidate review or foundation acceptance.

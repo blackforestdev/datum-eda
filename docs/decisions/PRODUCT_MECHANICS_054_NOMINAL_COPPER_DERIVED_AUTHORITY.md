@@ -134,3 +134,34 @@ retained on authored undo; Track UUID and anchors invert/replay/reopen exactly.
 Readers refuse arc-bearing legacy declarations and unknown future versions.
 This is the required source/schema compatibility safeguard under C06, not a
 manufacturing allowance, new identity system or complete geometry acceptance.
+
+
+## C07 — zero intentional deviation and read-only prerequisite amendment
+
+Status: explicitly owner-ratified at DA-M1-D after independent DA-M1-R PASS.
+The reviewed policy basis is source `9a3e8e8d499bfc161a90daa794ac5460e78cc102`,
+packet `fbb6b1491f99f3290a7db78c5d5ffa4d7dbf174d`, blob
+`1f2ffa0624622a427768c4b1fe93382c5142c26e`. This disposition supersedes earlier
+C07/M1-deferred language only to the following exact extent.
+
+Exact certified circular output with zero intentional deviation is permitted.
+Nonzero deviation or uncertified construction continues to refuse with its
+source-bound witness, preserving existing artifacts. Format validity, computed
+serialization error and authorized manufacturing error remain distinct. No
+fabrication tolerance, rounding allowance, chord substitution or dependency is
+ratified. The T04 1/3 nm center error and 2/3 nm occupied bound are observations;
+they confer no output permission. Nominal DRC cannot be waived by output checks.
+
+Positive rational-center CAM/T04 remains mandatory open manufacturing work,
+tracked as `dat-rational-center-cam-ir1t`, and does not block acceptance of the
+read-only S5A selection prerequisite. It is not passed or waived; full
+manufacturing foundation remains incomplete. All other selection-critical
+identity, complete occurrence membership, geometry, current-fill, lifetime,
+non-mutation and failure-disclosure obligations remain mandatory. No blanket
+deferral of unsupported cases is implied.
+
+The owner authorizes remaining selection-foundation integration, necessary
+repairs and focused verification. Reuse E1/nominal/M1 independent review at
+recorded scope; reserve the existing independent audit session for the amended
+candidate. Independent DA-A4-R and owner DA-A4-D acceptance precede S5A
+resumption; unchanged S5A execution authorization is preserved.
