@@ -80,6 +80,20 @@ logical/hierarchy membership through existing engine/substrate owners. Necessary
 authored identity changes use canonical typed commit/replay, never query writes.
 No renderer IDs, selection-triggered mutation, broad ECO or topology rewrite.
 
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-A2-NOMINAL-R -->
+### DA-A2-NOMINAL-R — reserved independent nominal candidate review
+
+The owner's partial remaining disposition explicitly reserved the existing
+independent audit session for the authorized E2–E4 candidate and focused replay.
+Record the bounded implementation candidate before this review; neither that
+record nor self-verification supplies independent boundary proof or acceptance.
+Return the single candidate packet through the owner-facing session. No automatic
+cross-session coordination or additional implementing/review agent is assumed.
+A REVISE returns bounded corrections to DA-A2 under the retained E2–E4 grant;
+it does not require repeated execution authorization for unchanged scope.
+C07/M1 stays deferred, mandatory T04 unpassed, and DA-A3/full foundation/S5A
+acceptance still requires the retained later gates.
+
 <!-- REQ:S5A-DERIVED-AUTHORITY:DA-A3 -->
 ### DA-A3 — expose and prove the complete read boundary
 

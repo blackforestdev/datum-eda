@@ -1497,3 +1497,72 @@ boundary review, complete F01–F06 or foundation/S5A acceptance. Mandatory unkn
 unsupported cases and C07/M1/CAM-T04 are retained, never passed by refusal or
 waiver. No S5A U2–U5 activation, prototype edit, renderer/resize redesign,
 private writer adoption or manufacturing approximation is introduced.
+
+
+### S5A-DERIVED-NOMINAL-CANDIDATE-01 — pinned independent review packet
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A2-NOMINAL-CANDIDATE -->
+**Implementation source:** `dd88510504af0d16ef22b54c38948b1308ba8855`.
+**Packet pin:** this document's Git blob in the governance landing commit;
+return both exact commit and blob to the reserved independent audit session.
+This records DA-A2 bounded nominal candidate delivery, not independent PASS,
+complete E2–E4 qualification, full F01–F06, foundation acceptance or S5A resumption.
+
+Authorization remains A1-03 C04–C06/PM054 and the owner's existing E2–E4 grant.
+The owner-resolved foreign Bus rule is PM055 (`d5d8a38b`): origin declaration
+constrains the physical Run; foreign contact is separate. A1 independent review,
+E1 PASS/resolved E1-IR-01/02 and all prior S5A approvals are reused at their scope.
+No new mechanism, dependency, latency limit or manufacturing allowance is asked.
+
+| Requirement/owner | Implemented source units | Exact focused review/replay |
+| --- | --- | --- |
+| E2 current fill, generated evidence owner | `931dcfb5`; feature-2 successful current empty | Filled empty versus Missing/Unfilled/Stale/Unsupported; producer/schema/source validation and canonical history. Refusal is not certified zero copper. |
+| E2 authored Track/certified occupied geometry, board owner | `300e65bc`, `c5a0d4dd`, `20eb3c1f` | Actual three anchors, major/reverse/mirror/odd width, checked arithmetic, occupied Pad/Via/fill boundaries, drill exclusions, actual stackup spans and explicit pad process. Known source/history/schema must preserve UUIDs. |
+| E3 complete read boundary, existing connectivity/substrate owners | `16b30ec4`, `04b9a3e1`, `8a200192`, `003f593a` | Complete occurrence-qualified logical/physical sets; stable explicit cross-domain/hierarchy bindings; Net-constrained board Runs and foreign contacts; PM055 physical Bus declarations/entries/related interfaces; 257+ uncapped members; revision/basis/assignment refusal and zero query mutation. |
+| E2/E4 Zone qualifiers/lifetime, engine and existing shared lifetime owners | `8a200192`, `3af1b74f` | Basis-bound occupied acquisition; exact decomposition equivalence and canonical transform lineage; unique merge, all split tokens, Unknown/current-empty/deleted clearing, stale suspension with last certified basis, no old-hit replay or resurrection. |
+| E4 native projections/adapters, existing gui-protocol/viewport owners | `300e65bc`, `3af1b74f` | Display flattening preserves authored anchors/UUID but has no electrical authority; shared closed identity model preserves source domain and stable occurrence paths. Full electrical/Board/Bus projections retain source-qualified layers/regions/foreign contacts. No competing scene identity system. |
+| E4 nominal DRC, existing physical graph/checking owners | `17c46547`, `dd885105` | Actual arc clearance/current fills and connectivity; complete terminal components, Separate/plated layers, exact foreign source pairs, no chord/outline/airwire qualification, source-bound unavailable results and shared fingerprints/waivers/history. |
+
+Final proof is the single candidate replay recorded in the preceding native
+connectivity unit: 1,348 tests/12 binaries including 1,140 engine tests, plus
+one doctest; 14 CLI DRC and 24 combined-check tests with overlap disclosed.
+Use its exact binary hashes, Linux/Rust versions, guarded serial target/TMPDIR
+and recipe sources. Replay the relevant actual native cases independently;
+compare identity/member/contact sets, source/journal bytes and history, not only
+screenshots or aggregate test counts. Source fixtures use canonical genesis and
+operations; randomized fixture UUIDs are allocated once and checked by exact
+identity in each invocation, not reused as renderer authority. Do not credit
+superseded failed/setup logs, stale shared-cache binaries or a mismatched source.
+
+| Retained obligation | Disposition at this candidate |
+| --- | --- |
+| F01/F02/F04 identity/binding/Bus | Existing independent bounded E1 PASS reused; affected canonical/query regression passes. Complete foundation review remains separate. |
+| F03/F05 supported geometry/read boundary | Focused native implementation proof only. Independent supported-domain/boundary review is required here; unsupported required cases do not pass. |
+| F06/C07/M1/T04 | **Deferred/unpassed.** No approximation allowance; rational-center CAM positive coverage remains mandatory. Safe output refusal is not T04 success. |
+| Unknown legacy pad process or incomplete aperture/span | Typed unavailable. Do not infer plating from drill/Net/name/UUID or invent intermediate copper. Full required fixture qualification remains open. |
+| Nonorthogonal noncircular pads, edge-reaching/non-contained drill, checked-range/unresolved predicates | Unsupported/unverified where required, not amended away or counted as a pass. The numerical domain is exact checked integer/rational representability, not an invented fixed-coordinate or error allowance. |
+| Pool-generated legacy pads | Existing in-memory `api/ops_helpers` regeneration still emits zero geometry/Unknown. Existing Padstack facts do not authorize silently adopting an unpinned pool or private writer. Native placed-pad writes/import provide this candidate's actual source; pool/native materialization obligations remain tracked, not qualified. dat-7unq remains unpassed. |
+| Authored net-tie exception, native artifact lifecycle and absent authored graphics | No unsupported authority fabricated; relevant required rows remain unverified with their existing owners. |
+| Active S5A U2–U5 / N01–N17, editor availability and latency | Unactivated/unverified here. Board/schematic scope and deferred Footprint/Symbol Editor obligations retained; latency budgets undecided under PM051. This engine replay is not native S5A acceptance. |
+| Rendering/resize/performance | PM049/052 paths preserved. Reuse adequate prior closure proof; no new GPU/performance campaign, renderer redesign or prototype edit. |
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-A2-NOMINAL-R -->
+<!-- OWNER:S5A-DERIVED-AUTHORITY:DA-A2-NOMINAL-R:NOMINAL-REVIEW -->
+Return the reserved independent E2–E4 nominal candidate review and focused replay:
+reviewer/session identity, exact source commit and packet commit/blob, binaries,
+fixture recipes/environment, PASS/REVISE and every mandatory finding disposition.
+Cover C04–C06, PM055, source/schema/history, full occurrence/identity/member/contact
+sets, acquisition/refusal/revision/lifetime, projection/checking integration,
+non-mutation and preservation of PM026/049/051/052. Reuse adequate E1 and resize
+proof. Keep every deferred/unsupported row explicitly unverified; never substitute
+safe refusal for mandatory positive proof. The reviewer remains independent of
+implementation. This reservation was already authorized; no new execution grant
+or full foundation/S5A acceptance is requested. DA-M1-D remains pending after the
+bounded nominal review; no manufacturing policy or implementation is advanced.
+
+The canonical roadmap now expresses that already-reserved nominal review as
+DA-A2-NOMINAL-R after candidate delivery and before DA-M1-D. DA-A2 records only
+bounded implementation, while independent boundary/qualification disposition
+moves to this explicit review gate. On REVISE, return necessary unchanged-scope
+corrections to DA-A2 under the retained grant. Implementation lease and beads
+claim are released together; no review session inherits implementation ownership.
