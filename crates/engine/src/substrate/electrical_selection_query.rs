@@ -1,10 +1,13 @@
 //! Immutable public selection queries. Members come from canonical engine owners,
 //! never pane visibility, display names, hit primitives or a context envelope.
+#[path = "electrical_selection_query/bus_run.rs"]
+mod bus_run;
 use super::*;
 use crate::substrate::{
     DesignModel, ElectricalIdentity, ElectricalOccurrence, ModelRevision, NetCorrespondenceStatus,
     SourceShardKind,
 };
+pub use bus_run::{BusRunMembership, CrossBusContact};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -24,6 +27,10 @@ pub enum ElectricalQueryFailure {
     },
     InvalidOccurrence {
         origin: ElectricalOccurrence,
+    },
+    UnavailableGeometry {
+        origin: ElectricalOccurrence,
+        reason: String,
     },
     UnavailableAssignment {
         origin: ElectricalOccurrence,
@@ -54,6 +61,7 @@ pub struct ElectricalSelectionSnapshot {
     basis: super::super::electrical_basis::ElectricalBasis,
     logical: BTreeMap<Uuid, BTreeSet<ElectricalOccurrence>>,
     physical: Vec<BTreeSet<ElectricalOccurrence>>,
+    schematic: Option<crate::schematic::Schematic>,
     representations: BTreeSet<ElectricalOccurrence>,
     values: BTreeMap<Uuid, serde_json::Value>,
     source_basis: Vec<SelectionSourceBasis>,
@@ -102,7 +110,7 @@ impl ElectricalSelectionSnapshot {
         };
         let basis = super::super::electrical_basis::ElectricalBasis::with_reader(model, &[], &read)
             .map_err(failure)?;
-        let (logical, physical, representations) = if model
+        let (logical, physical, representations, schematic) = if model
             .source_shards
             .iter()
             .any(|s| s.kind == SourceShardKind::SchematicRoot)
@@ -120,15 +128,17 @@ impl ElectricalSelectionSnapshot {
                 logical,
                 crate::connectivity::physical_partitions(&schematic).map_err(failure)?,
                 crate::connectivity::representation_occurrences(&schematic).map_err(failure)?,
+                Some(schematic),
             )
         } else {
-            (BTreeMap::new(), vec![], BTreeSet::new())
+            (BTreeMap::new(), vec![], BTreeSet::new(), None)
         };
         Ok(Self {
             model: model.clone(),
             basis,
             logical,
             physical,
+            schematic,
             representations,
             values,
             source_basis,
@@ -431,7 +441,6 @@ impl ElectricalSelectionSnapshot {
             .get(&id)
             .ok_or(ElectricalQueryFailure::AbsentIdentity { id })?;
         let ElectricalIdentity::Bus {
-            representations,
             scalar_nets,
             retired: false,
             ..
@@ -439,19 +448,8 @@ impl ElectricalSelectionSnapshot {
         else {
             return Err(ElectricalQueryFailure::AbsentIdentity { id });
         };
-        let mut result = self.result(id, representations.clone());
-        for origin in representations {
-            if !self.representations.contains(origin) {
-                return Err(ElectricalQueryFailure::InvalidOccurrence {
-                    origin: origin.clone(),
-                });
-            }
-            self.basis.occurrence(&self.model, origin).map_err(|_| {
-                ElectricalQueryFailure::InvalidOccurrence {
-                    origin: origin.clone(),
-                }
-            })?;
-        }
+        let owned = self.bus_representations(id)?;
+        let mut result = self.result(id, owned);
         for net in scalar_nets {
             let members = self.logical.get(net).ok_or({
                 ElectricalQueryFailure::UnavailableBinding {
@@ -506,6 +504,6 @@ impl ElectricalSelectionSnapshot {
                 });
             }
         }
-        Ok(representations.clone())
+        self.bus_owned_entries(id, representations.clone())
     }
 }
