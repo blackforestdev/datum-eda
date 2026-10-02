@@ -1,4 +1,9 @@
-//! Internal current/final occurrence authority shared by writes and diagnostics.
+#[path = "electrical_selection_query.rs"]
+mod query;
+pub use query::{
+    ElectricalMembership, ElectricalQueryFailure, ElectricalSelectionSnapshot, SelectionSourceBasis,
+};
+// Internal current/final occurrence authority shared by writes and diagnostics.
 use super::{DesignModel, ElectricalIdentity, ElectricalOccurrence, EngineError, Operation};
 use std::collections::{BTreeMap, BTreeSet};
 use uuid::Uuid;

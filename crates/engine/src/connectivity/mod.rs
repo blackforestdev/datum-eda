@@ -1,7 +1,11 @@
+mod segment_geometry;
+use segment_geometry::point_on_wire_segment;
 mod label_semantics;
 mod occurrence_partition;
 use label_semantics::*;
-pub(crate) use occurrence_partition::partitions;
+pub(crate) use occurrence_partition::{
+    partitions, physical_partitions, representation_occurrences,
+};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 use uuid::Uuid;
@@ -697,24 +701,6 @@ fn child_hierarchical_labels_by_name(
         grouped.entry(label.name.clone()).or_default().push(label);
     }
     grouped
-}
-
-fn point_on_wire_segment(point: Point, a: Point, b: Point) -> bool {
-    if a == b {
-        return point == a;
-    }
-
-    let cross = (point.y - a.y) * (b.x - a.x) - (point.x - a.x) * (b.y - a.y);
-    if cross != 0 {
-        return false;
-    }
-
-    let min_x = a.x.min(b.x);
-    let max_x = a.x.max(b.x);
-    let min_y = a.y.min(b.y);
-    let max_y = a.y.max(b.y);
-
-    point.x >= min_x && point.x <= max_x && point.y >= min_y && point.y <= max_y
 }
 
 fn preferred_name(labels: &[LabelRef], ports: &[PortRef]) -> Option<String> {

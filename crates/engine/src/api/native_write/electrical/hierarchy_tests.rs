@@ -98,6 +98,13 @@ fn occurrence_qualified_bus_identity_and_interface_reopen() {
             },
         },
     );
+    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&model).unwrap();
+    let projection = snapshot.bus(snapshot.revision(), id).unwrap();
+    assert_eq!(projection.owned, BTreeSet::from([a.clone(), b.clone()]));
+    let ElectricalIdentity::Net { anchor, .. } = &model.electrical_identities[&n].identity else {
+        panic!()
+    };
+    assert_eq!(projection.related, BTreeSet::from([anchor.clone()]));
     let interface = Uuid::new_v4();
     create(
         &mut model,
@@ -163,6 +170,12 @@ fn occurrence_qualified_bus_identity_and_interface_reopen() {
     assert!(
         matches!(&model.electrical_identities[&id].identity, ElectricalIdentity::Bus { representations, retired: false, .. } if representations.is_empty())
     );
+    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&model).unwrap();
+    let projection = snapshot.bus(snapshot.revision(), id).unwrap();
+    assert!(projection.owned.is_empty());
+    assert_eq!(projection.related, BTreeSet::from([anchor_from(&model, n)]));
+    assert_eq!(projection.subject_id, id);
+
     assert_eq!(
         ProjectResolver::new(&root)
             .resolve()

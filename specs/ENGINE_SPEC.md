@@ -1981,3 +1981,19 @@ These are partial E2/E4 capabilities. Complete pad/via-span/current-fill pair
 integration, authoritative complete components/queries, Zone evolution and
 shared subject adoption still require their implementation and focused proof;
 no F01–F06, full foundation, S5A or manufacturing acceptance follows here.
+
+
+PM054 query exposure: `ElectricalSelectionSnapshot` captures the resolved model
+and hash-certified source values once through the journal/materialization owner.
+Raw source-byte hashes preserve lawful formatting; a differing disk preimage must
+replay to the expected canonical hash or capture returns source-bound unavailable.
+The snapshot reuses canonical scalar occurrence partitions, stable authored Net
+anchors and the existing correspondence certifier. Physical schematic Runs omit
+logical label/interface unions. Global Net publication requires complete explicit
+binding; pending/mismatched/unverified correspondence returns a typed failure,
+not schematic-only partial success. Semantic Bus owns its occurrence-qualified
+representations and exposes scalar/interface subjects as related, with no board
+Bus projection. Query results carry project/model revision, source basis and
+uncapped ordered sets; capture and reads perform no adoption or authored writes.
+Board physical component/Zone qualifier authority and shared selection consumer
+adoption remain separate pending DA-A2 work; this exposure does not certify them.

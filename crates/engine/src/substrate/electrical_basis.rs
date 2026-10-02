@@ -10,6 +10,15 @@ pub(super) struct ElectricalBasis {
 }
 impl ElectricalBasis {
     pub(super) fn new(model: &DesignModel, operations: &[Operation]) -> Result<Self, EngineError> {
+        Self::with_reader(model, operations, &|shard| {
+            super::journal::materialized_shard_value(model, shard)
+        })
+    }
+    pub(super) fn with_reader(
+        model: &DesignModel,
+        operations: &[Operation],
+        read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
+    ) -> Result<Self, EngineError> {
         let mut values = BTreeMap::new();
         for shard in &model.source_shards {
             if !matches!(
@@ -45,7 +54,7 @@ impl ElectricalBasis {
             });
             let mut value = match pending_create {
                 Some(value) => value,
-                None => super::journal::materialized_shard_value(model, shard)?,
+                None => read(shard)?,
             };
             for operation in operations {
                 match shard.kind {

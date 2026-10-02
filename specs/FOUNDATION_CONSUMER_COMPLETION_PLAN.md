@@ -1118,3 +1118,45 @@ implemented, not positive proof for the still-unavailable required pairs.
 Final guarded engine Clippy (`--all-targets -- -D warnings`) passes in
 `target/s5a-nominal-final-engine-lint.log` after the compatibility follow-up.
 This is a bounded source-unit check, not a full drift or foundation acceptance.
+
+
+### DA-A2 bounded occurrence-query unit
+
+Source baseline `300e65bc`; DA-A2 remains claimed/in progress under PM054.
+The existing substrate membership owner now exposes immutable selection capture,
+complete scalar Global Net sets only after existing correspondence certification,
+physical schematic Runs independent of name/hierarchy unions, and semantic Bus
+owned/related projections. Capture uses expected source-byte hashes or verified
+canonical replay, never an unverified reread; expected revision, absent identity,
+source-basis failure, invalid occurrence, unavailable assignment and binding
+status remain distinct. No pane/filter/context-cap inputs can prune these sets.
+
+Focused native proof independently specifies a 257-branch/514-source Net,
+physical versus logical membership and repeated-sheet instances. It checks exact
+sets/IDs, explicit cross-domain pin/pad membership, subject-local pending binding,
+undo/reopen, unchanged authored/journal bytes, capture immutability, source
+tampering and lawful noncanonical JSON formatting. Existing E1 atomic transition
+and binding regressions are replayed after the shared-owner extraction. Full
+engine replay passes **1,104 tests** in
+`target/s5a-membership-engine-replay.log`; all 13 PM022 governance regressions,
+source-health against `300e65bc`, parity and resolver raw-load gates pass.
+The final focused replay passes **40 electrical tests**, including semantic Bus
+resolution with zero drawn projections, in
+`target/s5a-membership-electrical-final.log`. Final guarded all-target engine
+Clippy passes (`-D warnings`), `target/s5a-membership-lint-final.log`; the earlier
+one-lint failure was corrected. The final isolated test binary
+`target/s5a-nominal-proof/debug/deps/eda_engine-5b3bfac123e4e569`, SHA-256
+`e9399e8c700b96f98e9726a52e5bbf786f8e258df40ac2d581bbd7ee2999e621`,
+was hash-checked before/after full replay: **1,104 passed**, log
+`target/s5a-membership-candidate-replay.log`. No stale shared-cache run is credited.
+
+Real PM022 boundaries: journal materialization moves to its own normal child,
+803→766 pre-test lines; exact segment incidence moves to the normal shared
+`segment_geometry` owner, connectivity root 737→722. Both ceilings ratchet;
+no exception/dependency is added. The incidence comparison supports the complete
+i64 domain without overflowing intermediate i64 products. No scene identity,
+new geometry, source mutation, native GUI proof, rendering/resize change or
+independent PASS is inferred. Board physical components, Zone lifetime,
+remaining nominal pairs and shared adapter integration remain mandatory pending
+work. Manufacturing M1/T04, recorded full-drift/private-writer/pool-fixture
+failures, E1 PASS and partial S5A approval/reserved review remain unchanged.

@@ -8,6 +8,16 @@ pub(super) fn schematic(
     model: &DesignModel,
     operations: &[Operation],
 ) -> Result<Schematic, EngineError> {
+    schematic_with_reader(model, operations, &|shard| {
+        super::journal::materialized_shard_value(model, shard)
+    })
+}
+
+pub(super) fn schematic_with_reader(
+    model: &DesignModel,
+    operations: &[Operation],
+    read: &impl Fn(&super::SourceShardRef) -> Result<serde_json::Value, EngineError>,
+) -> Result<Schematic, EngineError> {
     let mut root = None;
     let mut sheets = BTreeMap::new();
     let mut definitions = BTreeMap::new();
@@ -45,7 +55,7 @@ pub(super) fn schematic(
         });
         let mut value = match pending_create {
             Some(value) => value,
-            None => super::journal::materialized_shard_value(model, shard)?,
+            None => read(shard)?,
         };
         for operation in operations {
             match shard.kind {

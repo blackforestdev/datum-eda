@@ -130,6 +130,9 @@ pub use zone_fill::{
 
 pub use electrical_identity::*;
 pub use electrical_identity_validation::net_correspondence_status;
+pub use electrical_net_membership::{
+    ElectricalMembership, ElectricalQueryFailure, ElectricalSelectionSnapshot, SelectionSourceBasis,
+};
 pub(crate) use electrical_transaction::adoption as electrical_adoption_operations;
 pub use electrical_transition::plan_net_identity_transition;
 

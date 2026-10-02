@@ -237,10 +237,26 @@ fn bus(
 }
 
 pub fn net_correspondence_status(model: &DesignModel, net_id: Uuid) -> NetCorrespondenceStatus {
-    let mut found = false;
-    let mut unverified = false;
     let source_basis = super::electrical_basis::ElectricalBasis::new(model, &[]);
     let membership = super::electrical_net_membership::index(model, &[]);
+    correspondence_with_basis(
+        model,
+        net_id,
+        source_basis.as_ref().ok(),
+        membership.as_ref().ok(),
+    )
+}
+
+pub(super) fn correspondence_with_basis(
+    model: &DesignModel,
+    net_id: Uuid,
+    source: Option<&super::electrical_basis::ElectricalBasis>,
+    membership: Option<
+        &std::collections::BTreeMap<Uuid, std::collections::BTreeSet<super::ElectricalOccurrence>>,
+    >,
+) -> NetCorrespondenceStatus {
+    let mut found = false;
+    let mut unverified = false;
     let mut board_owners = std::collections::BTreeSet::new();
     for record in model.electrical_identities.values() {
         if let ElectricalIdentity::NetRelationship {
@@ -272,11 +288,7 @@ pub fn net_correspondence_status(model: &DesignModel, net_id: Uuid) -> NetCorres
             }
             for basis in evidence {
                 // A reusable pin UUID alone cannot certify another occurrence or Net.
-                match membership
-                    .as_ref()
-                    .ok()
-                    .and_then(|index| index.get(logical_net))
-                {
+                match membership.and_then(|index| index.get(logical_net)) {
                     Some(members) if members.contains(&basis.schematic_terminal) => {}
                     Some(_) => return NetCorrespondenceStatus::Mismatch,
                     None => return NetCorrespondenceStatus::Unverified,
@@ -288,9 +300,7 @@ pub fn net_correspondence_status(model: &DesignModel, net_id: Uuid) -> NetCorres
                     return NetCorrespondenceStatus::Stale;
                 }
                 if *intent == NetRelationshipIntent::Implemented {
-                    let status = source_basis
-                        .as_ref()
-                        .ok()
+                    let status = source
                         .and_then(|source| {
                             super::electrical_correspondence::certify(
                                 model,
