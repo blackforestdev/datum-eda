@@ -946,3 +946,47 @@ canonical owner boundary; the prerequisite issue stays open/unassigned. Full
 foundation F01–F06, remaining C04–C07/E2–E4/M1 and S5A acceptance stay pending;
 dependent S5A implementation remains paused. No automatic review notification,
 independent PASS, new ratification or execution grant is assumed.
+
+
+### DA-A2-E1-R — independent bounded E1 PASS recorded
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A2-E1-R-PASS -->
+The owner returned the reserved independent owner-facing audit session's PASS
+for source `5998da49bf50de119d82e2405777ae28aa36f661`, packet
+`5f5a32bd21598ec70fd7dafa101c6c2a5f72ec95` / E1-ID-INTEGRATION-02,
+blob `df0e801aa7cceda8205ffa26ff11988e48ae567e`. Review evidence:
+`target/e1-independent-5f5a32bd/review.json`, reviewed
+2026-10-02T00:40:03.198432+00:00. This supersedes the historical REVISE for
+bounded E1 readiness; it does not rewrite the earlier review or packet pins.
+
+E1-IR-01 and E1-IR-02 are **RESOLVED**, with no remaining mandatory E1 findings.
+The independent replay passed **36 electrical and 17 proposal tests**. Credited
+results used retained `target/e1-ir-corrected` and matched corrected binary SHA256
+`d8bccc84ea48ef68d6c080243a7a47370f6c5b08293714c98ea482baac2635ff`.
+The stale shared-cache execution was discarded, not credited as corrected proof;
+`dat-proof-cache-origin-gw6l` remains tracked. Earlier adequate connectivity,
+journal and native-library proof was reused; producer Clippy was inspected rather
+than rerun. No new build or native experiment accompanies this governance record.
+
+Complete **DA-A2-E1-R** only. Select **DA-A2-D**, still owner_decision,
+open/unassigned with no implementation claim. **dat-7unq remains unpassed**.
+Full foundation F01–F06, S5A acceptance and dependent execution are not accepted.
+Preserve PM026/049/051/052, S5A C02 execution approval, partial U1 and C05 review.
+
+The remaining disposition refers to the already-reviewed A1-03 proposals at
+`3730cf16f4ca44f37c85bbd011e73bd9ac6e347d`, blob
+`7e712f81156da247fa09ffc2e3a2b86ee554c2d4`; this record ratifies none of them:
+
+| Remaining owner decision | Reviewed recommendation and boundary |
+| --- | --- |
+| C04 contact/Run | Complete physical component within the origin's resolved Net; foreign-Net contact remains separate fault evidence. Unknown assignment/geometry is unavailable; no invented net-tie exception. |
+| C05 Zone qualification/fill | One authored Zone identity with engine component qualifier, unambiguous acquisition, exact-equivalence or certified lineage, explicit split/unknown/lifetime behavior and versioned successful current empty fill. No outline-as-copper or overlap-only lineage. |
+| C06 Track arcs | Optional authored on-arc midpoint, exact nominal locus and certified supported contact predicates, checked numerical domain and canonical persistence. No renderer/chord authority or invented epsilon. |
+| C07/M1 manufacturing | Distinguish format validity, certified serialization deviation and authorized manufacturing error. Recommend the finite evidence-derived policy packet described in A1-03; do not invent a tolerance. General rational-center CAM/T04 remains mandatory and unresolved until justified policy, or an explicit owner scope amendment that does not claim complete T04 support. |
+| E2–E4 execution/review | Separately disposition exact ratified geometry/fill, public complete-query and adapter/DRC/manufacturing scope and independent candidate review/replay. E1 internal producer approval does not grant public query, geometry or manufacturing work. |
+
+C01–C03 and the implemented E1 remain ratified/authorized and reviewed. Remaining
+ratification must reconcile numbered decisions and owning specifications; remaining
+execution needs its separate exact grant. No complete foundation acceptance or
+S5A resumption is implied by E1 PASS. Do not ask the owner for a numerical policy
+without the required supporting evidence.
