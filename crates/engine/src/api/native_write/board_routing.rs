@@ -230,6 +230,7 @@ fn previous_journaled_zone_fill_value(
 
 #[cfg(test)]
 mod tests {
+    include!("board_routing_empty_fill_tests.rs");
     use std::path::PathBuf;
 
     use super::super::context::commit_prepared;

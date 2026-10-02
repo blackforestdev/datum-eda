@@ -1018,3 +1018,29 @@ Obtain evidence-derived C07/M1 manufacturing policy ratification and exact
 policy-dependent implementation disposition before complete CAM/T04 or full
 foundation proof. No tolerance invention or acceptance reduction. The finite
 policy packet from A1-03 is still required; nominal execution is not that packet.
+
+
+### DA-A2 nominal implementation unit — successful-empty ZoneFill
+
+PM054 C05 generated-evidence unit writes ZoneFill version 2 through the existing
+canonical producer, validates current source Zone/model basis and allows proven
+zero islands with provenance. Readers retain legacy version 1 nonempty meaning;
+omitted version is 1, old Unsupported remains unavailable. Supported rectangular
+cutout calculations that exhaust copper now return Filled/empty instead of
+Unsupported. Ambiguous/unsupported solver inputs are still unavailable. Current
+empty emits zero copper without an unavailable-fill blocker. No authored Zone or
+board bytes are changed by generated fill/read/replay.
+
+Focused guarded proof in `target/s5a-nominal-proof`: **28 fill-related tests**
+and **9 native board-routing tests passed**; raw logs
+`target/s5a-nominal-fill.log` / `target/s5a-nominal-board-routing.log`. Permanent
+canonical tests cover single/multiple covering obstacles, zero copper/current
+availability, version-1 empty refusal, missing provenance, source/model basis
+refusal, historical Unsupported and undo/redo/reopen/unchanged authored bytes.
+The earlier compilation during a source-class correction was discarded; only
+the fixed-source replay above is credited.
+
+This is one implemented E2 unit, not complete Zone succession, E2–E4, F01–F06,
+independent candidate acceptance or S5A resumption. DA-A2 remains in progress
+under its synchronized claim. C07/M1/CAM-T04 stays deferred/unpassed, as does
+dat-7unq; preserve rendering/resize and all prior work.

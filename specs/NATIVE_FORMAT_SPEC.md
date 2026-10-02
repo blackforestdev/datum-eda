@@ -164,7 +164,7 @@ path for zone fills is:
 ```
 
 Each file is a `ZoneFill` record owned by the engine substrate with
-`schema_version: 1`, `zone_id`, `state`, `source_zone_revision`,
+`schema_version: 2` (legacy 1 remains readable), `zone_id`, `state`, `source_zone_revision`,
 `model_revision`, `islands`, and optional `provenance`. The filename UUID must
 match `zone_id`; journaled `SetZoneFill` validates the same id before staging.
 Resolver materialization classifies these shards as
@@ -172,7 +172,9 @@ Resolver materialization classifies these shards as
 `SourceShardAuthority::GeneratedEvidence`.
 
 `state = "filled"` may carry closed, non-degenerate, non-self-intersecting
-polygon islands. `state = "unfilled"` and `state = "unsupported"` carry no
+polygon islands. Version 2 also permits zero islands with successful producer
+provenance and exact source/model basis; legacy version 1 Filled must remain
+nonempty. `state = "unfilled"` and `state = "unsupported"` carry no
 islands. `state = "stale"` marks persisted evidence whose recorded
 `model_revision` or `source_zone_revision` no longer matches the resolved
 project. Missing persisted evidence for an authored zone resolves as an

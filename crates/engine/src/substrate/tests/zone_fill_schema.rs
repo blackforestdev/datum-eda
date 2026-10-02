@@ -112,10 +112,7 @@ fn resolver_accepts_legacy_zone_fill_without_schema_version() {
     let resolved = ProjectResolver::new(&root)
         .resolve()
         .expect("project resolves with legacy persisted fill");
-    assert_eq!(
-        resolved.zone_fills[&zone_id].schema_version,
-        ZONE_FILL_SCHEMA_VERSION
-    );
+    assert_eq!(resolved.zone_fills[&zone_id].schema_version, 1);
     assert!(resolved.source_shards.iter().any(|shard| {
         shard.kind == SourceShardKind::ZoneFill
             && shard.authority == SourceShardAuthority::GeneratedEvidence

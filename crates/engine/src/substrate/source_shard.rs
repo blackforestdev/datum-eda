@@ -358,12 +358,16 @@ pub(super) fn validate_source_shard_schema_version(
     relative_path: &str,
     schema_version: Option<u64>,
 ) -> Result<(), EngineError> {
-    const SUPPORTED_SCHEMA_VERSION: u64 = 1;
+    let supported_schema_version = if *kind == SourceShardKind::ZoneFill {
+        super::zone_fill::ZONE_FILL_SCHEMA_VERSION
+    } else {
+        1
+    };
     if let Some(version) = schema_version
-        && version > SUPPORTED_SCHEMA_VERSION
+        && version > supported_schema_version
     {
         return Err(EngineError::Validation(format!(
-            "unsupported {kind:?} schema_version {version} in {relative_path}; supported <= {SUPPORTED_SCHEMA_VERSION}"
+            "unsupported {kind:?} schema_version {version} in {relative_path}; supported <= {supported_schema_version}"
         )));
     }
     Ok(())

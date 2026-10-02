@@ -28,10 +28,10 @@ pub enum ZoneFillState {
     Unsupported,
 }
 
-pub const ZONE_FILL_SCHEMA_VERSION: u64 = 1;
+pub const ZONE_FILL_SCHEMA_VERSION: u64 = 2;
 
 fn default_zone_fill_schema_version() -> u64 {
-    ZONE_FILL_SCHEMA_VERSION
+    1
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -405,7 +405,7 @@ fn read_zone_fill_shard(
 }
 
 fn validate_zone_fill(fill: &ZoneFill) -> Result<(), String> {
-    if fill.schema_version != ZONE_FILL_SCHEMA_VERSION {
+    if !(1..=ZONE_FILL_SCHEMA_VERSION).contains(&fill.schema_version) {
         return Err(format!(
             "unsupported zone fill schema_version {}; supported {}",
             fill.schema_version, ZONE_FILL_SCHEMA_VERSION
@@ -413,8 +413,8 @@ fn validate_zone_fill(fill: &ZoneFill) -> Result<(), String> {
     }
     match fill.state {
         ZoneFillState::Filled => {
-            if fill.islands.is_empty() {
-                return Err("filled zone fill must contain at least one island".to_string());
+            if fill.schema_version == 1 && fill.islands.is_empty() {
+                return Err("legacy filled zone fill must contain at least one island".to_string());
             }
             if fill.provenance.as_deref().unwrap_or("").trim().is_empty() {
                 return Err("filled zone fill must record provenance".to_string());

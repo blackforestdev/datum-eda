@@ -368,7 +368,7 @@ def zone_fill_surface() -> list[str]:
 
     zone_fill = read_text(ROOT / "crates/engine/src/substrate/zone_fill.rs")
     for marker in (
-        "pub const ZONE_FILL_SCHEMA_VERSION: u64 = 1;",
+        "pub const ZONE_FILL_SCHEMA_VERSION: u64 = 2;",
         'persist_generated_evidence(project_root, ".datum/zone_fills", &fill.zone_id, fill)',
         "pub fn compute_bounded_zone_fill",
         "pub fn zone_fill_copper_projection_zones",
