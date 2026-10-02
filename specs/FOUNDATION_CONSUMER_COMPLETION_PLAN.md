@@ -990,3 +990,31 @@ ratification must reconcile numbered decisions and owning specifications; remain
 execution needs its separate exact grant. No complete foundation acceptance or
 S5A resumption is implied by E1 PASS. Do not ask the owner for a numerical policy
 without the required supporting evidence.
+
+
+### DA-A2-D — partial remaining ratification and bounded nominal execution
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A2-D-NOMINAL-AUTHORIZED -->
+The owner explicitly ratifies C04–C06 of reviewed A1-03 at
+3730cf16f4ca44f37c85bbd011e73bd9ac6e347d / blob
+7e712f81156da247fa09ffc2e3a2b86ee554c2d4. PM054 records exact clauses and
+owning reconciliation. Authorize E2–E4 Net-constrained Runs/separate contact
+evidence, Zone acquisition/succession/successful-empty fill, authored arcs/
+certified nominal geometry, complete occurrence-qualified queries, shared
+adapters/projections and nominal DRC. Reserve the existing independent audit
+session for exact candidate review/focused replay. No new dependency authorized.
+
+Complete DA-A2-D only for this disposition, not full remaining acceptance. The
+owner approves the bounded roadmap amendment: select DA-A2 execution of the
+authorized nominal units; retain separate DA-M1-D before complete DA-A3 proof.
+C07/M1 is DEFERRED with no manufacturing approximation allowance, no policy-
+dependent implementation and mandatory rational-center CAM/T04 still unpassed.
+DA-A3/DA-A4 and S5A resumption require complete retained obligations. Preserve
+E1 PASS, S5A C02/partial U1/C05 and PM026/049/051/052. dat-7unq remains unpassed.
+
+<!-- REQ:S5A-DERIVED-AUTHORITY:DA-M1-D -->
+<!-- OWNER:S5A-DERIVED-AUTHORITY:DA-M1-D:MANUFACTURING-POLICY -->
+Obtain evidence-derived C07/M1 manufacturing policy ratification and exact
+policy-dependent implementation disposition before complete CAM/T04 or full
+foundation proof. No tolerance invention or acceptance reduction. The finite
+policy packet from A1-03 is still required; nominal execution is not that packet.
