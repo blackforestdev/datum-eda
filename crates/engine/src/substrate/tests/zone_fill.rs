@@ -64,6 +64,7 @@ fn bounded_zone_fill_cuts_out_single_foreign_pad_with_netclass_clearance() {
     let mut context = ZoneFillCopperContext::default();
     context.net_clearance_nm.insert(zone_net, 100);
     context.pads.push(PlacedPad {
+        layer_connection: Default::default(),
         uuid: Uuid::new_v4(),
         package: Uuid::new_v4(),
         name: "1".to_string(),
@@ -104,6 +105,7 @@ fn bounded_zone_fill_rejects_foreign_pad_without_clearance_basis() {
     let foreign_net = Uuid::new_v4();
     let mut context = ZoneFillCopperContext::default();
     context.pads.push(PlacedPad {
+        layer_connection: Default::default(),
         uuid: Uuid::new_v4(),
         package: Uuid::new_v4(),
         name: "1".to_string(),
@@ -145,6 +147,7 @@ fn bounded_zone_fill_cuts_out_multiple_non_overlapping_foreign_pads() {
     context.net_clearance_nm.insert(zone_net, 50);
     for position in [Point { x: 250, y: 250 }, Point { x: 750, y: 750 }] {
         context.pads.push(PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package: Uuid::new_v4(),
             name: "1".to_string(),
@@ -188,6 +191,7 @@ fn bounded_zone_fill_conservatively_unions_overlapping_foreign_pad_cutouts() {
     context.net_clearance_nm.insert(zone_net, 100);
     for position in [Point { x: 450, y: 500 }, Point { x: 550, y: 500 }] {
         context.pads.push(PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package: Uuid::new_v4(),
             name: "1".to_string(),

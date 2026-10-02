@@ -67,6 +67,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     anchor_top_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_top_uuid,
                         package: Uuid::from_u128(0x3210),
                         name: "1".into(),
@@ -91,6 +92,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     anchor_bottom_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_bottom_uuid,
                         package: Uuid::from_u128(0x3211),
                         name: "1".into(),
@@ -290,6 +292,7 @@ fn route_path_candidate_authored_copper_graph_prefers_shorter_existing_copper_pa
             (
                 anchor_left_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: anchor_left_uuid,
                     package: Uuid::from_u128(0x3297),
                     name: "1".into(),
@@ -314,6 +317,7 @@ fn route_path_candidate_authored_copper_graph_prefers_shorter_existing_copper_pa
             (
                 anchor_right_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: anchor_right_uuid,
                     package: Uuid::from_u128(0x3298),
                     name: "1".into(),

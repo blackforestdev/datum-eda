@@ -59,6 +59,7 @@ fn topology_aware_authored_copper_graph_prefers_fewer_topology_transitions_for_e
             (
                 from_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: from_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "1".into(),
@@ -83,6 +84,7 @@ fn topology_aware_authored_copper_graph_prefers_fewer_topology_transitions_for_e
             (
                 to_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: to_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "2".into(),
@@ -267,6 +269,7 @@ fn topology_aware_authored_copper_graph_reports_no_path_when_all_paths_are_block
             (
                 from_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: from_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "1".into(),
@@ -291,6 +294,7 @@ fn topology_aware_authored_copper_graph_reports_no_path_when_all_paths_are_block
             (
                 to_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: to_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "2".into(),

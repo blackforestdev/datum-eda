@@ -63,6 +63,7 @@ fn render_rs274x_outline_requires_two_vertices() {
 fn render_rs274x_soldermask_layer_emits_pad_flashes() {
     let pads = vec![
         PlacedPad {
+            layer_connection: Default::default(),
             uuid: uuid::Uuid::nil(),
             package: uuid::Uuid::from_u128(42),
             name: "1".to_string(),
@@ -87,6 +88,7 @@ fn render_rs274x_soldermask_layer_emits_pad_flashes() {
             roundrect_rratio_ppm: 250_000,
         },
         PlacedPad {
+            layer_connection: Default::default(),
             uuid: uuid::Uuid::from_u128(1),
             package: uuid::Uuid::from_u128(42),
             name: "2".to_string(),
@@ -123,6 +125,7 @@ fn render_rs274x_soldermask_layer_emits_pad_flashes() {
 #[test]
 fn render_rs274x_soldermask_layer_rejects_non_positive_rectangular_pad_width() {
     let pads = vec![PlacedPad {
+        layer_connection: Default::default(),
         uuid: uuid::Uuid::nil(),
         package: uuid::Uuid::from_u128(42),
         name: "1".to_string(),
@@ -153,6 +156,7 @@ fn render_rs274x_soldermask_layer_rejects_non_positive_rectangular_pad_width() {
 fn render_rs274x_paste_layer_emits_pad_flashes() {
     let pads = vec![
         PlacedPad {
+            layer_connection: Default::default(),
             uuid: uuid::Uuid::nil(),
             package: uuid::Uuid::from_u128(42),
             name: "1".to_string(),
@@ -177,6 +181,7 @@ fn render_rs274x_paste_layer_emits_pad_flashes() {
             roundrect_rratio_ppm: 250_000,
         },
         PlacedPad {
+            layer_connection: Default::default(),
             uuid: uuid::Uuid::from_u128(1),
             package: uuid::Uuid::from_u128(42),
             name: "2".to_string(),
@@ -213,6 +218,7 @@ fn render_rs274x_paste_layer_emits_pad_flashes() {
 #[test]
 fn render_rs274x_paste_layer_rejects_non_positive_rectangular_pad_width() {
     let pads = vec![PlacedPad {
+        layer_connection: Default::default(),
         uuid: uuid::Uuid::nil(),
         package: uuid::Uuid::from_u128(42),
         name: "1".to_string(),

@@ -1405,3 +1405,37 @@ Pad barrel exposure and remaining nominal connectivity still require DA-A2 work.
 No full F01–F06, independent PASS, foundation/S5A acceptance, latency criterion or
 M1/T04 allowance is inferred. Prior partial S5A approval/C05, rendering/resize
 behavior and all recorded unresolved gates remain preserved.
+
+
+### DA-A2 bounded placed-pad layer authority unit
+
+Source baseline `3af1b74f`. Existing placed-pad source now retains explicit
+inherited process/span facts (Unknown, Separate, PlatedThrough, PlatedSpan).
+KiCad import uses its actual parsed kind; identical drills/apertures do not
+establish identical plating. Canonical writes and history preserve Pad/Net
+identity and exact process facts. Known facts adopt BoardRoot 3 forward-only;
+arc writes cannot downgrade it. Legacy omitted Unknown remains unchanged.
+The shared physical graph keeps Separate apertures in distinct layer components;
+plated groups require complete known aperture/stackup span. Full Run results also
+carry per-source copper layers, preventing UUID-only projection joins.
+
+Final on-disk engine replay passes **1,136 tests** in
+`target/s5a-pad-engine-final.log`, including three native pad/history/refusal/
+blind-span cases and one full board-import process oracle. Engine binary:
+`target/s5a-nominal-proof/debug/deps/eda_engine-5b3bfac123e4e569`, SHA-256
+`3d895719e8d41bf2edfa10f48f9d9f93f1af6f516f845b4211168e3cd8449c16`.
+The initial pad test setup incorrectly attempted consecutive journal undo; the
+schema diagnostic also required the resolver's established unsupported-version
+route. Both were corrected before credited replay. Import proof initially used
+an unsupported compact/indented fixture; its corrected standard multiline source
+now exercises actual pad construction. Earlier failed setup logs are not passes.
+Source-health policy integrity passes 13 tests; real helper extraction retires
+one debt row (75 remain), without increased ceilings or formatting exemptions.
+Engine/CLI all-target guarded lint evidence is `target/s5a-pad-lint.log`.
+
+Unknown legacy plating, incomplete intermediate apertures/span, unsupported
+nonorthogonal/edge-reaching drill geometry and unexposed pool process geometry
+remain typed capability gaps, not inferred copper or waived requirements.
+Remaining nominal connectivity DRC requires DA-A2 integration. No new dependency,
+manufacturing policy, CAM/T04, independent PASS or foundation/S5A acceptance;
+prior selection/rendering/resize approval and native evidence remain preserved.

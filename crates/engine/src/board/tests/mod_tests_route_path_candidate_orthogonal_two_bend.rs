@@ -68,6 +68,7 @@ pub(super) fn orthogonal_two_bend_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
                 (
                     anchor_a_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_a_uuid,
                         package: pkg_a,
                         name: "1".into(),
@@ -92,6 +93,7 @@ pub(super) fn orthogonal_two_bend_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
                 (
                     anchor_b_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_b_uuid,
                         package: pkg_b,
                         name: "1".into(),

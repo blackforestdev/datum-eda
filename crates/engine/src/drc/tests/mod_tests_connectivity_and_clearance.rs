@@ -64,6 +64,7 @@ fn connectivity_check_reports_no_copper_net_with_two_pins() {
     board.pads.insert(
         Uuid::new_v4(),
         crate::board::PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package: pkg_a,
             name: "1".into(),
@@ -88,6 +89,7 @@ fn connectivity_check_reports_no_copper_net_with_two_pins() {
     board.pads.insert(
         Uuid::new_v4(),
         crate::board::PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package: pkg_b,
             name: "1".into(),
@@ -247,6 +249,7 @@ fn connectivity_reports_single_pin_unconnected_pin_violation() {
     board.pads.insert(
         Uuid::new_v4(),
         crate::board::PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package: pkg,
             name: "1".into(),

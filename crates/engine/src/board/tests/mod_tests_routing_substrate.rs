@@ -99,6 +99,7 @@ fn routing_substrate_reports_deterministic_sorted_persisted_facts() {
         pads: HashMap::from([(
             board_pad_uuid,
             PlacedPad {
+                layer_connection: Default::default(),
                 uuid: board_pad_uuid,
                 package: component_uuid_b,
                 name: "TP1".to_string(),

@@ -55,6 +55,7 @@ fn layer_balance_aware_explain_reports_selected_path_and_balance_reason() {
             (
                 from_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: from_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "1".into(),
@@ -79,6 +80,7 @@ fn layer_balance_aware_explain_reports_selected_path_and_balance_reason() {
             (
                 to_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: to_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "2".into(),
@@ -242,6 +244,7 @@ fn layer_balance_aware_explain_reports_no_existing_path_when_all_candidates_bloc
             (
                 from_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: from_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "1".into(),
@@ -266,6 +269,7 @@ fn layer_balance_aware_explain_reports_no_existing_path_when_all_candidates_bloc
             (
                 to_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: to_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "2".into(),

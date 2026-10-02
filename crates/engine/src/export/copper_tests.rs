@@ -123,6 +123,7 @@ fn render_rs274x_copper_layer_rejects_non_positive_via_diameter() {
 #[test]
 fn render_rs274x_copper_layer_emits_pad_flashes() {
     let pads = vec![PlacedPad {
+        layer_connection: Default::default(),
         uuid: uuid::Uuid::nil(),
         package: uuid::Uuid::from_u128(42),
         name: "1".to_string(),
@@ -156,6 +157,7 @@ fn render_rs274x_copper_layer_emits_pad_flashes() {
 #[test]
 fn render_rs274x_copper_layer_rejects_non_positive_pad_diameter() {
     let pads = vec![PlacedPad {
+        layer_connection: Default::default(),
         uuid: uuid::Uuid::nil(),
         package: uuid::Uuid::from_u128(42),
         name: "1".to_string(),
@@ -185,6 +187,7 @@ fn render_rs274x_copper_layer_rejects_non_positive_pad_diameter() {
 #[test]
 fn render_rs274x_copper_layer_emits_rectangular_pad_flashes() {
     let pads = vec![PlacedPad {
+        layer_connection: Default::default(),
         uuid: uuid::Uuid::nil(),
         package: uuid::Uuid::from_u128(42),
         name: "1".to_string(),
@@ -218,6 +221,7 @@ fn render_rs274x_copper_layer_emits_rectangular_pad_flashes() {
 #[test]
 fn render_rs274x_copper_layer_rejects_non_positive_rectangular_pad_width() {
     let pads = vec![PlacedPad {
+        layer_connection: Default::default(),
         uuid: uuid::Uuid::nil(),
         package: uuid::Uuid::from_u128(42),
         name: "1".to_string(),
@@ -247,6 +251,7 @@ fn render_rs274x_copper_layer_rejects_non_positive_rectangular_pad_width() {
 #[test]
 fn render_rs274x_copper_layer_rejects_non_positive_rectangular_pad_height() {
     let pads = vec![PlacedPad {
+        layer_connection: Default::default(),
         uuid: uuid::Uuid::nil(),
         package: uuid::Uuid::from_u128(42),
         name: "1".to_string(),

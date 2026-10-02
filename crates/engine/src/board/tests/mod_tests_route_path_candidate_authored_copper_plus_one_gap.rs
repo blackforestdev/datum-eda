@@ -40,6 +40,7 @@ pub(crate) fn plus_one_gap_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     from_pad_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: from_pad_uuid,
                         package: Uuid::from_u128(0xa110),
                         name: "1".into(),
@@ -64,6 +65,7 @@ pub(crate) fn plus_one_gap_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     to_pad_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: to_pad_uuid,
                         package: Uuid::from_u128(0xa111),
                         name: "1".into(),

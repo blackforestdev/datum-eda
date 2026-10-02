@@ -273,6 +273,7 @@ fn placed_pad_from_land_pattern(
     rotation: i32,
 ) -> crate::board::PlacedPad {
     crate::board::PlacedPad {
+        layer_connection: Default::default(),
         uuid: deterministic_component_pad_uuid(component_uuid, &name),
         package: component_uuid,
         name,

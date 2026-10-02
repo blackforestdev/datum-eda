@@ -73,6 +73,7 @@ pub(super) fn orthogonal_graph_via_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uu
                 (
                     anchor_top_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_top_uuid,
                         package: top_pkg_uuid,
                         name: "1".into(),
@@ -97,6 +98,7 @@ pub(super) fn orthogonal_graph_via_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uu
                 (
                     anchor_bottom_uuid,
                     PlacedPad {
+                        layer_connection: Default::default(),
                         uuid: anchor_bottom_uuid,
                         package: bottom_pkg_uuid,
                         name: "1".into(),

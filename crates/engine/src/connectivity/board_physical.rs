@@ -74,6 +74,7 @@ pub struct BoardRunMembership {
     pub origin: ElectricalOccurrence,
     pub board_net: Uuid,
     pub members: BTreeSet<ElectricalOccurrence>,
+    pub copper_layers: BTreeMap<ElectricalOccurrence, BTreeSet<LayerId>>,
     pub zone_copper: Vec<ZoneCopperProjection>,
     pub zone_regions: Vec<ZoneRegionQualifier>,
     pub contact_evidence: Result<Vec<CrossNetContact>, PhysicalQueryFailure>,
@@ -197,23 +198,26 @@ impl Graph {
             if *id != pad.uuid {
                 return Err(geometry([*id], "Pad source key mismatch"));
             }
-            let layers = copper::pad_layers(&source.stackup, pad);
-            let validation = copper::validate_pad(pad);
-            // Multiple aperture layers alone do not prove a plated barrel.
-            // The placed source currently lacks that authority; never stitch
-            // them by source UUID, matching name, Net or nonzero drill.
-            let validation = if layers.as_ref().is_ok_and(|v| v.len() > 1) {
-                Err(GeometryError::UnknownPadLayerConnection)
-            } else {
-                validation
-            };
-            graph.push(
-                reference("pads", *id),
-                pad.net,
-                Shape::Pad(pad.clone()),
-                layers,
-                validation,
-            );
+            match copper::pad_layer_groups(&source.stackup, pad) {
+                Ok(groups) => {
+                    for layers in groups {
+                        graph.push(
+                            reference("pads", *id),
+                            pad.net,
+                            Shape::Pad(pad.clone()),
+                            Ok(layers),
+                            copper::validate_pad(pad),
+                        );
+                    }
+                }
+                Err(reason) => graph.push(
+                    reference("pads", *id),
+                    pad.net,
+                    Shape::Pad(pad.clone()),
+                    copper::pad_layers(&source.stackup, pad),
+                    Err(reason),
+                ),
+            }
         }
         for (id, via) in &source.vias {
             if *id != via.uuid {
@@ -465,10 +469,15 @@ fn membership(
     let net = assignment(source, origin)?;
     let group = &graph.groups[index];
     let mut members = BTreeSet::new();
+    let mut copper_layers = BTreeMap::<ElectricalOccurrence, BTreeSet<LayerId>>::new();
     let mut regions = BTreeMap::<Uuid, ZoneCopperProjection>::new();
     for i in group {
         let node = &graph.nodes[*i];
         members.insert(node.reference.clone());
+        copper_layers
+            .entry(node.reference.clone())
+            .or_default()
+            .extend(node.layers.iter().copied());
         if let Shape::Fill(polygon) = &node.shape {
             regions
                 .entry(node.reference.source_id)
@@ -494,6 +503,7 @@ fn membership(
         origin: origin.clone(),
         board_net: net,
         members,
+        copper_layers,
         zone_regions: regions
             .keys()
             .map(|id| zone_regions::qualifier(model, source_basis, *id, index))

@@ -72,6 +72,7 @@ fn authored_drc_object_waiver_marks_matching_violation_as_waived() {
     board.pads.insert(
         Uuid::new_v4(),
         crate::board::PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package: pkg_a,
             name: "1".into(),
@@ -96,6 +97,7 @@ fn authored_drc_object_waiver_marks_matching_violation_as_waived() {
     board.pads.insert(
         Uuid::new_v4(),
         crate::board::PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package: pkg_b,
             name: "1".into(),

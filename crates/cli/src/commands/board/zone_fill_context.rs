@@ -42,6 +42,7 @@ pub(crate) fn zone_fill_copper_context(
         let package = Uuid::parse_str(component_key).unwrap_or_else(|_| Uuid::nil());
         for pad in component_pads {
             pads.push(PlacedPad {
+                layer_connection: Default::default(),
                 uuid: pad.uuid,
                 package,
                 name: pad.name.clone(),

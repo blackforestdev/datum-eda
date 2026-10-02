@@ -34,6 +34,7 @@ fn drc_connectivity_requires_filled_zone_evidence() {
     board.pads.insert(
         Uuid::new_v4(),
         PlacedPad {
+            layer_connection: Default::default(),
             uuid: Uuid::new_v4(),
             package,
             name: "1".into(),
@@ -134,6 +135,7 @@ fn board_with_two_pin_zone_only_net() -> (crate::board::Board, Uuid) {
         board.pads.insert(
             Uuid::new_v4(),
             PlacedPad {
+                layer_connection: Default::default(),
                 uuid: Uuid::new_v4(),
                 package,
                 name: name.into(),

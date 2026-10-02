@@ -65,7 +65,13 @@ fn stamp_schema(value: &mut serde_json::Value) {
                 .any(|track| track.get("midpoint").is_some_and(|point| !point.is_null()))
         });
     if has_arcs {
-        value["schema_version"] = serde_json::json!(BOARD_ARC_SCHEMA_VERSION);
+        value["schema_version"] = serde_json::json!(
+            value
+                .get("schema_version")
+                .and_then(serde_json::Value::as_u64)
+                .unwrap_or(1)
+                .max(BOARD_ARC_SCHEMA_VERSION)
+        );
     }
     // Format adoption is retained on undo; authored Track anchors still invert.
 }

@@ -58,6 +58,7 @@ fn layer_balance_aware_prefers_more_even_layer_usage_for_equal_step_and_topology
             (
                 from_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: from_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "1".into(),
@@ -82,6 +83,7 @@ fn layer_balance_aware_prefers_more_even_layer_usage_for_equal_step_and_topology
             (
                 to_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: to_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "2".into(),
@@ -255,6 +257,7 @@ fn layer_balance_aware_reports_no_path_when_obstacles_block_all_candidates() {
             (
                 from_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: from_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "1".into(),
@@ -279,6 +282,7 @@ fn layer_balance_aware_reports_no_path_when_obstacles_block_all_candidates() {
             (
                 to_pad_uuid,
                 PlacedPad {
+                    layer_connection: Default::default(),
                     uuid: to_pad_uuid,
                     package: Uuid::new_v4(),
                     name: "2".into(),

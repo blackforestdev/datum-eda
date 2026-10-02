@@ -188,6 +188,7 @@ mod tests {
                 controlled_impedance: None,
             }],
             pads: vec![PlacedPad {
+                layer_connection: Default::default(),
                 uuid: Uuid::from_u128(0xf1),
                 package: Uuid::from_u128(0xf2),
                 name: "1".to_string(),
