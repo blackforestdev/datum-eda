@@ -14,6 +14,7 @@ pub enum GeometryError {
     UnknownNetAssignment,
     UnknownPadLayerConnection,
     UnresolvedPredicate,
+    UnverifiedFillBasis,
 }
 pub(super) type Result<T> = std::result::Result<T, GeometryError>;
 

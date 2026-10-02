@@ -9,7 +9,9 @@ mod zone_fill_projection;
 use fingerprint::attach_drc_violation_fingerprints;
 pub(crate) use fingerprint::drc_violation_fingerprint;
 pub use types::{DrcLocation, DrcReport, DrcSeverity, DrcSummary, DrcViolation};
-pub use zone_fill_projection::{run_with_zone_fills, run_with_zone_fills_and_waivers};
+pub use zone_fill_projection::{
+    run_with_current_zone_fills_and_waivers, run_with_zone_fills, run_with_zone_fills_and_waivers,
+};
 
 pub fn run(board: &Board, selected_rules: &[RuleType]) -> DrcReport {
     run_with_waivers(board, selected_rules, &[])
@@ -20,6 +22,15 @@ pub fn run_with_waivers(
     selected_rules: &[RuleType],
     waivers: &[CheckWaiver],
 ) -> DrcReport {
+    run_with_clearance_override(board, selected_rules, waivers, None)
+}
+
+fn run_with_clearance_override(
+    board: &Board,
+    selected_rules: &[RuleType],
+    waivers: &[CheckWaiver],
+    clearance: Option<Vec<DrcViolation>>,
+) -> DrcReport {
     let run_all = selected_rules.is_empty();
     let mut violations = Vec::new();
 
@@ -27,7 +38,7 @@ pub fn run_with_waivers(
         violations.extend(checks::run_connectivity_checks(board));
     }
     if run_all || selected_rules.contains(&RuleType::ClearanceCopper) {
-        violations.extend(checks::run_clearance_checks(board));
+        violations.extend(clearance.unwrap_or_else(|| checks::run_clearance_checks(board)));
     }
     if run_all || selected_rules.contains(&RuleType::TrackWidth) {
         violations.extend(checks::run_track_width_checks(board));

@@ -3,7 +3,16 @@ use super::*;
 use crate::board::{nominal_geometry::DistanceBoundary, track_contact::tracks_within};
 
 pub(in crate::drc) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
-    let mut violations = arc_peer_findings(board);
+    run_clearance_checks_with_zone_copper(board, &std::collections::BTreeMap::new())
+}
+pub(in crate::drc) fn run_clearance_checks_with_zone_copper(
+    board: &Board,
+    copper: &std::collections::BTreeMap<
+        Uuid,
+        Result<Vec<crate::ir::geometry::Polygon>, crate::board::nominal_geometry::GeometryError>,
+    >,
+) -> Vec<DrcViolation> {
+    let mut violations = arc_peer_findings(board, copper);
     let mut tracks: Vec<&Track> = board.tracks.values().collect();
     tracks.sort_by_key(|track| track.uuid);
 
@@ -87,7 +96,13 @@ pub(in crate::drc) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
     violations
 }
 
-fn arc_peer_findings(board: &Board) -> Vec<DrcViolation> {
+fn arc_peer_findings(
+    board: &Board,
+    copper: &std::collections::BTreeMap<
+        Uuid,
+        Result<Vec<crate::ir::geometry::Polygon>, crate::board::nominal_geometry::GeometryError>,
+    >,
+) -> Vec<DrcViolation> {
     use crate::board::nominal_geometry::GeometryError;
     use crate::board::occupied_copper::{
         pad_layers, track_layers, track_pad_within, track_via_within, via_layers,
@@ -150,9 +165,32 @@ fn arc_peer_findings(board: &Board) -> Vec<DrcViolation> {
         }
         for zone in board.zones.values() {
             if zone.net != arc.net && zone.layer == arc.layer {
-                // This Board-only call has no certified generated-fill basis.
-                // Current fill integration is distinct from outline geometry.
-                peers.insert(zone.uuid, Err(GeometryError::UnresolvedPredicate));
+                let classification = (|| {
+                    let polygons = copper
+                        .get(&zone.uuid)
+                        .ok_or(GeometryError::UnverifiedFillBasis)?
+                        .as_ref()
+                        .map_err(|e| *e)?;
+                    if polygons.is_empty() {
+                        return Ok(false);
+                    }
+                    crate::board::occupied_copper::conductive_layer(&board.stackup, zone.layer)?;
+                    track_layers(&board.stackup, arc)?;
+                    if !board.nets.contains_key(&zone.net) || !board.nets.contains_key(&arc.net) {
+                        return Err(GeometryError::UnknownNetAssignment);
+                    }
+                    let mut violates = false;
+                    for p in polygons {
+                        violates |= crate::board::occupied_copper::track_polygon_within(
+                            arc,
+                            p,
+                            required_clearance_nm(board, arc.net, zone.net),
+                            DistanceBoundary::Strict,
+                        )?;
+                    }
+                    Ok(violates)
+                })();
+                peers.insert(zone.uuid, classification);
             }
         }
         for (peer, classification) in peers {

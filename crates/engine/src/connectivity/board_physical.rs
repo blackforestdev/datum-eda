@@ -1,6 +1,6 @@
 //! Complete source-referenced board components. No semantic identity allocation.
 use crate::board::{
-    Net, PlacedPad, Stackup, Track, Via, Zone,
+    Net, NetClass, PlacedPad, Stackup, Track, Via, Zone,
     nominal_geometry::{DistanceBoundary, GeometryError, Rational},
     occupied_copper as copper,
     track_contact::tracks_within,
@@ -25,6 +25,8 @@ pub(crate) struct BoardCopperSource {
     pub vias: BTreeMap<Uuid, Via>,
     pub zones: BTreeMap<Uuid, Zone>,
     pub nets: BTreeMap<Uuid, Net>,
+    #[serde(default)]
+    pub net_classes: BTreeMap<Uuid, NetClass>,
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PhysicalQueryFailure {
@@ -161,15 +163,7 @@ struct Graph {
     groups: Vec<Vec<usize>>,
 }
 fn current_fill(model: &DesignModel, id: Uuid) -> Option<&crate::substrate::ZoneFill> {
-    model.zone_fills.get(&id).filter(|f| {
-        f.zone_id == id
-            && f.state == ZoneFillState::Filled
-            && f.model_revision == model.model_revision
-            && model
-                .objects
-                .get(&id)
-                .is_some_and(|o| o.object_revision == f.source_zone_revision)
-    })
+    model.current_zone_fill(id)
 }
 impl Graph {
     fn build(

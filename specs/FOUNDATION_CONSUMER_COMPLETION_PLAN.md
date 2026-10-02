@@ -1279,3 +1279,34 @@ fill DRC and missing pad barrel exposure still require implementation; no full
 F01–F06, independent PASS, foundation/S5A acceptance or deferred M1/T04 result is
 inferred. DA-A2 stays claimed/in progress and preserves all earlier approvals,
 rendering/resize behavior and recorded unresolved gates.
+
+
+### DA-A2 bounded current-fill nominal DRC unit
+
+Source baseline `8a200192`. Native CLI DRC now consumes the immutable electrical
+snapshot and the generated-fill owner's single model/source-revision check.
+The Board projection, including NetClasses, must match captured authored source.
+Arc/Zone clearance tests actual successful current filled cells and holes with
+existing strict thresholds, source-pair fingerprints and waiver finalization.
+Overlapping cells produce one authored pair; successful empty fill produces no
+copper. Missing/stale/Unsupported/Unfilled, tampered source and mismatched Board
+projection produce explicit unavailable basis. A raw fill map never certifies
+nominal arc/Zone acceptance; queries and checks leave authored/journal bytes intact.
+
+Three new on-disk canonical native tests pass in
+`target/s5a-current-fill-drc-native-final.log`; 14 existing CLI DRC regressions
+pass in `target/s5a-current-fill-drc-cli-replay.log`. Final engine replay passes
+**1,127 tests** in `target/s5a-current-fill-drc-engine-final.log`; isolated binary
+`target/s5a-nominal-proof/debug/deps/eda_engine-5b3bfac123e4e569`, SHA-256
+`81d225664f850e966ebdb88e775c4019e437554cfe7cee3c5860d1cc239e2816`.
+Final guarded engine/CLI all-target Clippy is recorded in
+`target/s5a-current-fill-drc-lint-final.log`. A first final lint command named an
+absent CLI package and did not compile; the corrected package is datum-eda-cli.
+Proof fixtures and binaries remain in the owned disk-backed target. No new
+dependency, latency acceptance or manufacturing approximation is introduced.
+
+Physical Bus Runs, shared adapter/lifetime adoption, certified pad barrel exposure
+and remaining nominal connectivity integration still require authorized DA-A2
+work. C07/M1 and rational-center CAM/T04 stay pending. No independent PASS, full
+foundation or S5A acceptance is inferred; all prior approvals, partial work and
+rendering/resize behavior remain preserved.
