@@ -13,7 +13,7 @@ use crate::{
 use std::collections::BTreeSet;
 use uuid::Uuid;
 
-fn fixture(name: &str) -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
+pub(super) fn fixture(name: &str) -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
     let root = super::super::test_support::temp_project_root(name);
     let ids = genesis::bootstrap_native_project(
         &root,
@@ -34,7 +34,7 @@ fn fixture(name: &str) -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
     );
     (root, model, ids.schematic_uuid, sheet)
 }
-fn add_sheet(
+pub(super) fn add_sheet(
     model: &mut DesignModel,
     root: &std::path::Path,
     schematic: Uuid,
@@ -46,7 +46,7 @@ fn add_sheet(
         build_create_schematic_sheet(model, provenance(), schematic, id, path, source).unwrap();
     commit_prepared(model, root, write).unwrap();
 }
-fn wire(
+pub(super) fn wire(
     model: &mut DesignModel,
     root: &std::path::Path,
     sheet: Uuid,
@@ -69,7 +69,7 @@ fn member(class: &str, id: Uuid, path: &[Uuid]) -> ElectricalOccurrence {
         instance_path: path.to_vec(),
     }
 }
-fn id_at(model: &DesignModel, reference: &ElectricalOccurrence) -> Uuid {
+pub(super) fn id_at(model: &DesignModel, reference: &ElectricalOccurrence) -> Uuid {
     let groups = electrical_test_partitions(model, &[]).unwrap();
     let group = groups.iter().find(|g| g.contains(reference)).unwrap();
     model

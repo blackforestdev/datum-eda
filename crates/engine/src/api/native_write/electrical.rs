@@ -219,3 +219,6 @@ pub fn build_adopt_schematic_net_identities(
 mod binding_fixture;
 #[cfg(test)]
 mod binding_membership_tests;
+
+#[cfg(test)]
+mod selection_query_tests;

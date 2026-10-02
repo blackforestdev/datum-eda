@@ -65,7 +65,7 @@ pub(crate) fn partitions(
     let mut global = BTreeMap::<String, ElectricalOccurrence>::new();
     for context in &contexts {
         let sheet = &schematic.sheets[&context.sheet];
-        local(context, sheet, &mut groups);
+        local(context, sheet, &mut groups, true);
         for label in sheet
             .labels
             .values()
@@ -129,6 +129,43 @@ pub(crate) fn partitions(
             return Err(invalid("unbound child hierarchical label"));
         }
     }
+    Ok(finish(groups))
+}
+
+pub(crate) fn physical_partitions(
+    schematic: &Schematic,
+) -> Result<Vec<BTreeSet<ElectricalOccurrence>>, EngineError> {
+    let mut groups = Groups::default();
+    for context in contexts(schematic)? {
+        local(
+            &context,
+            &schematic.sheets[&context.sheet],
+            &mut groups,
+            false,
+        );
+    }
+    Ok(finish(groups))
+}
+
+pub(crate) fn representation_occurrences(
+    schematic: &Schematic,
+) -> Result<BTreeSet<ElectricalOccurrence>, EngineError> {
+    let mut result = BTreeSet::new();
+    for context in contexts(schematic)? {
+        let sheet = &schematic.sheets[&context.sheet];
+        for (class, ids) in [
+            ("buses", sheet.buses.keys().copied().collect::<Vec<_>>()),
+            ("bus_entries", sheet.bus_entries.keys().copied().collect()),
+            ("labels", sheet.labels.keys().copied().collect()),
+            ("ports", sheet.ports.keys().copied().collect()),
+        ] {
+            result.extend(ids.into_iter().map(|id| reference(&context, class, id)));
+        }
+    }
+    Ok(result)
+}
+
+fn finish(mut groups: Groups) -> Vec<BTreeSet<ElectricalOccurrence>> {
     let mut result = BTreeMap::<ElectricalOccurrence, BTreeSet<ElectricalOccurrence>>::new();
     for member in groups.parent.keys().cloned().collect::<Vec<_>>() {
         result
@@ -138,10 +175,10 @@ pub(crate) fn partitions(
     }
     let mut result: Vec<_> = result.into_values().collect();
     result.sort();
-    Ok(result)
+    result
 }
 
-fn local(context: &Context, sheet: &Sheet, groups: &mut Groups) {
+fn local(context: &Context, sheet: &Sheet, groups: &mut Groups, resolve_names: bool) {
     let mut endpoints = BTreeMap::<(i64, i64), ElectricalOccurrence>::new();
     let mut names = BTreeMap::<(u8, String), ElectricalOccurrence>::new();
     let mut attachments = Vec::new();
@@ -166,7 +203,7 @@ fn local(context: &Context, sheet: &Sheet, groups: &mut Groups) {
         let member = reference(context, "labels", label.uuid);
         // Local labels join only inside this occurrence. Hierarchical labels
         // retain the existing same-sheet interface scope before explicit links.
-        if !matches!(label.kind, LabelKind::Global) {
+        if resolve_names && !matches!(label.kind, LabelKind::Global) {
             let name = (
                 if matches!(label.kind, LabelKind::Local) {
                     0
@@ -185,10 +222,12 @@ fn local(context: &Context, sheet: &Sheet, groups: &mut Groups) {
     }
     for port in sheet.ports.values() {
         let member = reference(context, "ports", port.uuid);
-        if let Some(first) = names.get(&(1, port.name.clone())) {
-            groups.join(first, &member);
-        } else {
-            names.insert((1, port.name.clone()), member.clone());
+        if resolve_names {
+            if let Some(first) = names.get(&(1, port.name.clone())) {
+                groups.join(first, &member);
+            } else {
+                names.insert((1, port.name.clone()), member.clone());
+            }
         }
         attachments.push((member, port.position));
     }

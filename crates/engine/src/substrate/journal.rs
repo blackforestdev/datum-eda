@@ -1,3 +1,6 @@
+#[path = "journal_materialization.rs"]
+mod journal_materialization;
+pub(super) use journal_materialization::{capture_shard_value, materialized_shard_value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -471,46 +474,6 @@ pub fn transaction_journal_path(project_root: &Path) -> PathBuf {
     project_root.join(JOURNAL_RELATIVE_PATH)
 }
 
-pub(super) fn materialized_shard_value(
-    model: &DesignModel,
-    shard: &SourceShardRef,
-) -> Result<serde_json::Value, EngineError> {
-    let mut value = match read_json_value(&shard.path) {
-        Ok(value) => value,
-        Err(_)
-            if matches!(
-                shard.kind,
-                SourceShardKind::SchematicSheet
-                    | SourceShardKind::SchematicDefinition
-                    | SourceShardKind::Pool
-                    | SourceShardKind::ForwardAnnotationReview
-                    | SourceShardKind::ProposalMetadata
-            ) =>
-        {
-            match shard.kind {
-                SourceShardKind::Pool => {
-                    reconstruct_pool_shard_value(&shard.relative_path, &model.journal)?
-                }
-                SourceShardKind::ForwardAnnotationReview => {
-                    reconstruct_forward_annotation_review_value(
-                        &shard.relative_path,
-                        &model.journal,
-                    )?
-                }
-                SourceShardKind::ProposalMetadata => {
-                    reconstruct_proposal_metadata_value(&shard.relative_path, &model.journal)?
-                }
-                _ => reconstruct_schematic_object_value(&shard.relative_path, &model.journal)?,
-            }
-        }
-        Err(error) => return Err(error),
-    };
-    if canonical_json_hash(&value)? == shard.content_hash {
-        return Ok(value);
-    }
-    replay_journal_shard_value(&shard.kind, &mut value, &model.journal)?;
-    Ok(value)
-}
 
 fn reconstruct_schematic_object_value(
     relative_path: &str,

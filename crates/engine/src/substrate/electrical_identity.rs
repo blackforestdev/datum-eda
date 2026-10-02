@@ -106,7 +106,7 @@ pub struct ElectricalIdentityShard {
     pub record: ElectricalIdentityRecord,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NetCorrespondenceStatus {
     /// Explicit intent and (for Implemented) certified pin/pad correspondence.
     /// This is not a complete derived Global Net membership result.

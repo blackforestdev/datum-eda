@@ -480,7 +480,7 @@
     "crates/engine/src/connectivity/mod.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 737
+        "pre_test_lines": 722
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -513,7 +513,7 @@
     "crates/engine/src/substrate/journal.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 803
+        "pre_test_lines": 766
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

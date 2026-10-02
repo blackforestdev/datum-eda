@@ -120,6 +120,17 @@ legacy schema-1 source reading retains separate coverage.
 The source-health gate and all 13 policy-integrity regressions verify these
 boundaries; feature proof and complete drift results remain candidate evidence.
 
+PM054 occurrence-query exposure moves source materialization into the real
+`journal_materialization` child of the canonical journal owner (803 to 766
+pre-test lines). Query capture adds byte-hash or verified replay certification;
+ordinary mutation materialization retains its existing behavior. Exact segment
+incidence moves from the connectivity root into `segment_geometry` (737 to 722
+pre-test lines), shared by logical and physical occurrence resolution. Its signed
+product comparison supports the full i64 coordinate domain without overflowing
+an i64 determinant. Both remaining legacy ceilings ratchet; no normal budget or
+exception changes. Public selection queries remain a child of the existing
+membership owner, with separate native occurrence/binding/completeness proofs.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,
