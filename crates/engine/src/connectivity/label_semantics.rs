@@ -60,3 +60,21 @@ pub(super) fn preferred_name(
         .map(|label| label.name.clone())
         .or_else(|| ports.first().map(|port| port.name.clone()))
 }
+
+pub(super) fn child_hierarchical_labels_by_name(
+    child_sheet: &crate::schematic::Sheet,
+) -> std::collections::BTreeMap<String, Vec<&NetLabel>> {
+    let mut grouped: std::collections::BTreeMap<String, Vec<&NetLabel>> =
+        std::collections::BTreeMap::new();
+    let mut labels: Vec<_> = child_sheet
+        .labels
+        .values()
+        .filter(|label| matches!(label.kind, LabelKind::Hierarchical))
+        .filter(|label| !is_bus_container_label(label))
+        .collect();
+    labels.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
+    for label in labels {
+        grouped.entry(label.name.clone()).or_default().push(label);
+    }
+    grouped
+}

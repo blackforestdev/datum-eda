@@ -1239,3 +1239,43 @@ remain mandatory DA-A2 work. No independent PASS, full foundation/S5A acceptance
 T04/C07/M1 allowance, renderer/resize change or new dependency is inferred.
 DA-A2 remains claimed/in progress, with all prior approvals and unresolved gates
 preserved.
+
+
+### DA-A2 bounded Zone qualification/succession unit
+
+Source baseline `04b9a3e1`. The engine now emits opaque Zone component qualifiers
+bound to project/model revision, captured source basis and authored occurrence.
+The old complete graph validates every token; journal-prefix/revision checks
+reject unrelated histories, projects and bases. Exact filled-region union equality
+uses checked rational boundary splitting and occupied-side classification, not
+polygon-list identity or numerical tolerances. It supports decomposition, winding,
+order, redundant overlap and holes within the certified arithmetic domain.
+Unchanged complete copper certifies external bridge merge/split mappings. A
+single canonical pure Zone translation supplies an optional witness only after
+source endpoint and translated complete fill verification. Unknown changed fill
+requests reacquisition; stale/Unsupported/Unfilled suspends; successful current
+empty and verified canonical deletion clear. Empty-source proof does not depend
+on resolving unrelated same-Net geometry. No query resurrects a selection.
+
+Focused `region` replay passes **10 tests** (eight new exact-region/native
+succession tests and two existing region export regressions),
+`target/s5a-zone-region-native-tests.log`. This is not rational-center CAM/T04
+proof. Final broader replay passes **1,124 engine tests** in
+`target/s5a-zone-region-engine-replay.log`; isolated binary
+`target/s5a-nominal-proof/debug/deps/eda_engine-5b3bfac123e4e569`, SHA-256
+`23ad9758c9645bcbae8ad5e2db5ed983ca9dbdc059931e8360531a536d1e2547`.
+Final guarded all-target engine Clippy passes with warnings denied in
+`target/s5a-zone-region-lint-final.log`; two test-only slice-clone lints were
+corrected before the final replay. All 13 PM022 governance regressions pass.
+Real label-index extraction returns connectivity production from 709 to **694**
+lines, removing its ledger entry; the current debt inventory is 76 entries.
+
+These oracles cover equivalent refill, split/merge, exact translation versus
+inconsistent fill, stale/unknown/current-empty/deleted states, wrong component/
+revision/project/source basis, exact source identity/projection and reopen, with
+unchanged source bytes during succession queries. Arithmetic/capability errors
+remain explicit. Shared consumer lifetime adoption, physical Bus Runs, current-
+fill DRC and missing pad barrel exposure still require implementation; no full
+F01–F06, independent PASS, foundation/S5A acceptance or deferred M1/T04 result is
+inferred. DA-A2 stays claimed/in progress and preserves all earlier approvals,
+rendering/resize behavior and recorded unresolved gates.

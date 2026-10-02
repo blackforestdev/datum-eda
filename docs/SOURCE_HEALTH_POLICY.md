@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 77 legacy source entries remain. UNIT-I03B moved
+Current debt inventory: 76 legacy source entries remain. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
@@ -344,3 +344,11 @@ the same change; the 1,835-line legacy test tail remains open. New typed subject
 resolution and viewport lifetime modules stay below normal budgets. Focused
 selection regressions verify the extraction; this partial foundation does not
 claim complete native selection or resolve absent engine Net/Bus authority.
+
+
+PM054 Zone succession integration moves the existing child hierarchical-label
+index into the shared `label_semantics` owner. Connectivity production drops
+from 709 to below the normal 700-line budget; its legacy ledger entry is removed.
+The exact occupied-region comparator, Zone qualifier/successor owner and native
+succession proofs are real normal modules. No include/forwarding split, increased
+ceiling, exception or geometry-to-renderer ownership transfer is introduced.
