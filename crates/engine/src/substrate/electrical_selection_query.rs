@@ -217,6 +217,15 @@ impl ElectricalSelectionSnapshot {
         Ok(source)
     }
 
+    pub(crate) fn board_net_components(
+        &self,
+        source: &crate::connectivity::BoardCopperSource,
+        net: Uuid,
+    ) -> Result<crate::connectivity::BoardNetComponents, ElectricalQueryFailure> {
+        crate::connectivity::board_net_components(source, &self.model, net)
+            .map_err(ElectricalQueryFailure::Physical)
+    }
+
     pub(crate) fn current_zone_fill(&self, id: Uuid) -> Option<&crate::substrate::ZoneFill> {
         self.model.current_zone_fill(id)
     }

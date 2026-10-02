@@ -149,22 +149,38 @@ fn project_query_drc_does_not_treat_unfilled_zone_boundary_as_copper() {
     )
     .expect("drc query should succeed");
     let drc: serde_json::Value = serde_json::from_str(&drc_output).expect("drc JSON");
-    let no_copper_fingerprint = drc["raw_report"]["drc"]
+    let unavailable_fingerprint = drc["raw_report"]["drc"]
         .as_array()
         .unwrap()
         .iter()
-        .find(|entry| entry["code"] == "connectivity_no_copper")
+        .find(|entry| entry["code"] == "nominal_connectivity_unavailable")
         .and_then(|entry| entry["fingerprint"].as_str())
-        .expect("connectivity_no_copper should carry an engine DRC fingerprint")
+        .expect("nominal_connectivity_unavailable should carry an engine DRC fingerprint")
         .to_string();
-    assert!(no_copper_fingerprint.starts_with("sha256:"));
+    assert!(unavailable_fingerprint.starts_with("sha256:"));
     assert!(
         drc["raw_report"]["drc"]
             .as_array()
             .unwrap()
             .iter()
-            .any(|entry| entry["code"] == "connectivity_no_copper"),
-        "unfilled zone {zone_uuid} must not count as routed copper"
+            .any(|entry| entry["code"] == "nominal_connectivity_unavailable"),
+        "unfilled zone {zone_uuid} must report unknown current copper, not pass or prove absence"
+    );
+
+    let findings = drc["raw_report"]["drc"].as_array().unwrap();
+    assert!(findings.iter().any(|v| {
+        v["code"] == "nominal_connectivity_unavailable"
+            && v["objects"]
+                .as_array()
+                .unwrap()
+                .contains(&serde_json::json!(zone_uuid))
+    }));
+    assert!(
+        !findings
+            .iter()
+            .any(|v| v["code"] == "connectivity_no_copper"
+                || v["code"] == "connectivity_unrouted_net"),
+        "missing fill cannot certify absent copper or disconnected components"
     );
 
     let diagnostics_output = execute(
@@ -253,9 +269,10 @@ fn project_query_drc_does_not_treat_unfilled_zone_boundary_as_copper() {
     assert!(
         check["findings"].as_array().unwrap().iter().any(|entry| {
             entry["source"] == "drc"
-                && entry["code"] == "connectivity_no_copper"
-                && entry["fingerprint"].as_str() == Some(no_copper_fingerprint.as_str())
-                && entry["payload"]["fingerprint"].as_str() == Some(no_copper_fingerprint.as_str())
+                && entry["code"] == "nominal_connectivity_unavailable"
+                && entry["fingerprint"].as_str() == Some(unavailable_fingerprint.as_str())
+                && entry["payload"]["fingerprint"].as_str()
+                    == Some(unavailable_fingerprint.as_str())
         }),
         "check-run DRC findings must preserve engine DRC fingerprints"
     );

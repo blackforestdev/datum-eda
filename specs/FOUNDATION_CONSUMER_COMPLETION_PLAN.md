@@ -1439,3 +1439,61 @@ remain typed capability gaps, not inferred copper or waived requirements.
 Remaining nominal connectivity DRC requires DA-A2 integration. No new dependency,
 manufacturing policy, CAM/T04, independent PASS or foundation/S5A acceptance;
 prior selection/rendering/resize approval and native evidence remain preserved.
+
+
+### DA-A2 bounded native nominal connectivity unit
+
+Source baseline `20eb3c1f`. Native DRC now consumes the same complete physical
+Net component owner as Run queries. Actual arc swept copper, current fill cells/
+holes/empty results and explicit plated versus separate aperture layers decide
+terminal connectivity. Foreign Net contacts remain separate source-pair faults,
+deduplicated across Net owners. Missing/stale/unsupported geometry, invalid
+assignment or mismatched native Board/source projection reports unavailable
+rather than a chord, outline or legacy pin-anchor conclusion. Existing checking
+sort/fingerprint/waiver/finalization remains shared and mutation-free.
+
+Four new canonical native tests cover arc bulge versus chord, exact identity,
+read-only bytes, current fill holes/empty/stale, plated/separate apertures,
+foreign source-pair completeness, source-basis refusal, fingerprints/waivers,
+undo and reopen. Final engine/protocol/viewport replay passes **1,348 tests in
+12 binaries**, including **1,140 engine tests**, plus one compile-fail doctest,
+in `target/s5a-nominal-candidate-package-replay.log`. Final CLI replay passes
+14 DRC cases and 24 combined-check consumer cases (overlapping filters) in
+`target/s5a-nominal-candidate-cli-drc.log` and
+`target/s5a-nominal-candidate-cli-check.log`. Four-package all-target guarded
+Clippy with warnings denied passes in `target/s5a-nominal-final-lint-corrected.log`.
+
+An initial foreign-contact oracle missed the fixture's real Pad-to-Track contact;
+the corrected oracle names both distinct source pairs rather than removing a
+fault. Affected CLI fixtures previously supplied zero pad geometry/no conductive
+stackup; they now declare valid single-layer apertures. The unfilled-Zone oracle
+now requires source-qualified unavailable authority and forbids proven-absence/
+unrouted conclusions. Existing legacy airwire/diagnostic estimates are unchanged.
+The lint-only conditional rewrite was followed by the final credited candidate
+replay; earlier failed/setup or superseded binary runs are not credited.
+
+Final test binaries under `target/s5a-nominal-proof/debug/deps`:
+
+- `eda_engine-5b3bfac123e4e569`: SHA-256
+  `220b3610975a61f23d8a8cc6a7107b069c0b16d5f58a9c8fdbc168d72ae198e4`.
+- `native_selection-e10665e58b41c02b`: SHA-256
+  `455fdc1c31164c32f5bb853624124e4aeccce6b1500b40e48803eec071ddfcaa`.
+- `native_selection_lifetime-8f1591adc012840a`: SHA-256
+  `1dd6ae9642a58618eb2b9e3a47c5ffa17b3eb20fa0965b5c92b2b14d649efa4e`.
+- `datum_eda-8806a01442a6ca8d`: SHA-256
+  `d88b2b34408edde62f17c4e82c3e5d142c4955188031255b3bde540a12cd26d0`.
+
+Linux 6.12.107+deb13-amd64 x86_64; rustc 1.98.0 (88d9e12ae 2026-08-18),
+cargo 1.98.0 (797e8a9bc 2026-08-05), unoptimized test profile. Guarded serial
+proof uses the owned disk-backed target and its `run-fixtures` TMPDIR; no
+incremental proof state, new dependency or numerical performance acceptance.
+The existing native recipe owners generate canonical batches and explicit
+expected identity/member sets; fixtures are ephemeral, not unrecorded customer
+boards or renderer-generated authority. Independent replay reconstructs recipes
+on its own pinned candidate/binary/environment.
+
+This finishes the bounded implementation candidate, not required independent
+boundary review, complete F01–F06 or foundation/S5A acceptance. Mandatory unknown/
+unsupported cases and C07/M1/CAM-T04 are retained, never passed by refusal or
+waiver. No S5A U2–U5 activation, prototype edit, renderer/resize redesign,
+private writer adoption or manufacturing approximation is introduced.

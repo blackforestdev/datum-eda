@@ -7,7 +7,7 @@ use crate::rules::ast::RuleType;
 use crate::schematic::CheckWaiver;
 use crate::substrate::{ZoneFill, zone_fill_copper_projection_zones};
 
-use super::{DrcReport, run_with_clearance_override};
+use super::{DrcReport, run_with_clearance_override, run_with_nominal_overrides};
 
 pub fn run_with_zone_fills(
     board: &Board,
@@ -45,29 +45,47 @@ pub fn run_with_current_zone_fills_and_waivers(
     let need_nominal = (selected_rules.is_empty()
         || selected_rules.contains(&RuleType::ClearanceCopper))
         && board.tracks.values().any(|t| t.midpoint.is_some());
+    let need_connectivity =
+        selected_rules.is_empty() || selected_rules.contains(&RuleType::Connectivity);
+    let snapshot = (need_nominal || need_connectivity)
+        .then(|| ElectricalSelectionSnapshot::capture(model))
+        .transpose();
+    let source = snapshot
+        .as_ref()
+        .ok()
+        .and_then(|s| s.as_ref())
+        .and_then(|s| s.board_source().ok());
+    let certified = source.as_ref().is_some_and(|s| {
+        s.uuid == board.uuid
+            && s.stackup == board.stackup
+            && same(&s.tracks, &board.tracks)
+            && same(&s.pads, &board.pads)
+            && same(&s.vias, &board.vias)
+            && same(&s.zones, &board.zones)
+            && same(&s.nets, &board.nets)
+            && same(&s.net_classes, &board.net_classes)
+    });
+    let snapshot = snapshot.as_ref().ok().and_then(|s| s.as_ref());
+    let connectivity = need_connectivity.then(|| {
+        if certified {
+            super::nominal_connectivity::run(
+                snapshot.expect("certified snapshot"),
+                source.as_ref().expect("certified source"),
+            )
+        } else {
+            vec![super::nominal_connectivity::unavailable(
+                vec![board.uuid],
+                "Unverified native Board/source basis".into(),
+            )]
+        }
+    });
     let clearance = if need_nominal {
-        let snapshot = ElectricalSelectionSnapshot::capture(model).ok();
-        let certified = snapshot
-            .as_ref()
-            .and_then(|s| s.board_source().ok())
-            .filter(|s| {
-                s.uuid == board.uuid
-                    && s.stackup == board.stackup
-                    && same(&s.tracks, &board.tracks)
-                    && same(&s.pads, &board.pads)
-                    && same(&s.vias, &board.vias)
-                    && same(&s.zones, &board.zones)
-                    && same(&s.nets, &board.nets)
-                    && same(&s.net_classes, &board.net_classes)
-            })
-            .is_some();
         let copper = board
             .zones
             .keys()
             .map(|id| {
                 let value = if certified {
                     snapshot
-                        .as_ref()
                         .and_then(|s| s.current_zone_fill(*id))
                         .map(|f| Ok(f.islands.clone()))
                         .unwrap_or(Err(GeometryError::UnverifiedFillBasis))
@@ -83,7 +101,11 @@ pub fn run_with_current_zone_fills_and_waivers(
     } else {
         None
     };
-    projected_report(board, selected_rules, &model.zone_fills, waivers, clearance)
+    let mut projected = board.clone();
+    let zones = projected.zones.values().cloned().collect::<Vec<_>>();
+    let (zones, _) = zone_fill_copper_projection_zones(&zones, &model.zone_fills);
+    projected.zones = zones.into_iter().map(|z| (z.uuid, z)).collect();
+    run_with_nominal_overrides(&projected, selected_rules, waivers, clearance, connectivity)
 }
 fn same<T: PartialEq>(a: &BTreeMap<Uuid, T>, b: &std::collections::HashMap<Uuid, T>) -> bool {
     a.len() == b.len() && b.iter().all(|(id, value)| a.get(id) == Some(value))

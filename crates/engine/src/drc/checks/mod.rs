@@ -525,7 +525,7 @@ fn pad_process_aperture_violation(pad: &PlacedPad, code: &str, message: String) 
     }
 }
 
-fn stable_violation_id(
+pub(super) fn stable_violation_id(
     code: &str,
     rule_type: RuleType,
     location: Option<&DrcLocation>,

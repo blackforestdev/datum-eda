@@ -1995,8 +1995,8 @@ not schematic-only partial success. Semantic Bus owns its occurrence-qualified
 representations and exposes scalar/interface subjects as related, with no board
 Bus projection. Query results carry project/model revision, source basis and
 uncapped ordered sets; capture and reads perform no adoption or authored writes.
-Board physical component/Zone qualifier authority and shared selection consumer
-adoption remain separate pending DA-A2 work; this exposure does not certify them.
+The later native board/Zone and shared adapter units consume this same snapshot;
+the initial exposure alone did not certify those separate capabilities.
 
 
 PM054 occupied-copper predicates now share rational point/segment candidates
@@ -2033,7 +2033,9 @@ an array entry. Current successful empty fill contributes zero copper; absent or
 stale fill cannot be replaced by its outline. All queries remain immutable and
 expected-revision-bound. Multi-layer placed pad apertures without certified barrel
 authority remain unavailable; aperture list, source UUID, Net and drill alone
-cannot establish plating. Remaining pad/span and current-fill predicates remain pending; these limits do not waive required acceptance.
+cannot establish plating. Explicit known connection/span now uses the shared
+placed-pad authority described below. Remaining unsupported geometry stays
+unverified; these limits do not waive required acceptance.
 
 
 PM054 Zone qualifiers now bind an authored Zone occurrence to the exact captured
@@ -2066,8 +2068,9 @@ Unsupported/Unfilled, tampered or mismatched projection basis emits explicit
 UnverifiedFillBasis rather than testing an outline or passing an absent peer.
 Legacy raw fill maps cannot certify that basis. Existing waiver/fingerprint
 finalization and the established straight-geometry checking path remain shared.
-This does not certify unresolved nominal connectivity, unsupported geometry,
-manufacturing approximation, complete foundation acceptance or S5A native proof.
+The native connectivity checker described below now consumes this same
+source/current-fill authority. Unsupported geometry, manufacturing approximation,
+complete foundation acceptance and S5A native proof remain uncertified.
 
 
 PM055 physical Bus Run queries now constrain complete local path connectivity
@@ -2081,7 +2084,8 @@ queries include those entries without redundant binding writes and refuse a
 conflicting declaration. Scalar wires/Nets and related Bus interfaces remain
 related only. Invalid occurrences, ambiguous/missing declaration and unavailable
 authored paths return typed failures; queries allocate no authored identity.
-Shared consumer adoption and remaining pad/connectivity capabilities are pending.
+The shared native adapter consumes these results; active S5A UI and unsupported
+geometry/provider capabilities remain pending.
 
 
 The existing gui-protocol selection resolver now has one immutable native engine
@@ -2124,3 +2128,21 @@ layer projections. A shared pad UUID cannot join disconnected aperture groups.
 No numeric layer ranges, filled drill centers or inferred intermediate copper
 establish contact. Unsupported geometry remains explicit; this does not approve
 manufacturing approximation, unrestricted pool materialization or full S5A proof.
+
+
+Native model-bound connectivity DRC now consumes the same complete Net-constrained
+physical graph as Run membership. It checks disconnected terminal copper
+components and actual separate foreign-Net source contacts, including nominal
+arc bulges, current fill cells/holes and explicit pad process/span. Unknown Net
+assignment, missing/stale fill, unsupported geometry or mismatched captured Board
+projection emits source-bound unavailable authority rather than an airwire/chord/
+outline conclusion. Certified empty fill contributes zero copper. Shared Pad UUIDs
+on Separate apertures never join components. Foreign contact findings name both
+actual authored sources and are deduplicated across the two Net owners.
+
+These findings pass through the existing sort/fingerprint/waiver/summary owner.
+Native replay/reopen retains exact findings and source identities without query
+writes. The Board-only legacy airwire/diagnostic path remains an estimate and
+cannot certify unavailable nominal geometry; native DRC is the qualified entry.
+No authored net-tie exception is currently certified. Unsupported required cases,
+CAM/T04, independent candidate review and full foundation/S5A proof remain open.

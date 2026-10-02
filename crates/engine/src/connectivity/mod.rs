@@ -2,7 +2,9 @@ mod bus_physical;
 pub(crate) use bus_physical::bus_physical;
 mod board_physical;
 pub(crate) use board_physical::successor as board_physical_successor;
-pub(crate) use board_physical::{BoardCopperSource, board_run};
+pub(crate) use board_physical::{
+    BoardCopperSource, BoardNetComponents, board_net_components, board_run,
+};
 pub use board_physical::{
     BoardRunMembership, CrossNetContact, PhysicalQueryFailure, ZoneClearReason,
     ZoneCopperProjection, ZoneRegionQualifier, ZoneRegionSuccessor,
