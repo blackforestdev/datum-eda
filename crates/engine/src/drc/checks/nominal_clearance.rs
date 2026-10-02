@@ -3,7 +3,7 @@ use super::*;
 use crate::board::{nominal_geometry::DistanceBoundary, track_contact::tracks_within};
 
 pub(in crate::drc) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
-    let mut violations = arc_peer_capability_findings(board);
+    let mut violations = arc_peer_findings(board);
     let mut tracks: Vec<&Track> = board.tracks.values().collect();
     tracks.sort_by_key(|track| track.uuid);
 
@@ -87,50 +87,107 @@ pub(in crate::drc) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
     violations
 }
 
-fn arc_peer_capability_findings(board: &Board) -> Vec<DrcViolation> {
+fn arc_peer_findings(board: &Board) -> Vec<DrcViolation> {
+    use crate::board::nominal_geometry::GeometryError;
+    use crate::board::occupied_copper::{
+        pad_layers, track_layers, track_pad_within, track_via_within, via_layers,
+    };
     let mut result = Vec::new();
     let mut arcs = board
         .tracks
         .values()
-        .filter(|track| track.midpoint.is_some())
+        .filter(|t| t.midpoint.is_some())
         .collect::<Vec<_>>();
-    arcs.sort_by_key(|track| track.uuid);
+    arcs.sort_by_key(|t| t.uuid);
     for arc in arcs {
-        let mut peers = std::collections::BTreeSet::new();
+        let mut peers = std::collections::BTreeMap::new();
         for pad in board.pads.values() {
-            if pad.net != Some(arc.net)
-                && (if pad.copper_layers.is_empty() {
-                    pad.layer == arc.layer
-                } else {
-                    pad.copper_layers.contains(&arc.layer)
-                })
-            {
-                peers.insert(pad.uuid);
+            if pad.net == Some(arc.net) {
+                continue;
             }
+            let classification = (|| {
+                let layers = pad_layers(&board.stackup, pad)?;
+                track_layers(&board.stackup, arc)?;
+                if !layers.contains(&arc.layer) {
+                    return Ok(false);
+                }
+                let Some(net) = pad.net else {
+                    return Err(GeometryError::UnknownNetAssignment);
+                };
+                if !board.nets.contains_key(&net) || !board.nets.contains_key(&arc.net) {
+                    return Err(GeometryError::UnknownNetAssignment);
+                }
+                track_pad_within(
+                    arc,
+                    pad,
+                    required_clearance_nm(board, arc.net, net),
+                    DistanceBoundary::Strict,
+                )
+            })();
+            peers.insert(pad.uuid, classification);
         }
         for via in board.vias.values() {
-            let layer_index = |id| board.stackup.layers.iter().position(|layer| layer.id == id);
-            let relevant = match (
-                layer_index(via.from_layer),
-                layer_index(via.to_layer),
-                layer_index(arc.layer),
-            ) {
-                (Some(a), Some(b), Some(p)) => p >= a.min(b) && p <= a.max(b),
-                _ => true, // Unknown span is unavailable, never proof of separation.
-            };
-            if via.net != arc.net && relevant {
-                peers.insert(via.uuid);
+            if via.net == arc.net {
+                continue;
             }
+            let classification = (|| {
+                let layers = via_layers(&board.stackup, via)?;
+                track_layers(&board.stackup, arc)?;
+                if !layers.contains(&arc.layer) {
+                    return Ok(false);
+                }
+                if !board.nets.contains_key(&via.net) || !board.nets.contains_key(&arc.net) {
+                    return Err(GeometryError::UnknownNetAssignment);
+                }
+                track_via_within(
+                    arc,
+                    via,
+                    required_clearance_nm(board, arc.net, via.net),
+                    DistanceBoundary::Strict,
+                )
+            })();
+            peers.insert(via.uuid, classification);
         }
         for zone in board.zones.values() {
             if zone.net != arc.net && zone.layer == arc.layer {
-                peers.insert(zone.uuid);
+                // This Board-only call has no certified generated-fill basis.
+                // Current fill integration is distinct from outline geometry.
+                peers.insert(zone.uuid, Err(GeometryError::UnresolvedPredicate));
             }
         }
-        for peer in peers {
+        for (peer, classification) in peers {
+            let (code, message) = match classification {
+                Ok(false) => continue,
+                Ok(true) => (
+                    "clearance_copper",
+                    format!(
+                        "certified nominal arc clearance violates applicable copper clearance on layer {}",
+                        arc.layer
+                    ),
+                ),
+                Err(error) => (
+                    "nominal_geometry_unavailable",
+                    format!(
+                        "certified nominal arc clearance unavailable: {error:?}; source pair requires resolution"
+                    ),
+                ),
+            };
             let mut objects = vec![arc.uuid, peer];
             objects.sort();
-            result.push(DrcViolation {id:stable_violation_id("nominal_geometry_unavailable",RuleType::ClearanceCopper,None,&objects),code:"nominal_geometry_unavailable".into(),rule_type:RuleType::ClearanceCopper,severity:DrcSeverity::Error,message:"certified arc/pad, via-span or current-fill clearance is not yet available; no chord or outline fallback".into(),location:None,objects,fingerprint:None,standards_basis:None,rule_revision:None,import_key:None,waived:false});
+            result.push(DrcViolation {
+                id: stable_violation_id(code, RuleType::ClearanceCopper, None, &objects),
+                code: code.into(),
+                rule_type: RuleType::ClearanceCopper,
+                severity: DrcSeverity::Error,
+                message,
+                location: None,
+                objects,
+                fingerprint: None,
+                standards_basis: None,
+                rule_revision: None,
+                import_key: None,
+                waived: false,
+            });
         }
     }
     result

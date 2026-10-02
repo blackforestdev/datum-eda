@@ -49,11 +49,23 @@ pub fn point_segment_within_boundary(
     half: R,
     boundary: DistanceBoundary,
 ) -> Result<bool> {
+    rational_point_segment_within(point(p), point(from), point(to), half, boundary)
+}
+pub(super) fn point(p: Point) -> [R; 2] {
+    [R::integer(i128::from(p.x)), R::integer(i128::from(p.y))]
+}
+pub(super) fn rational_point_segment_within(
+    p: [R; 2],
+    from: [R; 2],
+    to: [R; 2],
+    half: R,
+    boundary: DistanceBoundary,
+) -> Result<bool> {
     if half.numerator < 0 {
         return Err(GeometryError::InvalidWidth);
     }
-    let a = vector(p, from);
-    let d = vector(to, from);
+    let a = minus(p, from)?;
+    let d = minus(to, from)?;
     let len = norm(d)?;
     if len.numerator == 0 {
         return Ok(boundary.accepts(norm(a)?.compare(half.square()?)?));
@@ -61,7 +73,7 @@ pub fn point_segment_within_boundary(
     let u = dot(a, d)?.checked_div(len)?;
     if !unit_interval(u)? {
         let endpoint = if u.numerator < 0 { from } else { to };
-        return Ok(boundary.accepts(norm(vector(p, endpoint))?.compare(half.square()?)?));
+        return Ok(boundary.accepts(norm(minus(p, endpoint)?)?.compare(half.square()?)?));
     }
     Ok(boundary.accepts(
         cross(a, d)?
@@ -79,18 +91,27 @@ pub fn arc_line_within_boundary(
     half: R,
     boundary: DistanceBoundary,
 ) -> Result<bool> {
+    rational_arc_segment_within(arc, point(from), point(to), half, boundary)
+}
+pub(super) fn rational_arc_segment_within(
+    arc: CertifiedArc,
+    from: [R; 2],
+    to: [R; 2],
+    half: R,
+    boundary: DistanceBoundary,
+) -> Result<bool> {
     if half.numerator < 0 {
         return Err(GeometryError::InvalidWidth);
     }
-    if arc.point_within_boundary(from, half, boundary)?
-        || arc.point_within_boundary(to, half, boundary)?
-        || point_segment_within_boundary(arc.from, from, to, half, boundary)?
-        || point_segment_within_boundary(arc.to, from, to, half, boundary)?
+    if arc.rational_point_within_boundary(from, half, boundary)?
+        || arc.rational_point_within_boundary(to, half, boundary)?
+        || rational_point_segment_within(point(arc.from), from, to, half, boundary)?
+        || rational_point_segment_within(point(arc.to), from, to, half, boundary)?
     {
         return Ok(true);
     }
-    let a = arc.radial_vector(from)?;
-    let d = vector(to, from);
+    let a = minus(minus(from, point(arc.from))?, arc.center)?;
+    let d = minus(to, from)?;
     let len = norm(d)?;
     if len.numerator == 0 {
         return Ok(false);

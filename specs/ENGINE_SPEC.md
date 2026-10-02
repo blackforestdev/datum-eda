@@ -1997,3 +1997,25 @@ Bus projection. Query results carry project/model revision, source basis and
 uncapped ordered sets; capture and reads perform no adoption or authored writes.
 Board physical component/Zone qualifier authority and shared selection consumer
 adoption remain separate pending DA-A2 work; this exposure does not certify them.
+
+
+PM054 occupied-copper predicates now share rational point/segment candidates
+with authored arc predicates. Circle pads accept any rotation; Rect/Oval/
+RoundRect pads currently support exact orthogonal rotations and half-nanometer
+or ratio-derived rational boundaries. Their occupied outer shape is an exact
+rounded box; contained drill discs are empty copper. Vias use annular copper
+and the actual ordered conductive stackup span, never numeric layer ranges.
+Current simple filled polygons are used as occupied cells; holes remain absent
+cells, not authored Zone-outline copper. Invalid/self-intersecting polygons,
+invalid arcs (even with an endpoint inside fill), unknown conductive layers or
+Net assignment, unsupported nonorthogonal/non-contained-drill pad geometry,
+checked arithmetic range and unresolved strict zero-clearance polygon predicates
+return explicit capability errors. These restrictions are implementation limits,
+not amended requirements or a general geometry acceptance claim.
+
+Nominal arc/pad and arc/via DRC now use these predicates and existing applicable
+clearance, source-pair fingerprints and typed failures. Valid boundary equality
+is contact but not a strict minimum-clearance violation. The Board-only DRC path
+still lacks certified current-fill authority and refuses relevant arc/Zone pairs;
+current-fill integration remains mandatory DA-A2 work. No outline, screen path,
+manufacturing approximation or generated semantic identity supplies that authority.
