@@ -80,6 +80,8 @@ with overlay-retention evidence rather than treated as final behavior.
 - Owner-ratified Bus scope is independent: section → connected bus run → semantic
   hierarchical bus. Spine, owned name, and entries project together; scalar
   member nets remain separate selection subjects.
+- Physical Bus Runs stay within the origin declared Bus (PM055); foreign-Bus
+  contact is disclosed separately and receives no selection treatment.
 - Hidden selected geometry remains hidden. Locked selected geometry retains
   selection plus a non-color constraint cue and no transform handles.
 - Derived zone fills, projected graphics, dimensions, groups, locks, and other

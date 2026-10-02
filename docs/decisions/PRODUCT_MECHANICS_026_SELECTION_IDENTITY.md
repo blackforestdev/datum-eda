@@ -119,6 +119,20 @@ mutation, without building mutation infrastructure or claiming R1–R4 passed.
 D1–D4 specification reconciliation does not complete S5A-C02; execution remains
 pending independent review of the revised pinned packet and exact authorization.
 
+
+
+## Bus Run contact clarification — PM055
+
+
+**Foreign declared Bus contact (PM055, owner-resolved):** constrain a physical
+Bus Run to the origin's declared semantic Bus and disclose contacting foreign
+Bus declarations/occurrences separately. Equal names or scalar member sets do
+not join it. Disconnected same-Bus representations widen only at the semantic
+Bus tier; explicit Bus interfaces do not make local physical bridges. This is
+complete derived membership within the lawful subject, independent of visibility
+and context caps. Foreign contact is not co-selection or a scalar short. Missing
+or ambiguous declaration/source authority is explicitly unavailable.
+
 ## What This Decision Does NOT Do
 
 **It authorizes no implementation.** S5A execution remains separately

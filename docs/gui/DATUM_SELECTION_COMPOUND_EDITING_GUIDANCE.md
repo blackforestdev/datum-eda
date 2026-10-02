@@ -33,6 +33,8 @@ surface.
    filtered but rendered members retain selection treatment and all members
    remain disclosed. UVT §2.2.8/PM026 controls this rule; D4 candidates still
    qualify by ordinary eligibility before complete-membership comparison.
+   PM055 constrains physical Bus Runs to the origin declaration and discloses
+   foreign-Bus contacts separately; equal labels/member sets never add membership.
 3. The Inspector keeps canvas membership intact while exposing `All N` and
    explicit per-type scopes. Scope changes are view/target declarations, not
    hidden reselection.

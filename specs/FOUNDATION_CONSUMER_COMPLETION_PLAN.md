@@ -1310,3 +1310,17 @@ and remaining nominal connectivity integration still require authorized DA-A2
 work. C07/M1 and rational-center CAM/T04 stay pending. No independent PASS, full
 foundation or S5A acceptance is inferred; all prior approvals, partial work and
 rendering/resize behavior remain preserved.
+
+
+### DA-A2 owner-resolved foreign Bus contact
+
+The owner explicitly chose “Constrain to origin Bus; disclose foreign contact.”
+PM055 and the owning PM026/PM053/UVT/schematic connectivity route reconcile the
+physical Bus Run versus semantic declaration ambiguity, tracked by
+`dat-s5a-bus-run-contact-pnze`. Equal names/member sets do not merge declarations
+or expand a Run; exact foreign contact evidence remains separate. Existing E3/E4
+execution and claim continue. The selection-study semantic ownership/scalar
+separation reference remains consistent; no Claude HTML change is required.
+Focused candidate oracles in PM055 preserve repeated occurrences, completeness,
+non-mutation and rederivation. This records the decision, not its implementation
+or independent acceptance. All deferred M1/foundation/S5A boundaries remain.

@@ -138,3 +138,16 @@ reservation does not replace complete foundation review or S5A C05. Partial E1
 success cannot close this prerequisite or resume dependent S5A implementation.
 M1 is unresolved: retain complete manufacturing obligations without invented
 tolerance or narrowed CAM acceptance. C04–C07/E2–E4 remain unratified/unauthorized.
+
+
+## Bus Run contact clarification — PM055
+
+
+**Foreign declared Bus contact (PM055, owner-resolved):** constrain a physical
+Bus Run to the origin's declared semantic Bus and disclose contacting foreign
+Bus declarations/occurrences separately. Equal names or scalar member sets do
+not join it. Disconnected same-Bus representations widen only at the semantic
+Bus tier; explicit Bus interfaces do not make local physical bridges. This is
+complete derived membership within the lawful subject, independent of visibility
+and context caps. Foreign contact is not co-selection or a scalar short. Missing
+or ambiguous declaration/source authority is explicitly unavailable.
