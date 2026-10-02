@@ -1,7 +1,7 @@
 //! Actual canonical pad process/span facts, exact layer components and history.
 use super::*;
 use crate::board::{PadLayerConnection, PlacedPad};
-fn pad(net: Uuid, connection: PadLayerConnection) -> PlacedPad {
+pub(super) fn pad(net: Uuid, connection: PadLayerConnection) -> PlacedPad {
     serde_json::from_value(serde_json::json!({
         "uuid":Uuid::new_v4(),"package":Uuid::nil(),"name":"1","net":net,
         "position":{"x":0,"y":0},"layer":8,"copper_layers":[8,9],
@@ -9,7 +9,7 @@ fn pad(net: Uuid, connection: PadLayerConnection) -> PlacedPad {
     }))
     .unwrap()
 }
-fn write_pad(
+pub(super) fn write_pad(
     model: &mut DesignModel,
     root: &Path,
     pad: &PlacedPad,

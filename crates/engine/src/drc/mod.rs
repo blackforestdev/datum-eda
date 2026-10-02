@@ -4,6 +4,7 @@ use crate::schematic::{CheckDomain, CheckWaiver, WaiverTarget};
 
 mod checks;
 mod fingerprint;
+mod nominal_connectivity;
 mod types;
 mod zone_fill_projection;
 use fingerprint::attach_drc_violation_fingerprints;
@@ -31,11 +32,21 @@ fn run_with_clearance_override(
     waivers: &[CheckWaiver],
     clearance: Option<Vec<DrcViolation>>,
 ) -> DrcReport {
+    run_with_nominal_overrides(board, selected_rules, waivers, clearance, None)
+}
+
+fn run_with_nominal_overrides(
+    board: &Board,
+    selected_rules: &[RuleType],
+    waivers: &[CheckWaiver],
+    clearance: Option<Vec<DrcViolation>>,
+    connectivity: Option<Vec<DrcViolation>>,
+) -> DrcReport {
     let run_all = selected_rules.is_empty();
     let mut violations = Vec::new();
 
     if run_all || selected_rules.contains(&RuleType::Connectivity) {
-        violations.extend(checks::run_connectivity_checks(board));
+        violations.extend(connectivity.unwrap_or_else(|| checks::run_connectivity_checks(board)));
     }
     if run_all || selected_rules.contains(&RuleType::ClearanceCopper) {
         violations.extend(clearance.unwrap_or_else(|| checks::run_clearance_checks(board)));

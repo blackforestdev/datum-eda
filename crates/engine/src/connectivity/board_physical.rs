@@ -512,3 +512,50 @@ fn membership(
         contact_evidence: contacts,
     })
 }
+
+/// Native checking consumes these same complete physical groups; no second graph.
+pub(crate) struct BoardNetComponents {
+    pub components: Vec<BTreeSet<ElectricalOccurrence>>,
+    pub contacts: Result<Vec<CrossNetContact>, PhysicalQueryFailure>,
+}
+pub(crate) fn board_net_components(
+    source: &BoardCopperSource,
+    model: &DesignModel,
+    net: Uuid,
+) -> Result<BoardNetComponents, PhysicalQueryFailure> {
+    let graph = Graph::build(source, model, net)?;
+    let components = graph
+        .groups
+        .iter()
+        .map(|group| {
+            group
+                .iter()
+                .map(|i| graph.nodes[*i].reference.clone())
+                .collect()
+        })
+        .collect();
+    let mut contacts = BTreeMap::new();
+    for group in &graph.groups {
+        match graph.contacts(group, net, &source.nets) {
+            Ok(values) => {
+                for value in values {
+                    let key = (value.left.clone(), value.right.clone());
+                    contacts
+                        .entry(key)
+                        .and_modify(|old: &mut CrossNetContact| old.layers.extend(&value.layers))
+                        .or_insert(value);
+                }
+            }
+            Err(failure) => {
+                return Ok(BoardNetComponents {
+                    components,
+                    contacts: Err(failure),
+                });
+            }
+        }
+    }
+    Ok(BoardNetComponents {
+        components,
+        contacts: Ok(contacts.into_values().collect()),
+    })
+}

@@ -189,7 +189,7 @@ fn seed_board_drc_fixture(root: &Path) -> Uuid {
                 "schema_version": 1,
                 "uuid": Uuid::new_v4(),
                 "name": "Check Demo Board",
-                "stackup": { "layers": [] },
+                "stackup": { "layers": [{"id":1,"name":"F.Cu","layer_type":"Copper","thickness_nm":35000}] },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {
                     package_a_uuid.to_string(): {
@@ -222,7 +222,8 @@ fn seed_board_drc_fixture(root: &Path) -> Uuid {
                         "name": "1",
                         "net": net_uuid,
                         "position": { "x": 0, "y": 0 },
-                        "layer": 1
+                        "layer": 1,
+                        "diameter": 100000
                     },
                     pad_b_uuid.to_string(): {
                         "uuid": pad_b_uuid,
@@ -230,7 +231,8 @@ fn seed_board_drc_fixture(root: &Path) -> Uuid {
                         "name": "1",
                         "net": net_uuid,
                         "position": { "x": 5000000, "y": 0 },
-                        "layer": 1
+                        "layer": 1,
+                        "diameter": 100000
                     }
                 },
                 "tracks": {},

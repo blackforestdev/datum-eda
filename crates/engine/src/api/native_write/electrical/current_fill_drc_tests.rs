@@ -4,7 +4,7 @@ use crate::board::{Board, NetClass};
 use crate::drc::{DrcReport, run_with_current_zone_fills_and_waivers, run_with_zone_fills};
 use crate::rules::ast::RuleType;
 
-fn native_board(model: &DesignModel) -> Board {
+pub(super) fn native_board(model: &DesignModel) -> Board {
     let mut value = model
         .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
         .unwrap();
