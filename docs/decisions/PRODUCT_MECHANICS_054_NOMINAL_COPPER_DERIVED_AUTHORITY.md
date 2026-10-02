@@ -124,3 +124,13 @@ ratified. Mandatory rational-center CAM/T04 remains pending, not waived or passe
 Defer policy-dependent manufacturing implementation. Bounded nominal execution
 may proceed without declaring the complete foundation accepted; complete F01–F06,
 independent foundation review/owner acceptance and S5A resumption remain gated.
+
+## Bounded implementation record — Track feature schema
+
+The C06 implementation uses BoardRoot feature schema 2 for authored midpoint.
+Existing straight-only legacy profile remains compatible; first canonical curve
+write adopts 2 in its same transaction. Format adoption is forward-only and
+retained on authored undo; Track UUID and anchors invert/replay/reopen exactly.
+Readers refuse arc-bearing legacy declarations and unknown future versions.
+This is the required source/schema compatibility safeguard under C06, not a
+manufacturing allowance, new identity system or complete geometry acceptance.

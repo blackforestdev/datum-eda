@@ -56,6 +56,7 @@ fn route_path_candidate_orthogonal_graph_three_via_explain_reports_blocked_tripl
     board.tracks.insert(
         Uuid::from_u128(0xf1c),
         Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0xf1c),
             net: other_net_uuid,
             from: Point::new(0, 500_000),

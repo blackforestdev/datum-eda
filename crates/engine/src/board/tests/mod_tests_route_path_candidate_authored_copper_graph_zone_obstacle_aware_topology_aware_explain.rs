@@ -106,6 +106,7 @@ fn topology_aware_explain_reports_selected_path_and_topology_reason() {
             (
                 Uuid::from_u128(1),
                 Track {
+                    midpoint: None,
                     uuid: Uuid::from_u128(1),
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -117,6 +118,7 @@ fn topology_aware_explain_reports_selected_path_and_topology_reason() {
             (
                 lower_track_first_uuid,
                 Track {
+                    midpoint: None,
                     uuid: lower_track_first_uuid,
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -128,6 +130,7 @@ fn topology_aware_explain_reports_selected_path_and_topology_reason() {
             (
                 lower_track_second_uuid,
                 Track {
+                    midpoint: None,
                     uuid: lower_track_second_uuid,
                     net: net_uuid,
                     from: Point::new(2_000_000, 500_000),
@@ -139,6 +142,7 @@ fn topology_aware_explain_reports_selected_path_and_topology_reason() {
             (
                 Uuid::from_u128(6),
                 Track {
+                    midpoint: None,
                     uuid: Uuid::from_u128(6),
                     net: net_uuid,
                     from: Point::new(1_500_000, 500_000),
@@ -316,6 +320,7 @@ fn topology_aware_explain_reports_no_existing_path_when_all_candidates_blocked()
         tracks: HashMap::from([(
             track_uuid,
             Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net: net_uuid,
                 from: Point::new(500_000, 500_000),

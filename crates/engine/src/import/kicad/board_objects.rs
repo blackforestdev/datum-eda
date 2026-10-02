@@ -111,6 +111,7 @@ pub(super) fn parse_tracks(
         tracks.insert(
             track_uuid,
             Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net,
                 from,

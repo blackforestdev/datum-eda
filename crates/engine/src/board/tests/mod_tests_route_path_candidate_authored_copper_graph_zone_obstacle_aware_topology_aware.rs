@@ -109,6 +109,7 @@ fn topology_aware_authored_copper_graph_prefers_fewer_topology_transitions_for_e
             (
                 top_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: top_track_uuid,
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -120,6 +121,7 @@ fn topology_aware_authored_copper_graph_prefers_fewer_topology_transitions_for_e
             (
                 lower_track_first_uuid,
                 Track {
+                    midpoint: None,
                     uuid: lower_track_first_uuid,
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -131,6 +133,7 @@ fn topology_aware_authored_copper_graph_prefers_fewer_topology_transitions_for_e
             (
                 lower_track_second_uuid,
                 Track {
+                    midpoint: None,
                     uuid: lower_track_second_uuid,
                     net: net_uuid,
                     from: Point::new(2_000_000, 500_000),
@@ -142,6 +145,7 @@ fn topology_aware_authored_copper_graph_prefers_fewer_topology_transitions_for_e
             (
                 alternate_lower_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: alternate_lower_track_uuid,
                     net: net_uuid,
                     from: Point::new(1_500_000, 500_000),
@@ -312,6 +316,7 @@ fn topology_aware_authored_copper_graph_reports_no_path_when_all_paths_are_block
         tracks: HashMap::from([(
             track_uuid,
             Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net: net_uuid,
                 from: Point::new(500_000, 500_000),

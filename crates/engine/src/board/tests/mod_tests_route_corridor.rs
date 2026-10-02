@@ -113,6 +113,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
             tracks: HashMap::from([(
                 foreign_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: foreign_track_uuid,
                     net: other_net_uuid,
                     from: Point::new(500_000, 100_000),
@@ -367,6 +368,7 @@ fn route_corridor_sorts_and_deduplicates_blockages_deterministically() {
     board.tracks.insert(
         foreign_track_uuid,
         Track {
+            midpoint: None,
             uuid: foreign_track_uuid,
             net: other_net_uuid,
             from: Point::new(300_000, 300_000),

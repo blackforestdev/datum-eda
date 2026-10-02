@@ -75,6 +75,7 @@ impl Board {
         let preflight = self
             .route_preflight(net_uuid)
             .ok_or(RoutePathCandidateError::NetNotFound { net_uuid })?;
+        self.require_straight_routing_sources()?;
         let from_anchor = preflight
             .anchors
             .iter()

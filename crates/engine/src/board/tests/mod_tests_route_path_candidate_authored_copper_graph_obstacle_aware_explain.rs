@@ -88,6 +88,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
             tracks: HashMap::from([(
                 Uuid::from_u128(0x3712),
                 Track {
+                    midpoint: None,
                     uuid: Uuid::from_u128(0x3712),
                     net: net_uuid,
                     from: Point::new(100_000, 100_000),

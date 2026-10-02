@@ -81,6 +81,7 @@ fn route_path_candidate_orthogonal_graph_five_via_explain_reports_blocked_quintu
     board.tracks.insert(
         Uuid::from_u128(0xfdd),
         Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0xfdd),
             net: other_net_uuid,
             from: Point::new(0, 680_000),

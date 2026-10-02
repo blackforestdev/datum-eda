@@ -116,6 +116,7 @@ pub(super) fn orthogonal_dogleg_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
             tracks: HashMap::from([(
                 blocking_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: blocking_track_uuid,
                     net: other_net_uuid,
                     from: Point::new(900_000, 300_000),

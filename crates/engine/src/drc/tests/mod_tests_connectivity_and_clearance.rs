@@ -170,6 +170,7 @@ fn clearance_check_reports_overlapping_tracks_on_different_nets() {
     board.tracks.insert(
         track_a,
         Track {
+            midpoint: None,
             uuid: track_a,
             net: net_a,
             from: Point::new(0, 0),
@@ -181,6 +182,7 @@ fn clearance_check_reports_overlapping_tracks_on_different_nets() {
     board.tracks.insert(
         track_b,
         Track {
+            midpoint: None,
             uuid: track_b,
             net: net_b,
             from: Point::new(0, 100_000),

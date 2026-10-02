@@ -74,6 +74,7 @@ fn route_path_candidate_orthogonal_graph_explain_reports_blocked_graph() {
     board.tracks.insert(
         uuid::Uuid::from_u128(0x930c),
         crate::board::Track {
+            midpoint: None,
             uuid: uuid::Uuid::from_u128(0x930c),
             net: uuid::Uuid::from_u128(0x9301),
             from: crate::ir::geometry::Point::new(0, 600_000),

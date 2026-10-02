@@ -90,6 +90,7 @@ fn zone_demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             tracks: HashMap::from([(
                 track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: track_uuid,
                     net: net_uuid,
                     from: Point::new(100_000, 100_000),

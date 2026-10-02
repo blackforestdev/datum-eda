@@ -1044,3 +1044,77 @@ This is one implemented E2 unit, not complete Zone succession, E2–E4, F01–F0
 independent candidate acceptance or S5A resumption. DA-A2 remains in progress
 under its synchronized claim. C07/M1/CAM-T04 stays deferred/unpassed, as does
 dat-7unq; preserve rendering/resize and all prior work.
+
+
+### DA-A2 nominal implementation unit — authored Track source and exact candidates
+
+The shared Track source adds optional integer-nm midpoint, preserving straight
+serialization and UUID. Canonical source validation rejects repeated/collinear/
+unsupported triples and source/operation identity mismatch atomically. Native
+BoardRoot feature schema 2 adopts in the same canonical Track transaction;
+legacy arc declarations and unknown future schemas refuse. Adoption remains
+forward-only on undo; authored anchors/identity restore, redo and reopen exactly.
+The Track apply/inverse owner is a real child of the existing board journal owner.
+
+Checked normalized rational center/radius and sign-aware radical comparisons
+provide directed point/segment, arc/line and arc/arc feature candidates, exact
+half-nm widths, inclusive contact and strict clearance. Engine DRC shares Track
+pair classification, exposes source-bound capability errors and preserves the
+existing straight report/fingerprint. Display projection retains all three
+exact anchors and one authored source; display tessellation has no electrical
+or manufacturing authority. The bounded fill producer refuses foreign arcs by
+source rather than using chord bounds. CAM refusals retain deferred C07/M1 and
+mandatory T04 unpassed; refusal is not positive manufacturing proof.
+
+The numerical domain is checked i128 construction/predicate intermediates after
+normalization/cancellation, with explicit range error. No coordinate/latency
+budget or general pair coverage is invented. A millimeter-scale rational-center
+crossing oracle passes independently specified circle/sweep geometry. Remaining
+pad/via/current-fill contact, complete component/query authority, Zone lifecycle,
+shared subject integration remain work,
+not waived requirements. DA-A2 stays in progress; no independent candidate PASS,
+complete foundation/S5A acceptance or S5A resumption is claimed.
+
+Current guarded engine replay: **1,099 passed** in
+`target/s5a-nominal-schema-engine-replay.log`. Earlier 1,090/1,096 runs were
+intermediate source snapshots; initial schema/legacy-report failures were
+corrected and only fixed-source replay is credited. CLI producer assertions now
+follow ZoneFill 2 and retain separate legacy-reader proof. Current CLI replay:
+**897 passed / 1 failed**, `target/s5a-nominal-cli-schema-replay.log`. The remaining
+pool-pad fixture expects a foreign-source UUID reuse that canonical source
+uniqueness refuses; it is tracked independently as
+`dat-pool-pad-foreign-source-fixture-27re`, not repaired by weakening identity.
+No pool production source is changed by this unit.
+
+PM022 structural repairs compare against `1fe82839`, before the preceding
+successful-empty-fill unit. Real modules own CLI Track placement/profile fixtures,
+preview/import/copper/Zone proof families, Track source history and display
+projection. Six parents return to normal budgets; all touched remaining legacy
+ceilings ratchet downward exactly. Source-health and all 13 policy-integrity
+regressions pass. Complete drift was attempted; workspace Clippy passed on the
+pre-schema intermediate snapshot, then the battery stopped at existing terminal
+renderer marker failures `dat-terminal-renderer-markers-7uuk`. Current snapshot workspace Clippy also passes in
+`target/s5a-nominal-drift-current.log`; its full battery stops at the same
+unchanged terminal markers. Current protocol replay passes **123 tests** in
+`target/s5a-nominal-protocol-current.log`, with explicit isolated CLI binary and
+engine sockets unset. The initial protocol setup failures before prebuild and
+the intermediate straight-report/schema failures are retained, not credited. The private
+writer gate remains unpassed for recorded `dat-7unq`; no out-of-lane repair or
+full drift PASS is inferred. Preserve E1 PASS, partial S5A U1/C02/C05, PM026/
+049/051/052 and the reserved exact-candidate independent audit. No dependency,
+prototype or renderer/resize implementation changes.
+
+The compatibility follow-up uses one sorted source-ID guard across existing
+source-reading route candidate entry points; planners refuse curves rather than
+constructing chord paths. Legacy arc airwire/DRC connectivity is explicitly
+unavailable. Unimplemented arc/pad/via-span/current-fill clearance produces
+source-pair capability findings rather than a false rule pass. Supported Track
+pairs continue through the certified kernel. Current full engine replay passes
+**1,099 tests** in `target/s5a-nominal-compat-engine.log`; the final DRC refusal/
+strict-boundary regression passes in `target/s5a-nominal-compat-drc.log`.
+This is compatibility protection while the complete physical/query owner is
+implemented, not positive proof for the still-unavailable required pairs.
+
+Final guarded engine Clippy (`--all-targets -- -D warnings`) passes in
+`target/s5a-nominal-final-engine-lint.log` after the compatibility follow-up.
+This is a bounded source-unit check, not a full drift or foundation acceptance.

@@ -90,7 +90,10 @@ fn project_generate_standards_repair_proposals_links_unfilled_zone_fill_findings
     };
     assert_eq!(*zone_id, Uuid::parse_str(&zone_uuid).unwrap());
     assert!(previous_zone_fill.is_none());
-    assert_eq!(zone_fill["schema_version"], 1);
+    assert_eq!(
+        zone_fill["schema_version"],
+        eda_engine::substrate::ZONE_FILL_SCHEMA_VERSION
+    );
     assert_eq!(zone_fill["zone_id"], zone_uuid);
     assert_eq!(zone_fill["state"], "filled");
     assert_eq!(zone_fill["model_revision"], report["model_revision"]);
@@ -158,7 +161,10 @@ fn project_generate_standards_repair_proposals_links_stale_zone_fill_findings() 
             .expect("stale repair should preserve previous fill")["state"],
         "stale"
     );
-    assert_eq!(zone_fill["schema_version"], 1);
+    assert_eq!(
+        zone_fill["schema_version"],
+        eda_engine::substrate::ZONE_FILL_SCHEMA_VERSION
+    );
     assert_eq!(zone_fill["state"], "filled");
     assert_eq!(zone_fill["model_revision"], report["model_revision"]);
 

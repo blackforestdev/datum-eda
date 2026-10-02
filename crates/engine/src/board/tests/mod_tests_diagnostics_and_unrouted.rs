@@ -27,6 +27,7 @@ fn board_diagnostics_reports_empty_and_via_only_nets() {
         tracks: HashMap::from([(
             Uuid::new_v4(),
             Track {
+                midpoint: None,
                 uuid: Uuid::new_v4(),
                 net: gnd,
                 from: Point::new(0, 0),
@@ -173,6 +174,7 @@ fn board_diagnostics_report_partially_routed_net() {
         tracks: HashMap::from([(
             Uuid::new_v4(),
             Track {
+                midpoint: None,
                 uuid: Uuid::new_v4(),
                 net: net_uuid,
                 from: Point::new(0, 0),
@@ -472,6 +474,7 @@ fn board_unrouted_treats_multilayer_pads_as_connected_on_bottom_copper() {
         tracks: HashMap::from([(
             track_uuid,
             Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net: net_uuid,
                 from: Point::new(0, 0),
@@ -606,6 +609,7 @@ fn board_unrouted_treats_track_endpoint_inside_rotated_rect_pad_as_connected() {
         tracks: HashMap::from([(
             track_uuid,
             Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net: net_uuid,
                 from: Point::new(400_000, 0),

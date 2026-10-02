@@ -151,21 +151,8 @@ pub(super) fn load_scene_from_kicad_import(
     let track_payloads: Vec<BoardTrackPayload> = board
         .tracks
         .values()
-        .map(|t| BoardTrackPayload {
-            uuid: t.uuid.to_string(),
-            net: t.net.to_string(),
-            from: PointNm {
-                x: t.from.x,
-                y: t.from.y,
-            },
-            to: PointNm {
-                x: t.to.x,
-                y: t.to.y,
-            },
-            width: t.width,
-            layer: t.layer,
-        })
-        .collect();
+        .map(track_payload)
+        .collect::<Result<Vec<_>>>()?;
 
     let via_payloads: Vec<BoardViaPayload> = board
         .vias

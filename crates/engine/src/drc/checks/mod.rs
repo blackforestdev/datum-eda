@@ -10,6 +10,24 @@ use super::{DrcLocation, DrcSeverity, DrcViolation};
 
 pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
     let mut violations = Vec::new();
+    // Legacy pin-anchor connectivity is not complete nominal arc authority.
+    // Emit a source-bound capability finding rather than claiming a pass.
+    let mut arc_ids = board
+        .tracks
+        .values()
+        .filter(|track| track.midpoint.is_some())
+        .map(|track| track.uuid)
+        .collect::<Vec<_>>();
+    arc_ids.sort();
+    arc_ids.dedup();
+    if !arc_ids.is_empty() {
+        violations.push(DrcViolation {
+            id:stable_violation_id("nominal_connectivity_unavailable",RuleType::Connectivity,None,&arc_ids),
+            code:"nominal_connectivity_unavailable".into(),rule_type:RuleType::Connectivity,severity:DrcSeverity::Error,
+            message:"complete nominal arc connectivity is unavailable in the legacy pin-anchor check; no chord authority".into(),location:None,objects:arc_ids,
+            fingerprint:None,standards_basis:None,rule_revision:None,import_key:None,waived:false,
+        });
+    }
 
     for net in board.net_info() {
         if net.pins.len() < 2 {
@@ -104,60 +122,8 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
     violations
 }
 
-pub(super) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
-    let mut violations = Vec::new();
-    let mut tracks: Vec<&Track> = board.tracks.values().collect();
-    tracks.sort_by_key(|track| track.uuid);
-
-    for i in 0..tracks.len() {
-        for j in (i + 1)..tracks.len() {
-            let a = tracks[i];
-            let b = tracks[j];
-            if a.layer != b.layer || a.net == b.net {
-                continue;
-            }
-
-            let center_distance = segment_distance_nm(a.from, a.to, b.from, b.to);
-            let edge_distance = center_distance - ((a.width + b.width) / 2);
-            let required = required_clearance_nm(board, a.net, b.net);
-
-            if edge_distance < required {
-                let location = midpoint(a.from, a.to);
-                let mut objects = vec![a.uuid, b.uuid];
-                objects.sort();
-                let violation_location = DrcLocation {
-                    x_nm: location.x,
-                    y_nm: location.y,
-                    layer: Some(a.layer),
-                };
-                violations.push(DrcViolation {
-                    id: stable_violation_id(
-                        "clearance_copper",
-                        RuleType::ClearanceCopper,
-                        Some(&violation_location),
-                        &objects,
-                    ),
-                    code: "clearance_copper".into(),
-                    rule_type: RuleType::ClearanceCopper,
-                    severity: DrcSeverity::Error,
-                    message: format!(
-                        "track clearance {}nm is below required {}nm on layer {}",
-                        edge_distance, required, a.layer
-                    ),
-                    location: Some(violation_location),
-                    objects,
-                    fingerprint: None,
-                    standards_basis: None,
-                    rule_revision: None,
-                    import_key: None,
-                    waived: false,
-                });
-            }
-        }
-    }
-
-    violations
-}
+mod nominal_clearance;
+pub(super) use nominal_clearance::run_clearance_checks;
 
 pub(super) fn run_track_width_checks(board: &Board) -> Vec<DrcViolation> {
     let mut violations = Vec::new();

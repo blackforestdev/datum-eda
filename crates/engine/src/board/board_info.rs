@@ -139,6 +139,13 @@ impl Board {
         let mut airwires = Vec::new();
 
         for net in self.nets.values() {
+            if self
+                .tracks
+                .values()
+                .any(|track| track.net == net.uuid && track.midpoint.is_some())
+            {
+                continue;
+            }
             let pad_points = self.net_pad_points(net.uuid);
             if pad_points.len() < 2 {
                 continue;

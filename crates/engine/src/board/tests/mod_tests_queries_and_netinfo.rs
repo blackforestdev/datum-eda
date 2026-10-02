@@ -314,6 +314,7 @@ fn board_net_info_counts_tracks_and_vias() {
         tracks: HashMap::from([(
             Uuid::new_v4(),
             Track {
+                midpoint: None,
                 uuid: Uuid::new_v4(),
                 net: net_uuid,
                 from: Point::new(0, 0),

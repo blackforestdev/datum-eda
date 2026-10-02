@@ -124,6 +124,7 @@ fn routing_substrate_reports_deterministic_sorted_persisted_facts() {
             (
                 track_uuid_b,
                 Track {
+                    midpoint: None,
                     uuid: track_uuid_b,
                     net: net_uuid_b,
                     from: Point { x: 0, y: 0 },
@@ -135,6 +136,7 @@ fn routing_substrate_reports_deterministic_sorted_persisted_facts() {
             (
                 track_uuid_a,
                 Track {
+                    midpoint: None,
                     uuid: track_uuid_a,
                     net: net_uuid_a,
                     from: Point { x: 0, y: 10 },

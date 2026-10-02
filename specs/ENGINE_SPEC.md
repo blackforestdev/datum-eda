@@ -1945,3 +1945,39 @@ E2–E4 nominal execution and focused independent review are owner-authorized.
 C07/M1 manufacturing policy and mandatory rational-center CAM/T04 remain deferred
 and unpassed. This amendment supplies no approximation allowance, general CAM
 claim, full foundation/S5A acceptance or selection-triggered design mutation.
+
+### PM054 nominal source/kernel implementation boundary
+
+`board/nominal_geometry` constructs a directed three-point arc with normalized
+rational center relative to the authored start and rational squared radius.
+All i64 coordinate differences widen to i128 before arithmetic. Rational signs,
+products, sums, division and comparisons check every intermediate; common
+factors cancel before products. `radical_sign` classifies up to three real
+square roots by sign-aware exact squaring, including exact cancellation.
+The implemented numerical domain is precisely those inputs whose required
+normalized construction/predicate intermediates fit checked i128; range failure
+is explicit `ArithmeticRange`, never false separation or guessed contact.
+This is an arithmetic capability boundary, not an invented coordinate or latency
+budget. Required unsupported fixture/pair rows remain unpassed.
+
+Implemented feature candidates cover round-cap point/segment, directed arc/line
+and directed arc/arc comparisons, concentric/coincident and endpoint/interior
+features. Inclusive contact and strict clearance use the same exact kernel;
+odd-nm widths retain rational halves. Legacy route candidate planners use one source-bound straight-only guard;
+legacy arc connectivity and unresolved arc/pad/via/current-fill clearance report
+explicit unavailable findings, never a certified pass or chord authority.
+Track-to-Track nominal DRC binds capability
+failures to both sources. Its existing straight report/fingerprint remains;
+rounded straight diagnostics never govern the new classification.
+Native Track source and inverse ownership reside in `board_track_source` through
+the existing canonical journal dispatcher. BoardRoot 2 declares authored arcs;
+legacy files cannot falsely declare arc-bearing schema 1. Display projection
+keeps exact authored anchors and one Track identity while flattening only for
+rendering. CAM refuses authored arcs by source while C07/M1 remains deferred.
+The bounded fill producer also discloses unsupported foreign-arc obstacles
+rather than using chord bounds. No new dependency is introduced.
+
+These are partial E2/E4 capabilities. Complete pad/via-span/current-fill pair
+integration, authoritative complete components/queries, Zone evolution and
+shared subject adoption still require their implementation and focused proof;
+no F01–F06, full foundation, S5A or manufacturing acceptance follows here.

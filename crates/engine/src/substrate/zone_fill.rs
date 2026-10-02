@@ -59,6 +59,21 @@ pub fn compute_bounded_zone_fill(
     zone: &Zone,
     context: &ZoneFillCopperContext,
 ) -> (ZoneFillState, Vec<Polygon>, String) {
+    // The bounded cutout producer has no certified arc obstacle construction.
+    // Refuse by authored source instead of passing a curve through chord bounds.
+    if let Some(track) = context
+        .tracks
+        .iter()
+        .filter(|track| {
+            track.layer == zone.layer && track.net != zone.net && track.midpoint.is_some()
+        })
+        .min_by_key(|track| track.uuid)
+    {
+        return unsupported(&format!(
+            "datum-eda fill-zones: unsupported nominal arc obstacle {}; no chord fallback",
+            track.uuid
+        ));
+    }
     let thermal_requested =
         zone.thermal_relief || zone.thermal_gap != 0 || zone.thermal_spoke_width != 0;
     if thermal_requested && has_same_net_thermal_anchor(context, zone) {
@@ -470,4 +485,50 @@ fn validate_filled_island(island: &Polygon, index: usize) -> Result<(), String> 
         ));
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod arc_obstacle_tests {
+    use super::*;
+    use crate::ir::geometry::Point;
+    #[test]
+    fn bounded_fill_discloses_authored_arc_instead_of_using_chord_bounds() {
+        let net = Uuid::from_u128(1);
+        let source = Uuid::from_u128(2);
+        let zone = Zone {
+            uuid: Uuid::from_u128(3),
+            net,
+            polygon: Polygon::new(vec![
+                Point::new(0, 0),
+                Point::new(100, 0),
+                Point::new(100, 100),
+                Point::new(0, 100),
+            ]),
+            layer: 1,
+            priority: 0,
+            thermal_relief: false,
+            thermal_gap: 0,
+            thermal_spoke_width: 0,
+        };
+        let track = Track {
+            midpoint: Some(Point::new(50, 50)),
+            ..Track::straight(
+                source,
+                Uuid::from_u128(4),
+                Point::new(0, 0),
+                Point::new(100, 0),
+                1,
+                1,
+            )
+        };
+        let context = ZoneFillCopperContext {
+            tracks: vec![track],
+            ..Default::default()
+        };
+        let (state, copper, reason) = compute_bounded_zone_fill(&zone, &context);
+        assert_eq!(state, ZoneFillState::Unsupported);
+        assert!(copper.is_empty());
+        assert!(reason.contains(&source.to_string()));
+        assert!(reason.contains("no chord fallback"));
+    }
 }

@@ -682,7 +682,7 @@ fn resolver_rejects_future_native_source_shard_schema_version() {
     let mut board: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read board root"))
             .expect("board root JSON should parse");
-    board["schema_version"] = serde_json::json!(2);
+    board["schema_version"] = serde_json::json!(3);
     write_json(&board_path, board);
 
     let error = ProjectResolver::new(&root)
@@ -692,7 +692,7 @@ fn resolver_rejects_future_native_source_shard_schema_version() {
     assert!(
         error
             .to_string()
-            .contains("unsupported BoardRoot schema_version 2")
+            .contains("unsupported BoardRoot schema_version 3")
     );
     assert!(error.to_string().contains("board/board.json"));
 }

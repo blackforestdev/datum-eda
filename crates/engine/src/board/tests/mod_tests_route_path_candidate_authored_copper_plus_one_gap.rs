@@ -90,6 +90,7 @@ pub(crate) fn plus_one_gap_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     track_a_uuid,
                     Track {
+                        midpoint: None,
                         uuid: track_a_uuid,
                         net: net_uuid,
                         from: Point::new(100_000, 500_000),
@@ -101,6 +102,7 @@ pub(crate) fn plus_one_gap_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     track_b_uuid,
                     Track {
+                        midpoint: None,
                         uuid: track_b_uuid,
                         net: net_uuid,
                         from: Point::new(1_300_000, 500_000),
