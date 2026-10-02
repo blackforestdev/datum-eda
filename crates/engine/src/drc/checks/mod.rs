@@ -124,6 +124,7 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
 
 mod nominal_clearance;
 pub(super) use nominal_clearance::run_clearance_checks;
+pub(super) use nominal_clearance::run_clearance_checks_with_zone_copper;
 
 pub(super) fn run_track_width_checks(board: &Board) -> Vec<DrcViolation> {
     let mut violations = Vec::new();

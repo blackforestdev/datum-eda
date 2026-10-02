@@ -46,6 +46,22 @@ pub struct ZoneFill {
     pub provenance: Option<String>,
 }
 
+impl DesignModel {
+    /// One generated-fill owner supplies the current copper basis to immutable
+    /// membership, succession and nominal checking consumers.
+    pub(crate) fn current_zone_fill(&self, id: Uuid) -> Option<&ZoneFill> {
+        self.zone_fills.get(&id).filter(|fill| {
+            fill.zone_id == id
+                && fill.state == ZoneFillState::Filled
+                && fill.model_revision == self.model_revision
+                && self
+                    .objects
+                    .get(&id)
+                    .is_some_and(|object| object.object_revision == fill.source_zone_revision)
+        })
+    }
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct ZoneFillCopperContext {
     pub pads: Vec<PlacedPad>,

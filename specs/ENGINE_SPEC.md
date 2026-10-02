@@ -2017,7 +2017,8 @@ Nominal arc/pad and arc/via DRC now use these predicates and existing applicable
 clearance, source-pair fingerprints and typed failures. Valid boundary equality
 is contact but not a strict minimum-clearance violation. The Board-only DRC path
 still lacks certified current-fill authority and refuses relevant arc/Zone pairs;
-current-fill integration remains mandatory DA-A2 work. No outline, screen path,
+The model-bound DRC entry point now certifies the immutable Board projection and
+current generated-fill basis before using filled copper for those pairs. No outline, screen path,
 manufacturing approximation or generated semantic identity supplies that authority.
 
 The snapshot now exposes `board_run` through the existing connectivity owner.
@@ -2033,7 +2034,7 @@ stale fill cannot be replaced by its outline. All queries remain immutable and
 expected-revision-bound. Multi-layer placed pad apertures without certified barrel
 authority remain unavailable; aperture list, source UUID, Net and drill alone
 cannot establish plating. Zone successor qualification, shared adapters and
-current-fill DRC remain pending; these limits do not waive required acceptance.
+remaining current-fill predicates remain pending; these limits do not waive required acceptance.
 
 
 PM054 Zone qualifiers now bind an authored Zone occurrence to the exact captured
@@ -2053,3 +2054,18 @@ and certified current empty or canonical deletion clears. Queries do not themsel
 select or resurrect anything; the shared selection lifetime owner must consume
 these dispositions. This bounded transform witness does not promise general CAD
 lineage, arbitrary rotations or complete nominal foundation acceptance.
+
+
+The native CLI DRC path now uses `run_with_current_zone_fills_and_waivers`.
+It captures the same immutable electrical snapshot as membership queries and
+certifies Board identity, stackup, copper objects, Nets and NetClasses against
+that source basis. The generated-fill owner alone checks model/source revisions
+and successful Filled state. Arc/Zone clearance uses actual current occupied
+cells, holes, strict existing rule thresholds and one authored source-pair
+fingerprint. Current successful empty fill contributes no copper. Missing, stale,
+Unsupported/Unfilled, tampered or mismatched projection basis emits explicit
+UnverifiedFillBasis rather than testing an outline or passing an absent peer.
+Legacy raw fill maps cannot certify that basis. Existing waiver/fingerprint
+finalization and the established straight-geometry checking path remain shared.
+This does not certify unresolved nominal connectivity, unsupported geometry,
+manufacturing approximation, complete foundation acceptance or S5A native proof.

@@ -41,10 +41,10 @@ pub(crate) fn query_native_project_drc_with_rules(
     let (project, model) = load_native_project_with_resolved_board_and_model(root)?;
     let board = build_native_project_board(&project)?;
     let schematic = build_native_project_schematic(&project)?;
-    Ok(eda_engine::drc::run_with_zone_fills_and_waivers(
+    Ok(eda_engine::drc::run_with_current_zone_fills_and_waivers(
         &board,
         rules,
-        &model.zone_fills,
+        &model,
         &schematic.waivers,
     ))
 }

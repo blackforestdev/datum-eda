@@ -171,7 +171,7 @@ impl ElectricalSelectionSnapshot {
         .map_err(ElectricalQueryFailure::Physical)
     }
 
-    fn board_source(
+    pub(crate) fn board_source(
         &self,
     ) -> Result<crate::connectivity::BoardCopperSource, ElectricalQueryFailure> {
         let roots: Vec<_> = self
@@ -202,6 +202,10 @@ impl ElectricalSelectionSnapshot {
             });
         }
         Ok(source)
+    }
+
+    pub(crate) fn current_zone_fill(&self, id: Uuid) -> Option<&crate::substrate::ZoneFill> {
+        self.model.current_zone_fill(id)
     }
 
     pub fn revision(&self) -> &ModelRevision {
