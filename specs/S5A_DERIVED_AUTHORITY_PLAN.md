@@ -1,7 +1,7 @@
 # S5A derived-selection authority prerequisite
 
-Status: ratified bounded PM053/054/055 authority; DA-A3 producer candidate
-ready for reserved independent DA-A4-R review and later DA-A4-D acceptance.
+Status: accepted selection prerequisite under PM053/054/055; exact independent
+DA-A4-R PASS and owner DA-A4-D acceptance recorded. S5A-C03 explicitly resumed.
 Historical A1 proposals below retain their original disposition at their pins.
 Frontier: `S5A-DERIVED-AUTHORITY`; issue: `dat-s5a-derived-authority-hhsw`.
 Owning route: `foundation-consumer-completion`.
@@ -555,6 +555,9 @@ Clippy, reused independent evidence and explicit domain/capability limitations.
 DA-A3 producer delivery is complete; DA-A4-R must independently audit/replay the
 exact candidate and every mandatory obligation, with REVISE for any required
 unverified positive case. No capability limitation waives a requirement.
-DA-A4-D acceptance and explicit S5A resumption remain pending. Positive CAM/T04
+DA-A4-R PASS and owner DA-A4-D acceptance are recorded in the current foundation
+consumer plan receipt for source 91b56957 / packet e298e2df / blob cc39cd23.
+S5A-C03 is explicitly restored under retained C02 approval with its own claim.
+Positive CAM/T04
 is separately open manufacturing work; all selection-critical authority and
 non-mutation laws stay intact. No renewed unchanged-scope execution permission.

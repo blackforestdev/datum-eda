@@ -1976,3 +1976,33 @@ only it may close the prerequisite and explicitly resume S5A-C03 under retained
 approval. S5A U2-U5/N01-N17, C05 review, definition-editor deferred rows, latency
 and complete manufacturing acceptance remain separate. PM026/049/051/052 and
 rendering/resize behavior remain preserved.
+
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A4-R-ACCEPTED -->
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A4-D-ACCEPTED -->
+### Selection foundation accepted; S5A-C03 resumed
+
+The owner returned reserved independent reviewer `/root` PASS for source
+`91b569576f329eca92b04e60a4f87e4b433df3c9`, packet
+`S5A-SELECTION-FOUNDATION-CANDIDATE-02`, commit
+`e298e2df7e4973168e335f52c985201e425e6540`, blob
+`cc39cd23ab916539bf0361894682cb76d548f3a9`. Review evidence is
+`target/s5a-foundation-independent-e298e2df/review.json`: 102 distinct Rust
+and 5 Python passes, no mandatory findings. Reuse recorded E1/nominal/M1 and
+rendering/resize reviews at their exact scope; no unchanged review requested.
+
+The owner explicitly accepts this exact selection prerequisite under PM054,
+completing DA-A4-R and DA-A4-D and closing `dat-s5a-derived-authority-hhsw`.
+Restore S5A-C03 under retained C02 execution authorization for
+`0ef0efc7` / `S5A-C02-PACKET-IR01`; partial U1 `a4537277` is preserved.
+A new synchronized Frontier/beads consumer claim resumes approved U1–U5.
+The immutable engine snapshot and native adapter are the membership authority;
+canvas visibility, origin eligibility, acquisition, inspection and accessibility
+are the remaining shared selection consumer work. No renderer-generated IDs.
+
+Positive rational-center CAM/T04 remains open `dat-rational-center-cam-ir1t`.
+Capability limitations are retained; this acceptance does not claim universal
+geometry/editor support, manufacturing completion, S5A UI implementation or
+native acceptance. Board/schematic C04 proof, reserved independent C05 candidate
+review/replay and final C06 owner acceptance remain separate. PM026/049/051/052,
+non-mutation, deferred unverified editors and undecided latency remain binding.
