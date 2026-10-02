@@ -1160,3 +1160,41 @@ independent PASS is inferred. Board physical components, Zone lifetime,
 remaining nominal pairs and shared adapter integration remain mandatory pending
 work. Manufacturing M1/T04, recorded full-drift/private-writer/pool-fixture
 failures, E1 PASS and partial S5A approval/reserved review remain unchanged.
+
+
+### DA-A2 bounded occupied-copper unit
+
+Source baseline `16b30ec4`. Extend the certified kernel to rational pad boundaries,
+annular drill exclusions, actual conductive layer spans and current simple filled
+polygon cells, with no screen/outline fallback. Circle and orthogonal Rect/Oval/
+RoundRect contact supports odd dimensions and source rounding ratios. Other
+rotation/drill cases and strict zero-clearance polygon predicates disclose explicit
+capability failure; required coverage is not waived. Arc/pad and arc/via nominal
+DRC now use exact occupied copper, source IDs and applicable clearance. A formerly
+unsupported valid via case now expects certified clearance; unknown-span refusal
+retains separate coverage. Current-fill DRC/board components/Zone equivalence and
+lifetime/shared adapters remain mandatory pending integration.
+
+Proof: **196 board tests passed** in `target/s5a-occupied-board-replay.log`.
+The first broader replay retained one obsolete unsupported-via expectation;
+corrected replay passed 1,110. Final replay includes invalid-arc endpoint-containment
+and unresolved zero-clearance negative cases: **1,111 engine tests passed**, log
+`target/s5a-occupied-candidate-replay.log`. Guarded final all-target engine Clippy
+passes with warnings denied, `target/s5a-occupied-lint-final.log`. Isolated test
+binary `target/s5a-nominal-proof/debug/deps/eda_engine-5b3bfac123e4e569`, SHA-256
+`5175898d9eb024dba833d4fc84b9d911e5e20e859f3929add862eff42e7fd479`.
+Independent expected oracles cover mm-scale odd-width pad tangency versus positive
+gap, actual arc bulge versus chord, hollow drills and inner tangency, filled-cell
+cutouts and winding, orthogonal rounding/oval geometry, unsupported rotation,
+non-numeric conductive layer ordering, nominal DRC source/fingerprint and invalid
+source refusal. No positive T04 or complete F01/F06/S5A proof is inferred.
+
+The first lint attempt was correctly refused by the `/tmp` reserve guard.
+Fixtures from the three completed occupied-copper proof windows were reversibly
+retained under the owned disk target; every moved tree was hash-verified unchanged.
+`target/s5a-owned-fixture-relocation.json` records original/destination paths and
+proof-log attribution. The reserve was not lowered and no shared target/artifacts
+were swept. Source-health, dependency authority and Cargo resource-policy gates
+pass; normal module budgets and the existing 77-entry debt inventory are unchanged.
+DA-A2 stays claimed/in progress. E1 PASS, PM026/049/051/052, partial S5A approval,
+reserved independent review and all recorded unresolved gates remain preserved.

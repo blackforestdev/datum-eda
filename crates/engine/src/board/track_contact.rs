@@ -42,7 +42,7 @@ pub fn tracks_within(a: &Track, b: &Track, extra: i64, boundary: DistanceBoundar
         (None, None) => segments_within(a.from, a.to, b.from, b.to, half, boundary),
     }
 }
-fn segments_within(
+pub(super) fn segments_within(
     a: Point,
     b: Point,
     c: Point,

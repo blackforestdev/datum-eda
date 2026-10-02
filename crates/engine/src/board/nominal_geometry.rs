@@ -8,6 +8,11 @@ pub enum GeometryError {
     InvalidArc,
     InvalidWidth,
     ArithmeticRange,
+    InvalidPolygon,
+    UnsupportedPadGeometry,
+    UnknownConductiveLayer,
+    UnknownNetAssignment,
+    UnresolvedPredicate,
 }
 pub(super) type Result<T> = std::result::Result<T, GeometryError>;
 
@@ -211,14 +216,38 @@ impl CertifiedArc {
         half: Rational,
         boundary: DistanceBoundary,
     ) -> Result<bool> {
-        let radial = self.radial_vector(point)?;
+        self.rational_point_within_boundary(
+            [
+                Rational::integer(i128::from(point.x)),
+                Rational::integer(i128::from(point.y)),
+            ],
+            half,
+            boundary,
+        )
+    }
+    pub(super) fn rational_point_within_boundary(
+        self,
+        point: [Rational; 2],
+        half: Rational,
+        boundary: DistanceBoundary,
+    ) -> Result<bool> {
+        let v = [
+            point[0].checked_sub(Rational::integer(i128::from(self.from.x)))?,
+            point[1].checked_sub(Rational::integer(i128::from(self.from.y)))?,
+        ];
+        let radial = [
+            v[0].checked_sub(self.center[0])?,
+            v[1].checked_sub(self.center[1])?,
+        ];
         if self.contains_direction(radial)? || radial.iter().all(|x| x.numerator == 0) {
             return radial_gap_boundary(norm(radial)?, self.radius_squared, half, boundary);
         }
-        Ok(
-            boundary.accepts(norm(vector(point, self.from))?.compare(half.square()?)?)
-                || boundary.accepts(norm(vector(point, self.to))?.compare(half.square()?)?),
-        )
+        let to = vector(self.to, self.from);
+        Ok(boundary.accepts(norm(v)?.compare(half.square()?)?)
+            || boundary.accepts(
+                norm([v[0].checked_sub(to[0])?, v[1].checked_sub(to[1])?])?
+                    .compare(half.square()?)?,
+            ))
     }
 }
 /// |sqrt(distance_squared)-sqrt(radius_squared)| <= half_width, squared

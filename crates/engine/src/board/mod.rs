@@ -12,6 +12,7 @@ mod dimension;
 mod net_graph;
 pub mod nominal_geometry;
 pub mod nominal_predicates;
+pub mod occupied_copper;
 mod pad;
 mod polygon;
 mod radical_sign;
