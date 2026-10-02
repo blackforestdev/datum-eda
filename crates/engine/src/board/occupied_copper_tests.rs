@@ -49,9 +49,12 @@ fn authored_arc_pad_boundaries_preserve_half_nm_and_actual_bulge() {
         rotate.rotation = 90;
         assert!(track_pad_within(&track, &rotate, 0, DistanceBoundary::Inclusive).unwrap());
         rotate.rotation = 37;
+        // The rotation-invariant inscribed disk proves this inclusive contact
+        // exactly. It does not certify the full rotated boundary.
+        assert!(track_pad_within(&track, &rotate, 0, DistanceBoundary::Inclusive).unwrap());
         assert_eq!(
-            track_pad_within(&track, &rotate, 0, DistanceBoundary::Inclusive),
-            Err(GeometryError::UnsupportedPadGeometry)
+            track_pad_within(&track, &rotate, 0, DistanceBoundary::Strict),
+            Err(GeometryError::UnresolvedPredicate)
         );
     }
 }

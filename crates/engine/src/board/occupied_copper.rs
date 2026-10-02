@@ -1,6 +1,7 @@
 //! Certified occupied copper shared by physical membership and nominal DRC.
-//! Orthogonal pad shapes have exact rational boundaries; arbitrary noncircular
-//! rotations remain explicit capability failure, never rounded/chord geometry.
+//! Orthogonal pads have exact rational boundaries. Rotation-invariant subset/
+//! superset certificates settle some other poses; unresolved boundaries refuse.
+mod rotation_bounds;
 use super::nominal_geometry::{
     CertifiedArc, DistanceBoundary, GeometryError, Rational as R, Result, cross, norm,
 };
@@ -10,6 +11,7 @@ use super::nominal_predicates::{
 use super::radical_sign::Expression;
 use super::{PadShape, PlacedPad, Stackup, StackupLayerType, Track, Via};
 use crate::ir::geometry::{LayerId, Point, Polygon};
+use rotation_bounds::{certify_pad, certify_pads, pad_bounds};
 use std::cmp::Ordering;
 type P = [R; 2];
 fn sub(a: P, b: P) -> Result<P> {
@@ -63,7 +65,7 @@ pub fn validate_track(track: &Track) -> Result<()> {
 }
 
 pub fn validate_pad(pad: &PlacedPad) -> Result<()> {
-    RoundedBox::pad(pad)?;
+    pad_bounds(pad)?;
     Ok(())
 }
 pub fn validate_via(via: &Via) -> Result<()> {
@@ -100,7 +102,7 @@ fn box_contains_point(shape: RoundedBox, p: Point) -> Result<bool> {
     )
 }
 pub fn pad_contains_point(pad: &PlacedPad, p: Point) -> Result<bool> {
-    box_contains_point(RoundedBox::pad(pad)?, p)
+    certify_pad(pad, |shape| box_contains_point(shape, p))
 }
 pub fn via_contains_point(via: &Via, p: Point) -> Result<bool> {
     box_contains_point(RoundedBox::via(via)?, p)
@@ -327,7 +329,7 @@ pub fn track_pad_within(
     extra: i64,
     boundary: DistanceBoundary,
 ) -> Result<bool> {
-    track_box(track, RoundedBox::pad(pad)?, extra, boundary)
+    certify_pad(pad, |shape| track_box(track, shape, extra, boundary))
 }
 pub fn track_via_within(
     track: &Track,
@@ -386,7 +388,7 @@ pub fn pads_within(
     extra: i64,
     boundary: DistanceBoundary,
 ) -> Result<bool> {
-    boxes_within(RoundedBox::pad(a)?, RoundedBox::pad(b)?, extra, boundary)
+    certify_pads(a, b, |a, b| boxes_within(a, b, extra, boundary))
 }
 pub fn pad_via_within(
     a: &PlacedPad,
@@ -394,7 +396,8 @@ pub fn pad_via_within(
     extra: i64,
     boundary: DistanceBoundary,
 ) -> Result<bool> {
-    boxes_within(RoundedBox::pad(a)?, RoundedBox::via(b)?, extra, boundary)
+    let via = RoundedBox::via(b)?;
+    certify_pad(a, |pad| boxes_within(pad, via, extra, boundary))
 }
 pub fn vias_within(a: &Via, b: &Via, extra: i64, boundary: DistanceBoundary) -> Result<bool> {
     boxes_within(RoundedBox::via(a)?, RoundedBox::via(b)?, extra, boundary)
@@ -538,7 +541,7 @@ pub fn pad_polygon_within(
     extra: i64,
     boundary: DistanceBoundary,
 ) -> Result<bool> {
-    polygon_box(polygon, RoundedBox::pad(pad)?, extra, boundary)
+    certify_pad(pad, |shape| polygon_box(polygon, shape, extra, boundary))
 }
 pub fn via_polygon_within(
     via: &Via,

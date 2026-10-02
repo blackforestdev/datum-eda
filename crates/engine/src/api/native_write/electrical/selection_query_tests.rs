@@ -88,6 +88,21 @@ fn complete_257_branch_net_is_not_a_context_envelope_and_runs_are_physical() {
         .collect();
     let journal = std::fs::read(crate::substrate::transaction_journal_path(&root)).unwrap();
     let snapshot = ElectricalSelectionSnapshot::capture(&model).unwrap();
+    let from_origin = snapshot
+        .net_for_origin(&model.model_revision, &wire)
+        .unwrap();
+    assert_eq!(from_origin.subject_id, logical);
+    assert_eq!(from_origin.owned, expected);
+    assert_eq!(
+        snapshot.net_for_origin(&crate::substrate::ModelRevision("wrong".into()), &wire),
+        Err(ElectricalQueryFailure::StaleRevision)
+    );
+    let mut invalid_path = wire.clone();
+    invalid_path.instance_path.push(Uuid::new_v4());
+    assert!(matches!(
+        snapshot.net_for_origin(&model.model_revision, &invalid_path),
+        Err(ElectricalQueryFailure::InvalidOccurrence { .. })
+    ));
     assert_eq!(
         snapshot
             .global_net(&model.model_revision, logical)
@@ -182,6 +197,11 @@ fn repeated_sheet_source_has_distinct_occurrences_and_queries_preserve_ids() {
     }
     let snapshot = ElectricalSelectionSnapshot::capture(&model).unwrap();
     for (origin, id) in expected.iter().zip(ids) {
+        let membership = snapshot
+            .net_for_origin(snapshot.revision(), origin)
+            .unwrap();
+        assert_eq!(membership.subject_id, id);
+        assert_eq!(membership.owned, BTreeSet::from([origin.clone()]));
         assert_eq!(
             snapshot.global_net(snapshot.revision(), id).unwrap().owned,
             BTreeSet::from([origin.clone()])
@@ -292,6 +312,13 @@ fn binding_failure_is_subject_local_and_cross_domain_membership_never_prunes_boa
         member("pads", evidence[0].board_pad.object_id, &[]),
     ]);
     let captured = ElectricalSelectionSnapshot::capture(&model).unwrap();
+    for origin in &expected {
+        let bound = captured
+            .net_for_origin(captured.revision(), origin)
+            .unwrap();
+        assert_eq!(bound.subject_id, logical);
+        assert_eq!(bound.owned, expected);
+    }
     assert_eq!(
         captured
             .global_net(captured.revision(), logical)
@@ -310,6 +337,15 @@ fn binding_failure_is_subject_local_and_cross_domain_membership_never_prunes_boa
     let prepared = build_set_electrical_identity(&model, provenance(), pending).unwrap();
     commit_prepared(&mut model, &root, prepared).unwrap();
     let snapshot = ElectricalSelectionSnapshot::capture(&model).unwrap();
+    for origin in &expected {
+        assert!(matches!(
+            snapshot.net_for_origin(snapshot.revision(), origin),
+            Err(ElectricalQueryFailure::UnavailableBinding {
+                status: crate::substrate::NetCorrespondenceStatus::Pending,
+                ..
+            })
+        ));
+    }
     assert!(matches!(
         snapshot.global_net(snapshot.revision(), logical),
         Err(ElectricalQueryFailure::UnavailableBinding {
@@ -336,6 +372,15 @@ fn binding_failure_is_subject_local_and_cross_domain_membership_never_prunes_boa
         .unwrap();
     let reopened = ProjectResolver::new(&root).resolve().unwrap();
     let snapshot = ElectricalSelectionSnapshot::capture(&reopened).unwrap();
+    for origin in &expected {
+        assert_eq!(
+            snapshot
+                .net_for_origin(snapshot.revision(), origin)
+                .unwrap()
+                .owned,
+            expected
+        );
+    }
     assert_eq!(
         snapshot
             .global_net(snapshot.revision(), logical)

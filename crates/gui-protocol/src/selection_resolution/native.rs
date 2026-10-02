@@ -106,6 +106,32 @@ impl NativeSelectionResolution {
             .map_err(SelectionResolutionError::Engine)
     }
 
+    /// Widen a currently resolved Run through its engine-owned origin binding.
+    /// This returns a candidate subject, not selected state or acquisition
+    /// eligibility. Pane visibility and gestures remain consumer responsibilities.
+    pub fn widen_run(
+        &self,
+        run: &RunSelectionIdentity,
+    ) -> Result<SelectionSubject, SelectionResolutionError> {
+        self.resolve(&SelectionSubject::Run(run.clone()))?;
+        let origin = occurrence(&run.origin);
+        let membership = if run.origin.class == Class::BusSection {
+            self.snapshot.bus_for_origin(self.revision(), &origin)
+        } else {
+            self.snapshot.net_for_origin(self.revision(), &origin)
+        }
+        .map_err(SelectionResolutionError::Engine)?;
+        let subject = if run.origin.class == Class::BusSection {
+            SelectionSubject::Bus(membership.subject_id)
+        } else {
+            SelectionSubject::GlobalNet(membership.subject_id)
+        };
+        // Validate the complete adapter projection before offering the subject.
+        // A missing source class/member cannot produce a partially resolved Net.
+        self.resolve(&subject)?;
+        Ok(subject)
+    }
+
     pub fn resolve(
         &self,
         subject: &SelectionSubject,

@@ -77,6 +77,17 @@ fn native_board_run_keeps_complete_owned_projection_and_separate_faults() {
         .acquire_run(identity(Class::Track, 1, &[]), None)
         .unwrap();
     let projection = resolver.resolve(&subject).unwrap();
+    let Subject::Run(run_subject) = &subject else {
+        panic!("expected Run");
+    };
+    // Board-local assignment is not a canonical Net binding. This fixture has
+    // no authored relationship, so widening must not reuse run.board_net.
+    assert!(matches!(
+        resolver.widen_run(run_subject),
+        Err(SelectionResolutionError::Engine(
+            ElectricalQueryFailure::UnavailableAssignment { .. }
+        ))
+    ));
     assert_eq!(projection.project, f.model.project.project_id);
     assert_eq!(projection.revision, f.model.model_revision);
     assert_eq!(
@@ -150,6 +161,17 @@ fn native_bus_owned_entries_are_projection_not_extra_subject_members_or_scalar_w
         .acquire_run(identity(Class::BusSection, 1, &[]), None)
         .unwrap();
     let projection = native.resolve(&subject).unwrap();
+    let Subject::Run(run_subject) = &subject else {
+        panic!("expected Run");
+    };
+    let widened = native.widen_run(run_subject).unwrap();
+    assert_eq!(widened, Subject::Bus(id(800)));
+    assert_eq!(
+        native.members(&widened).unwrap(),
+        [1, 2, 3]
+            .map(|n| identity(Class::BusSection, n, &[]))
+            .into()
+    );
     assert_eq!(
         projection.members,
         BTreeSet::from([
@@ -282,6 +304,14 @@ fn native_binding_failure_is_not_empty_membership_or_deletion() {
     create(&mut f, relation);
     let good = Native::capture(&f.model).unwrap();
     let subject = Subject::GlobalNet(id(800));
+    let local = good
+        .acquire_run(identity(Class::Track, 1, &[]), None)
+        .unwrap();
+    let Subject::Run(run) = &local else {
+        panic!("expected Run");
+    };
+    assert_ne!(id(800), f.net);
+    assert_eq!(good.widen_run(run).unwrap(), subject);
     assert_eq!(
         good.members(&subject).unwrap(),
         BTreeSet::from([identity(Class::Track, 1, &[])])
@@ -294,6 +324,16 @@ fn native_binding_failure_is_not_empty_membership_or_deletion() {
         electrical::build_set_electrical_identity(&f.model, provenance(), relation).unwrap();
     native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
     let pending = Native::capture(&f.model).unwrap();
+    assert!(matches!(
+        pending.widen_run(run),
+        Err(SelectionResolutionError::Engine(
+            ElectricalQueryFailure::UnavailableBinding {
+                status: NetCorrespondenceStatus::Pending,
+                ..
+            }
+        ))
+    ));
+    assert_eq!(good.widen_run(run).unwrap(), subject);
     assert!(pending.derived_exists(&subject).unwrap());
     assert!(matches!(
         pending.members(&subject),

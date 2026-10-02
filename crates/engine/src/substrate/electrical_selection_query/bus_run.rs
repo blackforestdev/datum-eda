@@ -120,7 +120,10 @@ impl ElectricalSelectionSnapshot {
         Ok(owned)
     }
 
-    fn bus_owner(&self, origin: &ElectricalOccurrence) -> Result<Uuid, ElectricalQueryFailure> {
+    pub(super) fn bus_owner(
+        &self,
+        origin: &ElectricalOccurrence,
+    ) -> Result<Uuid, ElectricalQueryFailure> {
         let owners: Vec<_> = self
             .model
             .electrical_identities
