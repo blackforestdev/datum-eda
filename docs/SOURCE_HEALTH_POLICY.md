@@ -360,3 +360,12 @@ policy fixtures into their own child. Import skeleton production drops 1,057 to
 811 to 672 and leaves the legacy ledger. All children use normal budgets; no
 ceiling grows and existing parsing/fixture assertions remain owned by their
 original routes.
+
+
+DA-A3 canonical bootstrap verification (`dat-7unq`) extracts project-bootstrap
+checks from `check_schematic_private_writers.py` into the normal
+`private_writer_bootstrap_policy.py` owner. The legacy guard drops from 1,004 to
+987 physical lines and its ceiling ratchets exactly. Five focused regressions
+verify units-aware engine delegation and rejection of substituted calls/imports,
+private JSON serialization and direct filesystem writes. No source-health limit,
+exception or canonical writer boundary is weakened; remaining debt stays open.

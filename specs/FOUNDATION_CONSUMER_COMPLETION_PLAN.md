@@ -1814,3 +1814,63 @@ candidate DA-A4-R; final owner acceptance DA-A4-D still precedes S5A resumption.
 Preserve unchanged S5A authorization/partial U1/C05 and PM026/049/051/052.
 Synchronized new session Frontier/beads claim establishes implementation ownership;
 this receipt is not independent candidate review or foundation acceptance.
+
+
+### S5A-SELECTION-FOUNDATION-INTEGRATION-01 — partial DA-A3 source and proof
+
+<!-- EVIDENCE:S5A-DERIVED-AUTHORITY:DA-A3-INTEGRATION-01 -->
+**Source:** `b347b988b2d24ba16cb34ec96d385934a1fc1154`.
+**Owner authorization/synchronized claim:** `6fab7d30`; DA-M1-D complete,
+DA-A3 remains in progress. This is a reviewable implementation unit, not a
+completed selection foundation or DA-A4-R/DA-A4-D disposition. Retain the owner's
+reserved amended-candidate audit and final acceptance before S5A resumption.
+
+| Owner / requirement | Implemented behavior and exact proof |
+| --- | --- |
+| Existing immutable electrical snapshot, F03–F05 | `net_for_origin` and `bus_for_origin` use canonical assignment/declaration and complete occurrence sets. Revision/path validation, actual Pin/Pad relationship, distinct board-local UUID, pending refusal, repeated-sheet isolation, 257-member completeness and undo/reopen conservation. No source/name/context fallback or read allocation of identity. |
+| Existing shared native adapter | `widen_run` resolves the current qualified Run, obtains its engine-owned Net/Bus and validates full projection before returning a candidate subject. Disconnected same-Bus spines widen; contacting foreign declarations do not. No selected state, visibility or gesture authority is added. Editors configure acquisition separately in S5A. |
+| Existing occupied-copper owner, F01/T02–T03 | Rotation-invariant inner/outer annulus certificates prove contact or separation without changing authored pose, shape or drill. Odd halves stay rational; unchanged quarter-turn predicates remain exact. Unknown boundary returns UnresolvedPredicate. Rect/Oval/RoundRect, holes, pair/via/polygon, invalid source and clearance cases have permanent proof. These bounds are certificates, never an approximation allowance or substitute nominal pad geometry. |
+| Amended T04 boundary | Native T04 rational-center arc acquires its actual Run and widens to its canonical complete Net, including disconnected assigned copper. Existing manufacturing output still refuses nonzero deviation; source/journal bytes and reopen membership are conserved. This passes selection, not positive CAM/T04. |
+| Required canonical write guard | `c6e75b3b` repairs actual units-aware genesis delegation recognition. Five positive/negative guard regressions pass; private writers remain forbidden. `dat-7unq` now closes with that verified repair, rather than being silently credited from its historical failed state. |
+
+Final guarded proof: **1,154 engine + seven native adapter/widening + nine shared
+lifetime tests = 1,170 distinct Rust passes**, zero failures. Engine/protocol/
+viewport all-target Clippy with warnings denied passes. Five bootstrap and 13
+source-health Python tests pass. Source health (2,773 files), formatting,
+private-writer, dependency/resource and governance checks pass. The full engine
+batch earns its cost because occupied-copper certificates affect shared contact,
+DRC, fill and manufacturing constraints; consumer batches verify canonical
+identity/projection/lifetime and the specific selection-versus-CAM amendment.
+Preliminary overlapping suites and wrong-target setup attempts are uncredited.
+No build candidates for GUI, GPU campaign or native S5A acceptance is asserted.
+
+`target/s5a-a3-evidence/candidate.json`, SHA-256
+`4384f95bb327848b21bb97494ee7574d33394862f3f6ce1c7bb1873c263e7ab4`, pins five
+binaries, nine recipe sources, four final replay/Clippy logs and environment.
+Linux 6.12.107+deb13-amd64 x86_64; Rust 1.98.0, unoptimized serial proof guard,
+incremental disabled, disk target `target/s5a-nominal-proof`, fixtures `/tmp`
+(TMPDIR unset), repository-configured 16 MiB test stack. Expected native source
+IDs/occurrences are authored through canonical producers and compared exactly.
+Reuse independent E1/nominal/M1 reviews at their recorded scopes; this unit has
+no independent PASS. Rendering/resize closure is reused without rerunning it.
+
+**Remaining selection-critical obstacle: `dat-rotated-pad-selection-7pe8`.**
+A canonical Track from (0,1.4) to (0,1.400001) mm contacts a 2 mm-square Pad at
+(0,0), rotation 45°, same Net/layer and explicit Separate process. The first
+on-track point's local squared coordinates are 0.98 mm², strictly below each
+1 mm² half-width bound. Expected complete Run is exactly Track1 + Pad2. The
+current inner/outer certificates cannot settle that corner; native acquisition
+returns UnavailableGeometry through UnresolvedPredicate, preserving source/journal.
+Its permanent regression passes **refusal honesty only**, not the required
+positive membership oracle. Complete certified rotated-boundary contact,
+tangency/gap/clearance and native persistence proof remain necessary under
+PM054 C06/F01/T02; this is an implementation deficiency, not a new product rule.
+No numerical tolerance, rounded outline or partial membership is a remedy.
+
+Do not complete DA-A3 or select full foundation review/acceptance while this
+mandatory geometry proof is unresolved. Other unsupported/unverified rows in the
+nominal packet remain unchanged, not automatically deferred. Manufacturing
+`dat-rational-center-cam-ir1t` remains open but does not block read-only selection.
+S5A approval/partial U1/C05 and PM026/049/051/052 remain preserved; no dependency,
+prototype or renderer/resize changes accompany this unit. Existing execution
+authorization remains valid; no repeated owner authorization is requested.

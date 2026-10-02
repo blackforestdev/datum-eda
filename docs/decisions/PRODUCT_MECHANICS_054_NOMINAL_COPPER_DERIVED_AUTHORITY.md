@@ -1,6 +1,7 @@
 # Product Mechanics 054: Nominal copper and derived selection authority
 
-Status: owner-ratified C04–C06; C07/M1 deferred.
+Status: owner-ratified C04–C06 and C07 zero-intentional-deviation policy;
+positive rational-center CAM/T04 remains open manufacturing work.
 Frontier: S5A-DERIVED-AUTHORITY; issue: dat-s5a-derived-authority-hhsw.
 
 The owner explicitly ratified C04–C06 of reviewed S5A-DERIVED-A1-03 at
