@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 85 legacy source entries remain. UNIT-I03B moved
+Current debt inventory: 77 legacy source entries remain. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
@@ -95,6 +95,30 @@ existing shared native GPU boundary. The renderer include ceiling falls from
 7,159 to 7,153 lines and geometry production from 1,189 to 1,183; no exception or
 limit increase is introduced. Allocator conformance and text pixel parity support
 this ownership change; full overhead/resource qualification remains separate.
+
+PM054 nominal Track source adoption extracts CLI Track placement to
+`board/track_source.rs` (857 to 829 pre-test lines) and profile-divergence fixture
+ownership to `route/profile_divergence_fixture.rs` (3,193 to 3,124 pre-test lines).
+Route-policy preservation tests move to their own normal test module (976 to
+811 lines). These three legacy ceilings ratchet downward exactly. Native import
+proofs, proposal-preview proofs, copper-export proofs and Zone-fill validation
+proofs move to real child modules; all four parents return within normal limits
+and leave the ledger. The Zone-fill extraction also repairs the structural
+obligation across the preceding successful-empty-fill unit: comparison uses
+`1fe82839`, before either source change. Shared Track construction preserves
+straight-source serialization while the extracted modules retain their tests.
+Shared Track source extraction and display projection move from the protocol
+root into `board_track_projection.rs` (4,525 to 4,466 pre-test lines);
+removing its duplicate import conversion reduces the legacy KiCad scene include
+expansion from 2,159 to 2,140 lines. Both ceilings ratchet downward. Canonical Track application, inverse and feature
+schema ownership move to the real `board_track_source` child; its parent
+`board_journal_ops.rs` returns from 707 to 681 pre-test lines and leaves the ledger.
+Zone-fill CLI producer/history proofs move into the normal `zone_fill_command_tests`
+child, returning `main_tests_project_board_zone.rs` from 974 to 541 lines and
+removing its legacy entry. Assertions follow the adopted version-2 producer;
+legacy schema-1 source reading retains separate coverage.
+The source-health gate and all 13 policy-integrity regressions verify these
+boundaries; feature proof and complete drift results remain candidate evidence.
 
 ## What Counts as Structural Evidence
 

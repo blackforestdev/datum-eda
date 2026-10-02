@@ -32,9 +32,11 @@ mod schematic_scene_import;
 pub use schematic_scene_import::{SchematicHitKind, load_kicad_schematic_workspace_state};
 mod artifact_preview_viewport;
 pub use artifact_preview_viewport::ArtifactPreviewViewportState;
+mod board_track_projection;
 pub mod selection_resolution;
 pub mod selection_subject;
 mod workspace_selection;
+use board_track_projection::{BoardTrackPayload, extract_tracks, track_payload, track_primitive};
 pub use selection_subject::{
     AuthoredSelectionClass, AuthoredSelectionIdentity, CompoundSelection, SelectionProjectId,
     SelectionSubject, SelectionSubjectError, SelectionTarget,
@@ -1222,16 +1224,6 @@ struct BoardPadPayload {
     drill: Option<i64>,
     #[serde(default)]
     rotation: i32,
-}
-
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-struct BoardTrackPayload {
-    uuid: String,
-    net: String,
-    from: PointNm,
-    to: PointNm,
-    width: i64,
-    layer: i32,
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -2879,45 +2871,6 @@ impl std::fmt::Display for EnginePadShape {
     }
 }
 
-fn extract_tracks(board: &Value) -> Result<Vec<BoardTrackPayload>> {
-    let tracks_map = board
-        .get("tracks")
-        .and_then(|v| v.as_object())
-        .cloned()
-        .unwrap_or_default();
-    let mut tracks = Vec::with_capacity(tracks_map.len());
-    for (_key, value) in tracks_map {
-        let track: EngineTrackPayload =
-            serde_json::from_value(value).context("failed to parse board track")?;
-        tracks.push(BoardTrackPayload {
-            uuid: track.uuid.to_string(),
-            net: track.net.to_string(),
-            from: PointNm {
-                x: track.from.x,
-                y: track.from.y,
-            },
-            to: PointNm {
-                x: track.to.x,
-                y: track.to.y,
-            },
-            width: track.width,
-            layer: track.layer,
-        });
-    }
-    tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
-    Ok(tracks)
-}
-
-#[derive(Debug, Clone, Deserialize)]
-struct EngineTrackPayload {
-    uuid: uuid::Uuid,
-    net: uuid::Uuid,
-    from: EnginePointPayload,
-    to: EnginePointPayload,
-    width: i64,
-    layer: i32,
-}
-
 fn extract_vias(board: &Value) -> Result<Vec<BoardViaPayload>> {
     let vias_map = board
         .get("vias")
@@ -3535,19 +3488,7 @@ fn build_board_review_scene(
             }
         })
         .collect();
-    let tracks: Vec<TrackPrimitive> = tracks
-        .into_iter()
-        .map(|track| TrackPrimitive {
-            object_id: format!("track:{}", track.uuid),
-            object_kind: "track".to_string(),
-            source_object_uuid: track.uuid.clone(),
-            track_uuid: track.uuid.clone(),
-            net_uuid: Some(track.net),
-            layer_id: layer_id(track.layer),
-            width_nm: track.width,
-            path: vec![track.from, track.to],
-        })
-        .collect();
+    let tracks: Vec<TrackPrimitive> = tracks.into_iter().map(track_primitive).collect();
     let vias: Vec<ViaPrimitive> = vias
         .into_iter()
         .map(|via| ViaPrimitive {

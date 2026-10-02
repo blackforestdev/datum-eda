@@ -73,6 +73,7 @@ pub fn build_accepted_route_proposal(
                 ],
             );
             let track = Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net: action.net_uuid,
                 from: action.from,

@@ -100,6 +100,7 @@ fn route_path_candidate_orthogonal_graph_six_via_explain_reports_blocked_sextupl
     board.tracks.insert(
         Uuid::from_u128(0x103e),
         Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0x103e),
             net: other_net_uuid,
             from: Point::new(0, 700_000),

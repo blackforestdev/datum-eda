@@ -108,6 +108,7 @@ fn layer_balance_aware_prefers_more_even_layer_usage_for_equal_step_and_topology
             (
                 alternate_top_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: alternate_top_track_uuid,
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -119,6 +120,7 @@ fn layer_balance_aware_prefers_more_even_layer_usage_for_equal_step_and_topology
             (
                 preferred_inner_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: preferred_inner_track_uuid,
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -302,6 +304,7 @@ fn layer_balance_aware_reports_no_path_when_obstacles_block_all_candidates() {
         tracks: HashMap::from([(
             track_uuid,
             Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net: net_uuid,
                 from: Point::new(500_000, 500_000),

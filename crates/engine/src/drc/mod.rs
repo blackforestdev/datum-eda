@@ -114,6 +114,8 @@ fn waiver_matches(waiver: &CheckWaiver, violation: &DrcViolation) -> bool {
 
 #[cfg(test)]
 mod tests {
+    #[path = "nominal_arc_clearance.rs"]
+    mod nominal_arc_clearance;
     #[path = "support.rs"]
     mod support;
     use support::empty_board;

@@ -14,6 +14,7 @@ use crate::board::{Board, StackupLayer};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RoutePathCandidateError {
     NetNotFound { net_uuid: Uuid },
+    UnsupportedArcSources { track_ids: Vec<Uuid> },
     AnchorNotOnNet { pad_uuid: Uuid, net_uuid: Uuid },
     DuplicateAnchorPair { pad_uuid: Uuid },
 }
@@ -21,6 +22,10 @@ pub enum RoutePathCandidateError {
 impl Display for RoutePathCandidateError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::UnsupportedArcSources { track_ids } => write!(
+                f,
+                "routing nominal arc geometry unavailable for authored Tracks {track_ids:?}; no chord fallback"
+            ),
             Self::NetNotFound { net_uuid } => {
                 write!(f, "board net not found in native project: {net_uuid}")
             }
@@ -92,6 +97,7 @@ impl Board {
         let preflight = self
             .route_preflight(net_uuid)
             .ok_or(RoutePathCandidateError::NetNotFound { net_uuid })?;
+        self.require_straight_routing_sources()?;
         if !preflight
             .anchors
             .iter()
@@ -161,5 +167,25 @@ impl Board {
             },
             path,
         })
+    }
+}
+
+impl Board {
+    /// Existing route planners are straight-only. This conservative source-bound
+    /// refusal does not disable nominal inspection, DRC or scene projection.
+    pub(super) fn require_straight_routing_sources(&self) -> Result<(), RoutePathCandidateError> {
+        let mut track_ids = self
+            .tracks
+            .values()
+            .filter(|track| track.midpoint.is_some())
+            .map(|track| track.uuid)
+            .collect::<Vec<_>>();
+        track_ids.sort();
+        track_ids.dedup();
+        if track_ids.is_empty() {
+            Ok(())
+        } else {
+            Err(RoutePathCandidateError::UnsupportedArcSources { track_ids })
+        }
     }
 }

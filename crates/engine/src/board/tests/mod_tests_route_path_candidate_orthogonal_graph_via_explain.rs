@@ -103,6 +103,7 @@ fn route_path_candidate_orthogonal_graph_via_explain_reports_blocked_matching_vi
     board.tracks.insert(
         Uuid::from_u128(0x940e),
         crate::board::Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0x940e),
             net: Uuid::from_u128(0x9401),
             from: crate::ir::geometry::Point::new(0, 600_000),

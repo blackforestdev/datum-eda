@@ -73,6 +73,7 @@ fn route_path_candidate_orthogonal_graph_four_via_explain_reports_blocked_quadru
     board.tracks.insert(
         Uuid::from_u128(0xf7c),
         Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0xf7c),
             net: other_net_uuid,
             from: Point::new(0, 600_000),

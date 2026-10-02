@@ -123,6 +123,7 @@ pub(super) fn orthogonal_graph_via_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uu
                 (
                     top_wall_a_uuid,
                     Track {
+                        midpoint: None,
                         uuid: top_wall_a_uuid,
                         net: other_net_uuid,
                         from: Point::new(0, 300_000),
@@ -134,6 +135,7 @@ pub(super) fn orthogonal_graph_via_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uu
                 (
                     top_wall_b_uuid,
                     Track {
+                        midpoint: None,
                         uuid: top_wall_b_uuid,
                         net: other_net_uuid,
                         from: Point::new(200_000, 500_000),
@@ -145,6 +147,7 @@ pub(super) fn orthogonal_graph_via_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uu
                 (
                     bottom_wall_a_uuid,
                     Track {
+                        midpoint: None,
                         uuid: bottom_wall_a_uuid,
                         net: other_net_uuid,
                         from: Point::new(0, 500_000),
@@ -156,6 +159,7 @@ pub(super) fn orthogonal_graph_via_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uu
                 (
                     bottom_wall_b_uuid,
                     Track {
+                        midpoint: None,
                         uuid: bottom_wall_b_uuid,
                         net: other_net_uuid,
                         from: Point::new(200_000, 700_000),
@@ -306,6 +310,7 @@ fn route_path_candidate_orthogonal_graph_via_reports_no_path_when_matching_via_s
     board.tracks.insert(
         Uuid::from_u128(0x940e),
         Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0x940e),
             net: Uuid::from_u128(0x9401),
             from: Point::new(0, 600_000),

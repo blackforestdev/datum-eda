@@ -118,6 +118,7 @@ pub(super) fn orthogonal_two_bend_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
                 (
                     left_block_uuid,
                     Track {
+                        midpoint: None,
                         uuid: left_block_uuid,
                         net: other_net_uuid,
                         from: Point::new(100_000, 300_000),
@@ -129,6 +130,7 @@ pub(super) fn orthogonal_two_bend_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
                 (
                     right_block_uuid,
                     Track {
+                        midpoint: None,
                         uuid: right_block_uuid,
                         net: other_net_uuid,
                         from: Point::new(900_000, 300_000),
@@ -240,6 +242,7 @@ fn route_path_candidate_orthogonal_two_bend_reports_no_path_when_all_candidates_
     board.tracks.insert(
         Uuid::from_u128(0x9209),
         Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0x9209),
             net: Uuid::from_u128(0x9201),
             from: Point::new(300_000, 900_000),

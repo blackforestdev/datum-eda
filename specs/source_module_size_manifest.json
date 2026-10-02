@@ -84,13 +84,13 @@
     "crates/cli/src/commands/board/routing_net.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 857
+        "pre_test_lines": 829
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Rust production module exceeds the normal authored production limit before inline tests. PM054 Track source adoption extracts cohesive command/fixture/preservation-test ownership; exact ceiling ratcheted downward. Remaining debt stays open."
     },
     "crates/cli/src/commands/dispatch.rs": {
       "kind": "rust-production",
@@ -227,13 +227,13 @@
     "crates/cli/src/commands/route/proposal.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3193
+        "pre_test_lines": 3124
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Rust production module exceeds the normal authored production limit before inline tests. PM054 Track source adoption extracts cohesive command/fixture/preservation-test ownership; exact ceiling ratcheted downward. Remaining debt stays open."
     },
     "crates/cli/src/commands/route/views.rs": {
       "kind": "rust-production",
@@ -283,17 +283,6 @@
       "kind": "rust-test",
       "limits": {
         "file_lines": 2083
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
-    },
-    "crates/cli/src/main_tests/main_tests_project_board_zone.rs": {
-      "kind": "rust-test",
-      "limits": {
-        "file_lines": 974
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -378,17 +367,6 @@
       "status": "decomposition-required",
       "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
     },
-    "crates/cli/src/main_tests/main_tests_project_proposals.rs": {
-      "kind": "rust-test",
-      "limits": {
-        "file_lines": 807
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
-    },
     "crates/cli/src/main_tests/main_tests_project_relationships.rs": {
       "kind": "rust-test",
       "limits": {
@@ -466,17 +444,6 @@
       "status": "decomposition-required",
       "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
     },
-    "crates/engine/src/api/native_write/imports.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "inline_test_lines": 459
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 350,
-      "status": "decomposition-required",
-      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
-    },
     "crates/engine/src/api/native_write/library.rs": {
       "kind": "rust-production",
       "limits": {
@@ -502,13 +469,13 @@
     "crates/engine/src/board/tests/mod_tests_route_path_candidate_authored_copper_graph_policy.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 976
+        "file_lines": 811
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit. PM054 Track source adoption extracts cohesive command/fixture/preservation-test ownership; exact ceiling ratcheted downward. Remaining debt stays open."
     },
     "crates/engine/src/connectivity/mod.rs": {
       "kind": "rust-production",
@@ -520,17 +487,6 @@
       "target_lines": 700,
       "status": "decomposition-required",
       "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
-    "crates/engine/src/export/tests.rs": {
-      "kind": "rust-test",
-      "limits": {
-        "file_lines": 707
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
     },
     "crates/engine/src/import/kicad/parser_helpers.rs": {
       "kind": "rust-production",
@@ -547,17 +503,6 @@
       "kind": "rust-production",
       "limits": {
         "pre_test_lines": 1058
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
-    "crates/engine/src/substrate/board_journal_ops.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 707
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -591,17 +536,6 @@
       "kind": "rust-test",
       "limits": {
         "file_lines": 793
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
-    },
-    "crates/engine/src/substrate/tests/zone_fill.rs": {
-      "kind": "rust-test",
-      "limits": {
-        "file_lines": 754
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -645,25 +579,25 @@
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 2159
+        "expanded_lines": 2140
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Literal include! root exceeds the normal recursively expanded logical-module limit; textual splitting is not architectural decomposition."
+      "note": "PM054 shared Track payload/projection owner removes duplicate source conversion; literal include debt remains at exact downward ceiling."
     },
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 4525,
+        "pre_test_lines": 4466,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "Selection vocabulary and existing workspace selection entry/navigation methods extracted into normal modules for S5A U1; remaining production/test debt stays frozen."
+      "note": "PM054 Track source extraction/display projection moves to normal board_track_projection module; remaining production/test debt frozen."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

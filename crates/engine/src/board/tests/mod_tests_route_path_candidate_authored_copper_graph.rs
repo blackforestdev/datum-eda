@@ -117,6 +117,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     track_a_uuid,
                     Track {
+                        midpoint: None,
                         uuid: track_a_uuid,
                         net: net_uuid,
                         from: Point::new(100_000, 100_000),
@@ -128,6 +129,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     track_b_uuid,
                     Track {
+                        midpoint: None,
                         uuid: track_b_uuid,
                         net: net_uuid,
                         from: Point::new(500_000, 500_000),
@@ -139,6 +141,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 (
                     long_track_uuid,
                     Track {
+                        midpoint: None,
                         uuid: long_track_uuid,
                         net: net_uuid,
                         from: Point::new(100_000, 100_000),
@@ -337,6 +340,7 @@ fn route_path_candidate_authored_copper_graph_prefers_shorter_existing_copper_pa
             (
                 direct_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: direct_track_uuid,
                     net: net_uuid,
                     from: Point::new(100_000, 100_000),
@@ -348,6 +352,7 @@ fn route_path_candidate_authored_copper_graph_prefers_shorter_existing_copper_pa
             (
                 first_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: first_track_uuid,
                     net: net_uuid,
                     from: Point::new(100_000, 100_000),
@@ -359,6 +364,7 @@ fn route_path_candidate_authored_copper_graph_prefers_shorter_existing_copper_pa
             (
                 second_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: second_track_uuid,
                     net: net_uuid,
                     from: Point::new(500_000, 100_000),
@@ -431,6 +437,7 @@ fn route_path_candidate_authored_copper_graph_breaks_equal_length_ties_by_object
     board.tracks.insert(
         alt_track_a_uuid,
         Track {
+            midpoint: None,
             uuid: alt_track_a_uuid,
             net: net_uuid,
             from: Point::new(100_000, 100_000),

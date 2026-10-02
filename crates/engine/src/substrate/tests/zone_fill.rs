@@ -1,3 +1,6 @@
+#[path = "zone_fill_validation_tests.rs"]
+mod zone_fill_validation_tests;
+
 use super::*;
 use crate::board::{PadShape, PlacedPad, Track, Zone};
 use crate::ir::geometry::{Point, Polygon};
@@ -226,14 +229,14 @@ fn bounded_zone_fill_cuts_out_single_foreign_orthogonal_track_with_netclass_clea
     let foreign_net = Uuid::new_v4();
     let mut context = ZoneFillCopperContext::default();
     context.net_clearance_nm.insert(zone_net, 50);
-    context.tracks.push(Track {
-        uuid: Uuid::new_v4(),
-        net: foreign_net,
-        from: Point { x: 300, y: 500 },
-        to: Point { x: 700, y: 500 },
-        width: 100,
-        layer: 0,
-    });
+    context.tracks.push(Track::straight(
+        Uuid::new_v4(),
+        foreign_net,
+        Point { x: 300, y: 500 },
+        Point { x: 700, y: 500 },
+        100,
+        0,
+    ));
 
     let (state, islands, provenance) =
         compute_bounded_zone_fill(&zone(zone_id, zone_net, 0, 0), &context);
@@ -254,14 +257,14 @@ fn bounded_zone_fill_conservatively_cuts_out_non_orthogonal_foreign_track_bounds
     let foreign_net = Uuid::new_v4();
     let mut context = ZoneFillCopperContext::default();
     context.net_clearance_nm.insert(zone_net, 50);
-    context.tracks.push(Track {
-        uuid: Uuid::new_v4(),
-        net: foreign_net,
-        from: Point { x: 300, y: 300 },
-        to: Point { x: 700, y: 700 },
-        width: 100,
-        layer: 0,
-    });
+    context.tracks.push(Track::straight(
+        Uuid::new_v4(),
+        foreign_net,
+        Point { x: 300, y: 300 },
+        Point { x: 700, y: 700 },
+        100,
+        0,
+    ));
 
     let (state, islands, provenance) =
         compute_bounded_zone_fill(&zone(zone_id, zone_net, 0, 0), &context);
@@ -501,254 +504,4 @@ fn resolver_marks_persisted_zone_fill_stale_when_model_revision_changes() {
     assert_eq!(fill.islands, stale.islands);
     assert_eq!(fill.provenance, stale.provenance);
     assert_eq!(fill.model_revision, stale.model_revision);
-}
-
-#[test]
-fn resolver_rejects_invalid_filled_zone_fill_generated_evidence() {
-    let project_id = Uuid::new_v4();
-    let board_id = Uuid::new_v4();
-    let zone_id = Uuid::new_v4();
-    let net_id = Uuid::new_v4();
-    let root = temp_project_root("zone_fill_invalid_filled");
-    write_minimal_project(&root, project_id, board_id);
-    write_json(
-        &root.join("board/board.json"),
-        serde_json::json!({
-            "schema_version": 1,
-            "uuid": board_id,
-            "name": "Board",
-            "packages": {},
-            "tracks": {},
-            "vias": {},
-            "zones": {
-                zone_id.to_string(): {
-                    "uuid": zone_id,
-                    "net": net_id,
-                    "polygon": filled_island(),
-                    "layer": 0,
-                    "priority": 0,
-                    "thermal_relief": false,
-                    "thermal_gap": 0,
-                    "thermal_spoke_width": 0
-                }
-            },
-            "nets": {},
-            "net_classes": {}
-        }),
-    );
-    let initial = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves");
-    let invalid = ZoneFill {
-        schema_version: 1,
-        zone_id,
-        state: ZoneFillState::Filled,
-        source_zone_revision: ObjectRevision(0),
-        model_revision: initial.model_revision.clone(),
-        islands: Vec::new(),
-        provenance: Some("unit-test-fill".to_string()),
-    };
-    persist_zone_fill(&root, &invalid).expect("invalid fill writes for resolver validation");
-
-    let resolved = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves with invalid fill diagnostic");
-    let fill = resolved
-        .zone_fills
-        .get(&zone_id)
-        .expect("fallback fill exists");
-    assert_eq!(fill.state, ZoneFillState::Unfilled);
-    assert!(fill.islands.is_empty());
-    assert!(resolved.diagnostics.iter().any(|diagnostic| {
-        diagnostic.code == "invalid_zone_fill"
-            && diagnostic
-                .message
-                .contains("filled zone fill must contain at least one island")
-    }));
-}
-
-#[test]
-fn resolver_rejects_self_intersecting_filled_zone_fill_island() {
-    let project_id = Uuid::new_v4();
-    let board_id = Uuid::new_v4();
-    let zone_id = Uuid::new_v4();
-    let net_id = Uuid::new_v4();
-    let root = temp_project_root("zone_fill_self_intersecting");
-    write_minimal_project(&root, project_id, board_id);
-    write_json(
-        &root.join("board/board.json"),
-        serde_json::json!({
-            "schema_version": 1,
-            "uuid": board_id,
-            "name": "Board",
-            "packages": {},
-            "tracks": {},
-            "vias": {},
-            "zones": {
-                zone_id.to_string(): {
-                    "uuid": zone_id,
-                    "net": net_id,
-                    "polygon": filled_island(),
-                    "layer": 0,
-                    "priority": 0,
-                    "thermal_relief": false,
-                    "thermal_gap": 0,
-                    "thermal_spoke_width": 0
-                }
-            },
-            "nets": {},
-            "net_classes": {}
-        }),
-    );
-    let initial = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves");
-    let invalid = ZoneFill {
-        schema_version: ZONE_FILL_SCHEMA_VERSION,
-        zone_id,
-        state: ZoneFillState::Filled,
-        source_zone_revision: ObjectRevision(0),
-        model_revision: initial.model_revision.clone(),
-        islands: vec![self_intersecting_island()],
-        provenance: Some("unit-test-fill".to_string()),
-    };
-    persist_zone_fill(&root, &invalid).expect("invalid fill writes for resolver validation");
-
-    let resolved = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves with invalid fill diagnostic");
-    let fill = resolved
-        .zone_fills
-        .get(&zone_id)
-        .expect("fallback fill exists");
-    assert_eq!(fill.state, ZoneFillState::Unfilled);
-    assert!(resolved.diagnostics.iter().any(|diagnostic| {
-        diagnostic.code == "invalid_zone_fill"
-            && diagnostic
-                .message
-                .contains("filled zone island 0 must not self-intersect")
-    }));
-}
-
-#[test]
-fn resolver_rejects_nonfilled_zone_fill_with_renderable_islands() {
-    let project_id = Uuid::new_v4();
-    let board_id = Uuid::new_v4();
-    let zone_id = Uuid::new_v4();
-    let net_id = Uuid::new_v4();
-    let root = temp_project_root("zone_fill_invalid_unsupported");
-    write_minimal_project(&root, project_id, board_id);
-    write_json(
-        &root.join("board/board.json"),
-        serde_json::json!({
-            "schema_version": 1,
-            "uuid": board_id,
-            "name": "Board",
-            "packages": {},
-            "tracks": {},
-            "vias": {},
-            "zones": {
-                zone_id.to_string(): {
-                    "uuid": zone_id,
-                    "net": net_id,
-                    "polygon": filled_island(),
-                    "layer": 0,
-                    "priority": 0,
-                    "thermal_relief": false,
-                    "thermal_gap": 0,
-                    "thermal_spoke_width": 0
-                }
-            },
-            "nets": {},
-            "net_classes": {}
-        }),
-    );
-    let initial = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves");
-    let invalid = ZoneFill {
-        schema_version: ZONE_FILL_SCHEMA_VERSION,
-        zone_id,
-        state: ZoneFillState::Unsupported,
-        source_zone_revision: ObjectRevision(0),
-        model_revision: initial.model_revision.clone(),
-        islands: vec![filled_island()],
-        provenance: Some("unit-test-fill".to_string()),
-    };
-    persist_zone_fill(&root, &invalid).expect("invalid fill writes for resolver validation");
-
-    let resolved = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves with invalid fill diagnostic");
-    let fill = resolved
-        .zone_fills
-        .get(&zone_id)
-        .expect("fallback fill exists");
-    assert_eq!(fill.state, ZoneFillState::Unfilled);
-    assert!(fill.islands.is_empty());
-    assert!(resolved.diagnostics.iter().any(|diagnostic| {
-        diagnostic.code == "invalid_zone_fill"
-            && diagnostic
-                .message
-                .contains("Unsupported zone fill must not contain renderable islands")
-    }));
-}
-
-#[test]
-fn resolver_accepts_valid_unsupported_zone_fill_generated_evidence() {
-    let project_id = Uuid::new_v4();
-    let board_id = Uuid::new_v4();
-    let zone_id = Uuid::new_v4();
-    let net_id = Uuid::new_v4();
-    let root = temp_project_root("zone_fill_valid_unsupported");
-    write_minimal_project(&root, project_id, board_id);
-    write_json(
-        &root.join("board/board.json"),
-        serde_json::json!({
-            "schema_version": 1,
-            "uuid": board_id,
-            "name": "Board",
-            "packages": {},
-            "tracks": {},
-            "vias": {},
-            "zones": {
-                zone_id.to_string(): {
-                    "uuid": zone_id,
-                    "net": net_id,
-                    "polygon": filled_island(),
-                    "layer": 0,
-                    "priority": 0,
-                    "thermal_relief": false,
-                    "thermal_gap": 0,
-                    "thermal_spoke_width": 0
-                }
-            },
-            "nets": {},
-            "net_classes": {}
-        }),
-    );
-    let initial = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves");
-    let unsupported = ZoneFill {
-        schema_version: ZONE_FILL_SCHEMA_VERSION,
-        zone_id,
-        state: ZoneFillState::Unsupported,
-        source_zone_revision: ObjectRevision(0),
-        model_revision: initial.model_revision.clone(),
-        islands: Vec::new(),
-        provenance: Some("unsupported by test solver".to_string()),
-    };
-    persist_zone_fill(&root, &unsupported).expect("unsupported fill should persist");
-
-    let resolved = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves with unsupported fill");
-    assert_eq!(resolved.zone_fills[&zone_id], unsupported);
-    assert!(
-        !resolved
-            .diagnostics
-            .iter()
-            .any(|diagnostic| diagnostic.code == "invalid_zone_fill")
-    );
 }

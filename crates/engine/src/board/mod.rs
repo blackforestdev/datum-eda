@@ -10,13 +10,17 @@ mod board_root_exports;
 mod board_types;
 mod dimension;
 mod net_graph;
+pub mod nominal_geometry;
+pub mod nominal_predicates;
 mod pad;
 mod polygon;
+mod radical_sign;
 pub mod route_proposal;
 mod route_surface;
 mod rule_set;
 mod stackup;
 mod text;
+pub mod track_contact;
 use net_graph::{BoardNetGraph, PadPoint, nearest_pin_pair, segment_length_nm};
 
 pub use board_root_exports::*;
@@ -51,6 +55,17 @@ impl Board {
 
     pub fn diagnostics(&self) -> Vec<ConnectivityDiagnosticInfo> {
         let mut diagnostics = Vec::new();
+        let mut arc_ids = self
+            .tracks
+            .values()
+            .filter(|track| track.midpoint.is_some())
+            .map(|track| track.uuid)
+            .collect::<Vec<_>>();
+        arc_ids.sort();
+        arc_ids.dedup();
+        if !arc_ids.is_empty() {
+            diagnostics.push(ConnectivityDiagnosticInfo {kind:"nominal_connectivity_unavailable".into(),severity:"warning".into(),message:"legacy airwire estimates do not establish complete nominal arc connectivity; use qualified authority".into(),objects:arc_ids});
+        }
         let unrouted_by_net: HashMap<Uuid, usize> = {
             let mut counts = HashMap::new();
             for airwire in self.unrouted() {

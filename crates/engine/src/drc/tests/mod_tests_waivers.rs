@@ -201,6 +201,7 @@ fn authored_drc_rule_objects_waiver_matches_independent_of_object_order() {
     board.tracks.insert(
         track_a,
         Track {
+            midpoint: None,
             uuid: track_a,
             net: net_a,
             from: Point::new(0, 0),
@@ -212,6 +213,7 @@ fn authored_drc_rule_objects_waiver_matches_independent_of_object_order() {
     board.tracks.insert(
         track_b,
         Track {
+            midpoint: None,
             uuid: track_b,
             net: net_b,
             from: Point::new(0, 100_000),
@@ -261,6 +263,7 @@ fn standards_backed_drc_fingerprint_includes_rule_revision_basis() {
     board.tracks.insert(
         track_uuid,
         Track {
+            midpoint: None,
             uuid: track_uuid,
             net: net_uuid,
             from: Point::new(0, 0),

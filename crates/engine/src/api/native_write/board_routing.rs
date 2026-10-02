@@ -229,8 +229,14 @@ fn previous_journaled_zone_fill_value(
 }
 
 #[cfg(test)]
+#[path = "board_track_arc_tests.rs"]
+mod arc_tests;
+#[cfg(test)]
+#[path = "board_routing_empty_fill_tests.rs"]
+mod empty_fill_tests;
+
+#[cfg(test)]
 mod tests {
-    include!("board_routing_empty_fill_tests.rs");
     use std::path::PathBuf;
 
     use super::super::context::commit_prepared;
@@ -241,7 +247,7 @@ mod tests {
         CommitSource, ObjectRevision, ProjectResolver, ZONE_FILL_SCHEMA_VERSION,
     };
 
-    fn test_provenance() -> WriteProvenance {
+    pub(super) fn test_provenance() -> WriteProvenance {
         WriteProvenance::new("unit-test", CommitSource::Test, "board routing facade test")
     }
 
@@ -278,7 +284,11 @@ mod tests {
         }
     }
 
-    fn test_zone_fill(model: &DesignModel, zone_id: Uuid, state: ZoneFillState) -> ZoneFill {
+    pub(super) fn test_zone_fill(
+        model: &DesignModel,
+        zone_id: Uuid,
+        state: ZoneFillState,
+    ) -> ZoneFill {
         ZoneFill {
             schema_version: ZONE_FILL_SCHEMA_VERSION,
             zone_id,
@@ -292,7 +302,9 @@ mod tests {
 
     /// Fixture with one committed net and one committed zone (created through
     /// the facade itself, then re-resolved from disk).
-    fn resolved_model_with_net_and_zone(name: &str) -> (PathBuf, DesignModel, Net, Zone) {
+    pub(super) fn resolved_model_with_net_and_zone(
+        name: &str,
+    ) -> (PathBuf, DesignModel, Net, Zone) {
         let (root, mut model, _board_id, _package_id) = resolved_model_with_board_package(name);
         let net = test_net(Uuid::new_v4());
         let prepared = build_place_board_net(&model, test_provenance(), &net)
@@ -380,6 +392,7 @@ mod tests {
         let (_root, model, _board_id, _package_id) =
             resolved_model_with_board_package("board_routing_set_unknown");
         let track = Track {
+            midpoint: None,
             uuid: Uuid::new_v4(),
             net: Uuid::new_v4(),
             from: Point { x: 0, y: 0 },

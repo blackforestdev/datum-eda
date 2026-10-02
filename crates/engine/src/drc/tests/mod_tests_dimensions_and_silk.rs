@@ -35,6 +35,7 @@ fn track_width_check_reports_below_minimum_width() {
     board.tracks.insert(
         track_uuid,
         Track {
+            midpoint: None,
             uuid: track_uuid,
             net: net_uuid,
             from: Point::new(0, 0),
@@ -157,6 +158,7 @@ fn silk_clearance_reports_text_too_close_to_track() {
     board.tracks.insert(
         track_uuid,
         Track {
+            midpoint: None,
             uuid: track_uuid,
             net: net_uuid,
             from: Point::new(9_800_000, 10_000_000),

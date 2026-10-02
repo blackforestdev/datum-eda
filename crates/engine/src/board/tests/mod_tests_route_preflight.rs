@@ -113,6 +113,7 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
             tracks: HashMap::from([(
                 foreign_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: foreign_track_uuid,
                     net: other_net_uuid,
                     from: Point::new(500_000, 100_000),
@@ -231,6 +232,7 @@ fn route_preflight_detects_keepout_crossing_when_track_endpoints_stay_outside_ke
     board.tracks.insert(
         Uuid::new_v4(),
         Track {
+            midpoint: None,
             uuid: Uuid::new_v4(),
             net: net_uuid,
             from: Point::new(100_000, 500_000),
@@ -275,6 +277,7 @@ fn route_preflight_detects_non_convex_outline_escape_when_track_endpoints_remain
     board.tracks.insert(
         Uuid::new_v4(),
         Track {
+            midpoint: None,
             uuid: Uuid::new_v4(),
             net: net_uuid,
             from: Point::new(200_000, 800_000),
@@ -317,6 +320,7 @@ fn route_preflight_detects_non_convex_outline_escape_when_segment_leaves_and_ree
     board.tracks.insert(
         Uuid::new_v4(),
         Track {
+            midpoint: None,
             uuid: Uuid::new_v4(),
             net: net_uuid,
             from: Point::new(100_000, 500_000),
@@ -340,6 +344,7 @@ fn route_preflight_detects_concave_keepout_crossing() {
     board.tracks.insert(
         Uuid::new_v4(),
         Track {
+            midpoint: None,
             uuid: Uuid::new_v4(),
             net: net_uuid,
             from: Point::new(100_000, 500_000),

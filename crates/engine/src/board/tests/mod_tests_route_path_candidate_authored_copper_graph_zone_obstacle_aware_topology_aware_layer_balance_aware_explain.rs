@@ -105,6 +105,7 @@ fn layer_balance_aware_explain_reports_selected_path_and_balance_reason() {
             (
                 Uuid::from_u128(10),
                 Track {
+                    midpoint: None,
                     uuid: Uuid::from_u128(10),
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -116,6 +117,7 @@ fn layer_balance_aware_explain_reports_selected_path_and_balance_reason() {
             (
                 preferred_inner_track_uuid,
                 Track {
+                    midpoint: None,
                     uuid: preferred_inner_track_uuid,
                     net: net_uuid,
                     from: Point::new(500_000, 500_000),
@@ -289,6 +291,7 @@ fn layer_balance_aware_explain_reports_no_existing_path_when_all_candidates_bloc
         tracks: HashMap::from([(
             track_uuid,
             Track {
+                midpoint: None,
                 uuid: track_uuid,
                 net: net_uuid,
                 from: Point::new(500_000, 500_000),

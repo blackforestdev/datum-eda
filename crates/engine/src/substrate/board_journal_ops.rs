@@ -1,3 +1,5 @@
+#[path = "board_track_source.rs"]
+pub(super) mod board_track_source;
 use uuid::Uuid;
 
 use super::board_json_maps::{
@@ -16,6 +18,9 @@ pub(super) fn apply_board_operation(
     board_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<bool, EngineError> {
+    if let Some(applied) = board_track_source::apply(board_value, operation)? {
+        return Ok(applied);
+    }
     if let Some(applied) = apply_board_list_operation(board_value, operation)? {
         return Ok(applied);
     }
@@ -102,18 +107,6 @@ pub(super) fn apply_board_operation(
             remove_board_map_value(board_value, "pads", *pad_id)?;
             Ok(true)
         }
-        Operation::CreateBoardTrack { track_id, track } => {
-            insert_board_map_value(board_value, "tracks", *track_id, track.clone())?;
-            Ok(true)
-        }
-        Operation::SetBoardTrack { track_id, track } => {
-            replace_board_map_value(board_value, "tracks", *track_id, track.clone())?;
-            Ok(true)
-        }
-        Operation::DeleteBoardTrack { track_id, .. } => {
-            remove_board_map_value(board_value, "tracks", *track_id)?;
-            Ok(true)
-        }
         Operation::CreateBoardVia { via_id, via } => {
             insert_board_map_value(board_value, "vias", *via_id, via.clone())?;
             Ok(true)
@@ -177,6 +170,10 @@ pub(super) fn inverse_board_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<(), EngineError> {
+    if board_track_source::inverse(board_value, operation, inverse_operations)? {
+        return Ok(());
+    }
+
     if inverse_board_list_operation(board_value, operation, inverse_operations)? {
         return Ok(());
     }
@@ -324,29 +321,6 @@ pub(super) fn inverse_board_operation(
                 pad: previous,
             });
             remove_board_map_value(board_value, "pads", *pad_id)?;
-        }
-        Operation::CreateBoardTrack { track_id, track } => {
-            inverse_operations.push(Operation::DeleteBoardTrack {
-                track_id: *track_id,
-                track: track.clone(),
-            });
-            insert_board_map_value(board_value, "tracks", *track_id, track.clone())?;
-        }
-        Operation::SetBoardTrack { track_id, track } => {
-            let previous = board_map_value(board_value, "tracks", *track_id)?.clone();
-            inverse_operations.push(Operation::SetBoardTrack {
-                track_id: *track_id,
-                track: previous,
-            });
-            replace_board_map_value(board_value, "tracks", *track_id, track.clone())?;
-        }
-        Operation::DeleteBoardTrack { track_id, .. } => {
-            let previous = board_map_value(board_value, "tracks", *track_id)?.clone();
-            inverse_operations.push(Operation::CreateBoardTrack {
-                track_id: *track_id,
-                track: previous,
-            });
-            remove_board_map_value(board_value, "tracks", *track_id)?;
         }
         Operation::CreateBoardVia { via_id, via } => {
             inverse_operations.push(Operation::DeleteBoardVia {

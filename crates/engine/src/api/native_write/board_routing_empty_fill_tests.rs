@@ -1,3 +1,7 @@
+use super::tests::{resolved_model_with_net_and_zone, test_provenance, test_zone_fill};
+use super::*;
+use crate::api::native_write::commit_prepared;
+use crate::substrate::{ObjectRevision, ProjectResolver, ZONE_FILL_SCHEMA_VERSION};
 // PM054 successful-empty proof through canonical native producers.
 #[test]
 fn empty_fill_is_current_zero_copper_and_preserves_authored_bytes_on_replay() {
@@ -32,11 +36,12 @@ fn empty_fill_is_current_zero_copper_and_preserves_authored_bytes_on_replay() {
             islands,
             provenance: Some(reason),
         };
-        let write = build_set_zone_fills(&model, test_provenance(), &[fill.clone()]).unwrap();
+        let write =
+            build_set_zone_fills(&model, test_provenance(), std::slice::from_ref(&fill)).unwrap();
         commit_prepared(&mut model, &root, write).unwrap();
         assert_eq!(model.model_revision, revision);
         let (copper, unavailable) =
-            zone_fill_copper_projection_zones(&[zone.clone()], &model.zone_fills);
+            zone_fill_copper_projection_zones(std::slice::from_ref(&zone), &model.zone_fills);
         assert!(copper.is_empty());
         assert!(
             unavailable.is_empty(),

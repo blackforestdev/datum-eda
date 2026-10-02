@@ -31,6 +31,9 @@ pub(super) fn read_source_shard(
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
     validate_source_shard_schema_version(&kind, relative_path, schema_version)?;
+    if kind == SourceShardKind::BoardRoot {
+        super::board_journal_ops::board_track_source::validate_native(value)?;
+    }
     Ok(SourceShardRef {
         shard_id: Uuid::new_v5(
             &Uuid::NAMESPACE_URL,
@@ -360,6 +363,8 @@ pub(super) fn validate_source_shard_schema_version(
 ) -> Result<(), EngineError> {
     let supported_schema_version = if *kind == SourceShardKind::ZoneFill {
         super::zone_fill::ZONE_FILL_SCHEMA_VERSION
+    } else if *kind == SourceShardKind::BoardRoot {
+        super::board_journal_ops::board_track_source::BOARD_ARC_SCHEMA_VERSION
     } else {
         1
     };

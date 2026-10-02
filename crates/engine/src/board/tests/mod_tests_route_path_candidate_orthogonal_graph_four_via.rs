@@ -62,6 +62,7 @@ fn route_path_candidate_orthogonal_graph_four_via_reports_no_path_when_middle_la
     board.tracks.insert(
         Uuid::from_u128(0xf7b),
         Track {
+            midpoint: None,
             uuid: Uuid::from_u128(0xf7b),
             net: other_net_uuid,
             from: Point::new(0, 600_000),

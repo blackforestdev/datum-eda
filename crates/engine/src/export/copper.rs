@@ -10,6 +10,11 @@ pub fn render_rs274x_copper_layer(
     zones: &[Zone],
     vias: &[Via],
 ) -> Result<String, ExportError> {
+    if let Some(track) = tracks.iter().find(|track| track.midpoint.is_some()) {
+        return Err(ExportError::DeferredArcManufacturing {
+            source_id: track.uuid,
+        });
+    }
     if tracks.iter().any(|track| track.width <= 0) {
         return Err(ExportError::InvalidTrackWidth);
     }

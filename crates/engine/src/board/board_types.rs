@@ -20,12 +20,36 @@ pub struct PlacedPackage {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Track {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub midpoint: Option<Point>,
     pub uuid: Uuid,
     pub net: Uuid,
     pub from: Point,
     pub to: Point,
     pub width: i64,
     pub layer: LayerId,
+}
+
+impl Track {
+    /// Existing straight source encoding: no curve feature and no new identity.
+    pub fn straight(
+        uuid: Uuid,
+        net: Uuid,
+        from: Point,
+        to: Point,
+        width: i64,
+        layer: LayerId,
+    ) -> Self {
+        Self {
+            uuid,
+            net,
+            from,
+            to,
+            width,
+            layer,
+            midpoint: None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
