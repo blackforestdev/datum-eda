@@ -732,6 +732,17 @@ click depth and does not select the parent bus. Entry-level independent selectio
 exists only in a workspace/tool with that editing authority. Inspector lists
 member nets and hidden/cross-sheet occurrences without glowing every member net.
 
+
+
+**Foreign declared Bus contact (PM055, owner-resolved):** constrain a physical
+Bus Run to the origin's declared semantic Bus and disclose contacting foreign
+Bus declarations/occurrences separately. Equal names or scalar member sets do
+not join it. Disconnected same-Bus representations widen only at the semantic
+Bus tier; explicit Bus interfaces do not make local physical bridges. This is
+complete derived membership within the lawful subject, independent of visibility
+and context caps. Foreign contact is not co-selection or a scalar short. Missing
+or ambiguous declaration/source authority is explicitly unavailable.
+
 **Bus region qualification and hierarchy projection (owner-resolved, S5-C01A /
 OPEN-8, 2026-08-14):** bus sections region-qualify by the generic line/path
 anchor rule (straight: both endpoints inside; curved: ≥2 of

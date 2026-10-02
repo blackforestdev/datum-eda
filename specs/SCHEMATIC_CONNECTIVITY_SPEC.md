@@ -119,6 +119,18 @@ Current imported KiCad subset:
 - simple contiguous bus-range labels of the form `NAME[a..b]`
 - unambiguous geometric `bus_entry` association between one bus and one wire
 
+
+
+**Foreign declared Bus contact (PM055, owner-resolved):** constrain a physical
+Bus Run to the origin's declared semantic Bus and disclose contacting foreign
+Bus declarations/occurrences separately. Equal names or scalar member sets do
+not join it. Disconnected same-Bus representations widen only at the semantic
+Bus tier; explicit Bus interfaces do not make local physical bridges. This is
+complete derived membership within the lawful subject, independent of visibility
+and context caps. Foreign contact is not co-selection or a scalar short. Missing
+or ambiguous declaration/source authority is explicitly unavailable.
+
+
 ### 4.6 No-Connect
 - A no-connect marker suppresses “unconnected pin” ERC for that exact pin
 - A no-connect marker on a pin that is actually connected is an ERC error
