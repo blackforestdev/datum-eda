@@ -1,5 +1,5 @@
 //! Existing scalar/range label semantics shared by summaries and identity topology.
-use crate::schematic::NetLabel;
+use crate::schematic::{LabelKind, NetLabel};
 pub(super) fn canonical_label_name(name: &str) -> String {
     parse_scalar_bus_member_name(name).unwrap_or_else(|| name.to_string())
 }
@@ -38,4 +38,25 @@ fn parse_bus_range_members(name: &str) -> Option<(i32, i32)> {
     }
     let (start, end) = name[open + 1..close].split_once("..")?;
     Some((start.trim().parse().ok()?, end.trim().parse().ok()?))
+}
+
+pub(super) fn preferred_name(
+    labels: &[super::LabelRef],
+    ports: &[super::PortRef],
+) -> Option<String> {
+    labels
+        .iter()
+        .find(|label| matches!(label.kind, LabelKind::Global))
+        .or_else(|| {
+            labels
+                .iter()
+                .find(|label| matches!(label.kind, LabelKind::Hierarchical))
+        })
+        .or_else(|| {
+            labels
+                .iter()
+                .find(|label| matches!(label.kind, LabelKind::Local))
+        })
+        .map(|label| label.name.clone())
+        .or_else(|| ports.first().map(|port| port.name.clone()))
 }

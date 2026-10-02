@@ -12,6 +12,7 @@ pub enum GeometryError {
     UnsupportedPadGeometry,
     UnknownConductiveLayer,
     UnknownNetAssignment,
+    UnknownPadLayerConnection,
     UnresolvedPredicate,
 }
 pub(super) type Result<T> = std::result::Result<T, GeometryError>;

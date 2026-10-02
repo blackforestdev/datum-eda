@@ -221,4 +221,6 @@ mod binding_fixture;
 mod binding_membership_tests;
 
 #[cfg(test)]
+mod board_selection_query_tests;
+#[cfg(test)]
 mod selection_query_tests;

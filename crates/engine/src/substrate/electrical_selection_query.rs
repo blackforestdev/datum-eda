@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ElectricalQueryFailure {
+    Physical(crate::connectivity::PhysicalQueryFailure),
     StaleRevision,
     AbsentIdentity {
         id: Uuid,
@@ -132,6 +133,49 @@ impl ElectricalSelectionSnapshot {
             values,
             source_basis,
         })
+    }
+
+    pub fn board_run(
+        &self,
+        expected: &ModelRevision,
+        origin: &ElectricalOccurrence,
+        hit: Option<crate::ir::geometry::Point>,
+    ) -> Result<crate::connectivity::BoardRunMembership, ElectricalQueryFailure> {
+        self.require_revision(expected)?;
+        self.basis.occurrence(&self.model, origin).map_err(|_| {
+            ElectricalQueryFailure::InvalidOccurrence {
+                origin: origin.clone(),
+            }
+        })?;
+        let roots: Vec<_> = self
+            .model
+            .source_shards
+            .iter()
+            .filter(|s| s.kind == SourceShardKind::BoardRoot)
+            .collect();
+        if roots.len() != 1 {
+            return Err(ElectricalQueryFailure::UnavailableBasis {
+                sources: roots.iter().map(|r| r.shard_id).collect(),
+                reason: "board root is not unique".into(),
+            });
+        }
+        let source: crate::connectivity::BoardCopperSource =
+            serde_json::from_value(self.values[&roots[0].shard_id].clone()).map_err(|e| {
+                ElectricalQueryFailure::UnavailableBasis {
+                    sources: vec![roots[0].shard_id],
+                    reason: e.to_string(),
+                }
+            })?;
+        if !self.model.objects.get(&source.uuid).is_some_and(|o| {
+            o.domain == "board" && o.kind == "$" && o.source_shard_id == roots[0].shard_id
+        }) {
+            return Err(ElectricalQueryFailure::UnavailableBasis {
+                sources: vec![roots[0].shard_id],
+                reason: "board root identity does not match the captured model".into(),
+            });
+        }
+        crate::connectivity::board_run(&source, &self.model, origin, hit, &self.source_basis)
+            .map_err(ElectricalQueryFailure::Physical)
     }
 
     pub fn revision(&self) -> &ModelRevision {
