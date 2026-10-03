@@ -84,6 +84,11 @@ impl Runtime {
                 handled
             }
             HitTarget::CheckFinding(fingerprint) => {
+                if let Some(handled) = self.acquire_native_artifact(
+                    datum_gui_protocol::SelectionSubject::Diagnostic(fingerprint.clone()),
+                ) {
+                    return handled;
+                }
                 let handled = self.dispatch_session_command(SessionCommand::SelectCheckFinding(
                     fingerprint.clone(),
                 ));

@@ -5,6 +5,7 @@ use crate::{AuthoredSelectionIdentity as Id, PointNm, SelectionSubject};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Command {
     Object(Id),
+    Diagnostic(String),
     Run { origin: Id, point: PointNm },
     Semantic(Id),
     All,
@@ -40,6 +41,11 @@ pub fn resolve(
         | Command::InspectScope(_)
         | Command::InventoryToggle
         | Command::FilterToggle(_) => return Ok(None),
+        Command::Diagnostic(_) => {
+            return Err(
+                crate::selection_resolution::SelectionResolutionError::MissingArtifactAuthority,
+            );
+        }
         Command::Object(id) => {
             if !authority.authored_contains(id) {
                 return Err(
@@ -174,6 +180,32 @@ impl SelectionMenu {
                 ),
                 command: Command::FilterToggle(class),
                 unavailable: None,
+            });
+        }
+    }
+}
+
+impl SelectionMenu {
+    /// Explicit Checks entries use producing fingerprints, not target objects.
+    /// The complete list is keyboard reachable and independent of context caps.
+    pub fn append_checks(&mut self, checks: &crate::CheckRunReviewState) {
+        if checks.project_id.as_deref() != Some(&self.project.to_string()) {
+            return;
+        }
+        let mut counts = std::collections::BTreeMap::new();
+        for finding in &checks.findings {
+            *counts.entry(&finding.fingerprint).or_insert(0usize) += 1;
+        }
+        for finding in &checks.findings {
+            self.items.push(Item {
+                label: format!(
+                    "Checks: {} {} — {}",
+                    finding.severity, finding.rule_id, finding.fingerprint
+                ),
+                command: Command::Diagnostic(finding.fingerprint.clone()),
+                unavailable: (finding.fingerprint.is_empty()
+                    || counts.get(&finding.fingerprint) != Some(&1))
+                .then(|| "Finding fingerprint is unavailable or ambiguous".into()),
             });
         }
     }

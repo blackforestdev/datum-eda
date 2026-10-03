@@ -95,6 +95,7 @@ impl Runtime {
                 self.workspace().scene.scene_id.clone()
             };
             menu.filters = self.workspace().ui.filters.clone();
+            menu.append_checks(&self.workspace().checks);
             if let SelectionTarget::Native(view) = &self.workspace().selection {
                 menu.append_inspection(view);
             }
@@ -200,6 +201,14 @@ impl Runtime {
             return true;
         }
         use datum_gui_protocol::selection_menu::Command;
+        if let Command::Diagnostic(fingerprint) = &item.command {
+            self.dismiss_marking_menu();
+            return self
+                .acquire_native_artifact(datum_gui_protocol::SelectionSubject::Diagnostic(
+                    fingerprint.clone(),
+                ))
+                .unwrap_or(false);
+        }
         if matches!(
             item.command,
             Command::InspectScope(_) | Command::InventoryToggle | Command::FilterToggle(_)

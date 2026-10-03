@@ -1,5 +1,6 @@
 //! Producing-artifact authority composes with native authored selection, never
 //! with scene-derived identities or a second selected-state store.
+pub use crate::check_runs::marker as diagnostic_markers;
 use crate::selection_resolution::{
     NativeSelectionResolution, SelectionAuthority, SelectionModelRevision,
     SelectionResolutionError as Error,
@@ -196,6 +197,46 @@ pub fn build_workspace_selection_view(
         "artifact_kind".into(),
         V::Common(serde_json::json!(view.subject.kind())),
     );
+    if let SelectionSubject::Diagnostic(id) = &view.subject {
+        let finding = state
+            .checks
+            .findings
+            .iter()
+            .find(|f| f.fingerprint == *id)
+            .expect("validated producer");
+        for (name, value) in [
+            ("fingerprint", &finding.fingerprint),
+            ("severity", &finding.severity),
+            ("rule", &finding.rule_id),
+            ("message", &finding.message),
+            ("explanation", &finding.explanation),
+        ] {
+            fields.insert(name.into(), V::Common(serde_json::json!(value)));
+        }
+        for (surface, scene) in [
+            ("board", Some(&state.scene)),
+            ("schematic", state.schematic_scene.as_ref()),
+        ] {
+            let projection = scene.map(|scene| {
+                crate::check_runs::marker::MarkerProjectionIndex::capture(
+                    scene,
+                    &state.checks,
+                    visible,
+                )
+                .anchor(finding)
+            });
+            fields.insert(
+                format!("{surface}_marker"),
+                match projection {
+                    Some(Ok(point)) => V::Common(
+                        serde_json::json!({"navigation_anchor_nm":point,"selected_identity":id}),
+                    ),
+                    Some(Err(reason)) => V::Unavailable(reason.into()),
+                    None => V::Unavailable("Surface is not available".into()),
+                },
+            );
+        }
+    }
     fields.insert("artifact_payload".into(), V::Common(payload));
     if !matches!(view.subject, SelectionSubject::Diagnostic(_)) {
         fields.insert("producer_identity".into(),V::Common(if let Some(proposal)=&state.review.producer_proposal {

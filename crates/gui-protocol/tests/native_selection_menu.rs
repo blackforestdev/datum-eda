@@ -159,3 +159,46 @@ fn native_select_menu_keeps_complete_inventory_and_refuses_unbound_semantics_wit
     assert!(resolve(&next, &menu.items[299].command).is_err());
     assert_ne!(menu.revision, next.revision().0);
 }
+
+#[test]
+fn explicit_checks_entries_keep_complete_fingerprints_and_refuse_ambiguous_or_foreign_producers() {
+    let f = Fixture::new("checks-menu");
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let state = datum_gui_protocol::load_fixture_workspace_state();
+    let mut menu = SelectionMenu::capture(
+        &authority,
+        vec![],
+        datum_gui_protocol::PointNm { x: 0, y: 0 },
+        state.ui.filters,
+    );
+    let mut checks = datum_gui_protocol::CheckRunReviewState {
+        project_id: Some(authority.project().to_string()),
+        findings: (0..300)
+            .map(|i| datum_gui_protocol::CheckFindingSummary {
+                fingerprint: format!("sha256:finding-{i}"),
+                severity: "warning".into(),
+                rule_id: "R".into(),
+                ..Default::default()
+            })
+            .collect(),
+        ..Default::default()
+    };
+    menu.append_checks(&checks);
+    assert_eq!(menu.items.len(), 301);
+    assert_eq!(
+        menu.items[300].command,
+        Command::Diagnostic("sha256:finding-299".into())
+    );
+    assert!(menu.items.iter().all(|item| item.unavailable.is_none()));
+    checks.findings.push(checks.findings[0].clone());
+    let mut ambiguous = menu.clone();
+    ambiguous.items.clear();
+    ambiguous.append_checks(&checks);
+    assert!(ambiguous.items[0].unavailable.is_some());
+    assert!(ambiguous.items[300].unavailable.is_some());
+    checks.project_id = Some(uuid::Uuid::new_v4().to_string());
+    let mut foreign = menu.clone();
+    foreign.items.clear();
+    foreign.append_checks(&checks);
+    assert!(foreign.items.is_empty());
+}

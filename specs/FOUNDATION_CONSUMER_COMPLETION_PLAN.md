@@ -2413,3 +2413,23 @@ Diagnostic markers, complete orthogonal-channel/dense/visual integration and
 U5/native proof continue. This is no full artifact, C03, C04, C05 or C06 acceptance.
 Graphics positive requirements/blocker, PM026/049/051/052, deferred editors,
 undecided latency and manufacturing CAM/T04 remain unchanged.
+
+### S5A-C03 — explicit source-bound diagnostic acquisition
+
+The same producing fingerprint now owns native topmost marker and complete,
+keyboard-reachable Checks entries in the existing Select menu. Current DRC
+locations or unique root-scene source targets supply navigation anchors only;
+stale/foreign contexts, ambiguous UUID/fingerprint projections and unprojected
+occurrence frames remain explicitly Unavailable in read-only inspection. Native
+marker acquisition does not fit/hover or acquire the diagnosed object. The
+Selection Study triangle/exclamation and severity core survive selection.
+
+Focused proof: three marker/projection tests, two complete menu tests and eight
+artifact/lifetime tests passed (13 distinct); logs are
+`target/s5a-c03-diagnostic-{proof,menu-proof,lifetime-proof}.log`.
+Four affected crates pass all-target Clippy in
+`target/s5a-c03-diagnostic-clippy.log`. The schematic-domain unit uses a transport
+projection and is not native schematic acceptance. Three-part styling, dense
+shared LOD, actual producer/occurrence native proof and standalone graphics
+positives remain pending. C03 continues; no C04/C05/C06, rendering/resize,
+manufacturing, latency or definition-editor acceptance is claimed.

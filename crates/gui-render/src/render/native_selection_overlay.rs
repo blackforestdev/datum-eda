@@ -1,3 +1,5 @@
+#[path = "native_selection_overlay/diagnostics.rs"]
+mod diagnostics;
 use super::*;
 
 pub(super) fn push_lightweight_selection_overlay(
@@ -400,6 +402,14 @@ impl PreparedScene {
                 state,
                 pass.pane_id,
                 scene,
+                pass.scene_viewport,
+                pass.camera,
+            );
+            diagnostics::push(
+                &mut quads,
+                &mut self.hit_regions,
+                scene,
+                state,
                 pass.scene_viewport,
                 pass.camera,
             );
