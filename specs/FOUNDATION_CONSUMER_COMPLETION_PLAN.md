@@ -2573,3 +2573,18 @@ buffers. Earlier empty-buffer comparisons establish no positive paint proof.
 `dat-native-copper-stage-iw3n` separately tracks omitted default-native Top Copper
 and its positive case; no name/side inference or production repair is credited.
 Graphics/C05/C06/CAM/T04 and other U4/native obligations remain unchanged.
+
+The reproduced default-native omission now has a bounded correction:
+explicitly declared copper with unresolved side enters the copper painter,
+retains existing unresolved material, and follows declared within-bucket layer
+order. Known named stages/appearance are preserved; no front/back source role
+is invented. The unmodified genesis Top Copper stackup plus canonical Track
+has positive retained geometry and selected paint incidence, stable cleared
+material/resize eligibility and zero post-fixture mutation. Thirty-one focused
+cases pass (two layer/default-native, twelve existing render contracts, fifteen
+overlays/requests, two painter ranges), binary
+`a43ba460ecc8089d6bc0c3c782ff47dbbbbbb0db88ca4db9fa9196559a3fc01e`;
+renderer/app Clippy passes. Logs: `target/s5a-c03-copper-stage-*.log`.
+This resolves producer omission dat-native-copper-stage-iw3n, not independent
+C05/native acceptance or resolved semantic side styling. GPU mask, remaining
+U4/native/graphics proofs, C05/C06 and CAM/T04 still remain.

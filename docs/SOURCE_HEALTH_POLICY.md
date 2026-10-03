@@ -453,3 +453,10 @@ physical1051→1018 shrink. Exact declared ceilings ratchet downward. Source key
 and typed paint roles are disposable projection metadata, never authored
 identity. Shared clone/weak retirement and constructor admission include their
 owned capacities; no new dependency, resource budget or rendering authority.
+
+S5A-C03 declared-copper visibility correction extracts existing stage/name
+queries into normal `layer_stages`; renderer expansion3620→3560 and pad physical
+1018→957 shrink. The exact expanded ceiling ratchets down. Known stage ordering
+and material tokens remain; the private unresolved-copper painter bucket uses
+existing fallback appearance and declared order without minting a side/identity
+or changing native sources. Normal budgets and remaining debt are unchanged.

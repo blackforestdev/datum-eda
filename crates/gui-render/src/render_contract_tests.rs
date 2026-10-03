@@ -48,6 +48,7 @@ fn render_stage_declaration_order_is_the_only_priority_encoding() {
     // render_stage_priority must agree — one encoding, not three.
     let declared = [
         RenderStage::BottomCopper,
+        RenderStage::UnresolvedCopper,
         RenderStage::InnerCopper,
         RenderStage::TopCopper,
         RenderStage::BottomMask,

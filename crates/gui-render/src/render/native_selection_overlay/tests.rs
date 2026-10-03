@@ -36,6 +36,12 @@ pub(crate) fn selected_state() -> (Fixture, ReviewWorkspaceState) {
     selected_track_state(10_000_000)
 }
 pub(crate) fn selected_track_state(length_nm: i64) -> (Fixture, ReviewWorkspaceState) {
+    selected_track_state_with_layer(length_nm, "F.Cu")
+}
+pub(crate) fn selected_track_state_with_layer(
+    length_nm: i64,
+    layer_name: &str,
+) -> (Fixture, ReviewWorkspaceState) {
     use eda_engine::{
         api::native_write::{self, WriteProvenance, genesis},
         board::{Net, Track},
@@ -63,23 +69,36 @@ pub(crate) fn selected_track_state(length_nm: i64) -> (Fixture, ReviewWorkspaceS
             "source-bound immediate proof",
         )
     };
-    // This fixture declares a supported render lane through the canonical
-    // stackup writer; genesis's distinct Top Copper stage gap is tracked in
-    // dat-native-copper-stage-iw3n and is not passed by this supported fixture.
-    let layer = eda_engine::board::StackupLayer::new(
-        1,
-        "F.Cu",
-        eda_engine::board::StackupLayerType::Copper,
-        35_000,
+    // Supported F.Cu and actual unmodified genesis Top Copper are separate
+    // fixture cases. Neither renderer nor selection invents the layer source.
+    if layer_name != "Top Copper" {
+        let layer = eda_engine::board::StackupLayer::new(
+            1,
+            layer_name,
+            eda_engine::board::StackupLayerType::Copper,
+            35_000,
+        );
+        let write = native_write::board_layout::build_set_board_stackup(
+            &f.model,
+            provenance(),
+            f.board,
+            &[layer],
+        )
+        .unwrap();
+        native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    }
+    let source = f
+        .model
+        .materialized_source_shard_value(eda_engine::substrate::SourceShardKind::BoardRoot)
+        .unwrap();
+    assert_eq!(
+        source["stackup"]["layers"][0]["name"].as_str(),
+        Some(layer_name)
     );
-    let write = native_write::board_layout::build_set_board_stackup(
-        &f.model,
-        provenance(),
-        f.board,
-        &[layer],
-    )
-    .unwrap();
-    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    assert_eq!(
+        source["stackup"]["layers"][0]["layer_type"].as_str(),
+        Some("Copper")
+    );
     let net = Net::new(uuid::Uuid::new_v4(), "N", uuid::Uuid::nil());
     let write =
         native_write::board_routing::build_place_board_net(&f.model, provenance(), &net).unwrap();
@@ -121,7 +140,7 @@ pub(crate) fn selected_track_state(length_nm: i64) -> (Fixture, ReviewWorkspaceS
     state.scene.board_uuid = f.board.to_string();
     state.scene.layers = vec![datum_gui_protocol::SceneLayer {
         layer_id: "layer-1".into(),
-        name: "F.Cu".into(),
+        name: layer_name.into(),
         kind: "copper".into(),
         render_order: 0,
         visible_by_default: true,

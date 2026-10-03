@@ -75,7 +75,7 @@ pub(crate) fn sort_retained_draw_commands(
     {
         return Ok(());
     }
-    let layout = std::alloc::Layout::array::<(u32, usize)>(commands.len())?;
+    let layout = std::alloc::Layout::array::<((u32, u32), usize)>(commands.len())?;
     admit(crate::cpu_alloc::heap::allocation_bytes(layout))?;
     let mut order = Vec::new();
     order.try_reserve_exact(commands.len())?;
@@ -106,14 +106,22 @@ pub(crate) fn sort_retained_draw_commands(
 fn draw_command_priority(
     command: &RetainedDrawCommand,
     layers: &[datum_gui_protocol::SceneLayer],
-) -> u32 {
+) -> (u32, u32) {
     let layer_id = match command {
         RetainedDrawCommand::Quads { layer_id, .. }
         | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id.as_deref(),
     };
-    layer_id
-        .map(|id| scene_layer_stack_priority(id, layers))
-        .unwrap_or(u32::MAX)
+    layer_id.map_or((u32::MAX, 0), |id| {
+        let tie = if render_stage_for_layer(id, layers) == RenderStage::UnresolvedCopper {
+            layers
+                .iter()
+                .find(|layer| layer.layer_id == id)
+                .map_or(0, |layer| layer.render_order)
+        } else {
+            0
+        };
+        (scene_layer_stack_priority(id, layers), tie)
+    })
 }
 
 impl RetainedScene {

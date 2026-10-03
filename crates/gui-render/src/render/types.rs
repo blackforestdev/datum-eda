@@ -256,6 +256,7 @@ enum LayerFamily {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum RenderStage {
     BottomCopper,
+    UnresolvedCopper,
     InnerCopper,
     TopCopper,
     BottomMask,
