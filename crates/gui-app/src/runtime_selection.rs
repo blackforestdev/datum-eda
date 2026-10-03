@@ -397,6 +397,11 @@ impl Runtime {
             return false;
         }
         view.scope = scope;
+        self.session
+            .workspace_mut()
+            .ui
+            .selection_inspector
+            .reset_scroll();
         self.invalidate_frame();
         true
     }

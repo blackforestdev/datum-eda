@@ -1,8 +1,11 @@
 //! Complete, revision-bound shared output. Never an authored group or writer.
+mod inspection;
+pub mod inspector_state;
 use crate::selection_resolution::{
     NativeSelectionResolution, SelectionAuthority, SelectionModelRevision,
 };
 use crate::{AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, SelectionSubject};
+pub use inspection::ScopeInspection;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -23,6 +26,7 @@ pub struct SelectionView {
     pub related: BTreeSet<Id>,
     pub scope: Option<Class>,
     pub values: BTreeMap<Id, BTreeMap<String, Value>>,
+    pub inspection: Vec<ScopeInspection>,
     pub zone_regions: BTreeMap<String, Vec<Vec<crate::PointNm>>>,
     pub board_keys: BTreeSet<String>,
     pub schematic_keys: BTreeSet<String>,
@@ -49,34 +53,23 @@ impl SelectionView {
             .filter(|id| self.scope.is_none_or(|class| class == id.class))
     }
     pub fn field(&self, name: &str) -> InspectionValue {
-        let mut common: Option<&Value> = None;
-        let mut mixed = false;
-        let mut count = 0;
-        for id in self.scoped_members() {
-            count += 1;
-            let Some(value) = self.values.get(id).and_then(|v| v.get(name)) else {
-                return InspectionValue::Unavailable(
+        self.inspection
+            .iter()
+            .find(|scope| scope.scope == self.scope)
+            .and_then(|scope| scope.fields.get(name))
+            .cloned()
+            .unwrap_or_else(|| {
+                InspectionValue::Unavailable(
                     "Property is absent or incompatible in the complete scope".into(),
-                );
-            };
-            if let Some(first) = common {
-                mixed |= first != value;
-            } else {
-                common = Some(value);
-            }
-        }
-        if count == 0 {
-            InspectionValue::Unavailable("No members in this scope".into())
-        } else if mixed {
-            InspectionValue::Mixed
-        } else {
-            InspectionValue::Common(common.unwrap().clone())
-        }
+                )
+            })
     }
     pub fn fields(&self) -> BTreeSet<&str> {
-        self.scoped_members()
-            .filter_map(|id| self.values.get(id))
-            .flat_map(|v| v.keys().map(String::as_str))
+        self.inspection
+            .iter()
+            .find(|scope| scope.scope == self.scope)
+            .into_iter()
+            .flat_map(|scope| scope.fields.keys().map(String::as_str))
             .collect()
     }
     pub fn summary(&self) -> String {
@@ -122,6 +115,7 @@ pub fn build_selection_view(
         related: projection.related,
         scope: None,
         values: BTreeMap::new(),
+        inspection: Vec::new(),
         zone_regions: BTreeMap::new(),
         board_keys: BTreeSet::new(),
         schematic_keys: BTreeSet::new(),
@@ -254,6 +248,7 @@ pub fn build_selection_view(
         .cloned()
         .collect();
     result.unprojected = result.members.difference(&represented).cloned().collect();
+    result.inspection = inspection::compile(&result.members, &result.values);
     Ok(result)
 }
 pub fn scene_keys(scene: &crate::BoardReviewSceneV1) -> impl Iterator<Item = &str> {

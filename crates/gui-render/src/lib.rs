@@ -1,3 +1,5 @@
+mod hit_target;
+pub use hit_target::HitTarget;
 #[path = "render/glyph_mesh_lookup.rs"]
 mod glyph_mesh_lookup;
 #[path = "render/world_polygon.rs"]
@@ -17,9 +19,6 @@ use eda_engine::ir::geometry::{LayerId, Point};
 use geometry_output::Output;
 #[path = "render/world_primitives.rs"]
 mod world_primitives;
-#[cfg(test)]
-use std::collections::BTreeMap;
-use std::ops::Range;
 use taffy::prelude::*;
 use uuid::Uuid;
 use world_primitives::{

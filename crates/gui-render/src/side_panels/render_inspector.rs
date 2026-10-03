@@ -11,6 +11,8 @@ pub(super) fn render_inspector_panel(
     match &state.selection {
         SelectionTarget::Native(view) => super::selection_inspector::render(
             view,
+            &state.ui.selection_inspector,
+            &state.ui.filters.excluded_selection_classes,
             inspector_rect,
             panel_quads,
             text_runs,

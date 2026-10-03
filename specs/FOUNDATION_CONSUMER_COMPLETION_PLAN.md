@@ -2094,6 +2094,16 @@ baseline-stale terminal renderer guard was corrected to its current existing
 painter/submission owners with eight regression passes; production terminal GPU
 paths were unchanged. Source health/traceability/project-state checks passed.
 
+The next integrated unit adds an expandable complete identity inventory,
+bounded visible-row rendering with Inspector-local wheel routing, and class
+filter controls that affect future acquisition only. Scope switching remains
+read-only; all Common/Mixed/Unavailable scopes compile from canonical values
+once per complete basis rather than rescanning membership per displayed field.
+A focused renderer replay reaches every inventory/filter row in a four-row
+viewport and verifies clipping, stable membership and unchanged authored bytes.
+Native keyboard/accessibility, complete aggregate coverage, bounded region
+queries and the remaining visual/native fixture proof are still pending.
+
 #### Native board graphics: bounded proposal for owner/reviewer disposition
 
 `S5A-BOARD-GRAPHICS-PROPOSAL-01`, issue

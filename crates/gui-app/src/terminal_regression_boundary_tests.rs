@@ -58,6 +58,10 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ReviewAction(_)
         | HitTarget::AuthoredObject(_)
         | HitTarget::SelectionScope(_)
+        | HitTarget::SelectionInventoryToggle
+        | HitTarget::SelectionFiltersToggle
+        | HitTarget::SelectionClassToggle(_)
+        | HitTarget::SelectionInspectorScroll { .. }
         | HitTarget::FitBoard
         | HitTarget::FitReviewTarget
         | HitTarget::SetWorkspaceTool(_)

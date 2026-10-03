@@ -62,6 +62,7 @@ pub struct WorkspaceFilterState {
 #[derive(Debug, Clone, PartialEq)]
 pub struct WorkspaceUiState {
     pub selection_region: Option<SelectionRegionFeedback>,
+    pub selection_inspector: crate::selection_view::inspector_state::SelectionInspectorState,
     /// The one application-level input/selection owner. `WorkspaceLayout`
     /// retains pane structure and the last editor leaf, while this value says
     /// whether that leaf, the terminal dock, or a transient overlay currently
@@ -120,6 +121,7 @@ impl WorkspaceUiState {
     pub fn new(filters: WorkspaceFilterState) -> Self {
         Self {
             selection_region: None,
+            selection_inspector: Default::default(),
             focus: ApplicationFocus::default(),
             active_dock_tab: None,
             active_menu: None,

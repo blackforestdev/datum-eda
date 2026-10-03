@@ -391,3 +391,11 @@ Renderer include expansion falls from5948 to4922; the legacy test file falls
 from960 to840 lines. All exact ceilings ratchet downward; remaining debt and
 normal budgets remain. Canonical output, exact region and native retained-byte
 proof support these boundaries without adding a selection writer or dependency.
+
+S5A-C03 Inspector navigation extracts unchanged typed chrome action dispatch into
+`runtime_hit_actions.rs` and pointer targets into the normal `hit_target.rs`
+module. `gui-app/main.rs` now meets the ordinary production budget and its
+legacy entry is removed; renderer root expanded debt ratchets to 4,812 lines.
+Inspector interaction/navigation and canonical aggregate compilation are normal
+modules. These structural changes do not close S5A, alter focus doctrine or
+change the rendering/resize owners.

@@ -1,9 +1,17 @@
-//! Shared complete selection Inspector; scope is independent of canvas membership.
+//! Shared complete selection Inspector; navigation never alters membership.
 use super::inspector_chrome::push_inspector_title_band;
 use super::*;
-use datum_gui_protocol::selection_view::{InspectionValue, SelectionView};
+use datum_gui_protocol::{
+    AuthoredSelectionClass as Class,
+    selection_view::{InspectionValue, SelectionView, inspector_state::SelectionInspectorState},
+};
+use std::collections::BTreeSet;
+
+#[allow(clippy::too_many_arguments)]
 pub(super) fn render(
     view: &SelectionView,
+    navigation: &SelectionInspectorState,
+    excluded: &BTreeSet<Class>,
     rect: RectPx,
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
@@ -17,18 +25,75 @@ pub(super) fn render(
         format!("{} — {} objects", view.subject.kind(), view.members.len())
     };
     push_inspector_title_band(rect, &title, "Read-only inspection", true, quads, text)?;
-    let mut y = rect.y + 76.0;
-    let mut row = |label: &str, text: &mut Vec<TextRun>| {
+    let body = RectPx {
+        x: rect.x,
+        y: rect.y + 76.0,
+        width: rect.width,
+        height: (rect.height - 76.0).max(0.0),
+    };
+    let visible = (body.height / 22.0).floor() as usize;
+    if visible == 0 {
+        return Ok(());
+    }
+    let mut counts = std::collections::BTreeMap::new();
+    for id in &view.members {
+        *counts.entry(id.class).or_insert(0usize) += 1;
+    }
+    let fields = view.fields();
+    let total = 1
+        + usize::from(view.stale)
+        + usize::from(view.focus().is_some())
+        + usize::from(view.notice.is_some())
+        + 1
+        + 1
+        + counts.len()
+        + fields.len()
+        + 1
+        + if navigation.inventory_expanded {
+            view.scoped_members().count()
+        } else {
+            0
+        }
+        + 1
+        + if navigation.filters_expanded {
+            CLASSES.len() + 1
+        } else {
+            0
+        };
+    let start = navigation.scroll_offset.min(total.saturating_sub(visible));
+    hits.push(HitRegion {
+        rect: body,
+        target: HitTarget::SelectionInspectorScroll { total, visible },
+    });
+    let row_index = std::cell::Cell::new(0usize);
+    let mut row = |label: &str, target: Option<HitTarget>, active: bool| {
+        let index = row_index.get();
+        row_index.set(index + 1);
+        if index < start || index >= start + visible {
+            return;
+        }
+        let y = body.y + (index - start) as f32 * 22.0;
+        let hit = RectPx {
+            x: rect.x + 10.0,
+            y,
+            width: (rect.width - 20.0).max(0.0),
+            height: 22.0,
+        };
+        if active {
+            push_rect_border(quads, hit, TEXT_ACCENT, 1.0);
+        }
+        if let Some(target) = target {
+            hits.push(HitRegion { rect: hit, target });
+        }
         draw_text(
             label,
             rect.x + 12.0,
-            y,
-            11.5,
-            TEXT_PRIMARY,
+            y + 3.0,
+            11.0,
+            if active { TEXT_ACCENT } else { TEXT_PRIMARY },
             TextFace::Ui,
             text,
         );
-        y += 22.0;
     };
     row(
         &format!(
@@ -37,104 +102,193 @@ pub(super) fn render(
             view.locked.len(),
             view.unprojected.len()
         ),
-        text,
+        None,
+        false,
     );
     if view.stale {
-        row("STALE: previous basis; current geometry unavailable", text);
+        row(
+            "STALE: previous basis; current geometry unavailable",
+            None,
+            false,
+        );
     }
     if let Some(focus) = view.focus() {
-        row(&format!("Focus: {:?} {}", focus.class, focus.id), text);
+        row(
+            &format!("Focus: {:?} {}", focus.class, focus.id),
+            None,
+            false,
+        );
     }
     if let Some(notice) = &view.notice {
-        row(notice, text);
+        row(notice, None, false);
     }
     row(
         "Unavailable: Move / Rotate / Mirror / Lock / Group (S5A)",
-        text,
+        None,
+        false,
     );
-    let mut counts = std::collections::BTreeMap::new();
-    for id in &view.members {
-        *counts.entry(id.class).or_insert(0usize) += 1;
-    }
-    for (scope, label) in std::iter::once((None, format!("All {}", view.members.len()))).chain(
-        counts
-            .into_iter()
-            .map(|(class, n)| (Some(class), format!("{class:?} {n}"))),
-    ) {
-        let current = view.scope == scope;
-        let target = RectPx {
-            x: rect.x + 10.0,
-            y: y - 3.0,
-            width: (rect.width - 20.0).max(0.0),
-            height: 22.0,
-        };
-        if current {
-            push_rect_border(quads, target, TEXT_ACCENT, 1.0);
-        }
-        hits.push(HitRegion {
-            rect: target,
-            target: HitTarget::SelectionScope(scope),
-        });
-        draw_text(
-            &label,
-            rect.x + 12.0,
-            y,
-            11.5,
-            if current { TEXT_ACCENT } else { TEXT_PRIMARY },
-            TextFace::Ui,
-            text,
+    row(
+        &format!("All {}", view.members.len()),
+        Some(HitTarget::SelectionScope(None)),
+        view.scope.is_none(),
+    );
+    for (class, n) in counts {
+        row(
+            &format!("{} {n}", class_label(class)),
+            Some(HitTarget::SelectionScope(Some(class))),
+            view.scope == Some(class),
         );
-        y += 24.0;
     }
-    for field in view.fields() {
+    for field in fields {
         let value = match view.field(field) {
             InspectionValue::Common(v) => v.to_string(),
             InspectionValue::Mixed => "Mixed".into(),
             InspectionValue::Unavailable(reason) => format!("Unavailable — {reason}"),
         };
-        draw_text(
-            &format!("{field}: {value}"),
-            rect.x + 12.0,
-            y,
-            11.0,
-            TEXT_PRIMARY,
-            TextFace::Ui,
-            text,
+        row(
+            &format!("{}: {value}", field.replace('_', " ")),
+            None,
+            false,
         );
-        y += 22.0;
     }
-    draw_text(
-        &format!("Members {} (complete scope)", view.scoped_members().count()),
-        rect.x + 12.0,
-        y,
-        11.5,
-        TEXT_PRIMARY,
-        TextFace::UiStrong,
-        text,
+    row(
+        &format!(
+            "{} Members {} (complete scope)",
+            if navigation.inventory_expanded {
+                "▾"
+            } else {
+                "▸"
+            },
+            view.scoped_members().count()
+        ),
+        Some(HitTarget::SelectionInventoryToggle),
+        false,
     );
-    y += 24.0;
-    // Render only visible rows; complete inventory lives in the projection, not this viewport.
-    for id in view.scoped_members() {
-        if y + 16.0 > rect.y + rect.height {
-            break;
+    if navigation.inventory_expanded {
+        let inventory_start = row_index.get();
+        let count = view.scoped_members().count();
+        // Do not format or allocate labels for clipped inventory rows.
+        let skip = start.saturating_sub(inventory_start).min(count);
+        row_index.set(row_index.get() + skip);
+        let end = (start + visible).saturating_sub(inventory_start).min(count);
+        for id in view
+            .scoped_members()
+            .skip(skip)
+            .take(end.saturating_sub(skip))
+        {
+            let mut status = String::new();
+            if view.hidden.contains(id) {
+                status.push_str(" · hidden");
+            }
+            if view.locked.contains(id) {
+                status.push_str(" · locked");
+            }
+            if view.unprojected.contains(id) {
+                status.push_str(" · unprojected");
+            }
+            let occurrence = if id.instance_path.is_empty() {
+                String::new()
+            } else {
+                format!(" · occurrence {:?}", id.instance_path)
+            };
+            row(
+                &format!("{} {}{occurrence}{status}", class_label(id.class), id.id),
+                None,
+                false,
+            );
         }
-        let status = if view.hidden.contains(id) {
-            " · hidden"
-        } else if view.locked.contains(id) {
-            " · locked"
-        } else {
-            ""
-        };
+        row_index.set(inventory_start + count);
+    }
+    row(
+        &format!(
+            "{} Acquisition filters",
+            if navigation.filters_expanded {
+                "▾"
+            } else {
+                "▸"
+            }
+        ),
+        Some(HitTarget::SelectionFiltersToggle),
+        false,
+    );
+    if navigation.filters_expanded {
+        row(
+            "Future acquisition only; Ctrl+A bypasses filters",
+            None,
+            false,
+        );
+        for class in CLASSES {
+            row(
+                &format!(
+                    "{} {}",
+                    if excluded.contains(&class) {
+                        "[ ]"
+                    } else {
+                        "[x]"
+                    },
+                    class_label(class)
+                ),
+                Some(HitTarget::SelectionClassToggle(class)),
+                false,
+            );
+        }
+    }
+    if total > visible {
         draw_text(
-            &format!("{:?} {}{status}", id.class, id.id),
-            rect.x + 12.0,
-            y,
-            11.0,
-            TEXT_PRIMARY,
+            &format!("{}–{} / {total}", start + 1, (start + visible).min(total)),
+            rect.x + rect.width - 96.0,
+            rect.y + 56.0,
+            9.0,
+            TEXT_MUTED,
             TextFace::Mono,
             text,
         );
-        y += 20.0;
     }
     Ok(())
 }
+const CLASSES: [Class; 18] = [
+    Class::Footprint,
+    Class::Pad,
+    Class::Track,
+    Class::Via,
+    Class::Zone,
+    Class::BoardText,
+    Class::BoardGraphic,
+    Class::BoardOutline,
+    Class::Symbol,
+    Class::Pin,
+    Class::Wire,
+    Class::BusSection,
+    Class::Label,
+    Class::Port,
+    Class::Junction,
+    Class::NoConnect,
+    Class::SchematicText,
+    Class::SchematicGraphic,
+];
+fn class_label(class: Class) -> &'static str {
+    match class {
+        Class::Footprint => "Parts",
+        Class::Pad => "Pads",
+        Class::Track => "Tracks",
+        Class::Via => "Vias",
+        Class::Zone => "Zones",
+        Class::BoardText => "Board text",
+        Class::BoardGraphic => "Board graphics",
+        Class::BoardOutline => "Board outline",
+        Class::Symbol => "Symbols",
+        Class::Pin => "Pins",
+        Class::Wire => "Wires",
+        Class::BusSection => "Bus sections",
+        Class::Label => "Labels",
+        Class::Port => "Ports",
+        Class::Junction => "Junctions",
+        Class::NoConnect => "No-connects",
+        Class::SchematicText => "Schematic text",
+        Class::SchematicGraphic => "Schematic graphics",
+    }
+}
+
+#[cfg(test)]
+#[path = "selection_inspector/tests.rs"]
+mod tests;

@@ -543,17 +543,6 @@
       "status": "decomposition-required",
       "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
     },
-    "crates/gui-app/src/main.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 1113
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Selection/filter retained validity and history decisions move into shared RenderSession source validation; remaining root debt stays frozen."
-    },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",
       "limits": {
@@ -580,13 +569,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 4922
+        "expanded_lines": 4812
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Text preparation signature types now live with their identity/admission behavior in text_prepare_identity.rs. Shared glyph painter stages preserve one resource owner and explicit Console occlusion. Remaining include debt stays frozen."
+      "note": "Shared typed pointer targets now live in the normal hit_target module. Preserve shared routing and remaining include debt; no ceiling increase."
     },
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",

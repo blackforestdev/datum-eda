@@ -5,13 +5,13 @@ use datum_gui_protocol::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, SelectionSubject,
 };
 use eda_engine::ir::geometry::Point;
-struct Fixture {
+pub(crate) struct Fixture {
     root: std::path::PathBuf,
     model: eda_engine::substrate::DesignModel,
     board: uuid::Uuid,
 }
 impl Fixture {
-    fn source_bytes(&self) -> Vec<(std::path::PathBuf, Vec<u8>)> {
+    pub(crate) fn source_bytes(&self) -> Vec<(std::path::PathBuf, Vec<u8>)> {
         let mut files: Vec<_> = self
             .model
             .source_shards
@@ -28,7 +28,7 @@ impl Drop for Fixture {
         let _ = std::fs::remove_dir_all(&self.root);
     }
 }
-fn selected_state() -> (Fixture, ReviewWorkspaceState) {
+pub(crate) fn selected_state() -> (Fixture, ReviewWorkspaceState) {
     use eda_engine::{
         api::native_write::{self, WriteProvenance, genesis},
         board::{Net, Track},

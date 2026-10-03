@@ -1,5 +1,7 @@
 //! Immutable text mesh lookup with one admitted index and borrowed assets.
 use super::*;
+#[cfg(test)]
+use std::collections::BTreeMap;
 
 pub(crate) trait GlyphMeshLookup {
     fn mesh(&self, key: &GlyphMeshHandlePrimitive) -> Option<&GlyphMeshAssetPrimitive>;

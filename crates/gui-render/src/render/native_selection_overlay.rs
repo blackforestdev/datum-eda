@@ -403,4 +403,4 @@ pub(super) fn selection_beats_hover(
 
 #[cfg(test)]
 #[path = "native_selection_overlay/tests.rs"]
-mod tests;
+pub(crate) mod tests;
