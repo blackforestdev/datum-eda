@@ -193,7 +193,7 @@ impl PreparedScene {
             );
             let before_panel_quads = panel_quads.len();
             let before_text_runs = text_runs.len();
-            side_panels::render_side_panels(
+            let selection_lod_row = side_panels::render_side_panels(
                 state,
                 &layout,
                 &mut panel_quads,
@@ -517,6 +517,8 @@ impl PreparedScene {
                 viewport_underlay_vertices,
                 viewport_overlay_vertices,
                 selection_overlay_split: usize::MAX,
+                selection_lod_row,
+                selection_visual_lod: None,
                 selection_strokes: Vec::new(),
                 selection_masks: Vec::new(),
                 board_interaction_vertices,

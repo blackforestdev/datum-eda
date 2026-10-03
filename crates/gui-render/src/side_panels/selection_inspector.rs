@@ -19,7 +19,7 @@ pub(super) fn render(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<Option<RectPx>> {
     let title = if view.members.len() == 1 {
         "Object Selection".to_owned()
     } else if view.subject.kind() == "compound" {
@@ -36,14 +36,14 @@ pub(super) fn render(
     };
     let visible = (body.height / 22.0).floor() as usize;
     if visible == 0 {
-        return Ok(());
+        return Ok(None);
     }
     let mut counts = std::collections::BTreeMap::new();
     for id in &view.members {
         *counts.entry(id.class).or_insert(0usize) += 1;
     }
     let fields = view.fields();
-    let total = 1
+    let total = 2
         + usize::from(view.stale)
         + usize::from(view.focus().is_some())
         + usize::from(view.notice.is_some())
@@ -69,6 +69,7 @@ pub(super) fn render(
         target: HitTarget::SelectionInspectorScroll { total, visible },
     });
     let row_index = std::cell::Cell::new(0usize);
+    let visual_row = std::cell::Cell::new(None);
     let mut row = |label: &str, target: Option<HitTarget>, active: bool| {
         let index = row_index.get();
         row_index.set(index + 1);
@@ -82,6 +83,12 @@ pub(super) fn render(
             width: (rect.width - 20.0).max(0.0),
             height: 22.0,
         };
+        // Row one is reserved for the final camera-qualified presentation
+        // summary. Return typed chrome geometry, never identify rows by text.
+        if index == 1 {
+            visual_row.set(Some(hit));
+            return;
+        }
         if active {
             push_rect_border(quads, hit, TEXT_ACCENT, 1.0);
         }
@@ -108,6 +115,7 @@ pub(super) fn render(
         None,
         false,
     );
+    row("", None, false);
     if view.stale {
         row(
             "STALE: previous basis; current geometry unavailable",
@@ -251,7 +259,7 @@ pub(super) fn render(
             text,
         );
     }
-    Ok(())
+    Ok(visual_row.get())
 }
 
 #[cfg(test)]

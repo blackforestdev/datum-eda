@@ -57,12 +57,23 @@ impl LinuxTerminalAccessibilityBridge {
         view: Option<&datum_gui_protocol::selection_view::SelectionView>,
         pane: Option<datum_gui_protocol::PaneId>,
         evaluating: Option<(datum_gui_protocol::PaneId, usize)>,
+        visual_lod: Option<datum_gui_render::SelectionVisualLod>,
     ) {
+        // Only the successful preparation owner supplies a new visual summary.
+        // Identical snapshots keep their prior report without noisy no-op events;
+        // changed subjects/revisions wait for current preparation.
+        let visual_lod = visual_lod.or_else(|| {
+            self.selection
+                .as_ref()
+                .filter(|previous| view.is_some_and(|view| previous.view.as_ref() == view))
+                .and_then(|previous| previous.visual_lod)
+        });
         let focused = pane.is_some();
         if match (&self.selection, view) {
             (Some(previous), Some(view)) => {
                 previous.pane == pane
                     && previous.evaluating == evaluating
+                    && previous.visual_lod == visual_lod
                     && previous.view.as_ref() == view
             }
             (None, None) => true,
@@ -81,6 +92,7 @@ impl LinuxTerminalAccessibilityBridge {
             crate::selection_accessibility::SelectionAccessibilitySnapshot {
                 view,
                 evaluating,
+                visual_lod,
                 focused,
                 pane,
             }

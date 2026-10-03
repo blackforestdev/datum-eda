@@ -5,6 +5,7 @@
 
 use super::*;
 pub use native_selection_overlay::mask::PaintRange as SelectedPaintRange;
+pub use native_selection_overlay::visual_lod::SelectionVisualLod;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
@@ -24,6 +25,8 @@ pub struct PreparedScene {
     pub(super) viewport_underlay_vertices: Vec<Vertex>,
     pub(super) viewport_overlay_vertices: Vec<Vertex>,
     pub(super) selection_overlay_split: usize,
+    pub(super) selection_visual_lod: Option<SelectionVisualLod>,
+    pub(super) selection_lod_row: Option<(RectPx, f32)>,
     pub(super) selection_masks: Vec<(
         datum_gui_protocol::PaneId,
         SceneSurface,
@@ -67,6 +70,9 @@ pub struct PreparedScene {
 }
 
 impl PreparedScene {
+    pub fn selection_visual_lod(&self) -> Option<SelectionVisualLod> {
+        self.selection_visual_lod
+    }
     pub(super) fn schematic_overlay_vertices(&self) -> &[Vertex] {
         &self.schematic_overlay_vertices
     }

@@ -7,11 +7,25 @@ pub(super) fn render_active_inspector(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<Option<RectPx>> {
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    if !revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
-        render_inspector_panel(state, rect, panel_quads, text_runs, hit_regions)?;
-    }
+    let visual_row =
+        if revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
+            None
+        } else if let SelectionTarget::Native(view) = &state.selection {
+            super::selection_inspector::render(
+                view,
+                &state.ui.selection_inspector,
+                &state.ui.filters.excluded_selection_classes,
+                rect,
+                panel_quads,
+                text_runs,
+                hit_regions,
+            )?
+        } else {
+            render_inspector_panel(state, rect, panel_quads, text_runs, hit_regions)?;
+            None
+        };
     crate::hit_clipping::clip_content(
         panel_quads,
         text_runs,
@@ -22,7 +36,7 @@ pub(super) fn render_active_inspector(
         rect,
     );
 
-    Ok(())
+    Ok(visual_row.and_then(|row| row.intersect(rect)))
 }
 
 #[cfg(test)]

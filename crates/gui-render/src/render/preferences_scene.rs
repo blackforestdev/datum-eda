@@ -176,6 +176,8 @@ impl PreparedScene {
             viewport_underlay_vertices: Vec::new(),
             viewport_overlay_vertices: Vec::new(),
             selection_overlay_split: 0,
+            selection_lod_row: None,
+            selection_visual_lod: None,
             selection_strokes: Vec::new(),
             selection_masks: Vec::new(),
             board_interaction_vertices: Vec::new(),

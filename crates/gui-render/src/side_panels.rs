@@ -16,11 +16,12 @@ pub(super) fn render_side_panels(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<Option<(RectPx, f32)>> {
     let scale = crate::text_presentation::chrome_scale::Scale::for_layout(layout);
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     let logical = scale.logical_layout(layout.clone());
-    render_side_panels_logical(state, &logical, panel_quads, text_runs, hit_regions)?;
+    let visual_row =
+        render_side_panels_logical(state, &logical, panel_quads, text_runs, hit_regions)?;
     // Collapsed panels must not draw headings or own clicks over dock/status
     // chrome. Preserve unconstrained text layout while adding the visible clip.
     for run in &mut text_runs[starts.1..] {
@@ -46,7 +47,17 @@ pub(super) fn render_side_panels(
     scale.quads(&mut panel_quads[starts.0..]);
     scale.text_geometry(&mut text_runs[starts.1..]);
     scale.hits(&mut hit_regions[starts.2..]);
-    Ok(())
+    Ok(visual_row.map(|row| {
+        (
+            RectPx {
+                x: row.x * scale.factor(),
+                y: row.y * scale.factor(),
+                width: row.width * scale.factor(),
+                height: row.height * scale.factor(),
+            },
+            scale.factor(),
+        )
+    }))
 }
 
 fn render_side_panels_logical(
@@ -55,7 +66,7 @@ fn render_side_panels_logical(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<Option<RectPx>> {
     let left = layout.left_sidebar;
     let right = layout.right_sidebar;
 
@@ -84,7 +95,7 @@ fn render_side_panels_logical(
         text_runs,
         hit_regions,
     );
-    inspector_dispatch::render_active_inspector(
+    let visual_row = inspector_dispatch::render_active_inspector(
         state,
         inspector_rect,
         panel_quads,
@@ -92,5 +103,5 @@ fn render_side_panels_logical(
         hit_regions,
     )?;
 
-    Ok(())
+    Ok(visual_row)
 }

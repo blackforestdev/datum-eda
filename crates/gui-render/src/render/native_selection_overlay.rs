@@ -5,6 +5,8 @@ mod lod;
 #[path = "native_selection_overlay/mask.rs"]
 pub(crate) mod mask;
 use super::*;
+#[path = "native_selection_overlay/visual_lod.rs"]
+pub(crate) mod visual_lod;
 
 pub(super) fn push_lightweight_selection_overlay(
     out: &mut Vec<Quad>,
@@ -486,6 +488,7 @@ impl PreparedScene {
     ) -> anyhow::Result<()> {
         use crate::resource_consumers::{Consumer, Stream};
         self.selection_overlay_split = self.viewport_overlay_vertices.len();
+        let mut minimum_count = 0usize;
         for pass in &self.surface_passes {
             let (scene, consumer) = match pass.surface {
                 SceneSurface::Board => (&state.scene, Consumer::Board),
@@ -521,6 +524,9 @@ impl PreparedScene {
                     pass.scene_viewport,
                     glyphs.as_ref(),
                 );
+                minimum_count = minimum_count
+                    .checked_add(lod.minimum_count())
+                    .ok_or_else(|| anyhow::anyhow!("selection LOD count overflow"))?;
                 request.configure(
                     &lod,
                     view,
@@ -586,6 +592,39 @@ impl PreparedScene {
             self.viewport_overlay_vertices
                 .extend(quads_to_vertices(&quads));
         }
+        self.selection_visual_lod =
+            matches!(state.selection, SelectionTarget::Native(_)).then(|| {
+                if self.selection_masks.is_empty() {
+                    SelectionVisualLod::Unavailable
+                } else {
+                    SelectionVisualLod::ExactMask {
+                        panes: self.selection_masks.len(),
+                        minimum_cues: minimum_count,
+                    }
+                }
+            });
+        if let (Some((rect, scale)), Some(lod)) =
+            (self.selection_lod_row, self.selection_visual_lod)
+        {
+            let summary = lod.to_string();
+            let start = self.text_runs.len();
+            draw_text(
+                &summary,
+                rect.x + 2.0 * scale,
+                rect.y + 3.0 * scale,
+                11.0 * scale,
+                TEXT_PRIMARY,
+                TextFace::Ui,
+                &mut self.text_runs,
+            );
+            self.text_runs.last_mut().expect("LOD label").clip_bounds = Some(rect);
+            self.consumers.note(
+                Stream::Text,
+                Consumer::Inspector,
+                start,
+                self.text_runs.len(),
+            );
+        }
         Ok(())
     }
 }
@@ -612,3 +651,7 @@ pub(crate) mod tests;
 #[cfg(test)]
 #[path = "native_selection_overlay/lod_tests.rs"]
 mod lod_tests;
+
+#[cfg(test)]
+#[path = "native_selection_overlay/lod_inspector_tests.rs"]
+mod lod_inspector_tests;

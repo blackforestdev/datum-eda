@@ -48,6 +48,9 @@ pub(super) struct Plan {
     cues: Vec<(datum_gui_protocol::AuthoredSelectionClass, (f32, f32))>,
 }
 impl Plan {
+    pub(super) fn minimum_count(&self) -> usize {
+        self.cues.len()
+    }
     pub(super) fn capture(
         view: &SelectionView,
         scene: &BoardReviewSceneV1,

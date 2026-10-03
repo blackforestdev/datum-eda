@@ -54,6 +54,8 @@ impl Runtime {
             self.terminal_sessions.restore_render_damage(damage);
             return Err(error);
         }
+        drop(terminal_panes);
+        self.refresh_prepared_selection_accessibility();
         append_gui_verbose_diagnostic_line(|| {
             format!(
                 "native control_meshes window={:?} builds={}",

@@ -39,6 +39,7 @@ fn setup() -> (fixture::Fixture, ServiceState) {
     let mut scene = datum_gui_protocol::load_fixture_workspace_state().scene;
     scene.project_uuid = f.model.project.project_id.to_string();
     scene.board_uuid = f.board.to_string();
+    scene.source_revision = f.model.model_revision.0.clone();
     scene.components.clear();
     scene.pads.clear();
     scene.vias.clear();
@@ -50,6 +51,7 @@ fn setup() -> (fixture::Fixture, ServiceState) {
     track.object_id = "native-track".into();
     track.source_object_uuid = tracks[0].uuid.to_string();
     track.track_uuid = track.source_object_uuid.clone();
+    track.net_uuid = Some(f.net.to_string());
     scene.tracks = vec![track];
     let view =
         build_selection_view(&f.model, &authority, subject, &scene, None, |_| false).unwrap();
@@ -59,6 +61,7 @@ fn setup() -> (fixture::Fixture, ServiceState) {
         Vec::new(),
     );
     state.selection = Some(SelectionAccessibilitySnapshot {
+        visual_lod: None,
         view: Arc::new(view),
         focused: true,
         evaluating: None,
@@ -264,4 +267,48 @@ fn selection_accessibility_evaluation_reports_pending_work_without_partial_membe
     let events = messages(|| 1, "", Some(&previous), Some(&next), &state);
     assert_eq!(events.len(), 1);
     assert_eq!(events[0].header.member.as_deref(), Some("PropertyChange"));
+}
+
+#[test]
+fn visual_lod_is_read_only_current_presentation_and_coalesces_without_reselection() {
+    let (fixture, mut state) = setup();
+    let bytes = fixture.source_bytes();
+    let previous = state.selection.clone().unwrap();
+    let pending = state
+        .dispatch(1, &description_call(PATH))
+        .body_reader()
+        .variant_string()
+        .unwrap();
+    assert!(pending.contains("awaiting current preparation"));
+    state.selection.as_mut().unwrap().visual_lod =
+        Some(datum_gui_render::SelectionVisualLod::ExactMask {
+            panes: 2,
+            minimum_cues: 100_000,
+        });
+    let description = state
+        .dispatch(2, &description_call(PATH))
+        .body_reader()
+        .variant_string()
+        .unwrap();
+    assert!(description.contains("Exact mask · 100000 minimum · 2 panes"));
+    let next = state.selection.clone().unwrap();
+    let events = messages(|| 1, "", Some(&previous), Some(&next), &state);
+    assert_eq!(
+        events.len(),
+        1,
+        "one presentation update, no member selection event"
+    );
+    assert_eq!(next.view.members, previous.view.members);
+    assert_eq!(next.view.subject, previous.view.subject);
+    state.selection.as_mut().unwrap().visual_lod =
+        Some(datum_gui_render::SelectionVisualLod::Unavailable);
+    assert!(
+        state
+            .dispatch(3, &description_call(PATH))
+            .body_reader()
+            .variant_string()
+            .unwrap()
+            .contains("unavailable projection")
+    );
+    fixture::Fixture::assert_bytes(&bytes);
 }
