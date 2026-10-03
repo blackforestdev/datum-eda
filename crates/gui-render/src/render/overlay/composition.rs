@@ -365,6 +365,9 @@ pub(super) fn pad_matches_active_action(
     pad: &datum_gui_protocol::PadPrimitive,
     state: &ReviewWorkspaceState,
 ) -> bool {
+    if immediate_selection_workspace(state) {
+        return false;
+    }
     let Some(action) = state.selected_review_action() else {
         return false;
     };
@@ -375,6 +378,9 @@ pub(super) fn track_matches_active_action(
     track: &datum_gui_protocol::TrackPrimitive,
     state: &ReviewWorkspaceState,
 ) -> bool {
+    if immediate_selection_workspace(state) {
+        return false;
+    }
     let Some(action) = state.selected_review_action() else {
         return false;
     };
@@ -388,6 +394,9 @@ pub(super) fn via_matches_active_action(
     via: &datum_gui_protocol::ViaPrimitive,
     state: &ReviewWorkspaceState,
 ) -> bool {
+    if immediate_selection_workspace(state) {
+        return false;
+    }
     let Some(action) = state.selected_review_action() else {
         return false;
     };
@@ -401,6 +410,9 @@ pub(super) fn zone_matches_active_action(
     zone: &datum_gui_protocol::ZonePrimitive,
     state: &ReviewWorkspaceState,
 ) -> bool {
+    if immediate_selection_workspace(state) {
+        return false;
+    }
     let Some(action) = state.selected_review_action() else {
         return false;
     };
@@ -411,13 +423,16 @@ pub(super) fn zone_matches_active_action(
 }
 
 pub(super) fn has_review_focus(state: &ReviewWorkspaceState) -> bool {
-    state.selected_review_action().is_some()
+    !immediate_selection_workspace(state) && state.selected_review_action().is_some()
 }
 
 pub(super) fn component_overlaps_active_action(
     component: &datum_gui_protocol::ComponentBounds,
     state: &ReviewWorkspaceState,
 ) -> bool {
+    if immediate_selection_workspace(state) {
+        return false;
+    }
     let Some(action) = state.selected_review_action() else {
         return false;
     };

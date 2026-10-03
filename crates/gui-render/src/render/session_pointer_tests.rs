@@ -434,3 +434,62 @@ fn archived_fourteen_non_pad_transitions_keep_shared_content() {
         );
     }
 }
+
+#[test]
+fn native_proposal_review_context_and_dim_filters_never_rekey_or_repaint_authored_buffers() {
+    let (fixture, mut state) = crate::native_selection_overlay::tests::selected_state();
+    let selected = state.selection.clone();
+    state.backing = Some(datum_gui_protocol::WorkspaceBacking {
+        request: datum_gui_protocol::LiveReviewRequest {
+            project_root: fixture.root().to_path_buf(),
+            board_file: None,
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+            kicad_board_source: None,
+        },
+        board_path: fixture.root().join("board.json"),
+    });
+    state.selection = datum_gui_protocol::SelectionTarget::None;
+    state.active_review_target_id.clear();
+    state.ui.filters.dim_unrelated = false;
+    let baseline = RetainedScene::from_workspace(&state, 1600, 1000);
+    let baseline_key = RetainedSceneCacheKey::for_workspace(&state, 1600, 1000, 1.0);
+    let source_bytes = fixture.source_bytes();
+    let mut action = state.review.proposal_actions[0].clone();
+    action.action_id = "existing-producing-action".into();
+    action.net_uuid = state.scene.tracks[0].net_uuid.clone().unwrap();
+    state.review.proposal_actions = vec![action];
+    state.active_review_target_id = "existing-producing-action".into();
+    state.ui.filters.dim_unrelated = true;
+    let mut view = match selected {
+        datum_gui_protocol::SelectionTarget::Native(v) => v,
+        _ => unreachable!(),
+    };
+    view.subject =
+        datum_gui_protocol::SelectionSubject::Review(state.active_review_target_id.clone());
+    state.selection = datum_gui_protocol::SelectionTarget::Native(view);
+    let reviewed = RetainedScene::from_workspace(&state, 1600, 1000);
+    assert_eq!(
+        bytemuck::cast_slice::<crate::Vertex, u8>(baseline.world_vertices()),
+        bytemuck::cast_slice::<crate::Vertex, u8>(reviewed.world_vertices())
+    );
+    assert_eq!(
+        bytemuck::cast_slice::<crate::WorldStrokeInstance, u8>(baseline.world_strokes().as_ref()),
+        bytemuck::cast_slice::<crate::WorldStrokeInstance, u8>(reviewed.world_strokes().as_ref())
+    );
+    assert_eq!(
+        baseline_key,
+        RetainedSceneCacheKey::for_workspace(&state, 1600, 1000, 1.0)
+    );
+    state.selection = datum_gui_protocol::SelectionTarget::None;
+    assert_eq!(
+        baseline_key,
+        RetainedSceneCacheKey::for_workspace(&state, 1600, 1000, 1.0)
+    );
+    for (path, bytes) in source_bytes {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}

@@ -565,7 +565,11 @@ impl RetainedSceneCacheKey {
             ]
         };
         RetainedSceneCacheKey {
-            review_target: workspace.active_review_target_id.clone(),
+            review_target: if crate::scene_visibility::immediate_selection_workspace(workspace) {
+                String::new()
+            } else {
+                workspace.active_review_target_id.clone()
+            },
             schematic_source: workspace
                 .schematic_scene
                 .as_ref()
@@ -585,7 +589,8 @@ impl RetainedSceneCacheKey {
             show_authored: workspace.ui.filters.show_authored,
             show_proposed: workspace.ui.filters.show_proposed,
             show_unrouted: workspace.ui.filters.show_unrouted,
-            dim_unrelated: workspace.ui.filters.dim_unrelated,
+            dim_unrelated: !crate::scene_visibility::immediate_selection_workspace(workspace)
+                && workspace.ui.filters.dim_unrelated,
             layer_visibility: workspace
                 .ui
                 .filters

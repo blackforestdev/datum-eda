@@ -2433,3 +2433,23 @@ projection and is not native schematic acceptance. Three-part styling, dense
 shared LOD, actual producer/occurrence native proof and standalone graphics
 positives remain pending. C03 continues; no C04/C05/C06, rendering/resize,
 manufacturing, latency or definition-editor acceptance is claimed.
+
+### S5A-C03 — retained native material-context correction
+
+An observed cache-key regression showed native Review selection and dim-related
+state rekeying the authored scene despite immediate-only selection ownership.
+Native authored context now excludes transient review/proposal/selection paint
+inputs; native clear uses the same key. Existing compatibility behavior remains.
+The source-bound regression verifies cache equality and unchanged retained world
+vertices/strokes across select/review/clear, plus canonical journal non-mutation.
+It reproduced a key failure, not a palette failure in that fixture.
+
+Seven focused renderer tests pass (one context regression and six native/region/
+diagnostic overlay cases); evidence is `target/s5a-c03-material-context-proof.log`
+and `target/s5a-c03-material-overlay-proof.log`. The failing pre-repair key result
+is retained in `target/s5a-c03-material-context-before.log`. Renderer/application
+all-target Clippy with denied warnings passes in
+`target/s5a-c03-material-context-clippy.log`. Normal module extraction ratchets
+source debt; no authored bytes, identity, source model, dependency or resize
+authority changes. U4 full styling/dense/dim-related, U5/native proof, graphics
+positive cases and C05/C06 remain pending; available C03 work continues.

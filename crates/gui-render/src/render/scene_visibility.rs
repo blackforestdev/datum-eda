@@ -52,8 +52,17 @@ pub(super) fn pad_visible_on_any_copper_layer(
     }
 }
 
+pub(super) fn immediate_selection_workspace(state: &ReviewWorkspaceState) -> bool {
+    matches!(state.selection, SelectionTarget::Native(_))
+        || state
+            .backing
+            .as_ref()
+            .is_some_and(|b| b.request.board_file.is_none())
+}
+
 pub(super) fn dim_unrelated_active(state: &ReviewWorkspaceState) -> bool {
-    if !state.ui.filters.dim_unrelated {
+    // Native relationship presentation belongs after the authored world pass.
+    if immediate_selection_workspace(state) || !state.ui.filters.dim_unrelated {
         return false;
     }
     has_review_focus(state) || !matches!(state.selection, SelectionTarget::None)

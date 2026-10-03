@@ -51,64 +51,13 @@ use scene_projection::render_scene;
 mod scene_visibility;
 use scene_visibility::*;
 
-fn unrouted_matches_active_action(
-    unrouted: &UnroutedPrimitive,
-    state: &ReviewWorkspaceState,
-) -> bool {
-    state
-        .selected_review_action()
-        .is_some_and(|action| action.net_uuid == unrouted.net_uuid)
-}
-
-fn unrouted_base_color(scene: &BoardReviewSceneV1, unrouted: &UnroutedPrimitive) -> [f32; 3] {
-    scene
-        .net_display
-        .iter()
-        .find(|entry| entry.net_uuid == unrouted.net_uuid)
-        .map(|entry| entry.airwire_color_rgb)
-        .unwrap_or(UNROUTED_BASE)
-}
+#[path = "scene_relationships.rs"]
+mod scene_relationships;
+use scene_relationships::*;
 
 #[path = "selection_relation.rs"]
 mod selection_relation;
 use selection_relation::{component_is_selection_active, component_is_selection_related};
-
-fn proposal_preview_affected_ids(state: &ReviewWorkspaceState) -> Vec<&str> {
-    proposal_preview_ids(state).collect()
-}
-fn proposal_preview_ids(state: &ReviewWorkspaceState) -> impl Iterator<Item = &str> + Clone {
-    state
-        .production
-        .proposals
-        .iter()
-        .filter_map(|proposal| proposal.preview.as_ref())
-        .flat_map(|preview| preview.affected_objects.iter().map(String::as_str))
-}
-
-fn source_object_matches_preview(
-    affected_ids: &[&str],
-    object_id: &str,
-    source_object_uuid: &str,
-) -> bool {
-    affected_ids
-        .iter()
-        .any(|affected| *affected == object_id || *affected == source_object_uuid)
-}
-
-fn component_matches_preview(
-    component_uuid: &str,
-    scene: &BoardReviewSceneV1,
-    affected_ids: &[&str],
-) -> bool {
-    scene.components.iter().any(|component| {
-        component.component_uuid == component_uuid
-            && source_object_matches_preview(
-                affected_ids,
-                &component.object_id,
-                &component.source_object_uuid,
-            )
-    })
-}
 
 fn component_object_id_for_uuid<'a>(
     scene: &'a BoardReviewSceneV1,

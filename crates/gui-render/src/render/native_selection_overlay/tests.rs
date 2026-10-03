@@ -11,6 +11,9 @@ pub(crate) struct Fixture {
     board: uuid::Uuid,
 }
 impl Fixture {
+    pub(crate) fn root(&self) -> &std::path::Path {
+        &self.root
+    }
     pub(crate) fn source_bytes(&self) -> Vec<(std::path::PathBuf, Vec<u8>)> {
         let mut files: Vec<_> = self
             .model

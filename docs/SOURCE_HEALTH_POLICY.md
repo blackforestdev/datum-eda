@@ -424,3 +424,10 @@ review queries and their view into normal `proposal/review` and `views/route_rev
 owners. Protocol production4134→4060, CLI route proposal3095→2959 and CLI route
 views1917→1888 ratchet exactly downward. Existing engine proposal/identity/writer
 mechanisms remain unchanged; normal budgets and remaining debt stay open.
+
+S5A-C03 retained native material-context repair extracts existing relationship
+queries into normal `render/scene_relationships.rs`; renderer root expansion
+4343→4292 ratchets exactly downward. Native immediate selection/review state
+no longer keys or recolors retained authored geometry. Compatibility owners and
+PM049/052 retained resize behavior remain; native dim-related presentation and
+remaining selection visual/native proofs are not completed by this extraction.
