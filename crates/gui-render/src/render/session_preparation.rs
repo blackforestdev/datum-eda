@@ -87,7 +87,7 @@ impl Renderer {
         for &(pane, camera) in view.pane_cameras {
             prepared.set_surface_camera(pane, camera);
         }
-        prepared.append_native_selection(state);
+        prepared.append_native_selection(state)?;
         self.render_session
             .grid_lod
             .apply_to_prepared(&mut prepared);

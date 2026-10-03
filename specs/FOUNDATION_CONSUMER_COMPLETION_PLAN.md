@@ -2557,3 +2557,19 @@ three heap, one constructor budget, eleven overlays and two canonical source
 cases), with binary SHA256
 `b84ad7e89640012dbc43933b0afc93072a26a9b86102978811f32f4debfe3e5b`.
 U4 mask/occlusion/glyph/dense work continues.
+
+Mask intent now freezes complete shared-view projection owners, visual grouping
+and qualified Zone island roles against project/revision/scene pins. Its shared
+CPU storage is admitted by the existing process staging owner; failure publishes
+no partial frame. `selected_paint_ranges` observes actual visible painter commands
+and refuses foreign retained data or retired pane descriptors. This is input
+for the remaining GPU mask, not completed dense fallback/native acceptance.
+Twenty focused cases pass (15 native overlays/requests, three heap, two source),
+with binary `c2568883cf7b4da6e9065547b2f73cbf3bad71dd854f09233aae895ae2cfe7a6`
+and renderer/app Clippy in `target/s5a-c03-mask-request-*.log`.
+The supported F.Cu Track fixture now declares its stackup through the canonical
+writer and supplies native backing; retained-material proof requires nonempty
+buffers. Earlier empty-buffer comparisons establish no positive paint proof.
+`dat-native-copper-stage-iw3n` separately tracks omitted default-native Top Copper
+and its positive case; no name/side inference or production repair is credited.
+Graphics/C05/C06/CAM/T04 and other U4/native obligations remain unchanged.

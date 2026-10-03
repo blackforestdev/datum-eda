@@ -2,6 +2,8 @@
 mod diagnostics;
 #[path = "native_selection_overlay/lod.rs"]
 mod lod;
+#[path = "native_selection_overlay/mask.rs"]
+pub(crate) mod mask;
 use super::*;
 
 pub(super) fn push_lightweight_selection_overlay(
@@ -450,7 +452,10 @@ pub(super) fn push_region(
 
 impl PreparedScene {
     /// Append once after the shared session applies every pane's warm camera.
-    pub(super) fn append_native_selection(&mut self, state: &ReviewWorkspaceState) {
+    pub(super) fn append_native_selection(
+        &mut self,
+        state: &ReviewWorkspaceState,
+    ) -> anyhow::Result<()> {
         use crate::resource_consumers::{Consumer, Stream};
         self.selection_overlay_split = self.viewport_overlay_vertices.len();
         for pass in &self.surface_passes {
@@ -467,6 +472,13 @@ impl PreparedScene {
                 SceneSurface::Board => datum_gui_protocol::PaneContent::Board,
                 SceneSurface::Schematic => datum_gui_protocol::PaneContent::Schematic,
             };
+            if authored_visible(state)
+                && let SelectionTarget::Native(view) = &state.selection
+                && let Some(request) = mask::Request::capture(view, scene, surface)?
+            {
+                self.selection_masks
+                    .push((pass.pane_id, pass.surface, request));
+            }
             let mut quads = Vec::new();
             let before_text = self.text_runs.len();
             let before_strokes = self.selection_strokes.len();
@@ -515,6 +527,7 @@ impl PreparedScene {
             self.viewport_overlay_vertices
                 .extend(quads_to_vertices(&quads));
         }
+        Ok(())
     }
 }
 

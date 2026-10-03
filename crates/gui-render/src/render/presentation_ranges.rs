@@ -17,15 +17,47 @@ pub(crate) struct Span {
 }
 
 #[derive(Debug, Default, PartialEq, Eq)]
+pub(crate) struct Source {
+    pub project: String,
+    pub revision: String,
+    pub scene: String,
+}
+impl Source {
+    pub fn capture(
+        scene: &crate::BoardReviewSceneV1,
+        mut admit: impl FnMut(usize) -> anyhow::Result<()>,
+    ) -> anyhow::Result<Self> {
+        let mut copy = |value: &str| -> anyhow::Result<String> {
+            admit(crate::cpu_alloc::heap::capacity_bytes::<u8>(value.len()))?;
+            let mut copy = String::new();
+            copy.try_reserve_exact(value.len())?;
+            copy.push_str(value);
+            Ok(copy)
+        };
+        Ok(Self {
+            project: copy(&scene.project_uuid)?,
+            revision: copy(&scene.source_revision)?,
+            scene: copy(&scene.scene_id)?,
+        })
+    }
+    pub fn bytes(&self) -> usize {
+        [&self.project, &self.revision, &self.scene]
+            .into_iter()
+            .map(|value| crate::cpu_alloc::heap::capacity_bytes::<u8>(value.capacity()))
+            .sum()
+    }
+}
+#[derive(Debug, Default, PartialEq, Eq)]
 pub(crate) struct Presentation {
+    pub source: Option<Source>,
     pub quads: Vec<Span>,
     pub strokes: Vec<Span>,
 }
 impl Presentation {
     pub fn bytes(&self) -> usize {
-        [&self.quads, &self.strokes]
-            .into_iter()
-            .fold(0usize, |total, spans| {
+        [&self.quads, &self.strokes].into_iter().fold(
+            self.source.as_ref().map_or(0, Source::bytes),
+            |total, spans| {
                 total
                     .saturating_add(crate::cpu_alloc::heap::capacity_bytes::<Span>(
                         spans.capacity(),
@@ -40,7 +72,8 @@ impl Presentation {
                             })
                             .sum::<usize>(),
                     )
-            })
+            },
+        )
     }
     pub fn container_bytes() -> usize {
         if !crate::cpu_alloc::installed() {

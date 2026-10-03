@@ -63,6 +63,23 @@ pub(crate) fn selected_track_state(length_nm: i64) -> (Fixture, ReviewWorkspaceS
             "source-bound immediate proof",
         )
     };
+    // This fixture declares a supported render lane through the canonical
+    // stackup writer; genesis's distinct Top Copper stage gap is tracked in
+    // dat-native-copper-stage-iw3n and is not passed by this supported fixture.
+    let layer = eda_engine::board::StackupLayer::new(
+        1,
+        "F.Cu",
+        eda_engine::board::StackupLayerType::Copper,
+        35_000,
+    );
+    let write = native_write::board_layout::build_set_board_stackup(
+        &f.model,
+        provenance(),
+        f.board,
+        &[layer],
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
     let net = Net::new(uuid::Uuid::new_v4(), "N", uuid::Uuid::nil());
     let write =
         native_write::board_routing::build_place_board_net(&f.model, provenance(), &net).unwrap();
@@ -80,8 +97,35 @@ pub(crate) fn selected_track_state(length_nm: i64) -> (Fixture, ReviewWorkspaceS
             .unwrap();
     native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.backing = Some(datum_gui_protocol::WorkspaceBacking {
+        request: datum_gui_protocol::LiveReviewRequest {
+            project_root: f.root.clone(),
+            board_file: None,
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+            kicad_board_source: None,
+        },
+        board_path: f
+            .model
+            .source_shards
+            .iter()
+            .find(|shard| shard.kind == eda_engine::substrate::SourceShardKind::BoardRoot)
+            .unwrap()
+            .path
+            .clone(),
+    });
     state.scene.project_uuid = f.model.project.project_id.to_string();
     state.scene.board_uuid = f.board.to_string();
+    state.scene.layers = vec![datum_gui_protocol::SceneLayer {
+        layer_id: "layer-1".into(),
+        name: "F.Cu".into(),
+        kind: "copper".into(),
+        render_order: 0,
+        visible_by_default: true,
+    }];
     state.scene.components.clear();
     state.scene.pads.clear();
     state.scene.vias.clear();
@@ -117,6 +161,10 @@ fn native_selection_is_immediate_and_retained_authored_bytes_and_resize_eligibil
     let (f, mut state) = selected_state();
     let before = f.source_bytes();
     let selected = RetainedScene::from_workspace(&state, 1600, 1000);
+    assert!(
+        !selected.world_strokes().is_empty(),
+        "positive retained-material proof cannot compare empty buffers"
+    );
     state.selection = SelectionTarget::None;
     let baseline = RetainedScene::from_workspace(&state, 1600, 1000);
     assert_eq!(

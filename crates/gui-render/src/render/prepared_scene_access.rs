@@ -4,6 +4,7 @@
 //! scene construction while preserving one `PreparedScene` authority.
 
 use super::*;
+pub use native_selection_overlay::mask::PaintRange as SelectedPaintRange;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
@@ -23,6 +24,11 @@ pub struct PreparedScene {
     pub(super) viewport_underlay_vertices: Vec<Vertex>,
     pub(super) viewport_overlay_vertices: Vec<Vertex>,
     pub(super) selection_overlay_split: usize,
+    pub(super) selection_masks: Vec<(
+        datum_gui_protocol::PaneId,
+        SceneSurface,
+        native_selection_overlay::mask::Request,
+    )>,
     pub(super) selection_strokes: Vec<selection_stroke::Stroke>,
     pub(super) board_interaction_vertices: Vec<Vertex>,
     pub(super) console_overlay_vertices: Vec<Vertex>,

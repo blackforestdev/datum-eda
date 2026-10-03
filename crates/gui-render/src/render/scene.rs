@@ -4,7 +4,7 @@ mod board_hit_construction;
 mod hit_construction;
 #[path = "prepared_scene_access.rs"]
 mod prepared_scene_access;
-pub use prepared_scene_access::PreparedScene;
+pub use prepared_scene_access::{PreparedScene, SelectedPaintRange};
 #[path = "scene_console.rs"]
 mod scene_console;
 #[path = "schematic_retained.rs"]

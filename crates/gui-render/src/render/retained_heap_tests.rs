@@ -8,6 +8,11 @@ fn complete_scene_owned_capacities_match_allocator_and_weak_release() {
         surface_size_independent: true,
         hover_membership: Default::default(),
         presentation: std::sync::Arc::new(crate::presentation_ranges::Presentation {
+            source: Some(crate::presentation_ranges::Source {
+                project: String::with_capacity(80),
+                revision: String::with_capacity(64),
+                scene: String::with_capacity(96),
+            }),
             quads: vec![crate::presentation_ranges::Span {
                 key: Some(String::with_capacity(96)),
                 role: crate::presentation_ranges::Role::Void,

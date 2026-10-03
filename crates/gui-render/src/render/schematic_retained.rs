@@ -150,7 +150,17 @@ impl RetainedScene {
                 limit,
                 "presentation owner",
             )?;
+            let source = crate::presentation_ranges::Source::capture(schematic_scene, |bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "presentation source",
+                )
+            })?;
             let presentation = std::sync::Arc::new(crate::presentation_ranges::Presentation {
+                source: Some(source),
                 quads: quad_sources,
                 strokes: stroke_sources,
             });
