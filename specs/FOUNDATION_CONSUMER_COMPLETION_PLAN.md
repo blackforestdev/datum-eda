@@ -2299,3 +2299,37 @@ visual and dense proof remains C04; general context-menu authoring remains S7.
 Full aggregate coverage, artifact integration and U4/U5 continue within C03.
 Graphics positive cases, C05/C06, deferred editors, undecided latency and CAM/T04
 are unchanged; this unit is not complete S5A implementation or acceptance.
+
+
+### S5A-C03 — complete projection aggregates and canonical Net coverage
+
+The shared revision-bound Inspector now compiles exact rational bounds of member
+projections, separated by board/schematic source coordinate frame, including
+hidden projections and parent-owned children. Complete layer coverage counts
+stable members rather than display records. Missing projections and arithmetic/
+layout gaps disclose exact identities/reasons; resolved subsets remain labelled
+as projected output, never a complete substitute. Current qualified Zone islands
+and successful-empty fill retain their existing semantics. These are projection
+bounds, not nominal copper certificates or region qualification anchors.
+
+Canonical Net coverage resolves existing engine origin bindings, including
+parent-owned terminal occurrences; complete successful domains amortize queries.
+Logical identities remain distinct from board assignment IDs. Pending/mismatched
+correspondence is Unavailable with per-member/origin reasons, not a fabricated
+board-local Net. Complete non-electrical membership is separately disclosed.
+Derived subject/related IDs and foreign Net/Bus contact evidence use the existing
+engine result; contacts never expand selection membership. All and per-type
+scopes remain read-only filters over complete membership.
+
+Focused proof: five aggregate tests and seven existing native output tests passed
+(12 distinct), including hidden/odd-width rational bounds, missing projection and
+binding disclosure, separate coordinate frames, canonical logical binding/reopen,
+Run membership/contact separation and unchanged source/journal bytes. Logs:
+`target/s5a-c03-aggregate-proof.log` and
+`target/s5a-c03-aggregate-positive-proof.log`. Producer Clippy/check evidence is
+`target/s5a-c03-aggregate-clippy.log` and `target/s5a-c03-aggregate-check.log`.
+The initial shared-target build was refused by the resource guard; verification
+uses the owned disk-backed selection proof target, with no policy override.
+Artifact integration and U4/U5 remain available C03 work. No C04 native acceptance,
+C05 independent review, C06 acceptance, graphics-positive waiver, latency allowance
+or manufacturing CAM/T04 completion is asserted.

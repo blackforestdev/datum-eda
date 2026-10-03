@@ -1,6 +1,8 @@
 //! Complete, revision-bound shared output. Never an authored group or writer.
 mod inspection;
 pub mod inspector_state;
+mod net_coverage;
+mod projection_inspection;
 mod properties;
 use crate::selection_resolution::{
     NativeSelectionResolution, SelectionAuthority, SelectionModelRevision,
@@ -268,6 +270,16 @@ pub fn build_selection_view(
         .collect();
     result.unprojected = result.members.difference(&represented).cloned().collect();
     result.inspection = inspection::compile(&result);
+    projection_inspection::append(
+        &mut result,
+        authority,
+        projection.electrical.as_ref(),
+        projection.board_run.as_ref(),
+        projection.bus_run.as_ref(),
+        board,
+        schematic,
+    );
+    net_coverage::append(&mut result, model, authority);
     Ok(result)
 }
 pub fn scene_keys(scene: &crate::BoardReviewSceneV1) -> impl Iterator<Item = &str> {
