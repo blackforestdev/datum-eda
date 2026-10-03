@@ -2207,3 +2207,23 @@ owner acceptance. File/module decomposition, deterministic serialization,
 schema migration mechanics and reuse of existing nominal predicates are routine
 engineering choices within the ratified mechanisms; G1–G3 remain the exact
 owner decisions needed before new production source-model work.
+
+
+### S5A-C03 shared selection accessibility integration (partial)
+
+The existing Linux AT-SPI worker now exposes the immutable complete native
+SelectionView alongside terminal, menus and preferences. Stable project/source/
+occurrence-qualified nodes disclose selected membership, semantic focus,
+hidden/locked/unprojected states, canonical inspection and the existing active
+Editor pane. No-op updates are quiet; dense changes coalesce notifications.
+Complete child counts and indexed access remain uncapped; bulk GetChildren
+preflights the existing D-Bus transport size and explicitly refuses oversize
+replies rather than truncating membership. Writes/actions refuse.
+
+Guarded provider/bridge replay: 35 passed, zero failures, one live-bus
+registration test ignored; this is not native assistive-technology acceptance.
+Focused all-target gui-app Clippy passed with warnings denied; 13 boundary
+regressions and dependency/source-health checks passed. Logs:
+`target/s5a-c03-accessibility-{boundary-proof,clippy}.log`.
+Keyboard navigation, full native accessibility replay and other available C03
+work remain pending. C03, graphics positive proofs, C05/C06 and CAM/T04 stay open.

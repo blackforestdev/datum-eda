@@ -78,6 +78,7 @@ impl Runtime {
                     last_click: None,
                     lineage: Some(previous.lineage.unwrap_or(previous.authority)),
                 });
+                self.refresh_selection_accessibility();
                 return Ok(true);
             }
             let state = self.workspace();
@@ -125,12 +126,14 @@ impl Runtime {
             last_click: None,
             lineage: None,
         });
+        self.refresh_selection_accessibility();
         Ok(true)
     }
     pub(super) fn selection_notice(&mut self, message: String) {
         if let SelectionTarget::Native(view) = &mut self.session.workspace_mut().selection {
             view.notice = Some(message.clone());
         }
+        self.refresh_selection_accessibility();
         self.log_console_refusal(ConsoleFeedbackSource::Selection, message);
         self.invalidate_frame();
     }
@@ -307,6 +310,7 @@ impl Runtime {
             SelectionTarget::Native(Box::new(view))
         };
         self.native_selection.as_mut().unwrap().lineage = None;
+        self.refresh_selection_accessibility();
         if announce {
             self.log_console_echo(ConsoleFeedbackSource::Selection, summary);
         }
@@ -415,6 +419,10 @@ impl Runtime {
         if !result.handled {
             return false;
         }
+        let selection_changed = result
+            .events
+            .iter()
+            .any(|event| matches!(event, SessionEvent::SelectionChanged(_)));
         for event in result.events {
             match event {
                 // Shared source dependency validation owns retained reuse/history.
@@ -424,6 +432,9 @@ impl Runtime {
                 SessionEvent::FrameChanged => self.invalidate_frame(),
                 SessionEvent::ToolChanged(_) => self.invalidate_frame(),
             }
+        }
+        if selection_changed {
+            self.refresh_selection_accessibility();
         }
         true
     }
@@ -479,5 +490,6 @@ impl Runtime {
                 self.selection_notice(format!("Selection projection unavailable: {error:?}"))
             }
         }
+        self.refresh_selection_accessibility();
     }
 }

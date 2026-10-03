@@ -31,6 +31,7 @@ pub(crate) struct LinuxTerminalAccessibilityBridge {
     current: Option<Arc<TerminalAccessibilitySnapshot>>,
     preferences: Vec<GlobalPreferencesAccessibleNode>,
     menus: Vec<MenuAccessibleNode>,
+    selection: Option<crate::selection_accessibility::SelectionAccessibilitySnapshot>,
     platform: Option<PlatformBridge>,
     publish_platform: bool,
     announcement_log: VecDeque<AccessibilityAnnouncement>,
@@ -42,6 +43,7 @@ impl Default for LinuxTerminalAccessibilityBridge {
             current: None,
             preferences: Vec::new(),
             menus: Vec::new(),
+            selection: None,
             platform: None,
             publish_platform: true,
             announcement_log: VecDeque::new(),
@@ -50,6 +52,36 @@ impl Default for LinuxTerminalAccessibilityBridge {
 }
 
 impl LinuxTerminalAccessibilityBridge {
+    pub(crate) fn update_selection(
+        &mut self,
+        view: Option<&datum_gui_protocol::selection_view::SelectionView>,
+        pane: Option<datum_gui_protocol::PaneId>,
+    ) {
+        let focused = pane.is_some();
+        if match (&self.selection, view) {
+            (Some(previous), Some(view)) => previous.pane == pane && previous.view.as_ref() == view,
+            (None, None) => true,
+            _ => false,
+        } {
+            return;
+        }
+        self.selection =
+            view.map(
+                |view| crate::selection_accessibility::SelectionAccessibilitySnapshot {
+                    view: Arc::new(view.clone()),
+                    focused,
+                    pane,
+                },
+            );
+        if !self.publish_platform {
+            return;
+        }
+        match &mut self.platform {
+            Some(platform) => platform.publish_selection(self.selection.clone()),
+            None => self.platform = PlatformBridge::start_selection(self.selection.clone()).ok(),
+        }
+    }
+
     pub(crate) fn update_menus(&mut self, nodes: Vec<MenuAccessibleNode>) {
         if self.menus == nodes {
             return;
@@ -155,6 +187,7 @@ impl LinuxTerminalAccessibilityBridge {
             current: None,
             preferences: Vec::new(),
             menus: Vec::new(),
+            selection: None,
             platform: None,
             publish_platform: false,
             announcement_log: VecDeque::new(),

@@ -76,8 +76,8 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         sources["terminal_accessibility_platform/dbus.rs"] = sources[
             "terminal_accessibility_platform/dbus.rs"
         ].replace("MAX_MESSAGE_BYTES", "unbounded_message")
-        sources["terminal_accessibility_platform/worker.rs"] = sources[
-            "terminal_accessibility_platform/worker.rs"
+        sources["terminal_accessibility_platform/worker/tests.rs"] = sources[
+            "terminal_accessibility_platform/worker/tests.rs"
         ].replace("real_accessibility_bus_accepts_datum_registration", "deleted_live_proof")
         sources["terminal_accessibility_platform/connection.rs"] += "\nuse zbus::Connection;"
         failures: list[str] = []
@@ -89,6 +89,15 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         self.assertTrue(any("MAX_MESSAGE_BYTES" in failure for failure in failures))
         self.assertTrue(any("real_accessibility_bus" in failure for failure in failures))
         self.assertTrue(any("forbidden substrate" in failure for failure in failures))
+
+    def test_extracted_accessibility_proof_must_remain_wired(self) -> None:
+        sources = valid_sources()
+        sources["terminal_accessibility_platform/worker.rs"] = sources[
+            "terminal_accessibility_platform/worker.rs"
+        ].replace('mod tests;', 'removed_test_owner')
+        failures: list[str] = []
+        guard.check(sources, valid_render(), failures)
+        self.assertTrue(any("mod tests;" in failure for failure in failures))
 
     def test_search_wrap_stability_or_all_match_rendering_removal_fails(self) -> None:
         sources = valid_sources()

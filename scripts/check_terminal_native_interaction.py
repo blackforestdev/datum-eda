@@ -183,6 +183,10 @@ REQUIRED = {
     ),
     "terminal_accessibility_platform/worker.rs": (
         'name("datum-atspi"',
+        '#[path = "worker/tests.rs"]',
+        "mod tests;",
+    ),
+    "terminal_accessibility_platform/worker/tests.rs": (
         "real_accessibility_bus_accepts_datum_registration",
         "pending_updates_replace_snapshot_and_coalesce_event_kinds",
     ),

@@ -7,6 +7,7 @@ use std::os::unix::net::UnixStream;
 use std::sync::{Arc, Mutex};
 
 use crate::console_accessibility::AccessibilityAnnouncement;
+use crate::selection_accessibility::SelectionAccessibilitySnapshot;
 use crate::terminal_accessibility::TerminalAccessibilitySnapshot;
 use crate::terminal_accessibility_bridge::TerminalAccessibilityEvent;
 use datum_gui_protocol::GlobalPreferencesAccessibleNode;
@@ -28,6 +29,7 @@ struct PendingUpdate {
     announcements: VecDeque<AccessibilityAnnouncement>,
     preferences: Vec<GlobalPreferencesAccessibleNode>,
     menus: Vec<MenuAccessibleNode>,
+    selection: Option<SelectionAccessibilitySnapshot>,
 }
 
 struct Shared {
@@ -36,6 +38,7 @@ struct Shared {
     terminal_available: bool,
     latest_preferences: Vec<GlobalPreferencesAccessibleNode>,
     latest_menus: Vec<MenuAccessibleNode>,
+    latest_selection: Option<SelectionAccessibilitySnapshot>,
 }
 
 pub(crate) struct PlatformBridge {
@@ -55,6 +58,7 @@ impl PlatformBridge {
             announcements: VecDeque::new(),
             preferences: Vec::new(),
             menus: Vec::new(),
+            selection: None,
         })
     }
 
@@ -66,12 +70,14 @@ impl PlatformBridge {
         let terminal_available = update.terminal_available;
         let latest_preferences = update.preferences.clone();
         let latest_menus = update.menus.clone();
+        let latest_selection = update.selection.clone();
         let shared = Arc::new(Mutex::new(Shared {
             pending: Some(update),
             latest_snapshot,
             terminal_available,
             latest_preferences,
             latest_menus,
+            latest_selection,
         }));
         let worker_shared = Arc::clone(&shared);
         std::thread::Builder::new()
@@ -92,6 +98,7 @@ impl PlatformBridge {
             announcements,
             preferences: Vec::new(),
             menus: Vec::new(),
+            selection: None,
         })
     }
 
@@ -105,6 +112,7 @@ impl PlatformBridge {
             announcements: VecDeque::new(),
             preferences,
             menus: Vec::new(),
+            selection: None,
         })
     }
 
@@ -129,6 +137,7 @@ impl PlatformBridge {
                 None => {
                     let preferences = shared.latest_preferences.clone();
                     let menus = shared.latest_menus.clone();
+                    let selection = shared.latest_selection.clone();
                     shared.pending = Some(PendingUpdate {
                         snapshot,
                         events,
@@ -136,6 +145,7 @@ impl PlatformBridge {
                         announcements: VecDeque::new(),
                         preferences,
                         menus,
+                        selection,
                     })
                 }
             }
@@ -149,6 +159,7 @@ impl PlatformBridge {
             let terminal_available = shared.terminal_available;
             let preferences = shared.latest_preferences.clone();
             let menus = shared.latest_menus.clone();
+            let selection = shared.latest_selection.clone();
             let pending = shared.pending.get_or_insert_with(|| PendingUpdate {
                 snapshot,
                 events: Vec::new(),
@@ -156,6 +167,7 @@ impl PlatformBridge {
                 announcements: VecDeque::new(),
                 preferences,
                 menus,
+                selection,
             });
             push_bounded_announcement(&mut pending.announcements, announcement);
         }
@@ -171,6 +183,7 @@ impl PlatformBridge {
             let snapshot = shared.latest_snapshot.clone();
             let terminal_available = shared.terminal_available;
             let menus = shared.latest_menus.clone();
+            let selection = shared.latest_selection.clone();
             let pending = shared.pending.get_or_insert_with(|| PendingUpdate {
                 snapshot,
                 events: Vec::new(),
@@ -178,6 +191,7 @@ impl PlatformBridge {
                 announcements: VecDeque::new(),
                 preferences: Vec::new(),
                 menus,
+                selection,
             });
             pending.preferences = preferences;
         }
@@ -192,6 +206,7 @@ impl PlatformBridge {
             announcements: VecDeque::new(),
             preferences: Vec::new(),
             menus,
+            selection: None,
         })
     }
 
@@ -201,6 +216,7 @@ impl PlatformBridge {
             let snapshot = shared.latest_snapshot.clone();
             let terminal_available = shared.terminal_available;
             let preferences = shared.latest_preferences.clone();
+            let selection = shared.latest_selection.clone();
             let pending = shared.pending.get_or_insert_with(|| PendingUpdate {
                 snapshot,
                 events: Vec::new(),
@@ -208,8 +224,43 @@ impl PlatformBridge {
                 announcements: VecDeque::new(),
                 preferences,
                 menus: Vec::new(),
+                selection,
             });
             pending.menus = menus;
+        }
+        self.notify();
+    }
+
+    pub(crate) fn start_selection(
+        selection: Option<SelectionAccessibilitySnapshot>,
+    ) -> io::Result<Self> {
+        Self::start_update(PendingUpdate {
+            snapshot: empty_snapshot(),
+            events: Vec::new(),
+            terminal_available: false,
+            announcements: VecDeque::new(),
+            preferences: Vec::new(),
+            menus: Vec::new(),
+            selection,
+        })
+    }
+    pub(crate) fn publish_selection(&mut self, selection: Option<SelectionAccessibilitySnapshot>) {
+        if let Ok(mut shared) = self.shared.lock() {
+            shared.latest_selection = selection.clone();
+            let snapshot = shared.latest_snapshot.clone();
+            let terminal_available = shared.terminal_available;
+            let preferences = shared.latest_preferences.clone();
+            let menus = shared.latest_menus.clone();
+            let pending = shared.pending.get_or_insert_with(|| PendingUpdate {
+                snapshot,
+                events: Vec::new(),
+                terminal_available,
+                announcements: VecDeque::new(),
+                preferences,
+                menus,
+                selection: None,
+            });
+            pending.selection = selection;
         }
         self.notify();
     }
@@ -269,6 +320,12 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
                 };
                 let previous_root_offset = usize::from(state.terminal_available)
                     + usize::from(!state.preferences.is_empty());
+                let previous_selection = if newly_connected {
+                    None
+                } else {
+                    state.selection.clone()
+                };
+                state.selection = update.selection;
                 state.snapshot = update.snapshot;
                 state.terminal_available = update.terminal_available;
                 state.preferences = update.preferences;
@@ -296,6 +353,17 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
                     .iter()
                     .try_for_each(|message| active.send(message))
                     .is_err();
+                let selection_messages = super::atspi::selection_messages(
+                    || active.take_serial(),
+                    &state.bus_name,
+                    previous_selection.as_ref(),
+                    state.selection.as_ref(),
+                    state,
+                );
+                let selection_failed = selection_messages
+                    .iter()
+                    .try_for_each(|message| active.send(message))
+                    .is_err();
                 let mut announcement_failed = false;
                 for announcement in &update.announcements {
                     let message = events::announcement_message(active.take_serial(), announcement);
@@ -304,7 +372,7 @@ fn run(shared: Arc<Mutex<Shared>>, mut wake: UnixStream) {
                         break;
                     }
                 }
-                terminal_failed || menu_failed || announcement_failed
+                terminal_failed || menu_failed || selection_failed || announcement_failed
             } else {
                 false
             };
@@ -387,7 +455,7 @@ fn connect(
     Ok((connection, service))
 }
 
-fn empty_snapshot() -> Arc<TerminalAccessibilitySnapshot> {
+pub(super) fn empty_snapshot() -> Arc<TerminalAccessibilitySnapshot> {
     Arc::new(TerminalAccessibilitySnapshot {
         session_id: String::new(),
         title: "Terminal".to_string(),
@@ -449,162 +517,5 @@ fn drain_wake(wake: &mut UnixStream) {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::console_accessibility::AnnouncementPriority;
-    use crate::terminal_accessibility::TerminalAccessibilityBounds;
-
-    fn snapshot(text: &str) -> Arc<TerminalAccessibilitySnapshot> {
-        Arc::new(TerminalAccessibilitySnapshot {
-            session_id: "s".into(),
-            title: "Terminal".into(),
-            text: text.into(),
-            caret: text.chars().count(),
-            selection: None,
-            links: Vec::new(),
-            focused: true,
-            bell_count: 0,
-            bounds: TerminalAccessibilityBounds::default(),
-        })
-    }
-
-    #[test]
-    fn pending_updates_replace_snapshot_and_coalesce_event_kinds() {
-        let shared = Mutex::new(Shared {
-            pending: Some(PendingUpdate {
-                snapshot: snapshot("a"),
-                events: vec![TerminalAccessibilityEvent::TextChanged],
-                terminal_available: true,
-                announcements: VecDeque::new(),
-                preferences: Vec::new(),
-                menus: Vec::new(),
-            }),
-            latest_snapshot: snapshot("a"),
-            terminal_available: true,
-            latest_preferences: Vec::new(),
-            latest_menus: Vec::new(),
-        });
-        {
-            let mut state = shared.lock().unwrap();
-            let pending = state.pending.as_mut().unwrap();
-            pending.snapshot = snapshot("abc");
-            if !pending
-                .events
-                .contains(&TerminalAccessibilityEvent::CaretMoved)
-            {
-                pending.events.push(TerminalAccessibilityEvent::CaretMoved);
-            }
-        }
-        let pending = take_update(&shared).unwrap();
-        assert_eq!(pending.snapshot.text, "abc");
-        assert_eq!(pending.events.len(), 2);
-        assert!(take_update(&shared).is_none());
-    }
-
-    #[test]
-    fn pending_announcements_preserve_bounded_fifo_payload_order() {
-        let mut pending = VecDeque::new();
-        for index in 0..ANNOUNCEMENT_CAPACITY + 3 {
-            push_bounded_announcement(
-                &mut pending,
-                AccessibilityAnnouncement {
-                    text: format!("announcement {index}"),
-                    priority: AnnouncementPriority::Medium,
-                },
-            );
-        }
-        assert_eq!(pending.len(), ANNOUNCEMENT_CAPACITY);
-        assert_eq!(pending.front().unwrap().text, "announcement 3");
-        assert_eq!(
-            pending.back().unwrap().text,
-            format!("announcement {}", ANNOUNCEMENT_CAPACITY + 2)
-        );
-    }
-
-    #[test]
-    fn menu_publication_survives_interleaved_terminal_preferences_and_announcements() {
-        let (wake, _reader) = UnixStream::pair().unwrap();
-        let mut bridge = PlatformBridge {
-            shared: Arc::new(Mutex::new(Shared {
-                pending: None,
-                latest_snapshot: snapshot("terminal"),
-                terminal_available: true,
-                latest_preferences: Vec::new(),
-                latest_menus: Vec::new(),
-            })),
-            wake,
-        };
-        let mut workspace = datum_gui_protocol::load_fixture_workspace_state();
-        workspace.ui.active_menu = Some("View".to_owned());
-        let menus = datum_gui_protocol::gui_menu_model::accessibility::menu_accessibility_nodes(
-            &datum_gui_protocol::load_default_gui_menu_model().unwrap(),
-            &workspace,
-        );
-        let preferences = vec![GlobalPreferencesAccessibleNode {
-            id: "global-preferences".into(),
-            name: "Global Preferences".into(),
-            role: datum_gui_protocol::GlobalPreferencesAccessibleRole::Dialog,
-            value: None,
-            description: "Retained preferences consumer".into(),
-            available: true,
-            focused: false,
-        }];
-        bridge.publish_menus(menus.clone());
-        let latest = snapshot("latest terminal");
-        let retired = Arc::downgrade(&latest);
-        bridge.publish(
-            Arc::clone(&latest),
-            vec![TerminalAccessibilityEvent::TextChanged],
-        );
-        bridge.publish_preferences(preferences.clone());
-        bridge.publish_announcement(AccessibilityAnnouncement {
-            text: "preserved announcement".into(),
-            priority: AnnouncementPriority::Medium,
-        });
-        let pending = take_update(&bridge.shared).unwrap();
-        assert_eq!(pending.menus, menus);
-        assert_eq!(pending.preferences, preferences);
-        assert_eq!(pending.snapshot.text, "latest terminal");
-        assert!(Arc::ptr_eq(&pending.snapshot, &latest));
-        assert!(Arc::ptr_eq(
-            &bridge.shared.lock().unwrap().latest_snapshot,
-            &latest
-        ));
-        let service = ServiceState::new(Arc::clone(&pending.snapshot), true, Vec::new());
-        assert!(Arc::ptr_eq(&service.snapshot, &latest));
-        drop(latest);
-        assert!(pending.terminal_available);
-        assert_eq!(pending.announcements.len(), 1);
-        // The next update after the pending batch was consumed must also retain
-        // the independently cached menu projection.
-        bridge.publish(snapshot("next terminal"), Vec::new());
-        assert_eq!(take_update(&bridge.shared).unwrap().menus, menus);
-        // A consumed update and service may still read the previous generation.
-        assert_eq!(service.snapshot.text, "latest terminal");
-        drop(pending);
-        assert!(retired.upgrade().is_some());
-        drop(service);
-        assert!(retired.upgrade().is_none());
-        bridge.publish_menus(Vec::new());
-        let pending = take_update(&bridge.shared).unwrap();
-        assert!(pending.menus.is_empty());
-        assert_eq!(pending.preferences, preferences);
-        assert_eq!(pending.snapshot.text, "next terminal");
-    }
-
-    #[test]
-    #[ignore = "requires a live Linux accessibility bus"]
-    fn real_accessibility_bus_accepts_datum_registration() {
-        let (connection, service) = connect(
-            &snapshot("Datum accessibility probe"),
-            true,
-            Vec::new(),
-            Vec::new(),
-        )
-        .unwrap();
-        assert!(connection.unique_name().starts_with(':'));
-        assert_eq!(service.bus_name, connection.unique_name());
-        assert!(!service.registry_parent.0.is_empty());
-        assert_eq!(service.registry_parent.1, ROOT_PATH);
-    }
-}
+#[path = "worker/tests.rs"]
+mod tests;

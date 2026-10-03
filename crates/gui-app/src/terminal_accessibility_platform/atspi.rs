@@ -12,6 +12,8 @@ use super::dbus::{Message, MessageType};
 mod dispatch_error;
 mod introspection;
 mod menus;
+mod selection;
+pub(super) use selection::messages as selection_messages;
 mod properties;
 mod text_ranges;
 use dispatch_error::{error, invalid_args, unknown_object};
@@ -65,6 +67,7 @@ pub(super) struct ServiceState {
     pub(super) terminal_available: bool,
     pub(super) preferences: Vec<GlobalPreferencesAccessibleNode>,
     pub(super) menus: Vec<datum_gui_protocol::gui_menu_model::accessibility::MenuAccessibleNode>,
+    pub(super) selection: Option<crate::selection_accessibility::SelectionAccessibilitySnapshot>,
 }
 
 impl ServiceState {
@@ -81,6 +84,7 @@ impl ServiceState {
             terminal_available,
             preferences,
             menus: Vec::new(),
+            selection: None,
         }
     }
 
@@ -100,24 +104,27 @@ impl ServiceState {
         let path = call.header.path.as_deref().unwrap_or_default();
         let interface = call.header.interface.as_deref().unwrap_or_default();
         let member = call.header.member.as_deref().unwrap_or_default();
-        let result = if path.starts_with(menus::MENU_PATH) {
-            menus::dispatch(self, path, interface, member, call)
-        } else {
-            match interface {
-                PROPERTIES => self.properties(path, member, call),
-                INTROSPECTABLE if member == "Introspect" => Ok(("s", introspection_body(path))),
-                ACCESSIBLE => self.accessible(path, member, call),
-                APPLICATION => self.application(path, member, call),
-                COMPONENT => self.component(path, member, call),
-                TEXT => self.text(path, member, call),
-                HYPERTEXT => self.hypertext(path, member, call),
-                HYPERLINK => self.hyperlink(path, member, call),
-                _ => Err((
-                    "org.freedesktop.DBus.Error.UnknownInterface",
-                    "unsupported interface",
-                )),
-            }
-        };
+        let result =
+            if path == selection::PATH || path.starts_with(&format!("{}/", selection::PATH)) {
+                selection::dispatch(self, path, interface, member, call)
+            } else if path.starts_with(menus::MENU_PATH) {
+                menus::dispatch(self, path, interface, member, call)
+            } else {
+                match interface {
+                    PROPERTIES => self.properties(path, member, call),
+                    INTROSPECTABLE if member == "Introspect" => Ok(("s", introspection_body(path))),
+                    ACCESSIBLE => self.accessible(path, member, call),
+                    APPLICATION => self.application(path, member, call),
+                    COMPONENT => self.component(path, member, call),
+                    TEXT => self.text(path, member, call),
+                    HYPERTEXT => self.hypertext(path, member, call),
+                    HYPERLINK => self.hyperlink(path, member, call),
+                    _ => Err((
+                        "org.freedesktop.DBus.Error.UnknownInterface",
+                        "unsupported interface",
+                    )),
+                }
+            };
         match result {
             Ok((signature, body)) => Message::method_return(
                 serial,
@@ -285,6 +292,9 @@ impl ServiceState {
                 .filter(|node| node.parent.is_none())
                 .map(|node| menus::path(&node.id)),
         );
+        if self.selection.is_some() {
+            paths.push(selection::PATH.to_owned());
+        }
         paths
     }
 
