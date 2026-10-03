@@ -103,14 +103,22 @@ fn visit<'a>(
         })?;
     }
     for zone in &scene.zones {
-        if !layer_visible(state, &zone.layer_id) || zone.polygon.len() < 3 {
+        if !layer_visible(state, &zone.layer_id) {
             continue;
         }
-        emit(Region {
-            target: &zone.object_id,
-            layer_id: Some(&zone.layer_id),
-            shape: Shape::Polygon(&zone.polygon),
-        })?;
+        let legacy = (zone.fill_projection.is_legacy() && zone.polygon.len() >= 3)
+            .then_some(zone.polygon.as_slice());
+        let current = (!zone.fill_projection.is_legacy()).then_some(zone);
+        for polygon in legacy
+            .into_iter()
+            .chain(current.into_iter().flat_map(|z| z.occupied_polygons()))
+        {
+            emit(Region {
+                target: &zone.object_id,
+                layer_id: Some(&zone.layer_id),
+                shape: Shape::Polygon(polygon),
+            })?;
+        }
     }
     for graphic in &scene.component_graphics {
         let Some(target_id) = component_object_id_for_uuid(scene, &graphic.component_uuid) else {

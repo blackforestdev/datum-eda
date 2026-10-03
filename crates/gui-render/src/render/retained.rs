@@ -1,5 +1,7 @@
 #[path = "retained_board_graphics.rs"]
 mod retained_board_graphics;
+#[path = "retained_zones.rs"]
+mod retained_zones;
 use retained_board_graphics::{
     push_retained_board_graphic_batches, push_retained_board_text_geometry_batches,
     trace_retained_stage,
@@ -45,44 +47,16 @@ fn push_retained_scene_geometry(
     let copper_started = std::time::Instant::now();
     let copper_before = out.len();
     for pass_priority in [0u32, 1, 2] {
-        for zone in &scene.zones {
-            if copper_pass_priority_for_layer(&zone.layer_id, sl) != Some(pass_priority) {
-                continue;
-            }
-            if !authored_visible(state) || !layer_visible(state, &zone.layer_id) {
-                continue;
-            }
-            let related = zone_matches_active_action(zone, state)
-                || source_object_matches_preview(
-                    &preview_affected_ids,
-                    &zone.object_id,
-                    &zone.source_object_uuid,
-                );
-            let dimmed = dim_unrelated_active(state) && !related;
-            if zone.polygon.len() >= 4 {
-                let quad_start = out.len();
-                let stroke_start = strokes.len();
-                let za = layer_app(&zone.layer_id);
-                let (fill_color, outline_color) = (za.zone_fill, za.zone_outline);
-                push_world_polygon_fill(out, &zone.polygon, dim_authored_color(fill_color, dimmed));
-                let zone_weight = AuthoredStrokePrimitive::CopperZoneOutline;
-                gpu_strokes::push_world_stroke_loop(
-                    strokes,
-                    &zone.polygon,
-                    dim_authored_color(outline_color, dimmed),
-                    zone_weight.nominal_nm(),
-                    1.0,
-                );
-                scene_retained_access::finish_retained_draw_commands(
-                    draw_commands,
-                    Some(zone.layer_id.as_str()),
-                    quad_start,
-                    out.len(),
-                    stroke_start,
-                    strokes.len(),
-                );
-            }
-        }
+        retained_zones::push(
+            out,
+            strokes,
+            draw_commands,
+            scene,
+            reference_projection,
+            state,
+            pass_priority,
+            &preview_affected_ids,
+        );
         for track in &scene.tracks {
             if copper_pass_priority_for_layer(&track.layer_id, sl) != Some(pass_priority) {
                 continue;

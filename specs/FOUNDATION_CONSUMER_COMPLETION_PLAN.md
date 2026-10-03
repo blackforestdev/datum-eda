@@ -2494,3 +2494,19 @@ no-connect acceptance. The fixture Track width now matches its canonical source.
 Full three-part/dim-related/dense union-mask, per-class native proof and resource
 qualification remain pending. No C03/C04/C05/C06 closure, source model, dependency,
 latency budget, graphics scope or CAM/T04 acceptance change. Available U4 continues.
+
+### S5A-C03 — current-fill projection and inspection (partial)
+
+Native Zone DTOs, retained painting, hits and selection qualification now share
+the engine's existing current-fill predicate, exposed as an immutable query.
+Complete Object/Global Net copper projects all certified polygons; Runs retain
+their existing component qualifier. Successful-empty paint emits no copper,
+unavailable/stale/foreign fill cannot become nominal copper, and the authored
+boundary remains visible and selected for whole-Object/Net presentation.
+Zone-scoped inspection discloses current occupied, current empty or unavailable
+fill independently of authored bounds. Compatibility scenes preserve their
+recorded nominal paint. Twenty-six focused cases pass (one canonical Zone
+projection, one paint, eleven existing overlays and thirteen output/aggregate
+regressions); logs `target/s5a-c03-zone-*-proof.log`. Three-crate all-target
+Clippy and governance checks accompany the unit. Focused producer proof is not C04 native acceptance;
+full U4/U5, graphics positives, C05/C06 and CAM/T04 remain pending.

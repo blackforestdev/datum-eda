@@ -431,3 +431,10 @@ queries into normal `render/scene_relationships.rs`; renderer root expansion
 no longer keys or recolors retained authored geometry. Compatibility owners and
 PM049/052 retained resize behavior remain; native dim-related presentation and
 remaining selection visual/native proofs are not completed by this extraction.
+
+S5A-C03 current-fill projection extracts Zone DTOs and retained Zone painting
+into normal `zone_fill_projection` and `retained_zones` modules. Protocol
+production4060→4057 and renderer expansion4292→4266 ratchet exactly downward.
+The existing generated-fill authority is exposed immutably; no new geometry,
+source identity, fill producer, dependency or selection owner is introduced.
+Authored boundaries remain distinct from certified occupied copper.

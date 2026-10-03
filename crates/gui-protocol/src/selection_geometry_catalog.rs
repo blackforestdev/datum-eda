@@ -4,7 +4,7 @@ use crate::selection_resolution::NativeSelectionResolution;
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, BoardReviewSceneV1, PointNm,
 };
-use eda_engine::substrate::{DesignModel, SourceShardKind, ZoneFillState};
+use eda_engine::substrate::{DesignModel, SourceShardKind};
 use serde_json::Value;
 use std::collections::BTreeMap;
 pub type LayoutPoint = [R; 2];
@@ -112,20 +112,13 @@ pub fn qualification_catalog(
                     source(&board, "vias", &id)?.get("position")?,
                 )?])),
                 Class::Zone => {
-                    let fill = model.zone_fills.get(&id.id)?;
-                    let source = model.objects.get(&id.id)?;
-                    if fill.state != ZoneFillState::Filled
-                        || fill.model_revision != model.model_revision
-                        || fill.source_zone_revision != source.object_revision
-                    {
+                    let crate::ZoneFillProjection::Current(polygons) =
+                        crate::ZoneFillProjection::capture(model, id.id)
+                    else {
                         return None;
-                    }
-                    // Successful empty fill has no authored filled area to enclose.
+                    };
                     Some(QualificationGeometry::Filled(
-                        fill.islands
-                            .iter()
-                            .map(|p| polygon(p.vertices.iter().map(|p| PointNm { x: p.x, y: p.y })))
-                            .collect(),
+                        polygons.into_iter().map(polygon).collect(),
                     ))
                 }
                 Class::BoardOutline => {

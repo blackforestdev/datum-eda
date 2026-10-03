@@ -286,16 +286,9 @@ pub struct ViaPrimitive {
     pub end_layer_id: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct ZonePrimitive {
-    pub object_id: String,
-    pub object_kind: String,
-    pub source_object_uuid: String,
-    pub zone_uuid: String,
-    pub net_uuid: Option<String>,
-    pub layer_id: String,
-    pub polygon: Vec<PointNm>,
-}
+#[path = "zone_fill_projection.rs"]
+mod zone_fill_projection;
+pub use zone_fill_projection::{ZoneFillProjection, ZonePrimitive};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ProposalOverlayPrimitive {
@@ -2261,6 +2254,9 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
         scene.layers = layers;
     }
     scene.source_revision = model.model_revision.0.clone();
+    for zone in &mut scene.zones {
+        zone.fill_projection = ZoneFillProjection::capture(&model, zone.zone_uuid.parse()?);
+    }
     Ok((scene, board_path))
 }
 
@@ -3108,6 +3104,7 @@ fn build_board_review_scene(
             net_uuid: Some(zone.net),
             layer_id: layer_id(zone.layer),
             polygon: zone.polygon.vertices,
+            fill_projection: ZoneFillProjection::LegacyNominal,
         })
         .collect();
     let outline_path = close_outline_path(outline.vertices, outline.closed);

@@ -227,6 +227,19 @@ pub(super) fn push_native(
             && keys.contains(&zone.object_id)
             && layer_visible(state, &zone.layer_id)
         {
+            if !matches!(view.subject, datum_gui_protocol::SelectionSubject::Run(_)) {
+                let mut boundary = zone.polygon.clone();
+                if let Some(first) = boundary.first().copied() {
+                    boundary.push(first);
+                }
+                push_polyline_segments(
+                    out,
+                    &boundary,
+                    &projection,
+                    selected_copper_color(layer_app(&zone.layer_id).authored_track),
+                    3.0,
+                );
+            }
             for polygon in view.zone_regions.get(&zone.object_id).into_iter().flatten() {
                 let mut closed = polygon.clone();
                 if let Some(first) = closed.first().copied() {

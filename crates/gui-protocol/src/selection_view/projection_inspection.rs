@@ -56,6 +56,7 @@ fn rect(r: RectNm) -> [R; 4] {
 fn geometry<'a>(
     scene: &'a Scene,
     zones: &BTreeMap<String, Vec<Vec<PointNm>>>,
+    qualified_run: bool,
 ) -> BTreeMap<&'a str, Option<[R; 4]>> {
     let mut result = BTreeMap::new();
     for v in &scene.components {
@@ -80,6 +81,11 @@ fn geometry<'a>(
                 R::integer(0),
             )
         });
+        let boundary = (!qualified_run).then(|| path(&v.polygon, 0)).flatten();
+        let bounds = match (bounds, boundary) {
+            (Some(copper), Some(boundary)) => union(copper, boundary),
+            (copper, boundary) => copper.or(boundary),
+        };
         result.insert(v.object_id.as_str(), bounds);
     }
     for v in &scene.outline {
@@ -128,7 +134,7 @@ pub(super) fn append(
             continue;
         }
         let frame = format!("{surface}:{}", scene.board_uuid);
-        let geometries = geometry(scene, &view.zone_regions);
+        let geometries = geometry(scene, &view.zone_regions, run.is_some());
         for (key, binding) in SceneSelectionBindings::capture(scene, authority).iter() {
             // A parent owns its projected children; each stable member is
             // counted once per layer even when it has several display records.

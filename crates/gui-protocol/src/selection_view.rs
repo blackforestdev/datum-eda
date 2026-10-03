@@ -189,6 +189,33 @@ pub fn build_selection_view(
         dropped: BTreeSet::new(),
         stale: false,
     };
+    let zone_fills: BTreeMap<_, _> = result
+        .members
+        .iter()
+        .filter(|id| id.class == Class::Zone)
+        .map(|id| (id.clone(), crate::ZoneFillProjection::capture(model, id.id)))
+        .collect();
+    let zone_statuses: BTreeMap<_, _> = zone_fills
+        .iter()
+        .map(|(id, fill)| {
+            let status = match fill {
+                crate::ZoneFillProjection::Current(polygons) => {
+                    InspectionValue::Common(serde_json::json!(if polygons.is_empty() {
+                        "Current: no occupied copper"
+                    } else {
+                        "Current occupied copper"
+                    }))
+                }
+                crate::ZoneFillProjection::Unavailable(reason) => {
+                    InspectionValue::Unavailable(reason.clone())
+                }
+                crate::ZoneFillProjection::LegacyNominal => {
+                    unreachable!("native current-fill producer")
+                }
+            };
+            (id.clone(), status)
+        })
+        .collect();
     for zone in &board.zones {
         let Some(id) =
             crate::selection_scene::projection_candidate(board, &zone.object_id, authority)
@@ -198,36 +225,25 @@ pub fn build_selection_view(
         if !result.members.contains(&id) {
             continue;
         }
+        let fill = zone_fills.get(&id).expect("complete native zone facts");
         let polygons = if let Some(run) = &projection.board_run {
             run.zone_copper
                 .iter()
                 .filter(|c| c.zone_id == id.id)
                 .flat_map(|c| c.polygons.iter())
-                .collect::<Vec<_>>()
-        } else if let Some(fill) = model.zone_fills.get(&id.id).filter(|fill| {
-            fill.state == eda_engine::substrate::ZoneFillState::Filled
-                && fill.model_revision == model.model_revision
-                && model
-                    .objects
-                    .get(&id.id)
-                    .is_some_and(|source| fill.source_zone_revision == source.object_revision)
-        }) {
-            fill.islands.iter().collect::<Vec<_>>()
-        } else {
-            Vec::new()
-        };
-        result.zone_regions.insert(
-            zone.object_id.clone(),
-            polygons
-                .into_iter()
                 .map(|p| {
                     p.vertices
                         .iter()
                         .map(|p| crate::PointNm { x: p.x, y: p.y })
                         .collect()
                 })
-                .collect(),
-        );
+                .collect()
+        } else if let crate::ZoneFillProjection::Current(polygons) = fill {
+            polygons.clone()
+        } else {
+            continue;
+        };
+        result.zone_regions.insert(zone.object_id.clone(), polygons);
     }
     let needed: BTreeSet<_> = result
         .members
@@ -355,6 +371,40 @@ pub fn build_selection_view(
         .collect();
     result.unprojected = result.members.difference(&represented).cloned().collect();
     result.inspection = inspection::compile(&result);
+    if let Some(scope) = result
+        .inspection
+        .iter_mut()
+        .find(|s| s.scope == Some(Class::Zone))
+    {
+        let selected: Vec<_> = result
+            .members
+            .iter()
+            .filter(|id| id.class == Class::Zone)
+            .collect();
+        let unavailable: Vec<_> = selected
+            .iter()
+            .filter_map(|id| match zone_statuses.get(*id) {
+                Some(InspectionValue::Unavailable(reason)) => Some(format!("{}: {reason}", id.id)),
+                None => Some(format!("{}: no current surface projection", id.id)),
+                _ => None,
+            })
+            .collect();
+        let status = if !unavailable.is_empty() {
+            InspectionValue::Unavailable(unavailable.join("; "))
+        } else {
+            let values: Vec<_> = selected
+                .iter()
+                .map(|id| zone_statuses.get(*id).expect("complete zone states"))
+                .collect();
+            if values.windows(2).all(|w| w[0] == w[1]) {
+                values[0].clone()
+            } else {
+                InspectionValue::Mixed
+            }
+        };
+        scope.fields.insert("occupied_fill_status".into(), status);
+    }
+
     projection_inspection::append(
         &mut result,
         authority,

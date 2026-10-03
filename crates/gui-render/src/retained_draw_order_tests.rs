@@ -68,6 +68,7 @@ fn retained_commands_interleave_strokes_with_their_semantic_layers() {
     ];
     state.scene.zones = vec![
         datum_gui_protocol::ZonePrimitive {
+            fill_projection: datum_gui_protocol::ZoneFillProjection::LegacyNominal,
             object_id: "bottom-zone".into(),
             object_kind: "zone".into(),
             source_object_uuid: "bottom-zone".into(),
@@ -77,6 +78,7 @@ fn retained_commands_interleave_strokes_with_their_semantic_layers() {
             polygon: polygon.clone(),
         },
         datum_gui_protocol::ZonePrimitive {
+            fill_projection: datum_gui_protocol::ZoneFillProjection::LegacyNominal,
             object_id: "top-zone".into(),
             object_kind: "zone".into(),
             source_object_uuid: "top-zone".into(),
@@ -162,6 +164,7 @@ fn resize_independent_workspace() -> ReviewWorkspaceState {
         visible_by_default: true,
     }];
     state.scene.zones = vec![datum_gui_protocol::ZonePrimitive {
+        fill_projection: datum_gui_protocol::ZoneFillProjection::LegacyNominal,
         object_id: "resize-zone".into(),
         object_kind: "zone".into(),
         source_object_uuid: "resize-zone".into(),
