@@ -172,3 +172,59 @@ fn native_cues_are_clipped_to_each_pane_and_reproject_after_warm_camera_assignme
     };
     assert!(selection_beats_hover(&state, &hover));
 }
+
+#[test]
+fn region_evaluation_feedback_is_pane_clipped_and_preserves_authored_sources() {
+    let (fixture, mut state) = selected_state();
+    let source = fixture.source_bytes();
+    let pane = state.ui.layout.focused;
+    state.ui.selection_region = Some(datum_gui_protocol::SelectionRegionFeedback {
+        pane,
+        path: vec![
+            PointNm { x: 0, y: 0 },
+            PointNm { x: 10, y: 0 },
+            PointNm { x: 10, y: 10 },
+        ],
+        subtractive: false,
+        phase: 0,
+        evaluating: Some(4096),
+    });
+    let rect = RectPx {
+        x: 20.0,
+        y: 30.0,
+        width: 200.0,
+        height: 100.0,
+    };
+    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    push_region(
+        &mut quads,
+        &mut text,
+        &state,
+        pane,
+        &state.scene,
+        rect,
+        camera,
+    );
+    assert!(
+        text.iter()
+            .any(|run| run.text.contains("Evaluating selection")
+                && run.text.contains("Escape cancels")
+                && run.clip_bounds == Some(rect))
+    );
+    let mut other_text = Vec::new();
+    push_region(
+        &mut Vec::new(),
+        &mut other_text,
+        &state,
+        datum_gui_protocol::PaneId(pane.0 + 1),
+        &state.scene,
+        rect,
+        camera,
+    );
+    assert!(other_text.is_empty());
+    for (path, bytes) in source {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}

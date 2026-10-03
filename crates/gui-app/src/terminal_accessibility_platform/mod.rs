@@ -13,4 +13,4 @@ pub(crate) use worker::PlatformBridge;
 
 #[cfg(test)]
 #[path = "../../../gui-protocol/tests/support/native_selection_fixture.rs"]
-mod selection_fixture;
+pub(crate) mod selection_fixture;

@@ -2227,3 +2227,28 @@ regressions and dependency/source-health checks passed. Logs:
 `target/s5a-c03-accessibility-{boundary-proof,clippy}.log`.
 Keyboard navigation, full native accessibility replay and other available C03
 work remain pending. C03, graphics positive proofs, C05/C06 and CAM/T04 stay open.
+
+
+### S5A-C03 resumable source-qualified region integration (partial)
+
+Region release now traverses the shared retained AABB owner across bounded
+node/leaf ticks, staging the complete set until atomic publication. Source-bound
+board/current-sheet indexes are cached per resolved basis; exact oriented layout
+changes invalidate their preparation. Final world geometry, originating pane,
+revision and eligibility bind evaluation. Escape/focus/content/capture changes
+cancel staging; unresolved geometry refuses rather than omitting identities.
+Degenerate regions are empty. Visible and accessibility feedback disclose
+ongoing evaluation without replacing committed membership; no transport cap
+supplies candidates. Cached indexes cover at most the board and current sheet.
+
+Focused proof: 15 app selection/accessibility regressions, two shared 100k-index
+oracle/pruning/uncapped completion checks and one pane-clipped feedback test
+passed. Three affected crates passed all-target Clippy with warnings denied.
+An initially failing two-point degenerate case was corrected; original failure
+is retained in `target/s5a-c03-region-degenerate-failure.log`. Proof logs:
+`target/s5a-c03-{region-index,native-region,region-integration,region-render}-proof.log`.
+These are bounded producer checks, not complete N01–N17/native acceptance or
+100k per-class qualification/union-mask proof. Cache construction and individual
+exact geometry predicates are not qualified latency observations. Available
+C03 menu/keyboard/aggregate/visual/native work continues; graphics, C05/C06,
+deferred editors and manufacturing CAM/T04 boundaries remain unchanged.

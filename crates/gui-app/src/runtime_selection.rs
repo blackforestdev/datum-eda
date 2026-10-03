@@ -20,6 +20,10 @@ pub(super) struct NativeSelectionSession {
         u8,
     )>,
     lineage: Option<NativeSelectionResolution>,
+    pub(super) region_bases: std::collections::BTreeMap<
+        String,
+        std::sync::Arc<selection_region_evaluation::RegionBasis>,
+    >,
 }
 impl NativeSelectionSession {
     pub(super) fn reset_click_depth(&mut self) {
@@ -76,6 +80,7 @@ impl Runtime {
                     model,
                     authority,
                     last_click: None,
+                    region_bases: Default::default(),
                     lineage: Some(previous.lineage.unwrap_or(previous.authority)),
                 });
                 self.refresh_selection_accessibility();
@@ -124,6 +129,7 @@ impl Runtime {
             model,
             authority,
             last_click: None,
+            region_bases: Default::default(),
             lineage: None,
         });
         self.refresh_selection_accessibility();
@@ -318,6 +324,7 @@ impl Runtime {
         true
     }
     pub(super) fn native_select_all(&mut self) -> bool {
+        self.cancel_native_selection_gesture();
         match self.ensure_selection_authority() {
             Ok(true) => {}
             Ok(false) => return false,
@@ -401,6 +408,7 @@ impl Runtime {
             return false;
         }
         view.scope = scope;
+        self.refresh_selection_accessibility();
         self.session
             .workspace_mut()
             .ui

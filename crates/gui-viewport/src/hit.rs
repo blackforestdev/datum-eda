@@ -693,3 +693,6 @@ mod tests {
         }));
     }
 }
+
+pub mod region;
+pub use region::{DEFAULT_REGION_QUERY_BUDGET, RegionQueryCursor, RegionQueryStep};

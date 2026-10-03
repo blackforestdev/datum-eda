@@ -96,6 +96,7 @@ impl Runtime {
             session: LiveDesignSession::new(state),
             native_selection: None,
             selection_gesture: None,
+            selection_evaluation: None,
             selection_release_suppressed: false,
             selection_tick: None,
             render_sources: Default::default(),

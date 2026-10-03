@@ -5,6 +5,7 @@ use std::sync::Arc;
 pub(crate) struct SelectionAccessibilitySnapshot {
     pub view: Arc<SelectionView>,
     pub focused: bool,
+    pub evaluating: Option<(datum_gui_protocol::PaneId, usize)>,
     pub pane: Option<datum_gui_protocol::PaneId>,
 }
 impl crate::Runtime {
@@ -17,6 +18,13 @@ impl crate::Runtime {
             datum_gui_protocol::SelectionTarget::Native(view) => Some(view.as_ref()),
             _ => None,
         };
-        self.terminal_accessibility.update_selection(view, pane);
+        let evaluating = self
+            .workspace()
+            .ui
+            .selection_region
+            .as_ref()
+            .and_then(|region| region.evaluating.map(|count| (region.pane, count)));
+        self.terminal_accessibility
+            .update_selection(view, pane, evaluating);
     }
 }

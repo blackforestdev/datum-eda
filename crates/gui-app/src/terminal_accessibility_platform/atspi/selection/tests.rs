@@ -61,6 +61,7 @@ fn setup() -> (fixture::Fixture, ServiceState) {
     state.selection = Some(SelectionAccessibilitySnapshot {
         view: Arc::new(view),
         focused: true,
+        evaluating: None,
         pane: Some(datum_gui_protocol::PaneId(0)),
     });
     (f, state)
@@ -238,7 +239,27 @@ fn selection_accessibility_pane_switch_discloses_owner_without_changing_membersh
             .body_reader()
             .variant_string()
             .unwrap()
-            .contains("Active pane Some(7)")
+            .contains("Editor pane 7")
+    );
+    let events = messages(|| 1, "", Some(&previous), Some(&next), &state);
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].header.member.as_deref(), Some("PropertyChange"));
+}
+
+#[test]
+fn selection_accessibility_evaluation_reports_pending_work_without_partial_membership() {
+    let (_f, mut state) = setup();
+    let previous = state.selection.clone().unwrap();
+    state.selection.as_mut().unwrap().evaluating = Some((datum_gui_protocol::PaneId(0), 99));
+    let next = state.selection.clone().unwrap();
+    assert_eq!(previous.view, next.view);
+    let reply = state.dispatch(1, &description_call(PATH));
+    assert!(
+        reply
+            .body_reader()
+            .variant_string()
+            .unwrap()
+            .contains("Evaluating selection: 99 candidates examined; Escape cancels")
     );
     let events = messages(|| 1, "", Some(&previous), Some(&next), &state);
     assert_eq!(events.len(), 1);

@@ -95,6 +95,7 @@ mod runtime_terminal_search;
 mod runtime_terminal_theme;
 mod runtime_view_actions;
 mod selection_accessibility;
+mod selection_region_evaluation;
 mod terminal_accessibility;
 mod terminal_accessibility_bridge;
 mod terminal_accessibility_platform;

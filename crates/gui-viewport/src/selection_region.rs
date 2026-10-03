@@ -235,9 +235,16 @@ impl SelectionRegion {
             .map(|i| [point(path[i]), point(path[(i + 1) % path.len()])])
             .collect();
         Ok(Self {
-            triangles: even_odd_triangles(&path.iter().copied().map(point).collect::<Vec<_>>())?,
+            triangles: if path.len() < 3 {
+                Vec::new()
+            } else {
+                even_odd_triangles(&path.iter().copied().map(point).collect::<Vec<_>>())?
+            },
             boundary,
         })
+    }
+    pub fn is_empty(&self) -> bool {
+        self.triangles.is_empty()
     }
     pub fn contains(&self, p: PointNm) -> Result<bool> {
         for tri in &self.triangles {

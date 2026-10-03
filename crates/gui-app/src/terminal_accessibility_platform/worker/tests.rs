@@ -50,6 +50,7 @@ fn selection_accessibility_publication_preserves_all_siblings_and_latest_basis()
     let first = SelectionAccessibilitySnapshot {
         view: Arc::new(view),
         focused: true,
+        evaluating: None,
         pane: Some(datum_gui_protocol::PaneId(0)),
     };
     let (wake, _reader) = UnixStream::pair().unwrap();

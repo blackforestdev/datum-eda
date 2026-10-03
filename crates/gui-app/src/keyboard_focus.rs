@@ -226,6 +226,9 @@ impl Runtime {
     }
 
     pub(crate) fn set_application_focus(&mut self, focus: ApplicationFocus) {
+        if self.application_focus() != focus {
+            self.cancel_native_selection_gesture();
+        }
         let report = terminal_focus_report_transition(self.application_focus(), focus);
         self.session.workspace_mut().ui.focus = focus;
         self.refresh_selection_accessibility();

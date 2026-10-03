@@ -93,6 +93,7 @@ pub(super) fn push_native(
         camera,
     );
     let start = out.len();
+    let before_text = text_runs.len();
     let layer_app = |layer: &str| resolve_layer_appearance_with_scene(Some(layer), &scene.layers);
     let glyph_assets = glyph_mesh_lookup::MeshIndex::new(&scene.glyph_mesh_assets, out);
     for graphic in &scene.board_graphics {
@@ -253,7 +254,15 @@ pub(super) fn push_native(
             }
         }
     }
-    crate::hit_clipping::clip_content(out, &mut Vec::new(), &mut Vec::new(), start, 0, 0, viewport);
+    crate::hit_clipping::clip_content(
+        out,
+        text_runs,
+        &mut Vec::new(),
+        start,
+        before_text,
+        0,
+        viewport,
+    );
 }
 fn push_screen_line(
     out: &mut Vec<Quad>,
@@ -280,6 +289,7 @@ fn push_screen_line(
 
 pub(super) fn push_region(
     out: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
     state: &ReviewWorkspaceState,
     pane: datum_gui_protocol::PaneId,
     scene: &BoardReviewSceneV1,
@@ -300,6 +310,18 @@ pub(super) fn push_region(
         camera,
     );
     let start = out.len();
+    let before_text = text_runs.len();
+    if let Some(examined) = feedback.evaluating {
+        draw_text(
+            &format!("Evaluating selection — {examined} candidates examined; Escape cancels"),
+            viewport.x + 12.0,
+            viewport.y + 12.0,
+            12.0,
+            TEXT_PRIMARY,
+            TextFace::Ui,
+            text_runs,
+        );
+    }
     let phase = if state.ui.global_preferences.reduced_motion {
         0.0
     } else {
@@ -337,7 +359,15 @@ pub(super) fn push_region(
             at += dash * 2.0;
         }
     }
-    crate::hit_clipping::clip_content(out, &mut Vec::new(), &mut Vec::new(), start, 0, 0, viewport);
+    crate::hit_clipping::clip_content(
+        out,
+        text_runs,
+        &mut Vec::new(),
+        start,
+        before_text,
+        0,
+        viewport,
+    );
 }
 
 impl PreparedScene {
@@ -366,6 +396,7 @@ impl PreparedScene {
             );
             push_region(
                 &mut quads,
+                &mut self.text_runs,
                 state,
                 pass.pane_id,
                 scene,

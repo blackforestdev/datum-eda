@@ -981,6 +981,8 @@ mod tests {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct SelectionRegionFeedback {
+    /// Exact evaluation in progress; count is feedback, never committed membership.
+    pub evaluating: Option<usize>,
     pub pane: PaneId,
     pub path: Vec<crate::PointNm>,
     pub subtractive: bool,

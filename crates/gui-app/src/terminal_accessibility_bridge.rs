@@ -56,23 +56,35 @@ impl LinuxTerminalAccessibilityBridge {
         &mut self,
         view: Option<&datum_gui_protocol::selection_view::SelectionView>,
         pane: Option<datum_gui_protocol::PaneId>,
+        evaluating: Option<(datum_gui_protocol::PaneId, usize)>,
     ) {
         let focused = pane.is_some();
         if match (&self.selection, view) {
-            (Some(previous), Some(view)) => previous.pane == pane && previous.view.as_ref() == view,
+            (Some(previous), Some(view)) => {
+                previous.pane == pane
+                    && previous.evaluating == evaluating
+                    && previous.view.as_ref() == view
+            }
             (None, None) => true,
             _ => false,
         } {
             return;
         }
-        self.selection =
-            view.map(
-                |view| crate::selection_accessibility::SelectionAccessibilitySnapshot {
-                    view: Arc::new(view.clone()),
-                    focused,
-                    pane,
-                },
-            );
+        let shared_view = view.map(|view| {
+            self.selection
+                .as_ref()
+                .filter(|previous| previous.view.as_ref() == view)
+                .map(|previous| previous.view.clone())
+                .unwrap_or_else(|| Arc::new(view.clone()))
+        });
+        self.selection = shared_view.map(|view| {
+            crate::selection_accessibility::SelectionAccessibilitySnapshot {
+                view,
+                evaluating,
+                focused,
+                pane,
+            }
+        });
         if !self.publish_platform {
             return;
         }

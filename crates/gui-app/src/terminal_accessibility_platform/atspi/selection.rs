@@ -125,8 +125,18 @@ fn description(
     node: Node<'_>,
 ) -> String {
     let view = &snapshot.view;
+    let pane = snapshot
+        .pane
+        .map(|pane| format!("Editor pane {}", pane.0))
+        .unwrap_or_else(|| "Editor inactive".into());
+    let evaluation = snapshot
+        .evaluating
+        .map(|(_, count)| {
+            format!("Evaluating selection: {count} candidates examined; Escape cancels.")
+        })
+        .unwrap_or_default();
     match node {
-        Node::Root=>format!("Read-only {}. Active pane {:?}. {} unprojected; {} dropped. {} Move, rotate, mirror, lock and group unavailable in S5A.",view.summary(),snapshot.pane.map(|pane| pane.0),view.unprojected.len(),view.dropped.len(),if view.stale { "Stale previous basis; current geometry unavailable." } else { "Current resolved basis." }),
+        Node::Root=>format!("Read-only {}. {}. {} {} unprojected; {} dropped. {} Move, rotate, mirror, lock and group unavailable in S5A.",view.summary(),pane,evaluation,view.unprojected.len(),view.dropped.len(),if view.stale { "Stale previous basis; current geometry unavailable." } else { "Current resolved basis." }),
         Node::Member(id)=>format!("Selected identity {:?}; occurrence {:?}; hidden {}; locked {}; unprojected {}; selection focus {}; read-only.",id.id,id.instance_path,view.hidden.contains(id),view.locked.contains(id),view.unprojected.contains(id),view.focus()==Some(id)),
         Node::Field(field)=>field_value(view,field),
         Node::Members=>"Complete authoritative membership, including hidden and cross-sheet occurrences. No transport cap.".into(),

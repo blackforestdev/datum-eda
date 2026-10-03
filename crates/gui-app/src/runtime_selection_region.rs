@@ -1,12 +1,8 @@
 //! Native gesture plumbing over the shared qualification and acquisition owners.
 use super::*;
-use datum_gui_protocol::selection_geometry_catalog::{
-    QualificationGeometry as Geometry, qualification_catalog,
-};
 use datum_gui_viewport::{
     selection_acquisition::{AcquisitionEntry, AcquisitionMode},
     selection_gesture::SelectionGesture,
-    selection_region::SelectionRegion,
 };
 impl Runtime {
     pub(super) fn begin_native_selection_press(&mut self) -> bool {
@@ -17,6 +13,10 @@ impl Runtime {
             .is_some_and(|b| b.request.board_file.is_none())
         {
             return false;
+        }
+        if self.selection_evaluation.is_some() {
+            self.cancel_native_selection_gesture();
+            self.selection_release_suppressed = false;
         }
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
@@ -34,14 +34,15 @@ impl Runtime {
             return false;
         };
         let identity = match surface {
-            SceneSurface::Board => self.workspace().scene.scene_id.clone(),
-            SceneSurface::Schematic => self
-                .workspace()
-                .schematic_scene
-                .as_ref()
-                .unwrap()
-                .scene_id
-                .clone(),
+            SceneSurface::Board => format!(
+                "{}@{}",
+                self.workspace().scene.scene_id,
+                self.workspace().scene.source_revision
+            ),
+            SceneSurface::Schematic => {
+                let scene = self.workspace().schematic_scene.as_ref().unwrap();
+                format!("{}@{}", scene.scene_id, scene.source_revision)
+            }
         };
         let Some(gesture) = SelectionGesture::begin(
             pane,
@@ -58,8 +59,59 @@ impl Runtime {
         if pane != self.workspace().ui.layout.focused {
             self.swap_pane_focus(|l| l.focused = pane);
         }
+        if gesture.mode != AcquisitionMode::Replace
+            && let Err(reason) = self.prepare_native_region_basis(surface)
+        {
+            self.selection_notice(reason);
+            self.selection_release_suppressed = true;
+            return true;
+        }
         self.selection_gesture = Some(gesture);
         true
+    }
+    fn prepare_native_region_basis(&mut self, surface: SceneSurface) -> Result<(), String> {
+        match self.ensure_selection_authority() {
+            Ok(true) => {}
+            Ok(false) => return Err("Native region authority unavailable".into()),
+            Err(error) => return Err(error.to_string()),
+        }
+        let native = self.native_selection.as_ref().unwrap();
+        let scene = match surface {
+            SceneSurface::Board => &self.workspace().scene,
+            SceneSurface::Schematic => self
+                .workspace()
+                .schematic_scene
+                .as_ref()
+                .ok_or("Schematic region authority unavailable")?,
+        };
+        if scene.source_revision != native.model.model_revision.0
+            || scene.project_uuid != native.model.project.project_id.to_string()
+        {
+            return Err("Region source revision does not match resolved authority".into());
+        }
+        let key = match surface {
+            SceneSurface::Board => "board",
+            SceneSurface::Schematic => "schematic",
+        };
+        if native
+            .region_bases
+            .get(key)
+            .is_some_and(|basis| basis.matches(scene))
+        {
+            return Ok(());
+        }
+        let key = key.to_owned();
+        let basis = std::sync::Arc::new(selection_region_evaluation::RegionBasis::capture(
+            &native.model,
+            &native.authority,
+            scene,
+        ));
+        self.native_selection
+            .as_mut()
+            .unwrap()
+            .region_bases
+            .insert(key, basis);
+        Ok(())
     }
     pub(super) fn advance_native_selection(&mut self, screen: (f32, f32)) -> bool {
         let Some(pane) = self.selection_gesture.as_ref().map(|g| g.pane) else {
@@ -83,6 +135,7 @@ impl Runtime {
             pane,
             path: gesture.boundary(),
             subtractive: gesture.mode == AcquisitionMode::Remove,
+            evaluating: None,
             phase: self
                 .workspace()
                 .ui
@@ -98,9 +151,12 @@ impl Runtime {
         true
     }
     pub(super) fn cancel_native_selection_gesture(&mut self) -> bool {
-        let changed = self.selection_gesture.take().is_some();
+        let gesture_changed = self.selection_gesture.take().is_some();
+        let evaluation_changed = self.selection_evaluation.take().is_some();
+        let changed = gesture_changed || evaluation_changed;
         self.session.workspace_mut().ui.selection_region = None;
         self.selection_tick = None;
+        self.refresh_selection_accessibility();
         if changed {
             self.selection_release_suppressed = true;
             self.invalidate_frame();
@@ -127,7 +183,9 @@ impl Runtime {
             datum_gui_protocol::PaneContent::Schematic => self.workspace().schematic_scene.as_ref(),
             _ => None,
         };
-        if scene.is_none_or(|s| s.scene_id != gesture.source_revision) {
+        if scene.is_none_or(|s| {
+            format!("{}@{}", s.scene_id, s.source_revision) != gesture.source_revision
+        }) {
             return Some(true);
         }
         match self.ensure_selection_authority() {
@@ -138,13 +196,6 @@ impl Runtime {
                 return Some(true);
             }
         }
-        let region = match SelectionRegion::new(&gesture.boundary()) {
-            Ok(r) => r,
-            Err(e) => {
-                self.selection_notice(format!("Region refused: {e:?}"));
-                return Some(true);
-            }
-        };
         let state = self.workspace();
         let native = self.native_selection.as_ref().unwrap();
         let scene = if content == datum_gui_protocol::PaneContent::Schematic {
@@ -152,83 +203,108 @@ impl Runtime {
         } else {
             &state.scene
         };
-        let catalogue = qualification_catalog(&native.model, &native.authority, scene);
-        let bindings = datum_gui_protocol::selection_scene::SceneSelectionBindings::capture(
-            scene,
-            &native.authority,
-        );
-        let eligible: std::collections::BTreeSet<_> = bindings
-            .iter()
-            .filter(|(_, binding)| {
-                state.ui.filters.show_authored
-                    && binding.visible(|layer| {
-                        state
-                            .ui
-                            .filters
-                            .layer_visibility
-                            .get(layer)
-                            .copied()
-                            .unwrap_or(true)
-                    })
-            })
-            .map(|(_, binding)| binding.acquired.clone())
-            .collect();
-        let mut candidates = std::collections::BTreeSet::new();
-        for (id, geometry) in catalogue {
-            if !eligible.contains(&id)
-                || state
-                    .ui
-                    .filters
-                    .excluded_selection_classes
-                    .contains(&id.class)
-            {
-                continue;
+        let cache_key = if content == datum_gui_protocol::PaneContent::Schematic {
+            "schematic"
+        } else {
+            "board"
+        };
+        let Some(basis) = native
+            .region_bases
+            .get(cache_key)
+            .filter(|basis| basis.matches_source(scene))
+            .cloned()
+        else {
+            self.selection_notice(
+                "Region cancelled: source bounds unavailable; previous selection preserved".into(),
+            );
+            return Some(true);
+        };
+        let filters = state.ui.filters.clone();
+        let revision = native.model.model_revision.0.clone();
+        match selection_region_evaluation::RegionEvaluation::begin(
+            gesture.pane,
+            gesture.mode,
+            revision,
+            basis,
+            filters,
+            &gesture.boundary(),
+        ) {
+            Ok(evaluation) => {
+                self.selection_evaluation = Some(evaluation);
+                self.session.workspace_mut().ui.selection_region =
+                    Some(datum_gui_protocol::SelectionRegionFeedback {
+                        pane: gesture.pane,
+                        path: gesture.boundary(),
+                        subtractive: gesture.mode == AcquisitionMode::Remove,
+                        phase: 0,
+                        evaluating: Some(0),
+                    });
+                self.selection_tick = Some(std::time::Instant::now());
+                self.advance_native_region_evaluation();
             }
-            let qualified = match geometry {
-                Ok(Geometry::Anchors(anchors)) => region.anchors(&anchors),
-                Ok(Geometry::Layout(layout)) => region.majority_layout(&layout),
-                Ok(Geometry::Disk { center, radius }) => region.encloses_disk(center, radius),
-                Ok(Geometry::Filled(polygons)) => {
-                    let mut complete = !polygons.is_empty();
-                    let mut error = None;
-                    for polygon in polygons {
-                        match region.encloses(&polygon) {
-                            Ok(true) => {}
-                            Ok(false) => complete = false,
-                            Err(e) => {
-                                error = Some(e);
-                                break;
-                            }
-                        }
+            Err(reason) => self.selection_notice(reason),
+        }
+        Some(true)
+    }
+    fn advance_native_region_evaluation(&mut self) -> bool {
+        let Some(mut evaluation) = self.selection_evaluation.take() else {
+            return false;
+        };
+        let scene = self
+            .workspace()
+            .ui
+            .layout
+            .content_for(evaluation.pane)
+            .and_then(|content| match content {
+                datum_gui_protocol::PaneContent::Board => Some(&self.workspace().scene),
+                datum_gui_protocol::PaneContent::Schematic => {
+                    self.workspace().schematic_scene.as_ref()
+                }
+                _ => None,
+            });
+        if scene.is_none_or(|scene| !evaluation.basis.matches_source(scene))
+            || &self.workspace().ui.filters != evaluation.filters()
+        {
+            self.session.workspace_mut().ui.selection_region = None;
+            self.selection_tick = None;
+            self.selection_notice(
+                "Region cancelled: source or eligibility changed; previous selection preserved"
+                    .into(),
+            );
+            return true;
+        }
+        // Resolve the current canonical basis before publication, never mix revisions.
+        let outcome = evaluation.advance();
+        match outcome {
+            Ok(Some(candidates)) => {
+                self.session.workspace_mut().ui.selection_region = None;
+                self.selection_tick = None;
+                match self.ensure_selection_authority() {
+                    Ok(true) if self.native_selection.as_ref().unwrap().model.model_revision.0==evaluation.revision=> {
+                        self.native_selection.as_mut().unwrap().reset_click_depth();
+                        self.publish_native_acquisition(candidates,evaluation.mode,AcquisitionEntry::Region,None);
                     }
-                    match error {
-                        Some(e) => Err(e),
-                        None => Ok(complete),
-                    }
+                    Ok(_)=>self.selection_notice("Region cancelled: resolved revision changed; no partial selection published".into()),
+                    Err(error)=>self.selection_notice(error.to_string()),
                 }
-                Err(reason) => {
-                    self.selection_notice(reason);
-                    return Some(true);
+            }
+            Ok(None) => {
+                if let Some(feedback) = &mut self.session.workspace_mut().ui.selection_region {
+                    feedback.evaluating = Some(evaluation.examined());
                 }
-            };
-            match qualified {
-                Ok(true) => {
-                    candidates.insert(id);
-                }
-                Ok(false) => {}
-                Err(e) => {
-                    self.selection_notice(format!("Region refused atomically: {e:?}"));
-                    return Some(true);
-                }
+                self.selection_evaluation = Some(evaluation);
+                self.selection_tick =
+                    Some(std::time::Instant::now() + std::time::Duration::from_millis(33));
+            }
+            Err(reason) => {
+                self.session.workspace_mut().ui.selection_region = None;
+                self.selection_tick = None;
+                self.selection_notice(reason);
             }
         }
-        self.native_selection.as_mut().unwrap().reset_click_depth();
-        Some(self.publish_native_acquisition(
-            candidates,
-            gesture.mode,
-            AcquisitionEntry::Region,
-            None,
-        ))
+        self.refresh_selection_accessibility();
+        self.invalidate_frame();
+        true
     }
     pub(super) fn poll_native_selection_tick(&mut self) -> bool {
         if self
@@ -236,6 +312,9 @@ impl Runtime {
             .is_none_or(|due| due > std::time::Instant::now())
         {
             return false;
+        }
+        if self.selection_evaluation.is_some() {
+            return self.advance_native_region_evaluation();
         }
         let Some(gesture) = &self.selection_gesture else {
             self.selection_tick = None;
