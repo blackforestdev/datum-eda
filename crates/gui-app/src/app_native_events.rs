@@ -254,6 +254,7 @@ impl App {
                     runtime.pan_gesture.cancel();
                     runtime.cancel_terminal_tab_drag();
                     runtime.cancel_terminal_text_selection_drag();
+                    runtime.cancel_native_selection_gesture();
                     let terminal_split_finished = runtime.finish_terminal_split_drag().is_some();
                     let terminal_hover_cleared = runtime.clear_terminal_tab_hover();
                     if runtime.clear_interaction_overlay()
@@ -317,6 +318,8 @@ impl App {
                     } else if runtime.marking_menu_active() {
                         mark(&mut self.input_observation, "marking_menu");
                         changed = runtime.update_marking_menu_preview(next_pos);
+                    } else if runtime.selection_gesture.is_some() {
+                        changed = runtime.advance_native_selection(next_pos) || changed;
                     } else if runtime.pan_gesture.is_active() {
                         mark(&mut self.input_observation, "pan");
                         changed = previous_pos.is_some_and(|previous| {
@@ -426,6 +429,10 @@ impl App {
                         return;
                     }
                     if was_divider_drag {
+                        self.request_workspace_redraw();
+                        return;
+                    }
+                    if runtime.finish_native_selection_press().is_some() {
                         self.request_workspace_redraw();
                         return;
                     }

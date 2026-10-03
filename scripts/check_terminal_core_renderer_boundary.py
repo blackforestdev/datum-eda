@@ -18,6 +18,7 @@ TEXTURE = RENDER / "src/render/terminal_graphic_texture.rs"
 UPLOAD = RENDER / "src/render/terminal_upload.rs"
 STAGING = RENDER / "src/text_gpu/upload.rs"
 GPU = RENDER / "src/render/gpu_frame.rs"
+PAINTER = RENDER / "src/render/gpu_frame_painter.rs"
 SCENE = RENDER / "src/render/frame_preparation.rs"
 SESSION_PREPARATION = RENDER / "src/render/session_preparation.rs"
 TESTS = RENDER / "src/terminal_core_render_tests.rs"
@@ -54,6 +55,7 @@ def check(root: Path) -> list[str]:
         if marker not in graphics:
             failures.append(f"GPU texture owner is not wired: {marker}")
     gpu = re.sub(r"\s+", "", read(root, GPU)).replace(",)", ")")
+    painter = re.sub(r"\s+", "", read(root, PAINTER)).replace(",)", ")")
     scene = read(root, SCENE)
     tests = read(root, TESTS)
     visual = read(root, VISUAL)
@@ -117,20 +119,21 @@ def check(root: Path) -> list[str]:
         "crate::text_gpu::upload::TextureUpload {",
         "GraphicAnchorResolution::History",
         "GraphicAnchorResolution::Screen",
-        "terminal_graphics.draw_layer(&mutpass,&self.uniform_bind_group,false)",
-        "terminal_graphics.draw_layer(&mutpass,&self.uniform_bind_group,true)",
+        "terminal_graphics.draw_layer(pass,&self.uniform_bind_group,false,damage,clip)",
+        "terminal_graphics.draw_layer(pass,&self.uniform_bind_group,true,damage,clip)",
     ):
-        corpus = core + graphics + texture + gpu
+        corpus = core + graphics + texture + painter
         if marker not in corpus:
             failures.append(f"GPU image path lacks marker: {marker}")
 
     # Check the default native continuation and shared copy path in their owners.
     for path, markers in (
         (GRAPHICS, ('#[path = "terminal_upload.rs"]', 'mod upload;')),
-        (GPU, ('self.submit_terminal_upload_chunk(device, queue, &mut |submission| {',
+        (GPU, ('#[path = "gpu_frame_painter.rs"]', 'mod painter;',
+               'self.submit_terminal_upload_chunk(device, queue, &mut |submission| {',
                'target.submitted(submission)', 'target.acquire()?')),
         (UPLOAD, ('texture.append_chunk(', 'crate::text_gpu::upload::batch(',
-                  'queue.submit([batch.command()])', 'batch.hold(queue)',
+                  'queue.submit(before.into_iter().chain([batch.command()]).chain(after))', 'batch.hold(queue)',
                   'on_submitted(submission)', 'self.textures[index].consume_chunk(count)')),
         (STAGING, ('encoder.copy_buffer_to_texture(',)),
     ):

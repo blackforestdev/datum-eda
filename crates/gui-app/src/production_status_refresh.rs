@@ -71,6 +71,7 @@ fn refresh_workspace_after_terminal_output(
     };
     let before = session.workspace();
     if next.scene == before.scene
+        && next.schematic_scene == before.schematic_scene
         && next.review == before.review
         && next.production == before.production
         && next.checks == before.checks
@@ -81,6 +82,7 @@ fn refresh_workspace_after_terminal_output(
     }
     let workspace = session.workspace_mut();
     workspace.scene = next.scene;
+    workspace.schematic_scene = next.schematic_scene;
     workspace.review = next.review;
     workspace.production = next.production;
     workspace.source_shards = next.source_shards;
@@ -114,6 +116,8 @@ impl App {
                     || runtime.application_shutdown_blocked);
             changed |= runtime.poll_scheduled_production_refresh();
             changed |= runtime.poll_console_lifetime();
+            changed |= runtime.poll_native_selection_tick();
+            self.frames.wake_at(runtime.selection_tick);
             if runtime.application_terminal_shutdown_complete() {
                 event_loop.exit();
                 return;
@@ -212,6 +216,9 @@ impl Runtime {
             self.workspace_include_review,
         ) {
             Ok(ProductionStatusRefresh::Changed) => {
+                if let Err(error) = self.ensure_selection_authority() {
+                    self.selection_notice(error.to_string());
+                }
                 self.terminal_production_refresh_due = None;
                 self.terminal_production_refresh_attempts = 0;
                 self.invalidate_scene();

@@ -241,6 +241,9 @@ fn push_symbol_pin(
         name_v,
         SCHEMATIC_PIN_NAME_TEXT_LAYER_INT,
     );
+    if !pin.name.trim().is_empty() {
+        text.bind_last_source(pin.uuid);
+    }
     text.push(
         points,
         symbol_uuid,
@@ -252,4 +255,7 @@ fn push_symbol_pin(
         number_v,
         SCHEMATIC_PIN_NUMBER_TEXT_LAYER_INT,
     );
+    if !pin.number.trim().is_empty() {
+        text.bind_last_source(pin.uuid);
+    }
 }

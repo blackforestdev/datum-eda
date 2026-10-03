@@ -68,7 +68,7 @@ impl RetainedSceneCacheKey {
     ) -> Option<usize> {
         use datum_gui_protocol::SelectionTarget;
         let selection_len = match &state.selection {
-            SelectionTarget::None => 0,
+            SelectionTarget::Native(_) | SelectionTarget::None => 0,
             SelectionTarget::AuthoredObject(id)
             | SelectionTarget::ReviewAction(id)
             | SelectionTarget::CheckFinding(id) => id.len(),
@@ -512,7 +512,8 @@ fn retained_selection_cache_key(
     selection: &datum_gui_protocol::SelectionTarget,
 ) -> String {
     match selection {
-        datum_gui_protocol::SelectionTarget::None => "none".to_string(),
+        datum_gui_protocol::SelectionTarget::Native(_)
+        | datum_gui_protocol::SelectionTarget::None => "none".to_string(),
         datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
         datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
         datum_gui_protocol::SelectionTarget::AuthoredObject(id) => {

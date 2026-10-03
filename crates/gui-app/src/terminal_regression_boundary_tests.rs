@@ -57,6 +57,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::OpenRevisionWitness(_)
         | HitTarget::ReviewAction(_)
         | HitTarget::AuthoredObject(_)
+        | HitTarget::SelectionScope(_)
         | HitTarget::FitBoard
         | HitTarget::FitReviewTarget
         | HitTarget::SetWorkspaceTool(_)

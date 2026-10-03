@@ -9,6 +9,13 @@ pub(super) fn render_inspector_panel(
     hit_regions: &mut Vec<HitRegion>,
 ) -> anyhow::Result<()> {
     match &state.selection {
+        SelectionTarget::Native(view) => super::selection_inspector::render(
+            view,
+            inspector_rect,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        )?,
         SelectionTarget::ReviewAction(action_id) => {
             push_inspector_title_band(
                 inspector_rect,

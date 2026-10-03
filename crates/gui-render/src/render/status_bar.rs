@@ -84,6 +84,7 @@ pub(crate) fn render_status_bar_logical(
     };
 
     let sel = match &state.selection {
+        SelectionTarget::Native(view) => format!("{} {}", view.subject.kind(), view.members.len()),
         SelectionTarget::None => "none".to_string(),
         SelectionTarget::ReviewAction(id)
         | SelectionTarget::AuthoredObject(id)

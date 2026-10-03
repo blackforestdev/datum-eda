@@ -176,7 +176,15 @@ fn visit<'a>(
         emit(Region {
             target: &text.object_id,
             layer_id: Some(&text.layer_id),
-            shape: Shape::Rect(board_text_hit_rect(text)),
+            shape: scene
+                .board_text_geometries
+                .iter()
+                .find(|g| g.object_id == text.object_id)
+                .filter(|g| {
+                    datum_gui_protocol::selection_geometry_catalog::layout_polygon(g).is_some()
+                })
+                .map(Shape::Layout)
+                .unwrap_or_else(|| Shape::Rect(board_text_hit_rect(text))),
         })?;
     }
     for gfx in &scene.board_graphics {

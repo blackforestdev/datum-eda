@@ -378,3 +378,16 @@ ratchets downward while the 1,835-line inline test tail remains open. Native
 source projection and typed source bindings occupy normal modules. Guarded
 protocol regressions and consumer tests verify the boundary; this extraction
 adds no independent editor selection owner, writer, dependency or new limit.
+
+
+S5A-C03 native acquisition/inspection integration extracts Runtime selection and
+shared session-result application into `runtime_selection`, leaving Main at
+1113 production lines (from1128). Board-text source conversion moves from the
+legacy import expansion into the normal `board_text_source` owner; protocol
+production is4182 (from4184). Native immediate selection is a normal renderer
+owner, shared panel helpers become a real module, and renderer tests become a
+normal child with board-text control assertions in their own test module.
+Renderer include expansion falls from5948 to4922; the legacy test file falls
+from960 to840 lines. All exact ceilings ratchet downward; remaining debt and
+normal budgets remain. Canonical output, exact region and native retained-byte
+proof support these boundaries without adding a selection writer or dependency.

@@ -11,6 +11,7 @@ const LEAF_REGIONS: usize = 8;
 #[derive(Debug, Clone, PartialEq)]
 pub enum HitShape {
     Rect(RectNm),
+    Layout(Vec<crate::selection_region::Point>),
     Polyline {
         path: Vec<PointNm>,
         half_width_nm: f32,
@@ -26,6 +27,21 @@ impl HitShape {
     pub fn bounds(&self) -> Option<RectNm> {
         match self {
             Self::Rect(rect) => Some(*rect),
+            Self::Layout(corners) => {
+                let floor = |v: datum_gui_protocol::selection_geometry::Rational| {
+                    v.numerator.div_euclid(v.denominator)
+                };
+                let ceil = |v: datum_gui_protocol::selection_geometry::Rational| {
+                    floor(v) + i128::from(v.numerator.rem_euclid(v.denominator) != 0)
+                };
+                let bounded = |v: i128| v.clamp(i128::from(i64::MIN), i128::from(i64::MAX)) as i64;
+                Some(RectNm {
+                    min_x: bounded(corners.iter().map(|p| floor(p[0])).min()?),
+                    max_x: bounded(corners.iter().map(|p| ceil(p[0])).max()?),
+                    min_y: bounded(corners.iter().map(|p| floor(p[1])).min()?),
+                    max_y: bounded(corners.iter().map(|p| ceil(p[1])).max()?),
+                })
+            }
             Self::Polyline {
                 path,
                 half_width_nm,
@@ -46,6 +62,9 @@ impl HitShape {
     pub fn contains(&self, point: PointNm) -> bool {
         match self {
             Self::Rect(rect) => point_in_rect(point, *rect),
+            Self::Layout(corners) => {
+                crate::selection_region::layout_contains(corners, point).unwrap_or(false)
+            }
             Self::Polyline {
                 path,
                 half_width_nm,
@@ -172,6 +191,10 @@ impl<T> SpatialHitIndex<T> {
                 HitShape::Polyline { path, .. } | HitShape::Polygon(path) => {
                     cost::<PointNm>(path.capacity(), &mut allocation_bytes)?
                 }
+                HitShape::Layout(corners) => cost::<crate::selection_region::Point>(
+                    corners.capacity(),
+                    &mut allocation_bytes,
+                )?,
                 HitShape::Rect(_) | HitShape::Circle { .. } => 0,
             };
             let layer = cost::<u8>(

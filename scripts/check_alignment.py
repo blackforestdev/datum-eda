@@ -26,6 +26,9 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def run_command(command: list[str]) -> tuple[int, str]:
+    if command and command[0] == "cargo":
+        command = [sys.executable, str(ROOT / "scripts/run_cargo_guarded.py"),
+                   "--workload", "proof", "--", *command]
     completed = subprocess.run(
         command,
         cwd=ROOT,

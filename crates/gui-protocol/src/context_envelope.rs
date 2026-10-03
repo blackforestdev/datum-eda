@@ -49,6 +49,8 @@ pub struct DatumToolSessionMetadata {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DatumSelectionContext {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub details: Option<NativeSelectionContext>,
     pub kind: String,
     pub id: Option<String>,
 }
@@ -56,19 +58,28 @@ pub struct DatumSelectionContext {
 impl DatumSelectionContext {
     pub fn from_selection(selection: &SelectionTarget) -> Self {
         match selection {
+            SelectionTarget::Native(view) => Self {
+                kind: view.subject.kind().into(),
+                id: None,
+                details: Some(NativeSelectionContext::from_view(view)),
+            },
             SelectionTarget::None => Self {
+                details: None,
                 kind: "none".to_string(),
                 id: None,
             },
             SelectionTarget::ReviewAction(id) => Self {
+                details: None,
                 kind: "review_action".to_string(),
                 id: Some(id.clone()),
             },
             SelectionTarget::AuthoredObject(id) => Self {
+                details: None,
                 kind: "authored_object".to_string(),
                 id: Some(id.clone()),
             },
             SelectionTarget::CheckFinding(id) => Self {
+                details: None,
                 kind: "check_finding".to_string(),
                 id: Some(id.clone()),
             },
@@ -117,6 +128,7 @@ mod tests {
         assert_eq!(
             DatumSelectionContext::from_selection(&SelectionTarget::None),
             DatumSelectionContext {
+                details: None,
                 kind: "none".to_string(),
                 id: None
             }
@@ -126,6 +138,7 @@ mod tests {
                 "route-action".to_string()
             )),
             DatumSelectionContext {
+                details: None,
                 kind: "review_action".to_string(),
                 id: Some("route-action".to_string())
             }
@@ -135,6 +148,7 @@ mod tests {
                 "board-text".to_string()
             )),
             DatumSelectionContext {
+                details: None,
                 kind: "authored_object".to_string(),
                 id: Some("board-text".to_string())
             }
@@ -144,9 +158,63 @@ mod tests {
                 "sha256:finding-a".to_string()
             )),
             DatumSelectionContext {
+                details: None,
                 kind: "check_finding".to_string(),
                 id: Some("sha256:finding-a".to_string())
             }
         );
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct NativeSelectionContext {
+    pub project: crate::SelectionProjectId,
+    pub revision: crate::selection_resolution::SelectionModelRevision,
+    pub subject: Option<crate::SelectionSubject>,
+    pub focus: Option<crate::AuthoredSelectionIdentity>,
+    pub total: usize,
+    pub scope: Option<crate::AuthoredSelectionClass>,
+    pub per_type: std::collections::BTreeMap<crate::AuthoredSelectionClass, usize>,
+    pub inspection: std::collections::BTreeMap<String, crate::selection_view::InspectionValue>,
+    pub members: Option<Vec<crate::AuthoredSelectionIdentity>>,
+    pub hidden: usize,
+    pub locked: usize,
+    pub unprojected: usize,
+    pub notice: Option<String>,
+    pub stale: bool,
+}
+impl NativeSelectionContext {
+    fn from_view(view: &crate::selection_view::SelectionView) -> Self {
+        // Compound identity itself also must not leak its uncapped list into transport.
+        let subject = match &view.subject {
+            crate::SelectionSubject::Compound(_) => None,
+            other => Some(other.clone()),
+        };
+        Self {
+            project: view.project,
+            revision: view.revision.clone(),
+            subject,
+            focus: view.focus().cloned(),
+            total: view.members.len(),
+            scope: view.scope,
+            per_type: view.members.iter().fold(
+                std::collections::BTreeMap::new(),
+                |mut counts, id| {
+                    *counts.entry(id.class).or_insert(0) += 1;
+                    counts
+                },
+            ),
+            inspection: view
+                .fields()
+                .into_iter()
+                .map(|name| (name.to_owned(), view.field(name)))
+                .collect(),
+            members: (view.members.len() <= 256).then(|| view.members.iter().cloned().collect()),
+            hidden: view.hidden.len(),
+            locked: view.locked.len(),
+            unprojected: view.unprojected.len(),
+            notice: view.notice.clone(),
+            stale: view.stale,
+        }
     }
 }

@@ -34,11 +34,18 @@ mod schematic_scene_import;
 pub use schematic_scene_import::{SchematicHitKind, load_kicad_schematic_workspace_state};
 mod artifact_preview_viewport;
 pub use artifact_preview_viewport::ArtifactPreviewViewportState;
+mod board_text_source;
 mod board_track_projection;
 mod live_design_session;
+pub mod selection_geometry_catalog;
 pub mod selection_resolution;
 pub mod selection_scene;
 pub mod selection_subject;
+pub mod selection_view;
+/// Checked engine arithmetic reused by read-only consumer qualification.
+pub mod selection_geometry {
+    pub use eda_engine::board::nominal_geometry::{GeometryError, Rational};
+}
 mod workspace_selection;
 use board_track_projection::{BoardTrackPayload, extract_tracks, track_payload, track_primitive};
 pub use selection_subject::{
@@ -1137,6 +1144,7 @@ impl ReviewWorkspaceState {
             supervision: GuiSupervisionSnapshot::default(),
             ui: WorkspaceUiState::new(WorkspaceFilterState {
                 show_authored: true,
+                excluded_selection_classes: Default::default(),
                 show_proposed: true,
                 show_unrouted: true,
                 dim_unrelated: has_review_actions,
@@ -1560,16 +1568,6 @@ impl ReviewWorkspaceState {
             .components
             .iter()
             .find(|component| component.object_id == normalized)
-    }
-
-    pub fn selected_component(&self) -> Option<&ComponentBounds> {
-        let SelectionTarget::AuthoredObject(object_id) = &self.selection else {
-            return None;
-        };
-        self.scene
-            .components
-            .iter()
-            .find(|component| &component.object_id == object_id)
     }
 }
 

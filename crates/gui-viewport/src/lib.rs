@@ -48,3 +48,6 @@ pub use terminal_grid_geometry::{
     terminal_screen_geometry_with_chrome_scale, terminal_screen_geometry_with_scale,
     terminal_split_dividers, terminal_split_geometries,
 };
+
+pub mod selection_gesture;
+pub mod selection_region;

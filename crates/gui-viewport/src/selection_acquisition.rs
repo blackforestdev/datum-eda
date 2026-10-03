@@ -64,6 +64,17 @@ pub fn acquire_authored(
             ));
         }
     }
+    if candidates.is_empty()
+        && entry == AcquisitionEntry::Global
+        && mode == AcquisitionMode::Replace
+    {
+        return Ok(AcquisitionResult {
+            subject: SelectionSubject::None,
+            members: BTreeSet::new(),
+            changed: !matches!(prior, SelectionSubject::None),
+            refusal: None,
+        });
+    }
     let members = if mode == AcquisitionMode::Replace && !candidates.is_empty() {
         BTreeSet::new()
     } else {

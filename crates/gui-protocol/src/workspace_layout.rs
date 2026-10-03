@@ -48,6 +48,7 @@ pub enum DockTab {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WorkspaceFilterState {
     pub show_authored: bool,
+    pub excluded_selection_classes: std::collections::BTreeSet<crate::AuthoredSelectionClass>,
     pub show_proposed: bool,
     pub show_unrouted: bool,
     pub dim_unrelated: bool,
@@ -60,6 +61,7 @@ pub struct WorkspaceFilterState {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct WorkspaceUiState {
+    pub selection_region: Option<SelectionRegionFeedback>,
     /// The one application-level input/selection owner. `WorkspaceLayout`
     /// retains pane structure and the last editor leaf, while this value says
     /// whether that leaf, the terminal dock, or a transient overlay currently
@@ -117,6 +119,7 @@ impl WorkspaceUiState {
     /// empty until the owned PTY/core path supplies bytes.
     pub fn new(filters: WorkspaceFilterState) -> Self {
         Self {
+            selection_region: None,
             focus: ApplicationFocus::default(),
             active_dock_tab: None,
             active_menu: None,
@@ -972,4 +975,12 @@ mod tests {
             _ => panic!("root must be a split"),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct SelectionRegionFeedback {
+    pub pane: PaneId,
+    pub path: Vec<crate::PointNm>,
+    pub subtractive: bool,
+    pub phase: u16,
 }

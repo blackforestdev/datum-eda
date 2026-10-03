@@ -1,4 +1,5 @@
 use super::*;
+use crate::glyph_mesh_lookup::GlyphMeshLookup;
 
 #[test]
 fn board_text_mesh_path_bypasses_legacy_fill_fragments() {

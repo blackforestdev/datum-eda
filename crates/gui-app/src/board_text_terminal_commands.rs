@@ -212,6 +212,7 @@ mod tests {
             object_id: "board_text:gain".to_string(),
             object_kind: "board_text".to_string(),
             text_uuid: "text-gain".to_string(),
+            source_object_uuid: None,
             text: "GAIN STAGE A1".to_string(),
             layer_id: "F.SILKS".to_string(),
             position: PointNm {

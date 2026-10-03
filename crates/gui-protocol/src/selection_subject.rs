@@ -15,6 +15,7 @@ use std::collections::BTreeSet;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SelectionTarget {
     None,
+    Native(Box<crate::selection_view::SelectionView>),
     ReviewAction(String),
     AuthoredObject(String),
     CheckFinding(String),

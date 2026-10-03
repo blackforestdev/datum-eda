@@ -33,10 +33,15 @@ pub struct EditorViewport {
 
 impl EditorViewport {
     pub fn screen_to_world(self, point: ScreenPointPx) -> Option<PointNm> {
-        if !self.screen.contains(point)
-            || !self.scale_px_per_nm.is_finite()
-            || self.scale_px_per_nm <= 0.0
-        {
+        if !self.screen.contains(point) {
+            return None;
+        }
+        self.screen_to_world_unclipped(point)
+    }
+
+    /// An owned region retains this pane transform outside its clip during auto-pan.
+    pub fn screen_to_world_unclipped(self, point: ScreenPointPx) -> Option<PointNm> {
+        if !self.scale_px_per_nm.is_finite() || self.scale_px_per_nm <= 0.0 {
             return None;
         }
         let x = self.world.min_x as f64

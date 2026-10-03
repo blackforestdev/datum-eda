@@ -98,6 +98,22 @@ impl PreparedScene {
         })
     }
 
+    pub fn world_point_for_pane_unclipped(
+        &self,
+        pane: datum_gui_protocol::PaneId,
+        x: f32,
+        y: f32,
+    ) -> Option<PointNm> {
+        let pass = self.surface_passes.iter().find(|p| p.pane_id == pane)?;
+        let projection = Projection::new(
+            inset_rect(pass.scene_viewport, 10.0, 10.0, 10.0, 10.0),
+            &pass.bounds,
+            pass.camera,
+        );
+        editor_viewport(pass.pane_id, pass.surface, &projection)
+            .screen_to_world_unclipped(datum_gui_protocol::ScreenPointPx { x, y })
+    }
+
     pub fn surface_passes(&self) -> &[PreparedSurfacePass] {
         &self.surface_passes
     }
@@ -238,6 +254,17 @@ pub(crate) fn schematic_hit_regions(
                     layer_id: None,
                     shape,
                 })?;
+            }
+            for geometry in &scene.board_text_geometries {
+                if datum_gui_protocol::selection_geometry_catalog::layout_polygon(geometry)
+                    .is_some()
+                {
+                    emit(Region {
+                        target: &geometry.object_id,
+                        layer_id: Some(&geometry.layer_id),
+                        shape: Shape::Layout(geometry),
+                    })?;
+                }
             }
             Ok(())
         },

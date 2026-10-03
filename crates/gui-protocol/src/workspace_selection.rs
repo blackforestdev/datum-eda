@@ -1,6 +1,6 @@
 //! Existing application selection entry owner, extracted for the S5A migration.
 
-use crate::{ReviewWorkspaceState, RouteProposalActionPayload, SelectionTarget};
+use crate::{ComponentBounds, ReviewWorkspaceState, RouteProposalActionPayload, SelectionTarget};
 
 impl ReviewWorkspaceState {
     pub fn selected_review_action(&self) -> Option<&RouteProposalActionPayload> {
@@ -135,5 +135,17 @@ impl ReviewWorkspaceState {
 
     pub fn clear_selection(&mut self) {
         self.selection = SelectionTarget::None;
+    }
+}
+
+impl ReviewWorkspaceState {
+    pub fn selected_component(&self) -> Option<&ComponentBounds> {
+        let SelectionTarget::AuthoredObject(object_id) = &self.selection else {
+            return None;
+        };
+        self.scene
+            .components
+            .iter()
+            .find(|component| &component.object_id == object_id)
     }
 }

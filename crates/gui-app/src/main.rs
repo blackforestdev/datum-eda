@@ -75,6 +75,8 @@ mod runtime_present;
 mod runtime_primary_button;
 mod runtime_primary_pointer;
 mod runtime_revision_workspace;
+mod runtime_selection;
+mod runtime_selection_region;
 mod runtime_surface;
 mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
@@ -461,28 +463,6 @@ impl Runtime {
         self.invalidate_frame();
     }
 
-    fn apply_session_result(&mut self, result: datum_gui_protocol::SessionCommandResult) -> bool {
-        if !result.handled {
-            return false;
-        }
-        for event in result.events {
-            match event {
-                // Shared source dependency validation owns retained reuse/history.
-                SessionEvent::SceneChanged | SessionEvent::SelectionChanged(_) => {
-                    self.invalidate_frame()
-                }
-                SessionEvent::FrameChanged => self.invalidate_frame(),
-                SessionEvent::ToolChanged(_) => self.invalidate_frame(),
-            }
-        }
-        true
-    }
-
-    fn dispatch_session_command(&mut self, command: SessionCommand) -> bool {
-        let result = self.session.apply(command);
-        self.apply_session_result(result)
-    }
-
     fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
         if !matches!(tool, WorkspaceTool::Select) {
             self.log_console_refusal(
@@ -725,7 +705,12 @@ impl Runtime {
                 }
                 handled
             }
+            HitTarget::SelectionScope(scope) => self.set_selection_scope(*scope),
             HitTarget::AuthoredObject(object_id) => {
+                if let Some(handled) = self.acquire_native_key(object_id, SceneSurface::Board, None)
+                {
+                    return handled;
+                }
                 let handled = self.dispatch_session_command(SessionCommand::SelectAuthoredObject(
                     object_id.clone(),
                 ));

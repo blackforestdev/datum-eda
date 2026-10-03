@@ -33,6 +33,7 @@ pub enum SchematicHitKind {
     Port,
     Junction,
     NoConnect,
+    Drawing,
 }
 
 impl BoardGraphicPrimitive {
@@ -46,6 +47,7 @@ impl BoardGraphicPrimitive {
             "schematic_port" => Some(SchematicHitKind::Port),
             "schematic_junction" => Some(SchematicHitKind::Junction),
             "schematic_no_connect" => Some(SchematicHitKind::NoConnect),
+            "schematic_drawing" => Some(SchematicHitKind::Drawing),
             _ => None,
         }
     }
@@ -182,6 +184,17 @@ fn tag_schematic_hit_kinds(sheet: &Sheet, graphics: &mut [BoardGraphicPrimitive]
     for bus in sheet.buses.values() {
         kinds.insert(bus.uuid.to_string(), "schematic_bus");
     }
+    for drawing in sheet.drawings.values() {
+        kinds.insert(
+            match drawing {
+                eda_engine::schematic::SchematicPrimitive::Line { uuid, .. }
+                | eda_engine::schematic::SchematicPrimitive::Rect { uuid, .. }
+                | eda_engine::schematic::SchematicPrimitive::Circle { uuid, .. }
+                | eda_engine::schematic::SchematicPrimitive::Arc { uuid, .. } => uuid.to_string(),
+            },
+            "schematic_drawing",
+        );
+    }
     for symbol in sheet.symbols.values() {
         kinds.insert(symbol.uuid.to_string(), "schematic_symbol");
         for pin in &symbol.pins {
@@ -290,7 +303,7 @@ fn push_root_sheet_graphics(
     for schematic_text in sorted_values(&sheet.texts) {
         // Free schematic text is annotation, not a boxed object: emit it as real
         // text at its own position rather than a bare labelled rect.
-        text.push(
+        text.push_rotated(
             points,
             schematic_text.uuid,
             "schematic-text",
@@ -300,6 +313,7 @@ fn push_root_sheet_graphics(
             TextHAlign::Left,
             TextVAlign::Center,
             SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
+            schematic_text.rotation,
         );
     }
     for instance in sorted_values(&schematic.sheet_instances) {

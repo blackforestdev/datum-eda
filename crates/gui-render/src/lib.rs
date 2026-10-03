@@ -1,6 +1,5 @@
 #[path = "render/glyph_mesh_lookup.rs"]
 mod glyph_mesh_lookup;
-use glyph_mesh_lookup::GlyphMeshLookup;
 #[path = "render/world_polygon.rs"]
 mod world_polygon;
 use world_polygon::{push_world_polygon_fill, push_world_polygon_fill_contours};
@@ -76,6 +75,8 @@ mod scene_retained_access;
 include!("render/retained.rs");
 include!("render/overlay.rs");
 mod dim_policy;
+#[path = "render/native_selection_overlay.rs"]
+mod native_selection_overlay;
 pub(crate) use dim_policy::*;
 #[path = "render/stroke_policy.rs"]
 mod stroke_policy;
@@ -116,20 +117,18 @@ mod global_preferences_dialog_tests;
 #[cfg(test)]
 mod layout_invariant_tests;
 #[cfg(test)]
-mod lib_extra_tests;
-#[cfg(test)]
-mod render_contract_tests;
-#[cfg(test)]
 mod retained_draw_order_tests;
 #[cfg(test)]
 mod terminal_dock_contract_tests;
 
-include!("render/tests.rs");
 #[cfg(test)]
 #[path = "render/board_text_mesh_tests.rs"]
 mod board_text_mesh_tests;
 #[cfg(test)]
 #[path = "render/grid_tests.rs"]
 mod grid_tests;
+#[cfg(test)]
+#[path = "render/tests.rs"]
+mod renderer_tests;
 #[cfg(test)]
 mod revision_pane_tests;

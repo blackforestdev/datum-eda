@@ -5,6 +5,7 @@ use std::alloc::Layout;
 
 pub(super) enum Shape<'a> {
     Rect(datum_gui_protocol::RectNm),
+    Layout(&'a datum_gui_protocol::BoardTextGeometryPrimitive),
     Polyline {
         path: &'a [PointNm],
         half_width_nm: f32,
@@ -30,6 +31,7 @@ impl Region<'_> {
     fn payload_bytes(&self) -> anyhow::Result<usize> {
         let path = match self.shape {
             Shape::Polyline { path, .. } | Shape::Polygon(path) => bytes::<PointNm>(path.len())?,
+            Shape::Layout(_) => bytes::<datum_gui_viewport::selection_region::Point>(4)?,
             _ => 0,
         };
         bytes::<u8>(self.target.len())?
@@ -44,6 +46,10 @@ impl Region<'_> {
             layer_id: self.layer_id.map(copy_string).transpose()?,
             shape: match self.shape {
                 Shape::Rect(rect) => WorldHitShape::Rect(rect),
+                Shape::Layout(geometry) => WorldHitShape::Layout(copy_slice(
+                    &datum_gui_protocol::selection_geometry_catalog::layout_polygon(geometry)
+                        .ok_or_else(|| anyhow::anyhow!("Uncertified text layout"))?,
+                )?),
                 Shape::Polyline {
                     path,
                     half_width_nm,

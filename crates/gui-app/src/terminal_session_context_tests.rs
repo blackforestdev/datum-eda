@@ -24,6 +24,7 @@ fn terminal_launch_context_for_project_root(
         source_shard_status: datum_gui_protocol::SourceShardStatusSummary::default(),
         check_status: CheckRunReviewState::default(),
         selection_context: DatumSelectionContext {
+            details: None,
             kind: "none".to_string(),
             id: None,
         },

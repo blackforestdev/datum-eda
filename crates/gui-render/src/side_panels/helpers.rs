@@ -1,4 +1,6 @@
-fn inspector_height_for_state(state: &ReviewWorkspaceState) -> f32 {
+use super::*;
+
+pub(super) fn inspector_height_for_state(state: &ReviewWorkspaceState) -> f32 {
     let board_text_selected = matches!(
         &state.selection,
         SelectionTarget::AuthoredObject(object_id)
@@ -13,7 +15,7 @@ fn inspector_height_for_state(state: &ReviewWorkspaceState) -> f32 {
     height
 }
 
-fn inspector_detail_row_count(state: &ReviewWorkspaceState) -> usize {
+pub(super) fn inspector_detail_row_count(state: &ReviewWorkspaceState) -> usize {
     let mut count = 0;
     if state.selected_review_action().is_some() {
         count += 3;

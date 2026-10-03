@@ -6,6 +6,7 @@ use datum_gui_protocol::{SessionCommand, WorkspaceTool};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum WorkspaceCharacterAction {
     SetTool(WorkspaceTool),
+    SelectAll,
     FitCamera,
     FitReviewTarget,
     TogglePaneZoom,
@@ -17,6 +18,7 @@ pub(super) enum WorkspaceCharacterAction {
 
 pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCharacterAction> {
     let action = match text {
+        value if value.eq_ignore_ascii_case("a") && control => WorkspaceCharacterAction::SelectAll,
         value if value.eq_ignore_ascii_case("s") => {
             WorkspaceCharacterAction::SetTool(WorkspaceTool::Select)
         }
@@ -49,6 +51,7 @@ pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCha
 
 pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> bool {
     match action {
+        WorkspaceCharacterAction::SelectAll => runtime.native_select_all(),
         WorkspaceCharacterAction::SetTool(tool) => runtime.set_workspace_tool(tool),
         WorkspaceCharacterAction::FitCamera => runtime.activate_gui_local_menu_action(
             "view.fit",

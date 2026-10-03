@@ -427,6 +427,7 @@ mod tests {
         };
         let filters = datum_gui_protocol::WorkspaceFilterState {
             show_authored: true,
+            excluded_selection_classes: Default::default(),
             show_proposed: true,
             show_unrouted: true,
             dim_unrelated: false,

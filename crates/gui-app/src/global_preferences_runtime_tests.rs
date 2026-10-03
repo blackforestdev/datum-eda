@@ -58,6 +58,7 @@ fn projection_preserves_the_accepted_slice_while_full_catalog_work_remains_stage
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
         show_authored: true,
+        excluded_selection_classes: Default::default(),
         show_proposed: true,
         show_unrouted: true,
         dim_unrelated: false,
@@ -167,6 +168,7 @@ fn edits_and_resets_cannot_mutate_project_shards_or_journal() {
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
         show_authored: true,
+        excluded_selection_classes: Default::default(),
         show_proposed: true,
         show_unrouted: true,
         dim_unrelated: false,
@@ -277,6 +279,7 @@ fn every_visible_value_updates_its_declared_live_consumer() {
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
         show_authored: true,
+        excluded_selection_classes: Default::default(),
         show_proposed: true,
         show_unrouted: true,
         dim_unrelated: false,
@@ -396,6 +399,7 @@ fn keyboard_focus_has_no_trap_and_escape_closes_innermost_first() {
     };
     let filters = datum_gui_protocol::WorkspaceFilterState {
         show_authored: true,
+        excluded_selection_classes: Default::default(),
         show_proposed: true,
         show_unrouted: true,
         dim_unrelated: false,
@@ -546,6 +550,7 @@ fn projected_default_ui(name: &str) -> WorkspaceUiState {
     };
     let mut ui = WorkspaceUiState::new(datum_gui_protocol::WorkspaceFilterState {
         show_authored: true,
+        excluded_selection_classes: Default::default(),
         show_proposed: true,
         show_unrouted: true,
         dim_unrelated: false,

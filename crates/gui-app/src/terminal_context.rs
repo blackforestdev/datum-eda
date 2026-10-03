@@ -776,6 +776,7 @@ mod tests {
         }
         let mut refreshed_launch = launch.clone();
         refreshed_launch.selection_context = datum_gui_protocol::DatumSelectionContext {
+            details: None,
             kind: "authored_object".to_string(),
             id: Some("object-after-launch".to_string()),
         };

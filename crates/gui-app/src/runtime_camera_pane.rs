@@ -267,6 +267,7 @@ impl Runtime {
     }
 
     pub(super) fn pane_close_focused(&mut self) {
+        self.cancel_native_selection_gesture();
         self.swap_pane_focus(|layout| layout.close_focused());
         let live = self.workspace().ui.layout.leaves();
         // Prune after the focus transition, which stashes the outgoing camera.
@@ -297,6 +298,7 @@ impl Runtime {
     }
 
     pub(super) fn pane_set_focused_content(&mut self, content: datum_gui_protocol::PaneContent) {
+        self.cancel_native_selection_gesture();
         let retargeted_pane = self.workspace().ui.layout.focused;
         let outgoing_board = self.scene_leaf_id();
         let outgoing_camera = self.camera;
@@ -553,9 +555,14 @@ impl Runtime {
     ) -> bool {
         let hit = self.schematic_world_hit(world_point);
         self.trace_click(format!(
-            "primary click ({:.1}, {:.1}) schematic world ({}, {}) hit {hit:?} (selection deferred to S5)",
+            "primary click ({:.1}, {:.1}) schematic world ({}, {}) hit {hit:?} (native selection acquisition)",
             screen.0, screen.1, world_point.x, world_point.y
         ));
+        if let Some(HitTarget::AuthoredObject(id)) = hit {
+            return self
+                .acquire_native_key(&id, SceneSurface::Schematic, Some(world_point))
+                .unwrap_or(false);
+        }
         false
     }
 
@@ -654,5 +661,31 @@ impl Runtime {
             self.refresh_interaction_overlay();
         }
         changed
+    }
+}
+
+impl Runtime {
+    pub(super) fn pan_selection_pane(
+        &mut self,
+        pane: datum_gui_protocol::PaneId,
+        delta: (f32, f32),
+    ) -> bool {
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        let Some(route) = self.camera_viewport_for_pane(&panes, pane) else {
+            return false;
+        };
+        let fit = CameraState::fit_to_bounds(&route.bounds);
+        CameraEngine::pan_pixels(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            delta.0,
+            delta.1,
+        );
+        self.invalidate_frame();
+        true
     }
 }

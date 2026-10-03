@@ -261,6 +261,7 @@ pub(crate) fn build_schematic_interaction_vertices(
 fn shape_bounds_nm(shape: &WorldHitShape) -> Option<datum_gui_protocol::RectNm> {
     match shape {
         WorldHitShape::Rect(rect) => Some(*rect),
+        WorldHitShape::Layout(_) => shape.bounds(),
         WorldHitShape::Polyline { path, .. } | WorldHitShape::Polygon(path) => {
             bounds_of_points(path.iter().copied())
         }
@@ -339,19 +340,21 @@ impl PreparedScene {
         board_retained: &RetainedScene,
     ) {
         let board_hover = state.ui.hovered_object.as_ref().and_then(|hover| {
-            (hover.surface == datum_gui_protocol::PaneContent::Board)
-                .then(|| board_hover_bounds(board_retained, &hover.object_id))
-                .flatten()
+            (hover.surface == datum_gui_protocol::PaneContent::Board
+                && !native_selection_overlay::selection_beats_hover(state, hover))
+            .then(|| board_hover_bounds(board_retained, &hover.object_id))
+            .flatten()
         });
         let schematic_hover = state.ui.hovered_object.as_ref().and_then(|hover| {
-            (hover.surface == datum_gui_protocol::PaneContent::Schematic)
-                .then(|| {
-                    state
-                        .schematic_scene
-                        .as_ref()
-                        .and_then(|scene| schematic_symbol_bounds(scene, &hover.object_id))
-                })
-                .flatten()
+            (hover.surface == datum_gui_protocol::PaneContent::Schematic
+                && !native_selection_overlay::selection_beats_hover(state, hover))
+            .then(|| {
+                state
+                    .schematic_scene
+                    .as_ref()
+                    .and_then(|scene| schematic_symbol_bounds(scene, &hover.object_id))
+            })
+            .flatten()
         });
         self.refresh_pointer(
             state.ui.cursor_pos,

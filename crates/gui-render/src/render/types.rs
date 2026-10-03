@@ -24,6 +24,7 @@ pub enum HitTarget {
     OpenRevisionWitness(String),
     ReviewAction(String),
     AuthoredObject(String),
+    SelectionScope(Option<datum_gui_protocol::AuthoredSelectionClass>),
     FitBoard,
     FitReviewTarget,
     SetWorkspaceTool(WorkspaceTool),

@@ -332,10 +332,12 @@ pub(super) fn outline_board_graphics_from_outline(
     if vertices.len() < 2 {
         return Vec::new();
     }
-    if outline.closed && vertices.first() != vertices.last()
-        && let Some(first) = vertices.first().copied() {
-            vertices.push(first);
-        }
+    if outline.closed
+        && vertices.first() != vertices.last()
+        && let Some(first) = vertices.first().copied()
+    {
+        vertices.push(first);
+    }
     vertices
         .windows(2)
         .enumerate()
@@ -343,9 +345,9 @@ pub(super) fn outline_board_graphics_from_outline(
             let source = format!("{board_uuid}:outline-segment:{index}");
             BoardGraphicPrimitive {
                 object_id: format!("board-graphic:{source}"),
-                object_kind: "board_graphic".to_string(),
+                object_kind: "board_outline".to_string(),
                 primitive_kind: "line".to_string(),
-                source_object_uuid: source,
+                source_object_uuid: board_uuid.to_string(),
                 layer_id: edge_cuts_layer_key.to_string(),
                 path: vec![segment[0], segment[1]],
                 holes: Vec::new(),

@@ -4,10 +4,12 @@ mod inspector_dispatch;
 mod layer_scroll;
 mod panel_chrome;
 include!("side_panels/layout.rs");
+mod helpers;
 mod inspector_chrome;
 mod render_inspector;
 mod render_project_filters;
-include!("side_panels/helpers.rs");
+mod selection_inspector;
+use helpers::*;
 pub(super) fn render_side_panels(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,

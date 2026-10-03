@@ -367,6 +367,15 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
+    if escape_released
+        && app
+            .runtime
+            .as_mut()
+            .is_some_and(Runtime::cancel_native_selection_gesture)
+    {
+        app.request_workspace_redraw();
+        return true;
+    }
     if escape_released && app.runtime.as_mut().is_some_and(Runtime::cancel_active_pan) {
         return true;
     }

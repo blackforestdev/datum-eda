@@ -105,7 +105,6 @@ pub(super) struct SchematicTextSink {
 
 impl SchematicTextSink {
     #[allow(clippy::too_many_arguments)]
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn push(
         &mut self,
         points: &mut Vec<PointNm>,
@@ -117,6 +116,33 @@ impl SchematicTextSink {
         h_align: TextHAlign,
         v_align: TextVAlign,
         layer_int: i32,
+    ) {
+        self.push_rotated(
+            points,
+            object_uuid,
+            object_key,
+            content,
+            anchor,
+            height_nm,
+            h_align,
+            v_align,
+            layer_int,
+            0,
+        );
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(super) fn push_rotated(
+        &mut self,
+        points: &mut Vec<PointNm>,
+        object_uuid: Uuid,
+        object_key: &str,
+        content: &str,
+        anchor: PointNm,
+        height_nm: i64,
+        h_align: TextHAlign,
+        v_align: TextVAlign,
+        layer_int: i32,
+        rotation: i32,
     ) {
         let content = content.trim();
         if content.is_empty() {
@@ -130,7 +156,7 @@ impl SchematicTextSink {
                 x: anchor.x,
                 y: anchor.y,
             },
-            rotation: 0,
+            rotation,
             layer: layer_int,
             render_intent: TextRenderIntent::Annotation,
             family: TextFamilyId::default(),
@@ -147,12 +173,22 @@ impl SchematicTextSink {
             bold: false,
             style_class: None,
         };
+        let text_start = self.texts.len();
         push_board_text_scene_primitives(
             &board_text,
             &mut self.texts,
             &mut self.geometries,
             &mut self.mesh_assets,
         );
+        for text in &mut self.texts[text_start..] {
+            text.source_object_uuid = Some(object_uuid.to_string());
+        }
+    }
+
+    pub(super) fn bind_last_source(&mut self, source: Uuid) {
+        if let Some(text) = self.texts.last_mut() {
+            text.source_object_uuid = Some(source.to_string());
+        }
     }
 
     pub(super) fn into_parts(

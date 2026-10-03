@@ -56,17 +56,19 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         )
         (root / guard.UPLOAD).write_text(
             "texture.append_chunk( crate::text_gpu::upload::batch( "
-            "queue.submit([batch.command()]) batch.hold(queue) "
+            "queue.submit(before.into_iter().chain([batch.command()]).chain(after)) batch.hold(queue) "
             "on_submitted(submission) self.textures[index].consume_chunk(count)\n", encoding="utf-8"
         )
         (root / guard.STAGING).write_text("encoder.copy_buffer_to_texture(\n", encoding="utf-8")
         (root / guard.GPU).write_text(
             "self.submit_terminal_upload_chunk(device, queue, &mut |submission| { target.submitted(submission) })?\n"
             "target.acquire()?\n"
-            "terminal_graphics.draw_layer(&mut pass, &self.uniform_bind_group, false)\n"
-            "terminal_graphics.draw_layer(&mut pass, &self.uniform_bind_group, true)\n",
+            '#[path = "gpu_frame_painter.rs"] mod painter;\n',
             encoding="utf-8",
         )
+        (root / guard.PAINTER).write_text(
+            "terminal_graphics.draw_layer(pass, &self.uniform_bind_group, false, damage, clip)\n"
+            "terminal_graphics.draw_layer(pass, &self.uniform_bind_group, true, damage, clip)\n",encoding="utf-8")
         (root / guard.SCENE).write_text(
             "terminal_panes: &[crate::TerminalPaneRenderState]\n",
             encoding="utf-8",
@@ -129,14 +131,14 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         self.assertTrue(self.mutate(guard.CORE_RENDER, "\n", "\nuse TerminalScreen;\n"))
 
     def test_image_dpi_and_runtime_wiring_mutations_fail(self) -> None:
-        self.assertTrue(self.mutate(guard.GPU, "&self.uniform_bind_group, false)", "&self.uniform_bind_group, true)"))
+        self.assertTrue(self.mutate(guard.PAINTER, "&self.uniform_bind_group, false, damage, clip)", "&self.uniform_bind_group, true, damage, clip)"))
         self.assertTrue(self.mutate(guard.SCENE, "terminal_panes: &[crate::TerminalPaneRenderState]", ""))
         self.assertTrue(self.mutate(guard.TEXTURE, "crate::text_gpu::upload::TextureUpload {", ""))
         self.assertTrue(self.mutate(guard.GRAPHICS, "mod texture;", ""))
         self.assertTrue(
             self.mutate(
-                guard.GPU,
-                "terminal_graphics.draw_layer(&mut pass, &self.uniform_bind_group, true)",
+                guard.PAINTER,
+                "terminal_graphics.draw_layer(pass, &self.uniform_bind_group, true, damage, clip)",
                 "",
             )
         )
@@ -153,6 +155,17 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             )
         )
 
+    def test_painter_binding_clip_and_ordered_submission_cannot_be_dropped(self) -> None:
+        for path, old, new in (
+            (guard.GPU, 'mod painter;', ''),
+            (guard.PAINTER, ', damage, clip)', ')'),
+            (guard.UPLOAD, '.chain([batch.command()])', ''),
+            (guard.UPLOAD, 'before.into_iter()', 'after.into_iter()'),
+            (guard.UPLOAD, '.chain(after)', '.chain(before)'),
+        ):
+            with self.subTest(path=path, old=old):
+                self.assertTrue(self.mutate(path,old,new))
+
     def test_shared_preparation_cannot_drop_lease_or_row_cache(self) -> None:
         for marker in ("begin_workspace_preparation(state, &view, panes)?", "self.retain_terminal_damage(panes)",
                        "then_some(&mut self.render_session.terminal_cache)"):
@@ -167,7 +180,7 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             (guard.GPU, 'target.acquire()?'),
             (guard.UPLOAD, 'texture.append_chunk('),
             (guard.UPLOAD, 'crate::text_gpu::upload::batch('),
-            (guard.UPLOAD, 'queue.submit([batch.command()])'),
+            (guard.UPLOAD, 'queue.submit(before.into_iter().chain([batch.command()]).chain(after))'),
             (guard.UPLOAD, 'batch.hold(queue)'),
             (guard.UPLOAD, 'on_submitted(submission)'),
             (guard.UPLOAD, 'self.textures[index].consume_chunk(count)'),

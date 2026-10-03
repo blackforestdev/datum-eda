@@ -2047,3 +2047,153 @@ input migration remains paused; existing selection/render paths are preserved.
 U2–U5, C04 proof, reserved C05 independent review and C06 acceptance remain
 pending. PM026/049/051/052, open manufacturing CAM/T04, deferred editor rows and
 undecided latency remain unchanged.
+
+
+<!-- EVIDENCE:UVT-S5A-BUILD:S5A-C03-NATIVE-INTEGRATION -->
+### S5A-C03 native acquisition and inspection integration (partial)
+
+The retained C02 grant now has production native board/schematic click and
+modifier routing over the shared reducer, progressive Object/Run/Net-or-Bus
+acquisition, Ctrl+A, source-qualified marquee geometry and originating-pane
+cancellation/auto-pan. Plain authored drag remains inert. Origin visibility and
+selection-class eligibility do not prune complete derived membership. Empty
+region/no-op paths preserve selection; global empty replacement clears it.
+
+One uncapped, revision-bound `SelectionView` projects authoritative membership,
+focus, current qualified Zone islands and source-bound canonical properties.
+Inspector scopes, Common/Mixed/Unavailable, hidden/locked/unprojected disclosures
+and capped context output consume it. Context summaries retain kind/revision,
+semantic subject/focus, per-type totals and exact inspection values when the
+member list is omitted; the transport list never supplies membership.
+Selection overlays use each prepared pane's final warm camera and leave native
+retained authored selection keys/bytes independent of selection. Rendering and
+PM052 resizing remain owned by the shared session.
+
+This is an incremental implementation receipt, not U1–U5 closure or C04/C05/C06
+acceptance. Available menu, accessibility, inventory navigation, class-filter
+controls, region pruning/evaluation, dense/visual integration and native fixture
+proof remain under C03. The standalone-board-graphics issue blocks only its
+source-dependent paths/required positive proofs. The owner has separately
+authorized bounded planning for that gap, without new source-model execution.
+Preserve accepted foundation proof, retained S5A execution approval, independent
+C05 review, deferred definition-editor rows and open manufacturing CAM/T04.
+
+Focused proof for this unit: 23 selection acquisition/gesture/region/native
+consumer-output tests, two native overlay tests and one retained-hit admission
+test passed. Selected four-crate all-target Clippy passed with warnings denied.
+The shared source binding index avoids repeated per-key scene scans and rejects
+ambiguous display keys; text-hit certification allocates no pre-admission
+scratch. Proof logs are `target/s5a-c03-{focused,render,hit-admission}-proof.log`.
+
+The required drift battery passed workspace Clippy, governance/alignment,
+TerminalCore boundaries/proof and Console exact visual goldens, then stopped at
+unchanged menu CSV/JSON drift (`dat-menu-authoring-drift-pg88`, baseline replay
+`target/s5a-c03-menu-baseline.json`). No menu JSON or visual golden was rebuilt
+from stale authoring data, and the whole battery is not passed. A separate
+baseline-stale terminal renderer guard was corrected to its current existing
+painter/submission owners with eight regression passes; production terminal GPU
+paths were unchanged. Source health/traceability/project-state checks passed.
+
+#### Native board graphics: bounded proposal for owner/reviewer disposition
+
+`S5A-BOARD-GRAPHICS-PROPOSAL-01`, issue
+`dat-s5a-board-graphic-authority-h8xm`. This is proposed foundation work, not
+source-model ratification or execution. Keep C03 implementation on available
+sources; preserve every blocked graphics-positive row in C04/C05.
+
+**Established gap and inherited behavior.** Native `board::Board`,
+`api/native_write/genesis::GenesisBoardRoot` and canonical `substrate::Operation`
+have no independent board-graphic collection/operations. Native board adoption
+in `api/native_write/imports.rs` does not persist generic `gr_*` objects. The
+protocol's `kicad_scene_import/board_graphics.rs` produces compatibility scene
+paths, sometimes with ordinal fallback display keys; these cannot establish
+native identity, exact source geometry or reopen/history authority. The native
+outline is a Board-owned property slot, not an invented identity per segment.
+These observations establish missing source/adoption authority, not a renderer
+or selection-reducer defect.
+
+PM026/UVT already require independent standalone graphics, parent-owned
+footprint graphics in the board workspace, direct filled-interior acquisition,
+strict full filled-area enclosure, authored path/arc anchors, eligibility,
+lifetime, complete compounds and zero selection mutation. These are inherited
+requirements, not new product choices. Board text remains its existing source
+family; dimensions retain their exclusion. No generic graphic placement UI is
+implied: PCB Layout Tool Contract deliberately defers that public surface.
+
+**Recommended owner decisions (new mechanisms).**
+
+- G1: ratify a separate engine-owned `BoardGraphic` family and UUID-keyed optional
+  `board/board.json` collection, with exact Line, open Polyline, three-point Arc,
+  Rectangle, Circle and Polygon source variants. Polygon carries explicit outer
+  and hole rings and explicit filled/unfilled style; stroke width and layer are
+  source values. Preserve BoardText, dimensions, owned package graphics and the
+  BoardOutline slot as distinct authorities. Geometry is never recovered from
+  flattened renderer paths. Do not introduce a universal lock or Group model.
+- G2: initial graphics are nonconductive documentation geometry, on existing
+  non-copper graphical layers; no Net relationship or occupied-copper claim.
+  Edge.Cuts graphic identities do not silently edit the BoardOutline slot:
+  outline adoption/editing must remain explicitly canonical and disclose their
+  relationship. This is a proposed layer/domain restriction requiring owner
+  disposition, not permission to omit a ratified required layer case. Copper
+  graphics or a graphics-to-outline construction rule would need separate
+  explicit semantics before execution of those paths.
+- G3: adopt supported external graphics through the existing engine
+  `allocate_import_identity` and persisted ImportMap, keyed by stable source
+  UUID/provenance. Refuse an ambiguous or identifier-less automatic adoption
+  rather than treating source order or a scene fallback as identity. If
+  identifier-less positive adoption is required, specify a persistent
+  source-attachment mechanism before implementing that path. Native creation
+  uses the existing canonical engine object-ID/provenance convention.
+
+**Minimum implementation after disposition.** Existing board/substrate/native
+write owners add the typed geometry family, schema/adoption/defaulting, resolved
+object registration and source validation; required Create/Set/Delete builders
+reduce to canonical operations, inverse/history and the single commit path.
+Invalid geometry, mismatched IDs, duplicate import keys, invalid layers and
+unsupported adoption refuse the complete batch with no artifact/journal change.
+Existing projects with no collection reopen unchanged. Undo/replay/reopen must
+preserve each graphic ID, exact source geometry and import provenance. No new
+third-party dependency, private writer, generic placement tool, connectivity
+rewrite or manufacturing approximation is needed or authorized by this proposal.
+
+Protocol native-scene production then consumes resolved sources, recording
+actual source UUIDs and source geometry independently of flattening. The shared
+selection adapter exposes the class; the existing qualification catalog uses
+exact authored anchors/filled rings and the shared hit/region owner handles
+interiors and holes. Rendering remains a projection with the existing camera,
+layer, retained-buffer and resize owners. Engine-certified nominal arc geometry
+is reused; any unsupported exact shape case remains a named mandatory proof
+obligation rather than silently becoming a chord or a successful refusal.
+
+**Focused proof and resumption oracles.**
+
+- Persist/adopt/reopen the exact supported variants; compare typed IDs, source
+  geometry and import-map bindings. Repeat source-UUID adoption reuses identity;
+  collision/ambiguous/identifier-less refusal is atomic. Set preserves identity;
+  Delete removes it; undo/replay/reopen restores exact data without resurrecting
+  a previously dropped selection implicitly.
+- Positive filled interior and full-area enclosure, with hole/bounding-box-only,
+  missing island, partial enclosure and boundary-equality contrasts. Open paths
+  and arcs qualify using the ratified authored anchors, including the actual
+  arc midpoint, independently of tessellation. No refusal passes a required
+  positive case.
+- Native pointer/region/Ctrl+A/modifier/focus/lifecycle proof verifies exact
+  standalone IDs versus package-parent and BoardOutline identities, hidden and
+  class-filter behavior, complete Compound inventory above/below 256 members,
+  read-only inspection, and authored/journal bytes unchanged during selection.
+  Reuse accepted foundation/resize proof where the dependency is unchanged.
+- Independent candidate review/replay binds source, binary, fixtures and
+  environment; owner acceptance releases only the dependent graphics paths.
+  Rendering PM049/052, PM051 undecided latency, C05/C06 and open CAM/T04 remain.
+
+**Recommended placement.** Promote this existing intake as a new bounded native
+board-graphics prerequisite after the available C03 implementation and before
+its graphics-dependent C04/C05 cases, with explicit G1–G3 disposition followed
+by separately authorized engine implementation/review/acceptance. Do not reopen
+the accepted derived-selection foundation or completed earlier phases. Resume
+blocked graphics paths only once the resolved native family, canonical adoption/
+history and exact query/qualification authority have passed that review and
+owner acceptance. File/module decomposition, deterministic serialization,
+schema migration mechanics and reuse of existing nominal predicates are routine
+engineering choices within the ratified mechanisms; G1–G3 remain the exact
+owner decisions needed before new production source-model work.

@@ -223,3 +223,17 @@ fn replacement_can_leave_an_unavailable_derived_subject_without_weakening_modifi
         .is_err()
     );
 }
+
+#[test]
+fn empty_global_replace_clears_but_empty_region_preserves() {
+    let a = authority();
+    let prior = Subject::Run(id(1).into());
+    let global =
+        acquire_authored(&prior, BTreeSet::new(), Mode::Replace, Entry::Global, &a).unwrap();
+    assert_eq!(global.subject, Subject::None);
+    assert!(global.changed);
+    let region = acquire_authored(&prior, BTreeSet::new(), Mode::Add, Entry::Region, &a).unwrap();
+    assert_eq!(region.subject, prior);
+    assert_eq!(region.members.len(), 257);
+    assert!(!region.changed);
+}

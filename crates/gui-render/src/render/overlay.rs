@@ -11,7 +11,7 @@ fn push_scene_overlay_and_hits(
     let projection = Projection::new(board_field, &scene.bounds, camera);
     let active_move_component_uuid: Option<String> = None;
     let preview_affected_ids = proposal_preview_affected_ids(state);
-    push_lightweight_selection_overlay(out, scene, state, &projection);
+    native_selection_overlay::push_lightweight_selection_overlay(out, scene, state, &projection);
     for component in &scene.components {
         if !authored_visible(state) || !layer_visible(state, &component.placement_layer) {
             continue;
@@ -344,72 +344,6 @@ fn production_proposal_overlay_primitives(
                 })
         })
         .collect()
-}
-
-fn push_lightweight_selection_overlay(
-    out: &mut Vec<Quad>,
-    scene: &BoardReviewSceneV1,
-    state: &ReviewWorkspaceState,
-    projection: &Projection,
-) {
-    let SelectionTarget::AuthoredObject(object_id) = &state.selection else {
-        return;
-    };
-    if let Some(text) = scene
-        .board_texts
-        .iter()
-        .find(|text| &text.object_id == object_id)
-    {
-        if !authored_visible(state) || !layer_visible(state, &text.layer_id) {
-            return;
-        }
-        let rect = project_rect(board_text_hit_rect(text), projection);
-        let halo = RectPx {
-            x: rect.x - 4.0,
-            y: rect.y - 4.0,
-            width: rect.width + 8.0,
-            height: rect.height + 8.0,
-        };
-        push_rect_border(out, halo, selected_silk_color(COMPONENT_SILK), 2.0);
-        return;
-    }
-    if let Some(outline) = scene
-        .outline
-        .iter()
-        .find(|outline| &outline.object_id == object_id)
-    {
-        if !authored_visible(state) || !layer_visible(state, &outline.layer_id) {
-            return;
-        }
-        push_polyline_segments(
-            out,
-            &outline.path,
-            projection,
-            selected_mechanical_color(board_surface_color(BoardSurfaceRole::Edge)),
-            3.0,
-        );
-        return;
-    }
-    if let Some(graphic) = scene
-        .board_graphics
-        .iter()
-        .find(|graphic| &graphic.object_id == object_id)
-    {
-        if !authored_visible(state) || !layer_visible(state, &graphic.layer_id) {
-            return;
-        }
-        push_polyline_segments(
-            out,
-            &graphic.path,
-            projection,
-            selected_mechanical_color(board_graphic_world_color(
-                &graphic.layer_id,
-                &scene.layers,
-                false,
-            )),
-            3.0,
-        );
-    }
 }
 
 fn pad_matches_active_action(

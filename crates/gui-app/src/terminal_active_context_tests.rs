@@ -124,6 +124,7 @@ fn context_for_root(root: &std::path::Path) -> TerminalLaunchContext {
         source_shard_status: datum_gui_protocol::SourceShardStatusSummary::default(),
         check_status: CheckRunReviewState::default(),
         selection_context: DatumSelectionContext {
+            details: None,
             kind: "none".to_string(),
             id: None,
         },
@@ -219,6 +220,7 @@ fn terminal_context_projects_active_artifact_and_check_commands() {
     }];
     context.check_status.check_run_id = Some("check-run-visible".to_string());
     context.selection_context = DatumSelectionContext {
+        details: None,
         kind: "check_finding".to_string(),
         id: Some("sha256:selected-finding".to_string()),
     };

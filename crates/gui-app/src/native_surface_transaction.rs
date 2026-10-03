@@ -652,6 +652,7 @@ impl crate::App {
             let split_finished = runtime.finish_terminal_split_drag().is_some();
             let dock_finished = runtime.finish_dock_resize_drag().is_some();
             runtime.pan_gesture.cancel();
+            runtime.cancel_native_selection_gesture();
             runtime.cancel_terminal_tab_drag();
             // The host coordinator now consumes the cancelled gesture release.
             runtime.terminal_tab_drag_release_suppressed = false;

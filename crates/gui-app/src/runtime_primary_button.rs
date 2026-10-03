@@ -8,6 +8,7 @@ impl App {
         let Some(runtime) = &mut self.runtime else {
             return;
         };
+        runtime.selection_release_suppressed = false;
         if runtime.terminal_clipboard_menu_active() {
             return;
         }
@@ -53,6 +54,10 @@ impl App {
         }
         // Divider drag precedes click-to-focus so a gutter never selects a pane.
         if runtime.begin_divider_drag(x, y) {
+            self.request_workspace_redraw();
+            return;
+        }
+        if runtime.begin_native_selection_press() {
             self.request_workspace_redraw();
         }
     }

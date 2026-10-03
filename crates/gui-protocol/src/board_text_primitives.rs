@@ -6,6 +6,9 @@ pub struct BoardTextPrimitive {
     pub object_id: String,
     pub object_kind: String,
     pub text_uuid: String,
+    /// Native source owner; glyph/render UUID remains presentation only.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_object_uuid: Option<String>,
     pub text: String,
     pub layer_id: String,
     pub position: PointNm,

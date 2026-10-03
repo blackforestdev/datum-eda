@@ -170,6 +170,12 @@ impl Runtime {
                 ));
                 return true;
             }
+            if let Some(HitTarget::AuthoredObject(id)) = &retained_target
+                && let Some(handled) =
+                    self.acquire_native_key(id, SceneSurface::Board, Some(world_point))
+            {
+                return handled || focus_changed;
+            }
             if let Some(target) = retained_target {
                 self.trace_click(format!(
                     "primary click ({x:.1}, {y:.1}) world ({}, {}) retained target {target:?}; prepare {}ms; retained {}ms; dock {:?}",

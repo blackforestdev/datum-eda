@@ -15,6 +15,10 @@ pub(super) struct Runtime {
     pub(super) scale_factor: f32,
     pub(super) measurements: native_gpu_measurements::Host,
     pub(super) session: LiveDesignSession,
+    pub(super) native_selection: Option<runtime_selection::NativeSelectionSession>,
+    pub(super) selection_gesture: Option<datum_gui_viewport::selection_gesture::SelectionGesture>,
+    pub(super) selection_release_suppressed: bool,
+    pub(super) selection_tick: Option<std::time::Instant>,
     pub(super) render_sources: datum_gui_render::render_input::SourceEpoch,
     /// Camera for the renderer's live board leaf. Pointer and focused commands
     /// reach it only when their typed pane route names that leaf; schematic and
