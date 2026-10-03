@@ -29,6 +29,12 @@ fn project_review_route_proposal_reviews_live_selected_route() {
 
     assert_eq!(report["action"], "review_route_proposal");
     assert_eq!(report["review_source"], "selected_route_proposal");
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    assert_eq!(report["project_uuid"], model.project.project_id.to_string());
+    assert_eq!(report["producer_revision"], model.model_revision.0);
+    assert!(report["producer_proposal"].is_null());
     assert_eq!(report["selection_profile"], "default");
     assert_eq!(report["selected_candidate"], "route-path-candidate");
     assert_eq!(report["contract"], "m5_route_path_candidate_v2");
@@ -78,6 +84,18 @@ fn project_review_route_proposal_reviews_saved_artifact() {
 
     assert_eq!(report["action"], "review_route_proposal");
     assert_eq!(report["review_source"], "route_proposal_artifact");
+    let source = std::fs::read(&artifact).unwrap();
+    let producer: serde_json::Value = serde_json::from_slice(&source).unwrap();
+    assert_eq!(report["producer_proposal"], producer["proposal"]);
+    assert_eq!(
+        report["producer_revision"],
+        producer["proposal"]["prepared_against"]
+    );
+    use sha2::{Digest, Sha256};
+    assert_eq!(
+        report["source_fingerprint"],
+        format!("sha256:{:x}", Sha256::digest(&source))
+    );
     assert_eq!(report["artifact_path"], artifact.display().to_string());
     assert_eq!(report["kind"], "native_route_proposal_artifact");
     assert_eq!(report["contract"], "m5_route_path_candidate_v2");

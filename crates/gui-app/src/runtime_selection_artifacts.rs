@@ -65,6 +65,7 @@ impl Runtime {
         };
         let authority = WorkspaceSelectionAuthority {
             native: &native.authority,
+            model: &native.model,
             workspace: state,
         };
         let outcome = match acquire_artifact(&prior, subject, mode, &authority) {
@@ -115,11 +116,15 @@ impl Runtime {
         }
         let authority = WorkspaceSelectionAuthority {
             native: &native.authority,
+            model: &native.model,
             workspace: self.workspace(),
         };
         let outcome = match reconcile_selection(&prior.subject, prior.project, &authority) {
             Ok(outcome) => outcome,
             Err(error) => {
+                if let SelectionTarget::Native(view) = &mut self.session.workspace_mut().selection {
+                    view.stale = true;
+                }
                 self.selection_notice(format!("Artifact lifetime unavailable: {error:?}"));
                 return;
             }
@@ -141,6 +146,17 @@ impl Runtime {
             self.workspace(),
         ) {
             Ok(mut view) => {
+                if datum_gui_protocol::selection_artifacts::artifact_producer_changed(prior, &view)
+                {
+                    self.session.workspace_mut().selection = SelectionTarget::None;
+                    self.refresh_selection_accessibility();
+                    self.log_console_echo(
+                        ConsoleFeedbackSource::Selection,
+                        "Selected action producer changed; selection cleared",
+                    );
+                    self.invalidate_frame();
+                    return;
+                }
                 view.notice = prior.notice.clone();
                 self.session.workspace_mut().selection = SelectionTarget::Native(Box::new(view));
                 self.refresh_selection_accessibility();

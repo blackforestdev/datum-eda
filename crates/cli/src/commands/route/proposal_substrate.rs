@@ -23,6 +23,7 @@ pub(crate) struct RouteProposalArtifact {
 pub(crate) struct LoadedRouteProposalArtifact {
     pub(crate) artifact_path: PathBuf,
     pub(crate) source_version: u32,
+    pub(crate) source_fingerprint: String,
     pub(crate) artifact: RouteProposalArtifact,
 }
 

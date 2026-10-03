@@ -416,3 +416,11 @@ into the renderer root. Protocol production falls from4182 to4134 lines, rendere
 expansion from4812 to4343, and legacy renderer tests from793 to765 after the
 cohesive overlay-hit tests move to a normal child. Exact limits ratchet down;
 remaining debt, normal budgets and all selection/native acceptance remain open.
+
+
+S5A-C03 producing-lifecycle exposure moves complete route review/action payloads
+into the normal protocol `route_review_payload` owner, and existing CLI live/saved
+review queries and their view into normal `proposal/review` and `views/route_review`
+owners. Protocol production4134→4060, CLI route proposal3095→2959 and CLI route
+views1917→1888 ratchet exactly downward. Existing engine proposal/identity/writer
+mechanisms remain unchanged; normal budgets and remaining debt stay open.

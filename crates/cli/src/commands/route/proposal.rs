@@ -1,3 +1,5 @@
+mod review;
+use review::{review_route_proposal_artifact, review_selected_native_project_route_proposal};
 #[path = "profile_divergence_fixture.rs"]
 mod profile_divergence_fixture;
 use profile_divergence_fixture::seed_curated_route_strategy_profile_divergence_fixture;
@@ -477,77 +479,6 @@ pub(crate) fn report_native_project_route_strategy(
         selected_contract: selection.report.selected_contract,
         selected_actions: selection.report.selected_actions,
         next_step_command,
-    })
-}
-
-fn review_selected_native_project_route_proposal(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-    profile: NativeProjectRouteProposalProfileArg,
-) -> Result<NativeProjectRouteProposalReviewView> {
-    let selection = run_native_project_route_proposal_selection(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-        profile,
-    )?;
-    let selected_spec = selection.selected_spec.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route-proposal found no selectable route under current authored constraints"
-        )
-    })?;
-    let actions = build_route_proposal_actions_for_spec(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-        selected_spec,
-    )?;
-    super::apply::validate_route_proposal_actions(&actions)?;
-    let first_action = actions.first().ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal review candidate {} produced no actions",
-            route_proposal::candidate_spec_name(&selected_spec)
-        )
-    })?;
-    let segment_evidence =
-        orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(&actions);
-    Ok(NativeProjectRouteProposalReviewView {
-        action: "review_route_proposal".to_string(),
-        review_source: "selected_route_proposal".to_string(),
-        status: "deterministic_route_proposal_ready".to_string(),
-        explanation: format!(
-            "reviewing the currently selected deterministic route proposal chosen by profile {}",
-            route_proposal_profile_name(profile)
-        ),
-        project_root: Some(root.display().to_string()),
-        artifact_path: None,
-        kind: None,
-        source_version: None,
-        version: None,
-        project_uuid: None,
-        project_name: None,
-        net_uuid: Some(net_uuid.to_string()),
-        from_anchor_pad_uuid: Some(from_anchor_pad_uuid.to_string()),
-        to_anchor_pad_uuid: Some(to_anchor_pad_uuid.to_string()),
-        selection_profile: Some(route_proposal_profile_name(profile).to_string()),
-        selection_rule: Some(selection.report.selection_rule),
-        selected_candidate: Some(route_proposal::candidate_name(selected_spec).to_string()),
-        selected_policy: route_proposal::candidate_policy_name(selected_spec),
-        contract: first_action.contract.clone(),
-        actions: actions.len(),
-        draw_track_actions: actions
-            .iter()
-            .filter(|action| action.proposal_action == "draw_track")
-            .count(),
-        selected_path_bend_count: first_action.selected_path_bend_count,
-        selected_path_point_count: first_action.selected_path_point_count,
-        selected_path_segment_count: first_action.selected_path_segment_count,
-        segment_evidence,
-        proposal_actions: actions,
     })
 }
 
@@ -2358,6 +2289,10 @@ pub(crate) fn load_route_proposal_artifact(
             Ok(LoadedRouteProposalArtifact {
                 artifact_path: artifact_path.to_path_buf(),
                 source_version: ROUTE_PROPOSAL_ARTIFACT_VERSION,
+                source_fingerprint: {
+                    use sha2::{Digest, Sha256};
+                    format!("sha256:{:x}", Sha256::digest(contents.as_bytes()))
+                },
                 artifact,
             })
         }
@@ -2411,77 +2346,6 @@ pub(crate) fn inspect_route_proposal_artifact(
             .map(|action| action.selected_path_segment_count)
             .unwrap_or(0),
         segment_evidence,
-    })
-}
-
-fn review_route_proposal_artifact(
-    artifact_path: &Path,
-) -> Result<NativeProjectRouteProposalReviewView> {
-    let loaded = load_route_proposal_artifact(artifact_path)?;
-    let segment_evidence = orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(
-        &loaded.artifact.actions,
-    );
-    Ok(NativeProjectRouteProposalReviewView {
-        action: "review_route_proposal".to_string(),
-        review_source: "route_proposal_artifact".to_string(),
-        status: "saved_route_proposal_artifact_ready".to_string(),
-        explanation:
-            "reviewing one saved route proposal artifact without consulting live project state"
-                .to_string(),
-        project_root: None,
-        artifact_path: Some(loaded.artifact_path.display().to_string()),
-        kind: Some(loaded.artifact.kind.clone()),
-        source_version: Some(loaded.source_version),
-        version: Some(loaded.artifact.version),
-        project_uuid: Some(loaded.artifact.project_uuid.to_string()),
-        project_name: Some(loaded.artifact.project_name.clone()),
-        net_uuid: loaded
-            .artifact
-            .actions
-            .first()
-            .map(|action| action.net_uuid.to_string()),
-        from_anchor_pad_uuid: loaded
-            .artifact
-            .actions
-            .first()
-            .map(|action| action.from_anchor_pad_uuid.to_string()),
-        to_anchor_pad_uuid: loaded
-            .artifact
-            .actions
-            .first()
-            .map(|action| action.to_anchor_pad_uuid.to_string()),
-        selection_profile: None,
-        selection_rule: None,
-        selected_candidate: None,
-        selected_policy: None,
-        contract: loaded.artifact.contract.clone(),
-        actions: loaded.artifact.actions.len(),
-        draw_track_actions: loaded
-            .artifact
-            .actions
-            .iter()
-            .filter(|action| action.proposal_action == "draw_track")
-            .count(),
-        selected_path_bend_count: loaded
-            .artifact
-            .actions
-            .first()
-            .map(|action| action.selected_path_bend_count)
-            .unwrap_or(0),
-        selected_path_point_count: loaded
-            .artifact
-            .actions
-            .first()
-            .map(|action| action.selected_path_point_count)
-            .unwrap_or(0),
-        selected_path_segment_count: loaded
-            .artifact
-            .actions
-            .first()
-            .map(|action| action.selected_path_segment_count)
-            .unwrap_or(0),
-        segment_evidence,
-        proposal_actions: loaded.artifact.actions,
     })
 }
 

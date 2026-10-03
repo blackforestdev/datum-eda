@@ -2374,3 +2374,42 @@ Initial compilation/path failures remain in execution history and were repaired
 within this unit. These are producer/mechanism proofs, not native interaction,
 visual/AT acceptance, C05 review or C06 acceptance. Graphics blocker/positive
 cases, deferred editors, undecided latency, PM026/049/051/052 and CAM/T04 persist.
+
+
+### S5A-C03 — existing producing proposal authority exposed (bounded repair)
+
+The actual CLI live review now exposes its real project and coherent model
+revision, with before/final basis validation. Saved review exposes the existing
+Proposal metadata and hash of the exact parsed source bytes. No new authored
+identity, proposal allocator, source-model mechanism, dependency or writer exists.
+The native adapter checks existing source project/basis, current canonical
+Proposal batch/reference and Applied status; matching applied actions clear even
+when an old saved file still exposes the action. Missing lifecycle metadata,
+malformed source witness or conflicting batch refuses; deleted producing files
+clear. The same producer-qualified action identity is separate from a reused
+action string in a replacement proposal/context. Unknown basis stays explicitly
+stale and cannot retain a selected proposal/review cue. Undo/reopen does not
+resurrect consumer selection. Status changes and source provenance remain visible
+in read-only artifact inspection; no artifact mutation or private writer is added.
+
+Focused proof: eight artifact adapter/acquisition/lifetime tests and the two
+existing actual CLI live/saved review routes passed (10 distinct). Native tests
+exercise real canonical proposal metadata/application, conflicting batch refusal,
+source deletion, identity qualifier, source/journal non-mutation and undo/reopen.
+The adapter fixture witness is transport-only; actual CLI tests verify exact
+source-byte hash and producing Proposal equality, not fake native evidence. Logs:
+`target/s5a-c03-artifact-exposure-proof.log`,
+`target/s5a-c03-artifact-exposure-cli-proof.log`. Five affected crates all-target
+Clippy with warnings denied passed in
+`target/s5a-c03-artifact-exposure-clippy.log`; final stale-cue corrections have
+`target/s5a-c03-artifact-exposure-overlay-clippy.log`. Normal module extraction
+and exact source-health ceilings are reconciled in the same change.
+
+This repairs live project/saved canonical lifecycle exposure tracked by
+`dat-s5a-artifact-lifecycle-7g4l`; the broad artifact feature is still partial.
+Production proposal summaries remain proposal UUID/batch/preview data without
+whole action IDs, and cannot be converted into that authority in scene code.
+Diagnostic markers, complete orthogonal-channel/dense/visual integration and
+U5/native proof continue. This is no full artifact, C03, C04, C05 or C06 acceptance.
+Graphics positive requirements/blocker, PM026/049/051/052, deferred editors,
+undecided latency and manufacturing CAM/T04 remain unchanged.

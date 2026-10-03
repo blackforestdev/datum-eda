@@ -234,7 +234,8 @@ pub(super) fn push_scene_overlay_and_hits(
             }
             let selected = match &state.selection {
                 SelectionTarget::Native(view) => {
-                    matches!(&view.subject, datum_gui_protocol::SelectionSubject::Proposal(id) if *id == overlay.proposal_action_id)
+                    !view.stale
+                        && matches!(&view.subject, datum_gui_protocol::SelectionSubject::Proposal(id) if *id == overlay.proposal_action_id)
                 }
                 _ => overlay.proposal_action_id == state.active_review_target_id,
             };
@@ -277,7 +278,8 @@ pub(super) fn push_scene_overlay_and_hits(
         let active = review.evidence_key.as_ref() == active_evidence_key.as_ref()
             && match &state.selection {
                 SelectionTarget::Native(view) => {
-                    matches!(&view.subject, datum_gui_protocol::SelectionSubject::Review(id) if *id == state.active_review_target_id)
+                    !view.stale
+                        && matches!(&view.subject, datum_gui_protocol::SelectionSubject::Review(id) if *id == state.active_review_target_id)
                 }
                 _ => true,
             };

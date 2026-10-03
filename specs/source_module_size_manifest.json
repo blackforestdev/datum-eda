@@ -227,7 +227,7 @@
     "crates/cli/src/commands/route/proposal.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3095
+        "pre_test_lines": 2959
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -238,7 +238,7 @@
     "crates/cli/src/commands/route/views.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1917
+        "pre_test_lines": 1888
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -557,7 +557,7 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 4134,
+        "pre_test_lines": 4060,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",

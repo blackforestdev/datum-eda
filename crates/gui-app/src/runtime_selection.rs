@@ -64,6 +64,7 @@ impl Runtime {
                         view.project,
                         &WorkspaceSelectionAuthority {
                             native: &authority,
+                            model: &model,
                             workspace: self.workspace(),
                         },
                     )
@@ -75,10 +76,21 @@ impl Runtime {
                         &authority,
                     )
                 }
-                .map_err(|e| anyhow::anyhow!("Selection revision unavailable: {e:?}"))?,
+                .map_err(|e| anyhow::anyhow!("Selection revision unavailable: {e:?}")),
             )
         } else {
             None
+        };
+        let reconcile = match reconcile.transpose() {
+            Ok(value) => value,
+            Err(error) => {
+                if let SelectionTarget::Native(view) = &mut self.session.workspace_mut().selection
+                    && is_artifact(&view.subject)
+                {
+                    view.stale = true;
+                }
+                return Err(error);
+            }
         };
         // Capture/refuse atomically before replacing the previous complete basis.
         if let Some(reconcile) = reconcile {
@@ -104,13 +116,19 @@ impl Runtime {
                 self.refresh_selection_accessibility();
                 return Ok(true);
             }
-            let artifact_dissolved = reconcile.dissolved
+            let mut artifact_dissolved = reconcile.dissolved
                 && matches!(&self.workspace().selection, SelectionTarget::Native(prior) if is_artifact(&prior.subject));
             let state = self.workspace();
             let mut view =
                 build_workspace_selection_view(&model, &authority, reconcile.subject, state)
                     .map_err(|e| anyhow::anyhow!("Selection projection unavailable: {e:?}"))?;
             if let SelectionTarget::Native(previous) = &state.selection {
+                if datum_gui_protocol::selection_artifacts::artifact_producer_changed(
+                    previous, &view,
+                ) {
+                    view.subject = SelectionSubject::None;
+                    artifact_dissolved = true;
+                }
                 view.scope = previous
                     .scope
                     .filter(|class| view.members.iter().any(|id| id.class == *class));
@@ -285,6 +303,7 @@ impl Runtime {
             entry,
             &WorkspaceSelectionAuthority {
                 native: &native.authority,
+                model: &native.model,
                 workspace: self.workspace(),
             },
         ) {

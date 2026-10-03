@@ -9,6 +9,7 @@ use std::collections::BTreeSet;
 
 pub struct WorkspaceSelectionAuthority<'a> {
     pub native: &'a NativeSelectionResolution,
+    pub model: &'a eda_engine::substrate::DesignModel,
     pub workspace: &'a ReviewWorkspaceState,
 }
 impl WorkspaceSelectionAuthority<'_> {
@@ -16,10 +17,57 @@ impl WorkspaceSelectionAuthority<'_> {
         subject.validate().map_err(Error::InvalidSubject)?;
         match subject {
             SelectionSubject::Proposal(id) | SelectionSubject::Review(id) => {
-                // Saved-route lifecycle metadata is not exposed by this
-                // payload yet. Do not select an applied/discarded saved action
-                // merely because its old file still contains that action ID.
-                if self.workspace.review.artifact_path.is_some() {
+                if self.model.project.project_id != self.native.project()
+                    || self.model.model_revision != *self.native.revision()
+                {
+                    return Err(Error::MissingArtifactAuthority);
+                }
+                if let Some(path) = &self.workspace.review.artifact_path {
+                    let producer = self
+                        .workspace
+                        .review
+                        .producer_proposal
+                        .as_ref()
+                        .ok_or(Error::MissingArtifactAuthority)?;
+                    if producer.project_id != self.native.project()
+                        || producer.schema_version != eda_engine::substrate::PROPOSAL_SCHEMA_VERSION
+                        || producer.batch.expected_model_revision.as_ref()
+                            != Some(&producer.prepared_against)
+                        || !self
+                            .workspace
+                            .review
+                            .source_fingerprint
+                            .as_deref()
+                            .is_some_and(|s| {
+                                s.strip_prefix("sha256:").is_some_and(|digest| {
+                                    digest.len() == 64
+                                        && digest.bytes().all(|c| c.is_ascii_hexdigit())
+                                })
+                            })
+                    {
+                        return Err(Error::MissingArtifactAuthority);
+                    }
+                    if let Some(current) = self.model.proposals.get(&producer.proposal_id) {
+                        if current.project_id != producer.project_id
+                            || current.prepared_against != producer.prepared_against
+                            || current.batch != producer.batch
+                        {
+                            return Err(Error::MissingArtifactAuthority);
+                        }
+                        if current.status == eda_engine::substrate::ProposalStatus::Applied {
+                            return Ok(None);
+                        }
+                    }
+                    match std::fs::metadata(path) {
+                        Ok(meta) if meta.is_file() => {}
+                        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                            return Ok(None);
+                        }
+                        _ => return Err(Error::MissingArtifactAuthority),
+                    }
+                } else if self.workspace.review.producer_revision.as_deref()
+                    != Some(&self.native.revision().0)
+                {
                     return Err(Error::MissingArtifactAuthority);
                 }
                 // The route producer supplies whole action IDs. Production
@@ -127,6 +175,7 @@ pub fn build_workspace_selection_view(
     }
     let authority = WorkspaceSelectionAuthority {
         native,
+        model,
         workspace: state,
     };
     let payload = authority
@@ -148,11 +197,43 @@ pub fn build_workspace_selection_view(
         V::Common(serde_json::json!(view.subject.kind())),
     );
     fields.insert("artifact_payload".into(), V::Common(payload));
+    if !matches!(view.subject, SelectionSubject::Diagnostic(_)) {
+        fields.insert("producer_identity".into(),V::Common(if let Some(proposal)=&state.review.producer_proposal {
+            serde_json::json!({"project_id":proposal.project_id,"proposal_id":proposal.proposal_id,"prepared_against":proposal.prepared_against})
+        } else {
+            serde_json::json!({"project_id":view.project,"review_source":state.review.review_source,"net_uuid":state.review.net_uuid,"from_anchor_pad_uuid":state.review.from_anchor_pad_uuid,"to_anchor_pad_uuid":state.review.to_anchor_pad_uuid,"selection_profile":state.review.selection_profile,"selected_candidate":state.review.selected_candidate,"selected_policy":state.review.selected_policy})
+        }));
+    }
     fields.insert("artifact_basis".into(),V::Common(match &view.subject {
         SelectionSubject::Diagnostic(_)=>serde_json::json!({"check_run_id":state.checks.check_run_id,"model_revision":state.checks.model_revision,"status":state.checks.status}),
-        _=>serde_json::json!({"review_source":state.review.review_source,"artifact_path":state.review.artifact_path,"status":state.review.status}),
+        _=>serde_json::json!({"review_source":state.review.review_source,"artifact_path":state.review.artifact_path,"producer_revision":state.review.producer_revision,"source_fingerprint":state.review.source_fingerprint,"producer_proposal_ref":state.review.producer_proposal.as_ref().map(|p| serde_json::json!({"proposal_id":p.proposal_id,"prepared_against":p.prepared_against})),"canonical_status":state.review.producer_proposal.as_ref().and_then(|p|model.proposals.get(&p.proposal_id)).map(|p|p.status),"status":state.review.status}),
     }));
     // Related target payloads remain producing evidence/navigation, never
     // acquired authored members or an inferred occurrence binding.
     Ok(view)
+}
+
+/// Action IDs are scoped by their actual producing proposal/context. Compare
+/// that existing authority; never generate a replacement ID from scene data.
+pub fn artifact_producer_changed(
+    prior: &crate::selection_view::SelectionView,
+    current: &crate::selection_view::SelectionView,
+) -> bool {
+    if !matches!(
+        prior.subject,
+        SelectionSubject::Proposal(_) | SelectionSubject::Review(_)
+    ) || !is_artifact(&current.subject)
+    {
+        return false;
+    }
+    match (
+        prior.field("producer_identity"),
+        current.field("producer_identity"),
+    ) {
+        (
+            crate::selection_view::InspectionValue::Common(a),
+            crate::selection_view::InspectionValue::Common(b),
+        ) => a != b,
+        _ => false,
+    }
 }
