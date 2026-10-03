@@ -25,6 +25,9 @@ pub struct AcquisitionRefusal {
 impl AcquisitionRefusal {
     /// Shared visible and programmatic reason; announce once on completion.
     pub fn explanation(&self) -> String {
+        if matches!(self.subject_kind, "proposal" | "review" | "check_finding") {
+            return "Mixed authored/artifact and multi-artifact compounds are unavailable. Select without modifiers to replace the current subject.".into();
+        }
         let verb = match self.mode {
             AcquisitionMode::Remove => "remove members from",
             _ => "add members to",
@@ -104,6 +107,16 @@ pub fn acquire_authored(
             }),
         ));
     }
+    if mode == AcquisitionMode::Add && datum_gui_protocol::selection_artifacts::is_artifact(prior) {
+        return Ok(unchanged(
+            prior,
+            members,
+            Some(AcquisitionRefusal {
+                mode,
+                subject_kind: prior.kind(),
+            }),
+        ));
+    }
     let old_focus = match prior {
         SelectionSubject::Object(id) => Some(id.clone()),
         SelectionSubject::Compound(value) => value.focus.clone(),
@@ -165,4 +178,49 @@ fn unchanged(
         changed: false,
         refusal,
     }
+}
+
+/// Explicit whole producing artifact acquisition. It shares the one modifier
+/// law; a mixed artifact/authored or multi-artifact compound has no authority.
+pub fn acquire_artifact(
+    prior: &SelectionSubject,
+    candidate: SelectionSubject,
+    mode: AcquisitionMode,
+    authority: &(impl SelectionAuthority + ?Sized),
+) -> Result<AcquisitionResult, SelectionResolutionError> {
+    candidate
+        .validate()
+        .map_err(SelectionResolutionError::InvalidSubject)?;
+    if !datum_gui_protocol::selection_artifacts::is_artifact(&candidate)
+        || !authority.artifact_exists(&candidate)?
+    {
+        return Err(SelectionResolutionError::MissingArtifactAuthority);
+    }
+    let members = authority.members(prior)?;
+    if mode == AcquisitionMode::Replace
+        || (mode == AcquisitionMode::Add && matches!(prior, SelectionSubject::None))
+    {
+        return Ok(AcquisitionResult {
+            changed: candidate != *prior,
+            subject: candidate,
+            members: BTreeSet::new(),
+            refusal: None,
+        });
+    }
+    if mode == AcquisitionMode::Remove && *prior == candidate {
+        return Ok(AcquisitionResult {
+            changed: true,
+            subject: SelectionSubject::None,
+            members: BTreeSet::new(),
+            refusal: None,
+        });
+    }
+    Ok(unchanged(
+        prior,
+        members,
+        (mode == AcquisitionMode::Add && *prior != candidate).then_some(AcquisitionRefusal {
+            mode,
+            subject_kind: candidate.kind(),
+        }),
+    ))
 }

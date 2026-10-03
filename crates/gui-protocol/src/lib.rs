@@ -37,6 +37,8 @@ pub use artifact_preview_viewport::ArtifactPreviewViewportState;
 mod board_text_source;
 mod board_track_projection;
 mod live_design_session;
+pub use live_design_session::{SessionCommand, SessionCommandResult, SessionEvent};
+pub mod selection_artifacts;
 pub mod selection_geometry_catalog;
 pub mod selection_resolution;
 pub mod selection_scene;
@@ -587,56 +589,6 @@ pub struct ProductionPanelProjectionSummary {
     pub first_y_nm: Option<i64>,
     pub first_rotation_deg: Option<i32>,
     pub object_revision: u64,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SessionCommand {
-    SetTool(WorkspaceTool),
-    BeginAuthoringGesture {
-        world: PointNm,
-        target_object_id: Option<String>,
-    },
-    PreviewAuthoringGesture {
-        world: PointNm,
-        target_object_id: Option<String>,
-    },
-    CancelAuthoringGesture,
-    SelectReviewAction(String),
-    SelectAuthoredObject(String),
-    SelectCheckFinding(String),
-    ClearSelection,
-    SelectPreviousReviewAction,
-    SelectNextReviewAction,
-    ToggleShowAuthored,
-    ToggleShowProposed,
-    ToggleShowUnrouted,
-    ToggleDimUnrelated,
-    ToggleLayerVisibility(String),
-    FocusProductionArtifact(String),
-    FocusProductionArtifactFile(String),
-    ZoomArtifactPreviewIn,
-    ZoomArtifactPreviewOut,
-    PanArtifactPreview {
-        delta_x_ppm: i32,
-        delta_y_ppm: i32,
-    },
-    ResetArtifactPreviewViewport,
-    ToggleArtifactPreviewGeometry,
-    ToggleArtifactPreviewDrills,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SessionEvent {
-    SelectionChanged(SelectionTarget),
-    SceneChanged,
-    FrameChanged,
-    ToolChanged(WorkspaceTool),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SessionCommandResult {
-    pub handled: bool,
-    pub events: Vec<SessionEvent>,
 }
 
 fn layer_visibility_change_is_frame_only(scene: &BoardReviewSceneV1, layer_id: &str) -> bool {

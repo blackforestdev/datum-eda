@@ -24,6 +24,7 @@ pub enum HitTarget {
     CloseRevisionSurface,
     ToggleRevisionIssuanceArm,
     OpenRevisionWitness(String),
+    ProposalAction(String),
     ReviewAction(String),
     AuthoredObject(String),
     SelectionScope(Option<datum_gui_protocol::AuthoredSelectionClass>),

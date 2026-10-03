@@ -89,6 +89,20 @@ impl SelectionView {
             .collect()
     }
     pub fn summary(&self) -> String {
+        if let SelectionSubject::Proposal(id)
+        | SelectionSubject::Review(id)
+        | SelectionSubject::Diagnostic(id) = &self.subject
+        {
+            return format!(
+                "{} — {}{}",
+                self.subject.kind(),
+                id,
+                self.notice
+                    .as_ref()
+                    .map(|n| format!(". {n}"))
+                    .unwrap_or_default()
+            );
+        }
         format!(
             "{} — {} objects; {} hidden; {} locked{}",
             self.subject.kind(),

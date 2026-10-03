@@ -55,6 +55,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::CloseRevisionSurface
         | HitTarget::ToggleRevisionIssuanceArm
         | HitTarget::OpenRevisionWitness(_)
+        | HitTarget::ProposalAction(_)
         | HitTarget::ReviewAction(_)
         | HitTarget::AuthoredObject(_)
         | HitTarget::SelectionScope(_)

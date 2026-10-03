@@ -77,6 +77,7 @@ mod runtime_primary_button;
 mod runtime_primary_pointer;
 mod runtime_revision_workspace;
 mod runtime_selection;
+mod runtime_selection_artifacts;
 mod runtime_selection_hit;
 mod runtime_selection_inspector;
 mod runtime_selection_menu;

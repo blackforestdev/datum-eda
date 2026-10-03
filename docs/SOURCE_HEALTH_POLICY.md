@@ -406,3 +406,13 @@ Marking state and read-only native menu commands have normal owners; acquisition
 class labels/configuration are shared by Inspector and menu, not duplicated.
 The existing child-array preflight moves into one AT-SPI owner used by selection
 and menus. No budget, exception, source identity or mutation boundary changes.
+
+
+S5A-C03 artifact integration extracts shared workspace command/event vocabulary
+into `live_design_session/commands.rs` and proposal/review composition into a
+normal `render/overlay/composition.rs` module. The remaining four-line include
+bridge preserves existing callers; implementation is no longer macro-expanded
+into the renderer root. Protocol production falls from4182 to4134 lines, renderer
+expansion from4812 to4343, and legacy renderer tests from793 to765 after the
+cohesive overlay-hit tests move to a normal child. Exact limits ratchet down;
+remaining debt, normal budgets and all selection/native acceptance remain open.

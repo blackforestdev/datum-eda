@@ -1,5 +1,7 @@
 //! Shared workspace command dispatch; one session owns consumer state.
+mod commands;
 use crate::*;
+pub use commands::{SessionCommand, SessionCommandResult, SessionEvent};
 
 impl LiveDesignSession {
     pub fn new(workspace: ReviewWorkspaceState) -> Self {

@@ -2333,3 +2333,44 @@ uses the owned disk-backed selection proof target, with no policy override.
 Artifact integration and U4/U5 remain available C03 work. No C04 native acceptance,
 C05 independent review, C06 acceptance, graphics-positive waiver, latency allowance
 or manufacturing CAM/T04 completion is asserted.
+
+
+### S5A-C03 — explicit producing artifacts and shared lifecycle (partial)
+
+Native explicit pointing now distinguishes Proposal overlays from Review-lane
+rows carrying the same whole action ID. Both and Diagnostic fingerprints use
+the same Native selection state, read-only Inspector/context/accessibility
+projection and shared acquisition/lifetime reducers. Artifacts have no authored
+members: target evidence remains producing payload/navigation, never ownership.
+Add/remove no-ops and whole-artifact removal follow the existing modifier law;
+mixed authored/artifact and multi-artifact additions refuse atomically under
+OPEN-12. Authored regions and Ctrl+A remain authored-only. Source project and
+unique producing IDs are checked; missing/foreign/duplicate authority refuses.
+
+Compatible new check runs retain the fingerprint and refresh evidence; producer
+invalidation clears/reports without journaling or later resurrection. Runtime
+reconciles artifact changes even when model revision is unchanged, and uses the
+same generic lifetime owner alongside qualified Zone lineage. Proposal ghost
+and Review evidence emphasis now follow their distinct actual Native subjects,
+without changing retained authored buffers. Command/event vocabulary and legacy
+composition/test extraction ratchet source-health limits in the same change.
+
+This unit is deliberately partial: saved-route payloads omit the canonical
+Proposal lifecycle reference that already exists in saved artifact/substrate
+owners. The native path currently refuses rather than selecting an applied or
+discarded action from an old file. `dat-s5a-artifact-lifecycle-7g4l` tracks the
+minimum producer binding exposure and focused commit/discard/reopen proof.
+Production proposal UUIDs do not become action IDs by renderer inference.
+Diagnostic canvas marker/channel and remaining U4/U5 integration continue; no
+mandatory positive case is waived or marked passed.
+
+Focused proof: five native producing-artifact projection/acquisition/lifetime
+tests, seven existing shared acquisition tests, four qualified Zone lifetime
+regressions and one actual proposal-overlay hit regression passed (17 distinct).
+Logs `target/s5a-c03-artifact-proof.log` and
+`target/s5a-c03-artifact-overlay-proof.log`; four affected crates all-target
+Clippy with warnings denied passed in `target/s5a-c03-artifact-clippy.log`.
+Initial compilation/path failures remain in execution history and were repaired
+within this unit. These are producer/mechanism proofs, not native interaction,
+visual/AT acceptance, C05 review or C06 acceptance. Graphics blocker/positive
+cases, deferred editors, undecided latency, PM026/049/051/052 and CAM/T04 persist.

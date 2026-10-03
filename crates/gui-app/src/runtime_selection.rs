@@ -1,8 +1,11 @@
 //! Native selection entry and revision integration; editors configure one owner.
 use super::*;
 use datum_gui_protocol::{
-    SelectionSubject, SelectionTarget, selection_resolution::NativeSelectionResolution,
-    selection_view::build_selection_view,
+    SelectionSubject, SelectionTarget,
+    selection_artifacts::{
+        WorkspaceSelectionAuthority, build_workspace_selection_view, is_artifact,
+    },
+    selection_resolution::NativeSelectionResolution,
 };
 use datum_gui_viewport::selection_acquisition::{
     AcquisitionEntry, AcquisitionMode, acquire_authored,
@@ -46,6 +49,7 @@ impl Runtime {
             .as_ref()
             .is_some_and(|s| s.model.model_revision == model.model_revision)
         {
+            self.reconcile_native_artifact_selection();
             return Ok(true);
         }
         let authority = NativeSelectionResolution::capture(&model)
@@ -54,12 +58,23 @@ impl Runtime {
             (&self.native_selection, &self.workspace().selection)
         {
             Some(
-                datum_gui_viewport::selection_lifetime::reconcile_native_selection(
-                    &view.subject,
-                    view.project,
-                    previous.lineage.as_ref().unwrap_or(&previous.authority),
-                    &authority,
-                )
+                if is_artifact(&view.subject) {
+                    datum_gui_viewport::selection_lifetime::reconcile_selection(
+                        &view.subject,
+                        view.project,
+                        &WorkspaceSelectionAuthority {
+                            native: &authority,
+                            workspace: self.workspace(),
+                        },
+                    )
+                } else {
+                    datum_gui_viewport::selection_lifetime::reconcile_native_selection(
+                        &view.subject,
+                        view.project,
+                        previous.lineage.as_ref().unwrap_or(&previous.authority),
+                        &authority,
+                    )
+                }
                 .map_err(|e| anyhow::anyhow!("Selection revision unavailable: {e:?}"))?,
             )
         } else {
@@ -89,25 +104,12 @@ impl Runtime {
                 self.refresh_selection_accessibility();
                 return Ok(true);
             }
+            let artifact_dissolved = reconcile.dissolved
+                && matches!(&self.workspace().selection, SelectionTarget::Native(prior) if is_artifact(&prior.subject));
             let state = self.workspace();
-            let mut view = build_selection_view(
-                &model,
-                &authority,
-                reconcile.subject,
-                &state.scene,
-                state.schematic_scene.as_ref(),
-                |layer| {
-                    state.ui.filters.show_authored
-                        && state
-                            .ui
-                            .filters
-                            .layer_visibility
-                            .get(layer)
-                            .copied()
-                            .unwrap_or(true)
-                },
-            )
-            .map_err(|e| anyhow::anyhow!("Selection projection unavailable: {e:?}"))?;
+            let mut view =
+                build_workspace_selection_view(&model, &authority, reconcile.subject, state)
+                    .map_err(|e| anyhow::anyhow!("Selection projection unavailable: {e:?}"))?;
             if let SelectionTarget::Native(previous) = &state.selection {
                 view.scope = previous
                     .scope
@@ -127,6 +129,12 @@ impl Runtime {
                 } else {
                     SelectionTarget::Native(Box::new(view))
                 };
+            if artifact_dissolved {
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Selection,
+                    "Producing artifact invalidated its selected identity; selection cleared",
+                );
+            }
         }
         self.native_selection = Some(NativeSelectionSession {
             model,
@@ -270,7 +278,16 @@ impl Runtime {
             SelectionTarget::Native(v) => v.subject.clone(),
             _ => SelectionSubject::None,
         };
-        let outcome = match acquire_authored(&prior, candidates, mode, entry, &native.authority) {
+        let outcome = match acquire_authored(
+            &prior,
+            candidates,
+            mode,
+            entry,
+            &WorkspaceSelectionAuthority {
+                native: &native.authority,
+                workspace: self.workspace(),
+            },
+        ) {
             Ok(o) => o,
             Err(e) => {
                 self.selection_notice(format!("Selection refused atomically: {e:?}"));
@@ -282,22 +299,11 @@ impl Runtime {
             || semantic.as_ref().is_some_and(|s| *s != prior);
         let subject = semantic.unwrap_or(outcome.subject);
         let state = self.workspace();
-        let mut view = match build_selection_view(
+        let mut view = match build_workspace_selection_view(
             &native.model,
             &native.authority,
             subject,
-            &state.scene,
-            state.schematic_scene.as_ref(),
-            |layer| {
-                state.ui.filters.show_authored
-                    && state
-                        .ui
-                        .filters
-                        .layer_visibility
-                        .get(layer)
-                        .copied()
-                        .unwrap_or(true)
-            },
+            state,
         ) {
             Ok(v) => v,
             Err(e) => {
@@ -456,6 +462,9 @@ impl Runtime {
     }
 
     pub(super) fn dispatch_session_command(&mut self, command: SessionCommand) -> bool {
+        if let Some(handled) = self.dispatch_native_artifact_command(&command) {
+            return handled;
+        }
         let refresh = matches!(
             command,
             SessionCommand::ToggleLayerVisibility(_) | SessionCommand::ToggleShowAuthored
@@ -479,22 +488,11 @@ impl Runtime {
             return;
         }
         let state = self.workspace();
-        match build_selection_view(
+        match build_workspace_selection_view(
             &native.model,
             &native.authority,
             previous.subject.clone(),
-            &state.scene,
-            state.schematic_scene.as_ref(),
-            |layer| {
-                state.ui.filters.show_authored
-                    && state
-                        .ui
-                        .filters
-                        .layer_visibility
-                        .get(layer)
-                        .copied()
-                        .unwrap_or(true)
-            },
+            state,
         ) {
             Ok(mut view) => {
                 view.scope = previous.scope;

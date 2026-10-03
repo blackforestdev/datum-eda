@@ -36,6 +36,15 @@ impl Runtime {
             HitTarget::CloseRevisionSurface
             | HitTarget::ToggleRevisionIssuanceArm
             | HitTarget::OpenRevisionWitness(_) => unreachable!("revision targets return above"),
+            HitTarget::ProposalAction(action_id) => self
+                .acquire_native_artifact(datum_gui_protocol::SelectionSubject::Proposal(
+                    action_id.clone(),
+                ))
+                .unwrap_or_else(|| {
+                    self.dispatch_session_command(SessionCommand::SelectReviewAction(
+                        action_id.clone(),
+                    ))
+                }),
             HitTarget::ReviewAction(action_id) => {
                 let handled = self.dispatch_session_command(SessionCommand::SelectReviewAction(
                     action_id.clone(),
