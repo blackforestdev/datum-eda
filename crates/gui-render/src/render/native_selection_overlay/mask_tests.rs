@@ -174,3 +174,26 @@ fn prepared_paint_ranges_follow_visible_commands_and_survive_shared_clone() {
     assert_eq!(cloned.selected_paint_ranges(&foreign, None).count(), 0);
     assert_eq!(fixture.source_bytes(), before);
 }
+
+#[test]
+fn nonresolving_pane_creates_no_mask_request_or_selection_resource() {
+    let (fixture, state) = selected_wire_state();
+    let bytes = fixture.source_bytes();
+    let SelectionTarget::Native(view) = &state.selection else {
+        unreachable!()
+    };
+    assert!(view.board_keys.is_empty());
+    assert!(!view.schematic_keys.is_empty());
+    assert!(
+        Request::capture(view, &state.scene, datum_gui_protocol::PaneContent::Board)
+            .unwrap()
+            .is_none()
+    );
+    let scene = state.schematic_scene.as_ref().unwrap();
+    assert!(
+        Request::capture(view, scene, datum_gui_protocol::PaneContent::Schematic)
+            .unwrap()
+            .is_some()
+    );
+    assert_eq!(fixture.source_bytes(), bytes);
+}

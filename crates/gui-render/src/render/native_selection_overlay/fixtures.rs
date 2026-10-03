@@ -317,3 +317,65 @@ pub(crate) fn selected_via_state() -> (Fixture, ReviewWorkspaceState) {
     ));
     (fixture, state)
 }
+
+pub(crate) fn selected_schematic_text_state() -> (Fixture, ReviewWorkspaceState) {
+    use eda_engine::{
+        api::native_write::{self, WriteProvenance},
+        schematic::SchematicText,
+        substrate::CommitSource,
+    };
+    let (mut fixture, mut state) = super::selected_points_state();
+    let authority = NativeSelectionResolution::capture(&fixture.model).unwrap();
+    let sheet = authority
+        .snapshot()
+        .schematic_source()
+        .unwrap()
+        .sheets
+        .values()
+        .next()
+        .unwrap()
+        .uuid;
+    let text = SchematicText {
+        uuid: uuid::Uuid::new_v4(),
+        text: "8".into(),
+        position: Point::new(2_000_000, 0),
+        rotation: 0,
+    };
+    let write = native_write::schematic_sheets::build_create_schematic_text(
+        &fixture.model,
+        WriteProvenance::new(
+            "selection-text-fixture",
+            CommitSource::Test,
+            "actual native glyph silhouette",
+        ),
+        sheet,
+        &text,
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut fixture.model, &fixture.root, write).unwrap();
+    let schematic =
+        datum_gui_protocol::project_native_schematic_scene(&fixture.model, &fixture.root)
+            .unwrap()
+            .unwrap();
+    state.scene.source_revision = fixture.model.model_revision.0.clone();
+    let authority = NativeSelectionResolution::capture(&fixture.model).unwrap();
+    let view = build_selection_view(
+        &fixture.model,
+        &authority,
+        SelectionSubject::Object(Id {
+            class: Class::SchematicText,
+            id: text.uuid,
+            instance_path: vec![],
+        }),
+        &state.scene,
+        Some(&schematic),
+        |_| true,
+    )
+    .unwrap();
+    assert_eq!(view.members.len(), 1);
+    assert!(view.unprojected.is_empty());
+    assert!(!schematic.board_text_geometries.is_empty());
+    state.schematic_scene = Some(schematic);
+    state.selection = SelectionTarget::Native(Box::new(view));
+    (fixture, state)
+}

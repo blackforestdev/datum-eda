@@ -558,3 +558,6 @@ mod selection_stroke_gpu_tests;
 
 #[path = "selection_mask_gpu_tests.rs"]
 mod selection_mask_gpu_tests;
+
+#[path = "selection_schematic_mask_tests.rs"]
+mod selection_schematic_mask_tests;

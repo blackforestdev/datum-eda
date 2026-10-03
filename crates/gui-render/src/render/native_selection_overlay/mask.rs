@@ -56,6 +56,9 @@ impl Request {
         let Some(keys) = view.projection_keys(scene, surface) else {
             return Ok(None);
         };
+        if keys.is_empty() {
+            return Ok(None);
+        }
         let compound = matches!(
             view.subject,
             datum_gui_protocol::SelectionSubject::Compound(_)
