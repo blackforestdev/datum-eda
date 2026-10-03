@@ -46,6 +46,40 @@ fn selection_capsule_pixels_preserve_material_clip_and_two_pixel_boundary() {
     let ordinary = capture(&mut host, &prepared);
     assert_ne!(ordinary.get_pixel(200, 90), image.get_pixel(200, 90));
     assert_eq!(ordinary.get_pixel(200, 100), image.get_pixel(200, 100));
+    // Minimum ring/X modes use the same production stream, never the lift
+    // pass. Compare their authored center against the actual baseline image.
+    prepared.selection_strokes.clear();
+    let baseline = capture(&mut host, &prepared);
+    prepared
+        .selection_strokes
+        .push(crate::selection_stroke::Stroke::minimum(
+            [200.0, 100.0],
+            [200.0, 100.0],
+            prepared.scene_viewport,
+            1.0,
+        ));
+    let ring = capture(&mut host, &prepared);
+    assert_eq!(ring.get_pixel(200, 100), baseline.get_pixel(200, 100));
+    assert_eq!(ring.get_pixel(200, 97).0[..3], [206, 90, 146]);
+    assert_eq!(ring.get_pixel(200, 102).0[..3], [206, 90, 146]);
+    assert_eq!(ring.get_pixel(200, 95), baseline.get_pixel(200, 95));
+    prepared.selection_strokes = vec![
+        crate::selection_stroke::Stroke::minimum(
+            [197.0, 97.0],
+            [203.0, 103.0],
+            prepared.scene_viewport,
+            2.0,
+        ),
+        crate::selection_stroke::Stroke::minimum(
+            [197.0, 103.0],
+            [203.0, 97.0],
+            prepared.scene_viewport,
+            2.0,
+        ),
+    ];
+    let cross = capture(&mut host, &prepared);
+    assert_eq!(cross.get_pixel(200, 100).0[..3], [206, 90, 146]);
+    assert_eq!(cross.get_pixel(200, 96), baseline.get_pixel(200, 96));
     prepared.selection_strokes.clear();
     capture(&mut host, &prepared);
     assert!(host.renderer.selection_stroke_gpu.buffer().is_none());

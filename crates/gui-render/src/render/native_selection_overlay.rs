@@ -112,7 +112,7 @@ pub(super) fn push_native(
         viewport,
         glyph_assets.as_ref(),
     );
-    lod.push_cues(out);
+    lod.push_cues(selection_strokes, viewport);
     for graphic in &scene.board_graphics {
         if !lod.detailed(view, scene, surface, &graphic.object_id)
             || !layer_visible(state, &graphic.layer_id)

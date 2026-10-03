@@ -261,35 +261,24 @@ impl Plan {
         view.presentation_owner(scene, surface, key)
             .is_none_or(|owner| !self.skip.contains(owner))
     }
-    pub(super) fn push_cues(&self, out: &mut Vec<Quad>) {
+    pub(super) fn push_cues(&self, out: &mut Vec<selection_stroke::Stroke>, viewport: RectPx) {
         for &(class, (x, y)) in &self.cues {
             if class == datum_gui_protocol::AuthoredSelectionClass::NoConnect {
-                push_screen_line(
-                    out,
-                    (x - 3.0, y - 3.0),
-                    (x + 3.0, y + 3.0),
-                    TEXT_ACCENT,
-                    2.0,
-                );
-                push_screen_line(
-                    out,
-                    (x - 3.0, y + 3.0),
-                    (x + 3.0, y - 3.0),
-                    TEXT_ACCENT,
-                    2.0,
-                );
-                continue;
-            }
-            // One non-color ring per whole owner; the authored center/void stays
-            // visible. This is screen geometry only, never qualification bounds.
-            let points: Vec<_> = (0..=24)
-                .map(|i| {
-                    let a = i as f32 * std::f32::consts::TAU / 24.0;
-                    (x + a.cos() * 3.0, y + a.sin() * 3.0)
-                })
-                .collect();
-            for edge in points.windows(2) {
-                push_screen_line(out, edge[0], edge[1], TEXT_ACCENT, 2.0);
+                for (from, to) in [
+                    ([x - 3.0, y - 3.0], [x + 3.0, y + 3.0]),
+                    ([x - 3.0, y + 3.0], [x + 3.0, y - 3.0]),
+                ] {
+                    out.push(selection_stroke::Stroke::minimum(from, to, viewport, 2.0));
+                }
+            } else {
+                // One analytic annulus at the canonical anchor, with an open
+                // center. Its instance does not enlarge authored geometry.
+                out.push(selection_stroke::Stroke::minimum(
+                    [x, y],
+                    [x, y],
+                    viewport,
+                    1.0,
+                ));
             }
         }
     }
@@ -308,9 +297,48 @@ mod tests {
             )],
         };
         let mut q = Vec::new();
-        plan.push_cues(&mut q);
+        plan.push_cues(
+            &mut q,
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 100.0,
+            },
+        );
         assert_eq!(q.len(), 2);
-        assert!(q.iter().all(|quad| quad.color == TEXT_ACCENT));
-        assert_ne!(q[0].points, q[1].points);
+        assert!(q.iter().all(|stroke| stroke.high_contrast[1] == 2.0));
+        assert_ne!(q[0].from, q[1].from);
+    }
+    #[test]
+    fn dense_minimum_cues_preserve_every_anchor_in_one_bounded_instance_each() {
+        let plan = Plan {
+            skip: BTreeSet::new(),
+            cues: (0..100_000)
+                .map(|i| {
+                    (
+                        datum_gui_protocol::AuthoredSelectionClass::Junction,
+                        ((i % 1000) as f32, (i / 1000) as f32),
+                    )
+                })
+                .collect(),
+        };
+        let mut instances = Vec::new();
+        plan.push_cues(
+            &mut instances,
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 1000.0,
+                height: 100.0,
+            },
+        );
+        assert_eq!(instances.len(), 100_000);
+        assert_eq!(std::mem::size_of_val(instances.as_slice()), 6_400_000);
+        for (i, instance) in instances.iter().enumerate() {
+            assert_eq!(instance.from, [(i % 1000) as f32, (i / 1000) as f32]);
+            assert_eq!(instance.from, instance.to);
+            assert_eq!(instance.high_contrast, [1.0, 1.0, 0.0, 0.0]);
+        }
     }
 }

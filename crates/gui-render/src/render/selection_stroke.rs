@@ -11,6 +11,23 @@ pub(crate) struct Stroke {
     pub high_contrast: [f32; 4],
 }
 impl Stroke {
+    /// Disposable minimum-cue presentation mode: 1 = open ring, 2 = X segment.
+    /// No acquisition, source identity, or authored material is encoded here.
+    pub(super) fn minimum(from: [f32; 2], to: [f32; 2], viewport: RectPx, mode: f32) -> Self {
+        Self {
+            from,
+            to,
+            material_width: [0.0, 0.0, 0.0, if mode == 1.0 { 6.0 } else { 2.0 }],
+            clip: [
+                viewport.x,
+                viewport.y,
+                viewport.x + viewport.width,
+                viewport.y + viewport.height,
+            ],
+            high_contrast: [1.0, mode, 0.0, 0.0],
+        }
+    }
+
     pub(super) fn layout() -> wgpu::VertexBufferLayout<'static> {
         const ATTRS: [wgpu::VertexAttribute; 5] = wgpu::vertex_attr_array![0=>Float32x2,1=>Float32x2,2=>Float32x4,3=>Float32x4,4=>Float32x4];
         wgpu::VertexBufferLayout {

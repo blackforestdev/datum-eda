@@ -26,8 +26,9 @@ fn tiny_source_bound_track_has_one_anchor_ring_without_geometry_or_membership_ch
         _ => unreachable!(),
     };
     let mut quads = Vec::new();
+    let mut strokes = Vec::new();
     push_native(
-        &mut Vec::new(),
+        &mut strokes,
         &mut quads,
         &mut Vec::new(),
         &state.scene,
@@ -36,28 +37,28 @@ fn tiny_source_bound_track_has_one_anchor_ring_without_geometry_or_membership_ch
         camera(),
         PaneContent::Board,
     );
-    assert_eq!(
-        quads.len(),
-        24,
-        "one whole-owner ring instead of a detailed path"
+    assert!(
+        quads.is_empty(),
+        "minimum cues never expand into quad geometry"
     );
-    assert!(quads.iter().all(|q| q.color == TEXT_ACCENT));
+    assert_eq!(strokes.len(), 1, "one whole-owner ring instance");
+    assert_eq!(strokes[0].high_contrast[1], 1.0);
     let projection = Projection::new(
         inset_rect(pane(), 10.0, 10.0, 10.0, 10.0),
         &state.scene.bounds,
         camera(),
     );
     let center = projection.project_point(PointNm { x: 0, y: 0 });
-    let bounds = lod::bounds(&quads.iter().flat_map(|q| q.points).collect::<Vec<_>>());
-    assert!((bounds.x + bounds.width * 0.5 - center.0).abs() < 0.01);
-    assert!((bounds.y + bounds.height * 0.5 - center.1).abs() < 0.01);
-    assert!(bounds.width > 6.0 && bounds.width <= 8.1);
+    assert_eq!(strokes[0].from, [center.0, center.1]);
+    assert_eq!(strokes[0].from, strokes[0].to);
+    assert_eq!(strokes[0].material_width[3], 6.0);
     state.ui.global_preferences.high_contrast_noncolor = true;
     state.ui.global_preferences.reduced_motion = true;
     let mut accessible = Vec::new();
+    let mut accessible_quads = Vec::new();
     push_native(
-        &mut Vec::new(),
         &mut accessible,
+        &mut accessible_quads,
         &mut Vec::new(),
         &state.scene,
         &state,
@@ -66,7 +67,7 @@ fn tiny_source_bound_track_has_one_anchor_ring_without_geometry_or_membership_ch
         PaneContent::Board,
     );
     assert_eq!(
-        quads, accessible,
+        strokes, accessible,
         "minimum meaning never depends on glow or animation"
     );
     assert_eq!(
@@ -137,8 +138,9 @@ fn actual_native_junctions_keep_distinct_anchors_and_complete_membership() {
     assert_eq!(view.members.len(), 2);
     assert!(view.unprojected.is_empty());
     let mut quads = Vec::new();
+    let mut strokes = Vec::new();
     push_native(
-        &mut Vec::new(),
+        &mut strokes,
         &mut quads,
         &mut Vec::new(),
         scene,
@@ -147,10 +149,11 @@ fn actual_native_junctions_keep_distinct_anchors_and_complete_membership() {
         camera(),
         PaneContent::Schematic,
     );
+    assert!(quads.is_empty());
     assert_eq!(
-        quads.len(),
-        48,
-        "one ring for each complete authored junction"
+        strokes.len(),
+        2,
+        "one instance for each complete authored junction"
     );
     let projection = Projection::new(
         inset_rect(pane(), 10.0, 10.0, 10.0, 10.0),
@@ -174,10 +177,9 @@ fn actual_native_junctions_keep_distinct_anchors_and_complete_membership() {
         projection.project_point(PointNm { x: 1_000_000, y: 0 })
     );
     assert!(
-        quads
+        strokes
             .iter()
-            .flat_map(|q| q.points)
-            .all(|(x, y)| pane().contains(x, y))
+            .all(|s| pane().contains(s.from[0], s.from[1]))
     );
     assert_eq!(view.members.len(), 2);
     for (path, bytes) in source {
