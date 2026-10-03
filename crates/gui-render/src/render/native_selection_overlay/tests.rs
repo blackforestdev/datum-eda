@@ -101,6 +101,7 @@ pub(crate) fn selected_state() -> (Fixture, ReviewWorkspaceState) {
     ];
     state.scene.tracks = vec![primitive];
     let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    state.scene.source_revision = f.model.model_revision.0.clone();
     let subject = SelectionSubject::Object(Id {
         class: Class::Track,
         id: track.uuid,
@@ -153,6 +154,7 @@ fn native_cues_are_clipped_to_each_pane_and_reproject_after_warm_camera_assignme
         &state,
         viewport,
         camera,
+        datum_gui_protocol::PaneContent::Board,
     );
     assert!(!first.is_empty());
     assert!(
@@ -167,7 +169,15 @@ fn native_cues_are_clipped_to_each_pane_and_reproject_after_warm_camera_assignme
     let mut second = Vec::new();
     let mut warm = camera;
     warm.center_x_nm += 5_000_000.0;
-    push_native(&mut second, &mut text, &state.scene, &state, viewport, warm);
+    push_native(
+        &mut second,
+        &mut text,
+        &state.scene,
+        &state,
+        viewport,
+        warm,
+        datum_gui_protocol::PaneContent::Board,
+    );
     assert_ne!(format!("{first:?}"), format!("{second:?}"));
     let hover = datum_gui_protocol::HoverTarget {
         surface: datum_gui_protocol::PaneContent::Board,
@@ -227,6 +237,53 @@ fn region_evaluation_feedback_is_pane_clipped_and_preserves_authored_sources() {
         camera,
     );
     assert!(other_text.is_empty());
+    for (path, bytes) in source {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}
+
+#[test]
+fn native_projection_uses_typed_surface_and_refuses_foreign_or_stale_scene_basis() {
+    use datum_gui_protocol::PaneContent;
+    let (fixture, mut state) = selected_state();
+    let source = fixture.source_bytes();
+    let viewport = RectPx {
+        x: 0.0,
+        y: 0.0,
+        width: 500.0,
+        height: 400.0,
+    };
+    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+    // Names carry no surface authority: this is still the configured board pane.
+    state.scene.scene_id = "schematic-misleading-display-name".into();
+    let render = |state: &ReviewWorkspaceState, surface| {
+        let mut quads = Vec::new();
+        push_native(
+            &mut quads,
+            &mut Vec::new(),
+            &state.scene,
+            state,
+            viewport,
+            camera,
+            surface,
+        );
+        quads
+    };
+    assert!(!render(&state, PaneContent::Board).is_empty());
+    assert!(render(&state, PaneContent::Schematic).is_empty());
+    if let SelectionTarget::Native(view) = &mut state.selection {
+        view.schematic_keys.insert("stable-track-display".into());
+        view.board_keys.clear();
+    }
+    state.scene.scene_id = "board-misleading-display-name".into();
+    assert!(render(&state, PaneContent::Board).is_empty());
+    assert!(!render(&state, PaneContent::Schematic).is_empty());
+    let revision = state.scene.source_revision.clone();
+    state.scene.source_revision = "older-scene-revision".into();
+    assert!(render(&state, PaneContent::Schematic).is_empty());
+    state.scene.source_revision = revision;
+    state.scene.project_uuid = uuid::Uuid::new_v4().to_string();
+    assert!(render(&state, PaneContent::Schematic).is_empty());
     for (path, bytes) in source {
         assert_eq!(std::fs::read(path).unwrap(), bytes);
     }

@@ -119,19 +119,15 @@ pub(super) fn append(
         .iter()
         .map(|s| (s.scope, Coverage::default()))
         .collect();
-    for scene in std::iter::once(board).chain(schematic) {
-        if scene.project_uuid != view.project.to_string() {
+    for (surface, scene) in
+        std::iter::once(("board", board)).chain(schematic.map(|scene| ("schematic", scene)))
+    {
+        if scene.project_uuid != view.project.to_string()
+            || scene.source_revision != view.revision.0
+        {
             continue;
         }
-        let frame = format!(
-            "{}:{}",
-            if scene.scene_id.starts_with("schematic-") {
-                "schematic"
-            } else {
-                "board"
-            },
-            scene.board_uuid
-        );
+        let frame = format!("{surface}:{}", scene.board_uuid);
         let geometries = geometry(scene, &view.zone_regions);
         for (key, binding) in SceneSelectionBindings::capture(scene, authority).iter() {
             // A parent owns its projected children; each stable member is

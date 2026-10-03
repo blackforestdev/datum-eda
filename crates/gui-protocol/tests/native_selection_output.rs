@@ -24,6 +24,7 @@ fn setup() -> (Fixture, datum_gui_protocol::BoardReviewSceneV1, Vec<Id>) {
     }
     let mut scene = datum_gui_protocol::load_fixture_workspace_state().scene;
     scene.project_uuid = f.model.project.project_id.to_string();
+    scene.source_revision = f.model.model_revision.0.clone();
     scene.board_uuid = f.board.to_string();
     scene.components.clear();
     scene.pads.clear();
@@ -194,6 +195,7 @@ fn current_zone_islands_are_complete_for_object_and_qualified_for_run() {
     );
     let mut scene = datum_gui_protocol::load_fixture_workspace_state().scene;
     scene.project_uuid = f.model.project.project_id.to_string();
+    scene.source_revision = f.model.model_revision.0.clone();
     scene.board_uuid = f.board.to_string();
     let mut primitive = scene.zones[0].clone();
     primitive.source_object_uuid = zone.uuid.to_string();

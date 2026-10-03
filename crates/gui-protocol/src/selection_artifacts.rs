@@ -213,14 +213,19 @@ pub fn build_workspace_selection_view(
         ] {
             fields.insert(name.into(), V::Common(serde_json::json!(value)));
         }
-        for (surface, scene) in [
-            ("board", Some(&state.scene)),
-            ("schematic", state.schematic_scene.as_ref()),
+        for (surface, content, scene) in [
+            ("board", crate::PaneContent::Board, Some(&state.scene)),
+            (
+                "schematic",
+                crate::PaneContent::Schematic,
+                state.schematic_scene.as_ref(),
+            ),
         ] {
             let projection = scene.map(|scene| {
                 crate::check_runs::marker::MarkerProjectionIndex::capture(
                     scene,
                     &state.checks,
+                    content,
                     visible,
                 )
                 .anchor(finding)

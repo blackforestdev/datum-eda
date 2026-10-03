@@ -115,16 +115,32 @@ impl SelectionView {
                 .unwrap_or_default()
         )
     }
-    /// Rendering uses uncapped projection sets, never context transport.
-    pub fn selected_key(&self, scene: &crate::BoardReviewSceneV1, key: &str) -> bool {
-        if scene.project_uuid != self.project.to_string() {
-            return false;
+    /// Uncapped projection configured by the pane, never scene naming or context.
+    pub fn projection_keys(
+        &self,
+        scene: &crate::BoardReviewSceneV1,
+        surface: crate::PaneContent,
+    ) -> Option<&BTreeSet<String>> {
+        if self.stale
+            || scene.project_uuid != self.project.to_string()
+            || scene.source_revision != self.revision.0
+        {
+            return None;
         }
-        if scene.scene_id.starts_with("schematic-") {
-            self.schematic_keys.contains(key)
-        } else {
-            self.board_keys.contains(key)
+        match surface {
+            crate::PaneContent::Board => Some(&self.board_keys),
+            crate::PaneContent::Schematic => Some(&self.schematic_keys),
+            crate::PaneContent::Revision(_) => None,
         }
+    }
+    pub fn selected_key(
+        &self,
+        scene: &crate::BoardReviewSceneV1,
+        surface: crate::PaneContent,
+        key: &str,
+    ) -> bool {
+        self.projection_keys(scene, surface)
+            .is_some_and(|keys| keys.contains(key))
     }
 }
 
@@ -255,6 +271,11 @@ pub fn build_selection_view(
             &mut result.related_schematic_keys,
         )
     })) {
+        if scene.project_uuid != result.project.to_string()
+            || scene.source_revision != result.revision.0
+        {
+            continue;
+        }
         for graphic in &scene.board_graphics {
             if entry_sources.contains(&graphic.source_object_uuid) {
                 own.insert(graphic.object_id.clone());

@@ -15,10 +15,15 @@ impl MarkerProjectionIndex {
     pub fn capture(
         scene: &BoardReviewSceneV1,
         checks: &CheckRunReviewState,
+        surface: crate::PaneContent,
         visible: impl Fn(&str) -> bool,
     ) -> Self {
         let current = checks.project_id.as_deref() == Some(scene.project_uuid.as_str())
-            && checks.model_revision.as_deref() == Some(scene.source_revision.as_str());
+            && checks.model_revision.as_deref() == Some(scene.source_revision.as_str())
+            && matches!(
+                surface,
+                crate::PaneContent::Board | crate::PaneContent::Schematic
+            );
         let mut fingerprints = BTreeMap::new();
         for finding in &checks.findings {
             *fingerprints.entry(finding.fingerprint.clone()).or_insert(0) += 1;
@@ -90,7 +95,7 @@ impl MarkerProjectionIndex {
 
         Self {
             current,
-            schematic: scene.scene_id.starts_with("schematic-"),
+            schematic: matches!(surface, crate::PaneContent::Schematic),
             fingerprints,
             targets,
         }

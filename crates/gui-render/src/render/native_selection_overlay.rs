@@ -77,6 +77,7 @@ pub(super) fn push_native(
     state: &ReviewWorkspaceState,
     viewport: RectPx,
     camera: CameraState,
+    surface: datum_gui_protocol::PaneContent,
 ) {
     let SelectionTarget::Native(view) = &state.selection else {
         return;
@@ -84,10 +85,8 @@ pub(super) fn push_native(
     if !authored_visible(state) || view.stale {
         return;
     }
-    let keys = if scene.scene_id.starts_with("schematic-") {
-        &view.schematic_keys
-    } else {
-        &view.board_keys
+    let Some(keys) = view.projection_keys(scene, surface) else {
+        return;
     };
     let projection = Projection::new(
         inset_rect(viewport, 10.0, 10.0, 10.0, 10.0),
@@ -386,6 +385,10 @@ impl PreparedScene {
                     (scene, Consumer::Schematic)
                 }
             };
+            let surface = match pass.surface {
+                SceneSurface::Board => datum_gui_protocol::PaneContent::Board,
+                SceneSurface::Schematic => datum_gui_protocol::PaneContent::Schematic,
+            };
             let mut quads = Vec::new();
             let before_text = self.text_runs.len();
             push_native(
@@ -395,6 +398,7 @@ impl PreparedScene {
                 state,
                 pass.scene_viewport,
                 pass.camera,
+                surface,
             );
             push_region(
                 &mut quads,
@@ -412,6 +416,7 @@ impl PreparedScene {
                 state,
                 pass.scene_viewport,
                 pass.camera,
+                surface,
             );
             TextRun::annotate(
                 &mut self.text_runs[before_text..],
@@ -439,7 +444,7 @@ pub(super) fn selection_beats_hover(
         datum_gui_protocol::PaneContent::Schematic => state.schematic_scene.as_ref(),
         _ => None,
     };
-    scene.is_some_and(|s| view.selected_key(s, &hover.object_id))
+    scene.is_some_and(|s| view.selected_key(s, hover.surface, &hover.object_id))
 }
 
 #[cfg(test)]

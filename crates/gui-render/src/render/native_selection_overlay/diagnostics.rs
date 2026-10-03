@@ -9,6 +9,7 @@ pub(super) fn push(
     state: &ReviewWorkspaceState,
     viewport: RectPx,
     camera: CameraState,
+    surface: datum_gui_protocol::PaneContent,
 ) {
     let projection = Projection::new(
         inset_rect(viewport, 10.0, 10.0, 10.0, 10.0),
@@ -17,8 +18,9 @@ pub(super) fn push(
     );
     let start = out.len();
     let hit_start = hits.len();
-    let anchors =
-        marker::MarkerProjectionIndex::capture(scene, &state.checks, |l| layer_visible(state, l));
+    let anchors = marker::MarkerProjectionIndex::capture(scene, &state.checks, surface, |l| {
+        layer_visible(state, l)
+    });
     for finding in &state.checks.findings {
         let Ok(point) = anchors.anchor(finding) else {
             continue;

@@ -16,6 +16,7 @@ fn tracks() -> (Fixture, datum_gui_protocol::BoardReviewSceneV1, Vec<Id>) {
     ];
     let mut scene = datum_gui_protocol::load_fixture_workspace_state().scene;
     scene.project_uuid = f.model.project.project_id.to_string();
+    scene.source_revision = f.model.model_revision.0.clone();
     scene.board_uuid = f.board.to_string();
     scene.components.clear();
     scene.pads.clear();
@@ -136,7 +137,7 @@ fn absent_member_projection_and_pending_logical_correspondence_are_disclosed() {
 }
 #[test]
 fn board_and_schematic_frames_are_never_silently_unioned() {
-    let (mut f, scene, mut ids) = tracks();
+    let (mut f, mut scene, mut ids) = tracks();
     f.commit([Operation::CreateSchematicJunction {
         sheet_id: f.sheet,
         junction_id: id(3),
@@ -149,8 +150,10 @@ fn board_and_schematic_frames_are_never_silently_unioned() {
         instance_path: vec![],
     });
     let a = NativeSelectionResolution::capture(&f.model).unwrap();
+    scene.source_revision = f.model.model_revision.0.clone();
+    scene.scene_id = "schematic-misleading-name".into();
     let mut schematic = scene.clone();
-    schematic.scene_id = "schematic-current".into();
+    schematic.scene_id = "board-misleading-name".into();
     schematic.board_uuid = f.sheet.to_string();
     schematic.tracks.clear();
     schematic
@@ -252,6 +255,42 @@ fn logical_coverage_uses_canonical_binding_and_survives_reopen_without_selection
         assert_eq!(nets.as_object().unwrap().len(), 1);
         assert_eq!(nets[id(800).to_string()].as_array().unwrap().len(), 2);
         assert!(nets.get(f.net.to_string()).is_none());
+    }
+    Fixture::assert_bytes(&before);
+}
+
+#[test]
+fn stale_or_foreign_scene_discloses_complete_members_as_unprojected_without_fabricated_bounds() {
+    let (f, mut scene, ids) = tracks();
+    let before = f.source_bytes();
+    let a = NativeSelectionResolution::capture(&f.model).unwrap();
+    let subject = SelectionSubject::Compound(CompoundSelection::new(ids.clone(), None).unwrap());
+    let revision = scene.source_revision.clone();
+    for foreign_project in [false, true] {
+        if foreign_project {
+            scene.source_revision = revision.clone();
+            scene.project_uuid = uuid::Uuid::new_v4().to_string();
+        } else {
+            scene.source_revision = "older-canonical-basis".into();
+        }
+        let view =
+            build_selection_view(&f.model, &a, subject.clone(), &scene, None, |_| true).unwrap();
+        assert_eq!(view.members, ids.iter().cloned().collect());
+        assert_eq!(view.unprojected, view.members);
+        assert!(view.hidden.is_empty());
+        assert!(view.board_keys.is_empty());
+        assert!(matches!(
+            view.field("combined_bounds_nm"),
+            InspectionValue::Unavailable(_)
+        ));
+        assert_eq!(
+            view.field("projected_bounds_nm"),
+            InspectionValue::Common(serde_json::json!({}))
+        );
+        assert!(matches!(
+            view.field("layer_coverage"),
+            InspectionValue::Unavailable(_)
+        ));
     }
     Fixture::assert_bytes(&before);
 }

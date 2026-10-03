@@ -2453,3 +2453,23 @@ all-target Clippy with denied warnings passes in
 source debt; no authored bytes, identity, source model, dependency or resize
 authority changes. U4 full styling/dense/dim-related, U5/native proof, graphics
 positive cases and C05/C06 remain pending; available C03 work continues.
+
+### S5A-C03 — typed, fresh pane projection
+
+Native selected/hover and diagnostic projection now use configured pane content,
+not scene-name prefixes. Selection cues require exact scene project/revision and
+a fresh shared View. Revision panes have no authored projection. Inspection
+frames come from the typed board/schematic inputs; foreign/stale scenes do not
+count as projected or hidden members and cannot supply apparently complete
+bounds/layers. Complete authoritative membership remains intact and unavailable
+projection is disclosed. No scene-generated identity or source model is added.
+
+Focused proof: seven renderer overlay cases and fifteen aggregate/output/menu
+cases pass (22 distinct), including misleading names, separate board/schematic
+frames, stale/foreign basis, complete Unavailable disclosure and source/journal
+non-mutation. Logs: `target/s5a-c03-typed-projection-proof.log` and
+`target/s5a-c03-typed-projection-protocol-proof.log`; affected protocol/renderer/
+application all-target Clippy is in `target/s5a-c03-typed-projection-clippy.log`.
+Source-bound transport fixtures are not native schematic acceptance. Available
+U4/U5 continues; standalone graphics, unprojected occurrences, C05/C06 and CAM/T04
+requirements remain without waiver. No dependency or rendering/resize change.

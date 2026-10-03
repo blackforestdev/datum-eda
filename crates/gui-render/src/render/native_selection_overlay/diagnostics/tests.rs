@@ -20,7 +20,15 @@ fn marker_severity_and_source_identity_survive_selection_and_pane_clipping() {
     let camera = CameraState::fit_to_bounds(&state.scene.bounds);
     let mut core = Vec::new();
     let mut hits = Vec::new();
-    push(&mut core, &mut hits, &state.scene, &state, viewport, camera);
+    push(
+        &mut core,
+        &mut hits,
+        &state.scene,
+        &state,
+        viewport,
+        camera,
+        datum_gui_protocol::PaneContent::Board,
+    );
     assert_eq!(hits.len(), 1);
     assert_eq!(
         hits[0].target,
@@ -38,6 +46,7 @@ fn marker_severity_and_source_identity_survive_selection_and_pane_clipping() {
         &state,
         viewport,
         camera,
+        datum_gui_protocol::PaneContent::Board,
     );
     assert_eq!(selected_hits, hits);
     assert_eq!(&selected[3..], core.as_slice()); // semantic core bytes never recolored
@@ -59,6 +68,7 @@ fn marker_severity_and_source_identity_survive_selection_and_pane_clipping() {
         &state,
         viewport,
         camera,
+        datum_gui_protocol::PaneContent::Board,
     );
     assert_eq!(stale, core);
     for (path, bytes) in source_bytes {
@@ -71,8 +81,13 @@ fn marker_projection_uses_producing_location_and_refuses_foreign_revision_occurr
     let (_fixture, mut state) = selected_state();
     checks(&mut state);
     let anchor = |state: &ReviewWorkspaceState| {
-        marker::MarkerProjectionIndex::capture(&state.scene, &state.checks, |_| true)
-            .anchor(&state.checks.findings[0])
+        marker::MarkerProjectionIndex::capture(
+            &state.scene,
+            &state.checks,
+            datum_gui_protocol::PaneContent::Board,
+            |_| true,
+        )
+        .anchor(&state.checks.findings[0])
     };
     assert_eq!(anchor(&state), Ok(PointNm { x: 5_000_000, y: 0 }));
     state.checks.findings[0].payload = Default::default();
@@ -103,12 +118,22 @@ fn marker_projection_uses_producing_location_and_refuses_foreign_revision_occurr
 fn root_schematic_marker_preserves_domain_and_hidden_navigation_is_unavailable() {
     let (_fixture, mut state) = selected_state();
     checks(&mut state);
-    state.scene.scene_id = "schematic-root-projection".into();
+    state.scene.scene_id = "board-looking-name".into();
     state.checks.findings[0].domain = "erc".into();
     state.checks.findings[0].payload = Default::default();
-    let projected = marker::MarkerProjectionIndex::capture(&state.scene, &state.checks, |_| true);
+    let projected = marker::MarkerProjectionIndex::capture(
+        &state.scene,
+        &state.checks,
+        datum_gui_protocol::PaneContent::Schematic,
+        |_| true,
+    );
     assert!(projected.anchor(&state.checks.findings[0]).is_ok());
-    let hidden = marker::MarkerProjectionIndex::capture(&state.scene, &state.checks, |_| false);
+    let hidden = marker::MarkerProjectionIndex::capture(
+        &state.scene,
+        &state.checks,
+        datum_gui_protocol::PaneContent::Schematic,
+        |_| false,
+    );
     assert!(hidden.anchor(&state.checks.findings[0]).is_err());
     state.checks.findings[0].domain = "drc".into();
     assert!(projected.anchor(&state.checks.findings[0]).is_err());
