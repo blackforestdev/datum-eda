@@ -313,6 +313,11 @@ fn native_binding_failure_is_not_empty_membership_or_deletion() {
     assert_ne!(id(800), f.net);
     assert_eq!(good.widen_run(run).unwrap(), subject);
     assert_eq!(
+        good.semantic_subject_for_origin(&identity(Class::Track, 1, &[]))
+            .unwrap(),
+        subject
+    );
+    assert_eq!(
         good.members(&subject).unwrap(),
         BTreeSet::from([identity(Class::Track, 1, &[])])
     );
@@ -324,6 +329,15 @@ fn native_binding_failure_is_not_empty_membership_or_deletion() {
         electrical::build_set_electrical_identity(&f.model, provenance(), relation).unwrap();
     native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
     let pending = Native::capture(&f.model).unwrap();
+    assert!(matches!(
+        pending.semantic_subject_for_origin(&identity(Class::Track, 1, &[])),
+        Err(SelectionResolutionError::Engine(
+            ElectricalQueryFailure::UnavailableBinding {
+                status: NetCorrespondenceStatus::Pending,
+                ..
+            }
+        ))
+    ));
     assert!(matches!(
         pending.widen_run(run),
         Err(SelectionResolutionError::Engine(

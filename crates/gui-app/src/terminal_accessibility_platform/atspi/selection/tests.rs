@@ -123,13 +123,13 @@ fn selection_accessibility_fields_explain_scope_mixed_and_unavailable_without_mu
     let (f, mut state) = setup();
     let bytes = f.source_bytes();
     let members = state.selection.as_ref().unwrap().view.members.clone();
-    let reply = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
-    assert!(
-        reply
-            .body_reader()
-            .variant_string()
-            .unwrap()
-            .starts_with("Unavailable:")
+    let reply = state.dispatch(1, &description_call(&field_path("member_count")));
+    assert_eq!(reply.body_reader().variant_string().unwrap(), "258");
+    let class_field = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
+    assert_eq!(
+        class_field.kind,
+        MessageType::Error,
+        "All has only class-independent aggregates"
     );
     Arc::make_mut(&mut state.selection.as_mut().unwrap().view).scope = Some(Class::Track);
     let reply = state.dispatch(2, &description_call(&field_path("copper_width_nm")));

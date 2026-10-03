@@ -170,6 +170,10 @@ impl Runtime {
                 ));
                 return true;
             }
+            let retained_target = match self.selection_world_hit(world_point, SceneSurface::Board) {
+                Ok(hit) => hit,
+                Err(()) => return true,
+            };
             if let Some(HitTarget::AuthoredObject(id)) = &retained_target
                 && let Some(handled) =
                     self.acquire_native_key(id, SceneSurface::Board, Some(world_point))

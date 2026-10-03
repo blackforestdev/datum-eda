@@ -78,6 +78,11 @@ fn inspection_compares_canonical_values_and_scopes_never_change_membership() {
         })
         .unwrap();
     assert_eq!(view.members.len(), 2);
+    assert!(
+        !view.fields().contains("copper_width_nm"),
+        "All exposes class-independent aggregates only"
+    );
+    view.scope = Some(Class::Track);
     assert_eq!(view.field("copper_width_nm"), InspectionValue::Mixed);
     assert_eq!(
         view.field("board_net_id"),
@@ -276,5 +281,133 @@ fn indexed_bindings_validate_sources_and_refuse_ambiguous_display_keys() {
             .get("invalid-source")
             .is_none()
     );
+    Fixture::assert_bytes(&before);
+}
+
+#[test]
+fn native_text_class_tables_use_engine_defaults_and_missing_schematic_style_is_unavailable() {
+    let mut f = Fixture::new("typed-text-inspection");
+    let board_text:eda_engine::board::BoardText=serde_json::from_value(serde_json::json!({"uuid":id(1),"text":"B","position":{"x":10,"y":20},"rotation":90,"layer":3,"height_nm":1234567,"stroke_width_nm":4567})).unwrap();
+    let schematic_text = eda_engine::schematic::SchematicText {
+        uuid: id(2),
+        text: "S".into(),
+        position: Point::new(30, 40),
+        rotation: 45,
+    };
+    f.commit([
+        Operation::CreateBoardText {
+            text_id: board_text.uuid,
+            text: serde_json::to_value(&board_text).unwrap(),
+        },
+        Operation::CreateSchematicText {
+            sheet_id: f.sheet,
+            text_id: schematic_text.uuid,
+            text: serde_json::to_value(&schematic_text).unwrap(),
+        },
+    ]);
+    let before = f.source_bytes();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let ids = vec![
+        Id {
+            class: Class::BoardText,
+            id: id(1),
+            instance_path: vec![],
+        },
+        Id {
+            class: Class::SchematicText,
+            id: id(2),
+            instance_path: vec![],
+        },
+    ];
+    let subject = SelectionSubject::Compound(CompoundSelection::new(ids.clone(), None).unwrap());
+    let scene = datum_gui_protocol::load_fixture_workspace_state().scene;
+    let mut view =
+        build_selection_view(&f.model, &authority, subject, &scene, None, |_| true).unwrap();
+    assert_eq!(
+        view.field("member_count"),
+        InspectionValue::Common(serde_json::json!(2))
+    );
+    assert!(!view.fields().contains("text_height_nm"));
+    assert_eq!(
+        view.field("workspace_coverage"),
+        InspectionValue::Common(serde_json::json!({"board":1,"schematic":1}))
+    );
+    view.scope = Some(Class::BoardText);
+    assert_eq!(
+        view.field("text_height_nm"),
+        InspectionValue::Common(serde_json::json!(1234567))
+    );
+    assert_eq!(
+        view.field("text_stroke_width_nm"),
+        InspectionValue::Common(serde_json::json!(4567))
+    );
+    assert_eq!(
+        view.field("text_bold"),
+        InspectionValue::Common(serde_json::json!(false))
+    );
+    view.scope = Some(Class::SchematicText);
+    assert!(view.fields().contains("text_height_nm"));
+    assert!(matches!(
+        view.field("text_height_nm"),
+        InspectionValue::Unavailable(_)
+    ));
+    assert_eq!(
+        view.field("text_rotation"),
+        InspectionValue::Common(serde_json::json!(45))
+    );
+    assert_eq!(view.members.into_iter().collect::<Vec<_>>(), ids);
+    let single = build_selection_view(
+        &f.model,
+        &authority,
+        SelectionSubject::Object(Id {
+            class: Class::BoardText,
+            id: id(1),
+            instance_path: vec![],
+        }),
+        &scene,
+        None,
+        |_| true,
+    )
+    .unwrap();
+    assert_eq!(single.scope, Some(Class::BoardText));
+    assert!(single.fields().contains("text_height_nm"));
+    Fixture::assert_bytes(&before);
+}
+#[test]
+fn point_object_position_inspection_remains_read_only_and_null_midpoints_are_unavailable() {
+    let (mut f, scene, ids) = setup();
+    f.commit([Operation::CreateSchematicJunction {
+        sheet_id: f.sheet,
+        junction_id: id(3),
+        junction: serde_json::json!({"uuid":id(3),"position":{"x":70,"y":80}}),
+    }]);
+    let before = f.source_bytes();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let subject = SelectionSubject::Compound(
+        CompoundSelection::new(
+            [
+                ids[0].clone(),
+                Id {
+                    class: Class::Junction,
+                    id: id(3),
+                    instance_path: vec![],
+                },
+            ],
+            None,
+        )
+        .unwrap(),
+    );
+    let mut view =
+        build_selection_view(&f.model, &authority, subject, &scene, None, |_| true).unwrap();
+    view.scope = Some(Class::Junction);
+    assert_eq!(
+        view.field("position_nm"),
+        InspectionValue::Common(serde_json::json!({"x":70,"y":80}))
+    );
+    view.scope = Some(Class::Track);
+    assert!(matches!(
+        view.field("section_midpoint_nm"),
+        InspectionValue::Unavailable(_)
+    ));
     Fixture::assert_bytes(&before);
 }

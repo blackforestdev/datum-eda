@@ -118,14 +118,29 @@ impl NativeSelectionResolution {
         run: &RunSelectionIdentity,
     ) -> Result<SelectionSubject, SelectionResolutionError> {
         self.resolve(&SelectionSubject::Run(run.clone()))?;
-        let origin = occurrence(&run.origin);
-        let membership = if run.origin.class == Class::BusSection {
-            self.snapshot.bus_for_origin(self.revision(), &origin)
+        self.semantic_subject_for_origin(&run.origin)
+    }
+
+    /// Explicit Select Net/Bus entry; pads/pins/labels do not gain a click ladder.
+    /// Origin eligibility remains the shared acquisition owner's responsibility.
+    pub fn semantic_subject_for_origin(
+        &self,
+        origin: &AuthoredSelectionIdentity,
+    ) -> Result<SelectionSubject, SelectionResolutionError> {
+        if !self.authored_contains(origin) {
+            return Err(SelectionResolutionError::UnresolvedDerivedMember(
+                origin.clone(),
+            ));
+        }
+        let membership = if origin.class == Class::BusSection {
+            self.snapshot
+                .bus_for_origin(self.revision(), &occurrence(origin))
         } else {
-            self.snapshot.net_for_origin(self.revision(), &origin)
+            self.snapshot
+                .net_for_origin(self.revision(), &occurrence(origin))
         }
         .map_err(SelectionResolutionError::Engine)?;
-        let subject = if run.origin.class == Class::BusSection {
+        let subject = if origin.class == Class::BusSection {
             SelectionSubject::Bus(membership.subject_id)
         } else {
             SelectionSubject::GlobalNet(membership.subject_id)
@@ -340,6 +355,11 @@ fn occurrence(id: &AuthoredSelectionIdentity) -> ElectricalOccurrence {
         Class::Zone => "zones",
         Class::Wire => "wires",
         Class::BusSection => "buses",
+        Class::Pad => "pads",
+        Class::Pin => "pins",
+        Class::Label => "labels",
+        Class::Port => "ports",
+        Class::Junction => "junctions",
         _ => "invalid_origin",
     };
     ElectricalOccurrence {

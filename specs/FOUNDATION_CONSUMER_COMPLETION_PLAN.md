@@ -2252,3 +2252,25 @@ These are bounded producer checks, not complete N01–N17/native acceptance or
 exact geometry predicates are not qualified latency observations. Available
 C03 menu/keyboard/aggregate/visual/native work continues; graphics, C05/C06,
 deferred editors and manufacturing CAM/T04 boundaries remain unchanged.
+
+### S5A-C03 canonical inspection and eligible hit choice (partial)
+
+Object inspection defaults to its own class; All exposes only class-independent
+counts, type/workspace coverage and hidden/locked/unprojected summaries. Canonical
+text fields use the existing engine schema and its defaults. Missing or null
+properties disclose Unavailable in the complete scope and per-member inventory,
+including accessibility; no scene default supplies a source value. Explicit Net/
+Bus entry resolves through existing engine occurrence authority without granting
+pads, pins or labels a primary-click ladder. Native hit admission now applies
+source-bound class/layer eligibility before choosing the topmost winner, so a
+filtered foreground source cannot mask an eligible source underneath.
+
+Focused producer proof: 11 native adapter/output, seven accessibility, one
+Inspector and one overlap regression passed. Affected protocol/app/render
+all-target Clippy passed with warnings denied. Logs:
+`target/s5a-c03-{inspection,inspection-accessibility,inspection-render,topmost}-proof.log`
+and `target/s5a-c03-inspection-clippy.log`. Coordinate test ownership moved to a
+normal child to preserve existing source-health limits. Bounds/layer/net coverage,
+finite Select menus, keyboard, dense visual and native proof remain pending;
+this unit does not complete U3 or C03. Graphics, C05/C06, deferred editors and
+CAM/T04 remain unchanged; available implementation continues.

@@ -1,6 +1,7 @@
 //! Complete, revision-bound shared output. Never an authored group or writer.
 mod inspection;
 pub mod inspector_state;
+mod properties;
 use crate::selection_resolution::{
     NativeSelectionResolution, SelectionAuthority, SelectionModelRevision,
 };
@@ -72,6 +73,19 @@ impl SelectionView {
             .flat_map(|scope| scope.fields.keys().map(String::as_str))
             .collect()
     }
+    /// Exact per-member blocker detail for complete inventory/accessibility.
+    pub fn unavailable_fields(&self, id: &Id) -> Vec<&'static str> {
+        properties::fields(id.class)
+            .iter()
+            .filter_map(|(field, _)| {
+                (!self
+                    .values
+                    .get(id)
+                    .is_some_and(|values| values.contains_key(*field)))
+                .then_some(*field)
+            })
+            .collect()
+    }
     pub fn summary(&self) -> String {
         format!(
             "{} — {} objects; {} hidden; {} locked{}",
@@ -107,13 +121,18 @@ pub fn build_selection_view(
     visible: impl Fn(&str) -> bool,
 ) -> Result<SelectionView, crate::selection_resolution::SelectionResolutionError> {
     let projection = authority.resolve(&subject)?;
+    let scope = if let SelectionSubject::Object(id) = &subject {
+        Some(id.class)
+    } else {
+        None
+    };
     let mut result = SelectionView {
         project: authority.project(),
         revision: authority.revision().clone(),
         subject,
         members: projection.members,
         related: projection.related,
-        scope: None,
+        scope,
         values: BTreeMap::new(),
         inspection: Vec::new(),
         zone_regions: BTreeMap::new(),
@@ -195,7 +214,7 @@ pub fn build_selection_view(
             }
             result
                 .values
-                .insert(id.clone(), semantic_properties(id.class, value));
+                .insert(id.clone(), properties::values(id.class, value));
         }
     }
     let entry_sources: BTreeSet<_> = projection
@@ -248,7 +267,7 @@ pub fn build_selection_view(
         .cloned()
         .collect();
     result.unprojected = result.members.difference(&represented).cloned().collect();
-    result.inspection = inspection::compile(&result.members, &result.values);
+    result.inspection = inspection::compile(&result);
     Ok(result)
 }
 pub fn scene_keys(scene: &crate::BoardReviewSceneV1) -> impl Iterator<Item = &str> {
@@ -289,42 +308,4 @@ fn index_sources<'a>(
         }
         _ => {}
     }
-}
-fn semantic_properties(class: Class, value: &Value) -> BTreeMap<String, Value> {
-    let mut result = BTreeMap::new();
-    // Explicit semantic identities: a coincidentally named field is insufficient.
-    let fields: &[(&str, &str)] = match class {
-        Class::Footprint | Class::Symbol => &[
-            ("placement_position_nm", "position"),
-            ("placement_rotation", "rotation"),
-            ("reference", "reference"),
-            ("value", "value"),
-        ],
-        Class::Track => &[
-            ("copper_width_nm", "width"),
-            ("board_layer", "layer"),
-            ("board_net_id", "net"),
-        ],
-        Class::Via => &[
-            ("copper_diameter_nm", "diameter"),
-            ("drill_diameter_nm", "drill"),
-            ("board_net_id", "net"),
-        ],
-        Class::Zone => &[("board_layer", "layer"), ("board_net_id", "net")],
-        Class::BoardText => &[
-            ("text", "text"),
-            ("text_height_nm", "height"),
-            ("board_layer", "layer"),
-        ],
-        Class::SchematicText => &[("text", "text")],
-        Class::Label => &[("net_label_name", "name")],
-        Class::Port => &[("port_name", "name")],
-        _ => &[],
-    };
-    for (semantic, source) in fields {
-        if let Some(v) = value.get(source) {
-            result.insert((*semantic).into(), v.clone());
-        }
-    }
-    result
 }

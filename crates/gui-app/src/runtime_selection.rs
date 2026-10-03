@@ -20,6 +20,8 @@ pub(super) struct NativeSelectionSession {
         u8,
     )>,
     lineage: Option<NativeSelectionResolution>,
+    pub(super) binding_bases:
+        std::collections::BTreeMap<String, std::sync::Arc<runtime_selection_hit::BindingBasis>>,
     pub(super) region_bases: std::collections::BTreeMap<
         String,
         std::sync::Arc<selection_region_evaluation::RegionBasis>,
@@ -81,6 +83,7 @@ impl Runtime {
                     authority,
                     last_click: None,
                     region_bases: Default::default(),
+                    binding_bases: Default::default(),
                     lineage: Some(previous.lineage.unwrap_or(previous.authority)),
                 });
                 self.refresh_selection_accessibility();
@@ -130,6 +133,7 @@ impl Runtime {
             authority,
             last_click: None,
             region_bases: Default::default(),
+            binding_bases: Default::default(),
             lineage: None,
         });
         self.refresh_selection_accessibility();

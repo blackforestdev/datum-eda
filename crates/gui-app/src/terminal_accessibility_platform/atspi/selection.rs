@@ -137,7 +137,7 @@ fn description(
         .unwrap_or_default();
     match node {
         Node::Root=>format!("Read-only {}. {}. {} {} unprojected; {} dropped. {} Move, rotate, mirror, lock and group unavailable in S5A.",view.summary(),pane,evaluation,view.unprojected.len(),view.dropped.len(),if view.stale { "Stale previous basis; current geometry unavailable." } else { "Current resolved basis." }),
-        Node::Member(id)=>format!("Selected identity {:?}; occurrence {:?}; hidden {}; locked {}; unprojected {}; selection focus {}; read-only.",id.id,id.instance_path,view.hidden.contains(id),view.locked.contains(id),view.unprojected.contains(id),view.focus()==Some(id)),
+        Node::Member(id)=>format!("Selected identity {:?}; occurrence {:?}; hidden {}; locked {}; unprojected {}; selection focus {}; unavailable fields {:?}; read-only.",id.id,id.instance_path,view.hidden.contains(id),view.locked.contains(id),view.unprojected.contains(id),view.focus()==Some(id),view.unavailable_fields(id)),
         Node::Field(field)=>field_value(view,field),
         Node::Members=>"Complete authoritative membership, including hidden and cross-sheet occurrences. No transport cap.".into(),
         Node::Fields=>"Common, Mixed and Unavailable compare canonical values in the complete declared scope. No editable fields.".into(),

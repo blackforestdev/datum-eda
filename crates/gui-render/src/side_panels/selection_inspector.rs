@@ -186,6 +186,10 @@ pub(super) fn render(
             if view.unprojected.contains(id) {
                 status.push_str(" · unprojected");
             }
+            let unavailable = view.unavailable_fields(id);
+            if !unavailable.is_empty() {
+                status.push_str(&format!(" · unavailable: {}", unavailable.join(", ")));
+            }
             let occurrence = if id.instance_path.is_empty() {
                 String::new()
             } else {

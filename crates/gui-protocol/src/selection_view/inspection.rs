@@ -9,18 +9,36 @@ pub struct ScopeInspection {
 struct Aggregate {
     count: usize,
     values: BTreeMap<String, (usize, Value, bool)>,
+    classes: BTreeMap<Class, usize>,
+    workspaces: BTreeMap<&'static str, usize>,
+    hidden: usize,
+    locked: usize,
+    unprojected: usize,
 }
-pub(super) fn compile(
-    members: &BTreeSet<Id>,
-    values: &BTreeMap<Id, BTreeMap<String, Value>>,
-) -> Vec<ScopeInspection> {
+pub(super) fn compile(view: &SelectionView) -> Vec<ScopeInspection> {
     let mut scopes: BTreeMap<Option<Class>, Aggregate> = BTreeMap::new();
     scopes.entry(None).or_default();
-    for id in members {
+    for id in &view.members {
         for scope in [None, Some(id.class)] {
             let aggregate = scopes.entry(scope).or_default();
             aggregate.count += 1;
-            for (name, value) in values.get(id).into_iter().flat_map(|v| v.iter()) {
+            *aggregate.classes.entry(id.class).or_default() += 1;
+            let workspace = match id.class {
+                Class::Footprint
+                | Class::Pad
+                | Class::Track
+                | Class::Via
+                | Class::Zone
+                | Class::BoardText
+                | Class::BoardGraphic
+                | Class::BoardOutline => "board",
+                _ => "schematic",
+            };
+            *aggregate.workspaces.entry(workspace).or_default() += 1;
+            aggregate.hidden += usize::from(view.hidden.contains(id));
+            aggregate.locked += usize::from(view.locked.contains(id));
+            aggregate.unprojected += usize::from(view.unprojected.contains(id));
+            for (name, value) in view.values.get(id).into_iter().flat_map(|v| v.iter()) {
                 let entry = aggregate
                     .values
                     .entry(name.clone())
@@ -32,24 +50,23 @@ pub(super) fn compile(
     }
     scopes
         .into_iter()
-        .map(|(scope, aggregate)| ScopeInspection {
-            scope,
-            fields: aggregate
-                .values
-                .into_iter()
-                .map(|(name, (count, value, mixed))| {
-                    let state = if count != aggregate.count {
-                        InspectionValue::Unavailable(
-                            "Property is absent or incompatible in the complete scope".into(),
-                        )
-                    } else if mixed {
-                        InspectionValue::Mixed
-                    } else {
-                        InspectionValue::Common(value)
-                    };
-                    (name, state)
-                })
-                .collect(),
+        .map(|(scope, mut aggregate)| {
+            if let Some(class)=scope {
+                for (semantic,_) in properties::fields(class) {
+                    aggregate.values.entry((*semantic).into()).or_insert((0,Value::Null,false));
+                }
+            }
+            let mut fields: BTreeMap<String,InspectionValue>=if scope.is_none() {BTreeMap::new()} else { aggregate.values.into_iter().map(|(name,(count,value,mixed))| {
+                let state=if count!=aggregate.count {InspectionValue::Unavailable("Property is not typed or available for every member in this complete scope".into())} else if mixed {InspectionValue::Mixed} else {InspectionValue::Common(value)};
+                (name,state)
+            }).collect() };
+            fields.insert("member_count".into(),InspectionValue::Common(serde_json::json!(aggregate.count)));
+            fields.insert("member_types".into(),InspectionValue::Common(serde_json::json!(aggregate.classes)));
+            fields.insert("workspace_coverage".into(),InspectionValue::Common(serde_json::json!(aggregate.workspaces)));
+            fields.insert("hidden_members".into(),InspectionValue::Common(serde_json::json!(aggregate.hidden)));
+            fields.insert("locked_members".into(),InspectionValue::Common(serde_json::json!(aggregate.locked)));
+            fields.insert("unprojected_members".into(),InspectionValue::Common(serde_json::json!(aggregate.unprojected)));
+            ScopeInspection { scope,fields }
         })
         .collect()
 }

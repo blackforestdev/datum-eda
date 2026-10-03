@@ -544,16 +544,17 @@ impl Runtime {
 
     /// S3/UVT-004: resolve a primary click that `world_point_at_screen` reported on
     /// the SCHEMATIC surface. It hit-tests the schematic symbol regions in the
-    /// schematic camera's space and traces the resolved identity — the coordinate +
-    /// hit plumbing S5 (selection) and S7 (context menu) build on. Selection is
-    /// deliberately NOT fired here, so it returns `false` (unhandled) and leaves the
-    /// board path untouched.
+    /// schematic camera's space and acquires its source-qualified identity through
+    /// the shared selection owner.
     pub(super) fn resolve_schematic_primary_click(
         &mut self,
         screen: (f32, f32),
         world_point: PointNm,
     ) -> bool {
-        let hit = self.schematic_world_hit(world_point);
+        let hit = match self.selection_world_hit(world_point, SceneSurface::Schematic) {
+            Ok(hit) => hit,
+            Err(()) => return true,
+        };
         self.trace_click(format!(
             "primary click ({:.1}, {:.1}) schematic world ({}, {}) hit {hit:?} (native selection acquisition)",
             screen.0, screen.1, world_point.x, world_point.y
@@ -564,20 +565,6 @@ impl Runtime {
                 .unwrap_or(false);
         }
         false
-    }
-
-    /// Hit-test a schematic-pane world point against the companion schematic scene's
-    /// symbol hit regions (built lazily like the board's, and reused when the render
-    /// path already resolved it). `None` when there is no schematic scene/pane.
-    pub(super) fn schematic_world_hit(&mut self, world_point: PointNm) -> Option<HitTarget> {
-        if !self.ensure_retained_scene() {
-            return None;
-        }
-        self.renderer
-            .render_session()
-            .schematic()?
-            .hit_test_world(world_point)
-            .cloned()
     }
 
     /// S4 / UVT-004 per-surface hover: resolve hover in whichever pane the cursor
