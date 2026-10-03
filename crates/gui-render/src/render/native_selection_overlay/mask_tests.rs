@@ -114,10 +114,12 @@ fn zone_qualifier_and_void_construction_never_invent_membership() {
     let budget = crate::text_gpu::budget::Budget::new(1_000_000);
     let request = Request(Arc::new(Inner {
         source: Source::default(),
+        high_contrast: false,
         choices: vec![Choice {
             key: "zone".into(),
             label: 1,
             boundary: false,
+            minimum: false,
             islands: vec![1],
         }],
         _permit: Some(budget.reserve(1).unwrap()),

@@ -75,7 +75,7 @@ pub(super) fn push_lightweight_selection_overlay(
 /// Selection lives exclusively in immediate pane-clipped geometry. Retained
 /// authored colors and buffers do not depend on Native selection/focus/scopes.
 #[allow(clippy::too_many_arguments)] // Three output sinks share one configured projection.
-pub(super) fn push_native(
+fn push_native_impl(
     selection_strokes: &mut Vec<selection_stroke::Stroke>,
     out: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
@@ -84,6 +84,7 @@ pub(super) fn push_native(
     viewport: RectPx,
     camera: CameraState,
     surface: datum_gui_protocol::PaneContent,
+    mask_world: bool,
 ) {
     let SelectionTarget::Native(view) = &state.selection else {
         return;
@@ -114,6 +115,9 @@ pub(super) fn push_native(
     );
     lod.push_cues(selection_strokes, viewport);
     for graphic in &scene.board_graphics {
+        if mask_world {
+            continue;
+        }
         if !lod.detailed(view, scene, surface, &graphic.object_id)
             || !layer_visible(state, &graphic.layer_id)
         {
@@ -167,6 +171,9 @@ pub(super) fn push_native(
         .map(|c| c.component_uuid.as_str())
         .collect();
     for graphic in &scene.component_graphics {
+        if mask_world {
+            continue;
+        }
         if selected_components.contains(graphic.component_uuid.as_str())
             && graphic
                 .layer_id
@@ -177,6 +184,9 @@ pub(super) fn push_native(
         }
     }
     for text in &scene.component_texts {
+        if mask_world && !text.cached_polygons.is_empty() {
+            continue;
+        }
         if selected_components.contains(text.component_uuid.as_str())
             && text
                 .layer_id
@@ -197,6 +207,9 @@ pub(super) fn push_native(
         }
     }
     for track in &scene.tracks {
+        if mask_world {
+            continue;
+        }
         if lod.detailed(view, scene, surface, &track.object_id)
             && keys.contains(&track.object_id)
             && layer_visible(state, &track.layer_id)
@@ -214,6 +227,9 @@ pub(super) fn push_native(
         }
     }
     for pad in &scene.pads {
+        if mask_world {
+            continue;
+        }
         if lod.detailed(view, scene, surface, &pad.object_id)
             && keys.contains(&pad.object_id)
             && pad_visible_on_any_copper_layer(state, pad)
@@ -236,6 +252,9 @@ pub(super) fn push_native(
         }
     }
     for via in &scene.vias {
+        if mask_world {
+            continue;
+        }
         if lod.detailed(view, scene, surface, &via.object_id)
             && keys.contains(&via.object_id)
             && (layer_visible(state, &via.start_layer_id)
@@ -261,6 +280,9 @@ pub(super) fn push_native(
         }
     }
     for zone in &scene.zones {
+        if mask_world {
+            continue;
+        }
         if lod.detailed(view, scene, surface, &zone.object_id)
             && keys.contains(&zone.object_id)
             && layer_visible(state, &zone.layer_id)
@@ -294,6 +316,9 @@ pub(super) fn push_native(
         }
     }
     for outline in &scene.outline {
+        if mask_world {
+            continue;
+        }
         if lod.detailed(view, scene, surface, &outline.object_id)
             && keys.contains(&outline.object_id)
             && layer_visible(state, &outline.layer_id)
@@ -308,6 +333,9 @@ pub(super) fn push_native(
         }
     }
     for geometry in &scene.board_text_geometries {
+        if mask_world {
+            continue;
+        }
         if lod.detailed(view, scene, surface, &geometry.object_id)
             && keys.contains(&geometry.object_id)
             && layer_visible(state, &geometry.layer_id)
@@ -472,17 +500,40 @@ impl PreparedScene {
                 SceneSurface::Board => datum_gui_protocol::PaneContent::Board,
                 SceneSurface::Schematic => datum_gui_protocol::PaneContent::Schematic,
             };
+            let mut quads = Vec::new();
             if authored_visible(state)
                 && let SelectionTarget::Native(view) = &state.selection
-                && let Some(request) = mask::Request::capture(view, scene, surface)?
+                && let Some(mut request) = mask::Request::capture(view, scene, surface)?
             {
+                let projection = Projection::new(
+                    inset_rect(pass.scene_viewport, 10.0, 10.0, 10.0, 10.0),
+                    &scene.bounds,
+                    pass.camera,
+                );
+                let glyphs =
+                    glyph_mesh_lookup::MeshIndex::new(&scene.glyph_mesh_assets, &mut quads);
+                let lod = lod::Plan::capture(
+                    view,
+                    scene,
+                    surface,
+                    state,
+                    &projection,
+                    pass.scene_viewport,
+                    glyphs.as_ref(),
+                );
+                request.configure(
+                    &lod,
+                    view,
+                    scene,
+                    surface,
+                    state.ui.global_preferences.high_contrast_noncolor,
+                );
                 self.selection_masks
                     .push((pass.pane_id, pass.surface, request));
             }
-            let mut quads = Vec::new();
             let before_text = self.text_runs.len();
             let before_strokes = self.selection_strokes.len();
-            push_native(
+            push_native_impl(
                 &mut self.selection_strokes,
                 &mut quads,
                 &mut self.text_runs,
@@ -491,7 +542,15 @@ impl PreparedScene {
                 pass.scene_viewport,
                 pass.camera,
                 surface,
+                true,
             );
+            if self
+                .selection_masks
+                .iter()
+                .any(|(pane, _, _)| *pane == pass.pane_id)
+            {
+                self.consumers.include(Stream::Selection, consumer.into());
+            }
             self.consumers.note(
                 Stream::Selection,
                 consumer,

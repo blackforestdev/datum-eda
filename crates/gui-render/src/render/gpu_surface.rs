@@ -92,6 +92,7 @@ pub(crate) struct SurfaceAttachment {
 /// replacement and close are not themselves completion signals.
 pub(crate) struct SurfaceAttachments {
     damage_views: bool,
+    sampled: bool,
     #[cfg(all(test, feature = "visual"))]
     sample_readback: bool,
     owner: Owner,
@@ -121,6 +122,7 @@ impl SurfaceAttachments {
     fn with_generations(generations: Arc<crate::text_gpu::budget::Budget>) -> Self {
         Self {
             damage_views: false,
+            sampled: false,
             #[cfg(all(test, feature = "visual"))]
             sample_readback: false,
             owner: Owner::new(),
@@ -143,6 +145,41 @@ impl SurfaceAttachments {
         self.sample_readback = true;
     }
 
+    pub(crate) fn sampled() -> Self {
+        Self {
+            sampled: true,
+            ..Self::default()
+        }
+    }
+    pub(crate) fn prepare_sampled(
+        &mut self,
+        device: &wgpu::Device,
+        width: u32,
+        height: u32,
+        format: wgpu::TextureFormat,
+        samples: u32,
+    ) -> anyhow::Result<&wgpu::TextureView> {
+        anyhow::ensure!(self.sampled, "sampled attachment requires sampled owner");
+        self.ensure(device, AttachmentKey::new(width, height, format, samples))
+    }
+    pub(crate) fn clear_sampled(&mut self) {
+        assert!(self.sampled);
+        if let Some(image) = self.current.take() {
+            image
+                .image
+                .retire(crate::text_gpu::lifetime::RetirementReason::Replaced);
+        }
+    }
+    pub(crate) fn current_sampled_view(&self) -> Option<&wgpu::TextureView> {
+        self.current.as_ref().map(|image| &image.image.view)
+    }
+    pub(crate) fn sampled_snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
+        self.snapshot()
+    }
+    pub(crate) fn sampled_observer(&self) -> Observer {
+        self.owner.observer()
+    }
+
     pub(crate) fn regional_store(&self) -> wgpu::StoreOp {
         #[cfg(all(test, feature = "visual"))]
         if self.sample_readback {
@@ -157,7 +194,9 @@ impl SurfaceAttachments {
     }
 
     pub(super) fn replacement(&self) -> Self {
-        Self::with_generations(self.generations.clone())
+        let mut result = Self::with_generations(self.generations.clone());
+        result.sampled = self.sampled;
+        result
     }
 
     pub(crate) fn set_consumers(&self, consumers: crate::resource_consumers::Consumers) {
@@ -261,6 +300,11 @@ impl SurfaceAttachments {
             let reservation = GpuReservation::new(bytes, vec![])?;
             let alias_formats = [key.format.remove_srgb_suffix()];
             let usage = wgpu::TextureUsages::RENDER_ATTACHMENT
+                | if self.sampled {
+                    wgpu::TextureUsages::TEXTURE_BINDING
+                } else {
+                    wgpu::TextureUsages::empty()
+                }
                 | if self.damage_views && prefix_images::eligible(key) {
                     wgpu::TextureUsages::COPY_DST
                 } else {

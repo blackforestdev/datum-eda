@@ -4,6 +4,7 @@ pub(crate) struct Clip {
     source: [u32; 4],
     destination: [u32; 2],
     raster_scale: Option<[u32; 4]>,
+    raster_band: Option<[u32; 2]>,
 }
 impl Clip {
     pub(crate) fn full(width: u32, height: u32) -> Self {
@@ -17,11 +18,27 @@ impl Clip {
         }
         clip
     }
+    /// Adjacent suffix stripes own disjoint raster rows even during PM052
+    /// temporary resampling. Internal painter bounds still round outward.
+    pub(crate) fn resampled_band(
+        prepared: [u32; 2],
+        raster: [u32; 2],
+        top: u32,
+        bottom: u32,
+    ) -> Self {
+        let mut clip = Self::resampled(prepared, raster);
+        clip.source = [0, top, prepared[0], bottom.min(prepared[1])];
+        clip.destination = [0, top];
+        let row = |y| (u64::from(y) * u64::from(raster[1]) / u64::from(prepared[1])) as u32;
+        clip.raster_band = Some([row(top), row(bottom.min(prepared[1]))]);
+        clip
+    }
     pub(crate) fn translated(source: [u32; 4], destination: [u32; 2]) -> Self {
         Self {
             source,
             destination,
             raster_scale: None,
+            raster_band: None,
         }
     }
     pub(crate) fn intersect(self, [x, y, width, height]: [u32; 4]) -> Option<[u32; 4]> {
@@ -49,23 +66,31 @@ impl Clip {
     }
     fn raster_rect(self, original: [u32; 4]) -> Option<[u32; 4]> {
         let [x, y, width, height] = self.intersect(original)?;
-        let Some([vw, vh, rw, rh]) = self.raster_scale else {
-            return Some([x, y, width, height]);
+        let result = if let Some([vw, vh, rw, rh]) = self.raster_scale {
+            let lower = |v, raster, virtual_size| {
+                (u64::from(v) * u64::from(raster) / u64::from(virtual_size)) as u32
+            };
+            let upper = |v, raster, virtual_size| {
+                (u64::from(v) * u64::from(raster)).div_ceil(u64::from(virtual_size)) as u32
+            };
+            let left = lower(x, rw, vw);
+            let top = lower(y, rh, vh);
+            [
+                left,
+                top,
+                upper(x + width, rw, vw) - left,
+                upper(y + height, rh, vh) - top,
+            ]
+        } else {
+            [x, y, width, height]
         };
-        let lower = |v, raster, virtual_size| {
-            (u64::from(v) * u64::from(raster) / u64::from(virtual_size)) as u32
-        };
-        let upper = |v, raster, virtual_size| {
-            (u64::from(v) * u64::from(raster)).div_ceil(u64::from(virtual_size)) as u32
-        };
-        let left = lower(x, rw, vw);
-        let top = lower(y, rh, vh);
-        Some([
-            left,
-            top,
-            upper(x + width, rw, vw) - left,
-            upper(y + height, rh, vh) - top,
-        ])
+        if let Some([band_top, band_bottom]) = self.raster_band {
+            let top = result[1].max(band_top);
+            let bottom = (result[1] + result[3]).min(band_bottom);
+            (top < bottom).then_some([result[0], top, result[2], bottom - top])
+        } else {
+            Some(result)
+        }
     }
 }
 
@@ -89,6 +114,26 @@ mod tests {
             Clip::resampled([32, 32], [32, 32]).raster_rect([1, 2, 3, 4]),
             Some([1, 2, 3, 4])
         );
+    }
+    #[test]
+    fn stripe_rows_partition_settled_and_resampled_targets_exactly_once() {
+        for (prepared, raster) in [
+            ([1280, 800], [1280, 800]),
+            ([1347, 840], [1376, 864]),
+            ([1376, 864], [1347, 840]),
+            ([1280, 800], [3840, 2160]),
+        ] {
+            let mut next = 0;
+            for top in (0..prepared[1]).step_by(96) {
+                let clip = Clip::resampled_band(prepared, raster, top, (top + 96).min(prepared[1]));
+                let rect = clip.raster_rect([0, 0, prepared[0], prepared[1]]).unwrap();
+                assert_eq!(rect[0], 0);
+                assert_eq!(rect[1], next, "no stripe overlap or uncovered row");
+                assert_eq!(rect[2], raster[0]);
+                next += rect[3];
+            }
+            assert_eq!(next, raster[1]);
+        }
     }
     #[test]
     fn source_intersection_precedes_positive_and_negative_translation() {

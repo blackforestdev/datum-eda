@@ -1,6 +1,8 @@
 //! Post-world selection of the existing authored capsule presentation.
 //! Screen positions are disposable projections, never acquisition or identities.
 use super::*;
+#[path = "selection_mask.rs"]
+pub(crate) mod mask;
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
 pub(crate) struct Stroke {

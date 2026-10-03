@@ -209,6 +209,19 @@ impl Renderer {
         let msaa_view = self
             .ensure_msaa(device, raster_width, raster_height)?
             .clone();
+        self.selection_mask.prepare(
+            device,
+            queue,
+            &self.scene_bind_group_layout,
+            &self.damage_masks.layout,
+            self.msaa_format,
+            self.msaa_samples,
+            prepared,
+            retained,
+            schematic_retained,
+            [width, height],
+            [raster_width, raster_height],
+        )?;
         self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);
         let images = self

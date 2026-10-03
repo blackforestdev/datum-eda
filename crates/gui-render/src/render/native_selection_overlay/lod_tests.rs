@@ -1,3 +1,4 @@
+use super::tests::push_native;
 use super::*;
 use crate::native_selection_overlay::tests::selected_track_state;
 use datum_gui_protocol::PaneContent;

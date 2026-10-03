@@ -587,3 +587,6 @@ pub(super) fn required_refusal_defers_once_then_propagates_without_recreating_pr
     frame(&mut c, true);
     assert_eq!(c.renderer.prefix_copy_work(), (false, 0));
 }
+
+#[path = "selection_mask_prefix_tests.rs"]
+mod selection_mask_prefix_tests;

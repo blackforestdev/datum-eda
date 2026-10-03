@@ -127,6 +127,10 @@ impl Renderer {
                 .expect("nonempty painter clip"),
             );
         }
+        self.draw_selection_mask_lift(pass, prepared, damage, clip);
+        pass.set_pipeline(&self.pipeline);
+        pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+        pass.set_bind_group(1, damage, &[]);
         if !prepared.selection_strokes.is_empty() && clip.set(pass, [0, 0, width, height]) {
             pass.set_pipeline(&self.selection_stroke_pipelines.lift);
             pass.set_vertex_buffer(
@@ -157,6 +161,10 @@ impl Renderer {
             );
             pass.draw(0..split as u32, 0..1);
         }
+        self.draw_selection_mask_cue(pass, prepared, damage, clip);
+        pass.set_pipeline(&self.pipeline);
+        pass.set_bind_group(0, &self.uniform_bind_group, &[]);
+        pass.set_bind_group(1, damage, &[]);
         // Each native contribution carries its own pane clip. The combined stream
         // serves board and schematic, independently of the board's viewport.
         if !prepared.selection_strokes.is_empty() && clip.set(pass, [0, 0, width, height]) {

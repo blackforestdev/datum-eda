@@ -17,7 +17,7 @@ fn native_capsule_uses_current_source_width_and_canonical_members_without_writes
         camera,
     );
     let mut strokes = Vec::new();
-    crate::native_selection_overlay::push_native(
+    crate::native_selection_overlay::tests::push_native(
         &mut strokes,
         &mut Vec::new(),
         &mut Vec::new(),
@@ -45,7 +45,7 @@ fn native_capsule_uses_current_source_width_and_canonical_members_without_writes
     state.ui.global_preferences.high_contrast_noncolor = true;
     state.ui.global_preferences.reduced_motion = true;
     strokes.clear();
-    crate::native_selection_overlay::push_native(
+    crate::native_selection_overlay::tests::push_native(
         &mut strokes,
         &mut Vec::new(),
         &mut Vec::new(),
@@ -87,7 +87,7 @@ fn native_schematic_wire_uses_shared_capsule_owner_and_existing_stroke_profile()
     let camera = CameraState::fit_to_bounds(&scene.bounds);
     let mut strokes = Vec::new();
     let mut quads = Vec::new();
-    crate::native_selection_overlay::push_native(
+    crate::native_selection_overlay::tests::push_native(
         &mut strokes,
         &mut quads,
         &mut Vec::new(),

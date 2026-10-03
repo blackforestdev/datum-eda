@@ -555,3 +555,6 @@ mod frame_observation_tests;
 
 #[path = "selection_stroke_gpu_tests.rs"]
 mod selection_stroke_gpu_tests;
+
+#[path = "selection_mask_gpu_tests.rs"]
+mod selection_mask_gpu_tests;

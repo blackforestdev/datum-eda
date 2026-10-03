@@ -8,10 +8,12 @@ struct Choice {
     key: String,
     label: u32,
     boundary: bool,
+    minimum: bool,
     islands: Vec<usize>,
 }
 struct Inner {
     source: Source,
+    high_contrast: bool,
     choices: Vec<Choice>,
     _permit: Option<crate::text_gpu::budget::Permit>,
 }
@@ -27,7 +29,9 @@ impl std::fmt::Debug for Request {
 }
 impl PartialEq for Request {
     fn eq(&self, other: &Self) -> bool {
-        self.0.source == other.0.source && self.0.choices == other.0.choices
+        self.0.source == other.0.source
+            && self.0.choices == other.0.choices
+            && self.0.high_contrast == other.0.high_contrast
     }
 }
 impl Request {
@@ -122,6 +126,10 @@ impl Request {
             } else {
                 1
             };
+            anyhow::ensure!(
+                label != u32::MAX,
+                "selection visual group exceeds mask representation"
+            );
             let mut copy = String::new();
             copy.try_reserve_exact(key.len())?;
             copy.push_str(key);
@@ -156,14 +164,34 @@ impl Request {
                 key: copy,
                 label,
                 boundary,
+                minimum: false,
                 islands,
             });
         }
         Ok(Some(Self(Arc::new(Inner {
             source,
+            high_contrast: false,
             choices,
             _permit: Some(permit),
         }))))
+    }
+    pub(crate) fn high_contrast(&self) -> bool {
+        self.0.high_contrast
+    }
+    pub(super) fn configure(
+        &mut self,
+        lod: &super::lod::Plan,
+        view: &datum_gui_protocol::selection_view::SelectionView,
+        scene: &BoardReviewSceneV1,
+        surface: datum_gui_protocol::PaneContent,
+        high_contrast: bool,
+    ) {
+        let inner =
+            Arc::get_mut(&mut self.0).expect("configure newly captured mask before sharing");
+        inner.high_contrast = high_contrast;
+        for choice in &mut inner.choices {
+            choice.minimum = !lod.detailed(view, scene, surface, &choice.key);
+        }
     }
     pub(crate) fn matches(&self, presentation: &Presentation) -> bool {
         presentation.source.as_ref() == Some(&self.0.source)
@@ -180,12 +208,13 @@ impl Request {
             return 0;
         };
         let choice = &self.0.choices[index];
-        let selected = match span.role {
-            Role::Material => true,
-            Role::Void => false,
-            Role::ZoneBoundary => choice.boundary,
-            Role::ZoneIsland(index) => choice.islands.binary_search(&index).is_ok(),
-        };
+        let selected = !choice.minimum
+            && match span.role {
+                Role::Material => true,
+                Role::Void => false,
+                Role::ZoneBoundary => choice.boundary,
+                Role::ZoneIsland(index) => choice.islands.binary_search(&index).is_ok(),
+            };
         if selected { choice.label } else { 0 }
     }
 }
@@ -198,6 +227,7 @@ fn container_bytes() -> usize {
     *BYTES.get_or_init(|| {
         crate::cpu_alloc::heap::arc_bytes(Inner {
             source: Source::default(),
+            high_contrast: false,
             choices: Vec::new(),
             _permit: None,
         })

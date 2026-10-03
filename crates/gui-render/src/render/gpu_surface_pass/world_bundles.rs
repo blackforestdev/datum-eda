@@ -43,6 +43,12 @@ impl EncodedWorldAdmission<'_> {
 }
 
 impl CachedSurfaceBundle {
+    pub(crate) fn painter_ranges(&self) -> impl Iterator<Item = (bool, std::ops::Range<u32>)> + '_ {
+        self.batches
+            .iter()
+            .map(|batch| (batch.kind == DrawKind::Strokes, batch.range.clone()))
+    }
+
     fn matches(
         &self,
         vertex: Option<&wgpu::Buffer>,

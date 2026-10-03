@@ -1,5 +1,7 @@
 //! Shared cold, regional, empty and full-fallback image graphs.
 use super::*;
+#[path = "selection_mask_composition.rs"]
+mod selection_mask;
 use crate::gpu_surface::PrefixImages;
 use crate::renderer_state::damage::{clip::Clip, regional::Plan};
 
@@ -20,6 +22,22 @@ impl Renderer {
         #[cfg(all(test, feature = "visual"))]
         fault: crate::gpu_surface::prefix_negative_control::Fault,
     ) -> anyhow::Result<std::time::Duration> {
+        if self.selection_mask.active() {
+            return self.encode_mask_composition(
+                device,
+                encoder,
+                target,
+                working,
+                prepared,
+                width,
+                height,
+                images,
+                plan,
+                measurement,
+                #[cfg(all(test, feature = "visual"))]
+                fault,
+            );
+        }
         let clear = wgpu::LoadOp::Clear(wgpu::Color {
             r: APP_BG[0] as f64,
             g: APP_BG[1] as f64,
