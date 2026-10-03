@@ -50,7 +50,9 @@ fn inventory_and_filters_are_scrollable_with_complete_identity_and_no_reselectio
     for offset in 0..total {
         state.ui.selection_inspector.scroll_offset = offset;
         let (quads, text, hits) = frame(&state, rect);
-        found_members |= text.iter().any(|run| run.text.contains(&member));
+        found_members |= text
+            .iter()
+            .any(|run| run.text.starts_with("Tracks ") && run.text.contains(&member[..8]));
         for hit in hits {
             assert_eq!(hit.rect.intersect(rect), Some(hit.rect));
             if let HitTarget::SelectionClassToggle(class) = hit.target {
@@ -76,4 +78,60 @@ fn inventory_and_filters_are_scrollable_with_complete_identity_and_no_reselectio
     for (path, bytes) in bytes {
         assert_eq!(std::fs::read(path).unwrap(), bytes);
     }
+}
+
+#[test]
+fn long_values_and_reasons_are_explicit_previews_clipped_to_one_scroll_row() {
+    let (fixture, mut state) = selected_state();
+    let source = fixture.source_bytes();
+    if let SelectionTarget::Native(view) = &mut state.selection {
+        view.inspection
+            .iter_mut()
+            .find(|s| s.scope == view.scope)
+            .unwrap()
+            .fields
+            .insert(
+                "zz_large_value".into(),
+                datum_gui_protocol::selection_view::InspectionValue::Common(
+                    "long value ".repeat(100_000).into(),
+                ),
+            );
+    }
+    let selection = state.selection.clone();
+    let rect = RectPx {
+        x: 400.0,
+        y: 80.0,
+        width: 300.0,
+        height: 200.0,
+    };
+    let (_, _, hits) = frame(&state, rect);
+    let total = hits
+        .iter()
+        .find_map(|h| match h.target {
+            HitTarget::SelectionInspectorScroll { total, .. } => Some(total),
+            _ => None,
+        })
+        .unwrap();
+    let mut saw_preview = false;
+    for offset in 0..total {
+        state.ui.selection_inspector.scroll_offset = offset;
+        let (_, text, _) = frame(&state, rect);
+        for run in text
+            .iter()
+            .filter(|r| r.layout_size.is_some_and(|(_, h)| h == 18.0))
+        {
+            let clip = run.clip_bounds.expect("row-owned clip");
+            assert_eq!(clip.height, 22.0);
+            assert!(run.y >= clip.y && run.y < clip.y + clip.height);
+            assert!(run.text.chars().count() <= 43);
+            assert_eq!(clip.intersect(rect), Some(clip));
+            if run.text.starts_with("zz large value:") {
+                assert!(run.text.ends_with('…'));
+                saw_preview = true;
+            }
+        }
+    }
+    assert!(saw_preview);
+    assert_eq!(state.selection, selection);
+    assert_eq!(fixture.source_bytes(), source);
 }

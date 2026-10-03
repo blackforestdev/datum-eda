@@ -21,6 +21,14 @@ pub enum InspectionValue {
     Mixed,
     Unavailable(String),
 }
+mod display_preview;
+impl InspectionValue {
+    /// Explicit width-limited presentation; exact data remains available to all
+    /// read-only query/context/accessibility consumers.
+    pub fn display_preview(&self, columns: usize) -> String {
+        display_preview::value(self, columns)
+    }
+}
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SelectionView {
     pub project: crate::SelectionProjectId,
@@ -62,17 +70,20 @@ impl SelectionView {
             .iter()
             .filter(|id| self.scope.is_none_or(|class| class == id.class))
     }
-    pub fn field(&self, name: &str) -> InspectionValue {
+    /// Borrow the exact compiled value; display consumers need not clone large
+    /// complete arrays merely to render a bounded preview.
+    pub fn field_ref(&self, name: &str) -> Option<&InspectionValue> {
         self.inspection
             .iter()
             .find(|scope| scope.scope == self.scope)
             .and_then(|scope| scope.fields.get(name))
-            .cloned()
-            .unwrap_or_else(|| {
-                InspectionValue::Unavailable(
-                    "Property is absent or incompatible in the complete scope".into(),
-                )
-            })
+    }
+    pub fn field(&self, name: &str) -> InspectionValue {
+        self.field_ref(name).cloned().unwrap_or_else(|| {
+            InspectionValue::Unavailable(
+                "Property is absent or incompatible in the complete scope".into(),
+            )
+        })
     }
     pub fn fields(&self) -> BTreeSet<&str> {
         self.inspection

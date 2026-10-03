@@ -6,9 +6,10 @@ use datum_gui_protocol::selection_view::inspector_state::{
 };
 use datum_gui_protocol::{
     AuthoredSelectionClass as Class,
-    selection_view::{InspectionValue, SelectionView, inspector_state::SelectionInspectorState},
+    selection_view::{SelectionView, inspector_state::SelectionInspectorState},
 };
 use std::collections::BTreeSet;
+mod value_preview;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render(
@@ -68,6 +69,7 @@ pub(super) fn render(
         rect: body,
         target: HitTarget::SelectionInspectorScroll { total, visible },
     });
+    let columns = ((rect.width - 24.0).max(0.0) / (11.0 * 0.58)).floor() as usize;
     let row_index = std::cell::Cell::new(0usize);
     let visual_row = std::cell::Cell::new(None);
     let mut row = |label: &str, target: Option<HitTarget>, active: bool| {
@@ -95,8 +97,9 @@ pub(super) fn render(
         if let Some(target) = target {
             hits.push(HitRegion { rect: hit, target });
         }
+        let label = truncate_text(label, columns);
         draw_text(
-            label,
+            &label,
             rect.x + 12.0,
             y + 3.0,
             11.0,
@@ -104,6 +107,9 @@ pub(super) fn render(
             TextFace::Ui,
             text,
         );
+        let run = text.last_mut().expect("visible Inspector row");
+        run.clip_bounds = Some(hit);
+        run.layout_size = Some(((hit.width - 2.0).max(0.0), 18.0));
     };
     row(
         &format!(
@@ -151,16 +157,16 @@ pub(super) fn render(
         );
     }
     for field in fields {
-        let value = match view.field(field) {
-            InspectionValue::Common(v) => v.to_string(),
-            InspectionValue::Mixed => "Mixed".into(),
-            InspectionValue::Unavailable(reason) => format!("Unavailable — {reason}"),
-        };
-        row(
-            &format!("{}: {value}", field.replace('_', " ")),
-            None,
-            false,
+        if row_index.get() < start || row_index.get() >= start + visible {
+            row("", None, false);
+            continue;
+        }
+        let name = truncate_text(&field.replace('_', " "), columns / 2);
+        let value = value_preview::value(
+            view.field_ref(field),
+            columns.saturating_sub(name.chars().count() + 2),
         );
+        row(&format!("{name}: {value}"), None, false);
     }
     row(
         &format!(
