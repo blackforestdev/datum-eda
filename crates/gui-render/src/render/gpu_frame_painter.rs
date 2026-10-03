@@ -127,37 +127,73 @@ impl Renderer {
                 .expect("nonempty painter clip"),
             );
         }
-        if !viewport_overlay_vertices.is_empty()
-            && clip
-                .intersect(immediate_admission::screen_admission::scissor(
-                    prepared.scene_viewport,
-                ))
-                .is_some()
-        {
-            clip.set(
-                pass,
-                [
-                    prepared.scene_viewport.x.max(0.0).floor() as u32,
-                    prepared.scene_viewport.y.max(0.0).floor() as u32,
-                    prepared.scene_viewport.width.max(1.0).ceil() as u32,
-                    prepared.scene_viewport.height.max(1.0).ceil() as u32,
-                ],
+        if !prepared.selection_strokes.is_empty() && clip.set(pass, [0, 0, width, height]) {
+            pass.set_pipeline(&self.selection_stroke_pipelines.lift);
+            pass.set_vertex_buffer(
+                0,
+                self.selection_stroke_gpu
+                    .buffer()
+                    .expect("selection instance buffer")
+                    .slice(..),
             );
+            pass.draw(0..6, 0..prepared.selection_strokes.len() as u32);
+            pass.set_pipeline(&self.pipeline);
+        }
+        let split = prepared
+            .selection_overlay_split
+            .min(viewport_overlay_vertices.len());
+        if split > 0
+            && clip.set(
+                pass,
+                immediate_admission::screen_admission::scissor(prepared.scene_viewport),
+            )
+        {
             pass.set_vertex_buffer(
                 0,
                 self.viewport_overlay_gpu
                     .buffer()
-                    .expect("viewport overlay vertex buffer should exist")
+                    .expect("viewport overlay buffer")
                     .slice(..),
             );
-            pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
+            pass.draw(0..split as u32, 0..1);
+        }
+        // Each native contribution carries its own pane clip. The combined stream
+        // serves board and schematic, independently of the board's viewport.
+        if !prepared.selection_strokes.is_empty() && clip.set(pass, [0, 0, width, height]) {
+            pass.set_pipeline(&self.selection_stroke_pipelines.cue);
+            pass.set_vertex_buffer(
+                0,
+                self.selection_stroke_gpu
+                    .buffer()
+                    .expect("selection instance buffer")
+                    .slice(..),
+            );
+            pass.draw(0..6, 0..prepared.selection_strokes.len() as u32);
+            self.observe_screen_draw(
+                immediate_admission::screen_admission::ScreenGroup::Selection,
+                prepared.selection_strokes.len() as u32 * 12,
+                clip.intersect([0, 0, width, height])
+                    .expect("nonempty selection clip"),
+            );
+            pass.set_pipeline(&self.pipeline);
+        }
+        if split < viewport_overlay_vertices.len() && clip.set(pass, [0, 0, width, height]) {
+            pass.set_vertex_buffer(
+                0,
+                self.viewport_overlay_gpu
+                    .buffer()
+                    .expect("viewport overlay buffer")
+                    .slice(..),
+            );
+            pass.draw(split as u32..viewport_overlay_vertices.len() as u32, 0..1);
+        }
+        if !viewport_overlay_vertices.is_empty() {
+            // One logical stream can have prefix and pane-clipped native suffix
+            // draws; observation counts their complete payload once.
             self.observe_screen_draw(
                 immediate_admission::screen_admission::ScreenGroup::Overlay,
                 viewport_overlay_vertices.len() as u32,
-                clip.intersect(immediate_admission::screen_admission::scissor(
-                    prepared.scene_viewport,
-                ))
-                .expect("nonempty painter clip"),
+                [0, 0, width, height],
             );
         }
         if !board_interaction_vertices.is_empty()

@@ -2510,3 +2510,36 @@ projection, one paint, eleven existing overlays and thirteen output/aggregate
 regressions); logs `target/s5a-c03-zone-*-proof.log`. Three-crate all-target
 Clippy and governance checks accompany the unit. Focused producer proof is not C04 native acceptance;
 full U4/U5, graphics positives, C05/C06 and CAM/T04 remain pending.
+
+### S5A-C03 — post-world capsule treatment (partial U4)
+
+Native Track and typed schematic path projections use the existing authored
+stroke profile, material lift, supplementary translucent internal glow and a
+2-physical-pixel crisp boundary. High contrast removes glow. Material lift
+precedes proposals; cue follows proposals and precedes source-bound diagnostics.
+The native suffix carries each pane's own clip rather than inheriting a
+board-only scissor. Retained authored vertices, strokes and resize ownership
+remain unchanged. A projection collapsing a finite source segment to one screen
+point keeps its nominal capsule, without inventing an authored minimum anchor.
+
+The new typed instance stream shares existing screen capacity, snapshot,
+cancellation, submission, consumer and two-generation replacement accounting.
+Focused canonical board/schematic source proof verifies identity, current stroke
+profile and source/journal non-mutation. Existing overlay/lifecycle proof is
+reused/replayed as applicable. A guarded host pixel test on Intel HD Graphics
+P630/Vulkan verifies the physical boundary, material center, pane clipping,
+high contrast and warm capacity/upload reuse. Twenty-two distinct focused cases
+pass: eleven overlays, two canonical source cases, eight existing input/session
+replays and one host pixel case. The existing hardware-only session replay stays
+ignored/unverified. Final test binary SHA256 is
+`85c64419b584b2b418a6e418a852c864f963b9dde8b725be315578ba4a65ffd2`;
+the reused unchanged-shader host pixel binary is
+`9040adb2e067d5a0ab33a5bf24f5a00c742eb49b8d541a0683a5f5ed573128b1`.
+Two-crate all-target visual-feature Clippy and governance pass. Sandbox CPU-adapter refusal is
+not credited. Logs are `target/s5a-c03-capsule-*.log`. This construction/pixel
+proof is not complete native acceptance or a numerical latency criterion.
+
+Connected-path/subject seams, occlusion, complete owned glyph/fill treatment,
+dim-related and the exact dense union-mask remain pending U4. Bus/no-connect
+positive native cases are not passed by generic path routing. No C03/C04/C05/C06
+closure, graphics positive waiver, new source model or CAM/T04 change.

@@ -12,6 +12,7 @@ impl PreparedScene {
             && self.panel_vertices.is_empty()
             && self.viewport_underlay_vertices.is_empty()
             && self.viewport_overlay_vertices.is_empty()
+            && self.selection_strokes.is_empty()
             && self.board_interaction_vertices.is_empty()
             && self.console_overlay_vertices.is_empty()
             && self.visible_draw_commands.is_empty()

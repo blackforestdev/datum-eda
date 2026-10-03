@@ -108,10 +108,11 @@ pub(crate) enum Stream {
     BoardWorld,
     SchematicWorld,
     TerminalGraphics,
+    Selection,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub(crate) struct FrameConsumers([Consumers; 13]);
+pub(crate) struct FrameConsumers([Consumers; 14]);
 impl FrameConsumers {
     pub fn dialog(consumer: Consumer) -> Self {
         let mut result = Self::default();
@@ -192,6 +193,8 @@ impl crate::Renderer {
         self.schematic_overlay_gpu
             .set_consumers(frame.get(Stream::SchematicOverlay));
         self.surface_grid_gpu.set_consumers(frame.get(Stream::Grid));
+        self.selection_stroke_gpu
+            .set_consumers(frame.get(Stream::Selection));
         self.world_vertices_gpu
             .set_consumers(frame.get(Stream::BoardWorld));
         self.world_strokes_gpu

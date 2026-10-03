@@ -552,3 +552,6 @@ mod text_admission_tests;
 
 #[path = "frame_observation_tests.rs"]
 mod frame_observation_tests;
+
+#[path = "selection_stroke_gpu_tests.rs"]
+mod selection_stroke_gpu_tests;

@@ -27,6 +27,7 @@ fn tiny_source_bound_track_has_one_anchor_ring_without_geometry_or_membership_ch
     };
     let mut quads = Vec::new();
     push_native(
+        &mut Vec::new(),
         &mut quads,
         &mut Vec::new(),
         &state.scene,
@@ -55,6 +56,7 @@ fn tiny_source_bound_track_has_one_anchor_ring_without_geometry_or_membership_ch
     state.ui.global_preferences.reduced_motion = true;
     let mut accessible = Vec::new();
     push_native(
+        &mut Vec::new(),
         &mut accessible,
         &mut Vec::new(),
         &state.scene,
@@ -89,7 +91,9 @@ fn hidden_offscreen_and_unavailable_anchor_cases_never_fabricate_minimum_selecti
     let (_fixture, mut state) = selected_track_state(1);
     let render = |state: &ReviewWorkspaceState, camera| {
         let mut q = Vec::new();
+        let mut strokes = Vec::new();
         push_native(
+            &mut strokes,
             &mut q,
             &mut Vec::new(),
             &state.scene,
@@ -98,7 +102,7 @@ fn hidden_offscreen_and_unavailable_anchor_cases_never_fabricate_minimum_selecti
             camera,
             PaneContent::Board,
         );
-        q
+        vec![(); q.len() + strokes.len()]
     };
     let mut outside = camera();
     outside.center_x_nm = 1_000_000_000.0;
@@ -134,6 +138,7 @@ fn actual_native_junctions_keep_distinct_anchors_and_complete_membership() {
     assert!(view.unprojected.is_empty());
     let mut quads = Vec::new();
     push_native(
+        &mut Vec::new(),
         &mut quads,
         &mut Vec::new(),
         scene,

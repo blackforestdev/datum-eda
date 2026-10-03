@@ -76,6 +76,7 @@ impl Renderer {
         replacement.panel_gpu = self.panel_gpu.replacement();
         replacement.viewport_underlay_gpu = self.viewport_underlay_gpu.replacement();
         replacement.viewport_overlay_gpu = self.viewport_overlay_gpu.replacement();
+        replacement.selection_stroke_gpu = self.selection_stroke_gpu.replacement();
         replacement.board_interaction_gpu = self.board_interaction_gpu.replacement();
         replacement.console_gpu.vertices = self.console_gpu.vertices.replacement();
         replacement.menu_overlay_gpu = self.menu_overlay_gpu.replacement();
@@ -238,6 +239,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             multiview_mask: None,
             cache: None,
         });
+        let selection_stroke_pipelines =
+            selection_stroke::pipelines(device, &pipeline_layout, format, msaa_samples);
         let terminal_graphics = match previous {
             Some(old) => old.terminal_graphics.replacement(
                 device,
@@ -285,6 +288,11 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             pending_measurement: None,
             measurements: None,
             pipeline,
+            selection_stroke_pipelines,
+            selection_stroke_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
+                screen_budget.clone(),
+            )
+            .with_staging_budget(staging_budget.clone()),
             world_pipelines: std::sync::OnceLock::new(),
             terminal_graphics,
             uniform_bind_group,

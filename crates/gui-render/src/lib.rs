@@ -6,21 +6,14 @@ mod glyph_mesh_lookup;
 mod world_polygon;
 use world_polygon::{push_world_polygon_fill, push_world_polygon_fill_contours};
 mod geometry_output;
-use datum_gui_protocol::{
-    Affine2DFixedPrimitive, BoardGraphicPrimitive, BoardReviewSceneV1, BoardTextGeometryPrimitive,
-    BoardTextPrimitive, ComponentGraphicPrimitive, ComponentTextPrimitive, GlyphMeshAssetPrimitive,
-    GlyphMeshHandlePrimitive, PointNm, ProposalOverlayPrimitive, ReviewWorkspaceState,
-    SelectionTarget, UnroutedPrimitive, WorkspaceTool,
-};
+#[path = "render/source_types.rs"]
+mod source_types;
 pub use datum_gui_viewport::CameraState;
-use eda_engine::board::BoardText;
-use eda_engine::export::render_silkscreen_text_strokes;
-use eda_engine::ir::geometry::{LayerId, Point};
 use geometry_output::Output;
+use source_types::*;
 #[path = "render/world_primitives.rs"]
 mod world_primitives;
 use taffy::prelude::*;
-use uuid::Uuid;
 use world_primitives::{
     push_convex_polygon_fill, push_world_quad, push_world_rect_nm, push_world_triangle,
 };
@@ -65,6 +58,9 @@ pub use visual::{design_artboards, visual_capture, visual_diff, visual_manifest,
 
 include!("render/layout.rs");
 include!("render/types.rs");
+#[path = "render/draw_command.rs"]
+mod draw_command;
+use draw_command::RetainedDrawCommand;
 #[path = "render/pane_chrome.rs"]
 mod pane_chrome;
 use pane_chrome::render_viewport_panes;
@@ -76,6 +72,8 @@ include!("render/overlay.rs");
 mod dim_policy;
 #[path = "render/native_selection_overlay.rs"]
 mod native_selection_overlay;
+#[path = "render/selection_stroke.rs"]
+mod selection_stroke;
 pub(crate) use dim_policy::*;
 #[path = "render/stroke_policy.rs"]
 mod stroke_policy;

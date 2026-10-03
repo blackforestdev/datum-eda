@@ -22,6 +22,8 @@ pub struct PreparedScene {
     pub(super) menu_overlay_text_runs: Vec<TextRun>,
     pub(super) viewport_underlay_vertices: Vec<Vertex>,
     pub(super) viewport_overlay_vertices: Vec<Vertex>,
+    pub(super) selection_overlay_split: usize,
+    pub(super) selection_strokes: Vec<selection_stroke::Stroke>,
     pub(super) board_interaction_vertices: Vec<Vertex>,
     pub(super) console_overlay_vertices: Vec<Vertex>,
     pub(super) console_overlay_layout: Option<ConsoleOverlayLayout>,

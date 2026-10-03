@@ -516,6 +516,8 @@ impl PreparedScene {
                 menu_overlay_text_runs,
                 viewport_underlay_vertices,
                 viewport_overlay_vertices,
+                selection_overlay_split: usize::MAX,
+                selection_strokes: Vec::new(),
                 board_interaction_vertices,
                 console_overlay_vertices,
                 console_overlay_layout,

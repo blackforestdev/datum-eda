@@ -146,8 +146,10 @@ fn native_cues_are_clipped_to_each_pane_and_reproject_after_warm_camera_assignme
     };
     let camera = CameraState::fit_to_bounds(&state.scene.bounds);
     let mut first = Vec::new();
+    let mut first_strokes = Vec::new();
     let mut text = Vec::new();
     push_native(
+        &mut first_strokes,
         &mut first,
         &mut text,
         &state.scene,
@@ -156,7 +158,12 @@ fn native_cues_are_clipped_to_each_pane_and_reproject_after_warm_camera_assignme
         camera,
         datum_gui_protocol::PaneContent::Board,
     );
-    assert!(!first.is_empty());
+    assert!(!first_strokes.is_empty());
+    assert!(
+        first_strokes
+            .iter()
+            .all(|s| s.clip == [100.0, 200.0, 600.0, 600.0])
+    );
     assert!(
         first
             .iter()
@@ -167,9 +174,11 @@ fn native_cues_are_clipped_to_each_pane_and_reproject_after_warm_camera_assignme
                 && y <= viewport.y + viewport.height)
     );
     let mut second = Vec::new();
+    let mut second_strokes = Vec::new();
     let mut warm = camera;
     warm.center_x_nm += 5_000_000.0;
     push_native(
+        &mut second_strokes,
         &mut second,
         &mut text,
         &state.scene,
@@ -178,7 +187,7 @@ fn native_cues_are_clipped_to_each_pane_and_reproject_after_warm_camera_assignme
         warm,
         datum_gui_protocol::PaneContent::Board,
     );
-    assert_ne!(format!("{first:?}"), format!("{second:?}"));
+    assert_ne!(first_strokes, second_strokes);
     let hover = datum_gui_protocol::HoverTarget {
         surface: datum_gui_protocol::PaneContent::Board,
         object_id: "stable-track-display".into(),
@@ -258,7 +267,9 @@ fn native_projection_uses_typed_surface_and_refuses_foreign_or_stale_scene_basis
     state.scene.scene_id = "schematic-misleading-display-name".into();
     let render = |state: &ReviewWorkspaceState, surface| {
         let mut quads = Vec::new();
+        let mut strokes = Vec::new();
         push_native(
+            &mut strokes,
             &mut quads,
             &mut Vec::new(),
             &state.scene,
@@ -267,7 +278,7 @@ fn native_projection_uses_typed_surface_and_refuses_foreign_or_stale_scene_basis
             camera,
             surface,
         );
-        quads
+        strokes
     };
     assert!(!render(&state, PaneContent::Board).is_empty());
     assert!(render(&state, PaneContent::Schematic).is_empty());
@@ -398,4 +409,55 @@ pub(crate) fn selected_points_state() -> (Fixture, ReviewWorkspaceState) {
     state.schematic_scene = Some(schematic);
     state.selection = SelectionTarget::Native(Box::new(view));
     (fixture, state)
+}
+
+pub(crate) fn selected_wire_state() -> (Fixture, ReviewWorkspaceState) {
+    use eda_engine::{
+        api::native_write::{self, WriteProvenance},
+        substrate::CommitSource,
+    };
+    let (mut f, mut state) = selected_points_state();
+    let before = NativeSelectionResolution::capture(&f.model).unwrap();
+    let sheets = &before.snapshot().schematic_source().unwrap().sheets;
+    assert_eq!(sheets.len(), 1);
+    let sheet = *sheets.keys().next().unwrap();
+    let wire = eda_engine::schematic::SchematicWire {
+        uuid: uuid::Uuid::new_v4(),
+        from: Point::new(0, 0),
+        to: Point::new(10_000_000, 0),
+    };
+    let write = native_write::schematic_connectivity::build_create_schematic_wire(
+        &f.model,
+        WriteProvenance::new(
+            "selection-wire-fixture",
+            CommitSource::Test,
+            "canonical selection stroke source",
+        ),
+        sheet,
+        &wire,
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let schematic = datum_gui_protocol::project_native_schematic_scene(&f.model, &f.root)
+        .unwrap()
+        .unwrap();
+    state.scene.source_revision = f.model.model_revision.0.clone();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let subject = SelectionSubject::Object(Id {
+        class: Class::Wire,
+        id: wire.uuid,
+        instance_path: vec![],
+    });
+    let view = build_selection_view(
+        &f.model,
+        &authority,
+        subject,
+        &state.scene,
+        Some(&schematic),
+        |_| true,
+    )
+    .unwrap();
+    state.schematic_scene = Some(schematic);
+    state.selection = SelectionTarget::Native(Box::new(view));
+    (f, state)
 }

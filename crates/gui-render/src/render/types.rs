@@ -1,4 +1,3 @@
-use std::ops::Range;
 #[derive(Debug, Clone, PartialEq)]
 pub struct HitRegion {
     pub target: HitTarget,
@@ -39,17 +38,6 @@ struct PreparedTerminalGraphic {
     graphic: datum_terminal_core::RenderGraphic,
     rect: RectPx,
     clip: RectPx,
-}
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum RetainedDrawCommand {
-    Quads {
-        layer_id: Option<String>,
-        range: Range<u32>,
-    },
-    Strokes {
-        layer_id: Option<String>,
-        range: Range<u32>,
-    },
 }
 type WorldHitRegion = datum_gui_viewport::HitRegion<HitTarget>;
 type WorldHitShape = datum_gui_viewport::HitShape;

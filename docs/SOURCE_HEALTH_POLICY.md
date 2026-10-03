@@ -438,3 +438,10 @@ production4060→4057 and renderer expansion4292→4266 ratchet exactly downward
 The existing generated-fill authority is exposed immutably; no new geometry,
 source identity, fill producer, dependency or selection owner is introduced.
 Authored boundaries remain distinct from certified occupied copper.
+
+S5A-C03 post-world capsule integration moves retained draw-range vocabulary and
+existing source presentation imports into normal `draw_command` and
+`source_types` owners. Renderer root production133→131 and include expansion
+4266→4252 shrink; the exact expanded ceiling ratchets downward. New selection
+strokes use the shared immediate-screen admission/upload/lifetime owners; no
+new resource budget, source identity, dependency or renderer ownership is added.

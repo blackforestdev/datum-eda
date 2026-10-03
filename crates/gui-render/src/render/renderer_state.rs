@@ -34,7 +34,7 @@ pub struct Renderer {
     pub(super) damage_masks: damage::Masks,
     pub(super) render_session: RenderSession,
     pub(super) screen_admission: std::cell::Cell<
-        Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 7]>,
+        Option<[Option<immediate_admission::screen_admission::EncodedScreenGeometry>; 8]>,
     >,
     pub(super) grid_admission: Option<
         crate::text_gpu::staging_vec::StagingVec<immediate_admission::PreparedGridAdmission>,
@@ -54,6 +54,8 @@ pub struct Renderer {
     pub(super) world_strokes_gpu: gpu_data::retained_buffer::RetainedBuffer<WorldStrokeInstance>,
     pub(super) world_vertices_gpu: gpu_data::retained_buffer::RetainedBuffer<Vertex>,
     pub(super) pipeline: wgpu::RenderPipeline,
+    pub(super) selection_stroke_pipelines: selection_stroke::Pipelines,
+    pub(super) selection_stroke_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) world_pipelines: std::sync::OnceLock<world_pipelines::WorldPipelines>,
     pub(super) terminal_graphics: terminal_graphics::TerminalGraphicsRenderer,
     pub(super) uniform_bind_group: wgpu::BindGroup,

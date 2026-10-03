@@ -72,7 +72,9 @@ pub(super) fn push_lightweight_selection_overlay(
 
 /// Selection lives exclusively in immediate pane-clipped geometry. Retained
 /// authored colors and buffers do not depend on Native selection/focus/scopes.
+#[allow(clippy::too_many_arguments)] // Three output sinks share one configured projection.
 pub(super) fn push_native(
+    selection_strokes: &mut Vec<selection_stroke::Stroke>,
     out: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     scene: &BoardReviewSceneV1,
@@ -117,14 +119,45 @@ pub(super) fn push_native(
         }
         let selected = keys.contains(&graphic.object_id);
         if selected {
-            let color = selected_mechanical_color(board_graphic_world_color(
-                &graphic.layer_id,
-                &scene.layers,
-                false,
-            ));
-            push_polyline_segments(out, &graphic.path, &projection, color, 3.0);
+            let material = board_graphic_world_color(&graphic.layer_id, &scene.layers, false);
+            let path_subject = view
+                .presentation_owner(scene, surface, &graphic.object_id)
+                .is_some_and(|owner| {
+                    matches!(
+                        owner.class,
+                        datum_gui_protocol::AuthoredSelectionClass::Wire
+                            | datum_gui_protocol::AuthoredSelectionClass::BusSection
+                            | datum_gui_protocol::AuthoredSelectionClass::NoConnect
+                    )
+                });
+            if path_subject && graphic.primitive_kind != "polygon" {
+                // Membership is typed and source-bound; the existing appearance
+                // adapter alone supplies the authored stroke and physical floor.
+                let (width, floor) =
+                    semantic_graphic_kind(&graphic.object_id, &graphic.layer_id, graphic.width_nm)
+                        .nominal_and_floor();
+                selection_stroke::push(
+                    selection_strokes,
+                    &graphic.path,
+                    width,
+                    floor,
+                    material,
+                    &projection,
+                    viewport,
+                    state.ui.global_preferences.high_contrast_noncolor,
+                );
+            } else {
+                push_polyline_segments(
+                    out,
+                    &graphic.path,
+                    &projection,
+                    selected_mechanical_color(material),
+                    3.0,
+                );
+            }
         }
     }
+
     let selected_components: std::collections::BTreeSet<_> = scene
         .components
         .iter()
@@ -166,12 +199,15 @@ pub(super) fn push_native(
             && keys.contains(&track.object_id)
             && layer_visible(state, &track.layer_id)
         {
-            push_polyline_segments(
-                out,
+            selection_stroke::push(
+                selection_strokes,
                 &track.path,
+                track.width_nm,
+                1.0,
+                layer_app(&track.layer_id).authored_track,
                 &projection,
-                selected_copper_color(layer_app(&track.layer_id).authored_track),
-                3.0,
+                viewport,
+                state.ui.global_preferences.high_contrast_noncolor,
             );
         }
     }
@@ -416,6 +452,7 @@ impl PreparedScene {
     /// Append once after the shared session applies every pane's warm camera.
     pub(super) fn append_native_selection(&mut self, state: &ReviewWorkspaceState) {
         use crate::resource_consumers::{Consumer, Stream};
+        self.selection_overlay_split = self.viewport_overlay_vertices.len();
         for pass in &self.surface_passes {
             let (scene, consumer) = match pass.surface {
                 SceneSurface::Board => (&state.scene, Consumer::Board),
@@ -432,7 +469,9 @@ impl PreparedScene {
             };
             let mut quads = Vec::new();
             let before_text = self.text_runs.len();
+            let before_strokes = self.selection_strokes.len();
             push_native(
+                &mut self.selection_strokes,
                 &mut quads,
                 &mut self.text_runs,
                 scene,
@@ -440,6 +479,12 @@ impl PreparedScene {
                 pass.scene_viewport,
                 pass.camera,
                 surface,
+            );
+            self.consumers.note(
+                Stream::Selection,
+                consumer,
+                before_strokes,
+                self.selection_strokes.len(),
             );
             push_region(
                 &mut quads,

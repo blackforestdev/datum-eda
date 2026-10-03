@@ -12,8 +12,8 @@ pub struct PreparedScreenGeometry {
 impl PreparedScene {
     /// CPU-prepared streams, not a claim that each stream was submitted.
     /// Control meshes are already expanded into these production vertices.
-    pub fn screen_geometry_admission(&self) -> [PreparedScreenGeometry; 7] {
-        [
+    pub fn screen_geometry_admission(&self) -> [PreparedScreenGeometry; 8] {
+        let ordinary = [
             ("panel", &self.panel_vertices),
             ("menu_overlay", &self.menu_overlay_vertices),
             ("viewport_underlay", &self.viewport_underlay_vertices),
@@ -26,6 +26,17 @@ impl PreparedScene {
             group,
             vertices: vertices.len(),
             payload_bytes: std::mem::size_of_val(vertices.as_slice()),
+        });
+        std::array::from_fn(|i| {
+            if i < ordinary.len() {
+                ordinary[i]
+            } else {
+                PreparedScreenGeometry {
+                    group: "selection_strokes",
+                    vertices: self.selection_strokes.len() * 12,
+                    payload_bytes: std::mem::size_of_val(self.selection_strokes.as_slice()),
+                }
+            }
         })
     }
     pub fn prepared_terminal_graphic_count(&self) -> usize {
