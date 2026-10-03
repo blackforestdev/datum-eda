@@ -445,3 +445,11 @@ existing source presentation imports into normal `draw_command` and
 4266→4252 shrink; the exact expanded ceiling ratchets downward. New selection
 strokes use the shared immediate-screen admission/upload/lifetime owners; no
 new resource budget, source identity, dependency or renderer ownership is added.
+
+S5A-C03 retained presentation provenance moves the existing retained painter and
+world-pad emission into normal `retained` and `pad_retained` owners. Renderer
+root physical131→130 and expanded4252→3620 shrink; pad pre-test434→125 and
+physical1051→1018 shrink. Exact declared ceilings ratchet downward. Source keys
+and typed paint roles are disposable projection metadata, never authored
+identity. Shared clone/weak retirement and constructor admission include their
+owned capacities; no new dependency, resource budget or rendering authority.

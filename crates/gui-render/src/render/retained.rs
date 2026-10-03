@@ -1,10 +1,12 @@
+use super::*;
+use crate::presentation_ranges::Role;
 #[path = "retained_board_graphics.rs"]
 mod retained_board_graphics;
 #[path = "retained_zones.rs"]
 mod retained_zones;
-use retained_board_graphics::{
+use retained_board_graphics::trace_retained_stage;
+pub(super) use retained_board_graphics::{
     push_retained_board_graphic_batches, push_retained_board_text_geometry_batches,
-    trace_retained_stage,
 };
 
 /// Retained authored-board geometry pass.
@@ -26,7 +28,7 @@ use retained_board_graphics::{
 ///   overrides material color for the owned object only;
 /// - unknown-layer fallback appearance: deliberately divergent so unresolved
 ///   layer identity stays visible (see `resolve_layer_appearance_with_scene`).
-fn push_retained_scene_geometry(
+pub(super) fn push_retained_scene_geometry(
     out: &mut impl Output<Quad>,
     strokes: &mut impl Output<WorldStrokeInstance>,
     draw_commands: &mut impl Output<RetainedDrawCommand>,
@@ -34,6 +36,8 @@ fn push_retained_scene_geometry(
     reference_projection: &Projection,
     state: &ReviewWorkspaceState,
 ) {
+    out.source(None, Role::Material);
+    strokes.source(None, Role::Material);
     let active_move_component_uuid: Option<String> = None;
     let sl = &scene.layers;
     let preview_ids = proposal_preview_ids(state);
@@ -85,6 +89,7 @@ fn push_retained_scene_geometry(
                 width_nm: track.width_nm,
             }
             .nominal_nm() as f32;
+            strokes.source(Some(&track.object_id), Role::Material);
             let start = strokes.len();
             push_world_stroke_path(strokes, &track.path, color, track_width_nm as i64, 1.0);
             scene_retained_access::finish_retained_draw_commands(
@@ -122,6 +127,7 @@ fn push_retained_scene_geometry(
                 if !layer_visible(state, render_layer) {
                     continue;
                 }
+                out.source(Some(&pad.object_id), Role::Material);
                 let quad_start = out.len();
                 push_pad_primitive_world(
                     out,
@@ -175,6 +181,7 @@ fn push_retained_scene_geometry(
                     &via.source_object_uuid,
                 );
             let dimmed = dim_unrelated_active(state) && !selected && !related;
+            out.source(Some(&via.object_id), Role::Material);
             let quad_start = out.len();
             push_via_primitive_world(
                 out,
@@ -195,6 +202,22 @@ fn push_retained_scene_geometry(
         }
     }
     trace_retained_stage("copper", copper_started, copper_before, out.len());
+    let Some(mut parents) = out.scratch::<(&str, &str)>(scene.components.len()) else {
+        return;
+    };
+    parents.extend(scene.components.iter().map(|component| {
+        (
+            component.component_uuid.as_str(),
+            component.object_id.as_str(),
+        )
+    }));
+    parents.sort_unstable_by_key(|(uuid, _)| *uuid);
+    let parent_key = |uuid: &str| {
+        parents
+            .binary_search_by_key(&uuid, |(uuid, _)| *uuid)
+            .ok()
+            .map(|index| parents[index].1)
+    };
     let mechanical_graphics = scene.component_graphics.iter().filter(|graphic| {
         graphic.render_role == "component_mechanical"
             && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
@@ -261,6 +284,7 @@ fn push_retained_scene_geometry(
                     continue;
                 }
                 let bounds = process_pad_bounds(pad, *kind);
+                out.source(Some(&pad.object_id), Role::Material);
                 let quad_start = out.len();
                 push_pad_primitive_world(
                     out,
@@ -316,6 +340,8 @@ fn push_retained_scene_geometry(
                 ) || component_is_selection_active(&graphic.component_uuid, scene, state);
             let selected = false;
             let quad_start = out.len();
+            out.source(parent_key(&graphic.component_uuid), Role::Material);
+            strokes.source(parent_key(&graphic.component_uuid), Role::Material);
             let stroke_start = strokes.len();
             push_component_graphic_primitive_world(
                 out,
@@ -361,6 +387,8 @@ fn push_retained_scene_geometry(
                         if id == &format!("component:{}", graphic.component_uuid)
                 ) || component_is_selection_active(&graphic.component_uuid, scene, state);
             let quad_start = out.len();
+            out.source(parent_key(&graphic.component_uuid), Role::Material);
+            strokes.source(parent_key(&graphic.component_uuid), Role::Material);
             let stroke_start = strokes.len();
             push_component_graphic_primitive_world(
                 out,
@@ -464,6 +492,8 @@ fn push_retained_scene_geometry(
         }
     }
     trace_retained_stage("active-component", active_started, active_before, out.len());
+    out.source(None, Role::Material);
+    strokes.source(None, Role::Material);
     let unrouted_started = std::time::Instant::now();
     let unrouted_before = out.len();
     if unrouted_visible(state) {

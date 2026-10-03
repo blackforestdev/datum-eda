@@ -108,6 +108,7 @@ pub(crate) fn push_via_primitive_world(
         ),
         128,
     );
+    out.role(crate::presentation_ranges::Role::Void);
     let drill_half = via.drill_nm as f32 * 0.5;
     push_world_ellipse_nm(
         out,
@@ -120,5 +121,6 @@ pub(crate) fn push_via_primitive_world(
         dim_structural_color([0.13, 0.14, 0.16], dimmed),
         128,
     );
+    out.role(crate::presentation_ranges::Role::Material);
 }
 use crate::geometry_output::Output;

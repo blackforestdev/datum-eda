@@ -1,8 +1,11 @@
 //! Shared geometry emission with explicit retained-construction admission.
+use crate::presentation_ranges::{Role, Span};
 use std::ops::{Deref, DerefMut};
 
 pub(crate) trait Output<T>: DerefMut<Target = [T]> + Extend<T> {
     fn push(&mut self, value: T);
+    fn source(&mut self, _key: Option<&str>, _role: Role) {}
+    fn role(&mut self, _role: Role) {}
     fn reserve(&mut self, additional: usize);
     fn admit_temporary(&mut self, _bytes: usize) -> bool {
         true
@@ -44,6 +47,11 @@ pub(crate) struct Admitted<T, F> {
     values: Vec<T>,
     admit: F,
     failure: Option<anyhow::Error>,
+    tracking: bool,
+    spans: Vec<Span>,
+    key: Option<String>,
+    role: Role,
+    start: usize,
 }
 impl<T, F: FnMut(usize) -> anyhow::Result<()>> Admitted<T, F> {
     pub fn new(admit: F) -> Self {
@@ -51,7 +59,66 @@ impl<T, F: FnMut(usize) -> anyhow::Result<()>> Admitted<T, F> {
             values: Vec::new(),
             admit,
             failure: None,
+            tracking: false,
+            spans: Vec::new(),
+            key: None,
+            role: Role::Material,
+            start: 0,
         }
+    }
+    pub fn track_sources(mut self) -> Self {
+        self.tracking = true;
+        self
+    }
+    pub fn finish_with_sources(mut self) -> anyhow::Result<(Vec<T>, Vec<Span>)> {
+        if self.failure.is_none() {
+            self.failure = self.flush_source().err();
+        }
+        match self.failure {
+            Some(error) => Err(error),
+            None => Ok((self.values, self.spans)),
+        }
+    }
+    fn copy_key(&mut self, key: &str) -> anyhow::Result<String> {
+        let layout = std::alloc::Layout::array::<u8>(key.len())?;
+        (self.admit)(crate::cpu_alloc::heap::allocation_bytes(layout))?;
+        let mut value = String::new();
+        value.try_reserve_exact(key.len())?;
+        value.push_str(key);
+        Ok(value)
+    }
+    fn flush_source(&mut self) -> anyhow::Result<()> {
+        if !self.tracking || self.start == self.values.len() {
+            return Ok(());
+        }
+        if self.spans.len() == self.spans.capacity() {
+            let capacity = self
+                .spans
+                .len()
+                .checked_mul(2)
+                .ok_or_else(|| anyhow::anyhow!("presentation range overflow"))?
+                .max(4);
+            (self.admit)(crate::cpu_alloc::heap::allocation_bytes(
+                std::alloc::Layout::array::<Span>(capacity)?,
+            ))?;
+            self.spans.try_reserve_exact(capacity - self.spans.len())?;
+        }
+        // The active key remains live until the next source boundary. Admit its
+        // overlap with the immutable range copy before allocating.
+        let key = if let Some(key) = self.key.take() {
+            let copy = self.copy_key(&key);
+            self.key = Some(key);
+            Some(copy?)
+        } else {
+            None
+        };
+        self.spans.push(Span {
+            key,
+            role: self.role,
+            range: self.start..self.values.len(),
+        });
+        self.start = self.values.len();
+        Ok(())
     }
     pub fn finish(self) -> anyhow::Result<Vec<T>> {
         match self.failure {
@@ -85,6 +152,31 @@ impl<T, F> Deref for Admitted<T, F> {
     }
 }
 impl<T, F: FnMut(usize) -> anyhow::Result<()>> Output<T> for Admitted<T, F> {
+    fn source(&mut self, key: Option<&str>, role: Role) {
+        if !self.tracking || self.failure.is_some() {
+            return;
+        }
+        let result = (|| -> anyhow::Result<()> {
+            self.flush_source()?;
+            self.key = match key {
+                Some(key) => Some(self.copy_key(key)?),
+                None => None,
+            };
+            self.role = role;
+            Ok(())
+        })();
+        self.failure = result.err();
+    }
+    fn role(&mut self, role: Role) {
+        if !self.tracking || self.failure.is_some() || self.role == role {
+            return;
+        }
+        match self.flush_source() {
+            Ok(()) => self.role = role,
+            Err(error) => self.failure = Some(error),
+        }
+    }
+
     fn admit_temporary(&mut self, bytes: usize) -> bool {
         if self.failure.is_none() {
             self.failure = (self.admit)(bytes).err();
@@ -131,6 +223,47 @@ impl<T, F> DerefMut for Admitted<T, F> {
 mod tests {
     use super::*;
     use crate::*;
+
+    #[test]
+    fn tracked_emission_keeps_geometry_and_refuses_source_allocation_atomically() {
+        let mut values = Admitted::new(|_| Ok(())).track_sources();
+        values.source(Some("pad"), Role::Material);
+        values.push(1u32);
+        values.role(Role::Void);
+        values.push(2);
+        values.role(Role::Material);
+        values.push(3);
+        values.source(None, Role::Material);
+        values.push(4);
+        let (geometry, spans) = values.finish_with_sources().unwrap();
+        assert_eq!(geometry, [1, 2, 3, 4]);
+        assert_eq!(
+            spans
+                .iter()
+                .map(|span| span.range.clone())
+                .collect::<Vec<_>>(),
+            [0..1, 1..2, 2..3, 3..4]
+        );
+        assert_eq!(spans[1].role, Role::Void);
+        assert_eq!(spans[1].key.as_deref(), Some("pad"));
+        assert_eq!(spans[3].key, None);
+        let mut refuse =
+            Admitted::new(|_| anyhow::bail!("source allocation refused")).track_sources();
+        refuse.source(Some("pad"), Role::Material);
+        refuse.push(1u32);
+        assert!(refuse.finish_with_sources().is_err());
+        let mut flushed = Admitted::new(|bytes| {
+            anyhow::ensure!(bytes < 100, "range allocation refused");
+            Ok(())
+        })
+        .track_sources();
+        flushed.source(Some("pad"), Role::Material);
+        flushed.push(1u32);
+        assert!(
+            flushed.finish_with_sources().is_err(),
+            "final range admission cannot publish partial geometry"
+        );
+    }
 
     #[test]
     fn retained_emission_preserves_geometry_and_commands_and_refuses_before_growth() {

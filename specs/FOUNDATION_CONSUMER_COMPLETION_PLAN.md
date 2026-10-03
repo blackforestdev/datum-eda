@@ -2543,3 +2543,17 @@ Connected-path/subject seams, occlusion, complete owned glyph/fill treatment,
 dim-related and the exact dense union-mask remain pending U4. Bus/no-connect
 positive native cases are not passed by generic path routing. No C03/C04/C05/C06
 closure, graphics positive waiver, new source model or CAM/T04 change.
+
+Retained painter provenance now carries actual source-key/paint-role ranges
+through layer sorting and triangle compaction, distinguishing drill voids,
+Zone islands and authored Zone boundary. Parent graphics use the existing
+component key, not graphic ordinals. Complete admitted construction and shared
+weak-retirement accounting cover the metadata; colors, vertices, strokes and
+resize ownership are preserved. This is mask input, not a completed mask or
+positive native visual proof. Focused provenance/emission/heap/budget and existing
+overlay/source replays plus all-target Clippy are recorded in
+`target/s5a-c03-presentation-*.log`: 21 distinct passes (four provenance/emission,
+three heap, one constructor budget, eleven overlays and two canonical source
+cases), with binary SHA256
+`b84ad7e89640012dbc43933b0afc93072a26a9b86102978811f32f4debfe3e5b`.
+U4 mask/occlusion/glyph/dense work continues.

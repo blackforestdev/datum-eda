@@ -9,6 +9,7 @@ impl RetainedScene {
         Self {
             surface_size_independent: true,
             hover_membership: Default::default(),
+            presentation: Default::default(),
             world_vertices: Vec::new().into(),
             world_strokes: Vec::new().into(),
             draw_commands: Vec::new().into(),

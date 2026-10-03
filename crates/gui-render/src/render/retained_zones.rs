@@ -1,5 +1,6 @@
 //! Current generated copper and authored boundaries remain distinct projections.
 use super::*;
+use crate::presentation_ranges::Role;
 #[allow(clippy::too_many_arguments)]
 pub(super) fn push(
     out: &mut impl Output<Quad>,
@@ -28,7 +29,8 @@ pub(super) fn push(
         let quad_start = out.len();
         let stroke_start = strokes.len();
         let za = resolve_layer_appearance_with_scene(Some(&zone.layer_id), &scene.layers);
-        for polygon in zone.occupied_polygons() {
+        for (index, polygon) in zone.occupied_polygons().enumerate() {
+            out.source(Some(&zone.object_id), Role::ZoneIsland(index));
             push_world_polygon_fill(out, polygon, dim_authored_color(za.zone_fill, dimmed));
         }
         let minimum = if zone.fill_projection.is_legacy() {
@@ -37,6 +39,7 @@ pub(super) fn push(
             3
         };
         if zone.polygon.len() >= minimum {
+            strokes.source(Some(&zone.object_id), Role::ZoneBoundary);
             gpu_strokes::push_world_stroke_loop(
                 strokes,
                 &zone.polygon,

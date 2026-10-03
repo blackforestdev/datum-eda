@@ -569,7 +569,7 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 4252
+        "expanded_lines": 3620
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -591,7 +591,7 @@
     "crates/gui-render/src/render/pads_and_layers.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 434
+        "pre_test_lines": 125
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

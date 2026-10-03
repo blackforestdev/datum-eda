@@ -212,7 +212,8 @@ impl RetainedScene {
                     limit,
                     "geometry emission",
                 )
-            });
+            })
+            .track_sources();
             let mut world_strokes = crate::geometry_output::Admitted::new(|bytes| {
                 retained_scene_owner::document_cpu::admit_constructor_allocation(
                     &budget,
@@ -221,7 +222,8 @@ impl RetainedScene {
                     limit,
                     "geometry emission",
                 )
-            });
+            })
+            .track_sources();
             let mut draw_commands = crate::geometry_output::Admitted::new(|bytes| {
                 retained_scene_owner::document_cpu::admit_constructor_allocation(
                     &budget,
@@ -257,8 +259,8 @@ impl RetainedScene {
                 &reference_projection,
                 state,
             );
-            let world_quads = world_quads.finish()?;
-            let world_strokes = world_strokes.finish()?;
+            let (world_quads, quad_sources) = world_quads.finish_with_sources()?;
+            let (world_strokes, stroke_sources) = world_strokes.finish_with_sources()?;
             let mut draw_commands = draw_commands.finish()?;
             scene_retained_access::sort_retained_draw_commands(
                 &mut draw_commands,
@@ -299,6 +301,31 @@ impl RetainedScene {
                 world_quads.len(),
                 limit,
             )?;
+            let quad_sources = crate::presentation_ranges::remap(
+                &world_quads,
+                &draw_commands,
+                &quad_sources,
+                |bytes| {
+                    retained_scene_owner::document_cpu::admit_constructor_allocation(
+                        &budget,
+                        &scope,
+                        bytes,
+                        limit,
+                        "presentation remap",
+                    )
+                },
+            )?;
+            retained_scene_owner::document_cpu::admit_constructor_allocation(
+                &budget,
+                &scope,
+                crate::presentation_ranges::Presentation::container_bytes(),
+                limit,
+                "presentation owner",
+            )?;
+            let presentation = std::sync::Arc::new(crate::presentation_ranges::Presentation {
+                quads: quad_sources,
+                strokes: stroke_sources,
+            });
             let world_vertices = gpu_data::try_retained_vertices(&world_quads, &mut draw_commands)?;
             let quad_count = world_quads.len();
             drop(world_quads);
@@ -321,6 +348,7 @@ impl RetainedScene {
             let mut scene = Self {
                 surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
                 hover_membership: Default::default(),
+                presentation,
                 world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
                     world_vertices,
                     &state.scene.scene_id,

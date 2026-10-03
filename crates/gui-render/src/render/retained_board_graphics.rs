@@ -1,7 +1,8 @@
 //! Retained board graphics and text batching with shared layer command ownership.
 use super::*;
+use crate::presentation_ranges::Role;
 
-pub(super) fn push_retained_board_graphic_batches(
+pub(crate) fn push_retained_board_graphic_batches(
     out: &mut impl Output<Quad>,
     strokes: &mut impl Output<WorldStrokeInstance>,
     draw_commands: &mut impl Output<RetainedDrawCommand>,
@@ -27,6 +28,8 @@ pub(super) fn push_retained_board_graphic_batches(
             .iter()
             .filter(|gfx| render_stage_for_layer(&gfx.layer_id, sl) == stage)
         {
+            out.source(Some(&gfx.object_id), Role::Material);
+            strokes.source(Some(&gfx.object_id), Role::Material);
             let quad_start = out.len();
             let command_stroke_start = strokes.len();
             let active_color =
@@ -57,6 +60,7 @@ pub(super) fn push_retained_board_graphic_batches(
             .iter()
             .filter(|outline| render_stage_for_layer(&outline.layer_id, sl) == stage)
         {
+            strokes.source(Some(&outline.object_id), Role::Material);
             let command_stroke_start = strokes.len();
             push_world_stroke_path(
                 strokes,
@@ -77,7 +81,7 @@ pub(super) fn push_retained_board_graphic_batches(
     }
 }
 
-pub(super) fn push_retained_board_text_geometry_batches(
+pub(crate) fn push_retained_board_text_geometry_batches(
     out: &mut impl Output<Quad>,
     draw_commands: &mut impl Output<RetainedDrawCommand>,
     scene: &BoardReviewSceneV1,
@@ -102,6 +106,7 @@ pub(super) fn push_retained_board_text_geometry_batches(
             if !layer_visible(state, &text_geometry.layer_id) {
                 continue;
             }
+            out.source(Some(&text_geometry.object_id), Role::Material);
             let text_color = board_graphic_world_color(&text_geometry.layer_id, sl, dimmed);
             let quad_start = out.len();
             push_board_text_geometry_world(

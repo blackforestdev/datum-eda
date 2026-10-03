@@ -7,6 +7,14 @@ fn complete_scene_owned_capacities_match_allocator_and_weak_release() {
     let scene = scope.with(|| RetainedScene {
         surface_size_independent: true,
         hover_membership: Default::default(),
+        presentation: std::sync::Arc::new(crate::presentation_ranges::Presentation {
+            quads: vec![crate::presentation_ranges::Span {
+                key: Some(String::with_capacity(96)),
+                role: crate::presentation_ranges::Role::Void,
+                range: 0..100,
+            }],
+            strokes: Vec::new(),
+        }),
         world_vertices: vec![
             Vertex {
                 pos: [1.0; 2],

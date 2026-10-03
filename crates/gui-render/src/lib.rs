@@ -1,22 +1,20 @@
 mod hit_target;
 pub use hit_target::HitTarget;
+mod geometry_output;
 #[path = "render/glyph_mesh_lookup.rs"]
 mod glyph_mesh_lookup;
-#[path = "render/world_polygon.rs"]
-mod world_polygon;
-use world_polygon::{push_world_polygon_fill, push_world_polygon_fill_contours};
-mod geometry_output;
+#[path = "render/presentation_ranges.rs"]
+mod presentation_ranges;
 #[path = "render/source_types.rs"]
 mod source_types;
+#[path = "render/world_polygon.rs"]
+mod world_polygon;
 pub use datum_gui_viewport::CameraState;
 use geometry_output::Output;
 use source_types::*;
 #[path = "render/world_primitives.rs"]
 mod world_primitives;
 use taffy::prelude::*;
-use world_primitives::{
-    push_convex_polygon_fill, push_world_quad, push_world_rect_nm, push_world_triangle,
-};
 mod bottom_dock;
 #[cfg(feature = "visual")]
 pub mod capture_resource;
@@ -65,9 +63,10 @@ use draw_command::RetainedDrawCommand;
 mod pane_chrome;
 use pane_chrome::render_viewport_panes;
 include!("render/scene.rs");
+#[path = "render/retained.rs"]
+mod retained;
 #[path = "render/scene_retained_access.rs"]
 mod scene_retained_access;
-include!("render/retained.rs");
 include!("render/overlay.rs");
 mod dim_policy;
 #[path = "render/native_selection_overlay.rs"]
