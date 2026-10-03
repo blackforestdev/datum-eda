@@ -1,5 +1,7 @@
 #[path = "native_selection_overlay/diagnostics.rs"]
 mod diagnostics;
+#[path = "native_selection_overlay/lod.rs"]
+mod lod;
 use super::*;
 
 pub(super) fn push_lightweight_selection_overlay(
@@ -97,8 +99,20 @@ pub(super) fn push_native(
     let before_text = text_runs.len();
     let layer_app = |layer: &str| resolve_layer_appearance_with_scene(Some(layer), &scene.layers);
     let glyph_assets = glyph_mesh_lookup::MeshIndex::new(&scene.glyph_mesh_assets, out);
+    let lod = lod::Plan::capture(
+        view,
+        scene,
+        surface,
+        state,
+        &projection,
+        viewport,
+        glyph_assets.as_ref(),
+    );
+    lod.push_cues(out);
     for graphic in &scene.board_graphics {
-        if !layer_visible(state, &graphic.layer_id) {
+        if !lod.detailed(view, scene, surface, &graphic.object_id)
+            || !layer_visible(state, &graphic.layer_id)
+        {
             continue;
         }
         let selected = keys.contains(&graphic.object_id);
@@ -114,7 +128,7 @@ pub(super) fn push_native(
     let selected_components: std::collections::BTreeSet<_> = scene
         .components
         .iter()
-        .filter(|c| keys.contains(&c.object_id))
+        .filter(|c| keys.contains(&c.object_id) && lod.detailed(view, scene, surface, &c.object_id))
         .map(|c| c.component_uuid.as_str())
         .collect();
     for graphic in &scene.component_graphics {
@@ -148,7 +162,10 @@ pub(super) fn push_native(
         }
     }
     for track in &scene.tracks {
-        if keys.contains(&track.object_id) && layer_visible(state, &track.layer_id) {
+        if lod.detailed(view, scene, surface, &track.object_id)
+            && keys.contains(&track.object_id)
+            && layer_visible(state, &track.layer_id)
+        {
             push_polyline_segments(
                 out,
                 &track.path,
@@ -159,8 +176,9 @@ pub(super) fn push_native(
         }
     }
     for pad in &scene.pads {
-        if keys.contains(&pad.object_id)
-            && pad.copper_layer_ids.iter().any(|l| layer_visible(state, l))
+        if lod.detailed(view, scene, surface, &pad.object_id)
+            && keys.contains(&pad.object_id)
+            && pad_visible_on_any_copper_layer(state, pad)
         {
             let path = projected_pad_outline(pad, &projection, 1.5);
             for segment in path.windows(2).chain(std::iter::once(
@@ -180,7 +198,8 @@ pub(super) fn push_native(
         }
     }
     for via in &scene.vias {
-        if keys.contains(&via.object_id)
+        if lod.detailed(view, scene, surface, &via.object_id)
+            && keys.contains(&via.object_id)
             && (layer_visible(state, &via.start_layer_id)
                 || layer_visible(state, &via.end_layer_id))
         {
@@ -204,7 +223,10 @@ pub(super) fn push_native(
         }
     }
     for zone in &scene.zones {
-        if keys.contains(&zone.object_id) && layer_visible(state, &zone.layer_id) {
+        if lod.detailed(view, scene, surface, &zone.object_id)
+            && keys.contains(&zone.object_id)
+            && layer_visible(state, &zone.layer_id)
+        {
             for polygon in view.zone_regions.get(&zone.object_id).into_iter().flatten() {
                 let mut closed = polygon.clone();
                 if let Some(first) = closed.first().copied() {
@@ -221,7 +243,10 @@ pub(super) fn push_native(
         }
     }
     for outline in &scene.outline {
-        if keys.contains(&outline.object_id) && layer_visible(state, &outline.layer_id) {
+        if lod.detailed(view, scene, surface, &outline.object_id)
+            && keys.contains(&outline.object_id)
+            && layer_visible(state, &outline.layer_id)
+        {
             push_polyline_segments(
                 out,
                 &outline.path,
@@ -232,7 +257,10 @@ pub(super) fn push_native(
         }
     }
     for geometry in &scene.board_text_geometries {
-        if keys.contains(&geometry.object_id) && layer_visible(state, &geometry.layer_id) {
+        if lod.detailed(view, scene, surface, &geometry.object_id)
+            && keys.contains(&geometry.object_id)
+            && layer_visible(state, &geometry.layer_id)
+        {
             let Some(glyph_assets) = glyph_assets.as_ref() else {
                 continue;
             };
@@ -450,3 +478,7 @@ pub(super) fn selection_beats_hover(
 #[cfg(test)]
 #[path = "native_selection_overlay/tests.rs"]
 pub(crate) mod tests;
+
+#[cfg(test)]
+#[path = "native_selection_overlay/lod_tests.rs"]
+mod lod_tests;

@@ -2,6 +2,7 @@
 mod inspection;
 pub mod inspector_state;
 mod net_coverage;
+mod presentation;
 mod projection_inspection;
 mod properties;
 use crate::selection_resolution::{
@@ -29,10 +30,16 @@ pub struct SelectionView {
     pub related: BTreeSet<Id>,
     pub scope: Option<Class>,
     pub values: BTreeMap<Id, BTreeMap<String, Value>>,
+    #[serde(default)]
+    pub authored_anchors: BTreeMap<Id, crate::PointNm>,
     pub inspection: Vec<ScopeInspection>,
     pub zone_regions: BTreeMap<String, Vec<Vec<crate::PointNm>>>,
     pub board_keys: BTreeSet<String>,
     pub schematic_keys: BTreeSet<String>,
+    #[serde(default)]
+    pub board_presentations: BTreeMap<String, Id>,
+    #[serde(default)]
+    pub schematic_presentations: BTreeMap<String, Id>,
     pub related_board_keys: BTreeSet<String>,
     pub related_schematic_keys: BTreeSet<String>,
     pub hidden: BTreeSet<Id>,
@@ -166,10 +173,13 @@ pub fn build_selection_view(
         related: projection.related,
         scope,
         values: BTreeMap::new(),
+        authored_anchors: BTreeMap::new(),
         inspection: Vec::new(),
         zone_regions: BTreeMap::new(),
         board_keys: BTreeSet::new(),
         schematic_keys: BTreeSet::new(),
+        board_presentations: BTreeMap::new(),
+        schematic_presentations: BTreeMap::new(),
         related_board_keys: BTreeSet::new(),
         related_schematic_keys: BTreeSet::new(),
         hidden: BTreeSet::new(),
@@ -241,6 +251,9 @@ pub fn build_selection_view(
         if let Some(object) = model.objects.get(&id.id)
             && let Some(value) = index.get(&(object.source_shard_id, id.id))
         {
+            if let Some(anchor) = properties::anchor(id.class, value) {
+                result.authored_anchors.insert(id.clone(), anchor);
+            }
             if value.get("locked").and_then(Value::as_bool) == Some(true) {
                 result.locked.insert(id.clone());
             }
@@ -259,16 +272,18 @@ pub fn build_selection_view(
         .collect();
     let mut rendered = BTreeSet::new();
     let mut represented = BTreeSet::new();
-    for (scene, own, related) in std::iter::once((
+    for (scene, own, related, presentations) in std::iter::once((
         board,
         &mut result.board_keys,
         &mut result.related_board_keys,
+        &mut result.board_presentations,
     ))
     .chain(schematic.map(|scene| {
         (
             scene,
             &mut result.schematic_keys,
             &mut result.related_schematic_keys,
+            &mut result.schematic_presentations,
         )
     })) {
         if scene.project_uuid != result.project.to_string()
@@ -279,6 +294,36 @@ pub fn build_selection_view(
         for graphic in &scene.board_graphics {
             if entry_sources.contains(&graphic.source_object_uuid) {
                 own.insert(graphic.object_id.clone());
+                // Only an engine-qualified owned entry can use its explicit
+                // source spine for whole-owner presentation LOD. It never
+                // becomes a separate selected member or scalar-net identity.
+                if let Some(entry) = authority
+                    .snapshot()
+                    .schematic_source()
+                    .and_then(|s| {
+                        scene
+                            .board_uuid
+                            .parse()
+                            .ok()
+                            .and_then(|id| s.sheets.get(&id))
+                    })
+                    .and_then(|sheet| {
+                        graphic
+                            .source_object_uuid
+                            .parse()
+                            .ok()
+                            .and_then(|id| sheet.bus_entries.get(&id))
+                    })
+                {
+                    let owner = Id {
+                        class: Class::BusSection,
+                        id: entry.bus,
+                        instance_path: vec![],
+                    };
+                    if result.members.contains(&owner) {
+                        presentations.insert(graphic.object_id.clone(), owner);
+                    }
+                }
             }
         }
         let bindings = crate::selection_scene::SceneSelectionBindings::capture(scene, authority);
@@ -290,6 +335,11 @@ pub fn build_selection_view(
                 }
                 if result.members.contains(id) {
                     own.insert(key.to_owned());
+                    // Projected member wins when both it and its parent are
+                    // selected; repeated owned parts never mint a new member.
+                    presentations
+                        .entry(key.to_owned())
+                        .or_insert_with(|| id.clone());
                 }
                 if result.related.contains(id) {
                     related.insert(key.to_owned());

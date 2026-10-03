@@ -189,6 +189,57 @@ fn native_bus_owned_entries_are_projection_not_extra_subject_members_or_scalar_w
     );
     assert_eq!(projection.electrical.unwrap().owned, run.membership.owned);
     assert_eq!(native.members(&Subject::Bus(id(800))).unwrap().len(), 3);
+    let schematic = datum_gui_protocol::project_native_schematic_scene(&f.model, &f.root)
+        .unwrap()
+        .unwrap();
+    let mut board = datum_gui_protocol::load_fixture_workspace_state().scene;
+    board.project_uuid = f.model.project.project_id.to_string();
+    board.source_revision = f.model.model_revision.0.clone();
+    board.board_uuid = f.board.to_string();
+    let view = datum_gui_protocol::selection_view::build_selection_view(
+        &f.model,
+        &native,
+        widened,
+        &board,
+        Some(&schematic),
+        |_| true,
+    )
+    .unwrap();
+    let entry = schematic
+        .board_graphics
+        .iter()
+        .find(|g| g.source_object_uuid == id(5).to_string())
+        .unwrap();
+    let owner = identity(Class::BusSection, 2, &[]);
+    assert_eq!(
+        view.presentation_owner(
+            &schematic,
+            datum_gui_protocol::PaneContent::Schematic,
+            &entry.object_id
+        ),
+        Some(&owner)
+    );
+    assert_eq!(
+        view.authored_anchor(&owner),
+        Some(datum_gui_protocol::PointNm { x: 10, y: 0 })
+    );
+    assert_eq!(
+        view.members.len(),
+        3,
+        "entry remains presentation, not a fourth authored member"
+    );
+    assert!(
+        schematic
+            .board_graphics
+            .iter()
+            .filter(|g| g.source_object_uuid == id(4).to_string())
+            .all(|g| !view.selected_key(
+                &schematic,
+                datum_gui_protocol::PaneContent::Schematic,
+                &g.object_id
+            ))
+    );
+
     Fixture::assert_bytes(&files);
 }
 

@@ -2473,3 +2473,24 @@ application all-target Clippy is in `target/s5a-c03-typed-projection-clippy.log`
 Source-bound transport fixtures are not native schematic acceptance. Available
 U4/U5 continues; standalone graphics, unprojected occurrences, C05/C06 and CAM/T04
 requirements remain without waiver. No dependency or rendering/resize change.
+
+### S5A-C03 — source-owned minimum cues (partial U4)
+
+Complete fresh projection carries existing canonical presentation owners and
+authored point/path anchors. Whole-owner visible extents cull offscreen geometry
+and replace sub-2px detail with one clipped non-color cue; unavailable glyph/
+anchor authority retains detail, never a layout-center substitute. No-connect
+uses its X, not a junction ring. Bus entry projection uses the engine-qualified
+entry's explicit source spine, without adding an entry member or scalar wire.
+Existing pad layer visibility is reused. Selection/focus/qualification bounds,
+source identity, retained bytes and journal remain unchanged.
+
+Eleven renderer cases, fifteen protocol aggregate/output/menu cases and one
+existing native Bus case pass (27 distinct). Evidence: minimum-cue-{proof,
+protocol-proof,bus-proof}.log in `target/s5a-c03-*`; affected three-crate all-target
+Clippy is `target/s5a-c03-minimum-cue-clippy.log`. Actual native junction projection
+is exercised; the no-connect X assertion is construction-only, not native
+no-connect acceptance. The fixture Track width now matches its canonical source.
+Full three-part/dim-related/dense union-mask, per-class native proof and resource
+qualification remain pending. No C03/C04/C05/C06 closure, source model, dependency,
+latency budget, graphics scope or CAM/T04 acceptance change. Available U4 continues.

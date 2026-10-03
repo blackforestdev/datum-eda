@@ -113,3 +113,19 @@ pub(super) fn values(class: Class, value: &Value) -> BTreeMap<String, Value> {
         })
         .collect()
 }
+
+/// Existing canonical point or first authored path vertex, not a scene/layout
+/// center. No generated Zone component or missing graphic anchor is invented.
+pub(super) fn anchor(class: Class, value: &Value) -> Option<crate::PointNm> {
+    let point = match class {
+        Class::Track | Class::Wire => value.get("from")?,
+        Class::BusSection => value.get("segments")?.as_array()?.first()?,
+        Class::BoardOutline => value.get("outline")?.get("vertices")?.as_array()?.first()?,
+        Class::Zone | Class::BoardGraphic | Class::SchematicGraphic => return None,
+        _ => value.get("position")?,
+    };
+    Some(crate::PointNm {
+        x: point.get("x")?.as_i64()?,
+        y: point.get("y")?.as_i64()?,
+    })
+}

@@ -9,6 +9,7 @@ pub(crate) struct Fixture {
     root: std::path::PathBuf,
     model: eda_engine::substrate::DesignModel,
     board: uuid::Uuid,
+    schematic: uuid::Uuid,
 }
 impl Fixture {
     pub(crate) fn root(&self) -> &std::path::Path {
@@ -32,6 +33,9 @@ impl Drop for Fixture {
     }
 }
 pub(crate) fn selected_state() -> (Fixture, ReviewWorkspaceState) {
+    selected_track_state(10_000_000)
+}
+pub(crate) fn selected_track_state(length_nm: i64) -> (Fixture, ReviewWorkspaceState) {
     use eda_engine::{
         api::native_write::{self, WriteProvenance, genesis},
         board::{Net, Track},
@@ -50,6 +54,7 @@ pub(crate) fn selected_state() -> (Fixture, ReviewWorkspaceState) {
         model: ProjectResolver::new(&root).resolve().unwrap(),
         root,
         board: report.board_uuid,
+        schematic: report.schematic_uuid,
     };
     let provenance = || {
         WriteProvenance::new(
@@ -66,7 +71,7 @@ pub(crate) fn selected_state() -> (Fixture, ReviewWorkspaceState) {
         uuid::Uuid::new_v4(),
         net.uuid,
         Point::new(0, 0),
-        Point::new(10_000_000, 0),
+        Point::new(length_nm, 0),
         200_000,
         1,
     );
@@ -92,13 +97,8 @@ pub(crate) fn selected_state() -> (Fixture, ReviewWorkspaceState) {
     primitive.object_id = "stable-track-display".into();
     primitive.source_object_uuid = track.uuid.to_string();
     primitive.track_uuid = track.uuid.to_string();
-    primitive.path = vec![
-        PointNm { x: 0, y: 0 },
-        PointNm {
-            x: 10_000_000,
-            y: 0,
-        },
-    ];
+    primitive.width_nm = track.width;
+    primitive.path = vec![PointNm { x: 0, y: 0 }, PointNm { x: length_nm, y: 0 }];
     state.scene.tracks = vec![primitive];
     let authority = NativeSelectionResolution::capture(&f.model).unwrap();
     state.scene.source_revision = f.model.model_revision.0.clone();
@@ -287,4 +287,115 @@ fn native_projection_uses_typed_surface_and_refuses_foreign_or_stale_scene_basis
     for (path, bytes) in source {
         assert_eq!(std::fs::read(path).unwrap(), bytes);
     }
+}
+
+pub(crate) fn selected_points_state() -> (Fixture, ReviewWorkspaceState) {
+    use eda_engine::{
+        api::native_write::{self, BatchComposer, WriteProvenance},
+        substrate::{CommitSource, Operation},
+    };
+    let (mut fixture, mut state) = selected_state();
+    let sheet = uuid::Uuid::new_v4();
+    let junction = uuid::Uuid::new_v4();
+    let second_junction = uuid::Uuid::new_v4();
+    let provenance = || {
+        WriteProvenance::new(
+            "selection-point-fixture",
+            CommitSource::Test,
+            "canonical low-zoom marker source",
+        )
+    };
+    let mut source = fixture
+        .model
+        .materialized_source_shard_value(eda_engine::substrate::SourceShardKind::SchematicRoot)
+        .unwrap();
+    source.as_object_mut().unwrap().clear();
+    let empty = source.clone();
+    source["schema_version"] = 1.into();
+    source["uuid"] = sheet.to_string().into();
+    source["name"] = "Main".into();
+    for field in [
+        "symbols",
+        "wires",
+        "labels",
+        "ports",
+        "junctions",
+        "buses",
+        "bus_entries",
+        "noconnects",
+        "texts",
+        "drawings",
+    ] {
+        source[field] = empty.clone();
+    }
+    let mut junction_source = empty.clone();
+    junction_source["uuid"] = junction.to_string().into();
+    junction_source["position"] = empty.clone();
+    junction_source["position"]["x"] = 0.into();
+    junction_source["position"]["y"] = 0.into();
+    let mut second_source = junction_source.clone();
+    second_source["uuid"] = second_junction.to_string().into();
+    second_source["position"]["x"] = 1_000_000.into();
+    let write = native_write::schematic_sheets::build_create_schematic_sheet(
+        &fixture.model,
+        provenance(),
+        fixture.schematic,
+        sheet,
+        "sheets/main.json",
+        source,
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut fixture.model, &fixture.root, write).unwrap();
+    let write = BatchComposer::compose(&fixture.model, provenance())
+        .push_ops([
+            Operation::CreateSchematicJunction {
+                sheet_id: sheet,
+                junction_id: junction,
+                junction: junction_source,
+            },
+            Operation::CreateSchematicJunction {
+                sheet_id: sheet,
+                junction_id: second_junction,
+                junction: second_source,
+            },
+        ])
+        .finish()
+        .unwrap();
+    native_write::commit_prepared(&mut fixture.model, &fixture.root, write).unwrap();
+    let schematic =
+        datum_gui_protocol::project_native_schematic_scene(&fixture.model, &fixture.root)
+            .unwrap()
+            .unwrap();
+    state.scene.source_revision = fixture.model.model_revision.0.clone();
+    let authority = NativeSelectionResolution::capture(&fixture.model).unwrap();
+    let subject = SelectionSubject::Compound(
+        datum_gui_protocol::CompoundSelection::new(
+            [
+                Id {
+                    class: Class::Junction,
+                    id: junction,
+                    instance_path: vec![],
+                },
+                Id {
+                    class: Class::Junction,
+                    id: second_junction,
+                    instance_path: vec![],
+                },
+            ],
+            None,
+        )
+        .unwrap(),
+    );
+    let view = build_selection_view(
+        &fixture.model,
+        &authority,
+        subject,
+        &state.scene,
+        Some(&schematic),
+        |_| true,
+    )
+    .unwrap();
+    state.schematic_scene = Some(schematic);
+    state.selection = SelectionTarget::Native(Box::new(view));
+    (fixture, state)
 }
