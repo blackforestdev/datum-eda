@@ -381,3 +381,32 @@ fn interaction_refresh_preserves_retained_and_static_scene_work() {
         grid_before
     );
 }
+
+#[test]
+fn explicit_local_overlap_inventory_exceeds_first_hit_budget_without_truncation() {
+    let state = schematic_workspace_state();
+    let mut retained = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
+    retained.world_hit_index = datum_gui_viewport::SpatialHitIndex::with_budget(
+        (0..5_000)
+            .map(|n| WorldHitRegion {
+                target: HitTarget::AuthoredObject(format!("mechanism-{n}")),
+                layer_id: None,
+                shape: WorldHitShape::Rect(datum_gui_protocol::RectNm {
+                    min_x: 0,
+                    min_y: 0,
+                    max_x: 10,
+                    max_y: 10,
+                }),
+            })
+            .collect(),
+        3,
+    )
+    .into();
+    let point = PointNm { x: 5, y: 5 };
+    let hits = retained.authored_overlap_world(point, &state, |_| true);
+    assert_eq!(hits.len(), 5_000);
+    assert_eq!(hits[0], HitTarget::AuthoredObject("mechanism-4999".into()));
+    assert_eq!(hits[4_999], HitTarget::AuthoredObject("mechanism-0".into()));
+    let eligible = retained.authored_overlap_world(point, &state, |t| t == &hits[4_999]);
+    assert_eq!(eligible, vec![hits[4_999].clone()]);
+}

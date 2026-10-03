@@ -218,6 +218,50 @@ impl RetainedScene {
         })
     }
 
+    /// Complete local overlap inventory over the shared AABB owner. Pointer's
+    /// first-hit candidate budget never truncates this explicit query.
+    pub fn authored_overlap_world(
+        &self,
+        point: PointNm,
+        state: &ReviewWorkspaceState,
+        eligible: impl Fn(&HitTarget) -> bool,
+    ) -> Vec<HitTarget> {
+        if !authored_visible(state) {
+            return Vec::new();
+        }
+        let mut cursor = self
+            .world_hit_index
+            .begin_region(datum_gui_protocol::RectNm {
+                min_x: point.x,
+                max_x: point.x,
+                min_y: point.y,
+                max_y: point.y,
+            });
+        let mut hits = Vec::new();
+        loop {
+            let step = self.world_hit_index.advance_region_records(
+                &mut cursor,
+                datum_gui_viewport::hit::DEFAULT_REGION_QUERY_BUDGET,
+                |order, region| {
+                    if eligible(&region.target)
+                        && region
+                            .layer_id
+                            .as_deref()
+                            .is_none_or(|l| layer_visible(state, l))
+                        && region.shape.contains(point)
+                    {
+                        hits.push((order, region.target.clone()));
+                    }
+                },
+            );
+            if step.complete {
+                break;
+            }
+        }
+        hits.sort_unstable_by_key(|(order, _)| std::cmp::Reverse(*order));
+        hits.into_iter().map(|(_, target)| target).collect()
+    }
+
     /// Schematic (non-board) world hit-test — no board filters. The schematic's
     /// layers are always visible (mirrors `all_world_ranges`, which renders every
     /// batch), so every emitted hit region is live. Same scan core as the board

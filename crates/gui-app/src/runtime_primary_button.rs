@@ -9,6 +9,9 @@ impl App {
             return;
         };
         runtime.selection_release_suppressed = false;
+        if runtime.marking_menu_active() {
+            return;
+        }
         if runtime.terminal_clipboard_menu_active() {
             return;
         }

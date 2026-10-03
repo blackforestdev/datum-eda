@@ -42,6 +42,29 @@ impl crate::Runtime {
             return false;
         };
         let lines = wheel.lines(20.0);
+        if self.marking_menu_active() {
+            if let Some(menu) = self
+                .session
+                .workspace_mut()
+                .ui
+                .marking_menu
+                .as_mut()
+                .and_then(|m| m.selection.as_mut())
+                .filter(|m| m.open)
+            {
+                let max = menu.items.len().saturating_sub(1);
+                let step = lines.abs().ceil() as usize;
+                menu.focus = if lines > 0.0 {
+                    menu.focus.saturating_sub(step)
+                } else {
+                    (menu.focus + step).min(max)
+                };
+                menu.scroll = menu.focus.saturating_sub(7);
+                self.invalidate_frame();
+                return true;
+            }
+            return false;
+        }
         if let Some(changed) = self.handle_selection_inspector_scroll(lines) {
             return changed;
         }

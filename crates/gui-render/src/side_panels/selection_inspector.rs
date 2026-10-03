@@ -1,6 +1,9 @@
 //! Shared complete selection Inspector; navigation never alters membership.
 use super::inspector_chrome::push_inspector_title_band;
 use super::*;
+use datum_gui_protocol::selection_view::inspector_state::{
+    ACQUISITION_CLASSES as CLASSES, class_label,
+};
 use datum_gui_protocol::{
     AuthoredSelectionClass as Class,
     selection_view::{InspectionValue, SelectionView, inspector_state::SelectionInspectorState},
@@ -249,48 +252,6 @@ pub(super) fn render(
         );
     }
     Ok(())
-}
-const CLASSES: [Class; 18] = [
-    Class::Footprint,
-    Class::Pad,
-    Class::Track,
-    Class::Via,
-    Class::Zone,
-    Class::BoardText,
-    Class::BoardGraphic,
-    Class::BoardOutline,
-    Class::Symbol,
-    Class::Pin,
-    Class::Wire,
-    Class::BusSection,
-    Class::Label,
-    Class::Port,
-    Class::Junction,
-    Class::NoConnect,
-    Class::SchematicText,
-    Class::SchematicGraphic,
-];
-fn class_label(class: Class) -> &'static str {
-    match class {
-        Class::Footprint => "Parts",
-        Class::Pad => "Pads",
-        Class::Track => "Tracks",
-        Class::Via => "Vias",
-        Class::Zone => "Zones",
-        Class::BoardText => "Board text",
-        Class::BoardGraphic => "Board graphics",
-        Class::BoardOutline => "Board outline",
-        Class::Symbol => "Symbols",
-        Class::Pin => "Pins",
-        Class::Wire => "Wires",
-        Class::BusSection => "Bus sections",
-        Class::Label => "Labels",
-        Class::Port => "Ports",
-        Class::Junction => "Junctions",
-        Class::NoConnect => "No-connects",
-        Class::SchematicText => "Schematic text",
-        Class::SchematicGraphic => "Schematic graphics",
-    }
 }
 
 #[cfg(test)]

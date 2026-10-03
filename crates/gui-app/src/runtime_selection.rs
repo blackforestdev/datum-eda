@@ -328,6 +328,12 @@ impl Runtime {
         true
     }
     pub(super) fn native_select_all(&mut self) -> bool {
+        self.native_select_all_on(
+            self.workspace().ui.layout.focused_content()
+                == datum_gui_protocol::PaneContent::Schematic,
+        )
+    }
+    pub(super) fn native_select_all_on(&mut self, schematic: bool) -> bool {
         self.cancel_native_selection_gesture();
         match self.ensure_selection_authority() {
             Ok(true) => {}
@@ -338,8 +344,6 @@ impl Runtime {
             }
         }
         let state = self.workspace();
-        let schematic =
-            state.ui.layout.focused_content() == datum_gui_protocol::PaneContent::Schematic;
         let authority = &self.native_selection.as_ref().unwrap().authority;
         let root_sheet = state.schematic_scene.as_ref().and_then(|s| {
             s.board_uuid

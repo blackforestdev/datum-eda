@@ -212,7 +212,14 @@ impl Runtime {
         // Zoom invalidates the prepared frame, but a closed menu has no nodes.
         // Avoid touching its inventory at all in this high-frequency path;
         // publishing the empty projection still clears nodes when a menu closes.
-        let nodes = if self.workspace().ui.active_menu.is_none() {
+        let nodes = if self.workspace().ui.active_menu.is_none()
+            && self
+                .workspace()
+                .ui
+                .marking_menu
+                .as_ref()
+                .is_none_or(|m| m.selection.is_none())
+        {
             Vec::new()
         } else {
             datum_gui_protocol::gui_menu_model::default_gui_menu_model()

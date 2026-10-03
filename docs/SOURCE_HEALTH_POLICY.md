@@ -399,3 +399,10 @@ legacy entry is removed; renderer root expanded debt ratchets to 4,812 lines.
 Inspector interaction/navigation and canonical aggregate compilation are normal
 modules. These structural changes do not close S5A, alter focus doctrine or
 change the rendering/resize owners.
+
+S5A-C03 finite Select integration moves the marking-shell assertions into their
+normal child and ratchets the renderer legacy test ceiling from840 to793 lines.
+Marking state and read-only native menu commands have normal owners; acquisition
+class labels/configuration are shared by Inspector and menu, not duplicated.
+The existing child-array preflight moves into one AT-SPI owner used by selection
+and menus. No budget, exception, source identity or mutation boundary changes.

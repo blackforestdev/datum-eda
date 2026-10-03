@@ -121,16 +121,15 @@ pub(super) fn dispatch(
     }
     let menu = node.role == MenuAccessibleRole::Menu;
     match member {
-        "GetChildren" => Ok((
-            "a(so)",
-            object_array_body(
-                &state.bus_name,
-                &children(&state.menus, &node.id)
+        "GetChildren" => super::child_array::reply(state, call, || {
+            Box::new(
+                state
+                    .menus
                     .iter()
-                    .map(|node| path(&node.id))
-                    .collect::<Vec<_>>(),
-            ),
-        )),
+                    .filter(|child| child.parent.as_deref() == Some(node.id.as_str()))
+                    .map(|child| path(&child.id)),
+            )
+        }),
         "GetChildAtIndex" => {
             let index = usize::try_from(call.body_reader().i32().map_err(|_| invalid_args())?)
                 .map_err(|_| invalid_args())?;

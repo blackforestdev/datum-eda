@@ -321,6 +321,20 @@ fn native_binding_failure_is_not_empty_membership_or_deletion() {
         good.members(&subject).unwrap(),
         BTreeSet::from([identity(Class::Track, 1, &[])])
     );
+    let origin = identity(Class::Track, 1, &[]);
+    let menu = datum_gui_protocol::selection_menu::SelectionMenu::capture(
+        &good,
+        vec![(origin.clone(), origin)],
+        datum_gui_protocol::PointNm { x: 5, y: 0 },
+        datum_gui_protocol::load_fixture_workspace_state()
+            .ui
+            .filters,
+    );
+    assert!(menu.items[2].unavailable.is_none());
+    assert_eq!(
+        datum_gui_protocol::selection_menu::resolve(&good, &menu.items[2].command).unwrap(),
+        Some(subject.clone())
+    );
     let mut relation = f.model.electrical_identities[&id(801)].clone();
     if let ElectricalIdentity::NetRelationship { intent, .. } = &mut relation.identity {
         *intent = NetRelationshipIntent::Pending;

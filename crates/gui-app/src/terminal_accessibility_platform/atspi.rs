@@ -9,6 +9,7 @@ use super::body::BodyWriter;
 use super::connection::object_reference_body;
 use super::dbus::{Message, MessageType};
 
+mod child_array;
 mod dispatch_error;
 mod introspection;
 mod menus;

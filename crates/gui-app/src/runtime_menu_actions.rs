@@ -115,6 +115,13 @@ impl Runtime {
                 self.refresh_dialog_state();
                 true
             }
+            HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT" => {
+                self.open_native_select_list()
+            }
+            HitTarget::MarkingMenuItem { slot, .. } if slot.starts_with("SELECT:") => slot
+                .strip_prefix("SELECT:")
+                .and_then(|s| s.parse().ok())
+                .is_some_and(|index| self.activate_native_select_item(index)),
             HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),
             _ => return None,
         };
@@ -122,6 +129,9 @@ impl Runtime {
     }
 
     pub(super) fn handle_menu_key(&mut self, event: &KeyEvent) -> bool {
+        if self.handle_marking_selection_key(event) {
+            return true;
+        }
         let Some(active_menu) = self.workspace().ui.active_menu.clone() else {
             return false;
         };

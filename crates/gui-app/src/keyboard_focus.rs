@@ -396,6 +396,20 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         }
         return true;
     }
+    if workspace_action_pressed
+        && (matches!(event.logical_key, Key::Named(NamedKey::ContextMenu))
+            || (matches!(event.logical_key, Key::Named(NamedKey::F10))
+                && app
+                    .runtime
+                    .as_ref()
+                    .is_some_and(|r| r.modifiers.shift_key())))
+    {
+        if let Some(runtime) = &mut app.runtime {
+            runtime.open_marking_menu_for_keyboard();
+        }
+        app.request_redraw_if_needed();
+        return true;
+    }
     // Pane focus cycling (decision 021): Tab -> next leaf, Shift+Tab ->
     // previous leaf, when the dock does not own the keyboard. Reuses the
     // FEEL warm-camera focus swap; workspace view state, never journaled.

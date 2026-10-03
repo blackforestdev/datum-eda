@@ -42,6 +42,15 @@ impl<T> SpatialHitIndex<T> {
         budget: usize,
         mut candidate: impl FnMut(&T),
     ) -> RegionQueryStep {
+        self.advance_region_records(cursor, budget, |_, region| candidate(&region.target))
+    }
+    /// Record-aware traversal for complete local overlap menus.
+    pub fn advance_region_records(
+        &self,
+        cursor: &mut RegionQueryCursor,
+        budget: usize,
+        mut candidate: impl FnMut(usize, &HitRegion<T>),
+    ) -> RegionQueryStep {
         let mut work = 0;
         while work < budget {
             let Some(visit) = cursor.stack.pop() else {
@@ -79,7 +88,7 @@ impl<T> SpatialHitIndex<T> {
                         .is_some_and(|bounds| intersects(bounds, cursor.bounds))
                     {
                         cursor.examined += 1;
-                        candidate(&region.target);
+                        candidate(self.order[next], region);
                     }
                 }
             }

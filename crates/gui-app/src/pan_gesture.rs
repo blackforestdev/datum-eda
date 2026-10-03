@@ -88,7 +88,21 @@ impl Runtime {
                 self.pan_gesture.cancel();
                 self.open_marking_menu_at_cursor()
             }
-            ElementState::Released => self.dismiss_marking_menu(),
+            ElementState::Released => {
+                // A native read-only menu remains available for ordinary pointer
+                // and keyboard use after a click. No right-button pan fallback.
+                if self
+                    .workspace()
+                    .ui
+                    .marking_menu
+                    .as_ref()
+                    .is_some_and(|m| m.selection.is_some())
+                {
+                    true
+                } else {
+                    self.dismiss_marking_menu()
+                }
+            }
         }
     }
 }

@@ -25,6 +25,43 @@ pub fn menu_accessibility_nodes(
     model: &GuiMenuModel,
     state: &ReviewWorkspaceState,
 ) -> Vec<MenuAccessibleNode> {
+    if let Some(menu) = state
+        .ui
+        .marking_menu
+        .as_ref()
+        .and_then(|m| m.selection.as_ref())
+    {
+        let root = format!("menu:native-select:{}", menu.project);
+        let mut nodes = vec![menu_node(root.clone(), None, "Select")];
+        if menu.open {
+            for (i, item) in menu.items.iter().enumerate() {
+                nodes.push(MenuAccessibleNode {
+                    id: format!("{root}/{:?}", item.command),
+                    parent: Some(root.clone()),
+                    name: item.label.clone(),
+                    role: MenuAccessibleRole::MenuItem,
+                    key: Some("Arrow keys, Enter".into()),
+                    description: item.unavailable.clone().unwrap_or_else(|| {
+                        "Read-only selection; complete source membership".into()
+                    }),
+                    available: item.unavailable.is_none(),
+                    focused: state.ui.focus == ApplicationFocus::Overlay && menu.focus == i,
+                });
+            }
+        } else {
+            nodes.push(MenuAccessibleNode {
+                id: format!("{root}/open"),
+                parent: Some(root.clone()),
+                name: "Select".into(),
+                role: MenuAccessibleRole::MenuItem,
+                key: Some("S".into()),
+                description: "Open read-only Select menu".into(),
+                available: true,
+                focused: state.ui.focus == ApplicationFocus::Overlay,
+            });
+        }
+        return nodes;
+    }
     let Some(active) = state.ui.active_menu.as_deref() else {
         return Vec::new();
     };

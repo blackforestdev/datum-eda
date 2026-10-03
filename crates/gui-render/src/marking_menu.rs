@@ -9,6 +9,8 @@ static MARKING_MENU_MODEL: OnceLock<Result<datum_gui_protocol::GuiMenuModel, Str
     OnceLock::new();
 static MARKING_ICON_SET: OnceLock<Result<GuiIconSet, String>> = OnceLock::new();
 
+mod selection_list;
+
 const MARKING_RADIUS: f32 = 86.0;
 const MARKING_LABEL_WIDTH: f32 = 118.0;
 const MARKING_LABEL_HEIGHT: f32 = 30.0;
@@ -51,7 +53,16 @@ fn render_preview(
             return;
         }
     };
-    let Some(menu) = model.marking_menus.get(&preview.menu_key) else {
+    if preview.selection.as_ref().is_some_and(|m| m.open) {
+        selection_list::render(preview, layout, panel_quads, text_runs, hit_regions);
+        return;
+    }
+    let schematic = GuiMarkingMenu::default();
+    let Some(menu) = model
+        .marking_menus
+        .get(&preview.menu_key)
+        .or_else(|| (preview.menu_key == "schematic.selection").then_some(&schematic))
+    else {
         draw_marking_error(
             preview,
             layout,
@@ -131,7 +142,15 @@ fn render_slots(
             rect,
         });
     }
-    if !menu.overflow.is_empty() {
+    if preview.selection.is_some() {
+        selection_list::entry(
+            preview,
+            slot_rect(anchor, "MORE", bounds),
+            panel_quads,
+            text_runs,
+            hit_regions,
+        );
+    } else if !menu.overflow.is_empty() {
         let rect = slot_rect(anchor, "MORE", bounds);
         panel_quads.push(Quad::from_rect(rect, PANEL_BG));
         push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
@@ -197,7 +216,11 @@ fn draw_marking_center(
         text_runs,
     );
     draw_text(
-        &preview.menu_key,
+        if preview.menu_key == "schematic.selection" {
+            "Schematic"
+        } else {
+            &preview.menu_key
+        },
         anchor.0 - 54.0,
         anchor.1 + MARKING_RADIUS + 46.0,
         design_tokens::typography::CAPTION_SIZE,
@@ -347,6 +370,7 @@ mod tests {
                     preview_slot: Some("N".into()),
                     gesture_dx_px: 90,
                     gesture_dy_px: -72,
+                    selection: None,
                 });
                 let mut quads = Vec::new();
                 let mut text = Vec::new();

@@ -59,7 +59,14 @@ impl Runtime {
     }
 
     pub(super) fn handle_primary_click(&mut self) -> bool {
-        if self.dismiss_marking_menu() {
+        if self.marking_menu_active() {
+            if let Some((x, y)) = self.last_cursor_pos
+                && let Some(target @ HitTarget::MarkingMenuItem { .. }) =
+                    self.presented_hits.hit_test(x, y).cloned()
+            {
+                return self.select_hit_target(&target);
+            }
+            self.dismiss_marking_menu();
             return true;
         }
         let Some((x, y)) = self.last_cursor_pos else {

@@ -486,62 +486,6 @@ impl Runtime {
             .is_some_and(|route| route.viewport.contains(pos.0, pos.1))
     }
 
-    /// Open the radial marking menu at the cursor (right-click). A board-scene
-    /// affordance today; the schematic context menu is S7, so a schematic-pane or
-    /// out-of-pane point returns false (S3 only makes the schematic point
-    /// resolvable, via `world_point_at_screen` / `schematic_world_hit`).
-    pub(super) fn open_marking_menu_at_cursor(&mut self) -> bool {
-        let Some((x, y)) = self.last_cursor_pos else {
-            return false;
-        };
-        if self.cursor_in_dock() {
-            return false;
-        }
-        let world_point = {
-            let Some(prepared) = self.prepared_scene() else {
-                return false;
-            };
-            prepared.world_point_at_screen(x, y)
-        };
-        let Some((world_point, SceneSurface::Board)) = world_point else {
-            return false;
-        };
-        let retained_target = {
-            if !self.ensure_retained_scene() {
-                return false;
-            }
-            let retained = self
-                .renderer
-                .render_session()
-                .board()
-                .expect("retained scene initialized");
-            retained
-                .hit_test_authored_world(world_point, self.session.workspace())
-                .cloned()
-        };
-        let target_object_id = match retained_target {
-            Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id),
-            _ => None,
-        };
-        let menu_key = marking_menu_key_for_target(target_object_id.as_deref());
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.active_menu = None;
-        ui.marking_menu = Some(MarkingMenuState {
-            menu_key,
-            target_object_id,
-            anchor_x_px: x.round() as i32,
-            anchor_y_px: y.round() as i32,
-            preview_slot: None,
-            gesture_dx_px: 0,
-            gesture_dy_px: 0,
-        });
-        // TF-01: while open, the marking menu is a transient Overlay keyboard
-        // owner; `dismiss_marking_menu` restores Editor ownership.
-        self.set_application_focus(datum_gui_protocol::ApplicationFocus::Overlay);
-        self.invalidate_frame();
-        true
-    }
-
     /// S3/UVT-004: resolve a primary click that `world_point_at_screen` reported on
     /// the SCHEMATIC surface. It hit-tests the schematic symbol regions in the
     /// schematic camera's space and acquires its source-qualified identity through

@@ -2274,3 +2274,28 @@ normal child to preserve existing source-health limits. Bounds/layer/net coverag
 finite Select menus, keyboard, dense visual and native proof remain pending;
 this unit does not complete U3 or C03. Graphics, C05/C06, deferred editors and
 CAM/T04 remain unchanged; available implementation continues.
+
+### S5A-C03 finite read-only Select and keyboard integration (partial)
+
+Existing marking-menu ownership exposes source-bound Object, Run, Global Net/
+Bus and All leaves on board/current schematic, plus complete local overlap
+choices. The shared AABB query supplies the uncapped list independently of
+pointer's first-hit budget. Engine query failures are unavailable with exact
+source disclosure; stale/deleted command identities refuse. Project, revision,
+scene and acquisition eligibility bind invocation. All uses the originating
+surface. Inspector scopes, complete inventory and acquisition-only filters
+reuse the existing Inspector actions; their prior subject binds invocation.
+Context-menu/Shift+F10 routes under Editor keyboard ownership, then existing
+Overlay owns arrow/Home/End/Enter/Escape navigation; no PTY or pane-Tab override.
+Pointer release leaves the native menu available; outside click cancels without
+click-through. Complete accessibility nodes use the same leaves, and complete
+child-array replies share the existing exact D-Bus size preflight.
+
+Focused producer proof: five native source/command tests, ten shared overlap/
+coordinate tests, three menu clipping/shell tests, seventeen accessibility tests,
+one keyboard test and two region-index regressions passed (38 distinct).
+Logs: `target/s5a-c03-select-menu-*-proof.log`. Complete native interaction/AT/
+visual and dense proof remains C04; general context-menu authoring remains S7.
+Full aggregate coverage, artifact integration and U4/U5 continue within C03.
+Graphics positive cases, C05/C06, deferred editors, undecided latency and CAM/T04
+are unchanged; this unit is not complete S5A implementation or acceptance.
