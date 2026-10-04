@@ -45,6 +45,8 @@ impl PreparedSourceIdentities {
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct GeometryAdmissionCounts {
     pub retained_vertices: usize,
+    pub retained_glyph_vertices: usize,
+    pub prepared_glyph_vertices: u64,
     pub retained_stroke_instances: usize,
     pub prepared_commands: usize,
     pub prepared_vertices: u64,
@@ -54,6 +56,7 @@ pub struct GeometryAdmissionCounts {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum GeometryAdmissionRange {
     Vertices(std::ops::Range<u32>),
+    GlyphVertices(std::ops::Range<u32>),
     StrokeInstances(std::ops::Range<u32>),
 }
 #[derive(Clone, Copy)]
@@ -71,6 +74,9 @@ impl PreparedGeometryAdmission<'_> {
             RetainedDrawCommand::Quads { range, .. } => {
                 GeometryAdmissionRange::Vertices(range.clone())
             }
+            RetainedDrawCommand::Glyphs { range, .. } => {
+                GeometryAdmissionRange::GlyphVertices(range.clone())
+            }
             RetainedDrawCommand::Strokes { range, .. } => {
                 GeometryAdmissionRange::StrokeInstances(range.clone())
             }
@@ -84,15 +90,19 @@ impl PreparedGeometryAdmission<'_> {
             .ok_or_else(|| anyhow::anyhow!("missing retained scene for prepared pane"))?;
         let mut counts = GeometryAdmissionCounts {
             retained_vertices: retained.world_vertices.len(),
+            retained_glyph_vertices: retained.glyph.points.len(),
             retained_stroke_instances: retained.world_strokes.len(),
             prepared_commands: self.commands.len(),
             ..Default::default()
         };
         for command in self.ranges() {
-            let (range, capacity, strokes) = match command {
-                GeometryAdmissionRange::Vertices(r) => (r, counts.retained_vertices, false),
+            let (range, capacity, strokes, glyphs) = match command {
+                GeometryAdmissionRange::Vertices(r) => (r, counts.retained_vertices, false, false),
+                GeometryAdmissionRange::GlyphVertices(r) => {
+                    (r, counts.retained_glyph_vertices, false, true)
+                }
                 GeometryAdmissionRange::StrokeInstances(r) => {
-                    (r, counts.retained_stroke_instances, true)
+                    (r, counts.retained_stroke_instances, true, false)
                 }
             };
             anyhow::ensure!(
@@ -110,6 +120,12 @@ impl PreparedGeometryAdmission<'_> {
                     .checked_add(n * 2)
                     .ok_or_else(|| anyhow::anyhow!("triangle count overflow"))?;
             } else {
+                if glyphs {
+                    counts.prepared_glyph_vertices = counts
+                        .prepared_glyph_vertices
+                        .checked_add(n)
+                        .ok_or_else(|| anyhow::anyhow!("glyph count overflow"))?;
+                }
                 counts.prepared_vertices = counts
                     .prepared_vertices
                     .checked_add(n)

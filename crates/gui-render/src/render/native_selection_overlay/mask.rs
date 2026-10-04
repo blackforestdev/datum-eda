@@ -292,6 +292,7 @@ pub struct PaintRange {
     pub surface: SceneSurface,
     pub range: std::ops::Range<usize>,
     pub stroke: bool,
+    pub glyph: bool,
     /// Disposable visual group, never an authored identity or acquisition token.
     pub group: u32,
 }
@@ -327,12 +328,15 @@ impl PreparedScene {
                 };
                 presentation.into_iter().flat_map(move |presentation| {
                     commands.iter().flat_map(move |command| {
-                        let (stroke, range, spans) = match command {
+                        let (stroke, glyph, range, spans) = match command {
                             RetainedDrawCommand::Quads { range, .. } => {
-                                (false, range, &presentation.quads)
+                                (false, false, range, &presentation.quads)
+                            }
+                            RetainedDrawCommand::Glyphs { range, .. } => {
+                                (false, true, range, &presentation.glyphs)
                             }
                             RetainedDrawCommand::Strokes { range, .. } => {
-                                (true, range, &presentation.strokes)
+                                (true, false, range, &presentation.strokes)
                             }
                         };
                         let start = range.start as usize;
@@ -348,6 +352,7 @@ impl PreparedScene {
                                     surface: *surface,
                                     range: span.range.start.max(start)..span.range.end.min(end),
                                     stroke,
+                                    glyph,
                                     group,
                                 })
                             })

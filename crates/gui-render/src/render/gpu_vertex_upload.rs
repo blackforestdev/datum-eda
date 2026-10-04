@@ -38,6 +38,14 @@ pub(super) use screen_streams;
 
 macro_rules! world_streams {
     ($this:ident, $stream:ident, $action:expr $(, $mutability:ident)?) => {{
+        let $stream = & $($mutability)? $this.world_glyph_points_gpu;
+        $action;
+        let $stream = & $($mutability)? $this.world_glyph_materials_gpu;
+        $action;
+        let $stream = & $($mutability)? $this.schematic_glyph_points_gpu;
+        $action;
+        let $stream = & $($mutability)? $this.schematic_glyph_materials_gpu;
+        $action;
         let $stream = & $($mutability)? $this.world_vertices_gpu;
         $action;
         let $stream = & $($mutability)? $this.world_strokes_gpu;
@@ -144,6 +152,8 @@ impl Renderer {
         } else {
             self.world_vertices_gpu.clear();
             self.world_strokes_gpu.clear();
+            self.world_glyph_points_gpu.clear();
+            self.world_glyph_materials_gpu.clear();
         }
         if let Some(scene) = schematic_world {
             self.schematic_world_vertices_gpu.sync(
@@ -155,6 +165,8 @@ impl Renderer {
         } else {
             self.schematic_world_vertices_gpu.clear();
             self.schematic_world_strokes_gpu.clear();
+            self.schematic_glyph_points_gpu.clear();
+            self.schematic_glyph_materials_gpu.clear();
         }
         self.schematic_overlay_gpu.sync(
             device,

@@ -45,6 +45,10 @@ fn native_selection_is_immediate_and_retained_authored_bytes_and_resize_eligibil
     state.selection = SelectionTarget::None;
     let baseline = RetainedScene::from_workspace(&state, 1600, 1000);
     assert_eq!(
+        selected.glyph, baseline.glyph,
+        "selection cannot rewrite exact glyph material or positions"
+    );
+    assert_eq!(
         bytemuck::cast_slice::<Vertex, u8>(selected.world_vertices()),
         bytemuck::cast_slice::<Vertex, u8>(baseline.world_vertices())
     );

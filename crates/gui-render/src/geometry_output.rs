@@ -7,6 +7,9 @@ pub(crate) trait Output<T>: DerefMut<Target = [T]> + Extend<T> {
     fn source(&mut self, _key: Option<&str>, _role: Role) {}
     fn role(&mut self, _role: Role) {}
     fn reserve(&mut self, additional: usize);
+    fn reserve_exact(&mut self, additional: usize) {
+        self.reserve(additional);
+    }
     fn admit_temporary(&mut self, _bytes: usize) -> bool {
         true
     }
@@ -193,6 +196,26 @@ impl<T, F: FnMut(usize) -> anyhow::Result<()>> Output<T> for Admitted<T, F> {
         if self.failure.is_none() {
             self.failure = self.grow(additional).err();
         }
+    }
+    fn reserve_exact(&mut self, additional: usize) {
+        if self.failure.is_some() {
+            return;
+        }
+        let result = (|| -> anyhow::Result<()> {
+            let capacity = self
+                .values
+                .len()
+                .checked_add(additional)
+                .ok_or_else(|| anyhow::anyhow!("geometry output length overflow"))?;
+            if capacity > self.values.capacity() {
+                (self.admit)(crate::cpu_alloc::heap::allocation_bytes(
+                    std::alloc::Layout::array::<T>(capacity)?,
+                ))?;
+                self.values.try_reserve_exact(additional)?;
+            }
+            Ok(())
+        })();
+        self.failure = result.err();
     }
     fn push(&mut self, value: T) {
         self.reserve(1);

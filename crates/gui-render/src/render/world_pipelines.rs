@@ -4,6 +4,7 @@
 use super::*;
 
 pub(super) struct WorldPipelines {
+    pub(super) glyphs: wgpu::RenderPipeline,
     pub(super) quads: wgpu::RenderPipeline,
     pub(super) strokes: wgpu::RenderPipeline,
 }
@@ -88,38 +89,49 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 bind_group_layouts: &[scene_bind_group_layout],
                 immediate_size: 0,
             });
-        let world_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("datum-gui-render-world-pipeline"),
-            layout: Some(&world_pipeline_layout),
-            vertex: wgpu::VertexState {
-                module: &world_shader,
-                entry_point: Some("vs_main"),
-                buffers: &[Vertex::layout()],
-                compilation_options: Default::default(),
-            },
-            fragment: Some(wgpu::FragmentState {
-                module: &world_shader,
-                entry_point: Some("fs_main"),
-                targets: &[Some(wgpu::ColorTargetState {
-                    format,
-                    blend: Some(wgpu::BlendState::REPLACE),
-                    write_mask: wgpu::ColorWrites::ALL,
-                })],
-                compilation_options: Default::default(),
-            }),
-            primitive: wgpu::PrimitiveState::default(),
-            depth_stencil: None,
-            multisample: wgpu::MultisampleState {
-                count: msaa_samples,
-                mask: !0,
-                alpha_to_coverage_enabled: false,
-            },
-            multiview_mask: None,
-            cache: None,
-        });
+        let build = |buffers: &[wgpu::VertexBufferLayout<'_>], label| {
+            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: Some(label),
+                layout: Some(&world_pipeline_layout),
+                vertex: wgpu::VertexState {
+                    module: &world_shader,
+                    entry_point: Some("vs_main"),
+                    buffers,
+                    compilation_options: Default::default(),
+                },
+                fragment: Some(wgpu::FragmentState {
+                    module: &world_shader,
+                    entry_point: Some("fs_main"),
+                    targets: &[Some(wgpu::ColorTargetState {
+                        format,
+                        blend: Some(wgpu::BlendState::REPLACE),
+                        write_mask: wgpu::ColorWrites::ALL,
+                    })],
+                    compilation_options: Default::default(),
+                }),
+                primitive: wgpu::PrimitiveState::default(),
+                depth_stencil: None,
+                multisample: wgpu::MultisampleState {
+                    count: msaa_samples,
+                    mask: !0,
+                    alpha_to_coverage_enabled: false,
+                },
+                multiview_mask: None,
+                cache: None,
+            })
+        };
+        let world_pipeline = build(&[Vertex::layout()], "datum-world-quads");
+        let glyphs = build(
+            &[
+                retained_glyph::Point::layout(),
+                retained_glyph::Material::layout(),
+            ],
+            "datum-world-glyphs",
+        );
         let world_stroke_pipeline =
             create_world_stroke_pipeline(device, &world_pipeline_layout, format, msaa_samples);
         Self {
+            glyphs,
             quads: world_pipeline,
             strokes: world_stroke_pipeline,
         }

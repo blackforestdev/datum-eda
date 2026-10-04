@@ -74,6 +74,10 @@ impl RetainedScene {
                 )
             })
             .track_sources();
+            let retained_glyph::Builders {
+                points: mut glyph_points,
+                materials: mut glyph_materials,
+            } = retained_glyph::builders(&budget, &scope, limit);
             let mut draw_commands = crate::geometry_output::Admitted::new(|bytes| {
                 retained_scene_owner::document_cpu::admit_constructor_allocation(
                     &budget,
@@ -92,8 +96,10 @@ impl RetainedScene {
                 &reference_projection,
                 state,
             );
-            push_retained_board_text_geometry_batches(
+            retained_glyph::push(
                 &mut world_quads,
+                &mut glyph_points,
+                &mut glyph_materials,
                 &mut draw_commands,
                 schematic_scene,
                 &reference_projection,
@@ -110,6 +116,9 @@ impl RetainedScene {
             let (world_quads, quad_sources) = world_quads.finish_with_sources()?;
             let (world_strokes, stroke_sources) = world_strokes.finish_with_sources()?;
             let mut draw_commands = draw_commands.finish()?;
+            let (glyph_points, glyph_sources) = glyph_points.finish_with_sources()?;
+            let glyph_materials = glyph_materials.finish()?;
+
             scene_retained_access::sort_retained_draw_commands(
                 &mut draw_commands,
                 &schematic_scene.layers,
@@ -161,6 +170,7 @@ impl RetainedScene {
             })?;
             let presentation = std::sync::Arc::new(crate::presentation_ranges::Presentation {
                 source: Some(source),
+                glyphs: glyph_sources,
                 quads: quad_sources,
                 strokes: stroke_sources,
             });
@@ -180,6 +190,15 @@ impl RetainedScene {
                 })?;
             let world_hit_index =
                 Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
+            retained_glyph::Geometry::admit(&glyph_points, &glyph_materials, |bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "glyph owners",
+                )
+            })?;
             Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
             Ok(Some(
                 Self {
@@ -188,6 +207,11 @@ impl RetainedScene {
                     ),
                     hover_membership: Default::default(),
                     presentation,
+                    glyph: retained_glyph::Geometry::from_document(
+                        glyph_points,
+                        glyph_materials,
+                        &schematic_scene.scene_id,
+                    ),
                     world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
                         world_vertices,
                         &schematic_scene.scene_id,

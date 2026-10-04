@@ -3,6 +3,7 @@ use super::*;
 pub(super) struct Pipelines {
     pub table_layout: wgpu::BindGroupLayout,
     pub image_layout: wgpu::BindGroupLayout,
+    pub mask_glyph: wgpu::RenderPipeline,
     pub mask_quad: wgpu::RenderPipeline,
     pub mask_stroke: wgpu::RenderPipeline,
     pub lift: wgpu::RenderPipeline,
@@ -144,6 +145,18 @@ impl Pipelines {
             })
         };
         Self {
+            mask_glyph: build(
+                &mask_layout,
+                &world,
+                "vs_glyph",
+                "fs_mask",
+                &[
+                    retained_glyph::Point::layout(),
+                    retained_glyph::Material::layout(),
+                ],
+                format.remove_srgb_suffix(),
+                None,
+            ),
             mask_quad: build(
                 &mask_layout,
                 &world,

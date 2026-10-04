@@ -7,6 +7,7 @@ impl RetainedScene {
     /// An owned dialog has no world-space geometry or spatial hit index.
     pub fn empty() -> Self {
         Self {
+            glyph: Default::default(),
             surface_size_independent: true,
             hover_membership: Default::default(),
             presentation: Default::default(),

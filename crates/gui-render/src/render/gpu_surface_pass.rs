@@ -142,9 +142,10 @@ fn set_scissor(
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum DrawKind {
+pub(crate) enum DrawKind {
     Quads,
     Strokes,
+    Glyphs(u32),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -157,6 +158,12 @@ fn command_batch(command: &RetainedDrawCommand) -> DrawBatch {
     match command {
         RetainedDrawCommand::Quads { range, .. } => DrawBatch {
             kind: DrawKind::Quads,
+            range: range.clone(),
+        },
+        RetainedDrawCommand::Glyphs {
+            range, material, ..
+        } => DrawBatch {
+            kind: DrawKind::Glyphs(*material),
             range: range.clone(),
         },
         RetainedDrawCommand::Strokes { range, .. } => DrawBatch {
@@ -187,7 +194,7 @@ fn draw_batches(commands: &[RetainedDrawCommand]) -> impl Iterator<Item = DrawBa
             }
             // Each draw starts a fresh triangle list. Joining incomplete lists
             // could create a triangle that neither original draw emitted.
-            if batch.kind == DrawKind::Quads
+            if batch.kind != DrawKind::Strokes
                 && (!(batch.range.end - batch.range.start).is_multiple_of(3)
                     || !(next.range.end - next.range.start).is_multiple_of(3))
             {

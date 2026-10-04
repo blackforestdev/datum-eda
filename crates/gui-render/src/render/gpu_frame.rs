@@ -167,10 +167,34 @@ impl Renderer {
             &self.surface_grids.vertices,
         )?;
         if world_vertices.is_some() {
+            self.world_glyph_points_gpu.sync(
+                device,
+                queue,
+                "datum-world-glyph-points",
+                &retained.glyph.points,
+            )?;
+            self.world_glyph_materials_gpu.sync(
+                device,
+                queue,
+                "datum-world-glyph-materials",
+                &retained.glyph.materials,
+            )?;
             self.world_strokes_gpu
                 .sync(device, queue, "datum-world-strokes", world_strokes)?;
         }
         if let Some(scene) = schematic_pass {
+            self.schematic_glyph_points_gpu.sync(
+                device,
+                queue,
+                "datum-schematic-glyph-points",
+                &scene.glyph.points,
+            )?;
+            self.schematic_glyph_materials_gpu.sync(
+                device,
+                queue,
+                "datum-schematic-glyph-materials",
+                &scene.glyph.materials,
+            )?;
             self.schematic_world_strokes_gpu.sync(
                 device,
                 queue,

@@ -1,7 +1,7 @@
 //! Disposable mask resources under the existing screen/staging/attachment owners.
 //! Tables index retained painter spans, never authored objects or acquisition.
 use super::*;
-use crate::presentation_ranges::{Presentation, Role};
+use crate::presentation_ranges::Role;
 use crate::text_gpu::{budget::Budget, staging_vec::StagingVec};
 use std::sync::Arc;
 #[path = "selection_mask_painter.rs"]
@@ -110,7 +110,8 @@ impl Owner {
                             HEADER_ROWS
                                 + 15
                                 + retained.presentation.quads.len()
-                                + retained.presentation.strokes.len(),
+                                + retained.presentation.strokes.len()
+                                + retained.presentation.glyphs.len(),
                         )
                         .ok_or_else(|| anyhow::anyhow!("mask table overflow"))?;
                 }
@@ -170,11 +171,14 @@ impl Owner {
                 self.table.push([
                     crate::dim_policy::CONTEXT_FLOOR.to_bits(),
                     crate::dim_policy::CONTEXT_MIX.to_bits(),
-                    0,
-                    0,
+                    u32::try_from(presentation.glyphs.len())?,
+                    u32::try_from(
+                        presentation.quads.len() + presentation.strokes.len() + HEADER_ROWS,
+                    )?,
                 ]);
-                append_spans(&mut self.table, presentation, request, false)?;
-                append_spans(&mut self.table, presentation, request, true)?;
+                append_spans(&mut self.table, &presentation.quads, request)?;
+                append_spans(&mut self.table, &presentation.strokes, request)?;
+                append_spans(&mut self.table, &presentation.glyphs, request)?;
                 // Temporary offsets occupy admitted binding slots until the GPU
                 // buffer is ready. No partial binding is published on refusal.
                 self.bindings.push(None);
@@ -240,7 +244,8 @@ impl Owner {
                 begin = begin.div_ceil(16) * 16;
                 let entries = HEADER_ROWS
                     + retained.presentation.quads.len()
-                    + retained.presentation.strokes.len();
+                    + retained.presentation.strokes.len()
+                    + retained.presentation.glyphs.len();
                 let resource = || {
                     wgpu::BindingResource::Buffer(wgpu::BufferBinding {
                         buffer,
@@ -301,15 +306,10 @@ impl Owner {
 }
 fn append_spans(
     table: &mut StagingVec<[u32; 4]>,
-    presentation: &Presentation,
+    spans: &[crate::presentation_ranges::Span],
     request: &crate::native_selection_overlay::mask::Request,
-    stroke: bool,
 ) -> anyhow::Result<()> {
-    for span in if stroke {
-        &presentation.strokes
-    } else {
-        &presentation.quads
-    } {
+    for span in spans {
         let label = if span.role == Role::Void {
             u32::MAX
         } else {

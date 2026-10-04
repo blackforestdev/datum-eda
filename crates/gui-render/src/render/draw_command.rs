@@ -6,6 +6,11 @@ pub(crate) enum RetainedDrawCommand {
         layer_id: Option<String>,
         range: Range<u32>,
     },
+    Glyphs {
+        layer_id: Option<String>,
+        range: Range<u32>,
+        material: u32,
+    },
     Strokes {
         layer_id: Option<String>,
         range: Range<u32>,

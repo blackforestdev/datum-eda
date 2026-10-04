@@ -1,9 +1,9 @@
 //! Actual canonical schematic glyph/point material through the shared mask owner.
 use super::*;
-use crate::SceneSurface;
 use crate::native_selection_overlay::tests::{
     selected_points_state, selected_schematic_text_state,
 };
+use crate::{RetainedDrawCommand, SceneSurface};
 fn prepare_schematic(
     state: &ReviewWorkspaceState,
 ) -> (RetainedScene, RetainedScene, PreparedScene) {
@@ -22,10 +22,15 @@ fn prepare_schematic(
     let mut camera = CameraState::fit_to_bounds(&source.bounds);
     let mut lo = [f32::INFINITY; 2];
     let mut hi = [f32::NEG_INFINITY; 2];
-    for v in schematic.world_vertices() {
+    for pos in schematic
+        .world_vertices()
+        .iter()
+        .map(|v| v.pos)
+        .chain(schematic.glyph.points.iter().map(|v| v.pos))
+    {
         for axis in 0..2 {
-            lo[axis] = lo[axis].min(v.pos[axis]);
-            hi[axis] = hi[axis].max(v.pos[axis]);
+            lo[axis] = lo[axis].min(pos[axis]);
+            hi[axis] = hi[axis].max(pos[axis]);
         }
     }
     let viewport = prepared
@@ -91,9 +96,12 @@ fn native_schematic_mask_treats_actual_glyph_and_point_without_layout_boxes_or_w
             .selected_paint_ranges(&board, Some(&schematic))
             .find(|r| r.surface == SceneSurface::Schematic && !r.stroke && !r.range.is_empty())
             .unwrap_or_else(|| panic!("positive actual selected silhouette: text={text}, masks={:?}, presentation={:?}, vertices={}, strokes={}", prepared.selection_masks, schematic.presentation, schematic.world_vertices().len(), schematic.world_strokes().len()));
-        let color = schematic.world_vertices()[material.range.start]
-            .color
-            .map(|v| (v * 255.0).round() as u8);
+        let color = if material.glyph {
+            glyph_color(&schematic, material.range.start)
+        } else {
+            schematic.world_vertices()[material.range.start].color
+        }
+        .map(|v| (v * 255.0).round() as u8);
         let viewport = prepared
             .surface_passes()
             .iter()
@@ -210,6 +218,29 @@ fn native_related_context_preserves_parent_and_selection_while_dimming_only_fore
             witnesses.push((role, p, triangle[0].color));
         }
     }
+    for span in &schematic.presentation.glyphs {
+        let role = request.material_role(span);
+        if role > 2 {
+            continue;
+        }
+        for (ordinal, triangle) in schematic.glyph.points[span.range.clone()]
+            .as_chunks::<3>()
+            .0
+            .iter()
+            .enumerate()
+        {
+            let center = triangle.map(|v| v.pos);
+            let p = projection.project_point(datum_gui_protocol::PointNm {
+                x: ((center[0][0] + center[1][0] + center[2][0]) / 3.).round() as i64,
+                y: ((center[0][1] + center[1][1] + center[2][1]) / 3.).round() as i64,
+            });
+            witnesses.push((
+                role,
+                p,
+                glyph_color(&schematic, span.range.start + ordinal * 3),
+            ));
+        }
+    }
     for span in &schematic.presentation.strokes {
         let role = request.material_role(span);
         if role > 2 {
@@ -299,4 +330,19 @@ fn related_world_uploads(host: &OffscreenRenderer) -> Vec<(u64, u64, u64)> {
     assert!(!ids.is_empty());
     assert_eq!(records.len(), ids.len());
     records
+}
+
+fn glyph_color(scene: &RetainedScene, index: usize) -> [f32; 3] {
+    scene
+        .draw_commands
+        .iter()
+        .find_map(|c| match c {
+            RetainedDrawCommand::Glyphs {
+                range, material, ..
+            } if range.contains(&(index as u32)) => {
+                Some(scene.glyph.materials[*material as usize].color)
+            }
+            _ => None,
+        })
+        .expect("admitted glyph has actual painter material")
 }

@@ -2,6 +2,7 @@
 use crate::{PreparedScene, Renderer, RetainedScene};
 
 const CHUNK_BYTES: usize = 4 * 1024 * 1024;
+const WORLD_STREAMS: usize = 8;
 
 #[derive(Default)]
 pub(crate) struct ColdWorldUploads {
@@ -20,7 +21,11 @@ impl PreparedScene {
 
 impl Renderer {
     pub(crate) fn pending_world_upload_bytes(&self) -> usize {
-        self.world_vertices_gpu.pending_bytes()
+        self.world_glyph_points_gpu.pending_bytes()
+            + self.world_glyph_materials_gpu.pending_bytes()
+            + self.schematic_glyph_points_gpu.pending_bytes()
+            + self.schematic_glyph_materials_gpu.pending_bytes()
+            + self.world_vertices_gpu.pending_bytes()
             + self.world_strokes_gpu.pending_bytes()
             + self.schematic_world_vertices_gpu.pending_bytes()
             + self.schematic_world_strokes_gpu.pending_bytes()
@@ -36,10 +41,19 @@ impl Renderer {
             self.world_vertices_gpu
                 .matches_source(&retained.world_vertices)
                 && self
+                    .world_glyph_points_gpu
+                    .matches_source(&retained.glyph.points)
+                && self
+                    .world_glyph_materials_gpu
+                    .matches_source(&retained.glyph.materials)
+                && self
                     .world_strokes_gpu
                     .matches_source(retained.world_strokes())
         } else {
-            self.world_vertices_gpu.buffer().is_none() && self.world_strokes_gpu.buffer().is_none()
+            self.world_vertices_gpu.buffer().is_none()
+                && self.world_strokes_gpu.buffer().is_none()
+                && self.world_glyph_points_gpu.buffer().is_none()
+                && self.world_glyph_materials_gpu.buffer().is_none()
         };
         board_matches
             && match crate::gpu_surface_pass::prepare_schematic_pass(prepared, schematic) {
@@ -47,12 +61,20 @@ impl Renderer {
                     self.schematic_world_vertices_gpu
                         .matches_source(&scene.world_vertices)
                         && self
+                            .schematic_glyph_points_gpu
+                            .matches_source(&scene.glyph.points)
+                        && self
+                            .schematic_glyph_materials_gpu
+                            .matches_source(&scene.glyph.materials)
+                        && self
                             .schematic_world_strokes_gpu
                             .matches_source(scene.world_strokes())
                 }
                 None => {
                     self.schematic_world_vertices_gpu.buffer().is_none()
                         && self.schematic_world_strokes_gpu.buffer().is_none()
+                        && self.schematic_glyph_points_gpu.buffer().is_none()
+                        && self.schematic_glyph_materials_gpu.buffer().is_none()
                 }
             }
     }
@@ -66,16 +88,18 @@ impl Renderer {
         self.publish_resource_consumers();
         let descriptor_bytes = crate::text_gpu::staging_vec::StagingVec::<
             crate::text_gpu::upload::BufferUpload<'_>,
-        >::capacity_bytes(4)?;
+        >::capacity_bytes(WORLD_STREAMS)?;
         self.release_text_scratch_for(
             CHUNK_BYTES as u64
                 + descriptor_bytes
                 + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?
-                + crate::text_gpu::upload::destination_metadata_bytes(4)?,
+                + crate::text_gpu::upload::destination_metadata_bytes(WORLD_STREAMS)?,
         );
         let mut remaining = CHUNK_BYTES;
-        let mut uploads =
-            crate::text_gpu::staging_vec::StagingVec::new(4, &self.atlas.staging_budget)?;
+        let mut uploads = crate::text_gpu::staging_vec::StagingVec::new(
+            WORLD_STREAMS,
+            &self.atlas.staging_budget,
+        )?;
         let counts = [
             self.world_vertices_gpu
                 .append_chunk(&mut remaining, &mut uploads),
@@ -84,6 +108,14 @@ impl Renderer {
             self.schematic_world_vertices_gpu
                 .append_chunk(&mut remaining, &mut uploads),
             self.schematic_world_strokes_gpu
+                .append_chunk(&mut remaining, &mut uploads),
+            self.world_glyph_points_gpu
+                .append_chunk(&mut remaining, &mut uploads),
+            self.world_glyph_materials_gpu
+                .append_chunk(&mut remaining, &mut uploads),
+            self.schematic_glyph_points_gpu
+                .append_chunk(&mut remaining, &mut uploads),
+            self.schematic_glyph_materials_gpu
                 .append_chunk(&mut remaining, &mut uploads),
         ];
         let mut batch = crate::text_gpu::upload::batch(
@@ -102,6 +134,10 @@ impl Renderer {
             self.world_strokes_gpu.submission_ref(),
             self.schematic_world_vertices_gpu.submission_ref(),
             self.schematic_world_strokes_gpu.submission_ref(),
+            self.world_glyph_points_gpu.submission_ref(),
+            self.world_glyph_materials_gpu.submission_ref(),
+            self.schematic_glyph_points_gpu.submission_ref(),
+            self.schematic_glyph_materials_gpu.submission_ref(),
         ];
         let (before, after) = self
             .begin_upload_measurement(device, "world")?
@@ -113,6 +149,10 @@ impl Renderer {
         self.world_strokes_gpu.consume_chunk(counts[1]);
         self.schematic_world_vertices_gpu.consume_chunk(counts[2]);
         self.schematic_world_strokes_gpu.consume_chunk(counts[3]);
+        self.world_glyph_points_gpu.consume_chunk(counts[4]);
+        self.world_glyph_materials_gpu.consume_chunk(counts[5]);
+        self.schematic_glyph_points_gpu.consume_chunk(counts[6]);
+        self.schematic_glyph_materials_gpu.consume_chunk(counts[7]);
         self.cold_world.active = self.pending_world_upload_bytes() != 0;
         self.cold_world.chunks += 1;
         self.cold_world.bytes += (CHUNK_BYTES - remaining) as u64;

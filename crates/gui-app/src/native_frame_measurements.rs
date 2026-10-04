@@ -34,10 +34,11 @@ impl Writer {
         let panes: Vec<_> = frame.prepared.geometry_admission(frame.board, frame.schematic).map(|pane| {
             let ranges: Vec<_> = pane.ranges().map(|r| match r {
                 GeometryAdmissionRange::Vertices(r) => json!({"kind":"vertices","start":r.start,"end":r.end}),
+                GeometryAdmissionRange::GlyphVertices(r) => json!({"kind":"glyph_vertices","start":r.start,"end":r.end}),
                 GeometryAdmissionRange::StrokeInstances(r) => json!({"kind":"stroke_instances","start":r.start,"end":r.end}),
             }).collect();
             let (counts, error) = match pane.counts() {
-                Ok(c) => (json!({"retained_vertices":c.retained_vertices,"retained_stroke_instances":c.retained_stroke_instances,
+                Ok(c) => (json!({"retained_vertices":c.retained_vertices,"retained_glyph_vertices":c.retained_glyph_vertices,"prepared_glyph_vertices":c.prepared_glyph_vertices,"retained_stroke_instances":c.retained_stroke_instances,
                     "prepared_commands":c.prepared_commands,"prepared_vertices":c.prepared_vertices,
                     "prepared_stroke_instances":c.prepared_stroke_instances,"prepared_triangles":c.prepared_triangles}), None),
                 Err(e) => (Value::Null, Some(e.to_string())),
@@ -62,6 +63,10 @@ impl Writer {
                         vertices += n;
                         triangles += n / 3;
                         json!({"kind":"vertices","start":r.start,"end":r.end})
+                    }
+                    GeometryAdmissionRange::GlyphVertices(r) => {
+                        let n = u64::from(r.end-r.start); vertices += n; triangles += n/3;
+                        json!({"kind":"glyph_vertices","start":r.start,"end":r.end})
                     }
                     GeometryAdmissionRange::StrokeInstances(r) => {
                         let n = u64::from(r.end - r.start);

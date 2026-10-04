@@ -81,6 +81,23 @@ pub(crate) fn push_retained_board_graphic_batches(
     }
 }
 
+pub(super) fn trace_retained_stage(
+    name: &str,
+    started: std::time::Instant,
+    before_quads: usize,
+    after_quads: usize,
+) {
+    trace_render_timing(|| {
+        format!(
+            "retained stage {name} {}ms +{}q total={}q",
+            started.elapsed().as_millis(),
+            after_quads.saturating_sub(before_quads),
+            after_quads
+        )
+    });
+}
+
+#[cfg(test)]
 pub(crate) fn push_retained_board_text_geometry_batches(
     out: &mut impl Output<Quad>,
     draw_commands: &mut impl Output<RetainedDrawCommand>,
@@ -126,20 +143,4 @@ pub(crate) fn push_retained_board_text_geometry_batches(
             );
         }
     }
-}
-
-pub(super) fn trace_retained_stage(
-    name: &str,
-    started: std::time::Instant,
-    before_quads: usize,
-    after_quads: usize,
-) {
-    trace_render_timing(|| {
-        format!(
-            "retained stage {name} {}ms +{}q total={}q",
-            started.elapsed().as_millis(),
-            after_quads.saturating_sub(before_quads),
-            after_quads
-        )
-    });
 }

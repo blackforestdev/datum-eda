@@ -9,8 +9,8 @@ struct Out {
  @location(3) @interpolate(flat) label:u32, @location(4) logical:vec2<f32>,
  @location(5) @interpolate(flat) material_role:u32,
 };
-fn group(index:u32, stroke:bool)->vec2<u32> {
- let first=select(3u,ranges[0].z,stroke); let count=select(ranges[0].x,ranges[0].y,stroke);
+fn group(index:u32, kind:u32)->vec2<u32> {
+ let first=select(select(3u,ranges[0].z,kind==1u),ranges[2].w,kind==2u); let count=select(select(ranges[0].x,ranges[0].y,kind==1u),ranges[2].z,kind==2u);
  var lo=first; var hi=first+count;
  loop { if (lo>=hi) {break;} let mid=lo+(hi-lo)/2u;
   if (ranges[mid].y<=index) {lo=mid+1u;} else {hi=mid;}
@@ -25,7 +25,11 @@ fn project(p:vec2<f32>)->vec2<f32> {
 }
 @vertex fn vs_quad(i:QuadIn)->Out {
  var o:Out; o.logical=project(i.point); o.position=position(o.logical); o.material=i.color;
- o.local=vec2<f32>(0.0); o.capsule=vec2<f32>(0.0,-1.0); let role=group(i.vertex,false); o.label=role.x; o.material_role=role.y; return o;
+ o.local=vec2<f32>(0.0); o.capsule=vec2<f32>(0.0,-1.0); let role=group(i.vertex,0u); o.label=role.x; o.material_role=role.y; return o;
+}
+@vertex fn vs_glyph(i:QuadIn)->Out {
+ var o:Out; o.logical=project(i.point); o.position=position(o.logical); o.material=i.color;
+ o.local=vec2<f32>(0.0); o.capsule=vec2<f32>(0.0,-1.0); let role=group(i.vertex,2u); o.label=role.x; o.material_role=role.y; return o;
 }
 @vertex fn vs_stroke(i:StrokeIn)->Out {
  let endpoint_b=i.vertex==1u || i.vertex==2u || i.vertex==4u;
@@ -38,7 +42,7 @@ fn project(p:vec2<f32>)->vec2<f32> {
  let p=project(center)+tangent*select(-1.0,1.0,endpoint_b)*radius+normal*across;
  var o:Out; o.logical=p; o.position=position(p); o.material=i.material_floor.xyz;
  o.local=vec2<f32>(select(-1.0,1.0,endpoint_b)*(half_length+radius),across);
- o.capsule=vec2<f32>(half_length,radius); let role=group(i.instance,true); o.label=role.x; o.material_role=role.y; return o;
+ o.capsule=vec2<f32>(half_length,radius); let role=group(i.instance,1u); o.label=role.x; o.material_role=role.y; return o;
 }
 fn covered(i:Out)->bool {
  if (i.capsule.y<0.0) {return true;}

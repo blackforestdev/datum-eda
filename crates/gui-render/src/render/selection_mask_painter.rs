@@ -90,20 +90,39 @@ impl Renderer {
                     &self.schematic_world_strokes_gpu,
                 ),
             };
-            for (stroke, range) in self.surface_world_bundles[index].painter_ranges() {
-                match stroke {
-                    false => {
+            let (glyphs, materials) = match surface.surface {
+                SceneSurface::Board => (
+                    &self.world_glyph_points_gpu,
+                    &self.world_glyph_materials_gpu,
+                ),
+                SceneSurface::Schematic => (
+                    &self.schematic_glyph_points_gpu,
+                    &self.schematic_glyph_materials_gpu,
+                ),
+            };
+            for (kind, range) in self.surface_world_bundles[index].painter_ranges() {
+                match kind {
+                    crate::gpu_surface_pass::DrawKind::Quads => {
                         if let Some(buffer) = quads.buffer() {
                             pass.set_pipeline(&pipelines.mask_quad);
                             pass.set_vertex_buffer(0, buffer.slice(..));
                             pass.draw(range.clone(), 0..1);
                         }
                     }
-                    true => {
+                    crate::gpu_surface_pass::DrawKind::Strokes => {
                         if let Some(buffer) = strokes.buffer() {
                             pass.set_pipeline(&pipelines.mask_stroke);
                             pass.set_vertex_buffer(0, buffer.slice(..));
                             pass.draw(0..6, range.clone());
+                        }
+                    }
+                    crate::gpu_surface_pass::DrawKind::Glyphs(material) => {
+                        if let (Some(buffer), Some(colors)) = (glyphs.buffer(), materials.buffer())
+                        {
+                            pass.set_pipeline(&pipelines.mask_glyph);
+                            pass.set_vertex_buffer(0, buffer.slice(..));
+                            pass.set_vertex_buffer(1, colors.slice(..));
+                            pass.draw(range, material..material + 1);
                         }
                     }
                 }

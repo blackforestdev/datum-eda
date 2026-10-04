@@ -109,6 +109,7 @@ fn draw_command_priority(
 ) -> (u32, u32) {
     let layer_id = match command {
         RetainedDrawCommand::Quads { layer_id, .. }
+        | RetainedDrawCommand::Glyphs { layer_id, .. }
         | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id.as_deref(),
     };
     layer_id.map_or((u32::MAX, 0), |id| {
@@ -145,6 +146,7 @@ impl RetainedScene {
             .iter()
             .filter(|command| match command {
                 RetainedDrawCommand::Quads { layer_id, .. }
+                | RetainedDrawCommand::Glyphs { layer_id, .. }
                 | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id
                     .as_deref()
                     .is_none_or(|id| layer_visible(state, id)),
@@ -232,6 +234,10 @@ impl RetainedScene {
                 )
             })
             .track_sources();
+            let retained_glyph::Builders {
+                points: mut glyph_points,
+                materials: mut glyph_materials,
+            } = retained_glyph::builders(&budget, &scope, limit);
             let mut draw_commands = crate::geometry_output::Admitted::new(|bytes| {
                 retained_scene_owner::document_cpu::admit_constructor_allocation(
                     &budget,
@@ -252,8 +258,10 @@ impl RetainedScene {
             );
             let board_graphics_started = std::time::Instant::now();
             let board_graphics_before = world_quads.len();
-            push_retained_board_text_geometry_batches(
+            retained_glyph::push(
                 &mut world_quads,
+                &mut glyph_points,
+                &mut glyph_materials,
                 &mut draw_commands,
                 &state.scene,
                 &reference_projection,
@@ -270,6 +278,9 @@ impl RetainedScene {
             let (world_quads, quad_sources) = world_quads.finish_with_sources()?;
             let (world_strokes, stroke_sources) = world_strokes.finish_with_sources()?;
             let mut draw_commands = draw_commands.finish()?;
+            let (glyph_points, glyph_sources) = glyph_points.finish_with_sources()?;
+            let glyph_materials = glyph_materials.finish()?;
+
             scene_retained_access::sort_retained_draw_commands(
                 &mut draw_commands,
                 &state.scene.layers,
@@ -341,6 +352,7 @@ impl RetainedScene {
             })?;
             let presentation = std::sync::Arc::new(crate::presentation_ranges::Presentation {
                 source: Some(source),
+                glyphs: glyph_sources,
                 quads: quad_sources,
                 strokes: stroke_sources,
             });
@@ -362,11 +374,25 @@ impl RetainedScene {
             });
             let world_hit_index =
                 Self::admitted_hit_index(world_hit_regions, &budget, &scope, limit)?;
+            retained_glyph::Geometry::admit(&glyph_points, &glyph_materials, |bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "glyph owners",
+                )
+            })?;
             Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
             let mut scene = Self {
                 surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
                 hover_membership: Default::default(),
                 presentation,
+                glyph: retained_glyph::Geometry::from_document(
+                    glyph_points,
+                    glyph_materials,
+                    &state.scene.scene_id,
+                ),
                 world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
                     world_vertices,
                     &state.scene.scene_id,
@@ -427,6 +453,7 @@ mod retained_storage_tests {
         let mut layerless = original[0].clone();
         match &mut layerless {
             RetainedDrawCommand::Quads { layer_id, .. }
+            | RetainedDrawCommand::Glyphs { layer_id, .. }
             | RetainedDrawCommand::Strokes { layer_id, .. } => *layer_id = None,
         }
         original.push(layerless);

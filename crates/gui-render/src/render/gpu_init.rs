@@ -67,6 +67,11 @@ impl Renderer {
             Some(self),
         )?;
         replacement.surface_attachments = self.surface_attachments.replacement();
+        replacement.world_glyph_points_gpu = self.world_glyph_points_gpu.replacement();
+        replacement.world_glyph_materials_gpu = self.world_glyph_materials_gpu.replacement();
+        replacement.schematic_glyph_points_gpu = self.schematic_glyph_points_gpu.replacement();
+        replacement.schematic_glyph_materials_gpu =
+            self.schematic_glyph_materials_gpu.replacement();
         replacement.world_vertices_gpu = self.world_vertices_gpu.replacement();
         replacement.world_strokes_gpu = self.world_strokes_gpu.replacement();
         replacement.schematic_world_vertices_gpu = self.schematic_world_vertices_gpu.replacement();
@@ -310,6 +315,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             pane_uniform_generations: previous
                 .map(|old| old.pane_uniform_generations.clone())
                 .unwrap_or_default(),
+            world_glyph_points_gpu: Default::default(),
+            world_glyph_materials_gpu: Default::default(),
+            schematic_glyph_points_gpu: Default::default(),
+            schematic_glyph_materials_gpu: Default::default(),
             world_vertices_gpu: Default::default(),
             world_strokes_gpu: Default::default(),
             schematic_world_vertices_gpu: Default::default(),

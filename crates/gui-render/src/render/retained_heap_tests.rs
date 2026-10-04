@@ -5,6 +5,14 @@ use super::*;
 fn complete_scene_owned_capacities_match_allocator_and_weak_release() {
     let scope = crate::cpu_alloc::Scope::new("retained-scene-heap-proof");
     let scene = scope.with(|| RetainedScene {
+        glyph: retained_glyph::Geometry {
+            points: vec![retained_glyph::Point { pos: [1.0, 2.0] }; 3].into(),
+            materials: vec![retained_glyph::Material {
+                color: [0.2, 0.4, 0.6],
+                pad: 0.0,
+            }]
+            .into(),
+        },
         surface_size_independent: true,
         hover_membership: Default::default(),
         presentation: std::sync::Arc::new(crate::presentation_ranges::Presentation {
@@ -19,6 +27,7 @@ fn complete_scene_owned_capacities_match_allocator_and_weak_release() {
                 range: 0..100,
             }],
             strokes: Vec::new(),
+            glyphs: Vec::new(),
         }),
         world_vertices: vec![
             Vertex {

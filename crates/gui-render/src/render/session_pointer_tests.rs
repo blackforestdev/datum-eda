@@ -468,6 +468,10 @@ fn native_proposal_review_context_and_dim_filters_never_rekey_or_repaint_authore
     state.selection = datum_gui_protocol::SelectionTarget::Native(view);
     let reviewed = RetainedScene::from_workspace(&state, 1600, 1000);
     assert_eq!(
+        baseline.glyph, reviewed.glyph,
+        "review state cannot rewrite glyph material or positions"
+    );
+    assert_eq!(
         bytemuck::cast_slice::<crate::Vertex, u8>(baseline.world_vertices()),
         bytemuck::cast_slice::<crate::Vertex, u8>(reviewed.world_vertices())
     );

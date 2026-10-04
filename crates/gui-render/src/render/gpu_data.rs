@@ -1,5 +1,7 @@
 #[path = "document_gpu_budget.rs"]
 mod document_gpu_budget;
+#[path = "retained_glyph.rs"]
+pub(crate) mod retained_glyph;
 pub use document_gpu_budget::DocumentGpuUsage;
 #[path = "retained_buffer.rs"]
 pub(crate) mod retained_buffer;

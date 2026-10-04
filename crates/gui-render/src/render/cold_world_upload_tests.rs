@@ -74,28 +74,36 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
             .unwrap();
         assert_eq!(ready, attempt == 2, "only the final attempt can present");
         if !ready {
+            let residual = renderer.upload_staging_reserved_bytes()
+                - renderer.selection_mask_cpu_storage_bytes()
+                - renderer.surface_grid_cache_bytes()
+                - renderer.layout_scratch_reserved_bytes()
+                - renderer.pending_glyph_pixel_bytes()
+                - renderer.pending_glyph_metadata_bytes()
+                - renderer.screen_upload_metadata_bytes()
+                - renderer.screen_upload_snapshot_bytes()
+                - renderer.glyph_upload_storage_bytes()
+                - renderer.text_preparation_storage_bytes()
+                - renderer.raster_scratch_reserved_bytes()
+                - renderer.font_cache_reserved_bytes()
+                - renderer.atlas_page_metadata_bytes()
+                - renderer.atlas_lookup_metadata_bytes();
+            let allowed = CHUNK_BYTES as u64
+                + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
+                + crate::text_gpu::upload::destination_metadata_bytes(WORLD_STREAMS).unwrap();
             assert!(
-                renderer.upload_staging_reserved_bytes()
-                    - renderer.layout_scratch_reserved_bytes()
-                    - renderer.pending_glyph_pixel_bytes()
-                    - renderer.screen_upload_metadata_bytes()
-                    - renderer.screen_upload_snapshot_bytes()
-                    - renderer.glyph_upload_storage_bytes()
-                    - renderer.text_preparation_storage_bytes()
-                    - renderer.raster_scratch_reserved_bytes()
-                    - renderer.font_cache_reserved_bytes()
-                    - renderer.atlas_page_metadata_bytes()
-                    - renderer.atlas_lookup_metadata_bytes()
-                    <= CHUNK_BYTES as u64
-                        + crate::text_gpu::upload::retention_metadata_bytes(&[], false).unwrap()
-                        + crate::text_gpu::upload::destination_metadata_bytes(4).unwrap()
+                residual <= allowed,
+                "cold staging residual {residual}, allowed {allowed}, attempt {attempt}"
             );
         }
         device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
         assert_eq!(
             renderer.upload_staging_reserved_bytes(),
-            renderer.layout_scratch_reserved_bytes()
+            renderer.selection_mask_cpu_storage_bytes()
+                + renderer.surface_grid_cache_bytes()
+                + renderer.layout_scratch_reserved_bytes()
                 + renderer.pending_glyph_pixel_bytes()
+                + renderer.pending_glyph_metadata_bytes()
                 + renderer.screen_upload_metadata_bytes()
                 + renderer.screen_upload_snapshot_bytes()
                 + renderer.glyph_upload_storage_bytes()
@@ -110,7 +118,9 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
     assert_eq!(
         renderer.world_upload_chunk_bytes(),
         (std::mem::size_of_val(vertices.as_slice())
-            + std::mem::size_of_val(retained.world_strokes().as_ref())) as u64
+            + std::mem::size_of_val(retained.world_strokes().as_ref())
+            + std::mem::size_of_val(retained.glyph.points.as_ref())
+            + std::mem::size_of_val(retained.glyph.materials.as_ref())) as u64
     );
     assert_eq!(renderer.world_upload_chunk_count(), 2);
     let samples = renderer.poll_gpu_measurements(&device).unwrap();
@@ -259,7 +269,9 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
     assert_eq!(
         renderer.world_upload_chunk_bytes() - uploaded,
         (std::mem::size_of_val(vertices.as_slice())
-            + std::mem::size_of_val(retained.world_strokes().as_ref())) as u64
+            + std::mem::size_of_val(retained.world_strokes().as_ref())
+            + std::mem::size_of_val(retained.glyph.points.as_ref())
+            + std::mem::size_of_val(retained.glyph.materials.as_ref())) as u64
     );
     let expected: &[u8] = bytemuck::cast_slice(&vertices);
     let readback = device.create_buffer(&wgpu::BufferDescriptor {

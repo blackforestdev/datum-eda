@@ -138,7 +138,8 @@ fn retained_commands_interleave_strokes_with_their_semantic_layers() {
         commands
             .iter()
             .position(|command| match command {
-                RetainedDrawCommand::Quads { layer_id, .. } => {
+                RetainedDrawCommand::Quads { layer_id, .. }
+                | RetainedDrawCommand::Glyphs { layer_id, .. } => {
                     !strokes && layer_id.as_deref() == Some(layer)
                 }
                 RetainedDrawCommand::Strokes { layer_id, .. } => {

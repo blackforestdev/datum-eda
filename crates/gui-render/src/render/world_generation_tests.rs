@@ -75,7 +75,7 @@ fn two_live_allocations_survive_clear_and_document_switch_until_retirement() {
 
 #[test]
 #[ignore = "requires local GPU; renderer recovery allocation continuity"]
-fn renderer_recreation_preserves_all_four_world_stream_limits() {
+fn renderer_recreation_preserves_all_eight_world_stream_limits() {
     let instance = wgpu::Instance::default();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
@@ -99,6 +99,10 @@ fn renderer_recreation_preserves_all_four_world_stream_limits() {
         pin_first!(world_strokes_gpu),
         pin_first!(schematic_world_vertices_gpu),
         pin_first!(schematic_world_strokes_gpu),
+        pin_first!(world_glyph_points_gpu),
+        pin_first!(world_glyph_materials_gpu),
+        pin_first!(schematic_glyph_points_gpu),
+        pin_first!(schematic_glyph_materials_gpu),
     );
     // Retire fixed uniforms while retaining the world allocations under test.
     drop(first);
@@ -131,4 +135,8 @@ fn renderer_recreation_preserves_all_four_world_stream_limits() {
     exercise!(world_strokes_gpu, holds.1);
     exercise!(schematic_world_vertices_gpu, holds.2);
     exercise!(schematic_world_strokes_gpu, holds.3);
+    exercise!(world_glyph_points_gpu, holds.4);
+    exercise!(world_glyph_materials_gpu, holds.5);
+    exercise!(schematic_glyph_points_gpu, holds.6);
+    exercise!(schematic_glyph_materials_gpu, holds.7);
 }

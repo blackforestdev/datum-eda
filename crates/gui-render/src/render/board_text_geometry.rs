@@ -34,6 +34,17 @@ fn push_board_text_mesh_world(
     transform: Affine2DFixedPrimitive,
     color: [f32; 3],
 ) {
+    for_each_mesh_triangle(text_geometry, glyph_mesh_assets, transform, |[a, b, c]| {
+        push_world_triangle(out, a, b, c, color);
+    });
+}
+
+pub(super) fn for_each_mesh_triangle(
+    text_geometry: &BoardTextGeometryPrimitive,
+    glyph_mesh_assets: &impl GlyphMeshLookup,
+    transform: Affine2DFixedPrimitive,
+    mut emit: impl FnMut([(f32, f32); 3]),
+) {
     for glyph in &text_geometry.glyphs {
         let Some(asset) = glyph_mesh_assets.mesh(&glyph.glyph_handle) else {
             trace_text_mesh_skip(format!(
@@ -83,7 +94,7 @@ fn push_board_text_mesh_world(
                 glyph.origin_em_nm_x + c.x_em_nm,
                 glyph.origin_em_nm_y + c.y_em_nm,
             );
-            push_world_triangle(out, a, b, c, color);
+            emit([a, b, c]);
         }
     }
 }

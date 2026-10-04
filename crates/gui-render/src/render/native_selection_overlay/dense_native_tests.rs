@@ -120,7 +120,7 @@ fn complete_native_schematic_population_survives_reopen_and_inspection_without_w
     };
     let owned = retained
         .presentation
-        .quads
+        .glyphs
         .iter()
         .filter_map(|span| span.key.as_ref())
         .filter(|key| view.schematic_keys.contains(*key))
@@ -131,8 +131,8 @@ fn complete_native_schematic_population_survives_reopen_and_inspection_without_w
         "every authored glyph has retained source incidence"
     );
     eprintln!(
-        "authored_texts={COUNT}; retained_vertices={}; retained_strokes={}; distinct_owned_keys={}",
-        retained.world_vertices().len(),
+        "authored_texts={COUNT}; retained_glyph_vertices={}; retained_strokes={}; distinct_owned_keys={}",
+        retained.glyph.points.len(),
         retained.world_strokes().len(),
         owned.len()
     );
@@ -265,6 +265,97 @@ fn existing_native_dense_fixture_reports_retained_layout_without_authored_writes
             eprintln!("standalone_hit_index_refusal={error}; not_full_scene_admission=true")
         }
     }
+    for (path, bytes) in files.iter().zip(before) {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}
+
+#[test]
+#[ignore = "positive retained admission using preserved canonical S5A_DENSE_NATIVE_ROOT"]
+fn existing_native_dense_fixture_admits_complete_glyphs_without_authored_writes() {
+    use datum_gui_protocol::selection_resolution::SelectionAuthority;
+    let root = std::path::PathBuf::from(
+        std::env::var("S5A_DENSE_NATIVE_ROOT").expect("explicit preserved fixture"),
+    );
+    let model = ProjectResolver::new(&root).resolve().unwrap();
+    let files: Vec<_> = model
+        .source_shards
+        .iter()
+        .map(|s| s.path.clone())
+        .chain(std::iter::once(
+            eda_engine::substrate::transaction_journal_path(&root),
+        ))
+        .collect();
+    let before: Vec<_> = files.iter().map(|p| std::fs::read(p).unwrap()).collect();
+    let authority = NativeSelectionResolution::capture(&model).unwrap();
+    let members: std::collections::BTreeSet<_> = authority
+        .authored_identities()
+        .iter()
+        .filter(|id| id.class == Class::SchematicText)
+        .cloned()
+        .collect();
+    assert_eq!(members.len(), 100_000);
+    let subject = SelectionSubject::Compound(
+        datum_gui_protocol::CompoundSelection::new(members.clone(), None).unwrap(),
+    );
+    assert_eq!(authority.members(&subject).unwrap(), members);
+    let scene = datum_gui_protocol::project_native_schematic_scene(&model, &root)
+        .unwrap()
+        .unwrap();
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.source_revision = model.model_revision.0.clone();
+    let view = build_selection_view(
+        &model,
+        &authority,
+        subject,
+        &state.scene,
+        Some(&scene),
+        |_| true,
+    )
+    .unwrap();
+    assert_eq!(view.members, members);
+    assert!(view.unprojected.is_empty());
+    assert!(view.hidden.is_empty());
+    assert_eq!(view.schematic_keys.len(), 100_000);
+    let datum_gui_protocol::selection_view::InspectionValue::Common(count) =
+        view.field("member_count")
+    else {
+        panic!("complete aggregate count");
+    };
+    assert_eq!(count.as_u64(), Some(100_000));
+    state.selection = SelectionTarget::Native(Box::new(view));
+    state.schematic_scene = Some(scene);
+    state.ui.layout.open_beside_root(
+        datum_gui_protocol::PaneContent::Schematic,
+        datum_gui_protocol::SplitOrientation::Vertical,
+        0.5,
+        true,
+    );
+    let retained = RetainedScene::try_from_workspace_schematic_for_surface(&state, 1280, 800, 1.0)
+        .unwrap()
+        .unwrap();
+    let SelectionTarget::Native(view) = &state.selection else {
+        unreachable!()
+    };
+    let keys: std::collections::BTreeSet<_> = retained
+        .presentation
+        .glyphs
+        .iter()
+        .filter_map(|s| s.key.as_ref())
+        .filter(|k| view.schematic_keys.contains(*k))
+        .collect();
+    assert_eq!(keys.len(), 100_000);
+    assert_eq!(retained.glyph.points.len(), 3_000_000);
+    assert_eq!(retained.glyph.materials.len(), 1);
+    let observer = retained.geometry_observer();
+    let bytes = observer.document_cpu_payload_bytes();
+    assert!(bytes <= crate::retained_scene_owner::document_cpu::DOCUMENT_LIMIT);
+    eprintln!(
+        "authored_texts=100000; complete_owned_keys={}; exact_glyph_vertices={}; retained_cpu_bytes={bytes}; document_limit_bytes={}; native_input_and_GPU_acceptance_not_claimed=true",
+        keys.len(),
+        retained.glyph.points.len(),
+        crate::retained_scene_owner::document_cpu::DOCUMENT_LIMIT
+    );
     for (path, bytes) in files.iter().zip(before) {
         assert_eq!(std::fs::read(path).unwrap(), bytes);
     }

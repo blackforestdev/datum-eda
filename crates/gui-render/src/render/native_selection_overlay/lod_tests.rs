@@ -81,6 +81,10 @@ fn tiny_source_bound_track_has_one_anchor_ring_without_geometry_or_membership_ch
     state.selection = SelectionTarget::None;
     let baseline = RetainedScene::from_workspace(&state, 1000, 800);
     assert_eq!(
+        selected.glyph, baseline.glyph,
+        "selection cannot rewrite exact glyph material or positions"
+    );
+    assert_eq!(
         bytemuck::cast_slice::<Vertex, u8>(selected.world_vertices()),
         bytemuck::cast_slice::<Vertex, u8>(baseline.world_vertices())
     );

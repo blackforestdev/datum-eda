@@ -109,7 +109,7 @@ fn board_text_mesh_path_bypasses_legacy_fill_fragments() {
         &projection,
     );
     assert_eq!(indexed_out, out);
-    let mut refused = geometry_output::Admitted::new(|_| anyhow::bail!("index refused"));
+    let mut refused = geometry_output::Admitted::<Quad, _>::new(|_| anyhow::bail!("index refused"));
     assert!(glyph_mesh_lookup::MeshIndex::new(&indexed_assets, &mut refused).is_none());
     assert!(refused.finish().is_err());
 

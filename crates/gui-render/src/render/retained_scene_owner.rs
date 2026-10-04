@@ -33,6 +33,7 @@ pub struct RetainedScene {
     pub(crate) surface_size_independent: bool,
     pub(crate) presentation: Arc<crate::presentation_ranges::Presentation>,
     pub(crate) hover_membership: hover_membership::Membership,
+    pub(crate) glyph: retained_glyph::Geometry,
     pub(crate) world_vertices: gpu_data::shared_geometry::SharedGeometry<Vertex>,
     pub(crate) world_strokes: gpu_data::shared_geometry::SharedGeometry<WorldStrokeInstance>,
     pub(crate) draw_commands: Arc<Vec<RetainedDrawCommand>>,
@@ -42,6 +43,7 @@ pub struct RetainedScene {
 /// the small shared owner, never the separately boxed vertex/stroke payload.
 #[derive(Clone)]
 pub struct RetainedGeometryObserver {
+    glyph: retained_glyph::Observer,
     vertices: std::sync::Weak<Box<[Vertex]>>,
     strokes: std::sync::Weak<Box<[WorldStrokeInstance]>>,
     vertex_bytes: usize,
@@ -62,7 +64,8 @@ struct ObserverLifetime {
 
 impl RetainedGeometryObserver {
     pub fn is_live(&self) -> bool {
-        self.presentation.strong_count() != 0
+        self.glyph.live()
+            || self.presentation.strong_count() != 0
             || self.hover.is_live()
             || self.vertices.strong_count() != 0
             || self.strokes.strong_count() != 0
@@ -95,7 +98,14 @@ impl RetainedGeometryObserver {
                 0
             });
         let mut hover = self.hover.bytes();
+        let mut glyph_excluded = [false; 2];
         for other in others {
+            for (excluded, shared) in glyph_excluded
+                .iter_mut()
+                .zip(self.glyph.shares(&other.glyph))
+            {
+                *excluded |= shared;
+            }
             if self.presentation.ptr_eq(&other.presentation) {
                 presentation = 0;
             }
@@ -116,6 +126,7 @@ impl RetainedGeometryObserver {
             }
         }
         vertices
+            .saturating_add(self.glyph.bytes_mask(glyph_excluded))
             .saturating_add(strokes)
             .saturating_add(commands)
             .saturating_add(hits)
@@ -185,6 +196,7 @@ impl RetainedScene {
 
     pub fn geometry_observer(&self) -> RetainedGeometryObserver {
         document_cpu::observe(RetainedGeometryObserver {
+            glyph: self.glyph.observe(),
             lifetime: None,
             presentation: Arc::downgrade(&self.presentation),
             presentation_bytes: self.presentation.bytes(),
@@ -210,6 +222,7 @@ impl RetainedScene {
         for command in self.draw_commands.iter() {
             let layer = match command {
                 RetainedDrawCommand::Quads { layer_id, .. }
+                | RetainedDrawCommand::Glyphs { layer_id, .. }
                 | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id,
             };
             bytes = bytes.checked_add(capacity_bytes::<u8>(
@@ -229,6 +242,7 @@ impl RetainedScene {
     pub fn heap_payload_bytes(&self) -> Option<usize> {
         self.world_vertices
             .heap_bytes()
+            .checked_add(self.glyph.bytes())?
             .checked_add(self.world_strokes.heap_bytes())?
             .checked_add(self.command_bytes()?)?
             .checked_add(self.hit_bytes()?)?

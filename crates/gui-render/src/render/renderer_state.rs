@@ -52,6 +52,14 @@ pub struct Renderer {
         gpu_data::retained_buffer::RetainedBuffer<WorldStrokeInstance>,
     pub(super) schematic_world_vertices_gpu: gpu_data::retained_buffer::RetainedBuffer<Vertex>,
     pub(super) world_strokes_gpu: gpu_data::retained_buffer::RetainedBuffer<WorldStrokeInstance>,
+    pub(super) world_glyph_points_gpu:
+        gpu_data::retained_buffer::RetainedBuffer<retained_glyph::Point>,
+    pub(super) world_glyph_materials_gpu:
+        gpu_data::retained_buffer::RetainedBuffer<retained_glyph::Material>,
+    pub(super) schematic_glyph_points_gpu:
+        gpu_data::retained_buffer::RetainedBuffer<retained_glyph::Point>,
+    pub(super) schematic_glyph_materials_gpu:
+        gpu_data::retained_buffer::RetainedBuffer<retained_glyph::Material>,
     pub(super) world_vertices_gpu: gpu_data::retained_buffer::RetainedBuffer<Vertex>,
     pub(super) pipeline: wgpu::RenderPipeline,
     pub(super) selection_mask: selection_stroke::mask::Owner,

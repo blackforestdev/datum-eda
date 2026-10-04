@@ -92,6 +92,8 @@ macro_rules! geometry_element {
     };
 }
 geometry_element!(super::Vertex);
+geometry_element!(crate::retained_glyph::Point);
+geometry_element!(crate::retained_glyph::Material);
 geometry_element!(crate::WorldStrokeInstance);
 
 #[cfg(test)]

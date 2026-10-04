@@ -4,10 +4,8 @@ use crate::presentation_ranges::Role;
 mod retained_board_graphics;
 #[path = "retained_zones.rs"]
 mod retained_zones;
+pub(super) use retained_board_graphics::push_retained_board_graphic_batches;
 use retained_board_graphics::trace_retained_stage;
-pub(super) use retained_board_graphics::{
-    push_retained_board_graphic_batches, push_retained_board_text_geometry_batches,
-};
 
 /// Retained authored-board geometry pass.
 ///
@@ -626,3 +624,6 @@ pub(super) fn push_retained_scene_geometry(
     let outline_before = out.len();
     trace_retained_stage("outline", outline_started, outline_before, out.len());
 }
+
+#[cfg(test)]
+pub(super) use retained_board_graphics::push_retained_board_text_geometry_batches;

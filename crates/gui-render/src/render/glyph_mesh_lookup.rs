@@ -9,9 +9,9 @@ pub(crate) trait GlyphMeshLookup {
 
 pub(super) struct MeshIndex<'a>(Vec<(usize, &'a GlyphMeshAssetPrimitive)>);
 impl<'a> MeshIndex<'a> {
-    pub(super) fn new(
+    pub(super) fn new<T>(
         assets: &'a [GlyphMeshAssetPrimitive],
-        output: &mut impl Output<Quad>,
+        output: &mut impl Output<T>,
     ) -> Option<Self> {
         let mut entries = output.scratch(assets.len())?;
         entries.extend(assets.iter().enumerate());

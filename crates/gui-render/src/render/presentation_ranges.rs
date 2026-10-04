@@ -50,12 +50,13 @@ impl Source {
 #[derive(Debug, Default, PartialEq, Eq)]
 pub(crate) struct Presentation {
     pub source: Option<Source>,
+    pub glyphs: Vec<Span>,
     pub quads: Vec<Span>,
     pub strokes: Vec<Span>,
 }
 impl Presentation {
     pub fn bytes(&self) -> usize {
-        [&self.quads, &self.strokes].into_iter().fold(
+        [&self.quads, &self.strokes, &self.glyphs].into_iter().fold(
             self.source.as_ref().map_or(0, Source::bytes),
             |total, spans| {
                 total

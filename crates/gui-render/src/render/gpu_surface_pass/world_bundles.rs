@@ -10,6 +10,8 @@ pub(crate) struct CachedSurfaceBundle {
     used_kinds: u8,
     vertex_buffer: Option<wgpu::Buffer>,
     stroke_buffer: Option<wgpu::Buffer>,
+    glyph_buffer: Option<wgpu::Buffer>,
+    material_buffer: Option<wgpu::Buffer>,
     bind_group: wgpu::BindGroup,
     // Only actual encoded state belongs here. Visibility/layer metadata has
     // already selected the command stream and owns no additional GPU state.
@@ -35,6 +37,9 @@ impl EncodedWorldAdmission<'_> {
                 DrawKind::Quads => self.cached.vertex_buffer.as_ref().map(|_| {
                     geometry_admission::GeometryAdmissionRange::Vertices(batch.range.clone())
                 }),
+                DrawKind::Glyphs(_) => self.cached.glyph_buffer.as_ref().map(|_| {
+                    geometry_admission::GeometryAdmissionRange::GlyphVertices(batch.range.clone())
+                }),
                 DrawKind::Strokes => self.cached.stroke_buffer.as_ref().map(|_| {
                     geometry_admission::GeometryAdmissionRange::StrokeInstances(batch.range.clone())
                 }),
@@ -43,21 +48,27 @@ impl EncodedWorldAdmission<'_> {
 }
 
 impl CachedSurfaceBundle {
-    pub(crate) fn painter_ranges(&self) -> impl Iterator<Item = (bool, std::ops::Range<u32>)> + '_ {
+    pub(crate) fn painter_ranges(
+        &self,
+    ) -> impl Iterator<Item = (DrawKind, std::ops::Range<u32>)> + '_ {
         self.batches
             .iter()
-            .map(|batch| (batch.kind == DrawKind::Strokes, batch.range.clone()))
+            .map(|batch| (batch.kind, batch.range.clone()))
     }
 
     fn matches(
         &self,
         vertex: Option<&wgpu::Buffer>,
         stroke: Option<&wgpu::Buffer>,
+        glyph: Option<&wgpu::Buffer>,
+        material: Option<&wgpu::Buffer>,
         binding: &wgpu::BindGroup,
         commands: &[RetainedDrawCommand],
     ) -> bool {
         self.vertex_buffer.as_ref() == vertex.filter(|_| self.used_kinds & 1 != 0)
             && self.stroke_buffer.as_ref() == stroke.filter(|_| self.used_kinds & 2 != 0)
+            && self.glyph_buffer.as_ref() == glyph.filter(|_| self.used_kinds & 4 != 0)
+            && self.material_buffer.as_ref() == material.filter(|_| self.used_kinds & 4 != 0)
             && &self.bind_group == binding
             && draw_batches(commands).eq(self.batches.iter().cloned())
     }
@@ -121,8 +132,18 @@ impl Renderer {
                     schematic.map_or(&[][..], RetainedScene::all_draw_commands),
                 ),
             };
+            let (glyph, material) = match surface.surface {
+                SceneSurface::Board => (
+                    self.world_glyph_points_gpu.buffer(),
+                    self.world_glyph_materials_gpu.buffer(),
+                ),
+                SceneSurface::Schematic => (
+                    self.schematic_glyph_points_gpu.buffer(),
+                    self.schematic_glyph_materials_gpu.buffer(),
+                ),
+            };
             if let Some(cached) = self.surface_world_bundles.get_mut(index)
-                && cached.matches(vertex, stroke, bind_group, commands)
+                && cached.matches(vertex, stroke, glyph, material, bind_group, commands)
             {
                 // Pane identity is incidence metadata, not encoded GPU state.
                 cached.pane_id = surface.pane_id;
@@ -134,9 +155,12 @@ impl Renderer {
                 bits | match batch.kind {
                     DrawKind::Quads => 1,
                     DrawKind::Strokes => 2,
+                    DrawKind::Glyphs(_) => 4,
                 }
             });
             let vertex = vertex.filter(|_| used_kinds & 1 != 0);
+            let glyph = glyph.filter(|_| used_kinds & 4 != 0);
+            let material = material.filter(|_| used_kinds & 4 != 0);
             let stroke = stroke.filter(|_| used_kinds & 2 != 0);
             let mut encoder =
                 device.create_render_bundle_encoder(&wgpu::RenderBundleEncoderDescriptor {
@@ -153,16 +177,26 @@ impl Renderer {
                 let (pipeline, buffer) = match batch.kind {
                     DrawKind::Quads => (&pipelines.quads, vertex),
                     DrawKind::Strokes => (&pipelines.strokes, stroke),
+                    DrawKind::Glyphs(_) => (&pipelines.glyphs, glyph),
                 };
                 let Some(buffer) = buffer else { continue };
+                if matches!(batch.kind, DrawKind::Glyphs(_)) && material.is_none() {
+                    continue;
+                }
                 if bound_kind != Some(batch.kind) {
                     encoder.set_pipeline(pipeline);
                     encoder.set_vertex_buffer(0, buffer.slice(..));
+                    if matches!(batch.kind, DrawKind::Glyphs(_)) {
+                        encoder.set_vertex_buffer(1, material.unwrap().slice(..));
+                    }
                     bound_kind = Some(batch.kind);
                 }
                 match batch.kind {
                     DrawKind::Quads => encoder.draw(batch.range.clone(), 0..1),
                     DrawKind::Strokes => encoder.draw(0..6, batch.range.clone()),
+                    DrawKind::Glyphs(material) => {
+                        encoder.draw(batch.range.clone(), material..material + 1)
+                    }
                 }
                 draws += 1;
             }
@@ -170,15 +204,19 @@ impl Renderer {
                 SceneSurface::Board => [
                     self.world_vertices_gpu.prepared_ref(),
                     self.world_strokes_gpu.prepared_ref(),
+                    self.world_glyph_points_gpu.prepared_ref(),
+                    self.world_glyph_materials_gpu.prepared_ref(),
                 ],
                 SceneSurface::Schematic => [
                     self.schematic_world_vertices_gpu.prepared_ref(),
                     self.schematic_world_strokes_gpu.prepared_ref(),
+                    self.schematic_glyph_points_gpu.prepared_ref(),
+                    self.schematic_glyph_materials_gpu.prepared_ref(),
                 ],
             }
             .into_iter()
             .enumerate()
-            .filter(|(index, _)| used_kinds & (1 << index) != 0)
+            .filter(|(index, _)| used_kinds & (1 << (*index).min(2)) != 0)
             .filter_map(|(_, allocation)| allocation)
             .chain(std::iter::once(binding.buffer.prepared_ref()))
             .collect();
@@ -191,6 +229,8 @@ impl Renderer {
                 }),
                 vertex_buffer: vertex.cloned(),
                 stroke_buffer: stroke.cloned(),
+                glyph_buffer: glyph.cloned(),
+                material_buffer: material.cloned(),
                 bind_group: bind_group.clone(),
                 batches,
                 _allocations: allocations,
@@ -263,7 +303,8 @@ mod tests {
         let observed: Vec<_> = encoded
             .ranges()
             .flat_map(|r| match r {
-                geometry_admission::GeometryAdmissionRange::Vertices(r) => {
+                geometry_admission::GeometryAdmissionRange::Vertices(r)
+                | geometry_admission::GeometryAdmissionRange::GlyphVertices(r) => {
                     r.map(|i| (false, i)).collect::<Vec<_>>()
                 }
                 geometry_admission::GeometryAdmissionRange::StrokeInstances(r) => {
@@ -275,7 +316,8 @@ mod tests {
             .visible_draw_commands
             .iter()
             .flat_map(|r| match r {
-                RetainedDrawCommand::Quads { range, .. } => {
+                RetainedDrawCommand::Quads { range, .. }
+                | RetainedDrawCommand::Glyphs { range, .. } => {
                     range.clone().map(|i| (false, i)).collect::<Vec<_>>()
                 }
                 RetainedDrawCommand::Strokes { range, .. } => {
@@ -305,6 +347,7 @@ mod tests {
         for command in &mut equivalent.visible_draw_commands {
             match command {
                 RetainedDrawCommand::Quads { layer_id, .. }
+                | RetainedDrawCommand::Glyphs { layer_id, .. }
                 | RetainedDrawCommand::Strokes { layer_id, .. } => {
                     *layer_id = Some("metadata already applied upstream".into());
                 }
@@ -388,6 +431,7 @@ mod tests {
             .iter()
             .find_map(|command| match command {
                 RetainedDrawCommand::Quads { layer_id, .. }
+                | RetainedDrawCommand::Glyphs { layer_id, .. }
                 | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id.clone(),
             })
             .expect("fixture has a layered draw");

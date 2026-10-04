@@ -44,6 +44,7 @@ fn canonical_mask_source_preserves_identity_and_refuses_foreign_revision_without
         stale.project_uuid = uuid::Uuid::new_v4().to_string();
         assert!(Request::capture(view, &stale, surface).unwrap().is_none());
         let presentation = Presentation {
+            glyphs: Vec::new(),
             source: Some(Source {
                 project: scene.project_uuid.clone(),
                 revision: scene.source_revision.clone(),
