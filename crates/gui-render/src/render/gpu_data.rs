@@ -128,6 +128,32 @@ pub(crate) fn try_retained_vertices(
     quads: &[Quad],
     commands: &mut [super::RetainedDrawCommand],
 ) -> anyhow::Result<Vec<Vertex>> {
+    let count = retained_vertex_count(quads, commands)?;
+    let mut out = Vec::new();
+    out.try_reserve_exact(count)?;
+    for command in commands {
+        if let super::RetainedDrawCommand::Quads { range, .. } = command {
+            let start = out.len() as u32;
+            for quad in &quads[range.start as usize / 6..range.end as usize / 6] {
+                let vertices = quad_vertices(*quad);
+                let keep = if quad.points[2] == quad.points[3] {
+                    3
+                } else {
+                    6
+                };
+                out.extend_from_slice(&vertices[..keep]);
+            }
+            *range = start..out.len() as u32;
+        }
+    }
+    Ok(out)
+}
+
+/// Exact allocation count shared by admission and retained expansion.
+pub(crate) fn retained_vertex_count(
+    quads: &[Quad],
+    commands: &[super::RetainedDrawCommand],
+) -> anyhow::Result<usize> {
     let mut count = 0usize;
     for command in commands.iter() {
         if let super::RetainedDrawCommand::Quads { range, .. } = command {
@@ -155,24 +181,7 @@ pub(crate) fn try_retained_vertices(
         count <= quads.len().saturating_mul(6) && u32::try_from(count).is_ok(),
         "retained expansion exceeds admitted capacity or draw index range"
     );
-    let mut out = Vec::new();
-    out.try_reserve_exact(count)?;
-    for command in commands {
-        if let super::RetainedDrawCommand::Quads { range, .. } = command {
-            let start = out.len() as u32;
-            for quad in &quads[range.start as usize / 6..range.end as usize / 6] {
-                let vertices = quad_vertices(*quad);
-                let keep = if quad.points[2] == quad.points[3] {
-                    3
-                } else {
-                    6
-                };
-                out.extend_from_slice(&vertices[..keep]);
-            }
-            *range = start..out.len() as u32;
-        }
-    }
-    Ok(out)
+    Ok(count)
 }
 
 #[cfg(test)]

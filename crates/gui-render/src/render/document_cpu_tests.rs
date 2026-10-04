@@ -154,8 +154,8 @@ fn vertex_expansion_admission_includes_live_owners_staging_and_requested_capacit
     let limit = existing
         + (before.payload_bytes + before.tracking_bytes) as usize
         + capacity_bytes::<crate::Vertex>(6);
-    admit_vertex_expansion(&budget, &scope, 1, limit).unwrap();
-    assert!(admit_vertex_expansion(&budget, &scope, 1, limit - 1).is_err());
+    admit_vertex_expansion(&budget, &scope, 6, limit).unwrap();
+    assert!(admit_vertex_expansion(&budget, &scope, 6, limit - 1).is_err());
     assert!(admit_vertex_expansion(&budget, &scope, usize::MAX, limit).is_err());
     assert_eq!(scope.usage().allocations, before.allocations);
     assert_eq!(staging.len(), 4096);
@@ -348,4 +348,47 @@ fn document_payload_aggregates_distinct_scenes_deduplicates_clones_and_releases(
             .any(|entry| entry.scene_id == "cpu-document-aggregation-proof")
     );
     assert!(usage(&other.geometry_observer()) > 0);
+}
+
+#[test]
+fn exact_triangle_admission_matches_allocation_and_refuses_rectangle_at_the_same_limit() {
+    use crate::{Quad, RetainedDrawCommand, gpu_data};
+    let budget = for_scene("exact-triangle-admission");
+    let scope = crate::cpu_alloc::Scope::new("exact-triangle-admission");
+    let triangle = Quad {
+        points: [(0.0, 0.0), (4.0, 0.0), (2.0, 3.0), (2.0, 3.0)],
+        color: [0.2, 0.4, 0.6],
+    };
+    let rectangle = Quad {
+        points: [(0.0, 0.0), (4.0, 0.0), (4.0, 3.0), (0.0, 3.0)],
+        color: triangle.color,
+    };
+    let mut command = [RetainedDrawCommand::Quads {
+        layer_id: None,
+        range: 0..6,
+    }];
+    let existing = usage_for_identity(&Arc::downgrade(&budget));
+    let limit = existing + capacity_bytes::<crate::Vertex>(3);
+    let count = gpu_data::retained_vertex_count(&[triangle], &command).unwrap();
+    admit_vertex_expansion(&budget, &scope, count, limit).unwrap();
+    let vertices = scope
+        .with(|| gpu_data::try_retained_vertices(&[triangle], &mut command))
+        .unwrap();
+    assert_eq!(&vertices[..], &gpu_data::quad_vertices(triangle)[..3]);
+    let actual = scope.usage();
+    assert_eq!(
+        existing + (actual.payload_bytes + actual.tracking_bytes) as usize,
+        limit
+    );
+    drop(vertices);
+    assert_eq!(scope.usage().allocations, 0);
+    command[0] = RetainedDrawCommand::Quads {
+        layer_id: None,
+        range: 0..6,
+    };
+    let before = command.clone();
+    let count = gpu_data::retained_vertex_count(&[rectangle], &command).unwrap();
+    assert!(admit_vertex_expansion(&budget, &scope, count, limit).is_err());
+    assert_eq!(command, before);
+    assert_eq!(scope.usage().allocations, 0);
 }

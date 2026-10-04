@@ -250,17 +250,13 @@ fn document_bytes(document: &Document) -> usize {
     )
 }
 
-/// Check the live constructor staging plus proposed quad-to-vertex expansion
-/// against the document allowance before allocating the expanded vertex buffer.
+/// Admit the exact retained vertex allocation alongside live owners and staging.
 pub(crate) fn admit_vertex_expansion(
     budget: &Arc<Budget>,
     scope: &crate::cpu_alloc::Scope,
-    quads: usize,
+    count: usize,
     limit: usize,
 ) -> anyhow::Result<()> {
-    let count = quads
-        .checked_mul(6)
-        .ok_or_else(|| anyhow::anyhow!("retained vertex count overflow"))?;
     let layout = std::alloc::Layout::array::<crate::Vertex>(count)?;
     admit_constructor_allocation(
         budget,

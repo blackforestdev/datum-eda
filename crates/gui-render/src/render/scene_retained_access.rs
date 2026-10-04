@@ -306,7 +306,7 @@ impl RetainedScene {
             retained_scene_owner::document_cpu::admit_vertex_expansion(
                 &budget,
                 &scope,
-                world_quads.len(),
+                gpu_data::retained_vertex_count(&world_quads, &draw_commands)?,
                 limit,
             )?;
             let quad_sources = crate::presentation_ranges::remap(

@@ -198,8 +198,8 @@ fn existing_native_dense_fixture_reports_retained_layout_without_authored_writes
         }
     }
     // Quad construction stores [a,b,c,c]. Retained expansion keeps only
-    // three vertices; its admission currently reserves six. This diagnostic
-    // distinguishes actual payload from that upper bound and never credits
+    // three vertices; admission uses that same exact count. This diagnostic
+    // distinguishes geometry and provenance payloads and never credits
     // construction refusal as positive dense acceptance.
     let quad_bytes = triangles.checked_mul(std::mem::size_of::<Quad>()).unwrap();
     let vertex_bytes = triangles
@@ -223,10 +223,10 @@ fn existing_native_dense_fixture_reports_retained_layout_without_authored_writes
         .map(|g| assets[&g.glyph_handle].vertices.len())
         .sum();
     eprintln!(
-        "authored_texts={}; glyph_assets={}; actual_glyph_triangles={triangles}; quad_payload_bytes={quad_bytes}; actual_compacted_vertex_payload_bytes={vertex_bytes}; admission_vertex_upper_bound_bytes={}; required_source_span_bytes={source_span_bytes}; required_source_key_bytes={source_key_bytes}; final_bare_lower_bound_bytes={final_bare_lower_bound}; exact_unique_mesh_vertex_bytes={}; exact_mesh_index_bytes={}; document_limit_bytes={}; allocation_headers_hit_index_and_other_geometry_additional=true",
+        "authored_texts={}; glyph_assets={}; actual_glyph_triangles={triangles}; quad_payload_bytes={quad_bytes}; actual_compacted_vertex_payload_bytes={vertex_bytes}; admission_vertex_capacity_bytes={}; required_source_span_bytes={source_span_bytes}; required_source_key_bytes={source_key_bytes}; final_bare_lower_bound_bytes={final_bare_lower_bound}; exact_unique_mesh_vertex_bytes={}; exact_mesh_index_bytes={}; document_limit_bytes={}; allocation_headers_hit_index_and_other_geometry_additional=true",
         members.len(),
         assets.len(),
-        vertex_bytes * 2,
+        vertex_bytes,
         unique_vertices * std::mem::size_of::<Vertex>(),
         triangles * 3 * std::mem::size_of::<u32>(),
         crate::retained_scene_owner::document_cpu::DOCUMENT_LIMIT
