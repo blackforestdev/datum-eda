@@ -232,13 +232,21 @@ pub fn qualification_catalog(
                             radius: *radius,
                         }),
                         P::Arc { arc, .. } => {
-                            let sweep = arc.end_angle.checked_sub(arc.start_angle)?;
+                            // Canonical IR and the native projector use tenths
+                            // of a degree and a positive wrapped sweep.
+                            let mut sweep = arc.end_angle.checked_sub(arc.start_angle)?;
+                            if sweep == 0 {
+                                sweep = 3600;
+                            }
+                            if sweep < 0 {
+                                sweep = sweep.checked_add(3600)?;
+                            }
                             let at = |angle: i32| {
-                                let (dx, dy) = match angle.rem_euclid(360) {
+                                let (dx, dy) = match angle.rem_euclid(3600) {
                                     0 => (arc.radius, 0),
-                                    90 => (0, arc.radius),
-                                    180 => (-arc.radius, 0),
-                                    270 => (0, -arc.radius),
+                                    900 => (0, arc.radius),
+                                    1800 => (arc.radius.checked_neg()?, 0),
+                                    2700 => (0, arc.radius.checked_neg()?),
                                     _ => return None,
                                 };
                                 Some(PointNm {
@@ -251,7 +259,7 @@ pub fn qualification_catalog(
                             }
                             Some(QualificationGeometry::Anchors(vec![
                                 at(arc.start_angle)?,
-                                at(arc.start_angle + sweep / 2)?,
+                                at(arc.start_angle.checked_add(sweep / 2)?)?,
                                 at(arc.end_angle)?,
                             ]))
                         }
