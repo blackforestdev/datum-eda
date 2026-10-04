@@ -11,11 +11,13 @@ mod lifecycle;
 mod parents;
 #[path = "s5a_fixture/recipe.rs"]
 mod recipe;
+#[path = "s5a_fixture/semantic.rs"]
+mod semantic;
 
 fn main() -> Result<()> {
     let mut args = std::env::args_os().skip(1);
     let family = args.next().context(
-        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|library-base|library-parents> <fresh-root>",
+        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|library-base|library-parents> <fresh-root>",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
     let root = PathBuf::from(args.next().context("fresh output root required")?);
@@ -39,7 +41,7 @@ fn run(family: &str, root: &Path) -> Result<()> {
         return library::prepare(root);
     }
     let count = match family {
-        "electrical-scope" | "revision-lifetime" | "class-qualification" => 1,
+        "electrical-scope" | "revision-lifetime" | "class-qualification" | "semantic-scope" => 1,
         "compound-output" => 257,
         "dense-and-cancel" => 100_000,
         _ => bail!("unsupported family; no substitute recipe is credited"),
@@ -58,6 +60,11 @@ fn run(family: &str, root: &Path) -> Result<()> {
     } else {
         None
     };
+    let semantic_variant = if family == "semantic-scope" {
+        Some(semantic::build(root)?)
+    } else {
+        None
+    };
     let manifest = serde_json::json!({
         "schema_version": 1,
         "recipe": "s5a-native-core-v1",
@@ -65,6 +72,7 @@ fn run(family: &str, root: &Path) -> Result<()> {
         "engine_observation": report,
         "revision_variants": variants,
         "class_variant": class_variant,
+        "semantic_variant": semantic_variant,
         "native_input": "pending: bind candidate, binary, environment and actual input/observation before C04",
         "acceptance": "not established; C04/C05/C06 remain separate",
         "coverage": {
@@ -89,6 +97,28 @@ fn run(family: &str, root: &Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn semantic_variant_preserves_complete_bus_and_occurrence_membership() {
+        let root = std::env::temp_dir().join(format!("s5a-semantic-test-{}", uuid::Uuid::new_v4()));
+        run("semantic-scope", &root).unwrap();
+        let report: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(root.join("s5a-fixture.json")).unwrap()).unwrap();
+        assert_eq!(
+            report["semantic_variant"]["expected_global_net_members"]
+                .as_array()
+                .unwrap()
+                .len(),
+            21
+        );
+        assert_eq!(
+            report["semantic_variant"]["expected_bus_members"]
+                .as_array()
+                .unwrap()
+                .len(),
+            8
+        );
+        std::fs::remove_dir_all(root).unwrap();
+    }
     #[test]
     fn class_variant_preserves_actual_geometry_and_current_generated_fill() {
         let root = std::env::temp_dir().join(format!("s5a-class-test-{}", uuid::Uuid::new_v4()));

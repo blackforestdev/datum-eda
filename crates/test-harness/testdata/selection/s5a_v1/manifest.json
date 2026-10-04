@@ -3906,6 +3906,846 @@
         "Standalone board graphics: dat-s5a-board-graphic-authority-h8xm",
         "Full C04 native input, C05 independent review and C06 acceptance"
       ]
+    },
+    {
+      "builder_command": [
+        "target/s5a-c03-u5-semantic-builder",
+        "semantic-scope",
+        "<fresh-root>"
+      ],
+      "builder_override": {
+        "path": "target/s5a-c03-u5-semantic-builder",
+        "sha256": "8a3f8c83734311dcc45fab1148bffc61c2428e21ad7d829ec05773801ba93759",
+        "source_base_commit": "5a3c2bf9",
+        "source_files": [
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture.rs",
+            "sha256": "c8bb7fb647c3c6e5b364623d35774294575d8048283d51f7109af82da7f02830"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/semantic.rs",
+            "sha256": "71f15d9c5a1af6de71198461d7aea8aae68290edcc0c7e3dea42694c985efc6e"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/semantic/checks.rs",
+            "sha256": "c7e02fd5523cdfcd023a49ef1aff02a8562a8a142fc441465c696d102e5c6081"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/semantic/fork.rs",
+            "sha256": "439d90d92f78eefade5ff4d17b459a6e4ca43c9cbbd174cd993f54a32a0713a2"
+          }
+        ]
+      },
+      "engine_oracles": {
+        "acceptance": "partial C03 fixture preparation; no C04/C05/C06 acceptance",
+        "contact_evidence": [
+          {
+            "foreign_bus": "73000000-0000-4000-8000-00000000002a",
+            "foreign_member": {
+              "class": "buses",
+              "instance_path": [],
+              "source_id": "73000000-0000-4000-8000-000000000004"
+            },
+            "origin_bus": "73000000-0000-4000-8000-000000000029",
+            "origin_member": {
+              "class": "buses",
+              "instance_path": [],
+              "source_id": "73000000-0000-4000-8000-000000000002"
+            }
+          }
+        ],
+        "expected_bus_members": [
+          {
+            "class": "bus_entries",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000005"
+          },
+          {
+            "class": "bus_entries",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000069"
+          },
+          {
+            "class": "buses",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000001"
+          },
+          {
+            "class": "buses",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000002"
+          },
+          {
+            "class": "buses",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000003"
+          },
+          {
+            "class": "buses",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000065"
+          },
+          {
+            "class": "buses",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000066"
+          },
+          {
+            "class": "buses",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000067"
+          }
+        ],
+        "expected_bus_run_members": [
+          {
+            "class": "bus_entries",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000005"
+          },
+          {
+            "class": "buses",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000001"
+          },
+          {
+            "class": "buses",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000002"
+          }
+        ],
+        "expected_global_net_members": [
+          {
+            "class": "junctions",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000b"
+          },
+          {
+            "class": "junctions",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006f"
+          },
+          {
+            "class": "junctions",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006f"
+          },
+          {
+            "class": "labels",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "labels",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000e"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006e"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006e"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000072"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000072"
+          },
+          {
+            "class": "ports",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "ports",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000070"
+          },
+          {
+            "class": "ports",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000070"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000008"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000d"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006c"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006c"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006d"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006d"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000071"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000071"
+          }
+        ],
+        "expected_related": [
+          {
+            "class": "bus_entries",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000069"
+          },
+          {
+            "class": "buses",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000065"
+          },
+          {
+            "class": "buses",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000066"
+          },
+          {
+            "class": "buses",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000067"
+          },
+          {
+            "class": "junctions",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000b"
+          },
+          {
+            "class": "junctions",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006f"
+          },
+          {
+            "class": "junctions",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006f"
+          },
+          {
+            "class": "labels",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "labels",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000e"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006e"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006e"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000072"
+          },
+          {
+            "class": "labels",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000072"
+          },
+          {
+            "class": "ports",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "ports",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000070"
+          },
+          {
+            "class": "ports",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000070"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000008"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000d"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006c"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006c"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006d"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-00000000006d"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000071"
+          },
+          {
+            "class": "wires",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ],
+            "source_id": "73000000-0000-4000-8000-000000000071"
+          }
+        ],
+        "expected_wire_run_members": [
+          {
+            "class": "junctions",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000b"
+          },
+          {
+            "class": "labels",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "ports",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000008"
+          },
+          {
+            "class": "wires",
+            "instance_path": [],
+            "source_id": "73000000-0000-4000-8000-000000000009"
+          }
+        ],
+        "foreign_bus": "73000000-0000-4000-8000-00000000002a",
+        "logical_net": "b151f91b-1da9-478b-8c71-6ff4ad03dd04",
+        "model_revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+        "native_input": "pending: three acquisition tiers, pre-acquisition hidden/filter, modifier refusal/no-op and unprojected qualified-members disclosure",
+        "nonmutation": "complete source shards and full journal compared byte-for-byte around captured queries/reopen",
+        "path": "target/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+        "primary_bus": "73000000-0000-4000-8000-000000000029",
+        "project_id": "20000000-0000-4000-8000-000000000001",
+        "related_bus": "73000000-0000-4000-8000-00000000002b",
+        "sheet_instances": [
+          "73000000-0000-4000-8000-00000000001f",
+          "73000000-0000-4000-8000-000000000020"
+        ],
+        "source_basis": [
+          {
+            "content_hash": "c18dc00b4c681fb3413ebff3a3d137b74fea2a368e8e2bbcb8ed9ca007b96d3c",
+            "shard_id": "269c0f9f-1f60-5c72-bda3-4ee9288fdca4"
+          },
+          {
+            "content_hash": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7",
+            "shard_id": "291ce3da-2e6e-58e9-91ef-3bcd89c0a29d"
+          },
+          {
+            "content_hash": "a0fd30341bbf222ab5f4d781fc6eb0676006909adbd8e0e5236af7cd59e5a811",
+            "shard_id": "2a27cfc1-fb92-5ccd-9dcc-80861136bec5"
+          },
+          {
+            "content_hash": "23737bde6690579a1a2279b50b9c403fef8cf8dcc9cf53f92fc9ede46460147a",
+            "shard_id": "2e54f707-66e6-5491-8612-a10e6ac34882"
+          },
+          {
+            "content_hash": "52345d72b79d35cf52e43d7b95b1a98e810c3d4d77d32338e81951e3cb2f14b7",
+            "shard_id": "3bb375a7-7003-58c1-ab11-4e23b2913a0d"
+          },
+          {
+            "content_hash": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc",
+            "shard_id": "577eca33-838f-5c28-b281-7a0ba7a73f97"
+          },
+          {
+            "content_hash": "895c6eb02185583f168d6e38550c5ef0f2a570e447c4724df47ee66e4ddc04fd",
+            "shard_id": "650d2415-6756-55c4-bdda-65e552691999"
+          },
+          {
+            "content_hash": "10c8d2518b81a5cc9bfab6c12616f51c3be79e059977836d449475fbaaf240fd",
+            "shard_id": "661c9403-2d8d-505f-b69c-6d55f459aef5"
+          },
+          {
+            "content_hash": "1a1c534540fe103a7ac7c4de03f348d0c74ca5884e889f7230d7d4d6f42dcd8d",
+            "shard_id": "ab849971-d8e8-5237-a40e-cdabce6c3443"
+          },
+          {
+            "content_hash": "6aa93108571f962fa561d0d6784eeeb9cc8b658a5ad0addee1feb542e2f9de76",
+            "shard_id": "b13498d3-7dc0-561e-8b82-ab6b821f7e9a"
+          },
+          {
+            "content_hash": "2c5483e18ecfd45e50fdeb2c359a5cedf5802bab088d93963df84969c2771018",
+            "shard_id": "d5250f26-60d2-5775-b965-650e8980c732"
+          },
+          {
+            "content_hash": "1ff2cb47eeb580f6a70fb319e249ff7063a890c8ccdffdeefe4f70e5faee0041",
+            "shard_id": "d6d17c54-531c-5698-bc8f-6c85ba09c85b"
+          },
+          {
+            "content_hash": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088",
+            "shard_id": "ee12e824-8a2a-5987-8809-35925590d54e"
+          },
+          {
+            "content_hash": "f15eff8e7e3f04dab7728dbfba493c11bea0704f859584bf47a11f9a38e02245",
+            "shard_id": "f509c79e-0b34-5a9e-9e3c-ada35cf08b77"
+          },
+          {
+            "content_hash": "e426a028b722369c776b28042c0130442e85e595e828f7feacc619083821aa46",
+            "shard_id": "f7c39bc0-b0d3-54a6-961f-64187dbffac9"
+          }
+        ]
+      },
+      "family": "electrical-scope/semantic-occurrences",
+      "files": [
+        {
+          "bytes": 281,
+          "relative_path": ".datum/electrical_identities/60000000-0000-4000-8000-000000000001.json",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 309,
+          "relative_path": ".datum/electrical_identities/60000000-0000-4000-8000-000000000002.json",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 245,
+          "relative_path": ".datum/electrical_identities/73000000-0000-4000-8000-000000000028.json",
+          "sha256": "c18dc00b4c681fb3413ebff3a3d137b74fea2a368e8e2bbcb8ed9ca007b96d3c"
+        },
+        {
+          "bytes": 886,
+          "relative_path": ".datum/electrical_identities/73000000-0000-4000-8000-000000000029.json",
+          "sha256": "a0fd30341bbf222ab5f4d781fc6eb0676006909adbd8e0e5236af7cd59e5a811"
+        },
+        {
+          "bytes": 458,
+          "relative_path": ".datum/electrical_identities/73000000-0000-4000-8000-00000000002a.json",
+          "sha256": "1a1c534540fe103a7ac7c4de03f348d0c74ca5884e889f7230d7d4d6f42dcd8d"
+        },
+        {
+          "bytes": 622,
+          "relative_path": ".datum/electrical_identities/73000000-0000-4000-8000-00000000002b.json",
+          "sha256": "6aa93108571f962fa561d0d6784eeeb9cc8b658a5ad0addee1feb542e2f9de76"
+        },
+        {
+          "bytes": 370,
+          "relative_path": ".datum/electrical_identities/73000000-0000-4000-8000-00000000002c.json",
+          "sha256": "10c8d2518b81a5cc9bfab6c12616f51c3be79e059977836d449475fbaaf240fd"
+        },
+        {
+          "bytes": 608,
+          "relative_path": ".datum/electrical_identities/73000000-0000-4000-8000-00000000002d.json",
+          "sha256": "e426a028b722369c776b28042c0130442e85e595e828f7feacc619083821aa46"
+        },
+        {
+          "bytes": 607,
+          "relative_path": ".datum/electrical_identities/73000000-0000-4000-8000-00000000002e.json",
+          "sha256": "52345d72b79d35cf52e43d7b95b1a98e810c3d4d77d32338e81951e3cb2f14b7"
+        },
+        {
+          "bytes": 284,
+          "relative_path": ".datum/electrical_identities/b151f91b-1da9-478b-8c71-6ff4ad03dd04.json",
+          "sha256": "f15eff8e7e3f04dab7728dbfba493c11bea0704f859584bf47a11f9a38e02245"
+        },
+        {
+          "bytes": 33,
+          "relative_path": ".datum/journal/cursor.json",
+          "sha256": "a2b2202f4a705d3659c1fc9e2b69666fdfbecb41ff61c8639041b3d3ad243e63"
+        },
+        {
+          "bytes": 39566,
+          "relative_path": ".datum/journal/transactions.jsonl",
+          "sha256": "4a15ca01a754e433e4d9fec6631c0acf1e3812c2e42e37b703ac54ac50b7ee68"
+        },
+        {
+          "bytes": 336,
+          "relative_path": ".datum/revision/v1/blobs/sha256/08a53f6035f006108aa7b1db978007ba36a20b58772c19ef48f5e2ea30313c87",
+          "sha256": "08a53f6035f006108aa7b1db978007ba36a20b58772c19ef48f5e2ea30313c87"
+        },
+        {
+          "bytes": 1169,
+          "relative_path": ".datum/revision/v1/blobs/sha256/0dc12f421e97e2ff6170bc68e634de3fc296f34a2be5dc1e40463a2e468592e7",
+          "sha256": "0dc12f421e97e2ff6170bc68e634de3fc296f34a2be5dc1e40463a2e468592e7"
+        },
+        {
+          "bytes": 370,
+          "relative_path": ".datum/revision/v1/blobs/sha256/10c8d2518b81a5cc9bfab6c12616f51c3be79e059977836d449475fbaaf240fd",
+          "sha256": "10c8d2518b81a5cc9bfab6c12616f51c3be79e059977836d449475fbaaf240fd"
+        },
+        {
+          "bytes": 270,
+          "relative_path": ".datum/revision/v1/blobs/sha256/11a2a7304b046252ecc6eef7baa9d2e7ddaecafd8aaa4fc54944907d9ca54cf6",
+          "sha256": "11a2a7304b046252ecc6eef7baa9d2e7ddaecafd8aaa4fc54944907d9ca54cf6"
+        },
+        {
+          "bytes": 458,
+          "relative_path": ".datum/revision/v1/blobs/sha256/1a1c534540fe103a7ac7c4de03f348d0c74ca5884e889f7230d7d4d6f42dcd8d",
+          "sha256": "1a1c534540fe103a7ac7c4de03f348d0c74ca5884e889f7230d7d4d6f42dcd8d"
+        },
+        {
+          "bytes": 707,
+          "relative_path": ".datum/revision/v1/blobs/sha256/1ff2cb47eeb580f6a70fb319e249ff7063a890c8ccdffdeefe4f70e5faee0041",
+          "sha256": "1ff2cb47eeb580f6a70fb319e249ff7063a890c8ccdffdeefe4f70e5faee0041"
+        },
+        {
+          "bytes": 1341,
+          "relative_path": ".datum/revision/v1/blobs/sha256/217ae40a1b340f0f7fa6701f56dc273ccdb8f61169dce3762602f6e67e8ec30e",
+          "sha256": "217ae40a1b340f0f7fa6701f56dc273ccdb8f61169dce3762602f6e67e8ec30e"
+        },
+        {
+          "bytes": 125,
+          "relative_path": ".datum/revision/v1/blobs/sha256/23737bde6690579a1a2279b50b9c403fef8cf8dcc9cf53f92fc9ede46460147a",
+          "sha256": "23737bde6690579a1a2279b50b9c403fef8cf8dcc9cf53f92fc9ede46460147a"
+        },
+        {
+          "bytes": 2388,
+          "relative_path": ".datum/revision/v1/blobs/sha256/2c5483e18ecfd45e50fdeb2c359a5cedf5802bab088d93963df84969c2771018",
+          "sha256": "2c5483e18ecfd45e50fdeb2c359a5cedf5802bab088d93963df84969c2771018"
+        },
+        {
+          "bytes": 607,
+          "relative_path": ".datum/revision/v1/blobs/sha256/52345d72b79d35cf52e43d7b95b1a98e810c3d4d77d32338e81951e3cb2f14b7",
+          "sha256": "52345d72b79d35cf52e43d7b95b1a98e810c3d4d77d32338e81951e3cb2f14b7"
+        },
+        {
+          "bytes": 1091,
+          "relative_path": ".datum/revision/v1/blobs/sha256/6464cd7eec69bd6ec6010d7dd1631bd9afb1bf8ce7616d706324b83f01078d13",
+          "sha256": "6464cd7eec69bd6ec6010d7dd1631bd9afb1bf8ce7616d706324b83f01078d13"
+        },
+        {
+          "bytes": 622,
+          "relative_path": ".datum/revision/v1/blobs/sha256/6aa93108571f962fa561d0d6784eeeb9cc8b658a5ad0addee1feb542e2f9de76",
+          "sha256": "6aa93108571f962fa561d0d6784eeeb9cc8b658a5ad0addee1feb542e2f9de76"
+        },
+        {
+          "bytes": 7496,
+          "relative_path": ".datum/revision/v1/blobs/sha256/6b122ec177be6f2fcb831b3c7b243fa60ed12f92f3ca0b92385a3fe4a1ee7865",
+          "sha256": "6b122ec177be6f2fcb831b3c7b243fa60ed12f92f3ca0b92385a3fe4a1ee7865"
+        },
+        {
+          "bytes": 1517,
+          "relative_path": ".datum/revision/v1/blobs/sha256/6e47d20c168002b50e77c020385630d5edd2ea387285d342366c47a45783cb69",
+          "sha256": "6e47d20c168002b50e77c020385630d5edd2ea387285d342366c47a45783cb69"
+        },
+        {
+          "bytes": 1299,
+          "relative_path": ".datum/revision/v1/blobs/sha256/7f7d24578e26d5279955cd048f3ade577167a456f861ee94c848a8969153625b",
+          "sha256": "7f7d24578e26d5279955cd048f3ade577167a456f861ee94c848a8969153625b"
+        },
+        {
+          "bytes": 2369,
+          "relative_path": ".datum/revision/v1/blobs/sha256/895c6eb02185583f168d6e38550c5ef0f2a570e447c4724df47ee66e4ddc04fd",
+          "sha256": "895c6eb02185583f168d6e38550c5ef0f2a570e447c4724df47ee66e4ddc04fd"
+        },
+        {
+          "bytes": 1265,
+          "relative_path": ".datum/revision/v1/blobs/sha256/8f86f90b9f3ebfc9eb01d3b393c2e623b83350ee2fcd2c3688de265273e8fe27",
+          "sha256": "8f86f90b9f3ebfc9eb01d3b393c2e623b83350ee2fcd2c3688de265273e8fe27"
+        },
+        {
+          "bytes": 886,
+          "relative_path": ".datum/revision/v1/blobs/sha256/a0fd30341bbf222ab5f4d781fc6eb0676006909adbd8e0e5236af7cd59e5a811",
+          "sha256": "a0fd30341bbf222ab5f4d781fc6eb0676006909adbd8e0e5236af7cd59e5a811"
+        },
+        {
+          "bytes": 1845,
+          "relative_path": ".datum/revision/v1/blobs/sha256/a6f3976e892e447034fe8479a773816b536474c7f152e5d62ff032b6e527b921",
+          "sha256": "a6f3976e892e447034fe8479a773816b536474c7f152e5d62ff032b6e527b921"
+        },
+        {
+          "bytes": 521,
+          "relative_path": ".datum/revision/v1/blobs/sha256/aaef6b0744a78470c43f648b58f53b9bbcc038115957a93b91754165e78f7731",
+          "sha256": "aaef6b0744a78470c43f648b58f53b9bbcc038115957a93b91754165e78f7731"
+        },
+        {
+          "bytes": 2373,
+          "relative_path": ".datum/revision/v1/blobs/sha256/ba04d0a11f14e4905ac69cb50163abcc8df26ae399135887ea7644c40be48424",
+          "sha256": "ba04d0a11f14e4905ac69cb50163abcc8df26ae399135887ea7644c40be48424"
+        },
+        {
+          "bytes": 245,
+          "relative_path": ".datum/revision/v1/blobs/sha256/c18dc00b4c681fb3413ebff3a3d137b74fea2a368e8e2bbcb8ed9ca007b96d3c",
+          "sha256": "c18dc00b4c681fb3413ebff3a3d137b74fea2a368e8e2bbcb8ed9ca007b96d3c"
+        },
+        {
+          "bytes": 1817,
+          "relative_path": ".datum/revision/v1/blobs/sha256/c5b6a90362975ade15321bc3fbfba201e26e1e9a6c164e83362e9e9c834ec8ef",
+          "sha256": "c5b6a90362975ade15321bc3fbfba201e26e1e9a6c164e83362e9e9c834ec8ef"
+        },
+        {
+          "bytes": 1815,
+          "relative_path": ".datum/revision/v1/blobs/sha256/cf2237e575add21576818f590c915d0b04e22161d1ca1567fb29947e2186195d",
+          "sha256": "cf2237e575add21576818f590c915d0b04e22161d1ca1567fb29947e2186195d"
+        },
+        {
+          "bytes": 6256,
+          "relative_path": ".datum/revision/v1/blobs/sha256/d07998e5b63deb25ad8fb98d39db9f2774ced55f887d7c0101ea0f3e629f9275",
+          "sha256": "d07998e5b63deb25ad8fb98d39db9f2774ced55f887d7c0101ea0f3e629f9275"
+        },
+        {
+          "bytes": 1299,
+          "relative_path": ".datum/revision/v1/blobs/sha256/d7406cd18bb286dcead00f534de610ee741fc8d720d66aec7ce7143c2d32a32d",
+          "sha256": "d7406cd18bb286dcead00f534de610ee741fc8d720d66aec7ce7143c2d32a32d"
+        },
+        {
+          "bytes": 608,
+          "relative_path": ".datum/revision/v1/blobs/sha256/e426a028b722369c776b28042c0130442e85e595e828f7feacc619083821aa46",
+          "sha256": "e426a028b722369c776b28042c0130442e85e595e828f7feacc619083821aa46"
+        },
+        {
+          "bytes": 284,
+          "relative_path": ".datum/revision/v1/blobs/sha256/f15eff8e7e3f04dab7728dbfba493c11bea0704f859584bf47a11f9a38e02245",
+          "sha256": "f15eff8e7e3f04dab7728dbfba493c11bea0704f859584bf47a11f9a38e02245"
+        },
+        {
+          "bytes": 918,
+          "relative_path": ".datum/revision/v1/generations/0e2c42c7818cecf6ee69f860cdbf14373c651d46b7094d8d100eaf60b4dfdd5e.json",
+          "sha256": "f9df33f221ce02d135f7c306a1a77ef56f58adc164250744d31563eca9f207b5"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/2234c12afae98c48441a1e81859ef379ec31d38777b0bcc76efa0a7401c5387a.json",
+          "sha256": "ab84d62612c010cc943cb1009943793d75093358af29ee4d0f98924fd77d0f91"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/2cf08f7abdb18a357cbc1cf036b127bef19914cb54419cf23f2cec5655a97f32.json",
+          "sha256": "45965600c6a7ca748ff2f279c618fa8e02244394851e29d2f1ec95eb2fa4b599"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/45ba7d7162859e5fb75505ca4e9d82605edbd1b2ddfb5c3eb3462b55b42b1cd4.json",
+          "sha256": "8ccda8885962bd970c83e4db440700bcd215bedc73f9965ad7e2fb04e7f11652"
+        },
+        {
+          "bytes": 1016,
+          "relative_path": ".datum/revision/v1/generations/5235b204667592e82f95a53d7de4b27947ee442c774c446adc1d0eeb6d177f35.json",
+          "sha256": "a2b3ac5ed9003205f759f35ca9119fd3a3e04d654353a08ff8ed1d02b31c9730"
+        },
+        {
+          "bytes": 1219,
+          "relative_path": ".datum/revision/v1/generations/61c3d5627030a976b05929e4cb76646051f199482dc76d9a6492a4575f07e7f2.json",
+          "sha256": "b5efda67255ef884c0dd9bf46c3ddfa4746e6074af3ece4d09622b705cbd063d"
+        },
+        {
+          "bytes": 1231,
+          "relative_path": ".datum/revision/v1/generations/6ad02828b0ed080fca55b41a98449b57c5c35328f6af70ebde1ecf6f224286d3.json",
+          "sha256": "e8e46f0ad765aa1a5006dea9137456a51eaaf0f7ec29f87b58c61d11408f7c5a"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/89138bb7462820bda5d3d54cd1581316fc5a26d4270efb9af9231c887ed7775d.json",
+          "sha256": "fb66ed6e31312133da7c546f5388a6fcff269655ecd0457a6ae34939d6000a40"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/d7583fe17de54396046b2358ecea6c4f102adb8d788b63cea1789e4d7d3a3d57.json",
+          "sha256": "c8448d2b10bd31019f137b370083caf8777621158f2c499f2ddfc535e5c31551"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/e98f533b99840f1e060a3f1df239efcf1740ead626548d939d33e5808c71d8bb.json",
+          "sha256": "44a24f14be1399e73b7084d33ac8eb47fbdf6b86fd7b8f4e00670593d03bfac6"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/f84925ea972848d50ab8fa0b33e8209b4ea6fee99cca70bca8e6ca6b0cc2c92f.json",
+          "sha256": "76b0ecab2ab44e4c56615a60e32d70506dd5d720e25bd21946048f95d4130978"
+        },
+        {
+          "bytes": 1016,
+          "relative_path": ".datum/revision/v1/generations/fc29e429b385bec6406d248474e1352378edc0e838397adf08d78ce27428dab4.json",
+          "sha256": "de050fe170ebb31f8af83dc6984363f0e151b250fe8774727ac3d14b8845678d"
+        },
+        {
+          "bytes": 1108,
+          "relative_path": ".datum/revision/v1/generations/feecf07c696b507083c3a34d9cf8d02b4872c34206701d78fe7a5454fa2e23d8.json",
+          "sha256": "b2249d49147ae5df515ec89976b5a99a5c94074802854c89e30d1c4ad51b1b03"
+        },
+        {
+          "bytes": 220,
+          "relative_path": ".datum/revision/v1/head.json",
+          "sha256": "4796b3ec54bdac466677fb2e7c0b1405677b82509721de41ec8c8aeac1d47081"
+        },
+        {
+          "bytes": 2086,
+          "relative_path": "board/board.json",
+          "sha256": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc"
+        },
+        {
+          "bytes": 227,
+          "relative_path": "project.json",
+          "sha256": "fe1148655ce362e6e266159d7b954c8cd81aa4e693238b397a5e132f817c545e"
+        },
+        {
+          "bytes": 98,
+          "relative_path": "rules/rules.json",
+          "sha256": "e0f25baed6dc4d0e9840a043b575ee42853a03637372875510827f89a9efdf59"
+        },
+        {
+          "bytes": 125,
+          "relative_path": "schematic/definitions/semantic.json",
+          "sha256": "23737bde6690579a1a2279b50b9c403fef8cf8dcc9cf53f92fc9ede46460147a"
+        },
+        {
+          "bytes": 707,
+          "relative_path": "schematic/schematic.json",
+          "sha256": "1ff2cb47eeb580f6a70fb319e249ff7063a890c8ccdffdeefe4f70e5faee0041"
+        },
+        {
+          "bytes": 2369,
+          "relative_path": "schematic/selection.json",
+          "sha256": "895c6eb02185583f168d6e38550c5ef0f2a570e447c4724df47ee66e4ddc04fd"
+        },
+        {
+          "bytes": 2388,
+          "relative_path": "schematic/semantic-child.json",
+          "sha256": "2c5483e18ecfd45e50fdeb2c359a5cedf5802bab088d93963df84969c2771018"
+        }
+      ],
+      "focused_proof": {
+        "binary": "target/s5a-c03-native-semantic-tests",
+        "cli": "target/s5a-c03-u5-library-cli",
+        "cli_sha256": "e1c076c4a9d72ad3812ac7d75ceba0a797bf35b53be8c7989c00b9c49ab60400",
+        "log": "target/s5a-c03-native-semantic-final-corrected.log",
+        "scope": "production root projection, complete occurrence-qualified Run/Bus/Global Net, foreign contact, hidden/unprojected disclosure, full source/journal byte equality and reopen",
+        "sha256": "4d4576cbaed97d3c088605f7c79d1f15307d5ccf6454dbbf4400cb7931dd052e",
+        "tests_passed": 1
+      },
+      "frozen_root": "target/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+      "native_input_proof": "pending C04; no pointer/keyboard/render acceptance claimed",
+      "unverified": [
+        "Qualified child Sheet canvas projection",
+        "Full N01\u2013N17 input/accessibility/revision proof",
+        "C05 independent replay and C06 owner acceptance"
+      ]
     }
   ],
   "focused_proof": {
