@@ -386,3 +386,6 @@ pub(crate) fn selected_wire_state() -> (Fixture, ReviewWorkspaceState) {
     state.selection = SelectionTarget::Native(Box::new(view));
     (f, state)
 }
+
+#[path = "dense_native_tests.rs"]
+mod dense_native_tests;

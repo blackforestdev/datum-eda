@@ -3,10 +3,12 @@
 use super::{DesignModel, ElectricalOccurrence, EngineError, Operation, SourceShardKind};
 use serde_json::Value;
 use std::collections::BTreeMap;
+mod class_index;
 use uuid::Uuid;
 
 pub(super) struct ElectricalBasis {
     values: BTreeMap<Uuid, Value>,
+    classes: class_index::Index,
 }
 impl ElectricalBasis {
     pub(super) fn new(model: &DesignModel, operations: &[Operation]) -> Result<Self, EngineError> {
@@ -83,16 +85,19 @@ impl ElectricalBasis {
             }
             values.insert(shard.shard_id, value);
         }
-        Ok(Self { values })
+        let classes = class_index::Index::capture(&values);
+        Ok(Self { values, classes })
     }
     pub(super) fn class(&self, model: &DesignModel, id: Uuid, class: &str, domain: &str) -> bool {
         model
             .objects
             .get(&id)
             .filter(|o| o.domain == domain)
-            .and_then(|o| self.values.get(&o.source_shard_id))
-            .is_some_and(|v| {
-                find_class(v, class, id).is_some()
+            .and_then(|o| self.values.get(&o.source_shard_id).map(|v| (o, v)))
+            .is_some_and(|(o, v)| {
+                self.classes
+                    .contains(o.source_shard_id, class, id)
+                    .unwrap_or_else(|| find_class(v, class, id).is_some())
                     || (domain == "pool"
                         && model.objects[&id].kind == class
                         && v.get("uuid").and_then(Value::as_str) == Some(id.to_string().as_str()))
