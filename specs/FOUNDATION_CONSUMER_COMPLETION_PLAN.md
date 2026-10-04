@@ -2588,3 +2588,33 @@ renderer/app Clippy passes. Logs: `target/s5a-c03-copper-stage-*.log`.
 This resolves producer omission dat-native-copper-stage-iw3n, not independent
 C05/native acceptance or resolved semantic side styling. GPU mask, remaining
 U4/native/graphics proofs, C05/C06 and CAM/T04 still remain.
+
+<!-- OWNER:UVT-S5A-BUILD:S5A-C03:IMPORT-FILL-REPAIR -->
+### S5A-C03 bounded imported-fill amendment
+
+The owner approved the diagnosed missing saved copper-fill repair and owning
+reconciliation with “proceed”. [PM056](../docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md)
+places `dat-imported-zone-fill-authority-udb8` under the current C03 integration
+claim: canonical native adoption, complete saved fill, stable Zone identity,
+exact holes, final source/evidence basis, atomic refusal and history/reopen.
+This is a bounded correction, not reopening the accepted selection prerequisite
+or authorizing broader import/geometry/manufacturing work. Retain all open source
+blockers, C04 proof, C05 independent review and C06 owner acceptance.
+
+The bounded repair is implemented: one source Zone per authored layer, complete
+saved occupied copper, exact source-grid/hole certification, final-basis atomic
+adoption, guarded legacy source restoration, and undo/redo/reopen. Existing
+MissingInSource reimport remains non-destructive and makes incompatible incoming
+fill explicitly Stale. Only the existing importer's omitted pad connection fact
+may be restored with matching source/provenance and untouched, otherwise identical
+pad data. No new pad/source model is introduced.
+
+Producer proof: 37 focused passes (6 adoption/history/membership/refusal, 3 exact
+geometry/grid, 25 existing fill-owner, 3 existing import lifecycle); engine/CLI
+Clippy is clean. Fresh and copied-cache DOA2526 adoption both preserve all 20
+saved contours as 18 current source-bound records with identical exact occupied
+polygons. Native copper presentation is captured in
+`target/s5a-import-fill-native.png`; scoped receipts/pins are in
+`target/s5a-import-fill-proof.json`. These results cover this repair only. C03
+remains partial; graphics/source limitations, complete C04/C05 proof, C06 and
+manufacturing CAM/T04 stay open.

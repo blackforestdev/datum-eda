@@ -43,7 +43,7 @@ pub(super) fn validate_transaction_links(
             if target.transaction_kind == TransactionKind::Undo {
                 return Err(format!("undo_of {undo_of} references an undo transaction"));
             }
-            validate_compensating_payload(transaction, target, "undo")?;
+            validate_compensating_payload(transaction, target, prior, "undo")?;
         }
         TransactionKind::Redo => {
             let Some(redo_of) = transaction.redo_of else {
@@ -82,7 +82,7 @@ pub(super) fn validate_transaction_links(
                     "redo_of {redo_of} was cleared by a newer normal transaction"
                 ));
             }
-            validate_compensating_payload(transaction, target, "redo")?;
+            validate_compensating_payload(transaction, target, prior, "redo")?;
         }
     }
     Ok(())
@@ -91,9 +91,12 @@ pub(super) fn validate_transaction_links(
 fn validate_compensating_payload(
     transaction: &TransactionRecord,
     target: &TransactionRecord,
+    prior: &[TransactionRecord],
     label: &str,
 ) -> Result<(), String> {
-    if transaction.operations != target.inverse_operations {
+    if transaction.operations != target.inverse_operations
+        && !super::board_batch_basis::matches_imported_fill_compensation(transaction, target, prior)
+    {
         return Err(format!(
             "{label} operations do not match target inverse operations"
         ));

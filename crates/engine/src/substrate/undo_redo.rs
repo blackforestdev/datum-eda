@@ -79,7 +79,7 @@ impl DesignModel {
                 target.transaction_id
             )));
         }
-        let batch = OperationBatch {
+        let mut batch = OperationBatch {
             batch_id: Uuid::new_v5(
                 &self.project.project_id,
                 format!(
@@ -94,6 +94,7 @@ impl DesignModel {
             provenance,
             operations: target.inverse_operations.clone(),
         };
+        super::board_batch_basis::bind_imported_fill_history(self, &mut batch)?;
         let (undo_of, redo_of) = match transaction_kind {
             TransactionKind::Undo => (Some(target.transaction_id), None),
             TransactionKind::Redo => (None, Some(target.transaction_id)),
@@ -124,6 +125,14 @@ impl DesignModel {
 }
 
 fn compensation_needs_revision_override(target: &TransactionRecord) -> bool {
+    // Imported generated copper accompanies real board-source operations.
+    // Compensation must retain their actual final revisions, rather than
+    // restoring the historical hash used for metadata-only import-map writes.
+    if target.operations.iter().chain(&target.inverse_operations).any(|op|
+        matches!(op, Operation::SetZoneFill { zone_fill, .. } if
+            zone_fill["provenance"].as_str().is_some_and(|p| p.starts_with("datum:kicad-saved-fill:v1;")))) {
+        return false;
+    }
     target
         .operations
         .iter()

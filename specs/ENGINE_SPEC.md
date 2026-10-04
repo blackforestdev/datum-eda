@@ -1579,6 +1579,15 @@ refer to the current implementation contract.
 
 ### 5.1 Current Implemented Engine API
 
+The native import family also exposes
+`api::native_write::imports::build_kicad_board_import_with_fills` under PM056.
+It builds one guarded source/generated-evidence batch, preserving Zone identity,
+complete saved copper, final native basis, stale refusal and canonical history.
+The compatibility-only board import builder retains its existing interface;
+GUI/CLI callers cannot privately manufacture current copper or trigger refill
+from selection. This is the bounded S5A-C03 imported-fill repair, not general
+import qualification or a manufacturing allowance.
+
 The total `pub fn` surface across `crates/engine/src/api/` (excluding
 tests) is **locked via** `specs/SPEC_PARITY.md` → `engine_api_pub_fns`.
 At the GP-CM03 Project-genesis refresh the inventory contains 203 methods. Any

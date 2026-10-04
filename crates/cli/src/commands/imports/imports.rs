@@ -3,7 +3,7 @@ use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::api::native_write::imports::{
-    build_eagle_library_import, build_kicad_board_import, eagle_library_import_map_relative_path,
+    build_eagle_library_import, eagle_library_import_map_relative_path,
     kicad_board_import_map_relative_path,
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
@@ -75,10 +75,17 @@ pub(crate) fn import_native_project_kicad_board(
         .find(|shard| shard.kind == SourceShardKind::BoardRoot)
         .map(|shard| shard.shard_id)
         .context("native project has no resolver-visible board root shard")?;
+    let source_hash = compute_source_hash_file(source)?;
     let (board, _report, identities) =
         import_board_document_with_import_map_identities(source, &before.import_map)
             .with_context(|| format!("failed to import KiCad board {}", source.display()))?;
-    let source_hash = compute_source_hash_file(source)?;
+    let mut board = board;
+    let legacy_zones = board.zones.clone();
+    let saved_fills =
+        eda_engine::import::kicad::native_zone_sources(source, &before.import_map, &mut board)?;
+    if compute_source_hash_file(source)? != source_hash {
+        anyhow::bail!("KiCad source changed while capturing saved fill");
+    }
     let board_root = before
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
         .context("failed to materialize native board root before KiCad board import")?;
@@ -101,7 +108,7 @@ pub(crate) fn import_native_project_kicad_board(
     );
     let import_map_relative_path = kicad_board_import_map_relative_path(source);
     let import_map_entry_count = import_map_entries.len();
-    let write = build_kicad_board_import(
+    let write = eda_engine::api::native_write::imports::build_kicad_board_import_with_fills(
         &before,
         WriteProvenance::new(
             "datum-eda-cli",
@@ -110,8 +117,11 @@ pub(crate) fn import_native_project_kicad_board(
         ),
         board_id,
         &board,
+        &legacy_zones,
+        &saved_fills,
         import_map_entries,
         source,
+        &source_hash,
     )?;
     let created_object_count = write.created_object_count;
     if let Some(prepared) = write.prepared {

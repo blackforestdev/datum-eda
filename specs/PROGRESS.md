@@ -95,7 +95,7 @@
    *Dependencies:* none. *Unblocks:* dat-uvt-s5a-build-1wv. *Governing:* `specs/S5A_DERIVED_AUTHORITY_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `specs/ENGINE_SPEC.md`, `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_053_ELECTRICAL_IDENTITY_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_054_NOMINAL_COPPER_DERIVED_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_055_BUS_RUN_CONTACT_AUTHORITY.md`, `docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
    C03 partial native board/schematic integration: shared acquisition/modifiers/Ctrl+A, bounded complete regions, revision-bound view, canonical class inspection, inventory/filter navigation and read-only Linux accessibility implemented. Finite source-bound Select/overlap menus and keyboard Inspector access now reuse existing owners. Remaining complete aggregate/artifact/dense-visual/native work continues under retained C02 approval. dat-s5a-board-graphic-authority-h8xm blocks only standalone graphics paths/positive proof; S5A-BOARD-GRAPHICS-PROPOSAL-01 awaits review/disposition, no source model grant. C04/C05/C06, PM026/049/051/052, CAM/T04, latency and deferred editors preserved. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
-   *Dependencies:* `dat-s5-selection-visual-contract-zid`, `dat-s5a-derived-authority-hhsw`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`.
+   *Dependencies:* `dat-s5-selection-visual-contract-zid`, `dat-s5a-derived-authority-hhsw`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
    Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized. *state `blocked`; authorization `planning`.*
@@ -3349,3 +3349,13 @@ The c243eb5e follow-up audit correction binds individual measurement captures
 to reported values and success status, and binds case commands to the exact
 candidate fixture recipe and parameters. These are GP-CM05E validator fixes;
 they do not complete the step or establish product readiness or acceptance.
+
+### PM056 — imported Zone generated-fill repair
+
+[~] Owner approved the bounded S5A-C03 repair (`dat-imported-zone-fill-authority-udb8`):
+separate authored Zone source and saved occupied copper; canonical atomic adoption,
+exact geometry/source provenance, stale refusal and history. Implemented with
+37 focused passes, clean engine/CLI Clippy and actual fresh/cache DOA2526 native
+copper presentation. Receipt: `target/s5a-import-fill-proof.json`. C03 remains
+partial; C04/C05/final acceptance, graphics/source limitations and CAM/T04 stay
+separate.

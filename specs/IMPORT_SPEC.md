@@ -294,3 +294,16 @@ These are known losses that are documented, not bugs:
 | KiCad-specific rendering hints | Not applicable |
 | Eagle ULP-generated content | No ULP runtime |
 | Eagle Fusion 360 cloud references | Inaccessible URN assets |
+
+## Saved Zone copper in native adoption (PM056)
+
+[PM056](../docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md)
+controls the bounded S5A-C03 native-fill repair. Preserve authored Zone boundary
+and identity separately from complete saved filled islands. Validated saved
+copper enters the engine's generated-evidence owner through the same canonical
+import batch, bound to source hash and final native revisions. Native edits make
+that evidence stale; opening/selecting does not refill. Exact bridged-hole
+conversion must preserve area and oriented boundary without new coordinates.
+Legacy island-as-source migration requires unchanged source/provenance;
+malformed or ambiguous data refuses without partial adoption. No broader import
+feature expansion, native solver change or manufacturing qualification follows.

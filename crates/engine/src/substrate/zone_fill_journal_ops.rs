@@ -23,13 +23,14 @@ pub(super) fn maybe_stage_zone_fill_operation(
         } => {
             let fill = validated_zone_fill_payload(*zone_id, zone_fill)?;
             if fill.state != ZoneFillState::Stale {
-                validate_generated_evidence_scope("zone fill", None, &fill.model_revision, model)?;
+                let basis = super::project_board_basis(model, batch)?;
+                validate_generated_evidence_scope("zone fill", None, &fill.model_revision, &basis)?;
                 if fill.schema_version >= 2 {
-                    let zone = model.objects.get(zone_id).ok_or_else(|| {
+                    let zone = basis.objects.get(zone_id).ok_or_else(|| {
                         EngineError::Validation("zone fill has no source Zone".into())
                     })?;
-                    if !super::electrical_basis::ElectricalBasis::new(model, &batch.operations)?
-                        .class(model, *zone_id, "zones", "board")
+                    if !super::electrical_basis::ElectricalBasis::new(&basis, &[])?
+                        .class(&basis, *zone_id, "zones", "board")
                         || zone.object_revision != fill.source_zone_revision
                     {
                         return Err(EngineError::Validation(

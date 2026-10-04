@@ -181,7 +181,11 @@ project. Missing persisted evidence for an authored zone resolves as an
 `Unfilled` in-memory record; it is not promoted to disk until an explicit
 producer writes generated evidence.
 
-The only public producer in the current product surface is
+Native KiCad board adoption also produces validated saved-fill evidence under
+[PM056](../docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md),
+with authored boundaries separate from complete saved copper, source provenance
+and final native revision binding in one canonical batch. It does not run a
+refill or silently revive stale evidence. The native solver producer is
 `datum-eda check fill-zones` / MCP `datum.check.fill_zones`. It computes the
 bounded native solver slice, commits `SetZoneFill` generated-evidence
 operations with undo/redo inverses (`DeleteZoneFill` or restoration of the

@@ -10,6 +10,7 @@ use crate::error::EngineError;
 mod artifact;
 mod artifact_run;
 mod artifact_validation;
+mod board_batch_basis;
 mod board_journal_ops;
 mod board_json_maps;
 mod board_list_journal_ops;
@@ -88,6 +89,8 @@ mod transaction_links;
 mod undo_redo;
 mod variant;
 mod zone_fill;
+use board_batch_basis::compute_model_revision;
+pub(crate) use board_batch_basis::project_board_basis;
 mod zone_fill_geometry;
 mod zone_fill_journal_ops;
 
@@ -642,38 +645,6 @@ pub(super) fn source_shard_authority_for_kind(kind: &SourceShardKind) -> SourceS
         | SourceShardKind::ZoneFill
         | SourceShardKind::ArtifactMetadata => SourceShardAuthority::GeneratedEvidence,
     }
-}
-
-fn compute_model_revision(
-    project_id: &Uuid,
-    shards: &[SourceShardRef],
-    objects: &BTreeMap<ObjectId, DomainObject>,
-) -> ModelRevision {
-    let mut hasher = Sha256::new();
-    hasher.update(project_id.as_bytes());
-    for shard in shards {
-        if matches!(
-            shard.kind,
-            SourceShardKind::ArtifactMetadata
-                | SourceShardKind::ArtifactRun
-                | SourceShardKind::OutputJobRun
-                | SourceShardKind::CheckRun
-                | SourceShardKind::ZoneFill
-                | SourceShardKind::ImportMap
-                | SourceShardKind::ProposalMetadata
-                | SourceShardKind::ForwardAnnotationReview
-        ) {
-            continue;
-        }
-        hasher.update(shard.relative_path.as_bytes());
-        hasher.update(shard.content_hash.as_bytes());
-    }
-    for (object_id, object) in objects {
-        hasher.update(object_id.as_bytes());
-        hasher.update(object.object_revision.0.to_be_bytes());
-        hasher.update(object.source_shard_id.as_bytes());
-    }
-    ModelRevision(sha256_digest_hex(hasher.finalize().as_slice()))
 }
 
 pub(super) fn sha256_hex(bytes: &[u8]) -> String {

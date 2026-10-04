@@ -129,6 +129,21 @@ fn project_import_kicad_board_marks_absent_source_entries_missing() {
     assert_eq!(reduced_report["created_object_count"], 0);
     assert_eq!(reduced_report["reused_existing_identity_count"], 4);
     assert_eq!(reduced_report["import_map_entry_count"], 5);
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    assert!(
+        model
+            .zone_fills
+            .values()
+            .all(|fill| fill.state == eda_engine::substrate::ZoneFillState::Stale)
+    );
+    assert!(
+        model
+            .zone_fills
+            .values()
+            .all(|fill| model.current_zone_fill(fill.zone_id).is_none())
+    );
 
     let import_map_output = execute(
         Cli::try_parse_from([

@@ -142,6 +142,7 @@ fn modify_board(
     )
 }
 
+mod imported_zone_fill_tests;
 mod main_tests_check;
 mod main_tests_check_goldens;
 mod main_tests_import_plan;
