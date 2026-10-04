@@ -4,6 +4,8 @@ use super::*;
 pub struct ScopeInspection {
     pub scope: Option<Class>,
     pub fields: BTreeMap<String, InspectionValue>,
+    #[serde(default)]
+    pub quantities: BTreeMap<String, quantities::QuantityPresentation>,
 }
 #[derive(Default)]
 struct Aggregate {
@@ -66,7 +68,7 @@ pub(super) fn compile(view: &SelectionView) -> Vec<ScopeInspection> {
             fields.insert("hidden_members".into(),InspectionValue::Common(serde_json::json!(aggregate.hidden)));
             fields.insert("locked_members".into(),InspectionValue::Common(serde_json::json!(aggregate.locked)));
             fields.insert("unprojected_members".into(),InspectionValue::Common(serde_json::json!(aggregate.unprojected)));
-            ScopeInspection { scope,fields }
+            ScopeInspection { scope,fields, quantities: BTreeMap::new() }
         })
         .collect()
 }

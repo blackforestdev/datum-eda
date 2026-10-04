@@ -135,3 +135,75 @@ fn long_values_and_reasons_are_explicit_previews_clipped_to_one_scroll_row() {
     assert_eq!(state.selection, selection);
     assert_eq!(fixture.source_bytes(), source);
 }
+
+#[test]
+fn inspector_quantity_rows_use_project_units_without_changing_exact_values() {
+    let (f, mut state) = selected_state();
+    use eda_engine::{
+        api::native_write,
+        ir::units::{PreFeatureProjectUnitsMigration, migrate_pre_feature_project_units},
+    };
+    let PreFeatureProjectUnitsMigration::Create { profile, receipt } =
+        migrate_pre_feature_project_units(None).unwrap()
+    else {
+        panic!("fresh receipt")
+    };
+    let mut model = eda_engine::substrate::ProjectResolver::new(f.root())
+        .resolve()
+        .unwrap();
+    let write = native_write::project::build_initialize_project_display_units(
+        &model,
+        native_write::WriteProvenance::new(
+            "selection-render-test",
+            eda_engine::substrate::CommitSource::Test,
+            "actual Project units",
+        ),
+        profile,
+        &receipt,
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut model, f.root(), write).unwrap();
+    let bytes = f.source_bytes();
+    let SelectionTarget::Native(previous) = &state.selection else {
+        panic!("native selection")
+    };
+    let subject = previous.subject.clone();
+    let authority =
+        datum_gui_protocol::selection_resolution::NativeSelectionResolution::capture(&model)
+            .unwrap();
+    state.scene.source_revision = model.model_revision.0.clone();
+    let mut view = datum_gui_protocol::selection_view::build_selection_view(
+        &model,
+        &authority,
+        subject,
+        &state.scene,
+        None,
+        |_| true,
+    )
+    .unwrap();
+    view.scope = Some(datum_gui_protocol::AuthoredSelectionClass::Track);
+    let datum_gui_protocol::selection_view::InspectionValue::Common(width) =
+        view.field("copper_width_nm")
+    else {
+        panic!("canonical width")
+    };
+    assert_eq!(width.as_i64(), Some(200000));
+    state.selection = SelectionTarget::Native(Box::new(view));
+    let selection = state.selection.clone();
+    let (_, text, _) = frame(
+        &state,
+        RectPx {
+            x: 400.0,
+            y: 80.0,
+            width: 600.0,
+            height: 1400.0,
+        },
+    );
+    assert!(
+        text.iter()
+            .any(|t| t.text.contains("copper width: 0.200mm")),
+        "native Inspector consumes shared formatted quantity"
+    );
+    assert_eq!(state.selection, selection);
+    assert_eq!(f.source_bytes(), bytes);
+}

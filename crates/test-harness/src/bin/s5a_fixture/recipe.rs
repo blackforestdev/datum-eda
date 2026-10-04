@@ -35,11 +35,18 @@ fn occurrence(class: &str, source_id: Uuid) -> ElectricalOccurrence {
     }
 }
 pub(super) fn build_and_check(root: &Path, count: usize) -> Result<serde_json::Value> {
+    build_with_project_group(root, count, 0x20000000)
+}
+pub(super) fn build_with_project_group(
+    root: &Path,
+    count: usize,
+    group: u128,
+) -> Result<serde_json::Value> {
     let roots = genesis::GenesisRootIds {
-        project: id(0x20000000, 1),
-        schematic: id(0x20000000, 2),
-        board: id(0x20000000, 3),
-        rules: Some(id(0x20000000, 4)),
+        project: id(group, 1),
+        schematic: id(group, 2),
+        board: id(group, 3),
+        rules: Some(id(group, 4)),
     };
     genesis::bootstrap_native_project(
         root,
@@ -58,7 +65,7 @@ pub(super) fn build_and_check(root: &Path, count: usize) -> Result<serde_json::V
     )?;
     native_write::commit_prepared(&mut model, root, write)?;
     let sheet = Sheet {
-        uuid: id(0x20000000, 5),
+        uuid: id(group, 5),
         name: "Selection".into(),
         frame: None,
         symbols: HashMap::new(),

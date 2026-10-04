@@ -413,3 +413,38 @@ fn point_object_position_inspection_remains_read_only_and_null_midpoints_are_una
     ));
     Fixture::assert_bytes(&before);
 }
+
+#[test]
+fn missing_project_quantity_context_is_disclosed_without_changing_exact_inspection() {
+    let (f, scene, ids) = setup();
+    let before = f.source_bytes();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let mut view = build_selection_view(
+        &f.model,
+        &authority,
+        SelectionSubject::Object(ids[0].clone()),
+        &scene,
+        None,
+        |_| true,
+    )
+    .unwrap();
+    view.scope = Some(Class::Track);
+    assert_eq!(
+        view.field("copper_width_nm"),
+        InspectionValue::Common(serde_json::json!(5080000))
+    );
+    assert!(
+        view.field_display_preview("copper_width_nm", 300)
+            .starts_with("Unavailable — Project quantity context unavailable:")
+    );
+    assert_eq!(view.field_display_preview("board_layer", 100), "1");
+    let encoded = serde_json::to_value(&view.inspection).unwrap();
+    let restored: Vec<datum_gui_protocol::selection_view::ScopeInspection> =
+        serde_json::from_value(encoded).unwrap();
+    assert_eq!(restored, view.inspection);
+    assert_eq!(
+        f.source_bytes(),
+        before,
+        "units formatting never seeds or migrates a Project"
+    );
+}

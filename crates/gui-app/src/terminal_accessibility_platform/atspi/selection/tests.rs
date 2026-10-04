@@ -382,3 +382,60 @@ fn related_parent_is_disclosed_without_becoming_an_accessible_selected_member() 
     assert_eq!(reply.body_reader().variant_i32().unwrap(), 1);
     fixture::Fixture::assert_bytes(&bytes);
 }
+
+#[test]
+fn quantity_accessibility_keeps_canonical_value_and_discloses_project_rounding() {
+    let (mut f, mut state) = setup();
+    use eda_engine::api::native_write;
+    use eda_engine::ir::units::{
+        PreFeatureProjectUnitsMigration, migrate_pre_feature_project_units,
+    };
+    let PreFeatureProjectUnitsMigration::Create { profile, receipt } =
+        migrate_pre_feature_project_units(None).unwrap()
+    else {
+        panic!("fresh receipt")
+    };
+    let write = native_write::project::build_initialize_project_display_units(
+        &f.model,
+        native_write::WriteProvenance::new(
+            "selection-test",
+            eda_engine::substrate::CommitSource::Test,
+            "actual preconfigured Project units",
+        ),
+        profile,
+        &receipt,
+    )
+    .unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let before = f.source_bytes();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let identity = authority
+        .authored_identities()
+        .iter()
+        .find(|id| id.class == Class::Track)
+        .unwrap()
+        .clone();
+    let mut scene = datum_gui_protocol::load_fixture_workspace_state().scene;
+    scene.project_uuid = f.model.project.project_id.to_string();
+    scene.board_uuid = f.board.to_string();
+    scene.source_revision = f.model.model_revision.0.clone();
+    let mut view = build_selection_view(
+        &f.model,
+        &authority,
+        SelectionSubject::Object(identity),
+        &scene,
+        None,
+        |_| true,
+    )
+    .unwrap();
+    view.scope = Some(Class::Track);
+    state.selection.as_mut().unwrap().view = Arc::new(view);
+    let reply = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
+    let value = reply.body_reader().variant_string().unwrap();
+    assert_eq!(value, "3; Project display 0.000mm; rounded true");
+    assert_eq!(
+        f.source_bytes(),
+        before,
+        "accessibility does not author units or geometry"
+    );
+}

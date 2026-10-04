@@ -99,10 +99,20 @@ fn child(
     }
 }
 fn field_value(view: &datum_gui_protocol::selection_view::SelectionView, field: &str) -> String {
-    match view.field(field) {
+    let canonical = match view.field(field) {
         InspectionValue::Common(v) => v.to_string(),
         InspectionValue::Mixed => "Mixed".into(),
         InspectionValue::Unavailable(reason) => format!("Unavailable: {reason}"),
+    };
+    match view.field_quantity_presentation(field) {
+        Some(datum_gui_protocol::selection_view::QuantityPresentation::Formatted {
+            rendered,
+            rounded,
+        }) => format!("{canonical}; Project display {rendered}; rounded {rounded}"),
+        Some(datum_gui_protocol::selection_view::QuantityPresentation::Unavailable { reason }) => {
+            format!("{canonical}; display unavailable: {reason}")
+        }
+        None => canonical,
     }
 }
 fn name(view: &datum_gui_protocol::selection_view::SelectionView, node: Node<'_>) -> String {

@@ -9,7 +9,6 @@ use datum_gui_protocol::{
     selection_view::{SelectionView, inspector_state::SelectionInspectorState},
 };
 use std::collections::BTreeSet;
-mod value_preview;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render(
@@ -169,11 +168,14 @@ pub(super) fn render(
             row("", None, false);
             continue;
         }
-        let name = truncate_text(&field.replace('_', " "), columns / 2);
-        let value = value_preview::value(
-            view.field_ref(field),
-            columns.saturating_sub(name.chars().count() + 2),
-        );
+        let label = if view.field_quantity_presentation(field).is_some() {
+            field.trim_end_matches("_nm")
+        } else {
+            field
+        };
+        let name = truncate_text(&label.replace('_', " "), columns / 2);
+        let value =
+            view.field_display_preview(field, columns.saturating_sub(name.chars().count() + 2));
         row(&format!("{name}: {value}"), None, false);
     }
     row(

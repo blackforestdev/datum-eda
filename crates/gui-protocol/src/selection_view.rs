@@ -5,11 +5,13 @@ mod net_coverage;
 mod presentation;
 mod projection_inspection;
 mod properties;
+mod quantities;
 use crate::selection_resolution::{
     NativeSelectionResolution, SelectionAuthority, SelectionModelRevision,
 };
 use crate::{AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, SelectionSubject};
 pub use inspection::ScopeInspection;
+pub use quantities::QuantityPresentation;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -77,6 +79,29 @@ impl SelectionView {
             .iter()
             .find(|scope| scope.scope == self.scope)
             .and_then(|scope| scope.fields.get(name))
+    }
+    pub fn field_quantity_presentation(&self, name: &str) -> Option<&QuantityPresentation> {
+        self.inspection
+            .iter()
+            .find(|scope| scope.scope == self.scope)
+            .and_then(|scope| scope.quantities.get(name))
+    }
+    /// Read-only Project quantity formatting; canonical aggregate values stay exact.
+    pub fn field_display_preview(&self, name: &str, columns: usize) -> String {
+        let presentation = self.field_quantity_presentation(name);
+        match presentation {
+            Some(QuantityPresentation::Formatted { rendered, rounded }) => display_preview::elide(
+                &format!("{rendered}{}", if *rounded { " (rounded)" } else { "" }),
+                columns,
+            ),
+            Some(QuantityPresentation::Unavailable { reason }) => {
+                display_preview::elide(&format!("Unavailable — {reason}"), columns)
+            }
+            None => self
+                .field_ref(name)
+                .map(|value| value.display_preview(columns))
+                .unwrap_or_else(|| display_preview::elide("Unavailable", columns)),
+        }
     }
     pub fn field(&self, name: &str) -> InspectionValue {
         self.field_ref(name).cloned().unwrap_or_else(|| {
@@ -382,6 +407,7 @@ pub fn build_selection_view(
         .collect();
     result.unprojected = result.members.difference(&represented).cloned().collect();
     result.inspection = inspection::compile(&result);
+    quantities::append(model, &mut result.inspection);
     if let Some(scope) = result
         .inspection
         .iter_mut()
