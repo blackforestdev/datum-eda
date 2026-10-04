@@ -267,6 +267,36 @@ fn unadmitted_retry_yields_without_renewing_active_budget() {
 }
 
 #[test]
+fn completed_upload_admission_ends_host_wait_before_cold_preparation() {
+    use super::super::native_recovery::{Recovery, RetryReason};
+    let owner = QueueOwner::default();
+    let host = owner.register();
+    let start = Instant::now();
+    let mut recovery = Recovery::default();
+    for chunk in 0..3 {
+        let submitted = at(start, chunk * 4000);
+        let (serial, completion) = owner.submission_receipt();
+        let callback = owner.completion_callback(serial, completion);
+        recovery.defer(RetryReason::Queue, submitted);
+        assert!(!owner.retry_ready(host, serial));
+        assert!(!recovery.poll_admitted(submitted, false).0);
+        callback();
+        assert_eq!(
+            owner
+                .progress(at(submitted, 2), true, || panic!("already completed"))
+                .unwrap(),
+            (None, false)
+        );
+        assert!(owner.retry_ready(host, serial));
+        assert_eq!(recovery.poll_admitted(at(submitted, 2), true), (true, None));
+        // Real completed receipts, rather than a submission or redraw, permit
+        // the next CPU preparation turn to outlast the GPU-stall deadline.
+        assert!(recovery.ready(at(submitted, 3999)));
+        assert!(!recovery.failed());
+    }
+}
+
+#[test]
 fn regional_image_union_retires_only_after_last_native_submission() {
     let owner = QueueOwner::default();
     let host = owner.register();

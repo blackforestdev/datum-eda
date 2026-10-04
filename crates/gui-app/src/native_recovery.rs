@@ -131,11 +131,18 @@ impl Recovery {
     }
     /// A queue wait needs callback progress, not another native frame attempt.
     /// Preserve the episode and short wake while admission remains unavailable.
+    /// Actual queue admission ends a queue-only wait: later CPU preparation is
+    /// not stalled GPU time. Acquisition failures still require a presented frame.
     pub(crate) fn poll_admitted(
         &mut self,
         now: Instant,
         admitted: bool,
     ) -> (bool, Option<Instant>) {
+        // attempts is nonzero once acquisition has failed in this episode.
+        if admitted && self.drawable && self.episode && self.attempts == 0 && !self.failed {
+            self.success();
+            return (true, None);
+        }
         let result = self.poll(now);
         if result.0 && !admitted {
             self.defer(RetryReason::Queue, now);
@@ -293,5 +300,47 @@ mod acquisition_tests {
             assert_eq!(recovery.poll(now), (false, None));
             assert!(!recovery.episode);
         }
+    }
+
+    #[test]
+    fn completed_upload_does_not_charge_later_cpu_preparation_as_gpu_stall() {
+        let start = Instant::now();
+        let mut recovery = Recovery::default();
+        recovery.defer(RetryReason::Queue, start);
+        recovery.set_drawable(false, start);
+        assert_eq!(recovery.poll_admitted(start, true), (false, None));
+        recovery.set_drawable(true, start);
+        assert_eq!(
+            recovery.poll_admitted(start + Duration::from_millis(2), true),
+            (true, None)
+        );
+        // The next turn can compile shaders/prepare cold content before acquire.
+        // No GPU receipt is outstanding; exceeding the stall limit is lawful.
+        let prepared = start + LIMIT * 2;
+        assert!(recovery.ready(prepared));
+        assert!(!recovery.failed());
+        // A subsequent outstanding upload has its own bounded wait.
+        recovery.defer(RetryReason::Queue, prepared);
+        assert_eq!(
+            recovery.poll_admitted(prepared + LIMIT, false),
+            (false, None)
+        );
+        assert!(recovery.failed());
+    }
+
+    #[test]
+    fn admitted_uploads_do_not_renew_an_acquisition_failure_episode() {
+        let start = Instant::now();
+        let mut recovery = Recovery::default();
+        recovery.acquisition_failed(&wgpu::SurfaceError::Lost, start);
+        recovery.defer(RetryReason::Queue, start + Duration::from_millis(16));
+        assert_eq!(
+            recovery.poll_admitted(start + Duration::from_millis(18), true),
+            (true, None)
+        );
+        assert!(!recovery.ready(start + LIMIT));
+        assert!(recovery.failed());
+        // Completion/admission cannot revive a host after failure was latched.
+        assert_eq!(recovery.poll_admitted(start + LIMIT, true), (false, None));
     }
 }
