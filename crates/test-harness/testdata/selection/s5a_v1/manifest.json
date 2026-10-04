@@ -3901,6 +3901,29 @@
         }
       ],
       "frozen_root": "target/s5a-c03-u5-parents-v3",
+      "lock_material_proof": {
+        "distinct_tests_passed": 15,
+        "native_binary": {
+          "path": "target/s5a-c03-native-locked-parent-tests",
+          "sha256": "967d0baed2846dd8fd29466f3e4c1e31cceb602e449a7cf03028750500889658"
+        },
+        "native_log": "target/s5a-c03-native-locked-parent-proof.log",
+        "renderer_binary": {
+          "path": "target/s5a-c03-locked-material-tests",
+          "sha256": "b9ec85ab90aa9cb353a7225b2e391413ab52c70c275c058b1c72d698214d51a4"
+        },
+        "renderer_logs": [
+          "target/s5a-c03-locked-material-corrected-tests.log",
+          "target/s5a-c03-locked-render-contracts.log"
+        ],
+        "scope": "Actual Package lock reaches native component DTO; shared retained chroma greying independent of selection, preserving owned geometry, drill voids/unrelated material, resource admission and existing render contracts; source/journal/reopen unchanged",
+        "source_base": "5880d436",
+        "unverified": [
+          "native grayscale/locked appearance and cue/cursor proof",
+          "padlock glyph cannot ship before contact-sheet/visual review",
+          "C04/C05/C06"
+        ]
+      },
       "unverified": [
         "Component Pad identities and geometry: dat-s5a-component-pad-authority-hadv; repeated library UUID payloads remain unqualified. Required positive cases preserved.",
         "Standalone board graphics: dat-s5a-board-graphic-authority-h8xm",

@@ -113,11 +113,27 @@ impl RetainedScene {
                 &reference_projection,
                 state,
             );
-            let (world_quads, quad_sources) = world_quads.finish_with_sources()?;
-            let (world_strokes, stroke_sources) = world_strokes.finish_with_sources()?;
+            let (mut world_quads, quad_sources) = world_quads.finish_with_sources()?;
+            let (mut world_strokes, stroke_sources) = world_strokes.finish_with_sources()?;
             let mut draw_commands = draw_commands.finish()?;
             let (glyph_points, glyph_sources) = glyph_points.finish_with_sources()?;
             let glyph_materials = glyph_materials.finish()?;
+            scene_retained_access::locked_material::apply(
+                schematic_scene,
+                &mut world_quads,
+                &quad_sources,
+                &mut world_strokes,
+                &stroke_sources,
+                |bytes| {
+                    retained_scene_owner::document_cpu::admit_constructor_allocation(
+                        &budget,
+                        &scope,
+                        bytes,
+                        limit,
+                        "locked material source index",
+                    )
+                },
+            )?;
 
             scene_retained_access::sort_retained_draw_commands(
                 &mut draw_commands,

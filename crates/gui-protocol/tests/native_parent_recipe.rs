@@ -63,6 +63,17 @@ fn actual_placed_parents_pins_inspection_and_unresolved_pad_boundary() {
         let symbol = identity(Class::Symbol, &placement["symbol"]);
         let package = identity(Class::Footprint, &placement["package"]);
         parents.extend([symbol.clone(), package.clone()]);
+        let projected = state
+            .scene
+            .components
+            .iter()
+            .find(|c| c.source_object_uuid == package.id.to_string())
+            .unwrap();
+        assert_eq!(
+            projected.locked,
+            placement["locked"].as_bool().unwrap(),
+            "actual authored Package lock must reach persistent painter independently of selection"
+        );
         let symbol_view = build_selection_view(
             &model,
             &authority,

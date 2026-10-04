@@ -212,6 +212,9 @@ fn default_outline_layer_id() -> String {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ComponentBounds {
+    /// Existing authored Package lock; schematic symbols have no lock in S5A.
+    #[serde(default)]
+    pub locked: bool,
     pub object_id: String,
     pub object_kind: String,
     pub source_object_uuid: String,
@@ -3019,6 +3022,7 @@ fn build_board_review_scene(
                     .unwrap_or(&[]),
             );
             ComponentBounds {
+                locked: component.locked,
                 object_id: format!("component:{}", component.uuid),
                 object_kind: "component".to_string(),
                 source_object_uuid: component.uuid.clone(),
