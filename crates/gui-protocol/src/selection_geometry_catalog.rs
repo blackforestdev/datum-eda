@@ -90,6 +90,16 @@ pub fn qualification_catalog(
         if result.contains_key(&id) {
             continue;
         }
+        if id.class == Class::Footprint
+            && board
+                .get("component_pads")
+                .and_then(|v| v.get(id.id.to_string()))
+                .and_then(Value::as_array)
+                .is_some_and(|pads| !pads.is_empty())
+        {
+            result.insert(id, Err("Complete native component Pad identity/geometry authority unavailable; placement-point fallback refused".into()));
+            continue;
+        }
         let geometry = (|| -> Option<QualificationGeometry> {
             match id.class {
                 Class::Footprint => {
