@@ -46,6 +46,10 @@ path = "src/bin/m3_undo_redo_roundtrip.rs"
 name = "m3_write_surface_parity"
 path = "src/bin/m3_write_surface_parity.rs"
 
+[[bin]]
+name = "s5a_fixture"
+path = "src/bin/s5a_fixture.rs"
+
 [dependencies]
 eda-engine = { path = "../engine" }
 serde.workspace = true
