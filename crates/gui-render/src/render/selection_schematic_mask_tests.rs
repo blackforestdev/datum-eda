@@ -151,3 +151,152 @@ fn native_schematic_mask_treats_actual_glyph_and_point_without_layout_boxes_or_w
         }
     }
 }
+
+#[test]
+#[ignore = "requires local hardware GPU: source-related baseline and unrelated dimming"]
+fn native_related_context_preserves_parent_and_selection_while_dimming_only_foreign_material() {
+    let (fixture, mut state) = crate::native_selection_overlay::tests::selected_related_state();
+    let source = fixture.source_bytes();
+    let selection = state.selection.clone();
+    state.ui.layout.open_beside_root(
+        datum_gui_protocol::PaneContent::Schematic,
+        datum_gui_protocol::SplitOrientation::Vertical,
+        0.5,
+        true,
+    );
+    state.ui.global_preferences.high_contrast_noncolor = true;
+    state.ui.filters.dim_unrelated = false;
+    let (board, schematic, ordinary_context) = prepare_schematic(&state);
+    let mut host = hardware_renderer(1280, 800);
+    let before = capture_schematic(&mut host, &ordinary_context, &board, &schematic);
+    let world = related_world_uploads(&host);
+    state.ui.filters.dim_unrelated = true;
+    let (_, _, dimmed_context) = prepare_schematic(&state);
+    let after = capture_schematic(&mut host, &dimmed_context, &board, &schematic);
+    let request = &dimmed_context
+        .selection_masks
+        .iter()
+        .find(|(_, s, _)| *s == SceneSurface::Schematic)
+        .unwrap()
+        .2;
+    assert!(request.dim_unrelated());
+    let scene = state.schematic_scene.as_ref().unwrap();
+    let pass = dimmed_context
+        .surface_passes()
+        .iter()
+        .find(|p| p.surface == SceneSurface::Schematic)
+        .unwrap();
+    let projection = crate::Projection::new(
+        crate::inset_rect(pass.scene_viewport, 10., 10., 10., 10.),
+        &scene.bounds,
+        pass.camera,
+    );
+    let mut checked = [0_usize; 3];
+    let mut witnesses = Vec::new();
+    for span in &schematic.presentation.quads {
+        let role = request.material_role(span);
+        if role > 2 {
+            continue;
+        }
+        for triangle in schematic.world_vertices()[span.range.clone()]
+            .as_chunks::<6>()
+            .0
+        {
+            let center = [0, 1, 2].map(|i| triangle[i].pos);
+            let p = projection.project_point(datum_gui_protocol::PointNm {
+                x: ((center[0][0] + center[1][0] + center[2][0]) / 3.).round() as i64,
+                y: ((center[0][1] + center[1][1] + center[2][1]) / 3.).round() as i64,
+            });
+            witnesses.push((role, p, triangle[0].color));
+        }
+    }
+    for span in &schematic.presentation.strokes {
+        let role = request.material_role(span);
+        if role > 2 {
+            continue;
+        }
+        for stroke in &schematic.world_strokes()[span.range.clone()] {
+            for fraction in [0.25, 0.5, 0.75] {
+                let p = projection.project_point(datum_gui_protocol::PointNm {
+                    x: (stroke.from[0] + (stroke.to[0] - stroke.from[0]) * fraction).round() as i64,
+                    y: (stroke.from[1] + (stroke.to[1] - stroke.from[1]) * fraction).round() as i64,
+                });
+                witnesses.push((
+                    role,
+                    p,
+                    [
+                        stroke.color_min_px[0],
+                        stroke.color_min_px[1],
+                        stroke.color_min_px[2],
+                    ],
+                ));
+            }
+        }
+    }
+    for (role, p, color) in witnesses {
+        if !pass.scene_viewport.contains(p.0, p.1) {
+            continue;
+        }
+        let (x, y) = (p.0.floor() as u32, p.1.floor() as u32);
+        let expected_before =
+            color.map(|c| ((if role == 1 { (c * 1.08).min(1.) } else { c }) * 255.).round() as u8);
+        if before.get_pixel(x, y).0[..3] != expected_before {
+            continue;
+        }
+        if role == 0 {
+            let expected = crate::dim_policy::dim_context_color(color, true)
+                .map(|c| (c * 255.).round() as i16);
+            for (actual, expected) in after.get_pixel(x, y).0[..3].iter().zip(expected) {
+                assert!(
+                    (*actual as i16 - expected).abs() <= 1,
+                    "dim witness at {x},{y}"
+                );
+            }
+            assert_ne!(before.get_pixel(x, y), after.get_pixel(x, y));
+        } else {
+            assert_eq!(
+                before.get_pixel(x, y),
+                after.get_pixel(x, y),
+                "baseline role {role} at {x},{y}"
+            );
+        }
+        checked[role as usize] += 1;
+    }
+    assert!(
+        checked.iter().all(|n| *n > 0),
+        "actual material pixel witnesses for all roles: {checked:?}"
+    );
+    assert!(world.iter().any(|v| v.2 > 0));
+    assert_eq!(related_world_uploads(&host), world);
+    assert_eq!(
+        after,
+        capture_schematic(&mut host, &dimmed_context, &board, &schematic)
+    );
+    assert_eq!(host.renderer.selection_mask.table_gpu.last_upload_bytes, 0);
+    assert_eq!(state.selection, selection);
+    assert_eq!(fixture.source_bytes(), source);
+    if let Ok(path) = std::env::var("S5A_NATIVE_RELATED_CAPTURE") {
+        after.save(path).unwrap();
+    }
+}
+
+fn related_world_uploads(host: &OffscreenRenderer) -> Vec<(u64, u64, u64)> {
+    let ids: Vec<_> = [
+        host.renderer.world_vertices_gpu.submission_ref(),
+        host.renderer.world_strokes_gpu.submission_ref(),
+        host.renderer.schematic_world_vertices_gpu.submission_ref(),
+        host.renderer.schematic_world_strokes_gpu.submission_ref(),
+    ]
+    .into_iter()
+    .flatten()
+    .map(|r| r.allocation_id)
+    .collect();
+    let records: Vec<_> = Renderer::gpu_process_allocations()
+        .into_iter()
+        .filter(|r| ids.contains(&r.id))
+        .map(|r| (r.id, r.submitted_source_bytes, r.submitted_transfer_bytes))
+        .collect();
+    assert!(!ids.is_empty());
+    assert_eq!(records.len(), ids.len());
+    records
+}

@@ -7,14 +7,15 @@ struct Out {
  @builtin(position) position:vec4<f32>, @location(0) material:vec3<f32>,
  @location(1) local:vec2<f32>, @location(2) @interpolate(flat) capsule:vec2<f32>,
  @location(3) @interpolate(flat) label:u32, @location(4) logical:vec2<f32>,
+ @location(5) @interpolate(flat) material_role:u32,
 };
-fn group(index:u32, stroke:bool)->u32 {
- let first=select(2u,ranges[0].z,stroke); let count=select(ranges[0].x,ranges[0].y,stroke);
+fn group(index:u32, stroke:bool)->vec2<u32> {
+ let first=select(3u,ranges[0].z,stroke); let count=select(ranges[0].x,ranges[0].y,stroke);
  var lo=first; var hi=first+count;
  loop { if (lo>=hi) {break;} let mid=lo+(hi-lo)/2u;
   if (ranges[mid].y<=index) {lo=mid+1u;} else {hi=mid;}
  }
- if (lo<first+count && ranges[lo].x<=index) {return ranges[lo].z;} return 0u;
+ if (lo<first+count && ranges[lo].x<=index) {return ranges[lo].zw;} return vec2<u32>(0u,3u);
 }
 fn position(p:vec2<f32>)->vec4<f32> {
  return vec4<f32>(p.x/scene.resolution.x*2.0-1.0,1.0-p.y/scene.resolution.y*2.0,0.0,1.0);
@@ -24,7 +25,7 @@ fn project(p:vec2<f32>)->vec2<f32> {
 }
 @vertex fn vs_quad(i:QuadIn)->Out {
  var o:Out; o.logical=project(i.point); o.position=position(o.logical); o.material=i.color;
- o.local=vec2<f32>(0.0); o.capsule=vec2<f32>(0.0,-1.0); o.label=group(i.vertex,false); return o;
+ o.local=vec2<f32>(0.0); o.capsule=vec2<f32>(0.0,-1.0); let role=group(i.vertex,false); o.label=role.x; o.material_role=role.y; return o;
 }
 @vertex fn vs_stroke(i:StrokeIn)->Out {
  let endpoint_b=i.vertex==1u || i.vertex==2u || i.vertex==4u;
@@ -37,7 +38,7 @@ fn project(p:vec2<f32>)->vec2<f32> {
  let p=project(center)+tangent*select(-1.0,1.0,endpoint_b)*radius+normal*across;
  var o:Out; o.logical=p; o.position=position(p); o.material=i.material_floor.xyz;
  o.local=vec2<f32>(select(-1.0,1.0,endpoint_b)*(half_length+radius),across);
- o.capsule=vec2<f32>(half_length,radius); o.label=group(i.instance,true); return o;
+ o.capsule=vec2<f32>(half_length,radius); let role=group(i.instance,true); o.label=role.x; o.material_role=role.y; return o;
 }
 fn covered(i:Out)->bool {
  if (i.capsule.y<0.0) {return true;}
@@ -57,6 +58,12 @@ struct MaskOut { @location(0) label:vec4<f32>, @location(1) material:vec4<f32> }
 @fragment fn fs_mask(i:Out,@builtin(sample_index) sample:u32)->MaskOut {
  if (!covered(i)) {discard;}
  var o:MaskOut; o.label=encode(i.label);
- o.material=vec4<f32>(linear(min(i.material*1.08,vec3<f32>(1.0))),1.0);
+ var color=i.material; var alpha=0.0;
+ if (i.material_role==1u) {color=min(color*1.08,vec3<f32>(1.0)); alpha=1.0;}
+ if (i.material_role==0u && (ranges[0].w&2u)!=0u) {
+  let context=bitcast<vec4<f32>>(ranges[1]); let policy=bitcast<vec4<f32>>(ranges[2]);
+  color=mix(max(color*context.w,vec3<f32>(policy.x)),context.xyz,policy.y); alpha=1.0;
+ }
+ o.material=vec4<f32>(linear(color),alpha);
  return o;
 }

@@ -33,13 +33,14 @@ fn selected(label:u32)->bool {return label!=0u && label!=0xffffffffu;}
  let accent=vec3<f32>(206.0,90.0,146.0)/255.0;
  let c=select(pow((accent+vec3<f32>(0.055))/1.055,vec3<f32>(2.4)),accent/12.92,accent<=vec3<f32>(0.04045));
  if (outside) {return vec4<f32>(c,1.0);}
- if (!selected(center) || ranges[0].w!=0u || edge_distance>2.0) {discard;}
+ if (!selected(center) || (ranges[0].w&1u)!=0u || edge_distance>2.0) {discard;}
  return vec4<f32>(c,0.30*(1.0-smoothstep(0.0,2.0,edge_distance-0.5)));
 }
 
 @fragment fn fs_lift(i:Out,@builtin(sample_index) sample:u32)->@location(0) vec4<f32> {
  if (!datum_damaged(i.position)) {discard;}
  let p=vec2<i32>(i.logical-vec2<f32>(0.0,f32(band[0].x)-2.0));
- if (!selected(label(p,sample))) {discard;}
- return textureLoad(material,p,i32(sample));
+ let color=textureLoad(material,p,i32(sample));
+ if (color.a==0.0) {discard;}
+ return color;
 }

@@ -115,6 +115,7 @@ fn zone_qualifier_and_void_construction_never_invent_membership() {
     let request = Request(Arc::new(Inner {
         source: Source::default(),
         high_contrast: false,
+        dim_unrelated: false,
         choices: vec![Choice {
             key: "zone".into(),
             label: 1,
@@ -196,4 +197,86 @@ fn nonresolving_pane_creates_no_mask_request_or_selection_resource() {
             .is_some()
     );
     assert_eq!(fixture.source_bytes(), bytes);
+}
+
+#[test]
+fn canonical_related_parent_keeps_baseline_role_while_selected_pin_keeps_material_role() {
+    let (fixture, mut state) = crate::native_selection_overlay::tests::selected_related_state();
+    let source = fixture.source_bytes();
+    let selection = state.selection.clone();
+    state.ui.layout.open_beside_root(
+        datum_gui_protocol::PaneContent::Schematic,
+        datum_gui_protocol::SplitOrientation::Vertical,
+        0.5,
+        true,
+    );
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    for enabled in [false, true] {
+        state.ui.filters.dim_unrelated = enabled;
+        let mut prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        )
+        .unwrap();
+        prepared.append_native_selection(&state).unwrap();
+        let request = &prepared
+            .selection_masks
+            .iter()
+            .find(|(_, surface, _)| *surface == SceneSurface::Schematic)
+            .unwrap()
+            .2;
+        assert_eq!(request.dim_unrelated(), enabled);
+        let scene = state.schematic_scene.as_ref().unwrap();
+        let SelectionTarget::Native(view) = &state.selection else {
+            unreachable!()
+        };
+        for key in &view.related_schematic_keys {
+            if !view.schematic_keys.contains(key) {
+                let span = Span {
+                    key: Some(key.clone()),
+                    role: Role::Material,
+                    range: 0..1,
+                };
+                assert_eq!(request.material_role(&span), 2);
+                assert_eq!(request.label(&span), 0);
+            }
+        }
+        for key in &view.schematic_keys {
+            let span = Span {
+                key: Some(key.clone()),
+                role: Role::Material,
+                range: 0..1,
+            };
+            assert_eq!(request.material_role(&span), 1);
+        }
+        assert_eq!(
+            request.material_role(&Span {
+                key: None,
+                role: Role::Material,
+                range: 0..1
+            }),
+            3
+        );
+        let unrelated = scene
+            .board_texts
+            .iter()
+            .find(|v| {
+                !view.schematic_keys.contains(&v.object_id)
+                    && !view.related_schematic_keys.contains(&v.object_id)
+            })
+            .unwrap();
+        assert_eq!(
+            request.material_role(&Span {
+                key: Some(unrelated.object_id.clone()),
+                role: Role::Material,
+                range: 0..1
+            }),
+            0
+        );
+    }
+    assert_eq!(state.selection, selection);
+    assert_eq!(fixture.source_bytes(), source);
 }

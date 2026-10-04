@@ -312,3 +312,73 @@ fn visual_lod_is_read_only_current_presentation_and_coalesces_without_reselectio
     );
     fixture::Fixture::assert_bytes(&bytes);
 }
+
+#[test]
+fn related_parent_is_disclosed_without_becoming_an_accessible_selected_member() {
+    let mut f = fixture::Fixture::new("accessible-related-parent");
+    let package = fixture::id(610);
+    let pad = fixture::id(611);
+    f.commit([Operation::CreateBoardPackage {
+        package_id: package,
+        package: serde_json::json!({"uuid":package,"reference":"U1","value":"","position":{"x":0,"y":0},"rotation":0,"layer":1,"locked":false}),
+        materialized: serde_json::json!({}),
+    }]);
+    let source_pad: eda_engine::board::PlacedPad = serde_json::from_value(serde_json::json!({"uuid":pad,"package":package,"name":"1","net":f.net,"position":{"x":0,"y":0},"layer":1})).unwrap();
+    let write = eda_engine::api::native_write::board_routing::build_place_board_pad(
+        &f.model,
+        fixture::provenance(),
+        &source_pad,
+    )
+    .unwrap();
+    eda_engine::api::native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let bytes = f.source_bytes();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let child = authority
+        .authored_identities()
+        .iter()
+        .find(|id| id.id == pad)
+        .unwrap()
+        .clone();
+    let mut scene = datum_gui_protocol::load_fixture_workspace_state().scene;
+    scene.project_uuid = f.model.project.project_id.to_string();
+    scene.board_uuid = f.board.to_string();
+    scene.source_revision = f.model.model_revision.0.clone();
+    let view = build_selection_view(
+        &f.model,
+        &authority,
+        SelectionSubject::Object(child.clone()),
+        &scene,
+        None,
+        |_| false,
+    )
+    .unwrap();
+    assert_eq!(view.members, std::collections::BTreeSet::from([child]));
+    assert_eq!(view.related.len(), 1);
+    assert_eq!(view.related.first().unwrap().id, package);
+    let mut state = ServiceState::new(
+        crate::terminal_accessibility_platform::worker::empty_snapshot(),
+        true,
+        Vec::new(),
+    );
+    state.selection = Some(SelectionAccessibilitySnapshot {
+        view: Arc::new(view),
+        visual_lod: None,
+        focused: true,
+        evaluating: None,
+        pane: None,
+    });
+    let reply = state.dispatch(1, &description_call(PATH));
+    assert!(
+        reply
+            .body_reader()
+            .variant_string()
+            .unwrap()
+            .contains("1 related identities keep normal authored appearance and are not selected")
+    );
+    let mut body = BodyWriter::new();
+    body.string(ACCESSIBLE);
+    body.string("ChildCount");
+    let reply = state.dispatch(2, &call(MEMBERS, PROPERTIES, "Get", "ss", body.finish()));
+    assert_eq!(reply.body_reader().variant_i32().unwrap(), 1);
+    fixture::Fixture::assert_bytes(&bytes);
+}

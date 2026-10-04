@@ -44,6 +44,9 @@ fn native_mask_preserves_material_join_and_occlusion_without_authored_writes() {
     let selected = projection.project_point(crate::PointNm { x: 500_000, y: 0 });
     let pixel = (selected.0.floor() as u32, selected.1.floor() as u32);
     let color = baseline_image.get_pixel(pixel.0, pixel.1).0;
+    if let Ok(path) = std::env::var("S5A_NATIVE_TRACK_CAPTURE") {
+        image.save(path).unwrap();
+    }
     assert_eq!(
         image.get_pixel(pixel.0, pixel.1).0[..3],
         color[..3]

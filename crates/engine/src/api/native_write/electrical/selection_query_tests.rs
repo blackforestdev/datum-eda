@@ -393,3 +393,81 @@ fn binding_failure_is_subject_local_and_cross_domain_membership_never_prunes_boa
 
 #[path = "bus_run_query_tests.rs"]
 mod bus_run_query_tests;
+
+#[test]
+fn related_parent_queries_use_captured_pin_and_pad_ownership_without_selecting_parents() {
+    let mut f = super::binding_fixture::fixture("selection_related_parents");
+    let standalone: crate::board::PlacedPad = serde_json::from_value(serde_json::json!({"uuid":Uuid::new_v4(),"package":Uuid::nil(),"name":"P","net":Uuid::nil(),"position":{"x":20,"y":0},"layer":1})).unwrap();
+    let prepared =
+        super::super::board_routing::build_place_board_pad(&f.model, provenance(), &standalone)
+            .unwrap();
+    super::super::commit_prepared(&mut f.model, &f.root, prepared).unwrap();
+    let bytes = super::binding_fixture::authored_bytes(&f.root, &f.model);
+    let journal = std::fs::read(crate::substrate::transaction_journal_path(&f.root)).unwrap();
+    let pin = f.symbol.pins[0].uuid;
+    let board = f
+        .model
+        .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
+        .unwrap();
+    let pad: crate::board::PlacedPad = serde_json::from_value(
+        board["pads"]
+            .as_object()
+            .unwrap()
+            .values()
+            .find(|p| p["package"] != serde_json::json!(Uuid::nil()))
+            .unwrap()
+            .clone(),
+    )
+    .unwrap();
+    let children = BTreeSet::from([
+        member("pins", pin, &[]),
+        member("pads", pad.uuid, &[]),
+        member("pads", standalone.uuid, &[]),
+    ]);
+    let expected = BTreeSet::from([
+        member("symbols", f.symbol.uuid, &[]),
+        member("packages", pad.package, &[]),
+    ]);
+    let snapshot = ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+    assert_eq!(
+        snapshot
+            .related_parents(snapshot.revision(), &children)
+            .unwrap(),
+        expected
+    );
+    let mut with_parent = children.clone();
+    with_parent.extend(expected.clone());
+    assert!(
+        snapshot
+            .related_parents(snapshot.revision(), &with_parent)
+            .unwrap()
+            .is_empty()
+    );
+    let stale = crate::substrate::ModelRevision("foreign".into());
+    assert_eq!(
+        snapshot.related_parents(&stale, &children),
+        Err(ElectricalQueryFailure::StaleRevision)
+    );
+    let forged = BTreeSet::from([member("pins", Uuid::new_v4(), &[])]);
+    assert!(matches!(
+        snapshot.related_parents(snapshot.revision(), &forged),
+        Err(ElectricalQueryFailure::InvalidOccurrence { .. })
+    ));
+    assert_eq!(children.len(), 3);
+    assert_eq!(
+        super::binding_fixture::authored_bytes(&f.root, &f.model),
+        bytes
+    );
+    assert_eq!(
+        std::fs::read(crate::substrate::transaction_journal_path(&f.root)).unwrap(),
+        journal
+    );
+    let reopened = ProjectResolver::new(&f.root).resolve().unwrap();
+    let replay = ElectricalSelectionSnapshot::capture(&reopened).unwrap();
+    assert_eq!(
+        replay
+            .related_parents(replay.revision(), &children)
+            .unwrap(),
+        expected
+    );
+}

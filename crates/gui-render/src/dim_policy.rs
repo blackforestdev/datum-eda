@@ -32,8 +32,16 @@ pub(crate) fn dim_structural_color(color: [f32; 3], dimmed: bool) -> [f32; 3] {
     dim_with_policy(color, dimmed, STRUCTURAL_DIM_FACTOR, 0.12, 0.10)
 }
 
+pub(crate) const CONTEXT_FLOOR: f32 = 0.20;
+pub(crate) const CONTEXT_MIX: f32 = 0.04;
 pub(crate) fn dim_context_color(color: [f32; 3], dimmed: bool) -> [f32; 3] {
-    dim_with_policy(color, dimmed, CONTEXT_DIM_FACTOR, 0.20, 0.04)
+    dim_with_policy(
+        color,
+        dimmed,
+        CONTEXT_DIM_FACTOR,
+        CONTEXT_FLOOR,
+        CONTEXT_MIX,
+    )
 }
 
 pub(crate) fn selected_copper_color(base: [f32; 3]) -> [f32; 3] {

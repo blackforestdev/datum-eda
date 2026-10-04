@@ -14,6 +14,7 @@ struct Choice {
 struct Inner {
     source: Source,
     high_contrast: bool,
+    dim_unrelated: bool,
     choices: Vec<Choice>,
     _permit: Option<crate::text_gpu::budget::Permit>,
 }
@@ -32,6 +33,7 @@ impl PartialEq for Request {
         self.0.source == other.0.source
             && self.0.choices == other.0.choices
             && self.0.high_contrast == other.0.high_contrast
+            && self.0.dim_unrelated == other.0.dim_unrelated
     }
 }
 impl Request {
@@ -59,12 +61,18 @@ impl Request {
         if keys.is_empty() {
             return Ok(None);
         }
+        let related = match surface {
+            datum_gui_protocol::PaneContent::Board => &view.related_board_keys,
+            datum_gui_protocol::PaneContent::Schematic => &view.related_schematic_keys,
+            datum_gui_protocol::PaneContent::Revision(_) => unreachable!(),
+        };
+        let count = keys.union(related).count();
         let compound = matches!(
             view.subject,
             datum_gui_protocol::SelectionSubject::Compound(_)
         );
         let boundary = !matches!(view.subject, datum_gui_protocol::SelectionSubject::Run(_));
-        let mut bytes = crate::cpu_alloc::heap::capacity_bytes::<Choice>(keys.len());
+        let mut bytes = crate::cpu_alloc::heap::capacity_bytes::<Choice>(count);
         bytes = bytes
             .checked_add(container_bytes())
             .ok_or_else(|| anyhow::anyhow!("mask source layout overflow"))?;
@@ -86,7 +94,7 @@ impl Request {
                 .ok()
                 .map(|index| zones[index])
         };
-        for key in keys {
+        for key in keys.union(related) {
             bytes = bytes
                 .checked_add(crate::cpu_alloc::heap::capacity_bytes::<u8>(key.len()))
                 .ok_or_else(|| anyhow::anyhow!("mask key overflow"))?;
@@ -101,7 +109,7 @@ impl Request {
         let permit = budget.reserve(bytes as u64)?;
         let source = Source::capture(scene, |_| Ok(()))?;
         let mut choices = Vec::new();
-        choices.try_reserve_exact(keys.len())?;
+        choices.try_reserve_exact(count)?;
         let member_layout = crate::cpu_alloc::heap::capacity_bytes::<
             &datum_gui_protocol::AuthoredSelectionIdentity,
         >(view.members.len());
@@ -111,23 +119,30 @@ impl Request {
         members.extend(view.members.iter());
         // Both shared owner map and native members qualify the key. The context
         // envelope, DTO ordinals and spelling supply no membership authority.
-        for key in keys {
-            let owner = view
-                .presentation_owner(scene, surface, key)
-                .ok_or_else(|| {
-                    anyhow::anyhow!("selected presentation has no authoritative owner: {key}")
-                })?;
-            let label = if compound {
-                let ordinal = members
-                    .binary_search(&owner)
-                    .map_err(|_| anyhow::anyhow!("mask owner absent from complete selection"))?;
-                u32::try_from(
-                    ordinal
-                        .checked_add(1)
-                        .ok_or_else(|| anyhow::anyhow!("mask group overflow"))?,
-                )?
+        for key in keys.union(related) {
+            let owner = keys
+                .contains(key)
+                .then(|| {
+                    view.presentation_owner(scene, surface, key).ok_or_else(|| {
+                        anyhow::anyhow!("selected presentation has no authoritative owner: {key}")
+                    })
+                })
+                .transpose()?;
+            let label = if let Some(owner) = owner {
+                if compound {
+                    let ordinal = members.binary_search(&owner).map_err(|_| {
+                        anyhow::anyhow!("mask owner absent from complete selection")
+                    })?;
+                    u32::try_from(
+                        ordinal
+                            .checked_add(1)
+                            .ok_or_else(|| anyhow::anyhow!("mask group overflow"))?,
+                    )?
+                } else {
+                    1
+                }
             } else {
-                1
+                0
             };
             anyhow::ensure!(
                 label != u32::MAX,
@@ -174,12 +189,16 @@ impl Request {
         Ok(Some(Self(Arc::new(Inner {
             source,
             high_contrast: false,
+            dim_unrelated: false,
             choices,
             _permit: Some(permit),
         }))))
     }
     pub(crate) fn high_contrast(&self) -> bool {
         self.0.high_contrast
+    }
+    pub(crate) fn dim_unrelated(&self) -> bool {
+        self.0.dim_unrelated
     }
     pub(super) fn configure(
         &mut self,
@@ -188,16 +207,52 @@ impl Request {
         scene: &BoardReviewSceneV1,
         surface: datum_gui_protocol::PaneContent,
         high_contrast: bool,
+        dim_unrelated: bool,
     ) {
         let inner =
             Arc::get_mut(&mut self.0).expect("configure newly captured mask before sharing");
         inner.high_contrast = high_contrast;
+        inner.dim_unrelated = dim_unrelated && !view.related.is_empty();
         for choice in &mut inner.choices {
             choice.minimum = !lod.detailed(view, scene, surface, &choice.key);
         }
     }
     pub(crate) fn matches(&self, presentation: &Presentation) -> bool {
         presentation.source.as_ref() == Some(&self.0.source)
+    }
+    /// 0 unrelated authored, 1 selected material, 2 related baseline,
+    /// 3 anonymous structure/void. These are paint roles, never identities.
+    pub(crate) fn material_role(&self, span: &Span) -> u32 {
+        if span.role == Role::Void {
+            return 3;
+        }
+        let Some(key) = span.key.as_deref() else {
+            return 3;
+        };
+        let Ok(index) = self
+            .0
+            .choices
+            .binary_search_by(|choice| choice.key.as_str().cmp(key))
+        else {
+            return 0;
+        };
+        let choice = &self.0.choices[index];
+        if choice.label == 0 {
+            return 2;
+        }
+        if Self::selected_part(choice, span.role) {
+            1
+        } else {
+            0
+        }
+    }
+    fn selected_part(choice: &Choice, role: Role) -> bool {
+        match role {
+            Role::Material => true,
+            Role::Void => false,
+            Role::ZoneBoundary => choice.boundary,
+            Role::ZoneIsland(index) => choice.islands.binary_search(&index).is_ok(),
+        }
     }
     pub(crate) fn label(&self, span: &Span) -> u32 {
         let Some(key) = span.key.as_deref() else {
@@ -211,13 +266,7 @@ impl Request {
             return 0;
         };
         let choice = &self.0.choices[index];
-        let selected = !choice.minimum
-            && match span.role {
-                Role::Material => true,
-                Role::Void => false,
-                Role::ZoneBoundary => choice.boundary,
-                Role::ZoneIsland(index) => choice.islands.binary_search(&index).is_ok(),
-            };
+        let selected = !choice.minimum && Self::selected_part(choice, span.role);
         if selected { choice.label } else { 0 }
     }
 }
@@ -231,6 +280,7 @@ fn container_bytes() -> usize {
         crate::cpu_alloc::heap::arc_bytes(Inner {
             source: Source::default(),
             high_contrast: false,
+            dim_unrelated: false,
             choices: Vec::new(),
             _permit: None,
         })

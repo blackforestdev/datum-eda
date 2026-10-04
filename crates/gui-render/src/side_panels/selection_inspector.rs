@@ -48,6 +48,7 @@ pub(super) fn render(
         + usize::from(view.stale)
         + usize::from(view.focus().is_some())
         + usize::from(view.notice.is_some())
+        + usize::from(!view.related.is_empty())
         + 1
         + 1
         + counts.len()
@@ -138,6 +139,13 @@ pub(super) fn render(
     }
     if let Some(notice) = &view.notice {
         row(notice, None, false);
+    }
+    if !view.related.is_empty() {
+        row(
+            &format!("Related {} · normal appearance", view.related.len()),
+            None,
+            false,
+        );
     }
     row(
         "Unavailable: Move / Rotate / Mirror / Lock / Group (S5A)",

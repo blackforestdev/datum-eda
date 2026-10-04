@@ -6,6 +6,8 @@ mod authored_sources;
 mod bus_run;
 #[path = "electrical_selection_query/origin_binding.rs"]
 mod origin_binding;
+#[path = "electrical_selection_query/related_parents.rs"]
+mod related_parents;
 use super::*;
 use crate::substrate::{
     DesignModel, ElectricalIdentity, ElectricalOccurrence, ModelRevision, NetCorrespondenceStatus,

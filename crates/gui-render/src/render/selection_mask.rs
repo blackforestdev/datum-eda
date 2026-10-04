@@ -8,6 +8,7 @@ use std::sync::Arc;
 mod painter;
 pub(crate) const BAND: u32 = 96;
 pub(crate) const GUARD: u32 = 2;
+const HEADER_ROWS: usize = 3;
 #[path = "selection_mask_pipelines.rs"]
 mod pipelines;
 pub(crate) struct Owner {
@@ -81,7 +82,7 @@ impl Owner {
         board: &RetainedScene,
         schematic: Option<&RetainedScene>,
         extent: [u32; 2],
-        raster: [u32; 2],
+        _raster: [u32; 2],
     ) -> anyhow::Result<()> {
         self.bands = extent[1].div_ceil(BAND) as usize;
         self.bindings.clear();
@@ -106,7 +107,9 @@ impl Owner {
                     );
                     count = count
                         .checked_add(
-                            16 + retained.presentation.quads.len()
+                            HEADER_ROWS
+                                + 15
+                                + retained.presentation.quads.len()
                                 + retained.presentation.strokes.len(),
                         )
                         .ok_or_else(|| anyhow::anyhow!("mask table overflow"))?;
@@ -155,11 +158,21 @@ impl Owner {
                 self.table.push([
                     u32::try_from(presentation.quads.len())?,
                     u32::try_from(presentation.strokes.len())?,
-                    u32::try_from(presentation.quads.len() + 2)?,
-                    u32::from(request.high_contrast()),
+                    u32::try_from(presentation.quads.len() + 3)?,
+                    u32::from(request.high_contrast()) | (u32::from(request.dim_unrelated()) << 1),
                 ]);
-                self.table
-                    .push([extent[0], extent[1], raster[0], raster[1]]);
+                self.table.push([
+                    BOARD_INNER_FIELD[0].to_bits(),
+                    BOARD_INNER_FIELD[1].to_bits(),
+                    BOARD_INNER_FIELD[2].to_bits(),
+                    CONTEXT_DIM_FACTOR.to_bits(),
+                ]);
+                self.table.push([
+                    crate::dim_policy::CONTEXT_FLOOR.to_bits(),
+                    crate::dim_policy::CONTEXT_MIX.to_bits(),
+                    0,
+                    0,
+                ]);
                 append_spans(&mut self.table, presentation, request, false)?;
                 append_spans(&mut self.table, presentation, request, true)?;
                 // Temporary offsets occupy admitted binding slots until the GPU
@@ -225,8 +238,9 @@ impl Owner {
                     .any(|(pane, surface, _)| *pane == pass.pane_id && *surface == pass.surface)
             }) {
                 begin = begin.div_ceil(16) * 16;
-                let entries =
-                    2 + retained.presentation.quads.len() + retained.presentation.strokes.len();
+                let entries = HEADER_ROWS
+                    + retained.presentation.quads.len()
+                    + retained.presentation.strokes.len();
                 let resource = || {
                     wgpu::BindingResource::Buffer(wgpu::BufferBinding {
                         buffer,
@@ -305,7 +319,7 @@ fn append_spans(
             u32::try_from(span.range.start)?,
             u32::try_from(span.range.end)?,
             label,
-            0,
+            request.material_role(span),
         ]);
     }
     Ok(())

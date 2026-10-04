@@ -533,6 +533,7 @@ impl PreparedScene {
                     scene,
                     surface,
                     state.ui.global_preferences.high_contrast_noncolor,
+                    state.ui.filters.dim_unrelated,
                 );
                 self.selection_masks
                     .push((pass.pane_id, pass.surface, request));

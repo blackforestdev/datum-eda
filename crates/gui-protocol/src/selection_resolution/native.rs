@@ -242,6 +242,20 @@ impl NativeSelectionResolution {
         if let Some(result) = &projection.board_run {
             projection.members = self.identities(&result.members)?;
         }
+        let children = projection
+            .members
+            .iter()
+            .filter(|id| matches!(id.class, Class::Pin | Class::Pad))
+            .map(occurrence)
+            .collect();
+        let parents = self
+            .snapshot
+            .related_parents(self.revision(), &children)
+            .map_err(SelectionResolutionError::Engine)?;
+        projection.related.extend(self.identities(&parents)?);
+        projection
+            .related
+            .retain(|id| !projection.members.contains(id));
         Ok(projection)
     }
 
