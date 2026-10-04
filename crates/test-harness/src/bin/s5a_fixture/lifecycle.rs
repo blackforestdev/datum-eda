@@ -16,7 +16,7 @@ fn snapshot(model: &eda_engine::substrate::DesignModel) -> Result<ElectricalSele
     ElectricalSelectionSnapshot::capture(model)
         .map_err(|e| anyhow::anyhow!("lifetime capture: {e:?}"))
 }
-fn copy_project(source: &Path, target: &Path) -> Result<()> {
+pub(super) fn copy_project(source: &Path, target: &Path) -> Result<()> {
     ensure!(!target.exists(), "fresh variant required");
     let model = ProjectResolver::new(source).resolve()?;
     let files = model

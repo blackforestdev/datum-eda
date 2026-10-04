@@ -9,6 +9,7 @@
     "path": "target/s5a-c03-u5-fixture-builder",
     "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
     "sha256": "8d7c8f55e7e5ba373cf0d421818b789a596a9badec17f5a3fdbc5c604defff40",
+    "source_commit": "c509eb1b",
     "source_files": [
       {
         "path": "crates/test-harness/Cargo.toml",
@@ -1851,9 +1852,762 @@
       "native_input_proof": "pending; none credited",
       "persisted_root": "target/s5a-c03-u5-v1/dense-and-cancel",
       "revision_variants": null
+    },
+    {
+      "builder_command": [
+        "target/s5a-c03-u5-class-builder",
+        "class-qualification",
+        "<fresh-root>"
+      ],
+      "builder_override": {
+        "path": "target/s5a-c03-u5-class-builder",
+        "sha256": "f2ec2f81cf281b0d4a043805610eacb9ff282d0216085c10327f48ea48a70846",
+        "source_files": [
+          {
+            "path": "crates/test-harness/Cargo.toml",
+            "sha256": "d9015be4735e6eec374607d4a662f35edde82e5ac004d92483eaa0a55b1cedaf"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture.rs",
+            "sha256": "db4991b200c5b933316b81d1d428f19ae3e404c961441956094edee70569af6e"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/classes.rs",
+            "sha256": "4fef2b27157e703997355d28c013cf1d0059acb985ec651bc5426c05df48e6f7"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/lifecycle.rs",
+            "sha256": "1bb74cf4f7783dfa4adb78f7cafe06a69a7fe4b92a7dd80ba13acadf79f6b4a4"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/recipe/identities.rs",
+            "sha256": "f0c16f71da80d4a40ab755df06567c0744196e21666108fcab5c81ff7b6222f5"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/recipe.rs",
+            "sha256": "5f534c8cb0933f6a3ae40b2b6b0cfe46857b340283545fb829229ee9eb6ca243"
+          }
+        ]
+      },
+      "class_variant": {
+        "authored_net_class": {
+          "clearance": 200000,
+          "diffpair_gap": 200000,
+          "diffpair_width": 100000,
+          "name": "Class fixture",
+          "track_width": 100000,
+          "uuid": "71000000-0000-4000-8000-00000000000a",
+          "via_diameter": 1000000,
+          "via_drill": 250000
+        },
+        "expected_additional_ids": [
+          "71000000-0000-4000-8000-000000000001",
+          "71000000-0000-4000-8000-000000000002",
+          "71000000-0000-4000-8000-000000000003",
+          "71000000-0000-4000-8000-000000000004",
+          "71000000-0000-4000-8000-000000000005",
+          "71000000-0000-4000-8000-000000000006",
+          "71000000-0000-4000-8000-000000000007",
+          "71000000-0000-4000-8000-000000000008",
+          "71000000-0000-4000-8000-000000000009"
+        ],
+        "fill_islands": [
+          {
+            "closed": true,
+            "vertices": [
+              {
+                "x": 140000000,
+                "y": 0
+              },
+              {
+                "x": 141550000,
+                "y": 0
+              },
+              {
+                "x": 141550000,
+                "y": 4000000
+              },
+              {
+                "x": 140000000,
+                "y": 4000000
+              }
+            ]
+          },
+          {
+            "closed": true,
+            "vertices": [
+              {
+                "x": 142450000,
+                "y": 0
+              },
+              {
+                "x": 144000000,
+                "y": 0
+              },
+              {
+                "x": 144000000,
+                "y": 4000000
+              },
+              {
+                "x": 142450000,
+                "y": 4000000
+              }
+            ]
+          }
+        ],
+        "filled_area_oracle": "all islands require full enclosure; no authored-boundary or centroid substitute",
+        "model_revision": "c9d9868ddbb9f6ef3d543b0b5eee855e6a8c629c7b238a51249aa8d9f4496dba",
+        "native_acquisition": "pending; this verifies source availability only",
+        "pad_anchors": [
+          {
+            "x": 99000000,
+            "y": -1000000
+          },
+          {
+            "x": 100000000,
+            "y": -1000000
+          },
+          {
+            "x": 101000000,
+            "y": -1000000
+          },
+          {
+            "x": 101000000,
+            "y": 0
+          },
+          {
+            "x": 101000000,
+            "y": 1000000
+          },
+          {
+            "x": 100000000,
+            "y": 1000000
+          },
+          {
+            "x": 99000000,
+            "y": 1000000
+          },
+          {
+            "x": 99000000,
+            "y": 0
+          }
+        ],
+        "pad_id": "71000000-0000-4000-8000-000000000001",
+        "pad_majority_oracle": {
+          "qualified_4": false,
+          "qualified_5": true
+        },
+        "relative_root": "variants/class-geometry",
+        "remaining": "placed-parent/Pin, board text, graphics, hidden/filter and native gesture bindings remain explicit additional cases",
+        "source_basis": [
+          {
+            "content_hash": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7",
+            "shard_id": "291ce3da-2e6e-58e9-91ef-3bcd89c0a29d"
+          },
+          {
+            "content_hash": "823a541b6d3ad34a60779f086bce065e9afb438a3a68fe2dfe5ef3159b4c1916",
+            "shard_id": "577eca33-838f-5c28-b281-7a0ba7a73f97"
+          },
+          {
+            "content_hash": "4941c5e43834046168df568443c3de2a200b85d7a923432062755e700e38aee5",
+            "shard_id": "650d2415-6756-55c4-bdda-65e552691999"
+          },
+          {
+            "content_hash": "c8e0117d61b72291f4ab2f52000b387f4702502335472b93f62dc97694d75c65",
+            "shard_id": "d01ada98-47ce-54f7-994b-9838f7681467"
+          },
+          {
+            "content_hash": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721",
+            "shard_id": "d6d17c54-531c-5698-bc8f-6c85ba09c85b"
+          },
+          {
+            "content_hash": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088",
+            "shard_id": "ee12e824-8a2a-5987-8809-35925590d54e"
+          }
+        ],
+        "source_inventory": [
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "outline",
+              "instance_path": [],
+              "source_id": "20000000-0000-4000-8000-000000000003"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "pads",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000001"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000001"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000002"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000003"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000004"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000004"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000005"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "vias",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000002"
+            }
+          },
+          {
+            "domain": "Board",
+            "occurrence": {
+              "class": "zones",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000003"
+            }
+          },
+          {
+            "domain": "Schematic",
+            "occurrence": {
+              "class": "drawings",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000006"
+            }
+          },
+          {
+            "domain": "Schematic",
+            "occurrence": {
+              "class": "drawings",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000007"
+            }
+          },
+          {
+            "domain": "Schematic",
+            "occurrence": {
+              "class": "drawings",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000008"
+            }
+          },
+          {
+            "domain": "Schematic",
+            "occurrence": {
+              "class": "drawings",
+              "instance_path": [],
+              "source_id": "71000000-0000-4000-8000-000000000009"
+            }
+          },
+          {
+            "domain": "Schematic",
+            "occurrence": {
+              "class": "texts",
+              "instance_path": [],
+              "source_id": "50000000-0000-4000-8000-000000001000"
+            }
+          }
+        ],
+        "track_arc_authored_anchors": [
+          {
+            "x": 80000000,
+            "y": 0
+          },
+          {
+            "x": 85000000,
+            "y": 5000000
+          },
+          {
+            "x": 90000000,
+            "y": 0
+          }
+        ],
+        "track_arc_id": "71000000-0000-4000-8000-000000000004",
+        "track_arc_majority_oracle": {
+          "qualified_1": false,
+          "qualified_2": true
+        },
+        "zone_id": "71000000-0000-4000-8000-000000000003"
+      },
+      "engine_oracles": {
+        "board_id": "20000000-0000-4000-8000-000000000003",
+        "canonical_widths_nm": [
+          5080000,
+          5080001
+        ],
+        "disconnected_same_net": {
+          "class": "tracks",
+          "instance_path": [],
+          "source_id": "40000000-0000-4000-8000-000000000003"
+        },
+        "expected_global_net": {
+          "members": [
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000001"
+            },
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000002"
+            },
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000003"
+            }
+          ],
+          "subject_id": "60000000-0000-4000-8000-000000000001"
+        },
+        "expected_run_members": [
+          {
+            "class": "tracks",
+            "instance_path": [],
+            "source_id": "40000000-0000-4000-8000-000000000001"
+          },
+          {
+            "class": "tracks",
+            "instance_path": [],
+            "source_id": "40000000-0000-4000-8000-000000000002"
+          }
+        ],
+        "foreign_net": "30000000-0000-4000-8000-000000000002",
+        "foreign_track": {
+          "class": "tracks",
+          "instance_path": [],
+          "source_id": "40000000-0000-4000-8000-000000000004"
+        },
+        "journal_bytes": 8983,
+        "journal_path": ".datum/journal/transactions.jsonl",
+        "model_revision": "84a2849978d030ae9494bfb6fc5d615d4d856e8484bf32dd9414a26e384966a2",
+        "nonmutation": "all source shards and complete journal compared byte-for-byte around snapshot/queries",
+        "observed_global_net": {
+          "owned": [
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000001"
+            },
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000002"
+            },
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000003"
+            }
+          ],
+          "project_id": "20000000-0000-4000-8000-000000000001",
+          "related": [],
+          "related_subjects": [],
+          "revision": "84a2849978d030ae9494bfb6fc5d615d4d856e8484bf32dd9414a26e384966a2",
+          "source_basis": [
+            {
+              "content_hash": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7",
+              "shard_id": "291ce3da-2e6e-58e9-91ef-3bcd89c0a29d"
+            },
+            {
+              "content_hash": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc",
+              "shard_id": "577eca33-838f-5c28-b281-7a0ba7a73f97"
+            },
+            {
+              "content_hash": "ebe4bb4b9acb4536159d51341b46c145aea0c8b91c9e83cb1578f9dfdb399603",
+              "shard_id": "650d2415-6756-55c4-bdda-65e552691999"
+            },
+            {
+              "content_hash": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721",
+              "shard_id": "d6d17c54-531c-5698-bc8f-6c85ba09c85b"
+            },
+            {
+              "content_hash": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088",
+              "shard_id": "ee12e824-8a2a-5987-8809-35925590d54e"
+            }
+          ],
+          "subject_id": "60000000-0000-4000-8000-000000000001"
+        },
+        "observed_run": {
+          "board_net": "30000000-0000-4000-8000-000000000001",
+          "contact_evidence": [
+            {
+              "layers": [
+                1
+              ],
+              "left": {
+                "class": "tracks",
+                "instance_path": [],
+                "source_id": "40000000-0000-4000-8000-000000000001"
+              },
+              "left_net": "30000000-0000-4000-8000-000000000001",
+              "right": {
+                "class": "tracks",
+                "instance_path": [],
+                "source_id": "40000000-0000-4000-8000-000000000004"
+              },
+              "right_net": "30000000-0000-4000-8000-000000000002"
+            },
+            {
+              "layers": [
+                1
+              ],
+              "left": {
+                "class": "tracks",
+                "instance_path": [],
+                "source_id": "40000000-0000-4000-8000-000000000002"
+              },
+              "left_net": "30000000-0000-4000-8000-000000000001",
+              "right": {
+                "class": "tracks",
+                "instance_path": [],
+                "source_id": "40000000-0000-4000-8000-000000000004"
+              },
+              "right_net": "30000000-0000-4000-8000-000000000002"
+            }
+          ],
+          "members": [
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000001"
+            },
+            {
+              "class": "tracks",
+              "instance_path": [],
+              "source_id": "40000000-0000-4000-8000-000000000002"
+            }
+          ],
+          "origin": {
+            "class": "tracks",
+            "instance_path": [],
+            "source_id": "40000000-0000-4000-8000-000000000001"
+          }
+        },
+        "project_id": "20000000-0000-4000-8000-000000000001",
+        "sheet_id": "20000000-0000-4000-8000-000000000005",
+        "source_basis": [
+          {
+            "content_hash": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7",
+            "shard_id": "291ce3da-2e6e-58e9-91ef-3bcd89c0a29d"
+          },
+          {
+            "content_hash": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc",
+            "shard_id": "577eca33-838f-5c28-b281-7a0ba7a73f97"
+          },
+          {
+            "content_hash": "ebe4bb4b9acb4536159d51341b46c145aea0c8b91c9e83cb1578f9dfdb399603",
+            "shard_id": "650d2415-6756-55c4-bdda-65e552691999"
+          },
+          {
+            "content_hash": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721",
+            "shard_id": "d6d17c54-531c-5698-bc8f-6c85ba09c85b"
+          },
+          {
+            "content_hash": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088",
+            "shard_id": "ee12e824-8a2a-5987-8809-35925590d54e"
+          }
+        ],
+        "text_population": {
+          "class": "texts",
+          "construction": "consecutive authored UUIDs, canonical CreateSchematicText batch",
+          "count": 1,
+          "first_uuid": "50000000-0000-4000-8000-000000001000",
+          "grid_columns": 400,
+          "instance_path": [],
+          "last_uuid": "50000000-0000-4000-8000-000000001000",
+          "spacing_nm": 2000000
+        },
+        "transport_controls": {
+          "first_256": null,
+          "full_257": null
+        }
+      },
+      "family": "class-qualification",
+      "files": [
+        {
+          "bytes": 281,
+          "relative_path": ".datum/electrical_identities/60000000-0000-4000-8000-000000000001.json",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 309,
+          "relative_path": ".datum/electrical_identities/60000000-0000-4000-8000-000000000002.json",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 32,
+          "relative_path": ".datum/journal/cursor.json",
+          "sha256": "6a9f017b05deb0ce39a50ccc9a3363b9175318e8ac8ccd0eb9d36f146789fbb4"
+        },
+        {
+          "bytes": 8983,
+          "relative_path": ".datum/journal/transactions.jsonl",
+          "sha256": "70376ccd15eb03df12941769760deaca5eea585e356d09604cf331c5cac97182"
+        },
+        {
+          "bytes": 930,
+          "relative_path": ".datum/revision/v1/blobs/sha256/04f236fabc4a3d656ce941e24b7ac034a40bf618bc0607141f1ddaf645ae1588",
+          "sha256": "04f236fabc4a3d656ce941e24b7ac034a40bf618bc0607141f1ddaf645ae1588"
+        },
+        {
+          "bytes": 209,
+          "relative_path": ".datum/revision/v1/blobs/sha256/06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721",
+          "sha256": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721"
+        },
+        {
+          "bytes": 1175,
+          "relative_path": ".datum/revision/v1/blobs/sha256/0ac75a0e40642cdcdbbb87cc48fbb07336725ad3c4be80347822d68ae5eed761",
+          "sha256": "0ac75a0e40642cdcdbbb87cc48fbb07336725ad3c4be80347822d68ae5eed761"
+        },
+        {
+          "bytes": 1826,
+          "relative_path": ".datum/revision/v1/blobs/sha256/0ea2d7393ec018b5b1e7ae5a92fbec0082df69b6bd6489eaf0ca270fc8f3b5b3",
+          "sha256": "0ea2d7393ec018b5b1e7ae5a92fbec0082df69b6bd6489eaf0ca270fc8f3b5b3"
+        },
+        {
+          "bytes": 1357,
+          "relative_path": ".datum/revision/v1/blobs/sha256/0f168a24ccd2ee3e6f9c1f409366276133396f8f9fdac3047c0bb0005fc39fa0",
+          "sha256": "0f168a24ccd2ee3e6f9c1f409366276133396f8f9fdac3047c0bb0005fc39fa0"
+        },
+        {
+          "bytes": 281,
+          "relative_path": ".datum/revision/v1/blobs/sha256/1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 3259,
+          "relative_path": ".datum/revision/v1/blobs/sha256/24bc26b4befc7761494b0939a77b36a540791ab2db1d3003ac75588fbac4d55f",
+          "sha256": "24bc26b4befc7761494b0939a77b36a540791ab2db1d3003ac75588fbac4d55f"
+        },
+        {
+          "bytes": 2086,
+          "relative_path": ".datum/revision/v1/blobs/sha256/322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc",
+          "sha256": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc"
+        },
+        {
+          "bytes": 1366,
+          "relative_path": ".datum/revision/v1/blobs/sha256/82bba50c88ff9f896d89cc926793ebecd9e0568ba3cb1ce5f6d5ba9b55ccd78a",
+          "sha256": "82bba50c88ff9f896d89cc926793ebecd9e0568ba3cb1ce5f6d5ba9b55ccd78a"
+        },
+        {
+          "bytes": 1237,
+          "relative_path": ".datum/revision/v1/blobs/sha256/958c59d4a2c4115c28777eb993546e26189ff9bfd16368d3f53509fbc05d09e1",
+          "sha256": "958c59d4a2c4115c28777eb993546e26189ff9bfd16368d3f53509fbc05d09e1"
+        },
+        {
+          "bytes": 309,
+          "relative_path": ".datum/revision/v1/blobs/sha256/9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 211,
+          "relative_path": ".datum/revision/v1/blobs/sha256/dcb53f0f2e0eed49e6d36ccd25c9f8d65927189ef042448b69d30da3379455de",
+          "sha256": "dcb53f0f2e0eed49e6d36ccd25c9f8d65927189ef042448b69d30da3379455de"
+        },
+        {
+          "bytes": 346,
+          "relative_path": ".datum/revision/v1/blobs/sha256/ebe4bb4b9acb4536159d51341b46c145aea0c8b91c9e83cb1578f9dfdb399603",
+          "sha256": "ebe4bb4b9acb4536159d51341b46c145aea0c8b91c9e83cb1578f9dfdb399603"
+        },
+        {
+          "bytes": 1209,
+          "relative_path": ".datum/revision/v1/generations/55493a3c91e0bb83a96fe8dbfab321f9bf1bffedc677a9f80fccbf86c7ede83a.json",
+          "sha256": "4ce0f3faa516546760de0d378e4b2a177e4772413f87d448b9baf5ae6d6f39eb"
+        },
+        {
+          "bytes": 839,
+          "relative_path": ".datum/revision/v1/generations/8c7d469856ff4672b6157014cbafa2dfe5ddce4d48c0282abd4a4be8a69a5b6b.json",
+          "sha256": "f9f091e561c72416d0d327340a2b75264757333989c7ff1ed2994dd1ed5ffcc5"
+        },
+        {
+          "bytes": 1393,
+          "relative_path": ".datum/revision/v1/generations/9be4036f6a793cb5ffd8610441379f474d0161b41431e0eeb7a609864551cd26.json",
+          "sha256": "65509923dc496323e2e5cfbb446cf804316f677776467140ffe29f77ce44888d"
+        },
+        {
+          "bytes": 1193,
+          "relative_path": ".datum/revision/v1/generations/c0f3768533ddfd34dbb95d19ac46e7c849ffa4a20b3be0da5e44f82a35cddf43.json",
+          "sha256": "2df77c774727a33df04c561351f0b0138cffa1583de4b0f43e427714d767f6ea"
+        },
+        {
+          "bytes": 1000,
+          "relative_path": ".datum/revision/v1/generations/dd2da47997fb0c3ec097b518da5ce73ce1b42d8d0ba4c1308dff156affafd56f.json",
+          "sha256": "3ec59788256905d1ae073e26bc73edd6825f80d00f88e3761d933c7457c1d0be"
+        },
+        {
+          "bytes": 220,
+          "relative_path": ".datum/revision/v1/head.json",
+          "sha256": "d3d34bd65f6356cad1a6dbe0c7f1a4c9b34f2c3126957b728b6e44975b2bdc4a"
+        },
+        {
+          "bytes": 2086,
+          "relative_path": "board/board.json",
+          "sha256": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc"
+        },
+        {
+          "bytes": 227,
+          "relative_path": "project.json",
+          "sha256": "fe1148655ce362e6e266159d7b954c8cd81aa4e693238b397a5e132f817c545e"
+        },
+        {
+          "bytes": 98,
+          "relative_path": "rules/rules.json",
+          "sha256": "e0f25baed6dc4d0e9840a043b575ee42853a03637372875510827f89a9efdf59"
+        },
+        {
+          "bytes": 10405,
+          "relative_path": "s5a-fixture.json",
+          "sha256": "724c250a92974324a82c0485d3f2a7aea27c2b549469f6c9ef084aa0b94ef20a"
+        },
+        {
+          "bytes": 209,
+          "relative_path": "schematic/schematic.json",
+          "sha256": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721"
+        },
+        {
+          "bytes": 346,
+          "relative_path": "schematic/selection.json",
+          "sha256": "ebe4bb4b9acb4536159d51341b46c145aea0c8b91c9e83cb1578f9dfdb399603"
+        },
+        {
+          "bytes": 281,
+          "relative_path": "variants/class-geometry/.datum/electrical_identities/60000000-0000-4000-8000-000000000001.json",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 309,
+          "relative_path": "variants/class-geometry/.datum/electrical_identities/60000000-0000-4000-8000-000000000002.json",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 32,
+          "relative_path": "variants/class-geometry/.datum/journal/cursor.json",
+          "sha256": "e1a7df476d7bc12a4af30a545d971ffdee639a29d50bf850980a2933413547ce"
+        },
+        {
+          "bytes": 19185,
+          "relative_path": "variants/class-geometry/.datum/journal/transactions.jsonl",
+          "sha256": "10b0165e6b43f8cae332a191747f17a02b0d634d0780a6ab60aeb9e6b2f98e7f"
+        },
+        {
+          "bytes": 1008,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/blobs/sha256/4941c5e43834046168df568443c3de2a200b85d7a923432062755e700e38aee5",
+          "sha256": "4941c5e43834046168df568443c3de2a200b85d7a923432062755e700e38aee5"
+        },
+        {
+          "bytes": 4222,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/blobs/sha256/823a541b6d3ad34a60779f086bce065e9afb438a3a68fe2dfe5ef3159b4c1916",
+          "sha256": "823a541b6d3ad34a60779f086bce065e9afb438a3a68fe2dfe5ef3159b4c1916"
+        },
+        {
+          "bytes": 8209,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/blobs/sha256/aa3381fe57d2e058b432029a1102b48dd3636ed2b5b9cb825fe7ecbbb8b02d8d",
+          "sha256": "aa3381fe57d2e058b432029a1102b48dd3636ed2b5b9cb825fe7ecbbb8b02d8d"
+        },
+        {
+          "bytes": 641,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/blobs/sha256/c8e0117d61b72291f4ab2f52000b387f4702502335472b93f62dc97694d75c65",
+          "sha256": "c8e0117d61b72291f4ab2f52000b387f4702502335472b93f62dc97694d75c65"
+        },
+        {
+          "bytes": 1993,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/blobs/sha256/fe900cfdeea67988faeba895a28d153f7481b55cd9133c07dc0f2e4a5949f12c",
+          "sha256": "fe900cfdeea67988faeba895a28d153f7481b55cd9133c07dc0f2e4a5949f12c"
+        },
+        {
+          "bytes": 1095,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/generations/52a2a862cffc43b9f78afcd4a3beb2d1e28de05dcc3e421df4c9f31dc1569b07.json",
+          "sha256": "9a6bb0af094944dcf0ad2baaa6882f0122e46b8cd39f7185b5cb83fd3c63e784"
+        },
+        {
+          "bytes": 1086,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/generations/a5dfce40de780a925f543642559c3fbffdf86371df4ceb0e5b8c903ee1534fa4.json",
+          "sha256": "6e3147335731b330cd53a1e0882596294fc34e806681495e79f2b1bdc4e62c2c"
+        },
+        {
+          "bytes": 220,
+          "relative_path": "variants/class-geometry/.datum/revision/v1/head.json",
+          "sha256": "88a322b729409b14adc425888a5745f87815d423b19edc5d55f4488e2e26ed50"
+        },
+        {
+          "bytes": 641,
+          "relative_path": "variants/class-geometry/.datum/zone_fills/71000000-0000-4000-8000-000000000003.json",
+          "sha256": "c8e0117d61b72291f4ab2f52000b387f4702502335472b93f62dc97694d75c65"
+        },
+        {
+          "bytes": 4222,
+          "relative_path": "variants/class-geometry/board/board.json",
+          "sha256": "823a541b6d3ad34a60779f086bce065e9afb438a3a68fe2dfe5ef3159b4c1916"
+        },
+        {
+          "bytes": 227,
+          "relative_path": "variants/class-geometry/project.json",
+          "sha256": "fe1148655ce362e6e266159d7b954c8cd81aa4e693238b397a5e132f817c545e"
+        },
+        {
+          "bytes": 98,
+          "relative_path": "variants/class-geometry/rules/rules.json",
+          "sha256": "e0f25baed6dc4d0e9840a043b575ee42853a03637372875510827f89a9efdf59"
+        },
+        {
+          "bytes": 209,
+          "relative_path": "variants/class-geometry/schematic/schematic.json",
+          "sha256": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721"
+        },
+        {
+          "bytes": 1008,
+          "relative_path": "variants/class-geometry/schematic/selection.json",
+          "sha256": "4941c5e43834046168df568443c3de2a200b85d7a923432062755e700e38aee5"
+        }
+      ],
+      "native_class_root": "target/s5a-c03-u5-v2/class-qualification/variants/class-geometry",
+      "native_input_proof": "pending; no acquisition or screenshot pass credited",
+      "persisted_root": "target/s5a-c03-u5-v2/class-qualification"
     }
   ],
   "focused_proof": {
+    "class_generation": "target/s5a-c03-u5-class-generation.log",
+    "class_recipe_tests": "target/s5a-c03-u5-class-tests.log",
     "dense_render": "target/s5a-c03-u5-dense-render.log",
     "dense_retained_cpu_bytes": 60824838,
     "document_limit_bytes": 67108864,
@@ -1872,7 +2626,7 @@
     "Native accessibility/non-color/lock asset and maximum mask/cancellation input evidence"
   ],
   "remaining_families": {
-    "class-qualification": "not frozen yet; standalone board graphics positives blocked by dat-s5a-board-graphic-authority-h8xm; other available classes remain work",
+    "class-qualification": "Partial source binding exists for Pad/Via/Track arc/Zone producer and schematic Line/Rect/Circle/Arc. Placed parents/Pin, board text, source layer/filter inputs and all native acquisition remain work; standalone board graphics positives remain blocked by dat-s5a-board-graphic-authority-h8xm.",
     "non-authored-channels": "not frozen; dat-s5a-artifact-lifecycle-7g4l remains an authority question, no fake identity or lifetime proof",
     "scope-and-reopen": "additional two-Project quantity-context and duplicate-pane input binding remains work"
   },
