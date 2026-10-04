@@ -196,10 +196,10 @@ fn even_odd_triangles(path: &[Point]) -> Result<Vec<[Point; 3]>> {
     // A zero-area gesture qualifies nothing; it is not an unresolved predicate.
     Ok(triangles)
 }
-fn clip(mut polygon: Vec<Point>, triangle: [Point; 3]) -> Result<Vec<Point>> {
-    for edge in 0..3 {
-        let a = triangle[edge];
-        let b = triangle[(edge + 1) % 3];
+fn clip(mut polygon: Vec<Point>, boundary: &[Point]) -> Result<Vec<Point>> {
+    for edge in 0..boundary.len() {
+        let a = boundary[edge];
+        let b = boundary[(edge + 1) % boundary.len()];
         let input = std::mem::take(&mut polygon);
         if input.is_empty() {
             break;
@@ -224,8 +224,29 @@ fn clip(mut polygon: Vec<Point>, triangle: [Point; 3]) -> Result<Vec<Point>> {
     }
     Ok(polygon)
 }
+/// Certify one simple convex boundary before bypassing even-odd triangles.
+/// Duplicate winding and self-crossing paths cannot use this representation.
+fn convex_boundary(path: Vec<Point>) -> Result<Option<Vec<Point>>> {
+    let path = match orient(path) {
+        Ok(path) => path,
+        Err(Error::InvalidPolygon) => return Ok(None),
+        Err(error) => return Err(error),
+    };
+    for i in 0..path.len() {
+        if path[i + 1..].contains(&path[i]) {
+            return Ok(None);
+        }
+        for p in &path {
+            if side(path[i], path[(i + 1) % path.len()], *p)?.numerator < 0 {
+                return Ok(None);
+            }
+        }
+    }
+    Ok(Some(path))
+}
 #[derive(Debug, Clone)]
 pub struct SelectionRegion {
+    convex: Option<Vec<Point>>,
     triangles: Vec<[Point; 3]>,
     boundary: Vec<[Point; 2]>,
 }
@@ -234,11 +255,13 @@ impl SelectionRegion {
         let boundary = (0..path.len())
             .map(|i| [point(path[i]), point(path[(i + 1) % path.len()])])
             .collect();
+        let points: Vec<_> = path.iter().copied().map(point).collect();
         Ok(Self {
+            convex: convex_boundary(points.clone())?,
             triangles: if path.len() < 3 {
                 Vec::new()
             } else {
-                even_odd_triangles(&path.iter().copied().map(point).collect::<Vec<_>>())?
+                even_odd_triangles(&points)?
             },
             boundary,
         })
@@ -268,8 +291,14 @@ impl SelectionRegion {
         let subjects = triangulate(polygon.to_vec())?;
         let mut covered = R::integer(0);
         for subject in subjects {
-            for triangle in &self.triangles {
-                covered = covered.checked_add(area(&clip(subject.to_vec(), *triangle)?)?)?;
+            if let Some(boundary) = &self.convex {
+                // Artificial triangulation diagonals can magnify exact fractions
+                // beyond i128 even when the actual clipped area is small.
+                covered = covered.checked_add(area(&clip(subject.to_vec(), boundary)?)?)?;
+            } else {
+                for triangle in &self.triangles {
+                    covered = covered.checked_add(area(&clip(subject.to_vec(), triangle)?)?)?;
+                }
             }
         }
         Ok(covered)

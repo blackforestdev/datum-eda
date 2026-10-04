@@ -123,3 +123,62 @@ fn oriented_hit_excludes_bbox_corners_and_preserves_exact_fractional_boundary() 
         }
     );
 }
+
+#[test]
+fn real_rotated_text_convex_enclosure_avoids_artificial_diagonal_fraction_growth() {
+    // Captured engine layout from the native annotation recipe. Independent
+    // Fraction shoelace computation: 267035013242257/50 square nanometers.
+    let layout = vec![
+        [
+            R::new(1217675203, 40).unwrap(),
+            R::new(18801283, 2).unwrap(),
+        ],
+        [R::new(292739117, 8).unwrap(), R::new(25903283, 2).unwrap()],
+        [
+            R::new(289731117, 8).unwrap(),
+            R::new(136028923, 10).unwrap(),
+        ],
+        [
+            R::new(1202635203, 40).unwrap(),
+            R::new(100518923, 10).unwrap(),
+        ],
+    ];
+    let full = SelectionRegion::new(&rect(30065879, 9400640, 6526512, 4202254)).unwrap();
+    assert_eq!(
+        full.covered_area(&layout).unwrap(),
+        R::new(267035013242257, 50).unwrap()
+    );
+    assert!(full.majority_layout(&layout).unwrap());
+    let mostly = SelectionRegion::new(&rect(30066879, 9400640, 6525512, 4202254)).unwrap();
+    assert!(mostly.majority_layout(&layout).unwrap());
+    let sliver = SelectionRegion::new(&rect(36591391, 9400640, 1000, 4202254)).unwrap();
+    assert!(!sliver.majority_layout(&layout).unwrap());
+    let mut reversed = rect(30065879, 9400640, 6526512, 4202254);
+    reversed.reverse();
+    assert_eq!(
+        SelectionRegion::new(&reversed)
+            .unwrap()
+            .covered_area(&layout)
+            .unwrap(),
+        R::new(267035013242257, 50).unwrap()
+    );
+}
+
+#[test]
+fn convex_clipping_does_not_bypass_even_odd_winding_or_arithmetic_refusal() {
+    let once = rect(0, 0, 10, 10);
+    let twice: Vec<_> = once.iter().chain(once.iter()).copied().collect();
+    let square: Vec<_> = once.iter().copied().map(point).collect();
+    let region = SelectionRegion::new(&twice).unwrap();
+    assert_eq!(region.covered_area(&square).unwrap(), R::integer(0));
+    assert!(!region.majority_layout(&square).unwrap());
+    let huge = vec![
+        [R::integer(i128::MAX), R::integer(0)],
+        [R::integer(0), R::integer(i128::MAX)],
+        [R::integer(-i128::MAX), R::integer(0)],
+    ];
+    assert!(matches!(
+        SelectionRegion::new(&once).unwrap().majority_layout(&huge),
+        Err(datum_gui_protocol::selection_geometry::GeometryError::ArithmeticRange)
+    ));
+}
