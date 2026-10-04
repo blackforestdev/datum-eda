@@ -79,13 +79,17 @@ pub(super) fn build_with_project_group(
         texts: HashMap::new(),
         drawings: HashMap::new(),
     };
+    // Persist the existing native shard header used by CLI create-sheet and
+    // native_write schematic_sheets tests; Sheet is only the geometry payload.
+    let mut payload = serde_json::to_value(&sheet)?;
+    payload["schema_version"] = serde_json::json!(1);
     let write = native_write::schematic_sheets::build_create_schematic_sheet(
         &model,
         provenance(),
         roots.schematic,
         sheet.uuid,
         "selection.json",
-        serde_json::to_value(&sheet)?,
+        payload,
     )?;
     native_write::commit_prepared(&mut model, root, write)?;
     let nets = [

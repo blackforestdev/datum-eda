@@ -1508,7 +1508,7 @@ pub fn refresh_production_status(request: &LiveReviewRequest) -> Result<Producti
     load_production_status(&cli_prefix(), request)
 }
 pub fn refresh_check_run_review_state(request: &LiveReviewRequest) -> Result<CheckRunReviewState> {
-    load_check_run_review_state(&cli_prefix(), request)
+    check_runs::loading::load(&cli_prefix(), request)
 }
 pub fn production_status_from_output_jobs_json(payload: &str) -> Result<ProductionStatus> {
     let payload: OutputJobsPayload =
@@ -1625,7 +1625,7 @@ fn load_workspace_state_impl(
     };
     state.production = load_production_status(&cli, request)?;
     state.source_shards = refresh_source_shard_status(request)?;
-    state.checks = load_check_run_review_state(&cli, request)?;
+    state.checks = check_runs::loading::load(&cli, request)?;
     state.supervision = load_gui_supervision_snapshot(
         request,
         &state.scene,
@@ -1748,25 +1748,6 @@ fn load_gui_supervision_snapshot(
             .collect();
     }
     Ok(snapshot)
-}
-
-fn load_check_run_review_state(
-    cli: &[String],
-    request: &LiveReviewRequest,
-) -> Result<CheckRunReviewState> {
-    if request.board_file.is_some() {
-        return Ok(CheckRunReviewState::default());
-    }
-    let project_root = request.project_root.display().to_string();
-    if let Ok(context) = run_cli_json::<Value>(
-        cli,
-        &["context", "refresh", "--project-root", &project_root],
-    ) && let Some(state) = check_runs::check_run_review_state_from_context_value(&context)
-    {
-        return Ok(state);
-    }
-    run_cli_json(cli, &["check", "run", &project_root])
-        .or_else(|_| Ok(CheckRunReviewState::default()))
 }
 
 fn load_production_status(cli: &[String], request: &LiveReviewRequest) -> Result<ProductionStatus> {

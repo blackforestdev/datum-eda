@@ -51,6 +51,7 @@ pub(super) fn create(
     }
     remap(&mut source, &ids);
     source["name"] = "Repeated semantic definition".into();
+    source["schema_version"] = serde_json::json!(1);
     let write = schematic_sheets::build_create_schematic_sheet(
         model,
         provenance(),

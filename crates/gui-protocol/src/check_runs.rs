@@ -1,3 +1,4 @@
+pub(crate) mod loading;
 pub mod marker;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};

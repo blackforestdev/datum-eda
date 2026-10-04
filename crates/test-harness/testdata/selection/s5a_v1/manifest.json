@@ -5865,6 +5865,547 @@
         "Component-Pad and standalone board-graphics authority gaps remain separate",
         "C05 replay/C06 acceptance"
       ]
+    },
+    {
+      "builder_command": [
+        "target/s5a-c03-artifact-builder-final",
+        "non-authored-channels",
+        "<fresh-root>",
+        "target/s5a-c03-u5-library-cli"
+      ],
+      "builder_override": {
+        "cli": {
+          "path": "target/s5a-c03-u5-library-cli",
+          "sha256": "e1c076c4a9d72ad3812ac7d75ceba0a797bf35b53be8c7989c00b9c49ab60400"
+        },
+        "path": "target/s5a-c03-artifact-builder-final",
+        "sha256": "a98c6367c5fdd75774b31791e557cab9831f02b12c6ae425c81deaa8793427be",
+        "source_base": "d1700fa5",
+        "source_files": [
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture.rs",
+            "sha256": "2fe30bd7278004cd06c96583d21d3160a450ef180671cf5b84e690f4f635bd51"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/annotations.rs",
+            "sha256": "bb31dd05cea87ef3f968585ba4f73ca43fed1185e1518f3a0d851b0ed8244725"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/artifacts.rs",
+            "sha256": "e6f509bc3037e5a587dd26c8fe1d62c92020561d5bc31c23bf059075bed7772f"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/classes.rs",
+            "sha256": "4fef2b27157e703997355d28c013cf1d0059acb985ec651bc5426c05df48e6f7"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/library.rs",
+            "sha256": "81ce27dd651919d2fcfe43a81b865543db227782aa8b026bea27cd16953f320d"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/lifecycle.rs",
+            "sha256": "1bb74cf4f7783dfa4adb78f7cafe06a69a7fe4b92a7dd80ba13acadf79f6b4a4"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/parents.rs",
+            "sha256": "fd23c50db86cda1c3a88f171b7713c66063d70f5ae28109388ad623f2beb2a11"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/recipe/identities.rs",
+            "sha256": "f0c16f71da80d4a40ab755df06567c0744196e21666108fcab5c81ff7b6222f5"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/recipe.rs",
+            "sha256": "20fa605bc732952ce8ec39fdd793224976fd58047c34ec9d0f6a19b82a1c7ff3"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/scope.rs",
+            "sha256": "d4023c7fdbb1e23780099a20d085db44e2ada2e9f7a00af545471334a80cdbef"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/semantic/checks.rs",
+            "sha256": "c7e02fd5523cdfcd023a49ef1aff02a8562a8a142fc441465c696d102e5c6081"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/semantic/fork.rs",
+            "sha256": "fda476b722b51529bffbcf32a5eeff62172be439687aa27a2beefae3dd9f8072"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/semantic.rs",
+            "sha256": "71f15d9c5a1af6de71198461d7aea8aae68290edcc0c7e3dea42694c985efc6e"
+          }
+        ]
+      },
+      "engine_oracles": {
+        "findings": [
+          {
+            "fingerprint": "sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8",
+            "primary_target": {
+              "id": "40000000-0000-4000-8000-000000000001",
+              "kind": "object_uuid"
+            },
+            "related_targets": [
+              {
+                "id": "40000000-0000-4000-8000-000000000004",
+                "kind": "object_uuid"
+              }
+            ],
+            "rule_id": "clearance_copper"
+          },
+          {
+            "fingerprint": "sha256:744a4bb592db929c6b08fd312affeec1fc2614503f8512dd653cdb0df3117b46",
+            "primary_target": {
+              "id": "40000000-0000-4000-8000-000000000002",
+              "kind": "object_uuid"
+            },
+            "related_targets": [
+              {
+                "id": "40000000-0000-4000-8000-000000000004",
+                "kind": "object_uuid"
+              }
+            ],
+            "rule_id": "clearance_copper"
+          },
+          {
+            "fingerprint": "sha256:7b84f138acb5fc3a5984ea1df30951f92c7b99c0d285de8e4439fa6c0030c5a1",
+            "primary_target": {
+              "id": "40000000-0000-4000-8000-000000000001",
+              "kind": "object_uuid"
+            },
+            "related_targets": [
+              {
+                "id": "40000000-0000-4000-8000-000000000004",
+                "kind": "object_uuid"
+              }
+            ],
+            "rule_id": "connectivity_cross_net_contact"
+          },
+          {
+            "fingerprint": "sha256:6c5d4923c8131cb0236770d72dcd9aa0ec54f139cf198c0a2835b37ca87e953b",
+            "primary_target": {
+              "id": "40000000-0000-4000-8000-000000000002",
+              "kind": "object_uuid"
+            },
+            "related_targets": [
+              {
+                "id": "40000000-0000-4000-8000-000000000004",
+                "kind": "object_uuid"
+              }
+            ],
+            "rule_id": "connectivity_cross_net_contact"
+          },
+          {
+            "fingerprint": "sha256:ef77bdde597b7ae0b901dcf2f8fd5ec6926254f004b87cc05a6f062f33276871",
+            "primary_target": {
+              "id": "74000000-0000-4000-8000-000000000001",
+              "kind": "object_uuid"
+            },
+            "related_targets": [],
+            "rule_id": "connectivity_no_copper"
+          },
+          {
+            "fingerprint": "sha256:23477c385c6bd0cc3bf466c42f44b8449f13b30bd0cfa891685e2f83aa657f35",
+            "primary_target": {
+              "id": "74000000-0000-4000-8000-000000000001",
+              "kind": "object_uuid"
+            },
+            "related_targets": [],
+            "rule_id": "connectivity_unrouted_net"
+          }
+        ],
+        "model_revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+        "no_check_variant": "variants/no-checks",
+        "nonmutation": "complete source/journal byte equality around actual saved artifact review and reopen",
+        "producer_details": "full existing-producer receipts in hash-pinned s5a-fixture.json; no fabricated action identities",
+        "project_id": "20000000-0000-4000-8000-000000000001",
+        "proposal_actions": [
+          {
+            "action_id": "sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55",
+            "from_anchor_pad_uuid": "74000000-0000-4000-8000-000000000002",
+            "to_anchor_pad_uuid": "74000000-0000-4000-8000-000000000003"
+          }
+        ],
+        "route_anchors": [
+          "74000000-0000-4000-8000-000000000002",
+          "74000000-0000-4000-8000-000000000003"
+        ],
+        "route_net": "74000000-0000-4000-8000-000000000001"
+      },
+      "family": "non-authored-channels",
+      "files": [
+        {
+          "bytes": 17525,
+          "relative_path": ".datum/check_runs/82b88a4a-5868-5a8c-8489-718146685e40.json",
+          "sha256": "48319d4c4e2f36e598aefd00b22ea74b3070a3f1dc5f3e1f3ad78ec7a06ccea7"
+        },
+        {
+          "bytes": 281,
+          "relative_path": ".datum/electrical_identities/60000000-0000-4000-8000-000000000001.json",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 309,
+          "relative_path": ".datum/electrical_identities/60000000-0000-4000-8000-000000000002.json",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 32,
+          "relative_path": ".datum/journal/cursor.json",
+          "sha256": "b040522044eb38906cb27a4fbb4aae717224ddc410bd3c2f7c9053971acf4a7c"
+        },
+        {
+          "bytes": 49665,
+          "relative_path": ".datum/journal/transactions.jsonl",
+          "sha256": "58c1d2351f572a0836894492f5e1922ba0f73e82262d853d5de29f683b1667d0"
+        },
+        {
+          "bytes": 930,
+          "relative_path": ".datum/revision/v1/blobs/sha256/04f236fabc4a3d656ce941e24b7ac034a40bf618bc0607141f1ddaf645ae1588",
+          "sha256": "04f236fabc4a3d656ce941e24b7ac034a40bf618bc0607141f1ddaf645ae1588"
+        },
+        {
+          "bytes": 209,
+          "relative_path": ".datum/revision/v1/blobs/sha256/06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721",
+          "sha256": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721"
+        },
+        {
+          "bytes": 281,
+          "relative_path": ".datum/revision/v1/blobs/sha256/1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 3556,
+          "relative_path": ".datum/revision/v1/blobs/sha256/17c1cf2803373779ec8cf1487ae320dfec694fcae64794ca7fc37b2bd00e9d33",
+          "sha256": "17c1cf2803373779ec8cf1487ae320dfec694fcae64794ca7fc37b2bd00e9d33"
+        },
+        {
+          "bytes": 1395,
+          "relative_path": ".datum/revision/v1/blobs/sha256/1cfcb6fa34cc5c1d4043e85c987ff0f75e9f5681429be30967a9691dcb431456",
+          "sha256": "1cfcb6fa34cc5c1d4043e85c987ff0f75e9f5681429be30967a9691dcb431456"
+        },
+        {
+          "bytes": 2086,
+          "relative_path": ".datum/revision/v1/blobs/sha256/322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc",
+          "sha256": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc"
+        },
+        {
+          "bytes": 3259,
+          "relative_path": ".datum/revision/v1/blobs/sha256/33037b8dc15ccc954a1e483299656ccfe24b557b5ebc32922069c7877efab4aa",
+          "sha256": "33037b8dc15ccc954a1e483299656ccfe24b557b5ebc32922069c7877efab4aa"
+        },
+        {
+          "bytes": 17525,
+          "relative_path": ".datum/revision/v1/blobs/sha256/48319d4c4e2f36e598aefd00b22ea74b3070a3f1dc5f3e1f3ad78ec7a06ccea7",
+          "sha256": "48319d4c4e2f36e598aefd00b22ea74b3070a3f1dc5f3e1f3ad78ec7a06ccea7"
+        },
+        {
+          "bytes": 35760,
+          "relative_path": ".datum/revision/v1/blobs/sha256/53c173a9a7e24bcef2656861fc50df684f8078775a0a31bd0c63dd7b19a6a7af",
+          "sha256": "53c173a9a7e24bcef2656861fc50df684f8078775a0a31bd0c63dd7b19a6a7af"
+        },
+        {
+          "bytes": 1826,
+          "relative_path": ".datum/revision/v1/blobs/sha256/7bc40ce3ec61721db19a6cbd3941fa98b8e1ce229e2096dd0a16e7ffdc74aee7",
+          "sha256": "7bc40ce3ec61721db19a6cbd3941fa98b8e1ce229e2096dd0a16e7ffdc74aee7"
+        },
+        {
+          "bytes": 1237,
+          "relative_path": ".datum/revision/v1/blobs/sha256/958c59d4a2c4115c28777eb993546e26189ff9bfd16368d3f53509fbc05d09e1",
+          "sha256": "958c59d4a2c4115c28777eb993546e26189ff9bfd16368d3f53509fbc05d09e1"
+        },
+        {
+          "bytes": 900,
+          "relative_path": ".datum/revision/v1/blobs/sha256/95e6da589e54056603fea3353c07b06fbbaea2a63a5751d19847941179081f7e",
+          "sha256": "95e6da589e54056603fea3353c07b06fbbaea2a63a5751d19847941179081f7e"
+        },
+        {
+          "bytes": 309,
+          "relative_path": ".datum/revision/v1/blobs/sha256/9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 3675,
+          "relative_path": ".datum/revision/v1/blobs/sha256/9ea142818d020ab30f185ea750f46ed83d7b5360850d72af4e2b23d39c59acd5",
+          "sha256": "9ea142818d020ab30f185ea750f46ed83d7b5360850d72af4e2b23d39c59acd5"
+        },
+        {
+          "bytes": 3984,
+          "relative_path": ".datum/revision/v1/blobs/sha256/d31f05813a04320b3ba010baab39e413b77022aa9a96d470e5f78153f260c0a6",
+          "sha256": "d31f05813a04320b3ba010baab39e413b77022aa9a96d470e5f78153f260c0a6"
+        },
+        {
+          "bytes": 1175,
+          "relative_path": ".datum/revision/v1/blobs/sha256/e7adc0a4f64277d2bf8b9c72d01c7547dfa939f12cc8723cbdeba6f0c9ff4aa4",
+          "sha256": "e7adc0a4f64277d2bf8b9c72d01c7547dfa939f12cc8723cbdeba6f0c9ff4aa4"
+        },
+        {
+          "bytes": 230,
+          "relative_path": ".datum/revision/v1/blobs/sha256/eb3b37b77ad81beb660dc43b723a5ed29f3790bdc1d0a271634ec13f49757296",
+          "sha256": "eb3b37b77ad81beb660dc43b723a5ed29f3790bdc1d0a271634ec13f49757296"
+        },
+        {
+          "bytes": 365,
+          "relative_path": ".datum/revision/v1/blobs/sha256/ec84a2205188fccb55a5ab5d751e3d6c2e46415c0570fa175b2de6e282fcf622",
+          "sha256": "ec84a2205188fccb55a5ab5d751e3d6c2e46415c0570fa175b2de6e282fcf622"
+        },
+        {
+          "bytes": 1366,
+          "relative_path": ".datum/revision/v1/blobs/sha256/f3484877f32eff7ff2cf3ca86932be8166dd4316ecd5fc67a552f91d6231e0d2",
+          "sha256": "f3484877f32eff7ff2cf3ca86932be8166dd4316ecd5fc67a552f91d6231e0d2"
+        },
+        {
+          "bytes": 1000,
+          "relative_path": ".datum/revision/v1/generations/11a2fd7af5b08e13b219f6034b6ea5721ac963a9bf4f6fd0584f1979efbf2cc7.json",
+          "sha256": "689cd948179ff29c8f4c51521b6440315f12cc77a2042bf3bd0efe8b4fe090b2"
+        },
+        {
+          "bytes": 839,
+          "relative_path": ".datum/revision/v1/generations/1cbf11d985e0d3ada6f0b6e04c6d6b3a6a7c2d6fff0568ff997ffb42b6430724.json",
+          "sha256": "68ddc23e11abfbb31c6c1d4a2fc1df91fb207b97d33571ef6e7e13fc9cbfaba4"
+        },
+        {
+          "bytes": 1000,
+          "relative_path": ".datum/revision/v1/generations/758c4d66ceb6f17b1dac4b3ab80958a37c4a43e2bf3328ad145795d9a34479d7.json",
+          "sha256": "1e85055f7c0c1e4b5c1f4f01624d1300661d9c8ce31330fa4c416b36c09f3916"
+        },
+        {
+          "bytes": 1000,
+          "relative_path": ".datum/revision/v1/generations/85defe0f173181722a1dc7a203c2aafededdd9d7b64ca447a8c7909390f6a39f.json",
+          "sha256": "1a808326011611ae71c7ffdf42801edc5f92c0606f56db5556e4fa1c661d3f36"
+        },
+        {
+          "bytes": 1393,
+          "relative_path": ".datum/revision/v1/generations/9613c940f847ded7aebc12e07cab26fd39b4955cc88aff5fbe4fd2899ae27a1f.json",
+          "sha256": "5f1770621b85b093efe9fd3d8d9a5b7d3ba95121500d440132f8d4c2d96e2229"
+        },
+        {
+          "bytes": 1086,
+          "relative_path": ".datum/revision/v1/generations/b79fd56d410c68be3cb6c1424ff3b21cae05e3e579c793a9b24bfd90dad3a19e.json",
+          "sha256": "6d5c9bbb130716b6786ac77e6a9b4c35d30405c3b5e0cbc6e2a3566f020e2c75"
+        },
+        {
+          "bytes": 1209,
+          "relative_path": ".datum/revision/v1/generations/c2fd199bc7aeabb8f9a9bf1284dcaae8b84138e3db3d05abebd39fcc7a0b6576.json",
+          "sha256": "c56c85edd9538fcd88fa4ae0f2b3d254f95daa0f7de460fd3f3fd0009383e6f4"
+        },
+        {
+          "bytes": 1193,
+          "relative_path": ".datum/revision/v1/generations/cf6d0f5ddf4cdbe1fa544aea734362941a1a17b3641fd5be1df273c39abbb4e1.json",
+          "sha256": "11c664568332a80ff2c7e7a40043dcb4f48699b00835e1db20e66701dd5f9df0"
+        },
+        {
+          "bytes": 220,
+          "relative_path": ".datum/revision/v1/head.json",
+          "sha256": "98cd081791126ea26c57fafc3adf986ad0e6604302f98f3da6437645f006b4e3"
+        },
+        {
+          "bytes": 3675,
+          "relative_path": "board/board.json",
+          "sha256": "9ea142818d020ab30f185ea750f46ed83d7b5360850d72af4e2b23d39c59acd5"
+        },
+        {
+          "bytes": 227,
+          "relative_path": "project.json",
+          "sha256": "fe1148655ce362e6e266159d7b954c8cd81aa4e693238b397a5e132f817c545e"
+        },
+        {
+          "bytes": 2067,
+          "relative_path": "route-proposal.json",
+          "sha256": "c0ec82e4a50562c02b3c381fdab1f6824c457d2012e45b269ee087b9e13e7648"
+        },
+        {
+          "bytes": 98,
+          "relative_path": "rules/rules.json",
+          "sha256": "e0f25baed6dc4d0e9840a043b575ee42853a03637372875510827f89a9efdf59"
+        },
+        {
+          "bytes": 32275,
+          "relative_path": "s5a-fixture.json",
+          "sha256": "2bf1f656ec58e10ddfadc4794debc024f090ff0bf368bf9a74be9d1752ef98f8"
+        },
+        {
+          "bytes": 209,
+          "relative_path": "schematic/schematic.json",
+          "sha256": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721"
+        },
+        {
+          "bytes": 365,
+          "relative_path": "schematic/selection.json",
+          "sha256": "ec84a2205188fccb55a5ab5d751e3d6c2e46415c0570fa175b2de6e282fcf622"
+        },
+        {
+          "bytes": 281,
+          "relative_path": "variants/no-checks/.datum/electrical_identities/60000000-0000-4000-8000-000000000001.json",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 309,
+          "relative_path": "variants/no-checks/.datum/electrical_identities/60000000-0000-4000-8000-000000000002.json",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 32,
+          "relative_path": "variants/no-checks/.datum/journal/cursor.json",
+          "sha256": "6a9f017b05deb0ce39a50ccc9a3363b9175318e8ac8ccd0eb9d36f146789fbb4"
+        },
+        {
+          "bytes": 9021,
+          "relative_path": "variants/no-checks/.datum/journal/transactions.jsonl",
+          "sha256": "646d529d4e08c54ff920b921d6598612b958b247146c4e09ccdc3dc4b1c288e6"
+        },
+        {
+          "bytes": 1366,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/0261e3aaf1cd0f28bacf9fd82085cf957eaf069e700644f8eca980038e565c09",
+          "sha256": "0261e3aaf1cd0f28bacf9fd82085cf957eaf069e700644f8eca980038e565c09"
+        },
+        {
+          "bytes": 930,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/04f236fabc4a3d656ce941e24b7ac034a40bf618bc0607141f1ddaf645ae1588",
+          "sha256": "04f236fabc4a3d656ce941e24b7ac034a40bf618bc0607141f1ddaf645ae1588"
+        },
+        {
+          "bytes": 209,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721",
+          "sha256": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721"
+        },
+        {
+          "bytes": 281,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088",
+          "sha256": "1268e757c3964258f361c38866efda43a0afb3eb79220b2ecc17c7185512d088"
+        },
+        {
+          "bytes": 3259,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/31813bcd3c17cb4e5ab66593fea543860ed146e0aac0f744638e0bd77b8108aa",
+          "sha256": "31813bcd3c17cb4e5ab66593fea543860ed146e0aac0f744638e0bd77b8108aa"
+        },
+        {
+          "bytes": 2086,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc",
+          "sha256": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc"
+        },
+        {
+          "bytes": 1395,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/39bfbd4f01f631169196352e75fb035655383bd03846139d201daa2f206101b3",
+          "sha256": "39bfbd4f01f631169196352e75fb035655383bd03846139d201daa2f206101b3"
+        },
+        {
+          "bytes": 1826,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/69cb7bba98e66e2f8758bd863c1dac419984354df2fed9643a205757a8fe9c67",
+          "sha256": "69cb7bba98e66e2f8758bd863c1dac419984354df2fed9643a205757a8fe9c67"
+        },
+        {
+          "bytes": 1237,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/958c59d4a2c4115c28777eb993546e26189ff9bfd16368d3f53509fbc05d09e1",
+          "sha256": "958c59d4a2c4115c28777eb993546e26189ff9bfd16368d3f53509fbc05d09e1"
+        },
+        {
+          "bytes": 309,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7",
+          "sha256": "9a593299233f11a2b13ce64f0fba693135cb7ede77ae76c9eab218f9b25029a7"
+        },
+        {
+          "bytes": 1175,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/c458d0875fb27aa406effb84dbfe7e2258a77d850f629d28c0b7e9d91a1b52e8",
+          "sha256": "c458d0875fb27aa406effb84dbfe7e2258a77d850f629d28c0b7e9d91a1b52e8"
+        },
+        {
+          "bytes": 230,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/eb3b37b77ad81beb660dc43b723a5ed29f3790bdc1d0a271634ec13f49757296",
+          "sha256": "eb3b37b77ad81beb660dc43b723a5ed29f3790bdc1d0a271634ec13f49757296"
+        },
+        {
+          "bytes": 365,
+          "relative_path": "variants/no-checks/.datum/revision/v1/blobs/sha256/ec84a2205188fccb55a5ab5d751e3d6c2e46415c0570fa175b2de6e282fcf622",
+          "sha256": "ec84a2205188fccb55a5ab5d751e3d6c2e46415c0570fa175b2de6e282fcf622"
+        },
+        {
+          "bytes": 839,
+          "relative_path": "variants/no-checks/.datum/revision/v1/generations/101073cbbb23a51d1ecadddee773db63a2f8c36b73073c1778469a1d12285437.json",
+          "sha256": "afdccceaadf60dd8017f91de76368af12aa0466cf6b604261e6ce7fe4dfecf77"
+        },
+        {
+          "bytes": 1209,
+          "relative_path": "variants/no-checks/.datum/revision/v1/generations/392206bdf70b6122e4f524c2fbfdc25420b25c76b979945cada39e68799b46dc.json",
+          "sha256": "c1944f7dbfa937330fa53339c6f427d78a3b017c2d4672bb85f48d59ffb807b4"
+        },
+        {
+          "bytes": 1393,
+          "relative_path": "variants/no-checks/.datum/revision/v1/generations/8ef7aeb5149f248877aaafec68c24cf378475878b4faab536b4d1ee995b60fb3.json",
+          "sha256": "ae8f0cb54558c867d1165a40c7abb80d71b8dc059c8083f89af2e193a86e5765"
+        },
+        {
+          "bytes": 1000,
+          "relative_path": "variants/no-checks/.datum/revision/v1/generations/9bae486717c7bd2537d2111dc873d8fb0b161cded57b162e384adf731c5479f1.json",
+          "sha256": "271d0348de8cae3e7bb06016cf1a4abc4c395639360d403f7b686355e349e15d"
+        },
+        {
+          "bytes": 1193,
+          "relative_path": "variants/no-checks/.datum/revision/v1/generations/e6a63971130bedac1acddc0c12e1391d276135294d3a007526fb6b888e6fba4c.json",
+          "sha256": "df86bae80744c5676629d4355192f43b788aad36993fc12e02b4a7e8edf45fb5"
+        },
+        {
+          "bytes": 220,
+          "relative_path": "variants/no-checks/.datum/revision/v1/head.json",
+          "sha256": "d9e58451747e3add6cffa6fc2304258c31a36985db03525570cf08722393b4b9"
+        },
+        {
+          "bytes": 2086,
+          "relative_path": "variants/no-checks/board/board.json",
+          "sha256": "322e5b12765af954733acb8cb8e46c38de09eabdf1fc7b2b0aaf2113080b16cc"
+        },
+        {
+          "bytes": 227,
+          "relative_path": "variants/no-checks/project.json",
+          "sha256": "fe1148655ce362e6e266159d7b954c8cd81aa4e693238b397a5e132f817c545e"
+        },
+        {
+          "bytes": 98,
+          "relative_path": "variants/no-checks/rules/rules.json",
+          "sha256": "e0f25baed6dc4d0e9840a043b575ee42853a03637372875510827f89a9efdf59"
+        },
+        {
+          "bytes": 209,
+          "relative_path": "variants/no-checks/schematic/schematic.json",
+          "sha256": "06e8c51a05d8a53e36998d93c52f5153bc1aa0232b5c7eeb0fc00beea8520721"
+        },
+        {
+          "bytes": 365,
+          "relative_path": "variants/no-checks/schematic/selection.json",
+          "sha256": "ec84a2205188fccb55a5ab5d751e3d6c2e46415c0570fa175b2de6e282fcf622"
+        }
+      ],
+      "focused_proof": {
+        "binary": "target/s5a-c03-native_artifact_recipe-final",
+        "log": "target/s5a-c03-native-artifacts-extracted.log",
+        "production_sources": [
+          {
+            "path": "crates/gui-protocol/src/lib.rs",
+            "sha256": "67464e545beb75806054ee18feb29f9156ac5e442468721ae395f9b726b2cf50"
+          },
+          {
+            "path": "crates/gui-protocol/src/check_runs.rs",
+            "sha256": "62863ad8a550f83c023781b893f31004607f183405b080160a93f51f179d24f0"
+          },
+          {
+            "path": "crates/gui-protocol/src/check_runs/loading.rs",
+            "sha256": "c6c05e9ce3e4c8df35cfaae23460de9553c38da6f043af77ae33a52913e1a9e7"
+          },
+          {
+            "path": "crates/gui-viewport/tests/native_artifact_recipe.rs",
+            "sha256": "9238f979f30174db160714aaa16081c1f6e23c84b1c3ffbb6d4d8fdcbf41d03f"
+          }
+        ],
+        "scope": "Actual route producer action identity and six persisted DRC findings; Proposal/Review kind distinction, whole-artifact/noop/refusal, finding lifetime/duplicate authority, absent terminal context with saved checks and without checks; full source/journal/artifact equality and reopen. Failed v3 mutation replay is excluded.",
+        "sha256": "b2ba49ba9282a0262a4b79b1043d150fcd01c0b0f1e977f3dcba3b6cbad738e5",
+        "tests_passed": 2
+      },
+      "frozen_root": "target/s5a-c03-u5-artifacts-v4",
+      "native_input_proof": "pending C04 actual pointer/keyboard, overlay/lanes, visual/accessibility and revision cases",
+      "unverified": [
+        "Generic production Proposal action authority dat-s5a-artifact-lifecycle-7g4l remains open",
+        "Native authored/artifact channel collision and complete C04 cases",
+        "C05 independent replay and C06 acceptance"
+      ]
     }
   ],
   "focused_proof": {
@@ -5884,13 +6425,13 @@
   "remaining_cases": [
     "Native pointer/keyboard/region and 4-of-8 versus 5-of-8 acquisition oracles",
     "Pre-acquisition hidden/class-filter complete derived-member oracles and D4 refusal/no-op lifetime",
-    "Complete hierarchy/semantic Bus, mixed inspection and channel collision fixture bindings",
+    "Frozen semantic hierarchy/Bus, exact mixed quantity inspection and actual route/DRC identities have focused replay; native interaction and maximal channel collision cases remain pending.",
     "Native accessibility/non-color/lock asset and maximum mask/cancellation input evidence"
   ],
   "remaining_families": {
-    "class-qualification": "Partial source binding exists for Pad/Via/Track arc/Zone producer and schematic Line/Rect/Circle/Arc. Placed parents/Pin, board text, source layer/filter inputs and all native acquisition remain work; standalone board graphics positives remain blocked by dat-s5a-board-graphic-authority-h8xm.",
-    "non-authored-channels": "not frozen; dat-s5a-artifact-lifecycle-7g4l remains an authority question, no fake identity or lifetime proof",
-    "scope-and-reopen": "additional two-Project quantity-context and duplicate-pane input binding remains work"
+    "class-qualification": "Partial source-bound replay covers existing Pad/Via/Track arc/Zone, schematic drawings, placed parents/Pins, NoConnect and BoardText. Native inputs remain pending; component-Pad positives are blocked by dat-s5a-component-pad-authority-hadv and standalone board graphics by dat-s5a-board-graphic-authority-h8xm.",
+    "non-authored-channels": "Frozen actual route actions and persisted DRC finding fingerprints with nonmutation/reopen proof; native input/channel collision pending. Generic production Proposal action authority remains open under dat-s5a-artifact-lifecycle-7g4l.",
+    "scope-and-reopen": "Two preconfigured Projects with distinct quantity contexts and same object UUIDs are frozen/replayed; actual duplicate-pane/native scope inputs remain pending."
   },
   "schema_version": 1,
   "status": "partial fixture binding; neither C03 closure nor C04/C05/C06 acceptance"
