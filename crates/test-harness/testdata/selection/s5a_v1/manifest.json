@@ -2603,6 +2603,1309 @@
       "native_class_root": "target/s5a-c03-u5-v2/class-qualification/variants/class-geometry",
       "native_input_proof": "pending; no acquisition or screenshot pass credited",
       "persisted_root": "target/s5a-c03-u5-v2/class-qualification"
+    },
+    {
+      "builder_command": [
+        "target/s5a-c03-u5-parents-builder",
+        "library-parents",
+        "<fresh-root>",
+        "target/s5a-c03-u5-library-cli"
+      ],
+      "builder_override": {
+        "cli": {
+          "path": "target/s5a-c03-u5-library-cli",
+          "sha256": "e1c076c4a9d72ad3812ac7d75ceba0a797bf35b53be8c7989c00b9c49ab60400",
+          "source_commit": "059943b5"
+        },
+        "path": "target/s5a-c03-u5-parents-builder",
+        "sha256": "434653582c416c737ef1491a7d720d650523648264a3b072274aa5501b5fb779",
+        "source_files": [
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture.rs",
+            "sha256": "f0d026cd93da5db29fb816d648ddfd2e3832fa66634cb70748c00a7f7b3876c7"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/library.rs",
+            "sha256": "81ce27dd651919d2fcfe43a81b865543db227782aa8b026bea27cd16953f320d"
+          },
+          {
+            "path": "crates/test-harness/src/bin/s5a_fixture/parents.rs",
+            "sha256": "fd23c50db86cda1c3a88f171b7713c66063d70f5ae28109388ad623f2beb2a11"
+          }
+        ]
+      },
+      "coverage": "Four placed parents, ten actual instance Pins, exact parent-only relationships, two ComponentInstance bindings, 0/30 degree rotation and locked/unlocked Packages. Native input/projection/inspection pending.",
+      "engine_oracles": {
+        "acceptance": "partial C03 fixture preparation; no C04/C05/C06 or graphics/manufacturing acceptance",
+        "cli_receipts": [
+          {
+            "arguments": [
+              "--sheet",
+              "10000000-0000-4000-8000-000000000004",
+              "--reference",
+              "U1",
+              "--value",
+              "native fixture",
+              "--lib-id",
+              "30000000-0000-4000-8000-000000000001",
+              "--x-nm",
+              "0",
+              "--y-nm",
+              "0",
+              "--rotation-deg",
+              "0"
+            ],
+            "command": "place-symbol",
+            "result": {
+              "action": "place_symbol",
+              "binding_diagnostics": [],
+              "binding_evidence": {
+                "component_instance_ref": {
+                  "object_id": "7c9191b7-9135-5b25-a429-aa3f76ecab59",
+                  "object_revision": 0
+                },
+                "entity_ref": {
+                  "object_id": "40000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "gate_uuid": "40000000-0000-4000-8000-000000000101",
+                "part_ref": {
+                  "object_id": "90000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "placed_symbol_ref": {
+                  "object_id": "b2b25adc-20e8-4942-b377-bc8d82d91690",
+                  "object_revision": 0
+                },
+                "pool_symbol_ref": {
+                  "object_id": "30000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "pool_unit_ref": {
+                  "object_id": "20000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                }
+              },
+              "binding_status": "bound_with_part",
+              "component_instance_uuid": "7c9191b7-9135-5b25-a429-aa3f76ecab59",
+              "display_mode": "LibraryDefault",
+              "entity_uuid": "40000000-0000-4000-8000-000000000001",
+              "gate_uuid": "40000000-0000-4000-8000-000000000101",
+              "hidden_power_behavior": "SourceDefinedImplicit",
+              "lib_id": "30000000-0000-4000-8000-000000000001",
+              "mirrored": false,
+              "part_uuid": "90000000-0000-4000-8000-000000000001",
+              "project_root": "target/s5a-c03-u5-parents-v3",
+              "reference": "U1",
+              "rotation_deg": 0,
+              "sheet_path": "target/s5a-c03-u5-parents-v3/schematic/main.json",
+              "sheet_uuid": "10000000-0000-4000-8000-000000000004",
+              "symbol_uuid": "b2b25adc-20e8-4942-b377-bc8d82d91690",
+              "unit_selection": null,
+              "value": "native fixture",
+              "x_nm": 0,
+              "y_nm": 0
+            }
+          },
+          {
+            "arguments": [
+              "--part",
+              "90000000-0000-4000-8000-000000000001",
+              "--package",
+              "50000000-0000-4000-8000-000000000001",
+              "--reference",
+              "U1",
+              "--value",
+              "native fixture",
+              "--x-nm",
+              "0",
+              "--y-nm",
+              "0",
+              "--layer",
+              "1"
+            ],
+            "command": "place-board-component",
+            "result": {
+              "action": "place_board_component",
+              "board_path": "target/s5a-c03-u5-parents-v3/board/board.json",
+              "component_uuid": "53cc307d-321d-4231-b104-c2c35f731c69",
+              "has_persisted_component_mechanical": true,
+              "has_persisted_component_models_3d": false,
+              "has_persisted_component_pads": true,
+              "has_persisted_component_silkscreen": false,
+              "layer": 1,
+              "locked": false,
+              "package_uuid": "50000000-0000-4000-8000-000000000001",
+              "part_uuid": "90000000-0000-4000-8000-000000000001",
+              "persisted_component_mechanical_arc_count": 0,
+              "persisted_component_mechanical_circle_count": 0,
+              "persisted_component_mechanical_line_count": 0,
+              "persisted_component_mechanical_polygon_count": 1,
+              "persisted_component_mechanical_polyline_count": 0,
+              "persisted_component_mechanical_text_count": 0,
+              "persisted_component_model_3d_count": 0,
+              "persisted_component_pad_count": 8,
+              "persisted_component_silkscreen_arc_count": 0,
+              "persisted_component_silkscreen_circle_count": 0,
+              "persisted_component_silkscreen_line_count": 0,
+              "persisted_component_silkscreen_polygon_count": 0,
+              "persisted_component_silkscreen_polyline_count": 0,
+              "persisted_component_silkscreen_text_count": 0,
+              "project_root": "target/s5a-c03-u5-parents-v3",
+              "reference": "U1",
+              "rotation_deg": 0,
+              "value": "native fixture",
+              "x_nm": 0,
+              "y_nm": 0
+            }
+          },
+          {
+            "arguments": [
+              "--component",
+              "53cc307d-321d-4231-b104-c2c35f731c69"
+            ],
+            "command": "set-board-component-locked",
+            "result": {
+              "action": "set_board_component_locked",
+              "board_path": "target/s5a-c03-u5-parents-v3/board/board.json",
+              "component_uuid": "53cc307d-321d-4231-b104-c2c35f731c69",
+              "has_persisted_component_mechanical": true,
+              "has_persisted_component_models_3d": false,
+              "has_persisted_component_pads": true,
+              "has_persisted_component_silkscreen": false,
+              "layer": 1,
+              "locked": true,
+              "package_uuid": "50000000-0000-4000-8000-000000000001",
+              "part_uuid": "90000000-0000-4000-8000-000000000001",
+              "persisted_component_mechanical_arc_count": 0,
+              "persisted_component_mechanical_circle_count": 0,
+              "persisted_component_mechanical_line_count": 0,
+              "persisted_component_mechanical_polygon_count": 1,
+              "persisted_component_mechanical_polyline_count": 0,
+              "persisted_component_mechanical_text_count": 0,
+              "persisted_component_model_3d_count": 0,
+              "persisted_component_pad_count": 8,
+              "persisted_component_silkscreen_arc_count": 0,
+              "persisted_component_silkscreen_circle_count": 0,
+              "persisted_component_silkscreen_line_count": 0,
+              "persisted_component_silkscreen_polygon_count": 0,
+              "persisted_component_silkscreen_polyline_count": 0,
+              "persisted_component_silkscreen_text_count": 0,
+              "project_root": "target/s5a-c03-u5-parents-v3",
+              "reference": "U1",
+              "rotation_deg": 0,
+              "value": "native fixture",
+              "x_nm": 0,
+              "y_nm": 0
+            }
+          },
+          {
+            "arguments": [
+              "--component-instance",
+              "7c9191b7-9135-5b25-a429-aa3f76ecab59",
+              "--symbol",
+              "b2b25adc-20e8-4942-b377-bc8d82d91690",
+              "--package",
+              "53cc307d-321d-4231-b104-c2c35f731c69",
+              "--part",
+              "90000000-0000-4000-8000-000000000001"
+            ],
+            "command": "set-component-instance",
+            "result": {
+              "action": "set_component_instance",
+              "component_instance": {
+                "authority": "authored",
+                "id": "7c9191b7-9135-5b25-a429-aa3f76ecab59",
+                "library_bindings": {
+                  "bbee36be-46e9-5ec7-b22d-74eb0a66be04": {
+                    "binding_role": "part",
+                    "pinned_object_revision": 0,
+                    "target_object_id": "90000000-0000-4000-8000-000000000001"
+                  }
+                },
+                "object_revision": 1,
+                "part_ref": "90000000-0000-4000-8000-000000000001",
+                "placed_package_refs": [
+                  "53cc307d-321d-4231-b104-c2c35f731c69"
+                ],
+                "placed_package_roles": {
+                  "53cc307d-321d-4231-b104-c2c35f731c69": {
+                    "role": "primary"
+                  }
+                },
+                "placed_symbol_refs": [
+                  "b2b25adc-20e8-4942-b377-bc8d82d91690"
+                ],
+                "placed_symbol_roles": {
+                  "b2b25adc-20e8-4942-b377-bc8d82d91690": {
+                    "role": "primary"
+                  }
+                }
+              },
+              "component_instance_path": "target/s5a-c03-u5-parents-v3/.datum/component_instances/7c9191b7-9135-5b25-a429-aa3f76ecab59.json",
+              "contract": "component_instance_mutation_v1",
+              "project_id": "72000000-0000-4000-8000-000000000001",
+              "transaction_id": "9b4249c4-71f4-5351-8dc0-fa639676e4bb"
+            }
+          },
+          {
+            "arguments": [
+              "--sheet",
+              "10000000-0000-4000-8000-000000000004",
+              "--reference",
+              "U2",
+              "--value",
+              "native fixture",
+              "--lib-id",
+              "30000000-0000-4000-8000-000000000001",
+              "--x-nm",
+              "20000000",
+              "--y-nm",
+              "0",
+              "--rotation-deg",
+              "30"
+            ],
+            "command": "place-symbol",
+            "result": {
+              "action": "place_symbol",
+              "binding_diagnostics": [],
+              "binding_evidence": {
+                "component_instance_ref": {
+                  "object_id": "6f424e57-14c4-55f6-94d8-f2b734beb1b0",
+                  "object_revision": 0
+                },
+                "entity_ref": {
+                  "object_id": "40000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "gate_uuid": "40000000-0000-4000-8000-000000000101",
+                "part_ref": {
+                  "object_id": "90000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "placed_symbol_ref": {
+                  "object_id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95",
+                  "object_revision": 0
+                },
+                "pool_symbol_ref": {
+                  "object_id": "30000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "pool_unit_ref": {
+                  "object_id": "20000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                }
+              },
+              "binding_status": "bound_with_part",
+              "component_instance_uuid": "6f424e57-14c4-55f6-94d8-f2b734beb1b0",
+              "display_mode": "LibraryDefault",
+              "entity_uuid": "40000000-0000-4000-8000-000000000001",
+              "gate_uuid": "40000000-0000-4000-8000-000000000101",
+              "hidden_power_behavior": "SourceDefinedImplicit",
+              "lib_id": "30000000-0000-4000-8000-000000000001",
+              "mirrored": false,
+              "part_uuid": "90000000-0000-4000-8000-000000000001",
+              "project_root": "target/s5a-c03-u5-parents-v3",
+              "reference": "U2",
+              "rotation_deg": 30,
+              "sheet_path": "target/s5a-c03-u5-parents-v3/schematic/main.json",
+              "sheet_uuid": "10000000-0000-4000-8000-000000000004",
+              "symbol_uuid": "d73a14b1-02bf-4dd7-be50-b54a7de08e95",
+              "unit_selection": null,
+              "value": "native fixture",
+              "x_nm": 20000000,
+              "y_nm": 0
+            }
+          },
+          {
+            "arguments": [
+              "--part",
+              "90000000-0000-4000-8000-000000000001",
+              "--package",
+              "50000000-0000-4000-8000-000000000001",
+              "--reference",
+              "U2",
+              "--value",
+              "native fixture",
+              "--x-nm",
+              "20000000",
+              "--y-nm",
+              "0",
+              "--layer",
+              "1"
+            ],
+            "command": "place-board-component",
+            "result": {
+              "action": "place_board_component",
+              "board_path": "target/s5a-c03-u5-parents-v3/board/board.json",
+              "component_uuid": "3590f8c2-17bd-4866-8933-b53c432e4ecd",
+              "has_persisted_component_mechanical": true,
+              "has_persisted_component_models_3d": false,
+              "has_persisted_component_pads": true,
+              "has_persisted_component_silkscreen": false,
+              "layer": 1,
+              "locked": false,
+              "package_uuid": "50000000-0000-4000-8000-000000000001",
+              "part_uuid": "90000000-0000-4000-8000-000000000001",
+              "persisted_component_mechanical_arc_count": 0,
+              "persisted_component_mechanical_circle_count": 0,
+              "persisted_component_mechanical_line_count": 0,
+              "persisted_component_mechanical_polygon_count": 1,
+              "persisted_component_mechanical_polyline_count": 0,
+              "persisted_component_mechanical_text_count": 0,
+              "persisted_component_model_3d_count": 0,
+              "persisted_component_pad_count": 8,
+              "persisted_component_silkscreen_arc_count": 0,
+              "persisted_component_silkscreen_circle_count": 0,
+              "persisted_component_silkscreen_line_count": 0,
+              "persisted_component_silkscreen_polygon_count": 0,
+              "persisted_component_silkscreen_polyline_count": 0,
+              "persisted_component_silkscreen_text_count": 0,
+              "project_root": "target/s5a-c03-u5-parents-v3",
+              "reference": "U2",
+              "rotation_deg": 0,
+              "value": "native fixture",
+              "x_nm": 20000000,
+              "y_nm": 0
+            }
+          },
+          {
+            "arguments": [
+              "--component",
+              "3590f8c2-17bd-4866-8933-b53c432e4ecd",
+              "--rotation-deg",
+              "30"
+            ],
+            "command": "rotate-board-component",
+            "result": {
+              "action": "rotate_board_component",
+              "board_path": "target/s5a-c03-u5-parents-v3/board/board.json",
+              "component_uuid": "3590f8c2-17bd-4866-8933-b53c432e4ecd",
+              "has_persisted_component_mechanical": true,
+              "has_persisted_component_models_3d": false,
+              "has_persisted_component_pads": true,
+              "has_persisted_component_silkscreen": false,
+              "layer": 1,
+              "locked": false,
+              "package_uuid": "50000000-0000-4000-8000-000000000001",
+              "part_uuid": "90000000-0000-4000-8000-000000000001",
+              "persisted_component_mechanical_arc_count": 0,
+              "persisted_component_mechanical_circle_count": 0,
+              "persisted_component_mechanical_line_count": 0,
+              "persisted_component_mechanical_polygon_count": 1,
+              "persisted_component_mechanical_polyline_count": 0,
+              "persisted_component_mechanical_text_count": 0,
+              "persisted_component_model_3d_count": 0,
+              "persisted_component_pad_count": 8,
+              "persisted_component_silkscreen_arc_count": 0,
+              "persisted_component_silkscreen_circle_count": 0,
+              "persisted_component_silkscreen_line_count": 0,
+              "persisted_component_silkscreen_polygon_count": 0,
+              "persisted_component_silkscreen_polyline_count": 0,
+              "persisted_component_silkscreen_text_count": 0,
+              "project_root": "target/s5a-c03-u5-parents-v3",
+              "reference": "U2",
+              "rotation_deg": 30,
+              "value": "native fixture",
+              "x_nm": 20000000,
+              "y_nm": 0
+            }
+          },
+          {
+            "arguments": [
+              "--component-instance",
+              "6f424e57-14c4-55f6-94d8-f2b734beb1b0",
+              "--symbol",
+              "d73a14b1-02bf-4dd7-be50-b54a7de08e95",
+              "--package",
+              "3590f8c2-17bd-4866-8933-b53c432e4ecd",
+              "--part",
+              "90000000-0000-4000-8000-000000000001"
+            ],
+            "command": "set-component-instance",
+            "result": {
+              "action": "set_component_instance",
+              "component_instance": {
+                "authority": "authored",
+                "id": "6f424e57-14c4-55f6-94d8-f2b734beb1b0",
+                "library_bindings": {
+                  "7efc5db6-b8ab-5e66-9fd7-4a4aaeedd168": {
+                    "binding_role": "part",
+                    "pinned_object_revision": 0,
+                    "target_object_id": "90000000-0000-4000-8000-000000000001"
+                  }
+                },
+                "object_revision": 1,
+                "part_ref": "90000000-0000-4000-8000-000000000001",
+                "placed_package_refs": [
+                  "3590f8c2-17bd-4866-8933-b53c432e4ecd"
+                ],
+                "placed_package_roles": {
+                  "3590f8c2-17bd-4866-8933-b53c432e4ecd": {
+                    "role": "primary"
+                  }
+                },
+                "placed_symbol_refs": [
+                  "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+                ],
+                "placed_symbol_roles": {
+                  "d73a14b1-02bf-4dd7-be50-b54a7de08e95": {
+                    "role": "primary"
+                  }
+                }
+              },
+              "component_instance_path": "target/s5a-c03-u5-parents-v3/.datum/component_instances/6f424e57-14c4-55f6-94d8-f2b734beb1b0.json",
+              "contract": "component_instance_mutation_v1",
+              "project_id": "72000000-0000-4000-8000-000000000001",
+              "transaction_id": "6de41dc7-ebf4-539a-b302-24b3662e329a"
+            }
+          }
+        ],
+        "component_pad_authority": "unavailable: library UUIDs repeat across Packages in component_pads; absent from canonical pads class. Positive component-Pad membership/corner proofs remain pending; no IDs fabricated",
+        "expected_authored_members": [
+          {
+            "class": "packages",
+            "instance_path": [],
+            "source_id": "3590f8c2-17bd-4866-8933-b53c432e4ecd"
+          },
+          {
+            "class": "packages",
+            "instance_path": [],
+            "source_id": "53cc307d-321d-4231-b104-c2c35f731c69"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "02abb110-2c36-4746-8d4e-571140faa5ce"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "05debdad-837d-465f-baf6-994bdf9ab543"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "09a05333-7d9c-4ccb-ab1e-e4398c917a75"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "1a5f6cc0-8679-44a9-8a44-22d1c7d7171d"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "54abb474-ec9b-4f2f-9aa3-06b7c7680004"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "8b47dd69-29b9-40ab-b7c0-0a9a9671b69f"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "a42ba0d8-c4ea-48e6-a780-b3bd70eadfda"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "aeaadd59-3b56-4ca5-978c-3b857be64f4f"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "bc2a5f91-7037-47f6-8511-68b9e4d22c69"
+          },
+          {
+            "class": "pins",
+            "instance_path": [],
+            "source_id": "c5fdf0e7-b926-4e29-b90d-cbd065bc1295"
+          },
+          {
+            "class": "symbols",
+            "instance_path": [],
+            "source_id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          },
+          {
+            "class": "symbols",
+            "instance_path": [],
+            "source_id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+          }
+        ],
+        "model_revision": "70f2407113b85974d2f17f45c57f04c14b853439045047b7205d6f8bd684f9f3",
+        "native_input": "pending: parent acquisition, projections, locked disclosure and inspection",
+        "nonmutation": "all source shards and full journal byte-equal around read-only queries",
+        "placements": [
+          {
+            "component_instance": "7c9191b7-9135-5b25-a429-aa3f76ecab59",
+            "expected_pin_members": [
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "09a05333-7d9c-4ccb-ab1e-e4398c917a75"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "1a5f6cc0-8679-44a9-8a44-22d1c7d7171d"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "54abb474-ec9b-4f2f-9aa3-06b7c7680004"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "aeaadd59-3b56-4ca5-978c-3b857be64f4f"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "c5fdf0e7-b926-4e29-b90d-cbd065bc1295"
+              }
+            ],
+            "locked": true,
+            "package": "53cc307d-321d-4231-b104-c2c35f731c69",
+            "pads": [
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "1",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -2700000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000001",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "2",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -900000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000002",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "3",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 900000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000003",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "4",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 2700000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000004",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "5",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 2700000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000005",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "6",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 900000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000006",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "7",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -900000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000007",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "8",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -2700000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000008",
+                "width_nm": 1300000
+              }
+            ],
+            "parent_queries": "exact single source parent; children retained separately; no sibling membership",
+            "pins": [
+              {
+                "electrical_type": "Output",
+                "library_pin": "20000000-0000-4000-8000-000000000101",
+                "name": "OUT",
+                "number": "OUT",
+                "position": {
+                  "x": 1500000,
+                  "y": 0
+                },
+                "uuid": "09a05333-7d9c-4ccb-ab1e-e4398c917a75"
+              },
+              {
+                "electrical_type": "Input",
+                "library_pin": "20000000-0000-4000-8000-000000000102",
+                "name": "IN-",
+                "number": "IN-",
+                "position": {
+                  "x": -1500000,
+                  "y": -500000
+                },
+                "uuid": "aeaadd59-3b56-4ca5-978c-3b857be64f4f"
+              },
+              {
+                "electrical_type": "Input",
+                "library_pin": "20000000-0000-4000-8000-000000000103",
+                "name": "IN+",
+                "number": "IN+",
+                "position": {
+                  "x": -1500000,
+                  "y": 500000
+                },
+                "uuid": "54abb474-ec9b-4f2f-9aa3-06b7c7680004"
+              },
+              {
+                "electrical_type": "PowerIn",
+                "library_pin": "20000000-0000-4000-8000-000000000104",
+                "name": "V-",
+                "number": "V-",
+                "position": {
+                  "x": 0,
+                  "y": 1500000
+                },
+                "uuid": "c5fdf0e7-b926-4e29-b90d-cbd065bc1295"
+              },
+              {
+                "electrical_type": "PowerIn",
+                "library_pin": "20000000-0000-4000-8000-000000000106",
+                "name": "V+",
+                "number": "V+",
+                "position": {
+                  "x": 0,
+                  "y": -1500000
+                },
+                "uuid": "1a5f6cc0-8679-44a9-8a44-22d1c7d7171d"
+              }
+            ],
+            "rotation_deg": 0,
+            "symbol": "b2b25adc-20e8-4942-b377-bc8d82d91690",
+            "unqualified_component_library_pad_ids": [
+              "80000000-0000-4000-8000-000000000001",
+              "80000000-0000-4000-8000-000000000002",
+              "80000000-0000-4000-8000-000000000003",
+              "80000000-0000-4000-8000-000000000004",
+              "80000000-0000-4000-8000-000000000005",
+              "80000000-0000-4000-8000-000000000006",
+              "80000000-0000-4000-8000-000000000007",
+              "80000000-0000-4000-8000-000000000008"
+            ]
+          },
+          {
+            "component_instance": "6f424e57-14c4-55f6-94d8-f2b734beb1b0",
+            "expected_pin_members": [
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "02abb110-2c36-4746-8d4e-571140faa5ce"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "05debdad-837d-465f-baf6-994bdf9ab543"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "8b47dd69-29b9-40ab-b7c0-0a9a9671b69f"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "a42ba0d8-c4ea-48e6-a780-b3bd70eadfda"
+              },
+              {
+                "class": "pins",
+                "instance_path": [],
+                "source_id": "bc2a5f91-7037-47f6-8511-68b9e4d22c69"
+              }
+            ],
+            "locked": false,
+            "package": "3590f8c2-17bd-4866-8933-b53c432e4ecd",
+            "pads": [
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "1",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -2700000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000001",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "2",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -900000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000002",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "3",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 900000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000003",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "4",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 2700000,
+                  "y": -1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000004",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "5",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 2700000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000005",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "6",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": 900000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000006",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "7",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -900000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000007",
+                "width_nm": 1300000
+              },
+              {
+                "diameter_nm": 0,
+                "drill_nm": null,
+                "height_nm": 450000,
+                "layer": 1,
+                "name": "8",
+                "padstack": "70000000-0000-4000-8000-000000000001",
+                "position": {
+                  "x": -2700000,
+                  "y": 1905000
+                },
+                "shape": "rect",
+                "uuid": "80000000-0000-4000-8000-000000000008",
+                "width_nm": 1300000
+              }
+            ],
+            "parent_queries": "exact single source parent; children retained separately; no sibling membership",
+            "pins": [
+              {
+                "electrical_type": "Output",
+                "library_pin": "20000000-0000-4000-8000-000000000101",
+                "name": "OUT",
+                "number": "OUT",
+                "position": {
+                  "x": 1500000,
+                  "y": 0
+                },
+                "uuid": "bc2a5f91-7037-47f6-8511-68b9e4d22c69"
+              },
+              {
+                "electrical_type": "Input",
+                "library_pin": "20000000-0000-4000-8000-000000000102",
+                "name": "IN-",
+                "number": "IN-",
+                "position": {
+                  "x": -1500000,
+                  "y": -500000
+                },
+                "uuid": "02abb110-2c36-4746-8d4e-571140faa5ce"
+              },
+              {
+                "electrical_type": "Input",
+                "library_pin": "20000000-0000-4000-8000-000000000103",
+                "name": "IN+",
+                "number": "IN+",
+                "position": {
+                  "x": -1500000,
+                  "y": 500000
+                },
+                "uuid": "05debdad-837d-465f-baf6-994bdf9ab543"
+              },
+              {
+                "electrical_type": "PowerIn",
+                "library_pin": "20000000-0000-4000-8000-000000000104",
+                "name": "V-",
+                "number": "V-",
+                "position": {
+                  "x": 0,
+                  "y": 1500000
+                },
+                "uuid": "a42ba0d8-c4ea-48e6-a780-b3bd70eadfda"
+              },
+              {
+                "electrical_type": "PowerIn",
+                "library_pin": "20000000-0000-4000-8000-000000000106",
+                "name": "V+",
+                "number": "V+",
+                "position": {
+                  "x": 0,
+                  "y": -1500000
+                },
+                "uuid": "8b47dd69-29b9-40ab-b7c0-0a9a9671b69f"
+              }
+            ],
+            "rotation_deg": 30,
+            "symbol": "d73a14b1-02bf-4dd7-be50-b54a7de08e95",
+            "unqualified_component_library_pad_ids": [
+              "80000000-0000-4000-8000-000000000001",
+              "80000000-0000-4000-8000-000000000002",
+              "80000000-0000-4000-8000-000000000003",
+              "80000000-0000-4000-8000-000000000004",
+              "80000000-0000-4000-8000-000000000005",
+              "80000000-0000-4000-8000-000000000006",
+              "80000000-0000-4000-8000-000000000007",
+              "80000000-0000-4000-8000-000000000008"
+            ]
+          }
+        ],
+        "project_id": "72000000-0000-4000-8000-000000000001",
+        "recipe": "s5a-library-parents-v1",
+        "schema_version": 1,
+        "source_basis": [
+          {
+            "content_hash": "9b73a6864e0d8313aab0b662bf8bedeb7497fece945685bcebfe658cfbb047ab",
+            "shard_id": "00dddcc6-9e1d-5142-8a18-d3d21c3274c8"
+          },
+          {
+            "content_hash": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+            "shard_id": "10c02697-e754-5bff-950d-e40dc7ad32d8"
+          },
+          {
+            "content_hash": "81123852e7e8b2607d1b3ef4c3022a3c8df855f457a84801da6764f2c207bf02",
+            "shard_id": "27923bb7-ddb7-5284-895f-0ed44215e86a"
+          },
+          {
+            "content_hash": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+            "shard_id": "29e5dddb-95d8-5f52-af02-ed68fe2469e2"
+          },
+          {
+            "content_hash": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+            "shard_id": "56fdd94f-a28f-52d6-ba79-98547cd74a1e"
+          },
+          {
+            "content_hash": "0b133b7664b5105b66a0f38a0c57c97cac72007556e73ef07da8c2e86bab72df",
+            "shard_id": "577eca33-838f-5c28-b281-7a0ba7a73f97"
+          },
+          {
+            "content_hash": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+            "shard_id": "65dcbc06-1b6b-58ba-91d8-a2c7a42bacae"
+          },
+          {
+            "content_hash": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+            "shard_id": "9671d2b7-b3b4-5382-bddf-7a7d908ca8d1"
+          },
+          {
+            "content_hash": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+            "shard_id": "d6d17c54-531c-5698-bc8f-6c85ba09c85b"
+          },
+          {
+            "content_hash": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+            "shard_id": "d910ce70-ff0f-547a-a4a8-07654f9afe72"
+          },
+          {
+            "content_hash": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+            "shard_id": "dd71c960-d081-524d-89fe-e61ad23c3ed5"
+          },
+          {
+            "content_hash": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+            "shard_id": "e7b87982-d984-574b-b277-697010010c4d"
+          },
+          {
+            "content_hash": "5d6215c16371e0aaaa8ed4b40548a7187dc46778098a271cacdbbc3dd8048950",
+            "shard_id": "fab9a2a8-c67d-556e-96e2-792cbd20324a"
+          }
+        ]
+      },
+      "family": "class-qualification/library-parents",
+      "files": [
+        {
+          "path": ".datum/component_instances/6f424e57-14c4-55f6-94d8-f2b734beb1b0.json",
+          "sha256": "9b73a6864e0d8313aab0b662bf8bedeb7497fece945685bcebfe658cfbb047ab"
+        },
+        {
+          "path": ".datum/component_instances/7c9191b7-9135-5b25-a429-aa3f76ecab59.json",
+          "sha256": "5d6215c16371e0aaaa8ed4b40548a7187dc46778098a271cacdbbc3dd8048950"
+        },
+        {
+          "path": ".datum/journal/cursor.json",
+          "sha256": "31db1d548b76ffce4c506f32e9cc15f5952a17d22fa3c78c754ba5cf1dcb1604"
+        },
+        {
+          "path": ".datum/journal/transactions.jsonl",
+          "sha256": "5a792efa9848ef6fe15fd409e46325d0356887e15d4997054468045777cee0ea"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+          "sha256": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+          "sha256": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/0669cc4027ec233a0e16a9f3744980363d28296fd4826b6251cab7f6ee67dd15",
+          "sha256": "0669cc4027ec233a0e16a9f3744980363d28296fd4826b6251cab7f6ee67dd15"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/0b133b7664b5105b66a0f38a0c57c97cac72007556e73ef07da8c2e86bab72df",
+          "sha256": "0b133b7664b5105b66a0f38a0c57c97cac72007556e73ef07da8c2e86bab72df"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/14b1782f0e040c71f1cf6c6e15f4aaac068fada5c40adc3444d89caeed27c11d",
+          "sha256": "14b1782f0e040c71f1cf6c6e15f4aaac068fada5c40adc3444d89caeed27c11d"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+          "sha256": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/262a26d1bbb1ee7264e4d0e498777725c642a7e005b53d13781eeaf5bd358586",
+          "sha256": "262a26d1bbb1ee7264e4d0e498777725c642a7e005b53d13781eeaf5bd358586"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/38c2300cbdc75bc850dd2786a2c54176892411d7ccb96db25ce9956db494e80a",
+          "sha256": "38c2300cbdc75bc850dd2786a2c54176892411d7ccb96db25ce9956db494e80a"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/3f32b2f42048f3e9fb9d600f4e4d3d02fca4ca9176693710d2648a8462ca1f02",
+          "sha256": "3f32b2f42048f3e9fb9d600f4e4d3d02fca4ca9176693710d2648a8462ca1f02"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889",
+          "sha256": "4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/5955e4e973ed2af1cbbf73b1e743c204afc37112da303efe86062d3fa00c1bb6",
+          "sha256": "5955e4e973ed2af1cbbf73b1e743c204afc37112da303efe86062d3fa00c1bb6"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/5c8eb3c96d6839018cf0b1dc4a933ea5f60162efe4c97d33a9dd40cc6545d2ae",
+          "sha256": "5c8eb3c96d6839018cf0b1dc4a933ea5f60162efe4c97d33a9dd40cc6545d2ae"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/5d6215c16371e0aaaa8ed4b40548a7187dc46778098a271cacdbbc3dd8048950",
+          "sha256": "5d6215c16371e0aaaa8ed4b40548a7187dc46778098a271cacdbbc3dd8048950"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/65aed79dd629cd8d6f2fc0521019560c4fae3fabcfd536b2612d98093e86ddf0",
+          "sha256": "65aed79dd629cd8d6f2fc0521019560c4fae3fabcfd536b2612d98093e86ddf0"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/7a506789d30c18f9f8e9cd95b8e53520977ca355f6f28fb95d3fec2aa918c144",
+          "sha256": "7a506789d30c18f9f8e9cd95b8e53520977ca355f6f28fb95d3fec2aa918c144"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+          "sha256": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/81123852e7e8b2607d1b3ef4c3022a3c8df855f457a84801da6764f2c207bf02",
+          "sha256": "81123852e7e8b2607d1b3ef4c3022a3c8df855f457a84801da6764f2c207bf02"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6",
+          "sha256": "83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/8d528873b4c77ce36cbe37ca910dac3b9ab9fa450ca3a3f6c434952a034438df",
+          "sha256": "8d528873b4c77ce36cbe37ca910dac3b9ab9fa450ca3a3f6c434952a034438df"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/8df8647996361419a0b0532af6fb125894a044b65a8d2747143a9022519e133b",
+          "sha256": "8df8647996361419a0b0532af6fb125894a044b65a8d2747143a9022519e133b"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/91dc58479893e4443521bf09169f265589b3e7fade16d95599a5b1fcc7466733",
+          "sha256": "91dc58479893e4443521bf09169f265589b3e7fade16d95599a5b1fcc7466733"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c",
+          "sha256": "97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/9b73a6864e0d8313aab0b662bf8bedeb7497fece945685bcebfe658cfbb047ab",
+          "sha256": "9b73a6864e0d8313aab0b662bf8bedeb7497fece945685bcebfe658cfbb047ab"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/9bb84497ac3f27e5c3daa6e1336d961d4f04363ae9bf719fb7d32468e12271a8",
+          "sha256": "9bb84497ac3f27e5c3daa6e1336d961d4f04363ae9bf719fb7d32468e12271a8"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+          "sha256": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+          "sha256": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/bb636fb8ebadc7c4f45431d32c810dfcb0c1d344f0d04761c3bd9c344af67141",
+          "sha256": "bb636fb8ebadc7c4f45431d32c810dfcb0c1d344f0d04761c3bd9c344af67141"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+          "sha256": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+          "sha256": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+          "sha256": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/e8a4fd46332aa46048433a7cb087048783f8d125f65fd8c7580b30c78ac11f9e",
+          "sha256": "e8a4fd46332aa46048433a7cb087048783f8d125f65fd8c7580b30c78ac11f9e"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/ea39097fff2fd35b8d1c5497a5e0eb7f5c739ccc6efd66a3c95aa294d9fb31f0",
+          "sha256": "ea39097fff2fd35b8d1c5497a5e0eb7f5c739ccc6efd66a3c95aa294d9fb31f0"
+        },
+        {
+          "path": ".datum/revision/v1/blobs/sha256/efe834c6ad1d7f3f83a5efb460eec9d4ebc3a0145feeb2e3e86377098ef7c11b",
+          "sha256": "efe834c6ad1d7f3f83a5efb460eec9d4ebc3a0145feeb2e3e86377098ef7c11b"
+        },
+        {
+          "path": ".datum/revision/v1/generations/35da6e259333990fa9de3f4f95ea81290dae9f036b7614295716451764f485f9.json",
+          "sha256": "1786f3afd8e81fb77ead50486e514ac6576472bc52f03557d73da8f02bbe703f"
+        },
+        {
+          "path": ".datum/revision/v1/generations/4cbda1e55dc3ad13c7e74252a8077ccedd4f091b972d67d10f9b4d5e2d4229c6.json",
+          "sha256": "eee6246a908a4e80c9db85568528f564b716d233dd2225a00b382288a6a789a2"
+        },
+        {
+          "path": ".datum/revision/v1/generations/57c37189122273b000ba1923325d76c0e1510ba3ab7b14d98f6b6b8170e6903c.json",
+          "sha256": "72fd3f868dba92ae0c0d750277a8a38d369b5f22a4159e572fdbe571d6ccc8a8"
+        },
+        {
+          "path": ".datum/revision/v1/generations/7070c35123f47429c7a450f6ea2928873ef3f1cbeb6c908a57943eaf1eb6d114.json",
+          "sha256": "8f002360ea018018e3272bef463cca8151da00370ad76e4a70c41bea3cfe054f"
+        },
+        {
+          "path": ".datum/revision/v1/generations/aa9d8f6313d167799300b298d675987c0e095fc867dc50a55c05deb5bef2816e.json",
+          "sha256": "18ddded35ced927d1ea3769b3ec8d868d37805e5977963d443363e9282790dd1"
+        },
+        {
+          "path": ".datum/revision/v1/generations/aad340297a50a03b9848244c7820aa6ef3ec69326a1d331a91c29c70de82bbd0.json",
+          "sha256": "6182c0ca4893fce6d1c234a0367900d87b889b6cce00bce2af5e3bf48cbcd133"
+        },
+        {
+          "path": ".datum/revision/v1/generations/ae1713107ab344e2438ef40b4fc1ec077ea4fbb41b0054951a61385f7c80a8f3.json",
+          "sha256": "5ecc945b50b83aa433835ef59f52aef6606cdfb1710a478e25e6e5b7f8a99f33"
+        },
+        {
+          "path": ".datum/revision/v1/generations/cd0d187c24076592fe50d0d59fee18aaedc9727c041dc2f364f306ed193a0f11.json",
+          "sha256": "e5c316608a08974f2368b5ed7dd2c874ce3e9f3b9e5e68bd87caf4bc7cdea6f5"
+        },
+        {
+          "path": ".datum/revision/v1/generations/d30615de8b77b76f8be24a5c175cd6119f5513f2de8754f0df2634ea4609374a.json",
+          "sha256": "ef4c432920d54bb6f1d7d4245f4c10d17c0282ddf20b40323fdb516546944857"
+        },
+        {
+          "path": ".datum/revision/v1/generations/e0432dd091390e0d41f777892c1f81f0f247093d9b5b4d6b84e2e52789206b02.json",
+          "sha256": "ea6c957ef3574ba38f71ebeea7941962111d79639522b44e47fe328718babb04"
+        },
+        {
+          "path": ".datum/revision/v1/generations/e738071c5cccba325a933a6d41c73a281cb0b3b272062d68c1f3e9d8635d5d23.json",
+          "sha256": "b5de2ae9fcd42adf667194401ae86df216d00a7d36335d6e4a94fce9aa2f7cd4"
+        },
+        {
+          "path": ".datum/revision/v1/head.json",
+          "sha256": "72322014e91141dbec42a726cbbdf3855f127cb10ade0c3813b9722a7e6db11a"
+        },
+        {
+          "path": "board/board.json",
+          "sha256": "0b133b7664b5105b66a0f38a0c57c97cac72007556e73ef07da8c2e86bab72df"
+        },
+        {
+          "path": "pool/entities/40000000-0000-4000-8000-000000000001.json",
+          "sha256": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a"
+        },
+        {
+          "path": "pool/footprints/60000000-0000-4000-8000-000000000001.json",
+          "sha256": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b"
+        },
+        {
+          "path": "pool/packages/50000000-0000-4000-8000-000000000001.json",
+          "sha256": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7"
+        },
+        {
+          "path": "pool/padstacks/70000000-0000-4000-8000-000000000001.json",
+          "sha256": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970"
+        },
+        {
+          "path": "pool/parts/90000000-0000-4000-8000-000000000001.json",
+          "sha256": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c"
+        },
+        {
+          "path": "pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json",
+          "sha256": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29"
+        },
+        {
+          "path": "pool/symbols/30000000-0000-4000-8000-000000000001.json",
+          "sha256": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd"
+        },
+        {
+          "path": "pool/units/20000000-0000-4000-8000-000000000001.json",
+          "sha256": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed"
+        },
+        {
+          "path": "project.json",
+          "sha256": "97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c"
+        },
+        {
+          "path": "rules/rules.json",
+          "sha256": "8b154e147848162f43ebdc8c8792ebc3f79d7ab2a18e8d23309af0f13dce6147"
+        },
+        {
+          "path": "s5a-fixture.json",
+          "sha256": "b877d88e070b733da666b1f848d0ca6a04e9cf65f49f33b615233b4938416d45"
+        },
+        {
+          "path": "schematic/main.json",
+          "sha256": "81123852e7e8b2607d1b3ef4c3022a3c8df855f457a84801da6764f2c207bf02"
+        },
+        {
+          "path": "schematic/schematic.json",
+          "sha256": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325"
+        }
+      ],
+      "frozen_root": "target/s5a-c03-u5-parents-v3",
+      "unverified": [
+        "Component Pad identities and geometry: dat-s5a-component-pad-authority-hadv; repeated library UUID payloads remain unqualified. Required positive cases preserved.",
+        "Standalone board graphics: dat-s5a-board-graphic-authority-h8xm",
+        "Full C04 native input, C05 independent review and C06 acceptance"
+      ]
     }
   ],
   "focused_proof": {

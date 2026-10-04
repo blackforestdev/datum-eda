@@ -3,24 +3,41 @@ use anyhow::{Context, Result, bail};
 use std::path::{Path, PathBuf};
 #[path = "s5a_fixture/classes.rs"]
 mod classes;
+#[path = "s5a_fixture/library.rs"]
+mod library;
 #[path = "s5a_fixture/lifecycle.rs"]
 mod lifecycle;
+#[path = "s5a_fixture/parents.rs"]
+mod parents;
 #[path = "s5a_fixture/recipe.rs"]
 mod recipe;
 
 fn main() -> Result<()> {
     let mut args = std::env::args_os().skip(1);
     let family = args.next().context(
-        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification> <fresh-root>",
+        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|library-base|library-parents> <fresh-root>",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
     let root = PathBuf::from(args.next().context("fresh output root required")?);
+    if family == "library-parents" {
+        let cli = PathBuf::from(
+            args.next()
+                .context("existing datum-eda CLI binary required")?,
+        );
+        if args.next().is_some() {
+            bail!("unexpected argument");
+        }
+        return parents::build(&root, &cli);
+    }
     if args.next().is_some() {
         bail!("unexpected argument");
     }
     run(family, &root)
 }
 fn run(family: &str, root: &Path) -> Result<()> {
+    if family == "library-base" {
+        return library::prepare(root);
+    }
     let count = match family {
         "electrical-scope" | "revision-lifetime" | "class-qualification" => 1,
         "compound-output" => 257,
