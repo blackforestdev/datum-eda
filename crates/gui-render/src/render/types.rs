@@ -39,7 +39,7 @@ struct PreparedTerminalGraphic {
     rect: RectPx,
     clip: RectPx,
 }
-type WorldHitRegion = datum_gui_viewport::HitRegion<HitTarget>;
+type WorldHitRegion = datum_gui_viewport::HitRegion<String>;
 type WorldHitShape = datum_gui_viewport::HitShape;
 #[derive(Debug, Clone, PartialEq)]
 struct Projection {

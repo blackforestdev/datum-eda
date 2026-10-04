@@ -92,10 +92,8 @@ fn shared_pointer_projection_matches_previous_board_and_schematic_geometry() {
             .world_hit_index
             .regions()
             .iter()
-            .find_map(|r| match &r.target {
-                crate::HitTarget::AuthoredObject(id) => Some(id.clone()),
-                _ => None,
-            })
+            .map(|r| r.target.clone())
+            .next()
             .unwrap();
         let view = base
             .surface_passes()
@@ -288,10 +286,7 @@ fn non_pad_dependencies_retain_world_and_unknown_membership_refuses() {
         .iter()
         .enumerate()
         .filter(|(i, _)| session.board().unwrap().hover_is_pad(*i) == Some(false))
-        .filter_map(|(_, r)| match &r.target {
-            crate::HitTarget::AuthoredObject(id) => Some(id.clone()),
-            _ => None,
-        })
+        .map(|(_, r)| r.target.clone())
         .collect();
     assert!(!targets.is_empty());
     for id in targets {

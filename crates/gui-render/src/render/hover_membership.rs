@@ -1,7 +1,7 @@
 //! Source-bound pad paint dependencies and their shared CPU lifetime.
 use super::{RetainedScene, document_cpu};
+use crate::ReviewWorkspaceState;
 use crate::cpu_alloc::heap::capacity_bytes;
-use crate::{HitTarget, ReviewWorkspaceState};
 use std::sync::{Arc, Weak};
 
 pub(crate) fn material_id(state: &ReviewWorkspaceState) -> Option<&str> {
@@ -23,7 +23,7 @@ pub(crate) struct Membership(Option<Arc<Vec<u64>>>);
 impl Membership {
     pub(crate) fn build(
         state: &ReviewWorkspaceState,
-        index: &datum_gui_viewport::SpatialHitIndex<HitTarget>,
+        index: &datum_gui_viewport::SpatialHitIndex<String>,
         budget: &Arc<crate::text_gpu::budget::Budget>,
         scope: &crate::cpu_alloc::Scope,
         limit: usize,
@@ -32,7 +32,7 @@ impl Membership {
     }
     fn try_build(
         state: &ReviewWorkspaceState,
-        index: &datum_gui_viewport::SpatialHitIndex<HitTarget>,
+        index: &datum_gui_viewport::SpatialHitIndex<String>,
         budget: &Arc<crate::text_gpu::budget::Budget>,
         scope: &crate::cpu_alloc::Scope,
         limit: usize,
@@ -45,10 +45,7 @@ impl Membership {
         bits.try_reserve_exact(words).ok()?;
         bits.resize(words, 0);
         for (i, region) in index.regions().iter().enumerate() {
-            let id = match &region.target {
-                HitTarget::AuthoredObject(id) | HitTarget::ReviewAction(id) => id,
-                _ => continue,
-            };
+            let id = &region.target;
             let count = state
                 .scene
                 .pads
@@ -149,12 +146,7 @@ mod tests {
         assert!(observer.same(&clone.observe()));
         assert_eq!(observer.bytes(), live());
         for (i, r) in scene.world_hit_index.regions().iter().enumerate() {
-            let expected = match &r.target {
-                HitTarget::AuthoredObject(id) | HitTarget::ReviewAction(id) => {
-                    state.scene.pads.iter().any(|p| p.object_id == *id)
-                }
-                _ => false,
-            };
+            let expected = state.scene.pads.iter().any(|p| p.object_id == r.target);
             assert_eq!(membership.is_pad(i), Some(expected));
         }
         drop(membership);

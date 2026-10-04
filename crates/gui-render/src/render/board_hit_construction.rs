@@ -260,7 +260,7 @@ mod tests {
             }
             let region = regions
                 .iter()
-                .find(|region| region.target == HitTarget::AuthoredObject(track.object_id.clone()))
+                .find(|region| region.target == track.object_id)
                 .expect("visible track hit");
             assert_eq!(region.layer_id.as_deref(), Some(track.layer_id.as_str()));
             assert_eq!(

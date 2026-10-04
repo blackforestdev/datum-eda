@@ -35,7 +35,7 @@ fn complete_scene_owned_capacities_match_allocator_and_weak_release() {
         }]
         .into(),
         world_hit_index: datum_gui_viewport::SpatialHitIndex::new(vec![WorldHitRegion {
-            target: HitTarget::AuthoredObject(String::with_capacity(64)),
+            target: String::with_capacity(64),
             layer_id: Some(String::with_capacity(32)),
             shape: WorldHitShape::Polyline {
                 path: vec![PointNm { x: 0, y: 0 }, PointNm { x: 10, y: 20 }],

@@ -523,7 +523,7 @@ mod tests {
         let hit = retained
             .hit_test_authored_world(hit_point, &state)
             .expect("board outline segment should be selectable");
-        assert_eq!(hit, &HitTarget::AuthoredObject(outline.object_id.clone()));
+        assert_eq!(hit, HitTarget::AuthoredObject(outline.object_id.clone()));
     }
 
     #[test]
@@ -607,10 +607,9 @@ mod tests {
             .expect("fixture should include pads");
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
 
+        let regions = retained.world_hit_index.regions();
         assert!(
-            retained.world_hit_index.regions().iter().any(|region| {
-                matches!(&region.target, HitTarget::AuthoredObject(id) if id == &pad.object_id)
-            }),
+            regions.iter().any(|region| region.target == pad.object_id),
             "pad hit region should select the pad object for read-only inspection"
         );
     }

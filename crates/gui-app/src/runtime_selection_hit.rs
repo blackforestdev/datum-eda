@@ -72,33 +72,31 @@ impl Runtime {
         };
         let state = self.workspace();
         Ok(if let Some(basis) = basis {
-            retained
-                .hit_test_authored_world_eligible(point, state, |target| {
-                    let HitTarget::AuthoredObject(key) = target else {
-                        return false;
-                    };
-                    basis.bindings.get(key).is_some_and(|binding| {
-                        !state
-                            .ui
-                            .filters
-                            .excluded_selection_classes
-                            .contains(&binding.acquired.class)
-                            && binding.visible(|layer| {
-                                state
-                                    .ui
-                                    .filters
-                                    .layer_visibility
-                                    .get(layer)
-                                    .copied()
-                                    .unwrap_or(true)
-                            })
-                    })
+            retained.hit_test_authored_world_eligible(point, state, |target| {
+                let HitTarget::AuthoredObject(key) = target else {
+                    return false;
+                };
+                basis.bindings.get(key).is_some_and(|binding| {
+                    !state
+                        .ui
+                        .filters
+                        .excluded_selection_classes
+                        .contains(&binding.acquired.class)
+                        && binding.visible(|layer| {
+                            state
+                                .ui
+                                .filters
+                                .layer_visibility
+                                .get(layer)
+                                .copied()
+                                .unwrap_or(true)
+                        })
                 })
-                .cloned()
+            })
         } else {
             match surface {
-                SceneSurface::Board => retained.hit_test_authored_world(point, state).cloned(),
-                SceneSurface::Schematic => retained.hit_test_world(point).cloned(),
+                SceneSurface::Board => retained.hit_test_authored_world(point, state),
+                SceneSurface::Schematic => retained.hit_test_world(point),
             }
         })
     }

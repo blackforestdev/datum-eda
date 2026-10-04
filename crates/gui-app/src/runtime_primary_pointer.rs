@@ -155,9 +155,7 @@ impl Runtime {
                     .render_session()
                     .board()
                     .expect("retained scene initialized");
-                retained
-                    .hit_test_authored_world(world_point, self.session.workspace())
-                    .cloned()
+                retained.hit_test_authored_world(world_point, self.session.workspace())
             };
             let retained_elapsed = retained_started.elapsed();
             let target_object_id = match &retained_target {

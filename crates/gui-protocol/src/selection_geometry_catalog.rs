@@ -16,8 +16,15 @@ pub enum QualificationGeometry {
     Disk { center: PointNm, radius: i64 },
 }
 pub fn layout_polygon(geometry: &crate::BoardTextGeometryPrimitive) -> Option<[LayoutPoint; 4]> {
-    let t = geometry.world_transform_nm?;
-    let b = geometry.block_bbox_em_nm?;
+    layout_polygon_from_basis(geometry.world_transform_nm?, geometry.block_bbox_em_nm?)
+}
+
+/// Exact layout corners from the same captured affine/em basis, without
+/// requiring each retained hit to own a duplicated rational corner array.
+pub fn layout_polygon_from_basis(
+    t: crate::Affine2DFixedPrimitive,
+    b: crate::MeshRectEmPrimitive,
+) -> Option<[LayoutPoint; 4]> {
     let corners = [
         (b.min_x_em_nm, b.min_y_em_nm),
         (b.max_x_em_nm, b.min_y_em_nm),

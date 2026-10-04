@@ -186,7 +186,7 @@ impl RetainedScene {
         &self,
         point: PointNm,
         state: &ReviewWorkspaceState,
-    ) -> Option<&HitTarget> {
+    ) -> Option<HitTarget> {
         if !authored_visible(state) {
             return None;
         }
@@ -205,12 +205,12 @@ impl RetainedScene {
         point: PointNm,
         state: &ReviewWorkspaceState,
         eligible: impl Fn(&HitTarget) -> bool,
-    ) -> Option<&HitTarget> {
+    ) -> Option<HitTarget> {
         if !authored_visible(state) {
             return None;
         }
         self.hit_test_world_with(point, |region| {
-            eligible(&region.target)
+            eligible(&HitTarget::AuthoredObject(region.target.clone()))
                 && region
                     .layer_id
                     .as_deref()
@@ -243,14 +243,14 @@ impl RetainedScene {
                 &mut cursor,
                 datum_gui_viewport::hit::DEFAULT_REGION_QUERY_BUDGET,
                 |order, region| {
-                    if eligible(&region.target)
+                    if eligible(&HitTarget::AuthoredObject(region.target.clone()))
                         && region
                             .layer_id
                             .as_deref()
                             .is_none_or(|l| layer_visible(state, l))
                         && region.shape.contains(point)
                     {
-                        hits.push((order, region.target.clone()));
+                        hits.push((order, HitTarget::AuthoredObject(region.target.clone())));
                     }
                 },
             );
@@ -266,7 +266,7 @@ impl RetainedScene {
     /// layers are always visible (mirrors `all_world_ranges`, which renders every
     /// batch), so every emitted hit region is live. Same scan core as the board
     /// path; the S3 schematic pane hit-tests through here.
-    pub fn hit_test_world(&self, point: PointNm) -> Option<&HitTarget> {
+    pub fn hit_test_world(&self, point: PointNm) -> Option<HitTarget> {
         self.hit_test_world_with(point, |_| true)
     }
 
@@ -276,8 +276,11 @@ impl RetainedScene {
         &self,
         point: PointNm,
         layer_pass: impl Fn(&WorldHitRegion) -> bool,
-    ) -> Option<&HitTarget> {
-        self.world_hit_index.hit_test(point, layer_pass).target
+    ) -> Option<HitTarget> {
+        self.world_hit_index
+            .hit_test(point, layer_pass)
+            .target
+            .map(|key| HitTarget::AuthoredObject(key.clone()))
     }
 }
 
@@ -369,8 +372,8 @@ pub fn resolve_pane_hover(
     x: f32,
     y: f32,
 ) -> datum_gui_protocol::ViewportInteraction {
-    let hit_id = |target: Option<&HitTarget>| match target {
-        Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id.clone()),
+    let hit_id = |target: Option<HitTarget>| match target {
+        Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id),
         _ => None,
     };
     match prepared.world_point_at_screen(x, y) {

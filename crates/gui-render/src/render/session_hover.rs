@@ -30,12 +30,7 @@ impl BoardHoverDependency {
             .world_hit_index
             .regions()
             .iter()
-            .position(|region| match &region.target {
-                crate::HitTarget::AuthoredObject(id) | crate::HitTarget::ReviewAction(id) => {
-                    id == &hover.object_id
-                }
-                _ => false,
-            })
+            .position(|region| region.target == hover.object_id)
             .map_or(Self::Unknown, |i| match retained.hover_is_pad(i) {
                 Some(true) => Self::Pad(i),
                 Some(false) => Self::None,

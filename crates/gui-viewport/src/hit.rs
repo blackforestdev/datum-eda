@@ -12,6 +12,10 @@ const LEAF_REGIONS: usize = 8;
 pub enum HitShape {
     Rect(RectNm),
     Layout(Vec<crate::selection_region::Point>),
+    LayoutBasis {
+        transform: datum_gui_protocol::Affine2DFixedPrimitive,
+        bbox: datum_gui_protocol::MeshRectEmPrimitive,
+    },
     Polyline {
         path: Vec<PointNm>,
         half_width_nm: f32,
@@ -27,20 +31,13 @@ impl HitShape {
     pub fn bounds(&self) -> Option<RectNm> {
         match self {
             Self::Rect(rect) => Some(*rect),
-            Self::Layout(corners) => {
-                let floor = |v: datum_gui_protocol::selection_geometry::Rational| {
-                    v.numerator.div_euclid(v.denominator)
-                };
-                let ceil = |v: datum_gui_protocol::selection_geometry::Rational| {
-                    floor(v) + i128::from(v.numerator.rem_euclid(v.denominator) != 0)
-                };
-                let bounded = |v: i128| v.clamp(i128::from(i64::MIN), i128::from(i64::MAX)) as i64;
-                Some(RectNm {
-                    min_x: bounded(corners.iter().map(|p| floor(p[0])).min()?),
-                    max_x: bounded(corners.iter().map(|p| ceil(p[0])).max()?),
-                    min_y: bounded(corners.iter().map(|p| floor(p[1])).min()?),
-                    max_y: bounded(corners.iter().map(|p| ceil(p[1])).max()?),
-                })
+            Self::Layout(corners) => layout_bounds(corners),
+            Self::LayoutBasis { transform, bbox } => {
+                let corners =
+                    datum_gui_protocol::selection_geometry_catalog::layout_polygon_from_basis(
+                        *transform, *bbox,
+                    )?;
+                layout_bounds(&corners)
             }
             Self::Polyline {
                 path,
@@ -64,6 +61,14 @@ impl HitShape {
             Self::Rect(rect) => point_in_rect(point, *rect),
             Self::Layout(corners) => {
                 crate::selection_region::layout_contains(corners, point).unwrap_or(false)
+            }
+            Self::LayoutBasis { transform, bbox } => {
+                datum_gui_protocol::selection_geometry_catalog::layout_polygon_from_basis(
+                    *transform, *bbox,
+                )
+                .is_some_and(|corners| {
+                    crate::selection_region::layout_contains(&corners, point).unwrap_or(false)
+                })
             }
             Self::Polyline {
                 path,
@@ -122,10 +127,11 @@ impl<T> SpatialHitIndex<T> {
     }
 
     /// New index storage only; supplied region/shape ownership is already live.
-    pub fn construction_layouts(region_count: usize) -> Option<[std::alloc::Layout; 2]> {
+    pub fn construction_layouts(region_count: usize) -> Option<[std::alloc::Layout; 3]> {
         Some([
             std::alloc::Layout::array::<usize>(region_count).ok()?,
             std::alloc::Layout::array::<Node>(node_capacity(region_count)).ok()?,
+            std::alloc::Layout::array::<Option<RectNm>>(region_count).ok()?,
         ])
     }
 
@@ -137,6 +143,9 @@ impl<T> SpatialHitIndex<T> {
         regions: Vec<HitRegion<T>>,
         query_budget: usize,
     ) -> Result<Self, std::collections::TryReserveError> {
+        let mut bounds = Vec::new();
+        bounds.try_reserve_exact(regions.len())?;
+        bounds.extend(regions.iter().map(|region| region.shape.bounds()));
         let mut order = Vec::new();
         order.try_reserve_exact(regions.len())?;
         order.extend(0..regions.len());
@@ -149,7 +158,7 @@ impl<T> SpatialHitIndex<T> {
             query_budget: query_budget.max(1),
         };
         if !index.order.is_empty() {
-            index.build_node(0, index.order.len());
+            index.build_node(0, index.order.len(), &bounds);
         }
         Ok(index)
     }
@@ -195,7 +204,7 @@ impl<T> SpatialHitIndex<T> {
                     corners.capacity(),
                     &mut allocation_bytes,
                 )?,
-                HitShape::Rect(_) | HitShape::Circle { .. } => 0,
+                HitShape::Rect(_) | HitShape::Circle { .. } | HitShape::LayoutBasis { .. } => 0,
             };
             let layer = cost::<u8>(
                 region.layer_id.as_ref().map_or(0, String::capacity),
@@ -276,11 +285,11 @@ impl<T> SpatialHitIndex<T> {
         }
     }
 
-    fn build_node(&mut self, start: usize, end: usize) -> usize {
+    fn build_node(&mut self, start: usize, end: usize, cached: &[Option<RectNm>]) -> usize {
         let bounds = union_bounds(
             self.order[start..end]
                 .iter()
-                .filter_map(|&index| self.regions[index].shape.bounds()),
+                .filter_map(|&index| cached[index]),
         )
         .unwrap_or(RectNm {
             min_x: 0,
@@ -302,7 +311,7 @@ impl<T> SpatialHitIndex<T> {
             let split_x = bounds.max_x.saturating_sub(bounds.min_x)
                 >= bounds.max_y.saturating_sub(bounds.min_y);
             self.order[start..end].sort_unstable_by_key(|&index| {
-                let b = self.regions[index].shape.bounds().unwrap_or(bounds);
+                let b = cached[index].unwrap_or(bounds);
                 if split_x {
                     ((b.min_x as i128 + b.max_x as i128) / 2) as i64
                 } else {
@@ -310,8 +319,8 @@ impl<T> SpatialHitIndex<T> {
                 }
             });
             let mid = start + (end - start) / 2;
-            let left = self.build_node(start, mid);
-            let right = self.build_node(mid, end);
+            let left = self.build_node(start, mid, cached);
+            let right = self.build_node(mid, end, cached);
             self.nodes[node_index].left = Some(left);
             self.nodes[node_index].right = Some(right);
         }
@@ -696,3 +705,22 @@ mod tests {
 
 pub mod region;
 pub use region::{DEFAULT_REGION_QUERY_BUDGET, RegionQueryCursor, RegionQueryStep};
+
+fn layout_bounds(corners: &[crate::selection_region::Point]) -> Option<RectNm> {
+    let floor =
+        |v: datum_gui_protocol::selection_geometry::Rational| v.numerator.div_euclid(v.denominator);
+    let ceil = |v: datum_gui_protocol::selection_geometry::Rational| {
+        floor(v) + i128::from(v.numerator.rem_euclid(v.denominator) != 0)
+    };
+    let bounded = |v: i128| v.clamp(i128::from(i64::MIN), i128::from(i64::MAX)) as i64;
+    Some(RectNm {
+        min_x: bounded(corners.iter().map(|p| floor(p[0])).min()?),
+        max_x: bounded(corners.iter().map(|p| ceil(p[0])).max()?),
+        min_y: bounded(corners.iter().map(|p| floor(p[1])).min()?),
+        max_y: bounded(corners.iter().map(|p| ceil(p[1])).max()?),
+    })
+}
+
+#[cfg(test)]
+#[path = "hit/layout_basis_tests.rs"]
+mod layout_basis_tests;

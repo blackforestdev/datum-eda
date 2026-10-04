@@ -504,7 +504,7 @@ mod retained_storage_tests {
     }
 
     #[test]
-    fn retained_payload_accounts_geometry_and_refuses_unknown_targets() {
+    fn retained_payload_accounts_geometry_and_all_owned_source_keys() {
         let state = datum_gui_protocol::load_fixture_workspace_state();
         let mut scene = RetainedScene::from_workspace(&state, 960, 720);
         assert!(
@@ -512,7 +512,7 @@ mod retained_storage_tests {
                 > std::mem::size_of_val(scene.world_vertices.as_ref())
         );
         scene.world_hit_index = datum_gui_viewport::SpatialHitIndex::new(vec![WorldHitRegion {
-            target: HitTarget::ReviewAction("unsupported retained target".into()),
+            target: "unknown source display key".into(),
             layer_id: None,
             shape: WorldHitShape::Circle {
                 center: PointNm { x: 0, y: 0 },
@@ -520,7 +520,10 @@ mod retained_storage_tests {
             },
         }])
         .into();
-        assert_eq!(scene.heap_payload_bytes(), None);
+        assert!(
+            scene.heap_payload_bytes().is_some(),
+            "source-key storage cannot hide an uncounted UI action payload"
+        );
     }
 
     use super::*;

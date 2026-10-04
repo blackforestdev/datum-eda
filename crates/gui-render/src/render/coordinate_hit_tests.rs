@@ -39,7 +39,7 @@ fn topmost_acquisition_skips_ineligible_foreground_without_changing_hit_order() 
     let mut state = schematic_workspace_state();
     let mut retained = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
     let region = |key: &str, layer: &str| WorldHitRegion {
-        target: HitTarget::AuthoredObject(key.into()),
+        target: key.into(),
         layer_id: Some(layer.into()),
         shape: WorldHitShape::Rect(datum_gui_protocol::RectNm {
             min_x: -10,
@@ -58,11 +58,11 @@ fn topmost_acquisition_skips_ineligible_foreground_without_changing_hit_order() 
     let background = HitTarget::AuthoredObject("eligible-source".into());
     assert_eq!(
         retained.hit_test_authored_world(point, &state),
-        Some(&foreground)
+        Some(foreground.clone())
     );
     assert_eq!(
         retained.hit_test_authored_world_eligible(point, &state, |target| target != &foreground),
-        Some(&background)
+        Some(background.clone())
     );
     state
         .ui
@@ -75,7 +75,7 @@ fn topmost_acquisition_skips_ineligible_foreground_without_changing_hit_order() 
     );
     assert_eq!(
         retained.hit_test_authored_world(point, &state),
-        Some(&foreground)
+        Some(foreground.clone())
     );
     assert_eq!(retained.world_hit_index.regions().len(), 2);
 }
@@ -106,10 +106,7 @@ fn schematic_hit_storage_is_admitted_before_cloning_and_matches_allocator() {
         .iter()
         .filter(|graphic| graphic.schematic_hit_kind().is_some() && !graphic.path.is_empty());
     for (region, graphic) in regions.iter().zip(eligible) {
-        assert_eq!(
-            region.target,
-            HitTarget::AuthoredObject(graphic.object_id.clone())
-        );
+        assert_eq!(region.target, graphic.object_id.clone());
         match &region.shape {
             WorldHitShape::Polyline { path, .. } | WorldHitShape::Polygon(path) => {
                 assert_eq!(path, &graphic.path);
@@ -144,10 +141,7 @@ fn schematic_scene_emits_symbol_hit_regions() {
         .world_hit_index
         .regions()
         .iter()
-        .filter_map(|region| match &region.target {
-            HitTarget::AuthoredObject(id) => Some(id.as_str()),
-            _ => None,
-        })
+        .map(|region| region.target.as_str())
         .collect();
     let schematic = state
         .schematic_scene
@@ -243,7 +237,7 @@ fn hit_test_at_symbol_location_returns_its_identity() {
     let hit = retained
         .hit_test_world(symbol_center)
         .expect("the symbol's world center must land inside its hit region");
-    assert_eq!(hit, &HitTarget::AuthoredObject(symbol_id));
+    assert_eq!(hit, HitTarget::AuthoredObject(symbol_id));
 }
 
 fn prepared_for(state: &ReviewWorkspaceState, board: &RetainedScene) -> PreparedScene {
@@ -335,10 +329,8 @@ fn board_hover_ring_lands_in_the_board_overlay() {
         .world_hit_index
         .regions()
         .iter()
-        .find_map(|region| match &region.target {
-            HitTarget::AuthoredObject(id) | HitTarget::ReviewAction(id) => Some(id.clone()),
-            _ => None,
-        })
+        .map(|region| region.target.clone())
+        .next()
         .expect("the board fixture must expose at least one hoverable object");
 
     let base_rings = count_color(
@@ -389,7 +381,7 @@ fn explicit_local_overlap_inventory_exceeds_first_hit_budget_without_truncation(
     retained.world_hit_index = datum_gui_viewport::SpatialHitIndex::with_budget(
         (0..5_000)
             .map(|n| WorldHitRegion {
-                target: HitTarget::AuthoredObject(format!("mechanism-{n}")),
+                target: format!("mechanism-{n}"),
                 layer_id: None,
                 shape: WorldHitShape::Rect(datum_gui_protocol::RectNm {
                     min_x: 0,

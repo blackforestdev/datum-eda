@@ -255,11 +255,9 @@ fn existing_native_dense_fixture_reports_retained_layout_without_authored_writes
             "standalone_hit_index_payload_and_tracking={:?}; standalone_hit_index_heap={:?}; not_full_scene_admission=true",
             scope.usage(),
             index.heap_bytes_with(
-                |target| match target {
-                    HitTarget::AuthoredObject(s) =>
-                        Some(crate::cpu_alloc::heap::capacity_bytes::<u8>(s.capacity())),
-                    _ => None,
-                },
+                |target| Some(crate::cpu_alloc::heap::capacity_bytes::<u8>(
+                    target.capacity()
+                )),
                 |layout| Some(crate::cpu_alloc::heap::allocation_bytes(layout))
             )
         ),

@@ -261,7 +261,7 @@ pub(crate) fn build_schematic_interaction_vertices(
 fn shape_bounds_nm(shape: &WorldHitShape) -> Option<datum_gui_protocol::RectNm> {
     match shape {
         WorldHitShape::Rect(rect) => Some(*rect),
-        WorldHitShape::Layout(_) => shape.bounds(),
+        WorldHitShape::Layout(_) | WorldHitShape::LayoutBasis { .. } => shape.bounds(),
         WorldHitShape::Polyline { path, .. } | WorldHitShape::Polygon(path) => {
             bounds_of_points(path.iter().copied())
         }
@@ -287,10 +287,7 @@ pub(crate) fn board_hover_bounds(
         .world_hit_index
         .regions()
         .iter()
-        .find(|region| match &region.target {
-            HitTarget::AuthoredObject(target) | HitTarget::ReviewAction(target) => target == id,
-            _ => false,
-        })
+        .find(|region| region.target == id)
         .and_then(|region| shape_bounds_nm(&region.shape))
 }
 

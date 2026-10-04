@@ -639,9 +639,7 @@ impl Runtime {
                 .render_session()
                 .board()
                 .expect("retained scene initialized");
-            retained
-                .hit_test_authored_world(world, self.session.workspace())
-                .cloned()
+            retained.hit_test_authored_world(world, self.session.workspace())
         };
         match target {
             Some(HitTarget::AuthoredObject(id)) => Some(id),

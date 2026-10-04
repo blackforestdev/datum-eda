@@ -36,7 +36,7 @@ pub struct RetainedScene {
     pub(crate) world_vertices: gpu_data::shared_geometry::SharedGeometry<Vertex>,
     pub(crate) world_strokes: gpu_data::shared_geometry::SharedGeometry<WorldStrokeInstance>,
     pub(crate) draw_commands: Arc<Vec<RetainedDrawCommand>>,
-    pub(crate) world_hit_index: Arc<datum_gui_viewport::SpatialHitIndex<HitTarget>>,
+    pub(crate) world_hit_index: Arc<datum_gui_viewport::SpatialHitIndex<String>>,
 }
 /// Non-owning retained CPU scene lifetime observation. Weak references retain only
 /// the small shared owner, never the separately boxed vertex/stroke payload.
@@ -47,7 +47,7 @@ pub struct RetainedGeometryObserver {
     vertex_bytes: usize,
     stroke_bytes: usize,
     commands: std::sync::Weak<Vec<RetainedDrawCommand>>,
-    hits: std::sync::Weak<datum_gui_viewport::SpatialHitIndex<HitTarget>>,
+    hits: std::sync::Weak<datum_gui_viewport::SpatialHitIndex<String>>,
     metadata_bytes: [usize; 2],
     presentation: std::sync::Weak<crate::presentation_ranges::Presentation>,
     presentation_bytes: usize,
@@ -130,9 +130,9 @@ impl RetainedScene {
         budget: &Arc<crate::text_gpu::budget::Budget>,
         scope: &crate::cpu_alloc::Scope,
         limit: usize,
-    ) -> anyhow::Result<datum_gui_viewport::SpatialHitIndex<HitTarget>> {
+    ) -> anyhow::Result<datum_gui_viewport::SpatialHitIndex<String>> {
         let layouts =
-            datum_gui_viewport::SpatialHitIndex::<HitTarget>::construction_layouts(regions.len())
+            datum_gui_viewport::SpatialHitIndex::<String>::construction_layouts(regions.len())
                 .ok_or_else(|| anyhow::anyhow!("retained hit index layout overflow"))?;
         let bytes = layouts
             .into_iter()
@@ -220,10 +220,7 @@ impl RetainedScene {
     }
     fn hit_bytes(&self) -> Option<usize> {
         self.world_hit_index.heap_bytes_with(
-            |target| match target {
-                HitTarget::AuthoredObject(id) => Some(capacity_bytes::<u8>(id.capacity())),
-                _ => None,
-            },
+            |target| Some(capacity_bytes::<u8>(target.capacity())),
             |layout| Some(crate::cpu_alloc::heap::allocation_bytes(layout)),
         )
     }
@@ -251,11 +248,11 @@ fn commands_container_bytes() -> usize {
 }
 fn hits_container_bytes() -> usize {
     if !crate::cpu_alloc::installed() {
-        return std::mem::size_of::<datum_gui_viewport::SpatialHitIndex<HitTarget>>();
+        return std::mem::size_of::<datum_gui_viewport::SpatialHitIndex<String>>();
     }
     static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
     *BYTES.get_or_init(|| {
-        crate::cpu_alloc::heap::arc_bytes(datum_gui_viewport::SpatialHitIndex::<HitTarget>::new(
+        crate::cpu_alloc::heap::arc_bytes(datum_gui_viewport::SpatialHitIndex::<String>::new(
             Vec::new(),
         ))
     })

@@ -88,10 +88,8 @@ fn real_hit_index_admission_includes_staging_and_matches_allocator() {
     let scope = crate::cpu_alloc::Scope::new("hit-index-construction-proof");
     let regions = scope.with(|| scene.world_hit_index.regions().to_vec());
     assert!(!regions.is_empty());
-    let layouts = datum_gui_viewport::SpatialHitIndex::<crate::HitTarget>::construction_layouts(
-        regions.len(),
-    )
-    .unwrap();
+    let layouts =
+        datum_gui_viewport::SpatialHitIndex::<String>::construction_layouts(regions.len()).unwrap();
     let extra: usize = layouts.into_iter().map(allocation_bytes).sum();
     let staging = scope.usage();
     let limit = usage(&scene.geometry_observer())
@@ -106,12 +104,7 @@ fn real_hit_index_admission_includes_staging_and_matches_allocator() {
         .unwrap();
     let bytes = index
         .heap_bytes_with(
-            |target| {
-                Some(match target {
-                    crate::HitTarget::AuthoredObject(id) => capacity_bytes::<u8>(id.capacity()),
-                    _ => 0,
-                })
-            },
+            |target| Some(capacity_bytes::<u8>(target.capacity())),
             |layout| Some(allocation_bytes(layout)),
         )
         .unwrap();
