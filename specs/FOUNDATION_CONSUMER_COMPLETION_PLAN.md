@@ -2618,3 +2618,17 @@ polygons. Native copper presentation is captured in
 `target/s5a-import-fill-proof.json`. These results cover this repair only. C03
 remains partial; graphics/source limitations, complete C04/C05 proof, C06 and
 manufacturing CAM/T04 stay open.
+
+
+C03 imported-fill candidate handoff: `S5A-IMPORTED-FILL-CANDIDATE-01`, source
+`cecbcdaeea088265a80f8ad1a2b52c81378ecd50`. Paired CLI
+`5e4413a516b231fa4714fbfed661734904caf43258bbc6d4b2a2708960760d71`
+and GUI `f702fedb9253b5fd0fb48df776b5e7104b4f0da84940b8f19d46dceb41865f31`
+are built from that source. Final native presentation and board/journal byte
+preservation pass; the earlier verified board image is reused after lint-only
+normalization. The final active-window image selected an unrelated application
+and was excluded, not credited. Full source/fixture/binary/environment pins and
+limitations are in `target/s5a-import-fill-proof.json`. The bounded producer bug
+is closed; the unchanged C03 execution grant and independent C05 boundary remain.
+The same implementation session reconciled its expired lease and refreshed the
+synchronized Frontier/beads claim before this handoff; no ownership transfer.
