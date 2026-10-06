@@ -397,3 +397,6 @@ mod dense_native_tests;
 #[path = "related_fixture.rs"]
 mod related_fixture;
 pub(crate) use related_fixture::selected_related_state;
+
+#[path = "owned_graphic_tests.rs"]
+mod owned_graphic_tests;

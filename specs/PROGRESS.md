@@ -3411,3 +3411,18 @@ parallel threads. Log: `target/s5a-lock-cue-gui-render-lib.log`. gui-render/gui-
 all-target Clippy with warnings denied passes. "Dense compound" has no ratified threshold; every compound is treated
 as dense pending owner/visual disposition. Native capture, HUMAN same-size
 re-review, C04/C05/C06 remain open.
+
+### S5A-C03 — footprint-owned graphic acquisition (existing sources)
+
+[~] Persisted per-Package `component_mechanical_*`/`component_silkscreen_*` board
+sources already project as owned component graphics whose hit regions target the
+parent placement. An actual frozen library-parents replay now proves the production
+pointer chain for both placed Packages: an authored courtyard vertex outside every
+pad hits the parent key in the retained index, its typed binding acquires exactly
+the Footprint, the Individual Replace reducer yields only that member, and the view
+projects the whole owned presentation as the parent with source/journal bytes
+unchanged (`target/s5a-owned-graphic-native.log`). Limits: the recipe carries only
+mechanical polygons (no owned silkscreen line or text), the oracle uses
+all-visible hit filtering, and the component Edge.Cuts-versus-board-outline negative
+has no native source in the recipe. Standalone board graphics remain the separate
+`dat-s5a-board-graphic-authority-h8xm` source-model gap.
