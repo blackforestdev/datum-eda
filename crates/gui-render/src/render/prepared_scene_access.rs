@@ -4,8 +4,11 @@
 //! scene construction while preserving one `PreparedScene` authority.
 
 use super::*;
+#[path = "pointer_selection.rs"]
+mod pointer_selection;
 pub use native_selection_overlay::mask::PaintRange as SelectedPaintRange;
 pub use native_selection_overlay::visual_lod::SelectionVisualLod;
+pub(super) use pointer_selection::SelectionHover;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
@@ -59,6 +62,9 @@ pub struct PreparedScene {
     // schematic camera is applied (`set_schematic_camera`) — hence the hovered
     // symbol's world bbox is retained here to re-project it against that camera.
     pub(super) schematic_hover_bounds_nm: Option<datum_gui_protocol::RectNm>,
+    /// Revision-qualified keys shared by prepared clones; pointer hover cannot
+    /// add a second halo to an actual selected member.
+    pub(super) selection_hover: SelectionHover,
     /// Locked-placement hover anchors, so the pointer-only refresh can draw the
     /// governed padlock without re-preparing world content.
     pub(super) board_lock_anchors: crate::native_selection_overlay::lock_cue::HoverAnchors,

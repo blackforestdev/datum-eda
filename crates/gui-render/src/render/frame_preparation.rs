@@ -109,6 +109,8 @@ impl PreparedScene {
             });
             let board_lock_anchors =
                 crate::native_selection_overlay::lock_cue::HoverAnchors::build(state);
+            let selection_hover =
+                prepared_scene_access::SelectionHover::capture(state, retained_scene)?;
             let crosshair_cursor_screen = state.ui.cursor_pos.map(|p| (p.x, p.y));
             let crosshair_style = state.ui.crosshair_style;
 
@@ -545,6 +547,7 @@ impl PreparedScene {
                 schematic_bounds,
                 schematic_camera,
                 schematic_hover_bounds_nm: schematic_hover_bounds,
+                selection_hover,
                 board_lock_anchors,
                 crosshair_cursor_screen,
                 crosshair_style,

@@ -492,3 +492,122 @@ fn native_proposal_review_context_and_dim_filters_never_rekey_or_repaint_authore
         assert_eq!(std::fs::read(path).unwrap(), bytes);
     }
 }
+
+#[test]
+fn pointer_refresh_preserves_native_selection_precedence() {
+    let (fixture, mut state) =
+        crate::native_selection_overlay::tests::selected_track_state(10_000_000);
+    let before = fixture.source_bytes();
+    state.ui.crosshair_style = CrosshairStyle::None;
+    let target = state.scene.tracks[0].object_id.clone();
+    let mut session = RenderSession::default();
+    install(&mut session, &state);
+    let pane = session
+        .prepared()
+        .unwrap()
+        .surface_passes()
+        .iter()
+        .find(|p| p.surface == crate::SceneSurface::Board)
+        .unwrap()
+        .scene_viewport;
+    state.ui.cursor_pos = Some(ScreenPointPx {
+        x: pane.x + pane.width / 2.0,
+        y: pane.y + pane.height / 2.0,
+    });
+    state.ui.hovered_object = Some(HoverTarget {
+        surface: PaneContent::Board,
+        object_id: target,
+    });
+    let mut expected = session.prepared().unwrap().clone();
+    expected.refresh_interaction(&state, session.board().unwrap());
+    assert!(
+        expected.board_interaction_vertices().is_empty(),
+        "full preparation suppresses selected-object hover"
+    );
+    let resolves = crate::retained_scene_resolve_count();
+    assert!(session.update_pointer(PointerUpdate {
+        generation: session.pointer_generation(),
+        cursor: state.ui.cursor_pos,
+        style: state.ui.crosshair_style,
+        hover: state.ui.hovered_object.as_ref(),
+    }));
+    assert_eq!(
+        session.prepared().unwrap().board_interaction_vertices(),
+        expected.board_interaction_vertices(),
+        "pointer-only preparation must preserve selection precedence"
+    );
+    assert_eq!(crate::retained_scene_resolve_count(), resolves);
+    for (path, bytes) in before {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}
+
+#[test]
+fn pointer_refresh_suppresses_schematic_members_but_preserves_related_parent_hover() {
+    let (fixture, mut state) = crate::native_selection_overlay::tests::selected_related_state();
+    let before = fixture.source_bytes();
+    state.ui.layout.set_focused_content(PaneContent::Schematic);
+    state.ui.layout.focus_next();
+    state.ui.layout.set_focused_content(PaneContent::Board);
+    state.ui.crosshair_style = CrosshairStyle::None;
+    let datum_gui_protocol::SelectionTarget::Native(view) = &state.selection else {
+        unreachable!()
+    };
+    let scene = state.schematic_scene.as_ref().unwrap();
+    let selected = scene
+        .board_graphics
+        .iter()
+        .find(|g| view.schematic_keys.contains(&g.object_id) && g.schematic_hit_kind().is_some())
+        .unwrap()
+        .object_id
+        .clone();
+    let related = scene
+        .board_graphics
+        .iter()
+        .find(|g| {
+            view.related_schematic_keys.contains(&g.object_id)
+                && !view.schematic_keys.contains(&g.object_id)
+                && g.schematic_hit_kind().is_some()
+        })
+        .unwrap()
+        .object_id
+        .clone();
+    let mut session = RenderSession::default();
+    install(&mut session, &state);
+    let pane = session
+        .prepared()
+        .unwrap()
+        .surface_passes()
+        .iter()
+        .find(|p| p.surface == crate::SceneSurface::Schematic)
+        .unwrap()
+        .scene_viewport;
+    state.ui.cursor_pos = Some(ScreenPointPx {
+        x: pane.x + pane.width / 2.0,
+        y: pane.y + pane.height / 2.0,
+    });
+    let resolves = crate::retained_scene_resolve_count();
+    for (target, suppressed) in [(selected, true), (related, false)] {
+        state.ui.hovered_object = Some(HoverTarget {
+            object_id: target,
+            surface: PaneContent::Schematic,
+        });
+        let mut expected = session.prepared().unwrap().clone();
+        expected.refresh_interaction(&state, session.board().unwrap());
+        assert_eq!(expected.schematic_overlay_vertices().is_empty(), suppressed);
+        assert!(session.update_pointer(PointerUpdate {
+            generation: session.pointer_generation(),
+            cursor: state.ui.cursor_pos,
+            style: state.ui.crosshair_style,
+            hover: state.ui.hovered_object.as_ref()
+        }));
+        assert_eq!(
+            session.prepared().unwrap().schematic_overlay_vertices(),
+            expected.schematic_overlay_vertices()
+        );
+    }
+    assert_eq!(crate::retained_scene_resolve_count(), resolves);
+    for (path, bytes) in before {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}

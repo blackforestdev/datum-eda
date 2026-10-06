@@ -3,6 +3,7 @@
 mod frame_target;
 pub use super::session_sources::{SourceEpoch, SourceRevision};
 use super::*;
+use crate::SceneSurface;
 use datum_gui_protocol::{CrosshairStyle, HoverTarget, PaneContent, ScreenPointPx};
 pub use frame_target::FrameTarget;
 
@@ -66,6 +67,20 @@ impl RenderSession {
         }
         let bounds = |surface, source: Option<&RetainedScene>| {
             let hover = input.hover.filter(|hover| hover.surface == surface)?;
+            let scene_surface = match surface {
+                PaneContent::Board => SceneSurface::Board,
+                PaneContent::Schematic => SceneSurface::Schematic,
+                _ => return None,
+            };
+            if self
+                .prepared
+                .as_ref()
+                .expect("validated preparation")
+                .selection_hover
+                .suppresses(scene_surface, &hover.object_id)
+            {
+                return None;
+            }
             crate::interaction_overlay::board_hover_bounds(source?, &hover.object_id)
         };
         let board_hover = bounds(PaneContent::Board, self.board.as_ref());
