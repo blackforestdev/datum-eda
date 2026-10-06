@@ -7,6 +7,7 @@ pub(crate) struct Fixture {
     pub(super) schematic: uuid::Uuid,
 }
 impl Fixture {
+    #[cfg(feature = "visual")]
     pub(crate) fn select(&self, state: &mut ReviewWorkspaceState, subject: SelectionSubject) {
         let authority = NativeSelectionResolution::capture(&self.model).unwrap();
         let view =
@@ -181,6 +182,7 @@ pub(crate) fn selected_track_state_with_layer(
     state.selection = SelectionTarget::Native(Box::new(view));
     (f, state)
 }
+#[cfg(feature = "visual")]
 pub(crate) fn selected_occluded_track_state() -> (Fixture, ReviewWorkspaceState) {
     use eda_engine::api::native_write::{self, WriteProvenance};
     let (mut fixture, mut state) = selected_track_state(2_000_000);
@@ -238,6 +240,7 @@ pub(crate) fn selected_occluded_track_state() -> (Fixture, ReviewWorkspaceState)
     (fixture, state)
 }
 
+#[cfg(feature = "visual")]
 pub(crate) fn selected_via_state() -> (Fixture, ReviewWorkspaceState) {
     use eda_engine::{
         api::native_write::{self, WriteProvenance},

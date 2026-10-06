@@ -484,23 +484,6 @@ mod tests {
     }
 
     #[test]
-    fn hit_regions_include_review_rows_and_overlay_targets() {
-        let state = datum_gui_protocol::load_fixture_workspace_state();
-        let retained = RetainedScene::from_workspace(&state, 1280, 800);
-        let prepared = PreparedScene::from_workspace(
-            &state,
-            1280,
-            800,
-            CameraState::fit_to_bounds(&state.scene.bounds),
-            &retained,
-        )
-        .unwrap();
-        assert!(prepared.hit_regions.iter().any(
-            |region| matches!(region.target, HitTarget::ReviewAction(ref id) if id == "action-1")
-        ));
-    }
-
-    #[test]
     fn board_outline_hit_region_selects_assembled_outline() {
         let state = datum_gui_protocol::load_fixture_workspace_state();
         let retained = RetainedScene::from_workspace(&state, 1280, 800);

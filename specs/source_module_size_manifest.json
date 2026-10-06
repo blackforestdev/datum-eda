@@ -602,13 +602,13 @@
     "crates/gui-render/src/render/tests.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 765
+        "file_lines": 747
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Fallible shared text preparation moves display text helpers and scene-layout verification into normal owning modules; remaining legacy ownership retains an exact downward ceiling. S5A finite Select integration moves actual marking-shell verification into its normal child and ratchets this exact ceiling."
+      "note": "Fallible shared text preparation moves display text helpers and scene-layout verification into normal owning modules; remaining legacy ownership retains an exact downward ceiling. S5A finite Select integration moves actual marking-shell verification into its normal child and ratchets this exact ceiling. S5A artifact hit-channel verification moves to the existing overlay-hit test owner; exact legacy ceiling ratcheted."
     },
     "crates/test-harness/src/bin/m3_sidecar_roundtrip_fidelity.rs": {
       "kind": "rust-production",
