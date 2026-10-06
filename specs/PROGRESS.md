@@ -3382,3 +3382,8 @@ hideable second Bus layer, so no such positive case is invented. Rendering,
 resize, source-model/dependency authority and the open CAM/T04 obligation remain
 unchanged. Remaining graphics, component-Pad, generic production-action identity
 and governed lock-asset positives stay pending.
+
+Correction source: `90a1b27f8b3d495a4f608789fe7d6928546526cb`; exact GUI/CLI/test binary and fixture/log pins
+are in `target/s5a-c03-eligibility-candidate.json`, linked by digest from the
+existing S5A native fixture manifest. Three-crate all-target Clippy and guarded
+GUI build pass. This closes the bounded producer bug only, not C03 acceptance.

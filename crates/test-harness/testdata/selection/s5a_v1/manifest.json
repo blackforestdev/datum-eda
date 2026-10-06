@@ -6951,6 +6951,14 @@
     "document_limit_bytes": 67108864,
     "generation": "target/s5a-c03-u5-fixture-generation.log",
     "native_input_and_GPU_dense_acceptance": false,
+    "ordinary_acquisition_correction": {
+      "native_input_acceptance": false,
+      "receipt": "target/s5a-c03-eligibility-candidate.json",
+      "receipt_sha256": "4c8277eca8eb831c9e8128cb763da54a60852bc4faf32808cf3e6721b4128f4a",
+      "rust_tests_passed": 16,
+      "scope": "complete eligible local overlap inventory; pre-acquisition hidden/class-filter Wire Run/Global Net complete membership; Bus origin-negative, complete membership and D4 refusal/no-op; GUI region cancellation/atomic refusal. Full native matrix remains pending.",
+      "source_commit": "90a1b27f8b3d495a4f608789fe7d6928546526cb"
+    },
     "recipe_tests": "target/s5a-c03-u5-fixture-test.log",
     "renderer_binary": "target/s5a-c03-glyph-owner-final2-gpu-tests",
     "renderer_sha256": "886415f9e729621ae68b197b2304ba955640dafb58b4553de77e77d555fb284d"
