@@ -73,7 +73,16 @@ impl RenderSession {
         self.prepared
             .as_mut()
             .expect("validated preparation")
-            .refresh_pointer(input.cursor, input.style, board_hover, schematic_hover);
+            .refresh_pointer(
+                input.cursor,
+                input.style,
+                board_hover,
+                input
+                    .hover
+                    .filter(|hover| hover.surface == PaneContent::Board)
+                    .map(|hover| hover.object_id.as_str()),
+                schematic_hover,
+            );
         self.prepared_revision = self.revisions.update(Change::Interaction);
         true
     }

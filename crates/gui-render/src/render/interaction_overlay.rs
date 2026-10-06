@@ -78,6 +78,7 @@ impl PreparedScene {
         cursor: Option<datum_gui_protocol::ScreenPointPx>,
         style: datum_gui_protocol::CrosshairStyle,
         board_hover: Option<datum_gui_protocol::RectNm>,
+        board_hover_target: Option<&str>,
         schematic_hover: Option<datum_gui_protocol::RectNm>,
     ) {
         self.schematic_hover_bounds_nm = schematic_hover;
@@ -104,6 +105,12 @@ impl PreparedScene {
                 board_hover,
                 self.crosshair_cursor_screen,
                 self.crosshair_style,
+            );
+            crate::native_selection_overlay::lock_cue::push_hover(
+                &mut board,
+                board_hover_target.and_then(|id| self.board_lock_anchors.get(id)),
+                &projection,
+                pass.scene_viewport,
             );
         }
         self.board_interaction_vertices = quads_to_vertices(&board);
@@ -353,10 +360,17 @@ impl PreparedScene {
             })
             .flatten()
         });
+        let board_target = state
+            .ui
+            .hovered_object
+            .as_ref()
+            .filter(|hover| hover.surface == datum_gui_protocol::PaneContent::Board)
+            .map(|hover| hover.object_id.as_str());
         self.refresh_pointer(
             state.ui.cursor_pos,
             state.ui.crosshair_style,
             board_hover,
+            board_target,
             schematic_hover,
         );
     }

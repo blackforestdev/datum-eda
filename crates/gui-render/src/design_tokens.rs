@@ -57,6 +57,9 @@ pub(crate) mod content {
     pub(crate) const PAD: Rgb = srgb(0xC9, 0x97, 0x4A);
     pub(crate) const VIA: Rgb = srgb(0xC7, 0x7B, 0x3C);
     pub(crate) const RATSNEST: Rgb = srgb(0xAE, 0xB4, 0xBB);
+    /// Neutral locked-anchor glyph grey: Selection Study `--lock-grey`, the
+    /// Rendering Book §1 courtyard neutral. Never a warning/error hue (RB §2.5).
+    pub(crate) const LOCK_ANCHOR: Rgb = srgb(0x6E, 0x76, 0x81);
     // Board substrate sits one step below chrome::CANVAS and SURFACE_01 — the
     // dark field the copper/silk/edge sit on. The grid is a whisper near
     // #171A20, far below chrome BORDER_STRONG/SUBTLE: major slightly stronger,

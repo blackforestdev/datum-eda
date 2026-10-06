@@ -59,6 +59,9 @@ pub struct PreparedScene {
     // schematic camera is applied (`set_schematic_camera`) — hence the hovered
     // symbol's world bbox is retained here to re-project it against that camera.
     pub(super) schematic_hover_bounds_nm: Option<datum_gui_protocol::RectNm>,
+    /// Locked-placement hover anchors, so the pointer-only refresh can draw the
+    /// governed padlock without re-preparing world content.
+    pub(super) board_lock_anchors: crate::native_selection_overlay::lock_cue::HoverAnchors,
     // S4 cursor crosshair (decision 023 UVT-005): the live cursor in device-pixel
     // SCREEN space and the user-selected style, retained so `set_schematic_camera`
     // (which has no `state`) can rebuild the schematic overlay crosshair against

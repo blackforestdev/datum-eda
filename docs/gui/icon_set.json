@@ -440,7 +440,7 @@
   "selection-lock-anchor": {
    "source": "eda",
    "asset": "selection-lock-anchor.svg",
-   "status": "to_author"
+   "status": "exists"
   },
   "settings": {
    "source": "tabler",

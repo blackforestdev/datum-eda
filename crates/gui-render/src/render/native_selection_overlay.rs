@@ -1,5 +1,7 @@
 #[path = "native_selection_overlay/diagnostics.rs"]
 mod diagnostics;
+#[path = "lock_cue.rs"]
+pub(crate) mod lock_cue;
 #[path = "native_selection_overlay/lod.rs"]
 mod lod;
 #[path = "native_selection_overlay/mask.rs"]
@@ -551,6 +553,18 @@ impl PreparedScene {
                 surface,
                 true,
             );
+            if surface == datum_gui_protocol::PaneContent::Board
+                && authored_visible(state)
+                && let SelectionTarget::Native(view) = &state.selection
+                && !view.stale
+            {
+                let projection = Projection::new(
+                    inset_rect(pass.scene_viewport, 10.0, 10.0, 10.0, 10.0),
+                    &scene.bounds,
+                    pass.camera,
+                );
+                lock_cue::push_selected(&mut quads, view, &projection, pass.scene_viewport);
+            }
             if self
                 .selection_masks
                 .iter()

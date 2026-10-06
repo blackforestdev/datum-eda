@@ -107,6 +107,8 @@ impl PreparedScene {
                 })
                 .flatten()
             });
+            let board_lock_anchors =
+                crate::native_selection_overlay::lock_cue::HoverAnchors::build(&state.scene);
             let crosshair_cursor_screen = state.ui.cursor_pos.map(|p| (p.x, p.y));
             let crosshair_style = state.ui.crosshair_style;
 
@@ -327,6 +329,17 @@ impl PreparedScene {
                     crosshair_cursor_screen,
                     crosshair_style,
                 );
+                crate::native_selection_overlay::lock_cue::push_hover(
+                    &mut board_interaction_quads,
+                    state
+                        .ui
+                        .hovered_object
+                        .as_ref()
+                        .filter(|hover| hover.surface == datum_gui_protocol::PaneContent::Board)
+                        .and_then(|hover| board_lock_anchors.get(&hover.object_id)),
+                    &board_projection,
+                    scene_viewport,
+                );
             }
             for pane in layout.viewport_panes(&state.ui.layout).panes {
                 if let datum_gui_protocol::PaneContent::Revision(revision_pane) = pane.content {
@@ -532,6 +545,7 @@ impl PreparedScene {
                 schematic_bounds,
                 schematic_camera,
                 schematic_hover_bounds_nm: schematic_hover_bounds,
+                board_lock_anchors,
                 crosshair_cursor_screen,
                 crosshair_style,
                 schematic_overlay_vertices,

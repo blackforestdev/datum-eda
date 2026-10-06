@@ -137,7 +137,7 @@ fn real_pointer_triangles_keep_thin_support_and_cover_enter_move_leave() {
             }),
             None,
         ] {
-            scene.refresh_pointer(cursor, style, None, None);
+            scene.refresh_pointer(cursor, style, None, None, None);
             let pixels = Pixels::capture(&scene, [1280, 800]).unwrap();
             let damage = previous.union(pixels).unwrap();
             for r in previous.rectangles().iter().chain(pixels.rectangles()) {

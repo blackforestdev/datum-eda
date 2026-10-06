@@ -94,7 +94,7 @@
    Selection prerequisite accepted by owner after reserved independent PASS for source 91b56957 / packet e298e2df / blob cc39cd23; 102 Rust and 5 Python replay passes, no mandatory findings. DA-A4-R and DA-A4-D complete. Explicitly restore S5A-C03 under retained C02 execution approval. Positive rational-center CAM/T04 remains open dat-rational-center-cam-ir1t; capability limits preserved; no S5A UI/native acceptance. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-uvt-s5a-build-1wv. *Governing:* `specs/S5A_DERIVED_AUTHORITY_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `specs/ENGINE_SPEC.md`, `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_053_ELECTRICAL_IDENTITY_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_054_NOMINAL_COPPER_DERIVED_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_055_BUS_RUN_CONTACT_AUTHORITY.md`, `docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
-   C03 partial shared native selection/inspection, silhouettes, saved artifacts and bound fixtures implemented. Ordinary pointer/menu/region eligibility now has one source-bound owner; overlap Select All uses complete local eligible inventory, while Ctrl+A retains its sole document-wide bypass (dat-selection-overlap-all-n4os). Imported saved copper repair PM056 is pinned separately. Remaining standalone graphics, placed component-Pad authority, generic producing action identity and governed lock asset keep their required positives pending. Available-source native C04 proof, independent C05/C06, PM026/049/051/052, open CAM/T04, undecided latency and deferred editors preserved. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   C03 partial shared native selection/inspection, silhouettes, saved artifacts and bound fixtures implemented. Ordinary pointer/menu/region eligibility now has one source-bound owner; overlap Select All uses complete local eligible inventory, while Ctrl+A retains its sole document-wide bypass (dat-selection-overlap-all-n4os). Imported saved copper repair PM056 is pinned separately. The governed selection-lock-anchor asset and its selected/focus/hover padlock cue are implemented (HUMAN same-size re-review stays with C04/C05). Remaining standalone graphics, placed component-Pad authority and generic producing action identity keep their required positives pending owner disposition. Available-source native C04 proof, independent C05/C06, PM026/049/051/052, open CAM/T04, undecided latency and deferred editors preserved. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`, `dat-s5a-derived-authority-hhsw`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
@@ -3387,3 +3387,27 @@ Correction source: `90a1b27f8b3d495a4f608789fe7d6928546526cb`; exact GUI/CLI/tes
 are in `target/s5a-c03-eligibility-candidate.json`, linked by digest from the
 existing S5A native fixture manifest. Three-crate all-target Clippy and guarded
 GUI build pass. This closes the bounded producer bug only, not C03 acceptance.
+
+### S5A-C03 — governed selection-lock-anchor cue
+
+[~] The owner-approved `selection-lock-anchor` design (Rendering Study contact
+sheet, 24px keyline / 1.7 stroke / round caps and joins) is now the committed asset
+`crates/engine/assets/icons/eda/selection-lock-anchor.svg`; `icon_set.json` marks it
+`exists`. The shared `gui-render` lock cue draws exactly that geometry in screen
+space, in the neutral `#6E7681` lock grey, centred on the authored anchor at the
+Selection Study panel-3 body size. A selected locked Object shows it; a compound
+shows it only on its explicit focus member; a hovered locked placement (including
+an owned pad hit) shows it through the pointer-only refresh. Hidden members and
+partial pane-edge glyphs emit nothing. Schematic symbols carry no S5A lock.
+
+Proof: three unit cases (asset/code geometry binding, whole-or-absent neutral glyph,
+locked-parent/owned-pad hover anchors) and one actual frozen library-parents replay
+(locked/unlocked Package Object, compound without/with focus, hover equality,
+source bytes unchanged) pass: `target/s5a-lock-cue-native.log`. Serial gui-render
+lib suite: 464 pass; the only failure, a fixture review-action hit test, already
+fails at `2e0157f9` (`dat-review-action-hit-fixture-07e1`,
+`target/s5a-baseline-hit-regions.log`); four allocator-byte tests fail only under
+parallel threads. Log: `target/s5a-lock-cue-gui-render-lib.log`. gui-render/gui-app
+all-target Clippy with warnings denied passes. "Dense compound" has no ratified threshold; every compound is treated
+as dense pending owner/visual disposition. Native capture, HUMAN same-size
+re-review, C04/C05/C06 remain open.
