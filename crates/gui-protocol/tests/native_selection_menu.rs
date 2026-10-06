@@ -14,7 +14,7 @@ fn native_select_menu_keeps_complete_inventory_and_refuses_unbound_semantics_wit
     let mut f = Fixture::new("native-select-menu");
     let net = f.net;
     f.commit(
-        (1..=300)
+        (1..=301)
             .map(|n| {
                 let x = n as i64 * 100;
                 let track =
@@ -49,6 +49,21 @@ fn native_select_menu_keeps_complete_inventory_and_refuses_unbound_semantics_wit
         filters,
     );
     assert_eq!(menu.items.len(), 303);
+    let outside = Id {
+        class: C::Track,
+        id: id(301),
+        instance_path: vec![],
+    };
+    assert!(authority.authored_contains(&outside));
+    assert!(!menu.overlap_candidates().any(|id| id == &outside));
+
+    assert_eq!(
+        menu.overlap_candidates()
+            .cloned()
+            .collect::<std::collections::BTreeSet<_>>(),
+        origins.iter().map(|(id, _)| id.clone()).collect(),
+        "local Select All uses the complete overlap inventory, not a context cap or document query"
+    );
     assert_eq!(
         menu.items[299].command,
         Command::Object(origins[299].0.clone())

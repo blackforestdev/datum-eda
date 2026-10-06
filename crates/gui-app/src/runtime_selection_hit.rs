@@ -76,22 +76,10 @@ impl Runtime {
                 let HitTarget::AuthoredObject(key) = target else {
                     return false;
                 };
-                basis.bindings.get(key).is_some_and(|binding| {
-                    !state
-                        .ui
-                        .filters
-                        .excluded_selection_classes
-                        .contains(&binding.acquired.class)
-                        && binding.visible(|layer| {
-                            state
-                                .ui
-                                .filters
-                                .layer_visibility
-                                .get(layer)
-                                .copied()
-                                .unwrap_or(true)
-                        })
-                })
+                basis
+                    .bindings
+                    .get(key)
+                    .is_some_and(|binding| binding.eligible(&state.ui.filters))
             })
         } else {
             match surface {

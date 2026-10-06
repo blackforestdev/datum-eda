@@ -9,9 +9,31 @@ pub struct SceneSelectionBinding {
     pub layers: Vec<String>,
 }
 impl SceneSelectionBinding {
+    /// Ordinary acquisition gates the source origin, never derived membership.
+    /// Ctrl+A deliberately bypasses this predicate at its shared acquisition entry.
+    pub fn eligible(&self, filters: &crate::WorkspaceFilterState) -> bool {
+        acquisition_eligible(
+            self.acquired.class,
+            self.layers.iter().map(String::as_str),
+            filters,
+        )
+    }
     pub fn visible(&self, visible: impl Fn(&str) -> bool) -> bool {
         self.layers.iter().any(|layer| visible(layer))
     }
+}
+/// Shared ordinary origin/candidate eligibility for pointer, menu and regions.
+/// Complete derived membership and explicit Ctrl+A do not consume this gate.
+pub fn acquisition_eligible<'a>(
+    class: Class,
+    layers: impl IntoIterator<Item = &'a str>,
+    filters: &crate::WorkspaceFilterState,
+) -> bool {
+    filters.show_authored
+        && !filters.excluded_selection_classes.contains(&class)
+        && layers
+            .into_iter()
+            .any(|layer| filters.layer_visibility.get(layer).copied().unwrap_or(true))
 }
 #[derive(Debug, Default)]
 pub struct SceneSelectionBindings {

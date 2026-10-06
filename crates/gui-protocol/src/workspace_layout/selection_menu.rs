@@ -66,6 +66,15 @@ pub fn resolve(
     Ok(Some(subject))
 }
 impl SelectionMenu {
+    /// Complete eligible local overlap inventory captured before menu opening.
+    /// Semantic leaves, findings and inspection controls add no authored members.
+    /// This is not the document-wide Ctrl+A eligibility bypass.
+    pub fn overlap_candidates(&self) -> impl Iterator<Item = &Id> {
+        self.items.iter().filter_map(|item| match &item.command {
+            Command::Object(id) if item.unavailable.is_none() => Some(id),
+            _ => None,
+        })
+    }
     /// Ordered eligible acquired/source pairs from the actual shared hit index.
     /// Deduplication is by complete authored identity, never display keys.
     pub fn capture(

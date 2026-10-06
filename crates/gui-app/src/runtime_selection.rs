@@ -190,41 +190,24 @@ impl Runtime {
         if self.modifiers.shift_key() && self.modifiers.control_key() {
             return Some(true);
         }
-        let state = self.workspace();
-        let scene = match surface {
-            SceneSurface::Board => &state.scene,
-            SceneSurface::Schematic => state.schematic_scene.as_ref()?,
+        let basis = match self.native_binding_basis(surface) {
+            Ok(Some(basis)) => basis,
+            Ok(None) => return None,
+            Err(error) => {
+                self.selection_notice(error.to_string());
+                return Some(true);
+            }
         };
-        let authority = &self.native_selection.as_ref()?.authority;
-        if !state.ui.filters.show_authored
-            || !datum_gui_protocol::selection_scene::candidate_visible(scene, key, |l| {
-                state
-                    .ui
-                    .filters
-                    .layer_visibility
-                    .get(l)
-                    .copied()
-                    .unwrap_or(true)
-            })
-        {
-            return Some(true);
-        }
-        let Some(id) =
-            datum_gui_protocol::selection_scene::authored_candidate(scene, key, authority)
-        else {
+        let Some(binding) = basis.bindings.get(key) else {
             self.selection_notice(
                 "This source has no authoritative workspace selection identity".into(),
             );
             return Some(true);
         };
-        if state
-            .ui
-            .filters
-            .excluded_selection_classes
-            .contains(&id.class)
-        {
+        if !binding.eligible(&self.workspace().ui.filters) {
             return Some(true);
         }
+        let id = binding.acquired.clone();
         let mode = if self.modifiers.control_key() {
             AcquisitionMode::Remove
         } else if self.modifiers.shift_key() {

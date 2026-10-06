@@ -156,11 +156,11 @@ impl RegionBasis {
     }
 }
 fn eligible(id: &Id, layers: &BTreeSet<String>, filters: &WorkspaceFilterState) -> bool {
-    filters.show_authored
-        && !filters.excluded_selection_classes.contains(&id.class)
-        && layers
-            .iter()
-            .any(|layer| filters.layer_visibility.get(layer).copied().unwrap_or(true))
+    datum_gui_protocol::selection_scene::acquisition_eligible(
+        id.class,
+        layers.iter().map(String::as_str),
+        filters,
+    )
 }
 fn qualifies(region: &SelectionRegion, geometry: &Geometry) -> Result<bool, String> {
     let result = match geometry {

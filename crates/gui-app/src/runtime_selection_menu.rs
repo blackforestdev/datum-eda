@@ -47,23 +47,10 @@ impl Runtime {
             let HitTarget::AuthoredObject(key) = target else {
                 return false;
             };
-            basis.bindings.get(key).is_some_and(|b| {
-                !self
-                    .workspace()
-                    .ui
-                    .filters
-                    .excluded_selection_classes
-                    .contains(&b.acquired.class)
-                    && b.visible(|layer| {
-                        self.workspace()
-                            .ui
-                            .filters
-                            .layer_visibility
-                            .get(layer)
-                            .copied()
-                            .unwrap_or(true)
-                    })
-            })
+            basis
+                .bindings
+                .get(key)
+                .is_some_and(|binding| binding.eligible(&self.workspace().ui.filters))
         });
         let retained_target = hits.first().cloned();
         let selection = basis.as_ref().map(|basis| {
@@ -201,6 +188,29 @@ impl Runtime {
             return true;
         }
         use datum_gui_protocol::selection_menu::Command;
+        if item.command == Command::All {
+            let candidates = self
+                .workspace()
+                .ui
+                .marking_menu
+                .as_ref()
+                .unwrap()
+                .selection
+                .as_ref()
+                .unwrap()
+                .overlap_candidates()
+                .cloned()
+                .collect();
+            self.dismiss_marking_menu();
+            self.cancel_native_selection_gesture();
+            self.native_selection.as_mut().unwrap().reset_click_depth();
+            return self.publish_native_acquisition(
+                candidates,
+                AcquisitionMode::Replace,
+                AcquisitionEntry::Region,
+                None,
+            );
+        }
         if let Command::Diagnostic(fingerprint) = &item.command {
             self.dismiss_marking_menu();
             return self
@@ -245,7 +255,7 @@ impl Runtime {
                 Some(subject),
             )
         } else {
-            self.native_select_all_on(schematic)
+            true
         }
     }
     pub(super) fn handle_marking_selection_key(&mut self, event: &KeyEvent) -> bool {

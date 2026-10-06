@@ -94,7 +94,7 @@
    Selection prerequisite accepted by owner after reserved independent PASS for source 91b56957 / packet e298e2df / blob cc39cd23; 102 Rust and 5 Python replay passes, no mandatory findings. DA-A4-R and DA-A4-D complete. Explicitly restore S5A-C03 under retained C02 execution approval. Positive rational-center CAM/T04 remains open dat-rational-center-cam-ir1t; capability limits preserved; no S5A UI/native acceptance. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-uvt-s5a-build-1wv. *Governing:* `specs/S5A_DERIVED_AUTHORITY_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `specs/ENGINE_SPEC.md`, `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_053_ELECTRICAL_IDENTITY_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_054_NOMINAL_COPPER_DERIVED_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_055_BUS_RUN_CONTACT_AUTHORITY.md`, `docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
-   C03 partial native board/schematic integration: shared acquisition/modifiers/Ctrl+A, bounded complete regions, revision-bound view, canonical class inspection, inventory/filter navigation and read-only Linux accessibility implemented. Finite source-bound Select/overlap menus and keyboard Inspector access now reuse existing owners. Remaining complete aggregate/artifact/dense-visual/native work continues under retained C02 approval. dat-s5a-board-graphic-authority-h8xm blocks only standalone graphics paths/positive proof; S5A-BOARD-GRAPHICS-PROPOSAL-01 awaits review/disposition, no source model grant. C04/C05/C06, PM026/049/051/052, CAM/T04, latency and deferred editors preserved. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   C03 partial shared native selection/inspection, silhouettes, saved artifacts and bound fixtures implemented. Ordinary pointer/menu/region eligibility now has one source-bound owner; overlap Select All uses complete local eligible inventory, while Ctrl+A retains its sole document-wide bypass (dat-selection-overlap-all-n4os). Imported saved copper repair PM056 is pinned separately. Remaining standalone graphics, placed component-Pad authority, generic producing action identity and governed lock asset keep their required positives pending. Available-source native C04 proof, independent C05/C06, PM026/049/051/052, open CAM/T04, undecided latency and deferred editors preserved. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`, `dat-s5a-derived-authority-hhsw`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
@@ -3359,3 +3359,26 @@ exact geometry/source provenance, stale refusal and history. Implemented with
 copper presentation. Receipt: `target/s5a-import-fill-proof.json`. C03 remains
 partial; C04/C05/final acceptance, graphics/source limitations and CAM/T04 stay
 separate.
+
+### S5A-C03 — ordinary eligibility and overlap Select All
+
+[~] PM026/UVT ordinary pointer, menu and region acquisition now consume one
+source-bound eligibility predicate. The overlap menu's Select All previously
+called document-wide Ctrl+A; it now replaces from its complete eligible local
+inventory, without arbitrary focus. Empty local inventory preserves the prior
+subject. Ctrl+A alone retains the global eligibility bypass. Complete derived
+membership is not filtered. `dat-selection-overlap-all-n4os` tracks this bounded
+correction under `dat-uvt-s5a-build-1wv` / S5A-C03.
+
+Producer proof: two persisted semantic-source eligibility/refusal/no-op cases,
+seven acquisition regressions, two complete menu-inventory cases and five GUI
+region/cancellation/refusal cases pass (16 distinct). Policy regression proof
+passes 13 cases. Logs are `target/s5a-eligibility-final-viewport.log`,
+`target/s5a-overlap-menu-proof.log`, `target/s5a-eligibility-region-proof.log`
+and `target/s5a-eligibility-health-regression.log`. No native input, accessibility,
+C04/C05/C06 or full hidden-member matrix acceptance is asserted. The Bus fixture
+proves complete membership and ineligible-origin refusal; it has no independently
+hideable second Bus layer, so no such positive case is invented. Rendering,
+resize, source-model/dependency authority and the open CAM/T04 obligation remain
+unchanged. Remaining graphics, component-Pad, generic production-action identity
+and governed lock-asset positives stay pending.

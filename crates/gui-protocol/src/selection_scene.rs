@@ -4,7 +4,7 @@ use crate::selection_resolution::{NativeSelectionResolution, SelectionAuthority}
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, BoardReviewSceneV1, PointNm,
 };
-pub use index::{SceneSelectionBinding, SceneSelectionBindings};
+pub use index::{SceneSelectionBinding, SceneSelectionBindings, acquisition_eligible};
 
 pub fn projection_candidate(
     scene: &BoardReviewSceneV1,
