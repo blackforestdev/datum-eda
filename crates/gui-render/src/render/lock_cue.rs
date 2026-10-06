@@ -23,15 +23,19 @@ const CENTRE: (f32, f32) = (12.0, 12.0);
 pub(crate) struct HoverAnchors(Vec<(String, PointNm)>);
 
 impl HoverAnchors {
-    pub(crate) fn build(scene: &BoardReviewSceneV1) -> Self {
-        let locked: std::collections::BTreeMap<&str, (&str, PointNm)> = scene
+    pub(crate) fn build(state: &ReviewWorkspaceState) -> Self {
+        if !authored_visible(state) {
+            return Self::default();
+        }
+        let scene = &state.scene;
+        let locked: std::collections::BTreeMap<&str, (&str, PointNm, &str)> = scene
             .components
             .iter()
             .filter(|c| c.locked)
             .map(|c| {
                 (
                     c.component_uuid.as_str(),
-                    (c.object_id.as_str(), c.position),
+                    (c.object_id.as_str(), c.position, c.placement_layer.as_str()),
                 )
             })
             .collect();
@@ -40,11 +44,13 @@ impl HoverAnchors {
         }
         let mut anchors: Vec<_> = locked
             .values()
-            .map(|(id, at)| (id.to_string(), *at))
+            .filter(|(_, _, layer)| layer_visible(state, layer))
+            .map(|(id, at, _)| (id.to_string(), *at))
             .chain(scene.pads.iter().filter_map(|pad| {
-                locked
-                    .get(pad.component_uuid.as_str())
-                    .map(|(_, at)| (pad.object_id.clone(), *at))
+                pad_visible_on_any_copper_layer(state, pad)
+                    .then(|| locked.get(pad.component_uuid.as_str()))
+                    .flatten()
+                    .map(|(_, at, _)| (pad.object_id.clone(), *at))
             }))
             .collect();
         anchors.sort_by(|a, b| a.0.cmp(&b.0));

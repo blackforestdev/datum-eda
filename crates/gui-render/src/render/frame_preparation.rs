@@ -108,7 +108,7 @@ impl PreparedScene {
                 .flatten()
             });
             let board_lock_anchors =
-                crate::native_selection_overlay::lock_cue::HoverAnchors::build(&state.scene);
+                crate::native_selection_overlay::lock_cue::HoverAnchors::build(state);
             let crosshair_cursor_screen = state.ui.cursor_pos.map(|p| (p.x, p.y));
             let crosshair_style = state.ui.crosshair_style;
 

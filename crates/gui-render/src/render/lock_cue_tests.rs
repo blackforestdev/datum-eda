@@ -69,10 +69,10 @@ fn hover_anchors_cover_locked_parent_and_owned_pads_only() {
     for c in &mut state.scene.components {
         c.locked = false;
     }
-    assert_eq!(HoverAnchors::build(&state.scene), HoverAnchors::default());
+    assert_eq!(HoverAnchors::build(&state), HoverAnchors::default());
     let locked = state.scene.components[0].clone();
     state.scene.components[0].locked = true;
-    let anchors = HoverAnchors::build(&state.scene);
+    let anchors = HoverAnchors::build(&state);
     assert_eq!(anchors.get(&locked.object_id), Some(locked.position));
     for pad in &state.scene.pads {
         let expected = (pad.component_uuid == locked.component_uuid).then_some(locked.position);
@@ -80,6 +80,83 @@ fn hover_anchors_cover_locked_parent_and_owned_pads_only() {
     }
     for other in &state.scene.components[1..] {
         assert_eq!(anchors.get(&other.object_id), None);
+    }
+}
+
+#[test]
+fn hidden_locked_hover_emits_no_padlock_in_full_or_pointer_preparation() {
+    for hide_authored in [true, false] {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.selection = crate::SelectionTarget::None;
+        let component = state.scene.components[0].clone();
+        state.scene.components[0].locked = true;
+        let pad = state
+            .scene
+            .pads
+            .iter()
+            .find(|p| p.component_uuid == component.component_uuid)
+            .unwrap()
+            .clone();
+        if hide_authored {
+            state.ui.filters.show_authored = false;
+        } else {
+            for visible in state.ui.filters.layer_visibility.values_mut() {
+                *visible = false;
+            }
+            for layer in pad
+                .copper_layer_ids
+                .iter()
+                .chain([&pad.layer_id, &component.placement_layer])
+            {
+                state
+                    .ui
+                    .filters
+                    .layer_visibility
+                    .insert(layer.clone(), false);
+            }
+        }
+        for target in [component.object_id.clone(), pad.object_id.clone()] {
+            state.ui.hovered_object = Some(datum_gui_protocol::HoverTarget {
+                object_id: target.clone(),
+                surface: datum_gui_protocol::PaneContent::Board,
+            });
+            let retained = crate::RetainedScene::from_workspace(&state, 1280, 800);
+            let mut prepared = crate::PreparedScene::from_workspace(
+                &state,
+                1280,
+                800,
+                crate::CameraState::fit_to_bounds(&state.scene.bounds),
+                &retained,
+            )
+            .unwrap();
+            let no_lock = |prepared: &crate::PreparedScene| {
+                assert!(
+                    prepared
+                        .board_interaction_vertices()
+                        .iter()
+                        .all(|v| v.color != COLOR),
+                    "hidden locked hover must not paint the anchor padlock"
+                );
+            };
+            no_lock(&prepared);
+            let pass = prepared
+                .surface_passes()
+                .iter()
+                .find(|p| p.surface == crate::SceneSurface::Board)
+                .unwrap();
+            let cursor = datum_gui_protocol::ScreenPointPx {
+                x: pass.scene_viewport.x + pass.scene_viewport.width / 2.0,
+                y: pass.scene_viewport.y + pass.scene_viewport.height / 2.0,
+            };
+            prepared.refresh_pointer(
+                Some(cursor),
+                state.ui.crosshair_style,
+                None,
+                Some(&target),
+                None,
+            );
+            no_lock(&prepared);
+        }
     }
 }
 
@@ -170,7 +247,7 @@ fn actual_locked_package_shows_padlock_for_object_focus_and_hover_only() {
     assert!(glyphs(compound(None)).1.is_empty(), "no glyph field");
     assert!(glyphs(compound(Some(unlocked.clone()))).1.is_empty());
     assert_eq!(glyphs(compound(Some(locked.clone()))).1, single);
-    let anchors = HoverAnchors::build(&state.scene);
+    let anchors = HoverAnchors::build(&state);
     assert_eq!(anchors.get(&projected.object_id), Some(projected.position));
     let mut hover = Vec::new();
     push_hover(
