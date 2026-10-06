@@ -184,3 +184,67 @@ fn actual_locked_package_shows_padlock_for_object_focus_and_hover_only() {
         assert_eq!(std::fs::read(&path).unwrap(), bytes, "read-only cue");
     }
 }
+
+/// Production-renderer captures for same-size HUMAN review; never a golden.
+#[cfg(feature = "visual")]
+#[test]
+#[ignore = "requires S5A_NATIVE_PARENT_FIXTURE and S5A_LOCK_CUE_CAPTURE_DIR"]
+fn actual_locked_package_padlock_capture_for_review() {
+    let root = std::path::PathBuf::from(std::env::var_os("S5A_NATIVE_PARENT_FIXTURE").unwrap());
+    let out = std::path::PathBuf::from(std::env::var_os("S5A_LOCK_CUE_CAPTURE_DIR").unwrap());
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    let mut state = datum_gui_protocol::load_board_editor_workspace_state(
+        &datum_gui_protocol::LiveReviewRequest {
+            project_root: root.clone(),
+            board_file: None,
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+            kicad_board_source: None,
+        },
+    )
+    .unwrap();
+    let authority = NativeSelectionResolution::capture(&model).unwrap();
+    let locked = state.scene.components.iter().find(|c| c.locked).unwrap();
+    let locked_key = locked.object_id.clone();
+    let id = Id {
+        class: Class::Footprint,
+        id: locked.source_object_uuid.parse().unwrap(),
+        instance_path: vec![],
+    };
+    let view = build_selection_view(
+        &model,
+        &authority,
+        SelectionSubject::Object(id),
+        &state.scene,
+        state.schematic_scene.as_ref(),
+        |_| true,
+    )
+    .unwrap();
+    let mut renderer = crate::visual_capture::OffscreenRenderer::new(1280, 800).unwrap();
+    renderer
+        .render_workspace(&state, None)
+        .unwrap()
+        .save(out.join("lock-cue-none.png"))
+        .unwrap();
+    state.selection = crate::SelectionTarget::Native(Box::new(view));
+    renderer
+        .render_workspace(&state, None)
+        .unwrap()
+        .save(out.join("lock-cue-selected.png"))
+        .unwrap();
+    state.selection = crate::SelectionTarget::None;
+    state.ui.hovered_object = Some(datum_gui_protocol::HoverTarget {
+        object_id: locked_key,
+        surface: datum_gui_protocol::PaneContent::Board,
+    });
+    renderer
+        .render_workspace(&state, None)
+        .unwrap()
+        .save(out.join("lock-cue-hover.png"))
+        .unwrap();
+}

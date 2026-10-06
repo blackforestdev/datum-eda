@@ -94,7 +94,7 @@
    Selection prerequisite accepted by owner after reserved independent PASS for source 91b56957 / packet e298e2df / blob cc39cd23; 102 Rust and 5 Python replay passes, no mandatory findings. DA-A4-R and DA-A4-D complete. Explicitly restore S5A-C03 under retained C02 execution approval. Positive rational-center CAM/T04 remains open dat-rational-center-cam-ir1t; capability limits preserved; no S5A UI/native acceptance. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-uvt-s5a-build-1wv. *Governing:* `specs/S5A_DERIVED_AUTHORITY_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `specs/ENGINE_SPEC.md`, `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_053_ELECTRICAL_IDENTITY_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_054_NOMINAL_COPPER_DERIVED_AUTHORITY.md`, `docs/decisions/PRODUCT_MECHANICS_055_BUS_RUN_CONTACT_AUTHORITY.md`, `docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
-   C03 partial shared native selection/inspection, silhouettes, saved artifacts and bound fixtures implemented. Ordinary pointer/menu/region eligibility now has one source-bound owner; overlap Select All uses complete local eligible inventory, while Ctrl+A retains its sole document-wide bypass (dat-selection-overlap-all-n4os). Imported saved copper repair PM056 is pinned separately. The governed selection-lock-anchor asset and its selected/focus/hover padlock cue are implemented (HUMAN same-size re-review stays with C04/C05). Remaining standalone graphics, placed component-Pad authority and generic producing action identity keep their required positives pending owner disposition. Available-source native C04 proof, independent C05/C06, PM026/049/051/052, open CAM/T04, undecided latency and deferred editors preserved. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   C03 partial shared native selection/inspection, silhouettes, saved artifacts and bound fixtures implemented. Ordinary pointer/menu/region eligibility now has one source-bound owner; overlap Select All uses complete local eligible inventory, while Ctrl+A retains its sole document-wide bypass (dat-selection-overlap-all-n4os). Imported saved copper repair PM056 is pinned separately. The governed selection-lock-anchor asset and its selected/focus/hover padlock cue are implemented (HUMAN same-size re-review stays with C04/C05). Remaining standalone graphics, placed component-Pad authority and generic producing action identity keep their required positives pending owner disposition of packet S5A-C03-AUTHORITY-DISPOSITION-01. Footprint-owned graphic acquisition is proven on actual sources. Available-source native C04 proof, independent C05/C06, PM026/049/051/052, open CAM/T04, undecided latency and deferred editors preserved. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`, `dat-s5a-derived-authority-hhsw`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
@@ -3426,3 +3426,19 @@ mechanical polygons (no owned silkscreen line or text), the oracle uses
 all-visible hit filtering, and the component Edge.Cuts-versus-board-outline negative
 has no native source in the recipe. Standalone board graphics remain the separate
 `dat-s5a-board-graphic-authority-h8xm` source-model gap.
+
+### S5A-C03 — remaining authority disposition packet (pending owner)
+
+[ ] `docs/reviews/workflow-delivery-rollout/s5a/c03-authority-disposition.md`
+(`S5A-C03-AUTHORITY-DISPOSITION-01`) prepares one focused owner disposition for
+D1 standalone board graphics G1–G3 (ratify with byte-stability, Edge.Cuts, Law 1
+CAM and refusal-disclosure clarifications), D2 placed component-Pad identity
+(persisted per-placement Pad ObjectId with lifetime/adoption rules; the bare
+Package+library-pad pair is not recommended) and D3 production-Proposal action
+identity (one whole-batch action qualified by existing project/proposal/batch/
+prepared-against fields; chrome-only narrowing not proposed). Nothing is ratified;
+all three positive cases stay required. Adjacent intake:
+`dat-component-pad-validate-duplicate-jpg0`, `dat-component-pad-cam-transform-ab4v`.
+Production-renderer padlock captures for HUMAN review:
+`target/s5a-lock-cue-captures/` (at board-fit zoom the glyph overlaps the small
+footprint's reference text; a visual-review observation, not a pass).
