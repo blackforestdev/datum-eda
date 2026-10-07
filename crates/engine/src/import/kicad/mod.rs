@@ -8,6 +8,10 @@ use crate::schematic::PinElectricalType;
 use crate::substrate::{ImportKey, ImportMapEntry};
 
 mod board_objects;
+mod graphics;
+pub use graphics::{
+    GraphicImportDisposition, NativeGraphicImport, board_graphic_import_key, native_graphic_sources,
+};
 mod saved_fill_geometry;
 mod zones;
 pub use zones::native_zone_sources;

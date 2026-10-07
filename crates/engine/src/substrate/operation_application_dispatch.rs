@@ -15,6 +15,9 @@ pub(super) fn apply_pre_match_operation(
     operation: &Operation,
     diff: &mut CommitDiff,
 ) -> Result<bool, EngineError> {
+    if super::import_map_journal_ops::apply_model(model, operation)? {
+        return Ok(true);
+    }
     super::board_journal_ops::board_track_source::validate(operation)?;
     super::board_journal_ops::board_pad_source::validate(operation)?;
     if super::board_graphic_source::apply_model(model, operation, diff)? {

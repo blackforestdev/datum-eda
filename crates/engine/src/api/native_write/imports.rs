@@ -157,6 +157,9 @@ pub fn eagle_pool_object_refs(pool: &Pool) -> Vec<(&'static str, Uuid)> {
 #[path = "imported_board.rs"]
 mod imported_board;
 pub use imported_board::{build_kicad_board_import, build_kicad_board_import_with_fills};
+#[path = "imported_graphics.rs"]
+mod imported_graphics;
+pub use imported_graphics::build_kicad_graphic_import;
 
 // ---------------------------------------------------------------------------
 // Eagle library import
@@ -530,7 +533,7 @@ fn import_map_shard_operation(
 /// Splice a composed family builder's operations into the import batch,
 /// dropping its per-op guards (the combined batch is re-guarded as one unit
 /// by [`BatchComposer`] — the `forward_annotation` composition pattern).
-fn unguarded_operations(prepared: PreparedWrite) -> impl Iterator<Item = Operation> {
+pub(super) fn unguarded_operations(prepared: PreparedWrite) -> impl Iterator<Item = Operation> {
     prepared
         .batch
         .operations
@@ -538,7 +541,7 @@ fn unguarded_operations(prepared: PreparedWrite) -> impl Iterator<Item = Operati
         .filter(|operation| !matches!(operation, Operation::GuardObjectRevision { .. }))
 }
 
-fn finish_import_write(
+pub(super) fn finish_import_write(
     model: &DesignModel,
     provenance: WriteProvenance,
     operations: Vec<Operation>,

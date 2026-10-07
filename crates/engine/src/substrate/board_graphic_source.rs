@@ -248,11 +248,19 @@ pub(super) fn apply_model(
     }) {
         return Err(refusal("explicit profile-4 adoption required"));
     }
-    if let Some(key) = &graphic.import_key
+    // Deletion is qualified by the registered native source and exact payload
+    // preimage below. Its atomic inverse may remove a newly introduced sidecar
+    // before removing the imported native object; no new binding is acquired.
+    if !matches!(op, Operation::DeleteBoardGraphic { .. })
+        && let Some(key) = &graphic.import_key
         && !model.import_map.get(key).is_some_and(|entry| {
             entry.object_id == id
                 && entry.source_shard_id == shard_id
-                && entry.status == super::ImportMapEntryStatus::Active
+                && matches!(
+                    entry.status,
+                    super::ImportMapEntryStatus::Active
+                        | super::ImportMapEntryStatus::MissingInSource
+                )
         })
     {
         return Err(refusal(

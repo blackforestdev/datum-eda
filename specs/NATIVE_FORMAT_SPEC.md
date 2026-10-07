@@ -673,8 +673,14 @@ reuse recorded IDs and source values. Noncanonical or stale raw board bytes refu
 before staging; explicit profile adoption remains a separate transaction. This
 source unit is now consumed by native scene projection and source-qualified object
 selection: actual UUIDs, recorded arc anchors and filled geometry remain independent
-of display sampling. Filled pointer hits retain hole contours. Import adoption,
-manufacturing correspondence and C04–C06 acceptance remain required under PM057;
+of display sampling. Filled pointer hits retain hole contours. KiCad graphic
+adoption now records stable source UUID-qualified ImportMap bindings alongside
+native geometry. Replacement captures the prior sidecar; source refresh requires
+the recorded imported geometry preimage and refuses to overwrite native edits.
+Missing external sources retain native objects and bindings. Graphic-bearing
+compensation uses actual source revisions, restoring board and map bytes through
+reopened history. Manufacturing correspondence and C04–C06 acceptance remain
+required under PM057;
 missing output/refusal cannot pass a required graphics positive.
 
 ### 6.6 `rules/rules.json`

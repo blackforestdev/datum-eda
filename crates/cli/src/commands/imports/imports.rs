@@ -39,6 +39,10 @@ pub(crate) struct NativeProjectKiCadBoardImportView {
     pub(crate) imported_track_count: usize,
     pub(crate) imported_via_count: usize,
     pub(crate) imported_zone_count: usize,
+    pub(crate) imported_graphic_count: usize,
+    pub(crate) graphic_dispositions: Vec<eda_engine::import::kicad::GraphicImportDisposition>,
+    pub(crate) source_warnings: Vec<String>,
+    pub(crate) profile_adoption_transaction_id: Option<Uuid>,
     pub(crate) import_map_entry_count: usize,
     pub(crate) created_object_count: usize,
     pub(crate) reused_existing_identity_count: usize,
@@ -66,7 +70,7 @@ pub(crate) fn import_native_project_kicad_board(
     root: &Path,
     source: &Path,
 ) -> Result<NativeProjectKiCadBoardImportView> {
-    let before = ProjectResolver::new(root)
+    let mut before = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let board_shard_id = before
@@ -76,15 +80,18 @@ pub(crate) fn import_native_project_kicad_board(
         .map(|shard| shard.shard_id)
         .context("native project has no resolver-visible board root shard")?;
     let source_hash = compute_source_hash_file(source)?;
-    let (board, _report, identities) =
+    let (board, report, mut identities) =
         import_board_document_with_import_map_identities(source, &before.import_map)
             .with_context(|| format!("failed to import KiCad board {}", source.display()))?;
     let mut board = board;
     let legacy_zones = board.zones.clone();
     let saved_fills =
         eda_engine::import::kicad::native_zone_sources(source, &before.import_map, &mut board)?;
+    let graphics =
+        eda_engine::import::kicad::native_graphic_sources(source, &before.import_map, &board)?;
+    identities.extend(graphics.identities.iter().cloned());
     if compute_source_hash_file(source)? != source_hash {
-        anyhow::bail!("KiCad source changed while capturing saved fill");
+        anyhow::bail!("KiCad source changed while capturing board, graphics and saved fill");
     }
     let board_root = before
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
@@ -108,25 +115,78 @@ pub(crate) fn import_native_project_kicad_board(
     );
     let import_map_relative_path = kicad_board_import_map_relative_path(source);
     let import_map_entry_count = import_map_entries.len();
-    let write = eda_engine::api::native_write::imports::build_kicad_board_import_with_fills(
-        &before,
-        WriteProvenance::new(
-            "datum-eda-cli",
-            cli_commit_source()?,
-            format!("import KiCad board {}", source.display()),
-        ),
-        board_id,
-        &board,
-        &legacy_zones,
-        &saved_fills,
-        import_map_entries,
-        source,
-        &source_hash,
-    )?;
+    let provenance = WriteProvenance::new(
+        "datum-eda-cli",
+        cli_commit_source()?,
+        format!("import KiCad board {}", source.display()),
+    );
+    let build = |model: &eda_engine::substrate::DesignModel| -> Result<_> {
+        let base = eda_engine::api::native_write::imports::build_kicad_board_import_with_fills(
+            model,
+            provenance.clone(),
+            board_id,
+            &board,
+            &legacy_zones,
+            &saved_fills,
+            import_map_entries.clone(),
+            source,
+            &source_hash,
+        )?;
+        Ok(
+            eda_engine::api::native_write::imports::build_kicad_graphic_import(
+                model,
+                provenance.clone(),
+                base,
+                board_id,
+                &graphics.graphics,
+            )?,
+        )
+    };
+    // Capture/validate external sources and namespace before the explicitly
+    // separate, forward-only adoption. Native read/startup never invokes it.
+    for graphic in &graphics.graphics {
+        if before.objects.contains_key(&graphic.uuid)
+            && board_root
+                .get("graphics")
+                .and_then(|map| map.get(graphic.uuid.to_string()))
+                .is_none()
+        {
+            anyhow::bail!("graphic import identity collides with an existing native object");
+        }
+    }
+    let mut profile_adoption_transaction_id = None;
+    if !graphics.graphics.is_empty() && board_root["schema_version"].as_u64() != Some(4) {
+        // Validate the existing conductive import before any adoption write.
+        eda_engine::api::native_write::imports::build_kicad_board_import_with_fills(
+            &before,
+            provenance.clone(),
+            board_id,
+            &board,
+            &legacy_zones,
+            &saved_fills,
+            import_map_entries.clone(),
+            source,
+            &source_hash,
+        )?;
+        let adoption = eda_engine::api::native_write::board_layout::source_profile::build_adopt_board_source_profile(&before, provenance.clone(), board_id)?;
+        let adopted = commit_prepared(&mut before, root, adoption)
+            .context("separate BoardRoot profile adoption commit")?;
+        profile_adoption_transaction_id = Some(adopted.transaction.transaction_id);
+        before = ProjectResolver::new(root)
+            .resolve()
+            .context("reopen after separate BoardRoot profile adoption")?;
+    }
+    if compute_source_hash_file(source)? != source_hash {
+        anyhow::bail!(
+            "KiCad source changed before graphic import; separate profile adoption transaction: {profile_adoption_transaction_id:?}"
+        );
+    }
+    let write = build(&before).with_context(|| format!("graphic/board import failed; separate profile adoption transaction: {profile_adoption_transaction_id:?}"))?;
     let created_object_count = write.created_object_count;
     if let Some(prepared) = write.prepared {
         let mut model = before;
-        commit_prepared(&mut model, root, prepared)?;
+        commit_prepared(&mut model, root, prepared)
+            .context("combined board/graphic import commit")?;
     }
     let after_write = ProjectResolver::new(root).resolve().with_context(|| {
         format!(
@@ -156,6 +216,10 @@ pub(crate) fn import_native_project_kicad_board(
         imported_track_count: board.tracks.len(),
         imported_via_count: board.vias.len(),
         imported_zone_count: board.zones.len(),
+        imported_graphic_count: graphics.graphics.len(),
+        graphic_dispositions: graphics.dispositions,
+        source_warnings: report.warnings,
+        profile_adoption_transaction_id,
         import_map_entry_count,
         created_object_count,
         reused_existing_identity_count,
@@ -287,6 +351,7 @@ fn board_source_object_ref(identity: &KiCadBoardImportIdentity) -> String {
         "board_segment" => "board-segment",
         "board_via" => "board-via",
         "board_zone" => "board-zone",
+        "board_graphic" => "board-graphic",
         family => family,
     };
     format!("{family}:{}", identity.source_uuid)
@@ -299,7 +364,8 @@ fn is_same_kicad_board_source_entry(entry: &ImportMapEntry, source_path: &str) -
             || entry.import_key.starts_with("kicad:board-pad:")
             || entry.import_key.starts_with("kicad:board-segment:")
             || entry.import_key.starts_with("kicad:board-via:")
-            || entry.import_key.starts_with("kicad:board-zone:"))
+            || entry.import_key.starts_with("kicad:board-zone:")
+            || entry.import_key.starts_with("kicad:board-graphic:"))
 }
 
 pub(super) fn validate_project_local_pool_path(pool_path: &str) -> Result<()> {

@@ -125,6 +125,19 @@ impl DesignModel {
 }
 
 fn compensation_needs_revision_override(target: &TransactionRecord) -> bool {
+    // PM057 source edits advance actual object revisions even when their
+    // import-map sidecar is replaced. Metadata compensation cannot stamp the
+    // former model hash over that real post-undo source basis.
+    if target.operations.iter().any(|op| {
+        matches!(
+            op,
+            Operation::CreateBoardGraphic { .. }
+                | Operation::SetBoardGraphic { .. }
+                | Operation::DeleteBoardGraphic { .. }
+        )
+    }) {
+        return false;
+    }
     // Imported generated copper accompanies real board-source operations.
     // Compensation must retain their actual final revisions, rather than
     // restoring the historical hash used for metadata-only import-map writes.

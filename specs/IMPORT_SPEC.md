@@ -307,3 +307,23 @@ conversion must preserve area and oriented boundary without new coordinates.
 Legacy island-as-source migration requires unchanged source/provenance;
 malformed or ambiguous data refuses without partial adoption. No broader import
 feature expansion, native solver change or manufacturing qualification follows.
+
+## Independent board graphics in native adoption (PM057)
+
+The native KiCad board import explicitly captures supported non-copper Line,
+three-point Arc, Rectangle, integer-radius Circle and linear Polygon records.
+Stable source UUIDs qualify existing engine ImportMap allocations; missing or
+ambiguous identities, unsupported styles/fields and inexact geometry refuse
+before adoption. Structured dispositions distinguish supported graphic sources,
+existing outline contributions, pending outline obligations and refusals.
+Edge.Cuts line/arc contributions remain solely with the existing BoardOutline
+owner, including historical identifier-less input; no second graphic is minted.
+
+Required profile-4 adoption is a separate guarded forward-only transaction,
+reported by transaction ID. The subsequent complete import records graphic/map
+preimages and binds saved copper to the final combined source basis. Reimport
+reuses identities; unchanged input is a no-op; source refresh cannot overwrite
+native graphic edits. Missing external sources retain native graphics with
+MissingInSource provenance. Actual reopened undo/redo must restore both board
+and sidecar bytes. Source support is not exact manufacturing support: matching
+CAM, rational-centre T04 and C04–C06 remain required without a tolerance waiver.

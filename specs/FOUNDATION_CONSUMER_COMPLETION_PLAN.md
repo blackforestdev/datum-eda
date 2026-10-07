@@ -2131,8 +2131,13 @@ all six recorded variants and selection uses independent source UUIDs and exact
 qualification geometry; filled interior hits preserve hole voids and source lookup
 never allocates identity. Focused reopened native read-only and actual retained-hit
 proof is implementation evidence, not complete C04 input/candidate acceptance.
-Import and exact CAM consumers, placed-Pad integration and their required positives
-remain unfinished.
+The native KiCad import now captures exact supported graphics with actual
+ImportMap identities, complete sidecar preimages and source-refresh conflict
+refusal. Profile adoption remains a separate reported transaction. Reopened
+history restores board and map bytes; missing external sources retain native
+objects. Existing outlines and saved copper use their established owners.
+Exact CAM consumers, placed-Pad integration and their required positives remain
+unfinished; source support does not certify manufacturing output.
 
 D3's bounded source/protocol/native preview integration is implemented: the
 canonical producer tuple owns the whole batch, Deferred/stale retains selection

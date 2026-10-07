@@ -627,3 +627,6 @@ fn assert_kicad_board_source_refs_are_source_facing(
         );
     }
 }
+
+#[path = "main_tests_project_imports/graphics.rs"]
+mod graphics;

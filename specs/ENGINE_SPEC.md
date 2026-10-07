@@ -2173,5 +2173,15 @@ materialized read basis; noncanonical graphics writes still refuse before stagin
 The captured authored-source inventory now includes every registered native graphic;
 a missing registration refuses complete inventory. Native scene/selection consumes
 recorded UUIDs and geometry, including arc midpoint anchors and hole-aware filled
-pointer hits. Import/CAM, placed-Pad integration and complete C04–C06 proof remain
+pointer hits. The existing import facade now composes supported KiCad graphics,
+complete ImportMap preimages and existing saved-fill adoption in one canonical
+batch after separate profile adoption. Map operations qualify bindings in batch
+order. Source refresh reuses recorded IDs and requires unchanged imported geometry;
+native edits refuse rather than being overwritten. Graphic-bearing compensation
+retains actual post-operation revisions instead of a metadata-only historical hash.
+Promoted replay retains each recorded BoardRoot operation advance when an import
+changes both outline and stackup; a deduplicated diff is not a revision count.
+Saved-fill staging qualifies the pending source overlay against its current
+preimage, without replaying adoption onto future hashes.
+Exact CAM, placed-Pad integration and complete C04–C06 proof remain
 unfinished.

@@ -109,3 +109,30 @@ fn delete_import_map_shard(project_root: &Path, relative_path: &str) -> StagedSh
         delete: true,
     }
 }
+
+/// Apply bindings in operation order so the same atomic batch can qualify its
+/// newly adopted source. The journal and reopened sidecar remain authoritative.
+pub(super) fn apply_model(
+    model: &mut super::DesignModel,
+    op: &Operation,
+) -> Result<bool, EngineError> {
+    let (value, create) = match op {
+        Operation::CreateImportMapShard { shard, .. } => (shard, true),
+        Operation::DeleteImportMapShard { shard, .. } => (shard, false),
+        _ => return Ok(false),
+    };
+    let shard: ImportMapShard = serde_json::from_value(value.clone())?;
+    if shard.schema_version != super::import_map::IMPORT_MAP_SHARD_SCHEMA_VERSION {
+        return Err(EngineError::Validation(
+            "unsupported ImportMap operation schema".into(),
+        ));
+    }
+    for entry in shard.entries {
+        if create {
+            model.import_map.insert(entry.import_key.clone(), entry);
+        } else {
+            model.import_map.remove(&entry.import_key);
+        }
+    }
+    Ok(true)
+}

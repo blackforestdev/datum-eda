@@ -84,7 +84,28 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
         }
         for object_id in &transaction.diff.modified {
             if let Some(object) = objects.get_mut(object_id) {
-                object.object_revision = ObjectRevision(object.object_revision.0 + 1);
+                // A board import can set both outline and stackup. Canonical
+                // application advances the root for each operation, while the
+                // diff lists each modified object only once. Restore those
+                // recorded advances rather than truncating valid history.
+                let root_advances = if object.domain == "board" && object.kind == "$" {
+                    transaction
+                        .operations
+                        .iter()
+                        .filter(|op| match op {
+                            Operation::AdoptBoardSourceProfile { board_id, .. }
+                            | Operation::SetBoardOutline { board_id, .. }
+                            | Operation::SetBoardStackup { board_id, .. }
+                            | Operation::SetBoardName { board_id, .. } => board_id == object_id,
+                            Operation::BumpObjectRevision { object_id: id } => id == object_id,
+                            _ => false,
+                        })
+                        .count() as u64
+                } else {
+                    0
+                };
+                object.object_revision =
+                    ObjectRevision(object.object_revision.0 + root_advances.max(1));
             }
         }
         for object_id in &transaction.diff.deleted {

@@ -29,7 +29,11 @@ pub(super) fn maybe_stage_zone_fill_operation(
                     let zone = basis.objects.get(zone_id).ok_or_else(|| {
                         EngineError::Validation("zone fill has no source Zone".into())
                     })?;
-                    if !super::electrical_basis::ElectricalBasis::new(&basis, &[])?
+                    // Validate against the same pending source overlay. The
+                    // final basis has future hashes while disk still holds the
+                    // preimage; reading it as promoted source would replay old
+                    // adoption/history onto already materialized bytes.
+                    if !super::electrical_basis::ElectricalBasis::new(model, &batch.operations)?
                         .class(&basis, *zone_id, "zones", "board")
                         || zone.object_revision != fill.source_zone_revision
                     {
