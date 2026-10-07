@@ -2,6 +2,7 @@
 mod inspection;
 pub mod inspector_state;
 mod net_coverage;
+mod placed_pad_inspection;
 mod presentation;
 mod projection_inspection;
 mod properties;
@@ -299,6 +300,11 @@ pub fn build_selection_view(
             && let Ok(value) =
                 model.materialized_source_shard_value_by_relative_path(&shard.relative_path)
         {
+            let value = if shard.kind == eda_engine::substrate::SourceShardKind::BoardRoot {
+                crate::placed_pad_projection::project(model, value.clone()).unwrap_or(value)
+            } else {
+                value
+            };
             shards.insert(shard.shard_id, value);
         }
     }
@@ -413,6 +419,7 @@ pub fn build_selection_view(
         .cloned()
         .collect();
     result.unprojected = result.members.difference(&represented).cloned().collect();
+    placed_pad_inspection::append(&mut result, model);
     result.inspection = inspection::compile(&result);
     quantities::append(model, &mut result.inspection);
     if let Some(scope) = result

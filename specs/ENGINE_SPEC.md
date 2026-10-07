@@ -354,8 +354,10 @@ replacement board shard value through the journal, and captures a same-kind
 inverse operation for undo/redo.
 Component side changes are represented as `SetComponentSide`: the operation
 updates the package side, mirrors owned authored pads and persisted
-`component_pads` across the package origin on X, swaps side-sensitive pad layer
-arrays, mirrors pad rotation, and captures a same-kind inverse for undo/redo.
+legacy unbound `component_pads` across the package origin on X, swaps
+side-sensitive pad layer arrays, mirrors pad rotation, and captures a same-kind
+inverse for undo/redo. PM057 bound materializations retain frozen local geometry;
+read-only physical projection applies the placement-side reflection instead.
 
 ### 0.9 Zone And ZoneFill Honesty
 
@@ -2192,5 +2194,18 @@ header for existing translation-only panel consumers. The exact subset reader,
 semantic comparisons and artifact preview metadata preserve holes and arc offsets.
 Out-of-range, nonrobust and uncertified geometry refuses before output replacement;
 no sampling, coordinate adjustment or nonzero-deviation allowance is introduced.
-Positive rational-centre CAM/T04, placed-Pad integration and complete C04–C06
-proof remain unfinished. Supported graphics output does not accept those gaps.
+The native component facade now prepares PM057 adoption/rematerialization with
+actual producer pins and complete correspondences, additions and retirements.
+Admission runs under the write lease against canonical bytes and the complete
+preimage. Stable correspondence advances Pad revisions without delete/create;
+replacement records fresh IDs. Promoted replay reconstructs the actual package
+registration kind and explicit legacy-library recovery, including compensation.
+Electrical source capture overlays pending pool creates before qualification;
+complete existing PM053 certificates alone supply native Pad Net assignment.
+Set Part is stale materialization rather than contradictory new correspondence.
+Native scene, strict Pad-majority qualification and existing Inspector properties
+consume the same recorded per-placement identities and frozen source geometry.
+Copper output uses that projection, including exact quarter-turn rectangular
+apertures; unsupported rotation refuses without overwriting prior output.
+Positive rational-centre CAM/T04, complete native C04 and independent C05/C06
+proof remain unfinished. Supported implementation does not accept those gaps.

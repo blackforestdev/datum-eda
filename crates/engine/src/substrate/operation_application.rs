@@ -6,8 +6,8 @@ use super::{
     operation_application_board_payloads::{
         board_dimension_payload_objects, board_keepout_payload_objects,
         board_net_class_payload_objects, board_net_payload_objects, board_pad_payload_objects,
-        board_payload_objects, board_text_payload_objects, board_track_payload_objects,
-        board_via_payload_objects, board_zone_payload_objects, materialized_payload_objects,
+        board_text_payload_objects, board_track_payload_objects, board_via_payload_objects,
+        board_zone_payload_objects,
     },
     operation_application_dispatch::apply_pre_match_operation,
     operation_application_object_revision::bump_existing_object,
@@ -33,6 +33,9 @@ pub(super) fn apply_operation(
     diff: &mut CommitDiff,
 ) -> Result<(), EngineError> {
     if apply_pre_match_operation(model, operation, diff)? {
+        return Ok(());
+    }
+    if super::operation_application_package_materialization::apply(model, operation, diff)? {
         return Ok(());
     }
     match operation {
@@ -102,59 +105,6 @@ pub(super) fn apply_operation(
                     uuid: *rule_id,
                 })
             }
-        }
-        Operation::CreateBoardPackage {
-            package_id,
-            package,
-            materialized,
-        } => {
-            let created = board_payload_objects(model, *package_id, package, materialized)?;
-            for object_id in created.keys() {
-                diff.created.push(*object_id);
-            }
-            model.objects.extend(created);
-            Ok(())
-        }
-        Operation::DeleteBoardPackage {
-            package_id,
-            package,
-            materialized,
-        } => {
-            let deleted = board_payload_objects(model, *package_id, package, materialized)?;
-            for object_id in deleted.keys() {
-                if model.objects.remove(object_id).is_some() {
-                    diff.deleted.push(*object_id);
-                }
-            }
-            Ok(())
-        }
-        Operation::SetBoardPackagePackage {
-            package_id,
-            previous_materialized,
-            materialized,
-            ..
-        } => {
-            let deleted = materialized_payload_objects(model, *package_id, previous_materialized)?;
-            for object_id in deleted.keys() {
-                if model.objects.remove(object_id).is_some() {
-                    diff.deleted.push(*object_id);
-                }
-            }
-            let created = materialized_payload_objects(model, *package_id, materialized)?;
-            for object_id in created.keys() {
-                diff.created.push(*object_id);
-            }
-            model.objects.extend(created);
-            let object = model
-                .objects
-                .get_mut(package_id)
-                .ok_or(EngineError::NotFound {
-                    object_type: "domain_object",
-                    uuid: *package_id,
-                })?;
-            object.object_revision = ObjectRevision(object.object_revision.0 + 1);
-            diff.modified.push(*package_id);
-            Ok(())
         }
         Operation::CreateBoardPad { pad_id, pad } => {
             let created = board_pad_payload_objects(model, *pad_id, pad)?;

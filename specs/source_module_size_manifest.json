@@ -70,17 +70,6 @@
       "status": "decomposition-required",
       "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
-    "crates/cli/src/commands/board/component_mutations.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 701
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
     "crates/cli/src/commands/board/routing_net.rs": {
       "kind": "rust-production",
       "limits": {
@@ -399,17 +388,6 @@
       "target_lines": 700,
       "status": "decomposition-required",
       "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
-    },
-    "crates/engine/src/api/native_write/board_components.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "inline_test_lines": 383
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 350,
-      "status": "decomposition-required",
-      "note": "Rust module has an inline test tail exceeding the normal inline-test limit."
     },
     "crates/engine/src/api/native_write/component_instances.rs": {
       "kind": "rust-production",

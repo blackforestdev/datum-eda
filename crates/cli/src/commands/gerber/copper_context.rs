@@ -27,35 +27,43 @@ pub(super) fn resolve_native_project_copper_layer_context(
                 project.board_path.display()
             )
         })?;
-        pads.extend(component_pads.iter().filter_map(|pad| {
-            pad.shape.map(|shape| PlacedPad {
-                layer_connection: Default::default(),
-                uuid: pad.uuid,
-                package: component_uuid,
-                name: pad.name.clone(),
-                net: None,
-                position: Point {
-                    x: pad.position.x,
-                    y: pad.position.y,
-                },
-                layer: pad.layer,
-                copper_layers: vec![pad.layer],
-                shape,
-                diameter: pad.diameter_nm,
-                width: pad.width_nm,
-                height: pad.height_nm,
-                drill: pad.drill_nm.unwrap_or(0),
-                rotation: 0,
-                mask_layers: Vec::new(),
-                paste_layers: Vec::new(),
-                solder_mask_margin_nm: 0,
-                solder_paste_margin_nm: 0,
-                solder_paste_margin_ratio_ppm: 0,
-                roundrect_rratio_ppm: 250_000,
-            })
-        }));
+        pads.extend(
+            component_pads
+                .iter()
+                .filter(|pad| pad.source_binding.is_none())
+                .filter_map(|pad| {
+                    pad.shape.map(|shape| PlacedPad {
+                        layer_connection: Default::default(),
+                        uuid: pad.uuid,
+                        package: component_uuid,
+                        name: pad.name.clone(),
+                        net: None,
+                        position: Point {
+                            x: pad.position.x,
+                            y: pad.position.y,
+                        },
+                        layer: pad.layer,
+                        copper_layers: vec![pad.layer],
+                        shape,
+                        diameter: pad.diameter_nm,
+                        width: pad.width_nm,
+                        height: pad.height_nm,
+                        drill: pad.drill_nm.unwrap_or(0),
+                        rotation: 0,
+                        mask_layers: Vec::new(),
+                        paste_layers: Vec::new(),
+                        solder_mask_margin_nm: 0,
+                        solder_paste_margin_nm: 0,
+                        solder_paste_margin_ratio_ppm: 0,
+                        roundrect_rratio_ppm: 250_000,
+                    })
+                }),
+        );
     }
-    pads.retain(|pad| pad.layer == layer);
+    pads.extend(crate::project_bound_component_pads(project, model)?);
+    pads.retain(|pad| {
+        pad.copper_layers.contains(&layer) || (pad.copper_layers.is_empty() && pad.layer == layer)
+    });
     pads.sort_by(|a, b| {
         a.layer
             .cmp(&b.layer)

@@ -540,3 +540,16 @@ and uncertified rational centres refuse with the source UUID and explicit pendin
 obligation. Refusal is preservation evidence, not a mandatory positive. CAM/T04,
 zero intentional deviation, full native proof and independent review remain.
 No dependency, tool taxonomy, new panel mechanism or tolerance is introduced.
+
+### PM057 placed-Pad source consumption
+
+Native bound component-Pads reuse the journal-owned frozen-geometry projection
+for copper/mask consumer contexts. Per-placement IDs, placement translation,
+quarter-turn rotation, side reflection and declared copper span are preserved;
+unbound historical consumers retain their existing behavior. Copper rectangular
+apertures swap dimensions exactly for quarter turns. Unsupported local-point or
+rectangular output rotation refuses before replacing the artifact, rather than
+using unrotated or rounded geometry. Focused positive copper correspondence and
+non-mutation proof do not certify absent mask/paste policy, arbitrary rotations,
+rational-centre CAM/T04 or full manufacturing acceptance. Those remain explicit
+obligations under their owning contracts and C04/C05/C06 boundaries.

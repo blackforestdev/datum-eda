@@ -140,6 +140,15 @@ impl ElectricalSelectionSnapshot {
         } else {
             (BTreeMap::new(), vec![], BTreeSet::new(), None)
         };
+        for shard in model
+            .source_shards
+            .iter()
+            .filter(|s| s.kind == SourceShardKind::BoardRoot)
+        {
+            if let Some(value) = basis.shard_value(shard.shard_id) {
+                values.insert(shard.shard_id, value.clone());
+            }
+        }
         Ok(Self {
             model: model.clone(),
             basis,
@@ -201,6 +210,18 @@ impl ElectricalSelectionSnapshot {
             return Err(ElectricalQueryFailure::UnavailableBasis {
                 sources: roots.iter().map(|r| r.shard_id).collect(),
                 reason: "board root is not unique".into(),
+            });
+        }
+        if let Some(missing) = self.values[&roots[0].shard_id]
+            .get("component_pad_unavailable")
+            .and_then(serde_json::Value::as_object)
+            .filter(|m| !m.is_empty())
+        {
+            return Err(ElectricalQueryFailure::UnavailableBasis {
+                sources: vec![roots[0].shard_id],
+                reason: format!(
+                    "complete physical source has unavailable placed Pad geometry: {missing:?}"
+                ),
             });
         }
         let source: crate::connectivity::BoardCopperSource =

@@ -3,6 +3,7 @@ use super::*;
 pub(super) fn fields(class: Class) -> &'static [(&'static str, &'static str)] {
     match class {
         Class::Footprint => &[
+            ("pad_materialization_status", "pad_materialization_status"),
             ("placement_position_nm", "position"),
             ("placement_rotation", "rotation"),
             ("reference", "reference"),
@@ -14,6 +15,16 @@ pub(super) fn fields(class: Class) -> &'static [(&'static str, &'static str)] {
             ("placement_rotation", "rotation"),
             ("reference", "reference"),
             ("value", "value"),
+        ],
+        Class::Pad => &[
+            ("terminal_position_nm", "position"),
+            ("board_layer", "layer"),
+            ("board_net_id", "net"),
+            ("pad_shape", "shape"),
+            ("pad_diameter_nm", "diameter"),
+            ("pad_width_nm", "width"),
+            ("pad_height_nm", "height"),
+            ("drill_diameter_nm", "drill"),
         ],
         Class::Track => &[
             ("copper_width_nm", "width"),
@@ -93,6 +104,9 @@ pub(super) fn fields(class: Class) -> &'static [(&'static str, &'static str)] {
     }
 }
 pub(super) fn values(class: Class, value: &Value) -> BTreeMap<String, Value> {
+    if class == Class::Pad && value.get("package").is_none() {
+        return BTreeMap::new();
+    }
     // Engine deserialization owns existing defaulted text semantics; scene
     // defaults and rounded Inspector formatting never supply canonical values.
     let normalized = if class == Class::BoardText {
@@ -117,6 +131,9 @@ pub(super) fn values(class: Class, value: &Value) -> BTreeMap<String, Value> {
 /// Existing canonical point or first authored path vertex, not a scene/layout
 /// center. No generated Zone component or missing graphic anchor is invented.
 pub(super) fn anchor(class: Class, value: &Value) -> Option<crate::PointNm> {
+    if class == Class::Pad && value.get("package").is_none() {
+        return None;
+    }
     let point = match class {
         Class::Track | Class::Wire => value.get("from")?,
         Class::BusSection => value.get("segments")?.as_array()?.first()?,

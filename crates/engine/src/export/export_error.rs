@@ -3,6 +3,13 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum ExportError {
     #[error(
+        "Pad {source_id} rotation {rotation} has no exact supported copper aperture; output refused"
+    )]
+    UnsupportedPadRotation {
+        source_id: uuid::Uuid,
+        rotation: i32,
+    },
+    #[error(
         "BoardGraphic {source_id} manufacturing refused: {reason}; no approximate output is permitted"
     )]
     RefusedBoardGraphic {

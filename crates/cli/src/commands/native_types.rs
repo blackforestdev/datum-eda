@@ -101,6 +101,9 @@ pub(crate) struct NativePoint {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct NativeComponentPad {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) source_binding:
+        Option<eda_engine::substrate::component_pad_source::ComponentPadSourceBinding>,
     pub(crate) uuid: Uuid,
     pub(crate) name: String,
     pub(crate) position: NativePoint,

@@ -687,6 +687,36 @@ centres; successful output cannot silently omit a recorded selected-layer graphi
 Rational-centre CAM/T04 and complete C04–C06 acceptance remain required under PM057;
 missing output/refusal cannot pass a required graphics positive.
 
+#### PM057 journal-owned per-placement Pad bindings
+
+Profile 4 component materialization can retain `source_binding` beside each
+`component_pads[placedPackageUuid]` Pad. `uuid` is its freshly allocated placed
+ObjectId; the library Pad is a separately pinned reference. The binding records
+project/Board/placement, materialization basis, Part, Package, explicitly selected
+Footprint or legacy Package, Padstack, frozen local geometry and optional explicit
+ComponentInstance/PinPadMap relationships. Producer pins include actual shard,
+owner/record hashes, object revision and journal incarnation; display fields are
+not correspondence authority.
+
+Create/set-package journal payloads carry complete target producer pins, explicit
+old-ID/target-pin correspondences, additions, retirements and legacy-reference
+registration recovery. Whole-source admission checks every source Pad exactly
+once and refuses partial/foreign/stale transitions. Continuity requires surviving
+recorded source history; deletion/rebirth cannot reuse a placed ID. Replacement
+allocates fresh IDs. Separate profile adoption remains forward-only. Subsequent
+materialization inverses retain the actual complete JSON payload and its existing
+map presence; canonical-byte undo/redo/reopen is proven from that adopted preimage.
+Unsupported noncanonical source writes refuse before staging. Queries never mint
+or adopt, and old unbound/imported canonical Pad sources retain their own rules.
+
+Move/quarter-turn/flip project frozen local geometry through the placement pose;
+flip does not rewrite the binding. Set Part retains it and reports stale state.
+Physical and electrical projection reuse the source-owned occurrence index and
+PM053 complete pin/map/ComponentInstance certificate. Missing geometry or binding
+cannot qualify partial complete Run/Net membership. Exact integer quarter-turn
+geometry is supported; other local-point rotations currently disclose unavailable
+authority, with no rounding or acceptance waiver. C04/C05/C06 remain required.
+
 ### 6.6 `rules/rules.json`
 
 Purpose:

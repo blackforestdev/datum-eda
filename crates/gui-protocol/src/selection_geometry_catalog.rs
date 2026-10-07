@@ -73,9 +73,22 @@ pub fn qualification_catalog(
     authority: &NativeSelectionResolution,
     scene: &BoardReviewSceneV1,
 ) -> BTreeMap<Id, Result<QualificationGeometry, String>> {
-    let board = model
+    let mut board = model
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
         .unwrap_or(Value::Null);
+    let projection =
+        eda_engine::substrate::component_pad_source::component_pad_projection(model, &board);
+    if let Ok(p) = &projection {
+        if !p.pads.is_empty() && board.get("pads").is_none() {
+            board["pads"] = serde_json::json!({});
+        }
+        if let Some(map) = board.get_mut("pads").and_then(Value::as_object_mut) {
+            for (id, pad) in &p.pads {
+                map.entry(id.to_string())
+                    .or_insert_with(|| serde_json::to_value(pad).unwrap());
+            }
+        }
+    }
     let sheet = authority.snapshot().schematic_source().and_then(|s| {
         scene
             .board_uuid
@@ -95,7 +108,18 @@ pub fn qualification_catalog(
                 .get("component_pads")
                 .and_then(|v| v.get(id.id.to_string()))
                 .and_then(Value::as_array)
-                .is_some_and(|pads| !pads.is_empty())
+                .is_some_and(|pads| {
+                    !pads.is_empty()
+                        && (projection.as_ref().is_err()
+                            || pads.iter().any(|v| {
+                                v.get("uuid")
+                                    .and_then(Value::as_str)
+                                    .and_then(|s| s.parse().ok())
+                                    .is_none_or(|id| {
+                                        !projection.as_ref().unwrap().pads.contains_key(&id)
+                                    })
+                            }))
+                })
         {
             result.insert(id, Err("Complete native component Pad identity/geometry authority unavailable; placement-point fallback refused".into()));
             continue;

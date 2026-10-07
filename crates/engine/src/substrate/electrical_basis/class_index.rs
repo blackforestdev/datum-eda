@@ -53,6 +53,30 @@ impl Index {
                         .iter()
                         .position(|class| *class == key)
                         .map_or(classes, |index| classes | (1 << index));
+                    if key == "component_pads"
+                        && let Some(groups) = child.as_object()
+                    {
+                        for pad in groups
+                            .values()
+                            .filter_map(Value::as_array)
+                            .flatten()
+                            .filter(|p| p.get("source_binding").is_some_and(|v| !v.is_null()))
+                        {
+                            if let Some(id) = pad
+                                .get("uuid")
+                                .and_then(Value::as_str)
+                                .and_then(|s| s.parse::<Uuid>().ok())
+                            {
+                                self.0
+                                    .entry((
+                                        shard,
+                                        CLASSES.iter().position(|c| *c == "pads").unwrap(),
+                                    ))
+                                    .or_default()
+                                    .insert(id);
+                            }
+                        }
+                    }
                     self.walk(shard, child, child_classes);
                 }
             }

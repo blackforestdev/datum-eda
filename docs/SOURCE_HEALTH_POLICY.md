@@ -480,3 +480,11 @@ comparison and artifact preview payloads into normal bounded child modules.
 Mechanical implementation is below the normal production ceiling and its legacy
 entry is removed. Native project validation and GUI protocol ceilings ratchet to
 their smaller measured owners; no ceiling or policy is raised.
+
+PM057 placed-Pad integration extracts the existing component facade test tail,
+CLI placement/source helper, selected-Footprint test recipe and native scene Pad
+projection into normal bounded modules. The two retired facade/CLI entries are
+removed from the debt manifest; no ceiling or exception is increased. Package
+application and source validation use bounded child owners. Native tests reuse
+the PM053 binding fixture and historical pool-materialization recipe, rather than
+replacing either working implementation or its adequate unrelated proof.

@@ -9,11 +9,17 @@ fn refusal(message: &str) -> EngineError {
     EngineError::Validation(format!("BoardRoot profile adoption: {message}"))
 }
 
-pub(super) fn refuse_unjournaled(batch: &OperationBatch) -> Result<(), EngineError> {
-    if batch.operations.iter().any(|op| {
-        matches!(op, Operation::AdoptBoardSourceProfile { .. })
-            || super::board_graphic_source::identity(op).is_some()
-    }) {
+pub(super) fn refuse_unjournaled(
+    model: &DesignModel,
+    batch: &OperationBatch,
+) -> Result<(), EngineError> {
+    if super::component_pad_source::touches_batch(model, batch)?
+        || batch.operations.iter().any(|op| {
+            matches!(op, Operation::AdoptBoardSourceProfile { .. })
+                || super::board_graphic_source::identity(op).is_some()
+                || super::component_pad_source::touches(op)
+        })
+    {
         return Err(refusal("requires the canonical journaled transaction"));
     }
     Ok(())
@@ -141,5 +147,6 @@ pub(super) fn materialize(
 }
 
 pub(super) fn validate_native(value: &serde_json::Value) -> Result<(), EngineError> {
-    super::board_graphic_source::validate_native(value)
+    super::board_graphic_source::validate_native(value)?;
+    super::component_pad_source::validate_native(value)
 }

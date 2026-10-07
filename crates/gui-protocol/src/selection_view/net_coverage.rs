@@ -23,7 +23,8 @@ fn origins(
 ) -> BTreeMap<Id, BTreeSet<Occurrence>> {
     let board = model
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
-        .ok();
+        .ok()
+        .and_then(|b| crate::placed_pad_projection::project(model, b).ok());
     let mut pads: BTreeMap<crate::SelectionProjectId, BTreeSet<Occurrence>> = BTreeMap::new();
     for p in board
         .as_ref()

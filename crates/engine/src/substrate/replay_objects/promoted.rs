@@ -7,6 +7,7 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
     objects: &mut BTreeMap<ObjectId, DomainObject>,
     journal: &[TransactionRecord],
 ) {
+    let final_sources = objects.clone();
     for transaction in journal {
         for operation in &transaction.operations {
             if let Operation::CreateBoardGraphic {
@@ -82,6 +83,12 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
                 });
             }
         }
+        for id in &transaction.diff.created {
+            if let Some(source) = final_sources.get(id) {
+                objects.entry(*id).or_insert_with(|| source.clone());
+            }
+        }
+        restore_component_pad_registrations(objects, transaction);
         for object_id in &transaction.diff.modified {
             if let Some(object) = objects.get_mut(object_id) {
                 // A board import can set both outline and stackup. Canonical
@@ -111,5 +118,69 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
         for object_id in &transaction.diff.deleted {
             objects.remove(object_id);
         }
+        restore_library_source_registrations(objects, transaction);
+    }
+}
+
+fn restore_component_pad_registrations(
+    objects: &mut BTreeMap<ObjectId, DomainObject>,
+    transaction: &TransactionRecord,
+) {
+    for op in &transaction.operations {
+        let (package, materialized) = match op {
+            Operation::CreateBoardPackage {
+                package_id,
+                materialized,
+                ..
+            }
+            | Operation::SetBoardPackagePackage {
+                package_id,
+                materialized,
+                ..
+            } => (*package_id, materialized),
+            _ => continue,
+        };
+        let Some(shard) = objects.get(&package).map(|o| o.source_shard_id) else {
+            continue;
+        };
+        let Some(pads) = materialized
+            .get("component_pads")
+            .and_then(serde_json::Value::as_array)
+        else {
+            continue;
+        };
+        for value in pads {
+            if let Ok(pad) = serde_json::from_value::<
+                super::super::component_pad_source::ComponentPadSource,
+            >(value.clone())
+                && (pad.source_binding.is_some() || super::super::component_pad_source::touches(op))
+            {
+                let registration = DomainObject {
+                    object_id: pad.uuid,
+                    object_revision: ObjectRevision(0),
+                    source_shard_id: shard,
+                    domain: "board".into(),
+                    kind: package.to_string(),
+                };
+                if transaction.diff.created.contains(&pad.uuid) {
+                    objects.insert(pad.uuid, registration);
+                } else {
+                    objects.entry(pad.uuid).or_insert(registration);
+                }
+            }
+        }
+    }
+}
+fn restore_library_source_registrations(
+    objects: &mut BTreeMap<ObjectId, DomainObject>,
+    transaction: &TransactionRecord,
+) {
+    for op in &transaction.operations {
+        let materialized = match op {
+            Operation::CreateBoardPackage { materialized, .. }
+            | Operation::SetBoardPackagePackage { materialized, .. } => materialized,
+            _ => continue,
+        };
+        if let Some(value)=materialized.get("pad_source_transition") && let Ok(proof)=serde_json::from_value::<crate::api::native_write::board_components::pad_materialization::ComponentPadTransition>(value.clone()) {objects.extend(proof.library_source_registrations);}
     }
 }

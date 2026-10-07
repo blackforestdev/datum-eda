@@ -167,6 +167,8 @@ pub(crate) fn native_project_board_component_report(
 ) -> NativeProjectBoardComponentMutationReportView {
     let key = component.uuid.to_string();
     NativeProjectBoardComponentMutationReportView {
+        pad_materialization_status: super::board::component_pad_status(project, &component),
+        source_profile_adoption_transaction: None,
         action: action.to_string(),
         project_root: project.root.display().to_string(),
         board_path: project.board_path.display().to_string(),

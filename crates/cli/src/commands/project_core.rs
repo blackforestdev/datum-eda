@@ -284,6 +284,40 @@ fn parse_native_check_waiver(value: serde_json::Value) -> Result<CheckWaiver> {
     Ok(waiver)
 }
 
+/// Reuse the journal-qualified frozen source for every native board consumer.
+pub(crate) fn project_bound_component_pads(
+    project: &LoadedNativeProject,
+    model: Option<&eda_engine::substrate::DesignModel>,
+) -> Result<Vec<PlacedPad>> {
+    if !project
+        .board
+        .component_pads
+        .values()
+        .flatten()
+        .any(|p| p.source_binding.is_some())
+    {
+        return Ok(vec![]);
+    }
+    let resolved;
+    let model = match model {
+        Some(m) => m,
+        None => {
+            resolved = eda_engine::substrate::ProjectResolver::new(&project.root).resolve()?;
+            &resolved
+        }
+    };
+    let board =
+        model.materialized_source_shard_value(eda_engine::substrate::SourceShardKind::BoardRoot)?;
+    let projection =
+        eda_engine::substrate::component_pad_source::component_pad_projection(model, &board)?;
+    anyhow::ensure!(
+        projection.unavailable.is_empty(),
+        "placed Pad exact source geometry unavailable: {:?}",
+        projection.unavailable
+    );
+    Ok(projection.pads.into_values().collect())
+}
+
 pub(crate) fn build_native_project_board(project: &LoadedNativeProject) -> Result<Board> {
     let stackup_layers = project
         .board
@@ -304,7 +338,7 @@ pub(crate) fn build_native_project_board(project: &LoadedNativeProject) -> Resul
             Ok((package.uuid, package))
         })
         .collect::<Result<HashMap<Uuid, PlacedPackage>>>()?;
-    let pads = project
+    let mut pads = project
         .board
         .pads
         .values()
@@ -315,6 +349,10 @@ pub(crate) fn build_native_project_board(project: &LoadedNativeProject) -> Resul
             Ok((pad.uuid, pad))
         })
         .collect::<Result<HashMap<Uuid, PlacedPad>>>()?;
+    for pad in project_bound_component_pads(project, None)? {
+        anyhow::ensure!(!pads.contains_key(&pad.uuid), "placed Pad source collision");
+        pads.insert(pad.uuid, pad);
+    }
     let tracks = project
         .board
         .tracks

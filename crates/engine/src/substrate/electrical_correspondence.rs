@@ -9,6 +9,20 @@ pub(super) fn certify(
     evidence: &NetCorrespondence,
     board_net: Option<Uuid>,
 ) -> Result<NetCorrespondenceStatus, EngineError> {
+    if let Some(status) = source.component_pad_status(model, evidence.board_pad.object_id) {
+        use super::component_pad_source::ComponentPadMaterializationStatus as Materialization;
+        match status {
+            Materialization::Stale => return Ok(NetCorrespondenceStatus::Stale),
+            Materialization::Unverified => return Ok(NetCorrespondenceStatus::Unverified),
+            Materialization::Current => {}
+        }
+        if source
+            .object(model, evidence.board_pad.object_id, "pads")
+            .is_none()
+        {
+            return Ok(NetCorrespondenceStatus::Unverified);
+        }
+    }
     let Some(library_pad) = &evidence.library_pad else {
         return Ok(NetCorrespondenceStatus::Unverified);
     };

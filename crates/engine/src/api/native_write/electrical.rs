@@ -224,3 +224,6 @@ mod binding_membership_tests;
 mod board_selection_query_tests;
 #[cfg(test)]
 mod selection_query_tests;
+
+#[cfg(test)]
+mod placed_pad_binding_tests;

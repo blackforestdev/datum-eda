@@ -12,6 +12,9 @@ use crate::{
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectBoardComponentMutationReportView {
+    pub(crate) pad_materialization_status: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) source_profile_adoption_transaction: Option<String>,
     pub(crate) action: String,
     pub(crate) project_root: String,
     pub(crate) board_path: String,

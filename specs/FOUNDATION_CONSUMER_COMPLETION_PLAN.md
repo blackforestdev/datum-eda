@@ -2706,3 +2706,24 @@ committed 7675bcf8 and is captured as dat-release-count-baseline-odve; release
 checks and assertions remain unchanged. Positive rational-centre CAM/T04, placed
 Pad correspondence and complete C04/C05/C06 remain unfinished. No acceptance,
 prototype, dependency, tolerance, performance or deferred-editor boundary changed.
+
+### PM057 C03 — journal-owned placed-Pad integration unit
+
+The existing placement/package path now prepares per-placement Pad IDs and actual
+selected producer pins. Native adoption, explicit surviving-history
+rematerialization, replacement/retirement and registration recovery carry complete
+journal payloads. Focused proof covers exact canonical undo/redo/reopen, two
+placements, source survival versus UUID rebirth, whole-source refusal, stale Set
+Part, physical pose and positive existing PM053 Net inclusion. Native scene,
+selection geometry, Inspector status and copper contexts consume that same source.
+No query adopts or rematerializes. Historical incomplete sources remain unverified;
+imported canonical Pads keep their existing ImportMap/occurrence authority.
+
+This implementation does not close C03 or waive mandatory native positives.
+Remaining integration/proof must reconcile all existing callers and the frozen
+recipe, including the schematic handoff and complete native projection; non-quarter
+local geometry remains explicitly unavailable until its owning exact construction
+is delivered or dispositioned. Reserved C04 native proof, C05 independent review,
+C06 acceptance, CAM/T04, Inspector layout, performance and deferred editors retain
+their boundaries. Unrelated schematic Sheet registration-kind discrepancy is
+captured as intake, not absorbed into this delivery unit.

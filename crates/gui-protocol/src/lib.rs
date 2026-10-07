@@ -1,3 +1,5 @@
+mod placed_pad_projection;
+use placed_pad_projection::extract_pads;
 mod artifact_preview_payload;
 use anyhow::{Context, Result, bail};
 use artifact_preview_payload::*;
@@ -2114,7 +2116,7 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
         .find(|shard| shard.kind == SourceShardKind::BoardRoot)
         .context("resolved native project model is missing board root shard")?;
     let board_path = board_shard.path.clone();
-    let board_value = model
+    let mut board_value = model
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
         .context("failed to materialize resolved board root shard")?;
 
@@ -2137,6 +2139,7 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
     // --- Components (packages) ---
     let components = extract_components(&board_value)?;
 
+    board_value = placed_pad_projection::project(&model, board_value)?;
     // --- Pads ---
     let pads = extract_pads(&board_value)?;
     let pad_expansion_setup = extract_pad_expansion_setup(&board_value)?;
@@ -2292,50 +2295,6 @@ struct EnginePadExpansionSetupPayload {
     pad_to_paste_ratio_ppm: i32,
     #[serde(default)]
     solder_mask_min_width_nm: i64,
-}
-
-fn extract_pads(board: &Value) -> Result<Vec<BoardPadPayload>> {
-    let pads_map = board
-        .get("pads")
-        .and_then(|v| v.as_object())
-        .cloned()
-        .unwrap_or_default();
-    let mut pads = Vec::with_capacity(pads_map.len());
-    for (_key, value) in pads_map {
-        let pad: EnginePadPayload =
-            serde_json::from_value(value).context("failed to parse board pad")?;
-        pads.push(BoardPadPayload {
-            uuid: pad.uuid.to_string(),
-            package: pad.package.to_string(),
-            name: pad.name,
-            net: pad.net.map(|u| u.to_string()),
-            position: PointNm {
-                x: pad.position.x,
-                y: pad.position.y,
-            },
-            layer: pad.layer,
-            copper_layers: pad.copper_layers,
-            shape: pad.shape.to_string(),
-            diameter: pad.diameter,
-            width: pad.width,
-            height: pad.height,
-            roundrect_rratio_ppm: pad.roundrect_rratio_ppm,
-            mask_layers: pad.mask_layers,
-            paste_layers: pad.paste_layers,
-            solder_mask_margin_nm: pad.solder_mask_margin_nm,
-            solder_paste_margin_nm: pad.solder_paste_margin_nm,
-            solder_paste_margin_ratio_ppm: pad.solder_paste_margin_ratio_ppm,
-            drill: Some(pad.drill),
-            rotation: pad.rotation.unwrap_or(0),
-        });
-    }
-    pads.sort_by(|a, b| {
-        a.package
-            .cmp(&b.package)
-            .then_with(|| a.name.cmp(&b.name))
-            .then_with(|| a.uuid.cmp(&b.uuid))
-    });
-    Ok(pads)
 }
 
 fn extract_pad_expansion_setup(board: &Value) -> Result<ScenePadExpansionSetup> {
@@ -4023,18 +3982,18 @@ mod tests {
     use serde_json::json;
     use uuid::Uuid;
 
-    fn unique_project_root(label: &str) -> PathBuf {
+    pub(super) fn unique_project_root(label: &str) -> PathBuf {
         std::env::temp_dir().join(format!("{label}-{}", Uuid::new_v4()))
     }
 
-    fn write_json(path: &Path, value: serde_json::Value) {
+    pub(super) fn write_json(path: &Path, value: serde_json::Value) {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent).expect("fixture directory should create");
         }
         std::fs::write(path, format!("{value}\n")).expect("fixture JSON should write");
     }
 
-    fn write_minimal_native_project(root: &Path, project_id: Uuid, board_id: Uuid) {
+    pub(super) fn write_minimal_native_project(root: &Path, project_id: Uuid, board_id: Uuid) {
         write_json(
             &root.join("project.json"),
             json!({

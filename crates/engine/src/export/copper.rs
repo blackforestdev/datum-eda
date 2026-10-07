@@ -1,4 +1,4 @@
-use crate::board::{PadAperture, PlacedPad, Track, Via, Zone};
+use crate::board::{PadAperture, PadShape, PlacedPad, Track, Via, Zone};
 use crate::ir::geometry::LayerId;
 
 use super::{ExportError, format_coord, format_mm_6};
@@ -10,6 +10,24 @@ pub fn render_rs274x_copper_layer(
     zones: &[Zone],
     vias: &[Via],
 ) -> Result<String, ExportError> {
+    // Quarter turns have an exact rectangular aperture representation. Keep
+    // authored dimensions untouched; rotate only the output aperture basis.
+    let mut output_pads = pads.to_vec();
+    for pad in &mut output_pads {
+        if pad.shape == PadShape::Rect {
+            match pad.rotation.rem_euclid(180) {
+                0 => {}
+                90 => std::mem::swap(&mut pad.width, &mut pad.height),
+                _ => {
+                    return Err(ExportError::UnsupportedPadRotation {
+                        source_id: pad.uuid,
+                        rotation: pad.rotation,
+                    });
+                }
+            }
+        }
+    }
+    let pads = output_pads.as_slice();
     // Preflight every arc before publishing any layer bytes. Nonzero output
     // remains forbidden without M1 ratification, even when format-valid.
     for track in tracks.iter().filter(|t| t.midpoint.is_some()) {

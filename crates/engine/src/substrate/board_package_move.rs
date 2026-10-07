@@ -108,7 +108,9 @@ fn mirror_board_package_pads_for_side(
             let Some(pad_object) = pad.as_object_mut() else {
                 continue;
             };
-            mirror_pad_object_for_side(pad_object, origin_x, previous_layer, target_layer)?;
+            if !pad_object.contains_key("source_binding") {
+                mirror_pad_object_for_side(pad_object, origin_x, previous_layer, target_layer)?;
+            }
         }
     }
 

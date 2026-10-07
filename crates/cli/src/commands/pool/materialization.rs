@@ -21,10 +21,14 @@ use crate::{
 
 const PACKAGE_COURTYARD_MECHANICAL_LAYER_ID: i32 = 41;
 
-pub(crate) fn materialize_supported_pool_package_graphics(
+pub(crate) fn materialize_supported_pool_package_graphics_with_source(
     project: &mut LoadedNativeProject,
     component: &PlacedPackage,
-) -> Result<()> {
+) -> Result<
+    Option<
+        eda_engine::api::native_write::board_components::pad_materialization::PadLandPatternSource,
+    >,
+> {
     initialize_component_graphic_maps(project, component.uuid.to_string());
     let model = ProjectResolver::new(&project.root)
         .resolve()
@@ -37,14 +41,15 @@ pub(crate) fn materialize_supported_pool_package_graphics(
 
     let Some(package) = resolve_native_project_pool_package(project, &model, component.package)?
     else {
-        return Ok(());
+        return Ok(None);
     };
     let footprint =
         resolve_native_project_pool_footprint_for_component(project, &model, component)?;
     let Some(silkscreen_layer) = resolve_component_silkscreen_layer(project, component.layer)?
     else {
-        return Ok(());
+        return Ok(None);
     };
+    let source = footprint.as_ref().map_or(eda_engine::api::native_write::board_components::pad_materialization::PadLandPatternSource::LegacyPackage,|f|eda_engine::api::native_write::board_components::pad_materialization::PadLandPatternSource::Footprint(f.uuid));
     let geometry = PoolLandPatternGeometry::from_footprint_or_package(footprint, package);
 
     let key = component.uuid.to_string();
@@ -187,7 +192,14 @@ pub(crate) fn materialize_supported_pool_package_graphics(
         .component_models_3d
         .insert(component.uuid.to_string(), models_3d);
 
-    Ok(())
+    Ok(Some(source))
+}
+
+pub(crate) fn materialize_supported_pool_package_graphics(
+    project: &mut LoadedNativeProject,
+    component: &PlacedPackage,
+) -> Result<()> {
+    materialize_supported_pool_package_graphics_with_source(project, component).map(|_| ())
 }
 
 struct PoolLandPatternGeometry {
@@ -301,6 +313,7 @@ fn native_component_pad(
             None => (None, 0, 0, 0),
         };
     NativeComponentPad {
+        source_binding: None,
         uuid: pad.uuid,
         name: pad.name,
         position: native_point(pad.position),

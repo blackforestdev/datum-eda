@@ -34,6 +34,33 @@ impl ElectricalBasis {
                 continue;
             }
             let pending_create = operations.iter().find_map(|op| match op {
+                Operation::CreatePoolLibraryObject {
+                    relative_path,
+                    object,
+                    ..
+                } if shard.kind == SourceShardKind::Pool
+                    && shard.relative_path == *relative_path =>
+                {
+                    Some(object.clone())
+                }
+                Operation::CreatePoolPadstack {
+                    relative_path,
+                    padstack,
+                    ..
+                } if shard.kind == SourceShardKind::Pool
+                    && shard.relative_path == *relative_path =>
+                {
+                    Some(padstack.clone())
+                }
+                Operation::CreatePoolPackage {
+                    relative_path,
+                    package,
+                    ..
+                } if shard.kind == SourceShardKind::Pool
+                    && shard.relative_path == *relative_path =>
+                {
+                    Some(package.clone())
+                }
                 Operation::CreateSchematicDefinition {
                     relative_path,
                     definition,
@@ -83,10 +110,98 @@ impl ElectricalBasis {
                     _ => {}
                 }
             }
+            if shard.kind == SourceShardKind::BoardRoot {
+                value =
+                    super::component_pad_source::project_board_value(model, &value, operations)?;
+            }
             values.insert(shard.shard_id, value);
         }
         let classes = class_index::Index::capture(&values);
-        Ok(Self { values, classes })
+        let mut basis = Self { values, classes };
+        // Provisional assignments allow the existing PM053 certificate to inspect
+        // geometry and map correspondence. Only complete evidence survives capture.
+        let mut refused = Vec::new();
+        for (shard, value) in &basis.values {
+            let Some(groups) = value.get("component_pads").and_then(Value::as_object) else {
+                continue;
+            };
+            for raw in groups.values().filter_map(Value::as_array).flatten() {
+                let Some(id) = raw
+                    .get("uuid")
+                    .and_then(Value::as_str)
+                    .and_then(|s| Uuid::parse_str(s).ok())
+                else {
+                    continue;
+                };
+                let Some(net) = value
+                    .get("pads")
+                    .and_then(|p| p.get(id.to_string()))
+                    .and_then(|p| p.get("net"))
+                    .and_then(|n| serde_json::from_value::<Uuid>(n.clone()).ok())
+                else {
+                    continue;
+                };
+                let mut count = 0;
+                let mut complete = true;
+                for relation in model.electrical_identities.values() {
+                    if let super::ElectricalIdentity::NetRelationship {
+                        board_net: Some(board_net),
+                        intent: super::NetRelationshipIntent::Implemented,
+                        evidence,
+                        ..
+                    } = &relation.identity
+                    {
+                        for cell in evidence.iter().filter(|e| e.board_pad.object_id == id) {
+                            count += 1;
+                            complete &= board_net.object_id == net
+                                && super::electrical_correspondence::certify(
+                                    model,
+                                    &basis,
+                                    cell,
+                                    Some(net),
+                                )
+                                .is_ok_and(|s| s == super::NetCorrespondenceStatus::Complete);
+                        }
+                    }
+                }
+                if count == 0 || !complete {
+                    refused.push((*shard, id));
+                }
+            }
+        }
+        for (shard, id) in refused {
+            basis.values.get_mut(&shard).unwrap()["pads"][id.to_string()]["net"] = Value::Null;
+        }
+        Ok(basis)
+    }
+    pub(super) fn component_pad_status(
+        &self,
+        model: &DesignModel,
+        id: Uuid,
+    ) -> Option<super::component_pad_source::ComponentPadMaterializationStatus> {
+        let object = model.objects.get(&id)?;
+        let board = self.values.get(&object.source_shard_id)?;
+        for (package, pads) in board.get("component_pads")?.as_object()? {
+            for raw in pads.as_array()? {
+                if raw.get("uuid").and_then(Value::as_str) != Some(id.to_string().as_str())
+                    || raw.get("source_binding").is_none_or(Value::is_null)
+                {
+                    continue;
+                }
+                let pad =
+                    serde_json::from_value::<super::component_pad_source::ComponentPadSource>(
+                        raw.clone(),
+                    )
+                    .ok()?;
+                let placed: crate::board::PlacedPackage =
+                    serde_json::from_value(board["packages"][package].clone()).ok()?;
+                return Some(pad.materialization_status(model, placed.part, placed.package));
+            }
+        }
+        None
+    }
+    pub(super) fn shard_value(&self, id: Uuid) -> Option<&Value> {
+        self.values.get(&id)
     }
     pub(super) fn class(&self, model: &DesignModel, id: Uuid, class: &str, domain: &str) -> bool {
         model

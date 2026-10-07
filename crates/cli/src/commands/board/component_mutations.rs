@@ -1,4 +1,8 @@
+mod source_materialization;
 use crate::*;
+pub(crate) use source_materialization::{
+    component_pad_status, place_native_project_board_component,
+};
 use std::path::Path;
 
 use anyhow::{Context, Result};
@@ -38,47 +42,6 @@ fn commit_board_component_edit(
     let prepared = build_edit_board_package(&model, cli_provenance(reason)?, component_uuid, edit)?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(())
-}
-
-pub(crate) fn place_native_project_board_component(
-    root: &Path,
-    part_uuid: Uuid,
-    package_uuid: Uuid,
-    reference: String,
-    value: String,
-    position: Point,
-    layer: i32,
-) -> Result<NativeProjectBoardComponentMutationReportView> {
-    let component_uuid = Uuid::new_v4();
-    let component = PlacedPackage {
-        uuid: component_uuid,
-        part: part_uuid,
-        package: package_uuid,
-        reference,
-        value,
-        position,
-        rotation: 0,
-        layer,
-        locked: false,
-    };
-    let materialized = board_package_materialization_payload_for_component(root, &component)?;
-    let mut model = ProjectResolver::new(root).resolve()?;
-    let prepared = build_place_board_package(
-        &model,
-        cli_provenance("place board component")?,
-        &BoardPackagePlacement {
-            package: component.clone(),
-            materialized,
-        },
-    )?;
-    commit_prepared(&mut model, root, prepared)?;
-
-    let project = load_native_project_with_resolved_board(root)?;
-    Ok(native_project_board_component_report(
-        "place_board_component",
-        &project,
-        component,
-    ))
 }
 
 pub(crate) fn move_native_project_board_component(
@@ -213,8 +176,13 @@ pub(crate) fn set_native_project_board_component_package(
             .expect("native board component serialization must succeed"),
     );
     clear_loaded_component_materialization(&mut project, &key);
-    materialize_supported_pool_package_graphics(&mut project, &component)?;
-    let materialized = component_materialization_payload(&project, &key);
+    let selected = super::super::pool::materialize_supported_pool_package_graphics_with_source(
+        &mut project,
+        &component,
+    )?;
+    let legacy = component_materialization_payload(&project, &key);
+    let (materialized, adoption) =
+        source_materialization::source_payload(root, &component, &legacy, selected)?;
     commit_board_component_edit(
         root,
         "set board component package",
@@ -237,11 +205,10 @@ pub(crate) fn set_native_project_board_component_package(
             project.board_path.display()
         )
     })?;
-    Ok(native_project_board_component_report(
-        "set_board_component_package",
-        &project,
-        component,
-    ))
+    let mut report =
+        native_project_board_component_report("set_board_component_package", &project, component);
+    report.source_profile_adoption_transaction = adoption.map(|id| id.to_string());
+    Ok(report)
 }
 
 pub(crate) fn current_board_component_materialization_payload(
