@@ -1,3 +1,4 @@
+mod command;
 use crate::*;
 use std::path::Path;
 
@@ -283,6 +284,7 @@ pub(crate) fn propose_create_native_project_pool_pin_pad_map(
     )?;
     let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
     Ok(NativeProjectProposalCreateView {
+        source_profile_adoption_transaction: None,
         contract: "proposal_create_v1",
         action: "create_pool_pin_pad_map_proposal",
         project_id: model.project.project_id.to_string(),
@@ -395,6 +397,7 @@ pub(crate) fn propose_set_native_project_pool_pin_pad_map(
     )?;
     let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
     Ok(NativeProjectProposalCreateView {
+        source_profile_adoption_transaction: None,
         contract: "proposal_create_v1",
         action: "set_pool_pin_pad_map_proposal",
         project_id: model.project.project_id.to_string(),
@@ -455,6 +458,7 @@ pub(super) fn propose_create_pool_library_object_value(
     )?;
     let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
     Ok(NativeProjectProposalCreateView {
+        source_profile_adoption_transaction: None,
         contract: "proposal_create_v1",
         action,
         project_id: model.project.project_id.to_string(),
@@ -468,35 +472,6 @@ pub(super) fn propose_create_pool_library_object_value(
 // Phase 5: exec-layer dissolution — proposal-variant run() impls (the
 // former command_exec_proposal_library.rs forwarding fns, now inherent
 // methods on the clap args structs).
-
-impl ProposalCreatePoolLibraryObjectArgs {
-    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
-        let Self {
-            path,
-            pool,
-            kind,
-            object,
-            from_json,
-            proposal,
-            rationale,
-        } = self;
-        Ok((
-            render_output(
-                format,
-                &propose_create_native_project_pool_library_object(
-                    &path,
-                    &pool,
-                    &kind,
-                    object,
-                    &from_json,
-                    proposal,
-                    rationale.as_deref(),
-                )?,
-            ),
-            0,
-        ))
-    }
-}
 
 impl ProposalCreatePoolUnitArgs {
     pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {

@@ -2720,10 +2720,21 @@ No query adopts or rematerializes. Historical incomplete sources remain unverifi
 imported canonical Pads keep their existing ImportMap/occurrence authority.
 
 This implementation does not close C03 or waive mandatory native positives.
-Remaining integration/proof must reconcile all existing callers and the frozen
-recipe, including the schematic handoff and complete native projection; non-quarter
-local geometry remains explicitly unavailable until its owning exact construction
-is delivered or dispositioned. Reserved C04 native proof, C05 independent review,
+Schematic handoff and production replacement Proposals now use the same build-only
+source-qualified payload. Their mutation handlers preflight the complete request,
+perform any separately reported forward-only profile adoption, then rebuild from
+the adopted source basis. Dry-run does not adopt; accepted execution persists the
+prepared Pad allocations. Historical handoff and replacement recipes prove these
+actual CLI paths. Deleted handoff placement incarnations receive fresh IDs.
+
+Remaining integration/proof must reconcile the frozen native recipe and complete
+native projection; non-quarter local geometry remains explicitly unavailable until
+its owning exact construction is delivered or dispositioned. The retained 30°
+recipe requires irrational transformed Pad centres, which current integer-nm
+source/protocol points cannot represent. Existing PM054 query rules forbid silently
+quantizing those centres. A proposed bounded release amendment has no execution
+or acceptance effect before explicit owner disposition; the original cases remain
+mandatory. Reserved C04 native proof, C05 independent review,
 C06 acceptance, CAM/T04, Inspector layout, performance and deferred editors retain
 their boundaries. Unrelated schematic Sheet registration-kind discrepancy is
 captured as intake, not absorbed into this delivery unit.

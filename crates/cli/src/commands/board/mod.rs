@@ -42,10 +42,10 @@ mod views_mutations;
 
 pub(crate) use self::component_layer::set_native_project_board_component_layer;
 pub(crate) use self::component_mutations::{
-    board_package_materialization_payload_for_component, component_pad_status,
-    current_board_component_materialization_payload, delete_native_project_board_component,
-    place_native_project_board_component, set_native_project_board_component_package,
-    set_native_project_board_component_part,
+    adopt_component_pad_profile_for_write, board_package_materialization_payload_for_component,
+    component_pad_status, current_board_component_materialization_payload,
+    delete_native_project_board_component, place_native_project_board_component,
+    set_native_project_board_component_package, set_native_project_board_component_part,
 };
 pub(crate) use self::component_query::{
     component_graphic_count, component_has_persisted_mechanical,

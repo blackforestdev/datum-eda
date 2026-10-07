@@ -476,6 +476,7 @@ fn create_pool_footprint_proposal_from_operations(
     )?;
     let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
     Ok(NativeProjectProposalCreateView {
+        source_profile_adoption_transaction: None,
         contract: "proposal_create_v1",
         action,
         project_id: model.project.project_id.to_string(),

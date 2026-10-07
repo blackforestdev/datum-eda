@@ -115,6 +115,7 @@ pub(crate) fn propose_set_native_project_pool_package_pad(
     )?;
     let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
     Ok(NativeProjectProposalCreateView {
+        source_profile_adoption_transaction: None,
         contract: "proposal_create_v1",
         action: "set_pool_package_pad_proposal",
         project_id: model.project.project_id.to_string(),
@@ -236,6 +237,7 @@ fn propose_set_pool_package_object_value(
     )?;
     let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
     Ok(NativeProjectProposalCreateView {
+        source_profile_adoption_transaction: None,
         contract: "proposal_create_v1",
         action,
         project_id: model.project.project_id.to_string(),

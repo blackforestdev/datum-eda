@@ -56,7 +56,7 @@ fn seed_native_sheet(root: &Path) -> Uuid {
     sheet_uuid
 }
 
-fn add_local_pool_ref(root: &Path) {
+pub(super) fn add_local_pool_ref(root: &Path) {
     let project_json = root.join("project.json");
     let mut project_value: serde_json::Value = serde_json::from_str(
         &std::fs::read_to_string(&project_json).expect("project.json should read"),
@@ -73,7 +73,7 @@ fn add_local_pool_ref(root: &Path) {
     .expect("project.json should write");
 }
 
-fn write_pool_part_with_default_footprint(
+pub(super) fn write_pool_part_with_default_footprint(
     root: &Path,
     part_uuid: Uuid,
     package_uuid: Uuid,
@@ -139,6 +139,53 @@ fn write_pool_part_with_default_footprint(
     .expect("footprint should write");
 }
 
+// Extend this historical handoff recipe with real source-backed copper Pads.
+pub(super) fn install_supported_handoff_pads(root: &Path, package: Uuid, footprint: Uuid) -> Uuid {
+    let pad = Uuid::new_v4();
+    let stack = Uuid::new_v4();
+    let write = |path: PathBuf, value: serde_json::Value| {
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(
+            path,
+            format!("{}\n", to_json_deterministic(&value).unwrap()),
+        )
+        .unwrap();
+    };
+    write(
+        root.join(format!("pool/packages/{package}.json")),
+        serde_json::json!({
+            "schema_version":1, "uuid":package, "name":"HANDOFF", "pads":{},
+            "courtyard":{"vertices":[],"closed":true},"silkscreen":[],"models_3d":[],"tags":[]
+        }),
+    );
+    write(
+        root.join(format!("pool/padstacks/{stack}.json")),
+        serde_json::json!({
+            "schema_version":1, "uuid":stack, "name":"PAD",
+            "aperture":{"circle":{"diameter_nm":600000}},"drill_nm":null,"plated":false
+        }),
+    );
+    let path = root.join(format!("pool/footprints/{footprint}.json"));
+    let mut value: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    value["schema_version"] = 1.into();
+    value["pads"] = serde_json::json!({pad.to_string():{
+        "uuid":pad,"name":"1","position":{"x":100000,"y":200000},"padstack":stack,"layer":1
+    }});
+    write(path, value);
+    let path = root.join("board/board.json");
+    let mut value: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    value["stackup"] = serde_json::json!({"layers":[
+        {"id":1,"name":"F.Cu","layer_type":"Copper","thickness_nm":35000},
+        {"id":2,"name":"B.Cu","layer_type":"Copper","thickness_nm":35000},
+        {"id":21,"name":"F.SilkS","layer_type":"Silkscreen","thickness_nm":0},
+        {"id":22,"name":"B.SilkS","layer_type":"Silkscreen","thickness_nm":0}
+    ]});
+    write(path, value);
+    pad
+}
+
 fn place_symbol_with_part(root: &Path, sheet_uuid: Uuid, part_uuid: Uuid) -> String {
     let place_output = execute(
         Cli::try_parse_from([
@@ -193,6 +240,8 @@ fn project_generate_board_components_reports_and_applies_initial_packages() {
     let package_uuid = Uuid::new_v4();
     let footprint_uuid = Uuid::new_v4();
     write_pool_part_with_default_footprint(&root, part_uuid, package_uuid, footprint_uuid);
+    let library_pad = install_supported_handoff_pads(&root, package_uuid, footprint_uuid);
+    let initial_board = std::fs::read(root.join("board/board.json")).unwrap();
     let symbol_uuid = place_symbol_with_part(&root, sheet_uuid, part_uuid);
 
     let dry_run = execute(
@@ -217,6 +266,11 @@ fn project_generate_board_components_reports_and_applies_initial_packages() {
     .expect("generate-board-components dry-run should succeed");
     let dry_report: serde_json::Value =
         serde_json::from_str(&dry_run).expect("dry-run output should parse");
+    assert_eq!(
+        std::fs::read(root.join("board/board.json")).unwrap(),
+        initial_board
+    );
+    assert!(dry_report["source_profile_adoption_transaction"].is_null());
     assert_eq!(dry_report["applied"], false);
     assert_eq!(dry_report["generated_count"], 1);
     assert_eq!(
@@ -257,6 +311,18 @@ fn project_generate_board_components_reports_and_applies_initial_packages() {
         serde_json::from_str(&apply).expect("apply output should parse");
     assert_eq!(apply_report["applied"], true);
     assert_eq!(apply_report["generated_count"], 1);
+    assert!(apply_report["source_profile_adoption_transaction"].is_string());
+    let source: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("board/board.json")).unwrap()).unwrap();
+    let key = apply_report["generated_packages"][0]["package_uuid"]
+        .as_str()
+        .unwrap();
+    let placed_pad = &source["component_pads"][key][0];
+    assert_ne!(placed_pad["uuid"], library_pad.to_string());
+    assert_eq!(
+        placed_pad["source_binding"]["land_pattern"]["object_id"],
+        footprint_uuid.to_string()
+    );
 
     let components_output = execute(
         Cli::try_parse_from([
@@ -294,6 +360,8 @@ fn project_generate_board_components_can_create_and_apply_proposal() {
     let package_uuid = Uuid::new_v4();
     let footprint_uuid = Uuid::new_v4();
     write_pool_part_with_default_footprint(&root, part_uuid, package_uuid, footprint_uuid);
+    let library_pad = install_supported_handoff_pads(&root, package_uuid, footprint_uuid);
+    let initial_board = std::fs::read(root.join("board/board.json")).unwrap();
     let symbol_uuid = place_symbol_with_part(&root, sheet_uuid, part_uuid);
     let proposal_id = Uuid::new_v4();
 
@@ -324,6 +392,22 @@ fn project_generate_board_components_can_create_and_apply_proposal() {
     assert_eq!(proposal_report["proposed"], true);
     assert_eq!(proposal_report["proposal_id"], proposal_id.to_string());
     assert_eq!(proposal_report["generated_count"], 1);
+    assert!(proposal_report["source_profile_adoption_transaction"].is_string());
+    let adopted: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("board/board.json")).unwrap()).unwrap();
+    let mut expected: serde_json::Value = serde_json::from_slice(&initial_board).unwrap();
+    expected["schema_version"] = 4.into();
+    assert_eq!(
+        adopted, expected,
+        "draft writes only the separate profile adoption, not Pad materialization"
+    );
+    let proposed_pad =
+        &proposal_report["proposal"]["batch"]["operations"][0]["materialized"]["component_pads"][0];
+    assert_ne!(proposed_pad["uuid"], library_pad.to_string());
+    assert_eq!(
+        proposed_pad["source_binding"]["land_pattern"]["object_id"],
+        footprint_uuid.to_string()
+    );
     assert_eq!(
         proposal_report["generated_packages"][0]["symbol_uuid"],
         symbol_uuid
@@ -392,6 +476,15 @@ fn project_generate_board_components_can_create_and_apply_proposal() {
         .expect("CLI should parse"),
     )
     .expect("proposal accept-apply should succeed");
+    let source: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("board/board.json")).unwrap()).unwrap();
+    let key = proposal_report["generated_packages"][0]["package_uuid"]
+        .as_str()
+        .unwrap();
+    assert_eq!(
+        source["component_pads"][key][0]["uuid"],
+        proposed_pad["uuid"]
+    );
 
     let components_output = execute(
         Cli::try_parse_from([

@@ -75,6 +75,21 @@ fn proposal_create_board_component_replacement_is_non_mutating_until_accept_appl
     let original_package = Uuid::new_v4();
     let replacement_part = Uuid::new_v4();
     let replacement_package = Uuid::new_v4();
+    // Reuse the actual source-backed handoff recipe for this historical
+    // replacement path; the old placement deliberately has no library source.
+    let footprint = Uuid::new_v4();
+    super::main_tests_project_board_handoff::add_local_pool_ref(&root);
+    super::main_tests_project_board_handoff::write_pool_part_with_default_footprint(
+        &root,
+        replacement_part,
+        replacement_package,
+        footprint,
+    );
+    let library_pad = super::main_tests_project_board_handoff::install_supported_handoff_pads(
+        &root,
+        replacement_package,
+        footprint,
+    );
 
     let placed_output = execute(
         Cli::try_parse_from([
@@ -134,6 +149,15 @@ fn proposal_create_board_component_replacement_is_non_mutating_until_accept_appl
     )
     .expect("replacement proposal should create");
     let report: serde_json::Value = serde_json::from_str(&create_output).unwrap();
+    assert!(report["source_profile_adoption_transaction"].is_string());
+    let proposed_pad =
+        &report["proposal"]["batch"]["operations"][2]["materialized"]["component_pads"][0];
+    assert_ne!(proposed_pad["uuid"], library_pad.to_string());
+    assert_eq!(
+        proposed_pad["source_binding"]["land_pattern"]["object_id"],
+        footprint.to_string()
+    );
+
     assert_eq!(report["contract"], "proposal_create_v1");
     assert_eq!(report["action"], "propose_board_component_replacement");
     assert_eq!(report["proposal_id"], proposal_id.to_string());
@@ -170,6 +194,13 @@ fn proposal_create_board_component_replacement_is_non_mutating_until_accept_appl
     assert_eq!(components_after[0].part, replacement_part);
     assert_eq!(components_after[0].package, replacement_package);
     assert_eq!(components_after[0].value, "NEW");
+    let board: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("board/board.json")).unwrap()).unwrap();
+    assert_eq!(
+        board["component_pads"][component_uuid.to_string()][0]["uuid"],
+        proposed_pad["uuid"]
+    );
+
     let reopened = ProjectResolver::new(&root)
         .resolve()
         .expect("project should reopen");

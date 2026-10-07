@@ -12,29 +12,10 @@ pub(super) fn source_payload(
     selected: Option<PadLandPatternSource>,
 ) -> Result<(serde_json::Value, Option<Uuid>)> {
     let mut model = ProjectResolver::new(root).resolve()?;
-    let Some(selected) = selected else {
-        return Ok((materialized.clone(), None));
-    };
-    // Preserve historical incomplete pool placements as explicitly unadopted.
-    // A real Part producer enables the new semantics; missing data never mints authority.
-    if !model.source_shards.iter().any(|s| {
-        s.taxon == Some(SourceShardTaxon::PoolPart)
-            && model
-                .materialized_source_shard_value_by_relative_path(&s.relative_path)
-                .is_ok_and(|v| v["uuid"] == serde_json::json!(component.part))
-    }) {
-        return Ok((materialized.clone(), None));
+    let payload = qualified_payload(&model, component, materialized, selected.clone())?;
+    if payload.get("pad_source_transition").is_none() {
+        return Ok((payload, None));
     }
-    let request = ComponentPadMaterializationRequest {
-        placement: component.clone(),
-        land_pattern: selected,
-        component_instance: None,
-        pin_pad_map: None,
-        correspondences: vec![],
-        adopt_existing: false,
-    };
-    // Check all source/geometry requirements before advancing the profile.
-    let _ = prepare_component_pad_materialization(&model, &request, materialized)?;
     let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
     let adoption = if board["schema_version"].as_u64() != Some(4) {
         let board_id = serde_json::from_value(board["uuid"].clone())?;
@@ -52,7 +33,7 @@ pub(super) fn source_payload(
         None
     };
     Ok((
-        prepare_component_pad_materialization(&model, &request, materialized)?,
+        qualified_payload(&model, component, materialized, selected)?,
         adoption,
     ))
 }
@@ -152,4 +133,73 @@ pub(crate) fn place_native_project_board_component(
         native_project_board_component_report("place_board_component", &project, component);
     report.source_profile_adoption_transaction = adoption.map(|id| id.to_string());
     Ok(report)
+}
+
+/// Build-only source qualification for handoff/Proposal producers. No adoption
+/// or persistence happens here; execution handles any separate profile boundary.
+pub(super) fn qualified_payload(
+    model: &eda_engine::substrate::DesignModel,
+    component: &PlacedPackage,
+    materialized: &serde_json::Value,
+    selected: Option<PadLandPatternSource>,
+) -> Result<serde_json::Value> {
+    let Some(selected) = selected else {
+        return Ok(materialized.clone());
+    };
+    // Preserve historical incomplete pool placements as explicitly unadopted.
+    // A real Part producer enables the new semantics; missing data never mints authority.
+    if !model.source_shards.iter().any(|s| {
+        s.taxon == Some(SourceShardTaxon::PoolPart)
+            && model
+                .materialized_source_shard_value_by_relative_path(&s.relative_path)
+                .is_ok_and(|v| v["uuid"] == serde_json::json!(component.part))
+    }) {
+        return Ok(materialized.clone());
+    }
+    let request = ComponentPadMaterializationRequest {
+        placement: component.clone(),
+        land_pattern: selected,
+        component_instance: None,
+        pin_pad_map: None,
+        correspondences: vec![],
+        adopt_existing: false,
+    };
+    Ok(prepare_component_pad_materialization(
+        model,
+        &request,
+        materialized,
+    )?)
+}
+
+/// Called only after a complete mutation/proposal has been prepared successfully.
+/// Forward-only adoption is its own journal transaction, never a preview effect.
+pub(crate) fn adopt_component_pad_profile_for_write(
+    root: &Path,
+    model: &mut eda_engine::substrate::DesignModel,
+    batch: &eda_engine::substrate::OperationBatch,
+) -> Result<Option<Uuid>> {
+    let needed = batch.operations.iter().any(|op| match op {
+        eda_engine::substrate::Operation::CreateBoardPackage { materialized, .. }
+        | eda_engine::substrate::Operation::SetBoardPackagePackage { materialized, .. } => {
+            materialized.get("pad_source_transition").is_some()
+        }
+        _ => false,
+    });
+    if !needed {
+        return Ok(None);
+    }
+    let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    if board["schema_version"].as_u64() == Some(4) {
+        return Ok(None);
+    }
+    let write = build_adopt_board_source_profile(
+        model,
+        cli_provenance("separate profile-4 adoption before placed Pad producer write")?,
+        serde_json::from_value(board["uuid"].clone())?,
+    )?;
+    Ok(Some(
+        commit_prepared(model, root, write)?
+            .transaction
+            .transaction_id,
+    ))
 }

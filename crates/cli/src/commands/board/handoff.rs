@@ -19,8 +19,8 @@ use serde::Serialize;
 use uuid::Uuid;
 
 use crate::{
-    board_package_materialization_payload_for_component, build_native_project_schematic,
-    load_native_project_with_resolved_board_and_model,
+    adopt_component_pad_profile_for_write, board_package_materialization_payload_for_component,
+    build_native_project_schematic, load_native_project_with_resolved_board_and_model,
 };
 
 use crate::cli_commit_source;
@@ -32,6 +32,8 @@ pub(crate) struct NativeProjectBoardHandoffReport {
     pub(crate) proposed: bool,
     pub(crate) proposal_id: Option<Uuid>,
     pub(crate) proposal: Option<Proposal>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) source_profile_adoption_transaction: Option<Uuid>,
     pub(crate) generated_count: usize,
     pub(crate) skipped_count: usize,
     pub(crate) unresolved_count: usize,
@@ -89,6 +91,12 @@ pub(crate) fn generate_native_project_board_components(
     let (project, mut model) = load_native_project_with_resolved_board_and_model(root)?;
     let schematic = build_native_project_schematic(&project)?;
     let existing_join_keys = existing_board_join_keys(&project.board.packages)?;
+    if as_proposal
+        && let Some(id) = proposal_id
+        && model.proposals.contains_key(&id)
+    {
+        anyhow::bail!("proposal {id} already exists");
+    }
     let relationship_diagnostics = component_instance_diagnostics(&model.diagnostics);
     let mut generated = Vec::new();
     let mut skipped = Vec::new();
@@ -137,7 +145,7 @@ pub(crate) fn generate_native_project_board_components(
         let (package_ref_uuid, default_footprint_uuid) =
             package_ref_for_part(&model, &part)?.unwrap_or((part.package, None));
         let index = generated.len() as i64;
-        let component = generated_component(
+        let mut component = generated_component(
             &model.project.project_id,
             &symbol,
             part_uuid,
@@ -148,6 +156,15 @@ pub(crate) fn generate_native_project_board_components(
             },
             layer,
         );
+        // A deleted placement is a retired incarnation, even when the historical
+        // symbol-derived seed is the same. Record a fresh allocation in this write.
+        if model
+            .journal
+            .iter()
+            .any(|t| t.diff.deleted.contains(&component.uuid))
+        {
+            component.uuid = Uuid::new_v4();
+        }
         generated.push(NativeProjectBoardGeneratedPackage {
             symbol_uuid: symbol.uuid,
             package_uuid: component.uuid,
@@ -162,13 +179,24 @@ pub(crate) fn generate_native_project_board_components(
         });
     }
 
+    let mut source_profile_adoption_transaction = None;
     let proposal = if (apply || as_proposal) && !generated.is_empty() {
-        let prepared = generated_board_component_prepared_write(
+        let mut prepared = generated_board_component_prepared_write(
             root,
             &model,
             &generated,
             "generate board components from schematic",
         )?;
+        source_profile_adoption_transaction =
+            adopt_component_pad_profile_for_write(root, &mut model, &prepared.batch)?;
+        if source_profile_adoption_transaction.is_some() {
+            prepared = generated_board_component_prepared_write(
+                root,
+                &model,
+                &generated,
+                "generate board components from schematic",
+            )?;
+        }
         if apply {
             commit_prepared(&mut model, root, prepared)?;
             None
@@ -199,6 +227,7 @@ pub(crate) fn generate_native_project_board_components(
         proposed: created_proposal_id.is_some(),
         proposal_id: created_proposal_id,
         proposal,
+        source_profile_adoption_transaction,
         generated_count: generated.len(),
         skipped_count: skipped.len(),
         unresolved_count: unresolved.len(),
@@ -256,6 +285,9 @@ pub(crate) fn render_native_project_board_handoff_text(
     lines.push(format!("proposed: {}", report.proposed));
     if let Some(proposal_id) = report.proposal_id {
         lines.push(format!("proposal: {proposal_id}"));
+    }
+    if let Some(id) = report.source_profile_adoption_transaction {
+        lines.push(format!("source_profile_adoption_transaction: {id}"));
     }
     lines.push(format!("generated: {}", report.generated_count));
     lines.push(format!("skipped: {}", report.skipped_count));

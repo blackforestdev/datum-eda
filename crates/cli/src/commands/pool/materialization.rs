@@ -195,13 +195,6 @@ pub(crate) fn materialize_supported_pool_package_graphics_with_source(
     Ok(Some(source))
 }
 
-pub(crate) fn materialize_supported_pool_package_graphics(
-    project: &mut LoadedNativeProject,
-    component: &PlacedPackage,
-) -> Result<()> {
-    materialize_supported_pool_package_graphics_with_source(project, component).map(|_| ())
-}
-
 struct PoolLandPatternGeometry {
     pads: Vec<Pad>,
     courtyard: Polygon,

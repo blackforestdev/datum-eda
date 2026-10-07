@@ -150,7 +150,7 @@
     "crates/cli/src/commands/library/proposals.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1197
+        "pre_test_lines": 1172
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -172,7 +172,7 @@
     "crates/cli/src/commands/project/proposals.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 832
+        "pre_test_lines": 804
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

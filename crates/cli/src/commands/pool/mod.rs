@@ -16,7 +16,6 @@ mod materialization;
 mod query;
 
 pub(crate) use self::materialization::{
-    materialize_supported_pool_package_graphics,
     materialize_supported_pool_package_graphics_with_source, resolve_native_project_pool_path,
 };
 pub(crate) use self::query::{

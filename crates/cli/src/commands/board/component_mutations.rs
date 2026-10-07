@@ -1,7 +1,8 @@
 mod source_materialization;
 use crate::*;
 pub(crate) use source_materialization::{
-    component_pad_status, place_native_project_board_component,
+    adopt_component_pad_profile_for_write, component_pad_status,
+    place_native_project_board_component,
 };
 use std::path::Path;
 
@@ -19,7 +20,7 @@ use uuid::Uuid;
 use crate::{
     NativeProjectBoardComponentAlignReportView, NativeProjectBoardComponentMutationReportView,
     load_native_project_with_resolved_board, load_native_project_with_resolved_board_and_model,
-    materialize_supported_pool_package_graphics, native_project_board_component_report,
+    native_project_board_component_report,
 };
 
 use crate::cli_commit_source;
@@ -230,8 +231,17 @@ pub(crate) fn board_package_materialization_payload_for_component(
     let mut project = load_native_project_with_resolved_board(root)?;
     let key = component.uuid.to_string();
     clear_loaded_component_materialization(&mut project, &key);
-    materialize_supported_pool_package_graphics(&mut project, component)?;
-    Ok(component_materialization_payload(&project, &key))
+    let selected = super::super::pool::materialize_supported_pool_package_graphics_with_source(
+        &mut project,
+        component,
+    )?;
+    let model = ProjectResolver::new(root).resolve()?;
+    source_materialization::qualified_payload(
+        &model,
+        component,
+        &component_materialization_payload(&project, &key),
+        selected,
+    )
 }
 
 fn clear_loaded_component_materialization(project: &mut super::LoadedNativeProject, key: &str) {
