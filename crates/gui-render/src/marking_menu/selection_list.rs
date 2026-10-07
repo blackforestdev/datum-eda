@@ -155,6 +155,8 @@ mod tests {
                     .collect(),
                 open: true,
                 focus: 302,
+                preview: None,
+                preview_keys: Default::default(),
                 scroll: 295,
             }),
         });

@@ -14,8 +14,11 @@
 // via `use super::*` exactly as the sibling `coordinate_hit` module does.
 
 use super::*;
+#[path = "selection_menu_hover.rs"]
+mod selection_menu_hover;
 use datum_gui_protocol::CrosshairStyle;
 use datum_gui_viewport::WeightClass;
+pub(crate) use selection_menu_hover::capture as capture_menu_hover;
 
 /// Hover pre-highlight ring weight — spec §4.2 "Hover pre-highlight | A | 1.5 px".
 const HOVER_WEIGHT: WeightClass = WeightClass::ScreenConstant(1.5);

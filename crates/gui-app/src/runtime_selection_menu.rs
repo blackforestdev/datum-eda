@@ -82,6 +82,16 @@ impl Runtime {
                 self.workspace().scene.scene_id.clone()
             };
             menu.filters = self.workspace().ui.filters.clone();
+            let scene = if menu.schematic {
+                self.workspace().schematic_scene.as_ref().unwrap()
+            } else {
+                &self.workspace().scene
+            };
+            menu.bind_presentation(
+                scene,
+                &basis.bindings,
+                &self.native_selection.as_ref().unwrap().authority,
+            );
             menu.append_checks(&self.workspace().checks);
             if let SelectionTarget::Native(view) = &self.workspace().selection {
                 menu.append_inspection(view);
@@ -130,6 +140,7 @@ impl Runtime {
         };
         menu.open = true;
         menu.focus = 0;
+        menu.preview = Some(0);
         menu.scroll = 0;
         self.invalidate_frame();
         true
@@ -293,6 +304,7 @@ impl Runtime {
                     .as_mut()
                     .unwrap();
                 menu.focus = next;
+                menu.preview = Some(next);
                 menu.scroll = next.saturating_sub(7);
                 self.invalidate_frame();
             }
@@ -308,6 +320,30 @@ enum SelectionKeyIntent {
     Open,
     Focus(usize),
     Activate(usize),
+}
+/// Presented rows alone drive pointer preview; leaving the list clears only
+/// transient pre-highlight, preserving the committed subject and keyboard focus.
+pub(super) fn focus_pointer_candidate(
+    menu: &mut MarkingMenuState,
+    target: Option<&HitTarget>,
+) -> bool {
+    let Some(selection) = menu.selection.as_mut().filter(|m| m.open) else {
+        return false;
+    };
+    let preview = match target {
+        Some(HitTarget::MarkingMenuItem { menu_key, slot, .. }) if menu_key == &menu.menu_key => {
+            slot.strip_prefix("SELECT:")
+                .and_then(|s| s.parse::<usize>().ok())
+                .filter(|i| *i < selection.items.len())
+        }
+        _ => None,
+    };
+    let changed = selection.preview != preview || preview.is_some_and(|i| selection.focus != i);
+    selection.preview = preview;
+    if let Some(index) = preview {
+        selection.focus = index;
+    }
+    changed
 }
 fn selection_key_intent(
     menu: &datum_gui_protocol::selection_menu::SelectionMenu,
@@ -354,6 +390,55 @@ impl Runtime {
 mod tests {
     use super::*;
     #[test]
+    fn pointer_candidate_focus_uses_presented_rows_and_clears_preview_without_activation() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        // Use the existing constructor shape below rather than a runtime/window.
+        let mut menu = MarkingMenuState {
+            menu_key: "board.selection".into(),
+            target_object_id: None,
+            anchor_x_px: 0,
+            anchor_y_px: 0,
+            preview_slot: None,
+            gesture_dx_px: 0,
+            gesture_dy_px: 0,
+            selection: Some(datum_gui_protocol::selection_menu::SelectionMenu {
+                project: uuid::Uuid::nil(),
+                revision: "test".into(),
+                schematic: false,
+                source_scene: "test".into(),
+                inspection_subject: None,
+                filters: state.ui.filters.clone(),
+                items: (0..3)
+                    .map(|i| datum_gui_protocol::selection_menu::Item {
+                        label: i.to_string(),
+                        command: datum_gui_protocol::selection_menu::Command::All,
+                        unavailable: None,
+                    })
+                    .collect(),
+                open: true,
+                focus: 0,
+                preview: Some(0),
+                preview_keys: Default::default(),
+                scroll: 0,
+            }),
+        };
+        let prior = state.selection.clone();
+        let target = HitTarget::MarkingMenuItem {
+            menu_key: menu.menu_key.clone(),
+            slot: "SELECT:2".into(),
+            label: "row".into(),
+        };
+        assert!(focus_pointer_candidate(&mut menu, Some(&target)));
+        assert_eq!(menu.selection.as_ref().unwrap().focus, 2);
+        assert_eq!(menu.selection.as_ref().unwrap().preview, Some(2));
+        assert!(!focus_pointer_candidate(&mut menu, Some(&target)));
+        assert!(focus_pointer_candidate(&mut menu, None));
+        assert_eq!(menu.selection.as_ref().unwrap().focus, 2);
+        assert_eq!(menu.selection.as_ref().unwrap().preview, None);
+        state.ui.marking_menu = Some(menu);
+        assert_eq!(state.selection, prior);
+    }
+    #[test]
     fn read_only_menu_keyboard_reaches_entries_beyond_transport_context_cap_and_consumes_others() {
         let mut menu = datum_gui_protocol::selection_menu::SelectionMenu {
             project: datum_gui_protocol::SelectionProjectId::nil(),
@@ -373,6 +458,8 @@ mod tests {
                 .collect(),
             open: false,
             focus: 0,
+            preview: None,
+            preview_keys: Default::default(),
             scroll: 0,
         };
         assert_eq!(

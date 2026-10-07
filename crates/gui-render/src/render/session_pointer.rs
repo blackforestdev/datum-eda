@@ -65,7 +65,19 @@ impl RenderSession {
             self.clear_content();
             return false;
         }
+        let menu_hover = self
+            .prepared
+            .as_ref()
+            .expect("validated preparation")
+            .menu_hover;
         let bounds = |surface, source: Option<&RetainedScene>| {
+            if let Some((board, schematic)) = menu_hover {
+                return match surface {
+                    PaneContent::Board => board,
+                    PaneContent::Schematic => schematic,
+                    _ => None,
+                };
+            }
             let hover = input.hover.filter(|hover| hover.surface == surface)?;
             let scene_surface = match surface {
                 PaneContent::Board => SceneSurface::Board,
@@ -94,7 +106,7 @@ impl RenderSession {
                 board_hover,
                 input
                     .hover
-                    .filter(|hover| hover.surface == PaneContent::Board)
+                    .filter(|hover| menu_hover.is_none() && hover.surface == PaneContent::Board)
                     .map(|hover| hover.object_id.as_str()),
                 schematic_hover,
             );
@@ -106,3 +118,7 @@ impl RenderSession {
 #[cfg(test)]
 #[path = "session_pointer_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "selection_menu_hover_tests.rs"]
+mod menu_hover_tests;

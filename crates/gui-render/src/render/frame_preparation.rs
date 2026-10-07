@@ -107,6 +107,9 @@ impl PreparedScene {
                 })
                 .flatten()
             });
+            let menu_hover = interaction_overlay::capture_menu_hover(state, retained_scene);
+            let (board_hover_bounds, schematic_hover_bounds) =
+                menu_hover.unwrap_or((board_hover_bounds, schematic_hover_bounds));
             let board_lock_anchors =
                 crate::native_selection_overlay::lock_cue::HoverAnchors::build(state);
             let selection_hover =
@@ -337,7 +340,10 @@ impl PreparedScene {
                         .ui
                         .hovered_object
                         .as_ref()
-                        .filter(|hover| hover.surface == datum_gui_protocol::PaneContent::Board)
+                        .filter(|hover| {
+                            menu_hover.is_none()
+                                && hover.surface == datum_gui_protocol::PaneContent::Board
+                        })
                         .and_then(|hover| board_lock_anchors.get(&hover.object_id)),
                     &board_projection,
                     scene_viewport,
@@ -548,6 +554,7 @@ impl PreparedScene {
                 schematic_camera,
                 schematic_hover_bounds_nm: schematic_hover_bounds,
                 selection_hover,
+                menu_hover,
                 board_lock_anchors,
                 crosshair_cursor_screen,
                 crosshair_style,

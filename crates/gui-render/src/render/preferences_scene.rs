@@ -193,6 +193,7 @@ impl PreparedScene {
             schematic_camera: camera,
             schematic_hover_bounds_nm: None,
             selection_hover: Default::default(),
+            menu_hover: None,
             board_lock_anchors: Default::default(),
             crosshair_cursor_screen: None,
             crosshair_style: Default::default(),

@@ -185,6 +185,28 @@ impl Runtime {
     }
 
     pub(super) fn update_marking_menu_preview(&mut self, pos: (f32, f32)) -> bool {
+        if self
+            .workspace()
+            .ui
+            .marking_menu
+            .as_ref()
+            .and_then(|m| m.selection.as_ref())
+            .is_some_and(|m| m.open)
+        {
+            let target = self.presented_hits.hit_test(pos.0, pos.1).cloned();
+            let menu = self
+                .session
+                .workspace_mut()
+                .ui
+                .marking_menu
+                .as_mut()
+                .unwrap();
+            let changed = runtime_selection_menu::focus_pointer_candidate(menu, target.as_ref());
+            if changed {
+                self.invalidate_frame();
+            }
+            return changed;
+        }
         let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
             return false;
         };

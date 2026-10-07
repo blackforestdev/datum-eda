@@ -1,4 +1,5 @@
 //! Source-qualified read-only leaves inside the existing marking-menu owner.
+mod presentation;
 use crate::selection_resolution::{NativeSelectionResolution, SelectionAuthority};
 use crate::selection_view::inspector_state::class_label;
 use crate::{AuthoredSelectionIdentity as Id, PointNm, SelectionSubject};
@@ -30,6 +31,9 @@ pub struct SelectionMenu {
     pub items: Vec<Item>,
     pub open: bool,
     pub focus: usize,
+    /// Transient candidate preview; never a committed selection or action.
+    pub preview: Option<usize>,
+    pub preview_keys: std::collections::BTreeMap<Id, std::collections::BTreeSet<String>>,
     pub scroll: usize,
 }
 pub fn resolve(
@@ -151,6 +155,8 @@ impl SelectionMenu {
             items,
             open: false,
             focus: 0,
+            preview: None,
+            preview_keys: Default::default(),
             scroll: 0,
         }
     }

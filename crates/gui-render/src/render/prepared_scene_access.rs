@@ -65,6 +65,11 @@ pub struct PreparedScene {
     /// Revision-qualified keys shared by prepared clones; pointer hover cannot
     /// add a second halo to an actual selected member.
     pub(super) selection_hover: SelectionHover,
+    /// Source-qualified menu pre-highlight survives pointer suffix refreshes.
+    pub(super) menu_hover: Option<(
+        Option<datum_gui_protocol::RectNm>,
+        Option<datum_gui_protocol::RectNm>,
+    )>,
     /// Locked-placement hover anchors, so the pointer-only refresh can draw the
     /// governed padlock without re-preparing world content.
     pub(super) board_lock_anchors: crate::native_selection_overlay::lock_cue::HoverAnchors,
