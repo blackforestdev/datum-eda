@@ -298,14 +298,25 @@ pub(crate) fn board_hover_bounds(
         .and_then(|region| shape_bounds_nm(&region.shape))
 }
 
-/// The world bbox of the schematic SYMBOL identified by `id` (a projected
-/// `board_graphics` body tagged `schematic-symbol:<uuid>`) — the schematic hover
-/// ring's extent. Resolved straight from the projected scene because the schematic
-/// `RetainedScene` is not threaded into `PreparedScene` construction.
-pub(crate) fn schematic_symbol_bounds(
+/// Schematic hover bounds from captured source geometry. Text uses the same
+/// certified affine/layout basis as retained hit-testing; other targets use
+/// their projected graphic path. No retained schematic is needed by full
+/// preparation, and pointer refresh resolves identical geometry from its hits.
+pub(crate) fn schematic_hover_bounds(
     scene: &BoardReviewSceneV1,
     id: &str,
 ) -> Option<datum_gui_protocol::RectNm> {
+    if let Some(text) = scene
+        .board_text_geometries
+        .iter()
+        .find(|text| text.object_id == id)
+    {
+        return WorldHitShape::LayoutBasis {
+            transform: text.world_transform_nm?,
+            bbox: text.block_bbox_em_nm?,
+        }
+        .bounds();
+    }
     scene
         .board_graphics
         .iter()
@@ -356,7 +367,7 @@ impl PreparedScene {
                 state
                     .schematic_scene
                     .as_ref()
-                    .and_then(|scene| schematic_symbol_bounds(scene, &hover.object_id))
+                    .and_then(|scene| schematic_hover_bounds(scene, &hover.object_id))
             })
             .flatten()
         });

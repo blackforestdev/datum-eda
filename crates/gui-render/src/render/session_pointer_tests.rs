@@ -153,7 +153,7 @@ fn retained_schematic_hit_bounds_equal_source_path_bounds_for_every_eligible_gra
         }
         assert_eq!(
             crate::interaction_overlay::board_hover_bounds(retained, &graphic.object_id),
-            crate::interaction_overlay::schematic_symbol_bounds(source, &graphic.object_id)
+            crate::interaction_overlay::schematic_hover_bounds(source, &graphic.object_id)
         );
         count += 1;
     }
@@ -610,4 +610,83 @@ fn pointer_refresh_suppresses_schematic_members_but_preserves_related_parent_hov
     for (path, bytes) in before {
         assert_eq!(std::fs::read(path).unwrap(), bytes);
     }
+}
+
+#[test]
+fn native_schematic_text_hover_matches_full_preparation_and_certified_layout() {
+    let (fixture, mut state) =
+        crate::native_selection_overlay::tests::selected_schematic_text_state();
+    let source_before = fixture.source_bytes();
+    state.selection = datum_gui_protocol::SelectionTarget::None;
+    state.ui.crosshair_style = CrosshairStyle::None;
+    state.ui.layout.open_beside_root(
+        PaneContent::Schematic,
+        datum_gui_protocol::SplitOrientation::Vertical,
+        0.5,
+        true,
+    );
+    let id = state
+        .schematic_scene
+        .as_ref()
+        .unwrap()
+        .board_text_geometries[0]
+        .object_id
+        .clone();
+    state.ui.hovered_object = Some(HoverTarget {
+        object_id: id.clone(),
+        surface: PaneContent::Schematic,
+    });
+    let mut session = RenderSession::default();
+    install(&mut session, &state);
+    let viewport = session
+        .prepared()
+        .unwrap()
+        .surface_passes
+        .iter()
+        .find(|pass| pass.surface == crate::SceneSurface::Schematic)
+        .unwrap()
+        .scene_viewport;
+    state.ui.cursor_pos = Some(ScreenPointPx {
+        x: viewport.x + viewport.width / 2.0,
+        y: viewport.y + viewport.height / 2.0,
+    });
+    install(&mut session, &state);
+    let bounds = crate::interaction_overlay::board_hover_bounds(session.schematic().unwrap(), &id)
+        .expect("certified native text hit bounds");
+    assert_eq!(
+        session.prepared().unwrap().schematic_hover_bounds_nm,
+        Some(bounds)
+    );
+    assert!(
+        !session
+            .prepared()
+            .unwrap()
+            .schematic_overlay_vertices
+            .is_empty()
+    );
+    acknowledge(&mut session);
+    let expected = session.prepared().unwrap().clone();
+    let resolves = crate::retained_scene_resolve_count();
+    assert!(session.update_pointer(PointerUpdate {
+        generation: session.pointer_generation(),
+        cursor: state.ui.cursor_pos,
+        hover: state.ui.hovered_object.as_ref(),
+        style: CrosshairStyle::None,
+    }));
+    assert_eq!(session.prepared().unwrap(), &expected);
+    assert!(session.update_pointer(PointerUpdate {
+        generation: session.pointer_generation(),
+        cursor: state.ui.cursor_pos,
+        hover: None,
+        style: CrosshairStyle::None,
+    }));
+    assert!(
+        session
+            .prepared()
+            .unwrap()
+            .schematic_overlay_vertices
+            .is_empty()
+    );
+    assert_eq!(crate::retained_scene_resolve_count(), resolves);
+    assert_eq!(fixture.source_bytes(), source_before);
 }
