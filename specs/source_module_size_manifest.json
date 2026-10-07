@@ -513,14 +513,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 4013,
+        "pre_test_lines": 3932,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "PM054 Track projection extraction and S5A-C03 unchanged shared LiveDesignSession dispatch extraction into normal modules reduce the production root to its exact downward ceiling; inline test debt remains frozen."
+      "note": "PM022: extract CLI companion resolution/build ownership into cli_bridge; preserve frozen inline test debt and reduce production ceiling exactly."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

@@ -1,4 +1,6 @@
+mod cli_bridge;
 mod placed_pad_projection;
+use cli_bridge::cli_prefix;
 use placed_pad_projection::extract_pads;
 mod artifact_preview_payload;
 use anyhow::{Context, Result, bail};
@@ -1479,10 +1481,10 @@ pub fn load_board_editor_workspace_state(
     load_workspace_state_impl(request, false)
 }
 pub fn refresh_production_status(request: &LiveReviewRequest) -> Result<ProductionStatus> {
-    load_production_status(&cli_prefix(), request)
+    load_production_status(&cli_prefix()?, request)
 }
 pub fn refresh_check_run_review_state(request: &LiveReviewRequest) -> Result<CheckRunReviewState> {
-    check_runs::loading::load(&cli_prefix(), request)
+    check_runs::loading::load(&cli_prefix()?, request)
 }
 pub fn production_status_from_output_jobs_json(payload: &str) -> Result<ProductionStatus> {
     let payload: OutputJobsPayload =
@@ -1544,7 +1546,7 @@ fn load_workspace_state_impl(
     include_review: bool,
 ) -> Result<ReviewWorkspaceState> {
     let workspace_started = std::time::Instant::now();
-    let cli = cli_prefix();
+    let cli = cli_prefix()?;
     let review_started = std::time::Instant::now();
     let review = if include_review && request.board_file.is_none() {
         load_live_route_review(&cli, request)?
@@ -3580,48 +3582,6 @@ fn run_cli_json_owned<T: DeserializeOwned>(cli_prefix: &[String], args: &[String
             args.join(" ")
         )
     })
-}
-
-fn cli_prefix() -> Vec<String> {
-    if let Ok(configured) = std::env::var("EDA_CLI_BIN") {
-        let parts: Vec<String> = configured
-            .split_whitespace()
-            .map(ToOwned::to_owned)
-            .collect();
-        if !parts.is_empty() {
-            return parts;
-        }
-    }
-    if let Some(binary) = resolve_workspace_eda_binary() {
-        return vec![binary];
-    }
-    vec![
-        "cargo".to_string(),
-        "run".to_string(),
-        "--quiet".to_string(),
-        "-p".to_string(),
-        "datum-eda-cli".to_string(),
-        "--bin".to_string(),
-        "datum-eda".to_string(),
-        "--".to_string(),
-    ]
-}
-
-fn resolve_workspace_eda_binary() -> Option<String> {
-    let exe = std::env::current_exe().ok()?;
-    let exe_dir = exe.parent()?;
-
-    let direct = exe_dir.join("datum-eda");
-    if direct.is_file() {
-        return Some(direct.to_string_lossy().into_owned());
-    }
-
-    let deps_sibling = exe_dir.parent()?.join("datum-eda");
-    if deps_sibling.is_file() {
-        return Some(deps_sibling.to_string_lossy().into_owned());
-    }
-
-    None
 }
 
 // Scene import threads many primitive-geometry parameters.

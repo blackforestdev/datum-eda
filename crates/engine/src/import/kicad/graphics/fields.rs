@@ -99,7 +99,9 @@ pub(super) fn width(block: &str) -> Result<i64, EngineError> {
             if field(block, "width")?.is_some() {
                 return Err(refusal("ambiguous graphic stroke width"));
             }
-            if field(stroke, "type")?.is_some() && scalar(stroke, "type")? != "default" {
+            if field(stroke, "type")?.is_some()
+                && !matches!(scalar(stroke, "type")?, "default" | "solid")
+            {
                 return Err(refusal("unsupported non-solid graphic stroke"));
             }
             nm(scalar(stroke, "width")?)

@@ -140,3 +140,29 @@ fn ambiguous_unsupported_or_inexact_graphic_source_refuses_with_complete_report(
         .is_err()
     );
 }
+
+#[test]
+fn explicit_solid_stroke_matches_default_and_patterned_strokes_remain_refused() {
+    let path = Path::new("graphics.kicad_pcb");
+    let contents = source("gr_line", "(start 0 0) (end 2 0)", Uuid::from_u128(1));
+    let default = parse(path, &contents, &BTreeMap::new(), &board()).unwrap();
+    let solid = parse(
+        path,
+        &contents.replace("type default", "type solid"),
+        &BTreeMap::new(),
+        &board(),
+    )
+    .unwrap();
+    assert_eq!(solid.graphics, default.graphics);
+    for style in ["dash", "dot", "dash_dot"] {
+        assert!(
+            parse(
+                path,
+                &contents.replace("type default", &format!("type {style}")),
+                &BTreeMap::new(),
+                &board()
+            )
+            .is_err()
+        );
+    }
+}

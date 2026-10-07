@@ -12,7 +12,7 @@ pub fn materialize_kicad_board_request(
     project_root: Option<PathBuf>,
 ) -> Result<LiveReviewRequest> {
     let parent = std::env::temp_dir().join("datum-eda/gui-imports");
-    materialize_with_parent(board_file, project_root, &parent, &cli_prefix())
+    materialize_with_parent(board_file, project_root, &parent, &cli_prefix()?)
 }
 
 fn materialize_with_parent(
@@ -165,7 +165,7 @@ mod tests {
             Self { root, source }
         }
         fn cli(&self) -> Vec<String> {
-            let binary = super::super::resolve_workspace_eda_binary()
+            let binary = super::super::cli_bridge::resolve_workspace_eda_binary()
                 .expect("build datum-eda-cli before the GUI materialization integration tests");
             vec![
                 "env".into(),
