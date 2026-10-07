@@ -209,6 +209,7 @@ fn terminal_context_projects_active_artifact_and_check_commands() {
         artifacts: Vec::new(),
     }];
     context.production_status.proposals = vec![datum_gui_protocol::ProductionProposalSummary {
+        action_identity: None,
         proposal_id: "proposal-repair".to_string(),
         status: "draft".to_string(),
         source: "Check".to_string(),

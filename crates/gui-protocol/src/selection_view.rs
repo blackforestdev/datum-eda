@@ -136,10 +136,17 @@ impl SelectionView {
         | SelectionSubject::Review(id)
         | SelectionSubject::Diagnostic(id) = &self.subject
         {
+            let display_id = if matches!(self.subject, SelectionSubject::Proposal(_)) {
+                serde_json::from_str::<crate::selection_artifacts::ProductionProposalActionIdentity>(id)
+                    .map(|identity| identity.proposal_id.to_string())
+                    .unwrap_or_else(|_| id.clone())
+            } else {
+                id.clone()
+            };
             return format!(
                 "{} — {}{}",
                 self.subject.kind(),
-                id,
+                display_id,
                 self.notice
                     .as_ref()
                     .map(|n| format!(". {n}"))

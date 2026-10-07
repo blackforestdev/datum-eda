@@ -2118,6 +2118,18 @@ authorized. The packet and proposal text below retain their preparation history;
 PM057 supersedes their pending-disposition status, without rewriting review pins.
 Schema/profile adoption still requires the packet's explicit disposition;
 C04/C05/C06, CAM/T04 and all other exclusions remain unchanged.
+The owner subsequently approves separate guarded profile-4 adoption; graphics
+inverse-byte proof starts from the adopted preimage. PM057 records the exact
+boundary. Adoption remains explicit and forward-only, never a query/startup write.
+
+D3's bounded source/protocol/native preview integration is implemented: the
+canonical producer tuple owns the whole batch, Deferred/stale retains selection
+with actual status, Applied/Rejected/absent dissolves it, and available preview
+geometry receives the existing proposal selection cue. Same-revision metadata
+refresh preserves native geometry authority. Focused canonical lifecycle and
+native canvas non-mutation proof passes; C04 native input/applicability and C05
+independent exact-candidate replay remain outstanding.
+
 
 #### Native board graphics: bounded proposal for owner/reviewer disposition
 

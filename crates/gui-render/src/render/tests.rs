@@ -3,6 +3,8 @@ use super::*;
 mod marking_shell_tests;
 #[path = "overlay_hit_tests.rs"]
 mod overlay_hit_tests;
+#[path = "production_proposal_tests.rs"]
+mod production_proposal_tests;
 
 #[path = "board_text_control_hit_tests.rs"]
 mod board_text_control_hit_tests;
@@ -22,51 +24,12 @@ mod text_identity_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn proposal_preview_affected_ids_match_scene_source_ids() {
-        let mut state = datum_gui_protocol::load_fixture_workspace_state();
-        let component = state
-            .scene
-            .components
-            .first()
-            .expect("fixture component should exist")
-            .clone();
-        state.production.proposals = vec![datum_gui_protocol::ProductionProposalSummary {
-            proposal_id: "proposal-a".to_string(),
-            status: "draft".to_string(),
-            source: "check".to_string(),
-            rationale: "highlight modified component".to_string(),
-            operation_count: 1,
-            can_apply: Some(false),
-            blocker_codes: Vec::new(),
-            preview: Some(datum_gui_protocol::ProductionProposalPreviewSummary {
-                prepared_against: "rev-before".to_string(),
-                preview_after_model_revision: "rev-after".to_string(),
-                created_count: 0,
-                modified_count: 1,
-                deleted_count: 0,
-                affected_object_count: 1,
-                affected_objects: vec![component.source_object_uuid.clone()],
-                render_deltas: Vec::new(),
-            }),
-        }];
 
-        let affected = proposal_preview_affected_ids(&state);
-        assert!(source_object_matches_preview(
-            &affected,
-            &component.object_id,
-            &component.source_object_uuid
-        ));
-        assert!(component_matches_preview(
-            &component.component_uuid,
-            &state.scene,
-            &affected
-        ));
-    }
     #[test]
     fn proposal_preview_render_deltas_become_overlay_primitives() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         state.production.proposals = vec![datum_gui_protocol::ProductionProposalSummary {
+            action_identity: None,
             proposal_id: "proposal-a".to_string(),
             status: "draft".to_string(),
             source: "check".to_string(),

@@ -460,3 +460,8 @@ queries into normal `layer_stages`; renderer expansion3620→3560 and pad physic
 and material tokens remain; the private unresolved-copper painter bucket uses
 existing fallback appearance and declared order without minting a side/identity
 or changing native sources. Normal budgets and remaining debt are unchanged.
+
+PM057 production Proposal integration moves the existing preview affected-source
+check into the normal `render/production_proposal_tests` owner, beside tuple
+transport and native cue proof. The remaining `render/tests.rs` ceiling ratchets
+from 747 to 710 lines; normal budgets and all other debt remain unchanged.

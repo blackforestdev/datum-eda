@@ -602,7 +602,7 @@
     "crates/gui-render/src/render/tests.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 747
+        "file_lines": 710
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

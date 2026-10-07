@@ -232,13 +232,7 @@ pub(super) fn push_scene_overlay_and_hits(
             {
                 continue;
             }
-            let selected = match &state.selection {
-                SelectionTarget::Native(view) => {
-                    !view.stale
-                        && matches!(&view.subject, datum_gui_protocol::SelectionSubject::Proposal(id) if *id == overlay.proposal_action_id)
-                }
-                _ => overlay.proposal_action_id == state.active_review_target_id,
-            };
+            let selected = proposal_selected(state, &overlay.proposal_action_id);
             let color = match overlay.render_role.as_str() {
                 "proposed_focus" if selected => PROPOSAL_FOCUS,
                 "proposed_overlay" if selected => PROPOSAL_FOCUS,
@@ -262,7 +256,8 @@ pub(super) fn push_scene_overlay_and_hits(
             {
                 continue;
             }
-            let rects = push_overlay(out, &overlay, &projection, PROPOSAL_BASE, false, false);
+            let selected = proposal_selected(state, &overlay.proposal_action_id);
+            let rects = push_overlay(out, &overlay, &projection, PROPOSAL_BASE, selected, false);
             for rect in rects {
                 hit_regions.push(HitRegion {
                     target: HitTarget::ProposalAction(overlay.proposal_action_id.clone()),
@@ -324,6 +319,16 @@ pub(super) fn push_scene_overlay_and_hits(
     }
 }
 
+fn proposal_selected(state: &ReviewWorkspaceState, action_id: &str) -> bool {
+    match &state.selection {
+        SelectionTarget::Native(view) => {
+            !view.stale
+                && matches!(&view.subject, datum_gui_protocol::SelectionSubject::Proposal(id) if id == action_id)
+        }
+        _ => state.active_review_target_id == action_id,
+    }
+}
+
 pub(super) fn production_proposal_overlay_primitives(
     state: &ReviewWorkspaceState,
 ) -> Vec<ProposalOverlayPrimitive> {
@@ -331,13 +336,9 @@ pub(super) fn production_proposal_overlay_primitives(
         .production
         .proposals
         .iter()
-        .filter_map(|proposal| {
-            proposal
-                .preview
-                .as_ref()
-                .map(|preview| (proposal.proposal_id.as_str(), preview))
-        })
-        .flat_map(|(proposal_id, preview)| {
+        .filter_map(|proposal| proposal.preview.as_ref().map(|preview| (proposal, preview)))
+        .flat_map(|(proposal, preview)| {
+            let proposal_id = proposal.proposal_id.as_str();
             preview
                 .render_deltas
                 .iter()
@@ -349,7 +350,10 @@ pub(super) fn production_proposal_overlay_primitives(
                 .map(move |(index, delta)| ProposalOverlayPrimitive {
                     overlay_id: format!("proposal:{proposal_id}:preview:{index}"),
                     primitive_kind: delta.primitive_kind.clone(),
-                    proposal_action_id: proposal_id.to_string(),
+                    proposal_action_id: proposal.action_identity.as_ref().map_or_else(
+                        || proposal_id.to_string(),
+                        |identity| identity.selection_key(),
+                    ),
                     layer_id: Some(delta.layer_id.clone()),
                     render_role: "proposed_preview".to_string(),
                     width_nm: Some(delta.width_nm),

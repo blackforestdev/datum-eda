@@ -1,11 +1,13 @@
 //! Producing-artifact authority composes with native authored selection, never
 //! with scene-derived identities or a second selected-state store.
+mod production;
 pub use crate::check_runs::marker as diagnostic_markers;
 use crate::selection_resolution::{
     NativeSelectionResolution, SelectionAuthority, SelectionModelRevision,
     SelectionResolutionError as Error,
 };
 use crate::{AuthoredSelectionIdentity as Id, ReviewWorkspaceState, SelectionSubject};
+pub use production::ProductionProposalActionIdentity;
 use std::collections::BTreeSet;
 
 pub struct WorkspaceSelectionAuthority<'a> {
@@ -22,6 +24,14 @@ impl WorkspaceSelectionAuthority<'_> {
                     || self.model.model_revision != *self.native.revision()
                 {
                     return Err(Error::MissingArtifactAuthority);
+                }
+                if let SelectionSubject::Proposal(key) = subject
+                    && let Ok(identity) =
+                        serde_json::from_str::<ProductionProposalActionIdentity>(key)
+                {
+                    return self.production_proposal(&identity).map(|p| {
+                        p.map(|proposal| serde_json::to_value(proposal).expect("typed proposal"))
+                    });
                 }
                 if let Some(path) = &self.workspace.review.artifact_path {
                     let producer = self
@@ -55,7 +65,11 @@ impl WorkspaceSelectionAuthority<'_> {
                         {
                             return Err(Error::MissingArtifactAuthority);
                         }
-                        if current.status == eda_engine::substrate::ProposalStatus::Applied {
+                        if matches!(
+                            current.status,
+                            eda_engine::substrate::ProposalStatus::Applied
+                                | eda_engine::substrate::ProposalStatus::Rejected
+                        ) {
                             return Ok(None);
                         }
                     }
@@ -242,10 +256,33 @@ pub fn build_workspace_selection_view(
             );
         }
     }
+    if let SelectionSubject::Proposal(key) = &view.subject
+        && let Ok(identity) = serde_json::from_str::<ProductionProposalActionIdentity>(key)
+    {
+        let proposal = model
+            .proposals
+            .get(&identity.proposal_id)
+            .expect("validated producer");
+        view.stale = identity.prepared_against != model.model_revision;
+        fields.insert(
+            "producer_identity".into(),
+            V::Common(serde_json::to_value(identity).unwrap()),
+        );
+        fields.insert(
+            "artifact_basis".into(),
+            V::Common(serde_json::json!({
+                "canonical_status": proposal.status,
+                "current_model_revision": model.model_revision,
+                "stale": view.stale,
+            })),
+        );
+        fields.insert("artifact_payload".into(), V::Common(payload));
+        return Ok(view);
+    }
     fields.insert("artifact_payload".into(), V::Common(payload));
     if !matches!(view.subject, SelectionSubject::Diagnostic(_)) {
         fields.insert("producer_identity".into(),V::Common(if let Some(proposal)=&state.review.producer_proposal {
-            serde_json::json!({"project_id":proposal.project_id,"proposal_id":proposal.proposal_id,"prepared_against":proposal.prepared_against})
+            serde_json::json!({"project_id":proposal.project_id,"proposal_id":proposal.proposal_id,"batch_id":proposal.batch.batch_id,"prepared_against":proposal.prepared_against})
         } else {
             serde_json::json!({"project_id":view.project,"review_source":state.review.review_source,"net_uuid":state.review.net_uuid,"from_anchor_pad_uuid":state.review.from_anchor_pad_uuid,"to_anchor_pad_uuid":state.review.to_anchor_pad_uuid,"selection_profile":state.review.selection_profile,"selected_candidate":state.review.selected_candidate,"selected_policy":state.review.selected_policy})
         }));

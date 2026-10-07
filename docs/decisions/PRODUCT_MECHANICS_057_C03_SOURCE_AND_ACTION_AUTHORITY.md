@@ -66,3 +66,17 @@ C04 native proof, reserved independent C05 review and C06 acceptance remain.
 No dependency, prototype edit, fabrication tolerance, acceptance waiver, Inspector
 layout change, performance budget or deferred editor is authorized. The pinned
 packet's byte/profile boundary remains explicit even under this execution grant.
+
+## Explicit profile-adoption disposition
+
+The owner approves separately explicit, guarded BoardRoot profile-4 adoption.
+Graphics operations follow adoption; exact graphics undo starts from the adopted
+preimage. Preserve original pre-adoption bytes as historical evidence, not an
+unsupported promise that a graphics inverse restores the former profile.
+Adoption stays forward-only under the native-format policy and uses the canonical
+journal/commit path. No read, reopen or selection-triggered adoption is allowed.
+Declare the graphic and placed-Pad source capabilities in profile 4; incompatible
+or undeclared source refuses rather than disappearing from the object index.
+This resolves the pinned packet's schema/profile boundary only. Exact source,
+map-presence, ID/provenance and affected/unaffected-shard undo/replay/reopen proof,
+noncanonical refusal, exact CAM and C04/C05/C06 remain required.

@@ -5,10 +5,13 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use super::{PointNm, ProductionStatus, run_cli_json_owned};
+use crate::selection_artifacts::ProductionProposalActionIdentity;
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct ProductionProposalSummary {
     pub proposal_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub action_identity: Option<ProductionProposalActionIdentity>,
     pub status: String,
     pub source: String,
     pub rationale: String,
@@ -52,6 +55,14 @@ pub(super) struct ProposalsPayload {
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 struct ProposalPayload {
+    #[serde(default)]
+    schema_version: Option<u64>,
+    #[serde(default)]
+    project_id: Option<uuid::Uuid>,
+    #[serde(default)]
+    proposal_id: Option<uuid::Uuid>,
+    #[serde(default)]
+    prepared_against: Option<eda_engine::substrate::ModelRevision>,
     status: String,
     #[serde(default)]
     source: String,
@@ -63,6 +74,10 @@ struct ProposalPayload {
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq, Default)]
 struct ProposalBatchPayload {
+    #[serde(default)]
+    batch_id: Option<uuid::Uuid>,
+    #[serde(default)]
+    expected_model_revision: Option<eda_engine::substrate::ModelRevision>,
     #[serde(default)]
     operations: Vec<Value>,
 }
@@ -186,6 +201,7 @@ pub(super) fn proposal_summaries(payload: &ProposalsPayload) -> Vec<ProductionPr
         .iter()
         .map(|(proposal_id, proposal)| ProductionProposalSummary {
             proposal_id: proposal_id.clone(),
+            action_identity: proposal.action_identity(proposal_id),
             status: proposal.status.clone(),
             source: proposal.source.clone(),
             rationale: proposal.rationale.clone(),
@@ -195,4 +211,23 @@ pub(super) fn proposal_summaries(payload: &ProposalsPayload) -> Vec<ProductionPr
             preview: None,
         })
         .collect()
+}
+
+impl ProposalPayload {
+    fn action_identity(&self, key: &str) -> Option<ProductionProposalActionIdentity> {
+        let proposal_id = self.proposal_id?;
+        let prepared_against = self.prepared_against.as_ref()?;
+        if self.schema_version != Some(eda_engine::substrate::PROPOSAL_SCHEMA_VERSION)
+            || key.parse::<uuid::Uuid>().ok() != Some(proposal_id)
+            || self.batch.expected_model_revision.as_ref() != Some(prepared_against)
+        {
+            return None;
+        }
+        Some(ProductionProposalActionIdentity {
+            project_id: self.project_id?,
+            proposal_id,
+            batch_id: self.batch.batch_id?,
+            prepared_against: prepared_against.clone(),
+        })
+    }
 }

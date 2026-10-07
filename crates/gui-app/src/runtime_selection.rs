@@ -34,6 +34,17 @@ impl NativeSelectionSession {
     pub(super) fn reset_click_depth(&mut self) {
         self.last_click = None;
     }
+    /// Proposal metadata is outside the source-model revision. Refresh its
+    /// canonical lifetime while retaining the unchanged native geometry basis.
+    fn refresh_same_revision(&mut self, model: DesignModel) -> Option<DesignModel> {
+        if self.model.project.project_id != model.project.project_id
+            || self.model.model_revision != model.model_revision
+        {
+            return Some(model);
+        }
+        self.model = model;
+        None
+    }
 }
 impl Runtime {
     pub(super) fn ensure_selection_authority(&mut self) -> anyhow::Result<bool> {
@@ -44,14 +55,17 @@ impl Runtime {
             return Ok(false);
         }
         let model = ProjectResolver::new(&backing.request.project_root).resolve()?;
-        if self
-            .native_selection
-            .as_ref()
-            .is_some_and(|s| s.model.model_revision == model.model_revision)
-        {
-            self.reconcile_native_artifact_selection();
-            return Ok(true);
-        }
+        let model = if let Some(session) = &mut self.native_selection {
+            match session.refresh_same_revision(model) {
+                Some(model) => model,
+                None => {
+                    self.reconcile_native_artifact_selection();
+                    return Ok(true);
+                }
+            }
+        } else {
+            model
+        };
         let authority = NativeSelectionResolution::capture(&model)
             .map_err(|e| anyhow::anyhow!("Selection source unavailable: {e:?}"))?;
         let reconcile = if let (Some(previous), SelectionTarget::Native(view)) =
@@ -509,3 +523,7 @@ impl Runtime {
         self.refresh_selection_accessibility();
     }
 }
+
+#[cfg(test)]
+#[path = "runtime_selection_metadata_tests.rs"]
+mod metadata_tests;

@@ -1610,9 +1610,12 @@ open — such cells carry `OPEN-n` markers regardless.
   diagnostic; selecting ADDS the cue without erasing uncommitted identity;
   no channel recolors another into selection magenta (RB §2.6;
   UVT §2.2.13); cross-pane projection deferred with mixed-compound
-  semantics (OPEN-12); production
-  proposals have no world-scene identity at all (data-panel summary +
-  chrome hit only). *Hidden/locked:* excluded from Ctrl+A as non-authored
+  semantics (OPEN-12). PM057 ratifies production whole-batch action identity
+  `{project_id, proposal_id, batch_id, prepared_against}` from the canonical
+  producer, with no geometry inference. Deferred keeps selection, stale keeps
+  it flagged, Applied/Rejected or absent artifact dissolves it. Finer route
+  actions remain separately producer-qualified. This replaces the predecessor's
+  data-panel/chrome-only production identity gap; C04/C05/C06 remain separate. *Hidden/locked:* excluded from Ctrl+A as non-authored
   (UVT §2.2.9) and from region acquisition (OPEN-12 resolved);
   hidden/locked semantics ride the channel lifecycle, not §2.2.7/2.2.8.
   *Overlay:*
@@ -1625,10 +1628,13 @@ open — such cells carry `OPEN-n` markers regardless.
   authority:* `ProposalOverlayPrimitive` (`lib.rs:322-334`);
   `SelectionTarget::ReviewAction(String)` + `SessionCommand::SelectReviewAction`
   (`lib.rs:440-445/:628-661`); ABSENT: retained-world hit regions; any typed
-  world identity for production proposals. *Verdict:* spec **partial**
+  world identity for production proposals in the predecessor. PM057 now
+  authorizes canonical producer/protocol/native overlay integration; that older
+  absence is not permission to reduce mandatory scope. *Verdict:* spec **partial**
   **ratified** (OPEN-12 resolved: explicit-only acquisition; mixed
   compounds deferred); substrate
-  **live** (route-proposal action selection end-to-end).
+  **live** (route actions and PM057 producer-qualified production preview
+  selection); complete native input proof and independent review remain C04/C05.
 - **Review subject (dashed evidence geometry of a review action).**
   *Ownership:* parent = the review action; evidence polylines are typed
   children (`ReviewPrimitive.evidence_key`) and are never independently
