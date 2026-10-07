@@ -2686,3 +2686,23 @@ limitations are in `target/s5a-import-fill-proof.json`. The bounded producer bug
 is closed; the unchanged C03 execution grant and independent C05 boundary remain.
 The same implementation session reconciled its expired lease and refreshed the
 synchronized Frontier/beads claim before this handoff; no ownership transfer.
+
+### PM057 C03 — exact documentation-graphic manufacturing unit
+
+Profile-4 graphics now reach the existing silkscreen and mechanical export,
+validation, inspection and semantic comparison owners. All six recorded shapes
+retain exact source geometry; transparent circle/polygon holes preserve overlapping
+objects, and certified arcs retain centres and sweep. Existing translation-only
+panel output reuses definitions. Artifact previews retain exact void/arc metadata.
+Profile-aware native validation accepts the declared BoardRoot capabilities.
+Uncertified, nonrobust or out-of-range output refuses before replacing artifacts.
+Refusal remains preservation evidence, not a mandatory graphics positive.
+
+Reuse the actual imported routed-board/saved-fill fixture for canonical edits,
+source-byte/journal non-mutation, both layer families, deliberate hole drift and
+panel readback. Engine geometry and protocol metadata checks remain focused on
+this integration. The unrelated release-count fixture failure reproduces at
+committed 7675bcf8 and is captured as dat-release-count-baseline-odve; release
+checks and assertions remain unchanged. Positive rational-centre CAM/T04, placed
+Pad correspondence and complete C04/C05/C06 remain unfinished. No acceptance,
+prototype, dependency, tolerance, performance or deferred-editor boundary changed.

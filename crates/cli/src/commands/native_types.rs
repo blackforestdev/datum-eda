@@ -77,6 +77,9 @@ pub(crate) struct NativeBoardRoot {
     pub(crate) dimensions: Vec<serde_json::Value>,
     #[serde(default)]
     pub(crate) texts: Vec<serde_json::Value>,
+    // Read-only projection. The canonical writer retains actual map presence.
+    #[serde(default)]
+    pub(crate) graphics: BTreeMap<Uuid, eda_engine::board::graphics::BoardGraphic>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

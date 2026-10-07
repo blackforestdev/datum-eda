@@ -114,17 +114,6 @@
       "status": "decomposition-required",
       "note": "Rust production module exceeds the normal authored production limit before inline tests."
     },
-    "crates/cli/src/commands/gerber/mechanical.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 701
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
     "crates/cli/src/commands/gerber/plan.rs": {
       "kind": "rust-production",
       "limits": {
@@ -216,7 +205,7 @@
     "crates/cli/src/commands/project/validate.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1035
+        "pre_test_lines": 1020
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -546,7 +535,7 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 4057,
+        "pre_test_lines": 4013,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",

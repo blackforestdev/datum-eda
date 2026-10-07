@@ -157,3 +157,6 @@ fn project_import_unsupported_graphic_refuses_before_profile_adoption_or_source_
         assert_eq!(std::fs::read(path).unwrap(), data);
     }
 }
+
+#[path = "graphics/manufacturing.rs"]
+mod manufacturing;

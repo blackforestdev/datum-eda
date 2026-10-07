@@ -3,6 +3,13 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum ExportError {
     #[error(
+        "BoardGraphic {source_id} manufacturing refused: {reason}; no approximate output is permitted"
+    )]
+    RefusedBoardGraphic {
+        source_id: uuid::Uuid,
+        reason: String,
+    },
+    #[error(
         "Track {source_id} manufacturing refused: {witness:?}; nonzero-deviation allowance or certified construction unavailable; no chord output is permitted"
     )]
     DeferredArcManufacturing {

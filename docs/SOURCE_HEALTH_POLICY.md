@@ -474,3 +474,9 @@ the same owner. `substrate/replay.rs` falls from 729 to 659 lines, below the nor
 700-line production limit, so its legacy entry is removed. No ceiling increases,
 new exception, suppression or parallel mutation path. Reopened graphic redo and
 subsequent canonical writes are the bounded proof obligation for this extraction.
+
+PM057 manufacturing integration moves the exact Gerber subset parser, mechanical
+comparison and artifact preview payloads into normal bounded child modules.
+Mechanical implementation is below the normal production ceiling and its legacy
+entry is removed. Native project validation and GUI protocol ceilings ratchet to
+their smaller measured owners; no ceiling or policy is raised.

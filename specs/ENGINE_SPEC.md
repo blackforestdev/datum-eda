@@ -2183,5 +2183,14 @@ Promoted replay retains each recorded BoardRoot operation advance when an import
 changes both outline and stackup; a deduplicated diff is not a revision count.
 Saved-fill staging qualifies the pending source overlay against its current
 preimage, without replaying adoption onto future hashes.
-Exact CAM, placed-Pad integration and complete C04–C06 proof remain
-unfinished.
+The existing FS46 manufacturing owner now appends source-qualified graphics to
+silkscreen and mechanical outputs. Solid circular apertures stroke exact paths;
+certified arcs retain exact centres and sweep; filled polygons retain source
+vertices. Circle aperture holes and polygon outline macros preserve transparent
+voids without clearing independent overlapping objects. Definitions stay in the
+header for existing translation-only panel consumers. The exact subset reader,
+semantic comparisons and artifact preview metadata preserve holes and arc offsets.
+Out-of-range, nonrobust and uncertified geometry refuses before output replacement;
+no sampling, coordinate adjustment or nonzero-deviation allowance is introduced.
+Positive rational-centre CAM/T04, placed-Pad integration and complete C04–C06
+proof remain unfinished. Supported graphics output does not accept those gaps.

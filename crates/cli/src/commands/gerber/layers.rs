@@ -130,6 +130,13 @@ pub(crate) fn export_native_project_gerber_silkscreen_layer(
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(&project, layer)?;
     let gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
+        .and_then(|base| {
+            eda_engine::export::append_rs274x_board_graphics(
+                &base,
+                layer,
+                &project.board.graphics.values().cloned().collect::<Vec<_>>(),
+            )
+        })
         .context("failed to render native board silkscreen layer as RS-274X")?;
     std::fs::write(output_path, gerber)
         .with_context(|| format!("failed to write {}", output_path.display()))?;
@@ -140,6 +147,12 @@ pub(crate) fn export_native_project_gerber_silkscreen_layer(
         board_path: project.board_path.display().to_string(),
         gerber_path: output_path.display().to_string(),
         layer,
+        board_graphic_count: project
+            .board
+            .graphics
+            .values()
+            .filter(|g| g.layer == layer)
+            .count(),
         text_count: texts.len().saturating_sub(component_text_count),
         component_text_count,
         component_stroke_count: component_line_count,
@@ -271,6 +284,13 @@ pub(crate) fn validate_native_project_gerber_silkscreen_layer(
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(&project, layer)?;
     let expected = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
+        .and_then(|base| {
+            eda_engine::export::append_rs274x_board_graphics(
+                &base,
+                layer,
+                &project.board.graphics.values().cloned().collect::<Vec<_>>(),
+            )
+        })
         .context("failed to render expected native board silkscreen layer as RS-274X")?;
     let actual = std::fs::read_to_string(gerber_path)
         .with_context(|| format!("failed to read {}", gerber_path.display()))?;
@@ -281,6 +301,12 @@ pub(crate) fn validate_native_project_gerber_silkscreen_layer(
         board_path: project.board_path.display().to_string(),
         gerber_path: gerber_path.display().to_string(),
         layer,
+        board_graphic_count: project
+            .board
+            .graphics
+            .values()
+            .filter(|g| g.layer == layer)
+            .count(),
         matches_expected: actual == expected,
         expected_bytes: expected.len(),
         actual_bytes: actual.len(),
@@ -505,6 +531,13 @@ pub(crate) fn compare_native_project_gerber_silkscreen_layer(
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(&project, layer)?;
     let expected_gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
+        .and_then(|base| {
+            eda_engine::export::append_rs274x_board_graphics(
+                &base,
+                layer,
+                &project.board.graphics.values().cloned().collect::<Vec<_>>(),
+            )
+        })
         .context("failed to render expected native board silkscreen layer as RS-274X")?;
     let actual_gerber = std::fs::read_to_string(gerber_path)
         .with_context(|| format!("failed to read {}", gerber_path.display()))?;
@@ -524,6 +557,12 @@ pub(crate) fn compare_native_project_gerber_silkscreen_layer(
         board_path: project.board_path.display().to_string(),
         gerber_path: gerber_path.display().to_string(),
         layer,
+        board_graphic_count: project
+            .board
+            .graphics
+            .values()
+            .filter(|g| g.layer == layer)
+            .count(),
         expected_text_count: texts.len().saturating_sub(component_text_count),
         expected_component_text_count: component_text_count,
         expected_component_stroke_count: component_line_count,

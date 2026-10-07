@@ -6,6 +6,7 @@ fn sample_artifact_preview_primitives()
     };
     vec![
         Prim {
+            exact_geometry: None,
             kind: "stroke".to_string(),
             aperture_diameter_nm: Some(250_000),
             aperture_width_nm: None,
@@ -21,6 +22,7 @@ fn sample_artifact_preview_primitives()
             ],
         },
         Prim {
+            exact_geometry: None,
             kind: "flash".to_string(),
             aperture_diameter_nm: Some(400_000),
             aperture_width_nm: None,
@@ -34,7 +36,6 @@ fn sample_artifact_preview_primitives()
         },
     ]
 }
-
 #[allow(dead_code)]
 fn panel_vertices_without_artifact_preview(mut state: ReviewWorkspaceState) -> usize {
     if let Some(artifact) = state.production.focused_artifact.as_mut()
@@ -53,7 +54,6 @@ fn panel_vertices_without_artifact_preview(mut state: ReviewWorkspaceState) -> u
     .panel_vertices()
     .len()
 }
-
 #[allow(dead_code)]
 fn artifact_preview_adds_panel_vertices(
     prepared: &PreparedScene,
@@ -61,7 +61,6 @@ fn artifact_preview_adds_panel_vertices(
 ) -> bool {
     prepared.panel_vertices().len() > panel_vertices_without_artifact_preview(state)
 }
-
 #[allow(dead_code)]
 fn prepared_has_artifact_preview_controls(prepared: &PreparedScene) -> bool {
     let has_zoom = prepared
@@ -78,7 +77,6 @@ fn prepared_has_artifact_preview_controls(prepared: &PreparedScene) -> bool {
         .any(|region| matches!(region.target, HitTarget::ArtifactPreviewViewport));
     has_zoom && has_geometry && has_viewport
 }
-
 #[allow(dead_code)]
 fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bool {
     if let Some(artifact) = state.production.focused_artifact.as_mut()

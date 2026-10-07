@@ -679,8 +679,12 @@ native geometry. Replacement captures the prior sidecar; source refresh requires
 the recorded imported geometry preimage and refuses to overwrite native edits.
 Missing external sources retain native objects and bindings. Graphic-bearing
 compensation uses actual source revisions, restoring board and map bytes through
-reopened history. Manufacturing correspondence and C04–C06 acceptance remain
-required under PM057;
+reopened history. Profile-aware native validation recognizes BoardRoot 1–4.
+Silkscreen/Mechanical manufacturing now consumes all six recorded shapes, including
+filled holes, through exact FS46 primitives and source-qualified refusal. Exact
+subset readback and artifact preview retain circle holes, polygon rings and arc
+centres; successful output cannot silently omit a recorded selected-layer graphic.
+Rational-centre CAM/T04 and complete C04–C06 acceptance remain required under PM057;
 missing output/refusal cannot pass a required graphics positive.
 
 ### 6.6 `rules/rules.json`

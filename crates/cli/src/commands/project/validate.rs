@@ -1,3 +1,5 @@
+mod schema_profiles;
+use schema_profiles::validate_schema_version;
 use anyhow::Result;
 use eda_engine::error::EngineError;
 use eda_engine::substrate::{
@@ -141,11 +143,13 @@ pub(crate) fn validate_native_project(root: &Path) -> Result<NativeProjectValida
 
         if let Some(board) = board {
             required_files_validated += 1;
-            validate_schema_version(
-                &mut issues,
-                relative_subject(root, &board_path),
-                board.schema_version,
-            );
+            if !(1..=4).contains(&board.schema_version) {
+                validate_schema_version(
+                    &mut issues,
+                    relative_subject(root, &board_path),
+                    board.schema_version,
+                );
+            }
             validate_board_root(&board, &mut issues)?;
         }
 
@@ -953,25 +957,6 @@ where
         }
     }
     Ok(())
-}
-
-fn validate_schema_version(
-    issues: &mut Vec<NativeProjectValidationIssueView>,
-    subject: String,
-    schema_version: u32,
-) {
-    if schema_version != SUPPORTED_NATIVE_SCHEMA_VERSION {
-        push_issue(
-            issues,
-            "error",
-            "invalid_schema_version",
-            subject,
-            format!(
-                "unsupported schema_version {}; expected {}",
-                schema_version, SUPPORTED_NATIVE_SCHEMA_VERSION
-            ),
-        );
-    }
 }
 
 fn parse_uuid_key(

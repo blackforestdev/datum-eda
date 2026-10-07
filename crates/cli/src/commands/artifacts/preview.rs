@@ -16,6 +16,8 @@ const MAX_PREVIEW_CSV_COLUMNS: usize = 8;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectArtifactPreviewPrimitive {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) exact_geometry: Option<serde_json::Value>,
     pub(crate) kind: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) aperture_diameter_nm: Option<i64>,
@@ -156,6 +158,7 @@ fn gerber_preview_primitives(
                 aperture_diameter_nm,
                 points,
             } => NativeProjectArtifactPreviewPrimitive {
+                exact_geometry: None,
                 kind: "stroke",
                 aperture_diameter_nm: Some(*aperture_diameter_nm),
                 aperture_width_nm: None,
@@ -165,9 +168,18 @@ fn gerber_preview_primitives(
                 points: preview_points(points),
             },
             ParsedGerberGeometry::Flash { aperture, position } => {
+                let mut exact_geometry = None;
                 let (diameter, width, height) = match aperture {
                     ParsedGerberAperture::Circle { diameter_nm } => {
                         (Some(*diameter_nm), None, None)
+                    }
+                    ParsedGerberAperture::Ring { diameter_nm, hole_nm } => {
+                        exact_geometry = Some(serde_json::json!({"kind":"ring", "hole_nm":hole_nm}));
+                        (Some(*diameter_nm), None, None)
+                    }
+                    ParsedGerberAperture::Polygon { outer, holes } => {
+                        exact_geometry = Some(serde_json::json!({"kind":"polygon", "outer":outer, "holes":holes}));
+                        (None, None, None)
                     }
                     ParsedGerberAperture::Rect {
                         width_nm,
@@ -175,6 +187,7 @@ fn gerber_preview_primitives(
                     } => (None, Some(*width_nm), Some(*height_nm)),
                 };
                 NativeProjectArtifactPreviewPrimitive {
+                    exact_geometry,
                     kind: "flash",
                     aperture_diameter_nm: diameter,
                     aperture_width_nm: width,
@@ -187,7 +200,12 @@ fn gerber_preview_primitives(
                     }],
                 }
             }
+            ParsedGerberGeometry::Arc { width_nm, from, to, center_offset, counterclockwise } => NativeProjectArtifactPreviewPrimitive {
+                exact_geometry: Some(serde_json::json!({"kind":"arc", "center_offset":center_offset,"counterclockwise":counterclockwise})),
+                kind: "arc", aperture_diameter_nm: Some(*width_nm), aperture_width_nm: None, aperture_height_nm: None, tool: None, diameter_mm: None, points: preview_points(&[*from,*to]),
+            },
             ParsedGerberGeometry::Region { points } => NativeProjectArtifactPreviewPrimitive {
+                exact_geometry: None,
                 kind: "region",
                 aperture_diameter_nm: None,
                 aperture_width_nm: None,
@@ -235,6 +253,7 @@ fn excellon_preview_primitives(bytes: &[u8]) -> Result<Vec<NativeProjectArtifact
         .take(MAX_PREVIEW_PRIMITIVES)
         .map(
             |(tool, diameter_mm, x_nm, y_nm)| NativeProjectArtifactPreviewPrimitive {
+                exact_geometry: None,
                 kind: "drill_hit",
                 aperture_diameter_nm: None,
                 aperture_width_nm: None,
@@ -289,4 +308,55 @@ fn preview_points(
             y_nm: point.y,
         })
         .collect()
+}
+
+#[cfg(test)]
+mod graphic_tests {
+    use super::*;
+    use eda_engine::ir::geometry::Point;
+    #[test]
+    fn exact_graphic_preview_retains_holes_and_arc_direction() {
+        let geometries = vec![
+            ParsedGerberGeometry::Flash {
+                aperture: ParsedGerberAperture::Ring {
+                    diameter_nm: 10_100_001,
+                    hole_nm: 9_899_999,
+                },
+                position: Point::new(0, 0),
+            },
+            ParsedGerberGeometry::Flash {
+                aperture: ParsedGerberAperture::Polygon {
+                    outer: vec![Point::new(0, 0), Point::new(10, 0), Point::new(10, 10)],
+                    holes: vec![vec![Point::new(2, 2), Point::new(4, 2), Point::new(4, 4)]],
+                },
+                position: Point::new(50, 50),
+            },
+            ParsedGerberGeometry::Arc {
+                width_nm: 100001,
+                from: Point::new(0, 0),
+                to: Point::new(2_000_000, 0),
+                center_offset: Point::new(1_000_000, 0),
+                counterclockwise: false,
+            },
+        ];
+        let preview = gerber_preview_primitives(&geometries);
+        assert_eq!(
+            preview[0].exact_geometry.as_ref().unwrap()["hole_nm"],
+            9_899_999
+        );
+        assert_eq!(
+            preview[1].exact_geometry.as_ref().unwrap()["holes"][0][0]["x"],
+            2
+        );
+        assert_eq!(preview[1].points[0].x_nm, 50);
+        assert_eq!(
+            preview[2].exact_geometry.as_ref().unwrap()["center_offset"]["x"],
+            1_000_000
+        );
+        assert_eq!(
+            preview[2].exact_geometry.as_ref().unwrap()["counterclockwise"],
+            false
+        );
+        assert_eq!(preview[2].points.len(), 2);
+    }
 }

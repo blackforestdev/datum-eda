@@ -62,6 +62,8 @@ pub struct ProductionArtifactFilePreviewSummary {
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct ProductionArtifactPreviewPrimitive {
+    #[serde(default)]
+    pub exact_geometry: Option<serde_json::Value>,
     pub kind: String,
     pub aperture_diameter_nm: Option<i64>,
     pub aperture_width_nm: Option<i64>,

@@ -522,3 +522,21 @@ does not block read-only S5A selection/inspection. This is not full manufacturin
 acceptance and does not defer any selection-critical current-fill, geometry,
 identity, membership, lifetime or non-mutation obligation. See PM054 and the
 current S5A derived-authority plan for the controlling disposition and proof pins.
+
+## PM057 independent documentation graphics integration
+
+The existing silkscreen and mechanical export/validate/compare owners consume
+profile-4 BoardGraphic sources alongside historical text and component geometry.
+Exact line/open-polyline strokes, certified three-point arcs, rectangles, integer
+circles and polygon rings are supported. Circle holes use transparent apertures;
+polygon holes use outline macros rather than union-only region contours or
+image-plane clearing. Existing translation-only panel output reuses definitions
+and translates flash/path positions while retaining relative arc centres.
+
+The exact subset reader, inspection counts, semantic comparison and artifact
+preview metadata carry these shapes and voids through. Export renders the complete
+selected layer before replacing a file. Invalid/out-of-range/nonrobust geometry
+and uncertified rational centres refuse with the source UUID and explicit pending
+obligation. Refusal is preservation evidence, not a mandatory positive. CAM/T04,
+zero intentional deviation, full native proof and independent review remain.
+No dependency, tool taxonomy, new panel mechanism or tolerance is introduced.

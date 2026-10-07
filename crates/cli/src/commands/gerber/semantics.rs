@@ -1,5 +1,10 @@
+#[path = "graphic_semantics.rs"]
+pub(super) mod graphic_semantics;
+#[path = "semantics_parser.rs"]
+mod parser;
 pub(crate) use super::semantics_utils::render_mm_6;
 use crate::*;
+pub(crate) use parser::parse_rs274x_subset;
 use std::collections::{BTreeMap, BTreeSet};
 pub(crate) fn classify_via_hole_class(
     start: i32,
@@ -16,11 +21,31 @@ pub(crate) fn classify_via_hole_class(
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum ParsedGerberAperture {
-    Circle { diameter_nm: i64 },
-    Rect { width_nm: i64, height_nm: i64 },
+    Circle {
+        diameter_nm: i64,
+    },
+    Rect {
+        width_nm: i64,
+        height_nm: i64,
+    },
+    Ring {
+        diameter_nm: i64,
+        hole_nm: i64,
+    },
+    Polygon {
+        outer: Vec<Point>,
+        holes: Vec<Vec<Point>>,
+    },
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum ParsedGerberGeometry {
+    Arc {
+        width_nm: i64,
+        from: Point,
+        to: Point,
+        center_offset: Point,
+        counterclockwise: bool,
+    },
     Stroke {
         aperture_diameter_nm: i64,
         points: Vec<Point>,
@@ -143,6 +168,10 @@ pub(crate) fn gerber_outline_actual_entries(
                 "flash".to_string(),
                 render_parsed_flash_geometry(aperture, position),
             ),
+            ParsedGerberGeometry::Arc { .. } => (
+                "arc".to_string(),
+                graphic_semantics::arc_signature(geometry),
+            ),
             ParsedGerberGeometry::Region { points } => {
                 ("region".to_string(), render_region_geometry(points))
             }
@@ -215,6 +244,10 @@ pub(crate) fn gerber_copper_actual_entries(
                 };
                 (kind.to_string(), signature)
             }
+            ParsedGerberGeometry::Arc { .. } => (
+                "arc".to_string(),
+                graphic_semantics::arc_signature(geometry),
+            ),
             ParsedGerberGeometry::Region { points } => {
                 ("zone".to_string(), render_region_geometry(points))
             }
@@ -257,6 +290,10 @@ pub(crate) fn gerber_soldermask_actual_entries(
                 };
                 (kind.to_string(), signature)
             }
+            ParsedGerberGeometry::Arc { .. } => (
+                "arc".to_string(),
+                graphic_semantics::arc_signature(geometry),
+            ),
             ParsedGerberGeometry::Region { points } => {
                 ("region".to_string(), render_region_geometry(points))
             }
@@ -281,6 +318,10 @@ pub(crate) fn gerber_silkscreen_expected_entries(
             ParsedGerberGeometry::Flash { aperture, position } => (
                 "flash".to_string(),
                 render_parsed_flash_geometry(aperture, position),
+            ),
+            ParsedGerberGeometry::Arc { .. } => (
+                "arc".to_string(),
+                graphic_semantics::arc_signature(geometry),
             ),
             ParsedGerberGeometry::Region { points } => {
                 ("region".to_string(), render_region_geometry(points))
@@ -334,6 +375,19 @@ pub(crate) fn render_parsed_flash_geometry(
     position: &Point,
 ) -> String {
     match aperture {
+        ParsedGerberAperture::Ring {
+            diameter_nm,
+            hole_nm,
+        } => format!(
+            "shape=ring diameter_mm={} hole_mm={} at=({}, {})",
+            render_mm_6(*diameter_nm),
+            render_mm_6(*hole_nm),
+            position.x,
+            position.y
+        ),
+        ParsedGerberAperture::Polygon { outer, holes } => {
+            graphic_semantics::polygon_signature(outer, holes, *position)
+        }
         ParsedGerberAperture::Circle { diameter_nm } => {
             render_circular_flash_geometry(*diameter_nm, position)
         }
@@ -356,187 +410,6 @@ fn render_point_path(points: &[Point]) -> String {
 }
 pub(crate) const DEFAULT_GERBER_OUTLINE_APERTURE_NM: i64 = 100_000;
 
-pub(crate) fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
-    let mut aperture_map = BTreeMap::<usize, ParsedGerberAperture>::new();
-    let mut current_aperture = None;
-    let mut current_position = None;
-    let mut pending_stroke = None::<PendingStroke>;
-    let mut in_region = false;
-    let mut region_points = Vec::<Point>::new();
-    let mut geometries = Vec::new();
-
-    for raw_line in gerber.lines() {
-        let line = raw_line.trim();
-        if line.is_empty() || line.starts_with("G04") {
-            continue;
-        }
-        if line == "%FSLAX46Y46*%" || line == "%MOMM*%" || line == "%LPD*%" {
-            continue;
-        }
-        if let Some(rest) = line.strip_prefix("%ADD") {
-            let split_idx = rest
-                .find(|ch: char| ch.is_ascii_alphabetic())
-                .context("unsupported Gerber aperture definition in comparison input")?;
-            let (code_str, definition) = rest.split_at(split_idx);
-            let (kind, params) = definition.split_at(1);
-            let params = params
-                .strip_prefix(',')
-                .context("unsupported Gerber aperture definition in comparison input")?
-                .strip_suffix("*%")
-                .context("unterminated Gerber aperture definition in comparison input")?;
-            let code = code_str
-                .parse::<usize>()
-                .context("invalid Gerber aperture code in comparison input")?;
-            let aperture = match kind {
-                "C" => ParsedGerberAperture::Circle {
-                    diameter_nm: parse_mm_6_to_nm(params)
-                        .context("invalid Gerber circular aperture diameter in comparison input")?,
-                },
-                "R" => {
-                    let (width_str, height_str) = params.split_once('X').context(
-                        "invalid Gerber rectangular aperture definition in comparison input",
-                    )?;
-                    ParsedGerberAperture::Rect {
-                        width_nm: parse_mm_6_to_nm(width_str).context(
-                            "invalid Gerber rectangular aperture width in comparison input",
-                        )?,
-                        height_nm: parse_mm_6_to_nm(height_str).context(
-                            "invalid Gerber rectangular aperture height in comparison input",
-                        )?,
-                    }
-                }
-                _ => bail!("unsupported Gerber aperture definition in comparison input: {line}"),
-            };
-            aperture_map.insert(code, aperture);
-            continue;
-        }
-        if line == "G36*" {
-            finalize_pending_stroke(&mut pending_stroke, &mut geometries);
-            if in_region {
-                bail!("nested Gerber regions are not supported by semantic comparison");
-            }
-            in_region = true;
-            region_points.clear();
-            continue;
-        }
-        if line == "G37*" {
-            if !in_region {
-                bail!("Gerber region end encountered without region start");
-            }
-            in_region = false;
-            if region_points.len() >= 2 {
-                geometries.push(ParsedGerberGeometry::Region {
-                    points: canonicalize_path_points(&region_points),
-                });
-            }
-            region_points.clear();
-            continue;
-        }
-        if let Some(code) = parse_aperture_select(line)? {
-            finalize_pending_stroke(&mut pending_stroke, &mut geometries);
-            current_aperture = Some(code);
-            continue;
-        }
-        if line == "M02*" {
-            break;
-        }
-
-        let Some((point, operation)) = parse_gerber_coordinate_operation(line)? else {
-            bail!("unsupported Gerber command in semantic comparison input: {line}");
-        };
-        let previous_position = current_position;
-        current_position = Some(point);
-
-        if in_region {
-            match operation {
-                2 => {
-                    region_points.clear();
-                    region_points.push(point);
-                }
-                1 => {
-                    region_points.push(point);
-                }
-                3 => bail!("Gerber flashes inside regions are not supported"),
-                _ => bail!("unsupported Gerber interpolation operation D0{operation}"),
-            }
-            continue;
-        }
-
-        let aperture_code = current_aperture.context(
-            "Gerber semantic comparison requires an active circular aperture before geometry",
-        )?;
-        let aperture = aperture_map.get(&aperture_code).with_context(|| {
-            format!("unknown Gerber aperture D{aperture_code} in comparison input")
-        })?;
-
-        match operation {
-            2 => {
-                let aperture_diameter_nm = match aperture {
-                    ParsedGerberAperture::Circle { diameter_nm } => *diameter_nm,
-                    ParsedGerberAperture::Rect { .. } => bail!(
-                        "Gerber semantic comparison only supports circular apertures for strokes"
-                    ),
-                };
-                finalize_pending_stroke(&mut pending_stroke, &mut geometries);
-                pending_stroke = Some(PendingStroke {
-                    aperture_diameter_nm,
-                    points: vec![point],
-                });
-            }
-            1 => {
-                let aperture_diameter_nm = match aperture {
-                    ParsedGerberAperture::Circle { diameter_nm } => *diameter_nm,
-                    ParsedGerberAperture::Rect { .. } => bail!(
-                        "Gerber semantic comparison only supports circular apertures for strokes"
-                    ),
-                };
-                let stroke = pending_stroke.get_or_insert_with(|| PendingStroke {
-                    aperture_diameter_nm,
-                    points: previous_position.into_iter().collect::<Vec<_>>(),
-                });
-                if stroke.aperture_diameter_nm != aperture_diameter_nm {
-                    finalize_pending_stroke(&mut pending_stroke, &mut geometries);
-                    pending_stroke = Some(PendingStroke {
-                        aperture_diameter_nm,
-                        points: previous_position
-                            .into_iter()
-                            .chain(std::iter::once(point))
-                            .collect::<Vec<_>>(),
-                    });
-                } else {
-                    stroke.points.push(point);
-                }
-            }
-            3 => {
-                finalize_pending_stroke(&mut pending_stroke, &mut geometries);
-                geometries.push(ParsedGerberGeometry::Flash {
-                    aperture: aperture.clone(),
-                    position: point,
-                });
-            }
-            _ => bail!("unsupported Gerber interpolation operation D0{operation}"),
-        }
-    }
-
-    if in_region {
-        bail!("unterminated Gerber region in comparison input");
-    }
-    finalize_pending_stroke(&mut pending_stroke, &mut geometries);
-    Ok(ParsedGerber { geometries })
-}
-fn finalize_pending_stroke(
-    pending_stroke: &mut Option<PendingStroke>,
-    geometries: &mut Vec<ParsedGerberGeometry>,
-) {
-    if let Some(stroke) = pending_stroke.take()
-        && stroke.points.len() >= 2
-    {
-        geometries.push(ParsedGerberGeometry::Stroke {
-            aperture_diameter_nm: stroke.aperture_diameter_nm,
-            points: canonicalize_path_points(&stroke.points),
-        });
-    }
-}
 fn canonicalize_path_points(points: &[Point]) -> Vec<Point> {
     let mut normalized = points.to_vec();
     if normalized.len() >= 2 && normalized.first() == normalized.last() {
@@ -594,45 +467,6 @@ fn point_path_cmp(a: &[Point], b: &[Point]) -> std::cmp::Ordering {
 }
 fn point_cmp(a: &Point, b: &Point) -> std::cmp::Ordering {
     a.x.cmp(&b.x).then_with(|| a.y.cmp(&b.y))
-}
-fn parse_aperture_select(line: &str) -> Result<Option<usize>> {
-    if !line.starts_with('D') || !line.ends_with('*') {
-        return Ok(None);
-    }
-    let code = line[1..line.len() - 1]
-        .parse::<usize>()
-        .context("invalid Gerber aperture selection in comparison input")?;
-    if code < 10 {
-        return Ok(None);
-    }
-    Ok(Some(code))
-}
-fn parse_gerber_coordinate_operation(line: &str) -> Result<Option<(Point, u8)>> {
-    let Some(rest) = line.strip_prefix('X') else {
-        return Ok(None);
-    };
-    let (x_str, rest) = rest
-        .split_once('Y')
-        .context("invalid Gerber coordinate command in comparison input")?;
-    let (y_str, d_str) = rest
-        .split_once('D')
-        .context("invalid Gerber coordinate command in comparison input")?;
-    let operation = d_str
-        .strip_suffix('*')
-        .context("unterminated Gerber coordinate command in comparison input")?
-        .parse::<u8>()
-        .context("invalid Gerber coordinate operation in comparison input")?;
-    Ok(Some((
-        Point {
-            x: x_str
-                .parse::<i64>()
-                .context("invalid Gerber X coordinate in comparison input")?,
-            y: y_str
-                .parse::<i64>()
-                .context("invalid Gerber Y coordinate in comparison input")?,
-        },
-        operation,
-    )))
 }
 fn parse_mm_6_to_nm(value: &str) -> Option<i64> {
     let mut parts = value.split('.');

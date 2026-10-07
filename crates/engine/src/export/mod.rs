@@ -8,6 +8,7 @@ mod export_public;
 mod export_surface;
 mod formatting;
 mod gerber_mechanical;
+mod graphics;
 mod mask;
 mod outline;
 mod silkscreen;

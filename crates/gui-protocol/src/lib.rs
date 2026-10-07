@@ -1,4 +1,6 @@
+mod artifact_preview_payload;
 use anyhow::{Context, Result, bail};
+use artifact_preview_payload::*;
 use eda_engine::board::BoardText;
 use eda_engine::substrate::{ProjectResolver, SourceShardKind};
 use eda_engine::text::{
@@ -692,40 +694,6 @@ struct ArtifactFilesPayload {
     files: Vec<OutputJobArtifactFilePayload>,
     #[serde(default)]
     production_projections: Vec<OutputJobArtifactProjectionPayload>,
-}
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-struct ArtifactFilePreviewPayload {
-    file: std::path::PathBuf,
-    preview_kind: String,
-    hash_matches_metadata: bool,
-    #[serde(default)]
-    primitive_count: usize,
-    #[serde(default)]
-    primitives: Vec<ArtifactFilePreviewPrimitivePayload>,
-    #[serde(default)]
-    inspection: serde_json::Value,
-}
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-struct ArtifactFilePreviewPrimitivePayload {
-    kind: String,
-    #[serde(default)]
-    aperture_diameter_nm: Option<i64>,
-    #[serde(default)]
-    aperture_width_nm: Option<i64>,
-    #[serde(default)]
-    aperture_height_nm: Option<i64>,
-    #[serde(default)]
-    tool: Option<String>,
-    #[serde(default)]
-    diameter_mm: Option<String>,
-    #[serde(default)]
-    points: Vec<ArtifactFilePreviewPointPayload>,
-}
-
-#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
-struct ArtifactFilePreviewPointPayload {
-    x_nm: i64,
-    y_nm: i64,
 }
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq, Default)]
 struct ManufacturingPlansPayload {
@@ -1870,6 +1838,7 @@ fn artifact_preview_payload_to_summary(
             .primitives
             .into_iter()
             .map(|primitive| ProductionArtifactPreviewPrimitive {
+                exact_geometry: primitive.exact_geometry,
                 kind: primitive.kind,
                 aperture_diameter_nm: primitive.aperture_diameter_nm,
                 aperture_width_nm: primitive.aperture_width_nm,

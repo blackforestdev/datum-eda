@@ -584,3 +584,16 @@ fn artifact_preview_viewport_commands_update_ui_state() {
         datum_gui_protocol::ArtifactPreviewViewportState::default()
     );
 }
+
+#[test]
+fn graphic_artifact_preview_retains_exact_geometry_metadata() {
+    let preview = datum_gui_protocol::production_artifact_file_preview_from_json(r#"{"contract":"artifact_file_preview_v1","file":"silk.gbr","preview_kind":"gerber_rs274x","hash_matches_metadata":true,"primitive_count":1,"primitives":[{"kind":"arc","aperture_diameter_nm":100001,"points":[{"x_nm":0,"y_nm":0},{"x_nm":2000000,"y_nm":0}],"exact_geometry":{"kind":"arc","center_offset":{"x":1000000,"y":0},"counterclockwise":false}}],"inspection":{"geometry_count":1,"arc_count":1}}"#).unwrap();
+    assert_eq!(
+        preview.primitives[0].exact_geometry.as_ref().unwrap()["center_offset"]["x"],
+        1000000
+    );
+    assert_eq!(
+        preview.primitives[0].exact_geometry.as_ref().unwrap()["counterclockwise"],
+        false
+    );
+}

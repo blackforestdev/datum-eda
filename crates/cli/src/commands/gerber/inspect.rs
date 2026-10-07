@@ -34,6 +34,11 @@ pub(crate) fn inspect_gerber(gerber_path: &Path) -> Result<NativeProjectGerberIn
         action: "inspect_gerber".to_string(),
         gerber_path: gerber_path.display().to_string(),
         geometry_count: parsed.geometries.len(),
+        arc_count: parsed
+            .geometries
+            .iter()
+            .filter(|g| matches!(g, ParsedGerberGeometry::Arc { .. }))
+            .count(),
         stroke_count,
         flash_count,
         region_count,
@@ -55,6 +60,10 @@ fn gerber_inspection_entries(gerber: &ParsedGerber) -> Vec<NativeProjectGerberGe
             ParsedGerberGeometry::Flash { aperture, position } => (
                 "flash".to_string(),
                 render_parsed_flash_geometry(aperture, position),
+            ),
+            ParsedGerberGeometry::Arc { .. } => (
+                "arc".to_string(),
+                super::semantics::graphic_semantics::arc_signature(geometry),
             ),
             ParsedGerberGeometry::Region { points } => {
                 ("region".to_string(), render_region_geometry(points))
