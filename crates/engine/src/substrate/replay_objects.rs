@@ -1,3 +1,6 @@
+mod promoted;
+pub(super) use promoted::apply_promoted_journal_object_diffs;
+
 use std::collections::BTreeMap;
 use std::path::Path;
 

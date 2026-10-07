@@ -11,6 +11,7 @@ mod artifact;
 mod artifact_run;
 mod artifact_validation;
 mod board_batch_basis;
+mod board_graphic_source;
 mod board_journal_ops;
 mod board_json_maps;
 mod board_list_journal_ops;

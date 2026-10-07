@@ -14,6 +14,7 @@ pub(super) fn apply_board_root_operation(
         }
         Operation::SetBoardStackup { stackup, .. } => {
             set_board_root_field(board_value, "stackup", stackup.clone())?;
+            super::board_source_profile::validate_native(board_value)?;
             Ok(Some(true))
         }
         Operation::SetBoardName { name, .. } => {
@@ -29,6 +30,9 @@ pub(super) fn inverse_board_root_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<bool, EngineError> {
+    if super::board_graphic_source::inverse(board_value, operation, inverse_operations)? {
+        return Ok(true);
+    }
     // Explicit format adoption is forward-only and has no geometry inverse.
     if super::board_source_profile::apply(board_value, operation)? {
         return Ok(true);

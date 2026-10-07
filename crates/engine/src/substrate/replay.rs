@@ -7,7 +7,9 @@ use super::production_journal_ops::{production_operation_write, production_relat
 use super::replay_authored_context::replay_authored_context_shards;
 use super::replay_forward_annotation::replay_forward_annotation_review_shard;
 use super::replay_generated_evidence::replay_generated_evidence_shards;
-use super::replay_objects::refresh_materialized_shard_objects;
+use super::replay_objects::{
+    apply_promoted_journal_object_diffs, refresh_materialized_shard_objects,
+};
 use super::replay_pool::replay_pool_shards;
 use super::replay_proposal::replay_proposal_shards;
 use super::replay_schematic::{
@@ -16,7 +18,7 @@ use super::replay_schematic::{
 use super::source_shard_ref_builders::source_shard_ref_for_value;
 use super::transaction_links::validate_transaction_links;
 use super::{
-    CommitDiff, DesignModel, DomainObject, EngineError, JournalCursor, ObjectId, ObjectRevision,
+    CommitDiff, DesignModel, DomainObject, EngineError, JournalCursor, ObjectId,
     ProjectManifestSummary, ResolveDiagnostic, SourceShardKind, SourceShardRef, TransactionRecord,
     apply_operation, canonical_json_hash, compute_model_revision, read_json_value,
     replay_journal_shard_value, source_shard::dirty_state_for_materialized_shard,
@@ -341,78 +343,6 @@ fn validate_promoted_journal_tip(
     objects.extend(candidate_objects);
     *shards = candidate_shards;
     Ok(journal.to_vec())
-}
-
-fn apply_promoted_journal_object_diffs(
-    objects: &mut BTreeMap<ObjectId, DomainObject>,
-    journal: &[TransactionRecord],
-) {
-    for transaction in journal {
-        for operation in &transaction.operations {
-            if let super::Operation::CreateSchematicSheet {
-                sheet_id,
-                relative_path,
-                ..
-            } = operation
-            {
-                objects.entry(*sheet_id).or_insert_with(|| DomainObject {
-                    object_id: *sheet_id,
-                    object_revision: ObjectRevision(0),
-                    source_shard_id: Uuid::new_v5(
-                        &Uuid::NAMESPACE_URL,
-                        format!("datum-eda:source-shard:schematic/{relative_path}").as_bytes(),
-                    ),
-                    domain: "schematic".to_string(),
-                    kind: "schematic_sheet".to_string(),
-                });
-            }
-            if let super::Operation::CreateSchematicDefinition {
-                definition_id,
-                relative_path,
-                ..
-            } = operation
-            {
-                objects
-                    .entry(*definition_id)
-                    .or_insert_with(|| DomainObject {
-                        object_id: *definition_id,
-                        object_revision: ObjectRevision(0),
-                        source_shard_id: Uuid::new_v5(
-                            &Uuid::NAMESPACE_URL,
-                            format!("datum-eda:source-shard:schematic/{relative_path}").as_bytes(),
-                        ),
-                        domain: "schematic".to_string(),
-                        kind: "schematic_definition".to_string(),
-                    });
-            }
-            if let super::Operation::CreatePoolLibraryObject {
-                object_id,
-                relative_path,
-                object_kind,
-                ..
-            } = operation
-            {
-                objects.entry(*object_id).or_insert_with(|| DomainObject {
-                    object_id: *object_id,
-                    object_revision: ObjectRevision(0),
-                    source_shard_id: Uuid::new_v5(
-                        &Uuid::NAMESPACE_URL,
-                        format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-                    ),
-                    domain: "pool".to_string(),
-                    kind: object_kind.clone(),
-                });
-            }
-        }
-        for object_id in &transaction.diff.modified {
-            if let Some(object) = objects.get_mut(object_id) {
-                object.object_revision = ObjectRevision(object.object_revision.0 + 1);
-            }
-        }
-        for object_id in &transaction.diff.deleted {
-            objects.remove(object_id);
-        }
-    }
 }
 
 fn install_promoted_journal_state(

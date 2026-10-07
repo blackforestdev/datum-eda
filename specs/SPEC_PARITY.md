@@ -29,14 +29,14 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 5 | `990b4a0e4fd6bddc8a5e74b6f2ee5795f32800c2dafcc40dd31476c1515d64c8` |
 | `workspace_crates` | `specs/PROGRESS.md` | 10 | `8f610e4e2a644b1a60bbf735eca22e1193b711eb4e2bb93ad959a9a477c1279c` |
 | `daemon_dispatch_methods` | `specs/PROGRESS.md` | 43 | `a1a7bd690633d6ebfbd765988cda081ce14c167bec3086e12a0648671f8131d7` |
-| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 212 | `3d9f3df881d5032e6d9443f48c5abc8ae32a3d60b0f7fe002571aca5b20b1c86` |
+| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 215 | `10b0cb02f0a9df24b7f3d2c4c2d129c1a106ed4f03c1187eb8b1f996415e0de7` |
 | `standards_check_surface` | `specs/CHECKING_ARCHITECTURE_SPEC.md` | 29 | `56e6d1bca3d5e3245655ab9e4f5089013b0b1368156a4b7303aabd394550f2af` |
 | `pool_library_surface` | `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md` | 115 | `2cbc95f1de4a410dbe6fb181eec5ffe4644afcc7ef946be8254c12fae893d1d2` |
 | `erc_pin_taxonomy_surface` | `specs/ERC_SPEC.md` | 33 | `8f44622d66f182ef0d12cd5a49eb0033647eb56f1b277adc0645b5ae3033a8a9` |
 | `schematic_connectivity_surface` | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | 9 | `9e6f3473c2eea9b28598a7e8cf7b24c8b0fef6687ced07442e0bf9920f4e55ed` |
 | `zone_fill_surface` | `specs/NATIVE_FORMAT_SPEC.md` | 19 | `0d9d4f46a6326aa551810d2f47ec11ada1fb4ed11712455d07d7320a1fa1ac84` |
 | `gui_supervision_surface` | `specs/PROGRESS.md` | 9 | `bf469cb5d3ef2b1d74295a43cef0d3c52b3fc0e6d7961f0784dd2aa0c07132d3` |
-| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 75 | `35f606229226b4b39e52ed137969f1a6bd78cc26c5066b63d7affb93cec1c56b` |
+| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 74 | `7a429c6c3c6b083366de45dd1d2bafd86b9d6aaee60fead48c44d30654273bd1` |
 | `global_preferences_product_surface` | `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` | 227 | `92f922ba4dce0e737bd7b702ba2899cfccd4a8a707e620605706469ac06ef30e` |
 | `global_preferences_acceptance_contract` | `specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md` | 1 | `84ef7b2bbe0f4dac20c00683b990ee74c078978b0c4339772beec6e1dea1f68d` |
 | `gui_performance_adoption_contract` | `specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md` | 2 | `29e36b6edfcb15a3c866db0b0b241ee8a55bec9b49eaacdce2e5d4ad5b36e22e` |
@@ -55,5 +55,5 @@ These names and counts do not establish readiness, enrollment, proof or activati
 | `electrical_bus_interfaces` | `specs/NATIVE_FORMAT_SPEC.md` | 2 | `d50413aabab0fca6591550379f84402ac6cbdceade981d4bde7a82777ba06ecc` |
 | `electrical_source_shard_kinds` | `specs/NATIVE_FORMAT_SPEC.md` | 22 | `4f2b2b1770e9f5d61d0e1e2ad3af9edde7fcc61f334a2fe07119b0d3d7bcef8b` |
 | `electrical_source_shard_taxa` | `specs/NATIVE_FORMAT_SPEC.md` | 23 | `1ff1a8ca056dd0775614cf993bda5db903ebe046397c86f3a9d07995085eee27` |
-| `canonical_operation_kinds` | `specs/NATIVE_FORMAT_SPEC.md` | 140 | `e94ffa94ba8d6250cb16604154bb5bb43bd03ebfc02701ca188abf2cf6fbaa82` |
+| `canonical_operation_kinds` | `specs/NATIVE_FORMAT_SPEC.md` | 143 | `04c764fb1b74e9e73cbf361067cf90d7485a5ad7ddf7849e836271a8177b29e6` |
 | `electrical_identity_source_schema` | `specs/NATIVE_FORMAT_SPEC.md` | 1 | `c60c0a32a9e73c4947f5b3dbff1f178c5dc9f1c81a1a8f5ac45a42aea666a1a9` |

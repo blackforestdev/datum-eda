@@ -2163,6 +2163,12 @@ and committed through the existing guarded journal path. It records the exact
 original UTF-8 board bytes, checks source identity/hash under the write lease,
 refuses mixed adoption/design batches, and adopts profile 4 forward-only. Read,
 reopen and build do not migrate. Original bytes are history; subsequent graphics
-inverse proof starts from the adopted canonical preimage. Nonempty graphics
-remain refused until the typed consumer is implemented; the adoption unit does
-not claim graphics, placed-Pad integration, CAM or C04–C06 delivery.
+inverse proof starts from the adopted canonical preimage. The typed PM057
+graphics source consumer now validates exact tagged geometry and uniquely declared
+documentation layers and registers independent source IDs. The native annotation
+facade builds guarded Create/Set/Delete; journal inverses retain exact JSON values
+and map presence. Promoted object replay restores recorded graphic registrations
+through redo and reopened subsequent writes. A current raw hash is a lawful
+materialized read basis; noncanonical graphics writes still refuse before staging.
+Native graphics scene/selection, import/CAM and placed-Pad integration and C04–C06
+remain unfinished.

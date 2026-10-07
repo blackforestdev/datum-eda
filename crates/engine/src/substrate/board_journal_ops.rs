@@ -20,6 +20,9 @@ pub(super) fn apply_board_operation(
     board_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<bool, EngineError> {
+    if let Some(applied) = super::board_graphic_source::apply(board_value, operation)? {
+        return Ok(applied);
+    }
     if let Some(applied) = board_pad_source::apply(board_value, operation)? {
         return Ok(applied);
     }

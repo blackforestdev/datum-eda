@@ -10,11 +10,10 @@ fn refusal(message: &str) -> EngineError {
 }
 
 pub(super) fn refuse_unjournaled(batch: &OperationBatch) -> Result<(), EngineError> {
-    if batch
-        .operations
-        .iter()
-        .any(|op| matches!(op, Operation::AdoptBoardSourceProfile { .. }))
-    {
+    if batch.operations.iter().any(|op| {
+        matches!(op, Operation::AdoptBoardSourceProfile { .. })
+            || super::board_graphic_source::identity(op).is_some()
+    }) {
         return Err(refusal("requires the canonical journaled transaction"));
     }
     Ok(())
@@ -25,6 +24,36 @@ pub(super) fn validate_batch(
     root: &Path,
     batch: &OperationBatch,
 ) -> Result<(), EngineError> {
+    if batch
+        .operations
+        .iter()
+        .any(|op| super::board_graphic_source::identity(op).is_some())
+    {
+        let shard = model
+            .source_shards
+            .iter()
+            .find(|s| s.kind == SourceShardKind::BoardRoot)
+            .ok_or_else(|| refusal("missing authoritative BoardRoot"))?;
+        let bytes = std::fs::read(root.join(&shard.relative_path))?;
+        let value: serde_json::Value = serde_json::from_slice(&bytes)?;
+        let canonical = format!(
+            "{}\n",
+            crate::ir::serialization::to_json_deterministic(&value)?
+        );
+        if super::sha256_hex(&bytes) != shard.content_hash || bytes != canonical.as_bytes() {
+            return Err(refusal(
+                "graphic writes require a current canonical byte preimage",
+            ));
+        }
+        // Check the same canonical model operations before writing stage artifacts.
+        // This also validates ImportMap bindings and source namespace collisions.
+        let mut candidate = model.clone();
+        super::operation_application_batch::apply_operations(
+            &mut candidate,
+            &batch.operations,
+            &mut super::CommitDiff::default(),
+        )?;
+    }
     let adoptions = batch
         .operations
         .iter()
@@ -101,36 +130,16 @@ pub(super) fn materialize(
     shard: &super::SourceShardRef,
     batch: &OperationBatch,
 ) -> Result<serde_json::Value, EngineError> {
-    if batch
-        .operations
-        .iter()
-        .any(|op| matches!(op, Operation::AdoptBoardSourceProfile { .. }))
-    {
+    if batch.operations.iter().any(|op| {
+        matches!(op, Operation::AdoptBoardSourceProfile { .. })
+            || super::board_graphic_source::identity(op).is_some()
+    }) {
         super::journal::capture_shard_value(model, shard)
     } else {
         super::journal::materialized_shard_value(model, shard)
     }
 }
 
-// Nonempty graphic source must not load as silently unindexed authority before
-// the typed graphic family is delivered. An empty map still declares a feature.
 pub(super) fn validate_native(value: &serde_json::Value) -> Result<(), EngineError> {
-    if let Some(graphics) = value.get("graphics") {
-        if value
-            .get("schema_version")
-            .and_then(serde_json::Value::as_u64)
-            != Some(BOARD_SOURCE_PROFILE)
-        {
-            return Err(refusal("graphics require declared profile 4"));
-        }
-        let map = graphics
-            .as_object()
-            .ok_or_else(|| refusal("graphics must be a UUID-keyed map"))?;
-        if !map.is_empty() {
-            return Err(refusal(
-                "nonempty graphics require the typed graphic source consumer",
-            ));
-        }
-    }
-    Ok(())
+    super::board_graphic_source::validate_native(value)
 }

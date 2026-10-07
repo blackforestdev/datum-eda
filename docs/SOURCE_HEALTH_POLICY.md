@@ -465,3 +465,12 @@ PM057 production Proposal integration moves the existing preview affected-source
 check into the normal `render/production_proposal_tests` owner, beside tuple
 transport and native cue proof. The remaining `render/tests.rs` ceiling ratchets
 from 747 to 710 lines; normal budgets and all other debt remain unchanged.
+
+
+PM057 graphic source history extends the existing promoted-object replay owner.
+The schematic/library creation registrations and revision diffs move intact into
+`substrate/replay_objects/promoted.rs`, adding recorded graphic re-creation under
+the same owner. `substrate/replay.rs` falls from 729 to 659 lines, below the normal
+700-line production limit, so its legacy entry is removed. No ceiling increases,
+new exception, suppression or parallel mutation path. Reopened graphic redo and
+subsequent canonical writes are the bounded proof obligation for this extraction.

@@ -2123,7 +2123,12 @@ inverse-byte proof starts from the adopted preimage. PM057 records the exact
 boundary. Explicit adoption is implemented through the native-write facade and
 canonical journal, with original-byte history, guarded stale/mixed/foreign
 refusal and reopen/forward-only proof. It is never a query/startup write.
-Graphics and placed-Pad consumers and their required positives remain unfinished.
+The graphic source unit now delivers typed exact geometry, source registration,
+canonical Create/Set/Delete and presence-aware JSON inverses. Every variant restores
+absent/empty/populated adopted preimages byte-exactly through reopened undo/redo;
+current noncanonical writes refuse before staging. Graphic native projection,
+import and exact CAM consumers, placed-Pad integration and their required positives
+remain unfinished.
 
 D3's bounded source/protocol/native preview integration is implemented: the
 canonical producer tuple owns the whole batch, Deferred/stale retains selection

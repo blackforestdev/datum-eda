@@ -13,6 +13,8 @@
 //! the board types; delete operations thread the stored raw value) and guard
 //! insertion are byte-for-byte the CLI's historical behavior.
 
+pub mod graphics;
+
 use crate::board::{BoardText, Dimension, Keepout};
 use crate::error::EngineError;
 use crate::substrate::{DesignModel, ObjectId, Operation};

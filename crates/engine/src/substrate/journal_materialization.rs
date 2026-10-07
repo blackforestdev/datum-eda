@@ -35,7 +35,9 @@ pub(in crate::substrate) fn materialized_shard_value(
         }
         Err(error) => return Err(error),
     };
-    if canonical_json_hash(&value)? == shard.content_hash {
+    if canonical_json_hash(&value)? == shard.content_hash
+        || std::fs::read(&shard.path).is_ok_and(|bytes| sha256_hex(&bytes) == shard.content_hash)
+    {
         return Ok(value);
     }
     replay_journal_shard_value(&shard.kind, &mut value, &model.journal)?;

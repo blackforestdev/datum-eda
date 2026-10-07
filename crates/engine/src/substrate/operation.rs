@@ -222,6 +222,23 @@ pub enum Operation {
         keepout_id: ObjectId,
         keepout: serde_json::Value,
     },
+    CreateBoardGraphic {
+        board_id: ObjectId,
+        graphic_id: ObjectId,
+        graphic: serde_json::Value,
+        map_was_present: bool,
+    },
+    SetBoardGraphic {
+        board_id: ObjectId,
+        graphic_id: ObjectId,
+        graphic: serde_json::Value,
+    },
+    DeleteBoardGraphic {
+        board_id: ObjectId,
+        graphic_id: ObjectId,
+        graphic: serde_json::Value,
+        remove_map: bool,
+    },
     AdoptBoardSourceProfile {
         board_id: ObjectId,
         preimage: String,

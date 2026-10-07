@@ -9,6 +9,7 @@ mod board_info;
 mod board_root_exports;
 mod board_types;
 mod dimension;
+pub mod graphics;
 mod net_graph;
 pub mod nominal_geometry;
 pub mod nominal_predicates;

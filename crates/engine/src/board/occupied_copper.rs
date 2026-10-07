@@ -124,7 +124,14 @@ fn track_half(track: &Track) -> Result<R> {
     }
     R::new(i128::from(track.width), 2)
 }
-fn segment_pair(a: P, b: P, c: P, d: P, half: R, boundary: DistanceBoundary) -> Result<bool> {
+pub(super) fn segment_pair(
+    a: P,
+    b: P,
+    c: P,
+    d: P,
+    half: R,
+    boundary: DistanceBoundary,
+) -> Result<bool> {
     for (p, x, y) in [(a, c, d), (b, c, d), (c, a, b), (d, a, b)] {
         if rational_point_segment_within(p, x, y, half, boundary)? {
             return Ok(true);

@@ -117,7 +117,7 @@ fn declared_profile_gate_does_not_ignore_graphics_or_future_source() {
             unavailable
                 .diagnostics
                 .iter()
-                .any(|d| d.message.contains("graphics"))
+                .any(|d| d.message.contains("BoardGraphic"))
         );
     }
     value["schema_version"] = 4.into();
@@ -138,7 +138,7 @@ fn declared_profile_gate_does_not_ignore_graphics_or_future_source() {
         unavailable
             .diagnostics
             .iter()
-            .any(|d| d.message.contains("graphics"))
+            .any(|d| d.message.contains("BoardGraphic"))
     );
     value["schema_version"] = 5.into();
     value.as_object_mut().unwrap().remove("graphics");

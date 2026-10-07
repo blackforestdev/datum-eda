@@ -655,6 +655,26 @@ Rules:
   without this object deserialize with no impedance target
 - a future split requires an explicit schema version bump
 
+#### PM057 optional graphics in profile 4
+
+`graphics` is an optional UUID-keyed map of independent nonconductive authored
+BoardGraphic objects. Its absence differs from present `{}`. Each object stores
+`uuid`, declared documentation `layer`, integer-nm `width`, exact tagged `geometry`
+and optional `import_key`. Geometry variants are Line, open Polyline, three-point
+Arc, Rectangle, integer-radius Circle, and Polygon with outer/hole rings and
+explicit filled style. Only uniquely declared Silkscreen/Mechanical layers qualify;
+source geometry validation reuses certified engine predicates. BoardText and
+BoardOutline remain separate. Graphic IDs cannot collide with other board sources.
+
+Canonical Create/Set/Delete use the existing native annotation facade and journal.
+Create records prior map presence; its inverse removes the map only if introduced.
+Set/Delete retain presence and capture exact JSON preimages. Undo/redo and reopen
+reuse recorded IDs and source values. Noncanonical or stale raw board bytes refuse
+before staging; explicit profile adoption remains a separate transaction. This
+source unit does not supply import adoption, native scene/selection, manufacturing
+correspondence or C04–C06 acceptance. Those consumers remain required under PM057;
+missing output/refusal cannot pass a required graphics positive.
+
 ### 6.6 `rules/rules.json`
 
 Purpose:
