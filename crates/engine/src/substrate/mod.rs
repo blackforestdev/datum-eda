@@ -17,6 +17,7 @@ mod board_list_journal_ops;
 mod board_package_json;
 mod board_package_move;
 mod board_root_journal_ops;
+mod board_source_profile;
 mod check_run;
 mod commit;
 mod component_instance;

@@ -800,7 +800,8 @@ Rules:
 - an unknown future version is a load error with a clear message
 
 > **Code status (PM054 nominal source unit):** shard/pool readers retain the
-> unknown-future-version load gate. BoardRoot supports feature schema 3 for
+> unknown-future-version load gate. BoardRoot supports explicitly adopted
+> profile 4 under PM057, feature schema 3 for
 > explicit placed-pad layer connection and feature schema 2 for authored Track
 > midpoint; ZoneFill supports schema 2 for successful current
 > empty fill. Other native kinds still support schema 1. A BoardRoot declaring
@@ -817,10 +818,24 @@ Rules:
 > layers and drill alone cannot supply that process fact. The first canonical
 > known connection write adopts BoardRoot 3; undo restores the exact source
 > fact while retaining format adoption. Undeclared connection source refuses;
-> schema 4 remains unknown. KiCad import retains the actual parsed pad kind as
+> profiles above 4 remain unknown. KiCad import retains the actual parsed pad kind as
 > the process fact, rather than inferring plating from a drill.
 > This implements only these bounded feature transitions. General migration
 > machinery and the `material_db` example below remain spec-ahead-of-code.
+
+PM057 profile-4 adoption is a separately explicit native-write transaction:
+`AdoptBoardSourceProfile` targets the authoritative BoardRoot and carries the exact
+UTF-8 original byte preimage in journal history. Model/object revision guards and
+an under-lease source hash/byte check refuse stale or foreign preimages before
+staging. The batch contains one adoption plus guards, with no design edits.
+Adoption changes only the profile declaration through the deterministic canonical
+writer; legacy formatting remains historical evidence. It has no backward inverse.
+Build, read, reopen and selection cannot trigger adoption. Graphics inverse proofs
+start from the adopted canonical preimage, including absent versus empty maps.
+Profile 4 is the declared boundary for PM057 graphics and placed-Pad bindings;
+this adoption unit alone does not deliver their operations, native selection or
+manufacturing consumers. Those remaining mechanisms require their own focused
+source/undo/replay/reopen proof and retain C04–C06 and CAM/T04 obligations.
 
 General migration implementation requirements (target — bounded PM054 feature
 adoption does not supply general migration machinery):

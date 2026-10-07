@@ -135,7 +135,8 @@ fn existing_object_guard_target(operation: &Operation) -> Option<ObjectId> {
         }
         Operation::SetBoardKeepout { keepout_id, .. }
         | Operation::DeleteBoardKeepout { keepout_id, .. } => Some(*keepout_id),
-        Operation::SetBoardOutline { board_id, .. }
+        Operation::AdoptBoardSourceProfile { board_id, .. }
+        | Operation::SetBoardOutline { board_id, .. }
         | Operation::SetBoardStackup { board_id, .. }
         | Operation::SetBoardName { board_id, .. } => Some(*board_id),
         Operation::SetSchematicSheetName { sheet_id, .. } => Some(*sheet_id),

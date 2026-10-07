@@ -2120,7 +2120,10 @@ Schema/profile adoption still requires the packet's explicit disposition;
 C04/C05/C06, CAM/T04 and all other exclusions remain unchanged.
 The owner subsequently approves separate guarded profile-4 adoption; graphics
 inverse-byte proof starts from the adopted preimage. PM057 records the exact
-boundary. Adoption remains explicit and forward-only, never a query/startup write.
+boundary. Explicit adoption is implemented through the native-write facade and
+canonical journal, with original-byte history, guarded stale/mixed/foreign
+refusal and reopen/forward-only proof. It is never a query/startup write.
+Graphics and placed-Pad consumers and their required positives remain unfinished.
 
 D3's bounded source/protocol/native preview integration is implemented: the
 canonical producer tuple owns the whole batch, Deferred/stale retains selection

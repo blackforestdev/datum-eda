@@ -32,6 +32,7 @@ pub(super) fn read_source_shard(
         .and_then(serde_json::Value::as_u64);
     validate_source_shard_schema_version(&kind, relative_path, schema_version)?;
     if kind == SourceShardKind::BoardRoot {
+        super::board_source_profile::validate_native(value)?;
         super::board_journal_ops::board_track_source::validate_native(value)?;
         super::board_journal_ops::board_pad_source::validate_native(value)?;
     }
@@ -365,7 +366,7 @@ pub(super) fn validate_source_shard_schema_version(
     let supported_schema_version = if *kind == SourceShardKind::ZoneFill {
         super::zone_fill::ZONE_FILL_SCHEMA_VERSION
     } else if *kind == SourceShardKind::BoardRoot {
-        super::board_journal_ops::board_pad_source::BOARD_PAD_SCHEMA_VERSION
+        super::board_source_profile::BOARD_SOURCE_PROFILE
     } else {
         1
     };

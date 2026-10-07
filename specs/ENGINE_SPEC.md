@@ -2155,3 +2155,14 @@ writes. The Board-only legacy airwire/diagnostic path remains an estimate and
 cannot certify unavailable nominal geometry; native DRC is the qualified entry.
 No authored net-tie exception is currently certified. Unsupported required cases,
 CAM/T04, independent candidate review and full foundation/S5A proof remain open.
+
+
+PM057 explicit BoardRoot capability adoption is built through
+`api::native_write::board_layout::source_profile::build_adopt_board_source_profile`
+and committed through the existing guarded journal path. It records the exact
+original UTF-8 board bytes, checks source identity/hash under the write lease,
+refuses mixed adoption/design batches, and adopts profile 4 forward-only. Read,
+reopen and build do not migrate. Original bytes are history; subsequent graphics
+inverse proof starts from the adopted canonical preimage. Nonempty graphics
+remain refused until the typed consumer is implemented; the adoption unit does
+not claim graphics, placed-Pad integration, CAM or C04–C06 delivery.

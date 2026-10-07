@@ -227,6 +227,10 @@ pub(super) fn apply_operation_to_objects(
             keepout_id: object_id,
             ..
         }
+        | Operation::AdoptBoardSourceProfile {
+            board_id: object_id,
+            ..
+        }
         | Operation::SetBoardOutline {
             board_id: object_id,
             ..

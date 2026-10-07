@@ -222,6 +222,10 @@ pub enum Operation {
         keepout_id: ObjectId,
         keepout: serde_json::Value,
     },
+    AdoptBoardSourceProfile {
+        board_id: ObjectId,
+        preimage: String,
+    },
     SetBoardOutline {
         board_id: ObjectId,
         outline: serde_json::Value,

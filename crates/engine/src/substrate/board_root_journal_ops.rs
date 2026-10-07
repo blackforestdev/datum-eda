@@ -4,6 +4,9 @@ pub(super) fn apply_board_root_operation(
     board_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<Option<bool>, EngineError> {
+    if super::board_source_profile::apply(board_value, operation)? {
+        return Ok(Some(true));
+    }
     match operation {
         Operation::SetBoardOutline { outline, .. } => {
             set_board_root_field(board_value, "outline", outline.clone())?;
@@ -26,6 +29,10 @@ pub(super) fn inverse_board_root_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<bool, EngineError> {
+    // Explicit format adoption is forward-only and has no geometry inverse.
+    if super::board_source_profile::apply(board_value, operation)? {
+        return Ok(true);
+    }
     match operation {
         Operation::SetBoardOutline { board_id, outline } => {
             let previous = board_root_field(board_value, "outline")?.clone();

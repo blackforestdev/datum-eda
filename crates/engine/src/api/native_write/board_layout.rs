@@ -13,6 +13,8 @@
 //! `{ "vertices": [{"x","y"}...], "closed": bool }` and the stackup as
 //! `{ "layers": [<serde StackupLayer>...] }`.
 
+pub mod source_profile;
+
 use crate::board::StackupLayer;
 use crate::error::EngineError;
 use crate::ir::geometry::Polygon;

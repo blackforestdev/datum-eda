@@ -109,7 +109,7 @@ pub(super) fn stage_operation_shard_writes(
         .iter()
         .find(|shard| shard.kind == SourceShardKind::BoardRoot)
     {
-        let mut board_value = materialized_shard_value(model, board_shard)?;
+        let mut board_value = super::board_source_profile::materialize(model, board_shard, batch)?;
         let mut touched_board = false;
         for operation in &batch.operations {
             if apply_board_operation(&mut board_value, operation)? {
@@ -386,7 +386,7 @@ pub(super) fn inverse_operations_for_batch(
         .iter()
         .find(|shard| shard.kind == SourceShardKind::BoardRoot)
     {
-        let mut board_value = materialized_shard_value(model, board_shard)?;
+        let mut board_value = super::board_source_profile::materialize(model, board_shard, batch)?;
         for operation in &batch.operations {
             inverse_board_operation(&mut board_value, operation, &mut inverse_operations)?;
         }

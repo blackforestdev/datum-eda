@@ -29,6 +29,7 @@ pub(super) enum CommitPolicyContext {
 
 impl DesignModel {
     pub fn commit(&mut self, batch: OperationBatch) -> Result<CommitReport, EngineError> {
+        super::board_source_profile::refuse_unjournaled(&batch)?;
         validate_direct_commit_proposal_policy(
             &batch,
             TransactionKind::Normal,
@@ -185,6 +186,7 @@ impl DesignModel {
         let batch = super::electrical_transaction::compose(self, batch, transaction_kind)?;
         super::electrical_history::validate(self, &batch.operations, transaction_kind)?;
         let _write_lease = ProjectWriteLease::acquire(project_root)?;
+        super::board_source_profile::validate_batch(self, project_root, &batch)?;
 
         if revision_input.related_transaction.is_none() {
             revision_input.related_transaction = undo_of.or(redo_of);
