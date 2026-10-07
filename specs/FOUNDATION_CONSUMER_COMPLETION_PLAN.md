@@ -2111,6 +2111,16 @@ queries and the remaining visual/native fixture proof are still pending.
 source-model ratification or execution. Keep C03 implementation on available
 sources; preserve every blocked graphics-positive row in C04/C05.
 
+The corrected pending `S5A-C03-AUTHORITY-DISPOSITION-01` packet at
+`docs/reviews/workflow-delivery-rollout/s5a/c03-authority-disposition.md`
+collects D1–D3. Its proposed graphics writer distinguishes absent and empty maps
+and canonical bytes from arbitrary formatting; inverse/replay/reopen proof is
+required. Render == CAM requires exact matching output: refusal or disclosure
+cannot pass mandatory output. Its placed-Pad correspondence, replacement,
+retirement, stale binding and electrical registration remain proposals. The
+owner authorized this bounded packet correction only, not ratification or new
+implementation. Existing C02/C03 execution and all mandatory positives remain.
+
 **Established gap and inherited behavior.** Native `board::Board`,
 `api/native_write/genesis::GenesisBoardRoot` and canonical `substrate::Operation`
 have no independent board-graphic collection/operations. Native board adoption
