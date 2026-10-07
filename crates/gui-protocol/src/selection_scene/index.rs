@@ -183,6 +183,8 @@ impl SceneSelectionBindings {
         for v in &scene.board_graphics {
             let class = if v.object_kind == "board_outline" {
                 Class::BoardOutline
+            } else if v.object_kind == "board_graphic" {
+                Class::BoardGraphic
             } else {
                 match v.schematic_hit_kind() {
                     Some(crate::SchematicHitKind::Symbol) => Class::Symbol,

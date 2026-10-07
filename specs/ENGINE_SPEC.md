@@ -2170,5 +2170,8 @@ facade builds guarded Create/Set/Delete; journal inverses retain exact JSON valu
 and map presence. Promoted object replay restores recorded graphic registrations
 through redo and reopened subsequent writes. A current raw hash is a lawful
 materialized read basis; noncanonical graphics writes still refuse before staging.
-Native graphics scene/selection, import/CAM and placed-Pad integration and C04–C06
-remain unfinished.
+The captured authored-source inventory now includes every registered native graphic;
+a missing registration refuses complete inventory. Native scene/selection consumes
+recorded UUIDs and geometry, including arc midpoint anchors and hole-aware filled
+pointer hits. Import/CAM, placed-Pad integration and complete C04–C06 proof remain
+unfinished.

@@ -271,7 +271,9 @@ pub(crate) fn build_schematic_interaction_vertices(
 fn shape_bounds_nm(shape: &WorldHitShape) -> Option<datum_gui_protocol::RectNm> {
     match shape {
         WorldHitShape::Rect(rect) => Some(*rect),
-        WorldHitShape::Layout(_) | WorldHitShape::LayoutBasis { .. } => shape.bounds(),
+        WorldHitShape::Layout(_)
+        | WorldHitShape::LayoutBasis { .. }
+        | WorldHitShape::Contours { .. } => shape.bounds(),
         WorldHitShape::Polyline { path, .. } | WorldHitShape::Polygon(path) => {
             bounds_of_points(path.iter().copied())
         }

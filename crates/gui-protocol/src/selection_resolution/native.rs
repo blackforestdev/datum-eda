@@ -339,6 +339,7 @@ fn source_identity(
         (SelectionSourceDomain::Board, "vias") => Class::Via,
         (SelectionSourceDomain::Board, "zones") => Class::Zone,
         (SelectionSourceDomain::Board, "texts") => Class::BoardText,
+        (SelectionSourceDomain::Board, "graphics") => Class::BoardGraphic,
         (SelectionSourceDomain::Board, "outline") => Class::BoardOutline,
         (SelectionSourceDomain::Schematic, "symbols") => Class::Symbol,
         (SelectionSourceDomain::Schematic, "pins") => Class::Pin,

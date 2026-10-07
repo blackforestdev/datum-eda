@@ -73,6 +73,11 @@ pub fn projection_candidate(
                 Class::BoardOutline,
                 graphic.source_object_uuid.parse().ok()?,
             ));
+        } else if graphic.object_kind == "board_graphic" {
+            source = Some((
+                Class::BoardGraphic,
+                graphic.source_object_uuid.parse().ok()?,
+            ));
         } else {
             let class = match graphic.schematic_hit_kind()? {
                 crate::SchematicHitKind::Symbol => Class::Symbol,

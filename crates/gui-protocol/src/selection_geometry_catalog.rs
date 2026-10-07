@@ -138,6 +138,9 @@ pub fn qualification_catalog(
                         polygons.into_iter().map(polygon).collect(),
                     ))
                 }
+                Class::BoardGraphic => {
+                    crate::native_board_graphics::qualification(source(&board, "graphics", &id)?)
+                }
                 Class::BoardOutline => {
                     let points: Vec<PointNm> = board
                         .get("outline")?

@@ -28,6 +28,7 @@ use kicad_scene_import::{
     load_scene_from_kicad_import, outline_board_graphics_from_outline,
     push_board_text_scene_primitives, trace_protocol_timing,
 };
+mod native_board_graphics;
 mod native_schematic_scene;
 pub use native_schematic_scene::project_native_schematic_scene;
 mod schematic_scene_import;
@@ -2210,8 +2211,9 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
     // authored primitives from the persisted assembled outline so native
     // projects participate in the same Edge.Cuts authored-layer lane as
     // imported boards, while keeping scene.outline as the board-boundary view.
-    let board_graphics =
+    let mut board_graphics =
         outline_board_graphics_from_outline(&outline, &inspect.board_uuid, &edge_cuts_layer_key);
+    board_graphics.extend(native_board_graphics::project(&board_value)?);
     let unrouted_primitives: Vec<UnroutedPrimitive> = Vec::new();
     let net_display = net_display_from_native_board_value(&board_value)?;
 
@@ -4557,7 +4559,7 @@ mod tests {
         };
         let graphics = outline_board_graphics_from_outline(&outline, "board-123", "L44");
         assert_eq!(graphics.len(), 4);
-        assert!(graphics.iter().all(|g| g.object_kind == "board_graphic"));
+        assert!(graphics.iter().all(|g| g.object_kind == "board_outline"));
         assert!(graphics.iter().all(|g| g.primitive_kind == "line"));
         assert!(graphics.iter().all(|g| g.layer_id == "L44"));
         assert_eq!(

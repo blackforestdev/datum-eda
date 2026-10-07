@@ -2126,8 +2126,12 @@ refusal and reopen/forward-only proof. It is never a query/startup write.
 The graphic source unit now delivers typed exact geometry, source registration,
 canonical Create/Set/Delete and presence-aware JSON inverses. Every variant restores
 absent/empty/populated adopted preimages byte-exactly through reopened undo/redo;
-current noncanonical writes refuse before staging. Graphic native projection,
-import and exact CAM consumers, placed-Pad integration and their required positives
+current noncanonical writes refuse before staging. Native projection now consumes
+all six recorded variants and selection uses independent source UUIDs and exact
+qualification geometry; filled interior hits preserve hole voids and source lookup
+never allocates identity. Focused reopened native read-only and actual retained-hit
+proof is implementation evidence, not complete C04 input/candidate acceptance.
+Import and exact CAM consumers, placed-Pad integration and their required positives
 remain unfinished.
 
 D3's bounded source/protocol/native preview integration is implemented: the

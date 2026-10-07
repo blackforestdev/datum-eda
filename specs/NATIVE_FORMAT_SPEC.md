@@ -671,8 +671,10 @@ Create records prior map presence; its inverse removes the map only if introduce
 Set/Delete retain presence and capture exact JSON preimages. Undo/redo and reopen
 reuse recorded IDs and source values. Noncanonical or stale raw board bytes refuse
 before staging; explicit profile adoption remains a separate transaction. This
-source unit does not supply import adoption, native scene/selection, manufacturing
-correspondence or C04–C06 acceptance. Those consumers remain required under PM057;
+source unit is now consumed by native scene projection and source-qualified object
+selection: actual UUIDs, recorded arc anchors and filled geometry remain independent
+of display sampling. Filled pointer hits retain hole contours. Import adoption,
+manufacturing correspondence and C04–C06 acceptance remain required under PM057;
 missing output/refusal cannot pass a required graphics positive.
 
 ### 6.6 `rules/rules.json`

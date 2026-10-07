@@ -21,6 +21,10 @@ pub enum HitShape {
         half_width_nm: f32,
     },
     Polygon(Vec<PointNm>),
+    Contours {
+        outer: Vec<PointNm>,
+        holes: Vec<Vec<PointNm>>,
+    },
     Circle {
         center: PointNm,
         radius_nm: f32,
@@ -44,6 +48,7 @@ impl HitShape {
                 half_width_nm,
             } => expanded_bounds(path, (*half_width_nm).ceil() as i64),
             Self::Polygon(path) => expanded_bounds(path, 0),
+            Self::Contours { outer, .. } => expanded_bounds(outer, 0),
             Self::Circle { center, radius_nm } => {
                 let radius = radius_nm.ceil() as i64;
                 Some(RectNm {
@@ -75,6 +80,10 @@ impl HitShape {
                 half_width_nm,
             } => polyline_contains_point(path, point, *half_width_nm),
             Self::Polygon(path) => point_in_polygon(path, point),
+            Self::Contours { outer, holes } => {
+                point_in_polygon(outer, point)
+                    && !holes.iter().any(|hole| point_in_polygon(hole, point))
+            }
             Self::Circle { center, radius_nm } => {
                 let dx = point.x as f64 - center.x as f64;
                 let dy = point.y as f64 - center.y as f64;
@@ -199,6 +208,19 @@ impl<T> SpatialHitIndex<T> {
             let shape = match &region.shape {
                 HitShape::Polyline { path, .. } | HitShape::Polygon(path) => {
                     cost::<PointNm>(path.capacity(), &mut allocation_bytes)?
+                }
+                HitShape::Contours { outer, holes } => {
+                    let mut bytes =
+                        cost::<PointNm>(outer.capacity(), &mut allocation_bytes)?.checked_add(
+                            cost::<Vec<PointNm>>(holes.capacity(), &mut allocation_bytes)?,
+                        )?;
+                    for hole in holes {
+                        bytes = bytes.checked_add(cost::<PointNm>(
+                            hole.capacity(),
+                            &mut allocation_bytes,
+                        )?)?;
+                    }
+                    bytes
                 }
                 HitShape::Layout(corners) => cost::<crate::selection_region::Point>(
                     corners.capacity(),

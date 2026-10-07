@@ -20,6 +20,7 @@ const CLASSES: &[&str] = &[
     "tracks",
     "vias",
     "zones",
+    "graphics",
     "nets",
     "instances",
     "pin_pad_maps",

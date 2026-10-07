@@ -55,7 +55,9 @@ impl ElectricalSelectionSnapshot {
         for object in self.model.objects.values().filter(|o| o.domain == "board") {
             // The resolver index only supplies candidates. Captured class data
             // proves membership in each actual source map/array.
-            for class in ["packages", "pads", "tracks", "vias", "zones", "texts"] {
+            for class in [
+                "packages", "pads", "tracks", "vias", "zones", "texts", "graphics",
+            ] {
                 if self
                     .basis
                     .class(&self.model, object.object_id, class, "board")
@@ -78,6 +80,29 @@ impl ElectricalSelectionSnapshot {
             .filter(|s| s.kind == SourceShardKind::BoardRoot)
         {
             let value = &self.values[&shard.shard_id];
+            // Every authored graphic must be registered; never advertise a
+            // complete inventory by silently omitting a broken source binding.
+            if let Some(graphics) = value.get("graphics").and_then(serde_json::Value::as_object) {
+                for key in graphics.keys() {
+                    let source_id = Uuid::parse_str(key).map_err(|_| {
+                        ElectricalQueryFailure::UnavailableBasis {
+                            sources: vec![shard.shard_id],
+                            reason: "Invalid graphic source UUID".into(),
+                        }
+                    })?;
+                    let origin = ElectricalOccurrence {
+                        class: "graphics".into(),
+                        source_id,
+                        instance_path: vec![],
+                    };
+                    if !self
+                        .basis
+                        .class(&self.model, source_id, "graphics", "board")
+                    {
+                        return Err(ElectricalQueryFailure::InvalidOccurrence { origin });
+                    }
+                }
+            }
             let id = value
                 .get("uuid")
                 .and_then(serde_json::Value::as_str)

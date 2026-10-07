@@ -202,7 +202,30 @@ fn visit<'a>(
         if !layer_visible(state, &gfx.layer_id) {
             continue;
         }
+        if gfx.primitive_kind == "polygon" {
+            emit(Region {
+                target: &gfx.object_id,
+                layer_id: Some(&gfx.layer_id),
+                shape: Shape::Contours {
+                    outer: &gfx.path,
+                    holes: &gfx.holes,
+                },
+            })?;
+        }
         let width = gfx.width_nm.unwrap_or(100_000);
+        if gfx.primitive_kind == "polygon" && gfx.width_nm.is_none() {
+            continue;
+        }
+        for hole in &gfx.holes {
+            emit(Region {
+                target: &gfx.object_id,
+                layer_id: Some(&gfx.layer_id),
+                shape: Shape::Polyline {
+                    path: hole,
+                    half_width_nm: (width as f32 * 0.5).max(150_000.0),
+                },
+            })?;
+        }
         emit(Region {
             target: &gfx.object_id,
             layer_id: Some(&gfx.layer_id),
@@ -231,6 +254,92 @@ fn visit<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn filled_board_graphic_hits_material_and_preserves_voids_with_exact_preflight() {
+        let mut state = crate::gpu_surface_pass::board_fixture_state();
+        state.scene.tracks.clear();
+        state.scene.vias.clear();
+        state.scene.components.clear();
+        state.scene.pads.clear();
+        state.scene.zones.clear();
+        state.scene.component_graphics.clear();
+        state.scene.board_texts.clear();
+        state.scene.outline.clear();
+        let p = |x, y| PointNm { x, y };
+        state.scene.board_graphics = vec![BoardGraphicPrimitive {
+            object_id: "board-graphic:recorded".into(),
+            object_kind: "board_graphic".into(),
+            primitive_kind: "polygon".into(),
+            source_object_uuid: "recorded".into(),
+            layer_id: "L37".into(),
+            path: vec![
+                p(0, 0),
+                p(10_000_000, 0),
+                p(10_000_000, 10_000_000),
+                p(8_000_000, 10_000_000),
+                p(8_000_000, 8_000_000),
+                p(0, 8_000_000),
+                p(0, 0),
+            ],
+            holes: vec![vec![
+                p(3_000_000, 3_000_000),
+                p(7_000_000, 3_000_000),
+                p(7_000_000, 7_000_000),
+                p(3_000_000, 7_000_000),
+                p(3_000_000, 3_000_000),
+            ]],
+            width_nm: None,
+        }];
+        state.ui.filters.layer_visibility.insert("L37".into(), true);
+        let scope = crate::cpu_alloc::Scope::new("filled-graphic-hit-proof");
+        let mut admitted = 0;
+        let regions = scope
+            .with(|| {
+                build(&state.scene, &state, |bytes| {
+                    admitted = bytes;
+                    Ok(())
+                })
+            })
+            .unwrap();
+        let usage = scope.usage();
+        assert_eq!(admitted as u64, usage.payload_bytes + usage.tracking_bytes);
+        assert_eq!(regions.len(), 1);
+        let index = datum_gui_viewport::SpatialHitIndex::new(regions);
+        assert_eq!(
+            index
+                .hit_test(p(1_000_000, 5_000_000), |_| true)
+                .target
+                .map(String::as_str),
+            Some("board-graphic:recorded")
+        );
+        assert!(
+            index
+                .hit_test(p(5_000_000, 5_000_000), |_| true)
+                .target
+                .is_none(),
+            "hole is not material"
+        );
+        assert!(
+            index
+                .hit_test(p(11_000_000, 5_000_000), |_| true)
+                .target
+                .is_none()
+        );
+        assert!(
+            index
+                .hit_test(p(5_000_000, 9_000_000), |_| true)
+                .target
+                .is_none(),
+            "bounding-box-only point is not material"
+        );
+        state
+            .ui
+            .filters
+            .layer_visibility
+            .insert("L37".into(), false);
+        assert!(build(&state.scene, &state, |_| Ok(())).unwrap().is_empty());
+    }
 
     #[test]
     fn real_board_hit_preflight_matches_owned_bytes_and_hidden_scene_allocates_nothing() {

@@ -106,6 +106,9 @@ pub(crate) fn push_board_graphic_semantic_stroke(
     let (nominal_nm, min_px) =
         super::semantic_graphic_kind(&graphic.object_id, &graphic.layer_id, graphic.width_nm)
             .nominal_and_floor();
+    for hole in &graphic.holes {
+        push_world_stroke_loop(strokes, hole, color, nominal_nm, min_px);
+    }
     if graphic.primitive_kind == "polygon" {
         push_world_stroke_loop(strokes, &graphic.path, color, nominal_nm, min_px);
     } else {

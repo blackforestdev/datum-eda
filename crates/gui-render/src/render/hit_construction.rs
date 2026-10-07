@@ -11,6 +11,10 @@ pub(super) enum Shape<'a> {
         half_width_nm: f32,
     },
     Polygon(&'a [PointNm]),
+    Contours {
+        outer: &'a [PointNm],
+        holes: &'a [Vec<PointNm>],
+    },
     Circle {
         center: PointNm,
         radius_nm: f32,
@@ -31,6 +35,17 @@ impl Region<'_> {
     fn payload_bytes(&self) -> anyhow::Result<usize> {
         let path = match self.shape {
             Shape::Polyline { path, .. } | Shape::Polygon(path) => bytes::<PointNm>(path.len())?,
+            Shape::Contours { outer, holes } => {
+                let mut size = bytes::<PointNm>(outer.len())?
+                    .checked_add(bytes::<Vec<PointNm>>(holes.len())?)
+                    .ok_or_else(|| anyhow::anyhow!("contour hit overflow"))?;
+                for hole in holes {
+                    size = size
+                        .checked_add(bytes::<PointNm>(hole.len())?)
+                        .ok_or_else(|| anyhow::anyhow!("contour hit overflow"))?;
+                }
+                size
+            }
             Shape::Layout(_) => 0,
             _ => 0,
         };
@@ -62,6 +77,17 @@ impl Region<'_> {
                     half_width_nm,
                 },
                 Shape::Polygon(path) => WorldHitShape::Polygon(copy_slice(path)?),
+                Shape::Contours { outer, holes } => {
+                    let mut owned = Vec::new();
+                    owned.try_reserve_exact(holes.len())?;
+                    for hole in holes {
+                        owned.push(copy_slice(hole)?);
+                    }
+                    WorldHitShape::Contours {
+                        outer: copy_slice(outer)?,
+                        holes: owned,
+                    }
+                }
                 Shape::Circle { center, radius_nm } => WorldHitShape::Circle { center, radius_nm },
             },
         })
