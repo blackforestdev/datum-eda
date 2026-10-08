@@ -1,7 +1,7 @@
 {
   "packet": "S5A-C03-EXACT-30-DELIVERY-01",
   "kind": "reserved-independent-bounded-implementation-review-return",
-  "implementation_commit": "af777151d2947d3bae312fce7fe503ca48add3cc",
+  "implementation_commit": "70f8faa5bcb4ce434a04abea7d83728eac80499f",
   "delivery_path": "docs/reviews/workflow-delivery-rollout/s5a/exact30-delivery.md",
   "delivery_blob": "97cbe6b7996257b2e44c029021cd342b7bcdcc3b",
   "evidence_path": "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
@@ -12,18 +12,53 @@
   },
   "recipient": "Existing reserved owner-facing independent audit/review session; no replacement appointed.",
   "delivery_route": "Shared repository handoff and dat-uvt-s5a-build-1wv comment; no direct session IPC endpoint available.",
-  "actual_reviewer_receipt_observed": false,
-  "review_status": "pending; no independent PASS inferred",
+  "actual_reviewer_receipt_observed": true,
+  "review_status": "Corrected candidate returned; reserved bounded re-review pending, no PASS inferred.",
   "specification_findings": "Owner reports pinned specification PASS with no mandatory findings; implementation acceptance is separate.",
-  "request": "Independently review exact implementation and native proof for this mandatory30 slice. Disposition each actual finding with candidate commit/blob. Preserve separate full S5A C04-C06 gates.",
+  "request": "Reserved reviewer: bounded re-review of mandatory EXACT30-IR-01 correction at the pinned implementation_commit/source_blob and the single regression. Retain prior review six focused PASS results at their scope; return commit/blob-qualified finding disposition. No specification review or renewed authorization requested.",
   "focused_review_questions": [
-    "Are exact contact, drilled containment and mixed45 reductions correct and bounded, with fail-closed arithmetic rather than false non-contact?",
-    "Do scene/quantity consumers, complete8-anchor majority and authoritative Run/Net enumeration preserve identity and unchanged sources?",
-    "Do unchanged asynchronous workers retain revision qualification/cancellation and atomic complete publication?",
-    "Do ordinary X11 input receipts support claimed functional behavior, with Wayland/HUMAN and delayed-shutdown limits explicit?"
+    "Does Exact world_pad_outline now derive intrinsic aperture dimensions through pad_dimensions_nm, with the existing LOD consumer receiving the corrected outline?",
+    "Does the regression establish rotated/inset aperture extents and conservative-bound independence while preserving integer caller-bound behavior?"
   ],
-  "C03_complete": false,
+  "C03_complete": true,
   "C04_complete": false,
   "C05_completed": false,
-  "C06_accepted": false
+  "C06_accepted": false,
+  "implementation_base_commit": "af777151d2947d3bae312fce7fe503ca48add3cc",
+  "previous_return_packet_commit": "50b9218b873102966723915353c134dfac8c5788",
+  "review_receipt_source": "Owner-reported reserved independent audit session result; original source af777151 / packet50b9218b.",
+  "prior_candidate_review": {
+    "outcome": "REVISE",
+    "source_commit": "af777151d2947d3bae312fce7fe503ca48add3cc",
+    "packet_commit": "50b9218b873102966723915353c134dfac8c5788",
+    "focused_tests_passed": 6,
+    "mandatory_findings": [
+      "EXACT30-IR-01"
+    ]
+  },
+  "finding_dispositions": [
+    {
+      "id": "EXACT30-IR-01",
+      "status": "implemented correction; pending independent bounded re-review",
+      "cause": "world_pad_outline used conservative bounds for intrinsic Exact PadCenter dimensions; LOD consumed the inflated outline.",
+      "correction": "Exact PadCenter uses existing pad_dimensions_nm; Integer retains caller-supplied bounds. Rotation/inset and LOD consumer remain unchanged.",
+      "source_path": "crates/gui-render/src/render/world_primitives.rs",
+      "source_blob": "149d1857a16568dfb216b27c9039ff7fea739276",
+      "consumer_path": "crates/gui-render/src/render/native_selection_overlay/lod.rs",
+      "regression": "world_primitives::tests::exact30_pad_outline_uses_local_aperture_and_preserves_integer_bounds",
+      "command": "TMPDIR=/home/bfadmin/Documents/datum-eda/target/s5a-owned-test-tmp python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render exact30_pad_outline_uses_local_aperture_and_preserves_integer_bounds --lib",
+      "result": "1 passed, 0 failed; rotated 400000x600000 outline and inset extents; inflated-bounds independence; integer caller-bounds compatibility. Existing fixture Pad reused."
+    }
+  ],
+  "native_evidence_boundary": "Existing af777151/50b9218b X11 identity/input/membership/nonmutation evidence retained at its original binary. It does not qualify corrected-binary LOD appearance; full C04-C06 and native Wayland/HUMAN remain pending.",
+  "C03_disposition_commit": "ea4889075af3cb5e5729c1f22e076938a86bc9be",
+  "corrected_ordinary_build": {
+    "source_commit": "70f8faa5bcb4ce434a04abea7d83728eac80499f",
+    "command": "TMPDIR=/home/bfadmin/Documents/datum-eda/target/s5a-owned-test-tmp python3 scripts/run_cargo_guarded.py --workload interactive -- cargo build -p datum-gui-app --bin datum-gui",
+    "result": "PASS",
+    "gui_sha256": "5d9a65751440d0908df80811aa633173f2c9f405eb72e04c1f123cd66a4b308e",
+    "observed_companion_cli_sha256": "589d8ae166e27fe61eee712e6a79375fc3e86693e6eb910064c66b0452b08d64",
+    "cargo_lock_sha256": "b566a5b6b876e3c1f13674105630af35e8e2294bacd0ffb6b563d0d836343c4f",
+    "native_visual_qualification": "pending; no new native/C04 claim"
+  }
 }
