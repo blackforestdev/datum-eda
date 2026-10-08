@@ -250,6 +250,42 @@ fn bounds(
 mod tests {
     use super::*;
     #[test]
+    fn exact30_position_uses_readable_project_units_without_rounding() {
+        use eda_engine::board::{nominal_geometry::Rational as R, quadratic3::Quadratic3 as Q};
+        use eda_engine::ir::units::{
+            DisplayPrecision, LengthUnit, MeasurementSystem, OverrideState,
+        };
+        let value = serde_json::json!({
+            "x": Q { a: R::integer(1_000_000), b: R::integer(2_000_000) },
+            "y": Q { a: R::integer(1_000_000), b: R::integer(-2_000_000) }
+        });
+        let before = value.clone();
+        for (unit, expected) in [
+            (LengthUnit::Millimeter, "(1 + 2√3, 1 − 2√3) mm"),
+            (
+                LengthUnit::Mil,
+                "(5000/127 + 10000/127√3, 5000/127 − 10000/127√3) mil",
+            ),
+        ] {
+            assert_eq!(
+                render(
+                    &value,
+                    ResolvedQuantityUnits {
+                        unit,
+                        precision: DisplayPrecision::DecimalPlaces(3),
+                        override_state: OverrideState::FollowsMeasurementSystem
+                    },
+                    MeasurementSystem::Metric
+                ),
+                Some(QuantityPresentation::Formatted {
+                    rendered: expected.into(),
+                    rounded: false
+                })
+            );
+        }
+        assert_eq!(value, before);
+    }
+    #[test]
     fn bounds_use_project_units_and_preserve_exact_fractional_nanometers() {
         let source = serde_json::json!({"board:example": {
             "min_x": {"numerator":"1000000","denominator":"1"},

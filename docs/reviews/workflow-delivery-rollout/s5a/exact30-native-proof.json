@@ -1,0 +1,505 @@
+{
+  "packet": "S5A-C03-EXACT-30-DELIVERY-01",
+  "record_type": "bounded-ordinary-build-implementation-evidence",
+  "frontier": "UVT-S5A-BUILD",
+  "completion_step": "S5A-C03",
+  "issue_id": "dat-uvt-s5a-build-1wv",
+  "implementation_commit": "af777151d2947d3bae312fce7fe503ca48add3cc",
+  "implementation_tree": "dba27a2b0ecc7ffa5137f8a6cabadb22980430a9",
+  "specification_pass": {
+    "receipt": "owner-reported reserved independent review PASS; no mandatory findings",
+    "commit": "bf277a58818e6c60b685b9bf8dcc8bd024e5bff9",
+    "blob": "53cf5e5440fb69ae3c4b6ebec3bc43ad73041564",
+    "ratification": "PM058"
+  },
+  "native_trials": {
+    "parents": {
+      "source_commit": "7f93768dd75262d6b43531cac2fdd9302925d10e",
+      "gui_sha256": "d2b553266747ba2c25ff6ddd01096167f66e9b56ece9be7707f266ca373b2753",
+      "cli_sha256": "589d8ae166e27fe61eee712e6a79375fc3e86693e6eb910064c66b0452b08d64",
+      "project_root": "/home/bfadmin/Documents/datum-eda/target/s5a-exact30-native",
+      "pid": 3981834,
+      "input_backend": "X11 on KDE Wayland desktop; native Wayland qualification pending",
+      "environment": {
+        "XDG_SESSION_TYPE": "wayland",
+        "DISPLAY": ":1",
+        "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/target/s5a-exact30-delivery/native-parents.log",
+        "DATUM_GUI_VERBOSE_LOG": "1",
+        "DATUM_ACTION_EVIDENCE": "1",
+        "EDA_CLI_BIN": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda"
+      },
+      "source_sha256": {
+        "exact30-scene.json": "566c30fd38dbafd8c90829afccc5927ed03e6bae688f6420a67542b035500977",
+        "project.json": "41d11b150d126385ecd7310c28b3a7bd915a490c6f78e656c81c8b061e2959ff",
+        "board/board.json": "ca201b98683009f0416fae6160c2b3f8c341f0233ca55f07b800e709eddb71d8",
+        "schematic/schematic.json": "bf69823f685e475da46a3f26f46fd9152371f4cee5fd3b733b46d22174d9074e",
+        "rules/rules.json": "1ac3db15d319a6ea3c26097f1e26c7332c01a7171f70213cb16a763f0c253f38",
+        ".datum/journal/transactions.jsonl": "ee2785fbc2d43ffc906deecddab8709118ad2420c0d3ea681378ca59a8e2d45e",
+        ".datum/journal/cursor.json": "60631e034ff613a24df68f0cb2f5c5e06736a2a7a639e21a3583dae7cdba8517",
+        "pool/packages/3332e86a-5508-40fe-a2ab-5844b93f7f3b.json": "196cb1a5bd9b7e51c525a29b7cc6b0074a712ad275ea6084a7abb52fc260d38b",
+        "pool/parts/60a6af45-3f6e-4663-ad03-f2639108631d.json": "ad7d8ab58b16a59a0e24eef4003819e07ed21af1d9bef29bb921699edda814a9",
+        "pool/padstacks/c679fac0-3bd4-4c78-82fd-0c0bfec0ee71.json": "569c5158e26458b2b9c45691470d3f878a59a00d01c2c54f94cbec1195424e79"
+      },
+      "receipts": [
+        {
+          "action": "front rectangle 4/8",
+          "screen_vertices": [
+            [
+              311,
+              316
+            ],
+            [
+              417,
+              485
+            ]
+          ],
+          "sequence": 6,
+          "subject": "None",
+          "members": [],
+          "expected": [],
+          "console": "view fit"
+        },
+        {
+          "action": "front rectangle 5/8",
+          "screen_vertices": [
+            [
+              311,
+              316
+            ],
+            [
+              438,
+              485
+            ]
+          ],
+          "sequence": 7,
+          "subject": "Compound",
+          "members": [
+            [
+              "Footprint",
+              "ccb03330-e729-46de-abd4-58dcf5924bf0"
+            ]
+          ],
+          "expected": [
+            [
+              "Footprint",
+              "ccb03330-e729-46de-abd4-58dcf5924bf0"
+            ]
+          ],
+          "console": "Compound selection \u2014 1 objects; 0 hidden; 0 locked"
+        },
+        {
+          "action": "front lasso 4/8",
+          "screen_vertices": [
+            [
+              417,
+              316
+            ],
+            [
+              311,
+              316
+            ],
+            [
+              311,
+              485
+            ],
+            [
+              417,
+              485
+            ],
+            [
+              417,
+              316
+            ]
+          ],
+          "sequence": 8,
+          "subject": "None",
+          "members": [],
+          "expected": [],
+          "console": "Compound selection \u2014 1 objects; 0 hidden; 0 locked"
+        },
+        {
+          "action": "front lasso 5/8",
+          "screen_vertices": [
+            [
+              438,
+              316
+            ],
+            [
+              311,
+              316
+            ],
+            [
+              311,
+              485
+            ],
+            [
+              438,
+              485
+            ],
+            [
+              438,
+              316
+            ]
+          ],
+          "sequence": 9,
+          "subject": "Compound",
+          "members": [
+            [
+              "Footprint",
+              "ccb03330-e729-46de-abd4-58dcf5924bf0"
+            ]
+          ],
+          "expected": [
+            [
+              "Footprint",
+              "ccb03330-e729-46de-abd4-58dcf5924bf0"
+            ]
+          ],
+          "console": "Compound selection \u2014 1 objects; 0 hidden; 0 locked"
+        },
+        {
+          "action": "back rectangle 4/8",
+          "screen_vertices": [
+            [
+              735,
+              316
+            ],
+            [
+              841,
+              485
+            ]
+          ],
+          "sequence": 10,
+          "subject": "None",
+          "members": [],
+          "expected": [],
+          "console": "Compound selection \u2014 1 objects; 0 hidden; 0 locked"
+        },
+        {
+          "action": "back rectangle 5/8",
+          "screen_vertices": [
+            [
+              735,
+              316
+            ],
+            [
+              862,
+              485
+            ]
+          ],
+          "sequence": 11,
+          "subject": "Compound",
+          "members": [
+            [
+              "Footprint",
+              "5271c934-bcb2-4040-b349-e24ec15b8106"
+            ]
+          ],
+          "expected": [
+            [
+              "Footprint",
+              "5271c934-bcb2-4040-b349-e24ec15b8106"
+            ]
+          ],
+          "console": "Compound selection \u2014 1 objects; 0 hidden; 0 locked"
+        },
+        {
+          "action": "back lasso 4/8",
+          "screen_vertices": [
+            [
+              841,
+              316
+            ],
+            [
+              735,
+              316
+            ],
+            [
+              735,
+              485
+            ],
+            [
+              841,
+              485
+            ],
+            [
+              841,
+              316
+            ]
+          ],
+          "sequence": 12,
+          "subject": "None",
+          "members": [],
+          "expected": [],
+          "console": "Compound selection \u2014 1 objects; 0 hidden; 0 locked"
+        },
+        {
+          "action": "back lasso 5/8",
+          "screen_vertices": [
+            [
+              862,
+              316
+            ],
+            [
+              735,
+              316
+            ],
+            [
+              735,
+              485
+            ],
+            [
+              862,
+              485
+            ],
+            [
+              862,
+              316
+            ]
+          ],
+          "sequence": 13,
+          "subject": "Compound",
+          "members": [
+            [
+              "Footprint",
+              "5271c934-bcb2-4040-b349-e24ec15b8106"
+            ]
+          ],
+          "expected": [
+            [
+              "Footprint",
+              "5271c934-bcb2-4040-b349-e24ec15b8106"
+            ]
+          ],
+          "console": "Compound selection \u2014 1 objects; 0 hidden; 0 locked"
+        },
+        {
+          "action": "subsequent Part",
+          "subject": "Object",
+          "members": [
+            [
+              "Footprint",
+              "ccb03330-e729-46de-abd4-58dcf5924bf0"
+            ]
+          ]
+        }
+      ],
+      "build_source_note": "Launch HEAD is the pre-commit base; its owned runtime changes are now pinned by implementation_commit and changed_source_blobs. No product code changed between this replay and that commit.",
+      "adapter_receipt": "[SystemTime { tv_sec: 1791476381, tv_nsec: 898016035 }] surface identity window=WindowId(27262980) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+      "final_GPU_receipt": {
+        "epoch": 1,
+        "submitted": 114,
+        "completed": 114
+      },
+      "failure_messages_observed": [],
+      "canonical_sources_and_journal_sha256_before_equals_after": true,
+      "shutdown": "close request exceeded15s runner wait; process subsequently exited; dat-kiel"
+    },
+    "electrical": {
+      "source_commit": "7f93768dd75262d6b43531cac2fdd9302925d10e",
+      "gui_sha256": "d2b553266747ba2c25ff6ddd01096167f66e9b56ece9be7707f266ca373b2753",
+      "cli_sha256": "589d8ae166e27fe61eee712e6a79375fc3e86693e6eb910064c66b0452b08d64",
+      "project_root": "/home/bfadmin/Documents/datum-eda/target/s5a-exact30-failure-evidence/datum_native_write_placed_pad_pm053_delivery_7e37631e-7aac-40c7-b6d4-63d8d5f71849",
+      "pid": 3981585,
+      "input_backend": "X11 on KDE Wayland desktop; native Wayland qualification pending",
+      "environment": {
+        "XDG_SESSION_TYPE": "wayland",
+        "DISPLAY": ":1",
+        "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/target/s5a-exact30-delivery/native-electrical.log",
+        "DATUM_GUI_VERBOSE_LOG": "1",
+        "DATUM_ACTION_EVIDENCE": "1",
+        "EDA_CLI_BIN": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda"
+      },
+      "source_sha256": {
+        "project.json": "aa071d90093d3ad682d05fba4d5f4c14e625387e74fd6ce7a48aec62b03cfb99",
+        "board/board.json": "f74ae981549e902466f3c95cb7e73767eb16f6a6b9c8b6aefabd2caf26c497ba",
+        "schematic/schematic.json": "dca6a828b18c839e4fa93b8aa78d5e59fcf26785887bfdc632e0dca79d731a71",
+        "rules/rules.json": "e8dd38f7cbebfd480292e8be8b2cc35c2e1e87faad6796a862cf0551143c6c3c",
+        ".datum/journal/transactions.jsonl": "01ca96b1d5a3689107121359bf1dce5abc2745180eea62dc3e9ddd9fd42f73bc",
+        ".datum/journal/cursor.json": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337",
+        "pool/entities/7701f611-0878-4e46-a2dd-11ef3227aa5a.json": "c16e3e31dd35b5dfb096ab43df5fac4f5ef5386c5b708e2b02f6d1466fae5380",
+        "pool/packages/42d3c222-010e-4b50-8f9d-1b0ec949c946.json": "385302b271e5227246f36499018ca5f724df0bbd9cdb4544b841f8d8d7b4a300",
+        "pool/parts/8e394c85-178a-492b-9245-86cda642af45.json": "c277265a2718fb8e0633fb30dcb258bc2cada6b790d6e1080eb5a4aec299156e",
+        "pool/padstacks/7ce39e69-7e22-46c2-9b79-7c91084d5da4.json": "42e378e6c594d118f8af54e9b23306b768095e732fa363969feca5887da339ea",
+        "pool/pin_pad_maps/2e3ba30a-f420-4fee-a6f2-0f85011128b2.json": "e3d851f399895eaf72762887d4a69627992e86bb2e58a11aa6964918546881fd",
+        "pool/units/07db4551-faa4-499a-8e1f-e7a2daf9d6e4.json": "f00dddd92e414bed1b5f9cc7b985afa2205e4221e559091e8d4cf3f53d052949",
+        "schematic/sheets/main.json": "fc2658d86696211f507c53b4bdf9f14b9386ab03007e8810c8c46308bc313cc3"
+      },
+      "receipts": [
+        {
+          "action": "Track Object",
+          "sequence": 9,
+          "members": [
+            [
+              "Track",
+              "8328b347-83a4-44fb-8dc1-e48313de969d"
+            ]
+          ]
+        },
+        {
+          "action": "Run plus wheel",
+          "sequence": 18,
+          "subject": "Run",
+          "members": [
+            [
+              "Pad",
+              "e80f97b8-feb3-406d-af4d-16e63dd52f02"
+            ],
+            [
+              "Track",
+              "8328b347-83a4-44fb-8dc1-e48313de969d"
+            ]
+          ],
+          "camera": {
+            "center_x_nm": -336914.46875,
+            "center_y_nm": 455.463623046875,
+            "zoom": 1.563464879989624
+          }
+        },
+        {
+          "action": "Net triple click",
+          "sequence": 22,
+          "subject": "Net",
+          "members": [
+            [
+              "Pad",
+              "e80f97b8-feb3-406d-af4d-16e63dd52f02"
+            ],
+            [
+              "Pin",
+              "b650d097-ca33-4dcd-ad39-36f1786a749e"
+            ],
+            [
+              "Track",
+              "8328b347-83a4-44fb-8dc1-e48313de969d"
+            ]
+          ]
+        },
+        {
+          "action": "Escape then Part",
+          "sequence": 24,
+          "members": [
+            [
+              "Footprint",
+              "919794f4-2bee-499b-b9f2-c501b99172a3"
+            ]
+          ]
+        }
+      ],
+      "build_source_note": "Launch HEAD is the pre-commit base; its owned runtime changes are now pinned by implementation_commit and changed_source_blobs. No product code changed between this replay and that commit.",
+      "adapter_receipt": "[SystemTime { tv_sec: 1791476349, tv_nsec: 219690368 }] surface identity window=WindowId(27262980) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+      "final_GPU_receipt": {
+        "epoch": 1,
+        "submitted": 29,
+        "completed": 29
+      },
+      "failure_messages_observed": [],
+      "canonical_sources_and_journal_sha256_before_equals_after": true,
+      "shutdown": "normal controlled window close"
+    }
+  },
+  "preserved_previous_delivery": "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008-accessible.json",
+  "scope": "Mandatory exact30 query-only geometry and typed consumers; no new persistence/dependency/tolerance/CAM waiver",
+  "acceptance": {
+    "native_X11_bounded_functional_cases": "demonstrated",
+    "native_Wayland": "pending; no unattended input route available; X11 does not qualify Wayland",
+    "HUMAN_visual": "pending",
+    "reserved_independent_implementation_review": "pending",
+    "C03_complete": false,
+    "C04_complete": false,
+    "C05_complete": false,
+    "C06_accepted": false
+  },
+  "separate_tracking": {
+    "cold_Run_completion_latency": "dat-cold-run-latency-op2e remains separate; no new timing claim or optimization campaign",
+    "X11_shutdown": "dat-kiel: functional replay passed; close request exceeded15s runner wait, process subsequently exited. Cause unestablished; not selection failure."
+  },
+  "verification_questions": [
+    {
+      "question": "Do exact contact and projection preserve boundaries, holes and mixed45 compatibility?",
+      "command": "guarded cargo test -p eda-engine thirty_degree_exact_contacts_and_legacy_eighth_turn_survive --lib",
+      "result": "PASS; includes byte-exact pose undo/redo and identical reopened centres"
+    },
+    {
+      "question": "Does source-qualified30 placement participate in complete Run and semantic membership?",
+      "command": "guarded cargo test -p eda-engine exact30_placed --lib",
+      "result": "PASS; canonical PM053/PM057 producers, exact Pad+Track identity equality"
+    },
+    {
+      "question": "Do both faces retain all8 centres and strict majority?",
+      "command": "guarded cargo test -p datum-gui-viewport exact30_tests --lib",
+      "result": "PASS; exact4/8 refusal5/8 acquisition and boundary decisions"
+    },
+    {
+      "question": "Do native scene-v2 and Inspector retain exact geometry/identity without source writes?",
+      "command": "guarded cargo test -p datum-gui-protocol placed_pad_projection --lib",
+      "result": "PASS; prior integer case plus exact16-Pad/all8 anchors, v2 roundtrip, typed positions and source/journal/reopen comparison"
+    },
+    {
+      "question": "Does legacy aperture painting remain supported?",
+      "command": "guarded cargo test -p datum-gui-render roundrect_pad --lib",
+      "result": "PASS; reused compatibility proof"
+    },
+    {
+      "question": "Does the ordinary application integrate the delivered path?",
+      "command": "guarded cargo build -p datum-gui-app --bin datum-gui -p datum-eda-cli --bin datum-eda, then archived native_exact30.py parents/electrical",
+      "result": "Build PASS; native selected identities, wheel, Escape and subsequent selection recorded below"
+    },
+    {
+      "question": "Do typed exact positions present readable project quantities without raw JSON or rounding?",
+      "command": "guarded cargo test -p datum-gui-protocol exact30_position_uses_readable_project_units_without_rounding --lib",
+      "result": "PASS; exact signed sqrt3 coefficients expressed in mm and mil; source Value unchanged. Test-only follow-up does not change the pinned ordinary binaries."
+    }
+  ],
+  "changed_source_blobs": {
+    "crates/cli/src/commands/project_core.rs": "5603c4084412cc95f0651e420c2bc0e6f8af8fe0",
+    "crates/engine/src/api/native_write/board_components/pad_materialization.rs": "b97d53a6670834d35c2ef31ffc3a9cf422a0634f",
+    "crates/engine/src/api/native_write/board_components/pad_materialization/tests.rs": "4940a01286cff1a0ecf84c8e7001190c1d45ec22",
+    "crates/engine/src/api/native_write/electrical/placed_pad_binding_tests.rs": "222f775281a8188f11c7d5e858eb775692ae9568",
+    "crates/engine/src/board/mod.rs": "c2a9b6708e210e5a26315027c1da61ab21a533a2",
+    "crates/engine/src/board/occupied_copper.rs": "02829caf2a96b6b05741f95d14a007256c2a7701",
+    "crates/engine/src/board/occupied_copper/quadratic.rs": "fe8e2f93ed35a90b5f687a0553dcdf9cff52b387",
+    "crates/engine/src/board/occupied_copper/quadratic_sign.rs": "01240bf6f820a3a587ada16606ac5e50ca39a1d6",
+    "crates/engine/src/connectivity/board_physical.rs": "ecec5c3bfb1f0436c6e2e9c7c50594ec1b004b88",
+    "crates/engine/src/connectivity/board_physical/bounds.rs": "3be226fb48c3a618bd0d5791ed0a53cd59cbff5b",
+    "crates/engine/src/substrate/component_pad_source.rs": "5cc2bafcf5c23f7190fe54789ebfb7a5fd783980",
+    "crates/engine/src/substrate/component_pad_source/projection.rs": "5d242d8b1af683cdc73900d2afdc51d580d083bd",
+    "crates/engine/src/substrate/electrical_basis.rs": "3b9e0f8a09964e0d122e348b48f7489376dda806",
+    "crates/engine/src/substrate/electrical_correspondence.rs": "869ef77fc5a8b99e8a50189f497ff84ad0b5f8ae",
+    "crates/engine/src/substrate/electrical_selection_query.rs": "19cddcec986d07db089c77e2b6f38dedac6de3c0",
+    "crates/engine/src/substrate/electrical_selection_query/related_parents.rs": "e9860cf693274c508605ae43356cc8f0287f8801",
+    "crates/gui-app/src/runtime_camera_fit_targets.rs": "6a447e2f75053f3eea4c6b9660bcad2bb4d484ad",
+    "crates/gui-app/src/selection_region_evaluation.rs": "3acc2439799c0f163897dc412829149708cbbfaf",
+    "crates/gui-protocol/src/board_review_scene.rs": "bc9d9bd300f39157d2d8ff91ee705c419c91ed4a",
+    "crates/gui-protocol/src/check_runs/marker.rs": "9d3a540dd77a0fe9cde1a2a1f0865911f4ec0207",
+    "crates/gui-protocol/src/lib.rs": "6c4f1dcb52a54352be7965717838bc56f881adcd",
+    "crates/gui-protocol/src/placed_pad_projection.rs": "fcfd27fd1ff643ab8a68537426cb23878023492c",
+    "crates/gui-protocol/src/placed_pad_projection/tests.rs": "06178959da94853e95923f478861754b74e4b369",
+    "crates/gui-protocol/src/selection_geometry_catalog.rs": "91a513d6f03c2300c6f715d2d475378374a8abcf",
+    "crates/gui-protocol/src/selection_view/inspector_labels.rs": "416b2f79864067d6e43c015dd175ca9a2edca269",
+    "crates/gui-protocol/src/selection_view/placed_pad_inspection.rs": "ca718df296c52cfc76b89b1c0d0a297bbc8c9522",
+    "crates/gui-protocol/src/selection_view/quantities.rs": "42725c221fcdec03e75cf6e9e921d542d28d7755",
+    "crates/gui-render/src/lib_extra_tests.rs": "78e5e7b48f8565c51ff4613a3906cabc43a622da",
+    "crates/gui-render/src/render/overlay/composition.rs": "be87c95743acad4471fce9c2925fc4e22789f465",
+    "crates/gui-render/src/render/pad_retained.rs": "8974b2dfab4874d98c8dedce8fc3bbe3a55e3c1a",
+    "crates/gui-render/src/render/pads_and_layers.rs": "19ba338a54061764f1387a196d80d55c8c2e5e4d",
+    "crates/gui-render/src/render/tests.rs": "3f6a1463cccf49299dfb5eb560dae004dc34650d",
+    "crates/gui-render/src/render/world_primitives.rs": "cf86c89afb2859df1c63ed1756cacab0422650d1",
+    "crates/gui-viewport/src/selection_region.rs": "5a01d3a22b4ac9d2d8ea37eb8ee306b5cef1513c",
+    "crates/engine/src/api/native_write/board_components/pad_materialization/exact30_tests.rs": "4a1631f8f3877605ebcb32e5d56b5cab7fa11fae",
+    "crates/engine/src/board/occupied_copper/mixed_field.rs": "7b4b777e313a22f8485ddc1276b3ef87a5232019",
+    "crates/engine/src/board/occupied_copper/source_relative.rs": "54a2e19234ecc59708f0bee8a81227359481d19e",
+    "crates/engine/src/board/occupied_copper/source_relative/arrangement.rs": "202a859a40d4fd40856cbb2148ebb3ff79403565",
+    "crates/engine/src/board/quadratic3.rs": "42e01c4fc56bfcedf24084076557864de94ece25",
+    "crates/engine/src/board/query_pad.rs": "10489676eb032612c16aa9c32dc697441690731b",
+    "crates/gui-protocol/src/pad_center.rs": "e2fa72f959e95285061741169d555ca767748b81",
+    "crates/gui-protocol/src/placed_pad_projection/exact30_tests.rs": "bc7b23c42d55ce8cb1bf8d229463f37be9b32247",
+    "crates/gui-render/src/render/pad_compatibility_tests.rs": "8077d8078661e545a8a6aff45e9b8fc654c0505e",
+    "crates/gui-render/src/render/pad_paint.rs": "c7b82da9467b8144101ba450f62932c1aec0981b"
+  },
+  "cargo_lock_sha256": "b566a5b6b876e3c1f13674105630af35e8e2294bacd0ffb6b563d0d836343c4f",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz",
+    "sha256": "1099ceca373e8e1aea676d2b26700044baadece5473cb052230f5f833dc4acb5"
+  }
+}
