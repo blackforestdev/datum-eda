@@ -300,3 +300,14 @@ The appointed manager may record objective first-edit development-build acceptan
 only with the required focused safety and actual bounded independent review.
 Deliver pinned source/binaries/native Project and ordinary launch command. Keep
 full GWP/NA/S5A/CAM and nondelegated HUMAN acceptance separate; no successor grant.
+
+<!-- EVIDENCE:FEATURE-DELIVERY-ENFORCEMENT:FDE-C01 -->
+
+FDE-C01 implemented in `27e989084464f0a78a9701d87588b4d28ff0d206`. Sixty focused feature-policy/selector tests
+passed, including missing contracts, unexplained prerequisites, fixture-only
+availability, missing ordinary results/source pins and evidence path escape.
+Project-state, generated roadmap, specification governance/parity, evidence
+traceability, progress coverage and source health passed. The first-edit
+manager claim, execution conditions and actual writer review are unchanged.
+This completes the owner-authorized enforcement correction; it does not claim
+measured effort allocation, board editing or broader product acceptance.
