@@ -7,6 +7,10 @@ pub(super) struct BindingBasis {
     revision: String,
     pub(super) bindings: SceneSelectionBindings,
 }
+pub(super) struct SelectionWorldHit {
+    pub target: Option<HitTarget>,
+    pub basis: Option<Arc<BindingBasis>>,
+}
 impl Runtime {
     pub(super) fn native_binding_basis(
         &mut self,
@@ -52,7 +56,7 @@ impl Runtime {
         &mut self,
         point: PointNm,
         surface: SceneSurface,
-    ) -> Result<Option<HitTarget>, ()> {
+    ) -> Result<SelectionWorldHit, ()> {
         let basis = match self.native_binding_basis(surface) {
             Ok(basis) => basis,
             Err(error) => {
@@ -68,10 +72,13 @@ impl Runtime {
             SceneSurface::Schematic => self.renderer.render_session().schematic(),
         };
         let Some(retained) = retained else {
-            return Ok(None);
+            return Ok(SelectionWorldHit {
+                target: None,
+                basis,
+            });
         };
         let state = self.workspace();
-        Ok(if let Some(basis) = basis {
+        let target = if let Some(basis) = &basis {
             retained.hit_test_authored_world_eligible(point, state, |target| {
                 let HitTarget::AuthoredObject(key) = target else {
                     return false;
@@ -86,6 +93,7 @@ impl Runtime {
                 SceneSurface::Board => retained.hit_test_authored_world(point, state),
                 SceneSurface::Schematic => retained.hit_test_world(point),
             }
-        })
+        };
+        Ok(SelectionWorldHit { target, basis })
     }
 }

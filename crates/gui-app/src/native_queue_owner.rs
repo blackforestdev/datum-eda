@@ -137,7 +137,12 @@ impl QueueOwner {
                 state.progress.success();
                 return Ok((None, false));
             }
-            if !state.progress.ready(now) {
+            // CPU input/selection preparation can postpone this event-thread
+            // poll past the deadline while the GPU has already finished. Give
+            // wgpu one nonblocking receipt-service opportunity before declaring
+            // exhaustion. No new submission, wait or retry budget is granted;
+            // only an actually delivered completion can clear the episode.
+            if !state.progress.ready(now) && !(drawable && state.progress.failed()) {
                 let (_, due) = state.progress.poll(now);
                 return Ok((due, state.progress.take_failure()));
             }

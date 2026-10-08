@@ -495,17 +495,20 @@ impl Runtime {
         screen: (f32, f32),
         world_point: PointNm,
     ) -> bool {
-        let hit = match self.selection_world_hit(world_point, SceneSurface::Schematic) {
+        let qualified = match self.selection_world_hit(world_point, SceneSurface::Schematic) {
             Ok(hit) => hit,
             Err(()) => return true,
         };
+        let hit = qualified.target;
         self.trace_click(format!(
             "primary click ({:.1}, {:.1}) schematic world ({}, {}) hit {hit:?} (native selection acquisition)",
             screen.0, screen.1, world_point.x, world_point.y
         ));
-        if let Some(HitTarget::AuthoredObject(id)) = hit {
+        if let Some(HitTarget::AuthoredObject(id)) = hit
+            && let Some(basis) = qualified.basis.as_deref()
+        {
             return self
-                .acquire_native_key(&id, SceneSurface::Schematic, Some(world_point))
+                .acquire_native_key_from_basis(&id, Some(world_point), basis)
                 .unwrap_or(false);
         }
         false

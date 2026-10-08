@@ -193,17 +193,6 @@ impl Runtime {
         surface: SceneSurface,
         point: Option<PointNm>,
     ) -> Option<bool> {
-        match self.ensure_selection_authority() {
-            Ok(false) => return None,
-            Err(e) => {
-                self.selection_notice(e.to_string());
-                return Some(true);
-            }
-            _ => {}
-        }
-        if self.modifiers.shift_key() && self.modifiers.control_key() {
-            return Some(true);
-        }
         let basis = match self.native_binding_basis(surface) {
             Ok(Some(basis)) => basis,
             Ok(None) => return None,
@@ -212,6 +201,19 @@ impl Runtime {
                 return Some(true);
             }
         };
+        self.acquire_native_key_from_basis(key, point, &basis)
+    }
+    /// Hit qualification and acquisition within one synchronous action use the
+    /// same freshly resolved source. Direct-key entry resolves before calling.
+    pub(super) fn acquire_native_key_from_basis(
+        &mut self,
+        key: &str,
+        point: Option<PointNm>,
+        basis: &runtime_selection_hit::BindingBasis,
+    ) -> Option<bool> {
+        if self.modifiers.shift_key() && self.modifiers.control_key() {
+            return Some(true);
+        }
         let Some(binding) = basis.bindings.get(key) else {
             self.selection_notice(
                 "This source has no authoritative workspace selection identity".into(),

@@ -53,6 +53,60 @@ fn idle_completion_reaps_closed_host_without_another_submission() {
 }
 
 #[test]
+fn delayed_event_thread_services_real_completion_before_deadline_failure() {
+    let owner = QueueOwner::default();
+    let start = Instant::now();
+    let host = owner.register();
+    let (serial, completion) = owner.submission_receipt();
+    let callback = owner.completion_callback(serial, completion);
+    owner.observe_attachment(host, 1, 1, Some(4096), serial);
+    owner.close_host(host);
+    owner.progress(start, true, || Ok(())).unwrap();
+    // Ordinary selection preparation can postpone callback service for more
+    // than two seconds. This models wgpu delivering a finished submission on
+    // the first nonblocking device poll after that CPU work, not a fake receipt.
+    assert_eq!(
+        owner
+            .progress(at(start, 3500), true, || {
+                callback();
+                Ok(())
+            })
+            .unwrap(),
+        (None, false)
+    );
+    assert_eq!((owner.snapshot().1, owner.snapshot().2), (serial, serial));
+    assert!(!owner.retry_progress());
+    assert_eq!(
+        owner
+            .with_attachments(|ledger, n| ledger.snapshot(n))
+            .completed_retirements,
+        1
+    );
+    let (pending, _) = owner.submission_receipt();
+    owner.progress(at(start, 3501), true, || Ok(())).unwrap();
+    let mut polls = 0;
+    assert_eq!(
+        owner
+            .progress(at(start, 5501), true, || {
+                polls += 1;
+                Ok(())
+            })
+            .unwrap(),
+        (None, true)
+    );
+    assert_eq!(polls, 1);
+    assert_eq!((owner.snapshot().1, owner.snapshot().2), (pending, serial));
+    assert_eq!(
+        owner
+            .progress(at(start, 5502), true, || panic!(
+                "stopped queue must not poll"
+            ))
+            .unwrap(),
+        (None, false)
+    );
+}
+
+#[test]
 fn newer_submissions_do_not_extend_stalled_watermark_and_retry_is_explicit() {
     let owner = QueueOwner::default();
     let host = owner.register();
@@ -65,9 +119,7 @@ fn newer_submissions_do_not_extend_stalled_watermark_and_retry_is_explicit() {
         (Some(at(start, 2000)), false)
     );
     assert_eq!(
-        owner
-            .progress(at(start, 2000), true, || panic!("expired poll"))
-            .unwrap(),
+        owner.progress(at(start, 2000), true, || Ok(())).unwrap(),
         (None, true)
     );
     completion.store(first, Ordering::Release);
@@ -125,9 +177,7 @@ fn external_completion_renews_budget_and_reaps_before_poll_deadline() {
         (Some(at(start, 4000)), false)
     );
     assert_eq!(
-        owner
-            .progress(at(start, 4000), true, || panic!("expired"))
-            .unwrap(),
+        owner.progress(at(start, 4000), true, || Ok(())).unwrap(),
         (None, true)
     );
 }
@@ -161,9 +211,7 @@ fn all_hosts_hidden_pause_polling_and_preserve_active_budget() {
         (Some(at(start, 21100)), false)
     );
     assert_eq!(
-        owner
-            .progress(at(start, 21100), true, || panic!("expired"))
-            .unwrap(),
+        owner.progress(at(start, 21100), true, || Ok(())).unwrap(),
         (None, true)
     );
 }
@@ -202,9 +250,7 @@ fn diagnostic_retry_releases_only_delivered_receipts_and_keeps_future_callbacks_
     assert!(!owner.retry_progress()); // Cannot release before real failure.
     owner.progress(start, true, || Ok(())).unwrap();
     assert_eq!(
-        owner
-            .progress(at(start, 2000), true, || panic!("expired"))
-            .unwrap(),
+        owner.progress(at(start, 2000), true, || Ok(())).unwrap(),
         (None, true)
     );
     assert!(owner.retry_progress());

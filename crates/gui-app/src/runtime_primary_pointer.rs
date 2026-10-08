@@ -175,13 +175,15 @@ impl Runtime {
                 ));
                 return true;
             }
-            let retained_target = match self.selection_world_hit(world_point, SceneSurface::Board) {
+            let hit = match self.selection_world_hit(world_point, SceneSurface::Board) {
                 Ok(hit) => hit,
                 Err(()) => return true,
             };
+            let retained_target = hit.target;
             if let Some(HitTarget::AuthoredObject(id)) = &retained_target
+                && let Some(basis) = &hit.basis
                 && let Some(handled) =
-                    self.acquire_native_key(id, SceneSurface::Board, Some(world_point))
+                    self.acquire_native_key_from_basis(id, Some(world_point), basis)
             {
                 return handled || focus_changed;
             }
