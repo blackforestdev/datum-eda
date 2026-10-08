@@ -6979,11 +6979,11 @@
   "schema_version": 1,
   "status": "partial fixture binding; neither C03 closure nor C04/C05/C06 acceptance",
   "current_candidate_reconciliation": {
-    "path": "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008.json",
-    "sha256": "e3dd7bc8b6ef6296954f8e5ef70788845630ee2a238896795487f574c2177790",
-    "code_commit": "b59af9f148b26995469c170c41b0f53d0980ee6f",
+    "path": "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008-accessible.json",
+    "sha256": "feb50d65e3bac0bbb9fdd19c2eb2294ff1fb6e0f7074fbc414fdb79d637a9524",
+    "code_commit": "b915a31e076a5498f6e9f9fc001d9c3ef7fcf744",
     "baseline_candidate_commit": "ee1d0355f26750671cb49e4f5cfaa773493cbc0d",
-    "status": "unblocked implementation audit exhausted; completed scope reviewable; C03/C04/C05/C06 not closed",
-    "historical_pins": "Historical candidate, production sources, builders, fixtures and existing proof remain unchanged. This successor corrects requirement extraction and adds qualified native256/region proof."
+    "status": "Read-only native Inspector accessibility delivered; exact native electrical subsets completed; C03/C04/C05/C06 remain open. Derived30-degree geometry decision pending.",
+    "historical_pins": "Prior delivery packet25291e1 and all existing fixtures, builders and proof retained unchanged."
   }
 }
