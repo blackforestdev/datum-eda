@@ -315,6 +315,13 @@ pub(crate) fn project_bound_component_pads(
         "placed Pad exact source geometry unavailable: {:?}",
         projection.unavailable
     );
+    anyhow::ensure!(
+        projection.query_pads.values().all(|p| matches!(
+            p,
+            eda_engine::board::query_pad::QueryPadGeometry::Integer(_)
+        )),
+        "source-qualified exact rotated Pads are unsupported by this integer Board/output consumer; no rounded or omitted copper output"
+    );
     Ok(projection.pads.into_values().collect())
 }
 

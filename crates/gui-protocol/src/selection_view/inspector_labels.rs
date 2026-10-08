@@ -3,6 +3,7 @@ use super::*;
 use crate::selection_view::inspector_state::class_label;
 pub fn field_label(field: &str) -> String {
     let label = match field {
+        "local_source_position_nm" => "Local source position",
         "placement_position_nm" | "position_nm" | "terminal_position_nm" => "Position",
         "placement_rotation" | "text_rotation" => "Rotation",
         "combined_bounds_nm" => "Bounds",

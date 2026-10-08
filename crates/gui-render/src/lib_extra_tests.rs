@@ -29,7 +29,8 @@ fn roundrect_ratio_changes_corner_radius() {
         center: PointNm {
             x: 1_000_000,
             y: 600_000,
-        },
+        }
+        .into(),
         bounds: datum_gui_protocol::RectNm {
             min_x: 700_000,
             min_y: 350_000,
@@ -83,7 +84,8 @@ fn rotated_rect_pad_produces_non_axis_aligned_geometry() {
         center: PointNm {
             x: 1_000_000,
             y: 600_000,
-        },
+        }
+        .into(),
         bounds: datum_gui_protocol::RectNm {
             min_x: 700_000,
             min_y: 450_000,
@@ -121,7 +123,8 @@ fn derived_mask_pad_expands_by_clearance() {
         center: PointNm {
             x: 1_000_000,
             y: 600_000,
-        },
+        }
+        .into(),
         bounds: datum_gui_protocol::RectNm {
             min_x: 900_000,
             min_y: 500_000,
@@ -165,7 +168,8 @@ fn derived_paste_pad_applies_ratio_and_clearance() {
         center: PointNm {
             x: 1_000_000,
             y: 600_000,
-        },
+        }
+        .into(),
         bounds: datum_gui_protocol::RectNm {
             min_x: 900_000,
             min_y: 500_000,
@@ -209,7 +213,8 @@ fn derived_process_pad_uses_pad_level_overrides_not_board_globals() {
         center: PointNm {
             x: 1_000_000,
             y: 600_000,
-        },
+        }
+        .into(),
         bounds: datum_gui_protocol::RectNm {
             min_x: 900_000,
             min_y: 500_000,
@@ -392,8 +397,8 @@ fn debug_datum_test_q1_q2_component_geometry() {
             eprintln!(
                 "  pad {} center=({}, {}) bounds=({}, {}, {}, {})",
                 pad.object_id,
-                pad.center.x,
-                pad.center.y,
+                pad.center.integer_point().unwrap().x,
+                pad.center.integer_point().unwrap().y,
                 pad.bounds.min_x,
                 pad.bounds.min_y,
                 pad.bounds.max_x,
@@ -415,7 +420,7 @@ fn inferred_component_body_geometry_handles_quarter_turn_parts() {
             net_uuid: None,
             layer_id: "L0".to_string(),
             copper_layer_ids: vec!["L0".to_string()],
-            center: PointNm { x: 0, y: 900_000 },
+            center: PointNm { x: 0, y: 900_000 }.into(),
             bounds: datum_gui_protocol::RectNm {
                 min_x: -250_000,
                 min_y: 600_000,
@@ -441,7 +446,7 @@ fn inferred_component_body_geometry_handles_quarter_turn_parts() {
             net_uuid: None,
             layer_id: "L0".to_string(),
             copper_layer_ids: vec!["L0".to_string()],
-            center: PointNm { x: 0, y: -900_000 },
+            center: PointNm { x: 0, y: -900_000 }.into(),
             bounds: datum_gui_protocol::RectNm {
                 min_x: -250_000,
                 min_y: -1_200_000,
@@ -467,7 +472,7 @@ fn inferred_component_body_geometry_handles_quarter_turn_parts() {
             net_uuid: None,
             layer_id: "L0".to_string(),
             copper_layer_ids: vec!["L0".to_string()],
-            center: PointNm { x: 800_000, y: 0 },
+            center: PointNm { x: 800_000, y: 0 }.into(),
             bounds: datum_gui_protocol::RectNm {
                 min_x: 550_000,
                 min_y: -300_000,

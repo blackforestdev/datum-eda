@@ -96,7 +96,18 @@ impl Runtime {
         for pad in self.workspace().scene.pads.iter().filter(|pad| {
             pad.pad_uuid == action.from_anchor_pad_uuid || pad.pad_uuid == action.to_anchor_pad_uuid
         }) {
-            points.push(pad.center);
+            if let Ok(b) = pad.center.bounds() {
+                points.extend([
+                    datum_gui_protocol::PointNm {
+                        x: b.min_x,
+                        y: b.min_y,
+                    },
+                    datum_gui_protocol::PointNm {
+                        x: b.max_x,
+                        y: b.max_y,
+                    },
+                ]);
+            }
         }
         if points.is_empty() {
             return None;

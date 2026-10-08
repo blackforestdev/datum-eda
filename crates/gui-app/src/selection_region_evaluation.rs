@@ -53,6 +53,21 @@ fn layouts(
 }
 fn geometry_bounds(geometry: &Geometry) -> Result<Option<RectNm>, String> {
     let points: Vec<_> = match geometry {
+        Geometry::ExactAnchors(points) => {
+            if points.is_empty() {
+                return Ok(None);
+            }
+            let bounds = points
+                .iter()
+                .map(|p| crate_exact_bounds(*p))
+                .collect::<Result<Vec<_>, _>>()?;
+            return Ok(Some(RectNm {
+                min_x: bounds.iter().map(|b| b.min_x).min().unwrap(),
+                max_x: bounds.iter().map(|b| b.max_x).max().unwrap(),
+                min_y: bounds.iter().map(|b| b.min_y).min().unwrap(),
+                max_y: bounds.iter().map(|b| b.max_y).max().unwrap(),
+            }));
+        }
         Geometry::Anchors(points) => points
             .iter()
             .copied()
@@ -165,6 +180,7 @@ fn eligible(id: &Id, layers: &BTreeSet<String>, filters: &WorkspaceFilterState) 
 fn qualifies(region: &SelectionRegion, geometry: &Geometry) -> Result<bool, String> {
     let result = match geometry {
         Geometry::Anchors(a) => region.anchors(a),
+        Geometry::ExactAnchors(a) => region.exact_anchors(a),
         Geometry::Layout(p) => region.majority_layout(p),
         Geometry::Disk { center, radius } => region.encloses_disk(*center, *radius),
         Geometry::Filled(polygons) => {
@@ -262,3 +278,14 @@ impl RegionEvaluation {
 #[cfg(test)]
 #[path = "selection_region_evaluation/tests.rs"]
 mod tests;
+
+fn crate_exact_bounds(p: datum_gui_protocol::ExactPointNm) -> Result<RectNm, String> {
+    datum_gui_protocol::PadCenter::Exact {
+        exact: p,
+        local_width_nm: 0,
+        local_height_nm: 0,
+        back: false,
+    }
+    .bounds()
+    .map_err(|e| format!("Certified source bound: {e:?}"))
+}

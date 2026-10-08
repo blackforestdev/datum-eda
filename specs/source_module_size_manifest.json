@@ -513,14 +513,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3869,
+        "pre_test_lines": 3853,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "PM022: scene envelope/corner ownership extracted into normal scene_bounds module; include recorded board graphic paths and ratchet production ceiling exactly. Inline test debt remains frozen."
+      "note": "PM058 integer Pad scene construction moves into bounded placed_pad_projection owner alongside exact query geometry. Exact downward ceiling; no inline-test expansion."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
@@ -547,24 +547,13 @@
     "crates/gui-render/src/render/pads_and_layers.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 125
+        "pre_test_lines": 120
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests. PM045 board hit construction and shared allocation-free component bounds extracted into normal modules; exact ceiling ratcheted. Remaining debt preserved."
-    },
-    "crates/gui-render/src/render/tests.rs": {
-      "kind": "rust-test",
-      "limits": {
-        "file_lines": 710
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Fallible shared text preparation moves display text helpers and scene-layout verification into normal owning modules; remaining legacy ownership retains an exact downward ceiling. S5A finite Select integration moves actual marking-shell verification into its normal child and ratchets this exact ceiling. S5A artifact hit-channel verification moves to the existing overlay-hit test owner; exact legacy ceiling ratcheted."
+      "note": "PM058 final Pad centre painting and dimensions move into bounded pad_paint owner. Integer painter retained; exact downward ceiling."
     },
     "crates/test-harness/src/bin/m3_sidecar_roundtrip_fidelity.rs": {
       "kind": "rust-production",

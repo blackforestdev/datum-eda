@@ -17,7 +17,7 @@ pub(super) fn certify(
             Materialization::Current => {}
         }
         if source
-            .object(model, evidence.board_pad.object_id, "pads")
+            .pad_terminal(model, evidence.board_pad.object_id)
             .is_none()
         {
             return Ok(NetCorrespondenceStatus::Unverified);
@@ -56,12 +56,9 @@ pub(super) fn certify(
             .ok_or_else(|| invalid("missing pinned map source"))?
             .clone(),
     )?;
-    let pad: crate::board::PlacedPad = serde_json::from_value(
-        source
-            .object(model, evidence.board_pad.object_id, "pads")
-            .ok_or_else(|| invalid("missing pad source"))?
-            .clone(),
-    )?;
+    let pad = source
+        .pad_terminal(model, evidence.board_pad.object_id)
+        .ok_or_else(|| invalid("missing typed Pad source"))?;
     if !ci.placed_package_refs.contains(&pad.package)
         || ci.part_ref != Some(map.part)
         || pad.net != board_net

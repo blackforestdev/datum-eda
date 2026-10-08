@@ -5,9 +5,11 @@ mod certified_polygon;
 mod integer_polygon;
 pub(crate) use certified_polygon::CertifiedPolygon;
 mod eighth_turn;
-mod quadratic;
-mod quadratic_sign;
+mod mixed_field;
+pub(crate) mod quadratic;
+pub(crate) mod quadratic_sign;
 mod rotation_bounds;
+pub(crate) mod source_relative;
 use super::nominal_geometry::{
     CertifiedArc, DistanceBoundary, GeometryError, Rational as R, Result, cross, norm,
 };

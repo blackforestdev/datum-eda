@@ -17,6 +17,8 @@ pub mod occupied_copper;
 pub(crate) mod occupied_region;
 mod pad;
 mod polygon;
+pub mod quadratic3;
+pub mod query_pad;
 mod radical_sign;
 pub mod route_proposal;
 mod route_surface;

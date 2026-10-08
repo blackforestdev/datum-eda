@@ -12,8 +12,8 @@ mod pins;
 mod projection;
 mod validation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
-pub(crate) use projection::project_board_value;
 pub use projection::{ComponentPadProjection, component_pad_projection};
+pub(crate) use projection::{project_value, projection_with_operations};
 pub(crate) use validation::{touches, touches_batch, validate_batch, validate_native};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

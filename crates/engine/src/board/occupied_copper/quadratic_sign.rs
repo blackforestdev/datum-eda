@@ -2,7 +2,7 @@
 //! Four u128 factors and the factor two fit 513 bits; nine u64 limbs suffice.
 //! This is private bounded sign arithmetic, not arbitrary-precision source data.
 use super::*;
-fn product(factors: &[u128]) -> Result<[u64; 9]> {
+pub(crate) fn product(factors: &[u128]) -> Result<[u64; 9]> {
     let mut out = [0u64; 9];
     out[0] = 1;
     for factor in factors {

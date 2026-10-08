@@ -158,7 +158,7 @@ pub(super) fn push_scene_overlay_and_hits(
                 .find(|a| Some(&a.net_uuid) == pad.net_uuid.as_ref())
                 .map(|a| a.net_name.clone())
                 .unwrap_or_else(|| "NET".to_string());
-            let (px, py) = project_point(pad.center, &projection);
+            let (px, py) = project_pad_center(pad.center, &projection);
             draw_text_clipped(
                 &net_label.to_uppercase(),
                 px + 8.0,

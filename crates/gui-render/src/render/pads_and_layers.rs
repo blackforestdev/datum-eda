@@ -1,3 +1,6 @@
+#[path = "pad_paint.rs"]
+mod pad_paint;
+use pad_paint::{pad_dimensions_nm, paint_pad_center, project_pad_center};
 #[path = "component_body.rs"]
 mod component_body;
 use component_body::{compact_component_body_bounds, inferred_component_body_bounds};
@@ -75,13 +78,6 @@ fn push_pad_primitive(
 mod pad_retained;
 use pad_retained::push_pad_primitive_world;
 
-fn pad_dimensions_nm(pad: &datum_gui_protocol::PadPrimitive) -> (f32, f32) {
-    (
-        (pad.bounds.max_x - pad.bounds.min_x).max(1) as f32,
-        (pad.bounds.max_y - pad.bounds.min_y).max(1) as f32,
-    )
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum PadProcessLayerKind {
     Mask,
@@ -112,8 +108,7 @@ fn process_pad_bounds(
     };
     let half_w = expanded_width_nm * 0.5;
     let half_h = expanded_height_nm * 0.5;
-    let center_x = pad.center.x as f32;
-    let center_y = pad.center.y as f32;
+    let (center_x, center_y) = paint_pad_center(pad.center);
     datum_gui_protocol::RectNm {
         min_x: (center_x - half_w).round() as i64,
         min_y: (center_y - half_h).round() as i64,
@@ -246,7 +241,7 @@ fn projected_pad_outline(
     inset_px: f32,
 ) -> Vec<(f32, f32)> {
     let (width_nm, height_nm) = pad_dimensions_nm(pad);
-    let center = projection.project_point(pad.center);
+    let center = project_pad_center(pad.center, projection);
     let width_px =
         (projection.world_length_to_px(width_nm.round() as i64) - inset_px * 2.0).max(1.0);
     let height_px =

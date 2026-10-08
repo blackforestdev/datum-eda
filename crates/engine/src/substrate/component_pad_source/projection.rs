@@ -1,5 +1,6 @@
 //! Source-owned projection of frozen local geometry. Display keys are not evidence.
 use super::*;
+use crate::board::query_pad::{QueryPadGeometry, SourceRelativePadGeometry};
 use crate::board::{PadLayerConnection, PlacedPackage, PlacedPad, Stackup, StackupLayerType};
 use crate::substrate::{Operation, SourceShardKind};
 use serde_json::Value;
@@ -7,6 +8,7 @@ use std::collections::{BTreeMap, BTreeSet};
 #[derive(Debug, Clone, Default)]
 pub struct ComponentPadProjection {
     pub pads: BTreeMap<Uuid, PlacedPad>,
+    pub query_pads: BTreeMap<Uuid, QueryPadGeometry>,
     pub statuses: BTreeMap<Uuid, ComponentPadMaterializationStatus>,
     pub unavailable: BTreeMap<Uuid, String>,
     pub unadopted_packages: BTreeSet<Uuid>,
@@ -113,9 +115,13 @@ pub(crate) fn projection_with_operations(
             match projected {
                 Ok(mut physical) => {
                     if result.statuses[&pad.uuid] == ComponentPadMaterializationStatus::Current {
-                        physical.net = authoritative_net(model, &physical, b);
+                        physical.terminal_mut().net =
+                            authoritative_net(model, physical.terminal(), b);
                     }
-                    if result.pads.insert(pad.uuid, physical).is_some() {
+                    if let QueryPadGeometry::Integer(p) = &physical {
+                        result.pads.insert(pad.uuid, p.clone());
+                    }
+                    if result.query_pads.insert(pad.uuid, physical).is_some() {
                         return Err(invalid("duplicate per-placement Pad ID"));
                     }
                 }
@@ -131,7 +137,7 @@ fn project_pad(
     pad: &ComponentPadSource,
     package: &PlacedPackage,
     stackup: &Stackup,
-) -> Result<PlacedPad, EngineError> {
+) -> Result<QueryPadGeometry, EngineError> {
     let b = pad.source_binding.as_ref().unwrap();
     let g = &b.frozen_geometry;
     let copper: Vec<_> = stackup
@@ -148,51 +154,56 @@ fn project_pad(
         return Err(invalid("placement side is not a declared copper face"));
     }
     let back = package.layer != first;
-    let x = if back {
+    let exact = package.rotation.rem_euclid(360) == 30;
+    let position = if exact {
         g.position
-            .x
-            .checked_neg()
-            .ok_or_else(|| invalid("placement reflection range"))?
     } else {
-        g.position.x
+        let x = if back {
+            g.position
+                .x
+                .checked_neg()
+                .ok_or_else(|| invalid("placement reflection range"))?
+        } else {
+            g.position.x
+        };
+        let y = g.position.y;
+        let (x, y) = match package.rotation.rem_euclid(360) {
+            0 => (x, y),
+            90 => (
+                y.checked_neg()
+                    .ok_or_else(|| invalid("placement rotation range"))?,
+                x,
+            ),
+            180 => (
+                x.checked_neg()
+                    .ok_or_else(|| invalid("placement rotation range"))?,
+                y.checked_neg()
+                    .ok_or_else(|| invalid("placement rotation range"))?,
+            ),
+            270 => (
+                y,
+                x.checked_neg()
+                    .ok_or_else(|| invalid("placement rotation range"))?,
+            ),
+            _ => {
+                return Err(invalid(
+                    "exact local-point transform for this rotation is unavailable; no rounded authority",
+                ));
+            }
+        };
+        Point::new(
+            package
+                .position
+                .x
+                .checked_add(x)
+                .ok_or_else(|| invalid("placement position range"))?,
+            package
+                .position
+                .y
+                .checked_add(y)
+                .ok_or_else(|| invalid("placement position range"))?,
+        )
     };
-    let y = g.position.y;
-    let (x, y) = match package.rotation.rem_euclid(360) {
-        0 => (x, y),
-        90 => (
-            y.checked_neg()
-                .ok_or_else(|| invalid("placement rotation range"))?,
-            x,
-        ),
-        180 => (
-            x.checked_neg()
-                .ok_or_else(|| invalid("placement rotation range"))?,
-            y.checked_neg()
-                .ok_or_else(|| invalid("placement rotation range"))?,
-        ),
-        270 => (
-            y,
-            x.checked_neg()
-                .ok_or_else(|| invalid("placement rotation range"))?,
-        ),
-        _ => {
-            return Err(invalid(
-                "exact local-point transform for this rotation is unavailable; no rounded authority",
-            ));
-        }
-    };
-    let position = Point::new(
-        package
-            .position
-            .x
-            .checked_add(x)
-            .ok_or_else(|| invalid("placement position range"))?,
-        package
-            .position
-            .y
-            .checked_add(y)
-            .ok_or_else(|| invalid("placement position range"))?,
-    );
     let side_layer = |layer| {
         if back {
             if layer == first {
@@ -260,7 +271,7 @@ fn project_pad(
         width: pad.width_nm,
         height: pad.height_nm,
         drill: pad.drill_nm.unwrap_or(0),
-        rotation: package.rotation,
+        rotation: if exact { 0 } else { package.rotation },
         roundrect_rratio_ppm: 250000,
         mask_layers: vec![],
         paste_layers: vec![],
@@ -270,7 +281,14 @@ fn project_pad(
     };
     crate::board::occupied_copper::validate_pad(&physical)
         .map_err(|e| invalid(format!("unavailable frozen Pad geometry: {e:?}")))?;
-    Ok(physical)
+    if exact {
+        Ok(QueryPadGeometry::SourceRelative(
+            SourceRelativePadGeometry::thirty(physical, package.position, back, b.clone())
+                .map_err(|e| invalid(format!("exact placement: {e:?}")))?,
+        ))
+    } else {
+        Ok(QueryPadGeometry::Integer(physical))
+    }
 }
 fn authoritative_net(
     model: &DesignModel,
@@ -327,23 +345,27 @@ pub fn component_pad_projection(
     board: &Value,
 ) -> Result<ComponentPadProjection, EngineError> {
     let mut projection = projection_with_operations(model, board, &[])?;
-    if projection.pads.values().any(|p| p.net.is_some()) {
+    if projection
+        .query_pads
+        .values()
+        .any(|p| p.terminal().net.is_some())
+    {
         let basis = crate::substrate::electrical_basis::ElectricalBasis::new(model, &[])?;
+        for pad in projection.query_pads.values_mut() {
+            pad.terminal_mut().net = basis
+                .pad_terminal(model, pad.terminal().uuid)
+                .and_then(|p| p.net);
+        }
         for pad in projection.pads.values_mut() {
-            pad.net = basis
-                .object(model, pad.uuid, "pads")
-                .and_then(|v| v.get("net"))
-                .and_then(|n| serde_json::from_value(n.clone()).ok());
+            pad.net = projection.query_pads[&pad.uuid].terminal().net;
         }
     }
     Ok(projection)
 }
-pub(crate) fn project_board_value(
-    model: &DesignModel,
+pub(crate) fn project_value(
     board: &Value,
-    pending: &[Operation],
+    projection: &ComponentPadProjection,
 ) -> Result<Value, EngineError> {
-    let projection = projection_with_operations(model, board, pending)?;
     let mut value = board.clone();
     if projection.pads.is_empty() && projection.unavailable.is_empty() {
         return Ok(value);
@@ -355,7 +377,14 @@ pub(crate) fn project_board_value(
         .get_mut("pads")
         .and_then(Value::as_object_mut)
         .ok_or_else(|| invalid("missing canonical Pad source map"))?;
-    for (id, pad) in projection.pads {
+    for id in projection.query_pads.keys() {
+        if map.contains_key(&id.to_string()) {
+            return Err(invalid(
+                "placed Pad query geometry collides with authored source",
+            ));
+        }
+    }
+    for (id, pad) in &projection.pads {
         if map
             .insert(id.to_string(), serde_json::to_value(pad)?)
             .is_some()
@@ -367,6 +396,6 @@ pub(crate) fn project_board_value(
     }
     // A failed transform remains explicit. Source identity can be inspected;
     // dependent physical membership must not advertise a partial result.
-    value["component_pad_unavailable"] = serde_json::to_value(projection.unavailable)?;
+    value["component_pad_unavailable"] = serde_json::to_value(&projection.unavailable)?;
     Ok(value)
 }

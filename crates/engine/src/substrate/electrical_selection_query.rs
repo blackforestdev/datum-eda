@@ -241,13 +241,18 @@ impl ElectricalSelectionSnapshot {
                 ),
             });
         }
-        let source: crate::connectivity::BoardCopperSource =
+        let mut source: crate::connectivity::BoardCopperSource =
             serde_json::from_value(self.values[&roots[0].shard_id].clone()).map_err(|e| {
                 ElectricalQueryFailure::UnavailableBasis {
                     sources: vec![roots[0].shard_id],
                     reason: e.to_string(),
                 }
             })?;
+        source.query_pads = self
+            .basis
+            .query_pads(roots[0].shard_id)
+            .cloned()
+            .unwrap_or_default();
         if !self.model.objects.get(&source.uuid).is_some_and(|o| {
             o.domain == "board" && o.kind == "$" && o.source_shard_id == roots[0].shard_id
         }) {
@@ -431,6 +436,26 @@ impl ElectricalSelectionSnapshot {
                 let origin = ElectricalOccurrence {
                     class: class.into(),
                     source_id,
+                    instance_path: vec![],
+                };
+                self.basis.occurrence(&self.model, &origin).map_err(|_| {
+                    ElectricalQueryFailure::InvalidOccurrence {
+                        origin: origin.clone(),
+                    }
+                })?;
+                members.insert(origin);
+            }
+        }
+        for pad in self
+            .basis
+            .query_pads(boards[0].shard_id)
+            .into_iter()
+            .flat_map(|m| m.values())
+        {
+            if pad.terminal().net == Some(net) {
+                let origin = ElectricalOccurrence {
+                    class: "pads".into(),
+                    source_id: pad.terminal().uuid,
                     instance_path: vec![],
                 };
                 self.basis.occurrence(&self.model, &origin).map_err(|_| {

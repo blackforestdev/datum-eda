@@ -2,7 +2,7 @@
 //! No trigonometric rounding, interval tolerance or authored coordinate changes.
 use super::*;
 #[derive(Clone, Copy, Debug)]
-pub(super) struct Q {
+pub(crate) struct Q {
     pub a: R,
     pub b: R,
 }

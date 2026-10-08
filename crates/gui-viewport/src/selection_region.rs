@@ -277,6 +277,35 @@ impl SelectionRegion {
         }
         Ok(false)
     }
+    pub fn contains_exact(&self, p: datum_gui_protocol::ExactPointNm) -> Result<bool> {
+        use datum_gui_protocol::Quadratic3 as Q;
+        for tri in &self.triangles {
+            let mut inside = true;
+            for i in 0..3 {
+                let a = tri[i];
+                let b = tri[(i + 1) % 3];
+                let dx = Q::rational(b[0].checked_sub(a[0])?);
+                let dy = Q::rational(b[1].checked_sub(a[1])?);
+                let x = p[0].sub(Q::rational(a[0]))?;
+                let y = p[1].sub(Q::rational(a[1]))?;
+                inside &= dx.mul(y)?.sub(dy.mul(x)?)?.sign()? >= 0;
+            }
+            if inside {
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    }
+    pub fn exact_anchors(&self, anchors: &[datum_gui_protocol::ExactPointNm]) -> Result<bool> {
+        if anchors.is_empty() {
+            return Err(Error::UnresolvedPredicate);
+        }
+        let mut count = 0;
+        for p in anchors {
+            count += usize::from(self.contains_exact(*p)?);
+        }
+        Ok(count > anchors.len() / 2)
+    }
     pub fn anchors(&self, anchors: &[PointNm]) -> Result<bool> {
         if anchors.is_empty() {
             return Err(Error::UnresolvedPredicate);
@@ -372,4 +401,99 @@ pub fn layout_contains(corners: &[Point], p: PointNm) -> Result<bool> {
         negative |= sign < 0;
     }
     Ok(!(positive && negative) && (positive || negative))
+}
+
+#[cfg(test)]
+mod exact30_tests {
+    use super::*;
+    use datum_gui_protocol::Quadratic3 as Q;
+    #[test]
+    fn both_faces_keep_all_eight_and_strict_majority() {
+        for back in [false, true] {
+            let anchors = [
+                (-2700000, -1905000),
+                (-900000, -1905000),
+                (900000, -1905000),
+                (2700000, -1905000),
+                (2700000, 1905000),
+                (900000, 1905000),
+                (-900000, 1905000),
+                (-2700000, 1905000),
+            ]
+            .map(|(x, y)| {
+                let x = if back { -x } else { x };
+                [
+                    Q {
+                        a: R::new(40_000_000 - y, 2).unwrap(),
+                        b: R::new(x, 2).unwrap(),
+                    },
+                    Q {
+                        a: R::new(x, 2).unwrap(),
+                        b: R::new(y, 2).unwrap(),
+                    },
+                ]
+            });
+            let region = |right| {
+                SelectionRegion::new(&[
+                    PointNm {
+                        x: 10_000_000,
+                        y: -10_000_000,
+                    },
+                    PointNm {
+                        x: right,
+                        y: -10_000_000,
+                    },
+                    PointNm {
+                        x: right,
+                        y: 10_000_000,
+                    },
+                    PointNm {
+                        x: 10_000_000,
+                        y: 10_000_000,
+                    },
+                ])
+                .unwrap()
+            };
+            let four = region(20_000_000);
+            let five = region(21_000_000);
+            assert_eq!(
+                anchors
+                    .iter()
+                    .filter(|p| four.contains_exact(**p).unwrap())
+                    .count(),
+                4
+            );
+            assert!(!four.exact_anchors(&anchors).unwrap());
+            assert_eq!(
+                anchors
+                    .iter()
+                    .filter(|p| five.contains_exact(**p).unwrap())
+                    .count(),
+                5
+            );
+            assert!(five.exact_anchors(&anchors).unwrap());
+        }
+        let region = SelectionRegion::new(&[
+            PointNm { x: 0, y: 0 },
+            PointNm { x: 2, y: 0 },
+            PointNm { x: 0, y: 2 },
+        ])
+        .unwrap();
+        // On-edge rational point and an irrational point straddling the diagonal.
+        assert!(
+            region
+                .contains_exact([Q::rational(R::integer(1)); 2])
+                .unwrap()
+        );
+        assert!(
+            !region
+                .contains_exact([Q::root(R::integer(1)), Q::rational(R::new(1, 2).unwrap())])
+                .unwrap()
+        );
+        assert!(
+            region
+                .contains_exact([Q::root(R::integer(1)), Q::rational(R::new(1, 4).unwrap())])
+                .unwrap()
+        );
+    }
 }

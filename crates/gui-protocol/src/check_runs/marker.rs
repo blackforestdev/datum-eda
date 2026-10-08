@@ -50,7 +50,7 @@ impl MarkerProjectionIndex {
         for v in &scene.pads {
             add(
                 &v.source_object_uuid,
-                Some(v.center),
+                v.center.integer_point(),
                 &v.copper_layer_ids
                     .iter()
                     .map(String::as_str)

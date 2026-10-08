@@ -494,3 +494,9 @@ edit helper and generic library Proposal command forwarding into bounded child
 modules. The owning CLI ceilings ratchet exactly: library Proposals 1197→1172
 and project Proposals 832→804. Optional adoption receipts do not change unrelated
 Proposal families. No ceiling increase, exception or alternative mutation owner.
+
+PM058 exact Pad integration moves integer scene construction into the existing
+placed-Pad owner and final painting conversion/dimensions into bounded pad_paint.
+Protocol production ceiling ratchets 3869→3853; pads-and-layers 125→120. Existing
+aperture compatibility proof moves into its bounded test owner; render/tests.rs
+returns below 700 lines and leaves the legacy ledger. No ceiling increase.

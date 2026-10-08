@@ -29,7 +29,28 @@ impl Bounds {
                 p(via.position),
                 Rational::new(i128::from(via.diameter), 2)?,
             ),
-            Shape::Pad(pad) => {
+            Shape::Pad(query) => {
+                let pad = query.terminal();
+                if let QueryPadGeometry::SourceRelative(exact) = query {
+                    let x = exact.center[0].floor_ceil_nm()?;
+                    let y = exact.center[1].floor_ceil_nm()?;
+                    let diameter = if pad.shape == crate::board::PadShape::Circle {
+                        i128::from(pad.diameter)
+                    } else {
+                        i128::from(pad.width) + i128::from(pad.height)
+                    };
+                    return Self::expanded(
+                        [
+                            Rational::integer(i128::from(x.0)),
+                            Rational::integer(i128::from(y.0)),
+                        ],
+                        [
+                            Rational::integer(i128::from(x.1)),
+                            Rational::integer(i128::from(y.1)),
+                        ],
+                        Rational::new(diameter, 2)?,
+                    );
+                }
                 let diameter = if pad.shape == crate::board::PadShape::Circle {
                     i128::from(pad.diameter)
                 } else {

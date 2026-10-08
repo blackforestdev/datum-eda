@@ -9,6 +9,34 @@ pub(crate) fn push_pad_primitive_world(
     dimmed: bool,
     reference_projection: &Projection,
 ) {
+    if let datum_gui_protocol::PadCenter::Exact { .. } = pad.center {
+        if !world_primitives::admit_outline_points(out, 64) {
+            return;
+        }
+        let center = paint_pad_center(pad.center);
+        let (w, h) = pad_dimensions_nm(pad);
+        let outline = if pad.shape_kind == "circle" {
+            ellipse_points(center, w, h, pad.rotation_degrees, 64)
+        } else {
+            rounded_rect_points(center, w, h, pad.rotation_degrees, 0.0)
+        };
+        world_primitives::push_convex_polygon_fill(
+            out,
+            &outline,
+            dim_authored_color(outer_color, dimmed),
+        );
+        if let Some(drill) = drill_nm.filter(|v| *v > 0) {
+            let hole = ellipse_points(center, drill as f32, drill as f32, 0.0, 128);
+            out.role(crate::presentation_ranges::Role::Void);
+            world_primitives::push_convex_polygon_fill(
+                out,
+                &hole,
+                dim_structural_color([0.10, 0.11, 0.12], dimmed),
+            );
+            out.role(crate::presentation_ranges::Role::Material);
+        }
+        return;
+    }
     let outer_color = dim_authored_color(outer_color, dimmed);
     // Ellipses use 64 points; rounded rectangles use at most 36. Include
     // floating-point input and nanometre output overlap before construction.

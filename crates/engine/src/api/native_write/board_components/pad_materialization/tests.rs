@@ -18,14 +18,14 @@ fn write(path: &Path, value: &Value) {
     )
     .unwrap();
 }
-fn provenance() -> WriteProvenance {
+pub(super) fn provenance() -> WriteProvenance {
     WriteProvenance::new(
         "pad-source-test",
         CommitSource::Test,
         "PM057 journaled source lifetime",
     )
 }
-fn fixture() -> (
+pub(super) fn fixture() -> (
     PathBuf,
     DesignModel,
     ComponentPadMaterializationRequest,

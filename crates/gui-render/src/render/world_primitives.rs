@@ -89,7 +89,7 @@ pub(super) fn world_pad_outline(
         (bounds.max_x - bounds.min_x).max(1) as f32,
         (bounds.max_y - bounds.min_y).max(1) as f32,
     );
-    let center = (pad.center.x as f32, pad.center.y as f32);
+    let center = paint_pad_center(pad.center);
     let width_nm = (width_nm - inset_nm * 2.0).max(1.0);
     let height_nm = (height_nm - inset_nm * 2.0).max(1.0);
     let points = match pad.shape_kind.as_str() {

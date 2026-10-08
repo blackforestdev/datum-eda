@@ -17,6 +17,7 @@ fn kind(class: Class, field: &str) -> Option<eda_engine::ir::units::LengthQuanti
         "placement_position_nm"
         | "position_nm"
         | "terminal_position_nm"
+        | "local_source_position_nm"
         | "section_start_nm"
         | "section_end_nm"
         | "section_midpoint_nm"
@@ -45,6 +46,51 @@ fn render(
     units: ResolvedQuantityUnits,
     system: eda_engine::ir::units::MeasurementSystem,
 ) -> Option<QuantityPresentation> {
+    if value.get("x").is_some_and(|v| v.get("radicand").is_some()) {
+        use eda_engine::board::{nominal_geometry::Rational as R, quadratic3::Quadratic3 as Q};
+        use eda_engine::ir::units::LengthUnit;
+        let (scale, label) = match units.unit {
+            LengthUnit::Nanometer => (1, "nm"),
+            LengthUnit::Micrometer => (1_000, "µm"),
+            LengthUnit::Millimeter => (1_000_000, "mm"),
+            LengthUnit::Mil => (25_400, "mil"),
+            LengthUnit::Inch => (25_400_000, "in"),
+        };
+        let coordinate = |v: &Value| -> Option<String> {
+            let q: Q = serde_json::from_value(v.clone()).ok()?;
+            let a = q.a.checked_div(R::integer(scale)).ok()?;
+            let b = q.b.checked_div(R::integer(scale)).ok()?;
+            let fraction = |r: R| {
+                if r.denominator == 1 {
+                    r.numerator.to_string()
+                } else {
+                    format!("{}/{}", r.numerator, r.denominator)
+                }
+            };
+            Some(if b.numerator == 0 {
+                fraction(a)
+            } else {
+                format!(
+                    "{} {} {}√3",
+                    fraction(a),
+                    if b.numerator < 0 { "−" } else { "+" },
+                    fraction(if b.numerator < 0 {
+                        b.checked_neg().ok()?
+                    } else {
+                        b
+                    })
+                )
+            })
+        };
+        return Some(QuantityPresentation::Formatted {
+            rendered: format!(
+                "({}, {}) {label}",
+                coordinate(&value["x"])?,
+                coordinate(&value["y"])?
+            ),
+            rounded: false,
+        });
+    }
     let format = |nm| {
         format_length(FormatLengthRequest {
             value: Nanometers::new(nm),

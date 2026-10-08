@@ -16,6 +16,13 @@ use crate::substrate::{
 use serde_json::json;
 #[test]
 fn journaled_placed_pad_registration_uses_complete_existing_pm053_correspondence() {
+    prove(false);
+}
+#[test]
+fn exact30_placed_pad_preserves_complete_electrical_run_and_net() {
+    prove(true);
+}
+fn prove(rotated: bool) {
     let mut f = super::binding_fixture::fixture("placed_pad_pm053_delivery");
     let (old_pad, library_pad, map, ci) =
         if let ElectricalIdentity::NetRelationship { evidence, .. } = &f.relationship.identity {
@@ -108,13 +115,93 @@ fn journaled_placed_pad_registration_uses_complete_existing_pm053_correspondence
         net_correspondence_status(&f.model, f.logical),
         NetCorrespondenceStatus::Complete
     );
-    let projection = component_pad_projection(&f.model, &source).unwrap();
-    assert!(projection.pads[&pad.uuid].net.is_some());
-    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&f.model).unwrap();
-    let members = snapshot
-        .global_net(&f.model.model_revision, f.logical)
+    if rotated {
+        let write = super::super::board_components::build_edit_board_package(
+            &f.model,
+            provenance(),
+            package_id,
+            super::super::board_components::BoardPackageEdit::Rotation { rotation: 30 },
+        )
         .unwrap();
-    assert!(members.owned.iter().any(|m| m.source_id == pad.uuid));
+        commit_prepared(&mut f.model, &f.root, write).unwrap();
+    }
+    let source = f
+        .model
+        .materialized_source_shard_value(SourceShardKind::BoardRoot)
+        .unwrap();
+    let projection = component_pad_projection(&f.model, &source).unwrap();
+    let net = projection.query_pads[&pad.uuid].terminal().net.unwrap();
+    let mut expected = std::collections::BTreeSet::from([crate::substrate::ElectricalOccurrence {
+        class: "pads".into(),
+        source_id: pad.uuid,
+        instance_path: vec![],
+    }]);
+    if rotated {
+        let track = crate::board::Track::straight(
+            uuid::Uuid::new_v4(),
+            net,
+            crate::ir::geometry::Point::new(-1_000_000, 0),
+            crate::ir::geometry::Point::new(1_000_000, 0),
+            100_000,
+            1,
+        );
+        let write =
+            super::super::board_routing::build_place_board_track(&f.model, provenance(), &track)
+                .unwrap();
+        commit_prepared(&mut f.model, &f.root, write).unwrap();
+        let origin = crate::substrate::ElectricalOccurrence {
+            class: "tracks".into(),
+            source_id: track.uuid,
+            instance_path: vec![],
+        };
+        expected.insert(origin.clone());
+        let before = std::fs::read(f.root.join("board/board.json")).unwrap();
+        let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+        let captured = snapshot.board_source().unwrap();
+        let typed = captured
+            .query_pads
+            .get(&pad.uuid)
+            .expect("captured exact Pad");
+        assert_eq!(
+            typed.terminal().net,
+            Some(net),
+            "source qualification lost after Track write"
+        );
+        assert!(
+            typed.contact_track(&track).unwrap(),
+            "exact occupied contact lost"
+        );
+        let run = snapshot
+            .board_run(
+                &f.model.model_revision,
+                &origin,
+                Some(crate::ir::geometry::Point::zero()),
+            )
+            .unwrap();
+        assert_eq!(run.members, expected);
+        let members = snapshot
+            .global_net(&f.model.model_revision, f.logical)
+            .unwrap();
+        assert_eq!(
+            members
+                .owned
+                .iter()
+                .filter(|o| matches!(o.class.as_str(), "pads" | "tracks"))
+                .cloned()
+                .collect::<std::collections::BTreeSet<_>>(),
+            expected
+        );
+        assert_eq!(
+            std::fs::read(f.root.join("board/board.json")).unwrap(),
+            before
+        );
+    } else {
+        let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+        let members = snapshot
+            .global_net(&f.model.model_revision, f.logical)
+            .unwrap();
+        assert!(members.owned.iter().any(|m| m.source_id == pad.uuid));
+    }
     let reopened = ProjectResolver::new(&f.root).resolve().unwrap();
     assert_eq!(
         net_correspondence_status(&reopened, f.logical),
@@ -143,7 +230,11 @@ fn journaled_placed_pad_registration_uses_complete_existing_pm053_correspondence
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
         .unwrap();
     assert_eq!(
-        component_pad_projection(&f.model, &source).unwrap().pads[&pad.uuid].net,
+        component_pad_projection(&f.model, &source)
+            .unwrap()
+            .query_pads[&pad.uuid]
+            .terminal()
+            .net,
         None
     );
     std::fs::remove_dir_all(f.root).unwrap();

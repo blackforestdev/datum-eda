@@ -1,4 +1,5 @@
 //! Complete source-referenced board components. No semantic identity allocation.
+use crate::board::query_pad::QueryPadGeometry;
 use crate::board::{
     Net, NetClass, PlacedPad, Stackup, Track, Via, Zone,
     nominal_geometry::{DistanceBoundary, GeometryError, Rational},
@@ -22,12 +23,22 @@ pub(crate) struct BoardCopperSource {
     pub uuid: Uuid,
     pub stackup: Stackup,
     pub pads: BTreeMap<Uuid, PlacedPad>,
+    #[serde(skip)]
+    pub query_pads: BTreeMap<Uuid, QueryPadGeometry>,
     pub tracks: BTreeMap<Uuid, Track>,
     pub vias: BTreeMap<Uuid, Via>,
     pub zones: BTreeMap<Uuid, Zone>,
     pub nets: BTreeMap<Uuid, Net>,
     #[serde(default)]
     pub net_classes: BTreeMap<Uuid, NetClass>,
+}
+impl BoardCopperSource {
+    pub(crate) fn pad_terminal(&self, id: Uuid) -> Option<&PlacedPad> {
+        self.query_pads
+            .get(&id)
+            .map(QueryPadGeometry::terminal)
+            .or_else(|| self.pads.get(&id))
+    }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PhysicalQueryFailure {
@@ -83,7 +94,7 @@ pub struct BoardRunMembership {
 #[derive(Clone)]
 enum Shape {
     Track(Track),
-    Pad(PlacedPad),
+    Pad(QueryPadGeometry),
     Via(Via),
     Fill(copper::CertifiedPolygon),
 }
@@ -134,22 +145,16 @@ fn contact(a: &Node, b: &Node) -> Result<bool, GeometryError> {
     }
     match (&a.shape, &b.shape) {
         (Shape::Track(a), Shape::Track(b)) => tracks_within(a, b, 0, boundary),
-        (Shape::Track(a), Shape::Pad(b)) | (Shape::Pad(b), Shape::Track(a)) => {
-            copper::track_pad_within(a, b, 0, boundary)
-        }
+        (Shape::Track(a), Shape::Pad(b)) | (Shape::Pad(b), Shape::Track(a)) => b.contact_track(a),
         (Shape::Track(a), Shape::Via(b)) | (Shape::Via(b), Shape::Track(a)) => {
             copper::track_via_within(a, b, 0, boundary)
         }
         (Shape::Track(a), Shape::Fill(b)) | (Shape::Fill(b), Shape::Track(a)) => {
             b.track_within(a, 0, boundary)
         }
-        (Shape::Pad(a), Shape::Pad(b)) => copper::pads_within(a, b, 0, boundary),
-        (Shape::Pad(a), Shape::Via(b)) | (Shape::Via(b), Shape::Pad(a)) => {
-            copper::pad_via_within(a, b, 0, boundary)
-        }
-        (Shape::Pad(a), Shape::Fill(b)) | (Shape::Fill(b), Shape::Pad(a)) => {
-            b.pad_within(a, 0, boundary)
-        }
+        (Shape::Pad(a), Shape::Pad(b)) => a.contact_pad(b),
+        (Shape::Pad(a), Shape::Via(b)) | (Shape::Via(b), Shape::Pad(a)) => a.contact_via(b),
+        (Shape::Pad(a), Shape::Fill(b)) | (Shape::Fill(b), Shape::Pad(a)) => a.contact_polygon(b),
         (Shape::Via(a), Shape::Via(b)) => copper::vias_within(a, b, 0, boundary),
         (Shape::Via(a), Shape::Fill(b)) | (Shape::Fill(b), Shape::Via(a)) => {
             b.via_within(a, 0, boundary)
@@ -162,7 +167,7 @@ fn occupied(node: &Node, p: Point) -> Result<bool, GeometryError> {
         Shape::Track(t) => {
             copper::track_point_within(t, p, Rational::integer(0), DistanceBoundary::Inclusive)
         }
-        Shape::Pad(pad) => copper::pad_contains_point(pad, p),
+        Shape::Pad(pad) => pad.contains(p),
         Shape::Via(via) => copper::via_contains_point(via, p),
         Shape::Fill(poly) => poly.contains(p),
     }
@@ -203,7 +208,16 @@ impl Graph {
                 validation,
             );
         }
-        for (id, pad) in &source.pads {
+        let mut pads = source
+            .pads
+            .iter()
+            .map(|(id, p)| (*id, QueryPadGeometry::Integer(p.clone())))
+            .collect::<BTreeMap<_, _>>();
+        for (id, p) in &source.query_pads {
+            pads.insert(*id, p.clone());
+        }
+        for (id, query) in &pads {
+            let pad = query.terminal();
             if *id != pad.uuid {
                 return Err(geometry([*id], "Pad source key mismatch"));
             }
@@ -213,7 +227,7 @@ impl Graph {
                         graph.push(
                             reference("pads", *id),
                             pad.net,
-                            Shape::Pad(pad.clone()),
+                            Shape::Pad(query.clone()),
                             Ok(layers),
                             copper::validate_pad(pad),
                         );
@@ -222,7 +236,7 @@ impl Graph {
                 Err(reason) => graph.push(
                     reference("pads", *id),
                     pad.net,
-                    Shape::Pad(pad.clone()),
+                    Shape::Pad(query.clone()),
                     copper::pad_layers(&source.stackup, pad),
                     Err(reason),
                 ),
@@ -425,7 +439,7 @@ fn assignment(
     }
     let net = match origin.class.as_str() {
         "tracks" => source.tracks.get(&origin.source_id).map(|o| Some(o.net)),
-        "pads" => source.pads.get(&origin.source_id).map(|o| o.net),
+        "pads" => source.pad_terminal(origin.source_id).map(|o| o.net),
         "vias" => source.vias.get(&origin.source_id).map(|o| Some(o.net)),
         "zones" => source.zones.get(&origin.source_id).map(|o| Some(o.net)),
         _ => None,

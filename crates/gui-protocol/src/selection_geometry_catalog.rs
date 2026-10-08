@@ -11,6 +11,7 @@ pub type LayoutPoint = [R; 2];
 #[derive(Debug, Clone)]
 pub enum QualificationGeometry {
     Anchors(Vec<PointNm>),
+    ExactAnchors(Vec<crate::ExactPointNm>),
     Layout(Vec<LayoutPoint>),
     Filled(Vec<Vec<LayoutPoint>>),
     Disk { center: PointNm, radius: i64 },
@@ -116,7 +117,7 @@ pub fn qualification_catalog(
                                     .and_then(Value::as_str)
                                     .and_then(|s| s.parse().ok())
                                     .is_none_or(|id| {
-                                        !projection.as_ref().unwrap().pads.contains_key(&id)
+                                        !projection.as_ref().unwrap().query_pads.contains_key(&id)
                                     })
                             }))
                 })
@@ -127,6 +128,42 @@ pub fn qualification_catalog(
         let geometry = (|| -> Option<QualificationGeometry> {
             match id.class {
                 Class::Footprint => {
+                    if let Ok(projection) = &projection {
+                        let mut anchors = BTreeMap::new();
+                        if let Some(pads) = board.get("pads").and_then(Value::as_object) {
+                            for (key, pad) in pads {
+                                if pad.get("package").and_then(Value::as_str)
+                                    == Some(&id.id.to_string())
+                                {
+                                    let center = point(pad.get("position")?)?;
+                                    anchors.insert(
+                                        key.clone(),
+                                        crate::PadCenter::Integer(center).exact_point(),
+                                    );
+                                }
+                            }
+                        }
+                        for (key, pad) in &projection.query_pads {
+                            if pad.terminal().package == id.id {
+                                anchors.insert(key.to_string(), pad.center());
+                            }
+                        }
+                        if !anchors.is_empty()
+                            && projection.query_pads.values().any(|p| {
+                                p.terminal().package == id.id
+                                    && matches!(
+                                    p,
+                                    eda_engine::board::query_pad::QueryPadGeometry::SourceRelative(
+                                        _
+                                    )
+                                )
+                            })
+                        {
+                            return Some(QualificationGeometry::ExactAnchors(
+                                anchors.into_values().collect(),
+                            ));
+                        }
+                    }
                     let package = source(&board, "packages", &id)?;
                     let pads = board.get("pads")?.as_object()?;
                     let mut anchors: Vec<_> = pads

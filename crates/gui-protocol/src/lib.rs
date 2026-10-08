@@ -1,3 +1,5 @@
+mod pad_center;
+pub use pad_center::{ExactPointNm, PadCenter, Quadratic3};
 mod cli_bridge;
 mod placed_pad_projection;
 use cli_bridge::cli_prefix;
@@ -247,7 +249,7 @@ pub struct PadPrimitive {
     pub layer_id: String,
     #[serde(default)]
     pub copper_layer_ids: Vec<String>,
-    pub center: PointNm,
+    pub center: PadCenter,
     pub bounds: RectNm,
     pub shape_kind: String,
     #[serde(default = "default_roundrect_rratio_ppm")]
@@ -2143,6 +2145,10 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
     // --- Components (packages) ---
     let components = extract_components(&board_value)?;
 
+    let exact_projection = eda_engine::substrate::component_pad_source::component_pad_projection(
+        &model,
+        &board_value,
+    )?;
     board_value = placed_pad_projection::project(&model, board_value)?;
     // --- Pads ---
     let pads = extract_pads(&board_value)?;
@@ -2212,6 +2218,7 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
         net_display,
         edge_cuts_layer_key,
     );
+    placed_pad_projection::append_exact(&mut scene, &exact_projection)?;
     if let Some(layers) = scene_layers_from_native_stackup_value(&board_value) {
         scene.layers = layers;
     }
@@ -2972,30 +2979,7 @@ fn build_board_review_scene(
         .collect();
     let pads: Vec<PadPrimitive> = pads
         .into_iter()
-        .map(|pad| {
-            let bounds = pad_bounds(&pad);
-            PadPrimitive {
-                object_id: format!("pad:{}", pad.uuid),
-                object_kind: "pad".to_string(),
-                source_object_uuid: pad.uuid.clone(),
-                pad_uuid: pad.uuid.clone(),
-                component_uuid: pad.package.clone(),
-                net_uuid: pad.net.clone(),
-                layer_id: layer_id(pad.layer),
-                copper_layer_ids: pad.copper_layers.into_iter().map(layer_id).collect(),
-                center: pad.position,
-                bounds,
-                shape_kind: pad.shape,
-                roundrect_rratio_ppm: pad.roundrect_rratio_ppm,
-                mask_layer_ids: pad.mask_layers.into_iter().map(layer_id).collect(),
-                paste_layer_ids: pad.paste_layers.into_iter().map(layer_id).collect(),
-                solder_mask_margin_nm: pad.solder_mask_margin_nm,
-                solder_paste_margin_nm: pad.solder_paste_margin_nm,
-                solder_paste_margin_ratio_ppm: pad.solder_paste_margin_ratio_ppm,
-                drill_nm: pad.drill,
-                rotation_degrees: pad.rotation as f32,
-            }
-        })
+        .map(placed_pad_projection::integer_primitive)
         .collect();
     let tracks: Vec<TrackPrimitive> = tracks.into_iter().map(track_primitive).collect();
     let vias: Vec<ViaPrimitive> = vias

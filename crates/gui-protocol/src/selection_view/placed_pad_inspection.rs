@@ -8,6 +8,34 @@ pub(super) fn append(view: &mut SelectionView, model: &DesignModel, board: Optio
     let Some(board) = board else {
         return;
     };
+    if view.members.iter().any(|id| id.class == Class::Pad) {
+        if let Ok(projection) =
+            eda_engine::substrate::component_pad_source::component_pad_projection(model, board)
+        {
+            for id in view.members.iter().filter(|id| id.class == Class::Pad) {
+                if let Some(p) = projection.query_pads.get(&id.id) {
+                    let values = view.values.entry(id.clone()).or_default();
+                    let local = p.terminal();
+                    values.extend(properties::values(
+                        Class::Pad,
+                        &serde_json::to_value(local).unwrap(),
+                    ));
+                    if let eda_engine::board::query_pad::QueryPadGeometry::SourceRelative(exact) = p
+                    {
+                        values.insert(
+                            "local_source_position_nm".into(),
+                            serde_json::to_value(local.position).unwrap(),
+                        );
+                        values.insert(
+                            "terminal_position_nm".into(),
+                            serde_json::json!({"x":exact.center[0],"y":exact.center[1]}),
+                        );
+                        view.authored_anchors.remove(id);
+                    }
+                }
+            }
+        }
+    }
     for id in &view.members {
         if id.class != Class::Footprint {
             continue;

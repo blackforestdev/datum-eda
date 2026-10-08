@@ -9,6 +9,7 @@ use uuid::Uuid;
 pub(super) struct ElectricalBasis {
     values: BTreeMap<Uuid, Value>,
     classes: class_index::Index,
+    query_pads: BTreeMap<Uuid, BTreeMap<Uuid, crate::board::query_pad::QueryPadGeometry>>,
 }
 impl ElectricalBasis {
     pub(super) fn new(model: &DesignModel, operations: &[Operation]) -> Result<Self, EngineError> {
@@ -22,6 +23,7 @@ impl ElectricalBasis {
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
     ) -> Result<Self, EngineError> {
         let mut values = BTreeMap::new();
+        let mut query_pads = BTreeMap::new();
         for shard in &model.source_shards {
             if !matches!(
                 shard.kind,
@@ -111,13 +113,20 @@ impl ElectricalBasis {
                 }
             }
             if shard.kind == SourceShardKind::BoardRoot {
-                value =
-                    super::component_pad_source::project_board_value(model, &value, operations)?;
+                let projection = super::component_pad_source::projection_with_operations(
+                    model, &value, operations,
+                )?;
+                value = super::component_pad_source::project_value(&value, &projection)?;
+                query_pads.insert(shard.shard_id, projection.query_pads);
             }
             values.insert(shard.shard_id, value);
         }
         let classes = class_index::Index::capture(&values);
-        let mut basis = Self { values, classes };
+        let mut basis = Self {
+            values,
+            classes,
+            query_pads,
+        };
         // Provisional assignments allow the existing PM053 certificate to inspect
         // geometry and map correspondence. Only complete evidence survives capture.
         let mut refused = Vec::new();
@@ -133,12 +142,7 @@ impl ElectricalBasis {
                 else {
                     continue;
                 };
-                let Some(net) = value
-                    .get("pads")
-                    .and_then(|p| p.get(id.to_string()))
-                    .and_then(|p| p.get("net"))
-                    .and_then(|n| serde_json::from_value::<Uuid>(n.clone()).ok())
-                else {
+                let Some(net) = basis.pad_terminal(model, id).and_then(|p| p.net) else {
                     continue;
                 };
                 let mut count = 0;
@@ -170,9 +174,40 @@ impl ElectricalBasis {
             }
         }
         for (shard, id) in refused {
-            basis.values.get_mut(&shard).unwrap()["pads"][id.to_string()]["net"] = Value::Null;
+            if let Some(p) = basis
+                .query_pads
+                .get_mut(&shard)
+                .and_then(|p| p.get_mut(&id))
+            {
+                p.terminal_mut().net = None;
+            }
+            if let Some(pad) = basis
+                .values
+                .get_mut(&shard)
+                .and_then(|v| v.get_mut("pads"))
+                .and_then(|v| v.get_mut(id.to_string()))
+            {
+                pad["net"] = Value::Null;
+            }
         }
         Ok(basis)
+    }
+    pub(super) fn query_pads(
+        &self,
+        shard: Uuid,
+    ) -> Option<&BTreeMap<Uuid, crate::board::query_pad::QueryPadGeometry>> {
+        self.query_pads.get(&shard)
+    }
+    pub(super) fn pad_terminal(
+        &self,
+        model: &DesignModel,
+        id: Uuid,
+    ) -> Option<crate::board::PlacedPad> {
+        let shard = model.objects.get(&id)?.source_shard_id;
+        if let Some(pad) = self.query_pads.get(&shard).and_then(|p| p.get(&id)) {
+            return Some(pad.terminal().clone());
+        }
+        serde_json::from_value(self.object(model, id, "pads")?.clone()).ok()
     }
     pub(super) fn component_pad_status(
         &self,

@@ -12,6 +12,7 @@ use crate::{
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BoardReviewSceneV1 {
     pub kind: String,
+    #[serde(deserialize_with = "supported_scene_version")]
     pub version: u32,
     pub scene_id: String,
     pub project_uuid: String,
@@ -60,4 +61,13 @@ pub struct ScenePadExpansionSetup {
     pub pad_to_paste_ratio_ppm: i32,
     #[serde(default)]
     pub solder_mask_min_width_nm: i64,
+}
+
+fn supported_scene_version<'de, D: serde::Deserializer<'de>>(d: D) -> Result<u32, D::Error> {
+    let version = u32::deserialize(d)?;
+    if version == 1 || version == 2 {
+        Ok(version)
+    } else {
+        Err(serde::de::Error::custom("unsupported board scene version"))
+    }
 }

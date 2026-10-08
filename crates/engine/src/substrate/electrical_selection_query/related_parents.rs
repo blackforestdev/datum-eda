@@ -49,7 +49,7 @@ impl ElectricalSelectionSnapshot {
                 )
             } else {
                 let board = board.as_ref().expect("requested pad source captured");
-                let pad = board.pads.get(&origin.source_id).ok_or_else(invalid)?;
+                let pad = board.pad_terminal(origin.source_id).ok_or_else(invalid)?;
                 // Canonical standalone pads explicitly carry no package.
                 // Absence of related context cannot invalidate their membership.
                 if pad.package.is_nil() {
