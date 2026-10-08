@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{SceneBounds, SelectionTarget};
+mod selection_inspection;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -177,6 +178,12 @@ pub struct NativeSelectionContext {
     pub per_type: std::collections::BTreeMap<crate::AuthoredSelectionClass, usize>,
     pub inspection: std::collections::BTreeMap<String, crate::selection_view::InspectionValue>,
     pub members: Option<Vec<crate::AuthoredSelectionIdentity>>,
+    /// The governed member list is omitted above 256; counts/identity stay whole.
+    #[serde(default)]
+    pub truncated: bool,
+    /// Complete per-member evidence is queried explicitly above the member cap.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub omitted_inspection_fields: Vec<String>,
     pub hidden: usize,
     pub locked: usize,
     pub unprojected: usize,
@@ -190,6 +197,9 @@ impl NativeSelectionContext {
             crate::SelectionSubject::Compound(_) => None,
             other => Some(other.clone()),
         };
+        let truncated = view.members.len() > 256;
+        let (inspection, omitted_inspection_fields) =
+            selection_inspection::capture(view, truncated);
         Self {
             project: view.project,
             revision: view.revision.clone(),
@@ -204,12 +214,10 @@ impl NativeSelectionContext {
                     counts
                 },
             ),
-            inspection: view
-                .fields()
-                .into_iter()
-                .map(|name| (name.to_owned(), view.field(name)))
-                .collect(),
+            inspection,
             members: (view.members.len() <= 256).then(|| view.members.iter().cloned().collect()),
+            truncated,
+            omitted_inspection_fields,
             hidden: view.hidden.len(),
             locked: view.locked.len(),
             unprojected: view.unprojected.len(),
