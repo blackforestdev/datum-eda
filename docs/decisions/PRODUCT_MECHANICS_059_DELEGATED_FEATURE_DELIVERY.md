@@ -207,3 +207,60 @@ focused failure controls and bounded independent implementation review. Preserve
 original KiCad bytes and all broader W1-W3/S5A/NA/CAM obligations. Approval of this
 readiness packet does not fabricate protocol review or ratification, and no
 runtime work starts until its recorded prerequisites and execution grant permit it.
+
+<!-- EVIDENCE:USER-EDIT-DELIVERY:UED-C02-OWNER-GRANT -->
+### Appointed first-footprint delivery manager — 2026-10-08
+
+The owner approves UED-FIRST-MOVE-01 at commit
+`e7fd1b28dd2c8ecb79eab6a7f30a5ed594f6c8b4`, packet blob
+`874ae14396bd25ed282df3cd95cb5f2aed93461d`, and explicitly appoints this
+implementation session (`codex-user-edit-delivery-20261008`) as delivery manager
+for the first-footprint edit under PM059. This is an owner appointment, not
+self-appointment. Record actual reviewer receipts, routine corrections,
+unchanged-scope continuation and objective development-build acceptance without
+owner approval relays. Use the existing reserved independent audit session;
+the implementing manager cannot review its own specification or implementation.
+
+The owner additionally delegates **PWO-C03 ratification for this bounded
+engine-owned writer protocol**, conditional on actual independent specification
+PASS and disposition of every mandatory finding. This explicit delegation is
+an exception to PM059's otherwise owner-reserved writer-policy ratification,
+limited to UED-FIRST-MOVE-01. Preserve canonical mutation, serialization, fresh
+guard validation, durability and recovery. The execution grant covers writer
+preparation/review/ratification, the necessary safety correction, typed dispatch,
+first-footprint preview/cancel/commit, undo/redo, Save and persistent reopen,
+focused ordinary Wayland+WGPU verification and bounded independent review.
+Writer representation implementation still waits for that actual reviewed
+ratification. No new dependency, scope reduction, tolerance, broader product
+rule, full qualification or successor feature phase is delegated.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C03 -->
+Prepare the smallest complete bounded engine-owned writer protocol and actual
+consumer/failure reconciliation using the existing PWO clauses and source pins.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C04 -->
+Return the pinned writer proposal to the reserved independent audit session;
+record actual specification PASS or mandatory corrections. No substitute review.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C05 -->
+<!-- OWNER:USER-EDIT-DELIVERY:UED-C05:BOUNDED-WRITER-RATIFICATION -->
+The appointed manager may ratify the exact bounded writer protocol only after
+actual independent specification PASS and resolution of mandatory findings under
+the owner's additional PWO-C03 delegation. Retain broader PWO obligations.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C06 -->
+Implement the ratified minimal writer safety and first-footprint ordinary edit
+through existing canonical builders/history and typed GUI/native dispatch.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C07 -->
+Prove first-footprint cancel/commit/undo/redo/Save/reopen and focused failure
+safety on the owner-board-derived Project; repair actual failures and return the
+exact candidate to the reserved independent reviewer. Use ordinary Wayland+WGPU;
+missing platform/HUMAN qualification remains explicit, not forced-X11 success.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C08 -->
+<!-- OWNER:USER-EDIT-DELIVERY:UED-C08:DEVELOPMENT-BUILD-ACCEPTANCE -->
+The appointed manager may record objective first-edit development-build acceptance
+only with the required focused safety and actual bounded independent review.
+Deliver pinned source/binaries/native Project and ordinary launch command. Keep
+full GWP/NA/S5A/CAM and nondelegated HUMAN acceptance separate; no successor grant.
