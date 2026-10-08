@@ -20,8 +20,12 @@ pub(super) fn render(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) -> anyhow::Result<Option<RectPx>> {
-    let title = if view.members.len() == 1 {
-        "Object Selection".to_owned()
+    let title = if view.subject.kind() == "object" {
+        view.members
+            .iter()
+            .next()
+            .map(|id| view.member_display_label(id, 1))
+            .unwrap_or_else(|| "Selection".into())
     } else if view.subject.kind() == "compound" {
         format!("Compound Selection — {} objects", view.members.len())
     } else {
@@ -131,7 +135,16 @@ pub(super) fn render(
     }
     if let Some(focus) = view.focus() {
         row(
-            &format!("Focus: {:?} {}", focus.class, focus.id),
+            &format!(
+                "Focus: {}",
+                view.member_display_label(
+                    focus,
+                    view.members
+                        .iter()
+                        .position(|id| id == focus)
+                        .map_or(0, |index| index + 1)
+                )
+            ),
             None,
             false,
         );
@@ -147,7 +160,7 @@ pub(super) fn render(
         );
     }
     row(
-        "Unavailable: Move / Rotate / Mirror / Lock / Group (S5A)",
+        "Move / Rotate / Mirror / Lock / Group: unavailable",
         None,
         false,
     );
@@ -168,12 +181,10 @@ pub(super) fn render(
             row("", None, false);
             continue;
         }
-        let label = if view.field_quantity_presentation(field).is_some() {
-            field.trim_end_matches("_nm")
-        } else {
-            field
-        };
-        let name = truncate_text(&label.replace('_', " "), columns / 2);
+        let name = truncate_text(
+            &datum_gui_protocol::selection_view::field_label(field),
+            columns / 2,
+        );
         let value =
             view.field_display_preview(field, columns.saturating_sub(name.chars().count() + 2));
         row(&format!("{name}: {value}"), None, false);
@@ -198,10 +209,11 @@ pub(super) fn render(
         let skip = start.saturating_sub(inventory_start).min(count);
         row_index.set(row_index.get() + skip);
         let end = (start + visible).saturating_sub(inventory_start).min(count);
-        for id in view
+        for (index, id) in view
             .scoped_members()
             .skip(skip)
             .take(end.saturating_sub(skip))
+            .enumerate()
         {
             let mut status = String::new();
             if view.hidden.contains(id) {
@@ -220,10 +232,21 @@ pub(super) fn render(
             let occurrence = if id.instance_path.is_empty() {
                 String::new()
             } else {
-                format!(" · occurrence {:?}", id.instance_path)
+                format!(
+                    " · sheet path {}",
+                    id.instance_path
+                        .iter()
+                        .map(ToString::to_string)
+                        .collect::<Vec<_>>()
+                        .join(" / ")
+                )
             };
             row(
-                &format!("{} {}{occurrence}{status}", class_label(id.class), id.id),
+                &format!(
+                    "{} · {}{occurrence}{status}",
+                    view.member_display_label(id, skip + index + 1),
+                    id.id
+                ),
                 None,
                 false,
             );

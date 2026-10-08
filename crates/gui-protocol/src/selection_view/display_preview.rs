@@ -1,7 +1,7 @@
 //! Bounded display-only serialization over borrowed complete inspection values.
 //! The canonical field and all exact consumers remain unchanged.
 use super::InspectionValue;
-use std::io::{self, Write};
+use serde_json::Value;
 pub(super) fn elide(text: &str, columns: usize) -> String {
     if columns == 0 {
         return String::new();
@@ -26,56 +26,81 @@ pub(super) fn elide(text: &str, columns: usize) -> String {
             .collect()
     }
 }
-struct Prefix {
-    bytes: Vec<u8>,
-    limit: usize,
-    full: bool,
-}
-impl Write for Prefix {
-    fn write(&mut self, data: &[u8]) -> io::Result<usize> {
-        let count = data.len().min(self.limit.saturating_sub(self.bytes.len()));
-        self.bytes.extend_from_slice(&data[..count]);
-        if count < data.len() {
-            self.full = true;
-            Err(io::Error::other("display preview complete"))
-        } else {
-            Ok(count)
+fn human(value: &Value, columns: usize) -> String {
+    match value {
+        Value::Null => "None".into(),
+        Value::Bool(value) => if *value { "Yes" } else { "No" }.into(),
+        Value::Number(value) => value.to_string(),
+        Value::String(value) => elide(value, columns),
+        Value::Array(values) => format!("{} items", values.len()),
+        Value::Object(values) => {
+            let mut text = String::new();
+            for (key, value) in values {
+                if !text.is_empty() {
+                    text.push_str(" · ");
+                }
+                // Structured coverage remains complete in the canonical field;
+                // the display identifies its scope and count, never JSON IDs.
+                let label = if key.parse::<uuid::Uuid>().is_ok() {
+                    "Net".into()
+                } else {
+                    match key.as_str() {
+                        "footprint" => "Parts".into(),
+                        "board" => "Board".into(),
+                        "schematic" => "Schematic".into(),
+                        "track" => "Tracks".into(),
+                        "symbol" => "Symbols".into(),
+                        _ => key.rsplit(':').next().unwrap_or(key).replace('_', " "),
+                    }
+                };
+                let value = match value {
+                    Value::Array(items) => items.len().to_string(),
+                    Value::Object(items) => format!("{} properties", items.len()),
+                    _ => human(value, columns),
+                };
+                text.push_str(&format!("{label} {value}"));
+                if text.chars().count() > columns {
+                    break;
+                }
+            }
+            if text.is_empty() { "None".into() } else { text }
         }
-    }
-    fn flush(&mut self) -> io::Result<()> {
-        Ok(())
     }
 }
 pub(super) fn value(value: &InspectionValue, columns: usize) -> String {
-    match value {
-        InspectionValue::Mixed => elide("Mixed", columns),
-        InspectionValue::Unavailable(reason) => elide(
-            &format!("Unavailable — {}", elide(reason, columns)),
-            columns,
-        ),
-        InspectionValue::Common(value) => {
-            if let Some(text) = value.as_str() {
-                return elide(text, columns);
-            }
-            let mut prefix = Prefix {
-                bytes: Vec::new(),
-                limit: columns.saturating_mul(4),
-                full: false,
+    let text = match value {
+        InspectionValue::Mixed => "Mixed".into(),
+        InspectionValue::Unavailable(reason) => {
+            let parsed = reason.find("\"reason\":").and_then(|start| {
+                let text = &reason[start + "\"reason\":".len()..];
+                // Decode only a bounded first cause, never the complete member
+                // evidence array. Exact evidence remains in the canonical field.
+                let prefix: String = text
+                    .chars()
+                    .take(columns.saturating_mul(8).max(64))
+                    .collect();
+                serde_json::Deserializer::from_str(&prefix)
+                    .into_iter::<String>()
+                    .next()?
+                    .ok()
+            });
+            let reason = parsed.as_deref().unwrap_or(reason);
+            let reason = if reason.trim_start().starts_with(['[', '{']) {
+                "Source relationships unresolved"
+            } else {
+                reason.split(['[', '{']).next().unwrap_or(reason).trim()
             };
-            // A width-derived stop bounds compound traversal and preview storage.
-            // The intentional IO error affects this preview only.
-            let result = serde_json::to_writer(&mut prefix, value);
-            debug_assert!(result.is_ok() || prefix.full);
-            if let Err(error) = std::str::from_utf8(&prefix.bytes) {
-                prefix.bytes.truncate(error.valid_up_to());
-            }
-            let mut text = String::from_utf8(prefix.bytes).expect("serializer emits UTF-8");
-            if prefix.full {
-                text.push('…');
-            }
-            elide(&text, columns)
+            let reason = match reason {
+                "UnavailableAssignment" => "Electrical assignment unavailable",
+                "StaleSource" | "StaleRevision" => "Source has changed",
+                "AmbiguousAssignment" => "Electrical assignment is ambiguous",
+                _ => reason,
+            };
+            format!("Unavailable — {}", elide(reason, columns))
         }
-    }
+        InspectionValue::Common(value) => human(value, columns),
+    };
+    elide(&text, columns)
 }
 
 #[cfg(test)]
@@ -86,7 +111,7 @@ mod tests {
         let source = InspectionValue::Common(serde_json::json!((0..100_000).collect::<Vec<_>>()));
         let original = source.clone();
         let preview = value(&source, 32);
-        assert!(preview.ends_with('…'));
+        assert_eq!(preview, "100000 items");
         assert!(preview.chars().count() <= 32);
         assert_eq!(source, original);
         for columns in [0, 1, 2, 3, 8, 32] {
@@ -105,6 +130,23 @@ mod tests {
         assert!(
             value(&InspectionValue::Unavailable("reason ".repeat(100_000)), 32)
                 .starts_with("Unavailable")
+        );
+    }
+    #[test]
+    fn coverage_and_unavailable_evidence_have_human_previews_without_json() {
+        let source = InspectionValue::Common(serde_json::json!({"footprint":2,"track":3}));
+        assert_eq!(value(&source, 80), "Parts 2 · Tracks 3");
+        let reason = InspectionValue::Unavailable(
+            "[{\"member\":\"id\",\"reason\":\"missing source\"}]".into(),
+        );
+        assert_eq!(value(&reason, 80), "Unavailable — missing source");
+        assert_eq!(
+            value(&InspectionValue::Common(serde_json::json!(true)), 8),
+            "Yes"
+        );
+        assert_eq!(
+            source,
+            InspectionValue::Common(serde_json::json!({"footprint":2,"track":3}))
         );
     }
 }

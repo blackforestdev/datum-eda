@@ -1,5 +1,7 @@
 //! Complete, revision-bound shared output. Never an authored group or writer.
 mod inspection;
+mod inspector_labels;
+pub use inspector_labels::field_label;
 pub mod inspector_state;
 mod net_coverage;
 mod placed_pad_inspection;
@@ -89,6 +91,14 @@ impl SelectionView {
     }
     /// Read-only Project quantity formatting; canonical aggregate values stay exact.
     pub fn field_display_preview(&self, name: &str, columns: usize) -> String {
+        if let Some(label) = self
+            .inspection
+            .iter()
+            .find(|scope| scope.scope == self.scope)
+            .and_then(|scope| scope.display_labels.get(name))
+        {
+            return display_preview::elide(label, columns);
+        }
         let presentation = self.field_quantity_presentation(name);
         match presentation {
             Some(QuantityPresentation::Formatted { rendered, rounded }) => display_preview::elide(
@@ -421,7 +431,6 @@ pub fn build_selection_view(
     result.unprojected = result.members.difference(&represented).cloned().collect();
     placed_pad_inspection::append(&mut result, model);
     result.inspection = inspection::compile(&result);
-    quantities::append(model, &mut result.inspection);
     if let Some(scope) = result
         .inspection
         .iter_mut()
@@ -466,6 +475,8 @@ pub fn build_selection_view(
         schematic,
     );
     net_coverage::append(&mut result, model, authority);
+    quantities::append(model, &mut result.inspection);
+    inspector_labels::append(&mut result.inspection, &shards);
     Ok(result)
 }
 pub fn scene_keys(scene: &crate::BoardReviewSceneV1) -> impl Iterator<Item = &str> {

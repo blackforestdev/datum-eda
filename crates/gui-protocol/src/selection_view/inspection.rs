@@ -5,6 +5,8 @@ pub struct ScopeInspection {
     pub scope: Option<Class>,
     pub fields: BTreeMap<String, InspectionValue>,
     #[serde(default)]
+    pub display_labels: BTreeMap<String, String>,
+    #[serde(default)]
     pub quantities: BTreeMap<String, quantities::QuantityPresentation>,
 }
 #[derive(Default)]
@@ -68,7 +70,7 @@ pub(super) fn compile(view: &SelectionView) -> Vec<ScopeInspection> {
             fields.insert("hidden_members".into(),InspectionValue::Common(serde_json::json!(aggregate.hidden)));
             fields.insert("locked_members".into(),InspectionValue::Common(serde_json::json!(aggregate.locked)));
             fields.insert("unprojected_members".into(),InspectionValue::Common(serde_json::json!(aggregate.unprojected)));
-            ScopeInspection { scope,fields, quantities: BTreeMap::new() }
+            ScopeInspection { scope,fields, display_labels: BTreeMap::new(), quantities: BTreeMap::new() }
         })
         .collect()
 }
