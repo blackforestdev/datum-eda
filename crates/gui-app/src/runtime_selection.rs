@@ -13,6 +13,7 @@ use datum_gui_viewport::selection_acquisition::{
 use eda_engine::substrate::{DesignModel, ProjectReadCache};
 use std::collections::BTreeSet;
 use std::sync::Arc;
+mod publication;
 
 // The session owns its required model. Optional reuse holds only a Weak model
 // reference and the engine's existing bounded, byte-compared input evidence.
@@ -277,6 +278,9 @@ impl Runtime {
                     origin: id.clone(),
                     point: point.map(|p| eda_engine::ir::geometry::Point::new(p.x, p.y)),
                     depth,
+                    inputs: Arc::new(crate::runtime_selection_run::ProjectionInputs::capture(
+                        self.workspace(),
+                    )),
                 };
                 if let Err(error) = self.selection_run.schedule(request) {
                     self.selection_notice(error);
@@ -300,71 +304,7 @@ impl Runtime {
         entry: AcquisitionEntry,
         semantic: Option<SelectionSubject>,
     ) -> bool {
-        crate::append_gui_verbose_diagnostic_line(|| "selection publish begin");
-        let Some(native) = &self.native_selection else {
-            return false;
-        };
-        let prior = match &self.workspace().selection {
-            SelectionTarget::Native(v) => v.subject.clone(),
-            _ => SelectionSubject::None,
-        };
-        let outcome = match acquire_authored(
-            &prior,
-            candidates,
-            mode,
-            entry,
-            &WorkspaceSelectionAuthority {
-                native: &native.authority,
-                model: &native.model,
-                workspace: self.workspace(),
-            },
-        ) {
-            Ok(o) => o,
-            Err(e) => {
-                self.selection_notice(format!("Selection refused atomically: {e:?}"));
-                return true;
-            }
-        };
-        let announce = outcome.refusal.is_some()
-            || outcome.changed
-            || semantic.as_ref().is_some_and(|s| *s != prior);
-        let subject = semantic.unwrap_or(outcome.subject);
-        let state = self.workspace();
-        let mut view = match build_workspace_selection_view(
-            &native.model,
-            &native.authority,
-            subject,
-            state,
-        ) {
-            Ok(v) => v,
-            Err(e) => {
-                self.selection_notice(format!("Selection projection refused: {e:?}"));
-                return true;
-            }
-        };
-        crate::append_gui_verbose_diagnostic_line(|| "selection view ready");
-        if let SelectionTarget::Native(previous) = &state.selection
-            && view.subject == previous.subject
-        {
-            view.scope = previous.scope;
-        }
-        if let Some(refusal) = outcome.refusal {
-            view.notice = Some(refusal.explanation());
-        }
-        let summary = view.summary();
-        self.session.workspace_mut().selection = if matches!(view.subject, SelectionSubject::None) {
-            SelectionTarget::None
-        } else {
-            SelectionTarget::Native(Box::new(view))
-        };
-        self.native_selection.as_mut().unwrap().lineage = None;
-        self.refresh_selection_accessibility();
-        crate::append_gui_verbose_diagnostic_line(|| "selection accessibility ready");
-        if announce {
-            self.log_console_echo(ConsoleFeedbackSource::Selection, summary);
-        }
-        self.invalidate_frame();
-        true
+        self.publish_native_acquisition_prepared(candidates, mode, entry, semantic, None)
     }
     pub(super) fn native_select_all(&mut self) -> bool {
         self.native_select_all_on(
