@@ -1,0 +1,26 @@
+{
+  "packet": "UED-FIRST-MOVE-01-WRITER-REVIEW",
+  "status": "pending_reserved_independent_review",
+  "candidate_commit": "49ef303e2f1ee7290fc00dfef47ae72d447f3442",
+  "proposal_path": "docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md",
+  "proposal_blob": "e9a0991f81aa8777e6acfef38e6d06a4c1ccc068",
+  "production_source_commit": "e7fd1b28dd2c8ecb79eab6a7f30a5ed594f6c8b4",
+  "reviewer": {
+    "name": "reserved audit-agent",
+    "thread_id": "01a0e343-3d9c-70f1-899e-5bd239513383"
+  },
+  "review_request": "Reserved audit-agent: bounded independent specification review requested by the owner-appointed implementation delivery manager. This resumes your existing reserved audit thread, not a substitute reviewer. Owner approved UED-FIRST-MOVE-01 and delegated bounded PWO-C03 ratification only after your actual independent PASS and mandatory finding resolution. Appointment and retained boundaries are durably recorded in PM059 at the pinned commit below.\n\nReview candidate commit 49ef303e2f1ee7290fc00dfef47ae72d447f3442.\nProposal: docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md\nProposal blob e9a0991f81aa8777e6acfef38e6d06a4c1ccc068.\nProduction source remains e7fd1b28dd2c8ecb79eab6a7f30a5ed594f6c8b4; no writer code implemented yet.\nSource findings/owner receipt: docs/reviews/workflow-delivery-rollout/user-edit/first-footprint-edit-readiness.json.\nControlling clause map: docs/reviews/workflow-delivery-rollout/clauses/project-writer-ownership.json.\n\nThis is read-only independent specification review. Inspect current source and the pinned proposal against every bounded writer clause: all actual writer entries, fresh preimage/tip/object guards, lock identity and process death, recovery ownership and durability, platform/mixed-version limitations, consumer handoff and finite first-edit integration. Assess whether the proposed stable std File lock, legacy-file refusal and cooperating candidate-binary boundary satisfy existing authority; do not overlook conflicts or invent waivers. Reuse adequate research/proof. No broad audit, performance campaign or fixture expansion.\n\nDo not edit production/governance/tracker/prototypes, claim work, ratify this proposal or review your own implementation. Return an actual bounded PASS or REVISE with exact source/packet pins, mandatory finding IDs, controlling clauses, concise evidence and explicit unresolved boundaries. This receipt is specification review only, never implementation acceptance, S5A/C04-C06/GWP/NA/CAM closure or HUMAN waiver. The implementation session will record your receipt, correct mandatory findings and then exercise only the delegated ratification authority.\n",
+  "transport_attempt": {
+    "timestamp_utc": "2026-10-08T20:10:30Z",
+    "command": "/home/bfadmin/.npm-global/bin/codex exec resume 01a0e343-3d9c-70f1-899e-5bd239513383 - --json -o target/user-edit-review/writer-spec-receipt.txt",
+    "result": "REFUSED: thread-store conflict; reserved thread already has an active writer",
+    "stderr": "2026-10-08T20:10:30.826490Z ERROR codex_core::session::session: failed to initialize thread persistence: thread-store conflict: thread 01a0e343-3d9c-70f1-899e-5bd239513383 already has an active writer\n2026-10-08T20:10:30.827675Z ERROR codex_core::session: Failed to create session: thread-store conflict: thread 01a0e343-3d9c-70f1-899e-5bd239513383 already has an active writer\nError: thread/resume: thread/resume failed: thread 01a0e343-3d9c-70f1-899e-5bd239513383 already has an active writer (code -32600)\n",
+    "review_receipt": null,
+    "bypass_attempted": false,
+    "replacement_reviewer_appointed": false
+  },
+  "required_next_action": "Reserved audit session reviews pinned PM060 and returns actual PASS/REVISE with mandatory finding dispositions. Existing active review session may consume this repository handoff directly. Implementation manager records receipt; no owner relay approval required.",
+  "blocked_work": "Delegated PWO-C03 ratification and writer-dependent UED-C06 first-edit implementation require the actual reserved independent specification PASS.",
+  "retained_authority": "Owner appointment, unchanged first-edit grant and conditional PWO-C03 delegation remain durable; no renewal requested.",
+  "acceptance_boundary": "No writer ratification, runtime feature delivery, implementation review, native proof or broader acceptance claimed."
+}
