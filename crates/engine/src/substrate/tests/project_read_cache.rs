@@ -215,3 +215,53 @@ fn project_read_cache_bypasses_input_retention_overflow_without_rejecting_projec
     let small = cache.resolve(root).unwrap();
     assert!(Arc::ptr_eq(&small, &cache.resolve(root).unwrap()));
 }
+
+#[test]
+fn project_read_cache_ignores_transport_receipts_but_never_declared_sources() {
+    let fixture = Fixture::new();
+    let root = &fixture.0;
+    let mut cache = ProjectReadCache::default();
+    std::fs::create_dir_all(root.join(".datum")).unwrap();
+    let first = cache.resolve(root).unwrap();
+    for relative in [
+        ".datum/terminal-contexts/session.json",
+        ".datum/tool-sessions/session.json",
+        ".datum/gui-terminal-context.json",
+    ] {
+        let path = root.join(relative);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, "runtime receipt").unwrap();
+        assert!(Arc::ptr_eq(&first, &cache.resolve(root).unwrap()));
+        std::fs::write(&path, "updated receipt").unwrap();
+        assert!(Arc::ptr_eq(&first, &cache.resolve(root).unwrap()));
+        std::fs::remove_file(path).unwrap();
+        assert!(Arc::ptr_eq(&first, &cache.resolve(root).unwrap()));
+    }
+    let source = root.join(".datum/terminal-contexts/board.json");
+    std::fs::copy(root.join("board/board.json"), &source).unwrap();
+    let manifest_path = root.join("project.json");
+    let mut manifest: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+    manifest["board"] = serde_json::json!(".datum/terminal-contexts/board.json");
+    write_json(&manifest_path, manifest);
+    let declared = cache.resolve(root).unwrap();
+    assert_eq!(*declared, ProjectResolver::new(root).resolve().unwrap());
+    assert!(!Arc::ptr_eq(&declared, &cache.resolve(root).unwrap()));
+}
+
+#[test]
+fn project_read_cache_nonretaining_reuses_only_while_caller_owns_model() {
+    let fixture = Fixture::new();
+    let mut cache = ProjectReadCache::nonretaining();
+    let first = cache.resolve(&fixture.0).unwrap();
+    assert!(Arc::ptr_eq(&first, &cache.resolve(&fixture.0).unwrap()));
+    let weak = Arc::downgrade(&first);
+    drop(first);
+    assert!(weak.upgrade().is_none());
+    let reopened = cache.resolve(&fixture.0).unwrap();
+    assert_eq!(
+        *reopened,
+        ProjectResolver::new(&fixture.0).resolve().unwrap()
+    );
+    assert!(Arc::ptr_eq(&reopened, &cache.resolve(&fixture.0).unwrap()));
+}

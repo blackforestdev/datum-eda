@@ -1,11 +1,11 @@
 //! Read-only materialization status in the existing typed Inspector vocabulary.
 use super::*;
-use eda_engine::substrate::{DesignModel, SourceShardKind};
-pub(super) fn append(view: &mut SelectionView, model: &DesignModel) {
+use eda_engine::substrate::DesignModel;
+pub(super) fn append(view: &mut SelectionView, model: &DesignModel, board: Option<&Value>) {
     use eda_engine::substrate::component_pad_source::{
         ComponentPadMaterializationStatus as Status, ComponentPadSource,
     };
-    let Ok(board) = model.materialized_source_shard_value(SourceShardKind::BoardRoot) else {
+    let Some(board) = board else {
         return;
     };
     for id in &view.members {

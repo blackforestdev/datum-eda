@@ -1,22 +1,42 @@
 //! One caller-owned read snapshot. Reuse proves identical complete local input
-//! bytes; metadata supplements byte comparison and never replaces validation.
+//! bytes, excluding reserved GUI transport outputs; metadata supplements byte
+//! comparison and never replaces validation.
 use super::{DesignModel, EngineError, ProjectResolver};
 use std::io::Read;
 use std::path::{Component, Path, PathBuf};
-use std::sync::Arc;
+use std::sync::{Arc, Weak};
 
-#[derive(Default)]
 pub struct ProjectReadCache {
     entry: Option<Entry>,
+    retained_model: Option<Arc<DesignModel>>,
+    retain_model: bool,
+}
+impl Default for ProjectReadCache {
+    fn default() -> Self {
+        Self {
+            entry: None,
+            retained_model: None,
+            retain_model: true,
+        }
+    }
 }
 
 struct Entry {
     root: PathBuf,
     input: Vec<u8>,
-    model: Arc<DesignModel>,
+    model: Weak<DesignModel>,
 }
 
 impl ProjectReadCache {
+    /// Reuse a caller-owned source model without extending its lifetime. Only
+    /// bounded input evidence remains when the caller releases its last Arc.
+    pub fn nonretaining() -> Self {
+        Self {
+            retain_model: false,
+            ..Self::default()
+        }
+    }
+
     /// Reads remain authoritative through ProjectResolver. Unsupported trees,
     /// transient diagnostics and pending recovery bypass reuse, not validation. The cache
     /// retains at most one model and has no global project registry.
@@ -24,11 +44,13 @@ impl ProjectReadCache {
         if let Some(entry) = &self.entry
             && entry.root == root
             && unchanged(root, &entry.input)
+            && let Some(model) = entry.model.upgrade()
         {
-            return Ok(entry.model.clone());
+            return Ok(model);
         }
         // Release the old snapshot before potentially expensive reconstruction.
         self.entry = None;
+        self.retained_model = None;
         let before = capture(root);
         let model = Arc::new(ProjectResolver::new(root).resolve()?);
         if let Some(before) = before
@@ -46,17 +68,36 @@ impl ProjectReadCache {
             && model
                 .source_shards
                 .iter()
-                .all(|shard| shard.path.strip_prefix(root).is_ok_and(local_relative))
+                .all(|shard| shard.path.strip_prefix(root).is_ok_and(cache_input_path))
             && unchanged(root, &before)
         {
             self.entry = Some(Entry {
                 root: root.to_owned(),
                 input: before,
-                model: model.clone(),
+                model: Arc::downgrade(&model),
             });
+            if self.retain_model {
+                self.retained_model = Some(model.clone());
+            }
         }
         Ok(model)
     }
+}
+
+// These transport receipts are not resolver inputs. If a project explicitly
+// declares one as a source, optional reuse is refused rather than hiding it.
+fn runtime_output(path: &Path) -> bool {
+    [
+        ".datum/terminal-contexts",
+        ".datum/tool-sessions",
+        ".datum/gui-terminal-context.json",
+    ]
+    .iter()
+    .any(|reserved| path.starts_with(reserved))
+}
+
+fn cache_input_path(path: &Path) -> bool {
+    local_relative(path) && !runtime_output(path)
 }
 
 fn local_relative(path: &Path) -> bool {
@@ -169,13 +210,13 @@ fn scan(root: &Path, input: &mut Input<'_>) -> Option<()> {
     }
     let manifest: serde_json::Value = serde_json::from_slice(&manifest_bytes).ok()?;
     for key in ["board", "schematic", "rules"] {
-        if !local_relative(Path::new(manifest.get(key)?.as_str()?)) {
+        if !cache_input_path(Path::new(manifest.get(key)?.as_str()?)) {
             return None;
         }
     }
     if let Some(pools) = manifest.get("pools") {
         for pool in pools.as_array()? {
-            if !local_relative(Path::new(pool.get("path")?.as_str()?)) {
+            if !cache_input_path(Path::new(pool.get("path")?.as_str()?)) {
                 return None;
             }
         }
@@ -185,7 +226,7 @@ fn scan(root: &Path, input: &mut Input<'_>) -> Option<()> {
         entries: 0,
         bytes: 0,
     };
-    scan.metadata(&std::fs::symlink_metadata(root).ok()?)?;
+    scan.metadata(&std::fs::symlink_metadata(root).ok()?, false)?;
     scan.directory(root, root, 0)?;
     Some(())
 }
@@ -200,14 +241,16 @@ impl Scan<'_, '_> {
     // File identity/change time also detects a rewrite-and-restore between the
     // scans around resolution. Content comparison remains required on every hit;
     // timestamps alone never establish freshness. Unsupported platforms bypass.
-    fn metadata(&mut self, metadata: &std::fs::Metadata) -> Option<()> {
+    fn metadata(&mut self, metadata: &std::fs::Metadata, change_time: bool) -> Option<()> {
         #[cfg(unix)]
         {
             use std::os::unix::fs::MetadataExt;
             self.input.append(&metadata.dev().to_le_bytes())?;
             self.input.append(&metadata.ino().to_le_bytes())?;
-            self.input.append(&metadata.ctime().to_le_bytes())?;
-            self.input.append(&metadata.ctime_nsec().to_le_bytes())?;
+            if change_time {
+                self.input.append(&metadata.ctime().to_le_bytes())?;
+                self.input.append(&metadata.ctime_nsec().to_le_bytes())?;
+            }
             self.input.append(&metadata.mode().to_le_bytes())?;
             Some(())
         }
@@ -224,16 +267,23 @@ impl Scan<'_, '_> {
         }
         let mut entries = Vec::new();
         for entry in std::fs::read_dir(path).ok()? {
+            let path = entry.ok()?.path();
+            if runtime_output(path.strip_prefix(root).ok()?) {
+                continue;
+            }
             self.entries += 1;
             if self.entries > MAX_ENTRIES {
                 return None;
             }
-            entries.push(entry.ok()?.path());
+            entries.push(path);
         }
         entries.sort();
         for path in entries {
             let metadata = std::fs::symlink_metadata(&path).ok()?;
-            self.metadata(&metadata)?;
+            // Creating/replacing an excluded receipt changes its parent ctime.
+            // Root/.datum membership is still compared exactly after filtering;
+            // identity and mode remain checked, and all input files keep ctime.
+            self.metadata(&metadata, path != root.join(".datum"))?;
             let relative = path.strip_prefix(root).ok()?.as_os_str().as_encoded_bytes();
             self.input.append(&(relative.len() as u64).to_le_bytes())?;
             self.input.append(relative)?;

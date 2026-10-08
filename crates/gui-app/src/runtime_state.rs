@@ -15,6 +15,7 @@ pub(super) struct Runtime {
     pub(super) scale_factor: f32,
     pub(super) measurements: native_gpu_measurements::Host,
     pub(super) session: LiveDesignSession,
+    pub(super) selection_read_cache: runtime_selection::SelectionReadCache,
     pub(super) native_selection: Option<runtime_selection::NativeSelectionSession>,
     pub(super) selection_gesture: Option<datum_gui_viewport::selection_gesture::SelectionGesture>,
     pub(super) selection_evaluation: Option<selection_region_evaluation::RegionEvaluation>,

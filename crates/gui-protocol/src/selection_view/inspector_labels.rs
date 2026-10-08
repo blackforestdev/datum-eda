@@ -63,7 +63,7 @@ impl SelectionView {
     }
 }
 
-pub(super) fn append(scopes: &mut [ScopeInspection], shards: &BTreeMap<uuid::Uuid, Value>) {
+pub(super) fn append(scopes: &mut [ScopeInspection], shards: &BTreeMap<uuid::Uuid, &Value>) {
     let Some(board) = shards
         .values()
         .find(|value| value.get("stackup").is_some() && value.get("nets").is_some())

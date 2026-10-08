@@ -307,17 +307,23 @@ pub fn build_selection_view(
     let mut shards = BTreeMap::new();
     for shard in &model.source_shards {
         if needed.contains(&shard.shard_id)
-            && let Ok(value) =
-                model.materialized_source_shard_value_by_relative_path(&shard.relative_path)
+            && let Ok(value) = authority
+                .snapshot()
+                .source_shard_value(authority.revision(), shard.shard_id)
         {
-            let value = if shard.kind == eda_engine::substrate::SourceShardKind::BoardRoot {
-                crate::placed_pad_projection::project(model, value.clone()).unwrap_or(value)
-            } else {
-                value
-            };
             shards.insert(shard.shard_id, value);
         }
     }
+    let board_source = model
+        .source_shards
+        .iter()
+        .find(|shard| shard.kind == eda_engine::substrate::SourceShardKind::BoardRoot)
+        .and_then(|shard| {
+            authority
+                .snapshot()
+                .source_shard_value(authority.revision(), shard.shard_id)
+                .ok()
+        });
     let mut index = BTreeMap::new();
     for (shard, value) in &shards {
         index_sources(*shard, value, &mut index);
@@ -429,7 +435,7 @@ pub fn build_selection_view(
         .cloned()
         .collect();
     result.unprojected = result.members.difference(&represented).cloned().collect();
-    placed_pad_inspection::append(&mut result, model);
+    placed_pad_inspection::append(&mut result, model, board_source);
     result.inspection = inspection::compile(&result);
     if let Some(scope) = result
         .inspection
@@ -474,7 +480,7 @@ pub fn build_selection_view(
         board,
         schematic,
     );
-    net_coverage::append(&mut result, model, authority);
+    net_coverage::append(&mut result, authority, board_source);
     quantities::append(model, &mut result.inspection);
     inspector_labels::append(&mut result.inspection, &shards);
     Ok(result)

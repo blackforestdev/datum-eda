@@ -1,5 +1,6 @@
 use super::*;
 use crate::terminal_accessibility_platform::selection_fixture as fixture;
+
 #[test]
 fn same_source_revision_refreshes_canonical_proposal_status_without_rebuilding_geometry_authority()
 {
@@ -39,9 +40,11 @@ fn same_source_revision_refreshes_canonical_proposal_status_without_rebuilding_g
         },
     )
     .unwrap();
-    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let mut cache = SelectionReadCache::default();
+    let initial = cache.resolve(&f.root).unwrap();
+    let authority = NativeSelectionResolution::capture(&initial).unwrap();
     let mut session = NativeSelectionSession {
-        model: f.model.clone(),
+        model: initial,
         authority,
         last_click: None,
         lineage: None,
@@ -55,7 +58,7 @@ fn same_source_revision_refreshes_canonical_proposal_status_without_rebuilding_g
         ProposalStatus::Rejected,
     )
     .unwrap();
-    let reopened = ProjectResolver::new(&f.root).resolve().unwrap();
+    let reopened = cache.resolve(&f.root).unwrap();
     assert_eq!(reopened.model_revision, session.model.model_revision);
     let snapshot_revision = session.authority.snapshot().revision().clone();
     let authored = session.authority.authored_identities().clone();
@@ -78,5 +81,9 @@ fn same_source_revision_refreshes_canonical_proposal_status_without_rebuilding_g
         eda_engine::ir::geometry::Point::new(20000, 0),
         eda_engine::ir::geometry::Point::new(30000, 0),
     );
-    assert!(session.refresh_same_revision(f.model.clone()).is_some());
+    assert!(
+        session
+            .refresh_same_revision(Arc::new(f.model.clone()))
+            .is_some()
+    );
 }

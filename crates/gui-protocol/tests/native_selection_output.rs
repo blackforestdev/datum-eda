@@ -437,7 +437,8 @@ fn missing_project_quantity_context_is_disclosed_without_changing_exact_inspecti
         view.field_display_preview("copper_width_nm", 300)
             .starts_with("Unavailable — Project quantity context unavailable:")
     );
-    assert_eq!(view.field_display_preview("board_layer", 100), "1");
+    // Layer names remain readable even when the quantity profile is absent.
+    assert_eq!(view.field_display_preview("board_layer", 100), "Top Copper");
     let encoded = serde_json::to_value(&view.inspection).unwrap();
     let restored: Vec<datum_gui_protocol::selection_view::ScopeInspection> =
         serde_json::from_value(encoded).unwrap();
@@ -447,4 +448,45 @@ fn missing_project_quantity_context_is_disclosed_without_changing_exact_inspecti
         before,
         "units formatting never seeds or migrates a Project"
     );
+}
+
+#[test]
+fn inspection_borrows_captured_sources_without_reopening_board_or_journal() {
+    let (f, scene, ids) = setup();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let subject = SelectionSubject::Object(ids[0].clone());
+    let before = build_selection_view(&f.model, &authority, subject.clone(), &scene, None, |_| {
+        true
+    })
+    .unwrap();
+    let board = f.root.join("board/board.json");
+    let journal = f.root.join(".datum/journal/transactions.jsonl");
+    let board_bytes = std::fs::read(&board).unwrap();
+    let journal_bytes = std::fs::read(&journal).unwrap();
+    std::fs::remove_file(&board).unwrap();
+    std::fs::write(&journal, "unrelated later disk contents").unwrap();
+    let after =
+        build_selection_view(&f.model, &authority, subject, &scene, None, |_| true).unwrap();
+    assert_eq!(before, after);
+    let shard = f
+        .model
+        .source_shards
+        .iter()
+        .find(|s| s.kind == eda_engine::substrate::SourceShardKind::BoardRoot)
+        .unwrap();
+    assert!(matches!(
+        authority.snapshot().source_shard_value(
+            &eda_engine::substrate::ModelRevision("stale".into()),
+            shard.shard_id
+        ),
+        Err(eda_engine::substrate::ElectricalQueryFailure::StaleRevision)
+    ));
+    assert!(
+        authority
+            .snapshot()
+            .source_shard_value(authority.snapshot().revision(), id(999))
+            .is_err()
+    );
+    std::fs::write(board, board_bytes).unwrap();
+    std::fs::write(journal, journal_bytes).unwrap();
 }

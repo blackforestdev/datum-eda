@@ -1,6 +1,6 @@
 //! Canonical logical Net coverage, distinct from board-local assignments.
 use super::*;
-use eda_engine::substrate::{DesignModel, ElectricalOccurrence as Occurrence, SourceShardKind};
+use eda_engine::substrate::ElectricalOccurrence as Occurrence;
 
 fn class(class: Class) -> Option<&'static str> {
     Some(match class {
@@ -17,14 +17,10 @@ fn class(class: Class) -> Option<&'static str> {
     })
 }
 fn origins(
-    model: &DesignModel,
     authority: &NativeSelectionResolution,
     members: &BTreeSet<Id>,
+    board: Option<&Value>,
 ) -> BTreeMap<Id, BTreeSet<Occurrence>> {
-    let board = model
-        .materialized_source_shard_value(SourceShardKind::BoardRoot)
-        .ok()
-        .and_then(|b| crate::placed_pad_projection::project(model, b).ok());
     let mut pads: BTreeMap<crate::SelectionProjectId, BTreeSet<Occurrence>> = BTreeMap::new();
     for p in board
         .as_ref()
@@ -89,10 +85,10 @@ fn origins(
 }
 pub(super) fn append(
     view: &mut SelectionView,
-    model: &DesignModel,
     authority: &NativeSelectionResolution,
+    board: Option<&Value>,
 ) {
-    let origins = origins(model, authority, &view.members);
+    let origins = origins(authority, &view.members, board);
     let mut cache = BTreeMap::new();
     for origin in origins.values().flatten() {
         if cache.contains_key(origin) {

@@ -94,6 +94,7 @@ impl Runtime {
             renderer,
             measurements,
             session: LiveDesignSession::new(state),
+            selection_read_cache: Default::default(),
             native_selection: None,
             selection_gesture: None,
             selection_evaluation: None,
@@ -143,6 +144,11 @@ impl Runtime {
         }
         if open_new_project {
             runtime.open_new_project();
+        }
+        // Prepare the validated source basis before the first interactive frame.
+        // Subsequent actions still compare canonical inputs through the resolver cache.
+        if let Err(error) = runtime.ensure_selection_authority() {
+            append_gui_diagnostic_line(format!("initial selection source unavailable: {error}"));
         }
         trace_startup_timing(format!(
             "runtime total {}ms",

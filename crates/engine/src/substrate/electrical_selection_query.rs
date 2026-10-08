@@ -161,6 +161,23 @@ impl ElectricalSelectionSnapshot {
         })
     }
 
+    /// Borrow the already captured source projection at this exact revision.
+    /// BoardRoot includes the engine-qualified placed-Pad projection. Consumers
+    /// must not reread disk or apply that projection a second time.
+    pub fn source_shard_value(
+        &self,
+        expected: &ModelRevision,
+        shard: Uuid,
+    ) -> Result<&serde_json::Value, ElectricalQueryFailure> {
+        self.require_revision(expected)?;
+        self.values
+            .get(&shard)
+            .ok_or_else(|| ElectricalQueryFailure::UnavailableBasis {
+                sources: vec![shard],
+                reason: "source is absent from captured selection basis".into(),
+            })
+    }
+
     pub fn board_run(
         &self,
         expected: &ModelRevision,

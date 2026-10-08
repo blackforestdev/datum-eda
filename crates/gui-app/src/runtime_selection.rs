@@ -10,11 +10,32 @@ use datum_gui_protocol::{
 use datum_gui_viewport::selection_acquisition::{
     AcquisitionEntry, AcquisitionMode, acquire_authored,
 };
-use eda_engine::substrate::{DesignModel, ProjectResolver};
+use eda_engine::substrate::{DesignModel, ProjectReadCache};
 use std::collections::BTreeSet;
+use std::sync::Arc;
+
+// The session owns its required model. Optional reuse holds only a Weak model
+// reference and the engine's existing bounded, byte-compared input evidence.
+pub(super) struct SelectionReadCache {
+    cache: ProjectReadCache,
+    owner: datum_gui_render::cpu_alloc::Scope,
+}
+impl Default for SelectionReadCache {
+    fn default() -> Self {
+        Self {
+            cache: ProjectReadCache::nonretaining(),
+            owner: datum_gui_render::cpu_alloc::Scope::new("selection-resolver"),
+        }
+    }
+}
+impl SelectionReadCache {
+    fn resolve(&mut self, root: &std::path::Path) -> anyhow::Result<Arc<DesignModel>> {
+        Ok(self.owner.with(|| self.cache.resolve(root))?)
+    }
+}
 
 pub(super) struct NativeSelectionSession {
-    pub model: DesignModel,
+    pub model: Arc<DesignModel>,
     pub authority: NativeSelectionResolution,
     last_click: Option<(
         datum_gui_protocol::AuthoredSelectionIdentity,
@@ -36,7 +57,7 @@ impl NativeSelectionSession {
     }
     /// Proposal metadata is outside the source-model revision. Refresh its
     /// canonical lifetime while retaining the unchanged native geometry basis.
-    fn refresh_same_revision(&mut self, model: DesignModel) -> Option<DesignModel> {
+    fn refresh_same_revision(&mut self, model: Arc<DesignModel>) -> Option<Arc<DesignModel>> {
         if self.model.project.project_id != model.project.project_id
             || self.model.model_revision != model.model_revision
         {
@@ -54,7 +75,10 @@ impl Runtime {
         if backing.request.board_file.is_some() {
             return Ok(false);
         }
-        let model = ProjectResolver::new(&backing.request.project_root).resolve()?;
+        let project_root = backing.request.project_root.clone();
+        crate::append_gui_verbose_diagnostic_line(|| "selection resolve begin");
+        let model = self.selection_read_cache.resolve(&project_root)?;
+        crate::append_gui_verbose_diagnostic_line(|| "selection resolve end");
         let model = if let Some(session) = &mut self.native_selection {
             match session.refresh_same_revision(model) {
                 Some(model) => model,
@@ -288,6 +312,7 @@ impl Runtime {
         entry: AcquisitionEntry,
         semantic: Option<SelectionSubject>,
     ) -> bool {
+        crate::append_gui_verbose_diagnostic_line(|| "selection publish begin");
         let Some(native) = &self.native_selection else {
             return false;
         };
@@ -329,6 +354,7 @@ impl Runtime {
                 return true;
             }
         };
+        crate::append_gui_verbose_diagnostic_line(|| "selection view ready");
         if let SelectionTarget::Native(previous) = &state.selection
             && view.subject == previous.subject
         {
@@ -345,6 +371,7 @@ impl Runtime {
         };
         self.native_selection.as_mut().unwrap().lineage = None;
         self.refresh_selection_accessibility();
+        crate::append_gui_verbose_diagnostic_line(|| "selection accessibility ready");
         if announce {
             self.log_console_echo(ConsoleFeedbackSource::Selection, summary);
         }
