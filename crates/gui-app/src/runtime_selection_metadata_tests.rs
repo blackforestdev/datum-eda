@@ -45,7 +45,7 @@ fn same_source_revision_refreshes_canonical_proposal_status_without_rebuilding_g
     let authority = NativeSelectionResolution::capture(&initial).unwrap();
     let mut session = NativeSelectionSession {
         model: initial,
-        authority,
+        authority: Arc::new(authority),
         last_click: None,
         lineage: None,
         binding_bases: Default::default(),

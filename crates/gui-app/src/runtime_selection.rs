@@ -36,14 +36,14 @@ impl SelectionReadCache {
 
 pub(super) struct NativeSelectionSession {
     pub model: Arc<DesignModel>,
-    pub authority: NativeSelectionResolution,
+    pub authority: Arc<NativeSelectionResolution>,
     last_click: Option<(
         datum_gui_protocol::AuthoredSelectionIdentity,
         (f32, f32),
         std::time::Instant,
         u8,
     )>,
-    lineage: Option<NativeSelectionResolution>,
+    lineage: Option<Arc<NativeSelectionResolution>>,
     pub(super) binding_bases:
         std::collections::BTreeMap<String, std::sync::Arc<runtime_selection_hit::BindingBasis>>,
     pub(super) region_bases: std::collections::BTreeMap<
@@ -145,7 +145,7 @@ impl Runtime {
                 let previous = self.native_selection.take().unwrap();
                 self.native_selection = Some(NativeSelectionSession {
                     model,
-                    authority,
+                    authority: Arc::new(authority),
                     last_click: None,
                     region_bases: Default::default(),
                     binding_bases: Default::default(),
@@ -194,7 +194,7 @@ impl Runtime {
         }
         self.native_selection = Some(NativeSelectionSession {
             model,
-            authority,
+            authority: Arc::new(authority),
             last_click: None,
             region_bases: Default::default(),
             binding_bases: Default::default(),

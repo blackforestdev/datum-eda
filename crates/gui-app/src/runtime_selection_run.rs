@@ -13,13 +13,20 @@ pub(super) struct Request {
     pub depth: u8,
 }
 impl Request {
+    fn same_query(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.model, &other.model)
+            && self.origin == other.origin
+            && self.point == other.point
+            && self.depth == other.depth
+    }
     fn matches_model(&self, current: &DesignModel) -> bool {
         current.project.project_id == self.model.project.project_id
             && current.model_revision == self.model.model_revision
     }
 }
 
-type Answer = Result<(NativeSelectionResolution, SelectionSubject), String>;
+type Complete = (Arc<NativeSelectionResolution>, SelectionSubject);
+type Answer = Result<Complete, String>;
 struct Active {
     ticket: u64,
     request: Request,
@@ -29,6 +36,7 @@ pub(super) struct RunWork {
     generation: u64,
     active: Option<Active>,
     queued: Option<Request>,
+    completed: Option<(Request, Complete)>,
     wake: Option<winit::event_loop::EventLoopProxy<()>>,
 }
 impl RunWork {
@@ -37,6 +45,7 @@ impl RunWork {
             generation: 0,
             active: None,
             queued: None,
+            completed: None,
             wake: Some(wake),
         }
     }
@@ -56,6 +65,21 @@ impl RunWork {
         }
     }
     fn start(&mut self, request: Request) -> Result<(), String> {
+        if let Some((previous, answer)) = &self.completed
+            && previous.same_query(&request)
+        {
+            let (sender, receiver) = mpsc::sync_channel(1);
+            let _ = sender.send(Ok(answer.clone()));
+            self.active = Some(Active {
+                ticket: self.generation,
+                request,
+                receiver,
+            });
+            crate::append_gui_verbose_diagnostic_line(
+                || "native Run reused complete identical query",
+            );
+            return Ok(());
+        }
         let model = request.model.clone();
         let origin = request.origin.clone();
         let point = request.point;
@@ -76,7 +100,7 @@ impl RunWork {
                         };
                         subject = authority.widen_run(run)?;
                     }
-                    Ok((authority, subject))
+                    Ok((Arc::new(authority), subject))
                 })()
                 .map_err(
                     |error: datum_gui_protocol::selection_resolution::SelectionResolutionError| {
@@ -114,6 +138,9 @@ impl RunWork {
         };
         let active = self.active.take().unwrap();
         let current = active.ticket == self.generation;
+        if current && let Ok(answer) = &answer {
+            self.completed = Some((active.request.clone(), answer.clone()));
+        }
         if let Some(request) = self.queued.take()
             && let Err(error) = self.start(request.clone())
         {
@@ -128,6 +155,7 @@ impl Runtime {
         let Some((request, answer)) = self.selection_run.poll() else {
             return false;
         };
+        let _probe = crate::gui_runtime_support::phase_probe::Probe::start("run_publication");
         // The immutable query proves complete membership. Publication separately
         // rechecks canonical source bytes after intervening native input/writes.
         match self.ensure_selection_authority() {
@@ -196,6 +224,7 @@ mod tests {
             generation: 0,
             active: None,
             queued: None,
+            completed: None,
             wake: None,
         }
     }
@@ -241,6 +270,41 @@ mod tests {
             assert!(std::time::Instant::now() < deadline);
             std::thread::yield_now();
         }
+    }
+    #[test]
+    fn identical_completed_query_reuses_authority_and_retains_cancellation_guards() {
+        let (_f, request) = setup();
+        let mut work = work();
+        work.schedule(request.clone()).unwrap();
+        let (_, first) = await_result(&mut work);
+        let first = first.unwrap();
+        work.schedule(request.clone()).unwrap();
+        let (_, reused) = work.poll().expect("completed query needs no worker wait");
+        let reused = reused.unwrap();
+        assert!(Arc::ptr_eq(&first.0, &reused.0));
+        assert_eq!(first.1, reused.1);
+        assert_eq!(
+            first.0.resolve(&first.1).unwrap(),
+            reused.0.resolve(&reused.1).unwrap()
+        );
+        let mut changed = request.clone();
+        changed.point = Some(Point::new(5, 0));
+        assert!(!request.same_query(&changed));
+        changed = request.clone();
+        changed.depth = 3;
+        assert!(!request.same_query(&changed));
+        changed = request.clone();
+        changed.model = Arc::new((*request.model).clone());
+        assert!(
+            !request.same_query(&changed),
+            "different captured preimage cannot reuse"
+        );
+        work.schedule(request).unwrap();
+        work.cancel();
+        assert!(
+            work.poll().is_none(),
+            "cached completion must honor cancellation"
+        );
     }
     #[test]
     fn busy_worker_retains_only_latest_superseding_request() {
