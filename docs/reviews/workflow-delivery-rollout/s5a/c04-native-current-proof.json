@@ -195,5 +195,14 @@
   "archive": {
     "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-evidence.tar.xz",
     "sha256": "917c9b5427d542d5690f95ee1ca140b3e537bbca80c6ca8ee3f9351de44db672"
+  },
+  "ownership_handoff": {
+    "owner_instruction": "Follow f827ad1b USER-EDIT-DELIVERY; finish coherent S5A unit and explicitly release claim",
+    "released_by": "codex-s5a-takeover-20261006",
+    "released_at": "2026-10-08T19:41:41Z",
+    "last_coherent_unit": "8228b4b7c8fde33b2271f95ebfbfd75c0b4567a4",
+    "dirty_work_at_release": [],
+    "remaining": "C04 native/Wayland/HUMAN qualification and existing gaps; C05/C06 remain pending; bounded exact30 PASS retained. No scope transferred to USER-EDIT-DELIVERY.",
+    "successor_claim": "USER-EDIT-DELIVERY / UED-C01 planning only"
   }
 }

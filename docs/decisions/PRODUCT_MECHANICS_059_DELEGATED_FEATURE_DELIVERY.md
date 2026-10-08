@@ -160,3 +160,50 @@ Preserve PM058 implementation, the existing claim and its exact scope, required
 C04/C05/C06 evidence, open CAM/T04, unamended positives, performance provenance and
 prototype ownership. This amendment neither closes S5A nor passes missing proof.
 No runtime, selector schema, dependency or product geometry change is introduced.
+
+<!-- EVIDENCE:USER-EDIT-DELIVERY:UED-C01-READINESS -->
+### First-footprint edit readiness outcome — 2026-10-08
+
+UED-C01 is complete at the planning boundary. The source-pinned handoff is
+`docs/reviews/workflow-delivery-rollout/user-edit/first-footprint-edit-readiness.json`
+(UED-FIRST-MOVE-01, inspected source f827ad1b). The S5A coherent unit8228b4b7
+is committed; its claim is explicitly released, with no dirty runtime/prototype
+work and no missing qualification passed. Its retained claim scope is not
+transferred to this delivery.
+
+Existing guarded package-position builders, owned-Pad translation, canonical
+commit/inverse/replay and native compensating undo/redo are reusable. Ordinary
+GUI authoring is disabled and its dormant move path sends terminal text. The
+native daemon registry does not contain the move verb; typed GUI move/history
+integration is missing. Preview must retain its acquired Footprint and cursor
+anchor instead of replacing its target with successive hover hits. Reopen must
+use a persistent Datum-owned Project, not repeat temporary --board import.
+
+The real safety prerequisite is the existing Project writer decision: all writer
+entry points need serialized fresh resolution/guard validation, persistence and
+recovery. Current transaction lock acquisition follows in-memory revision checks;
+that source observation is not a fresh reproduced race or a ratified protocol.
+Recommend engine-owned serialization using the existing lease, because daemon-only
+serialization cannot cover CLI and in-process writes. Preserve PWO-C02,
+PWO-REVIEW and PWO-C03; no lease/recovery semantics are ratified here.
+
+The packet schedules only writer safety, typed first-edit integration and ordinary
+footprint delivery/review. Existing P0 and complete W1-W3/native-authoring obligations
+remain; a first usable development build cannot close them. No new runtime edits,
+fixtures, dependency, converter expansion, KiCad writeback, geometry tolerance,
+prototype change, full qualification or execution authority are introduced.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C02 -->
+<!-- OWNER:USER-EDIT-DELIVERY:UED-C02:FIRST-EDIT-GRANT -->
+### UED-C02 — disposition the first-edit grant and its actual safety prerequisite
+
+Present UED-FIRST-MOVE-01 together, pinned by source and packet commit/blob.
+Request one bounded disposition: approve engine-owned writer-protocol preparation
+and independent review under existing PWO gates; grant the first-footprint runtime
+scope only after actual writer review and owner ratification. The intended slice
+is typed move preview/cancel/commit, compensating undo/redo, Save and persistent
+reopen on the owner-board-derived Project, with ordinary Wayland+WGPU verification,
+focused failure controls and bounded independent implementation review. Preserve
+original KiCad bytes and all broader W1-W3/S5A/NA/CAM obligations. Approval of this
+readiness packet does not fabricate protocol review or ratification, and no
+runtime work starts until its recorded prerequisites and execution grant permit it.

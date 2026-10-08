@@ -1,0 +1,246 @@
+{
+  "packet": "UED-FIRST-MOVE-01",
+  "kind": "bounded existing-contract readiness and implementation handoff",
+  "task": "USER-EDIT-DELIVERY",
+  "completion_step": "UED-C01",
+  "source_commit": "f827ad1b8a2d65f5c888843db3981d33123acb0e",
+  "priority_commit": "f827ad1b8a2d65f5c888843db3981d33123acb0e",
+  "current_authority": "Planning only. No runtime or writer protocol implementation authorized by this packet.",
+  "owner_inputs": {
+    "board": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+    "board_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "schematic": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch",
+    "schematic_sha256": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd",
+    "preservation": "Read-only inspection this cycle. Delivery derives a separate persistent Datum-owned project through existing canonical genesis/import; GUI reopen uses --project-root and never re-imports over edited state. No KiCad writeback or converter expansion."
+  },
+  "source_pins": [
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "blob": "077f240668b84fad73c4476fdd9026429b845dc0",
+      "sha256": "8860707fd96afc33858f0c9a1be10b9c5c8edd7cc7ac0e021ab81ea23aaf65db"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_primary_pointer.rs",
+      "blob": "88863993c10e4d712ad9b1b3c9115247431a3b2d",
+      "sha256": "4bdce9d295efdfb844a137d323afb15ecb3a4c710de3e081aedc265119194377"
+    },
+    {
+      "path": "crates/gui-app/src/workspace_keyboard.rs",
+      "blob": "9aa4f7d65800e0d975ddc7ec2b9f4853dd4440f3",
+      "sha256": "fb06b779b5e0f324777e738ddab72aaba7a89a67a1e70e6aec83f9133e4572d2"
+    },
+    {
+      "path": "crates/gui-protocol/src/lib.rs",
+      "blob": "6c4f1dcb52a54352be7965717838bc56f881adcd",
+      "sha256": "852b051e8d0a836f441dcd68b149b61461e8233e9ed93c8861a7e2eac66bfc3c"
+    },
+    {
+      "path": "crates/gui-protocol/src/kicad_board_materialization.rs",
+      "blob": "3e379c7a93a57a89674fb6de7353cce703e2a382",
+      "sha256": "d87ffbd8f8fbded5c4e169609091559753ce0ecce27d0e7bc5beee12496511de"
+    },
+    {
+      "path": "crates/gui-app/Cargo.toml",
+      "blob": "36bf7b5729fa33ef19ce4b9576faa4703747ad8d",
+      "sha256": "bacdf724016a32bbffcaf001c103d7f3d3af8235e24260d7e5027376ba59b6eb"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/board_components.rs",
+      "blob": "1402f3db8de1cabdfcb0dc0e6ab69099b2755a9d",
+      "sha256": "12d581e266a51d33bd728591a822c3947eb52ddd83a52df06741df583a7aa75c"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/context.rs",
+      "blob": "13a0d19b652bfb87cc4598efbc72369200578449",
+      "sha256": "599cc0e5ce85c3814a0a4345677941f3405e91e17eabf3f6758a95f76db7db41"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/guards.rs",
+      "blob": "0c944b0af437b20352e14611f137aa1e245c3bdd",
+      "sha256": "5520ccce709cd57a863dc3e9955be3e0a8f864bc004235192f46a6104ea26448"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/registry.rs",
+      "blob": "d47a99b63e865981ad1a36122848ca18ee5bea37",
+      "sha256": "a7a1c0e214e079911e1ac8a84bcaad3f5dcabf11d297c34325a2323dec629350"
+    },
+    {
+      "path": "crates/engine/src/substrate/board_journal_ops.rs",
+      "blob": "4360da8845e1ffdf28792e6d6e99282a504a4024",
+      "sha256": "5a91493a1486180189c16adcbb2d606fd29a4f3e39c4941e6dd73194b20dd9fd"
+    },
+    {
+      "path": "crates/engine/src/substrate/commit.rs",
+      "blob": "48a6e7e52ba9230120966f668b877cd436fbc8c4",
+      "sha256": "303eacaae495e02eeacf861eed502b2eb80ea6cec7a15a8c5c576e9b3ae3d4e8"
+    },
+    {
+      "path": "crates/engine/src/substrate/undo_redo.rs",
+      "blob": "4d49b5d68a990f44796341b59b244e7de3255547",
+      "sha256": "f57d1019b5a53494535e6ee7dae4382f95583e90c1f4f601f6ab185e119d7d35"
+    },
+    {
+      "path": "crates/engine/src/revision/store.rs",
+      "blob": "292fc36f8647eb257b242ee0134689ace0145369",
+      "sha256": "81562e4fc4a27e8791c5229047670bd3360df83bd95e5cd8a0bdbb6f6bdfba05"
+    },
+    {
+      "path": "crates/engine-daemon/src/main.rs",
+      "blob": "534db19f0e2bcc7bf9e26eabf296f4753a2f2e48",
+      "sha256": "0a3206ed086fa4e2c3e1752bfda670bef185d5ba7f07a7479031ed9a3d73e804"
+    },
+    {
+      "path": "crates/engine-daemon/src/dispatch.rs",
+      "blob": "420139a04c04dc15f3fc82cb66e240cb817303fc",
+      "sha256": "9be39695bfda0e678b1f30ffffd06f6249ecedcdd23b6b4655ba82c0494e5d69"
+    },
+    {
+      "path": "crates/verb-registry/src/lib.rs",
+      "blob": "bca934f38dc56380dae0d3ad8fda09d3b8340b51",
+      "sha256": "b4f5a980ef97eef69298ca8606731ab031ea6b531b838ad20036e54807f5183b"
+    },
+    {
+      "path": "crates/verb-registry/src/verbs_pcb.rs",
+      "blob": "9d06f89313daef201914e2621ef9f9a5065026b8",
+      "sha256": "c3597ca77f1a47cd89fcdc6554979125311f9fa5a1530b637724a84e62f2c02d"
+    },
+    {
+      "path": "crates/verb-registry/src/verbs_journal.rs",
+      "blob": "e10a1b80657720c6802b8ae29959e086d0bc9fc0",
+      "sha256": "a5d77b0a755b1c1595bca74aa681c1becab2f230915fb65df552bd8119d613d9"
+    },
+    {
+      "path": "crates/cli/src/commands/board/component_mutations.rs",
+      "blob": "f7a425aea11b975821e5b4193f9496229932cf9d",
+      "sha256": "c971b8023688d606de634737dcdb88f737f1e05a434bff05ab698034c4ee0d2b"
+    },
+    {
+      "path": "crates/cli/src/commands/project/journal_mutation.rs",
+      "blob": "5edf05f7146f6faff35872a639c801934963aa3d",
+      "sha256": "93f00410668ddaceb74eb75e3696b73df3670fd0c74a04e466eb92a926bd174e"
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md",
+      "blob": "a68613dd736da8ff1a03102dd3c41b0389a4a722",
+      "sha256": "e368e22a598d20aef0930b24219029ea47c84b4db24dcbbf1385fa326bd2d4cf"
+    },
+    {
+      "path": "docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md",
+      "blob": "12d292fdb1d082c6855cdb6206817ca900fc8638",
+      "sha256": "312e6ee9f852c10049197bb0c4a49508a01aaff6386298a9de4f12b06c6b776a"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md",
+      "blob": "776f1386393916b80cda1ba96b5e3d72879a81a3",
+      "sha256": "38a08231ff5fd1ad155b7d716e8960eccc028d35b7bc446e4a7cc3e3b1b6e46c"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+      "blob": "5b9f5c55e6aea7180e8a770df10100413cdb9e51",
+      "sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c"
+    },
+    {
+      "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+      "blob": "a993e8dc8b0378dd955fe5b0bc2802394951bcde",
+      "sha256": "69b3ec4fd8dec69e5224b3d0d2ce97e61b72464b9186fabe9d4d261db3628b44"
+    }
+  ],
+  "working_owners": [
+    {
+      "behavior": "Build one guarded existing Footprint translation",
+      "owner": "api/native_write/board_components.rs::build_edit_board_package(BoardPackageEdit::Position)",
+      "emits": "GuardObjectRevision + SetBoardPackagePosition, expected_model_revision and provenance; build-only before commit."
+    },
+    {
+      "behavior": "Move owned materialized and authored Pad geometry",
+      "owner": "substrate/board_journal_ops.rs::move_board_package_position and component_pad_source canonical validation",
+      "reuse": "Translate package-owned Pads, preserve IDs, source relationships, layer, rotation and electrical assignments. Exact30 query geometry remains unchanged."
+    },
+    {
+      "behavior": "Durable canonical commit, inverse and recovery",
+      "owner": "native_write/context.rs::commit_prepared -> DesignModel::commit_journaled; substrate/commit.rs + journal/materialization + revision store",
+      "reuse": "Stage/fsync, journal commit point, shard promotion, compensating inverses and resolver replay. No private files or new persistence format."
+    },
+    {
+      "behavior": "Undo/redo native project changes",
+      "owner": "substrate/undo_redo.rs::commit_journal_undo/redo; CLI project/journal_mutation.rs",
+      "reuse": "Compensating transactions and guards exist; current native history is tip-based. First-move delivery proves one move undo/redo and redo invalidation, not an unlimited new history mechanism."
+    },
+    {
+      "behavior": "Native import into independent Project",
+      "owner": "gui-protocol/kicad_board_materialization.rs; canonical genesis/import CLI",
+      "reuse": "Existing automatic container is temporary and import is invoked on --board opens. Editable deliverable must use a persistent native root and --project-root reopen, not keep re-importing."
+    },
+    {
+      "behavior": "Typed socket server and native.write",
+      "owner": "engine-daemon/main.rs::UnixListener/UnixStream and dispatch.rs::native_write_response",
+      "reuse": "Transport and guarded builders exist. GUI already depends on first-party eda-engine; historical no-engine-link claim is obsolete. No new third-party dependency needed."
+    }
+  ],
+  "actual_missing_behavior": [
+    {
+      "behavior": "User starts and previews a Footprint move in the ordinary board pane",
+      "owner": "gui-app/main.rs::set_workspace_tool/active_tool_is_authoring and runtime_primary_pointer.rs",
+      "gap": "All non-Select tools refuse; authoring predicate is false. Dormant finish_move_component_handoff emits terminal text, not typed GUI commit. Keep acquired source Footprint, revision and original cursor offset stable during preview; existing preview_authoring_gesture overwrites target with each hovered object. Wire the existing manual drag/Move grammar and preview/cancel through shared tooling."
+    },
+    {
+      "behavior": "GUI commits the visible destination without requiring the Terminal",
+      "owner": "GUI action/coordinator -> verb registry -> daemon native.write -> existing build_edit_board_package",
+      "gap": "Native registry contains project and waiver families only (8 current verbs); move is absent. Public datum.pcb.move_component maps to Dispatch::Cli; no NativeWrite dispatch variant. Required typed GUI client/action integration absent; add only the move/history consumers required for this development slice while retaining complete W1-W3 obligations."
+    },
+    {
+      "behavior": "Undo/redo/save/reopen in the ordinary GUI",
+      "owner": "GUI actions/shortcuts and native journal facade",
+      "gap": "No board-edit GUI history dispatch. Reuse compensating history; do not call daemon legacy undo/redo imported-session stack. Commits already persist: Save confirms the current durable project state, not a second byte writer. Refresh complete scene, selection basis and current-fill validity atomically after receipt."
+    },
+    {
+      "behavior": "Race-safe shared Project writer boundary",
+      "owner": "engine/revision/store.rs::ProjectWriteLease and substrate/commit.rs::commit_journaled_with_links_and_inverse",
+      "gap": "Existing transaction lease refuses a live lock, but model revision is compared against self before acquiring it; no fresh persisted model/tip validation under that lease is established for this path. GUI/CLI/daemon resolve before commit. Bound resolve-to-commit race with focused two-process stale-intent proof during authorized implementation; do not claim a reproduced failure from this read-only inspection. Current PID/nonce stale-lock reclaim requires reviewed recovery disposition.",
+      "controlling_boundary": "PROJECT-WRITER-OWNERSHIP PWO-C02/PWO-REVIEW/PWO-C03 in FOUNDATION_FOLLOWUP_PLANS; GUI-WRITE-PATH GWP-C01 requires numbered Project writer disposition, not a journal-tip check alone."
+    }
+  ],
+  "consolidated_recommendation": {
+    "writer": "Prefer engine-owned per-project serialization over daemon-only serialization because CLI and in-process Project Preferences also write. Reuse the existing ProjectWriteLease; cover fresh resolver/preimage/tip checks, canonical commit/history, journal/shard durability and recovery ownership. Define stale intent refusal and safe stale-lock recovery across every writer entry before implementation; no new library, persistence format or window-specific authority. This recommendation is not protocol ratification.",
+    "delivery": "Authorize one Footprint translation development unit through typed daemon/native dispatch and existing builders, history and persistent project reopen, conditioned on independently reviewed writer protocol ratification. Retain P0 typed rename transport proof as a focused prerequisite and all full W1-W3/NA requirements separately; do not require unrelated full-family GUI completion before shipping this development slice.",
+    "scope": "Existing unlocked Footprint only: drag/Move preview, Escape cancellation without writes, canonical commit, one guarded undo/redo, Save acknowledgement and reopen. Lock, stale/deleted/foreign project/revision, external writer and pending-write cancellation/refusal remain mandatory safety cases. No rotate/flip, routing, schematic editing, batch editing, Inspector redesign or source-model extension."
+  },
+  "ordered_delivery_units": [
+    {
+      "id": "writer-safety-prerequisite",
+      "authority": "Existing PWO planning; independent protocol review and owner ratification required before writer changes. UED planning does not complete any PWO step.",
+      "deliverable": "One bounded numbered writer disposition covering actual all-surface serialization/recovery clauses, using these source findings, then smallest engine safety correction with two-process/stale/crash proof. No general audit or fixture campaign."
+    },
+    {
+      "id": "typed-first-edit-integration",
+      "authority": "Pending explicit execution grant and ratified writer prerequisite.",
+      "deliverable": "Minimal typed GUI/daemon client and P0 path; native move registry/dispatch and native journal history adapters; stable complete preview and cancel; atomic refresh; persistent DOA2526-derived Project. Preserve original KiCad byte hashes."
+    },
+    {
+      "id": "ordinary-development-delivery",
+      "authority": "Inside the explicit execution grant once recorded; full qualification separate.",
+      "deliverable": "Focused move -> cancel -> commit -> undo -> redo -> Save -> reopen safety and ordinary Wayland+WGPU verification, fix actual failures, bounded independent candidate review, pinned binaries/source/root/launch command and usable behavior description. No forced X11 or owner-required test script. Missing HUMAN/platform evidence remains explicitly open."
+    }
+  ],
+  "verification_reuse": {
+    "source_only_this_cycle": true,
+    "new_fixtures": false,
+    "new_builds_or_tests": false,
+    "existing_regressions": [
+      "engine native_write/board_components/tests.rs guarded edit construction",
+      "CLI main_tests_project_board_component.rs::project_move_board_component_translates_package_owned_board_pads",
+      "CLI main_tests_project_journal_guards.rs move revision/undo stale tip/cursor controls",
+      "CLI main_tests_project_journal.rs compensating undo/redo",
+      "engine substrate/tests.rs journaled stale revision/no staging and persistence/reopen"
+    ],
+    "evidence_boundary": "Existing regression sources inspected; no current PASS claimed without pinned execution receipts. Run only safety cases whose existing evidence is inadequate for the actual implementation change."
+  },
+  "retained_obligations": [
+    "S5A C03 complete; exact30 bounded PASS preserved; C04/C05/C06 incomplete, claim explicitly released",
+    "Broad GUI-WRITE-PATH P0/W1/W2/W3 and native-authoring scope remain scheduled/unpassed; this first development build cannot close them",
+    "CAM/T04, prototype ownership, exact geometry, undecided budgets and all unamended product contracts",
+    "Then native library-backed symbols/wires, followed by board routing; no execution granted for those successors"
+  ],
+  "execution_granted_now": false,
+  "first_edit_delivered_now": false
+}
