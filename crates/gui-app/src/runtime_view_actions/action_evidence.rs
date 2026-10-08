@@ -5,8 +5,8 @@ use crate::Runtime;
 use datum_gui_protocol::gui_menu_model::action_registry::{self, ACTION_CONSUMERS};
 use datum_gui_protocol::{ReviewWorkspaceState, camera_scene_for_pane};
 use serde_json::{Value, json};
-use std::io::Write;
 use std::sync::{Mutex, OnceLock};
+mod output;
 
 #[derive(Clone, Copy)]
 pub(crate) enum EntrySurface {
@@ -96,14 +96,27 @@ fn attempt(
 struct Stream {
     sequence: u64,
     previous_state: Option<Value>,
+    output: Option<output::Output>,
+}
+
+fn stream() -> &'static Mutex<Stream> {
+    static STREAM: OnceLock<Mutex<Stream>> = OnceLock::new();
+    STREAM.get_or_init(|| Mutex::new(Stream::default()))
+}
+
+/// Drain only after the native event loop has stopped dispatching input.
+pub(crate) fn finish() {
+    let output = stream()
+        .lock()
+        .ok()
+        .and_then(|mut stream| stream.output.take());
+    if let Some(output) = output {
+        output.finish();
+    }
 }
 
 fn emit(event: &str, value: Value) {
-    static STREAM: Mutex<Stream> = Mutex::new(Stream {
-        sequence: 0,
-        previous_state: None,
-    });
-    let Ok(mut stream) = STREAM.lock() else {
+    let Ok(mut stream) = stream().lock() else {
         return;
     };
     if event == "state" {
@@ -115,15 +128,11 @@ fn emit(event: &str, value: Value) {
     stream.sequence += 1;
     let record = json!({"kind": "datum.action-evidence/v1", "sequence": stream.sequence,
         "event": event, "value": value});
-    // Value's Display emits many small fragments. Formatting straight into
-    // unbuffered stderr turns a complete Run projection into thousands of
-    // synchronous writes on each camera event, starving native input/painting.
-    // Preserve the complete record, but encode it before taking the output lock.
-    let mut line = b"DATUM_ACTION_EVIDENCE ".to_vec();
-    if serde_json::to_writer(&mut line, &record).is_ok() {
-        line.push(b'\n');
-        // A closed diagnostic pipe must not panic or change product behavior.
-        let _ = std::io::stderr().lock().write_all(&line);
+    if stream.output.is_none() {
+        stream.output = output::Output::start(std::io::stderr()).ok();
+    }
+    if let Some(output) = &stream.output {
+        output.submit(record);
     }
 }
 
@@ -132,6 +141,7 @@ impl Runtime {
         if !enabled() {
             return;
         }
+        let _probe = crate::gui_runtime_support::phase_probe::Probe::start("evidence_capture");
         let state = self.workspace();
         let camera = self.camera;
         let panes = self.current_layout().viewport_panes(&state.ui.layout);

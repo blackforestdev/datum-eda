@@ -46,16 +46,22 @@ pub(crate) fn reset_gui_diagnostic_log() {
 }
 
 pub(crate) fn append_gui_diagnostic_line(message: impl AsRef<str>) {
+    let line = format!(
+        "[{:?}] {}\n",
+        std::time::SystemTime::now(),
+        message.as_ref()
+    );
+    // Native, query and diagnostic workers share this log. Formatting directly
+    // into separately opened append handles interleaves fragments of receipts.
+    static OUTPUT: std::sync::Mutex<()> = std::sync::Mutex::new(());
+    let Ok(_output) = OUTPUT.lock() else {
+        return;
+    };
     let path = gui_diagnostic_log_path();
     let Ok(mut file) = OpenOptions::new().create(true).append(true).open(path) else {
         return;
     };
-    let _ = writeln!(
-        file,
-        "[{:?}] {}",
-        std::time::SystemTime::now(),
-        message.as_ref()
-    );
+    let _ = file.write_all(line.as_bytes());
 }
 
 /// Construct diagnostics only when enabled; callers must keep message-only work

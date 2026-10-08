@@ -49,6 +49,7 @@ impl App {
         let window = std::env::var_os("DATUM_GUI_VERBOSE_LOG")
             .and_then(|_| self.window.as_ref().map(std::sync::Arc::downgrade));
         drop(self);
+        crate::runtime_view_actions::action_evidence::finish();
         if let Some(window) = window {
             append_gui_diagnostic_line(format!(
                 "native Main window ownership released={}",
