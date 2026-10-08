@@ -52,6 +52,7 @@ pub mod footprint_move_preview;
 mod live_design_session;
 mod workspace_authoring;
 pub use live_design_session::{SessionCommand, SessionCommandResult, SessionEvent};
+pub use workspace_authoring::checked_snap_authoring_point;
 pub mod selection_artifacts;
 pub mod selection_geometry_catalog;
 pub mod selection_resolution;
@@ -1071,15 +1072,6 @@ impl ReviewWorkspaceState {
             .proposal_actions
             .iter()
             .position(|action| action.action_id == action_id)
-    }
-}
-
-fn snap_nm(value: i64, grid_nm: i64) -> i64 {
-    let half = grid_nm / 2;
-    if value >= 0 {
-        ((value + half) / grid_nm) * grid_nm
-    } else {
-        ((value - half) / grid_nm) * grid_nm
     }
 }
 

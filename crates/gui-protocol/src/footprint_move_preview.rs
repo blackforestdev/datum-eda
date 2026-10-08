@@ -9,7 +9,12 @@ pub struct FootprintMovePreview {
     pub cursor_anchor: PointNm,
 }
 impl FootprintMovePreview {
-    pub fn begin(scene: &BoardReviewSceneV1, target: &str, cursor: PointNm) -> Result<Self> {
+    pub fn begin(
+        scene: &BoardReviewSceneV1,
+        target: &str,
+        cursor: PointNm,
+        snap: AuthoringSnapState,
+    ) -> Result<Self> {
         let component = scene
             .components
             .iter()
@@ -34,49 +39,31 @@ impl FootprintMovePreview {
         Ok(Self {
             base: scene.clone(),
             component,
-            cursor_anchor: cursor,
+            cursor_anchor: checked_snap_authoring_point(cursor, snap)?,
         })
     }
     pub fn destination(&self, cursor: PointNm, snap: AuthoringSnapState) -> Result<PointNm> {
-        let x = self
-            .component
-            .position
-            .x
-            .checked_add(
-                cursor
-                    .x
-                    .checked_sub(self.cursor_anchor.x)
-                    .context("Move exceeds integer coordinates")?,
-            )
-            .context("Move exceeds integer coordinates")?;
-        let y = self
-            .component
-            .position
-            .y
-            .checked_add(
-                cursor
-                    .y
-                    .checked_sub(self.cursor_anchor.y)
-                    .context("Move exceeds integer coordinates")?,
-            )
-            .context("Move exceeds integer coordinates")?;
-        fn snap_one(v: i64, s: AuthoringSnapState) -> Result<i64> {
-            if !s.enabled || s.grid_nm <= 0 {
-                return Ok(v);
-            }
-            let adjusted = if v >= 0 {
-                v.checked_add(s.grid_nm / 2)
-            } else {
-                v.checked_sub(s.grid_nm / 2)
-            }
-            .context("Move snap exceeds integer coordinates")?;
-            (adjusted / s.grid_nm)
-                .checked_mul(s.grid_nm)
-                .context("Move snap exceeds integer coordinates")
-        }
+        let destination = checked_snap_authoring_point(cursor, snap)?;
+        let translate = |original: i64, current: i64, reference: i64| -> Result<i64> {
+            original
+                .checked_add(
+                    current
+                        .checked_sub(reference)
+                        .context("Move exceeds integer coordinates")?,
+                )
+                .context("Move exceeds integer coordinates")
+        };
         Ok(PointNm {
-            x: snap_one(x, snap)?,
-            y: snap_one(y, snap)?,
+            x: translate(
+                self.component.position.x,
+                destination.x,
+                self.cursor_anchor.x,
+            )?,
+            y: translate(
+                self.component.position.y,
+                destination.y,
+                self.cursor_anchor.y,
+            )?,
         })
     }
     pub fn scene_at(&self, destination: PointNm) -> Result<BoardReviewSceneV1> {

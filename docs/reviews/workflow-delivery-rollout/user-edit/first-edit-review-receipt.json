@@ -1,0 +1,61 @@
+{
+  "kind": "independent_implementation_source_review",
+  "packet": "UED-FIRST-MOVE-01-IMPLEMENTATION",
+  "outcome": "REVISE",
+  "reviewer": {
+    "name": "reserved audit-agent",
+    "thread_id": "01a0e343-3d9c-70f1-899e-5bd239513383"
+  },
+  "timestamp_utc": "2026-10-08T21:49:20.156554+00:00",
+  "source_commit": "fcb7633caa6c8b7fed5e85a8b92eb76c694a9ba7",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-implementation.json",
+  "packet_blob": "b46901f3b9a19de91d9f96fd11648680ea21b77b",
+  "source_blobs_verified": 39,
+  "retained_log_hashes_verified": 10,
+  "mandatory_findings": [
+    {
+      "id": "UED-IR-01",
+      "priority": "P2",
+      "title": "Preserve selection on identity-preserving edit, Save and refusal refresh",
+      "source": "crates/gui-app/src/runtime_native_edit.rs:285",
+      "evidence": "poll_native_edit replaces scene and unconditionally calls clear_selection for every qualified Answer, regardless of action success. Thus Save and refusal also deselect existing subjects. The production-callback proof starts without an established selection and does not cover retention.",
+      "authority": "FOUNDATION_MANUAL_WORKFLOW_CONTRACT F3: identity-preserving edits retain selection; PM026 selection lifetime.",
+      "required_correction": "Reconcile complete authoritative selection and focus to the refreshed revision, retaining surviving subjects and applying existing retirement/refusal rules. Cancel obsolete workers without treating cancellation as deselection. Extend existing real-design first-edit proof for Move/Save/refusal selection retention.",
+      "status": "open; sent directly to implementer"
+    },
+    {
+      "id": "UED-IR-02",
+      "priority": "P2",
+      "title": "Snap the move reference destination rather than the Footprint anchor",
+      "source": "crates/gui-protocol/src/footprint_move_preview.rs:77",
+      "evidence": "destination computes original component position plus cursor delta, then rounds that component anchor to grid. Nonzero grab offsets and off-grid component positions therefore change the intended translation/offset. Existing proof computes its expected position with this same function, so it cannot detect the wrong rule.",
+      "authority": "UVT \u00a72.2.12 immediate reference-point rule and original_position + (destination-reference); foundation F4 exact frame/snap and approved stable cursor-offset preview.",
+      "required_correction": "Use shared checked reference-point snapping; preserve captured original component and cursor reference, complete geometry and exact preview/commit correspondence. Cover off-grid component, nonzero offset and both coordinate signs without deriving expected values from the implementation under test.",
+      "status": "open; sent directly to implementer"
+    },
+    {
+      "id": "UED-IR-03",
+      "priority": "P1",
+      "title": "Do not truncate an accepted valid unterminated journal record",
+      "source": "crates/engine/src/substrate/project_resolver.rs:91; crates/engine/src/substrate/journal_io.rs:24",
+      "evidence": "read_transaction_journal parses content.lines(), accepting complete TransactionRecord JSON without final newline. Guarded confirmation syncs that visible journal and can promote its linked stage/head. resolve_for_write_with_lease subsequently calls recover_torn_journal_tail before committed-linkage inspection; the helper truncates every unterminated tail, including that valid now accepted record, orphaning authority and destroying journal evidence.",
+      "authority": "PM060 W3 durable/uncertain-outcome reconciliation and committed recovery evidence preservation; foundation F6.",
+      "required_correction": "Recognize and preserve complete/committed unterminated records or refuse ambiguous committed evidence without altering bytes. Recover only provably uncommitted torn tails. Add focused interrupted JSON-before-newline -> guarded confirmation/reopen -> next-write regression verifying no accepted record is removed or duplicated.",
+      "status": "open; sent directly to implementer"
+    }
+  ],
+  "proof_boundary": "Read-only source/contract review and pin/hash verification. No review Cargo or independent native input replay; producer is finishing final-cohort proof. Producer passing logs are producer evidence, not independent replay.",
+  "scope_assessed": [
+    "Kernel guard, fresh preimage/tip/object validation and guarded recovery/cache/backup entry integration",
+    "Typed asynchronous Footprint move preview/cancel/commit and full scene refresh",
+    "Compensating history, guarded Save acknowledgement and uncertain receipt reconciliation",
+    "Persistent root reopen, source geometry preservation and owned companion lifecycle"
+  ],
+  "retained_boundaries": [
+    "Actual PM060 specification PASS unchanged",
+    "No new owner ratification or execution required for these corrections under retained grant",
+    "No first-edit implementation PASS or development acceptance",
+    "No physical Wayland/HUMAN, S5A/GWP/NA/CAM or wider platform closure"
+  ],
+  "next_action": "Implementer corrects the three bounded source-demonstrated findings under existing grant, runs only the affected focused proof, pins corrected candidate and returns it directly to this reserved reviewer. Owner relay is unnecessary."
+}

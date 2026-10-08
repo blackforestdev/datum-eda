@@ -12,6 +12,7 @@ struct Answer {
     intent: NativeEditIntent,
     result: Result<String, String>,
     next: Option<datum_gui_protocol::ReviewWorkspaceState>,
+    selection: Option<native_edit_selection::Prepared>,
 }
 pub(super) struct EditWork {
     pub preview: Option<FootprintMovePreview>,
@@ -35,7 +36,12 @@ impl EditWork {
     pub fn pending(&self) -> bool {
         self.pending.is_some()
     }
-    fn start(&mut self, intent: NativeEditIntent, request: LiveReviewRequest) -> Result<()> {
+    fn start(
+        &mut self,
+        intent: NativeEditIntent,
+        request: LiveReviewRequest,
+        inputs: native_edit_selection::Inputs,
+    ) -> Result<()> {
         anyhow::ensure!(!self.pending(), "An edit is already pending");
         let (sender, receiver) = mpsc::sync_channel(1);
         let client = self.client.clone();
@@ -51,7 +57,8 @@ impl EditWork {
                     // Qualify the entire refresh against both revision and tip,
                     // including an undo/redo cycle that restores the same bytes.
                     let before=client.describe(&intent.project_root)?;
-                    let next=load_board_editor_workspace_state(&request)?;
+                    let mut next=load_board_editor_workspace_state(&request)?;
+                    let selection=native_edit_selection::prepare(&intent.project_root,&mut next,inputs)?;
                     let after=client.describe(&intent.project_root)?;
                     let qualified=before.get("model_revision")==after.get("model_revision")
                         && before.get("transaction_tip")==after.get("transaction_tip")
@@ -67,11 +74,62 @@ impl EditWork {
                         Ok(_)=>Err("Edit completed but the Project changed during refresh; reopen before editing".into()),
                         Err(error)=>Err(format!("{error:#}")),
                     };
-                    Ok(Answer {intent:intent.clone(),result,next:qualified.then_some(next)})
+                    Ok(Answer {intent:intent.clone(),result,next:qualified.then_some(next),selection:qualified.then_some(selection)})
                 })();
-                let answer=prepared.unwrap_or_else(|error|Answer {intent,result:Err(format!("{error:#}; reopen the Project before editing")),next:None});
+                let answer=prepared.unwrap_or_else(|error|Answer {intent,result:Err(format!("{error:#}; reopen the Project before editing")),next:None,selection:None});
                 let _=sender.send(answer);
                 let _=wake.send_event(());
+            })?;
+        self.pending = Some(receiver);
+        Ok(())
+    }
+    fn reconcile_again(
+        &mut self,
+        mut answer: Answer,
+        inputs: native_edit_selection::Inputs,
+    ) -> Result<()> {
+        let (sender, receiver) = mpsc::sync_channel(1);
+        let client = self.client.clone();
+        let wake = self.wake.clone();
+        std::thread::Builder::new()
+            .name("datum-edit-selection".into())
+            .spawn(move || {
+                let result = (|| -> Result<()> {
+                    let next = answer.next.as_mut().context("Edit scene unavailable")?;
+                    // Read-only superseding projection. The committed mutation is
+                    // never resent when input selection changed during preparation.
+                    answer.selection = Some(native_edit_selection::prepare(
+                        &answer.intent.project_root,
+                        next,
+                        inputs,
+                    )?);
+                    let owner = client
+                        .lock()
+                        .map_err(|_| anyhow::anyhow!("Native writer owner unavailable"))?;
+                    let current = owner
+                        .as_ref()
+                        .context("Native writer unavailable")?
+                        .describe(&answer.intent.project_root)?;
+                    anyhow::ensure!(
+                        current
+                            .get("model_revision")
+                            .and_then(serde_json::Value::as_str)
+                            == Some(next.scene.source_revision.as_str())
+                            && current
+                                .get("transaction_tip")
+                                .and_then(serde_json::Value::as_str)
+                                == next.supervision.journal.accepted_transaction_tip.as_deref(),
+                        "Project changed during selection preparation; reopen before editing"
+                    );
+                    Ok(())
+                })();
+                if let Err(error) = result {
+                    answer.next = None;
+                    answer.selection = None;
+                    answer.result = Err(format!("{error:#}"));
+                }
+                let _ = sender.send(answer);
+                let _ = wake.send_event(());
             })?;
         self.pending = Some(receiver);
         Ok(())
@@ -126,7 +184,12 @@ impl Runtime {
             );
             return true;
         };
-        let preview = match FootprintMovePreview::begin(&self.workspace().scene, &target, world) {
+        let preview = match FootprintMovePreview::begin(
+            &self.workspace().scene,
+            &target,
+            world,
+            self.workspace().authoring.snap,
+        ) {
             Ok(preview) => preview,
             Err(error) => {
                 self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
@@ -233,7 +296,8 @@ impl Runtime {
             expected_tip,
             action,
         );
-        match self.native_edit.start(intent, backing.request) {
+        let inputs = native_edit_selection::Inputs::capture(self);
+        match self.native_edit.start(intent, backing.request, inputs) {
             Ok(()) => {
                 self.cancel_native_move();
                 self.session.workspace_mut().last_command_status = Some(EditorCommandStatus {
@@ -268,7 +332,19 @@ impl Runtime {
         if self.workspace().scene.project_uuid != answer.intent.project_id.to_string() {
             return false;
         }
-        if let Some(next) = answer.next {
+        if answer
+            .selection
+            .as_ref()
+            .is_some_and(|prepared| !prepared.inputs.matches(self))
+        {
+            let inputs = native_edit_selection::Inputs::capture(self);
+            if let Err(error) = self.native_edit.reconcile_again(answer, inputs) {
+                self.native_edit.blocked = true;
+                self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
+            }
+            return true;
+        }
+        if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             let workspace = self.session.workspace_mut();
             workspace.scene = next.scene;
             workspace.schematic_scene = next.schematic_scene;
@@ -282,9 +358,11 @@ impl Runtime {
             );
             workspace.supervision = next.supervision;
             workspace.backing = next.backing;
-            workspace.clear_selection();
+            workspace.selection = prepared.selected;
             self.selection_run.cancel();
-            self.native_selection = None;
+            self.native_selection = Some(prepared.session);
+            self.selection_read_cache = prepared.cache;
+            self.refresh_selection_accessibility();
             self.invalidate_scene();
         } else {
             self.native_edit.blocked = true;

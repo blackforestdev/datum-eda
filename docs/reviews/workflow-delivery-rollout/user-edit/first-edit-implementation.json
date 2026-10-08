@@ -1,7 +1,7 @@
 {
   "packet": "UED-FIRST-MOVE-01-IMPLEMENTATION",
   "task": "USER-EDIT-DELIVERY",
-  "step": "UED-C06",
+  "step": "UED-C07",
   "kind": "implementation and focused production-callback proof; physical native input qualification remains separate",
   "authority": "Owner UED-FIRST-MOVE-01 approval and PM059 appointment; actual reserved PM060 specification PASS and delegated bounded ratification recorded in 05461239. Writer prerequisite 3efebe9d.",
   "project_root": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
@@ -37,7 +37,8 @@
   "failed_attempts": [
     "Initial root creation refused because parent directory absent; parent created then canonical genesis/import succeeded. Originals preserved.",
     "First routing repair build lacked EditorCommandStatus import; compile refused, import corrected, final case passed.",
-    "Safety test initially not executed because shared Cargo cache exceeded existing hard limit. At serialized observed idle, only regenerable engine/GUI incremental caches were removed; safety test then ran and passed."
+    "Safety test initially not executed because shared Cargo cache exceeded existing hard limit. At serialized observed idle, only regenerable engine/GUI incremental caches were removed; safety test then ran and passed.",
+    "Corrected trial first-edit-corrected-wayland-workflow.log failed bounded worker completion because producer Cargo binary filter omitted daemon binary. Daemon input journal_io.rs was newer than executable; freshness rebuild waited behind enclosing test Cargo guard. No move was written. Explicit matching daemon build fixed cohort; subsequent unchanged-source workflow passed. Timeout unchanged."
   ],
   "originals": [
     {
@@ -104,7 +105,7 @@
     },
     {
       "path": "crates/engine/src/substrate/journal_io.rs",
-      "blob": "df864eb8734ce2645a4a01f8498d0e58a6620cbc"
+      "blob": "942011686dd037a578ef76bb86d7124009b6154c"
     },
     {
       "path": "crates/engine/src/substrate/mod.rs",
@@ -112,7 +113,7 @@
     },
     {
       "path": "crates/engine/src/substrate/tests/revision_integrity.rs",
-      "blob": "48818627edb3ce2de8c465c6e1fafafc3f3b75e9"
+      "blob": "8167f01c49642e2320890a482ab2f961ddbd966a"
     },
     {
       "path": "crates/gui-app/src/application_terminal_shutdown.rs",
@@ -120,11 +121,15 @@
     },
     {
       "path": "crates/gui-app/src/main.rs",
-      "blob": "336f04dfa5397648bfb7cdefb642fce6d16d2a27"
+      "blob": "528fcb589237be99aa74f2f2969e57b9712b29b0"
+    },
+    {
+      "path": "crates/gui-app/src/native_edit_selection.rs",
+      "blob": "987625480ea6b666e544692468efb78130871cd1"
     },
     {
       "path": "crates/gui-app/src/native_first_edit_tests.rs",
-      "blob": "80cc77d44d029521ea6cdc4ef1a58c507b1f1aca"
+      "blob": "c8bab7e3c2ff608f76eb5975c90c8c2f423df378"
     },
     {
       "path": "crates/gui-app/src/production_status_refresh.rs",
@@ -140,7 +145,7 @@
     },
     {
       "path": "crates/gui-app/src/runtime_native_edit.rs",
-      "blob": "2ad8cfde73aa954680f1f4886b0002c0c45877db"
+      "blob": "9feccc2cd9e57695fcc309dc665ec036fbc6bf2e"
     },
     {
       "path": "crates/gui-app/src/runtime_primary_pointer.rs",
@@ -148,7 +153,7 @@
     },
     {
       "path": "crates/gui-app/src/runtime_selection.rs",
-      "blob": "4c86ef4afc0a21e22229d3d8db775956d5f75dd5"
+      "blob": "8405d3d4dc10044a100d61b08c7f6ee9354eb39e"
     },
     {
       "path": "crates/gui-app/src/runtime_selection_region.rs",
@@ -172,7 +177,7 @@
     },
     {
       "path": "crates/gui-protocol/src/footprint_move_preview.rs",
-      "blob": "813df7a32c4560d0b4bae893a77601e6df7e73c3"
+      "blob": "7dce8b9d46be3fd7b306a475971a3a7428505ad2"
     },
     {
       "path": "crates/gui-protocol/src/gui_menu_model.rs",
@@ -180,7 +185,7 @@
     },
     {
       "path": "crates/gui-protocol/src/lib.rs",
-      "blob": "aa6d92bc60403512aaba18ac2f438d6bdda8edba"
+      "blob": "51b15fe1d22490360c8f8a06ba491e431fbad358"
     },
     {
       "path": "crates/gui-protocol/src/native_edit_client.rs",
@@ -192,7 +197,7 @@
     },
     {
       "path": "crates/gui-protocol/src/workspace_authoring.rs",
-      "blob": "23b6d8e37bdcb844b9f67cbbe3dc1067a5b60fcc"
+      "blob": "b07fce81aac72e62c5d18b561a04b6bee99da647"
     },
     {
       "path": "docs/gui/menu_model.json",
@@ -200,11 +205,11 @@
     },
     {
       "path": "specs/SPEC_PARITY.md",
-      "blob": "29be0818673795e8c119558115f1f59dc79c76ae"
+      "blob": "a867d64ef1159d05bee473ab25328410914fbe9e"
     },
     {
       "path": "specs/source_module_size_manifest.json",
-      "blob": "6b16c74f08d4c0cff92878dbaa9cdc5a0c233c98"
+      "blob": "2a28c6bccd4c16ff999e3ab2bc4be6b713268977"
     }
   ],
   "logs": [
@@ -247,6 +252,160 @@
     {
       "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-recovery-confirmation-regression.log",
       "sha256": "bd9566ba24fb299080debf4ce5b57f46db7bdbd16db3f69877a1d1338f0bd1a6"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/journal-tail-review-correction.log",
+      "sha256": "2c648b6616137e2d764e5528fff63e7b82d6ccfdc22105078c07f576bbfd6b41"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/journal-torn-existing-correction.log",
+      "sha256": "4faa600dda5f4882c5210eacd360e52a606d6337ee69e2d31c1520dcc40c7069"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-cohort-build.log",
+      "sha256": "16be6eb8b10264e514f58baf61c5bcd1912a1186ebbae516c126bd4fcd0fc911"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-matching-cohort-build.log",
+      "sha256": "2af35bad839f01cd821a76914c6778b17667c9fae78dbf3d7a3d47f7d52d3d03"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-wayland-workflow.log",
+      "sha256": "5ea1731d5aa4c911f53b97f5490cb1e44363430e6350e4b4eb0b61a6b5cec49b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-native.log",
+      "sha256": "e12ac35dd72e1474d4cd692c19d38beddf8aaaa49662421ff20daed8777a3acf"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-matching-workflow.log",
+      "sha256": "cce8ba1043657c5e4fd13b761d8cd286e5d80ccf218b24b3a89cfc65157f2322"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-matching-native.log",
+      "sha256": "5ebd0907a77a737137e0a34766fb79db23d932d8b7f29fda2fa04461413c451b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-selection.png",
+      "sha256": "071556c3f23882c2604761b3123260b2d9680aa40f2d57198c7fd952be625302"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-ordinary-live.log",
+      "sha256": "6a0492c5aed87240a21bf4a5f10947706d44dd4c0973fc82e308f3a836746f41"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-ordinary-window.log",
+      "sha256": "ddeaea87fe6eb698b8516f69d27c04365d1380544723836d2bf40dc6947d8bc0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-corrected-ordinary-process.json",
+      "sha256": "9fac74f94b46381e1e932f261bea1eb4ee3f3fbc64adf8f665726a395463d43d"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-ordinary-window.png",
+      "sha256": "b84953e2dc41779fddea43626495ec6bee94918b5989f46f3041425bd4320d91"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-final-formatted-cohort-build.log",
+      "sha256": "837e8cd663d7efdbccb49013b6bd5bf94b0a348b0fe5f6c6e087cc29c71ef828"
     }
-  ]
+  ],
+  "previous_candidate": {
+    "source_commit": "fcb7633caa6c8b7fed5e85a8b92eb76c694a9ba7",
+    "packet_blob": "b46901f3b9a19de91d9f96fd11648680ea21b77b",
+    "review_receipt": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-review-receipt.json",
+    "outcome": "REVISE; no acceptance inferred"
+  },
+  "review_corrections": [
+    {
+      "finding": "UED-IR-01",
+      "change": "Existing lifetime reconciliation prepares complete selection/focus off dispatch; Move, undo, redo, Save and refusal retain surviving identity. New input supersedes prepared selection by read-only reconciliation; the mutation is not resent. Obsolete Run work cancelled on atomic publication.",
+      "producer_result": "Existing real-board Wayland/WGPU production-callback workflow passed selection retention at every refresh; reserved re-review pending."
+    },
+    {
+      "finding": "UED-IR-02",
+      "change": "Shared checked snap owns captured invocation reference and destination. Original Footprint anchor plus their exact delta preserves off-grid anchor and nonzero grab offset.",
+      "producer_result": "Both-sign, nonzero-offset literal arithmetic answers passed; real off-grid +Supply1 preview and committed pose agree: (141474214,80955786) to (142474214,81955786) nm."
+    },
+    {
+      "finding": "UED-IR-03",
+      "change": "Complete unterminated TransactionRecord is preserved and framed before append; ambiguous JSON or a missing committed head transaction refuses without modifying evidence. Only uncommitted torn fragment is truncated.",
+      "producer_result": "Interrupted complete-JSON confirmation/reopen/next-write and committed damaged-tail preservation passed; existing genuine torn-tail recovery passed."
+    }
+  ],
+  "corrected_verification": {
+    "workflow": "first-edit-corrected-matching-workflow.log: PASS; full production Runtime, Wayland native surface, WGPU/Vulkan; programmatic callbacks, not physical input. 81 Pads, 18 Zones; exact preview/cancel, Move/history/Save/refusal selection retention, byte-exact undo/redo, Save/reopen and original preservation.",
+    "journal": "journal-tail-review-correction.log and journal-torn-existing-correction.log: PASS; required framing/recovery distinction.",
+    "build": "first-edit-corrected-matching-cohort-build.log: PASS; explicit binaries datum-gui, datum-eda, eda-engine-daemon. All dependency-file inputs current.",
+    "historical_results": "Earlier focused_results/logs remain valid only at their original recorded scopes/source fcb7633c and writer prerequisite 3efebe9d; reused, not represented as rerun."
+  },
+  "binary_cohort": [
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+      "sha256": "139b1207835abf551e35e1c87fe88d09e10c93da8a7c71b4ca97e08fd2941a69"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
+      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
+      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+    }
+  ],
+  "review_status": "Corrected producer candidate; actual reserved independent implementation re-review pending. No UED-C07/C08 completion or development-ready acceptance claimed.",
+  "ordinary_reopen": {
+    "command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+    "source_revision": "5cf575 (ordinary visible window and production-callback screenshot agree)",
+    "window_backend": "wayland",
+    "gpu_backend": "WGPU/Vulkan",
+    "adapter": "Intel(R) HD Graphics P630 (KBL GT2), IntegratedGpu",
+    "driver": "Intel open-source Mesa driver; Mesa 25.0.7-2+deb13u1",
+    "environment": {
+      "XDG_SESSION_TYPE": "wayland",
+      "WAYLAND_DISPLAY": "wayland-0",
+      "DISPLAY": ":1",
+      "diagnostics": "Only DATUM_GUI_LOG for launch receipts; no inherited DATUM_, EDA_CLI_BIN, WGPU_ or VK_ overrides."
+    },
+    "visual_capture": "first-edit-ordinary-window.png: Spectacle existing native active-window capture inspected. Visible persisted board loaded normally without test flags.",
+    "limits": "No physical compositor input delivered. Production input callbacks prove edit workflow; ordinary default launch/reopen frame proves persisted integration. Hidden callback capture is first-edit-corrected-selection.png.",
+    "launch_attempt": "Earlier detached Popen launcher did not retain process after tool command ended, ending during workspace load. Retained exec session launch succeeded; both raw receipts retained. Verification-created window retired without a pending edit."
+  },
+  "delivered_project_pins": [
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/project.json",
+      "sha256": "b621f78d159c2a4f21a781e00517f4575ee833febfada7b7a048c6749b88547d"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json",
+      "sha256": "013ea1dcc77c9a45acbb830140e133fafc43778f20af9ca81134c700ba04dec0"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl",
+      "sha256": "15c404e042d03490e7c69fbcd3785ab1d2687e444b3a091e83a22daa1e823701"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/cursor.json",
+      "sha256": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/revision/v1/head.json",
+      "sha256": "dd2a60f6a8ffa02a4afbe3a9e77042bc4e521da2941cbd8fca01b5433b5db889"
+    }
+  ],
+  "tested_binary_cohort": [
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+      "sha256": "139b1207835abf551e35e1c87fe88d09e10c93da8a7c71b4ca97e08fd2941a69"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
+      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
+      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+    }
+  ],
+  "format_only_after_proof": "Required selected-file rustfmt sorted two module/export declarations in main.rs and gui-protocol/lib.rs; no function, predicate or test changed. Focused proof reused at this exact semantic scope. Final formatted GUI/CLI/daemon cohort build passed; tested and delivered binary hashes distinguished."
 }

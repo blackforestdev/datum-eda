@@ -17,17 +17,53 @@ pub(super) fn recover_torn_journal_tail(path: &Path) -> Result<String, EngineErr
             "journal append refused: journal is not UTF-8: {error}"
         ))
     })?;
-    let Some(last_newline) = text.rfind('\n') else {
-        if text.is_empty() {
-            return Ok(text);
-        }
-        truncate_journal_to(path, 0)?;
-        return Ok(String::new());
-    };
-    if last_newline + 1 == text.len() {
+    if text.is_empty() || text.ends_with('\n') {
         return Ok(text);
     }
-    let repaired = text[..=last_newline].to_string();
+    let end = text.rfind('\n').map_or(0, |i| i + 1);
+    let tail = &text[end..];
+    let mut ids = std::collections::BTreeSet::new();
+    for line in text[..end].lines().filter(|s| !s.trim().is_empty()) {
+        let record: TransactionRecord = serde_json::from_str(line).map_err(|error| {
+            EngineError::Operation(format!(
+                "journal append refused: existing journal parse error: {error}"
+            ))
+        })?;
+        ids.insert(record.transaction_id);
+    }
+    let complete = serde_json::from_str::<TransactionRecord>(tail).ok();
+    if let Some(record) = &complete {
+        ids.insert(record.transaction_id);
+    }
+    let root = path
+        .parent()
+        .and_then(Path::parent)
+        .and_then(Path::parent)
+        .ok_or_else(|| EngineError::Operation("journal root unavailable; tail preserved".into()))?;
+    let head = root.join(".datum/revision/v1/head.json");
+    if head.exists() {
+        let value: crate::revision::IntegrityHead = serde_json::from_slice(&std::fs::read(&head)?)?;
+        if !ids.contains(&value.transaction_id) {
+            return Err(EngineError::Operation("journal append refused: incomplete tail may contain committed authority; bytes preserved".into()));
+        }
+    }
+    if complete.is_some() {
+        // Readers already accept this complete transaction. Restore framing,
+        // never delete the record or append a second copy of the mutation.
+        let mut file = std::fs::OpenOptions::new().append(true).open(path)?;
+        file.write_all(b"\n")?;
+        file.sync_all()?;
+        if let Some(parent) = path.parent() {
+            sync_directory(parent)?;
+        }
+        return Ok(format!("{text}\n"));
+    }
+    if serde_json::from_str::<serde_json::Value>(tail).is_ok() {
+        return Err(EngineError::Operation(
+            "journal append refused: ambiguous complete JSON tail; bytes preserved".into(),
+        ));
+    }
+    let repaired = text[..end].to_string();
     truncate_journal_to(path, repaired.len() as u64)?;
     Ok(repaired)
 }

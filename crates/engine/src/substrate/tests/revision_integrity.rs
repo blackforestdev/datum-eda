@@ -72,6 +72,55 @@ fn first_edit_durable_confirmation_recovers_once_and_refuses_invalid_journal() {
 }
 
 #[test]
+fn first_edit_complete_unterminated_record_survives_confirmation_and_next_write() {
+    let (root, mut model, _) = committed_project("first_edit_unterminated");
+    model
+        .commit_journaled_with_integrity_fault(
+            &root,
+            rename_batch(&model, "before_newline"),
+            IntegrityCommitFaultPoint::JournalAppend,
+        )
+        .unwrap_err();
+    let path = transaction_journal_path(&root);
+    let mut bytes = std::fs::read(&path).unwrap();
+    assert_eq!(bytes.pop(), Some(b'\n'));
+    std::fs::write(&path, &bytes).unwrap();
+    let mut confirmed = crate::api::native_write::durability::resolve_durable(&root).unwrap();
+    let ids: Vec<_> = confirmed.journal.iter().map(|t| t.transaction_id).collect();
+    assert_eq!(ids.len(), 2);
+    assert_eq!(std::fs::read(&path).unwrap(), bytes);
+    let reopened = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(reopened.journal.len(), 2);
+    confirmed
+        .commit_journaled(&root, rename_batch(&confirmed, "next_write"))
+        .unwrap();
+    let next = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(next.journal.len(), 3);
+    assert_eq!(
+        next.journal
+            .iter()
+            .take(2)
+            .map(|t| t.transaction_id)
+            .collect::<Vec<_>>(),
+        ids
+    );
+    let after = std::fs::read(&path).unwrap();
+    assert!(after.starts_with(&bytes));
+    let last_start = after[..after.len() - 1]
+        .iter()
+        .rposition(|b| *b == b'\n')
+        .unwrap()
+        + 1;
+    let torn = &after[..last_start + (after.len() - last_start) / 2];
+    std::fs::write(&path, torn).unwrap();
+    assert!(
+        crate::substrate::journal_io::recover_torn_journal_tail(&path).is_err(),
+        "committed damaged tail must not be erased"
+    );
+    assert_eq!(std::fs::read(&path).unwrap(), torn);
+}
+
+#[test]
 fn journaled_commit_establishes_verified_algorithm_qualified_authority() {
     let (root, model, transaction) = committed_project("integrity_complete");
     let store = RevisionAuthorityStore::new(&root);

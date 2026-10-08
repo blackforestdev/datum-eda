@@ -352,3 +352,34 @@ impl ReviewWorkspaceState {
             .find(|component| component.object_id == normalized)
     }
 }
+
+fn snap_nm(value: i64, grid_nm: i64) -> i64 {
+    let half = grid_nm / 2;
+    if value >= 0 {
+        ((value + half) / grid_nm) * grid_nm
+    } else {
+        ((value - half) / grid_nm) * grid_nm
+    }
+}
+
+pub fn checked_snap_authoring_point(point: PointNm, snap: AuthoringSnapState) -> Result<PointNm> {
+    if !snap.enabled || snap.grid_nm <= 0 {
+        return Ok(point);
+    }
+    fn one(value: i64, grid: i64) -> Result<i64> {
+        let half = grid / 2;
+        let adjusted = if value >= 0 {
+            value.checked_add(half)
+        } else {
+            value.checked_sub(half)
+        }
+        .context("Snap exceeds integer coordinates")?;
+        (adjusted / grid)
+            .checked_mul(grid)
+            .context("Snap exceeds integer coordinates")
+    }
+    Ok(PointNm {
+        x: one(point.x, snap.grid_nm)?,
+        y: one(point.y, snap.grid_nm)?,
+    })
+}

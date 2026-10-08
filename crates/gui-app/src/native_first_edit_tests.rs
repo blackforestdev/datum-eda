@@ -68,6 +68,7 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
     let launch = args.load_launch_state(Some(wake.clone())).unwrap();
     let mut runtime = pollster::block_on(Runtime::new(window, launch, Some(1.0), wake)).unwrap();
     assert!(runtime.native_edit_available());
+    let grid = runtime.workspace().authoring.snap.grid_nm;
     let component = runtime
         .workspace()
         .scene
@@ -75,6 +76,7 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
         .iter()
         .find(|c| {
             !c.locked
+                && (c.position.x.rem_euclid(grid) != 0 || c.position.y.rem_euclid(grid) != 0)
                 && runtime
                     .workspace()
                     .scene
@@ -94,6 +96,67 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
     let count = runtime.workspace().scene.pads.len();
     let first_revision = runtime.workspace().scene.source_revision.clone();
     assert!(!runtime.workspace().scene.zones.is_empty());
+    assert_eq!(
+        runtime.acquire_native_key(
+            &component.object_id,
+            SceneSurface::Board,
+            Some(component.position)
+        ),
+        Some(true)
+    );
+    let selected = match &runtime.workspace().selection {
+        datum_gui_protocol::SelectionTarget::Native(view) => view.subject.clone(),
+        other => panic!("authoritative Footprint selection required: {other:?}"),
+    };
+    let retained = |r: &Runtime| match &r.workspace().selection {
+        datum_gui_protocol::SelectionTarget::Native(view) => {
+            assert_eq!(
+                view.subject, selected,
+                "identity-preserving refresh retains subject and focus"
+            );
+            assert_eq!(view.revision.0, r.workspace().scene.source_revision);
+            assert!(!view.stale);
+        }
+        other => panic!("selection unexpectedly dissolved: {other:?}"),
+    };
+
+    // Arithmetic regression uses the real scene copy and explicit contract
+    // answers, not a new persisted fixture or the destination helper as oracle.
+    let mut off_grid = runtime.workspace().scene.clone();
+    let c = off_grid
+        .components
+        .iter_mut()
+        .find(|c| c.component_uuid == component.component_uuid)
+        .unwrap();
+    c.position = PointNm { x: 123, y: -123 };
+    let snap = datum_gui_protocol::AuthoringSnapState {
+        enabled: true,
+        grid_nm: 100,
+    };
+    let grab = PointNm { x: 226, y: -226 };
+    let preview = FootprintMovePreview::begin(&off_grid, &component.object_id, grab, snap).unwrap();
+    assert_eq!(
+        preview.destination(grab, snap).unwrap(),
+        PointNm { x: 123, y: -123 },
+        "no pointer motion never snaps the anchor"
+    );
+    let to = PointNm { x: 326, y: -326 };
+    assert_eq!(
+        preview.destination(to, snap).unwrap(),
+        PointNm { x: 223, y: -223 },
+        "both-sign reference translation preserves nonzero grab offset"
+    );
+    assert_eq!(
+        preview
+            .scene_at(PointNm { x: 223, y: -223 })
+            .unwrap()
+            .components
+            .iter()
+            .find(|c| c.component_uuid == component.component_uuid)
+            .unwrap()
+            .position,
+        PointNm { x: 223, y: -223 }
+    );
     assert!(runtime.set_workspace_tool(WorkspaceTool::Move));
     runtime.last_cursor_pos = Some(screen(&mut runtime, component.position));
     assert!(
@@ -146,9 +209,19 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
         .unwrap()
         .0;
     let preview = runtime.native_edit.preview.as_ref().unwrap();
-    let expected = preview
-        .destination(world, runtime.workspace().authoring.snap)
-        .unwrap();
+    let snapped =
+        datum_gui_protocol::checked_snap_authoring_point(world, runtime.workspace().authoring.snap)
+            .unwrap();
+    let expected = PointNm {
+        x: component.position.x + snapped.x - preview.cursor_anchor.x,
+        y: component.position.y + snapped.y - preview.cursor_anchor.y,
+    };
+    assert_eq!(
+        preview
+            .destination(world, runtime.workspace().authoring.snap)
+            .unwrap(),
+        expected
+    );
     let expected_scene = preview.scene_at(expected).unwrap();
     runtime.handle_authoring_pointer_move(pointer);
     runtime.last_cursor_pos = Some(pointer);
@@ -165,6 +238,7 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
         started.elapsed()
     );
     finish(&mut runtime);
+    retained(&runtime);
     let position = |r: &Runtime| {
         r.workspace()
             .scene
@@ -199,6 +273,7 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
     assert_ne!(moved, before);
     assert!(runtime.queue_native_history(false));
     finish(&mut runtime);
+    retained(&runtime);
     assert_eq!(position(&runtime), component.position);
     assert_eq!(
         std::fs::read(&board_path).unwrap(),
@@ -207,6 +282,7 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
     );
     assert!(runtime.queue_native_history(true));
     finish(&mut runtime);
+    retained(&runtime);
     assert_eq!(position(&runtime), expected);
     assert_eq!(
         std::fs::read(&board_path).unwrap(),
@@ -215,7 +291,20 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
     );
     assert!(runtime.queue_native_edit(NativeEditAction::Save));
     finish(&mut runtime);
+    retained(&runtime);
     assert_eq!(std::fs::read(&board_path).unwrap(), moved);
+    assert!(runtime.queue_native_edit(NativeEditAction::Move {
+        component: uuid::Uuid::new_v4(),
+        x_nm: 0,
+        y_nm: 0
+    }));
+    finish(&mut runtime);
+    retained(&runtime);
+    assert_eq!(
+        std::fs::read(&board_path).unwrap(),
+        moved,
+        "refused edit preserves bytes and selection"
+    );
     let reopened = load_board_editor_workspace_state(&request).unwrap();
     assert_eq!(
         reopened

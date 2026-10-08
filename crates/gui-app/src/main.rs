@@ -1,4 +1,5 @@
 mod native_device_recovery;
+mod native_edit_selection;
 mod runtime_native_edit;
 mod runtime_state;
 use anyhow::{Context, Result};

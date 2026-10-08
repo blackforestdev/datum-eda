@@ -1,0 +1,14 @@
+{
+  "pid": 4067262,
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+    "--project-root",
+    "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit"
+  ],
+  "environment": {
+    "XDG_SESSION_TYPE": "wayland",
+    "WAYLAND_DISPLAY": "wayland-0",
+    "DISPLAY": ":1",
+    "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/target/user-edit-review/first-edit-corrected-ordinary-window.log"
+  }
+}

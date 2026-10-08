@@ -30,7 +30,7 @@ impl Default for SelectionReadCache {
     }
 }
 impl SelectionReadCache {
-    fn resolve(&mut self, root: &std::path::Path) -> anyhow::Result<Arc<DesignModel>> {
+    pub(super) fn resolve(&mut self, root: &std::path::Path) -> anyhow::Result<Arc<DesignModel>> {
         Ok(self.owner.with(|| self.cache.resolve(root))?)
     }
 }
@@ -53,6 +53,25 @@ pub(super) struct NativeSelectionSession {
     >,
 }
 impl NativeSelectionSession {
+    pub(super) fn prepared(
+        model: Arc<DesignModel>,
+        authority: Arc<NativeSelectionResolution>,
+        lineage: Option<Arc<NativeSelectionResolution>>,
+    ) -> Self {
+        Self {
+            model,
+            authority,
+            lineage,
+            last_click: None,
+            region_bases: Default::default(),
+            binding_bases: Default::default(),
+        }
+    }
+    pub(super) fn lifetime_basis(&self) -> Arc<NativeSelectionResolution> {
+        self.lineage
+            .clone()
+            .unwrap_or_else(|| self.authority.clone())
+    }
     pub(super) fn reset_click_depth(&mut self) {
         self.last_click = None;
     }
