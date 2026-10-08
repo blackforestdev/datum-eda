@@ -450,3 +450,23 @@ Cancelled queued motion must not reappear on the next frame; focused verificatio
 and reserved review cover that boundary. The original recovery exhaustion remains
 unattributed, with no timeout relaxation or new acceptance claim. UED-C07 and
 ordinary development availability remain open/withdrawn respectively.
+
+Actual reserved follow-on independent PASS is received for source
+`24b5971903615bf6ed441196a3e7622fe75f5c3c`, packet blob
+`2152af64405eb000ddd5d6fa66d045f4ce9ed750`, with no mandatory findings.
+`first-edit-motion-review.json` records independent production-tracing-OFF
+Wayland/WGPU App replay: the accumulated 192-event batch took 19 ms; complete
+preview, actual-identity queued cancellation, click commit, exact history, Save
+and reopen passed. Six source and three ordinary binary pins were verified;
+owner Project preimages remained unchanged. Unchanged writer/recovery evidence
+was reused. The demonstrated dispatch repairs are delivered and reviewed.
+
+The original recovery-stop host episode remains unattributed. Its launch-time
+physical event sequence and originating queue/acquisition receipts are missing;
+the current owner-copy fixture preserves post-QA source rather than reconstructing
+unrecorded launch state. No further cause-changing edit is justified by available
+evidence. Retain `dat-first-edit-native-recovery-dhj9` open and UED-C07 in progress;
+ordinary availability, physical/HUMAN and wider acceptance remain withheld.
+The rebuilt ordinary launch command is unchanged. No owner approval relay or
+renewed scope grant is needed for continued diagnosis when concrete failure
+evidence becomes available.

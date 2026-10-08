@@ -1,0 +1,29 @@
+{
+  "reviewer": "owner-reserved independent audit 01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "24b5971903615bf6ed441196a3e7622fe75f5c3c",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "2152af64405eb000ddd5d6fa66d045f4ce9ed750",
+  "outcome": "PASS for bounded pointer-preview coalescing correction only",
+  "mandatory_findings": [],
+  "source_review": [
+    "Pointer dispatch captures latest checked snapped destination; production changed handling schedules redraw. Full preview scene materializes after native frame admission.",
+    "Commit uses current click-derived world destination, not stale rendered or queued pose. Successful queue clears preview and pending intent.",
+    "Cancellation clears pending intent and restores complete base scene; repeated tool activation cancels prior preview. Existing revision/tip and asynchronous mutation guards retained."
+  ],
+  "independent_replay": {
+    "command": "env -u DATUM_TRACE_TIMING TMPDIR=$PWD/target/user-edit-tmp DATUM_FIRST_EDIT_PROJECT=<audit-private-copy> DATUM_FIRST_EDIT_POINTER_BURST=1 python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual --bin datum-gui ordinary_app_select_m_move_commit_history_reopen -- --ignored --nocapture",
+    "log": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/independent-24b59719-workflow.log",
+    "sha256": "90193cdcfe3d447fa1601c92f8acd719901c1b53ebe923d2f68bdfe485f7ee6a",
+    "result": "1 PASS, zero failures; 73.43 seconds",
+    "accumulated_192_event_batch_ms": 19,
+    "behavior": "Production App Wayland/WGPU native frame loop: selection/M pickup, full preview after burst, cancellation of queued motion before frame restores actual selected Footprint, rendered-label click commit, byte-exact undo/redo, Save and qualified reopen. No rendering pause in trial.",
+    "limits": "In-process pointer events and normalized shortcut; physical compositor input/HUMAN not established. Fixture retains its own stderr reporting; DATUM_TRACE_TIMING is absent. This is not a numeric acceptance benchmark."
+  },
+  "reused_evidence": "Unchanged recovery seven-test independent PASS at bf34; previous writer/journal and dispatch reviews retain their exact scopes. No new recovery/writer campaign.",
+  "preservation": "All six source blobs and three binary pins verified before replay; owner Project preimages and three binary pins verified afterward. Worktree clean; only audit copy mutated.",
+  "remaining": [
+    "Original owner recovery-stop cause remains unproven; dat-first-edit-native-recovery-dhj9 stays open.",
+    "Development availability remains withdrawn; this correction PASS does not complete UED-C07 or authorize acceptance.",
+    "Physical/HUMAN, full platform/editor/CAM qualification and successor execution remain outside scope."
+  ]
+}

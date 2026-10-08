@@ -95,7 +95,8 @@
     "The original owner recovery-stop episode itself did not reproduce in the corrected fixture. Its original receipt omits the originating wait. Bug dat-first-edit-native-recovery-dhj9 stays open; development availability withdrawn and UED-C07 in progress.",
     "No X11 trial, timeout relaxation, new dependency, injection infrastructure, source-model/persistence change, scope reduction, CAM/T04 or broader S5A/C04-C06 acceptance.",
     "Committed geometry still obeys existing copper current-fill invalidation. No replacement fill authority or manufacturing waiver.",
-    "The fixture writes only a copied Project; owner Project board/project/journal preimages and original KiCad files remain unchanged."
+    "The fixture writes only a copied Project; owner Project board/project/journal preimages and original KiCad files remain unchanged.",
+    "Current Project copy preserves post-QA state; original failure-launch complete physical event sequence and originating queue/acquisition receipts were not recorded. Native App replay covers in-process events rather than physical compositor delivery. These gaps prevent exact original recovery attribution, not implementation of the demonstrated dispatch repairs."
   ],
   "fixture_reproduction": [
     "Create a private disk-backed copy of /home/bfadmin/Documents/datum_projects/DOA2526-first-edit; never point this committing fixture at the owner Project.",
@@ -108,7 +109,14 @@
     "packet_blob": "70d4a58c708dc56dcd14d002cfd15a94015e5eb3",
     "receipt": "first-edit-runtime-corrected-review.json",
     "scope": "bf34 pickup/dispatch correction only; pending preview preparation correction not yet independently reviewed",
-    "follow_on": "Latest-pointer whole-preview frame preparation and actual-identity queued cancellation await reserved bounded re-review; bf34 PASS scopes preserved."
+    "follow_on": {
+      "outcome": "PASS for bounded pointer-preview coalescing correction only",
+      "source_commit": "24b5971903615bf6ed441196a3e7622fe75f5c3c",
+      "packet_blob": "2152af64405eb000ddd5d6fa66d045f4ce9ed750",
+      "receipt": "first-edit-motion-review.json",
+      "ordinary_production_trace": "off",
+      "observed_192_event_batch_ms": 19
+    }
   },
   "ordinary_build_cohort": {
     "datum-gui": {
@@ -146,6 +154,6 @@
       "input_batch_events": 192,
       "input_batch_ms": 24
     },
-    "failure_disposition": "Demonstrated movement dispatch backlog repaired. Original recovery-stop attribution remains open; no inference that the backlog caused that recovery episode."
+    "failure_disposition": "Movement backlog correction independently PASS at24b59719, trace-off batch19ms. Original recovery-stop attribution remains open; development availability withdrawn."
   }
 }
