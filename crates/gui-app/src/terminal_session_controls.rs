@@ -60,8 +60,10 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {
-        let context = crate::terminal_working_directory::context_for_new_terminal(
+        let context = crate::terminal_working_directory::context_for_new_terminal_from_state(
             &self.terminal_launch_context,
+            self.workspace(),
+            self.last_cursor_pos,
             self.session
                 .workspace()
                 .ui
@@ -90,8 +92,10 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_split(&mut self, direction: TerminalSplitDirection) -> bool {
-        let context = crate::terminal_working_directory::context_for_new_terminal(
+        let context = crate::terminal_working_directory::context_for_new_terminal_from_state(
             &self.terminal_launch_context,
+            self.workspace(),
+            self.last_cursor_pos,
             self.session
                 .workspace()
                 .ui

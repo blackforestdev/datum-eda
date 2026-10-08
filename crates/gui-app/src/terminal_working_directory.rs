@@ -20,6 +20,22 @@ pub(super) fn context_for_new_terminal(
     context
 }
 
+/// A new consumer captures the current shared projection, not the startup one.
+pub(super) fn context_for_new_terminal_from_state(
+    base: &TerminalLaunchContext,
+    state: &datum_gui_protocol::ReviewWorkspaceState,
+    cursor: Option<(f32, f32)>,
+    reported_working_directory: Option<&str>,
+) -> TerminalLaunchContext {
+    let mut current = crate::terminal_session::terminal_launch_context_from_state_with_cursor(
+        &base.project_root,
+        state,
+        cursor,
+    );
+    current.terminal_profile = base.terminal_profile.clone();
+    context_for_new_terminal(&current, reported_working_directory)
+}
+
 fn local_working_directory(value: &str) -> Option<PathBuf> {
     let encoded = if let Some(uri) = value.strip_prefix("file://") {
         if let Some(path) = uri.strip_prefix("localhost/") {
@@ -81,6 +97,26 @@ fn hex_value(byte: u8) -> Option<u8> {
 mod tests {
     use super::*;
     use std::fs;
+
+    #[test]
+    fn new_consumer_captures_current_selection_without_reusing_startup_context() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let base = crate::terminal_session::terminal_launch_context_from_state(
+            std::path::Path::new("/project"),
+            &state,
+        );
+        state.selection = datum_gui_protocol::SelectionTarget::AuthoredObject("current".into());
+        let current = context_for_new_terminal_from_state(&base, &state, Some((12.0, 34.0)), None);
+        assert_eq!(
+            current.selection_context,
+            datum_gui_protocol::DatumSelectionContext::from_selection(&state.selection)
+        );
+        assert_ne!(current.selection_context, base.selection_context);
+        assert_eq!(current.terminal_profile, base.terminal_profile);
+        assert_eq!(current.project_root, base.project_root);
+        assert_eq!(current.launch_working_directory, base.project_root);
+        assert_eq!(current.cursor_context.screen_px, Some([12, 34]));
+    }
 
     #[test]
     fn new_terminal_inherits_local_osc7_directory_without_changing_project_identity() {
