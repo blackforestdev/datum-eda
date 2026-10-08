@@ -156,7 +156,7 @@ impl SelectionView {
             };
             return format!(
                 "{} — {}{}",
-                self.subject.kind(),
+                self.subject.display_name(),
                 display_id,
                 self.notice
                     .as_ref()
@@ -166,7 +166,7 @@ impl SelectionView {
         }
         format!(
             "{} — {} objects; {} hidden; {} locked{}",
-            self.subject.kind(),
+            self.subject.display_name(),
             self.members.len(),
             self.hidden.len(),
             self.locked.len(),

@@ -72,6 +72,22 @@ fn setup() -> (fixture::Fixture, ServiceState) {
 fn call(path: &str, interface: &str, member: &str, signature: &str, body: Vec<u8>) -> Message {
     Message::method_call(7, "ignored", path, interface, member, signature, body)
 }
+fn attributes(state: &mut ServiceState, path: &str) -> std::collections::BTreeMap<String, String> {
+    let reply = state.dispatch(1, &call(path, ACCESSIBLE, "GetAttributes", "", vec![]));
+    assert_eq!(reply.kind, MessageType::MethodReturn);
+    let mut cursor = super::super::super::body::Cursor::new(
+        &reply.body,
+        super::super::super::body::Endian::Little,
+    );
+    cursor.u32().unwrap();
+    cursor.align(8).unwrap();
+    let mut values = std::collections::BTreeMap::new();
+    while !cursor.is_done() {
+        cursor.align(8).unwrap();
+        values.insert(cursor.string().unwrap(), cursor.string().unwrap());
+    }
+    values
+}
 fn description_call(path: &str) -> Message {
     let mut b = BodyWriter::new();
     b.string(ACCESSIBLE);
@@ -100,10 +116,15 @@ fn selection_accessibility_inventory_is_complete_and_bound_to_source_identity() 
         "not the context transport cap"
     );
     let reply = state.dispatch(2, &description_call(&path));
-    let description = reply.body_reader().variant_string().unwrap();
-    assert!(description.contains(&member.id.to_string()));
-    assert!(description.contains("hidden true"));
-    assert!(description.contains("selection focus true"));
+    let member_description = reply.body_reader().variant_string().unwrap();
+    assert!(!member_description.contains(&member.id.to_string()));
+    assert!(member_description.contains("Track: object 1"));
+    let identity: serde_json::Value =
+        serde_json::from_str(&attributes(&mut state, &path)["source-identity"]).unwrap();
+    assert_eq!(identity, serde_json::to_value(&member).unwrap());
+    assert!(!description(state.selection.as_ref().unwrap(), Node::Root).contains("S5A"));
+    assert!(member_description.contains("hidden true"));
+    assert!(member_description.contains("selection focus true"));
     let mut body = BodyWriter::new();
     body.i32(257);
     let reply = state.dispatch(
@@ -137,6 +158,18 @@ fn selection_accessibility_fields_explain_scope_mixed_and_unavailable_without_mu
     Arc::make_mut(&mut state.selection.as_mut().unwrap().view).scope = Some(Class::Track);
     let reply = state.dispatch(2, &description_call(&field_path("copper_width_nm")));
     assert_eq!(reply.body_reader().variant_string().unwrap(), "Mixed");
+    assert_eq!(
+        attributes(&mut state, &field_path("copper_width_nm"))["value-state"],
+        "mixed"
+    );
+    let count = attributes(&mut state, &field_path("member_types"));
+    assert_eq!(
+        count["canonical-value"],
+        match state.selection.as_ref().unwrap().view.field("member_types") {
+            InspectionValue::Common(value) => value.to_string(),
+            _ => panic!("common counts"),
+        }
+    );
     assert_eq!(state.selection.as_ref().unwrap().view.members, members);
     let write = state.dispatch(
         3,
@@ -221,9 +254,9 @@ fn selection_accessibility_events_are_quiet_for_noop_and_coalesce_dense_lifetime
         "constant notification count for complete dense changes"
     );
     let reply = state.dispatch(1, &description_call(PATH));
-    let description = reply.body_reader().variant_string().unwrap();
-    assert!(description.contains("Stale previous basis"));
-    assert!(description.contains("1 dropped"));
+    let member_description = reply.body_reader().variant_string().unwrap();
+    assert!(member_description.contains("Stale previous basis"));
+    assert!(member_description.contains("1 dropped"));
     state.selection = None;
     let reply = state.dispatch(2, &description_call(PATH));
     assert_eq!(reply.kind, MessageType::Error);
@@ -432,7 +465,10 @@ fn quantity_accessibility_keeps_canonical_value_and_discloses_project_rounding()
     state.selection.as_mut().unwrap().view = Arc::new(view);
     let reply = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
     let value = reply.body_reader().variant_string().unwrap();
-    assert_eq!(value, "3; Project display 0.000mm; rounded true");
+    assert_eq!(value, "0.000mm (rounded)");
+    let exact = attributes(&mut state, &field_path("copper_width_nm"));
+    assert_eq!(exact["canonical-value"], "3");
+    assert_eq!(exact["value-state"], "common");
     assert_eq!(
         f.source_bytes(),
         before,

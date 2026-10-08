@@ -29,7 +29,11 @@ pub(super) fn render(
     } else if view.subject.kind() == "compound" {
         format!("Compound Selection — {} objects", view.members.len())
     } else {
-        format!("{} — {} objects", view.subject.kind(), view.members.len())
+        format!(
+            "{} — {} objects",
+            view.subject.display_name(),
+            view.members.len()
+        )
     };
     push_inspector_title_band(rect, &title, "Read-only inspection", true, quads, text)?;
     let body = RectPx {

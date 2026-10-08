@@ -2,6 +2,8 @@
 use super::*;
 use datum_gui_protocol::{AuthoredSelectionIdentity as Id, selection_view::InspectionValue};
 mod children;
+mod presentation;
+use presentation::{description, name};
 mod events;
 pub(in crate::terminal_accessibility_platform) use events::messages;
 #[cfg(test)]
@@ -96,65 +98,6 @@ fn child(
             .map(|id| member_path(view.project, id)),
         Node::Fields => view.fields().into_iter().nth(index).map(field_path),
         _ => None,
-    }
-}
-fn field_value(view: &datum_gui_protocol::selection_view::SelectionView, field: &str) -> String {
-    let canonical = match view.field(field) {
-        InspectionValue::Common(v) => v.to_string(),
-        InspectionValue::Mixed => "Mixed".into(),
-        InspectionValue::Unavailable(reason) => format!("Unavailable: {reason}"),
-    };
-    match view.field_quantity_presentation(field) {
-        Some(datum_gui_protocol::selection_view::QuantityPresentation::Formatted {
-            rendered,
-            rounded,
-        }) => format!("{canonical}; Project display {rendered}; rounded {rounded}"),
-        Some(datum_gui_protocol::selection_view::QuantityPresentation::Unavailable { reason }) => {
-            format!("{canonical}; display unavailable: {reason}")
-        }
-        None => canonical,
-    }
-}
-fn name(view: &datum_gui_protocol::selection_view::SelectionView, node: Node<'_>) -> String {
-    match node {
-        Node::Root => view.summary(),
-        Node::Members => format!("Complete inventory: {} members", view.members.len()),
-        Node::Fields => format!(
-            "Read-only properties: {} members in {}",
-            view.scoped_members().count(),
-            view.scope
-                .map(|class| format!("{class:?}"))
-                .unwrap_or_else(|| "All".into())
-        ),
-        Node::Member(id) => format!("{:?} {}", id.class, id.id),
-        Node::Field(field) => format!("{}: {}", field.replace('_', " "), field_value(view, field)),
-    }
-}
-fn description(
-    snapshot: &crate::selection_accessibility::SelectionAccessibilitySnapshot,
-    node: Node<'_>,
-) -> String {
-    let view = &snapshot.view;
-    let pane = snapshot
-        .pane
-        .map(|pane| format!("Editor pane {}", pane.0))
-        .unwrap_or_else(|| "Editor inactive".into());
-    let evaluation = snapshot
-        .evaluating
-        .map(|(_, count)| {
-            format!("Evaluating selection: {count} candidates examined; Escape cancels.")
-        })
-        .unwrap_or_default();
-    let lod = snapshot
-        .visual_lod
-        .map(|lod| lod.to_string())
-        .unwrap_or_else(|| "Visual LOD: awaiting current preparation".into());
-    match node {
-        Node::Root=>format!("Read-only {}. {}. {} {} unprojected; {} dropped. {} Move, rotate, mirror, lock and group unavailable in S5A. {} related identities keep normal authored appearance and are not selected. {lod}.",view.summary(),pane,evaluation,view.unprojected.len(),view.dropped.len(),if view.stale { "Stale previous basis; current geometry unavailable." } else { "Current resolved basis." },view.related.len()),
-        Node::Member(id)=>format!("Selected identity {:?}; occurrence {:?}; hidden {}; locked {}; unprojected {}; selection focus {}; unavailable fields {:?}; read-only.",id.id,id.instance_path,view.hidden.contains(id),view.locked.contains(id),view.unprojected.contains(id),view.focus()==Some(id),view.unavailable_fields(id)),
-        Node::Field(field)=>field_value(view,field),
-        Node::Members=>"Complete authoritative membership, including hidden and cross-sheet occurrences. No transport cap.".into(),
-        Node::Fields=>"Common, Mixed and Unavailable compare canonical values in the complete declared scope. No editable fields.".into(),
     }
 }
 fn property(
@@ -337,6 +280,22 @@ pub(super) fn dispatch(
                     ("hidden", view.hidden.contains(id).to_string()),
                     ("locked", view.locked.contains(id).to_string()),
                 ]);
+            }
+            if let Node::Field(field) = node {
+                match view.field_ref(field) {
+                    Some(InspectionValue::Common(value)) => attributes.extend([
+                        ("value-state", "common".into()),
+                        ("canonical-value", value.to_string()),
+                    ]),
+                    Some(InspectionValue::Mixed) => {
+                        attributes.push(("value-state", "mixed".into()))
+                    }
+                    Some(InspectionValue::Unavailable(reason)) => attributes.extend([
+                        ("value-state", "unavailable".into()),
+                        ("unavailable-reason", reason.clone()),
+                    ]),
+                    None => {}
+                }
             }
             let mut body = BodyWriter::new();
             body.array(8, |body| {

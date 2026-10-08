@@ -156,6 +156,21 @@ impl SelectionSubject {
         }
     }
 
+    /// Product wording only; canonical kind tokens and identities stay unchanged.
+    pub fn display_name(&self) -> &'static str {
+        match self {
+            Self::None => "No selection",
+            Self::Object(_) => "Object",
+            Self::Compound(_) => "Compound selection",
+            Self::Run(_) => "Run",
+            Self::GlobalNet(_) => "Global Net",
+            Self::Bus(_) => "Bus",
+            Self::Proposal(_) => "Proposal",
+            Self::Review(_) => "Review",
+            Self::Diagnostic(_) => "Diagnostic",
+        }
+    }
+
     pub fn validate(&self) -> Result<(), SelectionSubjectError> {
         match self {
             Self::Compound(value) => value.validate(),
