@@ -3443,3 +3443,18 @@ all three positive cases stay required. Adjacent intake:
 Production-renderer padlock captures for HUMAN review:
 `target/s5a-lock-cue-captures/` (at board-fit zoom the glyph overlaps the small
 footprint's reference text; a visual-review observation, not a pass).
+
+
+## DELIVERY-MANAGEMENT — owner-directed workflow correction
+
+2026-10-08: PM059 records standing bounded development-management delegation and
+the build/test/fix/document delivery rhythm. AGENTS, CLAUDE, PM025 and project-state
+policy reconcile the decision-routing exception: appointed management handles
+routine review receipts, continuation and objective acceptance under existing
+criteria; new product choices and nondelegated HUMAN decisions remain owner-only.
+No manager appointment, S5A closure, changed claim, acceptance waiver or successor
+authorization is inferred. The current S5A execution grant and PM058 work continue.
+This global operational amendment applies to existing scheduled work; it introduces
+no competing task or ordering and therefore changes no Active Frontier item.
+Decision: `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
+Evidence: `research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md`.

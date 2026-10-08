@@ -61,6 +61,29 @@ Claude-only workflow capabilities, review gates, or mutation semantics.
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
+## Feature delivery and delegated development management
+
+The owner-approved PM059 workflow amendment controls routine delivery:
+`docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
+Build complete designer behavior, verify it, fix demonstrated failures, then
+record the necessary documentation and arrange independent review. Start with
+existing authority; research unresolved product mechanisms before implementing
+them. Do not replace usable delivery with repeated planning or supporting tasks.
+
+An owner-appointed manager receives routine development decision packets and
+coordinates implementers/reviewers directly under the standing PM059 delegation.
+It may record actual independent outcomes, unchanged-scope continuation and
+objective acceptance against ratified criteria with complete required evidence.
+It must not self-review implementation or impersonate a human owner response.
+New semantics, scope reductions, waivers, dependencies, destructive actions and
+nondelegated HUMAN/UX decisions remain owner-reserved. Preserve visual ownership.
+
+PM059 is a narrow exception to the owner-boundary wording below: implementers
+stop; the appointed manager may resolve only delegated decisions, record durable
+provenance and advance authorization in the normal synchronized transaction.
+Unassigned management, a failed selector or missing proof grants no authority.
+It does not alter canonical task selection, claim rules or response presentation.
+
 ## Specification Governance (controlling)
 Core principle: **no orphaned specs — in coverage OR in sequence.** Every active
 specification, contract, or decision record must be (a) tracked and classified,

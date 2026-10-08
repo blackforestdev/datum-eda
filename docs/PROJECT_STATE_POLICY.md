@@ -139,6 +139,36 @@ Landing a completion-plan tooling task must close its bead, preserve durable
 evidence, and explicitly restore the selected successor; selection is never an
 automatic consequence of unblocking.
 
+## Delegated decision routing and delivery rhythm
+
+PM059 is the owner-ratified amendment to PM025's decision routing. The roadmap
+continues to select one canonical step with the existing schema, claim and
+presentation rules. An implementer never advances an owner boundary on its own.
+
+An owner-appointed management session may resolve only delegated decisions:
+review provisioning, actual independent-review receipts, unchanged-scope execution
+continuation and objective acceptance against ratified criteria. Record appointment
+and scope in existing handoff/task evidence. Its disposition identifies manager
+session, selected task/step, exact candidate/evidence and PM059 authority; record
+it as delegated input, not a fabricated human reply. Then update step evidence,
+authorization and affected roadmap/tracker projections in the same transaction.
+Use existing response formats and state kinds; do not invent a parallel selector.
+No manager is appointed automatically by this policy.
+
+New mechanisms or conflicting product rules, scope reductions, waivers, dependency
+adoption, destructive actions and nondelegated HUMAN/UX decisions still route to
+the owner. Manager authority does not supply missing evidence, invent a numerical
+budget or authorize successors lacking their own grant. Preserve independent
+review, source health, canonical mutation and the Claude prototype lane.
+
+The delivery unit is complete designer behavior. Within an authorized unit, build,
+test, fix, document and deliver through the required independent review. Continue
+routine corrections under the retained grant; do not stop after a tracker update,
+lease renewal or proof packet. Reuse existing research/fixtures/proof, and attach
+supporting records to implementation where practical. Unavailable proof blocks
+its acceptance claim only. Escalate genuine product choices together with concrete
+recommendations; the owner is not the routine message courier.
+
 ## Work-Item Workflow
 
 1. **Capture:** create an issue in `br`. It remains intake-only unless promoted.

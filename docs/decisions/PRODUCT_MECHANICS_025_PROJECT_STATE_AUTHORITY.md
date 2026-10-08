@@ -54,6 +54,17 @@ may select a named scheduled task. With no target it selects the same canonical
 item as `next` and returns its validated ordered completion contract; agents MUST NOT
 replace it with a checklist reconstructed from prose.
 
+## PM059 decision-routing amendment
+
+The owner-ratified PM059 delegation is an explicit exception to the human-input
+routing above. An owner-appointed manager may disposition only delegated routine
+review/continuation/objective-acceptance decisions within existing ratified scope,
+using durable manager provenance and the same synchronized state transaction.
+Implementers still stop at the boundary; product changes and nondelegated decisions
+remain owner-reserved. No selector/schema, claim, response-format or proof bypass
+is authorized. See `PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md` and the
+project-state policy for appointment, evidence and limits.
+
 ## Why This Is Required
 
 Datum previously exposed several individually useful but mutually drifting

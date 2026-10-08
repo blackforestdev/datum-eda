@@ -17,6 +17,29 @@ The standard Datum MCP resource `datum://workflows` is the canonical workflow
 inventory. This file may explain repository operation, but it must not redefine
 workflow capabilities, review gates, or mutation semantics for Codex.
 
+## Feature delivery and delegated management
+
+PM059 (`docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`)
+controls the owner-approved workflow correction: deliver complete designer
+behavior through build, test, fix, document and independent review. Reuse adequate
+evidence and bundle supporting records with coherent implementation units where
+practical. Routine commits, proof receipts or lease renewals are not stopping
+points. Do not invent a feature-commit quota or weaken required verification.
+
+An owner-appointed management session handles delegated review provisioning,
+actual review receipts, unchanged-scope continuation and objective acceptance
+under existing criteria. Route those decision packets to that session, not through
+the owner as a manual relay. Record its appointment and exact delegated disposition
+in existing task evidence. New product semantics, scope reductions, waivers,
+dependencies and nondelegated HUMAN/UX decisions still require owner input.
+
+The owner-boundary rule below has only the explicit PM059 delegation exception:
+implementers stop at the boundary; an appointed manager may resolve an eligible
+decision and synchronize the existing Frontier/beads authorization before work
+resumes. No agent self-appoints, fabricates independent PASS, bypasses a failed
+selector or treats a new mechanism as routine continuation. No management session
+is asserted to have been appointed by this documentation change.
+
 ## Research and visual evidence
 
 Read-only codebase audits, external research, and conversational architecture
