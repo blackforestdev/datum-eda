@@ -1,0 +1,142 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "a07ce3e57e29179072adbc9e55534008984312dc",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+  "workflow_results": {
+    "Open the persistent owner-board-derived Datum Project": true,
+    "Preview and cancel an existing Footprint move": true,
+    "Commit the Footprint move through typed GUI dispatch": true,
+    "Undo, redo, Save and reopen the persisted result": true
+  },
+  "safety_results": {
+    "Original KiCad inputs remain byte-identical": true,
+    "Preview and cancellation perform no writes": true,
+    "Fresh revision validation and project writer exclusion protect commit": true,
+    "Commit and compensating undo/redo survive reopen": true
+  },
+  "evidence_mode": "Existing owner-board-derived native Project, production GUI Runtime on native Wayland/WGPU with programmatic production input callbacks, plus default visible ordinary application reopen and inspected native screenshot. No physical input replay or HUMAN acceptance.",
+  "workflow_evidence": "first-edit-logs/first-edit-corrected-matching-workflow.log",
+  "visible_ordinary_reopen": "first-edit-logs/first-edit-corrected-ordinary-live.log and first-edit-logs/first-edit-ordinary-window.png",
+  "safety_evidence": [
+    "first-edit-logs/first-edit-corrected-matching-workflow.log",
+    "first-edit-logs/journal-tail-review-correction.log",
+    "first-edit-logs/journal-torn-existing-correction.log",
+    "writer-implementation.json (retained existing guarded exclusion/stale/commit-boundary proof)",
+    "first-edit-implementation.json (source, original, Project and binary pins)"
+  ],
+  "binary_cohort": [
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+      "sha256": "139b1207835abf551e35e1c87fe88d09e10c93da8a7c71b4ca97e08fd2941a69"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
+      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
+      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+    }
+  ],
+  "project_root": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+  "project_pins": [
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/project.json",
+      "sha256": "b621f78d159c2a4f21a781e00517f4575ee833febfada7b7a048c6749b88547d"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json",
+      "sha256": "013ea1dcc77c9a45acbb830140e133fafc43778f20af9ca81134c700ba04dec0"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl",
+      "sha256": "15c404e042d03490e7c69fbcd3785ab1d2687e444b3a091e83a22daa1e823701"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/cursor.json",
+      "sha256": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/revision/v1/head.json",
+      "sha256": "dd2a60f6a8ffa02a4afbe3a9e77042bc4e521da2941cbd8fca01b5433b5db889"
+    }
+  ],
+  "originals": [
+    {
+      "path": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+      "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+    },
+    {
+      "path": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch",
+      "sha256": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+    }
+  ],
+  "pending_qualification": [
+    "Physical Wayland input/HUMAN qualification",
+    "Full S5A/GWP/NA and C04-C06 acceptance",
+    "CAM/T04 manufacturing",
+    "Wider platform and full writer failure-device/endurance qualification"
+  ],
+  "copper_validity": "Moving a Footprint invalidates existing fill correspondence; committed scene omits stale occupied copper. Preview retains source copper. No refill/CAM waiver.",
+  "delivery_steps": [
+    "Open persistent native Project via --project-root; --board is import/view, not this edit/reopen path.",
+    "M or Edit > Move; click Footprint or its Pad, move pointer for preview, click destination to commit.",
+    "Escape cancels preview with no design write.",
+    "Ctrl+Z undo; Ctrl+Shift+Z or Ctrl+Y redo; Ctrl+S confirms Save; reopen with same --project-root."
+  ],
+  "independent_review": {
+    "outcome": "PASS",
+    "receipt": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-corrected-review.json",
+    "receipt_sha256": "f2b100660a90dc0108badbbc6791ea55d668b5038178e922e1cb86c36bafc9a9",
+    "packet_blob": "1370cb179ec481b6be5101f8cccdc47e1a26e7cc",
+    "finding_dispositions": [
+      {
+        "id": "UED-IR-01",
+        "disposition": "RESOLVED",
+        "evidence": "Fresh revision-qualified selection/lifetime preparation preserves surviving selection/focus through edit, history, Save and refusal. Independent real-board callback replay passed."
+      },
+      {
+        "id": "UED-IR-02",
+        "disposition": "RESOLVED",
+        "evidence": "Checked snapped invocation-reference delta preserves original off-grid anchor and grab offset; source and literal arithmetic regression reviewed; independent real-board off-grid move passed."
+      },
+      {
+        "id": "UED-IR-03",
+        "disposition": "RESOLVED",
+        "evidence": "Complete unterminated accepted records preserved and framed; committed damaged tails refuse without mutation. Both corrected and existing genuine torn-tail tests independently passed."
+      }
+    ],
+    "independent_logs": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/journal-complete.log",
+        "sha256": "f4ef1d033cc1be92b9d9c6a92192a189c69e187f5b85829d7ebe0d16bf3948a1",
+        "outcome": "PASS: one focused test"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/journal-torn.log",
+        "sha256": "56de6b64b54450ca9892bd3dc6b6450cf30ac9c5742df69cf7d59ad3fe944157",
+        "outcome": "PASS: one focused test"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/workflow.log",
+        "sha256": "7c3e1d246ad3f0a6bf0a1acf4623221472ca25b15082f5c2bc585a0346641222",
+        "outcome": "PASS: one focused test"
+      }
+    ]
+  },
+  "manager_disposition": {
+    "session": "codex-user-edit-delivery-20261008",
+    "appointment": "Owner UED-FIRST-MOVE-01 approval of e7fd1b28dd2c8ecb79eab6a7f30a5ed594f6c8b4 / 874ae14396bd25ed282df3cd95cb5f2aed93461d, durably recorded in 49ef303e and PM059",
+    "timestamp_utc": "2026-10-08T22:22:35Z",
+    "response": "USER-EDIT-DELIVERY: manager approve DEVELOPMENT-BUILD-ACCEPTANCE \u2014 a07ce3e57e29179072adbc9e55534008984312dc; actual reserved independent corrected review PASS, packet 1370cb179ec481b6be5101f8cccdc47e1a26e7cc",
+    "criteria": "Every first-edit ordinary workflow and safety requirement is evidenced by actual production Runtime on Wayland/WGPU plus ordinary visible reopen, guarded engine safety proof, exact pins and actual independent replay. Only bounded development availability accepted; no physical-input, HUMAN, full qualification or successor grant."
+  },
+  "delivered_project_state": "Datum-owned project preserves the demonstration moves used in producer verification; original KiCad board and schematic remain byte-identical.",
+  "synchronized_closure_boundary": {
+    "status": "pending owner canonical successor selection",
+    "implementation_and_review": "Complete; actual reserved independent PASS, bounded objective development-build acceptance approved by appointed manager.",
+    "requirement": "PM025/project_status.py: exactly one canonical_next required and landed cannot be canonical; UED post_completion selects_successor=false.",
+    "owner_request": "Approve bounded readiness for already-directed native symbol-placement/wire-editing delivery, or designate another existing Frontier task. No new feature execution or representation authority inferred.",
+    "claim": "Explicitly released; no unfinished first-edit implementation."
+  }
+}

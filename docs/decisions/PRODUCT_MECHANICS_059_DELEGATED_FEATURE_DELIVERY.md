@@ -335,3 +335,50 @@ nondelegated HUMAN and wider platform obligations; no successor scope granted.
 Original KiCad inputs are byte-identical; the editable copy uses
 `--project-root`. A geometry commit invalidates current-fill correspondence;
 this unit does not display stale occupied copper as current or waive CAM.
+
+
+<!-- EVIDENCE:USER-EDIT-DELIVERY:UED-C07-FIRST-EDIT-PASS -->
+
+UED-C07 completed on source `a07ce3e57e29179072adbc9e55534008984312dc`,
+implementation packet blob `1370cb179ec481b6be5101f8cccdc47e1a26e7cc`.
+Actual reserved independent corrected implementation PASS is preserved unchanged
+in `docs/reviews/workflow-delivery-rollout/user-edit/first-edit-corrected-review.json`.
+UED-IR-01–03 are RESOLVED: authoritative selection retention, snapped invocation
+reference translation, and accepted unterminated journal-record preservation.
+Independent replay on an audit-owned copy passed the existing real-board native
+Wayland/WGPU production-callback workflow and both journal regressions. Complete
+81-Pad membership, cancel without writes, off-grid Move, exact undo/redo,
+selection retention through Save/refusal, and Save/reopen passed. The ordinary
+no-test-flags Wayland/Vulkan visible reopen and inspected capture are retained
+at their producer scopes. Physical compositor input/HUMAN qualification is not
+claimed. Raw outcomes, source/Project/binary pins and failure attempts are retained;
+original KiCad inputs and delivered Project pins were independently checked.
+
+<!-- EVIDENCE:USER-EDIT-DELIVERY:UED-C08-DEVELOPMENT-ACCEPTANCE -->
+
+The owner-appointed `codex-user-edit-delivery-20261008` delivery manager records:
+`USER-EDIT-DELIVERY: manager approve DEVELOPMENT-BUILD-ACCEPTANCE —
+a07ce3e57e29179072adbc9e55534008984312dc`, conditioned on the actual reserved
+PASS above and the objective evidence in
+`docs/reviews/workflow-delivery-rollout/user-edit/first-edit-delivery.json`.
+This is bounded first-footprint-edit development availability under the recorded
+PM059 appointment, not self-review or full product acceptance. Every declared
+workflow and safety requirement has actual GUI/canonical-path evidence. The
+matching GUI, CLI and daemon are pinned; the ordinary launch opens the persistent
+Datum-owned `DOA2526-first-edit` Project. M/Edit Move, click Footprint or its Pad,
+preview, Escape cancel, destination click commit, undo/redo, Save and reopen are
+available. The native copy retains producer demonstration moves; original KiCad
+board and schematic bytes are unchanged.
+
+UED-C07 and the bounded product delivery are complete. The manager approves
+objective development availability; UED-C08 synchronized closure publication is
+pending one explicit owner canonical-successor choice. PM025 currently rejects
+zero canonical tasks, while this grant authorizes no automatic successor. This
+is a roadmap-transition boundary, not missing implementation, review or first-edit
+safety proof. The implementation claim is explicitly released. No successor task
+is selected or authorized by this completion. Physical Wayland input/HUMAN, full S5A/GWP/NA/C04–C06, wider platform,
+CAM/T04 and broader writer qualification remain pending at their existing gates.
+A committed geometry change invalidates old copper fill correspondence; stale
+occupied copper is omitted, with no refill or manufacturing waiver. Missing
+schematic/native editor obligations are unchanged. No dependency, prototype,
+persistence representation, timeout, tolerance or scope reduction is introduced.

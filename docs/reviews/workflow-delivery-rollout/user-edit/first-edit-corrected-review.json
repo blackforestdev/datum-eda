@@ -1,0 +1,94 @@
+{
+  "reviewer": "owner-reserved independent audit session 01a0e343-3d9c-70f1-899e-5bd239513383",
+  "packet": "UED-FIRST-MOVE-01 corrected implementation",
+  "source_commit": "a07ce3e57e29179072adbc9e55534008984312dc",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-implementation.json",
+  "packet_blob": "1370cb179ec481b6be5101f8cccdc47e1a26e7cc",
+  "outcome": "PASS",
+  "scope": "Bounded corrected implementation review and independent replay supporting C07 development evidence only. No product ratification or full qualification acceptance.",
+  "findings": [
+    {
+      "id": "UED-IR-01",
+      "disposition": "RESOLVED",
+      "evidence": "Fresh revision-qualified selection/lifetime preparation preserves surviving selection/focus through edit, history, Save and refusal. Independent real-board callback replay passed."
+    },
+    {
+      "id": "UED-IR-02",
+      "disposition": "RESOLVED",
+      "evidence": "Checked snapped invocation-reference delta preserves original off-grid anchor and grab offset; source and literal arithmetic regression reviewed; independent real-board off-grid move passed."
+    },
+    {
+      "id": "UED-IR-03",
+      "disposition": "RESOLVED",
+      "evidence": "Complete unterminated accepted records preserved and framed; committed damaged tails refuse without mutation. Both corrected and existing genuine torn-tail tests independently passed."
+    }
+  ],
+  "independent_replays": [
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/user-edit-review/a07ce3e5-replay/journal-complete.log",
+      "sha256": "f4ef1d033cc1be92b9d9c6a92192a189c69e187f5b85829d7ebe0d16bf3948a1",
+      "outcome": "PASS: one focused test"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/user-edit-review/a07ce3e5-replay/journal-torn.log",
+      "sha256": "56de6b64b54450ca9892bd3dc6b6450cf30ac9c5742df69cf7d59ad3fe944157",
+      "outcome": "PASS: one focused test"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/user-edit-review/a07ce3e5-replay/workflow.log",
+      "sha256": "7c3e1d246ad3f0a6bf0a1acf4623221472ca25b15082f5c2bc585a0346641222",
+      "outcome": "PASS: one focused test"
+    }
+  ],
+  "method": "Guarded serial Cargo. Real-board workflow uses actual Wayland/WGPU production callbacks on an audit-owned copy; it is not physical compositor input. Move/cancel, retained selection, undo/redo, Save/reopen, 81 Pads and 18 Zones passed. Runtime 89.46 seconds.",
+  "preservation": "Delivered Project and binary pins verified after replay. Original KiCad preservation covered by workflow; original pins and all packet evidence were verified before replay. Worktree clean.",
+  "verified_pins_after_replay": [
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+      "sha256": "139b1207835abf551e35e1c87fe88d09e10c93da8a7c71b4ca97e08fd2941a69"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
+      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
+      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/project.json",
+      "sha256": "b621f78d159c2a4f21a781e00517f4575ee833febfada7b7a048c6749b88547d"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json",
+      "sha256": "013ea1dcc77c9a45acbb830140e133fafc43778f20af9ca81134c700ba04dec0"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl",
+      "sha256": "15c404e042d03490e7c69fbcd3785ab1d2687e444b3a091e83a22daa1e823701"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/cursor.json",
+      "sha256": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/revision/v1/head.json",
+      "sha256": "dd2a60f6a8ffa02a4afbe3a9e77042bc4e521da2941cbd8fca01b5433b5db889"
+    },
+    {
+      "path": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+      "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+    },
+    {
+      "path": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch",
+      "sha256": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+    }
+  ],
+  "producer_evidence": "40 source blobs and 34 evidence hashes verified before replay; both ordinary reopen and corrected selection screenshots inspected; producer ordinary no-test-flags Wayland/Vulkan reopen evidence reused at its recorded scope.",
+  "setup_failure": "Initial reviewer package name datum-gui was incorrect; Cargo rejected before compilation/runtime. Corrected to datum-gui-app. launcher-package-error.log preserved, no proof credited.",
+  "remaining_limits": [
+    "Physical input and HUMAN/UX assessment unverified.",
+    "Broader S5A/GWP/NA/CAM qualification remains pending.",
+    "This review grants no automatic successor execution."
+  ]
+}
