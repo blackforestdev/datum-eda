@@ -33,6 +33,45 @@ fn committed_project(name: &str) -> (PathBuf, DesignModel, TransactionRecord) {
 }
 
 #[test]
+fn first_edit_durable_confirmation_recovers_once_and_refuses_invalid_journal() {
+    let (root, mut model, _) = committed_project("first_edit_confirmation");
+    model
+        .commit_journaled_with_integrity_fault(
+            &root,
+            rename_batch(&model, "uncertain"),
+            IntegrityCommitFaultPoint::JournalAppend,
+        )
+        .expect_err("receipt remains uncertain");
+    let path = transaction_journal_path(&root);
+    let journal = std::fs::read(&path).unwrap();
+    let confirmed = crate::api::native_write::durability::resolve_durable(&root).unwrap();
+    assert_eq!(confirmed.journal.len(), 2);
+    assert_eq!(confirmed.journal_cursor.applied_transaction_count, 2);
+    assert!(
+        !confirmed
+            .diagnostics
+            .iter()
+            .any(|d| d.code.starts_with("journal_") || d.code == "revision_integrity_unavailable")
+    );
+    let again = crate::api::native_write::durability::resolve_durable(&root).unwrap();
+    assert_eq!(again.model_revision, confirmed.model_revision);
+    assert_eq!(
+        std::fs::read(&path).unwrap(),
+        journal,
+        "reconcile never retries the mutation"
+    );
+    let mut invalid = journal;
+    invalid.extend_from_slice(b"incomplete");
+    std::fs::write(&path, &invalid).unwrap();
+    assert!(crate::api::native_write::durability::resolve_durable(&root).is_err());
+    assert_eq!(
+        std::fs::read(&path).unwrap(),
+        invalid,
+        "confirmation does not erase failure evidence"
+    );
+}
+
+#[test]
 fn journaled_commit_establishes_verified_algorithm_qualified_authority() {
     let (root, model, transaction) = committed_project("integrity_complete");
     let store = RevisionAuthorityStore::new(&root);

@@ -311,6 +311,14 @@ impl Runtime {
         if let Some(action) = item.gui_local.as_deref() {
             return self.activate_gui_local_menu_action(action, surface);
         }
+        match item.verb.as_deref() {
+            Some("datum.journal.undo") => return self.queue_native_history(false),
+            Some("datum.journal.redo") => return self.queue_native_history(true),
+            Some("datum.pcb.move_component") => {
+                return self.set_workspace_tool(WorkspaceTool::Move);
+            }
+            _ => {}
+        }
         let reason = item
             .not_built
             .as_deref()

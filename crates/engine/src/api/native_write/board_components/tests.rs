@@ -197,6 +197,63 @@ fn edit_rejects_unknown_package() {
 }
 
 #[test]
+fn first_edit_move_refuses_locked_and_coordinate_overflow_without_writes() {
+    let (root, mut model, _, package_id) =
+        resolved_model_with_board_package("first_edit_move_safety");
+    let path = root.join("board/board.json");
+    let preimage = std::fs::read(&path).unwrap();
+    let prepared = build_edit_board_package(
+        &model,
+        test_provenance(),
+        package_id,
+        BoardPackageEdit::Position { x: i64::MIN, y: 0 },
+    )
+    .unwrap();
+    // The existing fixture's origin is zero: establish a positive pose through
+    // the canonical route so MIN cannot be translated without overflow.
+    let positive = build_edit_board_package(
+        &model,
+        test_provenance(),
+        package_id,
+        BoardPackageEdit::Position { x: 1, y: 0 },
+    )
+    .unwrap();
+    super::super::commit_prepared(&mut model, &root, positive).unwrap();
+    let positive_bytes = std::fs::read(&path).unwrap();
+    let fresh = build_edit_board_package(
+        &model,
+        test_provenance(),
+        package_id,
+        BoardPackageEdit::Position { x: i64::MIN, y: 0 },
+    )
+    .unwrap();
+    assert!(super::super::commit_prepared(&mut model, &root, fresh).is_err());
+    assert_eq!(std::fs::read(&path).unwrap(), positive_bytes);
+    assert!(
+        super::super::commit_prepared(&mut model, &root, prepared).is_err(),
+        "stale prepared move refused"
+    );
+    let lock = build_edit_board_package(
+        &model,
+        test_provenance(),
+        package_id,
+        BoardPackageEdit::Locked { locked: true },
+    )
+    .unwrap();
+    super::super::commit_prepared(&mut model, &root, lock).unwrap();
+    assert!(
+        build_edit_board_package(
+            &model,
+            test_provenance(),
+            package_id,
+            BoardPackageEdit::Position { x: 5, y: 7 }
+        )
+        .is_err()
+    );
+    assert_ne!(std::fs::read(&path).unwrap(), preimage);
+}
+
+#[test]
 fn delete_threads_stored_payloads_raw_and_guards() {
     let (_root, model, _board_id, package_id) =
         resolved_model_with_board_package("board_components_delete");

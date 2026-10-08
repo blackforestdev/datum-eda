@@ -51,6 +51,8 @@ impl Runtime {
             return true;
         }
         match action {
+            "project.save" => self
+                .queue_native_edit(datum_gui_protocol::native_edit_client::NativeEditAction::Save),
             "project.new.open" => self.open_new_project(),
             "preferences.global.open" => self.open_global_preferences(),
             "preferences.project.open" => self.open_project_preferences(),

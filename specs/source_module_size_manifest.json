@@ -502,14 +502,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3853,
+        "pre_test_lines": 3508,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "PM058 integer Pad scene construction moves into bounded placed_pad_projection owner alongside exact query geometry. Exact downward ceiling; no inline-test expansion."
+      "note": "First-edit ownership extraction moves workspace authoring gesture and handoff behavior to its bounded owner; inline tests remain in place. Downward ratchet only."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

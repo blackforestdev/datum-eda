@@ -155,7 +155,19 @@ impl Runtime {
                     .render_session()
                     .board()
                     .expect("retained scene initialized");
-                retained.hit_test_authored_world(world_point, self.session.workspace())
+                if self.workspace().tool == WorkspaceTool::Move {
+                    retained.hit_test_authored_world_eligible(
+                        world_point,
+                        self.session.workspace(),
+                        |target| {
+                            matches!(target, HitTarget::AuthoredObject(id)
+                            if self.workspace().scene.components.iter().any(|c| &c.object_id == id)
+                                || self.workspace().scene.pads.iter().any(|p| &p.object_id == id))
+                        },
+                    )
+                } else {
+                    retained.hit_test_authored_world(world_point, self.session.workspace())
+                }
             };
             let retained_elapsed = retained_started.elapsed();
             let target_object_id = match &retained_target {

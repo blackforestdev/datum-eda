@@ -26,6 +26,7 @@ use serde_json::{Value, json};
 
 mod check_run_view;
 mod dispatch;
+mod native_history;
 mod preferences_state;
 use dispatch::{dispatch_request, dispatch_request_with_preferences};
 use preferences_state::PreferencesDaemonState;
@@ -134,6 +135,8 @@ struct ApplyScopedComponentReplacementPlanParams {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct NativeDescribeParams {
     project_root: PathBuf,
+    #[serde(default)]
+    confirm_durable: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -156,6 +159,10 @@ struct NativeWriteParams {
     expected_model_revision: Option<String>,
     #[serde(default)]
     dry_run: bool,
+    #[serde(default)]
+    batch_id: Option<uuid::Uuid>,
+    #[serde(default)]
+    expected_transaction_tip: Option<uuid::Uuid>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

@@ -1,4 +1,5 @@
 mod native_device_recovery;
+mod runtime_native_edit;
 mod runtime_state;
 use anyhow::{Context, Result};
 use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
@@ -472,23 +473,32 @@ impl Runtime {
     }
 
     fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
-        if !matches!(tool, WorkspaceTool::Select) {
+        if !matches!(tool, WorkspaceTool::Select)
+            && !(tool == WorkspaceTool::Move && self.native_edit_available())
+        {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
-                format!("{} is disabled in the Phase 1 read-only GUI", tool.label()),
+                format!("{} is unavailable in this build", tool.label()),
             );
             self.invalidate_frame();
             return true;
         }
+        self.cancel_native_move();
+        if self.workspace().tool != tool {
+            self.cancel_native_selection_gesture();
+        }
         let handled = self.dispatch_session_command(SessionCommand::SetTool(tool));
         if handled {
-            self.log_console_echo(ConsoleFeedbackSource::Tool, "Selection tool active");
+            self.log_console_echo(
+                ConsoleFeedbackSource::Tool,
+                format!("{} tool active", tool.label()),
+            );
         }
         handled
     }
 
     fn active_tool_is_authoring(&self) -> bool {
-        false
+        self.workspace().tool == WorkspaceTool::Move && self.native_edit_available()
     }
 
     fn handle_authoring_pointer_move(&mut self, screen_pos: (f32, f32)) -> bool {
@@ -504,6 +514,9 @@ impl Runtime {
         else {
             return false;
         };
+        if self.workspace().tool == WorkspaceTool::Move {
+            return self.native_move_pointer(world);
+        }
         let target_object_id = self.authoring_target_object_id(world);
         self.dispatch_session_command(SessionCommand::PreviewAuthoringGesture {
             world,
@@ -518,6 +531,9 @@ impl Runtime {
     ) -> bool {
         if !self.active_tool_is_authoring() {
             return false;
+        }
+        if self.workspace().tool == WorkspaceTool::Move {
+            return self.native_move_click(world, target_object_id);
         }
         match self.workspace().tool {
             WorkspaceTool::DrawBoardTrack
@@ -569,39 +585,6 @@ impl Runtime {
                 self.invalidate_scene();
                 return true;
             }
-            WorkspaceTool::Move if self.workspace().authoring.gesture.anchor.is_some() => {
-                let Some(handoff) = self
-                    .session
-                    .workspace_mut()
-                    .finish_move_component_handoff(world)
-                else {
-                    self.log_console_refusal(
-                        ConsoleFeedbackSource::Tool,
-                        "move requires a selected component target".to_string(),
-                    );
-                    self.invalidate_frame();
-                    return true;
-                };
-                self.queue_authoring_terminal_handoff(handoff, "move-board-component");
-                self.invalidate_scene();
-                return true;
-            }
-            WorkspaceTool::Move => {
-                let Some(target) = target_object_id.clone() else {
-                    self.log_console_refusal(
-                        ConsoleFeedbackSource::Tool,
-                        "move requires clicking a component first".to_string(),
-                    );
-                    return true;
-                };
-                if !target.starts_with("component:") {
-                    self.log_console_refusal(
-                        ConsoleFeedbackSource::Tool,
-                        "move currently supports components only".to_string(),
-                    );
-                    return true;
-                }
-            }
             WorkspaceTool::Delete => {
                 let Some(target) = target_object_id else {
                     self.log_console_refusal(
@@ -622,7 +605,7 @@ impl Runtime {
                 self.invalidate_scene();
                 return true;
             }
-            WorkspaceTool::Select | WorkspaceTool::DrawBoardTrack => {}
+            WorkspaceTool::Select | WorkspaceTool::DrawBoardTrack | WorkspaceTool::Move => {}
         }
         self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
             world,

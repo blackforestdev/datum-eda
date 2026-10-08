@@ -47,6 +47,19 @@ pub struct GuiMenuItem {
     pub requires_project: bool,
 }
 
+pub fn native_project_edit_available(state: &crate::ReviewWorkspaceState) -> bool {
+    state
+        .backing
+        .as_ref()
+        .is_some_and(|b| b.request.board_file.is_none() && b.request.kicad_board_source.is_none())
+}
+fn first_edit_verb(verb: &str) -> bool {
+    matches!(
+        verb,
+        "datum.journal.undo" | "datum.journal.redo" | "datum.pcb.move_component"
+    )
+}
+
 impl GuiMenuItem {
     pub fn binding(&self) -> GuiMenuBinding<'_> {
         if let Some(reason) = self.not_built.as_deref() {
@@ -71,7 +84,7 @@ impl GuiMenuItem {
         matches!(
             self.binding(),
             GuiMenuBinding::GuiLocal(_) | GuiMenuBinding::Submenu(_)
-        )
+        ) || matches!(self.binding(), GuiMenuBinding::Verb(verb) if first_edit_verb(verb))
     }
 
     pub fn is_enabled(&self, project_open: bool) -> bool {
@@ -85,6 +98,12 @@ impl GuiMenuItem {
             && let Some(consumer) = action_registry::consumer(key)
         {
             return consumer.admit(state).err();
+        }
+        if matches!(self.binding(), GuiMenuBinding::GuiLocal("project.save"))
+            || matches!(self.binding(), GuiMenuBinding::Verb(verb) if first_edit_verb(verb))
+        {
+            return (!native_project_edit_available(state))
+                .then_some("Open a persistent Datum Project with --project-root to edit or save.");
         }
         if self.requires_project && state.backing.is_none() {
             return Some("This action requires an open Project.");

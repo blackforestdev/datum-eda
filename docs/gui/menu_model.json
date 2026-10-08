@@ -26,8 +26,9 @@
         {
           "label": "Save",
           "icon": "save",
-          "not_built": "native projects auto-persist; save semantics TBD (design spec File-menu note)",
-          "shortcut": "Ctrl+S"
+          "shortcut": "Ctrl+S",
+          "gui_local": "project.save",
+          "requires_project": true
         },
         {
           "label": "Save As\u2026",

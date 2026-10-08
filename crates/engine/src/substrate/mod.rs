@@ -42,7 +42,7 @@ mod generated_evidence_journal_ops;
 mod import_map;
 mod import_map_journal_ops;
 mod journal;
-mod journal_io;
+pub(crate) mod journal_io;
 mod journal_operation_hooks;
 mod operation;
 mod operation_application;

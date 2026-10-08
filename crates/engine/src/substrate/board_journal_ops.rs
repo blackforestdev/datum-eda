@@ -644,8 +644,12 @@ fn move_board_package_position(
     y: i64,
 ) -> Result<(), EngineError> {
     let (previous_x, previous_y) = board_package_position(board_value, package_id)?;
-    let dx = x - previous_x;
-    let dy = y - previous_y;
+    let dx = x.checked_sub(previous_x).ok_or_else(|| {
+        EngineError::Validation("Footprint translation exceeds integer coordinates".into())
+    })?;
+    let dy = y.checked_sub(previous_y).ok_or_else(|| {
+        EngineError::Validation("Footprint translation exceeds integer coordinates".into())
+    })?;
     set_board_package_field(
         board_value,
         package_id,

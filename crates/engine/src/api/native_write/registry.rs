@@ -50,6 +50,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
     VERBS.get_or_init(|| {
         let mut verbs: Vec<NativeWriteVerb> = Vec::new();
         verbs.extend_from_slice(super::project::VERBS);
+        verbs.extend_from_slice(super::board_components::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
         verbs.sort_by(|a, b| a.id.cmp(b.id));
         for pair in verbs.windows(2) {
@@ -133,6 +134,7 @@ mod tests {
             vec![
                 "datum.check.accept_deviation",
                 "datum.check.waive",
+                "datum.pcb.move_component",
                 "datum.project.create_rule",
                 "datum.project.delete_rule",
                 "datum.project.set_display_units",

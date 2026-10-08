@@ -1,0 +1,252 @@
+{
+  "packet": "UED-FIRST-MOVE-01-IMPLEMENTATION",
+  "task": "USER-EDIT-DELIVERY",
+  "step": "UED-C06",
+  "kind": "implementation and focused production-callback proof; physical native input qualification remains separate",
+  "authority": "Owner UED-FIRST-MOVE-01 approval and PM059 appointment; actual reserved PM060 specification PASS and delegated bounded ratification recorded in 05461239. Writer prerequisite 3efebe9d.",
+  "project_root": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+  "behavior": [
+    "M or Edit / Move activates Footprint translation; click Footprint or its Pad, move pointer, click to commit; exact local aperture and source identity retained.",
+    "Preview translates complete owned scene geometry, retains cursor offset and ratified grid snap; Escape cancels with no source/journal edit.",
+    "Typed native daemon worker commits through canonical engine guard/journal; fresh revision and tip reject stale preview. Entire refreshed scene qualified before atomic publication; no retry of an uncertain write.",
+    "Ctrl+Z / Edit Undo compensates one edit; Ctrl+Y or Ctrl+Shift+Z / Edit Redo reapplies it. Ctrl+S / File Save confirms canonical durability; --project-root reopen reads persisted edited state.",
+    "Direct --board import-view sessions refuse native editing and Save; original KiCad sources never written.",
+    "Save and uncertain-receipt reconciliation require explicit engine durability confirmation under the same kernel guard. Recovery synchronizes a visible journal before promoting linked stages; confirmation syncs canonical local shards/revision state and durably publishes the existing cursor. Unsupported companions and integrity/parse/sync failures refuse acknowledgement."
+  ],
+  "focused_results": {
+    "p0_transport": "PASS: same private companion typed native rename, stale intent refusal and byte-exact canonical undo.",
+    "first_edit": "PASS: real DOA2526-derived Project; production primary-click and pointer callbacks, stable Footprint, byte-preserving preview/cancel, full 81-Pad inventory and exact owned centre/aperture correspondence, byte-exact undo/redo, Save and persisted reopen. Latest routing case includes selection press/release refusal while Move active.",
+    "safety": "PASS: locked Footprint, overflowing translation and stale prepared intent refused; persisted board preserved. Existing all-variant guarded builder regression passed.",
+    "writer": "Reuse 3efebe9d focused two-process, stale/recovery, journal/cache/backup and revision-guard evidence; no repeated writer campaign.",
+    "durability": "PASS: guarded confirmation recovers an interrupted appended transaction exactly once, fixes the existing cursor, preserves journal bytes, and refuses invalid journal without truncating it. Existing five fault-boundary recovery regression remains passed after the recovery sync change."
+  },
+  "proof_limits": [
+    "Native host is Wayland with WGPU; callback test has a hidden native test window and programmatic production callbacks. It does not deliver physical compositor input or establish HUMAN qualification.",
+    "No full GWP/NA/S5A/C04-C06, CAM/T04, wider platform or successor acceptance. Bounded independent implementation review still required.",
+    "Existing copper source fill is retained during preview. A committed geometry change invalidates current-fill correspondence; native scene omits stale occupied copper. No fake current fill or CAM waiver.",
+    "Datum-owned Project contains imported PCB only; existing schematic/import limitations remain.",
+    "First native edit may start matching writer companion; this work is off native input dispatch. No arbitrary responsiveness budget or optimization claim.",
+    "Durability verification establishes guarded code path and existing injected commit-boundary recovery; no physical power-loss or failing-device qualification claimed."
+  ],
+  "repairs": [
+    "Move eligible-hit path excludes overlapping copper/tracks from masking Footprint/Pad targets.",
+    "Region selection starts only with Select, preserving ordinary Move press/release dispatch.",
+    "Applied native actions replace stale Cancelled Move status with actual outcome."
+  ],
+  "failed_attempts": [
+    "Initial root creation refused because parent directory absent; parent created then canonical genesis/import succeeded. Originals preserved.",
+    "First routing repair build lacked EditorCommandStatus import; compile refused, import corrected, final case passed.",
+    "Safety test initially not executed because shared Cargo cache exceeded existing hard limit. At serialized observed idle, only regenerable engine/GUI incremental caches were removed; safety test then ran and passed."
+  ],
+  "originals": [
+    {
+      "path": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+      "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+    },
+    {
+      "path": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch",
+      "sha256": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+    }
+  ],
+  "source_blobs": [
+    {
+      "path": "crates/engine-daemon/src/dispatch.rs",
+      "blob": "9d3c7a909a4b5fdcc36cdf33194746233b29c507"
+    },
+    {
+      "path": "crates/engine-daemon/src/main.rs",
+      "blob": "7e47a171121fd60646bed171ba5fd60e1e325482"
+    },
+    {
+      "path": "crates/engine-daemon/src/native_history.rs",
+      "blob": "48f4aa488b33887d2ae9b95dff11b213b7adf23e"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/board_components.rs",
+      "blob": "cbf15d460043cb52d75e17f67cf5f9ba06230a38"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/board_components/tests.rs",
+      "blob": "ca1ec24a15aa7d77b136ee8d2e5c64de1786fe1f"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/board_components/verb_registry.rs",
+      "blob": "0c4cc257883c4c99800e751c076b2c6d9f150f6a"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/durability.rs",
+      "blob": "d46db63d7cb3751bc57edc1adfe4821121405bfc"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/history.rs",
+      "blob": "f8eac834ffaae3f0a279ee4ae19dd61db55cfc3d"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/mod.rs",
+      "blob": "cf738926d87baa44458387185a06103dc5da3451"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/registry.rs",
+      "blob": "796f1c9eda3bc822ca423b86e6ed0bdb5e11cc6e"
+    },
+    {
+      "path": "crates/engine/src/revision/store.rs",
+      "blob": "a4de7d7ca49306468ae2f928eeb31bac2035fb86"
+    },
+    {
+      "path": "crates/engine/src/substrate/board_journal_ops.rs",
+      "blob": "27384da34043c734d01e374dc2c8ead46a4b608f"
+    },
+    {
+      "path": "crates/engine/src/substrate/board_package_move.rs",
+      "blob": "7e08228abc4744e114026a51d415ae640e2558ee"
+    },
+    {
+      "path": "crates/engine/src/substrate/journal_io.rs",
+      "blob": "df864eb8734ce2645a4a01f8498d0e58a6620cbc"
+    },
+    {
+      "path": "crates/engine/src/substrate/mod.rs",
+      "blob": "d4b5e0a789fc722d631094c1b18b442d7f7da836"
+    },
+    {
+      "path": "crates/engine/src/substrate/tests/revision_integrity.rs",
+      "blob": "48818627edb3ce2de8c465c6e1fafafc3f3b75e9"
+    },
+    {
+      "path": "crates/gui-app/src/application_terminal_shutdown.rs",
+      "blob": "63f3eb42315d62eeec278b7d9286acdff8780174"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "blob": "336f04dfa5397648bfb7cdefb642fce6d16d2a27"
+    },
+    {
+      "path": "crates/gui-app/src/native_first_edit_tests.rs",
+      "blob": "80cc77d44d029521ea6cdc4ef1a58c507b1f1aca"
+    },
+    {
+      "path": "crates/gui-app/src/production_status_refresh.rs",
+      "blob": "c0d4bc07321bc236f6aad3fdbc6f8849d969ea9d"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_init.rs",
+      "blob": "da32d1094a029f8625d6fc9ce0a5753398eba05b"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_menu_actions.rs",
+      "blob": "ff38a8e26abdd76793a3412d01aac8ea79b85b46"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_native_edit.rs",
+      "blob": "2ad8cfde73aa954680f1f4886b0002c0c45877db"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_primary_pointer.rs",
+      "blob": "31f5f4037e4b3cc5dcb01a960d046e7f1e783512"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_selection.rs",
+      "blob": "4c86ef4afc0a21e22229d3d8db775956d5f75dd5"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_selection_region.rs",
+      "blob": "33b86a89b6efea510f82ad77ef788c85104dd92d"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_state.rs",
+      "blob": "c6bd2d3027b42fcfc6940fc706dc764ffa8c8615"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_view_actions.rs",
+      "blob": "95de2ed3ce6636a6e689a3e227093926c84e7369"
+    },
+    {
+      "path": "crates/gui-app/src/workspace_keyboard.rs",
+      "blob": "44c4a2a9daf851b10857678f4ae2980d20790363"
+    },
+    {
+      "path": "crates/gui-protocol/src/cli_bridge.rs",
+      "blob": "daebf6a8e95281d18e628b6b38577ae741e7147a"
+    },
+    {
+      "path": "crates/gui-protocol/src/footprint_move_preview.rs",
+      "blob": "813df7a32c4560d0b4bae893a77601e6df7e73c3"
+    },
+    {
+      "path": "crates/gui-protocol/src/gui_menu_model.rs",
+      "blob": "322f2f4fcac5f3c551b732928826de5902d50bcd"
+    },
+    {
+      "path": "crates/gui-protocol/src/lib.rs",
+      "blob": "aa6d92bc60403512aaba18ac2f438d6bdda8edba"
+    },
+    {
+      "path": "crates/gui-protocol/src/native_edit_client.rs",
+      "blob": "98f1b449a5beeba3138e1ff9b3605a1fa50ccf32"
+    },
+    {
+      "path": "crates/gui-protocol/src/native_edit_client_tests.rs",
+      "blob": "626d40d94fcc0893b10b77d0e1ce72606770e446"
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_authoring.rs",
+      "blob": "23b6d8e37bdcb844b9f67cbbe3dc1067a5b60fcc"
+    },
+    {
+      "path": "docs/gui/menu_model.json",
+      "blob": "dbd6bb77bf351700cbe2a31f1f84b902f2267593"
+    },
+    {
+      "path": "specs/SPEC_PARITY.md",
+      "blob": "29be0818673795e8c119558115f1f59dc79c76ae"
+    },
+    {
+      "path": "specs/source_module_size_manifest.json",
+      "blob": "6b16c74f08d4c0cff92878dbaa9cdc5a0c233c98"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-p0.log",
+      "sha256": "dde6f5ecd41eda682f7fcd66ba73b0b583a785fca009bfe26f79efb7e32e6ec5"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-wayland-dispatch.log",
+      "sha256": "8ae673765b5c687d8dda0c172149c1d607db35e37c8e1bc6273a5a1ab9533474"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-wayland-routing-correction.log",
+      "sha256": "515b4cbcaf98c2d678ddb4b10ec5a696fd1082d4f6d04548152d107b8f708cec"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-wayland-routing-final.log",
+      "sha256": "7aff5b98ea997d76461cb7a24c36e072d46e0904e625ff0579a67b90562c0f5f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-move-safety.log",
+      "sha256": "727bfaf2797879f6a97dddc4f3d8df6a323e8c5e5539cf466967465b97619de3"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-move-safety-headroom.log",
+      "sha256": "143aea33d6bcea3436785768014e8067b0ec39e84a2a6005d46091f72c50d975"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-existing-builder.log",
+      "sha256": "9f5d8f9bc1f5a9f3d111e3002431f520e47734c459b5b60dcfdefb3365976d75"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/cache-headroom.log",
+      "sha256": "d2a773de2c3092eb41f3d748f9b2763bf5d22c5e14f3666f0c6da7c2706a68aa"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-durable-confirmation.log",
+      "sha256": "8b7fc7db5e95d76faefa6c423666577d108be7e7860fb150973faf004cde7ceb"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-logs/first-edit-recovery-confirmation-regression.log",
+      "sha256": "bd9566ba24fb299080debf4ce5b57f46db7bdbd16db3f69877a1d1338f0bd1a6"
+    }
+  ]
+}

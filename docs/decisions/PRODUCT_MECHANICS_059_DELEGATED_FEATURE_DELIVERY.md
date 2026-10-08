@@ -311,3 +311,27 @@ traceability, progress coverage and source health passed. The first-edit
 manager claim, execution conditions and actual writer review are unchanged.
 This completes the owner-authorized enforcement correction; it does not claim
 measured effort allocation, board editing or broader product acceptance.
+
+<!-- EVIDENCE:USER-EDIT-DELIVERY:UED-C06-FIRST-EDIT -->
+
+UED-C06 implements the bounded first Footprint edit: typed native Move/history,
+complete source-qualified preview and cancellation, asynchronous canonical
+commit and qualified scene publication, durability-confirming Save and native
+Project reopen. Engine writer prerequisite is `3efebe9d`; retained owner grant
+and actual reserved specification PASS/ratification are recorded above. The
+implementation and focused raw outcomes are pinned by source blobs in
+`docs/reviews/workflow-delivery-rollout/user-edit/first-edit-implementation.json`.
+Production-callback proof on the real owner-board-derived native Wayland/WGPU
+host passed preview/cancel, complete 81-Pad translation, exact undo/redo, Save
+and reopen. Locked/overflow/stale refusal, required P0 transport and guarded
+uncertain-receipt recovery passed at their recorded scopes. Subsequent source
+corrections and the exact binary cohort remain subject to UED-C07 verification.
+
+The canonical next step is UED-C07: finish focused ordinary integration proof
+and obtain actual reserved bounded candidate review. UED-C08 development
+acceptance remains pending. Programmatic callbacks are not physical Wayland
+input/HUMAN qualification. Preserve full GWP/NA/S5A/C04-C06, CAM/T04,
+nondelegated HUMAN and wider platform obligations; no successor scope granted.
+Original KiCad inputs are byte-identical; the editable copy uses
+`--project-root`. A geometry commit invalidates current-fill correspondence;
+this unit does not display stale occupied copper as current or waive CAM.

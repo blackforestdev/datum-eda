@@ -6,6 +6,9 @@ use datum_gui_viewport::{
 };
 impl Runtime {
     pub(super) fn begin_native_selection_press(&mut self) -> bool {
+        if self.workspace().tool != WorkspaceTool::Select {
+            return false;
+        }
         if !self
             .workspace()
             .backing

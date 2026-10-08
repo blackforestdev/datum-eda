@@ -7,6 +7,9 @@ use datum_gui_protocol::{SessionCommand, WorkspaceTool};
 pub(super) enum WorkspaceCharacterAction {
     SetTool(WorkspaceTool),
     SelectAll,
+    Save,
+    Undo,
+    Redo,
     FitCamera,
     FitReviewTarget,
     TogglePaneZoom,
@@ -18,6 +21,9 @@ pub(super) enum WorkspaceCharacterAction {
 
 pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCharacterAction> {
     let action = match text {
+        value if value.eq_ignore_ascii_case("s") && control => WorkspaceCharacterAction::Save,
+        value if value.eq_ignore_ascii_case("z") && control => WorkspaceCharacterAction::Undo,
+        value if value.eq_ignore_ascii_case("y") && control => WorkspaceCharacterAction::Redo,
         value if value.eq_ignore_ascii_case("a") && control => WorkspaceCharacterAction::SelectAll,
         value if value.eq_ignore_ascii_case("s") => {
             WorkspaceCharacterAction::SetTool(WorkspaceTool::Select)
@@ -51,6 +57,12 @@ pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCha
 
 pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> bool {
     match action {
+        WorkspaceCharacterAction::Save => runtime
+            .queue_native_edit(datum_gui_protocol::native_edit_client::NativeEditAction::Save),
+        WorkspaceCharacterAction::Undo => {
+            runtime.queue_native_history(runtime.modifiers.shift_key())
+        }
+        WorkspaceCharacterAction::Redo => runtime.queue_native_history(true),
         WorkspaceCharacterAction::SelectAll => runtime.native_select_all(),
         WorkspaceCharacterAction::SetTool(tool) => runtime.set_workspace_tool(tool),
         WorkspaceCharacterAction::FitCamera => runtime.activate_gui_local_menu_action(

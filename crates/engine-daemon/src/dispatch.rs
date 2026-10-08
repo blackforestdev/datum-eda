@@ -378,7 +378,9 @@ fn dispatch_request_inner(
             }
         }
         "native.describe" => match serde_json::from_value::<NativeDescribeParams>(request.params) {
-            Ok(params) => native_describe_response(request.id, &params.project_root),
+            Ok(params) => {
+                native_describe_response(request.id, &params.project_root, params.confirm_durable)
+            }
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "native.write" => match serde_json::from_value::<NativeWriteParams>(request.params) {
@@ -464,8 +466,17 @@ fn explain_violation_response(
 /// `native.describe`: resolve the native project at `project_root` and report
 /// the stale-guard anchor a `native.write` client needs (current
 /// `model_revision`), plus the manifest name and journal length.
-fn native_describe_response(request_id: Value, project_root: &Path) -> JsonRpcResponse {
-    match ProjectResolver::new(project_root).resolve() {
+fn native_describe_response(
+    request_id: Value,
+    project_root: &Path,
+    confirm_durable: bool,
+) -> JsonRpcResponse {
+    let resolved = if confirm_durable {
+        eda_engine::api::native_write::durability::resolve_durable(project_root)
+    } else {
+        ProjectResolver::new(project_root).resolve()
+    };
+    match resolved {
         Ok(model) => success_response(
             request_id,
             json!({
@@ -474,6 +485,13 @@ fn native_describe_response(request_id: Value, project_root: &Path) -> JsonRpcRe
                 "project_name": model.project.name,
                 "model_revision": model.model_revision.0,
                 "journal_len": model.journal.len(),
+                "durability_confirmed": confirm_durable,
+                "transaction_tip": eda_engine::revision::transaction_tip(&model.journal),
+                "diagnostics": model.diagnostics,
+                "transactions": model.journal.iter().map(|t| json!({
+                    "batch_id":t.batch_id,"transaction_id":t.transaction_id,
+                    "reason":t.provenance.reason,"after_model_revision":t.after_model_revision.0
+                })).collect::<Vec<_>>(),
             }),
         ),
         Err(err) => error_response(request_id, -32060, &err.to_string()),
@@ -513,6 +531,7 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
     };
     let actor = params
         .actor
+        .clone()
         .unwrap_or_else(|| "datum-eda-daemon".to_string());
 
     let mut model = match ProjectResolver::new(&params.project_root).resolve() {
@@ -531,6 +550,39 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
             ),
         );
     }
+    if matches!(
+        params.verb.as_str(),
+        "datum.pcb.move_component" | "datum.journal.undo" | "datum.journal.redo"
+    ) && params.expected_model_revision.is_none()
+    {
+        return error_response(
+            request_id,
+            -32602,
+            "native board editing requires expected_model_revision",
+        );
+    }
+    if matches!(
+        params.verb.as_str(),
+        "datum.pcb.move_component" | "datum.journal.undo" | "datum.journal.redo"
+    ) && eda_engine::revision::transaction_tip(&model.journal) != params.expected_transaction_tip
+    {
+        return error_response(
+            request_id,
+            -32061,
+            "stale expected transaction tip; native edit refused",
+        );
+    }
+    if matches!(
+        params.verb.as_str(),
+        "datum.journal.undo" | "datum.journal.redo"
+    ) {
+        return super::native_history::history_response(
+            request_id,
+            params,
+            model,
+            WriteProvenance::new(actor, source, reason),
+        );
+    }
     let Some(verb) = find_native_write_verb(&params.verb) else {
         return error_response(
             request_id,
@@ -540,7 +592,7 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
     };
 
     let provenance = WriteProvenance::new(actor, source, reason);
-    let prepared = {
+    let mut prepared = {
         let context = NativeWriteContext {
             model: &model,
             project_root: &params.project_root,
@@ -571,6 +623,9 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
         );
     }
 
+    if let Some(batch_id) = params.batch_id {
+        prepared.batch.batch_id = batch_id;
+    }
     let primary_object_id = prepared.primary_object_id;
     let operation_count = prepared.batch.operations.len();
     match commit_prepared(&mut model, &params.project_root, prepared) {

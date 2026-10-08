@@ -19,8 +19,10 @@
 //! journal provenance are byte-for-byte the CLI's historical behavior.
 
 pub mod pad_materialization;
+mod verb_registry;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+pub(crate) use verb_registry::VERBS;
 
 use crate::board::PlacedPackage;
 use crate::error::EngineError;
@@ -151,6 +153,18 @@ pub fn build_edit_board_package(
     package_id: ObjectId,
     edit: BoardPackageEdit,
 ) -> Result<PreparedWrite, EngineError> {
+    if matches!(edit, BoardPackageEdit::Position { .. }) {
+        let packages = load_board_packages(model)?;
+        let package = packages.get(&package_id).ok_or(EngineError::NotFound {
+            object_type: "board package",
+            uuid: package_id,
+        })?;
+        if package.locked {
+            return Err(EngineError::Operation(
+                "cannot move a locked Footprint".into(),
+            ));
+        }
+    }
     let operation = match edit {
         BoardPackageEdit::Position { x, y } => {
             Operation::SetBoardPackagePosition { package_id, x, y }

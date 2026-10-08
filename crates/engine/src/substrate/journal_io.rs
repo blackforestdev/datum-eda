@@ -208,7 +208,7 @@ pub(super) fn read_journal_cursor(
     (cursor, Vec::new())
 }
 
-pub(super) fn write_journal_cursor(
+pub(crate) fn write_journal_cursor(
     project_root: &Path,
     cursor: &JournalCursor,
 ) -> Result<(), EngineError> {

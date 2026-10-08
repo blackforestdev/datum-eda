@@ -241,6 +241,13 @@ impl RevisionAuthorityStore {
         lease: &ProjectWriteLease,
     ) -> Result<RevisionStoreState, EngineError> {
         lease.validate(self.project_root()?)?;
+        // A complete line can be visible after append fsync failed. Establish
+        // the journal commit point before adopting/promoting any linked stage.
+        let journal_path = transaction_journal_path(self.project_root()?);
+        if journal_path.exists() {
+            File::open(&journal_path)?.sync_all()?;
+            sync_parent(&journal_path)?;
+        }
         self.inspect_and_recover_inner(project_id, journal)
     }
 

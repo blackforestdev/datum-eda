@@ -118,6 +118,7 @@ impl App {
             changed |= runtime.poll_console_lifetime();
             changed |= runtime.poll_native_selection_tick();
             changed |= runtime.poll_native_run();
+            changed |= runtime.poll_native_edit();
             self.frames.wake_at(runtime.selection_tick);
             if runtime.application_terminal_shutdown_complete() {
                 event_loop.exit();

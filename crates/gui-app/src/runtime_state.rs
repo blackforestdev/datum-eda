@@ -17,6 +17,7 @@ pub(super) struct Runtime {
     pub(super) session: LiveDesignSession,
     pub(super) selection_read_cache: runtime_selection::SelectionReadCache,
     pub(super) selection_run: runtime_selection_run::RunWork,
+    pub(super) native_edit: runtime_native_edit::EditWork,
     pub(super) native_selection: Option<runtime_selection::NativeSelectionSession>,
     pub(super) selection_gesture: Option<datum_gui_viewport::selection_gesture::SelectionGesture>,
     pub(super) selection_evaluation: Option<selection_region_evaluation::RegionEvaluation>,

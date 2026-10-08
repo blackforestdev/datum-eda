@@ -44,8 +44,30 @@ pub(super) fn translate_board_package_pads(
             .ok_or_else(|| {
                 EngineError::Validation("board pad position.y is not an integer".to_string())
             })?;
-        position.insert("x".to_string(), serde_json::Value::Number((x + dx).into()));
-        position.insert("y".to_string(), serde_json::Value::Number((y + dy).into()));
+        position.insert(
+            "x".to_string(),
+            serde_json::Value::Number(
+                x.checked_add(dx)
+                    .ok_or_else(|| {
+                        EngineError::Validation(
+                            "Pad translation exceeds integer coordinates".into(),
+                        )
+                    })?
+                    .into(),
+            ),
+        );
+        position.insert(
+            "y".to_string(),
+            serde_json::Value::Number(
+                y.checked_add(dy)
+                    .ok_or_else(|| {
+                        EngineError::Validation(
+                            "Pad translation exceeds integer coordinates".into(),
+                        )
+                    })?
+                    .into(),
+            ),
+        );
     }
     Ok(())
 }

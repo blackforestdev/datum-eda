@@ -21,6 +21,14 @@ pub(super) fn cli_prefix() -> Result<Vec<String>> {
 }
 
 fn resolve_companion() -> Result<String> {
+    resolve_binary_companion("datum-eda", "datum-eda-cli")
+}
+
+pub(super) fn resolve_daemon_companion() -> Result<PathBuf> {
+    resolve_binary_companion("eda-engine-daemon", "eda-engine-daemon").map(PathBuf::from)
+}
+
+fn resolve_binary_companion(name: &str, package: &str) -> Result<String> {
     let exe = std::env::current_exe().context("locate GUI executable")?;
     let root = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
@@ -28,7 +36,7 @@ fn resolve_companion() -> Result<String> {
         .ok();
     let profile_dir =
         executable_profile_directory(&exe).context("locate CLI companion directory")?;
-    let binary = profile_dir.join("datum-eda");
+    let binary = profile_dir.join(name);
     // Workspace launches may rebuild only the GUI. Cargo must establish the
     // companion's source freshness, rather than inferring compatibility from
     // the mere existence or modification time of a sibling executable.
@@ -55,9 +63,9 @@ fn resolve_companion() -> Result<String> {
                 "build",
                 "--quiet",
                 "-p",
-                "datum-eda-cli",
+                package,
                 "--bin",
-                "datum-eda",
+                name,
                 "--profile",
                 profile,
             ])

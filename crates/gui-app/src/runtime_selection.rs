@@ -435,6 +435,10 @@ impl Runtime {
     }
 
     pub(super) fn dispatch_session_command(&mut self, command: SessionCommand) -> bool {
+        if matches!(command, SessionCommand::CancelAuthoringGesture) && self.cancel_native_move() {
+            return true;
+        }
+
         if let Some(handled) = self.dispatch_native_artifact_command(&command) {
             return handled;
         }

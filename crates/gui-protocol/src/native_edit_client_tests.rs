@@ -1,0 +1,48 @@
+//! Required P0 typed transport rehearsal over the same owned writer companion.
+use super::*;
+
+#[test]
+#[ignore = "requires owned DATUM_FIRST_EDIT_PROJECT; mutates and restores its name"]
+fn first_edit_p0_transport_and_stale_refusal() {
+    let root = PathBuf::from(std::env::var_os("DATUM_FIRST_EDIT_PROJECT").unwrap());
+    let client = NativeProjectClient::spawn().unwrap();
+    let initial = client.describe(&root).unwrap();
+    let preimage = std::fs::read(root.join("project.json")).unwrap();
+    let id = Uuid::new_v4();
+    let result=client.call("native.write",json!({
+        "project_root":root,"verb":"datum.project.set_name","params":{"name":"First edit transport rehearsal"},
+        "actor":"datum-gui","source":"tool","reason":format!("P0 typed transport {id}"),
+        "expected_model_revision":initial["model_revision"],"batch_id":id
+    }),id).unwrap();
+    assert_eq!(result["status"], "applied");
+    let next = client.describe(&root).unwrap();
+    assert_eq!(next["project_name"], "First edit transport rehearsal");
+    let stale = NativeEditIntent::new(
+        root.clone(),
+        serde_json::from_value(initial["project_id"].clone()).unwrap(),
+        initial["model_revision"].as_str().unwrap().into(),
+        serde_json::from_value(initial["transaction_tip"].clone()).unwrap(),
+        NativeEditAction::Save,
+    );
+    assert!(
+        client.execute(&stale).is_err(),
+        "stale prepared intent cannot acknowledge current Project"
+    );
+    let tip = serde_json::from_value(next["transaction_tip"].clone()).unwrap();
+    let undo = NativeEditIntent::new(
+        root.clone(),
+        stale.project_id,
+        next["model_revision"].as_str().unwrap().into(),
+        Some(tip),
+        NativeEditAction::Undo { expected_tip: tip },
+    );
+    assert!(client.execute(&undo).unwrap().applied);
+    assert_eq!(
+        std::fs::read(root.join("project.json")).unwrap(),
+        preimage,
+        "P0 undo byte-exact"
+    );
+    eprintln!(
+        "P0 typed native rename; independent journal describe; stale intent refused; canonical undo byte-exact"
+    );
+}

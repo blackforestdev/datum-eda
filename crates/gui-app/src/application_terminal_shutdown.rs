@@ -7,6 +7,7 @@ impl Runtime {
         if self.application_shutdown_started.is_some() {
             return;
         }
+        self.cancel_native_move();
         let started = Instant::now();
         let deadline = started + Duration::from_millis(GLOBAL_SHUTDOWN_MS);
         self.application_shutdown_started = Some(started);
@@ -63,6 +64,7 @@ impl Runtime {
         self.application_shutdown_started.is_some()
             && !self.application_shutdown_blocked
             && self.terminal_sessions.all_sessions_closed()
+            && !self.native_edit.pending()
     }
 
     pub(super) fn retry_application_terminal_shutdown(&mut self) {
