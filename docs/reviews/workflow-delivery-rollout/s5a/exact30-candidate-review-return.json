@@ -13,9 +13,9 @@
   "recipient": "Existing reserved owner-facing independent audit/review session; no replacement appointed.",
   "delivery_route": "Shared repository handoff and dat-uvt-s5a-build-1wv comment; no direct session IPC endpoint available.",
   "actual_reviewer_receipt_observed": true,
-  "review_status": "Corrected candidate returned; reserved bounded re-review pending, no PASS inferred.",
+  "review_status": "PASS for reserved exact30 bounded re-review; full C04-C06 remain pending",
   "specification_findings": "Owner reports pinned specification PASS with no mandatory findings; implementation acceptance is separate.",
-  "request": "Reserved reviewer: bounded re-review of mandatory EXACT30-IR-01 correction at the pinned implementation_commit/source_blob and the single regression. Retain prior review six focused PASS results at their scope; return commit/blob-qualified finding disposition. No specification review or renewed authorization requested.",
+  "request": "Reserved exact30 bounded re-review is complete with owner-reported PASS. Candidate remains prepared for the existing reserved C05 review; C04 is selected and incomplete, C05 has not advanced.",
   "focused_review_questions": [
     "Does Exact world_pad_outline now derive intrinsic aperture dimensions through pad_dimensions_nm, with the existing LOD consumer receiving the corrected outline?",
     "Does the regression establish rotated/inset aperture extents and conservative-bound independence while preserving integer caller-bound behavior?"
@@ -26,7 +26,7 @@
   "C06_accepted": false,
   "implementation_base_commit": "af777151d2947d3bae312fce7fe503ca48add3cc",
   "previous_return_packet_commit": "50b9218b873102966723915353c134dfac8c5788",
-  "review_receipt_source": "Owner-reported reserved independent audit session result; original source af777151 / packet50b9218b.",
+  "review_receipt_source": "Owner-reported reserved exact30 re-review PASS at 70f8faa5 / de0ef57f; prior REVISE retained in prior_candidate_review.",
   "prior_candidate_review": {
     "outcome": "REVISE",
     "source_commit": "af777151d2947d3bae312fce7fe503ca48add3cc",
@@ -39,7 +39,7 @@
   "finding_dispositions": [
     {
       "id": "EXACT30-IR-01",
-      "status": "implemented correction; pending independent bounded re-review",
+      "status": "resolved by reserved independent bounded re-review PASS",
       "cause": "world_pad_outline used conservative bounds for intrinsic Exact PadCenter dimensions; LOD consumed the inflated outline.",
       "correction": "Exact PadCenter uses existing pad_dimensions_nm; Integer retains caller-supplied bounds. Rotation/inset and LOD consumer remain unchanged.",
       "source_path": "crates/gui-render/src/render/world_primitives.rs",
@@ -60,5 +60,20 @@
     "observed_companion_cli_sha256": "589d8ae166e27fe61eee712e6a79375fc3e86693e6eb910064c66b0452b08d64",
     "cargo_lock_sha256": "b566a5b6b876e3c1f13674105630af35e8e2294bacd0ffb6b563d0d836343c4f",
     "native_visual_qualification": "pending; no new native/C04 claim"
-  }
+  },
+  "bounded_re_review_receipt": {
+    "source": "Owner-reported reserved independent audit session",
+    "outcome": "PASS",
+    "source_commit": "70f8faa5bcb4ce434a04abea7d83728eac80499f",
+    "source_blob": "149d1857a16568dfb216b27c9039ff7fea739276",
+    "packet_commit": "de0ef57f01487e4fd865584e88972a8ab423b2fb",
+    "independent_regression": {
+      "passed": 1,
+      "failed": 0
+    },
+    "prior_focused_results": "Six prior results remain valid at their scopes",
+    "resolved_finding": "EXACT30-IR-01",
+    "acceptance_scope": "bounded exact30 correction only; not full C04-C06"
+  },
+  "C04_native_addendum": "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json"
 }

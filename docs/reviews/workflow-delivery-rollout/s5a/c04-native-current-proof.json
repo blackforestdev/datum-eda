@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "kind": "S5A-C04 bounded native outcome addendum",
+  "implementation_source_commit": "70f8faa5bcb4ce434a04abea7d83728eac80499f",
+  "implementation_source_blob": "149d1857a16568dfb216b27c9039ff7fea739276",
+  "reviewed_packet_commit": "de0ef57f01487e4fd865584e88972a8ab423b2fb",
+  "reserved_exact30_review": {
+    "source": "Owner-reported reserved independent audit session",
+    "outcome": "PASS",
+    "source_commit": "70f8faa5bcb4ce434a04abea7d83728eac80499f",
+    "source_blob": "149d1857a16568dfb216b27c9039ff7fea739276",
+    "packet_commit": "de0ef57f01487e4fd865584e88972a8ab423b2fb",
+    "independent_regression": {
+      "passed": 1,
+      "failed": 0
+    },
+    "prior_focused_results": "Six prior results remain valid at their scopes",
+    "resolved_finding": "EXACT30-IR-01",
+    "acceptance_scope": "bounded exact30 correction only; not full C04-C06"
+  },
+  "gui_sha256": "5d9a65751440d0908df80811aa633173f2c9f405eb72e04c1f123cd66a4b308e",
+  "cli_sha256": "589d8ae166e27fe61eee712e6a79375fc3e86693e6eb910064c66b0452b08d64",
+  "cargo_lock_sha256": "b566a5b6b876e3c1f13674105630af35e8e2294bacd0ffb6b563d0d836343c4f",
+  "native_configuration": {
+    "input_backend": "X11 on KDE Wayland desktop, DISPLAY=:1; WAYLAND_DISPLAY removed",
+    "adapter": "Intel HD Graphics P630 (KBL GT2), Vulkan/Mesa; detailed initialization preserved in archive",
+    "settings": {
+      "XDG_SESSION_TYPE": "wayland",
+      "DISPLAY": ":1",
+      "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-native-current/native-majority.log",
+      "DATUM_GUI_VERBOSE_LOG": "1",
+      "DATUM_ACTION_EVIDENCE": "1",
+      "EDA_CLI_BIN": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda"
+    },
+    "ordinary_binary": "target/debug/datum-gui",
+    "launch": "target/debug/datum-gui --project-root target/s5a-c03-u5-majority-v1",
+    "scope": "Opt-in asynchronous diagnostic observation, production input dispatch; no fault injection or availability override"
+  },
+  "completed_native_behavior": [
+    {
+      "action": "rectangle 7/14",
+      "sequence": 256,
+      "actual_members": []
+    },
+    {
+      "action": "rectangle 8/14",
+      "sequence": 257,
+      "actual_members": [
+        [
+          "Symbol",
+          "d5032e68-e22b-47af-a043-9dfa3a8b9906",
+          ""
+        ]
+      ]
+    },
+    {
+      "action": "lasso 7/14",
+      "sequence": 258,
+      "actual_members": []
+    },
+    {
+      "action": "lasso 8/14",
+      "sequence": 259,
+      "actual_members": [
+        [
+          "Symbol",
+          "d5032e68-e22b-47af-a043-9dfa3a8b9906",
+          ""
+        ]
+      ]
+    },
+    {
+      "action": "pinless anchor acquisition",
+      "sequence": 261,
+      "actual_members": [
+        [
+          "Symbol",
+          "1e6478fa-6d06-4141-b87b-2cb407f54404",
+          ""
+        ]
+      ]
+    },
+    {
+      "action": "empty click preserves selection",
+      "sequence": 261,
+      "actual_members": [
+        [
+          "Symbol",
+          "1e6478fa-6d06-4141-b87b-2cb407f54404",
+          ""
+        ]
+      ]
+    },
+    {
+      "action": "Ctrl+A complete two parent membership",
+      "sequence": 262,
+      "actual_members": [
+        [
+          "Symbol",
+          "1e6478fa-6d06-4141-b87b-2cb407f54404",
+          ""
+        ],
+        [
+          "Symbol",
+          "d5032e68-e22b-47af-a043-9dfa3a8b9906",
+          ""
+        ]
+      ]
+    },
+    {
+      "action": "Ctrl region removes pinless parent",
+      "sequence": 263,
+      "actual_members": [
+        [
+          "Symbol",
+          "d5032e68-e22b-47af-a043-9dfa3a8b9906",
+          ""
+        ]
+      ]
+    },
+    {
+      "action": "Shift region restores pinless parent",
+      "sequence": 264,
+      "actual_members": [
+        [
+          "Symbol",
+          "1e6478fa-6d06-4141-b87b-2cb407f54404",
+          ""
+        ],
+        [
+          "Symbol",
+          "d5032e68-e22b-47af-a043-9dfa3a8b9906",
+          ""
+        ]
+      ]
+    },
+    {
+      "action": "Escape deselects",
+      "sequence": 265,
+      "actual_members": []
+    },
+    {
+      "action": "Escape cancels in-flight region",
+      "sequence": 265,
+      "actual_members": []
+    },
+    {
+      "action": "subsequent pinless Symbol Object",
+      "sequence": 266,
+      "actual_members": [
+        [
+          "Symbol",
+          "1e6478fa-6d06-4141-b87b-2cb407f54404",
+          ""
+        ]
+      ]
+    }
+  ],
+  "native_majority_result": "12 assertions passed; 7-of-14 refusal and 8-of-14 complete Symbol acquisition for both rectangle/lasso, pinless anchor, empty click preserves selection, Ctrl+A complete parents, Ctrl removal/Shift restoration, Escape deselection/cancel, subsequent Symbol Object",
+  "native_nonmutation": "All majority fixture source and journal hashes before/after match, checked again at packaging. Ephemeral terminal metadata excluded as in existing replay.",
+  "gpu_result": "majority native owner-drop receipt 410/410 completed; no timeout, recovery-stop or panic in this trial",
+  "scope_partial_results": [
+    {
+      "sequence": 7,
+      "behavior": "Track Object rendered canonical Project metric width 5.080mm"
+    },
+    {
+      "sequence": 10,
+      "behavior": "Run acquired complete two Track identities"
+    },
+    {
+      "sequence": 12,
+      "behavior": "Hiding L1 retains both Run identities and marks both hidden"
+    }
+  ],
+  "scope_partial_boundary": "Only these pre-contamination state receipts credited. Overall metric scope trial failed after external keyboard input; no post-hide cancellation, subsequent interaction, imperial or reopen claim.",
+  "runner_failures_preserved": [
+    "Prior corrected-binary Pad-parent trials lost focus to Spectacle; results are not credited. Focus restoration was added to the existing target-only replay.",
+    "Shared native desktop received physical C O P P E R keys outside the scope replay; later Escape was not delivered to the intended window.",
+    "Controlled-close timeouts retained; dat-kiel remains separate, no shutdown qualification."
+  ],
+  "remaining_executable_proof_blocker": "Current unattended route uses the shared active desktop. Observed focus loss and concurrent keyboard input make remaining scripted native trials unreliable and risk interfering with owner work. No existing Xvfb/Xephyr executable or isolated input route is available. No new input-injection infrastructure introduced.",
+  "retained_evidence": [
+    "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008-accessible.json",
+    "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
+    "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
+  ],
+  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Corrected-binary exact30 both-face replay/appearance not qualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
+  "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete.",
+  "C03_complete": true,
+  "C04_complete": false,
+  "C05_completed": false,
+  "C06_accepted": false,
+  "boundaries": "No new product rules, representation, dependency, persistence, tolerance, timeout, performance budget, prototype edit, CAM/T04 waiver, successor authorization or acceptance change.",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-evidence.tar.xz",
+    "sha256": "917c9b5427d542d5690f95ee1ca140b3e537bbca80c6ca8ee3f9351de44db672"
+  }
+}
