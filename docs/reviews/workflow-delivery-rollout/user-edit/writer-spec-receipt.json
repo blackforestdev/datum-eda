@@ -1,0 +1,180 @@
+{
+  "packet": "UED-FIRST-MOVE-01-WRITER-REVIEW",
+  "kind": "independent_specification_review",
+  "outcome": "PASS",
+  "timestamp_utc": "2026-10-08T20:27:05.965701+00:00",
+  "reviewer": {
+    "name": "reserved audit-agent",
+    "thread_id": "01a0e343-3d9c-70f1-899e-5bd239513383"
+  },
+  "candidate_commit": "49ef303e2f1ee7290fc00dfef47ae72d447f3442",
+  "proposal_path": "docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md",
+  "proposal_blob": "e9a0991f81aa8777e6acfef38e6d06a4c1ccc068",
+  "production_source_commit": "e7fd1b28dd2c8ecb79eab6a7f30a5ed594f6c8b4",
+  "source_pins_verified": 26,
+  "production_crate_diff_since_source": [],
+  "mandatory_findings": [],
+  "clauses": [
+    {
+      "id": "WRITER-ENTRY-POINTS",
+      "outcome": "PASS",
+      "evidence": "W2/W4 cover canonical design commit, native/CLI/daemon callers, undo/redo, authority-only revision commits, backup export/restore/undo restore and resolver recovery. Genesis remains its existing separate absent-root publication path."
+    },
+    {
+      "id": "FAILURE-TIMELINE",
+      "outcome": "PASS",
+      "evidence": "W4 supplies simultaneous R intents, A commits R+1, B refuses stale R, process death before/after append, and subsequent guarded reconciliation. W3 preserves uncertain committed outcomes without blind retry."
+    },
+    {
+      "id": "SERIALIZATION-MECHANISM",
+      "outcome": "PASS",
+      "evidence": "W1 kernel descriptor ownership plus W2 fresh guarded preimage addresses actual create-new/PID-unlink and stale in-memory validation paths. Daemon-only alternative is correctly rejected because CLI and in-process engine consumers also write."
+    },
+    {
+      "id": "LOCK-AND-RECOVERY",
+      "outcome": "PASS",
+      "evidence": "Stable canonical-root coordination inode remains present; no unlink/reap, descriptor cloning or child handoff. Symlink/nonregular/inode checks, nonblocking contention and borrowed opaque internal lease are specified. Recovery must reselect under the held guard, unlike current pre-acquisition candidate selection."
+    },
+    {
+      "id": "DURABILITY-PLATFORM",
+      "outcome": "PASS",
+      "evidence": "W1/W3 retain file and directory fsync, journal append commit point, guarded promotion/cursor completion and committed-stage linkage. Local cooperating Linux candidate writers are explicit assumptions; old uncooperative binaries, network filesystems and other platforms are not declared qualified."
+    },
+    {
+      "id": "TIP-AND-CONFORMANCE",
+      "outcome": "PASS",
+      "evidence": "W2 compares caller revision, applicable transaction tip, object revisions, root/project identity, lock and source guards against freshly resolved persisted state before electrical composition/inverse/staging. Finite two-process, stale-intent, kill/fault, alias, corrupt-stage and restore-inode proofs are required, not claimed passing."
+    },
+    {
+      "id": "CONSUMER-HANDOFF",
+      "outcome": "PASS",
+      "evidence": "W4 names engine commit/history/native context, resolver/store/cache, authority/backup, CLI/Preferences, daemon/registry/GUI and genesis/materialization. First move remains typed, persistent-root based and separate from reimport; native Save is durability acknowledgement rather than another writer."
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "outcome": "PASS",
+      "evidence": "This actual source-backed specification review is performed by the reserved audit thread, distinct from the manager and implementer. All 26 readiness source pins match; the exact PM060 blob matches. No compilation or implementation replay substitutes for this specification assessment."
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "outcome": "PASS",
+      "evidence": "Proposal remains unratified by this reviewer. Owner-appointed manager may record this PASS and exercise only the already recorded conditional PWO-C03 delegation after checking that the reviewed pin is unchanged."
+    },
+    {
+      "id": "IMPLEMENTATION-OBLIGATION",
+      "outcome": "PASS",
+      "evidence": "Finite writer correction and first-footprint implementation/proof/review remain UED-C06/C07 obligations. This receipt neither completes implementation nor closes broad PWO/GWP/NA/S5A/CAM/HUMAN obligations."
+    }
+  ],
+  "implementation_watchpoints": [
+    "All checks affecting mutation must run on the guarded fresh model, including operation-specific source guards, inverses, electrical composition and history target/tip selection; retain the exact originally submitted GUI target and revision.",
+    "Guard-taking public APIs need explicit internal held-lease paths so resolve/recovery/commit do not recursively acquire an independently opened descriptor. Read-only snapshot paths must not recover or publish stages.",
+    "Durability proof must cover newly created ancestor directory entries, torn append/failed fsync and cursor interruptions, not merely a file sync and successful normal return. Uncertain outcomes need transaction-correlated reconciliation.",
+    "The persistent coordination file must not make the read cache permanently busy; use real contention/validity. Restore swaps only its revision store while preserving the coordination inode.",
+    "Pin every writable first-edit GUI/CLI/daemon executable to the same candidate and identify the local filesystem; mixed old writable binaries are unsupported, not silently interoperable."
+  ],
+  "verification": {
+    "builds": 0,
+    "native_runs": 0,
+    "new_runtime_tests": 0,
+    "method": "Read-only clause/source review, exact Git/blob and 26 hash checks, writer entry search, source timeline/durability inspection and primary API documentation verification",
+    "rustc": "1.98.0 (88d9e12ae 2026-08-18)"
+  },
+  "external_sources": [
+    {
+      "title": "Rust File try_lock, unlock and platform behavior",
+      "url": "https://doc.rust-lang.org/std/fs/struct.File.html#method.try_lock",
+      "assessment": "API stable since 1.89; nonblocking exclusive acquisition, Unix flock behavior and duplicated/inherited descriptor lifetime support the proposed local protocol assumptions. This verifies primitive availability, not Datum conformance."
+    }
+  ],
+  "inspected_file_pins": [
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md",
+      "sha256": "e5ff57ebbb50787e097d1edd8706bb34dde697d55ec72f69b696bd4877fc0158"
+    },
+    {
+      "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+      "sha256": "69b3ec4fd8dec69e5224b3d0d2ce97e61b72464b9186fabe9d4d261db3628b44"
+    },
+    {
+      "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+      "sha256": "a70d39d2882c78308db773b2fd36a7b3a01f8fc8e7c2d44eac4dd87824a873bd"
+    },
+    {
+      "path": "research/process-quality/FOUNDATION_MANUAL_WORKFLOW_RESEARCH.md",
+      "sha256": "7926f36d304af51b074b2850a577f3b41325c241583e61792cfe8aca7bc2170f"
+    },
+    {
+      "path": "docs/reviews/workflow-foundation/handoff.md",
+      "sha256": "25174d073b9955075865ab2273f030604ab543101376f424c18da22969136feb"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/clauses/project-writer-ownership.json",
+      "sha256": "0b0e6d43fb250d47ab9225564b33766d988d2c844b5cf6fe593afeb6939f1c99"
+    },
+    {
+      "path": "crates/engine/src/revision/store.rs",
+      "sha256": "81562e4fc4a27e8791c5229047670bd3360df83bd95e5cd8a0bdbb6f6bdfba05"
+    },
+    {
+      "path": "crates/engine/src/revision/authority_store.rs",
+      "sha256": "857c6e7cafc84a214d1c312384fdc75ece024b7728856ed8a831986c59285ec5"
+    },
+    {
+      "path": "crates/engine/src/revision/backup.rs",
+      "sha256": "f98b7db4ee4bafbaac48a7413d20e8473a2b3760e8133f62bf76dd89abdc5748"
+    },
+    {
+      "path": "crates/engine/src/substrate/commit.rs",
+      "sha256": "303eacaae495e02eeacf861eed502b2eb80ea6cec7a15a8c5c576e9b3ae3d4e8"
+    },
+    {
+      "path": "crates/engine/src/substrate/project_resolver.rs",
+      "sha256": "8fe1a1d607b66daf5f0c10b42007f1c5299cc9b20b4223e02901852842f11ded"
+    },
+    {
+      "path": "crates/engine/src/substrate/project_read_cache.rs",
+      "sha256": "95d27984a7e09b2746f970e1fd2405e33b57f64861b467223ed01090497ebaa5"
+    },
+    {
+      "path": "crates/engine/src/substrate/journal.rs",
+      "sha256": "cbbf8c295b416a6000038926a79239ff8c4d8535ec85995ec6aa853d832826ad"
+    },
+    {
+      "path": "crates/engine/src/substrate/journal_io.rs",
+      "sha256": "a9f50504e430bc2d8357fa710ca48829a3dba0092bf9e7c051053a7aa9e28d46"
+    },
+    {
+      "path": "crates/engine/src/substrate/undo_redo.rs",
+      "sha256": "f57d1019b5a53494535e6ee7dae4382f95583e90c1f4f601f6ab185e119d7d35"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/context.rs",
+      "sha256": "599cc0e5ce85c3814a0a4345677941f3405e91e17eabf3f6758a95f76db7db41"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/guards.rs",
+      "sha256": "5520ccce709cd57a863dc3e9955be3e0a8f864bc004235192f46a6104ea26448"
+    },
+    {
+      "path": "crates/engine-daemon/src/dispatch.rs",
+      "sha256": "9be39695bfda0e678b1f30ffffd06f6249ecedcdd23b6b4655ba82c0494e5d69"
+    },
+    {
+      "path": "crates/cli/src/commands/board/component_mutations.rs",
+      "sha256": "c971b8023688d606de634737dcdb88f737f1e05a434bff05ab698034c4ee0d2b"
+    },
+    {
+      "path": "crates/cli/src/commands/project/journal_mutation.rs",
+      "sha256": "93f00410668ddaceb74eb75e3696b73df3670fd0c74a04e466eb92a926bd174e"
+    }
+  ],
+  "next_action": "Implementation manager consumes this actual receipt, records UED-C04 and delegated PWO-C03 disposition for the unchanged pin, synchronizes existing state, then continues the already conditionally authorized writer/first-move implementation without renewed owner approval. This reviewer grants no execution or ratification.",
+  "retained_boundaries": [
+    "No writer code or first-edit feature acceptance",
+    "No whole PWO/GWP/NA/S5A/C04-C06/CAM closure",
+    "No HUMAN/UX or native Wayland waiver",
+    "No new dependency, persistence schema or converter expansion",
+    "No fabricated current implementation test results"
+  ]
+}

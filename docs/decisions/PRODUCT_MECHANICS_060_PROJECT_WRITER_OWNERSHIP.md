@@ -1,6 +1,6 @@
 # Decision 060 — Engine-owned Project writer protocol
 
-Status: **proposed; independent specification review and delegated ratification pending**.
+Status: **ratified for the bounded UED-FIRST-MOVE-01 writer prerequisite**.
 Scope: UED-FIRST-MOVE-01's existing-Project writer prerequisite. This is not a
 new authoring contract or full foundation acceptance.
 
@@ -187,3 +187,23 @@ INDEPENDENT-REVIEW: **pending actual reserved receipt**.
 OWNER-RATIFICATION: **pending delegated manager disposition after PASS**.
 IMPLEMENTATION-OBLIGATION: UED-C06/C07 conditional grant; **not implemented**.
 No whole PWO, GWP W1–W3, S5A C04–C06, NA or CAM/T04 closure is claimed.
+
+## Actual review and delegated ratification
+
+<!-- EVIDENCE:USER-EDIT-DELIVERY:UED-C04-WRITER-PASS -->
+Reserved audit-agent thread 01a0e343-3d9c-70f1-899e-5bd239513383 returned actual
+independent specification PASS at 2026-10-08T20:27:05Z for commit
+49ef303e2f1ee7290fc00dfef47ae72d447f3442, proposal blob
+e9a0991f81aa8777e6acfef38e6d06a4c1ccc068. No mandatory findings; ten bounded
+PWO clauses reviewed, 26 readiness source pins verified. Preserve exact receipt
+in docs/reviews/workflow-delivery-rollout/user-edit/writer-spec-receipt.json.
+This replaces the transport blocker; no new reviewer or self-review was used.
+
+<!-- EVIDENCE:USER-EDIT-DELIVERY:UED-C05-WRITER-RATIFICATION -->
+Appointed manager codex-user-edit-delivery-20261008 checked the unchanged reviewed
+blob and exercises the owner's explicit conditional PWO-C03 delegation: ratify
+W1–W4 and finite implementation obligations for this first-edit scope. UED-C06
+execution proceeds under the retained owner grant. Preserve reviewer watchpoints
+on fresh validation, nonrecursive guards, directory durability, uncertain
+outcomes, cache contention and restore inode preservation. Specification PASS
+is not implementation acceptance; all broader qualification remains unpassed.
