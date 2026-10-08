@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "record_type": "s5a_candidate_reconciliation",
+  "frontier": "UVT-S5A-BUILD",
+  "completion_step": "S5A-C03",
+  "candidate_code_commit": "b59af9f148b26995469c170c41b0f53d0980ee6f",
+  "candidate_tree": "a20aba1ede51d888f858f22694b91b414039a79a",
+  "candidate_gui_sha256": "38ca01d8447c679634e001bedb58e7d0ce81b592370ee0909306016d3b0a9d03",
+  "candidate_cli_sha256": "8af0cb50e5f555c0539d9775cfa767a4f4927eaf9b3e96b49bf09c2b9cda79cb",
+  "cargo_lock_sha256": "b566a5b6b876e3c1f13674105630af35e8e2294bacd0ffb6b563d0d836343c4f",
+  "authority": "Retained approved C02 U1-U5/N01-N17/IR01/D4 plus owner-ratified PM057 D1-D3 and separately explicit profile4 adoption. No new scope or acceptance disposition.",
+  "delivery_commits": [
+    "28752192",
+    "2c3aab90",
+    "b59af9f1"
+  ],
+  "preserved_repairs": [
+    "667de4b7",
+    "90c237be",
+    "1698aedc"
+  ],
+  "proof_bundle": {
+    "path": "crates/test-harness/testdata/selection/s5a_v1/proof-20261008.tar.xz",
+    "sha256": "5de080bd7c0dae1a771e29bbef579f08ff2bf9854cfb4506609414377b69916b",
+    "includes": "existing canonical compound fixture, actual native input/receipts/screenshots, source/executable configuration and focused proof logs; no new fixture population",
+    "replay": "Reuse existing xdotool/qdbus6/Spectacle X11 route. Extract bundled fixture to target/s5a-c04-available-source-20261008/compound-output; build the pinned GUI through scripts/run_cargo_guarded.py and run bundled native_compound.py cap257-final. Script uses the pinned workspace/executable paths; source/executable SHA checks qualify observations. Native Wayland not substituted."
+  },
+  "native_proof": {
+    "candidate_code_commit": "b59af9f148b26995469c170c41b0f53d0980ee6f",
+    "gui_sha256": "38ca01d8447c679634e001bedb58e7d0ce81b592370ee0909306016d3b0a9d03",
+    "cli_sha256": "8af0cb50e5f555c0539d9775cfa767a4f4927eaf9b3e96b49bf09c2b9cda79cb",
+    "exact_schematic_member_count": 257,
+    "exact_schematic_member_oracle": "all257 canonical source UUIDs and root instance paths match the complete acquired set",
+    "native_board_count": 5,
+    "native_track_scope_preserves_whole_board_set": true,
+    "native_mixed_width": true,
+    "terminal_total": 257,
+    "terminal_revision_matches_selected_view": true,
+    "terminal_members_omitted": true,
+    "truncated": true,
+    "omitted_inspection_fields": [
+      "layer_coverage",
+      "non_electrical_members",
+      "projected_layer_coverage"
+    ],
+    "canonical_files_checked": 29,
+    "canonical_files_changed": [],
+    "queue": [
+      [
+        "1",
+        "14",
+        "14"
+      ]
+    ],
+    "healthy_native_close": true,
+    "native256_membership_acquisition": "NOT PROVED: attempted coordinates did not remove a text; existing focused transport256 case reused, not credited as native input",
+    "configuration": "X11/Vulkan on KDE Wayland; Wayland input not credited",
+    "companion_cli_context_get_preserves_exact_native_selection_dto": true
+  },
+  "proof_configuration": {
+    "XDG_SESSION_TYPE": "wayland",
+    "DISPLAY": ":1",
+    "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-available-source-20261008/native-compound-cap257-final.log",
+    "DATUM_GUI_VERBOSE_LOG": "1",
+    "DATUM_RESIZE_CPU_PROBE": "1",
+    "DATUM_ACTION_EVIDENCE": "1"
+  },
+  "configuration_boundary": "X11 on KDE Wayland; Vulkan Intel HD GraphicsP630 (KBL GT2), Mesa25.0.7-2+deb13u1, Fifo/msaa8. No native Wayland input trial is inferred. Diagnostic enabled, no timing qualification collected in this batch.",
+  "reuse_policy": "Existing adequate engine/protocol/geometry/byte/CAM/accessibility proofs retained. Historical native counts and source-test names do not imply current native input, platform accessibility or whole-scope acceptance.",
+  "remaining_latency": "Cold Run roughly0.90s whole-result readiness remains background and tracked dat-cold-run-latency-op2e; no further cold optimization campaign. Existing measured X11 receipts keep their746fb123 binary qualification, not a new timing claim for this38ca01d8 binary.",
+  "implementation_reconciliation": {
+    "U1": "Typed authority, lifetimes and engine membership delivered; PM057 graphics and per-placement Pad source replace old identity-authority gaps. Unsupported30-degree local-centre transform remains a mandatory dependent gap.",
+    "U2": "Shared click/menu/modifier/region/derived acquisition delivered, complete query/view worker and qualified same-preimage reuse preserved; remaining native matrix not replaced by tests.",
+    "U3": "Shared exact inspection/context and accessible projection delivered; this candidate repairs missing-units presentation, current new terminal context and explicit bounded transport omission.",
+    "U4": "Shared source-qualified immediate selection, masks/LOD, material and padlock integration retained; native HUMAN/channel/CAM positives not fully proven.",
+    "U5": "Reuse existing declared fixture families and current persisted29-file compound fixture. Historic fixture/source pins remain unchanged; this packet adds current evidence without rebuilding populations."
+  },
+  "authority_blockers": [
+    {
+      "boundary": "30-degree placement",
+      "actual_behavior": "component_pad_source/projection.rs transforms local Pad centres at0/90/180/270 only; other angles explicitly refuse rounded authority. Required30-degree placed-Pad/Footprint positives are unpassed.",
+      "owner_disposition": "Unresolved. Quarter-turn scope amendment paused; no tolerance or scope narrowing approved.",
+      "dependent_work_only": true
+    },
+    {
+      "boundary": "Manufacturing CAM/T04",
+      "actual_behavior": "Supported exact graphics output and refusal are distinct. Positive rational-centre Track CAM/T04 remains mandatory/open; dat-rational-center-cam-ir1t. Existing placed-Pad CAM transform defect dat-component-pad-cam-transform-ab4v remains separate.",
+      "dependent_work_only": true
+    }
+  ],
+  "review_readiness": {
+    "focused_inspection_of_this_candidate": "ready: exact source/executable/proof pins provided",
+    "reserved_C05_complete_scope_replay": "not ready: C03/C04 not complete; exact missing cases below remain obligations",
+    "C03_complete": false,
+    "C04_complete": false,
+    "C05_performed": false,
+    "C06_accepted": false
+  },
+  "cases": [
+    {
+      "case": "N01",
+      "required_behavior": "Shift-click existing member; Ctrl-click outside object; additive region containing only members; subtractive region containing no members; empty result. Check no manufactured focus, no refusal announcement and unchanged subject.",
+      "required_proof_question": "Existing idempotence survives the new rule.",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_primary_pointer.rs",
+          "sha256": "4bdce9d295efdfb844a137d323afb15ecb3a4c710de3e081aedc265119194377"
+        },
+        {
+          "path": "crates/gui-app/src/runtime_selection.rs",
+          "sha256": "233a26623a664678f5588b841dda9fccd2bdb26d9c62d1a3e2f6272f0082847d"
+        },
+        {
+          "path": "crates/gui-protocol/src/workspace_selection.rs",
+          "sha256": "f262090dcae067cbe99d25b635607fe564abc42e619fd52ab36f94944e0af98c"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Complete per-class native click/Shift/Ctrl/no-op/focus/threshold matrix; current native Ctrl+A and preserved ordinary Object evidence prove subsets only."
+    },
+    {
+      "case": "N02",
+      "required_behavior": "Using separately authorized fixture history, connect E, disconnect B, rename surviving semantic ID, delete Run origin or semantic ID; after a refusal verify fresh complete derivation or dissolve/report. Include undo/recreate under existing lifetime rules, revision during region evaluation, and Escape/focus/capture/content cancellation.",
+      "required_proof_question": "Refusal cannot pin stale membership, resurrect selection or override cancellation/revision exactness.",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection_region.rs",
+          "sha256": "3d5a843c34ed3574ab3a52a55c4dace52e7df52c6e43975a9be4bb7369f4af50"
+        },
+        {
+          "path": "crates/gui-app/src/selection_region_evaluation.rs",
+          "sha256": "6568e772ac1658e30310430a3c27aab713c52d2ce6550b1ee3609e8d1f316521"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Actual rectangle/lasso modifiers, locked shape, clipped dashed boundary, reduced motion and Space ordering; source evaluator/reducer proofs are not native input."
+    },
+    {
+      "case": "N03",
+      "required_behavior": "SOIC eight anchors 4 fail/5 pass; symbol fourteen 7 fail/8 pass; pinless/padless; straight 1/2 fail, 2/2 pass, curve 2/3; rotated text below/exactly/above half; all-island versus missing-island fill; even-odd self-intersecting lasso, zero area",
+      "required_proof_question": "Independent per-class oracle, A3/A6/V4",
+      "implemented_source": [
+        {
+          "path": "crates/gui-protocol/src/selection_geometry_catalog.rs",
+          "sha256": "f5c2fb3da4e8296e7c2140977891a8e468028228bb00c76d043b3c4a445ed3de"
+        },
+        {
+          "path": "crates/engine/src/substrate/component_pad_source/projection.rs",
+          "sha256": "b0e42b740f23c0558095932098faf511596aff776ee954e78a377910f78b7b9a"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native class-majority/path/text/island/lasso oracles. Placed-Pad authoritative source/lifetimes now exist under PM057; mandatory 30-degree local Pad-centre transform remains refused and owner disposition pending, not waived."
+    },
+    {
+      "case": "N04",
+      "required_behavior": "Edge/corner auto-pan in 24px band, stop/diagonal; equal final world regions by distinct pan/zoom paths; small AABB in 100k design; release under pressure evaluates across frames, no partial commit",
+      "required_proof_question": "Prove exactness and pruning, A1\u20135; no camera/preview-dependent membership",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/selection_region_evaluation.rs",
+          "sha256": "6568e772ac1658e30310430a3c27aab713c52d2ce6550b1ee3609e8d1f316521"
+        },
+        {
+          "path": "crates/gui-app/src/runtime_selection_region.rs",
+          "sha256": "3d5a843c34ed3574ab3a52a55c4dace52e7df52c6e43975a9be4bb7369f4af50"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native edge/corner auto-pan, equivalent world regions by distinct camera paths and across-frame dense evaluation under pressure. Existing exact bounded evaluator proof is reused; no new performance campaign."
+    },
+    {
+      "case": "N05",
+      "required_behavior": "Repeat member-hidden/member-filtered cases with complete 256 and 257+ sets, duplicate/mixed panes and keyboard invocation of the same applicable semantic action. Observe Inspector/Console/context and accessible selection/count/hidden state.",
+      "required_proof_question": "Membership and acquisition result match full authoritative resolution regardless of omitted context list. Consumer summaries agree, hidden projection stays absent, filtered-rendered projection stays selected, accessible information discloses membership without color or screenshot-only evidence.",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection.rs",
+          "sha256": "233a26623a664678f5588b841dda9fccd2bdb26d9c62d1a3e2f6272f0082847d"
+        },
+        {
+          "path": "crates/gui-app/src/runtime_selection_hit.rs",
+          "sha256": "e7d420e3ccfd0a85962e91410fb1608b58a3b3a68b09fb7e99cfebed0a9147e0"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native pre-hidden/pre-filtered member and ineligible origin oracles, hidden/locked global authored inventory. Existing source complete-member/D4 evidence remains adequate for unchanged reducer but not native acceptance."
+    },
+    {
+      "case": "N06",
+      "required_behavior": "Deterministic overlapping candidates, Select menu labels/order, preview and Select All; dismiss outside/Escape preserves prior; every seam disabled with reason",
+      "required_proof_question": "Manual ambiguity resolution, B1\u20133; full menu build remains separate",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection_menu.rs",
+          "sha256": "8a80fbd6da85bfbfe421534e0bfda1b13537657439b2881fa938fa3612ebba5f"
+        },
+        {
+          "path": "crates/gui-protocol/src/workspace_layout/selection_menu.rs",
+          "sha256": "86e3b47fa5863d662277d8a3d618e4af56ba5ada1310f6286e78cddc279712b3"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native complete overlap menu order, preview, Select All, dismissal and all disabled seams on both surfaces; focused menu/keyboard proofs exist."
+    },
+    {
+      "case": "N07",
+      "required_behavior": "Revision survivor updates; deleted member drop/report, delete+recreate new ID not selected; undo old ID not resurrected; loss of focus leaves none; stale restored/context IDs drop/report",
+      "required_proof_question": "Lifetime identity, L1\u20134/L6/L8; source setup deltas distinct",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection.rs",
+          "sha256": "233a26623a664678f5588b841dda9fccd2bdb26d9c62d1a3e2f6272f0082847d"
+        },
+        {
+          "path": "crates/gui-protocol/src/selection_resolution.rs",
+          "sha256": "fe67e0221da1ce0d33be221e6deb18184b3e1c82a40fb889a52dc3b811b49709"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native revision delete/recreate/undo/no-resurrection and focus/context restore cases using the existing approved revision variants; engine/protocol lifecycle proof reused."
+    },
+    {
+      "case": "N08",
+      "required_behavior": "Close pane, swap content/sheet, replace Project, missing scene; committed set survives pane loss, gesture cancels, Project replacement clears; duplicate panes have independent cameras, full equal cues only where resolvable",
+      "required_proof_question": "Scope/lifecycle/partial projection, L7/L9/I2/I3",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection.rs",
+          "sha256": "233a26623a664678f5588b841dda9fccd2bdb26d9c62d1a3e2f6272f0082847d"
+        },
+        {
+          "path": "crates/gui-protocol/src/selection_scene.rs",
+          "sha256": "3c777f1eb2a60b6bc964289617a0b335cb7e33d30b8b3bdac4026b70da53548d"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native close/swap/Project replacement/missing scene and duplicate-pane equal cues with independent cameras; current two-pane native focus is a subset."
+    },
+    {
+      "case": "N09",
+      "required_behavior": "Repeat refusal/no-op predicates with 256 and 257+ authoritative members, hidden members and cross-pane projections; omitted context list must not change the outcome. Bus scalar member nets and net parent bodies remain merely-related.",
+      "required_proof_question": "Transport truncation and projection cannot determine membership or violate PM026 mappings.",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection_run.rs",
+          "sha256": "6de14dbf0a347fc9bc62f297c2b8eec7bb5a9fd6a421d7b9c980c78254ce5313"
+        },
+        {
+          "path": "crates/gui-app/src/runtime_selection_run/projection.rs",
+          "sha256": "8d7dfc61fc748d57299aed0d4f1a6a2d63d20ae3fbdf40d31d6b90fe4c62258c"
+        },
+        {
+          "path": "crates/gui-app/src/runtime_selection/publication.rs",
+          "sha256": "ff3b599c10e1068ea0629e96e699489b84857e1cab923e9b56e2156c924f3ae9"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native schematic Wire/Bus/Net tiers, board Net/pad explicit actions, hidden/filter and full D4 positive/refusal/no-op/revision cases. Exact52 Board Run and continued scrolling/Escape/Part are preserved X11 evidence; native Wayland responsiveness remains pending only for that configuration."
+    },
+    {
+      "case": "N10",
+      "required_behavior": "Proposal/Review equal action ID but distinct kinds; explicit Diagnostic fingerprint; commit/discard/check invalidation dissolves/report, equal new fingerprint survives; region/Ctrl+A exclude; no mixed non-authored compound",
+      "required_proof_question": "Artifact lifecycle and nine-kind parity, A7/I1/O5",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection_artifacts.rs",
+          "sha256": "e386f914c6be634ebe3365df70e758e17740302664b6f55865f2c14729c5aba8"
+        },
+        {
+          "path": "crates/gui-protocol/src/selection_artifacts/production.rs",
+          "sha256": "5e24baee068abfe1dca45ae8858bd6c87630bfbb431f323f6c911bcda712fc19"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native Proposal/Review/Diagnostic origin/lane/marker and lifecycle/collision matrix. Generic producer-qualified tuple is now implemented; old generic-authority blocker is superseded, not silently accepted absence."
+    },
+    {
+      "case": "N11",
+      "required_behavior": "Singleton then homogeneous/mixed compounds; All N/per-type switch preserves membership/focus; Common vs Mixed exact canonical quantities 5080000/5080001nm despite equal rounded display; absent/incompatible field Unavailable with reason",
+      "required_proof_question": "Full typed output oracle and scope, O1\u20134/O6\u20137",
+      "implemented_source": [
+        {
+          "path": "crates/gui-protocol/src/selection_view.rs",
+          "sha256": "2679a37e61654c788a0084eee2d2246daed78441a03b9d43cd647f6e637b5d6e"
+        },
+        {
+          "path": "crates/gui-protocol/src/selection_view/quantities.rs",
+          "sha256": "3283f3967a5d8b80ae386d5dea9a3e067e830814069af625715b3cf35b7c3f66"
+        },
+        {
+          "path": "crates/gui-render/src/side_panels/selection_inspector.rs",
+          "sha256": "c5fc6feae1f7b27c639596adaf10fc054f743f1ac9ccfebe6b775e43538e2690"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Other singleton/homogeneous/mixed scopes and inaccessible-property native rows. This candidate proves native Tracks scope preserves all5, width Mixed, and missing Working Units explanation; scalar/source exactness proof reused."
+    },
+    {
+      "case": "N12",
+      "required_behavior": "256 and 257 enumerated AND derived members; origin/semantic identity/focus retained, list omitted only above cap; Inspector/Console/terminal-AI round-trip agree on revision/kind/totals/reasons",
+      "required_proof_question": "Bounded transport without membership loss, O5/I1",
+      "implemented_source": [
+        {
+          "path": "crates/gui-protocol/src/context_envelope.rs",
+          "sha256": "72d22ec7cd02005c5d102332227fa59e107a3a576f223b608c33c4552e3f8266"
+        },
+        {
+          "path": "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
+          "sha256": "68fbcf6ed74680723e24f7e14fd7c2f84d682f34df9d42d35fcb72f1afe4de5b"
+        },
+        {
+          "path": "crates/gui-app/src/terminal_session_controls.rs",
+          "sha256": "7d725ffd9c2253aab67b14d87b4d0b1c23fae5159349e2dd845c9f0cbbeca537"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Actual native256-member input was not acquired in the attempted coordinate trial. Focused256 boundary proof reused explicitly; this candidate natively proves complete257 and current terminal omission metadata. Derived256/257 and all consumer/focus/origin cases remain required."
+    },
+    {
+      "case": "N13",
+      "required_behavior": "Native modified pointer and keyboard invocation of the same acquisition action, keyboard access to Inspector explanation, programmatic reason/action/kind, unchanged accessible selection/count/focus, grayscale/high contrast/reduced motion and no status bar. Announce completed refusal, not pointer-motion updates or no-ops. All cases observe zero Operations, source-shard and journal delta.",
+      "required_proof_question": "One shared reducer and accessible refusal without design writes, mutation guard or screenshot-only acceptance.",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/runtime_selection_region.rs",
+          "sha256": "3d5a843c34ed3574ab3a52a55c4dace52e7df52c6e43975a9be4bb7369f4af50"
+        },
+        {
+          "path": "crates/gui-app/src/runtime_selection_run.rs",
+          "sha256": "6de14dbf0a347fc9bc62f297c2b8eec7bb5a9fd6a421d7b9c980c78254ce5313"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native entry surfaces, inert authoring attempts, drag and gesture/evaluation cancellation across all loss/content/pane cases. Idle Escape and source/journal nonmutation are proven subsets only."
+    },
+    {
+      "case": "N14",
+      "required_behavior": "Two preconfigured Project quantity contexts, source reopen and stale consumer restore; view/scope changes do not rescale geometry or write either Project/Global; no selection history entries",
+      "required_proof_question": "Foundation eight-concern isolation, L8/O6; no new Preferences UI",
+      "implemented_source": [
+        {
+          "path": "crates/gui-protocol/src/selection_view/quantities.rs",
+          "sha256": "3283f3967a5d8b80ae386d5dea9a3e067e830814069af625715b3cf35b7c3f66"
+        },
+        {
+          "path": "crates/gui-app/src/terminal_working_directory.rs",
+          "sha256": "da439b6c035b5744098d7c721bea59abdf6857d3fa6e4f739b3aacb845c86551"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native two-Project quantity contexts/reopen/stale consumer restoration. Existing two-Project source/oracle proof reused; current missing-context inspection/terminal opening remains read-only."
+    },
+    {
+      "case": "N15",
+      "required_behavior": "Whole-owned symbol/footprint and glyph/point silhouettes, hidden no cue, locked grey+approved padlock, selection beats hover, optional focus no extra persistent cue; all eight same/related mappings, channel collisions",
+      "required_proof_question": "V1\u20135/I2\u20133, native goldens + HUMAN panels 1\u20137/9; verify static bytes/uploads/CAM, not appearance alone",
+      "implemented_source": [
+        {
+          "path": "crates/gui-render/src/render/native_selection_overlay.rs",
+          "sha256": "95cad068e33aa40b7d62092bd78dbd3f14b990d2f16c7246b9fb825e2236296a"
+        },
+        {
+          "path": "crates/gui-render/src/render/selection_mask_painter.rs",
+          "sha256": "cfcbeba11b7f78bd011e5ba104d30ed0b34f7cde74550b398a1fa7d30050877e"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Full native ownership/glyph/point/hidden/lock precedence, all8 same/related channel mappings and HUMAN panels1-7/9. Static byte/upload/CAM and material proofs remain scoped evidence, not full human visual acceptance."
+    },
+    {
+      "case": "N16",
+      "required_behavior": "100k authored objects with separate primitive count, sub-2px cues, exactly 65,536 versus overflow; whole-pane exact union, no omitted members, maximal proposal/finding collision; repeated warm select/deselect/cancel/reopen",
+      "required_proof_question": "D1\u20132, bounded capacity/work and preserved channels; HUMAN panels 8/9",
+      "implemented_source": [
+        {
+          "path": "crates/gui-render/src/render/native_selection_overlay/lod.rs",
+          "sha256": "a4a05579fc9505aab9de287eb51d34dafecd72ffcb5d13b1d839b4528ffaf82a"
+        },
+        {
+          "path": "crates/gui-render/src/render/selection_mask.rs",
+          "sha256": "eac8a2bd16f6cd18da059cde576f7eff7fd0957b35a5ed68f8749476d4d7d4e5"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Native100k authored population and separate primitive counts, exact65536/overflow whole-pane union, all channels/maximal collisions, warm/cancel/reopen. Existing dense renderer/resource evidence reused; prescribed C04 diagnostics remain outstanding without a new latency budget."
+    },
+    {
+      "case": "N17",
+      "required_behavior": "Keyboard-only Ctrl+A/Escape/menu and Inspector scope/inventory; terminal/text owns keys; focused versus pointer pane; accessible names, selected/focus/count/Mixed/Unavailable/hidden/locked/dropped states; grayscale/CVD/high contrast/reduced motion",
+      "required_proof_question": "Programmatic and non-color parity; unavailable native accessibility route blocks this row",
+      "implemented_source": [
+        {
+          "path": "crates/gui-app/src/selection_accessibility.rs",
+          "sha256": "d116b407efbe4a14641bd6de5076f8442ca4940f31ca9bdaad467f8499bd8544"
+        },
+        {
+          "path": "crates/gui-app/src/terminal_accessibility_platform/atspi/selection.rs",
+          "sha256": "9ed4b5dd645ea0f48364459a5e51731adb8983ed88305fa2458d4130bd831bac"
+        }
+      ],
+      "disposition": "partial source/native proof; full case not credited",
+      "remaining": "Full native keyboard/terminal ownership/Inspector inventory, platform accessible states, grayscale/CVD/high contrast/reduced motion. Source AT-SPI proof is not a complete native or human assessment."
+    }
+  ]
+}

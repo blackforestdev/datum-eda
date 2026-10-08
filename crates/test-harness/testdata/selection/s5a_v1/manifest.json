@@ -6972,10 +6972,17 @@
     "Native accessibility/non-color/lock asset and maximum mask/cancellation input evidence"
   ],
   "remaining_families": {
-    "class-qualification": "Partial source-bound replay covers existing Pad/Via/Track arc/Zone, schematic drawings, placed parents/Pins, NoConnect and BoardText. Native inputs remain pending; component-Pad positives are blocked by dat-s5a-component-pad-authority-hadv and standalone board graphics by dat-s5a-board-graphic-authority-h8xm.",
-    "non-authored-channels": "Frozen actual route actions and persisted DRC finding fingerprints with nonmutation/reopen proof; native input/channel collision pending. Generic production Proposal action authority remains open under dat-s5a-artifact-lifecycle-7g4l.",
+    "class-qualification": "PM057 delivered native BoardGraphic and per-placement Pad source authority, source-qualified adoption/lifetimes and adapters. Old authority-gap labels are superseded by current candidate reconciliation; mandatory30-degree centre/majority disposition and complete native qualification remain pending. No quarter-turn scope amendment or tolerance.",
+    "non-authored-channels": "Producer-qualified whole-batch Proposal tuple/lifetimes implemented under PM057; finer route identities retained. Existing saved artifact fixtures/source proof reused. Complete native artifact input/channel collision and reserved review remain pending.",
     "scope-and-reopen": "Two preconfigured Projects with distinct quantity contexts and same object UUIDs are frozen/replayed; actual duplicate-pane/native scope inputs remain pending."
   },
   "schema_version": 1,
-  "status": "partial fixture binding; neither C03 closure nor C04/C05/C06 acceptance"
+  "status": "partial fixture binding; neither C03 closure nor C04/C05/C06 acceptance",
+  "current_candidate_reconciliation": {
+    "path": "crates/test-harness/testdata/selection/s5a_v1/candidate-20261008.json",
+    "sha256": "17e7842175da3f4af540a449d5b9ef1ce8a2bfaff6af689e4e6fcb68cdbdcb17",
+    "code_commit": "b59af9f148b26995469c170c41b0f53d0980ee6f",
+    "status": "partial implementation/native proof; C03/C04/C05/C06 not closed",
+    "historical_pins": "Existing production_source, builders, fixture roots and per-file/source hashes remain historical and unchanged."
+  }
 }
