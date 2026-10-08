@@ -382,3 +382,49 @@ A committed geometry change invalidates old copper fill correspondence; stale
 occupied copper is omitted, with no refill or manufacturing waiver. Missing
 schematic/native editor obligations are unchanged. No dependency, prototype,
 persistence representation, timeout, tolerance or scope reduction is introduced.
+
+
+### Owner QA revision — first edit remains undelivered in ordinary use
+
+The owner reports that selecting an object then pressing M produces movement
+delay exceeding five seconds followed by a crash. The appointed manager
+withdraws development availability and reopens UED-C07 under the retained
+first-edit correction grant. Earlier actual independent PASS and logs remain
+valid at their recorded callback/recovery scopes; they do not establish success
+for the failed ordinary input/frame sequence. A focused fixture must include
+production selection, keyboard routing, pointer movement and intervening render
+preparation/submission. Preserve current Project and original KiCad bytes;
+reproduce on a copy and repair demonstrated causes. No successor work, prototype,
+dependency, policy waiver or broader performance campaign is authorized.
+
+### First-edit ordinary frame correction — retained UED-C07 scope
+
+The copied owner-board fixture now drives the ordinary App Wayland/WGPU frame
+loop, production pointer dispatch and normalized M shortcut. It requires an
+actual moving Footprint preview, cancel with exact preimage preservation, a
+commit click on its presented authored label, exact undo/redo, Save and reopened
+revision. Production native deadlines remain authoritative; only scheduled
+script inputs and a finite experiment bound add wakes. Pending writer work uses
+production worker/queue wakes. Physical desktop input is excluded from this
+fixture and physical/HUMAN qualification is not inferred.
+
+Two demonstrated first-edit integration defects are corrected: M picks up the
+single current selected Footprint at the canvas cursor through the existing
+preview builder; presented authored-object hits no longer intercept Move commit
+as selection. Locked/stale refusal, complete geometry, canonical guarded worker,
+selection reconciliation, source identities and original bytes are preserved.
+No new mutation, snapping, persistence, timeout or selection mechanism is added.
+
+The owner failure log is preserved with its exact host, Wayland/Vulkan adapter
+and recovery-stop message. Recovery exhaustion has not reproduced in the corrected
+frame-interleaved trial. The original six-second fixture redraw gap was waiting
+for another redraw, not proof of six seconds executing M or GPU work; that failed
+harness was retained and its scheduler corrected. Ordinary recovery deadline
+transitions now retain their acquisition-attempt/active-time state once, without
+per-frame tracing or a changed protection limit. The precise originating wait
+in the owner failure remains unproven and tracked as
+`dat-first-edit-native-recovery-dhj9`. Development availability stays withdrawn;
+UED-C07 remains in progress pending reserved bounded review and a defensible
+ordinary failure disposition. Prior journal/callback PASS remains scoped; no
+successor or wider acceptance is authorized. Detailed outcomes and raw evidence
+are in `docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json`.

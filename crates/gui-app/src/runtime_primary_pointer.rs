@@ -122,7 +122,13 @@ impl Runtime {
             self.dismiss_terminal_clipboard_menu();
             return true;
         }
-        if let Some(target) = prepared_target {
+        if let Some(target) = prepared_target
+            && !(self.active_tool_is_authoring()
+                && matches!(
+                    target,
+                    HitTarget::AuthoredObject(_) | HitTarget::ReviewAction(_)
+                ))
+        {
             self.trace_click(format!(
                 "primary click ({x:.1}, {y:.1}) presented target {target:?}; hit {}ms; dock {:?}",
                 hit_elapsed.as_millis(),

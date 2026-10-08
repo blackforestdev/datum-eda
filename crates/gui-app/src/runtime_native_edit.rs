@@ -150,6 +150,47 @@ impl Runtime {
         }
         false
     }
+    // The bounded first-edit capability moves one complete Footprint. Never
+    // silently reduce a Run, compound selection or another object to a subset.
+    pub(super) fn begin_selected_native_move(&mut self) {
+        use datum_gui_protocol::{AuthoredSelectionClass, SelectionSubject, SelectionTarget};
+        let SelectionTarget::Native(selected) = &self.workspace().selection else {
+            return;
+        };
+        if selected.stale {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Select a current Footprint before moving",
+            );
+            return;
+        }
+        let SelectionSubject::Object(id) = &selected.subject else {
+            return;
+        };
+        if id.class != AuthoredSelectionClass::Footprint {
+            return;
+        }
+        let Some(target) = self
+            .workspace()
+            .scene
+            .components
+            .iter()
+            .find(|c| c.component_uuid == id.id.to_string())
+            .map(|c| c.object_id.clone())
+        else {
+            return;
+        };
+        let Some((x, y)) = self.last_cursor_pos else {
+            return;
+        };
+        let Some((world, SceneSurface::Board)) = self
+            .prepared_scene()
+            .and_then(|s| s.world_point_at_screen(x, y))
+        else {
+            return;
+        };
+        self.native_move_click(world, Some(target));
+    }
     pub(super) fn native_move_click(&mut self, world: PointNm, target: Option<String>) -> bool {
         if self.native_edit.pending() || self.native_edit.blocked {
             self.log_console_refusal(

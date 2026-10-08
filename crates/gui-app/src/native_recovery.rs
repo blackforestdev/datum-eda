@@ -71,7 +71,16 @@ impl Recovery {
             self.active += now.saturating_duration_since(since);
             self.since = Some(now);
         }
-        if self.active >= LIMIT {
+        if self.active >= LIMIT && !self.failed {
+            // Preserve the originating wait in ordinary-launch failure evidence.
+            // One transition record; no per-frame tracing or deadline change.
+            super::append_gui_diagnostic_line(format!(
+                "native recovery deadline exceeded: drawable={} active_ms={} acquisition_attempts={} episode={}",
+                self.drawable,
+                self.active.as_millis(),
+                self.attempts,
+                self.episode
+            ));
             self.failed = true;
             self.due = None;
             self.since = None;

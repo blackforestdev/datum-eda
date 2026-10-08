@@ -495,7 +495,10 @@ impl Runtime {
                 format!("{} tool active", tool.label()),
             );
         }
-        handled
+        if tool == WorkspaceTool::Move {
+            self.begin_selected_native_move();
+        }
+        handled || self.native_edit.preview.is_some()
     }
 
     fn active_tool_is_authoring(&self) -> bool {
@@ -671,3 +674,6 @@ fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {
 #[cfg(test)]
 #[path = "main_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+mod native_move_frame_tests;

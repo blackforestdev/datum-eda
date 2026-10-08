@@ -1,0 +1,427 @@
+//! Owner-board QA fixture: ordinary App frame loop interleaved with editor input.
+//! In-process input events are not physical Wayland/HUMAN qualification.
+use super::*;
+use std::time::{Duration, Instant};
+use winit::platform::wayland::EventLoopBuilderExtWayland;
+
+struct Fixture {
+    app: App,
+    stage: usize,
+    origin: Option<(f64, f64)>,
+    started: Instant,
+    stage_started: Instant,
+    failure: Option<String>,
+    board_path: std::path::PathBuf,
+    preimage: Vec<u8>,
+    committed: Option<Vec<u8>>,
+    logged_stage: Option<usize>,
+}
+impl Fixture {
+    fn mouse(&mut self, events: &ActiveEventLoop, x: f64, y: f64, click: bool) {
+        let window = self.app.window.as_ref().unwrap().id();
+        let started = Instant::now();
+        self.app.window_event(
+            events,
+            window,
+            WindowEvent::CursorMoved {
+                device_id: winit::event::DeviceId::dummy(),
+                position: winit::dpi::PhysicalPosition::new(x, y),
+            },
+        );
+        if click {
+            for state in [ElementState::Pressed, ElementState::Released] {
+                self.app.window_event(
+                    events,
+                    window,
+                    WindowEvent::MouseInput {
+                        device_id: winit::event::DeviceId::dummy(),
+                        state,
+                        button: MouseButton::Left,
+                    },
+                );
+            }
+        }
+        eprintln!(
+            "move-frame stage={} input_us={} click={click}",
+            self.stage,
+            started.elapsed().as_micros()
+        );
+    }
+    fn advance(&mut self, events: &ActiveEventLoop) {
+        let runtime = self.app.runtime.as_mut().unwrap();
+        if self.logged_stage != Some(self.stage) {
+            eprintln!(
+                "move-frame stage={} redraw_gap_ms={} selection={:?} preview={}",
+                self.stage,
+                self.stage_started.elapsed().as_millis(),
+                match &runtime.workspace().selection {
+                    datum_gui_protocol::SelectionTarget::Native(v) => Some(&v.subject),
+                    _ => None,
+                },
+                runtime.native_edit.preview.is_some()
+            );
+            self.logged_stage = Some(self.stage);
+        }
+        self.stage_started = Instant::now();
+        match self.stage {
+            0 => {
+                let component = runtime
+                    .workspace()
+                    .scene
+                    .components
+                    .iter()
+                    .find(|c| c.component_uuid == "ca340e78-04a5-5307-a024-9c5720a807d2")
+                    .or_else(|| {
+                        runtime
+                            .workspace()
+                            .scene
+                            .components
+                            .iter()
+                            .find(|c| !c.locked)
+                    })
+                    .unwrap()
+                    .clone();
+                // Use an actual Pad hit on this Footprint, through production mouse dispatch.
+                let point = runtime
+                    .workspace()
+                    .scene
+                    .pads
+                    .iter()
+                    .find(|p| p.component_uuid == component.component_uuid)
+                    .and_then(|p| p.center.integer_point())
+                    .unwrap_or(component.position);
+                let prepared = runtime.prepared_scene().unwrap();
+                let v = prepared.scene_viewport;
+                let a = (v.x + 20.0, v.y + 20.0);
+                let wa = prepared.world_point_at_screen(a.0, a.1).unwrap().0;
+                let wb = prepared
+                    .world_point_at_screen(a.0 + 100.0, a.1 + 100.0)
+                    .unwrap()
+                    .0;
+                let x = a.0 as f64 + (point.x - wa.x) as f64 * 100.0 / (wb.x - wa.x) as f64;
+                let y = a.1 as f64 + (point.y - wa.y) as f64 * 100.0 / (wb.y - wa.y) as f64;
+                self.origin = Some((x, y));
+                self.mouse(events, x, y, true);
+            }
+            1 => {
+                eprintln!(
+                    "move-frame M cursor={:?} origin={:?} tool={:?} components={:?}",
+                    runtime.last_cursor_pos,
+                    self.origin,
+                    runtime.workspace().tool,
+                    runtime
+                        .workspace()
+                        .scene
+                        .components
+                        .iter()
+                        .find(|c| c.component_uuid == "ca340e78-04a5-5307-a024-9c5720a807d2")
+                        .map(|c| (&c.component_uuid, &c.object_id, c.locked))
+                );
+                let started = Instant::now();
+                let action = workspace_keyboard::character_action("m", false).unwrap();
+                workspace_keyboard::apply(runtime, action);
+                eprintln!(
+                    "move-frame M_us={} immediate_preview={}",
+                    started.elapsed().as_micros(),
+                    runtime.native_edit.preview.is_some()
+                );
+                self.app.request_redraw_if_needed();
+            }
+            2 => {
+                // Record the owner sequence before accommodating the old two-click adapter.
+                let (x, y) = self.origin.unwrap();
+                self.mouse(events, x + 1.0, y + 1.0, false);
+            }
+            3 => {
+                assert!(
+                    runtime.native_edit.preview.is_some(),
+                    "M must pick up the selected Footprint without another click"
+                );
+                self.app.request_redraw_if_needed();
+            }
+            4..=15 => {
+                let (x, y) = self.origin.unwrap();
+                let delta = (self.stage - 3) as f64 * 2.0;
+                self.mouse(events, x + delta, y + delta, false);
+            }
+            16 => {
+                let preview = runtime
+                    .native_edit
+                    .preview
+                    .as_ref()
+                    .expect("moving preview remains active");
+                let component = runtime
+                    .workspace()
+                    .scene
+                    .components
+                    .iter()
+                    .find(|c| c.component_uuid == preview.component.component_uuid)
+                    .unwrap();
+                assert_ne!(
+                    component.position, preview.component.position,
+                    "pointer movement must translate the selected Footprint"
+                );
+                runtime.dispatch_session_command(SessionCommand::CancelAuthoringGesture);
+                self.app.request_redraw_if_needed();
+            }
+            17 => {
+                assert_eq!(std::fs::read(&self.board_path).unwrap(), self.preimage);
+                let (x, y) = self.origin.unwrap();
+                self.mouse(events, x, y, false);
+                let runtime = self.app.runtime.as_mut().unwrap();
+                assert!(workspace_keyboard::apply(
+                    runtime,
+                    workspace_keyboard::character_action("m", false).unwrap()
+                ));
+                assert!(
+                    runtime.native_edit.preview.is_some(),
+                    "M restarts after cancel"
+                );
+            }
+            18 => {
+                let (x, y) = self.origin.unwrap();
+                self.mouse(events, x + 60.0, y + 30.0, false);
+            }
+            19 => {
+                // The published Footprint label is an AuthoredObject screen hit.
+                // Before the correction it reselected instead of committing Move.
+                let target = &runtime
+                    .native_edit
+                    .preview
+                    .as_ref()
+                    .unwrap()
+                    .component
+                    .object_id;
+                let region = runtime
+                    .presented_hits
+                    .regions()
+                    .iter()
+                    .find(|r| matches!(&r.target, HitTarget::AuthoredObject(id) if id == target))
+                    .expect("rendered Footprint must expose its authored label");
+                let x = (region.rect.x + region.rect.width * 0.5) as f64;
+                let y = (region.rect.y + region.rect.height * 0.5) as f64;
+                eprintln!("move-frame destination presented_hit={:?}", region.target);
+                self.mouse(events, x, y, true);
+                assert!(
+                    self.app.runtime.as_ref().unwrap().native_edit.pending(),
+                    "destination click must commit rather than reselect"
+                );
+            }
+            20 => {
+                if runtime.native_edit.pending() {
+                    return;
+                }
+                assert!(
+                    !runtime.native_edit.blocked,
+                    "committed refresh must be qualified"
+                );
+                let after = std::fs::read(&self.board_path).unwrap();
+                assert_ne!(after, self.preimage);
+                self.committed = Some(after);
+                assert!(runtime.queue_native_history(false));
+            }
+            21 => {
+                if runtime.native_edit.pending() {
+                    return;
+                }
+                assert!(!runtime.native_edit.blocked);
+                assert_eq!(
+                    std::fs::read(&self.board_path).unwrap(),
+                    self.preimage,
+                    "Undo restores preimage"
+                );
+                assert!(runtime.queue_native_history(true));
+            }
+            22 => {
+                if runtime.native_edit.pending() {
+                    return;
+                }
+                assert!(!runtime.native_edit.blocked);
+                assert_eq!(
+                    std::fs::read(&self.board_path).unwrap(),
+                    *self.committed.as_ref().unwrap(),
+                    "Redo restores committed board"
+                );
+                assert!(runtime.queue_native_edit(
+                    datum_gui_protocol::native_edit_client::NativeEditAction::Save
+                ));
+            }
+            23 => {
+                if runtime.native_edit.pending() {
+                    return;
+                }
+                assert!(!runtime.native_edit.blocked);
+                assert_eq!(
+                    std::fs::read(&self.board_path).unwrap(),
+                    *self.committed.as_ref().unwrap()
+                );
+            }
+            _ => {
+                runtime.begin_application_terminal_shutdown();
+                self.stage = 25;
+                return;
+            }
+        }
+        self.stage += 1;
+    }
+}
+impl ApplicationHandler for Fixture {
+    fn resumed(&mut self, events: &ActiveEventLoop) {
+        self.app.resumed(events);
+    }
+    fn window_event(&mut self, events: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
+        // The owner can keep using the desktop. Scripted input enters App directly;
+        // unrelated physical pointer events must not overwrite its cursor reference.
+        if matches!(
+            event,
+            WindowEvent::CursorMoved { .. }
+                | WindowEvent::MouseInput { .. }
+                | WindowEvent::CursorLeft { .. }
+                | WindowEvent::KeyboardInput { .. }
+                | WindowEvent::MouseWheel { .. }
+        ) {
+            return;
+        }
+        let redraw = matches!(event, WindowEvent::RedrawRequested);
+        let started = Instant::now();
+        self.app.window_event(events, id, event);
+        if redraw {
+            eprintln!(
+                "move-frame native_redraw_us={}",
+                started.elapsed().as_micros()
+            );
+            if self.app.frames.rendering_failed(id) {
+                self.failure = Some("ordinary frame coordinator paused rendering".into());
+                events.exit();
+            }
+        }
+    }
+    fn about_to_wait(&mut self, events: &ActiveEventLoop) {
+        let pending = self.app.runtime.as_ref().map(|r| {
+            (
+                r.terminal_production_refresh_pending,
+                r.terminal_workspace_refresh_pending,
+            )
+        });
+        let started = Instant::now();
+        self.app.about_to_wait(events);
+        if self
+            .app
+            .window
+            .as_ref()
+            .is_some_and(|w| self.app.frames.rendering_failed(w.id()))
+        {
+            self.failure = Some("ordinary frame coordinator paused rendering".into());
+            events.exit();
+            return;
+        }
+        if started.elapsed() > Duration::from_millis(100) {
+            eprintln!(
+                "move-frame ordinary_round_ms={} production_workspace_pending={pending:?}",
+                started.elapsed().as_millis()
+            );
+        }
+        if self.stage < 25
+            && self.stage_started.elapsed() >= Duration::from_millis(20)
+            && self.app.runtime.as_ref().is_some_and(|r| {
+                r.surface_transaction.has_presented()
+                    && r.renderer.render_session().prepared().is_some()
+            })
+        {
+            self.advance(events);
+        }
+        if self.started.elapsed() > Duration::from_secs(90) {
+            self.failure = Some(format!(
+                "fixture stopped at stage {} without completion",
+                self.stage
+            ));
+            events.exit();
+        }
+        if self.stage == 25
+            && self
+                .app
+                .runtime
+                .as_ref()
+                .is_some_and(|r| r.application_terminal_shutdown_complete())
+        {
+            events.exit();
+        }
+        // Retain the ordinary native scheduler. Only an actual next script input
+        // adds a wake; pending edits rely on production worker/queue wakes.
+        let script_due = (self.stage < 25
+            && self.app.runtime.as_ref().is_some_and(|r| {
+                !r.native_edit.pending()
+                    && r.surface_transaction.has_presented()
+                    && r.renderer.render_session().prepared().is_some()
+            }))
+        .then_some(self.stage_started + Duration::from_millis(20));
+        let bound = self.started + Duration::from_secs(90);
+        let due = script_due.map_or(bound, |due| due.min(bound));
+        use winit::event_loop::ControlFlow;
+        events.set_control_flow(match events.control_flow() {
+            ControlFlow::Poll => ControlFlow::Poll,
+            ControlFlow::Wait => ControlFlow::WaitUntil(due),
+            ControlFlow::WaitUntil(native) => ControlFlow::WaitUntil(native.min(due)),
+        });
+    }
+}
+
+#[test]
+#[ignore = "requires owned DATUM_FIRST_EDIT_PROJECT copy and native Wayland; focused ordinary edit QA"]
+fn ordinary_app_select_m_move_commit_history_reopen() {
+    let root = std::env::var("DATUM_FIRST_EDIT_PROJECT").unwrap();
+    let path = std::path::Path::new(&root).join("board/board.json");
+    let before = std::fs::read(&path).unwrap();
+    let args =
+        <GuiArgs as clap::Parser>::try_parse_from(["datum-gui", "--project-root", &root]).unwrap();
+    let events = EventLoop::<()>::with_user_event()
+        .with_wayland()
+        .with_any_thread(true)
+        .build()
+        .unwrap();
+    let mut fixture = Fixture {
+        app: App::new(args, events.create_proxy()),
+        stage: 0,
+        origin: None,
+        started: Instant::now(),
+        stage_started: Instant::now(),
+        failure: None,
+        board_path: path.clone(),
+        preimage: before.clone(),
+        committed: None,
+        logged_stage: None,
+    };
+    events.run_app(&mut fixture).unwrap();
+    assert_eq!(
+        std::fs::read(path).unwrap(),
+        fixture.committed.clone().unwrap(),
+        "Save leaves committed bytes unchanged"
+    );
+    assert!(fixture.failure.is_none(), "{:?}", fixture.failure);
+    assert_eq!(fixture.stage, 25);
+    let reopened = load_board_editor_workspace_state(
+        &fixture
+            .app
+            .runtime
+            .as_ref()
+            .unwrap()
+            .workspace()
+            .backing
+            .as_ref()
+            .unwrap()
+            .request,
+    )
+    .unwrap();
+    assert_eq!(
+        reopened.scene.source_revision,
+        fixture
+            .app
+            .runtime
+            .as_ref()
+            .unwrap()
+            .workspace()
+            .scene
+            .source_revision,
+        "reopen resolves saved revision"
+    );
+}

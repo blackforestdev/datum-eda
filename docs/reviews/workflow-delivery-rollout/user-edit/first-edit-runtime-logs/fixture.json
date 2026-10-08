@@ -1,0 +1,39 @@
+{
+  "source_project": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+  "copied_project": "/home/bfadmin/Documents/datum-eda/target/user-edit-qa-fixture/project-224357",
+  "source_commit": "b27adac3f188c864a30b6aed4d829493d7b9778b",
+  "reported_sequence": "Object selection -> M -> pointer move; over five-second delay then crash",
+  "source_hashes": {
+    "board/board.json": "e63ef7be49a6ff55a6d270056e4ec4ec82bb91e02c9f46ce89f21d4796b3bca8",
+    "project.json": "b621f78d159c2a4f21a781e00517f4575ee833febfada7b7a048c6749b88547d",
+    ".datum/journal/transactions.jsonl": "df45c046116904d48f20d453decb82a820d8a2c5d7471b2c4115f61e2e83e299"
+  },
+  "owner_failure_log": "owner-last-native.log",
+  "owner_failure_window": "WindowId(94790203345888)",
+  "configuration": {
+    "XDG_SESSION_TYPE": "wayland",
+    "WAYLAND_DISPLAY": "wayland-0",
+    "DISPLAY": ":1",
+    "WGPU_BACKEND": null,
+    "WGPU_ADAPTER_NAME": null,
+    "EDA_CLI_BIN": null,
+    "DATUM_DIAGNOSTIC_QUEUE_COMPLETION": null,
+    "DATUM_SURFACE_FAULT": null,
+    "DATUM_GUI_VERBOSE_LOG": null
+  },
+  "fixture_input": "In-process production App pointer WindowEvents and production normalized M shortcut; physical desktop input excluded, native Wayland compositor frames retained; no X11.",
+  "pre_repair_executables": {
+    "datum-gui": {
+      "sha256": "139b1207835abf551e35e1c87fe88d09e10c93da8a7c71b4ca97e08fd2941a69",
+      "mtime_ns": 1791497684443953478
+    },
+    "datum-eda": {
+      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd",
+      "mtime_ns": 1791497173162559514
+    },
+    "eda-engine-daemon": {
+      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186",
+      "mtime_ns": 1791497298110882759
+    }
+  }
+}

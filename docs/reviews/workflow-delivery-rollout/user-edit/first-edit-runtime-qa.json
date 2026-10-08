@@ -1,0 +1,116 @@
+{
+  "packet": "UED-FIRST-MOVE-01-RUNTIME-QA",
+  "task": "USER-EDIT-DELIVERY",
+  "step": "UED-C07",
+  "source_parent": "b27adac3f188c864a30b6aed4d829493d7b9778b",
+  "source_blobs": [
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "blob": "e264fadfc3cc582859495b5db55f2c2624f073c5"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_native_edit.rs",
+      "blob": "1e30d8483e8a2030fbba6c8620ceb1f2d0222514"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_primary_pointer.rs",
+      "blob": "883bcb89cf7866a4fb26a80dac381cec10bf13a2"
+    },
+    {
+      "path": "crates/gui-app/src/native_recovery.rs",
+      "blob": "70837de128802eab0be4969c8c72a79705441410"
+    },
+    {
+      "path": "crates/gui-app/src/native_move_frame_tests.rs",
+      "blob": "3e290a7a2ba380670f73a5053ac82a9514e7db29"
+    }
+  ],
+  "authority": "Retained owner first-footprint edit correction grant and PM059 manager appointment; no successor grant.",
+  "owner_report": {
+    "launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+    "sequence": "select Object -> M -> pointer movement; delay >5 seconds then recovery stopped",
+    "native_log": "first-edit-runtime-logs/owner-last-native.log",
+    "host": "WindowId(94790203345888)",
+    "backend": "Wayland / WGPU Vulkan",
+    "adapter": "Intel HD Graphics P630 / Mesa 25.0.7-2+deb13u1"
+  },
+  "demonstrated_defects": [
+    {
+      "cause": "M only activated Move; selected Footprint was not picked up.",
+      "repair": "Use current canvas cursor and complete single current Footprint identity through existing FootprintMovePreview builder; preserve locked/stale refusal and snap/offset rules."
+    },
+    {
+      "cause": "Presented AuthoredObject hits returned through selection before the Move canvas dispatch. Earlier callback proof omitted intervening rendered screen hits.",
+      "repair": "Keep chrome selection dispatch; authoring object hits continue to existing Board Move dispatch. Fixture commits on a rendered Footprint authored label."
+    }
+  ],
+  "native_frame_result": {
+    "result": "PASS",
+    "log": "first-edit-runtime-logs/frame-ordinary-scheduler.log",
+    "behavior": "Actual ordinary App/native Wayland/WGPU frame loop, Object selection, normalized M, moving preview, cancel exact preimage, M restart, rendered-label destination commit, exact Undo/Redo, Save and reopened revision. Native scheduler retained; no polling timer while waiting for mutations. No rendering failure detected.",
+    "m_dispatch_ms": [
+      6.149
+    ],
+    "pointer_dispatch_ms": [
+      36.368,
+      30.737,
+      29.115,
+      26.377,
+      28.65,
+      26.939,
+      28.234,
+      29.861,
+      30.712,
+      28.442,
+      27.892,
+      31.198,
+      29.839,
+      30.467,
+      0.207,
+      28.275,
+      34.857
+    ],
+    "slow_round_ms": [
+      138,
+      123,
+      109
+    ],
+    "test_executable": "target/debug/deps/datum_gui-19c6acb98962ab73; same production App/runtime/render/worker code, not physical input into target/debug/datum-gui"
+  },
+  "recovery_contract": "Seven focused existing native recovery tests passed; active two-second limit, acquisition episode and admission rules preserved. One deadline transition receipt added without per-frame tracing.",
+  "retained_evidence": "Prior actual reserved callback/journal reviews remain valid at their scopes; complete 81-Pad movement, selection retention and writer guard/recovery proofs reused. No repeated writer or qualification campaign.",
+  "failed_attempts": [
+    "frame-reproduction.log: six-second gap was redraw-driven harness scheduling, not measured executing M/GPU time; next ignored pointer caused fixture to wait until bounded failure.",
+    "frame-reproduction-traced.log: nominal PASS invalid as Move proof; no preview actually active. Retained as discovery only.",
+    "frame-moving.log and frame-moving2.log: regression assertion failed because unrelated desktop pointer overwrote the in-process cursor reference. Physical input excluded from fixture; native frame events still forwarded.",
+    "frame-final-edit.log: destination happened not to have a screen AuthoredObject hit; tightened test to explicitly click the published Footprint label. No failed result credited as delivery."
+  ],
+  "proof_limits": [
+    "In-process production pointer events and normalized M shortcut; physical compositor keyboard/mouse delivery is not automated or HUMAN-qualified.",
+    "The original owner recovery-stop episode itself did not reproduce in the corrected fixture. Its original receipt omits the originating wait. Bug dat-first-edit-native-recovery-dhj9 stays open; development availability withdrawn and UED-C07 in progress.",
+    "No X11 trial, timeout relaxation, new dependency, injection infrastructure, source-model/persistence change, scope reduction, CAM/T04 or broader S5A/C04-C06 acceptance.",
+    "Committed geometry still obeys existing copper current-fill invalidation. No replacement fill authority or manufacturing waiver.",
+    "The fixture writes only a copied Project; owner Project board/project/journal preimages and original KiCad files remain unchanged."
+  ],
+  "fixture_reproduction": [
+    "Create a private disk-backed copy of /home/bfadmin/Documents/datum_projects/DOA2526-first-edit; never point this committing fixture at the owner Project.",
+    "TMPDIR=\"$PWD/target/user-edit-tmp\" DATUM_FIRST_EDIT_PROJECT=<private-copy> python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual --bin datum-gui ordinary_app_select_m_move_commit_history_reopen -- --ignored --nocapture",
+    "Build matching CLI/daemon explicitly before the test; a stale companion must not try a nested guarded Cargo build."
+  ],
+  "independent_review": "Reserved audit session notified of owner rejection and retained-scope correction; corrected exact candidate review pending.",
+  "ordinary_build_cohort": {
+    "datum-gui": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+      "sha256": "c6a10d8d1b9bd89f76506696b343240b1c67a0166fd79f14b95b833392176a3d"
+    },
+    "datum-eda": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
+      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+    },
+    "eda-engine-daemon": {
+      "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
+      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+    }
+  },
+  "ordinary_build_cohort_log": "first-edit-runtime-logs/ordinary-cohort-build.log"
+}
