@@ -6979,10 +6979,11 @@
   "schema_version": 1,
   "status": "partial fixture binding; neither C03 closure nor C04/C05/C06 acceptance",
   "current_candidate_reconciliation": {
-    "path": "crates/test-harness/testdata/selection/s5a_v1/candidate-20261008.json",
-    "sha256": "17e7842175da3f4af540a449d5b9ef1ce8a2bfaff6af689e4e6fcb68cdbdcb17",
+    "path": "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008.json",
+    "sha256": "e3dd7bc8b6ef6296954f8e5ef70788845630ee2a238896795487f574c2177790",
     "code_commit": "b59af9f148b26995469c170c41b0f53d0980ee6f",
-    "status": "partial implementation/native proof; C03/C04/C05/C06 not closed",
-    "historical_pins": "Existing production_source, builders, fixture roots and per-file/source hashes remain historical and unchanged."
+    "baseline_candidate_commit": "ee1d0355f26750671cb49e4f5cfaa773493cbc0d",
+    "status": "unblocked implementation audit exhausted; completed scope reviewable; C03/C04/C05/C06 not closed",
+    "historical_pins": "Historical candidate, production sources, builders, fixtures and existing proof remain unchanged. This successor corrects requirement extraction and adds qualified native256/region proof."
   }
 }
