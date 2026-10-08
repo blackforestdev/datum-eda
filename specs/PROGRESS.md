@@ -3458,3 +3458,17 @@ This global operational amendment applies to existing scheduled work; it introdu
 no competing task or ordering and therefore changes no Active Frontier item.
 Decision: `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 Evidence: `research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md`.
+
+
+## INSTRUCTION-CONSOLIDATION — task-scoped agent reading
+
+2026-10-08 owner-authorized consolidation reduces mandatory AGENTS/CLAUDE startup
+reading from approximately 14,148 to 4,018 character-estimated tokens (about72%).
+Essential doctrine, owner/manager authority, selector, claim, staging, file-lane,
+dependency, proof and formatting rules remain in the entry points. Detailed
+procedures are in `docs/AGENT_OPERATIONAL_PROCEDURES.md`, loaded by action; former
+architecture/milestone context is explicitly historical in
+`docs/PROJECT_ARCHITECTURE_REFERENCE.md`. No acceptance rule or owning-route review
+is removed, and no manager or executable PM059 enforcement is fabricated.
+This operational consolidation applies to existing work without changing task
+selection, claims or authorization. Current S5A/PM058 implementation is untouched.

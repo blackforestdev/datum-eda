@@ -1,25 +1,17 @@
-# Datum EDA
+# Datum EDA — controlling agent instructions
 
-## What This Is
-Datum is a professional, headless-first PCB design application for Linux,
-with optional first-class AI collaboration. It imports existing designs,
-inspects and transforms them, runs ERC/DRC, authors native schematics and
-boards, generates manufacturing output, and routes boards — driven through
-one inspectable design-mutation model that manual GUI tools, the CLI,
-scripts, MCP, and AI agents all share.
-
-Datum is **not** a KiCad importer, a board viewer, an AI-only design agent,
-or a visualization shell around imported EDA files. Import/export are interop
-infrastructure (migration, fixtures, compatibility, reverse engineering) —
-they support the product; they do not define its identity.
+Datum is a professional, manual-first, headless-first Linux EDA application with
+optional AI collaboration. Native library → schematic → PCB → manufacturing is
+the product flow; import/export supports it. Datum is not an importer, viewer or
+AI-only shell. Use `Datum EDA` in prose and `datum-eda` for machine identifiers.
+The CLI executable is `datum-eda`; do not introduce legacy placeholder names.
 
 ## Portable Datum workflows
 
 <!-- DATUM-WORKFLOW-CATALOG:datum://workflows -->
 
-Use the standard Datum MCP resource `datum://workflows` as the canonical
-workflow inventory. This file controls repository operation but does not create
-Claude-only workflow capabilities, review gates, or mutation semantics.
+`datum://workflows` is the canonical portable workflow inventory. Repository
+instructions must not redefine its capabilities, gates or mutation semantics.
 
 ## Ethos (controlling)
 - **Manual-first.** Every core EDA workflow must be possible without AI. If a
@@ -61,566 +53,114 @@ Claude-only workflow capabilities, review gates, or mutation semantics.
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
-## Feature delivery and delegated development management
+## Start with the task, not the documentation inventory
 
-The owner-approved PM059 workflow amendment controls routine delivery:
-`docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
-Build complete designer behavior, verify it, fix demonstrated failures, then
-record the necessary documentation and arrange independent review. Start with
-existing authority; research unresolved product mechanisms before implementing
-them. Do not replace usable delivery with repeated planning or supporting tasks.
+Read this file and AGENTS.md at startup. Then load only the relevant governed
+contract, implementation owner and task evidence. Detailed action procedures live
+in `docs/AGENT_OPERATIONAL_PROCEDURES.md`; its reading map identifies when to load
+each section. Architecture/milestone context is in
+`docs/PROJECT_ARCHITECTURE_REFERENCE.md` and is not startup or next-task authority.
+Do not recursively read every path mentioned in a reference. This does not exempt
+the required complete owning-route review for specification or visual work.
 
-An owner-appointed manager receives routine development decision packets and
-coordinates implementers/reviewers directly under the standing PM059 delegation.
-It may record actual independent outcomes, unchanged-scope continuation and
-objective acceptance against ratified criteria with complete required evidence.
-It must not self-review implementation or impersonate a human owner response.
-New semantics, scope reductions, waivers, dependencies, destructive actions and
-nondelegated HUMAN/UX decisions remain owner-reserved. Preserve visual ownership.
+Authority order: this file; product mechanics and numbered decisions; domain tool
+contracts; roadmap/status. Runtime incompleteness cannot override ratified rules
+or visual prototypes. Research unresolved product questions before implementing
+new mechanisms; ordinary choices inside an execution grant do not restart planning.
 
-PM059 is a narrow exception to the owner-boundary wording below: implementers
-stop; the appointed manager may resolve only delegated decisions, record durable
-provenance and advance authorization in the normal synchronized transaction.
-Unassigned management, a failed selector or missing proof grants no authority.
-It does not alter canonical task selection, claim rules or response presentation.
+## Delivery and management
 
-## Specification Governance (controlling)
-Core principle: **no orphaned specs — in coverage OR in sequence.** Every active
-specification, contract, or decision record must be (a) tracked and classified,
-and (b) placed in the ordered roadmap so its position, dependencies, and next
-action are derivable. A doc that exists but is not tracked is a governance
-defect; a doc that is classified but not woven into the roadmap frontier is a
-**roadmap orphan** — equally a defect, and the specific failure this project has
-repeatedly paid course-correction time for. Writing a spec is not finished until
-the next agent can find where it sits and what comes next.
+PM059 controls build → test → fix → document → independent review → delivery.
+The unit is complete designer behavior in the ordinary application. Continue
+routine corrections under the retained grant; commits, evidence packets and lease
+renewals are not stopping points. Capture unrelated issues without expanding scope.
 
-When you CREATE or REFINE any spec / contract / decision record, in the SAME
-change you MUST:
-1. Add or update its status row in `specs/PROGRESS.md` (current vs target).
-2. Classify it in `specs/spec_governance_manifest.json`
-   (`class`: `governed` / `doctrine` / `pending` / `historical`), enforced by
-   `check_spec_governance.py` (coverage + classification).
-3. Register any inventory shapes it defines in
-   `specs/spec_parity_manifest.json` (enforced by `check_spec_parity.py`).
-4. If it ratifies mechanism, it must be a numbered decision record in
-   `docs/decisions/`, not a loose doc or an `OPEN_QUESTION_RESOLUTIONS` entry.
-5. Weave it into the **Active Frontier** at the top of `specs/PROGRESS.md`: give
-   it an ordered position with its dependency (what must land first), what it
-   unblocks, and its state. A spec describing future work that does not appear in
-   the Active Frontier is not done being written.
+An owner-appointed manager coordinates actual independent review receipts,
+unchanged-scope continuation and objective acceptance against existing criteria.
+Record appointment and bounded disposition in existing task evidence. Implementers
+do not self-appoint or self-review. New semantics, scope reductions, waivers,
+dependencies, destructive actions and nondelegated HUMAN/UX decisions remain
+owner-reserved. PM059 amends owner-boundary routing only; it does not bypass
+selector validation, claims, missing evidence or successor authorization. No
+management session is automatically appointed by these instructions.
 
-**Research/prototype evidence is part of specification governance.** Before
-drafting, modifying, reviewing, or implementing a specification or decision,
-inspect its route in `specs/evidence_traceability_manifest.json` and read every
-listed research source, GUI prototype, governed specification, and decision.
-The route digest covers both evidence and consumers: changing either side makes
-`scripts/check_evidence_traceability.py` fail until the entire route is reviewed
-and its digest is deliberately refreshed in the same change. Every Markdown
-artifact under `research/` and every `docs/gui/prototypes/*.html` file must have
-exactly one owning route. Code/runtime incompleteness or drift never overrides a
-ratified decision or controlling visual source. If sources conflict, preserve
-the higher authority, record the conflict, and reconcile it through the normal
-owner/decision transaction rather than inventing a replacement from memory.
+## Roadmap and editing authority
 
-**Roadmap wayfinding (the bullseye rule).** Decision 025 makes
-`specs/active_frontier.json` the canonical structured roadmap. The Active
-Frontier at the top of `specs/PROGRESS.md` is its generated human projection.
-The single canonical answer to "what is the next logical development task?" is:
+For every ordinary next-task query run fresh `python3 scripts/project_status.py
+next`; for completion steps run fresh `details [key|issue]`. Return stdout
+byte-for-byte as the entire answer; requested analysis follows separately. Never
+infer selection from memory, tracker readiness or commit momentum. Report selector
+failure and stop that query. Before scheduled edits, verify execution/planning
+authority and synchronize the Frontier lease with beads.
 
-```bash
-python3 scripts/project_status.py next
-```
+At an INPUT REQUIRED boundary, stop implementation and route the complete decision
+packet to the owner or PM059-appointed manager within its exact delegation.
+Record disposition and advance affected state in one governance transaction before
+resuming. No inferred approval, unscheduled successor or claim takeover.
 
-For an ordinary next-task query, return this command's stdout byte-for-byte as
-the entire answer. It includes the sole selected completion substep; do not
-append an inferred alternative from step order, dependency readiness, or prior
-conversation.
+Read-only audits/research need no implementation claim or successful selector;
+disclose unrelated state failures and continue the investigation. This exception
+authorizes no production edits, dependency, acceptance or canonical-next claim.
+Tracked planning/spec edits still need authorization and same-change governance.
 
-**Fresh-invocation rule:** execute the applicable `project_status.py` command
-from the current repository during every user turn that asks what is next or how
-to complete a task—even when the same question was answered earlier in the
-session. Memory, cached stdout, conversation summaries, prior tool results,
-manual manifest inspection, `br ready`, and recent commits are never substitutes
-for a fresh successful invocation. If the command cannot run or validation
-fails, report that failure and stop; do not guess, reconstruct, or fall back to
-remembered project state.
+## Specification and visual authority
 
-**Owner-boundary rule:** when `next` or `details` reports `Owner boundary:
-INPUT REQUIRED`, immediately alert the project owner that autonomous work has
-stopped and present the selector's complete ordered decision packet and response
-format byte-for-byte. Do not claim the bead, edit
-files, choose a candidate disposition, skip ahead, or silently treat owner
-approval as implied. Resume only after the owner supplies the required choice;
-the same governance transaction records its durable review evidence, completes
-the decision step, selects the successor substep, and changes authorization to
-match it.
+Before reviewing, implementing or changing a specification/decision/GUI contract,
+inspect `specs/evidence_traceability_manifest.json` and review all listed sources
+and consumers for its owning route. Reconcile conflicts through the owning
+authority. Source/consumer edits require deliberate digest reconciliation in the
+same change. Every active specification needs classification and roadmap placement;
+new mechanisms require a numbered decision. Follow the detailed same-change
+checklist in the operational procedures; no orphan specifications.
 
-For “how/steps to finish or complete the current task?” run:
+Claude exclusively owns every `docs/gui/prototypes/*.html` file. Codex may inspect
+and screenshot, never modify, format, rename, delete or regenerate them. Return
+bounded changes to Claude. Never set/copy/forward the lane marker or refresh
+digests/goldens to launder an out-of-lane change. For native translation inspect
+prototype DOM/CSS as well as screenshots; verify matching relevant states.
+Capture and inspect visual changes before presenting them.
 
-```bash
-python3 scripts/project_status.py details [<Frontier-key|issue-id>]
-```
+## Verification must earn its cost
 
-Omit the target for the current canonical task; pass a stable Frontier key or
-issue ID when the user names a scheduled task. For an ordinary request for the
-steps, return the command's stdout byte-for-byte as the entire answer: no
-preface, summary, regrouping, renumbering, relabeling, inferred concurrency, or
-postscript. If the user explicitly asks for analysis too, reproduce stdout
-unchanged first and put analysis in a separate labeled section. If the plan
-appears incomplete, repair the structured contract; never invent a rival plan.
-The printed `Next completion step` is the sole subtask-selection authority;
-dependency-ready alternatives are not additional next steps and must not be
-offered as parallel or interchangeable choices.
+State the requirement/risk, evidence gap and decision enabled per cohesive batch.
+Reuse adequate evidence; a new session or documentation edit is not a rerun reason.
+Use the smallest meaningful checks; do not add implementation-mirroring tests.
+Keep required acceptance, negative controls, independent review and commit gates.
+Broaden only for affected changes, failures or unresolved concerns. Bound expensive
+experiments and preserve failed attempts; no retries-until-green or parameter sweeps.
+Keep raw logs once and reference them. Ordinary justified verification needs no
+additional owner approval. Do not create a separate proof framework or ledger.
 
-Run it before proposing or claiming work; it validates the roadmap against
-beads, governing documents, dependencies, authorization, and claim freshness.
-Never infer the answer from `br ready`, recent commits, issue priority, or prose
-outside the generated Frontier. Update the manifest and regenerate the projection
-in the same change as any roadmap change. Other docs, including this file's
-"Current Status" and PROGRESS's lower sections, must not restate rival ordering.
-The selector's lifecycle, authorization, tracker status, assignee, and live-claim
-fields are the complete operational answer; never append contrary state from
-conversation history or an earlier tracker read.
+Baseline, aspiration and acceptance budget are different. No invented blocking
+number: PM051 requires derivation, representative evidence, configuration, limits
+and product rationale. Approval alone cannot supply missing evidence. Keep
+unsupported figures undecided; review feasibility/value after repeated failure.
+Read the numerical-provenance procedure before changing a threshold or measurement
+campaign.
 
-Behavioral invariants are enforced by the PG-* proof gates
-(`run_migration_proof_gates.sh`) and the write-fence gates
-(`check_schematic_private_writers.py`, `check_daemon_write_parity.py`,
-`check_resolver_raw_loads.py`, `check_spec_parity.py`). There is NO per-doc
-enforcement ledger and no doc-string pinning gates: gates lock behavior in
-code, not prose in docs.
+## Nonnegotiable implementation boundaries
 
-Authority ordering (lower layers must not contradict higher ones; on conflict
-the higher layer wins and the lower doc is the one to fix):
-1. `CLAUDE.md` — operational instructions
-2. `docs/DATUM_PRODUCT_MECHANICS.md` + `docs/decisions/` — product doctrine
-3. `docs/contracts/` — domain tool contracts
-4. `specs/PROGRESS.md` — status truth
+- PM029: no adding/fetching/vendoring/linking third-party code without prior exact
+  owner ratification and license obligations in a numbered decision. The terminal
+  emulator/VT/PTY/session/fallback implementation is first-party only.
+- PM022 source health: no new oversized modules or invented ceiling exceptions.
+  Touching legacy debt requires real ownership extraction and a downward ratchet;
+  forwarding/include splits are not decomposition. Load its policy before such edits.
+- Every write uses the canonical engine mutation/journal route. Test against real
+  designs; use governed fixtures, not invented product evidence.
+- Rust proof/Clippy/release/smoke uses the guarded runner; no proof artifacts in
+  `/tmp`, parallel proof builds or shared-cache cleanup while Cargo/rustc is active.
+- Scoped formatting uses `scripts/format_rust.py`; never mutating workspace-wide
+  formatting or `cargo fmt -- <paths>` in the shared worktree.
+- Commit only owned work, explicitly staged, directly on main; substantive
+  conventional subject/body and no AI attribution anywhere. Force-push/history
+  rewrite/`--no-verify` needs explicit owner authority.
+- WDQ blocking enforcement is retired (PM044). Use `scripts/git-hooks`; no ordinary
+  enrollment, source-scope promotion or historical pilot replay. Retained tooling
+  is manual history/diagnostics, not permission to reinstall it.
 
-### Numerical performance requirements must have an evidentiary basis
-
-A measured baseline, an aspirational target, and a binding acceptance budget are
-different things. Label them explicitly. Never invent a number to complete a
-specification, present a proposed target as measured capability, or promote a
-guideline into a development gate merely through repetition, review or approval.
-
-Before a numerical performance threshold becomes blocking, its controlling
-specification must cite its derivation, supporting representative evidence,
-applicable hardware/backend/workload configurations, measurement limitations,
-and review conditions. Establish the observed baseline with a pinned stable
-candidate, verified input/output, complete metric boundaries, instrumentation
-effects, sample counts and per-trial variability. Reuse adequate evidence. Budget
-selection additionally needs a product rationale: responsiveness, supported-host
-expectations and explicit headroom or improvement assumptions. Neither observed
-performance alone nor owner approval supplies a missing technical derivation.
-If a defensible figure cannot be established, leave it undecided and nonblocking
-pending an explicit owner disposition; do not substitute another arbitrary value.
-
-Review the provenance of an existing threshold before organizing a repair around
-it. Missing provenance requires a specification correction and owner disposition,
-not silent relaxation or an assumption that implementation must eventually meet
-it. Preserve actual measurements and correctness obligations. Audit adjacent
-CPU/GPU/resource thresholds separately; discovery of one unsupported figure
-does not authorize changing all others.
-
-Investigations require a bounded effort and a product decision point. Repeated
-qualification failure must trigger review of both implementation and requirement
-feasibility, including the value of further work relative to deferred product
-functionality. Approval of successive bounded experiments must not become an
-unlimited optimization campaign. Inconclusive evidence is an allowed outcome,
-not automatic authorization for another experiment. Routine setup failures must
-remain distinguishable from measured results; execution recovery remains within
-the owner's actual authorized scope.
-
-Record corrections in the controlling decision/specifications, roadmap and
-active-agent handoff together. A historical numeric failure stays in the record,
-but its interpretation must follow corrected authority; do not claim a withdrawn
-threshold was met. See the
-[GUI budget provenance incident](docs/reviews/gui-performance/baseline-budget/budget-provenance-incident.md)
-for the motivating evidence, owner-reported impact and correction handoff.
-
-## Current Status
-### WDQ blocking enforcement retired
-
-The owner retired WDQ blocking enforcement on 2026-09-17 (PM044 retirement
-disposition). Use `scripts/git-hooks`, not an immutable WDQ owner-hook bundle.
-Do not require WDQ enrollment, source-scope promotion or historical-pilot replay
-for ordinary development or roadmap queries. Retained WDQ tooling and records
-are manual diagnostics/history only; do not reinstall them without new explicit
-owner direction. PM025 ownership and roadmap checks, source health, dependency
-authority, visual ownership, formatting and product acceptance requirements remain.
-
-The project has been course-corrected from a milestone-driven roadmap to the
-product-mechanics model above. Status sources of truth: the structured
-`specs/active_frontier.json`, its generated `specs/PROGRESS.md` projection,
-`specs/SPEC_PARITY.md` (machine-checked inventory shapes), and the
-product-mechanics docs.
-
-- **Active product area:** GUI product-model recovery toward a testable program
-  (decision 019) — the recovered application shell, board-render fidelity, and
-  the GUI→engine write path that lets menu/editor actions author typed operations
-  directly (not terminal CLI strings). This is product context, not task
-  ordering; use `python3 scripts/project_status.py next` for the current task.
-  Its foundation, the product-mechanics
-  **substrate** (typed `Operation` enum + single `commit()` + journal +
-  `ProjectResolver` + stable `ObjectId`/`ComponentInstance` +
-  `model_revision` + Import Map), is now the **universal native write
-  authority**: the engine native-write facade
-  (`crates/engine/src/api/native_write/`, 11 families) authors every native
-  operation batch; the CLI is a thin args/dispatch/views surface with zero
-  operation authoring; the daemon reaches the substrate through
-  `native.write`/`native.describe`; genesis is engine-owned. See
-  `specs/PROGRESS.md`.
-- **Post-correction sequence (committed):** substrate (complete as the native
-  write authority) → library →
-  native authoring + GUI surface. The GUI build-out is a named, real phase of
-  this sequence — **not** an implied "M8 later".
-- **Terminal product boundary:** Product Mechanics 027–030,
-  `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, and
-  `docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md` control the embedded terminal
-  and its agent interoperability plane. The clean-room standards baseline and
-  exhaustive first-party package DAG are
-  `docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md` and
-  `docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md`. The
-  target is a fully fledged daily-driver terminal over a pinned mature
-  `TerminalCore`, with exclusive PTY screen truth and verified support for
-  normal shells, TUIs, Codex, Claude Code, Cursor-compatible CLI agents, and
-  local agents. TF-01..TF-05 cover focus/input only; a focus fix, parser, PTY,
-  cell grid, or output-only Datum Console must never be reported as completion of the
-  terminal product. Delivery is T0 shell truth → T1 core/transport → T2 native
-  renderer/input → T3 daily-driver UX/protocols → T4a–T4d discovery/MCP/
-  context/workflow interoperability → T4e production proof. An inherited
-  environment variable or suggested launch prompt is not agent discovery.
-- **Frozen:** KiCad import. The M7 spike already imports a board with enough
-  fidelity to recognize all design aspects; that is sufficient — no further
-  import work until native authoring is real. Native is always the authority;
-  import is a one-time converter and "imported vs native" is not a state. See
-  `docs/DATUM_PRODUCT_MECHANICS.md` → "Interop Boundary And Import Posture".
-- **Frozen:** M6 strategy reporting (landed; pending repeated evidence runs
-  from the checked-in baseline gate).
-- **Closed for scope:** M0–M5.
-- Legacy milestone rows in `specs/PROGRESS.md` are truthful historical
-  evidence, not the next implementation priority.
-
-### What has landed (historical evidence, M0–M6)
-Real, shipped capability — read alongside the substrate gap below:
-- Canonical IR, pool foundation, deterministic KiCad import
-- Query engine over imported and native designs
-- ERC (7 rules) + DRC (7 rules) at 0% FP/FN quality gates
-- MCP runtime tools (daemon-dispatched + CLI-bridged, locked via
-  `specs/SPEC_PARITY.md`); CLI with proper exit codes
-- Imported-board write operations with undo/redo (engine API write-ops)
-- KiCad write-back with sidecar persistence and round-trip fidelity
-- Manufacturing export: Gerber, Excellon drill, BOM, pick-and-place
-- Deterministic routing kernel (60+ path-candidate strategies) and
-  route-proposal artifact export/apply/inspect/revalidate
-- GUI substrate (`gui-protocol`/`gui-render`/`gui-app`): read-only board
-  review surface, engine supervision/status snapshot, Outputs-lane
-  supervision rendering, and visual regression harness
-
-### Known gap between status and ethos (do not overstate)
-Write-surface convergence is COMPLETE — do not resurrect the old
-"convergence-debt" framing. The honest remainder:
-- **Legacy converter session (terminal, not debt):** the imported-KiCad
-  session keeps 4 legacy mutator methods + `Engine::save` with a private
-  in-memory `ImportedSessionUndoRecord` memo (never journaled); terminally
-  frozen, dies with the one-time converter (decision 011).
-- **Tier A substrate close-out:** `component_instance` bind/set/delete have
-  governed proposal twins (`datum.proposal.bind_component_instance`,
-  `.set_component_instance`, `.delete_component_instance`), so assistant
-  provenance can create proposals instead of direct writes. Genesis t=0 is
-  ratified by decision 018: no mutation-journal record; future visible genesis
-  evidence must be a non-mutation sidecar.
-- **Verb registry migration complete for public `datum.*` tools (decision 017):**
-  all 17 public prefixes are registry-generated (337/337 public tools);
-  hidden compatibility tools remain fenced outside the public generated surface.
-- **Library:** decision-008 `Footprint`/`PinPadMap` are now engine Rust types
-  and `LibraryBinding` is now the component-instance join type for placed
-  part/symbol/package/footprint/pin-pad-map/model bindings. IPC generation now
-  covers two-terminal chips and SOIC as engine-owned vertical slices with CLI,
-  proposal, MCP, and LibraryGraph validation coverage; broader package-family
-  coverage plus check-run/deviation/export/import-audit consumption remains
-  future work.
-- **GUI:** a review/supervision surface, not an editor; native board scenes and
-  the Outputs lane reflect resolver/materialized engine truth, but interactive
-  authoring (the user selecting a tool and drawing/placing/editing through a
-  direct GUI commit path) is not yet built.
-
-The per-domain tool contracts in `docs/contracts/` specify the target each
-domain builds toward on the landed substrate.
-
-## Working Posture (for agents)
-
-### Verification must earn its cost
-
-**Make every proposed test justify the decision it will enable.** This is the
-owner-directed default for all repository work, including benchmarks, diagnostics
-and repeat runs.
-
-- Before execution, name the requirement or concrete risk, the evidence gap,
-  and what a pass or failure will change. One short rationale per cohesive batch
-  suffices; a mandated check can cite its controlling requirement.
-- Reuse adequate evidence at its recorded scope. Handoffs, new sessions and
-  documentation edits do not invalidate tests. A rerun needs an affected change,
-  demonstrated method defect, unresolved question, or explicitly required replay.
-- Use the smallest meaningful verification that supports the decision. Do not
-  add tests for reversible low-impact edits or merely mirror implementation.
-  Batch related assertions; preserve required independent trials and separate
-  measurement modes. Broaden only when results or affected scope justify it.
-- Define repetitions and a stopping condition before expensive experiments.
-  Preserve failures, investigate their cause and fix demonstrated defects before
-  repeating qualification. No parameter sweeps, automatic retries until green,
-  or full-suite reruns without a stated reason.
-- Keep evidence concise: store raw output once, link the existing authoritative
-  result, and report the outcome and limitations. Handoffs carry unresolved work
-  and evidence pointers, not copied logs, repetitive histories or speculative
-  test lists. Do not create another framework or ledger to enforce this rule.
-- Retain required acceptance, negative controls, commit gates and independent
-  review. This rule removes redundant work; it does not waive requirements or
-  turn partial proof into acceptance. Ordinary justified verification proceeds
-  without an additional owner-approval step.
-
-- **Cargo output is a governed resource.** Full-workspace, proof, Clippy,
-  release, compatibility, and GUI-smoke compilation goes through
-  `python3 scripts/run_cargo_guarded.py --workload proof -- cargo ...`; focused
-  edit/check cycles use `--workload interactive`. Proof targets never live on
-  `/tmp`, expensive Cargo jobs run serially, and no agent cleans the shared
-  target until Cargo/rustc activity is known idle. The checked-in policy and
-  enforcement gate are `scripts/cargo_resource_policy.json` and
-  `scripts/check_cargo_resource_policy.py`.
-- **Source health is blocking governance.** Before touching an oversized source
-  module, read decision 022 and `docs/SOURCE_HEALTH_POLICY.md`. New source debt
-  cannot be registered into existence; legacy ceilings are exact and
-  downward-only; touching legacy debt requires real ownership extraction and a
-  same-change ratchet. `include!`/forwarding/continuation splits do not count.
-- **Planning vs execution.** Default to high-level planning and specification
-  (decision records, tool contracts, sequencing). Feature execution —
-  building engines, sourcing or authoring fixtures, running proof slices — is
-  a separate phase: name it as execution and get explicit authorization
-  before doing it. "Proof slice" / "proof gate" sections in the docs are
-  specifications of what execution must later demonstrate, not to-dos.
-- **Read-only research is not implementation.** Codebase audits, external
-  research, and conversational architecture planning do not require a live
-  implementation claim or a successful roadmap selector. Disclose unrelated
-  selector/claim failures and continue the investigation. This exception grants
-  no production edits, dependency adoption, reassignment, acceptance, or
-  canonical-next claims. Canonical next-task/completion queries still require
-  the fresh selector and its failure behavior. Tracked research/specification
-  writes and roadmap amendments retain applicable owner authorization and
-  same-change governance. An explicitly owner-approved planning amendment
-  never authorizes renderer implementation by implication.
-- **Dependency authority is owner-only.** Decision 029 forbids agents from
-  adding any new third-party code dependency without an explicit numbered
-  owner decision naming it and accepting its license obligations. Roadmap
-  authorization, a permissive license, technical merit, or “proceed” is not
-  approval. The terminal is stricter: its PTY/session and terminal-emulation
-  implementation must be Datum-owned; no external terminal crate, library,
-  source, build download, embedded executable, or fallback is permitted.
-- **Research before building — ten minutes in the library saves ten years in the
-  lab.** Before committing to a foundational or cross-cutting architecture (a
-  shared backbone, a data model, an editor's tool language), research the prior
-  art first — inside Datum and across the field, EDA and beyond. The cost is
-  asymmetric: an hour spent reading how mature tools solved a problem prevents the
-  expensive rework of discovering the design was wrong after it shipped. The
-  per-editor grid divergence is the cautionary case — the up-front shared-tooling
-  research (`docs/DATUM_SHARED_TOOLING_TAXONOMY.md`) would have prevented it. This
-  is proportionate to stakes, not a mandate to research trivia (that would fight
-  *Lean* and the no-rabbit-hole posture); it is the constructive form of "research
-  to resolve, don't bounce bare questions to the owner."
-- **Do not infer product identity** from the active milestone or the nearest
-  import/render/regression task. Use the product-mechanics doctrine.
-- No editing path may bypass the canonical operation/commit/journal model.
-- A viewer or review surface is not an editor. **Engine-first/GUI-last** is
-  deliberate only for the GUI *editor*: building the GUI editor (interactive
-  authoring) is a real, named phase of the work, not an implied "M8 later".
-- Prefer work that strengthens native EDA primitives and manual workflows.
-- Do not expand import fidelity unless it supports a clear product need.
-- **Screenshot to see your work — don't design blind.** To capture an HTML
-  prototype or artifact (e.g. `docs/gui/prototypes/*.html`) to PNG, run
-  `scripts/shot_html.sh <file> [out.png] [WxH]` (headless Firefox, throwaway
-  isolated profile). Chromium SIGTRAPs in the sandbox — its multi-process sandbox
-  needs namespace/seccomp syscalls the outer sandbox blocks, even with
-  `--no-sandbox` — but Firefox/Gecko starts fine. The wgpu app screenshots via its
-  own `--visual-test --screenshot-out --exit-after-screenshot` flags (see
-  `scripts/check_gui_visual_parity.py`). Always capture and eyeball the render
-  before showing the owner; you can Read the PNG to inspect it.
-- **HTML prototypes are construction references, not merely pictures.** When a
-  controlling visual prototype is HTML, inspect its actual DOM and CSS before
-  implementing the corresponding native GUI. Map the prototype's component
-  hierarchy, dimensions, spacing, borders, radii, colors, typography, state
-  ownership, focus treatment, and responsive rules into Datum's tokens and
-  wgpu primitives. Do not reconstruct the interface from a screenshot alone:
-  screenshots verify the rendered result and expose cross-renderer differences,
-  but the HTML defines how the protected design is composed. Compare matching
-  HTML and native states after implementation, including interaction, focus,
-  narrow-layout, accessibility, and non-color states where the prototype
-  specifies them. This is a translation into native Datum primitives, not
-  authorization to embed a browser runtime or to modify a Claude-owned
-  `docs/gui/prototypes/*.html` file.
-
-## Architecture: Engine-First
-
-```
-                    ┌─────────────┐
-                    │  MCP Server  │  ← AI agents
-                    └──────┬──────┘
-                           │ JSON-RPC / Unix socket
-    ┌──────────┐    ┌──────┴──────┐    ┌──────────┐
-    │   GUI    │    │   Engine    │    │   CLI    │
-    │          │───→│   (Rust)    │←───│ datum-eda│
-    └──────────┘    └─────────────┘    └──────────┘
-                           │
-                    ┌──────┴──────┐
-                    │   Python    │  ← scripting (PyO3)
-                    └─────────────┘
-```
-
-The engine is a Rust library with no GUI or rendering dependencies. The
-target authority is one resolved `DesignModel` assembled by an engine-owned
-resolver; every surface (GUI, CLI, MCP, scripting) operates on that model
-through the same operation/commit model. The GUI consumes the engine via the
-`gui-protocol` scene contract; it is a consumer, not a prerequisite.
-
-## Architectural Lineage
-Informed by study of three existing tools (not forked from any):
-- **Eagle 9.6.2** — Command-line philosophy, part model, file format DTD
-  (docs/EAGLE_BLUEPRINT.md)
-- **Horizon EDA** — Pool architecture, entity hierarchy, data model principles
-  (docs/HORIZON_ANALYSIS.md)
-- **Altium Designer** — Professional UX, rule query language, routing workflow
-  (docs/ALTIUM_LESSONS.md)
-
-## Attribution Policy
-Claude Code is engaged on this project as a paid service in a contractor
-capacity. All code, architecture, and design work is authored by the project
-owner. Claude Code is used strictly for research assistance and process
-automation.
-
-**No attribution of any kind is permitted in any commit, PR, comment, or
-document in this repository.** This includes `Co-Authored-By` tags,
-`Generated by` notes, or any other mechanism by which a commercial AI service
-claims credit for work it did not author. Applying such attribution without
-explicit instruction is a violation of standard professional contracting
-ethics and is explicitly forbidden on this project.
-
-## Project Principles
-- Project name policy: use `Datum EDA` for product naming and `datum-eda` for
-  machine identifiers (tool names, sockets, test generators, config keys). The
-  canonical CLI executable is `datum-eda` (crate `datum-eda-cli`); the legacy
-  `eda` binary name is historical only. Do not introduce any previous
-  placeholder project name in code, docs, fixtures, tests, or configs.
-- Datum must be fully usable without AI (manual-first).
-- The engine compiles and runs without any GUI dependency.
-- One canonical `DesignModel`; projections are not separate authorities.
-- Every committed design change flows through one operation/commit model; no
-  surface gets a private write path.
-- Interactive behaviors (drag, route-in-progress, hover, selection) are
-  consumer-specific — they produce operations, they are not operations
-  themselves and are never journaled.
-- Import fidelity is a quality gate, not the product center.
-- Usefulness before authoring: inspect and transform before create.
-- Canonical IR defines invariants, not just object shapes.
-- Test against real designs from day one; never fabricate fixtures.
-
-## Key Technical Decisions
-
-| Layer | Choice | Rationale |
-|-------|--------|-----------|
-| Engine | Rust | Memory safety, no GC, modern toolchain, cargo ecosystem |
-| Authority | One resolved `DesignModel` over segmented storage shards | Unified authority, projections not silos; git-reviewable persistence (see docs/decisions/PRODUCT_MECHANICS_000D) |
-| Data model | Canonical IR (docs/CANONICAL_IR.md) | Authored/derived separation, stable surrogate IDs, invariant-first |
-| Mutation | Typed operations → one `commit()` + journal | Single inspectable path for manual/CLI/MCP/AI; provenance, diff, undo |
-| Pool | SQLite + JSON files | Queryable index, human-readable source |
-| Design files | JSON shards (imported formats as first-class) | Diffable, AI-parseable |
-| MCP server | Python | MCP SDK, AI library ecosystem |
-| CLI | Rust (`datum-eda`, same engine crate) | Batch ops, CI/CD, scripting |
-| Scripting | Python via PyO3 | Universal, AI ecosystem |
-| Layout engine | Custom constraint-formalized placement + routing with AI policy layer | No PNS dependency; classical algorithms in a formal constraint pipeline. See docs/LAYOUT_ENGINE.md |
-| GUI | wgpu + winit + custom (`gui-protocol`/`gui-render`/`gui-app`) | Engine consumer; review surface today, editor is target |
-| Tooling | Lean shared tool surface (docs/contracts/) | One operation vocabulary across UI/CLI/MCP; redundant tools are defects |
-
-## Repository Layout
-```
-project/
-├── CLAUDE.md               # This file
-├── PLAN.md                 # Development roadmap
-│
-├── docs/
-│   ├── DATUM_PRODUCT_MECHANICS.md  # CONTROLLING product-mechanics doctrine
-│   ├── decisions/          # PRODUCT_MECHANICS_000..030 — ratified mechanism
-│   │                       #   decision records (what + why + how)
-│   ├── contracts/          # Per-domain tool-contract implementation specs:
-│   │                       #   schematic/PCB/library/rules/manufacturing +
-│   │                       #   shared AI_CLI_MCP_TOOL_SURFACE.md
-│   ├── audits/scope-integration/  # Historical audit/evidence: north-star
-│   │                       #   audit, readiness audits, research synthesis,
-│   │                       #   review agenda, doc/code parity delta
-│   ├── PRODUCTION_CLEANUP_MANIFEST.md  # Worktree classification for commits
-│   ├── SPEC_INTEGRATION_CONDUCTOR_REPORT.md
-│   ├── gui/                # GUI substrate, text engine, visual harness briefs
-│   ├── CANONICAL_IR.md     # Core data model: invariants, IDs, units, txns
-│   ├── ENGINE_DESIGN.md    # Operation model, API surface, rule engine
-│   ├── CHECKING_ARCHITECTURE.md  # ERC/DRC separation, shared reporting
-│   ├── ERC_SPEC.md / SCHEMATIC_CONNECTIVITY_SPEC.md
-│   ├── AUTHORING_TOOLS.md  # Tool semantics: place, wire, move, route, delete
-│   ├── POOL_ARCHITECTURE.md / LIBRARY_ARCHITECTURE.md / NATIVE_FORMAT.md
-│   ├── LAYOUT_ENGINE.md / INTEROP_SCOPE.md / MCP_DESIGN.md
-│   ├── IPC_FOOTPRINT_SYSTEM.md / STANDARDS_*_GUIDANCE.md
-│   ├── EAGLE_BLUEPRINT.md / HORIZON_ANALYSIS.md / ALTIUM_LESSONS.md
-│   ├── COMPETITIVE_ANALYSIS.md / COMMERCIAL_INTEROP_STRATEGY.md
-│   ├── FFI_BOUNDARY.md / LICENSING.md / RISK_REGISTER.md / TEST_STRATEGY.md
-│   ├── IMPLEMENTATION_PLAN.md / IMPLEMENTATION_GUARDRAILS.md
-│   ├── DECOMPOSITION_PLAN.md / DECOMPOSITION_BACKLOG.md / STABILIZATION_PLAN.md
-│   ├── RESEARCH_TRACEABILITY.md / USER_WORKFLOWS.md
-│   └── (legacy: M0/M1 checklists, R1_G0_FOUNDATION.md, workflows/)
-│
-├── crates/
-│   ├── engine/             # Core engine; src/api/native_write/ facade
-│   ├── cli/                # CLI `datum-eda` (crate datum-eda-cli): args/ +
-│   │                       #   commands/<family>/ + context/ + main_tests/
-│   ├── engine-daemon/      # JSON-RPC daemon (native.write/native.describe)
-│   ├── verb-registry/      # Single-source verb registry (decision 017)
-│   ├── test-harness/       # Perf/quality harnesses and helpers
-│   ├── gui-protocol/       # Scene contract + primitive types (no GUI deps)
-│   ├── gui-render/         # wgpu renderer + visual regression harness
-│   └── gui-app/            # winit shell for the GUI
-├── mcp-server/             # MCP server (Python, talks to engine via IPC)
-├── specs/                  # Controlling formal specifications
-│   ├── active_frontier.json # Canonical scheduled roadmap + next-task state
-│   ├── PROGRESS.md         # Generated Frontier + implementation evidence
-│   ├── SPEC_PARITY.md + spec_parity_manifest.json  # Code-derived inventory
-│   │                       #   digests (gated by check_spec_parity.py)
-│   ├── PROGRAM_SPEC.md / INTEGRATED_PROGRAM_SPEC.md / ENGINE_SPEC.md
-│   ├── NATIVE_FORMAT_SPEC.md / IMPORT_SPEC.md / MCP_API_SPEC.md
-│   ├── SCHEMATIC_EDITOR_SPEC.md / M7_FRONTEND_SPEC.md
-│   ├── CHECKING_ARCHITECTURE_SPEC.md / ERC_SPEC.md
-│   ├── SCHEMATIC_CONNECTIVITY_SPEC.md / STANDARDS_COMPLIANCE_SPEC.md
-│   └── progress/           # Per-milestone shards (historical)
-├── scripts/                # Validation and governance gates
-│   ├── check_spec_parity.py / check_alignment.py / check_spec_governance.py
-│   ├── check_progress_coverage.py / check_schematic_private_writers.py
-│   ├── check_daemon_write_parity.py / check_resolver_raw_loads.py
-│   ├── check_import_query_determinism.py / check_native_project_fixtures.py
-│   └── run_drift_gates.sh  # Drift gate runner (+ run_migration_proof_gates.sh)
-├── .github/                # CI/CD (alignment.yml) and PR template
-├── tests/corpus/           # Real designs for golden testing
-└── research/               # Analysis artifacts (gitignored working notes)
-```
-
-## Not Yet Implemented
-The authoring frontier (see `docs/contracts/` for target specs); the substrate
-is landed and authoritative — what remains is depth on top of it:
-- Richer semantic schematic/library editors, rule reference-resolution
-  semantics, and broader proposal/check operation vocabulary.
-- Full IPC footprint-system depth beyond the landed IPC-7351B two-terminal and
-  SOIC slices: broader families, deviation/check-run/export consumption, and
-  import-audit integration.
-- Full GUI editor (substrate + read-only review exist; interactive editing is
-  not exposed end-to-end). The current PTY lane is not yet the decision-027
-  fully fledged terminal and must not be described as one. Product-real
-  assistant.
-- Native copper-pour zone fill (imported fills only today).
-- 3D viewer, panelization, STEP/IDF/ODB++/IPC-2581 export — spec stubs landed
-  in Standards Audit Batch 1, implementation deferred.
-- Supply-chain lookups (Octopart/Digi-Key/Mouser) and behavioral-model attach
-  (IBIS/SPICE/Touchstone) — spec stubs landed, implementation deferred.
-- Controlled-impedance solver — `ImpedanceSpec` stub landed, solver deferred.
+Terminal completion requires the applicable PM027–030/native terminal contracts,
+not merely focus, PTY output or a cell grid. Imported KiCad conversion remains
+terminally frozen under PM011 unless explicitly authorized work changes that scope.
+Current capabilities and remaining work come from the selector and domain evidence,
+not the historical architecture reference.
