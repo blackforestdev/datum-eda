@@ -82,6 +82,7 @@ mod runtime_selection_hit;
 mod runtime_selection_inspector;
 mod runtime_selection_menu;
 mod runtime_selection_region;
+mod runtime_selection_run;
 mod runtime_surface;
 mod runtime_terminal_clipboard;
 mod runtime_terminal_context;

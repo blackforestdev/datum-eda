@@ -255,7 +255,7 @@ impl Runtime {
         } else {
             AcquisitionMode::Replace
         };
-        let mut candidate = None;
+        let candidate = None;
         if mode == AcquisitionMode::Replace {
             let screen = self.last_cursor_pos.unwrap_or((0.0, 0.0));
             let native = self.native_selection.as_mut().unwrap();
@@ -272,28 +272,16 @@ impl Runtime {
                 .unwrap_or(1);
             native.last_click = Some((id.clone(), screen, now, depth));
             if depth >= 2 && id.can_originate_run() {
-                match native
-                    .authority
-                    .acquire_run(
-                        id.clone(),
-                        point.map(|p| eda_engine::ir::geometry::Point::new(p.x, p.y)),
-                    )
-                    .and_then(|run| {
-                        if depth >= 3 {
-                            let SelectionSubject::Run(run) = run else {
-                                unreachable!()
-                            };
-                            native.authority.widen_run(&run)
-                        } else {
-                            Ok(run)
-                        }
-                    }) {
-                    Ok(subject) => candidate = Some(subject),
-                    Err(e) => {
-                        self.selection_notice(format!("Electrical selection refused: {e:?}"));
-                        return Some(true);
-                    }
+                let request = crate::runtime_selection_run::Request {
+                    model: native.model.clone(),
+                    origin: id.clone(),
+                    point: point.map(|p| eda_engine::ir::geometry::Point::new(p.x, p.y)),
+                    depth,
+                };
+                if let Err(error) = self.selection_run.schedule(request) {
+                    self.selection_notice(error);
                 }
+                return Some(true);
             }
         } else {
             self.native_selection.as_mut().unwrap().last_click = None;

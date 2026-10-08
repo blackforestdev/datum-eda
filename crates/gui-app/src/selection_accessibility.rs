@@ -11,6 +11,7 @@ pub(crate) struct SelectionAccessibilitySnapshot {
 }
 impl crate::Runtime {
     pub(super) fn refresh_selection_accessibility(&mut self) {
+        self.selection_run.cancel();
         self.refresh_selection_accessibility_lod(None);
     }
     pub(super) fn refresh_prepared_selection_accessibility(&mut self) {

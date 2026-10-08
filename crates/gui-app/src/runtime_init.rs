@@ -64,7 +64,7 @@ impl Runtime {
             config.width, config.height, config.format, config.present_mode, msaa_samples
         ));
         // Initial configuration joins the same admission path as later frames.
-        let device_health = native_device_recovery::DeviceHealth::observe(&device, wake);
+        let device_health = native_device_recovery::DeviceHealth::observe(&device, wake.clone());
         let renderer_started = std::time::Instant::now();
         append_gui_diagnostic_line("renderer init begin");
         let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples)?;
@@ -95,6 +95,7 @@ impl Runtime {
             measurements,
             session: LiveDesignSession::new(state),
             selection_read_cache: Default::default(),
+            selection_run: runtime_selection_run::RunWork::new(wake),
             native_selection: None,
             selection_gesture: None,
             selection_evaluation: None,
