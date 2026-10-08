@@ -1,0 +1,40 @@
+{
+  "reviewer": "owner-reserved independent audit 01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "5155b41191988afa59973800ddd8c607774d3444",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "f400b9f2106d5ba275d6810a02f069a4b448ea7e",
+  "outcome": "PASS for bounded native Move presentation correction; no development acceptance",
+  "mandatory_findings": [],
+  "source_review": [
+    "Complete preview source remains stable while awaiting native presentation; upload-only continuation cannot repeatedly replace it from later pointer events. Latest checked destination remains queued.",
+    "Matching successful surface presentation and accepted shared submitted-frame completion clear the preview hold. App requests a subsequent ordinary redraw if newer intent remains.",
+    "Cancel and canonical commit clear pending destination and presentation hold; ordinary revision/tip/selection guards retained.",
+    "Publication oracle uses presented_hits transferred only after successful native presentation/shared receipt acceptance. Prepared geometry alone is no longer credited as presented movement."
+  ],
+  "independent_replay": {
+    "log": "target/user-edit-review/5155b411-replay/workflow.log",
+    "sha256": "80f4181cd075ce0d85ddbc3ab90f31af32856058353958339523ae5197da99a8",
+    "result": "1 PASS, zero failures; 74.03 seconds",
+    "method": "Existing production App/Winit Wayland/WGPU ignored workflow; audit-owned real-board copy; 192-event burst; DATUM_TRACE_TIMING removed. In-process native pointer dispatch and normalized M; production wakes during publication waits.",
+    "batch_ms": 14,
+    "published_label_before": {
+      "x": 324.1462,
+      "y": 350.34448
+    },
+    "published_label_during_motion": {
+      "x": 344.27454,
+      "y": 370.47284
+    },
+    "committed_revision": "65caee62a43024294aaf74004b2fd85c30bb7b3ac6191664cf82aad96b3b1cf5",
+    "committed_status": "Edit committed",
+    "behavior": "Translated published Footprint hit region during movement, cancellation restores original published position, commit publishes translated position, Undo/Redo publish matching original/committed positions with exact board bytes, Save and qualified reopen passed. No rendering pause in this trial.",
+    "limits": "Presented hit projection tied to accepted native presentation is verified; no screenshot pixel comparison or physical compositor/display-latency/HUMAN proof is claimed. No latency acceptance budget."
+  },
+  "reused_evidence": "Unchanged earlier writer/journal and recovery proofs reused only at recorded scopes; prior dispatch/coalescing PASS retained without retroactive visual claims.",
+  "preservation": "Seven source blobs and three binary hashes verified before replay; owner Project preimages and three binary cohort hashes verified afterward. Worktree clean. Only private copy mutated.",
+  "remaining": [
+    "Original owner recovery exhaustion remains unattributed; dat-first-edit-native-recovery-dhj9 remains open.",
+    "Development availability remains withdrawn and UED-C07 incomplete according to the candidate; this review does not approve a usable-build acceptance claim.",
+    "Physical input/HUMAN, broader editor/platform/CAM qualification and successor execution remain outside scope."
+  ]
+}

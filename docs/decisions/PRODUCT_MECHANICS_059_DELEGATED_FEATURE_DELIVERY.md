@@ -490,3 +490,11 @@ positions, then saves/reopens exact bytes (one PASS, 75.77 seconds). Owner files
 remain unchanged. Reserved correction review is pending; UED-C07, original recovery
 attribution, physical-input/HUMAN and wider qualification remain open. No
 availability acceptance, new mechanism, timeout or successor is inferred.
+
+The owner-appointed first-edit manager received actual reserved independent PASS
+for source `5155b41191988afa59973800ddd8c607774d3444`, packet blob
+`f400b9f2106d5ba275d6810a02f069a4b448ea7e`, with no mandatory findings. The
+tracing-off independent native replay passed presented motion/cancel/history and
+exact Save/reopen (74.03 seconds); receipt is `first-edit-presentation-review.json`.
+This dispositions the demonstrated presentation correction only. Original recovery
+attribution and availability remain open; no UED-C07 acceptance or successor.

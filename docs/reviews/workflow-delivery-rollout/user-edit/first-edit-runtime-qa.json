@@ -207,7 +207,17 @@
       "original_pcb_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
       "original_sch_sha256": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
     },
-    "review": "Reserved independent correction review pending.",
-    "remaining": "Original recovery exhaustion not reproduced or attributed. Availability withdrawn, UED-C07 in progress, physical/HUMAN and wider qualification open; no successor grant."
+    "review": {
+      "outcome": "PASS for bounded native Move presentation correction; no development acceptance",
+      "source_commit": "5155b41191988afa59973800ddd8c607774d3444",
+      "packet_blob": "f400b9f2106d5ba275d6810a02f069a4b448ea7e",
+      "receipt": "first-edit-presentation-review.json",
+      "archived_replay": "first-edit-runtime-logs/independent-5155b411-presentation.log",
+      "replay_sha256": "80f4181cd075ce0d85ddbc3ab90f31af32856058353958339523ae5197da99a8",
+      "result": "1 PASS, zero failures; 74.03 seconds",
+      "trace": "off",
+      "pointer_batch_ms": 14
+    },
+    "remaining": "Demonstrated Move presentation starvation is repaired and independently PASS. Original recovery exhaustion remains unattributed/open; availability withdrawn, UED-C07 in progress, physical/HUMAN and wider qualification open; no successor grant."
   }
 }
