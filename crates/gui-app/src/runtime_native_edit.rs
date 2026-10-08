@@ -17,6 +17,7 @@ struct Answer {
 pub(super) struct EditWork {
     pub preview: Option<FootprintMovePreview>,
     preview_tip: Option<String>,
+    pending_position: Option<PointNm>,
     pending: Option<mpsc::Receiver<Answer>>,
     client: Arc<Mutex<Option<NativeProjectClient>>>,
     wake: winit::event_loop::EventLoopProxy<()>,
@@ -27,6 +28,7 @@ impl EditWork {
         Self {
             preview: None,
             preview_tip: None,
+            pending_position: None,
             pending: None,
             client: Arc::new(Mutex::new(None)),
             wake,
@@ -141,6 +143,7 @@ impl Runtime {
         datum_gui_protocol::gui_menu_model::native_project_edit_available(self.workspace())
     }
     pub(super) fn cancel_native_move(&mut self) -> bool {
+        self.native_edit.pending_position = None;
         if let Some(preview) = self.native_edit.preview.take() {
             self.native_edit.preview_tip = None;
             self.session.workspace_mut().scene = preview.base;
@@ -256,17 +259,28 @@ impl Runtime {
         let Some(preview) = &self.native_edit.preview else {
             return false;
         };
-        let next = preview
-            .destination(world, self.workspace().authoring.snap)
-            .and_then(|p| preview.scene_at(p));
-        match next {
+        match preview.destination(world, self.workspace().authoring.snap) {
+            Ok(position) => self.native_edit.pending_position = Some(position),
+            Err(error) => self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string()),
+        }
+        // Input captures the latest complete intent. The native frame materializes
+        // it once, so accumulated motion does not rebuild copper on every event.
+        true
+    }
+    pub(super) fn prepare_native_move_frame(&mut self) {
+        let Some(position) = self.native_edit.pending_position.take() else {
+            return;
+        };
+        let Some(preview) = &self.native_edit.preview else {
+            return;
+        };
+        match preview.scene_at(position) {
             Ok(scene) => {
                 self.session.workspace_mut().scene = scene;
                 self.invalidate_scene();
             }
             Err(error) => self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string()),
         }
-        true
     }
     pub(super) fn queue_native_history(&mut self, redo: bool) -> bool {
         let tip = self

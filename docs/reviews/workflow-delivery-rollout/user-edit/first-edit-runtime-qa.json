@@ -2,7 +2,7 @@
   "packet": "UED-FIRST-MOVE-01-RUNTIME-QA",
   "task": "USER-EDIT-DELIVERY",
   "step": "UED-C07",
-  "source_parent": "b27adac3f188c864a30b6aed4d829493d7b9778b",
+  "source_parent": "bf34a97475be0f328f5072bc909e49982a6ce3a4",
   "source_blobs": [
     {
       "path": "crates/gui-app/src/main.rs",
@@ -10,7 +10,7 @@
     },
     {
       "path": "crates/gui-app/src/runtime_native_edit.rs",
-      "blob": "1e30d8483e8a2030fbba6c8620ceb1f2d0222514"
+      "blob": "827f38beb8d1aab01b485d35c381c50591cb57f1"
     },
     {
       "path": "crates/gui-app/src/runtime_primary_pointer.rs",
@@ -21,8 +21,12 @@
       "blob": "70837de128802eab0be4969c8c72a79705441410"
     },
     {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "blob": "b504c8d90717378fffc195c8243bfaec820ee66f"
+    },
+    {
       "path": "crates/gui-app/src/native_move_frame_tests.rs",
-      "blob": "3e290a7a2ba380670f73a5053ac82a9514e7db29"
+      "blob": "30dbe962b52e136c273271ec11c58604184ac576"
     }
   ],
   "authority": "Retained owner first-footprint edit correction grant and PM059 manager appointment; no successor grant.",
@@ -83,7 +87,8 @@
     "frame-reproduction.log: six-second gap was redraw-driven harness scheduling, not measured executing M/GPU time; next ignored pointer caused fixture to wait until bounded failure.",
     "frame-reproduction-traced.log: nominal PASS invalid as Move proof; no preview actually active. Retained as discovery only.",
     "frame-moving.log and frame-moving2.log: regression assertion failed because unrelated desktop pointer overwrote the in-process cursor reference. Physical input excluded from fixture; native frame events still forwarded.",
-    "frame-final-edit.log: destination happened not to have a screen AuthoredObject hit; tightened test to explicitly click the published Footprint label. No failed result credited as delivery."
+    "frame-final-edit.log: destination happened not to have a screen AuthoredObject hit; tightened test to explicitly click the published Footprint label. No failed result credited as delivery.",
+    "frame-queued-cancel.log passed the workflow, but its visual cancellation assertion referred to the requested initiator rather than the actual selected Footprint when another object won the hit. Fixture now captures actual authoritative identity; fresh owner-copy frame-identity-cancel.log passes that corrected assertion. No false cancellation claim retained."
   ],
   "proof_limits": [
     "In-process production pointer events and normalized M shortcut; physical compositor keyboard/mouse delivery is not automated or HUMAN-qualified.",
@@ -94,14 +99,21 @@
   ],
   "fixture_reproduction": [
     "Create a private disk-backed copy of /home/bfadmin/Documents/datum_projects/DOA2526-first-edit; never point this committing fixture at the owner Project.",
-    "TMPDIR=\"$PWD/target/user-edit-tmp\" DATUM_FIRST_EDIT_PROJECT=<private-copy> python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual --bin datum-gui ordinary_app_select_m_move_commit_history_reopen -- --ignored --nocapture",
+    "TMPDIR=\"$PWD/target/user-edit-tmp\" DATUM_FIRST_EDIT_PROJECT=<private-copy> DATUM_FIRST_EDIT_POINTER_BURST=1 python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual --bin datum-gui ordinary_app_select_m_move_commit_history_reopen -- --ignored --nocapture",
     "Build matching CLI/daemon explicitly before the test; a stale companion must not try a nested guarded Cargo build."
   ],
-  "independent_review": "Reserved audit session notified of owner rejection and retained-scope correction; corrected exact candidate review pending.",
+  "independent_review": {
+    "outcome": "PASS for bounded Move dispatch correction; no development availability acceptance",
+    "source_commit": "bf34a97475be0f328f5072bc909e49982a6ce3a4",
+    "packet_blob": "70d4a58c708dc56dcd14d002cfd15a94015e5eb3",
+    "receipt": "first-edit-runtime-corrected-review.json",
+    "scope": "bf34 pickup/dispatch correction only; pending preview preparation correction not yet independently reviewed",
+    "follow_on": "Latest-pointer whole-preview frame preparation and actual-identity queued cancellation await reserved bounded re-review; bf34 PASS scopes preserved."
+  },
   "ordinary_build_cohort": {
     "datum-gui": {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
-      "sha256": "c6a10d8d1b9bd89f76506696b343240b1c67a0166fd79f14b95b833392176a3d"
+      "sha256": "85f7829453013b9b5657123ee0b739ecfc6277c730068d405662e61e9d3304f0"
     },
     "datum-eda": {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
@@ -112,5 +124,28 @@
       "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
     }
   },
-  "ordinary_build_cohort_log": "first-edit-runtime-logs/ordinary-cohort-build.log"
+  "ordinary_build_cohort_log": "first-edit-runtime-logs/ordinary-preview-cohort-build.log",
+  "motion_dispatch_cause": {
+    "introduced_by": "fcb7633caa6c8b7fed5e85a8b92eb76c694a9ba7",
+    "path": "crates/gui-app/src/runtime_native_edit.rs::native_move_pointer",
+    "observation": "192 accumulated production pointer events blocked dispatch for 6276 ms; complete scene invalidation rebuilt unchanged copper on each event before the next native round. Recovery stop itself did not reproduce.",
+    "repair": "Capture latest snapped complete Footprint intent per pointer; prepare full scene once at admitted native frame. Commit resolves actual click directly; cancel clears queued intent.",
+    "comparison_ms": {
+      "before": 6276,
+      "after_observed": [
+        16,
+        24
+      ]
+    },
+    "proof_scope": "Same finite production App/native Wayland fixture. Matched DATUM_TRACE_TIMING=1 before/after; physical input/HUMAN not qualified. No latency acceptance budget.",
+    "native_result": {
+      "result": "PASS",
+      "log": "first-edit-runtime-logs/frame-identity-cancel.log",
+      "actual_subject": "Footprint ca340e78-04a5-5307-a024-9c5720a807d2",
+      "behavior": "Batched motion followed by actual whole-scene frame publication; cancellation of another queued move before frame cannot resurrect the actual selected Footprint; exact byte preimage, direct click commit before next preview render, full history/Save/reopen preserved.",
+      "input_batch_events": 192,
+      "input_batch_ms": 24
+    },
+    "failure_disposition": "Demonstrated movement dispatch backlog repaired. Original recovery-stop attribution remains open; no inference that the backlog caused that recovery episode."
+  }
 }

@@ -428,3 +428,25 @@ UED-C07 remains in progress pending reserved bounded review and a defensible
 ordinary failure disposition. Prior journal/callback PASS remains scoped; no
 successor or wider acceptance is authorized. Detailed outcomes and raw evidence
 are in `docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json`.
+
+### Accumulated Move input correction — retained first-edit delivery
+
+Actual reserved independent bounded PASS for `bf34a97475be0f328f5072bc909e49982a6ce3a4`
+and packet blob `70d4a58c708dc56dcd14d002cfd15a94015e5eb3` is received and
+preserved in `first-edit-runtime-corrected-review.json`. Its independent native
+frame workflow and seven recovery tests passed. This receipt covers the pickup/
+dispatch correction; it does not resolve the owner's original recovery stop.
+
+The same fixture additionally demonstrates the movement delay: 192 accumulated
+production pointer events spend 6,276 ms on dispatch before the next native
+round. The cause introduced in `fcb7633c` is preview source invalidation and
+complete retained copper reconstruction on every motion event. The retained-scope
+repair stores the latest existing snapped Footprint intent and prepares the whole
+preview once per admitted native frame. It preserves complete geometry, final
+click destination, cancellation and the canonical mutation path. The same input
+batch measured 16 ms after correction, followed by the complete frame/edit/history/
+Save/reopen workflow. These are observations, not ratified latency budgets.
+Cancelled queued motion must not reappear on the next frame; focused verification
+and reserved review cover that boundary. The original recovery exhaustion remains
+unattributed, with no timeout relaxation or new acceptance claim. UED-C07 and
+ordinary development availability remain open/withdrawn respectively.

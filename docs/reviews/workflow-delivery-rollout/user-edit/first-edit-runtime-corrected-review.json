@@ -1,0 +1,37 @@
+{
+  "reviewer": "owner-reserved independent audit session 01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "bf34a97475be0f328f5072bc909e49982a6ce3a4",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "70d4a58c708dc56dcd14d002cfd15a94015e5eb3",
+  "outcome": "PASS for bounded Move dispatch correction; no development availability acceptance",
+  "mandatory_findings": [],
+  "source_review": [
+    "Selected current single Footprint M pickup reuses existing canonical preview with stale/lock refusal and captured snap reference; Run and Compound are not reduced to subsets. Existing set_workspace_tool cancels prior preview before pickup.",
+    "Presented authored/review hits reach authoring canvas dispatch; chrome dispatch remains prior to canvas preparation. Rendered-label destination exercises the corrected route.",
+    "Recovery adds one transition diagnostic, leaves the two-second limit and episode behavior unchanged."
+  ],
+  "independent_replays": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/independent-bf34-workflow.log",
+      "sha256": "e5faf0f3b05464ff0b7bd2a4270fa45d95de98e3d91d37ebdb5f03419e2fdf28",
+      "tests_passed": 1
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/independent-bf34-recovery.log",
+      "sha256": "741cd6e2527612045ad50e573484cd8dd43e3fa620d69dfbaa5cc6893cb9eb12",
+      "tests_passed": 7
+    }
+  ],
+  "workflow_result": "Actual App Wayland/WGPU frame loop and scheduler on private real-board Project copy: select, normalized M, moving preview, cancellation with board preimage preserved, rendered-label commit, exact undo/redo, Save and qualified reopen passed in 74.01 seconds. No rendering pause in this trial.",
+  "preservation": "Owner Project file hashes and matching three binary cohort hashes verified after replay; original KiCad unchanged by copied-project workflow. Source HEAD and all five packet source blobs verified. No production edits.",
+  "producer_evidence_reused": [
+    "Original owner recovery-stop native log inspected and retained.",
+    "Earlier callback/journal independent PASS reused only at its original scope."
+  ],
+  "remaining_blockers": [
+    "dat-first-edit-native-recovery-dhj9 remains OPEN: originating owner recovery-stop wait not reproduced or attributed. No inference that pickup/dispatch defects caused that stop.",
+    "Development availability remains withdrawn and UED-C07 remains incomplete as recorded in candidate.",
+    "Physical compositor keyboard/mouse delivery and HUMAN/UX not verified; normalized shortcut and in-process input are not physical input proof.",
+    "No successor execution or full S5A/GWP/NA/CAM qualification is granted."
+  ]
+}

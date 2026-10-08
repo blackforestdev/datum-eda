@@ -15,6 +15,8 @@ struct Fixture {
     preimage: Vec<u8>,
     committed: Option<Vec<u8>>,
     logged_stage: Option<usize>,
+    original_position: Option<PointNm>,
+    selected_component: Option<String>,
 }
 impl Fixture {
     fn mouse(&mut self, events: &ActiveEventLoop, x: f64, y: f64, click: bool) {
@@ -104,6 +106,29 @@ impl Fixture {
                 self.mouse(events, x, y, true);
             }
             1 => {
+                let datum_gui_protocol::SelectionTarget::Native(view) =
+                    &runtime.workspace().selection
+                else {
+                    panic!("native Object selection required");
+                };
+                let datum_gui_protocol::SelectionSubject::Object(id) = &view.subject else {
+                    panic!("Footprint Object required");
+                };
+                assert_eq!(
+                    id.class,
+                    datum_gui_protocol::AuthoredSelectionClass::Footprint
+                );
+                self.selected_component = Some(id.id.to_string());
+                self.original_position = Some(
+                    runtime
+                        .workspace()
+                        .scene
+                        .components
+                        .iter()
+                        .find(|c| c.component_uuid == id.id.to_string())
+                        .unwrap()
+                        .position,
+                );
                 eprintln!(
                     "move-frame M cursor={:?} origin={:?} tool={:?} components={:?}",
                     runtime.last_cursor_pos,
@@ -141,6 +166,20 @@ impl Fixture {
             }
             4..=15 => {
                 let (x, y) = self.origin.unwrap();
+                if self.stage == 4 && std::env::var_os("DATUM_FIRST_EDIT_POINTER_BURST").is_some() {
+                    // Reproduce accumulated native motion in one dispatch batch,
+                    // before the next ordinary frame/background round. Finite input,
+                    // not a responsiveness budget or OS injection mechanism.
+                    let started = Instant::now();
+                    for step in 0..192 {
+                        let delta = 2.0 + (step % 12) as f64;
+                        self.mouse(events, x + delta, y + delta, false);
+                    }
+                    eprintln!(
+                        "move-frame accumulated_pointer_batch_ms={}",
+                        started.elapsed().as_millis()
+                    );
+                }
                 let delta = (self.stage - 3) as f64 * 2.0;
                 self.mouse(events, x + delta, y + delta, false);
             }
@@ -161,11 +200,30 @@ impl Fixture {
                     component.position, preview.component.position,
                     "pointer movement must translate the selected Footprint"
                 );
-                runtime.dispatch_session_command(SessionCommand::CancelAuthoringGesture);
+                // Cancel another queued motion before any frame can materialize it.
+                let (x, y) = self.origin.unwrap();
+                self.mouse(events, x + 30.0, y + 30.0, false);
+                self.app
+                    .runtime
+                    .as_mut()
+                    .unwrap()
+                    .dispatch_session_command(SessionCommand::CancelAuthoringGesture);
                 self.app.request_redraw_if_needed();
             }
             17 => {
                 assert_eq!(std::fs::read(&self.board_path).unwrap(), self.preimage);
+                assert_eq!(
+                    runtime
+                        .workspace()
+                        .scene
+                        .components
+                        .iter()
+                        .find(|c| Some(&c.component_uuid) == self.selected_component.as_ref())
+                        .unwrap()
+                        .position,
+                    self.original_position.unwrap(),
+                    "cancelled queued motion must not resurrect on the next frame"
+                );
                 let (x, y) = self.origin.unwrap();
                 self.mouse(events, x, y, false);
                 let runtime = self.app.runtime.as_mut().unwrap();
@@ -390,6 +448,8 @@ fn ordinary_app_select_m_move_commit_history_reopen() {
         preimage: before.clone(),
         committed: None,
         logged_stage: None,
+        original_position: None,
+        selected_component: None,
     };
     events.run_app(&mut fixture).unwrap();
     assert_eq!(
