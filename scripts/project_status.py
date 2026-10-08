@@ -29,6 +29,7 @@ from project_task_details import (
     completion_view, render_completion, resolve_claim_state,
     selected_completion_step, validate_completion,
 )
+from project_feature_delivery import delivery_lines, validate_feature_delivery
 
 
 START_MARKER = "<!-- ACTIVE FRONTIER:START -->"
@@ -50,7 +51,7 @@ ROOT_KEYS = {"schema_version", "policy_decision", "claim_ttl_hours", "frontier"}
 ITEM_KEYS = {
     "key", "order", "title", "issue_id", "related_issue_ids", "governing_docs",
     "state", "authorization", "canonical_next", "parallel", "summary",
-    "dependencies", "unblocks", "landing_commit", "claim", "completion",
+    "dependencies", "unblocks", "landing_commit", "claim", "completion", "feature_delivery",
 }
 REQUIRED_ITEM_KEYS = {
     "key", "order", "title", "issue_id", "governing_docs", "state",
@@ -357,6 +358,7 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
         elif landing is not None:
             failures.append(f"{label}: landing_commit is only allowed for landed state")
         validate_claim(item, issue, ttl, moment, failures)
+        failures.extend(validate_feature_delivery(root, item, issue))
         if "completion" in item:
             failures.extend(validate_completion(root, item, issues, governed))
         claim = item.get("claim")
@@ -501,6 +503,7 @@ def render_next(view: dict[str, Any]) -> str:
             lines.append(f"- [{request['id']}] {request['question']}")
             lines.append(f"  Recommended: {request['recommended_response']}")
     lines.append(view["summary"])
+    lines.extend(delivery_lines(view))
     return "\n".join(lines)
 
 

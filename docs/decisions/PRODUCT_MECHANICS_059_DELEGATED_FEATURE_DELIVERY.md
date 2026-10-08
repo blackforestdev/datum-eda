@@ -13,6 +13,42 @@ amends PM025's decision routing, not its roadmap, claim or validation authority.
 
 ## Delivery unit and rhythm
 
+### Feature delivery enforcement
+
+The owner's one-hour workflow correction is execution-authorized as
+FEATURE-DELIVERY-ENFORCEMENT. Target roughly 80% of development effort toward
+implementing usable behavior; this is a prioritization target, not a measured
+commit percentage or permission to skip safety. Commit labels cannot prove effort.
+
+A selected feature must carry `feature_delivery` in the structured Frontier:
+`ordinary_workflow`, `safety_requirements`, `qualification_followups`,
+`prerequisite_reasons`, `development_ready` and `ordinary_evidence`. The selector
+rejects missing/empty workflow or safety criteria, unexplained hard prerequisites,
+and planning/decision substeps without a concrete `step:<ID>` blocker reason.
+Changing scope or selecting a successor still requires its existing authority.
+
+`development_ready` may become true only with repository-local ordinary-application
+evidence identifying source commit, launch command and passing results for every
+declared workflow and safety requirement. An offline fixture, document or engine
+test alone cannot satisfy this claim. This is a structural evidence check, not an
+automatic independent PASS, HUMAN assessment or product acceptance.
+
+Within the current grant, continue implementation, focused verification and
+repairs until the usable unit is delivered or a specific authority, safety,
+review/transport or ownership blocker prevents further authorized work. A commit,
+document, lease renewal or successful test is not by itself a stopping condition.
+State the blocker and what exact action resolves it; keep executable authorized
+work moving. Deferred qualification remains explicitly open and cannot be quietly
+turned into a new hard prerequisite. Necessary fixtures supplement ordinary use;
+every new verification batch must identify the decision it enables.
+
+<!-- REQ:FEATURE-DELIVERY-ENFORCEMENT:FDE-C01 -->
+Implement and verify ordinary-workflow, prerequisite and development-evidence
+checks in the existing selector; reconcile startup guidance and migrate the
+current first-edit task without changing its claim, writer grant or review gates.
+The owner authorizes this bounded tooling/governance implementation, not unrelated
+product mechanisms or a writer review result.
+
 A unit is a complete designer-visible behavior with a finite acceptance boundary.
 Within an authorized contract, the default cycle is **build, test, fix, document,
 review and deliver**. Check the contract and existing implementation first; do not

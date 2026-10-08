@@ -169,6 +169,19 @@ supporting records to implementation where practical. Unavailable proof blocks
 its acceptance claim only. Escalate genuine product choices together with concrete
 recommendations; the owner is not the routine message courier.
 
+PM059's `feature_delivery` field on the existing Frontier item records the
+ordinary user workflow, required safety behavior, separate qualification work,
+concrete prerequisite reasons and development availability. The selector requires
+it for the selected feature and validates every supplied contract. Hard issue
+dependencies and selected non-implementation steps need explicit blocker reasons.
+Development availability requires source-pinned ordinary-application evidence for
+every workflow and safety requirement; fixture-only records cannot satisfy it.
+These checks validate evidence structure, not observation truth, independent
+approval or an agent's time allocation. They never change grants or selection.
+The owner-directed target is roughly 80% effort toward usable implementation;
+commit labels are not an effort metric. Continue inside the recorded grant, and
+keep broader qualification separate from bounded development availability.
+
 ## Work-Item Workflow
 
 1. **Capture:** create an issue in `br`. It remains intake-only unless promoted.

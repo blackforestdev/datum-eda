@@ -18,6 +18,14 @@ independent review (PM059). Continue routine work under its existing grant; do n
 stop after administrative updates. Reuse adequate research/proof and capture
 unrelated defects without making them new prerequisites.
 
+Default to usable feature implementation; target roughly 80% of effort toward
+that outcome, not a percentage of commit labels. Read the selected task's
+`feature_delivery` contract. Use ordinary application workflows as delivery proof;
+isolated fixtures supplement them. Do not yield merely after a document, test,
+commit or lease update. Continue within the grant until delivery or a concrete
+authority, safety, review/transport or ownership blocker; explain its exact remedy.
+Full qualification remains open separately. Never invent an execution grant or PASS.
+
 An owner-appointed manager may handle only PM059-delegated decisions. Route actual
 review receipts, unchanged-scope continuation and objective acceptance to that
 manager; new product rules, scope reductions, waivers, dependencies and nondelegated
