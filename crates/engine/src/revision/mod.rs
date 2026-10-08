@@ -48,6 +48,7 @@ mod store;
 mod test_support;
 #[allow(dead_code)]
 mod transaction;
+mod writer;
 
 pub use approval::*;
 pub use authority::*;
@@ -78,9 +79,7 @@ pub use model::{
     TechnicalValidationState,
 };
 pub use resolver::AuthorityResolution;
-pub use store::{
-    ProjectWriteLease, RevisionAuthorityStore, StagedIntegrityGeneration, transaction_tip,
-};
+pub use store::{RevisionAuthorityStore, StagedIntegrityGeneration, transaction_tip};
 
 #[cfg(test)]
 pub(crate) use change_transaction::{
@@ -103,3 +102,7 @@ pub(crate) use transaction::{
     REV_I03_MUTATIONS, REV_I03_QUERIES, RevisionMutation, RevisionMutationKind, RevisionQueryKind,
     apply_revision_mutations, consume_seed_mutation,
 };
+
+pub use writer::ProjectWriteLease;
+
+pub(crate) use writer::create_directory_durable;

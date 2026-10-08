@@ -1,0 +1,121 @@
+{
+  "unit": "UED-C06 engine writer prerequisite",
+  "status": "implemented_and_focused_verified; first_edit_runtime_pending",
+  "authority_commit": "05461239",
+  "parent_source_commit": "05461239d884e7fd27e29cb8d2deba79764bde3f",
+  "behavior": "Cooperating canonical writers serialize by stable kernel-owned inode; validate a fresh guarded persisted preimage; refuse stale intent without overwriting; recover committed stages under ownership; preserve backup/restore lock identity; report uncertain publication with transaction/batch IDs. No new GUI editing capability delivered by this prerequisite alone.",
+  "source_pins": [
+    {
+      "path": "crates/engine/src/error.rs",
+      "blob": "1a2abb7e8ce098570b24ef70c26f3da135395567"
+    },
+    {
+      "path": "crates/engine/src/revision/authority_store.rs",
+      "blob": "5a16d928b8c4aab376754bff163bab8b4346c99c"
+    },
+    {
+      "path": "crates/engine/src/revision/backup.rs",
+      "blob": "5f64e445c5ef062994744fbf0114febdccff1511"
+    },
+    {
+      "path": "crates/engine/src/revision/mod.rs",
+      "blob": "5e365e84bb42e268e50c7aa23cbe6828b8ed6909"
+    },
+    {
+      "path": "crates/engine/src/revision/store.rs",
+      "blob": "95adc9c8bf582a26acc871350c1d7bb08792dc16"
+    },
+    {
+      "path": "crates/engine/src/substrate/commit.rs",
+      "blob": "ad557209152eae85a20398d21e1776a302ea08b3"
+    },
+    {
+      "path": "crates/engine/src/substrate/journal.rs",
+      "blob": "59590aa6cb73651638af31338f7aa3d6a7ad39bc"
+    },
+    {
+      "path": "crates/engine/src/substrate/journal_io.rs",
+      "blob": "94d27422c9b24226f2b7cc5bdd25eae891efac23"
+    },
+    {
+      "path": "crates/engine/src/substrate/mod.rs",
+      "blob": "c1d6c04ccd2dbe8e71e018c94c5140d0bcd89e6a"
+    },
+    {
+      "path": "crates/engine/src/substrate/project_read_cache.rs",
+      "blob": "cdc2372123f2edfab89527d2f5aeb37330eee293"
+    },
+    {
+      "path": "crates/engine/src/substrate/project_resolver.rs",
+      "blob": "f71fa9ee4ce146a9a994ad7f7ad8c70aacd58e52"
+    },
+    {
+      "path": "crates/engine/src/substrate/tests.rs",
+      "blob": "62fca2afc91343d7f3e0a05afe587da446f8bb40"
+    },
+    {
+      "path": "crates/engine/src/substrate/tests/project_read_cache.rs",
+      "blob": "645d80a0e5796fa60ea67a2d9802d738c611587b"
+    },
+    {
+      "path": "crates/engine/src/substrate/tests/revision_integrity.rs",
+      "blob": "d30ace0d40d8daa937a9c16cbc13686eaa3833a8"
+    },
+    {
+      "path": "specs/source_module_size_manifest.json",
+      "blob": "6b6616e360cde11a2595a7f25944aa47b49b7070"
+    },
+    {
+      "path": "crates/engine/src/revision/writer.rs",
+      "blob": "d10915c848fd81880614d7291c040c948abf609e"
+    },
+    {
+      "path": "crates/engine/src/substrate/tests/writer_ownership.rs",
+      "blob": "4d1d8e012ba24457cebfd9cb404127068dea31b6"
+    }
+  ],
+  "verification": {
+    "question": "Does the reviewed writer correction exclude concurrent/stale writes and preserve existing journal recovery, revision guards, backup/restore and reusable read snapshots?",
+    "process_cases": "3 passed, process helper intentionally ignored by main harness and executed in child processes",
+    "integrity_cases": "7 passed on final source, including all existing interruption boundaries and restore inode assertion",
+    "revision_guard_cases": "6 passed",
+    "journal_compatibility": "9 passed initially; malformed-complete-record case safely refused but diagnostic assertion failed, preserved log. Corrected diagnostic; focused regression 1 passed. Existing torn-tail append recovery passes.",
+    "cache_compatibility": "8 passed initially; legacy lease test expected old unlocked reads. Updated only that expectation to ratified refusal and byte preservation; focused case 1 passed. Permanent new coordination file permits reuse.",
+    "logs": [
+      {
+        "path": "target/user-edit-review/writer-ownership-pinned.log",
+        "sha256": "a19333cddae240e14ffb7f006e4442c500be8744eb49a90aa414e0c96c5f4102"
+      },
+      {
+        "path": "target/user-edit-review/writer-integrity-pinned.log",
+        "sha256": "de151dbd85b471acc32104e2a8d40b27f39de2294397848080ae1424ed25d7c8"
+      },
+      {
+        "path": "target/user-edit-review/writer-revision-guard-tests.log",
+        "sha256": "c455c3b525f87a8ae0e30dd9e18ca1e91b00724f223c60c23608a3b758a72df8"
+      },
+      {
+        "path": "target/user-edit-review/writer-journal-tests.log",
+        "sha256": "0fdddd7880e33097b40bb862932e5cb470429466597c9cf7ffcd9d0728a158fb"
+      },
+      {
+        "path": "target/user-edit-review/writer-journal-correction.log",
+        "sha256": "2e2bb8eca0b4517f37c4b9c6b5ba4af6a74d9313ea2d2bc2447e55f34a28a1df"
+      },
+      {
+        "path": "target/user-edit-review/writer-cache-tests.log",
+        "sha256": "6fd16855075b29c0529e9099549d33f15afc899b7c922fd3acda91dae92ca076"
+      },
+      {
+        "path": "target/user-edit-review/writer-cache-correction.log",
+        "sha256": "e6cd14a6d66d9005af95bf8b2376516209e1e258da0be3c965ec8f19ad70c1fa"
+      }
+    ]
+  },
+  "remaining": [
+    "Typed GUI/daemon first-footprint move/preview/cancel/history/Save/reopen implementation and ordinary-build proof",
+    "Transaction-correlated uncertain-outcome reconciliation at typed application boundary",
+    "Reserved bounded independent implementation review and objective development-build disposition",
+    "Full native Wayland/HUMAN and separate PWO/GWP/NA/S5A/CAM qualification remain unpassed; these focused results do not prove power-loss or other platform conformance"
+  ]
+}

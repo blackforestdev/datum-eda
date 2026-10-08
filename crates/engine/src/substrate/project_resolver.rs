@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::revision::{RevisionAuthorityStore, RevisionStoreState};
+use crate::revision::{ProjectWriteLease, RevisionAuthorityStore, RevisionStoreState};
 
 use super::artifact::{
     insert_manufacturing_plan_objects, insert_output_job_objects, insert_panel_projection_objects,
@@ -77,6 +77,54 @@ impl ProjectResolver {
     }
 
     pub fn resolve(&self) -> Result<DesignModel, EngineError> {
+        let lease = ProjectWriteLease::acquire(&self.project_root)?;
+        self.resolve_with_lease(&lease)
+    }
+
+    pub(crate) fn resolve_for_write_with_lease(
+        &self,
+        lease: &ProjectWriteLease,
+    ) -> Result<DesignModel, EngineError> {
+        lease.validate(&self.project_root)?;
+        let journal_path = super::transaction_journal_path(&self.project_root);
+        if journal_path.exists() {
+            super::journal_io::recover_torn_journal_tail(&journal_path)?;
+        }
+        self.resolve_with_lease(lease)
+    }
+
+    pub(crate) fn resolve_with_lease(
+        &self,
+        lease: &ProjectWriteLease,
+    ) -> Result<DesignModel, EngineError> {
+        lease.validate(&self.project_root)?;
+        let initial: NativeProjectManifestShape =
+            serde_json::from_value(read_json_value(&self.project_root.join("project.json"))?)?;
+        let (records, journal_diagnostics) = read_transaction_journal(&self.project_root);
+        let integrity = if journal_diagnostics.is_empty() {
+            RevisionAuthorityStore::new(&self.project_root).inspect_and_recover_with_lease(
+                initial.uuid,
+                &records,
+                lease,
+            )
+        } else {
+            Err(EngineError::Operation(format!(
+                "existing journal parse error or invalid journal; recovery refused: {}",
+                journal_diagnostics
+                    .iter()
+                    .map(|d| d.message.as_str())
+                    .collect::<Vec<_>>()
+                    .join("; ")
+            )))
+        }
+        .unwrap_or_else(|error| RevisionStoreState::ReadOnlyDiagnostic {
+            last_complete: None,
+            diagnostics: vec![crate::revision::IntegrityDiagnostic {
+                code: "revision_integrity_unavailable".into(),
+                message: error.to_string(),
+                path: Some(self.project_root.join(".datum/revision/v1")),
+            }],
+        });
         let manifest_path = self.project_root.join("project.json");
         let manifest_value = read_json_value(&manifest_path)?;
         let manifest: NativeProjectManifestShape = serde_json::from_value(manifest_value.clone())?;
@@ -257,9 +305,7 @@ impl ProjectResolver {
             &journal_records,
             &mut diagnostics,
         )?;
-        match RevisionAuthorityStore::new(&self.project_root)
-            .inspect_and_recover(manifest.uuid, &journal)
-        {
+        match integrity {
             RevisionStoreState::Empty if !journal.is_empty() => {
                 diagnostics.push(ResolveDiagnostic {
                     code: "revision_integrity_not_initialized".to_string(),

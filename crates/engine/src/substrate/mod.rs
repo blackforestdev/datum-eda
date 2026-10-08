@@ -117,10 +117,11 @@ pub use import_map::{
     IMPORT_MAP_SHARD_SCHEMA_VERSION, ImportIdentityAllocation, ImportMapEntryStatus,
     ImportMapShard, allocate_import_identity,
 };
-pub use journal::transaction_journal_path;
 use journal::{
     canonical_json_hash, materialized_shard_value, replay_journal_shard_value, sort_source_shards,
 };
+pub(crate) use journal_io::read_transaction_journal;
+pub use journal_io::transaction_journal_path;
 pub use operation::{Operation, SchematicMarkerKind};
 use operation_application::apply_operation;
 pub use project_read_cache::ProjectReadCache;

@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::{
@@ -14,7 +14,7 @@ use crate::{
 };
 
 use super::{
-    AuthoritySnapshot,
+    AuthoritySnapshot, ProjectWriteLease,
     canonical::{canonical_bytes, digest_bytes, validate_digest},
     model::{
         AffectedShard, AffectedShardAction, AlgorithmQualifiedDigest, CANONICAL_ENCODING,
@@ -44,85 +44,6 @@ impl IntegrityCommitFaultPoint {
         }
         Ok(())
     }
-}
-
-#[derive(Debug)]
-pub struct ProjectWriteLease {
-    path: PathBuf,
-    nonce: Uuid,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct LeaseRecord {
-    schema_version: u64,
-    pid: u32,
-    nonce: Uuid,
-}
-
-impl ProjectWriteLease {
-    pub fn acquire(project_root: &Path) -> Result<Self, EngineError> {
-        let lease_root = project_root.join(".datum/revision");
-        std::fs::create_dir_all(&lease_root)?;
-        let path = lease_root.join("write.lock");
-        let nonce = Uuid::new_v4();
-        let record = LeaseRecord {
-            schema_version: REVISION_STORE_SCHEMA_VERSION,
-            pid: std::process::id(),
-            nonce,
-        };
-        let bytes = canonical_bytes(&record)?;
-        for attempt in 0..2 {
-            match OpenOptions::new().write(true).create_new(true).open(&path) {
-                Ok(mut file) => {
-                    file.write_all(&bytes)?;
-                    file.sync_all()?;
-                    sync_parent(&path)?;
-                    return Ok(Self { path, nonce });
-                }
-                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists && attempt == 0 => {
-                    if !lease_owner_is_live(&path) {
-                        let _ = std::fs::remove_file(&path);
-                        continue;
-                    }
-                    return Err(EngineError::Operation(format!(
-                        "project write refused: live writer owns {}",
-                        path.display()
-                    )));
-                }
-                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
-                    return Err(EngineError::Operation(format!(
-                        "project write refused: write lease {} could not be acquired",
-                        path.display()
-                    )));
-                }
-                Err(error) => return Err(error.into()),
-            }
-        }
-        unreachable!("bounded write-lease attempts always return")
-    }
-}
-
-impl Drop for ProjectWriteLease {
-    fn drop(&mut self) {
-        let owned = std::fs::read(&self.path)
-            .ok()
-            .and_then(|bytes| serde_json::from_slice::<LeaseRecord>(&bytes).ok())
-            .is_some_and(|record| record.nonce == self.nonce);
-        if owned {
-            let _ = std::fs::remove_file(&self.path);
-            if let Some(parent) = self.path.parent() {
-                let _ = File::open(parent).and_then(|file| file.sync_all());
-            }
-        }
-    }
-}
-
-fn lease_owner_is_live(path: &Path) -> bool {
-    std::fs::read(path)
-        .ok()
-        .and_then(|bytes| serde_json::from_slice::<LeaseRecord>(&bytes).ok())
-        .is_some_and(|record| Path::new("/proc").join(record.pid.to_string()).exists())
 }
 
 #[derive(Debug, Clone)]
@@ -173,7 +94,7 @@ impl RevisionAuthorityStore {
         if stage_root.exists() {
             std::fs::remove_dir_all(&stage_root)?;
         }
-        std::fs::create_dir_all(stage_root.join("blobs/sha256"))?;
+        super::create_directory_durable(stage_root.join("blobs/sha256"))?;
 
         let transaction_bytes = canonical_bytes(transaction)?;
         let transaction_blob = self.stage_blob(&stage_root, &transaction_bytes)?;
@@ -275,7 +196,7 @@ impl RevisionAuthorityStore {
         project_id: Uuid,
         journal: &[TransactionRecord],
     ) -> RevisionStoreState {
-        match self.inspect_and_recover_inner(project_id, journal) {
+        match self.inspect_with_fresh_guard(project_id, journal) {
             Ok(state) => state,
             Err(error) => RevisionStoreState::ReadOnlyDiagnostic {
                 last_complete: self.find_last_complete(project_id, journal).ok().flatten(),
@@ -286,6 +207,41 @@ impl RevisionAuthorityStore {
                 }],
             },
         }
+    }
+
+    fn project_root(&self) -> Result<&Path, EngineError> {
+        self.root
+            .parent()
+            .and_then(Path::parent)
+            .and_then(Path::parent)
+            .ok_or_else(|| EngineError::Validation("revision store has no Project root".into()))
+    }
+
+    fn inspect_with_fresh_guard(
+        &self,
+        project_id: Uuid,
+        journal: &[TransactionRecord],
+    ) -> Result<RevisionStoreState, EngineError> {
+        let lease = ProjectWriteLease::acquire(self.project_root()?)?;
+        let (fresh, diagnostics) = crate::substrate::read_transaction_journal(self.project_root()?);
+        if !diagnostics.is_empty()
+            || super::transaction_tip(journal) != super::transaction_tip(&fresh)
+        {
+            return Err(EngineError::Operation(
+                "recovery journal changed or is invalid".into(),
+            ));
+        }
+        self.inspect_and_recover_with_lease(project_id, &fresh, &lease)
+    }
+
+    pub(crate) fn inspect_and_recover_with_lease(
+        &self,
+        project_id: Uuid,
+        journal: &[TransactionRecord],
+        lease: &ProjectWriteLease,
+    ) -> Result<RevisionStoreState, EngineError> {
+        lease.validate(self.project_root()?)?;
+        self.inspect_and_recover_inner(project_id, journal)
     }
 
     fn inspect_and_recover_inner(
@@ -309,13 +265,11 @@ impl RevisionAuthorityStore {
             let mut candidates = Vec::new();
             for entry in entries.flatten() {
                 let manifest_path = entry.path().join("generation.json");
-                let Ok(generation) = read_json::<IntegrityGeneration>(&manifest_path) else {
-                    continue;
-                };
+                let generation = read_json::<IntegrityGeneration>(&manifest_path)?;
                 if generation.project_id == project_id
                     && journal_ids.contains(&generation.transaction_id)
-                    && self.verify_staged(&entry.path(), &generation).is_ok()
                 {
+                    self.verify_staged(&entry.path(), &generation)?;
                     let index = journal
                         .iter()
                         .position(|record| record.transaction_id == generation.transaction_id)
@@ -327,17 +281,6 @@ impl RevisionAuthorityStore {
             }
             candidates.sort_by_key(|(index, _, _)| *index);
             if !candidates.is_empty() {
-                let _lease = ProjectWriteLease::acquire(
-                    self.root
-                        .parent()
-                        .and_then(Path::parent)
-                        .and_then(Path::parent)
-                        .ok_or_else(|| {
-                            EngineError::Validation(
-                                "revision store has no Project root".to_string(),
-                            )
-                        })?,
-                )?;
                 for (_, stage_root, generation) in candidates {
                     StagedIntegrityGeneration {
                         store: self.clone(),
@@ -556,8 +499,8 @@ impl StagedIntegrityGeneration {
                 "staged revision generation has no active parent head".to_string(),
             ));
         }
-        std::fs::create_dir_all(self.store.root.join("blobs/sha256"))?;
-        std::fs::create_dir_all(self.store.root.join("generations"))?;
+        super::create_directory_durable(self.store.root.join("blobs/sha256"))?;
+        super::create_directory_durable(self.store.root.join("generations"))?;
         for digest in std::iter::once(&self.generation.transaction_blob)
             .chain(self.generation.authority_snapshot_blob.iter())
             .chain(
@@ -613,7 +556,7 @@ fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, EngineError
 
 fn write_new_file(path: &Path, bytes: &[u8]) -> Result<(), EngineError> {
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
+        super::create_directory_durable(parent)?;
     }
     let mut file = OpenOptions::new().write(true).create_new(true).open(path)?;
     file.write_all(bytes)?;
@@ -623,7 +566,7 @@ fn write_new_file(path: &Path, bytes: &[u8]) -> Result<(), EngineError> {
 
 fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), EngineError> {
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
+        super::create_directory_durable(parent)?;
     }
     let temporary = path.with_extension(format!("tmp-{}", Uuid::new_v4()));
     write_new_file(&temporary, bytes)?;
@@ -643,7 +586,7 @@ fn promote_immutable(source: &Path, destination: &Path) -> Result<(), EngineErro
         return Ok(());
     }
     if let Some(parent) = destination.parent() {
-        std::fs::create_dir_all(parent)?;
+        super::create_directory_durable(parent)?;
     }
     std::fs::rename(source, destination)?;
     sync_parent(destination)

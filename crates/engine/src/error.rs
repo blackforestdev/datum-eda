@@ -31,6 +31,15 @@ pub enum EngineError {
     #[error("operation failed: {0}")]
     Operation(String),
 
+    #[error(
+        "transaction {transaction_id} (batch {batch_id}) outcome uncertain; reconcile persisted Project before retry: {message}"
+    )]
+    CommitOutcomeUncertain {
+        transaction_id: Uuid,
+        batch_id: Uuid,
+        message: String,
+    },
+
     #[error("unsupported rule scope: {node} (available from {available_from})")]
     UnsupportedScope {
         node: String,

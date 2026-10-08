@@ -97,7 +97,11 @@ fn project_read_cache_bypasses_external_pools_symlinks_and_pending_recovery() {
     std::fs::remove_dir(stage).unwrap();
     let lock = root.join(".datum/revision/write.lock");
     std::fs::write(&lock, "pending").unwrap();
-    assert_bypass(&mut cache);
+    assert!(
+        cache.resolve(root).is_err(),
+        "legacy writer boundary must refuse, never be reaped by a reader"
+    );
+    assert_eq!(std::fs::read(&lock).unwrap(), b"pending");
     std::fs::remove_file(lock).unwrap();
     let path = root.join("project.json");
     let mut manifest: serde_json::Value =

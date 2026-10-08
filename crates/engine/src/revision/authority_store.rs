@@ -35,7 +35,14 @@ impl RevisionAuthorityStore {
             .ok_or_else(|| {
                 EngineError::Validation("revision store has no Project root".to_string())
             })?;
-        let _lease = ProjectWriteLease::acquire(project_root)?;
+        let lease = ProjectWriteLease::acquire(project_root)?;
+        let (journal, diagnostics) = crate::substrate::read_transaction_journal(project_root);
+        if !diagnostics.is_empty() {
+            return Err(EngineError::Operation(
+                "authority write refused: invalid journal".into(),
+            ));
+        }
+        self.inspect_and_recover_with_lease(project_id, &journal, &lease)?;
         let head = self.read_head().transpose()?.ok_or_else(|| {
             EngineError::Validation(
                 "authority mutation requires an accepted Project transaction".to_string(),
@@ -85,7 +92,7 @@ fn write_immutable(path: &Path, bytes: &[u8]) -> Result<(), EngineError> {
         return Ok(());
     }
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
+        super::create_directory_durable(parent)?;
     }
     let mut file = OpenOptions::new().write(true).create_new(true).open(path)?;
     file.write_all(bytes)?;

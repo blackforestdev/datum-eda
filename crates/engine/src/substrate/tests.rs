@@ -56,6 +56,7 @@ mod schematic_writer_migration;
 mod source_shard_metadata;
 mod source_shard_ref_builders;
 mod source_shard_taxonomy;
+mod writer_ownership;
 mod zone_fill;
 mod zone_fill_replay;
 mod zone_fill_schema;

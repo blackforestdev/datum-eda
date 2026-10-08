@@ -157,8 +157,73 @@ impl DesignModel {
         policy_context: CommitPolicyContext,
         after_model_revision_override: Option<ModelRevision>,
         integrity_fault: Option<IntegrityCommitFaultPoint>,
-        mut revision_input: RevisionDesignCommitInput,
+        revision_input: RevisionDesignCommitInput,
     ) -> Result<CommitReport, EngineError> {
+        if batch.expected_model_revision.is_none() {
+            return Err(EngineError::Operation(
+                "journaled commit requires expected_model_revision".into(),
+            ));
+        }
+        if self.journal_cursor.applied_transaction_count != self.journal.len() {
+            return Err(EngineError::Operation(
+                "journal cursor mismatch before commit".into(),
+            ));
+        }
+        let lease = ProjectWriteLease::acquire(project_root)?;
+        let mut fresh =
+            super::ProjectResolver::new(project_root).resolve_for_write_with_lease(&lease)?;
+        if let Some(diagnostic) = fresh
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "revision_integrity_unavailable")
+        {
+            return Err(EngineError::Operation(format!(
+                "Project integrity unavailable; write refused: {}",
+                diagnostic.message
+            )));
+        }
+        if self.project.project_id != fresh.project.project_id
+            || batch.expected_model_revision.as_ref() != Some(&fresh.model_revision)
+            || self.model_revision != fresh.model_revision
+            || transaction_tip(&self.journal) != transaction_tip(&fresh.journal)
+        {
+            return Err(EngineError::Operation(
+                "model revision mismatch: persisted Project changed before commit".into(),
+            ));
+        }
+        let report = fresh.commit_journaled_under_lease(
+            project_root,
+            batch,
+            transaction_kind,
+            undo_of,
+            redo_of,
+            inverse_operations_override,
+            policy_context,
+            after_model_revision_override,
+            integrity_fault,
+            revision_input,
+            &lease,
+        )?;
+        *self = fresh;
+        Ok(report)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn commit_journaled_under_lease(
+        &mut self,
+        project_root: &Path,
+        batch: OperationBatch,
+        transaction_kind: TransactionKind,
+        undo_of: Option<Uuid>,
+        redo_of: Option<Uuid>,
+        inverse_operations_override: Option<Vec<super::Operation>>,
+        policy_context: CommitPolicyContext,
+        after_model_revision_override: Option<ModelRevision>,
+        integrity_fault: Option<IntegrityCommitFaultPoint>,
+        mut revision_input: RevisionDesignCommitInput,
+        lease: &ProjectWriteLease,
+    ) -> Result<CommitReport, EngineError> {
+        lease.validate(project_root)?;
         validate_direct_commit_proposal_policy(&batch, transaction_kind, policy_context)?;
         super::electrical_history::validate(self, &batch.operations, transaction_kind)?;
         validate_non_empty_operation_batch(&batch)?;
@@ -185,7 +250,6 @@ impl DesignModel {
 
         let batch = super::electrical_transaction::compose(self, batch, transaction_kind)?;
         super::electrical_history::validate(self, &batch.operations, transaction_kind)?;
-        let _write_lease = ProjectWriteLease::acquire(project_root)?;
         super::board_source_profile::validate_batch(self, project_root, &batch)?;
         super::component_pad_source::validate_batch(self, project_root, &batch, transaction_kind)?;
 
@@ -272,20 +336,28 @@ impl DesignModel {
             authority_snapshot.as_ref(),
         )?;
         inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::AuthorityStage)?;
-        append_transaction_journal(project_root, &report.transaction)?;
-        inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::JournalAppend)?;
-        promote_staged_shard_writes(staged_writes)?;
-        inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::ShardPromotion)?;
-        staged_integrity.promote()?;
-        inject_integrity_fault(
-            integrity_fault,
-            IntegrityCommitFaultPoint::AuthorityPromotion,
-        )?;
-        committed.journal_cursor = JournalCursor {
-            applied_transaction_count: report.journal_len,
-        };
-        write_journal_cursor(project_root, &committed.journal_cursor)?;
-        inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::CursorWrite)?;
+        let publication = (|| -> Result<(), EngineError> {
+            append_transaction_journal(project_root, &report.transaction)?;
+            inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::JournalAppend)?;
+            promote_staged_shard_writes(staged_writes)?;
+            inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::ShardPromotion)?;
+            staged_integrity.promote()?;
+            inject_integrity_fault(
+                integrity_fault,
+                IntegrityCommitFaultPoint::AuthorityPromotion,
+            )?;
+            committed.journal_cursor = JournalCursor {
+                applied_transaction_count: report.journal_len,
+            };
+            write_journal_cursor(project_root, &committed.journal_cursor)?;
+            inject_integrity_fault(integrity_fault, IntegrityCommitFaultPoint::CursorWrite)?;
+            Ok(())
+        })();
+        publication.map_err(|error| EngineError::CommitOutcomeUncertain {
+            transaction_id: report.transaction.transaction_id,
+            batch_id: report.transaction.batch_id,
+            message: error.to_string(),
+        })?;
         *self = committed;
         Ok(report)
     }

@@ -217,7 +217,17 @@ fn backup_is_independently_verified_and_restore_is_reversible() {
         second.transaction_id
     );
     let design_before_restore = std::fs::read(root.join("project.json")).expect("design bytes");
+    use std::os::unix::fs::MetadataExt;
+    let inode = std::fs::metadata(root.join(".datum/revision/writer.lock"))
+        .unwrap()
+        .ino();
     let receipt = restore_backup(&root, &backup).expect("restore");
+    assert_eq!(
+        std::fs::metadata(root.join(".datum/revision/writer.lock"))
+            .unwrap()
+            .ino(),
+        inode
+    );
     assert_eq!(
         RevisionAuthorityStore::new(&root)
             .read_head()

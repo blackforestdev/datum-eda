@@ -11,9 +11,10 @@ use uuid::Uuid;
 use crate::error::EngineError;
 
 use super::{
+    ProjectWriteLease,
     canonical::{canonical_bytes, digest_bytes},
     model::{AlgorithmQualifiedDigest, IntegrityHead, REVISION_STORE_SCHEMA_VERSION},
-    store::{ProjectWriteLease, RevisionAuthorityStore},
+    store::RevisionAuthorityStore,
 };
 
 const BACKUP_MANIFEST_NAME: &str = "backup-manifest.json";
@@ -68,8 +69,15 @@ pub fn export_backup(
     project_id: Uuid,
     destination: &Path,
 ) -> Result<BackupManifest, EngineError> {
-    let _lease = ProjectWriteLease::acquire(project_root)?;
+    let lease = ProjectWriteLease::acquire(project_root)?;
     let store = RevisionAuthorityStore::new(project_root);
+    let (journal, diagnostics) = crate::substrate::read_transaction_journal(project_root);
+    if !diagnostics.is_empty() {
+        return Err(EngineError::Operation(
+            "backup refused: invalid journal".into(),
+        ));
+    }
+    store.inspect_and_recover_with_lease(project_id, &journal, &lease)?;
     let head = store.read_head().transpose()?.ok_or_else(|| {
         EngineError::Validation("cannot back up an empty revision integrity store".to_string())
     })?;
@@ -84,7 +92,7 @@ pub fn export_backup(
             destination.display()
         )));
     }
-    std::fs::create_dir_all(destination)?;
+    super::create_directory_durable(destination)?;
 
     let mut source_paths = Vec::new();
     collect_files(&store.root, &store.root, &mut source_paths)?;
@@ -193,10 +201,19 @@ pub fn preview_restore(project_root: &Path, backup: &Path) -> Result<RestorePrev
 }
 
 pub fn restore_backup(project_root: &Path, backup: &Path) -> Result<RestoreReceipt, EngineError> {
-    let preview = preview_restore(project_root, backup)?;
     let _lease = ProjectWriteLease::acquire(project_root)?;
+    let preview = preview_restore(project_root, backup)?;
+    let manifest: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(project_root.join("project.json"))?)?;
+    if manifest.get("uuid").and_then(serde_json::Value::as_str)
+        != Some(preview.project_id.to_string().as_str())
+    {
+        return Err(EngineError::Operation(
+            "restore refused: foreign Project identity".into(),
+        ));
+    }
     let datum_root = project_root.join(".datum/revision");
-    std::fs::create_dir_all(&datum_root)?;
+    super::create_directory_durable(&datum_root)?;
     let active = datum_root.join("v1");
     let stage = datum_root.join(format!("restore-stage-{}", Uuid::new_v4()));
     let previous = datum_root.join(format!("restore-previous-{}", Uuid::new_v4()));
@@ -231,6 +248,17 @@ pub fn undo_restore(project_root: &Path, receipt: &RestoreReceipt) -> Result<(),
         ));
     };
     let _lease = ProjectWriteLease::acquire(project_root)?;
+    let current = RevisionAuthorityStore::new(project_root)
+        .read_head()
+        .transpose()?;
+    if current.as_ref() != Some(&receipt.restored_head)
+        || previous.parent().map(Path::canonicalize).transpose()?
+            != Some(project_root.join(".datum/revision").canonicalize()?)
+    {
+        return Err(EngineError::Operation(
+            "undo restore refused: stale or foreign receipt".into(),
+        ));
+    }
     let active = project_root.join(".datum/revision/v1");
     let displaced = project_root
         .join(".datum/revision")
@@ -245,7 +273,7 @@ pub fn undo_restore(project_root: &Path, receipt: &RestoreReceipt) -> Result<(),
 
 fn copy_verified_backup(source: &Path, destination: &Path) -> Result<(), EngineError> {
     let manifest = verify_backup(source)?;
-    std::fs::create_dir_all(destination)?;
+    super::create_directory_durable(destination)?;
     for entry in manifest.files {
         write_new(
             &destination.join(&entry.relative_path),
@@ -308,7 +336,7 @@ fn validate_relative_path(path: &str) -> Result<(), EngineError> {
 
 fn write_new(path: &Path, bytes: &[u8]) -> Result<(), EngineError> {
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
+        super::create_directory_durable(parent)?;
     }
     let mut file = OpenOptions::new().write(true).create_new(true).open(path)?;
     file.write_all(bytes)?;

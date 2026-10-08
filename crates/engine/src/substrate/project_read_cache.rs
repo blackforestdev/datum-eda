@@ -51,6 +51,9 @@ impl ProjectReadCache {
         // Release the old snapshot before potentially expensive reconstruction.
         self.entry = None;
         self.retained_model = None;
+        if !root.join(".datum/revision/writer.lock").exists() {
+            drop(crate::revision::ProjectWriteLease::acquire(root)?);
+        }
         let before = capture(root);
         let model = Arc::new(ProjectResolver::new(root).resolve()?);
         if let Some(before) = before
@@ -179,7 +182,7 @@ fn scan(root: &Path, input: &mut Input<'_>) -> Option<()> {
             return None;
         }
     }
-    if root.join(".datum/revision/write.lock").exists() {
+    if crate::revision::ProjectWriteLease::is_busy(root) {
         return None;
     }
     let stages = root.join(".datum/revision/v1/stage");
