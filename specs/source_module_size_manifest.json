@@ -513,14 +513,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3932,
+        "pre_test_lines": 3869,
         "inline_test_lines": 1835
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "PM022: extract CLI companion resolution/build ownership into cli_bridge; preserve frozen inline test debt and reduce production ceiling exactly."
+      "note": "PM022: scene envelope/corner ownership extracted into normal scene_bounds module; include recorded board graphic paths and ratchet production ceiling exactly. Inline test debt remains frozen."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

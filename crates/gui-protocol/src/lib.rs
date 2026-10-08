@@ -35,6 +35,8 @@ use kicad_scene_import::{
     push_board_text_scene_primitives, trace_protocol_timing,
 };
 mod native_board_graphics;
+mod scene_bounds;
+use scene_bounds::{rect_corners, scene_bounds};
 mod native_schematic_scene;
 pub use native_schematic_scene::project_native_schematic_scene;
 mod schematic_scene_import;
@@ -3039,6 +3041,11 @@ fn build_board_review_scene(
         component_graphics
             .iter()
             .flat_map(|graphic| graphic.path.iter().copied())
+            .chain(
+                board_graphics
+                    .iter()
+                    .flat_map(|graphic| graphic.path.iter().copied()),
+            )
             .collect::<Vec<_>>()
             .iter(),
         component_texts
@@ -3849,76 +3856,6 @@ fn close_outline_path(mut vertices: Vec<PointNm>, closed: bool) -> Vec<PointNm> 
         vertices.push(first);
     }
     vertices
-}
-
-// Scene import threads many primitive-geometry parameters.
-#[allow(clippy::too_many_arguments)]
-fn scene_bounds<'a>(
-    outline: impl Iterator<Item = &'a PointNm>,
-    components: impl Iterator<Item = &'a PointNm>,
-    pads: impl Iterator<Item = &'a PointNm>,
-    component_graphics: impl Iterator<Item = &'a PointNm>,
-    component_texts: impl Iterator<Item = &'a PointNm>,
-    board_texts: impl Iterator<Item = &'a PointNm>,
-    tracks: impl Iterator<Item = &'a PointNm>,
-    vias: impl Iterator<Item = &'a PointNm>,
-    zones: impl Iterator<Item = &'a PointNm>,
-) -> SceneBounds {
-    let mut points: Vec<PointNm> = Vec::new();
-    points.extend(outline.copied());
-    points.extend(components.copied());
-    points.extend(pads.copied());
-    points.extend(component_graphics.copied());
-    points.extend(component_texts.copied());
-    points.extend(board_texts.copied());
-    points.extend(tracks.copied());
-    points.extend(vias.copied());
-    points.extend(zones.copied());
-    if points.is_empty() {
-        return SceneBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 1,
-            max_y: 1,
-        };
-    }
-    let mut min_x = i64::MAX;
-    let mut min_y = i64::MAX;
-    let mut max_x = i64::MIN;
-    let mut max_y = i64::MIN;
-    for point in points {
-        min_x = min_x.min(point.x);
-        min_y = min_y.min(point.y);
-        max_x = max_x.max(point.x);
-        max_y = max_y.max(point.y);
-    }
-    SceneBounds {
-        min_x,
-        min_y,
-        max_x,
-        max_y,
-    }
-}
-
-fn rect_corners(rect: RectNm) -> [PointNm; 4] {
-    [
-        PointNm {
-            x: rect.min_x,
-            y: rect.min_y,
-        },
-        PointNm {
-            x: rect.max_x,
-            y: rect.min_y,
-        },
-        PointNm {
-            x: rect.max_x,
-            y: rect.max_y,
-        },
-        PointNm {
-            x: rect.min_x,
-            y: rect.max_y,
-        },
-    ]
 }
 
 pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
