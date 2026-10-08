@@ -1,0 +1,752 @@
+{
+  "status": "proposal algebra examples only; no runtime or native proof",
+  "source_baseline": "b2c1421538f201484b16be1e89590a7193cd30c7",
+  "fixture_path": "target/s5a-c03-u5-parents-v3/board/board.json",
+  "fixture_board_sha256": "0b133b7664b5105b66a0f38a0c57c97cac72007556e73ef07da8c2e86bab72df",
+  "identity_limit": "Historical fixture uses library IDs and is unadopted. These are coordinate examples, not authoritative placed-Pad or electrical membership evidence.",
+  "representative_placement": "3590f8c2-17bd-4866-8933-b53c432e4ecd",
+  "rotation_deg": 30,
+  "checks": [
+    "R30 transpose times R30 equals identity using exact Fraction coefficients",
+    "front and back inverse restores all8 existing local centres",
+    "sign sqrt3-1 positive; 2-sqrt3 positive; zero equality",
+    "fixture bytes unchanged"
+  ],
+  "coordinate_examples": [
+    {
+      "face": "front",
+      "library_pad_name": "1",
+      "recorded_local_position": {
+        "x": -2700000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "front",
+      "library_pad_name": "2",
+      "recorded_local_position": {
+        "x": -900000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "front",
+      "library_pad_name": "3",
+      "recorded_local_position": {
+        "x": 900000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "front",
+      "library_pad_name": "4",
+      "recorded_local_position": {
+        "x": 2700000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "front",
+      "library_pad_name": "5",
+      "recorded_local_position": {
+        "x": 2700000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "front",
+      "library_pad_name": "6",
+      "recorded_local_position": {
+        "x": 900000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "front",
+      "library_pad_name": "7",
+      "recorded_local_position": {
+        "x": -900000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "front",
+      "library_pad_name": "8",
+      "recorded_local_position": {
+        "x": -2700000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "1",
+      "recorded_local_position": {
+        "x": -2700000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "2",
+      "recorded_local_position": {
+        "x": -900000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "3",
+      "recorded_local_position": {
+        "x": 900000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "4",
+      "recorded_local_position": {
+        "x": 2700000,
+        "y": -1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "20952500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "5",
+      "recorded_local_position": {
+        "x": 2700000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "6",
+      "recorded_local_position": {
+        "x": 900000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "-450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "7",
+      "recorded_local_position": {
+        "x": -900000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "450000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    },
+    {
+      "face": "back",
+      "library_pad_name": "8",
+      "recorded_local_position": {
+        "x": -2700000,
+        "y": 1905000
+      },
+      "centre": {
+        "x": {
+          "a": {
+            "numerator": "19047500",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        },
+        "y": {
+          "a": {
+            "numerator": "1350000",
+            "denominator": "1"
+          },
+          "b": {
+            "numerator": "952500",
+            "denominator": "1"
+          },
+          "radicand": 3,
+          "unit": "nm"
+        }
+      },
+      "inverse_restores_recorded_local_position": true
+    }
+  ],
+  "sign_comparison_max_bits": 514,
+  "fixed_sign_scratch_bits": 576,
+  "implementation_proof": false,
+  "proposal_sha256": "65a17915367b08385454a812e115b51877a641e8d649401b1c3b24ade8a3ff29",
+  "reviewed_contract_pins": [
+    {
+      "path": "research/process-quality/FOUNDATION_CONSUMER_COMPLETION_REPAIR.md",
+      "sha256": "935fe18091796bac311ef8ed95263b276b9fc1f66128201ed9de023de3fb29a0",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+      "sha256": "f9014f415e385487ca86e1c414b7b370037320fe1feb70888621e81458046eda",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md",
+      "sha256": "b8009eb4d68675e51b7a1a80c69e3161320896377c2d766dd824206845b13e69",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "specs/S5A_DERIVED_AUTHORITY_PLAN.md",
+      "sha256": "da48407a36c5dcffbf47ce8da0c9ae1c8ab80a7e9e655ba9c5cdf4f5594f0014",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/derived-authority-research.md",
+      "sha256": "0b44fcdcb0350183ea781635f01640e6ccab6a4c0608fa9a494eeec7db1d7ebb",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_054_NOMINAL_COPPER_DERIVED_AUTHORITY.md",
+      "sha256": "be3e71c8a45b6c38247309956f7e3eb070c98997a27ff274b1081132d0d0651d",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md",
+      "sha256": "51fcfb0e3fc989151ce7c06cee570f5782212f29298cc6a5a2659d58398c29d1",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/SOURCE_HEALTH_POLICY.md",
+      "sha256": "1ae0c89e3b1f6fba518b98dfca63fcac8b9ea07ad9b770e2871054c012dec786",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md",
+      "sha256": "72b9d2d9db00cada8410fef556d6371f834e16c73e03d9d7face94e693444494",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "specs/NATIVE_FORMAT_SPEC.md",
+      "sha256": "0aa707d1ac88588d1eeab6505822c94a06c768730eb94104da314745461bc13d",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "specs/IMPORT_SPEC.md",
+      "sha256": "0016881e2f53065aebf35c678864d25de6f7eadcae61ebc61c134f226496c246",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "specs/ENGINE_SPEC.md",
+      "sha256": "a3831a77a5bcba5a538d1ce8f0e6b136d084a103cdad060e487e040957f05187",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/c03-authority-disposition.md",
+      "sha256": "b148abad615a02fb1c64d50438efc38f766d2cc44fdab6e55e25c4deeb9cb56e",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md",
+      "sha256": "a3306bbb2dc10cb26c5dd049cec974022a08f9e4c475320d7461e66d55a98de9",
+      "scope": "Existing authority preserved; affected proposal boundary reviewed, no ratification inferred."
+    }
+  ],
+  "implementation_source_pins": [
+    {
+      "path": "crates/engine/src/substrate/component_pad_source.rs",
+      "sha256": "d32288fc9ed92b63c0c82a12393dba14cbe2fad61ee6712bba86e79d65f83240"
+    },
+    {
+      "path": "crates/engine/src/substrate/component_pad_source/projection.rs",
+      "sha256": "b0e42b740f23c0558095932098faf511596aff776ee954e78a377910f78b7b9a"
+    },
+    {
+      "path": "crates/engine/src/substrate/electrical_basis.rs",
+      "sha256": "3c856200dbf55722f3fca6c8ddc8843e12ede0cda644b9b2230801d444c3d0ed"
+    },
+    {
+      "path": "crates/engine/src/substrate/electrical_correspondence.rs",
+      "sha256": "765396ce029455704c4f0fb9928a787f0fad47970620aa2a51379144064c2e53"
+    },
+    {
+      "path": "crates/engine/src/connectivity/board_physical.rs",
+      "sha256": "1041561c90b6cb5997db25fb92930996bd12b41566f8e5cae085d0eb5fafd53e"
+    },
+    {
+      "path": "crates/engine/src/connectivity/board_physical/bounds.rs",
+      "sha256": "79f29dff3ff5f7626f5c688321ce42a2dc356a1cc36c1cba43a7d5f7a1369028"
+    },
+    {
+      "path": "crates/engine/src/board/nominal_geometry.rs",
+      "sha256": "e2170e24bde13072982a93d3211de785e99990c13c83463bbd25e9f95b17fabd"
+    },
+    {
+      "path": "crates/engine/src/board/occupied_copper.rs",
+      "sha256": "002cd46fc3b68b93a7d88c561813d642d5e3e5de21b1bb80c9432da296997427"
+    },
+    {
+      "path": "crates/engine/src/board/occupied_copper/eighth_turn.rs",
+      "sha256": "eaed367eaf66ae1adfb41fcef993785e59c8aa60c29c71b471cb79395df83eab"
+    },
+    {
+      "path": "crates/engine/src/board/occupied_copper/quadratic.rs",
+      "sha256": "2422aca00cbb03a813285d0ec8ce60fb6a9c438166dca533ce20487377abf2da"
+    },
+    {
+      "path": "crates/engine/src/board/occupied_copper/quadratic_sign.rs",
+      "sha256": "6441f01610ca3b37340debfc39349c983a3917e273d8d43ed1ca1342497a61fd"
+    },
+    {
+      "path": "crates/engine/src/board/occupied_copper/rotation_bounds.rs",
+      "sha256": "8a53e47988aeb689deeecdac788d87e7906e7f15cc9cfa27ccef5d04db0cb84d"
+    },
+    {
+      "path": "crates/gui-protocol/src/placed_pad_projection.rs",
+      "sha256": "1d4346fa8e3e0a383f4f7b0c8d1b84e7c3a8118a7c17bb94cb9aa7d2665f3d3f"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_geometry_catalog.rs",
+      "sha256": "f5c2fb3da4e8296e7c2140977891a8e468028228bb00c76d043b3c4a445ed3de"
+    },
+    {
+      "path": "crates/gui-protocol/src/board_review_scene.rs",
+      "sha256": "788e4872ee556bc58a5153810f32fef4beeeaafe068c4942d6ee8d7c1705afb4"
+    },
+    {
+      "path": "crates/gui-protocol/src/lib.rs",
+      "sha256": "23f97ca9ebf8e1b9fb2e7a1996f5dbad4397d984eece66df4163a5503362b7de"
+    },
+    {
+      "path": "crates/gui-viewport/src/selection_region.rs",
+      "sha256": "d28de0cf59411ee9b4ef502700bd5bbcd60b123e1cebbfbe2767997b67158643"
+    },
+    {
+      "path": "crates/gui-app/src/selection_region_evaluation.rs",
+      "sha256": "6568e772ac1658e30310430a3c27aab713c52d2ce6550b1ee3609e8d1f316521"
+    },
+    {
+      "path": "crates/cli/src/commands/project_core.rs",
+      "sha256": "ef09b6d1ba2d2f382fc2fa360a0edec10ff130526167f5ec0851501bf414c0f9"
+    },
+    {
+      "path": "crates/engine/src/substrate/electrical_selection_query.rs",
+      "sha256": "2433db7b2768e51803dc06c5a755b10cb331911e7e7020007161aabccc9b657e"
+    },
+    {
+      "path": "crates/gui-render/src/render/pad_retained.rs",
+      "sha256": "3416ae049b0da58a0445acea43dbd4ed8fd88e111328be17ae1dae2399cb4020"
+    },
+    {
+      "path": "crates/gui-render/src/render/pads_and_layers.rs",
+      "sha256": "9600b54b1f20d00ea584d14246918b31163db13ff9e409ba81b9a27c6cc9f496"
+    },
+    {
+      "path": "crates/gui-render/src/render/native_selection_overlay.rs",
+      "sha256": "95cad068e33aa40b7d62092bd78dbd3f14b990d2f16c7246b9fb825e2236296a"
+    },
+    {
+      "path": "crates/gui-render/src/render/scene_relationships.rs",
+      "sha256": "aac14e6d58a444029e94be6efe32b383ee44e4a6268534abe58248a6fee9ac23"
+    }
+  ],
+  "route_review_digest": "d030618662b93b1b7913054afbe14e81e25de224cace757a77921d8800023795"
+}

@@ -253,6 +253,23 @@
       "path": "crates/engine/src/substrate/electrical_identity.rs",
       "enum": "NetAnchorReason",
       "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
+    },
+    {
+      "id": "s5a_exact_thirty_proposal",
+      "kind": "file_glob",
+      "glob": "docs/reviews/workflow-delivery-rollout/s5a/thirty-degree-proposal-evidence.json",
+      "owner_spec": "docs/reviews/workflow-delivery-rollout/s5a/thirty-degree-proposal.md",
+      "notes": "Filename inventory of the bounded unratified30-degree query geometry proposal evidence. Planned type names are proposed transient shapes, not implemented Rust inventory, certified predicates, native proof or owner execution authority.",
+      "planned_shapes": [
+        "Quadratic3",
+        "ExactPointNm",
+        "SourceRelativePadGeometry",
+        "QueryPadGeometry",
+        "MixedContactK",
+        "PadCenter",
+        "ExactAnchors",
+        "SceneVersion2ExactPosition"
+      ]
     }
   ]
 }
