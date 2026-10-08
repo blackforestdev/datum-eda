@@ -115,8 +115,16 @@ fn emit(event: &str, value: Value) {
     stream.sequence += 1;
     let record = json!({"kind": "datum.action-evidence/v1", "sequence": stream.sequence,
         "event": event, "value": value});
-    // A closed diagnostic pipe must not panic or change product behavior.
-    let _ = writeln!(std::io::stderr().lock(), "DATUM_ACTION_EVIDENCE {record}");
+    // Value's Display emits many small fragments. Formatting straight into
+    // unbuffered stderr turns a complete Run projection into thousands of
+    // synchronous writes on each camera event, starving native input/painting.
+    // Preserve the complete record, but encode it before taking the output lock.
+    let mut line = b"DATUM_ACTION_EVIDENCE ".to_vec();
+    if serde_json::to_writer(&mut line, &record).is_ok() {
+        line.push(b'\n');
+        // A closed diagnostic pipe must not panic or change product behavior.
+        let _ = std::io::stderr().lock().write_all(&line);
+    }
 }
 
 impl Runtime {
