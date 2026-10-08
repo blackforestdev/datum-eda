@@ -68,6 +68,15 @@ fn complete_hidden_projection_bounds_are_exact_and_not_qualification_anchors() {
     let subject = SelectionSubject::Compound(CompoundSelection::new(ids.clone(), None).unwrap());
     let mut view = build_selection_view(&f.model, &a, subject, &scene, None, |_| false).unwrap();
     assert_eq!(view.hidden.len(), 2);
+    assert!(eda_engine::api::native_write::project::project_display_units(&f.model).is_err());
+    for field in ["combined_bounds_nm", "projected_bounds_nm"] {
+        let preview = view.field_display_preview(field, 160);
+        assert!(
+            preview.starts_with("Unavailable — Project quantity context"),
+            "{preview}"
+        );
+        assert!(!preview.contains(&f.board.to_string()));
+    }
     let InspectionValue::Common(bounds) = view.field("combined_bounds_nm") else {
         panic!("complete projection");
     };

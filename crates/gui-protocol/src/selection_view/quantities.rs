@@ -79,7 +79,18 @@ pub(super) fn append(model: &eda_engine::substrate::DesignModel, scopes: &mut [S
             };
             let display = match (&context, field.as_str()) {
                 (Ok(profile), "combined_bounds_nm" | "projected_bounds_nm") => {
-                    bounds(value, *profile)
+                    Some(bounds(value, *profile).unwrap_or_else(|| {
+                        QuantityPresentation::Unavailable {
+                            reason:
+                                "Canonical bounds cannot be formatted by the engine units service"
+                                    .into(),
+                        }
+                    }))
+                }
+                (Err(reason), "combined_bounds_nm" | "projected_bounds_nm") => {
+                    Some(QuantityPresentation::Unavailable {
+                        reason: format!("Project quantity context unavailable: {reason}"),
+                    })
                 }
                 (Ok(profile), "placement_rotation") => value.as_i64().and_then(|degrees| {
                     use eda_engine::ir::units::{CanonicalAngleScale, format_decimal_degrees};
