@@ -27,3 +27,14 @@ PM059 supplies bounded delegated management authority, retains owner-reserved
 product changes and independent acceptance evidence, and reconciles PM025, the
 project-state policy and agent instructions. No existing acceptance obligation,
 visual file lane, dependency restriction or active implementation scope is waived.
+
+The owner subsequently requested a usable application whose real usage supplies
+test feedback, then instructed this session to make that direction effective.
+They clarified that they cannot edit even an imported board today. A fresh
+roadmap inspection still selected S5A native selection qualification, while GUI
+journaled writes and native authoring remained unfinished. This is a delivery
+priority gap; selection proof alone does not deliver a design-editing workflow.
+PM059 now distinguishes incremental development availability from complete
+qualification and schedules USER-EDIT-DELIVERY for the first actual board edit.
+The existing S5A implementation, active ownership and unperformed acceptance
+remain preserved; no fixture, review receipt or priority change proves editing.

@@ -101,6 +101,58 @@ existing receipts and trackers; no new approval framework, proof ledger or separ
 manager authorization is needed for each ordinary unit. The owner is contacted
 only for the reserved decisions above or a specifically requested status report.
 
+## Owner-directed usable development builds — 2026-10-08
+
+The owner directs delivery of an application they can use to design, with their
+ordinary use supplying primary defect feedback. They specifically report being
+unable to edit an imported board. A passing artificial fixture is supporting
+evidence, not delivery of that workflow.
+
+The first development target is an ordinary GUI edit of an existing Footprint in
+a Datum-owned project derived from the owner's board: select, preview a move,
+cancel without writing, commit through the canonical mutation path, undo/redo,
+save and reopen. Preserve the original KiCad inputs; this does not authorize
+writing back to KiCad or expanding the frozen converter. Follow with native
+library-backed symbol placement and wire connection, then physical placement and
+manual routing. These are incremental deliveries inside the existing authoring
+contracts, not replacements for their complete acceptance scope.
+
+Deliver each usable slice after focused checks for canonical writes, persistence,
+undo/recovery and obvious interaction failures plus its bounded independent review.
+Give the owner a pinned ordinary launch command and a short description of what
+they can do. Owner use is voluntary product feedback, not a required manual test
+script and not a substitute for data-integrity checks. Reproduce reported defects
+on the ordinary path, repair them, and retain focused regressions. Artificial
+fixtures remain justified for isolated boundary/negative cases; do not expand
+them into a campaign without naming the delivery decision they enable.
+
+Distinguish development availability from full qualification. Missing platform,
+visual, accessibility, endurance or comprehensive matrices remain explicitly open;
+they block their associated acceptance claims, not an unrelated authoring slice
+unless a concrete safety/correctness dependency is demonstrated. No missing proof
+is passed, waived or silently deleted. A development build is not a qualified
+release. Existing product, source-health, dependency and mutation rules remain.
+
+The structured USER-EDIT-DELIVERY lane makes this direction discoverable by the
+selector. Its immediate grant is a bounded readiness reconciliation, not permission
+to implement an unratified writer protocol. Reuse the existing GUI-WRITE-PATH and
+NATIVE-AUTHORING contracts; identify only actual dispatch, serialization and recovery
+prerequisites. Consolidate genuine unresolved owner choices. Do not redesign
+selection, polish the Inspector, launch another benchmark campaign or draft a new
+general authoring specification as prerequisites to this first edit.
+
+<!-- REQ:USER-EDIT-DELIVERY:UED-C01 -->
+### UED-C01 — establish the first ordinary edit's real execution boundary
+
+Inspect current GUI dispatch, canonical board move/undo/reopen builders and project
+writer ownership against existing ratified contracts. Produce one source-backed
+readiness disposition: reusable implemented owners, missing integration, genuine
+authority gaps and the smallest executable footprint-move slice. Schedule actual
+write-safety prerequisites and the runtime slice together; name exact granted versus
+ungranted work. Do not assert that planning, project rename or a CLI-only edit
+delivers board editing. Retain the follow-on symbol/wire and board-routing targets.
+Before touching another session's work, obtain its explicit synchronized handoff.
+
 ## Current-work preservation
 
 Apply prospectively to the retained S5A grant and all subsequent authorized work.
