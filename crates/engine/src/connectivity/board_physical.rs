@@ -12,6 +12,7 @@ use crate::substrate::{
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use uuid::Uuid;
+mod bounds;
 mod zone_regions;
 pub(crate) use zone_regions::successor;
 pub use zone_regions::{ZoneClearReason, ZoneRegionQualifier, ZoneRegionSuccessor};
@@ -84,7 +85,7 @@ enum Shape {
     Track(Track),
     Pad(PlacedPad),
     Via(Via),
-    Fill(Polygon),
+    Fill(copper::CertifiedPolygon),
 }
 #[derive(Clone)]
 struct Node {
@@ -92,6 +93,7 @@ struct Node {
     net: Option<Uuid>,
     layers: Vec<LayerId>,
     shape: Shape,
+    bounds: Option<bounds::Bounds>,
 }
 #[derive(Clone)]
 struct Unavailable {
@@ -123,6 +125,13 @@ fn contact(a: &Node, b: &Node) -> Result<bool, GeometryError> {
         return Ok(false);
     }
     let boundary = DistanceBoundary::Inclusive;
+    if a.bounds
+        .as_ref()
+        .zip(b.bounds.as_ref())
+        .is_some_and(|(a, b)| a.disjoint(b))
+    {
+        return Ok(false);
+    }
     match (&a.shape, &b.shape) {
         (Shape::Track(a), Shape::Track(b)) => tracks_within(a, b, 0, boundary),
         (Shape::Track(a), Shape::Pad(b)) | (Shape::Pad(b), Shape::Track(a)) => {
@@ -132,20 +141,20 @@ fn contact(a: &Node, b: &Node) -> Result<bool, GeometryError> {
             copper::track_via_within(a, b, 0, boundary)
         }
         (Shape::Track(a), Shape::Fill(b)) | (Shape::Fill(b), Shape::Track(a)) => {
-            copper::track_polygon_within(a, b, 0, boundary)
+            b.track_within(a, 0, boundary)
         }
         (Shape::Pad(a), Shape::Pad(b)) => copper::pads_within(a, b, 0, boundary),
         (Shape::Pad(a), Shape::Via(b)) | (Shape::Via(b), Shape::Pad(a)) => {
             copper::pad_via_within(a, b, 0, boundary)
         }
         (Shape::Pad(a), Shape::Fill(b)) | (Shape::Fill(b), Shape::Pad(a)) => {
-            copper::pad_polygon_within(a, b, 0, boundary)
+            b.pad_within(a, 0, boundary)
         }
         (Shape::Via(a), Shape::Via(b)) => copper::vias_within(a, b, 0, boundary),
         (Shape::Via(a), Shape::Fill(b)) | (Shape::Fill(b), Shape::Via(a)) => {
-            copper::via_polygon_within(a, b, 0, boundary)
+            b.via_within(a, 0, boundary)
         }
-        (Shape::Fill(a), Shape::Fill(b)) => copper::polygons_within(a, b, 0, boundary),
+        (Shape::Fill(a), Shape::Fill(b)) => a.within(b, 0, boundary),
     }
 }
 fn occupied(node: &Node, p: Point) -> Result<bool, GeometryError> {
@@ -155,7 +164,7 @@ fn occupied(node: &Node, p: Point) -> Result<bool, GeometryError> {
         }
         Shape::Pad(pad) => copper::pad_contains_point(pad, p),
         Shape::Via(via) => copper::via_contains_point(via, p),
-        Shape::Fill(poly) => copper::polygon_contains_point(poly, p),
+        Shape::Fill(poly) => poly.contains(p),
     }
 }
 struct Graph {
@@ -250,13 +259,20 @@ impl Graph {
                 continue;
             };
             for polygon in &fill.islands {
-                graph.push(
-                    reference("zones", *id),
-                    Some(zone.net),
-                    Shape::Fill(polygon.clone()),
-                    layers.clone(),
-                    copper::validate_polygon(polygon),
-                );
+                match copper::CertifiedPolygon::new(polygon) {
+                    Ok(polygon) => graph.push(
+                        reference("zones", *id),
+                        Some(zone.net),
+                        Shape::Fill(polygon),
+                        layers.clone(),
+                        Ok(()),
+                    ),
+                    Err(error) => graph.unavailable.push(Unavailable {
+                        net: Some(zone.net),
+                        layers: layers.clone().ok(),
+                        failure: geometry([*id], error),
+                    }),
+                }
             }
         }
         for unavailable in &graph.unavailable {
@@ -316,6 +332,7 @@ impl Graph {
                 reference,
                 net,
                 layers,
+                bounds: bounds::Bounds::new(&shape),
                 shape,
             }),
             (layers, error) => {
@@ -487,7 +504,7 @@ fn membership(
                     polygons: vec![],
                 })
                 .polygons
-                .push(polygon.clone());
+                .push(polygon.source().clone());
         }
     }
     let contacts = graph.contacts(group, net, &source.nets);

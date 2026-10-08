@@ -269,6 +269,21 @@ fn region_qualifiers_refuse_wrong_component_revision_project_and_source_basis() 
         vec![rectangle(0, 10)],
     );
     let (old, token) = selected(&model, &zone);
+    let current = old
+        .board_run(
+            old.revision(),
+            &member("zones", zone.uuid),
+            Some(Point::new(5, 5)),
+        )
+        .unwrap();
+    assert_eq!(
+        old.zone_region_successor(old.revision(), &old, &token)
+            .unwrap(),
+        ZoneRegionSuccessor::Unique {
+            qualifier: token.clone(),
+            run: Box::new(current)
+        }
+    );
     let snapshot = ElectricalSelectionSnapshot::capture(&model).unwrap();
     for (field, value) in [
         ("component", serde_json::json!(9999)),
@@ -279,6 +294,12 @@ fn region_qualifiers_refuse_wrong_component_revision_project_and_source_basis() 
         let mut value_token = serde_json::to_value(&token).unwrap();
         value_token[field] = value;
         let forged = serde_json::from_value(value_token).unwrap();
+        assert_eq!(
+            old.zone_region_successor(old.revision(), &old, &forged),
+            Err(ElectricalQueryFailure::Physical(
+                PhysicalQueryFailure::InvalidQualifier
+            ))
+        );
         assert_eq!(
             snapshot.zone_region_successor(snapshot.revision(), &old, &forged),
             Err(ElectricalQueryFailure::Physical(

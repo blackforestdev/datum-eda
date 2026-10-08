@@ -1,6 +1,9 @@
 //! Certified occupied copper shared by physical membership and nominal DRC.
 //! Orthogonal pads have exact rational boundaries. Rotation-invariant subset/
 //! superset certificates settle some other poses; unresolved boundaries refuse.
+mod certified_polygon;
+mod integer_polygon;
+pub(crate) use certified_polygon::CertifiedPolygon;
 mod eighth_turn;
 mod quadratic;
 mod quadratic_sign;
@@ -125,6 +128,25 @@ fn track_half(track: &Track) -> Result<R> {
     R::new(i128::from(track.width), 2)
 }
 pub(super) fn segment_pair(
+    a: P,
+    b: P,
+    c: P,
+    d: P,
+    half: R,
+    boundary: DistanceBoundary,
+) -> Result<bool> {
+    if integer_polygon::separated(a, b, c, d, half) == Some(true) {
+        return Ok(false);
+    }
+    if half.numerator == 0
+        && boundary == DistanceBoundary::Inclusive
+        && let Some(contact) = integer_polygon::segments_intersect(a, b, c, d)
+    {
+        return Ok(contact);
+    }
+    segment_pair_rational(a, b, c, d, half, boundary)
+}
+fn segment_pair_rational(
     a: P,
     b: P,
     c: P,
@@ -439,6 +461,11 @@ fn polygon_vertices(polygon: &Polygon) -> Result<Vec<P>> {
     if area.numerator == 0 {
         return Err(GeometryError::InvalidPolygon);
     }
+    match integer_polygon::simple(&vertices) {
+        Some(true) => return Ok(vertices),
+        Some(false) => return Err(GeometryError::InvalidPolygon),
+        None => {}
+    }
     for i in 0..vertices.len() {
         for j in i + 1..vertices.len() {
             if (i + 1) % vertices.len() == j || (j + 1) % vertices.len() == i {
@@ -459,6 +486,9 @@ fn polygon_vertices(polygon: &Polygon) -> Result<Vec<P>> {
     Ok(vertices)
 }
 fn inside(p: P, vertices: &[P]) -> Result<bool> {
+    if let Some(inside) = integer_polygon::contains(p, vertices) {
+        return Ok(inside);
+    }
     let mut winding = 0;
     for i in 0..vertices.len() {
         let a = vertices[i];
@@ -496,8 +526,20 @@ pub fn track_polygon_within(
     }
     validate_track(track)?;
     let vertices = polygon_vertices(polygon)?;
+    track_vertices(track, &vertices, extra, boundary)
+}
+fn track_vertices(
+    track: &Track,
+    vertices: &[P],
+    extra: i64,
+    boundary: DistanceBoundary,
+) -> Result<bool> {
+    if extra < 0 {
+        return Err(GeometryError::InvalidWidth);
+    }
+    validate_track(track)?;
     let half = track_half(track)?.checked_add(R::integer(i128::from(extra)))?;
-    if inside(point(track.from), &vertices)? || inside(point(track.to), &vertices)? {
+    if inside(point(track.from), vertices)? || inside(point(track.to), vertices)? {
         return Ok(true);
     }
     for i in 0..vertices.len() {
@@ -523,6 +565,17 @@ fn polygon_box(
         return Err(GeometryError::InvalidWidth);
     }
     let vertices = polygon_vertices(polygon)?;
+    polygon_vertices_box(&vertices, shape, extra, boundary)
+}
+fn polygon_vertices_box(
+    vertices: &[P],
+    shape: RoundedBox,
+    extra: i64,
+    boundary: DistanceBoundary,
+) -> Result<bool> {
+    if extra < 0 {
+        return Err(GeometryError::InvalidWidth);
+    }
     let box_vertices = shape.vertices();
     let extra = R::integer(i128::from(extra));
     let half = shape.radius.checked_add(extra)?;
@@ -530,26 +583,39 @@ fn polygon_box(
         return Err(GeometryError::UnresolvedPredicate);
     }
     let mut contact = false;
-    for v in &vertices {
-        contact |= shape.contains_inner(*v)?;
+    for v in vertices {
+        if shape.contains_inner(*v)? {
+            contact = true;
+            break;
+        }
     }
-    for v in box_vertices {
-        contact |= inside(v, &vertices)?;
+    if !contact {
+        for v in box_vertices {
+            if inside(v, vertices)? {
+                contact = true;
+                break;
+            }
+        }
     }
-    for i in 0..vertices.len() {
-        for j in 0..4 {
-            contact |= segment_pair(
-                vertices[i],
-                vertices[(i + 1) % vertices.len()],
-                box_vertices[j],
-                box_vertices[(j + 1) % 4],
-                half,
-                boundary,
-            )?;
+    if !contact {
+        'edges: for i in 0..vertices.len() {
+            for j in 0..4 {
+                if segment_pair(
+                    vertices[i],
+                    vertices[(i + 1) % vertices.len()],
+                    box_vertices[j],
+                    box_vertices[(j + 1) % 4],
+                    half,
+                    boundary,
+                )? {
+                    contact = true;
+                    break 'edges;
+                }
+            }
         }
     }
     Ok(contact
-        && !within_hole_vertices(&vertices, zero(), shape.center, shape.hole, extra, boundary)?)
+        && !within_hole_vertices(vertices, zero(), shape.center, shape.hole, extra, boundary)?)
 }
 pub fn pad_polygon_within(
     pad: &PlacedPad,
@@ -581,7 +647,16 @@ pub fn polygons_within(
     }
     let a = polygon_vertices(a)?;
     let b = polygon_vertices(b)?;
-    if inside(a[0], &b)? || inside(b[0], &a)? {
+    vertices_within(&a, &b, extra, boundary)
+}
+fn vertices_within(a: &[P], b: &[P], extra: i64, boundary: DistanceBoundary) -> Result<bool> {
+    if extra < 0 {
+        return Err(GeometryError::InvalidWidth);
+    }
+    if extra == 0 && boundary == DistanceBoundary::Strict {
+        return Err(GeometryError::UnresolvedPredicate);
+    }
+    if inside(a[0], b)? || inside(b[0], a)? {
         return Ok(true);
     }
     let half = R::integer(i128::from(extra));

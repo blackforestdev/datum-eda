@@ -97,7 +97,7 @@ fn native_board_run_keeps_complete_owned_projection_and_separate_faults() {
             identity(Class::Track, 2, &[])
         ])
     );
-    let run = projection.board_run.unwrap();
+    let run = projection.board_run.clone().unwrap();
     assert_eq!(run.board_net, f.net);
     assert_eq!(run.contact_evidence.unwrap().len(), 1);
     assert!(!projection.source_basis.is_empty());
@@ -114,6 +114,7 @@ fn native_board_run_keeps_complete_owned_projection_and_separate_faults() {
     ));
     let reopened = Native::capture(&f.reopen()).unwrap();
     assert_eq!(reopened.members(&subject).unwrap(), projection.members);
+    assert_eq!(reopened.resolve(&subject).unwrap(), projection);
 }
 
 #[test]

@@ -63,7 +63,7 @@ fn polygons(graph: &Graph, component: usize, id: Uuid) -> Vec<Polygon> {
         .filter_map(|i| {
             let n = &graph.nodes[*i];
             match &n.shape {
-                Shape::Fill(p) if n.reference.source_id == id => Some(p.clone()),
+                Shape::Fill(p) if n.reference.source_id == id => Some(p.source().clone()),
                 _ => None,
             }
         })
@@ -74,7 +74,7 @@ fn all_polygons(graph: &Graph, id: Uuid) -> Vec<Polygon> {
         .nodes
         .iter()
         .filter_map(|n| match &n.shape {
-            Shape::Fill(p) if n.reference.source_id == id => Some(p.clone()),
+            Shape::Fill(p) if n.reference.source_id == id => Some(p.source().clone()),
             _ => None,
         })
         .collect()
@@ -172,6 +172,21 @@ pub(crate) fn successor(
     let region = polygons(&old_graph, token.component, id);
     if region.is_empty() {
         return Err(PhysicalQueryFailure::InvalidQualifier);
+    }
+    // The exact same immutable snapshot needs token validation, not a geometric
+    // succession proof against itself. Keep the complete membership/contact query.
+    if std::ptr::eq(old, new) && old_basis == new_basis {
+        return Ok(ZoneRegionSuccessor::Unique {
+            qualifier: token.clone(),
+            run: Box::new(membership(
+                old_source,
+                old,
+                &token.source,
+                &old_graph,
+                token.component,
+                old_basis,
+            )?),
+        });
     }
     let Some(new_zone) = new_source.zones.get(&id) else {
         if new.objects.contains_key(&id) {

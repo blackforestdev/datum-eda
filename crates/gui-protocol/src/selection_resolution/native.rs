@@ -31,6 +31,9 @@ pub struct NativeSelectionProjection {
 pub struct NativeSelectionResolution {
     snapshot: ElectricalSelectionSnapshot,
     authored: BTreeSet<AuthoredSelectionIdentity>,
+    // One successful physical query per immutable basis, shared by acquisition
+    // and inspection. No cross-capture reuse, hit inference or partial result.
+    run_query: std::sync::Mutex<Option<(RunSelectionIdentity, BoardRunMembership)>>,
 }
 impl NativeSelectionResolution {
     pub fn capture(model: &DesignModel) -> Result<Self, SelectionResolutionError> {
@@ -52,7 +55,11 @@ impl NativeSelectionResolution {
             }
             authored.insert(source_identity(&source)?);
         }
-        Ok(Self { snapshot, authored })
+        Ok(Self {
+            snapshot,
+            authored,
+            run_query: std::sync::Mutex::new(None),
+        })
     }
     pub fn authored_identities(&self) -> &BTreeSet<AuthoredSelectionIdentity> {
         &self.authored
@@ -82,13 +89,17 @@ impl NativeSelectionResolution {
             if run.origin.class == Class::Zone {
                 let qualifiers: Vec<_> = result
                     .zone_regions
-                    .into_iter()
+                    .iter()
                     .filter(|q| q.source().source_id == run.origin.id)
+                    .cloned()
                     .collect();
                 if qualifiers.len() != 1 {
                     return Err(SelectionResolutionError::MissingDerivedAuthority);
                 }
                 run.zone_region = Some(qualifiers[0].clone());
+            }
+            if let Ok(mut query) = self.run_query.lock() {
+                *query = Some((run.clone(), result));
             }
         } else {
             self.resolve(&subject)?;
@@ -212,17 +223,29 @@ impl NativeSelectionResolution {
                     projection.electrical = Some(result.membership.clone());
                     projection.bus_run = Some(result);
                 }
-                Class::Track | Class::Via => {
-                    projection.board_run = Some(
+                Class::Track | Class::Via | Class::Zone => {
+                    let cached = self.run_query.lock().ok().and_then(|q| {
+                        q.as_ref()
+                            .filter(|(key, _)| key == run)
+                            .map(|(_, value)| value.clone())
+                    });
+                    let result = if let Some(result) = cached {
+                        result
+                    } else if run.origin.class == Class::Zone {
+                        match self.region_successor(self, run)? {
+                            ZoneRegionSuccessor::Unique { run, .. } => *run,
+                            _ => return Err(SelectionResolutionError::MissingDerivedAuthority),
+                        }
+                    } else {
                         self.snapshot
                             .board_run(self.revision(), &occurrence(&run.origin), None)
-                            .map_err(SelectionResolutionError::Engine)?,
-                    )
+                            .map_err(SelectionResolutionError::Engine)?
+                    };
+                    if let Ok(mut query) = self.run_query.lock() {
+                        *query = Some((run.clone(), result.clone()));
+                    }
+                    projection.board_run = Some(result);
                 }
-                Class::Zone => match self.region_successor(self, run)? {
-                    ZoneRegionSuccessor::Unique { run, .. } => projection.board_run = Some(*run),
-                    _ => return Err(SelectionResolutionError::MissingDerivedAuthority),
-                },
                 _ => {
                     return Err(SelectionResolutionError::InvalidSubject(
                         SelectionSubjectError::InvalidRunOrigin,
