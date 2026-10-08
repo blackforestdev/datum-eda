@@ -161,6 +161,7 @@ impl Runtime {
             &mut self.renderer,
             submitted,
         )?;
+        self.native_move_frame_presented();
         if let Some((hits, console)) = self.renderer.render_session_mut().take_published_frame() {
             self.presented_console_layout = console;
             self.presented_hits.replace(hits);

@@ -2,7 +2,7 @@
   "packet": "UED-FIRST-MOVE-01-RUNTIME-QA",
   "task": "USER-EDIT-DELIVERY",
   "step": "UED-C07",
-  "source_parent": "bf34a97475be0f328f5072bc909e49982a6ce3a4",
+  "source_parent": "c9c0fba2e92cebe0e69a29d95804742947852dec",
   "source_blobs": [
     {
       "path": "crates/gui-app/src/main.rs",
@@ -10,7 +10,7 @@
     },
     {
       "path": "crates/gui-app/src/runtime_native_edit.rs",
-      "blob": "827f38beb8d1aab01b485d35c381c50591cb57f1"
+      "blob": "26d81899f1c5eba675841a59b08c6733df7c57af"
     },
     {
       "path": "crates/gui-app/src/runtime_primary_pointer.rs",
@@ -22,11 +22,15 @@
     },
     {
       "path": "crates/gui-app/src/runtime_present.rs",
-      "blob": "b504c8d90717378fffc195c8243bfaec820ee66f"
+      "blob": "36b72321d5d51a365c92b4cfe46092fd9a24462e"
     },
     {
       "path": "crates/gui-app/src/native_move_frame_tests.rs",
-      "blob": "30dbe962b52e136c273271ec11c58604184ac576"
+      "blob": "aa82566023ddd35b7081d2bd506b5d8ad0dd60cd"
+    },
+    {
+      "path": "crates/gui-app/src/app_frame.rs",
+      "blob": "8c76dccf140c395704f90801448e8f8418a499ec"
     }
   ],
   "authority": "Retained owner first-footprint edit correction grant and PM059 manager appointment; no successor grant.",
@@ -79,7 +83,8 @@
       123,
       109
     ],
-    "test_executable": "target/debug/deps/datum_gui-19c6acb98962ab73; same production App/runtime/render/worker code, not physical input into target/debug/datum-gui"
+    "test_executable": "target/debug/deps/datum_gui-19c6acb98962ab73; same production App/runtime/render/worker code, not physical input into target/debug/datum-gui",
+    "scope_correction": "Historical moving-preview assertion inspected prepared scene, not translated presented geometry. Canonical/history PASS remains valid; visible-preview inference is withdrawn and superseded by presentation_correction."
   },
   "recovery_contract": "Seven focused existing native recovery tests passed; active two-second limit, acquisition episode and admission rules preserved. One deadline transition receipt added without per-frame tracing.",
   "retained_evidence": "Prior actual reserved callback/journal reviews remain valid at their scopes; complete 81-Pad movement, selection retention and writer guard/recovery proofs reused. No repeated writer or qualification campaign.",
@@ -88,7 +93,8 @@
     "frame-reproduction-traced.log: nominal PASS invalid as Move proof; no preview actually active. Retained as discovery only.",
     "frame-moving.log and frame-moving2.log: regression assertion failed because unrelated desktop pointer overwrote the in-process cursor reference. Physical input excluded from fixture; native frame events still forwarded.",
     "frame-final-edit.log: destination happened not to have a screen AuthoredObject hit; tightened test to explicitly click the published Footprint label. No failed result credited as delivery.",
-    "frame-queued-cancel.log passed the workflow, but its visual cancellation assertion referred to the requested initiator rather than the actual selected Footprint when another object won the hit. Fixture now captures actual authoritative identity; fresh owner-copy frame-identity-cancel.log passes that corrected assertion. No false cancellation claim retained."
+    "frame-queued-cancel.log passed the workflow, but its visual cancellation assertion referred to the requested initiator rather than the actual selected Footprint when another object won the hit. Fixture now captures actual authoritative identity; fresh owner-copy frame-identity-cancel.log passes that corrected assertion. No false cancellation claim retained.",
+    "owner-repeat-presented-pre-repair-proof.log: strengthened existing fixture FAILS because prepared translation did not move the actually presented Footprint label. Initial has_presented was insufficient in earlier PASS trials."
   ],
   "proof_limits": [
     "In-process production pointer events and normalized M shortcut; physical compositor keyboard/mouse delivery is not automated or HUMAN-qualified.",
@@ -108,7 +114,7 @@
     "source_commit": "bf34a97475be0f328f5072bc909e49982a6ce3a4",
     "packet_blob": "70d4a58c708dc56dcd14d002cfd15a94015e5eb3",
     "receipt": "first-edit-runtime-corrected-review.json",
-    "scope": "bf34 pickup/dispatch correction only; pending preview preparation correction not yet independently reviewed",
+    "scope": "Historical bf34 pickup/dispatch correction; subsequent actual review scopes retained separately. None proves the presentation correction until reserved re-review.",
     "follow_on": {
       "outcome": "PASS for bounded pointer-preview coalescing correction only",
       "source_commit": "24b5971903615bf6ed441196a3e7622fe75f5c3c",
@@ -121,18 +127,18 @@
   "ordinary_build_cohort": {
     "datum-gui": {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
-      "sha256": "85f7829453013b9b5657123ee0b739ecfc6277c730068d405662e61e9d3304f0"
+      "sha256": "c8b0fd3ea2af2dc9c2e3a5f2167d75c34e6da489312ecd08571380596e5e8236"
     },
     "datum-eda": {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
-      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+      "sha256": "92a3d78d325bded4ab6a11f9adcf02324c9a0538e5201d27a750d3fd169f5047"
     },
     "eda-engine-daemon": {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
-      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+      "sha256": "74e034b6059ee4d44903e55ad488b2221919cd242b9cb7e35f48235b429efa98"
     }
   },
-  "ordinary_build_cohort_log": "first-edit-runtime-logs/ordinary-preview-cohort-build.log",
+  "ordinary_build_cohort_log": "first-edit-runtime-logs/presented-repair-build.log",
   "motion_dispatch_cause": {
     "introduced_by": "fcb7633caa6c8b7fed5e85a8b92eb76c694a9ba7",
     "path": "crates/gui-app/src/runtime_native_edit.rs::native_move_pointer",
@@ -150,10 +156,58 @@
       "result": "PASS",
       "log": "first-edit-runtime-logs/frame-identity-cancel.log",
       "actual_subject": "Footprint ca340e78-04a5-5307-a024-9c5720a807d2",
-      "behavior": "Batched motion followed by actual whole-scene frame publication; cancellation of another queued move before frame cannot resurrect the actual selected Footprint; exact byte preimage, direct click commit before next preview render, full history/Save/reopen preserved.",
+      "behavior": "Historical trial passed prepared whole-scene translation, queued cancellation, canonical click commit, exact-byte history, Save/reopen. It did not assert translated Footprint publication in an actually presented frame; visual publication claim is withdrawn. See presentation correction.",
       "input_batch_events": 192,
       "input_batch_ms": 24
     },
     "failure_disposition": "Movement backlog correction independently PASS at24b59719, trace-off batch19ms. Original recovery-stop attribution remains open; development availability withdrawn."
+  },
+  "presentation_correction": {
+    "owner_repeat": {
+      "process_receipt": "first-edit-runtime-logs/owner-repeat-process.json",
+      "native_log": "first-edit-runtime-logs/owner-repeat-owner-failed-native.log",
+      "host": "WindowId(94418319196944)",
+      "settings": "Wayland; exact previous candidate GUI; no inherited DATUM_, WGPU_, VK_ or EDA_CLI_BIN overrides",
+      "ui_vs_journal": "MOVE / Sel none / Applying Project action / revision33de95; journal already4a0e1b92",
+      "limits": "Latest captured log contains no recovery/panic record; user closed processes. Original94790203345888 exhaustion is separate. Debugger samples retained construction then Wayland epoll idle; debugger pause proves no GPU timing.",
+      "stacks": [
+        "first-edit-runtime-logs/owner-repeat-threads.txt",
+        "first-edit-runtime-logs/owner-repeat-main-stack-2.txt"
+      ]
+    },
+    "introduced_by": "24b59719 moved source replacement into every admitted upload-continuation turn; earlier fcb7633c invalidated per motion.",
+    "cause": "Repeated motion replaces the complete source on every native turn, restarting retained-world upload before a translated frame can present. Prepared geometry changes while presented label remains x324.1462 y350.34448.",
+    "repair": "Keep complete preview source stable until qualified native presentation; latest checked snapped destination stays queued and receives a subsequent ordinary frame. Cancel/commit supersede immediately. Complete geometry, click destination, canonical guards and recovery timeout unchanged.",
+    "proof": {
+      "result": "1 PASS, 0 failures; 75.77 seconds",
+      "log": "first-edit-runtime-logs/presented-repair-proof.log",
+      "native_log": "first-edit-runtime-logs/presented-repair-native.log",
+      "configuration": "Existing production App/Winit Wayland/WGPU Vulkan Intel HD Graphics P630 Mesa25.0.7. In-process CursorMoved/MouseInput plus normalized M; no physical compositor/HUMAN or X11 qualification. DATUM_TRACE_TIMING=1 for paired cause evidence.",
+      "subject": "Footprint ca340e78-04a5-5307-a024-9c5720a807d2",
+      "presented_label_before": [
+        324.1462,
+        350.34448
+      ],
+      "presented_label_during_motion": [
+        342.15576,
+        368.35406
+      ],
+      "committed_presented_revision": "65caee62a43024294aaf74004b2fd85c30bb7b3ac6191664cf82aad96b3b1cf5",
+      "behavior": "M pickup; translated presented footprint during repeated movement; cancel presented at original position; commit presents translated footprint and Edit committed; Undo/Redo present corresponding positions and restore exact bytes; Save/reopen saved revision. Publication waits rely on production worker/queue/native wakes, not periodic script polling.",
+      "pointer_batch": "192 events /23ms; no new latency budget or ordinary trace-off inference."
+    },
+    "preservation": {
+      "owner_project_files_checked": 165,
+      "all_unchanged": true,
+      "canonical_preimages": {
+        ".datum/journal/transactions.jsonl": "c653c5dbb6ae4612519e25a7533cee1b45dbf183afc96d935acad187f4922c21",
+        "board/board.json": "379e8ac72cad12b73796adf80ddf157d517dd5efbb6367233c80db6902fdd2a4",
+        "project.json": "b621f78d159c2a4f21a781e00517f4575ee833febfada7b7a048c6749b88547d"
+      },
+      "original_pcb_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "original_sch_sha256": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+    },
+    "review": "Reserved independent correction review pending.",
+    "remaining": "Original recovery exhaustion not reproduced or attributed. Availability withdrawn, UED-C07 in progress, physical/HUMAN and wider qualification open; no successor grant."
   }
 }

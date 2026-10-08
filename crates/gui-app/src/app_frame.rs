@@ -27,6 +27,16 @@ impl App {
             false
         };
         self.frames.frame_finished(window, receipt, presented);
+        // Input received during upload continuation belongs to a later complete
+        // preview. The just-presented receipt cannot retire that queued intent.
+        if presented
+            && self
+                .runtime
+                .as_ref()
+                .is_some_and(Runtime::native_move_frame_needed)
+        {
+            self.request_workspace_redraw();
+        }
         if self.advance_kwin_lifecycle_smoke(event_loop) {
             return;
         }

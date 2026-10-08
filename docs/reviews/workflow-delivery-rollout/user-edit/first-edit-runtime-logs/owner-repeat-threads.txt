@@ -1,0 +1,214 @@
+[New LWP 4085826]
+[New LWP 4085823]
+[New LWP 4085822]
+[New LWP 4085821]
+[New LWP 4085820]
+[New LWP 4085819]
+[New LWP 4085818]
+[New LWP 4085817]
+[New LWP 4085816]
+[New LWP 4085810]
+[New LWP 4085809]
+[New LWP 4085808]
+[New LWP 4085807]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x00007f339a322932 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+warning: Missing auto-load script at offset 0 in section .debug_gdb_scripts
+of file /home/bfadmin/Documents/datum-eda/target/debug/datum-gui.
+Use `info auto-load python-scripts [REGEXP]' to list them.
+
+Thread 14 (Thread 0x7f339a1446c0 (LWP 4085807) "datum-gui"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f3cd in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a2c3746 in poll () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x000055df51c21916 in datum_gui::terminal_transport::linux::io::wait_with_timeout (fd=12, events=1, timeout_ms=100) at crates/gui-app/src/terminal_transport/linux/io.rs:78
+#5  0x000055df51c2188f in datum_gui::terminal_transport::linux::io::wait_readable (fd=12) at crates/gui-app/src/terminal_transport/linux/io.rs:42
+#6  0x000055df51bc52e5 in datum_gui::terminal_transport::reader::{impl#0}::wait_readable (self=0x7f339a142ea0) at crates/gui-app/src/terminal_transport/reader.rs:47
+#7  0x000055df51b6e26e in datum_gui::terminal_transport::reader::read_output_from<datum_gui::terminal_transport::reader::FileReader> (reader=0x7f339a142ea0, output=..., control=..., stop=0x55df7a2a2a28) at crates/gui-app/src/terminal_transport/reader.rs:69
+#8  0x000055df51bc2cfa in datum_gui::terminal_transport::reader::read_output (reader=..., output=..., control=..., stop=...) at crates/gui-app/src/terminal_transport/reader.rs:33
+#9  0x000055df51b7fc77 in datum_gui::terminal_transport::reader::spawn_reader::{closure#0} () at crates/gui-app/src/terminal_transport/reader.rs:23
+#10 0x000055df51a00a06 in std::sys::backtrace::__rust_begin_short_backtrace<datum_gui::terminal_transport::reader::spawn_reader::{closure_env#0}, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:166
+#11 0x000055df51ae646a in std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure#0}<datum_gui::terminal_transport::reader::spawn_reader::{closure_env#0}, ()> () at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/thread/lifecycle.rs:70
+#12 0x000055df51dea7b0 in core::panic::unwind_safe::{impl#23}::call_once<(), std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::reader::spawn_reader::{closure_env#0}, ()>> (self=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic/unwind_safe.rs:275
+#13 0x000055df51c807f5 in std::panicking::catch_unwind::do_call<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::reader::spawn_reader::{closure_env#0}, ()>>, ()> (data=0x7f339a143120) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:576
+
+Thread 13 (Thread 0x7f3399f436c0 (LWP 4085808) "datum-gui"):
+#0  0x00007f339a2ce4f9 in syscall () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x000055df55cb68d5 in std::sys::pal::unix::futex::futex_wait () at library/std/src/sys/pal/unix/futex.rs:73
+#2  std::sys::sync::condvar::futex::Condvar::wait_optional_timeout () at library/std/src/sys/sync/condvar/futex.rs:49
+#3  std::sys::sync::condvar::futex::Condvar::wait () at library/std/src/sys/sync/condvar/futex.rs:33
+#4  0x000055df51bd0315 in std::sync::poison::condvar::Condvar::wait<datum_gui::terminal_transport::input::InputState> (self=0x55df7a2bcf20, guard=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/poison/condvar.rs:128
+#5  0x000055df51ba8331 in datum_gui::terminal_transport::input::InputQueue::take (self=0x55df7a2bced8) at crates/gui-app/src/terminal_transport/input.rs:120
+#6  0x000055df51b6d7ca in datum_gui::terminal_transport::input::write_input<datum_gui::terminal_transport::input::FileWriter> (writer=..., queue=..., control=...) at crates/gui-app/src/terminal_transport/input.rs:224
+#7  0x000055df51b7fbb0 in datum_gui::terminal_transport::input::spawn_writer::{closure#0} () at crates/gui-app/src/terminal_transport/input.rs:197
+#8  0x000055df51a009f6 in std::sys::backtrace::__rust_begin_short_backtrace<datum_gui::terminal_transport::input::spawn_writer::{closure_env#0}, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:166
+#9  0x000055df51ae626a in std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure#0}<datum_gui::terminal_transport::input::spawn_writer::{closure_env#0}, ()> () at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/thread/lifecycle.rs:70
+#10 0x000055df51dea780 in core::panic::unwind_safe::{impl#23}::call_once<(), std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::input::spawn_writer::{closure_env#0}, ()>> (self=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic/unwind_safe.rs:275
+#11 0x000055df51c807c1 in std::panicking::catch_unwind::do_call<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::input::spawn_writer::{closure_env#0}, ()>>, ()> (data=0x7f3399f42140) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:576
+#12 0x000055df51b0e61b in __rust_try ()
+#13 0x000055df51ae3c45 in std::panicking::catch_unwind<(), core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::input::spawn_writer::{closure_env#0}, ()>>> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:544
+
+Thread 12 (Thread 0x7f3399d426c0 (LWP 4085809) "datum-gui"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f3cd in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a2ba507 in wait4 () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x000055df55cc7d6f in std::sys::process::unix::unix::{impl#1}::wait::{closure#0} () at library/std/src/sys/process/unix/unix.rs:1037
+#5  std::sys::pal::unix::cvt_r<i32, std::sys::process::unix::unix::{impl#1}::wait::{closure_env#0}> () at library/std/src/sys/pal/unix/mod.rs:251
+#6  std::sys::process::unix::unix::Process::wait () at library/std/src/sys/process/unix/unix.rs:1037
+#7  0x000055df55cc1da2 in std::process::Child::wait () at library/std/src/process.rs:2397
+#8  0x000055df51be3b81 in datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure#0} () at crates/gui-app/src/terminal_transport/process_supervisor.rs:74
+#9  0x000055df51a00966 in std::sys::backtrace::__rust_begin_short_backtrace<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#0}, ()> (f=<error reading variable: Cannot access memory at address 0x3e5839>) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:166
+#10 0x000055df51ae56b3 in std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#0}, ()> () at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/thread/lifecycle.rs:70
+#11 0x000055df51dea660 in core::panic::unwind_safe::{impl#23}::call_once<(), std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#0}, ()>> (self=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic/unwind_safe.rs:275
+#12 0x000055df51c80695 in std::panicking::catch_unwind::do_call<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#0}, ()>>, ()> (data=0x7f3399d410e0) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:576
+#13 0x000055df51b0e61b in __rust_try ()
+
+Thread 11 (Thread 0x7f3399b416c0 (LWP 4085810) "datum-gui"):
+#0  0x00007f339a2ce4f9 in syscall () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x000055df55cb68d5 in std::sys::pal::unix::futex::futex_wait () at library/std/src/sys/pal/unix/futex.rs:73
+#2  std::sys::sync::condvar::futex::Condvar::wait_optional_timeout () at library/std/src/sys/sync/condvar/futex.rs:49
+#3  std::sys::sync::condvar::futex::Condvar::wait () at library/std/src/sys/sync/condvar/futex.rs:33
+#4  0x000055df51bd0205 in std::sync::poison::condvar::Condvar::wait<datum_gui::terminal_transport::process_supervisor::SupervisorState> (self=0x55df7a7a70d0, guard=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/poison/condvar.rs:128
+#5  0x000055df51bfa4b5 in datum_gui::terminal_transport::process_supervisor::ProcessSupervisor::run (self=0x55df7a80d448) at crates/gui-app/src/terminal_transport/process_supervisor.rs:202
+#6  0x000055df51be3dc0 in datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure#1} () at crates/gui-app/src/terminal_transport/process_supervisor.rs:87
+#7  0x000055df51a0097e in std::sys::backtrace::__rust_begin_short_backtrace<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#1}, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:166
+#8  0x000055df51ae5897 in std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#1}, ()> () at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/thread/lifecycle.rs:70
+#9  0x000055df51dea690 in core::panic::unwind_safe::{impl#23}::call_once<(), std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#1}, ()>> (self=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic/unwind_safe.rs:275
+#10 0x000055df51c806c1 in std::panicking::catch_unwind::do_call<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#1}, ()>>, ()> (data=0x7f3399b40180) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:576
+#11 0x000055df51b0e61b in __rust_try ()
+#12 0x000055df51ae2932 in std::panicking::catch_unwind<(), core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#1}, ()>>> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:544
+#13 std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_transport::process_supervisor::{impl#0}::start::{closure_env#1}, ()>>, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panic.rs:359
+
+Thread 10 (Thread 0x7f3365ffd6c0 (LWP 4085816) "datum-g:disk$0"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f9ac in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a251e98 in pthread_cond_wait () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x00007f336efafc5d in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#5  0x00007f336ef7b2ab in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#6  0x00007f336efafb8b in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#7  0x00007f339a2528bb in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#8  0x00007f339a2d0538 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+
+Thread 9 (Thread 0x7f335bfff6c0 (LWP 4085817) "datum-gui:sh0"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f9ac in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a251e98 in pthread_cond_wait () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x00007f336efafc5d in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#5  0x00007f336ef7b2ab in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#6  0x00007f336efafb8b in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#7  0x00007f339a2528bb in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#8  0x00007f339a2d0538 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+
+Thread 8 (Thread 0x7f335affe6c0 (LWP 4085818) "datum-:traceq0"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f9ac in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a251e98 in pthread_cond_wait () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x00007f336efafc5d in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#5  0x00007f336ef7b2ab in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#6  0x00007f336efafb8b in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#7  0x00007f339a2528bb in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#8  0x00007f339a2d0538 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+
+Thread 7 (Thread 0x7f3359ffd6c0 (LWP 4085819) "datum-gu:gdrv0"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f9ac in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a251e98 in pthread_cond_wait () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x00007f336efafc5d in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#5  0x00007f336ef7b2ab in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#6  0x00007f336efafb8b in ?? () from /lib/x86_64-linux-gnu/libgallium-25.0.7-2+deb13u1.so
+#7  0x00007f339a2528bb in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#8  0x00007f339a2d0538 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+
+Thread 6 (Thread 0x7f336e9ff6c0 (LWP 4085820) "datum-g:disk$0"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f9ac in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a251e98 in pthread_cond_wait () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x00007f337b209cad in ?? () from /lib/x86_64-linux-gnu/libvulkan_intel.so
+#5  0x00007f337b1f04cb in ?? () from /lib/x86_64-linux-gnu/libvulkan_intel.so
+#6  0x00007f337b209c0b in ?? () from /lib/x86_64-linux-gnu/libvulkan_intel.so
+#7  0x00007f339a2528bb in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#8  0x00007f339a2d0538 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+
+Thread 5 (Thread 0x7f336d9fe6c0 (LWP 4085821) "datum-:traceq0"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f9ac in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a251e98 in pthread_cond_wait () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x00007f337b209cad in ?? () from /lib/x86_64-linux-gnu/libvulkan_intel.so
+#5  0x00007f337b1f04cb in ?? () from /lib/x86_64-linux-gnu/libvulkan_intel.so
+#6  0x00007f337b209c0b in ?? () from /lib/x86_64-linux-gnu/libvulkan_intel.so
+#7  0x00007f339a2528bb in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#8  0x00007f339a2d0538 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+
+Thread 4 (Thread 0x7f3398f366c0 (LWP 4085822) "datum-gui"):
+#0  0x000055df5406d162 in rustix::backend::arch::asm::syscall5 (nr=..., a0=..., a1=..., a2=..., a3=..., a4=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/backend/linux_raw/arch/x86_64.rs:202
+#1  0x000055df54061740 in rustix::backend::event::syscalls::poll (fds=..., timeout=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/backend/linux_raw/arch/mod.rs:117
+#2  0x000055df54058940 in rustix::event::poll::poll (fds=..., timeout=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/event/poll.rs:46
+#3  0x000055df54062539 in x11rb::rust_connection::stream::{impl#6}::poll (self=0x55df7948f290, mode=x11rb::rust_connection::stream::PollMode::Readable) at src/rust_connection/stream.rs:350
+#4  0x000055df53a1be46 in x11rb::rust_connection::RustConnection<x11rb::rust_connection::stream::DefaultStream>::read_packet_and_enqueue<x11rb::rust_connection::stream::DefaultStream> (self=0x55df7948f0c8, inner=..., mode=x11rb::rust_connection::BlockingMode::Blocking) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/x11rb-0.13.2/src/rust_connection/mod.rs:497
+#5  0x000055df53a1eba0 in x11rb::rust_connection::{impl#3}::wait_for_raw_event_with_sequence<x11rb::rust_connection::stream::DefaultStream> (self=0x55df7948f0c8) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/x11rb-0.13.2/src/rust_connection/mod.rs:763
+#6  0x000055df53a1f659 in x11rb::connection::Connection::wait_for_event_with_sequence<x11rb::rust_connection::RustConnection<x11rb::rust_connection::stream::DefaultStream>> (self=0x55df7948f0c8) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/x11rb-0.13.2/src/connection/mod.rs:372
+#7  0x000055df53a1f237 in x11rb::connection::Connection::wait_for_event<x11rb::rust_connection::RustConnection<x11rb::rust_connection::stream::DefaultStream>> (self=0x55df7948f0c8) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/x11rb-0.13.2/src/connection/mod.rs:362
+#8  0x000055df53a0c624 in arboard::platform::linux::x11::serve_requests (context=...) at src/platform/linux/x11.rs:820
+#9  0x000055df53a025d4 in arboard::platform::linux::x11::{impl#2}::new::{closure#0} () at src/platform/linux/x11.rs:926
+#10 0x000055df539fcc8e in std::sys::backtrace::__rust_begin_short_backtrace<arboard::platform::linux::x11::{impl#2}::new::{closure_env#0}, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:166
+#11 0x000055df53a0245f in std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure#0}<arboard::platform::linux::x11::{impl#2}::new::{closure_env#0}, ()> () at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/thread/lifecycle.rs:70
+#12 0x000055df53a204c1 in core::panic::unwind_safe::{impl#23}::call_once<(), std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<arboard::platform::linux::x11::{impl#2}::new::{closure_env#0}, ()>> (self=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic/unwind_safe.rs:275
+#13 0x000055df539f05f2 in std::panicking::catch_unwind::do_call<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<arboard::platform::linux::x11::{impl#2}::new::{closure_env#0}, ()>>, ()> (data=0x7f3398f35180) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:576
+
+Thread 3 (Thread 0x7f3398d326c0 (LWP 4085823) "datum-terminal-"):
+#0  0x00007f339a2ce4f9 in syscall () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x000055df55cc2696 in std::sys::pal::unix::futex::futex_wait () at library/std/src/sys/pal/unix/futex.rs:73
+#2  std::sys::sync::thread_parking::futex::Parker::park () at library/std/src/sys/sync/thread_parking/futex.rs:55
+#3  std::thread::thread::Thread::park () at library/std/src/thread/thread.rs:121
+#4  0x000055df51d4af54 in std::sync::mpmc::context::Context::wait_until (self=0x7f3398d30970, deadline=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpmc/context.rs:143
+#5  0x000055df51c99a86 in std::sync::mpmc::array::{impl#1}::recv::{closure#1}<datum_gui::runtime_terminal_notifications::DesktopNotification> (cx=0x7f3398d30970) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpmc/array.rs:402
+#6  0x000055df51d42ed3 in std::sync::mpmc::context::{impl#0}::with::{closure#0}<std::sync::mpmc::array::{impl#1}::recv::{closure_env#1}<datum_gui::runtime_terminal_notifications::DesktopNotification>, ()> (cx=0x7f3398d30970) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpmc/context.rs:49
+#7  std::sync::mpmc::context::{impl#0}::with::{closure#1}<std::sync::mpmc::array::{impl#1}::recv::{closure_env#1}<datum_gui::runtime_terminal_notifications::DesktopNotification>, ()> (cell=0x7f3398d326a0) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpmc/context.rs:57
+#8  0x000055df51d58598 in std::thread::local::LocalKey<core::cell::Cell<core::option::Option<std::sync::mpmc::context::Context>>>::try_with<core::cell::Cell<core::option::Option<std::sync::mpmc::context::Context>>, std::sync::mpmc::context::{impl#0}::with::{closure_env#1}<std::sync::mpmc::array::{impl#1}::recv::{closure_env#1}<datum_gui::runtime_terminal_notifications::DesktopNotification>, ()>, ()> (self=0x55df55d18380, f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/thread/local.rs:463
+#9  0x000055df51d0bb30 in std::sync::mpmc::context::Context::with<std::sync::mpmc::array::{impl#1}::recv::{closure_env#1}<datum_gui::runtime_terminal_notifications::DesktopNotification>, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpmc/context.rs:53
+#10 0x000055df51cb3b39 in std::sync::mpmc::array::Channel<datum_gui::runtime_terminal_notifications::DesktopNotification>::recv<datum_gui::runtime_terminal_notifications::DesktopNotification> (self=0x55df7a2bfe00, deadline=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpmc/array.rs:390
+#11 0x000055df5192e72e in std::sync::mpmc::Receiver<datum_gui::runtime_terminal_notifications::DesktopNotification>::recv<datum_gui::runtime_terminal_notifications::DesktopNotification> (self=0x7f3398d30de0) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpmc/mod.rs:1013
+#12 0x000055df51c65346 in std::sync::mpsc::Receiver<datum_gui::runtime_terminal_notifications::DesktopNotification>::recv<datum_gui::runtime_terminal_notifications::DesktopNotification> (self=0x7f3398d30de0) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sync/mpsc.rs:881
+#13 0x000055df519c7900 in datum_gui::runtime_terminal_notifications::{impl#1}::from_environment::{closure#0} () at crates/gui-app/src/runtime_terminal_notifications.rs:64
+
+Thread 2 (Thread 0x7f339870c6c0 (LWP 4085826) "datum-atspi"):
+#0  0x00007f339a25a72e in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f339a24f388 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f339a24f3cd in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#3  0x00007f339a2c3746 in poll () from /lib/x86_64-linux-gnu/libc.so.6
+#4  0x000055df51cede21 in datum_gui::terminal_accessibility_platform::worker::wait_for_wake (wake=0x7f3398709eec, bus_fd=...) at crates/gui-app/src/terminal_accessibility_platform/worker.rs:490
+#5  0x000055df51cef8ba in datum_gui::terminal_accessibility_platform::worker::run (shared=..., wake=...) at crates/gui-app/src/terminal_accessibility_platform/worker.rs:391
+#6  0x000055df51ce3472 in datum_gui::terminal_accessibility_platform::worker::{impl#0}::start_update::{closure#0} () at crates/gui-app/src/terminal_accessibility_platform/worker.rs:85
+#7  0x000055df51a009a2 in std::sys::backtrace::__rust_begin_short_backtrace<datum_gui::terminal_accessibility_platform::worker::{impl#0}::start_update::{closure_env#0}, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:166
+#8  0x000055df51ae5a7a in std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure#0}<datum_gui::terminal_accessibility_platform::worker::{impl#0}::start_update::{closure_env#0}, ()> () at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/thread/lifecycle.rs:70
+#9  0x000055df51dea6c0 in core::panic::unwind_safe::{impl#23}::call_once<(), std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_accessibility_platform::worker::{impl#0}::start_update::{closure_env#0}, ()>> (self=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic/unwind_safe.rs:275
+#10 0x000055df51c806f5 in std::panicking::catch_unwind::do_call<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_accessibility_platform::worker::{impl#0}::start_update::{closure_env#0}, ()>>, ()> (data=0x7f339870b160) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:576
+#11 0x000055df51b0e61b in __rust_try ()
+#12 0x000055df51ae2cd3 in std::panicking::catch_unwind<(), core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_accessibility_platform::worker::{impl#0}::start_update::{closure_env#0}, ()>>> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:544
+#13 std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<std::thread::lifecycle::spawn_unchecked::{closure#1}::{closure_env#0}<datum_gui::terminal_accessibility_platform::worker::{impl#0}::start_update::{closure_env#0}, ()>>, ()> (f=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panic.rs:359
+
+Thread 1 (Thread 0x7f339a1bc380 (LWP 4085784) "datum-gui"):
+#0  0x00007f339a322932 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x000055df52900154 in core::ptr::copy_nonoverlapping<u8> (src=0x55df797dd628, dst=0x55df7a202b68, count=69) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:549
+#2  alloc::vec::Vec<u8, alloc::alloc::Global>::append_elements<u8, alloc::alloc::Global> (self=0x7ffdb6823880, other=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/vec/mod.rs:2946
+#3  0x000055df52609290 in alloc::vec::spec_extend::{impl#4}::spec_extend<u8, alloc::alloc::Global> (self=0x7ffdb6823880, iterator=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/vec/spec_extend.rs:56
+#4  alloc::vec::Vec<u8, alloc::alloc::Global>::extend_from_slice<u8, alloc::alloc::Global> (self=0x7ffdb6823880, other=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/vec/mod.rs:3567
+#5  alloc::string::String::push_str (self=0x7ffdb6823880, string=...) at /home/bfadmin/.rustup/toolchains/1.98.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/string.rs:1107
+#6  0x000055df523c64cb in datum_gui_render::geometry_output::Admitted<datum_gui_render::Quad, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0}::{closure_env#1}>::copy_key<datum_gui_render::Quad, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0}::{closure_env#1}> (self=0x7ffdb6824358, key=...) at crates/gui-render/src/geometry_output.rs:90
+#7  0x000055df523b8966 in datum_gui_render::geometry_output::{impl#3}::source::{closure#0}<datum_gui_render::Quad, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0}::{closure_env#1}> () at crates/gui-render/src/geometry_output.rs:165
+#8  0x000055df523d6ccf in datum_gui_render::geometry_output::{impl#3}::source<datum_gui_render::Quad, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0}::{closure_env#1}> (self=0x7ffdb6824358, key=..., role=...) at crates/gui-render/src/geometry_output.rs:162
+#9  0x000055df522301dd in datum_gui_render::retained::retained_board_graphics::push_retained_board_graphic_batches<datum_gui_render::geometry_output::Admitted<datum_gui_render::Quad, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0}::{closure_env#1}>, datum_gui_render::geometry_output::Admitted<datum_gui_render::gpu_strokes::WorldStrokeInstance, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0}::{closure_env#2}>, datum_gui_render::geometry_output::Admitted<datum_gui_render::draw_command::RetainedDrawCommand, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0}::{closure_env#3}>> (out=0x7ffdb6824358, strokes=0x7ffdb6824480, draw_commands=0x7ffdb68247c8, scene=0x7ffdb684f710, _reference_projection=0x7ffdb6824300, state=0x7ffdb684ea00) at crates/gui-render/src/render/retained_board_graphics.rs:31
+#10 0x000055df5223899b in datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure#0} () at crates/gui-render/src/render/scene_retained_access.rs:272
+#11 0x000055df52275cc6 in datum_gui_render::renderer_state::cpu_alloc::with_current<core::result::Result<datum_gui_render::retained_scene_owner::RetainedScene, anyhow::Error>, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure_env#0}> (owner=0x55df7a9effb8, work=...) at crates/gui-render/src/render/../cpu_alloc.rs:138
+#12 0x000055df5226e9bf in datum_gui_render::renderer_state::cpu_alloc::Scope::with<core::result::Result<datum_gui_render::retained_scene_owner::RetainedScene, anyhow::Error>, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure_env#0}> (self=0x7ffdb6825a80, work=...) at crates/gui-render/src/render/../cpu_alloc.rs:85
+#13 0x000055df52279406 in datum_gui_render::retained_scene_owner::document_cpu::with_constructor<core::result::Result<datum_gui_render::retained_scene_owner::RetainedScene, anyhow::Error>, datum_gui_render::scene_retained_access::{impl#1}::from_workspace_bounded::{closure_env#0}> (scope=0x7ffdb6825a80, build=...) at crates/gui-render/src/render/document_cpu.rs:33
+[Inferior 1 (process 4085784) detached]

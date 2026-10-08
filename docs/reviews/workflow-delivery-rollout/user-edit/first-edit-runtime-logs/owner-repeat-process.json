@@ -1,0 +1,10 @@
+{
+  "pid": 4085784,
+  "exe": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+  "settings": {
+    "XDG_SESSION_TYPE": "wayland",
+    "WAYLAND_DISPLAY": "wayland-0"
+  },
+  "binary_sha256": "85f7829453013b9b5657123ee0b739ecfc6277c730068d405662e61e9d3304f0",
+  "matches_candidate": true
+}

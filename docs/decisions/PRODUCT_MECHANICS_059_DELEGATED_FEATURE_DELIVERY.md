@@ -470,3 +470,23 @@ ordinary availability, physical/HUMAN and wider acceptance remain withheld.
 The rebuilt ordinary launch command is unchanged. No owner approval relay or
 renewed scope grant is needed for continued diagnosis when concrete failure
 evidence becomes available.
+
+### Move preview presentation correction — owner repeat QA
+
+Latest owner QA used the exact delivered GUI binary without inherited fault
+injection. A journaled resistor move existed while the window showed the earlier
+revision. Its captured log lacks the previous recovery error; that original
+exhaustion remains separately open. Earlier fixture PASS proved prepared geometry
+and canonical history, but did not assert a translated Footprint in an actually
+presented frame. That visual inference is withdrawn.
+
+The strengthened existing real-board native fixture reproduces preview upload
+starvation: repeated motion replaces the complete source on every admitted
+upload-continuation turn. The retained-scope correction keeps that source stable
+until presentation, then schedules the latest queued snapped destination. Cancel
+and canonical commit supersede it immediately. The same ordinary App Wayland/WGPU
+trial now presents movement, cancellation, committed revision and Undo/Redo
+positions, then saves/reopens exact bytes (one PASS, 75.77 seconds). Owner files
+remain unchanged. Reserved correction review is pending; UED-C07, original recovery
+attribution, physical-input/HUMAN and wider qualification remain open. No
+availability acceptance, new mechanism, timeout or successor is inferred.

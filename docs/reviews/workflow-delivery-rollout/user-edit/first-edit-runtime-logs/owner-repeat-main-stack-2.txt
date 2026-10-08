@@ -1,0 +1,40 @@
+[New LWP 4086195]
+[New LWP 4085826]
+[New LWP 4085823]
+[New LWP 4085822]
+[New LWP 4085821]
+[New LWP 4085820]
+[New LWP 4085819]
+[New LWP 4085818]
+[New LWP 4085817]
+[New LWP 4085816]
+[New LWP 4085810]
+[New LWP 4085809]
+[New LWP 4085808]
+[New LWP 4085807]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x000055df521424d2 in rustix::backend::arch::asm::syscall5 (nr=..., a0=..., a1=..., a2=..., a3=..., a4=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/backend/linux_raw/arch/x86_64.rs:202
+202	    asm!(
+warning: Missing auto-load script at offset 0 in section .debug_gdb_scripts
+of file /home/bfadmin/Documents/datum-eda/target/debug/datum-gui.
+Use `info auto-load python-scripts [REGEXP]' to list them.
+#0  0x000055df521424d2 in rustix::backend::arch::asm::syscall5 (nr=..., a0=..., a1=..., a2=..., a3=..., a4=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/backend/linux_raw/arch/x86_64.rs:202
+#1  0x000055df52142b10 in rustix::backend::event::syscalls::epoll_wait (epfd=..., events=..., timeout=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/backend/linux_raw/arch/mod.rs:117
+#2  0x000055df5213e75d in rustix::event::epoll::wait<&std::os::fd::owned::OwnedFd, rustix::buffer::SpareCapacity<rustix::event::epoll::Event>> (epoll=0x55df7867b068, event_list=..., timeout=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/event/epoll.rs:213
+#3  0x000055df5213fcc9 in polling::epoll::Poller::wait_deadline (self=0x55df7867b068, events=0x55df78684eb8, deadline=...) at src/epoll.rs:219
+#4  0x000055df521413eb in polling::Poller::wait_impl (self=0x55df7867b068, events=0x55df78684eb8, deadline=...) at src/lib.rs:754
+#5  0x000055df5214132d in polling::Poller::wait (self=0x55df7867b068, events=0x55df78684eb8, timeout=...) at src/lib.rs:732
+#6  0x000055df52129ae4 in calloop::sys::Poll::poll (self=0x55df78684e60, timeout=...) at src/sys.rs:233
+#7  0x000055df51ca910a in calloop::loop_logic::EventLoop<winit::platform_impl::linux::wayland::state::WinitState>::dispatch_events<winit::platform_impl::linux::wayland::state::WinitState> (self=0x55df78691148, timeout=..., data=0x55df786911e0) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/calloop-0.13.0/src/loop_logic.rs:384
+#8  0x000055df51c7adfe in calloop::loop_logic::EventLoop<winit::platform_impl::linux::wayland::state::WinitState>::dispatch<winit::platform_impl::linux::wayland::state::WinitState, core::option::Option<core::time::Duration>> (self=0x55df78691148, timeout=..., data=0x55df786911e0) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/calloop-0.13.0/src/loop_logic.rs:559
+#9  0x000055df51d9dd58 in winit::platform_impl::linux::wayland::event_loop::EventLoop<()>::loop_dispatch<(), core::option::Option<core::time::Duration>> (self=0x55df786910e8, timeout=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/platform_impl/linux/wayland/event_loop/mod.rs:585
+#10 0x000055df51da3e48 in winit::platform_impl::linux::wayland::event_loop::EventLoop<()>::poll_events_with_timeout<(), &mut &mut winit::event_loop::{impl#6}::run_app::{closure_env#0}<(), datum_gui::app_shell::App>> (self=0x55df786910e8, timeout=..., callback=0x7ffdb6831470) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/platform_impl/linux/wayland/event_loop/mod.rs:289
+#11 0x000055df51d9d71f in winit::platform_impl::linux::wayland::event_loop::EventLoop<()>::pump_events<(), &mut winit::event_loop::{impl#6}::run_app::{closure_env#0}<(), datum_gui::app_shell::App>> (self=0x55df786910e8, timeout=..., callback=0x7ffdb68316f8) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/platform_impl/linux/wayland/event_loop/mod.rs:226
+#12 0x000055df51d9df17 in winit::platform_impl::linux::wayland::event_loop::EventLoop<()>::run_on_demand<(), winit::event_loop::{impl#6}::run_app::{closure_env#0}<(), datum_gui::app_shell::App>> (self=0x55df786910e8, event_handler=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/platform_impl/linux/wayland/event_loop/mod.rs:190
+#13 0x000055df519969f5 in winit::platform_impl::linux::EventLoop<()>::run_on_demand<(), winit::event_loop::{impl#6}::run_app::{closure_env#0}<(), datum_gui::app_shell::App>> (self=0x7ffdb68318b0, callback=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/platform_impl/linux/mod.rs:820
+#14 0x000055df51996a8a in winit::platform_impl::linux::EventLoop<()>::run<(), winit::event_loop::{impl#6}::run_app::{closure_env#0}<(), datum_gui::app_shell::App>> (self=..., callback=...) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/platform_impl/linux/mod.rs:813
+#15 0x000055df51dab651 in winit::event_loop::EventLoop<()>::run_app<(), datum_gui::app_shell::App> (self=..., app=<error reading variable: Value cannot be represented as integer of 8 bytes.>) at /home/bfadmin/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winit-0.30.13/src/event_loop.rs:265
+#16 0x000055df51b8adc4 in datum_gui::app_shell::App::run (self=<error reading variable: Value cannot be represented as integer of 8 bytes.>, event_loop=...) at crates/gui-app/src/app_shell.rs:44
+#17 0x000055df51beb46e in datum_gui::main () at crates/gui-app/src/main.rs:171
+[Inferior 1 (process 4085784) detached]

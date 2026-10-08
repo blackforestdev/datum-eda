@@ -17,6 +17,8 @@ struct Fixture {
     logged_stage: Option<usize>,
     original_position: Option<PointNm>,
     selected_component: Option<String>,
+    original_label: Option<datum_gui_render::RectPx>,
+    committed_label: Option<datum_gui_render::RectPx>,
 }
 impl Fixture {
     fn mouse(&mut self, events: &ActiveEventLoop, x: f64, y: f64, click: bool) {
@@ -48,6 +50,17 @@ impl Fixture {
             self.stage,
             started.elapsed().as_micros()
         );
+    }
+    fn selected_label(&self) -> datum_gui_render::RectPx {
+        let runtime = self.app.runtime.as_ref().unwrap();
+        let component = runtime
+            .workspace()
+            .scene
+            .components
+            .iter()
+            .find(|c| Some(&c.component_uuid) == self.selected_component.as_ref())
+            .unwrap();
+        runtime.presented_hits.regions().iter().find(|r| matches!(&r.target, HitTarget::AuthoredObject(id) if id == &component.object_id)).expect("selected Footprint must have a presented label").rect
     }
     fn advance(&mut self, events: &ActiveEventLoop) {
         let runtime = self.app.runtime.as_mut().unwrap();
@@ -119,6 +132,13 @@ impl Fixture {
                     datum_gui_protocol::AuthoredSelectionClass::Footprint
                 );
                 self.selected_component = Some(id.id.to_string());
+                self.original_label = runtime.presented_hits.regions().iter().find_map(|r| {
+                    matches!(&r.target, HitTarget::AuthoredObject(target) if target == &runtime.workspace().scene.components.iter().find(|c| c.component_uuid == id.id.to_string()).unwrap().object_id).then_some(r.rect)
+                });
+                assert!(
+                    self.original_label.is_some(),
+                    "selected Footprint label must be presented before M"
+                );
                 self.original_position = Some(
                     runtime
                         .workspace()
@@ -200,6 +220,18 @@ impl Fixture {
                     component.position, preview.component.position,
                     "pointer movement must translate the selected Footprint"
                 );
+                let label = runtime.presented_hits.regions().iter().find(|r| matches!(&r.target, HitTarget::AuthoredObject(id) if id == &preview.component.object_id)).expect("moved Footprint label must be presented");
+                let original = self.original_label.unwrap();
+                eprintln!(
+                    "move-frame presented label original={original:?} moved={:?} pending_frame={}",
+                    label.rect,
+                    runtime.renderer.render_session().has_pending_frame()
+                );
+                assert!(
+                    (label.rect.x - original.x).abs() > 2.0
+                        || (label.rect.y - original.y).abs() > 2.0,
+                    "prepared translation alone is insufficient: the actually presented Footprint must move"
+                );
                 // Cancel another queued motion before any frame can materialize it.
                 let (x, y) = self.origin.unwrap();
                 self.mouse(events, x + 30.0, y + 30.0, false);
@@ -211,6 +243,16 @@ impl Fixture {
                 self.app.request_redraw_if_needed();
             }
             17 => {
+                if runtime.renderer.render_session().has_pending_frame() {
+                    return;
+                }
+                let original = self.original_label.unwrap();
+                let actual = self.selected_label();
+                assert!(
+                    (actual.x - original.x).abs() < 1.0 && (actual.y - original.y).abs() < 1.0,
+                    "Cancel must restore the presented Footprint"
+                );
+                let runtime = self.app.runtime.as_mut().unwrap();
                 assert_eq!(std::fs::read(&self.board_path).unwrap(), self.preimage);
                 assert_eq!(
                     runtime
@@ -241,6 +283,11 @@ impl Fixture {
                 self.mouse(events, x + 60.0, y + 30.0, false);
             }
             19 => {
+                if runtime.native_move_frame_needed()
+                    || runtime.renderer.render_session().has_pending_frame()
+                {
+                    return;
+                }
                 // The published Footprint label is an AuthoredObject screen hit.
                 // Before the correction it reselected instead of committing Move.
                 let target = &runtime
@@ -266,7 +313,9 @@ impl Fixture {
                 );
             }
             20 => {
-                if runtime.native_edit.pending() {
+                if runtime.native_edit.pending()
+                    || runtime.renderer.render_session().has_pending_frame()
+                {
                     return;
                 }
                 assert!(
@@ -276,10 +325,23 @@ impl Fixture {
                 let after = std::fs::read(&self.board_path).unwrap();
                 assert_ne!(after, self.preimage);
                 self.committed = Some(after);
+                self.committed_label = Some(self.selected_label());
+                assert_ne!(
+                    self.committed_label, self.original_label,
+                    "Commit must present the translated Footprint, not just change bytes"
+                );
+                let runtime = self.app.runtime.as_mut().unwrap();
+                eprintln!(
+                    "move-frame committed presented_revision={} status={:?}",
+                    runtime.workspace().scene.source_revision,
+                    runtime.workspace().last_command_status
+                );
                 assert!(runtime.queue_native_history(false));
             }
             21 => {
-                if runtime.native_edit.pending() {
+                if runtime.native_edit.pending()
+                    || runtime.renderer.render_session().has_pending_frame()
+                {
                     return;
                 }
                 assert!(!runtime.native_edit.blocked);
@@ -288,10 +350,18 @@ impl Fixture {
                     self.preimage,
                     "Undo restores preimage"
                 );
+                assert_eq!(
+                    self.selected_label(),
+                    self.original_label.unwrap(),
+                    "Undo must be presented"
+                );
+                let runtime = self.app.runtime.as_mut().unwrap();
                 assert!(runtime.queue_native_history(true));
             }
             22 => {
-                if runtime.native_edit.pending() {
+                if runtime.native_edit.pending()
+                    || runtime.renderer.render_session().has_pending_frame()
+                {
                     return;
                 }
                 assert!(!runtime.native_edit.blocked);
@@ -300,12 +370,20 @@ impl Fixture {
                     *self.committed.as_ref().unwrap(),
                     "Redo restores committed board"
                 );
+                assert_eq!(
+                    self.selected_label(),
+                    self.committed_label.unwrap(),
+                    "Redo must be presented"
+                );
+                let runtime = self.app.runtime.as_mut().unwrap();
                 assert!(runtime.queue_native_edit(
                     datum_gui_protocol::native_edit_client::NativeEditAction::Save
                 ));
             }
             23 => {
-                if runtime.native_edit.pending() {
+                if runtime.native_edit.pending()
+                    || runtime.renderer.render_session().has_pending_frame()
+                {
                     return;
                 }
                 assert!(!runtime.native_edit.blocked);
@@ -409,6 +487,11 @@ impl ApplicationHandler for Fixture {
         let script_due = (self.stage < 25
             && self.app.runtime.as_ref().is_some_and(|r| {
                 !r.native_edit.pending()
+                    // At these stages there is no next input yet: require actual
+                    // production completion/presentation wakes, not script polling.
+                    && (!matches!(self.stage, 17 | 19..=23)
+                        || (!r.renderer.render_session().has_pending_frame()
+                            && !r.native_move_frame_needed()))
                     && r.surface_transaction.has_presented()
                     && r.renderer.render_session().prepared().is_some()
             }))
@@ -450,6 +533,8 @@ fn ordinary_app_select_m_move_commit_history_reopen() {
         logged_stage: None,
         original_position: None,
         selected_component: None,
+        original_label: None,
+        committed_label: None,
     };
     events.run_app(&mut fixture).unwrap();
     assert_eq!(

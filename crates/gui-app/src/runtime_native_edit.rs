@@ -18,6 +18,7 @@ pub(super) struct EditWork {
     pub preview: Option<FootprintMovePreview>,
     preview_tip: Option<String>,
     pending_position: Option<PointNm>,
+    preview_awaiting_presentation: bool,
     pending: Option<mpsc::Receiver<Answer>>,
     client: Arc<Mutex<Option<NativeProjectClient>>>,
     wake: winit::event_loop::EventLoopProxy<()>,
@@ -29,6 +30,7 @@ impl EditWork {
             preview: None,
             preview_tip: None,
             pending_position: None,
+            preview_awaiting_presentation: false,
             pending: None,
             client: Arc::new(Mutex::new(None)),
             wake,
@@ -144,6 +146,7 @@ impl Runtime {
     }
     pub(super) fn cancel_native_move(&mut self) -> bool {
         self.native_edit.pending_position = None;
+        self.native_edit.preview_awaiting_presentation = false;
         if let Some(preview) = self.native_edit.preview.take() {
             self.native_edit.preview_tip = None;
             self.session.workspace_mut().scene = preview.base;
@@ -267,7 +270,13 @@ impl Runtime {
         // it once, so accumulated motion does not rebuild copper on every event.
         true
     }
+    /// Keep the complete source stable across upload-only native turns. New
+    /// pointer intent supersedes only the queued destination, not the source
+    /// whose upload/presentation is already in progress.
     pub(super) fn prepare_native_move_frame(&mut self) {
+        if self.native_edit.preview_awaiting_presentation {
+            return;
+        }
         let Some(position) = self.native_edit.pending_position.take() else {
             return;
         };
@@ -277,10 +286,19 @@ impl Runtime {
         match preview.scene_at(position) {
             Ok(scene) => {
                 self.session.workspace_mut().scene = scene;
+                self.native_edit.preview_awaiting_presentation = true;
                 self.invalidate_scene();
             }
             Err(error) => self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string()),
         }
+    }
+    pub(super) fn native_move_frame_presented(&mut self) {
+        self.native_edit.preview_awaiting_presentation = false;
+    }
+    pub(super) fn native_move_frame_needed(&self) -> bool {
+        self.native_edit.preview.is_some()
+            && self.native_edit.pending_position.is_some()
+            && !self.native_edit.preview_awaiting_presentation
     }
     pub(super) fn queue_native_history(&mut self, redo: bool) -> bool {
         let tip = self
