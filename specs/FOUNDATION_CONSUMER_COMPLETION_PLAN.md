@@ -2738,3 +2738,46 @@ mandatory. Reserved C04 native proof, C05 independent review,
 C06 acceptance, CAM/T04, Inspector layout, performance and deferred editors retain
 their boundaries. Unrelated schematic Sheet registration-kind discrepancy is
 captured as intake, not absorbed into this delivery unit.
+
+
+<!-- EVIDENCE:UVT-S5A-BUILD:S5A-C03-COMPLETE -->
+### S5A-C03 implementation-completion disposition — 2026-10-08
+
+The owner instructs implementation-completion disposition against existing U1–U5,
+with later qualification/review/acceptance kept separate. Current delivered code
+is pinned by `af777151d2947d3bae312fce7fe503ca48add3cc`; the evidence/test-only
+follow-up is `50b9218b873102966723915353c134dfac8c5788`.
+Reconciliation reuses `delivery-20261008-accessible.json` and the committed
+`docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json`.
+Of the earlier case record's30 owning source paths,26 are byte-unchanged; the
+four changed paths implement the ratified exact30 projection/region/quantity
+addition. Its formerly missing30 behavior is delivered, not waived.
+
+| Unit | Current runtime/binding disposition and reused evidence |
+| --- | --- |
+| U1 | Typed nine-kind authority, metadata, parent membership and lifetimes exist in gui-protocol selection_subject/selection_artifacts and engine electrical_selection_query. PM057 source/action integration and PM058 exact30 query Pads close the identified source-geometry gaps. Full Pad+Track Run and Pad+Track+Pin Net identities are demonstrated. |
+| U2 | Shared viewport selection_acquisition, app runtime_selection/runtime_selection_region and selection_region_evaluation implement click/menu/modifier/region/filter/cancellation paths. ExactAnchors extends the same evaluator; both-face native rectangle/lasso4/8 refusal and5/8 acquisition pass without changing grammar. |
+| U3 | selection_view, quantities, selection_inspection, selection_accessibility and native AT-SPI owners supply complete inventory/scopes, Common/Mixed/Unavailable, canonical quantities and capped context to shared consumers. Earlier accessible ordinary-build proof is retained; exact30 typed positions/readable mm/mil are now delivered. |
+| U4 | gui-render native_selection_overlay, selection_mask_painter, native_selection_overlay/lod and lock_cue own immediate projection/mask/LOD/channel treatment. These case-record owners are unchanged; exact30 painting integrates through typed PadCenter/pad_retained without replacing their shared lifecycle. Native visual/HUMAN/channel qualification remains C04 evidence, not a missing runtime mechanism. |
+| U5 | Existing manifest.json contains electrical-scope, compound-output, revision-lifetime, dense-and-cancel, class-qualification, scope-and-reopen and non-authored-channel families and source/producer/oracle bindings. Exact30 native sources, binary hashes, actual subjects, backend/adapter/input receipts and source/journal comparisons are pinned in the delivered proof/archive. Remaining native execution/coverage belongs to C04; fixture families are not rebuilt. |
+
+No additional missing C03 runtime behavior is identified. **S5A-C03 is complete.**
+Select **S5A-C04** under the retained execution authorization and synchronize its
+Frontier/beads lease. The parent issue remains in progress, not closed.
+This disposition supersedes historical partial-C03 status statements at their
+current-state scope; it does not rewrite their evidence or claim more proof.
+
+Controlling C03 requires shared implementation; controlling C04 requires native
+proof; C05 requires reserved independent replay and finding dispositions; C06
+requires owner acceptance. PM058 preserves these separate obligations and has no
+clause requiring its bounded candidate review PASS before C03 completion.
+The reserved exact30 implementation review remains assigned and pending at
+`docs/reviews/workflow-delivery-rollout/s5a/exact30-candidate-review-return.json`;
+no substitute reviewer, repeated specification review or new grant is implied.
+
+All incomplete N01–N17 native cases/extensions in the existing delivery record
+remain C04 obligations, with the new exact30 X11 subset added at its exact scope.
+Native Wayland/HUMAN, full keyboard/accessibility/channel/dense/lifecycle proof,
+C05 independent replay and C06 acceptance are not passed by this disposition.
+Cold completion latency and dat-kiel shutdown observation remain separate;
+CAM/T04, deferred editors, undecided budgets and all unamended requirements remain.
