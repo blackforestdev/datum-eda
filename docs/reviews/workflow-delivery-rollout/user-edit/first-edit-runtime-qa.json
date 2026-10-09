@@ -795,9 +795,89 @@
     },
     "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
     "review": {
-      "outcome": "PENDING reserved bounded implementation review, not self-reviewed"
+      "source_commit": "8785aaf8586988ce25bb939647448d6facceb2b5",
+      "packet_blob": "ae3384ccb8b3a835b4aa2ad71ca797a5a9907b75",
+      "outcome": "PASS for bounded complete-model transport and guarded exact-input canonical preimage reuse; latency unresolved, no development acceptance",
+      "receipt_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-snapshot-review.json",
+      "receipt_sha256": "c14cd03c8bbf5c721882e3e00006e1440bb823ec03c790101fad599f64a15508",
+      "observations": {
+        "A_click_to_confirm_ms": 2758,
+        "B_click_to_confirm_ms": 2010,
+        "following_B_M_dispatch_us": 882,
+        "limits": "One descriptive trial, not matched benchmark, percentile or acceptance; multi-second lockout remains."
+      }
     },
     "remaining": "z9vn OPEN: confirmation still seconds, no fast-placement/C07/C08 acceptance. Wrong-target eitk closed at its actual prior review only. Original dhj9 unattributed/open, gate0u2x retained, physical compositor/HUMAN/pixel/full S5A and CAM/T04 unchanged. No successor authorization.",
-    "manager_disposition": "Pin complete engine-to-application unit for reserved safety review before further writer-result reuse. Record actual reviewed read-reuse receipt at its own97407e5f scope. Performance defect and first-edit development availability remain open; no requirement weakened."
+    "manager_disposition": "Actual independent bounded PASS recorded at8785aaf8/ae3384 scope. Independent A2758ms/B2010ms still leaves z9vn/C07 open and C08 availability withdrawn. Continue retained-scope repair; no administrative completion or successor. Fresh post-commit cache priming is not justified by whole-model correspondence alone."
+  },
+  "confirmation_preparation_correction": {
+    "authority": "Unchanged UED-C07 first-edit execution/PM059 appointment and PM060 engine-owned writer grant. Reserved audit actual scope guidance: companion preparation/removing complete snapshot copies fits; no new product ratification, no acceptance.",
+    "issue": "dat-first-edit-confirmation-latency-z9vn",
+    "source_parent": "8785aaf8586988ce25bb939647448d6facceb2b5",
+    "source_blobs": {
+      "crates/gui-app/src/runtime_init.rs": "d37a43518693c5d70f5f38672bab3e83978b6a92",
+      "crates/gui-app/src/runtime_native_edit.rs": "1f6677f6c831efeee268e49183c06520a6dcdd69",
+      "crates/gui-protocol/src/native_edit_client.rs": "15fdf3cd69efd3cd3df23f886e40f20e100627d3",
+      "crates/gui-protocol/src/native_edit_client_tests.rs": "0078e0f0c844bffeae2799f08931abc87a5d50fe"
+    },
+    "correction": [
+      "Prepare matching native companion and existing read cache on a background thread during window/GPU setup, only for an eligible persistent native Project. Preparation is a default metadata read, no durability or write receipt. Finish that startup task before initial selection admission so its transient exclusion cannot interfere with first click. No interactive input/frame dispatch has begun there; actual edit still freshly describes and canonically validates current inputs under real lease.",
+      "Preparation failure is best-effort, never marks an edit pending/applied/blocked, and leaves actual edit creation/read/guard/error/reconciliation path intact. Busy or changed Project never authorizes a stale write. Preview cancellation has no committed side effect.",
+      "Take the complete RPC result Value rather than cloning it, and borrow the operation description during worker preparation rather than copying the complete snapshot again. Preserve complete typed snapshot, current revision/history checks, atomic publication and final fresh durable acknowledgement.",
+      "Do not seed a post-commit cache from one whole-model equality result. That probe passed on the real board, but safe post-input correspondence/recovery/added-source qualification is still required; no unsupported fast-path implemented."
+    ],
+    "native_result": {
+      "trace_OFF": "PASS20.04s: full existing actual App/Winit Wayland/WGPU private-board repeated A/B workflow, target refusal, preview/cancel/commit, exact clicked destination, following selection/M, Undo/Redo, Save/reopen. No rendering pause observed.",
+      "A_click_to_confirm_ms": 1913,
+      "B_click_to_confirm_ms": 1898,
+      "following_B_M_us": 937,
+      "next_B_selection_us": 21262,
+      "startup_to_first_input_ms": 7509,
+      "startup_to_first_input_basis": "Existing fixture stage0 elapsed since construction; first ordinary dispatched selection31.181ms. Native resumed-to-visible7288ms. Not physical compositor or pixel latency.",
+      "limits": "Single descriptive trace-OFF trial, no controlled paired speedup, percentile or acceptance budget. Still~1.9s waiting; z9vn/C07/C08 remain open."
+    },
+    "trace_ordering": {
+      "result": "PASS15.89s, same finite replay. Companion prepare780ms resultOk finishes before runtime2042ms / first dispatch3319ms; first actual guarded describe33ms, native.write540ms, post-describe901ms, final describe25ms. Second move write513ms/postdescribe870ms/final37ms.",
+      "startup_ms": 3319,
+      "cold_click_to_confirm_ms": 1975,
+      "repeat_click_to_confirm_ms": 1911,
+      "basis": "Diagnostic-enabled single ordering/attribution trial, not ordinary launch latency or a matched benchmark. Earlier8785 diagnostic trial startup5318ms with runtime3973ms; current ordinary7509ms versus diagnostic3319ms varies substantially, no startup win claimed. Startup cost is explicit, not hidden in edit measurements."
+    },
+    "model_correspondence_probe": "Existing owner-board private copy, existing native verb/canonical writer. Whole serialized committed DesignModel equals fresh ProjectResolver result after one Footprint move;1 passed. Confirms correspondence for this actual case, not general post-commit cache qualification or source-control waiver.",
+    "intermediate_evidence": "Initial preparation rehearsal before final startup-ordering/ownership changes PASS17.83s A2198ms/B1971ms; target/user-edit-selection/preparation-workflow-proof.log retained as intermediate only, not final source proof.",
+    "raw_logs": {
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/preparation-final-build.log": {
+        "sha256": "dd65f6fb3220fda8309389368b9a1d39a985256adacd6564ebf55ccfeda5d264"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/preparation-final-workflow-proof.log": {
+        "sha256": "68001fd3b2ac65d94213ae5d3476c2e2c8a0bf38b90ba66e62962ecd3821d05b"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/preparation-final-native.log": {
+        "sha256": "54c86576ce59486c5e75e0ceb836b74bfc6c1bca486bf89e440fcbe929204f20"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/preparation-final-trace-proof.log": {
+        "sha256": "91e019304addb674839d2dc4710598193d5b85b4f4afc330a0931fc4cdb22466"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/preparation-final-trace-native.log": {
+        "sha256": "376547bfe7c68f937f8747eb1bcac98716a239bafc6e26a0f85ca7465992c03a"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/committed-model-proof.log": {
+        "sha256": "d9572005c47cca2d8b9c9f9f84848024764a1b6ea3b013630367e751e17f5251"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/post-snapshot-trace-proof.log": {
+        "sha256": "76a290cbf238d518d7dac639b6a231465d649c2516cbf394e880bb10b08860de"
+      }
+    },
+    "binary_sha256": {
+      "target/debug/datum-gui": "20fa94d9fcc74924062ae3fe0b6ff70174dda72bd5fb270f264a9c08eff1b9ec",
+      "target/debug/datum-eda": "b017e73242b0e31801c9299cd19e579a51debe2c662f187780fc9e32825115bf",
+      "target/debug/eda-engine-daemon": "2a360d1ded3b49c72ad70ca50b51a7559eba660ef6b37c79f9e1de45dbefefe6"
+    },
+    "original_inputs": "Owner native board/journal and original KiCad board/schematic verified unchanged against canonical-preimages.json; private copies only mutated.",
+    "review": {
+      "outcome": "PENDING reserved bounded implementation review"
+    },
+    "remaining": "Recurring post-write fresh resolution is still largest named stage; no proof of acceptable next-action readiness. z9vn open; prior actual8785 safety PASS recorded at its own scope. C07 in_progress, C08 availability withdrawn, dhj9/gate0u2x/HUMAN/S5A/CAM and successor boundaries unchanged.",
+    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit"
   }
 }

@@ -39,6 +39,40 @@ impl EditWork {
             blocked: false,
         }
     }
+    /// Begin the existing read-only companion preparation before first edit.
+    /// This creates no pending action and supplies no reusable write receipt.
+    pub(super) fn prepare_read(
+        &self,
+        root: std::path::PathBuf,
+    ) -> Option<std::thread::JoinHandle<()>> {
+        let client = self.client.clone();
+        let spawn = std::thread::Builder::new()
+            .name("datum-native-prepare".into())
+            .spawn(move || {
+                let started = std::time::Instant::now();
+                let prepared = (|| -> Result<()> {
+                    let mut owner = client
+                        .lock()
+                        .map_err(|_| anyhow::anyhow!("Native editor worker unavailable"))?;
+                    if owner.is_none() {
+                        *owner = Some(NativeProjectClient::spawn()?);
+                    }
+                    owner.as_ref().unwrap().prepare_read(&root)
+                })();
+                trace_startup_timing(format!(
+                    "native companion preparation {}ms result={prepared:?}",
+                    started.elapsed().as_millis()
+                ));
+            });
+        match spawn {
+            Ok(handle) => Some(handle),
+            Err(error) => {
+                trace_startup_timing(format!("native companion preparation unavailable: {error}"));
+                None
+            }
+        }
+    }
+
     pub fn pending(&self) -> bool {
         self.pending.is_some()
     }
@@ -67,12 +101,16 @@ impl EditWork {
                     // A confirmed receipt already carries a freshly resolved, durable
                     // post-write description. It is the pre-refresh boundary;
                     // failures still require a fresh recovery-qualified description.
-                    let before=match &operation {Ok(receipt)=>receipt.description.clone(),Err(_)=>client.describe(&intent.project_root)?};
+                    let recovered;
+                    let before=match &operation {
+                        Ok(receipt)=>&receipt.description,
+                        Err(_)=>{recovered=client.describe(&intent.project_root)?; &recovered}
+                    };
                     let refreshed=std::time::Instant::now();
                     // Populate existing byte-qualified read evidence on the worker;
                     // publishing an empty cache would cold-resolve on the next click.
                     let mut cache=runtime_selection::SelectionReadCache::default();
-                    let model=cache.resolve_with_engine_reader(&intent.project_root,|| client.read_model(&intent.project_root,&before))?;
+                    let model=cache.resolve_with_engine_reader(&intent.project_root,|| client.read_model(&intent.project_root,before))?;
                     let mut next=datum_gui_protocol::workspace_loading::project_board_editor_workspace(&request,model.clone())?;
                     let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,cache)?;
                     trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));

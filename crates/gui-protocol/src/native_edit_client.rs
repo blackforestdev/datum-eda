@@ -125,7 +125,7 @@ impl NativeProjectClient {
         stream.flush()?;
         let mut line = String::new();
         BufReader::new(stream).read_line(&mut line)?;
-        let response: Value =
+        let mut response: Value =
             serde_json::from_str(&line).context("native writer receipt unavailable")?;
         if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
             crate::trace_protocol_timing(format!(
@@ -146,10 +146,21 @@ impl NativeProjectClient {
             );
         }
         response
-            .get("result")
-            .cloned()
+            .get_mut("result")
+            .map(Value::take)
             .context("native writer result missing")
     }
+    /// Best-effort startup preparation, never a durability or write receipt.
+    /// Every actual edit still freshly describes and guards the Project.
+    pub fn prepare_read(&self, root: &Path) -> Result<()> {
+        self.call(
+            "native.describe",
+            json!({"project_root":root}),
+            Uuid::new_v4(),
+        )?;
+        Ok(())
+    }
+
     pub fn describe(&self, root: &Path) -> Result<Value> {
         self.describe_snapshot(root, false)
     }

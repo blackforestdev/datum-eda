@@ -1,0 +1,46 @@
+{
+  "reviewer": "owner-reserved independent audit01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "8785aaf8586988ce25bb939647448d6facceb2b5",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "ae3384ccb8b3a835b4aa2ad71ca797a5a9907b75",
+  "packet_section": "confirmation_snapshot_correction",
+  "outcome": "PASS for bounded complete-model transport and guarded exact-input canonical preimage reuse; latency unresolved, no development acceptance",
+  "mandatory_findings": [],
+  "source_review": [
+    "Canonical normal write retains new real root-qualified lease, torn-tail recovery before byte comparison, unsupported/pending-stage fallback, and the unchanged common integrity/revision/tip/object/electrical/source commit helper. No cached acknowledgment or duplicate uncertain write.",
+    "Optional complete existing DesignModel and description derive from the same authoritative engine Arc; typed consumer checks physical manifest root, UUID, revision, tip and journal count. Default describe remains metadata only.",
+    "GUI preparation reuses full typed snapshot with existing complete local input observation and transfers its selection cache; final fresh durable revision/tip and complete projection qualification remain before atomic publication.",
+    "History paths and all required durability operations remain; successful transport does not establish fast readiness or physical displayed latency."
+  ],
+  "independent_replays": [
+    {
+      "path": "target/user-edit-review/8785aaf8-replay/workflow.log",
+      "sha256": "24c48abec9dac371282b3256d23d8f634fba06e8aef32f0b6b454ab8ba3820e6",
+      "tests_passed": 1
+    },
+    {
+      "path": "target/user-edit-review/8785aaf8-replay/cache.log",
+      "sha256": "c23fab3549dd3454b13f75059dd8df5602c9956413e6fe84f155ab31c1cbd542",
+      "tests_passed": 14
+    },
+    {
+      "path": "target/user-edit-review/8785aaf8-replay/protocol.log",
+      "sha256": "4b0300fdf663dd454bf4b6d4497507884c2c31dc648e450c0fd96d7c1f5ac335",
+      "tests_passed": 1
+    }
+  ],
+  "ordinary_result": "Trace-OFF production App/Winit Wayland/WGPU on private owner-Project copy PASS16.60s: A/B preview/cancel/placement, pending target refusal, exact committed pose/published readiness, subsequent M, Undo/Redo/Save/reopen. No rendering pause observed. In-process event delivery, not physical compositor input or pixel/HUMAN proof.",
+  "observations": {
+    "A_click_to_confirm_ms": 2758,
+    "B_click_to_confirm_ms": 2010,
+    "following_B_M_dispatch_us": 882,
+    "limits": "One descriptive trial, not matched benchmark, percentile or acceptance; multi-second lockout remains."
+  },
+  "pins": "Eleven source blobs, three binaries, eight producer logs verified. Owner Project/KiCad preimages and binary cohort unchanged after replay; shared tree clean. Only private Project copy mutated.",
+  "reused_proof": "Producer daemon12 tests and unchanged writer/history/failure safety reviewed/reused; independent cache14 and protocol binding1 cover affected boundaries.",
+  "remaining": [
+    "z9vn OPEN; no fast-placement/C07/C08 acceptance.",
+    "dhj9 and gate0u2x remain open/unpassed.",
+    "Physical compositor/HUMAN, pixel/display latency, full S5A/CAM and successor grants unchanged."
+  ]
+}

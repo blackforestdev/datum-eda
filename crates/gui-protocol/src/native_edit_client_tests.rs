@@ -80,3 +80,54 @@ fn complete_model_binding_refuses_stale_mismatched_and_wrong_root_snapshots() {
     assert!(validate_read_model(&foreign, &description, &description, &model).is_err());
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+#[ignore = "requires owned DATUM_FIRST_EDIT_PROJECT; commits one real-footprint move"]
+fn first_edit_committed_model_matches_fresh_projection() {
+    use eda_engine::api::native_write::{
+        WriteProvenance,
+        registry::{NativeWriteContext, find_native_write_verb},
+    };
+    let root = PathBuf::from(std::env::var_os("DATUM_FIRST_EDIT_PROJECT").unwrap());
+    let mut engine = eda_engine::api::Engine::new().unwrap();
+    let mut model = std::sync::Arc::unwrap_or_clone(engine.read_native_project(&root).unwrap());
+    let component = "ca340e78-04a5-5307-a024-9c5720a807d2";
+    let board: Value =
+        serde_json::from_slice(&std::fs::read(root.join("board/board.json")).unwrap()).unwrap();
+    let pos = &board["packages"][component]["position"];
+    let prepared = (find_native_write_verb("datum.pcb.move_component")
+        .unwrap()
+        .build)(
+        &NativeWriteContext {
+            model: &model,
+            project_root: &root,
+        },
+        WriteProvenance::new(
+            "native-fixture",
+            eda_engine::substrate::CommitSource::Test,
+            "committed model/fresh projection correspondence",
+        ),
+        json!({"component":component,"x_nm":pos["x"].as_i64().unwrap()+250_000,"y_nm":pos["y"]}),
+    )
+    .unwrap();
+    engine
+        .commit_native_prepared(&mut model, &root, prepared)
+        .unwrap();
+    let fresh = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    let a = serde_json::to_value(&model).unwrap();
+    let b = serde_json::to_value(&fresh).unwrap();
+    let changed: Vec<_> = a
+        .as_object()
+        .unwrap()
+        .iter()
+        .filter(|(k, v)| b.get(k.as_str()) != Some(v))
+        .map(|(k, _)| k.clone())
+        .collect();
+    eprintln!("committed/fresh model differing fields={changed:?}");
+    assert!(
+        changed.is_empty(),
+        "Committed result cannot replace fresh projection: {changed:?}"
+    );
+}
