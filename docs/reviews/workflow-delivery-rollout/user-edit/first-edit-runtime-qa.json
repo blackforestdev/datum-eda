@@ -952,13 +952,34 @@
       },
       "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/source-snapshot-final-proof.log": {
         "sha256": "208618e5236c9fb6221b3854c68a4b0262c5fbb9ec46a53b3db27143a1a720fc"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/source-build-independent-workflow.log": {
+        "sha256": "aa9ac200fed68a01a8c8471d9afeea1deae378ffa1ca2cdbc8efef6e610a1c39"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/native-edit-cost-proof.log": {
+        "sha256": "bb831ca3e424f00c507b3bb4b24cc23364871bbae7b64ec59736f2db97e356e7"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/native-edit-cost-native.log": {
+        "sha256": "1f775f0be08f2ab7c9aac5371c7eca61da018470d463c26a705006974067043d"
       }
     },
     "original_inputs": "Owner native board/journal and KiCad board/schematic hashes match usable-engine-preimages.json. Only private copies were mutated.",
     "review": {
-      "outcome": "PENDING reserved bounded candidate review; no self-review"
+      "outcome": "PASS for bounded source/build correction; latency unresolved, no development acceptance",
+      "source_commit": "eaec2e361b5afad964694ba5b6eb97555547382a",
+      "packet_blob": "82f8741efd1c080bad0984d66802c10723052349",
+      "receipt_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-source-build-review.json",
+      "receipt_sha256": "9eaa7ccd147574c4861e246bb966bc013bde4b98e0a785821aa806ce36ca5574",
+      "observations": {
+        "A_click_to_confirm_ms": 1182,
+        "B_click_to_confirm_ms": 1055,
+        "following_B_M_dispatch_us": 751,
+        "fixture_stage0_elapsed_ms": 4345,
+        "first_selection_handler_us": 14136,
+        "limits": "Single descriptive trial under pinned checked opt1 package configuration; not matched comparative speedup, percentile, hardware limit or performance acceptance. Fixture clock does not measure physical launch/display latency."
+      }
     },
-    "remaining": "Noticeable ~1-second confirmation remains OPEN z9vn. C07 in progress, C08 development availability withdrawn. Separate unknown recovery-exhaustion dhj9, preexisting private-writer gate0u2x, physical Wayland/HUMAN, S5A C04\u2013C06/CAM-T04 unchanged.",
+    "remaining": "Actual independent bounded PASS eaec2e36/82f8741 at its own scope; A1182ms/B1055ms, next M751us, fixture stage0 4345ms. Noticeable confirmation z9vn/C07 remains OPEN; C08 availability withdrawn. Follow-up trace attributes write337ms/postdescribe442ms cold and B280/423ms; trace-ON single trial not ordinary latency. Duplicate journal parse under same lease demonstrated and bounded correction underway; no post-commit cache priming. dhj9/0u2x/HUMAN/S5A/CAM unchanged.",
     "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
     "focused_safety": {
       "final": "New owning source-shard snapshot regression PASS with final checked optimized engine: exact observed raw hash/value/descriptor correspondence and preserved ownership/schema/malformed JSON refusals.",
@@ -970,5 +991,57 @@
       "crates/engine/src/substrate/source_shard.rs": "d8742b11ce046351723850fe30b4163d7f100f9d",
       "crates/engine/src/substrate/tests/source_shard_snapshot.rs": "8216fa6c04fea2f02f19296a2792c78721a02f76"
     }
+  },
+  "confirmation_journal_read_correction": {
+    "source_parent": "eaec2e361b5afad964694ba5b6eb97555547382a",
+    "source_blob": "fcb6ceae59b0ad14958f06e6dd8eae1733696f06",
+    "authority": "Retained UED-C07 PM059/PM060 first-edit grant. No new source/cache/persistence/protocol mechanism or performance budget.",
+    "change": "Same held real writer lease: Complete/Empty integrity resolution consumes the already freshly parsed journal for replay. Recovery or ReadOnlyDiagnostic always rereads. Integrity code inspected: complete/empty processing does not change journal bytes; all replay/hash/link/schema checks and durable writes retained.",
+    "focused_proof": "Existing recovery/integrity9, malformed valid-prefix1, duplicate replay1 PASS. No new fixture; source-shard/cache/daemon safety evidence reused at unchanged scopes.",
+    "ordinary_native_result": {
+      "result": "PASS",
+      "workflow": "Same production App/Winit Wayland/WGPU private-owner-copy complete consecutive A/B Footprint move/cancel/commit, pending refusal, direct B selection, exact clicked pose, Undo/Redo, Save/reopen and immediate following M.",
+      "runtime_s": 10.95,
+      "A_click_to_confirm_ms": 1115,
+      "B_click_to_confirm_ms": 1011,
+      "following_B_M_dispatch_us": 909,
+      "fixture_stage0_elapsed_ms": 3908,
+      "first_selection_handler_us": 14310,
+      "direct_B_selection_handler_us": 12463,
+      "limits": "In-process production-dispatch native events, not physical compositor/HUMAN/pixel qualification. Single descriptive trial; no material latency improvement established relative to eaec A1119/B1038 or independent1182/1055; no percentile/budget/acceptance claim."
+    },
+    "configuration": "Wayland / WGPU Vulkan / Intel HD Graphics P630(KBL GT2) / Mesa25.0.7. Same checked dev package profiles as eaec. Ordinary GUI/CLI/daemon rebuilt together; explicit matching EDA_CLI_BIN in replay; trace timing/fault injection OFF. No recovery timeout change.",
+    "binary_sha256": {
+      "target/debug/datum-gui": "1d2c4177efa275ae1bba2c6f02a72411ef9eea6ce17a42c19ab5f7834e2fe22d",
+      "target/debug/datum-eda": "d3f03fccc7b6554fe5723c823a7cc7b46943640ce682b6a91243c1c9133a76e6",
+      "target/debug/eda-engine-daemon": "1f603bab61e17e70f1f60de6b71dbf405a44fd9dc7b69c2082cfc1b38e582c00"
+    },
+    "raw_logs": {
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-cohort-build.log": {
+        "sha256": "d7d49f3db576974226d06864e2568b4f243af4976c1ed64d76f29247216ae4ca"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-integrity-proof.log": {
+        "sha256": "b70fe447dc81e98f39d2bf68f408de7367c3ef22f03a5c94c4ac941bb5abebb1"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-prefix-proof.log": {
+        "sha256": "8a8e733ba88e9e10600fd34c54266000f03887fd19a9afbf21e37a4ec0d5f8fd"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-duplicate-proof.log": {
+        "sha256": "54f0837438924fd889f0bde47b11597fc392a477937ad6749af8205efc9405d4"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-qualified-workflow-proof.log": {
+        "sha256": "b61d25ec645d9071ab0a83bd283900f77e33f7e5828379c3037fa4aa663108ec"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-native.log": {
+        "sha256": "4d7d6f34a159f391d29ddbeb3c44377b672283740782a25fbaae7b705ee72496"
+      }
+    },
+    "failed_attempt": "journal-read-workflow-proof.log guard refused target42GiB before execution. Reclaimed only superseded own engine/cohort caches with Cargo idle; raw logs and private input copies retained. Successful qualified replay credited only.",
+    "review": {
+      "outcome": "PENDING reserved independent bounded review"
+    },
+    "remaining": "~1-second z9vn confirmation remains OPEN; no claimed instantaneous or fully resolved placement. C07 in progress, C08 availability withdrawn. Unattributed dhj9, gate0u2x, physical Wayland/HUMAN, S5A C04\u2013C06 and CAM/T04 unchanged.",
+    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+    "original_inputs": "Owner native board/journal and original KiCad board/schematic unchanged; hashes match usable-engine-preimages.json. Private copies only mutated."
   }
 }

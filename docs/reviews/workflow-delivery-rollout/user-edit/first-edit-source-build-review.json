@@ -1,0 +1,36 @@
+{
+  "reviewer": "owner-reserved independent audit01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "eaec2e361b5afad964694ba5b6eb97555547382a",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "82f8741efd1c080bad0984d66802c10723052349",
+  "packet_section": "confirmation_source_build_correction",
+  "outcome": "PASS for bounded single-read root parsing and checked development profile correction; latency unresolved, no development acceptance",
+  "mandatory_findings": [],
+  "source_review": [
+    "Root descriptor and collected objects now use one parsed byte buffer; content hash uses the exact original bytes. Ownership path, schema-version and Board profile/Track/Pad validation remain shared with prior reader; referenced shard collection and canonical guards remain unchanged.",
+    "Scoped dev opt1 settings retain debug assertions and overflow checks for engine, JSON/hash, protocol and daemon. No dependency/version/feature, persisted schema or manufacturing policy changes.",
+    "Named resolver diagnostic timing is conditional on DATUM_TRACE_TIMING and absent in ordinary replay. No durable receipt reuse or post-commit cache priming introduced."
+  ],
+  "independent_replay": {
+    "path": "target/user-edit-review/eaec2e36-replay/workflow.log",
+    "sha256": "aa9ac200fed68a01a8c8471d9afeea1deae378ffa1ca2cdbc8efef6e610a1c39",
+    "tests_passed": 1,
+    "runtime_seconds": 11.97,
+    "result": "Trace-OFF production App/Winit Wayland/WGPU on private owner-Project copy: consecutive A/B move preview/cancel/commit, pending refusal, exact clicked pose/native publication-qualified readiness, following M, Undo/Redo, Save/reopen passed; no rendering pause observed. Explicit matching EDA_CLI_BIN. In-process event injection, not physical compositor/HUMAN/pixel proof."
+  },
+  "observations": {
+    "A_click_to_confirm_ms": 1182,
+    "B_click_to_confirm_ms": 1055,
+    "following_B_M_dispatch_us": 751,
+    "fixture_stage0_elapsed_ms": 4345,
+    "first_selection_handler_us": 14136,
+    "limits": "Single descriptive trial under pinned checked opt1 package configuration; not matched comparative speedup, percentile, hardware limit or performance acceptance. Fixture clock does not measure physical launch/display latency."
+  },
+  "reused_proof": "Final source-shard snapshot regression producer PASS reviewed with pinned raw log, including exact bytes/hash/value/descriptor correspondence and path/schema/malformed-input refusals. Prior metadata18 and independent cache/snapshot/daemon safety evidence reused at recorded scopes; no independent parser test or broad suite rerun claimed.",
+  "pins": "Four current source blobs, three binaries and seven raw logs verified; source/binary cohort and owner Project/KiCad preimages unchanged after replay; shared tree clean. Guarded replay required3m30s compilation; private Project copy only mutated.",
+  "remaining": [
+    "z9vn OPEN: placement still1.182/1.055s; C07 incomplete and C08 availability withdrawn.",
+    "Original recovery dhj9 and private-writer gate0u2x remain open/unpassed.",
+    "Physical compositor/HUMAN, worst-case startup, full S5A/CAM and successor authority unchanged."
+  ]
+}

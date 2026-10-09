@@ -157,7 +157,18 @@ impl ProjectResolver {
             &mut import_map,
         );
         shards.push(manifest_shard);
-        let (journal_records, journal_diagnostics) = read_transaction_journal(&self.project_root);
+        // The current lease excludes canonical writers. Complete/empty integrity
+        // inspection did not recover anything, so replay can consume the same
+        // freshly parsed journal that the integrity check qualified. Retain a
+        // fresh read after recovery or a diagnostic refusal.
+        let (journal_records, journal_diagnostics) = if matches!(
+            &integrity,
+            RevisionStoreState::Empty | RevisionStoreState::Complete { .. }
+        ) {
+            (records, journal_diagnostics)
+        } else {
+            read_transaction_journal(&self.project_root)
+        };
         diagnostics.extend(journal_diagnostics);
 
         let shard_specs = [
