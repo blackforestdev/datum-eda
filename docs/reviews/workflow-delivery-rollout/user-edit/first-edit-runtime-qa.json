@@ -875,9 +875,100 @@
     },
     "original_inputs": "Owner native board/journal and original KiCad board/schematic verified unchanged against canonical-preimages.json; private copies only mutated.",
     "review": {
-      "outcome": "PENDING reserved bounded implementation review"
+      "outcome": "PASS for bounded companion preparation and snapshot ownership correction; latency unresolved, no development acceptance",
+      "source_commit": "ba3e178e65b2a9686ac131af610558a21649b001",
+      "packet_blob": "faf6386f6a08355831d164badc2d006e1d74a7bc",
+      "receipt_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-preparation-review.json",
+      "receipt_sha256": "a8d79ba881440b8c6c109ebb53619316254f84f98f816a169ce72a37f30e173e",
+      "observations": {
+        "first_fixture_stage0_elapsed_ms": 2906,
+        "first_selection_handler_us": 30894,
+        "A_click_to_confirm_ms": 1802,
+        "B_click_to_confirm_ms": 1670,
+        "following_B_M_dispatch_us": 927,
+        "limits": "One descriptive trial. Stage0 elapsed is existing fixture timer, not measured physical launch/input/display latency. No controlled comparative improvement, percentile or performance acceptance."
+      }
     },
-    "remaining": "Recurring post-write fresh resolution is still largest named stage; no proof of acceptable next-action readiness. z9vn open; prior actual8785 safety PASS recorded at its own scope. C07 in_progress, C08 availability withdrawn, dhj9/gate0u2x/HUMAN/S5A/CAM and successor boundaries unchanged.",
+    "remaining": "Actual independent bounded safety PASS recorded atba3e178e/faf638 scope. A1802ms/B1670ms, nextM927us, first stage0 elapsed2906ms/selection30894us remain descriptive; no startup worst-case/physical input acceptance. z9vn/C07 OPEN, C08 availability withdrawn. Continuing retained first-edit source-resolution/build repair, not successor; dhj9/gate0u2x/HUMAN/S5A/CAM unchanged.",
     "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit"
+  },
+  "confirmation_source_build_correction": {
+    "source_parent": "ba3e178e65b2a9686ac131af610558a21649b001",
+    "scope": "UED-C07 retained first-edit execution grant; dat-first-edit-confirmation-latency-z9vn remains OPEN. No successor, budget or development acceptance.",
+    "cause_evidence": "Default-OFF worker resolver stage probe: initial integrity252ms/root-and-pool251ms/sidecars58ms/journal150ms/joins9ms/validation38ms; post integrity216/root-and-pool235/sidecars67/journal152/joins9/validation38ms. Root loop read/parsed the same root twice for descriptor and objects. These phases include other work; no attribution of all root cost or total speedup to that duplication.",
+    "changes": [
+      "One source byte buffer backs root descriptor hash, validated schema/profile and object collection. Existing errors/ownership/profile checks shared; no cached durable acknowledgement or guard removal.",
+      "Scoped ordinary development opt-level1 for engine, serde_json, sha2, GUI protocol and engine daemon; all debug assertions and overflow checks explicitly retained. GUI/renderer/viewport/CLI remain opt0. No dependency/version/feature or BoardRoot/persistence profile change.",
+      "Named resolver timing is OFF absent DATUM_TRACE_TIMING; emitted only in engine resolution, outside GUI input handlers."
+    ],
+    "ordinary_native_result": {
+      "workflow": "Existing owner-board private-copy App/Winit Wayland + WGPU/Vulkan replay: select A/M/preview/pointer burst/cancel/commit, pending targeting refusal, Undo/Redo/Save, direct B selection without Escape, M targeting B despite hover A, cancel/commit exact B preserving A, immediate M/cancel/Save/reopen.",
+      "result": "PASS",
+      "elapsed_s": 12.63,
+      "A_click_to_confirm_ms": 1119,
+      "B_click_to_confirm_ms": 1038,
+      "following_B_M_dispatch_us": 997,
+      "limits": "In-process native events through production dispatcher and actual Wayland/WGPU window; not physical compositor input, HUMAN assessment or pixel qualification. Single descriptive trial, no percentile, threshold or controlled speedup claim.",
+      "fixture_stage0_elapsed_ms": 5261,
+      "first_selection_handler_us": 48513,
+      "startup_limit": "Stage0 existing fixture clock, not physical launch/display latency. Startup preparation may extend initial readiness; no startup improvement or worst-case bound claimed."
+    },
+    "configuration": {
+      "window_backend": "Wayland",
+      "gpu_backend": "Vulkan",
+      "adapter": "Intel(R) HD Graphics P630 (KBL GT2)",
+      "driver": "Mesa 25.0.7-2+deb13u1",
+      "fault_injection": "No inherited DATUM_*, WGPU_* or VK_* settings. No DATUM_DIAGNOSTIC_QUEUE_COMPLETION. DATUM_FIRST_EDIT_PROJECT/private copy and POINTER_BURST fixture settings plus GUI log path only. Trace timing OFF.",
+      "companion": "Final replay explicitly EDA_CLI_BIN=target/debug/datum-eda; matching CLI separately rebuilt before replay; daemon final build pinned below. Ordinary launcher resolves same siblings."
+    },
+    "binary_sha256": {
+      "target/debug/datum-gui": "b0b64fd659706f136d18e5f56174009a2d85cd62ae976284b5281020f3448111",
+      "target/debug/datum-eda": "e758509979410749dab031243a932c3fbf4be129a305bff6e1a992afc24d6ac3",
+      "target/debug/eda-engine-daemon": "dc667ec464c56fbef341635f90d8e80660bef7ed4ff7c669f88a386c11b3c0ff"
+    },
+    "intermediate_evidence": "Engine-only replay A1866/B1749ms; engine+JSON/hash A1127/B994ms. Final five-package A1119/B1038ms shows no material additional improvement established by added protocol/daemon optimization. Distinct configuration and trials, not matched benchmark.",
+    "failed_attempts": [
+      "native-edit-workflow-final-proof.log stalled before visible window because proof held Cargo guard while stale CLI companion requested nested guarded rebuild. Terminated owned stalled runner; no product result credited; fixed setup by building CLI outside proof.",
+      "Guard refused native-edit-build.log and several replay/CLI-build attempts before execution due target hard limit or unavailable du. Raw attempts retained in target/user-edit-selection; no product results. Reclaimed only obsolete regenerable artifacts at observed compiler-idle guarded boundaries; logs/preimages/private designs/archived old ordinary cohort retained."
+    ],
+    "raw_logs": {
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/native-edit-build-final.log": {
+        "sha256": "b7245ee24aba4182e463c39ed32278c18323c4e47ac3d5d9c49d8eb053c6c11c"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/native-edit-cli-matched-build.log": {
+        "sha256": "8c9f278213ab2eb8a379590c3984c2ad0acaf2ce50d8997187745eb01e46de34"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/native-edit-qualified-workflow-proof.log": {
+        "sha256": "b760c15da5709dcef9ae62fcdcc7a317847a2eece14044cfdff0725843e63ad9"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/native-edit-matched-native.log": {
+        "sha256": "d38a7ce7e5ad155dc5af06731353b77caa4504b5118f593fa47dd2b03cfa2cfc"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/source-snapshot-proof.log": {
+        "sha256": "0f5c1185701415ede8a0567c03ad149e30875d97bc6c0afc3f2befc89553496d"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/resolver-stage-proof.log": {
+        "sha256": "1aecbe08dcf15924a9805bac7841f7430fe37dd0a5e177990afb8a18b330169e"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/source-snapshot-final-proof.log": {
+        "sha256": "208618e5236c9fb6221b3854c68a4b0262c5fbb9ec46a53b3db27143a1a720fc"
+      }
+    },
+    "original_inputs": "Owner native board/journal and KiCad board/schematic hashes match usable-engine-preimages.json. Only private copies were mutated.",
+    "review": {
+      "outcome": "PENDING reserved bounded candidate review; no self-review"
+    },
+    "remaining": "Noticeable ~1-second confirmation remains OPEN z9vn. C07 in progress, C08 development availability withdrawn. Separate unknown recovery-exhaustion dhj9, preexisting private-writer gate0u2x, physical Wayland/HUMAN, S5A C04\u2013C06/CAM-T04 unchanged.",
+    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+    "focused_safety": {
+      "final": "New owning source-shard snapshot regression PASS with final checked optimized engine: exact observed raw hash/value/descriptor correspondence and preserved ownership/schema/malformed JSON refusals.",
+      "reused": "Pre-profile same regression plus17 source-shard metadata/schema/identity/journal cases PASS18; existing cache/daemon/protocol and real-board full-model correspondence proof reused at their pinned scopes; no blanket claim for final source."
+    },
+    "source_blobs": {
+      "Cargo.toml": "8a36bec48c7e62d14517ae7d2ff795e67a808e58",
+      "crates/engine/src/substrate/project_resolver.rs": "8a4ed8b089e6a92aa3a13de3caa952aba2a71084",
+      "crates/engine/src/substrate/source_shard.rs": "d8742b11ce046351723850fe30b4163d7f100f9d",
+      "crates/engine/src/substrate/tests/source_shard_snapshot.rs": "8216fa6c04fea2f02f19296a2792c78721a02f76"
+    }
   }
 }

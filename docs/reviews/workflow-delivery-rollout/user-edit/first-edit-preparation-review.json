@@ -1,0 +1,37 @@
+{
+  "reviewer": "owner-reserved independent audit01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "ba3e178e65b2a9686ac131af610558a21649b001",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "faf6386f6a08355831d164badc2d006e1d74a7bc",
+  "packet_section": "confirmation_preparation_correction",
+  "outcome": "PASS for bounded companion preparation and snapshot ownership correction; latency unresolved, no development acceptance",
+  "mandatory_findings": [],
+  "source_review": [
+    "Startup creates existing companion and requests nondurable metadata only for eligible persistent native Projects. It creates no pending edit, durability receipt or cached write authority.",
+    "Preparation runs on worker during native GPU setup and joins before selection authority/frame admission to avoid own transient exclusion; actual edits retain fresh describe and canonical guarded preimage checks. Errors remain best effort; initial selection resolution and actual edit errors still use existing paths.",
+    "Owned RPC result extraction and borrowing complete receipt remove copies while preserving exact response identity/error handling and full typed snapshot qualification. Final fresh durable describe/publication and uncertain-outcome reconciliation remain.",
+    "Startup join can extend time to initial interaction, particularly on failed/slow companion RPC using existing timeouts. This review does not certify worst-case startup/cancellation or imply a startup speedup."
+  ],
+  "independent_replay": {
+    "path": "target/user-edit-review/ba3e178e-replay/workflow.log",
+    "sha256": "e440cdec4fe69342ccf8089d36bafc020aa1952ea696489fd667da8ab065d21b",
+    "tests_passed": 1,
+    "runtime_seconds": 14.36,
+    "result": "Trace-OFF production App/Winit Wayland/WGPU private owner-Project copy: A/B preview/cancel/commit, exact clicked pose and native presentation-qualified readiness, pending target refusal, following M, Undo/Redo, Save/reopen passed; no rendering pause observed. In-process native-handler input, not physical compositor/HUMAN or pixel evidence."
+  },
+  "observations": {
+    "first_fixture_stage0_elapsed_ms": 2906,
+    "first_selection_handler_us": 30894,
+    "A_click_to_confirm_ms": 1802,
+    "B_click_to_confirm_ms": 1670,
+    "following_B_M_dispatch_us": 927,
+    "limits": "One descriptive trial. Stage0 elapsed is existing fixture timer, not measured physical launch/input/display latency. No controlled comparative improvement, percentile or performance acceptance."
+  },
+  "pins": "Four current source blobs, three binaries and seven producer raw logs verified before replay; source/binary cohort and owner Project/KiCad preimages unchanged afterward, clean tree. Only private Project copy mutated.",
+  "reused_proof": "Previous independent canonical cache14 and snapshot binding1 with actual prior bounded writer/transport PASS reused; affected code leaves these guards unchanged. Producer finite trace ordering and single committed-model equality probe reviewed, not an independent equality replay or cache-seeding authority.",
+  "remaining": [
+    "z9vn OPEN:1.802/1.670s placement delay remains, C07 incomplete/C08 availability withdrawn.",
+    "dhj9 and gate0u2x remain open/unpassed.",
+    "Physical compositor/HUMAN, startup failure/cancellation performance, full S5A/CAM and successor boundaries unchanged."
+  ]
+}

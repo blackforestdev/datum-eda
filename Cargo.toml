@@ -52,3 +52,30 @@ pollster = "0.4"
 bytemuck = { version = "1", features = ["derive"] }
 arboard = "3"
 libc = "0.2"
+
+# Keep the canonical engine usable in the ordinary development application.
+# Retain development arithmetic checks and assertions; no release-only behavior.
+[profile.dev.package.eda-engine]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.dev.package.serde_json]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.dev.package.sha2]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.dev.package.datum-gui-protocol]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.dev.package.eda-engine-daemon]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true

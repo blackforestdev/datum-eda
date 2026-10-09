@@ -27,6 +27,32 @@ pub(super) fn read_source_shard(
             &parsed
         }
     };
+    source_shard_from_bytes(project_root, kind, relative_path, &bytes, value)
+}
+
+/// Descriptor and object collection observe exactly the same source bytes.
+/// The existing ownership/profile/schema validation remains shared.
+pub(super) fn load_source_shard(
+    project_root: &Path,
+    kind: SourceShardKind,
+    relative_path: &str,
+) -> Result<(SourceShardRef, serde_json::Value), EngineError> {
+    validate_source_shard_ownership_path(&kind, relative_path)?;
+    let bytes = std::fs::read(project_root.join(relative_path))?;
+    let value = serde_json::from_slice(&bytes)?;
+    let shard = source_shard_from_bytes(project_root, kind, relative_path, &bytes, &value)?;
+    Ok((shard, value))
+}
+
+fn source_shard_from_bytes(
+    project_root: &Path,
+    kind: SourceShardKind,
+    relative_path: &str,
+    bytes: &[u8],
+    value: &serde_json::Value,
+) -> Result<SourceShardRef, EngineError> {
+    validate_source_shard_ownership_path(&kind, relative_path)?;
+    let path = project_root.join(relative_path);
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
@@ -48,7 +74,7 @@ pub(super) fn read_source_shard(
         relative_path: relative_path.to_string(),
         dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
+        content_hash: sha256_hex(bytes),
     })
 }
 

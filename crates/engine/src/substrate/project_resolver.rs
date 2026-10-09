@@ -32,7 +32,7 @@ use super::replay::{replay_import_map_shards, validate_and_replay_journal};
 use super::replay_proposal::replay_proposal_shards;
 use super::replay_schematic::add_missing_journal_schematic_sheet_shards;
 use super::run_evidence_validation::validate_run_evidence_links;
-use super::source_shard::{collect_referenced_shards, read_source_shard};
+use super::source_shard::{collect_referenced_shards, load_source_shard, read_source_shard};
 use super::variant::{
     propagate_variant_population_to_component_instances, read_variant_overlay_shards,
 };
@@ -98,6 +98,8 @@ impl ProjectResolver {
         lease: &ProjectWriteLease,
     ) -> Result<DesignModel, EngineError> {
         lease.validate(&self.project_root)?;
+        let trace = std::env::var_os("DATUM_TRACE_TIMING").is_some();
+        let mut phase = std::time::Instant::now();
         let initial: NativeProjectManifestShape =
             serde_json::from_value(read_json_value(&self.project_root.join("project.json"))?)?;
         let (records, journal_diagnostics) = read_transaction_journal(&self.project_root);
@@ -125,6 +127,13 @@ impl ProjectResolver {
                 path: Some(self.project_root.join(".datum/revision/v1")),
             }],
         });
+        if trace {
+            eprintln!(
+                "[datum-resolver] integrity {}ms",
+                phase.elapsed().as_millis()
+            );
+            phase = std::time::Instant::now();
+        }
         let manifest_path = self.project_root.join("project.json");
         let manifest_value = read_json_value(&manifest_path)?;
         let manifest: NativeProjectManifestShape = serde_json::from_value(manifest_value.clone())?;
@@ -158,9 +167,8 @@ impl ProjectResolver {
         ];
 
         for (kind, relative_path) in shard_specs {
-            match read_source_shard(&self.project_root, kind, relative_path, None) {
-                Ok(shard) => {
-                    let value = read_json_value(&shard.path)?;
+            match load_source_shard(&self.project_root, kind, relative_path) {
+                Ok((shard, value)) => {
                     collect_uuid_objects(
                         &value,
                         &shard,
@@ -203,6 +211,13 @@ impl ProjectResolver {
             )?;
         }
 
+        if trace {
+            eprintln!(
+                "[datum-resolver] roots-and-pools {}ms",
+                phase.elapsed().as_millis()
+            );
+            phase = std::time::Instant::now();
+        }
         let (manufacturing_plan_shards, manufacturing_plans, manufacturing_plan_diagnostics) =
             read_manufacturing_plan_shards(&self.project_root);
         insert_manufacturing_plan_objects(
@@ -297,6 +312,13 @@ impl ProjectResolver {
                 .then_with(|| a.relative_path.cmp(&b.relative_path))
         });
 
+        if trace {
+            eprintln!(
+                "[datum-resolver] sidecars {}ms",
+                phase.elapsed().as_millis()
+            );
+            phase = std::time::Instant::now();
+        }
         let journal = validate_and_replay_journal(
             &self.project_root,
             &manifest.uuid,
@@ -392,6 +414,13 @@ impl ProjectResolver {
         apply_artifact_metadata_journal_to_map(&journal, &mut artifact_metadata)?;
         let mut proposals = proposals;
         apply_proposal_journal_to_map(&journal, &mut proposals)?;
+        if trace {
+            eprintln!(
+                "[datum-resolver] journal-replay {}ms",
+                phase.elapsed().as_millis()
+            );
+            phase = std::time::Instant::now();
+        }
         let component_instances = collect_component_instances(
             &shards,
             &journal,
@@ -441,9 +470,22 @@ impl ProjectResolver {
             journal_cursor,
             diagnostics,
         };
+        if trace {
+            eprintln!(
+                "[datum-resolver] component-joins {}ms",
+                phase.elapsed().as_millis()
+            );
+            phase = std::time::Instant::now();
+        }
         model.zone_fills = super::derive_model_zone_fills(&model, persisted_zone_fills)?;
         super::electrical_identity_validation::validate(&model)?;
         validate_run_evidence_links(&mut model);
+        if trace {
+            eprintln!(
+                "[datum-resolver] derived-validation {}ms",
+                phase.elapsed().as_millis()
+            );
+        }
         Ok(model)
     }
 }

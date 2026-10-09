@@ -55,6 +55,8 @@ mod schematic_text_writer_migration;
 mod schematic_writer_migration;
 mod source_shard_metadata;
 mod source_shard_ref_builders;
+#[path = "tests/source_shard_snapshot.rs"]
+mod source_shard_snapshot;
 mod source_shard_taxonomy;
 mod writer_ownership;
 mod zone_fill;
