@@ -135,19 +135,19 @@
       },
       {
         "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json",
-        "sha256": "d206abe4153cc1c2f94578a06cf062ab873e7cce30dc3a34eb6e0370c5b89c57"
+        "sha256": "013ea1dcc77c9a45acbb830140e133fafc43778f20af9ca81134c700ba04dec0"
       },
       {
         "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl",
-        "sha256": "06867a02a9296d5bd4a5542e1ee1c9347a530370e2499415fac6ab77f16b41e9"
+        "sha256": "15c404e042d03490e7c69fbcd3785ab1d2687e444b3a091e83a22daa1e823701"
       },
       {
         "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/cursor.json",
-        "sha256": "c51542556812aebfbf87e752437514c07fd9f1c36e3e28893aaef89e432f0706"
+        "sha256": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337"
       },
       {
         "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/revision/v1/head.json",
-        "sha256": "af6081663e356c8ecf4f6441912451f94239ecaf982c967382df848a6dfc7896"
+        "sha256": "dd2a60f6a8ffa02a4afbe3a9e77042bc4e521da2941cbd8fca01b5433b5db889"
       }
     ],
     "independent_review": {
