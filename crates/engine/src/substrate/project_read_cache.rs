@@ -41,7 +41,7 @@ impl ProjectReadCache {
     /// transient diagnostics and pending recovery bypass reuse, not validation. The cache
     /// retains at most one model and has no global project registry.
     pub fn resolve(&mut self, root: &Path) -> Result<Arc<DesignModel>, EngineError> {
-        self.resolve_impl(root, None)
+        self.resolve_impl(root, None, || ProjectResolver::new(root).resolve())
     }
 
     /// Reuse the same complete byte evidence while the canonical writer owns
@@ -52,15 +52,45 @@ impl ProjectReadCache {
         lease: &crate::revision::ProjectWriteLease,
     ) -> Result<Arc<DesignModel>, EngineError> {
         validate_read_lease(root, lease)?;
-        let model = self.resolve_impl(root, Some(lease))?;
+        let model = self.resolve_impl(root, Some(lease), || {
+            ProjectResolver::new(root).resolve_with_lease(lease)
+        })?;
         validate_read_lease(root, lease)?;
         Ok(model)
+    }
+
+    /// Preserve canonical torn-tail recovery before comparing the preimage.
+    /// The caller must already hold and validate the actual writer exclusion.
+    pub(crate) fn resolve_for_write_with_lease(
+        &mut self,
+        root: &Path,
+        lease: &crate::revision::ProjectWriteLease,
+    ) -> Result<Arc<DesignModel>, EngineError> {
+        validate_read_lease(root, lease)?;
+        let journal = super::transaction_journal_path(root);
+        if journal.exists() {
+            super::journal_io::recover_torn_journal_tail(&journal)?;
+        }
+        self.resolve_with_lease(root, lease)
+    }
+
+    /// Observe the complete local inputs around a qualified canonical engine
+    /// snapshot read (for a local transport consumer). The reader must bind its
+    /// model to the engine's root/project/revision/tip description. This caches
+    /// parsed models only: it must never stand in for a durability receipt.
+    pub fn resolve_with_engine_reader(
+        &mut self,
+        root: &Path,
+        read: impl FnOnce() -> Result<DesignModel, EngineError>,
+    ) -> Result<Arc<DesignModel>, EngineError> {
+        self.resolve_impl(root, None, read)
     }
 
     fn resolve_impl(
         &mut self,
         root: &Path,
         lease: Option<&crate::revision::ProjectWriteLease>,
+        read: impl FnOnce() -> Result<DesignModel, EngineError>,
     ) -> Result<Arc<DesignModel>, EngineError> {
         if let Some(entry) = &self.entry
             && entry.root == root
@@ -76,11 +106,7 @@ impl ProjectReadCache {
             drop(crate::revision::ProjectWriteLease::acquire(root)?);
         }
         let before = capture(root, lease);
-        let resolver = ProjectResolver::new(root);
-        let model = Arc::new(match lease {
-            Some(lease) => resolver.resolve_with_lease(lease)?,
-            None => resolver.resolve()?,
-        });
+        let model = Arc::new(read()?);
         if let Some(before) = before
             // These join diagnostics derive only from the compared model inputs.
             // Preserve them verbatim; all IO, integrity and unknown diagnostics

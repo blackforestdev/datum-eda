@@ -665,8 +665,20 @@
         "DISPLAY": ":1"
       }
     },
-    "review": "PENDING exact reserved bounded candidate review",
-    "remaining": "Still3794\u20134328ms waiting for final qualified publication, so z9vn remains open and no fast-commit/availability acceptance. Existing canonical fresh-preimage resolution, fresh post-write reconciliation and separate complete GUI model preparation remain; no skipped integrity/durability, stale-state edits, uncertainty retry or new protocol/model mechanism. Actual bounded review pending; original recovery dhj9, private-writer gate0u2x, C07/C08 and broader qualification remain open.",
+    "review": {
+      "source_commit": "97407e5f1f9b8215940364fd3f2a4255fe90bbe0",
+      "reviewed_packet_blob": "249b1ac8eb4e39ec9eb72b576ae0b25c33cddcc6",
+      "receipt_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-read-reuse-review.json",
+      "receipt_sha256": "8d777ee570d276a4d096aba9f211855a612c297b9adc0483277f3473b13dfbd7",
+      "outcome": "PASS for bounded guarded native-read reuse correction; latency unresolved, no development acceptance",
+      "observations": {
+        "A_click_to_confirm_ms": 4246,
+        "B_click_to_confirm_ms": 3373,
+        "following_B_M_dispatch_us": 955,
+        "scope": "Single descriptive native replay, not a controlled comparative benchmark or acceptance budget. Multi-second placement remains a product defect."
+      }
+    },
+    "remaining": "Actual reserved bounded safety PASS recorded for97407e5f. Independent A4246ms/B3373ms still leaves z9vn open. Continuing complete-model transport and guarded canonical-preimage reuse under retained grant; no acceptance, recovery closure or successor. Original dhj9, gate0u2x, C07/C08 and broader qualification remain open.",
     "test_harness_corrections": "New repeated-input helper initially missed its NativeEditAction import, then held a preview borrow across mutable prepared-scene access. Corrected helper-only import/borrow ownership; both compile failures retained, not product reproductions or credited proof. Final full repeated native workflow passed.",
     "native_result": {
       "result": "PASS26.22s: original select/M/preview/cancel/commit/Undo/Redo/Save, correct next selection/M/cancel; second B commit preserves A and its clicked pose, immediate next M binds published B then cancel/Save/reopen passes.",
@@ -694,6 +706,98 @@
       "target/debug/datum-eda": "f89a8b9d4565a5cb7a3aa5373674381e61d8960019e4969f15f132c2a92dcc7d",
       "target/debug/eda-engine-daemon": "f6e13c8fd9a5e63a03d089c58528e2625532420d1a1c709f8301db510d29a2a2"
     },
-    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit"
+    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+    "manager_disposition": "Actual reserved safety PASS recorded; A4246ms/B3373ms remains unacceptable seconds-long lockout. z9vn/C07 remain open, availability not accepted. Continue retained engine-to-GUI result reuse under unchanged grant, not an administrative stopping point."
+  },
+  "confirmation_snapshot_correction": {
+    "issue": "dat-first-edit-confirmation-latency-z9vn",
+    "authority": "Retained UED-FIRST-MOVE-01, owner-appointed PM059 manager and PM060 W2; reserved audit actual scope guidance permits optional transport of existing complete DesignModel, no new ratification. C07 remains in_progress; C08 availability remains withdrawn.",
+    "source_parent": "97407e5f1f9b8215940364fd3f2a4255fe90bbe0",
+    "source_blobs": {
+      "crates/engine-daemon/src/dispatch.rs": "3feca57f74d54e7d95e402440eebcdcace7a9221",
+      "crates/engine-daemon/src/main.rs": "f5eab91ce2703bee18cd6278c1b2b3351434d566",
+      "crates/engine-daemon/src/tests/main_tests_native_write.rs": "dda9f9944b0b2237a909877b37558e2b612fdad1",
+      "crates/engine/src/api/native_project_reads.rs": "452910e0b6910564978c8ce42378ecf5afaa840e",
+      "crates/engine/src/substrate/commit.rs": "a29a4963b295eb1a364b1e2cba1f33931e9b19c4",
+      "crates/engine/src/substrate/project_read_cache.rs": "fd772ecb9770083c09181c80657188a75c400bd2",
+      "crates/engine/src/substrate/tests/project_read_cache.rs": "007cddab90a2fd0b514ccd28e66179b456307e8b",
+      "crates/gui-app/src/runtime_native_edit.rs": "54ace19b03580e6df1453b9233bbafab06008471",
+      "crates/gui-app/src/runtime_selection.rs": "b5ee1978989a2944e79d8cce48b7d4b26f3c85db",
+      "crates/gui-protocol/src/native_edit_client.rs": "a1391aa69f77e7621c5c3995c007111663af2e4c",
+      "crates/gui-protocol/src/native_edit_client_tests.rs": "f265ea2a2946aa167ba3af67dc0057f7189ce165"
+    },
+    "correction": [
+      "Optional native.describe include_model (default false) serializes the existing complete DesignModel from the same authoritative Arc as its description. Post-write reconciliation requests it once. Worker preparation reuses that response; Save/error fallback obtains a fresh paired response. No source schema, persistence or dependency change.",
+      "Snapshot must bind physical manifest root, project UUID, model revision, transaction tip, journal count and current durable description. Local complete-input evidence only retains a parsed model when before/after bytes and identities match. It is not sole qualification of a server model or a durable acknowledgement.",
+      "Canonical normal native writes may reuse an exact-input preimage under their newly acquired real writer lease, after canonical torn-tail recovery. Unsupported/recovery/promoted/changed inputs invalidate or fall back. The shared canonical commit helper retains integrity/project/revision/tip/object/electrical/source guards and canonical journal, staging, promotion and durability. Existing history/proposal paths unchanged.",
+      "Final fresh durable describe still verifies revision/tip and complete scene/selection before atomic GUI publication. No partial selection, stale next edit, uncertain-write retry or timeout relaxation. Required fsyncs still execute; diagnostic RPC timers are OFF unless DATUM_TRACE_TIMING is set."
+    ],
+    "focused_proof": {
+      "cache_module": "14 passed, including changed preimage refusal and torn-tail recovery; existing writer exclusion, wrong-root, recovery, external/malformed/replacement/unsupported input cases retained.",
+      "daemon": "12 passed: native describe snapshot exact resolver roundtrip/default metadata-only, canonical write and stale/error cases.",
+      "protocol": "1 passed snapshot root/revision/tip/UUID mismatch refusal; existing owned-project P0 test ignored, no credit. First misnamed daemon filter selected zero tests; raw target log retained and not proof.",
+      "ordinary_replay": "1 passed18.10s: actual App/Winit Wayland/WGPU on private copy of latest owner native board, original A preview/cancel/placement/Undo/Redo/Save, pending another-target refusal, next B click selects without implicit preview, M retains B across hover A/cancel; B commit preserves A and exact clicked pose, immediate next M binds published B, cancel/Save/reopen. Pending pose presented; no recovery pause in this trial."
+    },
+    "measured_observations": {
+      "A_click_to_confirm_ms": 2850,
+      "B_click_to_confirm_ms": 1913,
+      "following_B_M_dispatch_us": 925,
+      "next_B_selection_us": 22686,
+      "limits": "Single descriptive trace-OFF replay, not a controlled paired benchmark, percentile, acceptance budget or physical compositor/HUMAN test. Current2.85/1.91s still noticeable; z9vn OPEN. Prior reviewed4.246/3.373s and intermediate3.673/2.715s,2.600/2.015s remain scoped observations, not controlled causal rankings."
+    },
+    "cost_evidence": "Preserved pre-canonical-reuse intermediate snapshot trace: native.write1119/1116ms, post-write durable describe652/643ms, snapshot-plus-complete projection616/638ms; identifies duplicate resolve/transport work, not final-candidate timings. Measured intervals do not explain unmeasured gaps.",
+    "raw_logs": {
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/canonical-cache-proof.log": {
+        "sha256": "fe5a805b5b55e1f90ae7163953b8ab0868803c236368832f9a74037465f6489d"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/canonical-cache-module-proof.log": {
+        "sha256": "934dd79f75de270ffb9955a67d19d8bf88861e35b77ec2e6e0b95cabeddf8c10"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/canonical-daemon-native-write-proof.log": {
+        "sha256": "d33c6966fd345afee620c47cc78c76d95bb15cf6ce969fa84495f1c7da735882"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/paired-protocol-proof.log": {
+        "sha256": "d2c8e7019024c1df3ebf03d9aa7b7d9f0414675b111572da2674f66b3bdea0d2"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/paired-build.log": {
+        "sha256": "aac6a369151cd25f6099adbb8e958ff7c17393d24e47952985463741f6fea42e"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/paired-workflow-proof.log": {
+        "sha256": "d80c6088a70a32f9ee0f159fc7c47d625b1bfec26b768fbaa199985884a607b8"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/paired-native.log": {
+        "sha256": "73b073e4db3b8bcfe51939d3b8bbde85bcebe401258bcc3cd39b49c686805554"
+      },
+      "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/snapshot-trace-workflow-proof.log": {
+        "sha256": "fa14e9dd9178b0fdfaa007bc6f64e627c2a5d6b3e75dd08bb06473b01ef5993d"
+      }
+    },
+    "binary_sha256": {
+      "target/debug/datum-gui": "d7a5edfcc13874234328253aae659eb06787e4e2bc9999306f39afd17ca5fa06",
+      "target/debug/datum-eda": "b017e73242b0e31801c9299cd19e579a51debe2c662f187780fc9e32825115bf",
+      "target/debug/eda-engine-daemon": "2a360d1ded3b49c72ad70ca50b51a7559eba660ef6b37c79f9e1de45dbefefe6"
+    },
+    "backend": "Native Wayland surface; WGPU Vulkan; Intel HD Graphics P630(KBL GT2); Intel open-source Mesa25.0.7-2+deb13u1. No X11 replay. Normal input delivered in-process through production App handlers; not physical compositor injection, pixels or HUMAN acceptance.",
+    "environment": {
+      "XDG_SESSION_TYPE": "wayland",
+      "WAYLAND_DISPLAY": "wayland-0",
+      "DISPLAY": ":1",
+      "DATUM_TRACE_TIMING": null,
+      "DATUM_DIAGNOSTIC_QUEUE_COMPLETION": null,
+      "EDA_CLI_BIN": null,
+      "WGPU_BACKENDS": null
+    },
+    "preimages_unchanged": {
+      "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json": "43df082ab36cb3c94f3846fe7b156afb4abd0f3770413b4f1a873c4c940b99e4",
+      "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl": "f00658607659dfa71e9d5bb80a619dd0594dd25a9b7ee1987543455824eb8aa4",
+      "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+    },
+    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+    "review": {
+      "outcome": "PENDING reserved bounded implementation review, not self-reviewed"
+    },
+    "remaining": "z9vn OPEN: confirmation still seconds, no fast-placement/C07/C08 acceptance. Wrong-target eitk closed at its actual prior review only. Original dhj9 unattributed/open, gate0u2x retained, physical compositor/HUMAN/pixel/full S5A and CAM/T04 unchanged. No successor authorization.",
+    "manager_disposition": "Pin complete engine-to-application unit for reserved safety review before further writer-result reuse. Record actual reviewed read-reuse receipt at its own97407e5f scope. Performance defect and first-edit development availability remain open; no requirement weakened."
   }
 }

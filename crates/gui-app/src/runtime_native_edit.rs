@@ -72,7 +72,7 @@ impl EditWork {
                     // Populate existing byte-qualified read evidence on the worker;
                     // publishing an empty cache would cold-resolve on the next click.
                     let mut cache=runtime_selection::SelectionReadCache::default();
-                    let model=cache.resolve(&intent.project_root)?;
+                    let model=cache.resolve_with_engine_reader(&intent.project_root,|| client.read_model(&intent.project_root,&before))?;
                     let mut next=datum_gui_protocol::workspace_loading::project_board_editor_workspace(&request,model.clone())?;
                     let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,cache)?;
                     trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));

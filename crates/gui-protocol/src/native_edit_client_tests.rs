@@ -46,3 +46,37 @@ fn first_edit_p0_transport_and_stale_refusal() {
         "P0 typed native rename; independent journal describe; stale intent refused; canonical undo byte-exact"
     );
 }
+
+#[test]
+fn complete_model_binding_refuses_stale_mismatched_and_wrong_root_snapshots() {
+    use eda_engine::api::native_write::genesis::{GenesisSpec, bootstrap_native_project};
+    let root = std::env::temp_dir().join(format!("datum-snapshot-binding-{}", Uuid::new_v4()));
+    std::fs::create_dir_all(&root).unwrap();
+    bootstrap_native_project(
+        &root,
+        GenesisSpec {
+            project_name: "Snapshot".into(),
+            existing_ids: None,
+        },
+    )
+    .unwrap();
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    let description = json!({"project_id":model.project.project_id,"model_revision":model.model_revision.0,"transaction_tip":eda_engine::revision::transaction_tip(&model.journal),"journal_len":model.journal.len()});
+    validate_read_model(&root, &description, &description, &model).unwrap();
+    let mut stale = model.clone();
+    stale.model_revision.0 = "stale".into();
+    assert!(validate_read_model(&root, &description, &description, &stale).is_err());
+    let mut other = model.clone();
+    other.project.project_id = Uuid::new_v4();
+    assert!(validate_read_model(&root, &description, &description, &other).is_err());
+    let mut changed = description.clone();
+    changed["transaction_tip"] = json!(Uuid::new_v4());
+    assert!(validate_read_model(&root, &description, &changed, &model).is_err());
+    let foreign = root.join("foreign");
+    std::fs::create_dir(&foreign).unwrap();
+    std::fs::copy(root.join("project.json"), foreign.join("project.json")).unwrap();
+    assert!(validate_read_model(&foreign, &description, &description, &model).is_err());
+    std::fs::remove_dir_all(root).unwrap();
+}

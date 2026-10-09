@@ -430,3 +430,39 @@ fn native_write_surfaces_builder_errors() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn native_describe_complete_model_roundtrip_matches_its_durable_description() {
+    let root = temp_native_project("snapshot");
+    let mut engine = Engine::new().unwrap();
+    let response = dispatch_request(
+        &mut engine,
+        native_request(
+            1,
+            "native.describe",
+            json!({"project_root":root,"confirm_durable":true,"include_model":true}),
+        ),
+    );
+    assert!(response.error.is_none(), "{response:?}");
+    let description = response.result.unwrap();
+    let model: eda_engine::substrate::DesignModel =
+        serde_json::from_value(description["model"].clone()).unwrap();
+    assert_eq!(
+        model,
+        eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap()
+    );
+    assert_eq!(description["project_id"], json!(model.project.project_id));
+    assert_eq!(description["model_revision"], json!(model.model_revision.0));
+    assert_eq!(
+        description["transaction_tip"],
+        json!(eda_engine::revision::transaction_tip(&model.journal))
+    );
+    assert_eq!(description["durability_confirmed"], json!(true));
+    assert!(
+        describe(&mut engine, 2, &root).get("model").is_none(),
+        "default response remains metadata-only"
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}

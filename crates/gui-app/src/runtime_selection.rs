@@ -33,6 +33,19 @@ impl SelectionReadCache {
     pub(super) fn resolve(&mut self, root: &std::path::Path) -> anyhow::Result<Arc<DesignModel>> {
         Ok(self.owner.with(|| self.cache.resolve(root))?)
     }
+    pub(super) fn resolve_with_engine_reader(
+        &mut self,
+        root: &std::path::Path,
+        read: impl FnOnce() -> Result<DesignModel>,
+    ) -> Result<Arc<DesignModel>> {
+        Ok(self.owner.with(|| {
+            self.cache.resolve_with_engine_reader(root, || {
+                read().map_err(|error| {
+                    eda_engine::error::EngineError::Operation(format!("{error:#}"))
+                })
+            })
+        })?)
+    }
 }
 
 pub(super) struct NativeSelectionSession {

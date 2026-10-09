@@ -1,5 +1,5 @@
+use eda_engine::api::native_write::WriteProvenance;
 use eda_engine::api::native_write::registry::{NativeWriteContext, find_native_write_verb};
-use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{CommitSource, Operation, ProjectResolver};
 
 use super::check_run_view::{
@@ -383,6 +383,7 @@ fn dispatch_request_inner(
                 request.id,
                 &params.project_root,
                 params.confirm_durable,
+                params.include_model,
             ),
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
@@ -474,6 +475,7 @@ fn native_describe_response(
     request_id: Value,
     project_root: &Path,
     confirm_durable: bool,
+    include_model: bool,
 ) -> JsonRpcResponse {
     let resolved = if confirm_durable {
         engine.confirm_native_project_durable(project_root)
@@ -481,9 +483,8 @@ fn native_describe_response(
         engine.read_native_project(project_root)
     };
     match resolved {
-        Ok(model) => success_response(
-            request_id,
-            json!({
+        Ok(model) => {
+            let mut description = json!({
                 "project_root": project_root.display().to_string(),
                 "project_id": model.project.project_id,
                 "project_name": model.project.name,
@@ -496,8 +497,16 @@ fn native_describe_response(
                     "batch_id":t.batch_id,"transaction_id":t.transaction_id,
                     "reason":t.provenance.reason,"after_model_revision":t.after_model_revision.0
                 })).collect::<Vec<_>>(),
-            }),
-        ),
+            });
+            if include_model {
+                let snapshot = match serde_json::to_value(&*model) {
+                    Ok(snapshot) => snapshot,
+                    Err(error) => return error_response(request_id, -32060, &error.to_string()),
+                };
+                description["model"] = snapshot;
+            }
+            success_response(request_id, description)
+        }
         Err(err) => error_response(request_id, -32060, &err.to_string()),
     }
 }
@@ -636,7 +645,7 @@ fn native_write_response(
     }
     let primary_object_id = prepared.primary_object_id;
     let operation_count = prepared.batch.operations.len();
-    match commit_prepared(&mut model, &params.project_root, prepared) {
+    match engine.commit_native_prepared(&mut model, &params.project_root, prepared) {
         Ok(report) => success_response(
             request_id,
             json!({

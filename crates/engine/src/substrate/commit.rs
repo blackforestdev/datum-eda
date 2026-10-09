@@ -106,6 +106,29 @@ impl DesignModel {
         )
     }
 
+    /// Same canonical commit with a byte-qualified preimage read under a fresh
+    /// writer lease. Cached input never replaces current guards or recovery.
+    pub(crate) fn commit_journaled_using_reads(
+        &mut self,
+        root: &Path,
+        batch: OperationBatch,
+        reads: &mut super::ProjectReadCache,
+    ) -> Result<CommitReport, EngineError> {
+        self.commit_journaled_with_read_evidence(
+            root,
+            batch,
+            TransactionKind::Normal,
+            None,
+            None,
+            None,
+            CommitPolicyContext::Direct,
+            None,
+            None,
+            RevisionDesignCommitInput::default(),
+            Some(reads),
+        )
+    }
+
     pub(super) fn commit_journaled_accepted_proposal_apply(
         &mut self,
         project_root: &Path,
@@ -159,6 +182,36 @@ impl DesignModel {
         integrity_fault: Option<IntegrityCommitFaultPoint>,
         revision_input: RevisionDesignCommitInput,
     ) -> Result<CommitReport, EngineError> {
+        self.commit_journaled_with_read_evidence(
+            project_root,
+            batch,
+            transaction_kind,
+            undo_of,
+            redo_of,
+            inverse_operations_override,
+            policy_context,
+            after_model_revision_override,
+            integrity_fault,
+            revision_input,
+            None,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn commit_journaled_with_read_evidence(
+        &mut self,
+        project_root: &Path,
+        batch: OperationBatch,
+        transaction_kind: TransactionKind,
+        undo_of: Option<Uuid>,
+        redo_of: Option<Uuid>,
+        inverse_operations_override: Option<Vec<super::Operation>>,
+        policy_context: CommitPolicyContext,
+        after_model_revision_override: Option<ModelRevision>,
+        integrity_fault: Option<IntegrityCommitFaultPoint>,
+        revision_input: RevisionDesignCommitInput,
+        reads: Option<&mut super::ProjectReadCache>,
+    ) -> Result<CommitReport, EngineError> {
         if batch.expected_model_revision.is_none() {
             return Err(EngineError::Operation(
                 "journaled commit requires expected_model_revision".into(),
@@ -170,8 +223,14 @@ impl DesignModel {
             ));
         }
         let lease = ProjectWriteLease::acquire(project_root)?;
-        let mut fresh =
-            super::ProjectResolver::new(project_root).resolve_for_write_with_lease(&lease)?;
+        let mut fresh = match reads {
+            Some(reads) => std::sync::Arc::unwrap_or_clone(
+                reads.resolve_for_write_with_lease(project_root, &lease)?,
+            ),
+            None => {
+                super::ProjectResolver::new(project_root).resolve_for_write_with_lease(&lease)?
+            }
+        };
         if let Some(diagnostic) = fresh
             .diagnostics
             .iter()

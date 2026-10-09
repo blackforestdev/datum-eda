@@ -113,6 +113,7 @@ impl NativeProjectClient {
         Ok(client)
     }
     fn call(&self, method: &str, params: Value, id: Uuid) -> Result<Value> {
+        let started = Instant::now();
         let mut stream = UnixStream::connect(&self.socket)?;
         stream.set_read_timeout(Some(Duration::from_secs(30)))?;
         stream.set_write_timeout(Some(Duration::from_secs(30)))?;
@@ -126,6 +127,12 @@ impl NativeProjectClient {
         BufReader::new(stream).read_line(&mut line)?;
         let response: Value =
             serde_json::from_str(&line).context("native writer receipt unavailable")?;
+        if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+            crate::trace_protocol_timing(format!(
+                "native RPC {method} {}ms",
+                started.elapsed().as_millis()
+            ));
+        }
         if response.get("id") != Some(&json!(id)) {
             bail!("native writer receipt identity mismatch");
         }
@@ -144,9 +151,12 @@ impl NativeProjectClient {
             .context("native writer result missing")
     }
     pub fn describe(&self, root: &Path) -> Result<Value> {
+        self.describe_snapshot(root, false)
+    }
+    fn describe_snapshot(&self, root: &Path, include_model: bool) -> Result<Value> {
         let result = self.call(
             "native.describe",
-            json!({"project_root":root,"confirm_durable":true}),
+            json!({"project_root":root,"confirm_durable":true,"include_model":include_model}),
             Uuid::new_v4(),
         )?;
         if result.get("durability_confirmed") != Some(&json!(true)) {
@@ -156,6 +166,45 @@ impl NativeProjectClient {
         }
         Ok(result)
     }
+    /// One complete existing DesignModel paired with the same fresh durable
+    /// response. No persistence or mutation representation is introduced.
+    pub fn read_model(
+        &self,
+        root: &Path,
+        expected: &Value,
+    ) -> Result<eda_engine::substrate::DesignModel> {
+        // A complete model already paired with the operation's fresh durable
+        // reconciliation is sufficient for preparation. Publication still
+        // requires the worker's final fresh revision/tip/durability check.
+        if let Some(snapshot) = expected.get("model") {
+            anyhow::ensure!(
+                expected.get("durability_confirmed") == Some(&json!(true)),
+                "Snapshot durability was not confirmed"
+            );
+            let model =
+                <eda_engine::substrate::DesignModel as serde::Deserialize>::deserialize(snapshot)?;
+            validate_read_model(root, expected, expected, &model)?;
+            return Ok(model);
+        }
+        let mut description = self.call(
+            "native.describe",
+            json!({"project_root":root,"confirm_durable":true,"include_model":true}),
+            Uuid::new_v4(),
+        )?;
+        anyhow::ensure!(
+            description.get("durability_confirmed") == Some(&json!(true)),
+            "Snapshot durability was not confirmed"
+        );
+        let model: eda_engine::substrate::DesignModel = serde_json::from_value(
+            description
+                .get_mut("model")
+                .context("Matching complete engine snapshot unavailable")?
+                .take(),
+        )?;
+        validate_read_model(root, expected, &description, &model)?;
+        Ok(model)
+    }
+
     pub fn execute(&self, intent: &NativeEditIntent) -> Result<NativeEditReceipt> {
         let initial = self.describe(&intent.project_root)?;
         if initial.get("transaction_tip") != Some(&json!(intent.expected_tip)) {
@@ -214,7 +263,7 @@ impl NativeProjectClient {
         );
         // An error/timeout never means a second attempt. Query the canonical
         // journal after guarded recovery, correlating this exact request.
-        let description = self.describe(&intent.project_root)?;
+        let description = self.describe_snapshot(&intent.project_root, true)?;
         let found = description
             .get("transactions")
             .and_then(Value::as_array)
@@ -249,3 +298,38 @@ impl Drop for NativeProjectClient {
 #[cfg(test)]
 #[path = "native_edit_client_tests.rs"]
 mod tests;
+
+fn validate_read_model(
+    root: &Path,
+    expected: &Value,
+    description: &Value,
+    model: &eda_engine::substrate::DesignModel,
+) -> Result<()> {
+    for key in ["project_id", "model_revision", "transaction_tip"] {
+        anyhow::ensure!(
+            description.get(key).is_some() && description.get(key) == expected.get(key),
+            "Project changed during snapshot read: {key}"
+        );
+    }
+    anyhow::ensure!(
+        description.get("project_id") == Some(&json!(model.project.project_id))
+            && description.get("model_revision").and_then(Value::as_str)
+                == Some(model.model_revision.0.as_str())
+            && description.get("transaction_tip")
+                == Some(&json!(eda_engine::revision::transaction_tip(
+                    &model.journal
+                )))
+            && description.get("journal_len") == Some(&json!(model.journal.len())),
+        "Engine snapshot identity/revision/history mismatch"
+    );
+    let manifest = model
+        .source_shards
+        .iter()
+        .find(|s| s.kind == eda_engine::substrate::SourceShardKind::ProjectManifest)
+        .context("Engine snapshot lacks Project manifest")?;
+    anyhow::ensure!(
+        manifest.path.canonicalize()? == root.join("project.json").canonicalize()?,
+        "Engine snapshot belongs to another Project root"
+    );
+    Ok(())
+}

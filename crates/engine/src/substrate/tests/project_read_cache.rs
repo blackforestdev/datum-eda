@@ -345,3 +345,97 @@ fn engine_durable_reads_reuse_only_current_input_and_still_refuse_busy_writer() 
     assert!(!Arc::ptr_eq(&third, &changed));
     assert_eq!(changed.project.name, "external-edit");
 }
+
+#[test]
+fn observed_engine_snapshot_keeps_only_unchanged_complete_input_evidence() {
+    let fixture = Fixture::new();
+    let root = &fixture.0;
+    let mut cache = ProjectReadCache::default();
+    let first = cache
+        .resolve_with_engine_reader(root, || ProjectResolver::new(root).resolve())
+        .unwrap();
+    assert_eq!(*first, ProjectResolver::new(root).resolve().unwrap());
+    assert!(Arc::ptr_eq(&first, &cache.resolve(root).unwrap()));
+    let mut changed_cache = ProjectReadCache::default();
+    let observed = changed_cache
+        .resolve_with_engine_reader(root, || {
+            let model = ProjectResolver::new(root).resolve()?;
+            let path = root.join("project.json");
+            let text = std::fs::read_to_string(&path)?;
+            std::fs::write(path, text.replace("resolver-test", "external-edit"))?;
+            Ok(model)
+        })
+        .unwrap();
+    let current = changed_cache.resolve(root).unwrap();
+    assert!(!Arc::ptr_eq(&observed, &current));
+    assert_eq!(current.project.name, "external-edit");
+    assert_eq!(*current, ProjectResolver::new(root).resolve().unwrap());
+}
+
+#[test]
+fn cached_canonical_commit_refuses_changed_preimage_and_recovers_torn_tail() {
+    let fixture = Fixture::new();
+    let root = &fixture.0;
+    let package_id = Uuid::new_v4();
+    write_project_with_board_package(root, Uuid::new_v4(), Uuid::new_v4(), package_id);
+    let mut cache = ProjectReadCache::default();
+    let original = cache.resolve(root).unwrap();
+    let batch = |model: &DesignModel, value: &str| OperationBatch {
+        batch_id: Uuid::new_v4(),
+        expected_model_revision: Some(model.model_revision.clone()),
+        provenance: CommitProvenance {
+            actor: "unit-test".into(),
+            source: CommitSource::Test,
+            reason: "qualified canonical cached preimage".into(),
+        },
+        operations: vec![Operation::SetBoardPackageValue {
+            package_id,
+            value: value.into(),
+        }],
+    };
+    let mut writer = (*original).clone();
+    writer
+        .commit_journaled_using_reads(root, batch(&writer, "ONE"), &mut cache)
+        .unwrap();
+    let persisted = ProjectResolver::new(root).resolve().unwrap();
+    assert_eq!(writer.model_revision, persisted.model_revision);
+    assert_eq!(writer.journal, persisted.journal);
+    let current = cache.resolve(root).unwrap();
+    let mut external = (*current).clone();
+    external
+        .commit_journaled(root, batch(&external, "TWO"))
+        .unwrap();
+    let mut stale = (*current).clone();
+    let before = std::fs::read(root.join("board/board.json")).unwrap();
+    let error = stale
+        .commit_journaled_using_reads(root, batch(&stale, "BAD"), &mut cache)
+        .unwrap_err();
+    assert!(error.to_string().contains("persisted Project changed"));
+    assert_eq!(
+        before,
+        std::fs::read(root.join("board/board.json")).unwrap()
+    );
+    let latest = cache.resolve(root).unwrap();
+    let journal = transaction_journal_path(root);
+    use std::io::Write;
+    std::fs::OpenOptions::new()
+        .append(true)
+        .open(&journal)
+        .unwrap()
+        .write_all(b"{torn")
+        .unwrap();
+    let mut recovered = (*latest).clone();
+    recovered
+        .commit_journaled_using_reads(root, batch(&recovered, "THREE"), &mut cache)
+        .unwrap();
+    let reopened = ProjectResolver::new(root).resolve().unwrap();
+    assert_eq!(recovered.model_revision, reopened.model_revision);
+    assert_eq!(recovered.journal, reopened.journal);
+    assert_eq!(reopened.journal.len(), 3);
+    assert!(
+        reopened
+            .diagnostics
+            .iter()
+            .all(|d| !d.code.starts_with("journal_"))
+    );
+}

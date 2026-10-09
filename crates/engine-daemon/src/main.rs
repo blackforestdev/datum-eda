@@ -137,6 +137,8 @@ struct NativeDescribeParams {
     project_root: PathBuf,
     #[serde(default)]
     confirm_durable: bool,
+    #[serde(default)]
+    include_model: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

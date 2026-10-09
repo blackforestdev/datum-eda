@@ -1,0 +1,42 @@
+{
+  "reviewer": "owner-reserved independent audit01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "97407e5f1f9b8215940364fd3f2a4255fe90bbe0",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "249b1ac8eb4e39ec9eb72b576ae0b25c33cddcc6",
+  "outcome": "PASS for bounded guarded native-read reuse correction; latency unresolved, no development acceptance",
+  "mandatory_findings": [],
+  "source_review": [
+    "One existing bounded complete-input ProjectReadCache per engine retains parsed immutable models, not durable receipts. Native read and builder preparation use that owner. Copied write model cannot mutate the retained Arc.",
+    "Guarded cache path validates lease/root/inode and mixed-writer marker before and after complete input byte/identity checks. Unsupported/transient/recovery inputs fall back to resolver with the held lease; ordinary readers cannot reuse through a busy writer.",
+    "Every durable confirmation acquires a new writer lease and synchronizes canonical files/directories, journal/cursor and root. Failed synchronization propagates; no prior successful confirmation receipt is reused.",
+    "Canonical commit still resolves fresh persisted preimage under guard and validates revision/tip. GUI qualification, complete scene/selection publication and uncertain-result correlation remain unchanged."
+  ],
+  "independent_replays": [
+    {
+      "path": "target/user-edit-review/97407e5f-replay/workflow.log",
+      "sha256": "faf94fb6b37c226fcad261537a21b780d9cb9e1716611cc1203765b5f00872ed",
+      "tests_passed": 1
+    },
+    {
+      "path": "target/user-edit-review/97407e5f-replay/cache.log",
+      "sha256": "e49b6893779690daff7ce17949cb3d4b139ab1a7d42304763cd4b4ee1860d293",
+      "tests_passed": 12
+    }
+  ],
+  "ordinary_result": "Trace-OFF production App/Winit Wayland/WGPU repeated A/B workflow on latest ownerProject private copy PASS21.98s: original placement/presentation/cancel/Undo/Redo/Save, next selection/M/cancel, B placement preserves A and exact clicked position; next M acquires published B, then cancel/Save/reopen pass. No rendering pause in this trial.",
+  "observations": {
+    "A_click_to_confirm_ms": 4246,
+    "B_click_to_confirm_ms": 3373,
+    "following_B_M_dispatch_us": 955,
+    "scope": "Single descriptive native replay, not a controlled comparative benchmark or acceptance budget. Multi-second placement remains a product defect."
+  },
+  "cache_result": "Independent existing cache module12PASS: guarded/wrong-root/busy-writer/change invalidation and durability reuse, identical-byte cursor persistence, external edits/replacements, malformed/missing inputs, unsupported symlink/pool/recovery states retained.",
+  "reused_proof": "Producer daemon native-write11 tests and unchanged canonical writer/history/failure-safety evidence reviewed/reused at recorded scopes; no unnecessary broad build or matrix.",
+  "pins": "Ten current source blobs/three binaries/eleven raw logs and packet verified before replay. OwnerProject preimages and binary cohort verified afterward; worktree clean, only private Project copy mutated. Helper compile failures preserved and not product evidence.",
+  "remaining": [
+    "Confirmation latency z9vn remains OPEN: observed4246ms/3373ms, no fast-placement or C07/C08 acceptance.",
+    "Original recovery exhaustion dhj9 remains unattributed/open.",
+    "Private-writer gate0u2x failure retained, no waiver.",
+    "Physical compositor/HUMAN, pixel/display-latency and broader S5A/CAM/platform qualification remain unverified; no successor grant."
+  ]
+}
