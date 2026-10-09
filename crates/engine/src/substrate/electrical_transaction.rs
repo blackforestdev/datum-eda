@@ -8,8 +8,31 @@ use uuid::Uuid;
 
 pub(super) fn compose(
     model: &DesignModel,
+    batch: OperationBatch,
+    kind: TransactionKind,
+) -> Result<OperationBatch, EngineError> {
+    compose_inner(model, batch, kind, false)
+}
+
+/// Native authoring may record first births from an actually empty pre-topology.
+/// The historical facade and every nonempty unadopted source retain their
+/// separate explicit adoption boundary. No read/query calls this entry point.
+pub(crate) fn bootstrap_empty_native_topology(
+    model: &DesignModel,
+    batch: OperationBatch,
+) -> Result<OperationBatch, EngineError> {
+    let adopted = model.electrical_identities.values().any(|r| matches!(&r.identity,ElectricalIdentity::Net {anchor,..} if schematic_class(&anchor.class)));
+    if adopted {
+        return Ok(batch);
+    }
+    compose_inner(model, batch, TransactionKind::Normal, true)
+}
+
+fn compose_inner(
+    model: &DesignModel,
     mut batch: OperationBatch,
     kind: TransactionKind,
+    native_first_birth: bool,
 ) -> Result<OperationBatch, EngineError> {
     if kind != TransactionKind::Normal
         || !batch
@@ -21,8 +44,14 @@ pub(super) fn compose(
     }
     // Old projects require explicit adoption; reading or editing unadopted source
     // never silently imports identity provenance.
-    if !model.electrical_identities.values().any(|r| matches!(&r.identity,ElectricalIdentity::Net {anchor,..} if schematic_class(&anchor.class))) { return Ok(batch); }
+    let adopted = model.electrical_identities.values().any(|r| matches!(&r.identity,ElectricalIdentity::Net {anchor,..} if schematic_class(&anchor.class)));
+    if !adopted && !native_first_birth {
+        return Ok(batch);
+    }
     let before = super::electrical_topology_source::partitions(model, &[])?;
+    if !adopted && !before.is_empty() {
+        return Ok(batch);
+    }
     let after = super::electrical_topology_source::partitions(model, &batch.operations)?;
     let previous = previous(model, &before)?;
     if before == after {

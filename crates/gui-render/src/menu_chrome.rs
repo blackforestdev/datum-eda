@@ -1,3 +1,5 @@
+#[path = "schematic_picker.rs"]
+mod schematic_picker;
 use super::*;
 use datum_gui_protocol::{
     GuiIconSet, GuiMenuBinding, GuiMenuItem, GuiMenuModel, load_default_gui_icon_set,
@@ -43,6 +45,13 @@ pub(super) fn render_menu_bar(
         text_runs,
         hit_regions,
     )?;
+    schematic_picker::render(
+        state,
+        &scale.logical_layout(layout.clone()),
+        menu_overlay_quads,
+        menu_overlay_text_runs,
+        hit_regions,
+    );
     scale.quads(&mut panel_quads[starts.0..]);
     scale.quads(&mut menu_overlay_quads[starts.1..]);
     scale.text_geometry(&mut menu_overlay_text_runs[starts.2..]);

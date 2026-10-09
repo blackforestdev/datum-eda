@@ -502,14 +502,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3202,
+        "pre_test_lines": 3140,
         "inline_test_lines": 1705
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged."
+      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

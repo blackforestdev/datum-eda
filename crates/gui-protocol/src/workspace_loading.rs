@@ -126,6 +126,11 @@ fn load_workspace(
     } else {
         load_production_status(&cli, request)?
     };
+    state.schematic_authoring = model
+        .as_deref()
+        .map(crate::schematic_authoring::SchematicAuthoring::from_model)
+        .transpose()?
+        .unwrap_or_default();
     state.source_shards = model
         .as_deref()
         .map(source_shard_status::project_source_shard_status)

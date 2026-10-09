@@ -56,7 +56,11 @@ pub fn native_project_edit_available(state: &crate::ReviewWorkspaceState) -> boo
 fn first_edit_verb(verb: &str) -> bool {
     matches!(
         verb,
-        "datum.journal.undo" | "datum.journal.redo" | "datum.pcb.move_component"
+        "datum.journal.undo"
+            | "datum.journal.redo"
+            | "datum.pcb.move_component"
+            | "datum.schematic.place_symbol"
+            | "datum.schematic.draw_wire"
     )
 }
 
@@ -98,6 +102,13 @@ impl GuiMenuItem {
             && let Some(consumer) = action_registry::consumer(key)
         {
             return consumer.admit(state).err();
+        }
+        if matches!(
+            self.binding(),
+            GuiMenuBinding::Verb("datum.schematic.place_symbol" | "datum.schematic.draw_wire")
+        ) && state.schematic_authoring.sheet.is_none()
+        {
+            return Some("This Project needs a native schematic sheet before authoring.");
         }
         if matches!(self.binding(), GuiMenuBinding::GuiLocal("project.save"))
             || matches!(self.binding(), GuiMenuBinding::Verb(verb) if first_edit_verb(verb))

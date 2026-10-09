@@ -54,6 +54,9 @@ mod board_track_projection;
 pub mod footprint_move_preview;
 mod live_design_session;
 mod workspace_authoring;
+mod workspace_tools;
+pub use workspace_tools::*;
+pub mod schematic_authoring;
 pub use live_design_session::{SessionCommand, SessionCommandResult, SessionEvent};
 pub use workspace_authoring::checked_snap_authoring_point;
 pub mod selection_artifacts;
@@ -398,73 +401,6 @@ pub const BOARD_TEXT_HEIGHT_MIN_NM: i64 = 50_000;
 pub const BOARD_TEXT_HEIGHT_MAX_NM: i64 = 100_000_000;
 pub const BOARD_TEXT_HEIGHT_STEP_PPM: i64 = 100_000;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum WorkspaceTool {
-    Select,
-    DrawBoardTrack,
-    PlaceBoardVia,
-    PlaceBoardText,
-    Move,
-    Delete,
-}
-
-impl WorkspaceTool {
-    pub fn label(self) -> &'static str {
-        match self {
-            WorkspaceTool::Select => "select",
-            WorkspaceTool::DrawBoardTrack => "draw-board-track",
-            WorkspaceTool::PlaceBoardVia => "place-board-via",
-            WorkspaceTool::PlaceBoardText => "place-board-text",
-            WorkspaceTool::Move => "move",
-            WorkspaceTool::Delete => "delete",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct AuthoringSnapState {
-    pub enabled: bool,
-    pub grid_nm: i64,
-}
-
-impl Default for AuthoringSnapState {
-    fn default() -> Self {
-        Self {
-            enabled: true,
-            grid_nm: 100_000,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct AuthoringGestureState {
-    pub tool: WorkspaceTool,
-    pub anchor: Option<PointNm>,
-    pub preview: Option<PointNm>,
-    pub target_object_id: Option<String>,
-}
-
-impl AuthoringGestureState {
-    pub fn idle(tool: WorkspaceTool) -> Self {
-        Self {
-            tool,
-            anchor: None,
-            preview: None,
-            target_object_id: None,
-        }
-    }
-
-    pub fn is_active(&self) -> bool {
-        self.anchor.is_some() || self.preview.is_some() || self.target_object_id.is_some()
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct AuthoringToolState {
-    pub snap: AuthoringSnapState,
-    pub gesture: AuthoringGestureState,
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EditorCommandStatus {
     pub action: String,
@@ -554,6 +490,7 @@ fn layer_visibility_change_is_frame_only(scene: &BoardReviewSceneV1, layer_id: &
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ReviewWorkspaceState {
+    pub schematic_authoring: schematic_authoring::SchematicAuthoring,
     pub scene: BoardReviewSceneV1,
     /// Optional companion schematic scene, projected from the board project's
     /// sibling `.kicad_sch` alongside (not replacing) `scene`. Carried in
@@ -979,6 +916,7 @@ impl ReviewWorkspaceState {
         Self {
             scene,
             schematic_scene: None,
+            schematic_authoring: Default::default(),
             review,
             production: ProductionStatus::default(),
             source_shards: SourceShardStatusSummary::default(),

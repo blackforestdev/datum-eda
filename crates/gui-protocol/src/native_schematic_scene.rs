@@ -38,6 +38,11 @@ pub fn project_native_schematic_scene(
     } else {
         crate::schematic_scene_import::project_schematic_source(source, &schematic_file)?
     };
+    if let Some(sheet) = sheet {
+        crate::schematic_scene_import::native_library::project_bodies(
+            &mut scene, model, source, sheet.uuid,
+        )?;
+    }
     scene.project_uuid = authority.project().to_string();
     scene.project_name = model.project.name.clone();
     scene.source_revision = authority.revision().0.clone();

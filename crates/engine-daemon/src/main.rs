@@ -368,3 +368,5 @@ mod tests {
     #[path = "main_tests_session_pool_replacements.rs"]
     mod session_pool_replacements;
 }
+
+mod native_write;

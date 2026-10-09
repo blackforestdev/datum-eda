@@ -184,7 +184,7 @@ mod projection_tests;
 #[cfg(test)]
 mod tests;
 #[cfg(test)]
-mod topology_tests;
+pub(super) mod topology_tests;
 #[cfg(test)]
 mod transition_tests;
 

@@ -24,6 +24,10 @@ use winit::event::ElementState;
 /// focus only when the resulting behavior expects terminal typing).
 fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
+        HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
+        | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicReference
+        | HitTarget::SchematicValue | HitTarget::SchematicPlace
+        | HitTarget::SchematicCancel | HitTarget::SchematicFinishWire => false,
         // Deliberate entry: the shell-content cell rectangle, the dock
         // terminal tab (owner decision 2026-08-14), and the session actions
         // whose resulting behavior expects terminal typing.

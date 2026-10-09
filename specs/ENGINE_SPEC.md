@@ -2209,3 +2209,23 @@ Copper output uses that projection, including exact quarter-turn rectangular
 apertures; unsupported rotation refuses without overwriting prior output.
 Positive rational-centre CAM/T04, complete native C04 and independent C05/C06
 proof remain unfinished. Supported implementation does not accept those gaps.
+
+### FIRST-SYMBOL-WIRE-01 bounded native integration
+
+The native writer registry exposes `datum.schematic.place_symbol` and
+`datum.schematic.draw_wire` for the existing asynchronous GUI worker. The engine
+owns qualified pool-pin materialization and component binding, shared with the
+historical CLI, plus exact cardinal local-pin placement and complete wire-gesture
+construction. Required T-junction markers share the wire batch. Manual GUI
+provenance preserves Tool/Assistant proposal policy. Revision and transaction-tip
+guards qualify these requests before canonical preparation and commit.
+
+Only the new native adapters may initialize first Net identities from a complete,
+authoritatively empty pre-topology, using the existing final-partition nomination
+planner and recorded operations. Missing identities in nonempty historical source
+still require explicit adoption; reads never allocate them. No new persistence,
+identity rule, import behavior or full authoring acceptance is introduced.
+
+The engine API inventory is reconciled at its actual implemented surface (228
+names); this includes the already captured preexisting inventory drift and four
+new shared helpers. The count is an inventory, not qualification.

@@ -312,6 +312,8 @@ impl Runtime {
             return self.activate_gui_local_menu_action(action, surface);
         }
         match item.verb.as_deref() {
+            Some("datum.schematic.place_symbol") => return self.begin_native_schematic(false),
+            Some("datum.schematic.draw_wire") => return self.begin_native_schematic(true),
             Some("datum.journal.undo") => return self.queue_native_history(false),
             Some("datum.journal.redo") => return self.queue_native_history(true),
             Some("datum.pcb.move_component") => {

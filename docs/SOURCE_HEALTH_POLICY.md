@@ -500,3 +500,11 @@ placed-Pad owner and final painting conversion/dimensions into bounded pad_paint
 Protocol production ceiling ratchets 3869→3853; pads-and-layers 125→120. Existing
 aperture compatibility proof moves into its bounded test owner; render/tests.rs
 returns below 700 lines and leaves the legacy ledger. No ceiling increase.
+
+FIRST-SYMBOL-WIRE-01 extracts complete shared workspace tool/gesture/snap types
+from the protocol root into `workspace_tools.rs`, preserving reexports and all
+existing consumers. Its pre-test ceiling ratchets 3202 to 3140; inline-test debt
+is unchanged. Native authoring, native library drawing projection and the writer
+request owner are separate bounded modules. No new exception or raised ceiling.
+The debt inventory remains 69 entries; its parity digest records the actual
+existing ledger plus this downward ratchet, without closing historical debt.

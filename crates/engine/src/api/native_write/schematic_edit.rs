@@ -119,7 +119,7 @@ fn place_symbol(
         pin_overrides: Vec::new(),
         hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
     };
-    build_place_schematic_symbol(
+    let prepared = build_place_schematic_symbol(
         context.model,
         provenance,
         params.sheet,
@@ -128,7 +128,16 @@ fn place_symbol(
             pool_symbol_id: params.library_symbol,
             part_id: binding.1.part_id,
         }),
-    )
+    )?;
+    prepare_native_birth(context.model, prepared)
+}
+
+fn prepare_native_birth(
+    model: &DesignModel,
+    mut prepared: PreparedWrite,
+) -> Result<PreparedWrite, EngineError> {
+    prepared.batch = crate::substrate::bootstrap_empty_native_topology(model, prepared.batch)?;
+    Ok(prepared)
 }
 
 #[derive(Deserialize)]
@@ -215,9 +224,10 @@ pub fn build_wire_gesture(
             })?,
         });
     }
-    BatchComposer::compose(model, provenance)
+    let prepared = BatchComposer::compose(model, provenance)
         .push_ops(operations)
-        .finish()
+        .finish()?;
+    prepare_native_birth(model, prepared)
 }
 
 fn strictly_on_segment(p: Point, a: Point, b: Point) -> Result<bool, EngineError> {

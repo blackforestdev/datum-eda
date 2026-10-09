@@ -73,6 +73,14 @@ impl Runtime {
             self.trace_click("primary click ignored: no cursor position".to_string());
             return false;
         };
+        if let Some(target) = self.presented_hits.hit_test(x, y).cloned()
+            && self.handle_schematic_chrome(&target)
+        {
+            return true;
+        }
+        if self.workspace().schematic_authoring.picker {
+            return true;
+        }
         // A dropdown is application chrome, not the canvas beneath it. Resolve
         // its hit against the displayed context before a canvas focus gesture
         // can change the focused pane (and therefore the action's readiness).
@@ -105,10 +113,11 @@ impl Runtime {
         }
         // Move acts on an acquired gesture, not every click while its toolbar
         // mode remains selected. Idle clicks select; pending moves are refused.
-        let authoring_gesture = self.active_tool_is_authoring()
-            && (self.workspace().tool != WorkspaceTool::Move
-                || self.native_edit.preview.is_some()
-                || self.native_edit.pending());
+        let authoring_gesture = self.workspace().schematic_authoring.active()
+            || self.active_tool_is_authoring()
+                && (self.workspace().tool != WorkspaceTool::Move
+                    || self.native_edit.preview.is_some()
+                    || self.native_edit.pending());
         let hit_started = std::time::Instant::now();
         let prepared_target = self.presented_hits.hit_test(x, y).cloned();
         let hit_elapsed = hit_started.elapsed();
@@ -154,7 +163,9 @@ impl Runtime {
         if let Some((world_point, SceneSurface::Schematic)) = world_point {
             // UVT-004 resolves a schematic world point and symbol-region hit;
             // selection dispatch remains owned by the established session path.
-            return self.resolve_schematic_primary_click((x, y), world_point) || focus_changed;
+            return self.native_schematic_click(world_point, (x, y))
+                || self.resolve_schematic_primary_click((x, y), world_point)
+                || focus_changed;
         }
         if let Some((world_point, SceneSurface::Board)) = world_point {
             let retained_started = std::time::Instant::now();

@@ -681,3 +681,49 @@ ordinary Wayland/WGPU verification and reserved independent review. It grants no
 new dependency, representation, private writer, import expansion, tolerance or
 broader acceptance. Existing manager appointment is retained at its bounds;
 independent review and full qualification are not passed by approval.
+
+<!-- EVIDENCE:USER-SCHEMATIC-DELIVERY:NSD-C03-DELIVERY -->
+
+FIRST-SYMBOL-WIRE-01 runtime delivery is implemented under the explicit owner
+grant. Engine unit `9cda8d99` shares historical qualified library binding and
+materialization with the CLI; new adapters translate complete pins exactly and
+compose all wire segments plus required T junctions. The ordinary GUI exposes
+Place > Symbol with qualified choices, reference/value, preview/cancel/place;
+Place > Wire or W acquires exact source pins or the shared user grid. Finish Wire
+or repeat-click finishes; Escape finishes accepted wire vertices, while Cancel
+discards the gesture. Pending writes exclude new edits. Existing worker, revision
+and transaction-tip qualification, canonical history and Save/reopen are reused.
+Native library graphics replace the compatibility IEC body for qualified native
+symbols using the existing text/scene pipeline.
+
+Actual reserved audit authority assessment in thread
+`01a0e343-3d9c-70f1-899e-5bd239513383` confirms existing Manual GUI provenance
+(PM059/authoring contract) and PM053 first births from strictly empty authored
+topology are authorized integrations. This is an authority assessment, not an
+implementation PASS. Tool/Assistant proposal controls remain; missing identities
+in nonempty unadopted source never authorize automatic adoption. First-birth
+operations reuse the existing final-partition planner and canonical journal.
+
+Finite production App callback replay on native Wayland/WGPU Vulkan, Intel HD
+Graphics P630/Mesa 25.0.7, placed U1/U2 with complete five-pin/part bindings,
+verified preview/cancel byte preservation, acquired off-grid exact terminals,
+committed three connected wire segments, undid/redid exact sheet bytes, Saved and
+reopened with U1 OUT and U2 IN- in one authoritative physical Run. The ordinary
+executable separately reopened/rendered that persisted result. Original KiCad
+board/schematic and existing first-edit board/project SHA256 pins are unchanged.
+Prepared native Project: `/home/bfadmin/Documents/datum_projects/DOA2526-first-schematic`;
+canonical setup uses the already approved first-party native authored baseline
+library. Verification mutated private copies only.
+
+Preserved failed trials exposed swallowed selection-press placement, incorrect
+Tool provenance for manual binding, and unavailable identities in nonempty
+legacy source. Corrections respect the explicit old-source adoption boundary.
+Replay-only missing script wake/off-canvas input trials are preserved separately;
+they do not establish production scheduler failures. Engine contact/history and
+first-birth/legacy-source checks, daemon guarded writer/provenance checks and
+historical CLI binding proof supplement ordinary application evidence.
+
+NSD-C03 is complete; NSD-C04 selects the actual reserved candidate review and
+remaining focused safety checks. No implementation PASS, bounded development
+acceptance, physical compositor/HUMAN proof, full authoring/S5A/C04-C06,
+performance budget, CAM/T04 or automatic successor is inferred.

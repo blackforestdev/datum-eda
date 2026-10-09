@@ -6,7 +6,10 @@ use datum_gui_viewport::{
 };
 impl Runtime {
     pub(super) fn begin_native_selection_press(&mut self) -> bool {
-        if self.workspace().tool != WorkspaceTool::Select {
+        if self.workspace().tool != WorkspaceTool::Select
+            || self.workspace().schematic_authoring.active()
+            || self.workspace().schematic_authoring.picker
+        {
             return false;
         }
         if !self

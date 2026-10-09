@@ -211,7 +211,7 @@
    PM059 ordinary-workflow, concrete prerequisite and development-evidence validation implemented in 27e98908 with 60 focused tests and governance checks passed. First-edit manager ownership, actual writer review and qualification boundaries unchanged; no automatic grant or acceptance. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 - **Deliver first native symbol placement and wire connection** (`USER-SCHEMATIC-DELIVERY`; `dat-first-native-schematic-948o`).
-   Owner approves FIRST-SYMBOL-WIRE-01 at e17cbc52. Implement native library symbol placement and connected wire gesture with necessary canonical setup, existing async writer/history, focused ordinary Wayland/WGPU proof and reserved review; no broader acceptance. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   FIRST-SYMBOL-WIRE-01 runtime delivery implemented: qualified bound symbol placement, exact connected wire gestures and async history/Save/reopen. Ordinary Wayland/WGPU App replay passed at scoped programmatic input; reserved candidate review and bounded availability remain pending. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->

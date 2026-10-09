@@ -25,6 +25,7 @@ impl Runtime {
             return Ok(false);
         }
         self.prepare_native_move_frame();
+        self.prepare_native_schematic_frame();
         let probe = gui_runtime_support::phase_probe::Probe::start("prepare");
         if gui_runtime_support::native_frame_probe::clear_only() {
             let acquire_started = std::time::Instant::now();

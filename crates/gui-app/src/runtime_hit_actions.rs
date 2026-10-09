@@ -25,6 +25,14 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::SchematicPicker
+            | HitTarget::SchematicLibraryPage(_)
+            | HitTarget::SchematicLibraryChoice(_)
+            | HitTarget::SchematicReference
+            | HitTarget::SchematicValue
+            | HitTarget::SchematicPlace
+            | HitTarget::SchematicCancel
+            | HitTarget::SchematicFinishWire => self.handle_schematic_chrome(target),
             HitTarget::NewProjectModal
             | HitTarget::NewProjectName
             | HitTarget::NewProjectDestination

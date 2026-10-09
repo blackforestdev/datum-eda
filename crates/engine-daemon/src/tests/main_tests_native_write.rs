@@ -344,7 +344,7 @@ fn native_write_rejects_disallowed_source() {
     let mut engine = Engine::new().expect("engine should initialize");
     let root = temp_native_project("write_bad_source");
 
-    for source in ["cli", "manual", "test", "robot"] {
+    for source in ["cli", "test", "robot"] {
         let response = dispatch_request(
             &mut engine,
             native_request(
@@ -364,7 +364,7 @@ fn native_write_rejects_disallowed_source() {
         assert!(
             error
                 .message
-                .contains("source must be \"tool\" or \"assistant\""),
+                .contains("source must be \"tool\", \"assistant\" or \"manual\""),
             "{}",
             error.message
         );
@@ -465,4 +465,25 @@ fn native_describe_complete_model_roundtrip_matches_its_durable_description() {
         "default response remains metadata-only"
     );
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn native_write_preserves_manual_gui_and_default_tool_provenance() {
+    let mut engine = Engine::new().unwrap();
+    let root = temp_native_project("native_manual_origin");
+    for (source, expected) in [
+        (Some("manual"), eda_engine::substrate::CommitSource::Manual),
+        (None, eda_engine::substrate::CommitSource::Tool),
+    ] {
+        let mut params = json!({"project_root":root,"verb":"datum.project.set_name","params":{"name":format!("Origin {expected:?}")},"reason":"native editor origin"});
+        if let Some(source) = source {
+            params["source"] = json!(source);
+        }
+        let response = dispatch_request(&mut engine, native_request(1, "native.write", params));
+        assert!(response.error.is_none(), "{:?}", response.error);
+        let model = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        assert_eq!(model.journal.last().unwrap().provenance.source, expected);
+    }
 }

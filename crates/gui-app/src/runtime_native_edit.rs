@@ -421,6 +421,16 @@ impl Runtime {
             );
             return true;
         }
+        if !matches!(action, NativeEditAction::Schematic)
+            && (self.workspace().schematic_authoring.active()
+                || self.workspace().schematic_authoring.picker)
+        {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Finish or cancel the schematic preview first",
+            );
+            return true;
+        }
         let Some(backing) = self.workspace().backing.clone() else {
             return false;
         };
@@ -444,13 +454,21 @@ impl Runtime {
                 .clone()
         }
         .and_then(|tip| tip.parse().ok());
-        let intent = NativeEditIntent::new(
+        let mut intent = NativeEditIntent::new(
             backing.request.project_root.clone(),
             project_id,
             expected_revision,
             expected_tip,
             action,
         );
+        if matches!(action, NativeEditAction::Schematic) {
+            intent.schematic = self
+                .session
+                .workspace_mut()
+                .schematic_authoring
+                .pending_request
+                .take();
+        }
         // Build the final click-derived preview before dispatching the writer.
         // Ending a gesture is not cancellation: keep this complete pending pose
         // visible until the qualified canonical response replaces it.
@@ -533,6 +551,7 @@ impl Runtime {
             let workspace = self.session.workspace_mut();
             workspace.scene = next.scene;
             workspace.schematic_scene = next.schematic_scene;
+            workspace.schematic_authoring = next.schematic_authoring;
             workspace.review = next.review;
             workspace.production = next.production;
             workspace.source_shards = next.source_shards;

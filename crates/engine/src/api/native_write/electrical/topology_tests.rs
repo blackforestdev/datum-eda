@@ -13,7 +13,9 @@ use crate::{
 use std::collections::BTreeSet;
 use uuid::Uuid;
 
-pub(super) fn fixture(name: &str) -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
+pub(in crate::api::native_write) fn fixture(
+    name: &str,
+) -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
     let root = super::super::test_support::temp_project_root(name);
     let ids = genesis::bootstrap_native_project(
         &root,

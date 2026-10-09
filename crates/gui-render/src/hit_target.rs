@@ -2,6 +2,14 @@
 use datum_gui_protocol::WorkspaceTool;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    SchematicPicker,
+    SchematicLibraryPage(bool),
+    SchematicLibraryChoice(usize),
+    SchematicReference,
+    SchematicValue,
+    SchematicPlace,
+    SchematicCancel,
+    SchematicFinishWire,
     NewProjectModal,
     NewProjectName,
     NewProjectDestination,

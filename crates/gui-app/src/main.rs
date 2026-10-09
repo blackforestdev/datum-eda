@@ -1,6 +1,7 @@
 mod native_device_recovery;
 mod native_edit_selection;
 mod runtime_native_edit;
+mod runtime_schematic;
 mod runtime_state;
 use anyhow::{Context, Result};
 use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
@@ -485,6 +486,7 @@ impl Runtime {
             return true;
         }
         self.cancel_native_move();
+        self.cancel_native_schematic();
         if self.workspace().tool != tool {
             self.cancel_native_selection_gesture();
         }
@@ -506,6 +508,9 @@ impl Runtime {
     }
 
     fn handle_authoring_pointer_move(&mut self, screen_pos: (f32, f32)) -> bool {
+        if self.native_schematic_pointer(screen_pos) {
+            return true;
+        }
         if !self.active_tool_is_authoring() || !self.workspace().authoring.gesture.is_active() {
             return false;
         }
@@ -677,3 +682,6 @@ mod tests;
 
 #[cfg(test)]
 mod native_move_frame_tests;
+
+#[cfg(test)]
+mod native_schematic_frame_tests;

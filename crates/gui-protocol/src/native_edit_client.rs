@@ -26,6 +26,7 @@ pub enum NativeEditAction {
         expected_tip: Uuid,
     },
     Save,
+    Schematic,
 }
 #[derive(Clone, Debug)]
 pub struct NativeEditIntent {
@@ -35,6 +36,7 @@ pub struct NativeEditIntent {
     pub expected_tip: Option<Uuid>,
     pub action: NativeEditAction,
     pub request_id: Uuid,
+    pub schematic: Option<crate::schematic_authoring::SchematicEditRequest>,
 }
 impl NativeEditIntent {
     pub fn new(
@@ -51,6 +53,7 @@ impl NativeEditIntent {
             expected_tip,
             action,
             request_id: Uuid::new_v4(),
+            schematic: None,
         }
     }
 }
@@ -262,13 +265,18 @@ impl NativeProjectClient {
             NativeEditAction::Redo { expected_tip } => {
                 ("datum.journal.redo", json!({"expected_tip":expected_tip}))
             }
+            NativeEditAction::Schematic => intent
+                .schematic
+                .as_ref()
+                .context("Schematic edit payload missing")?
+                .verb_params(),
             NativeEditAction::Save => unreachable!(),
         };
         let reason = format!("GUI {verb}; request {}", intent.request_id);
         let result = self.call(
             "native.write",
             json!({"project_root":intent.project_root,
-            "verb":verb,"params":params,"actor":"datum-gui","source":"tool","reason":reason,
+            "verb":verb,"params":params,"actor":"datum-gui","source":"manual","reason":reason,
             "expected_model_revision":intent.expected_revision,"expected_transaction_tip":intent.expected_tip,"batch_id":intent.request_id}),
             intent.request_id,
         );
