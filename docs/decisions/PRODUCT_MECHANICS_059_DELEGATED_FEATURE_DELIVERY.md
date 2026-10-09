@@ -807,3 +807,32 @@ it adds no feature implementation or qualification prerequisite. C01-C05 remain
 complete, with no live implementation claim. Do not reopen acceptance or repeat
 proof while waiting. A successor requires its own existing authorization and
 prerequisites; this owner acceptance supplies none.
+
+
+<!-- EVIDENCE:USER-SCHEMATIC-DELIVERY:NSD-C06-DELEGATED-SELECTION -->
+### Owner-appointed project management and successor disposition — 2026-10-09
+
+The owner appoints this session to manage Datum agents and explicitly delegates
+these successor decisions while away. Verbatim appointment and delegation are
+recorded in the existing `native-schematic/development-acceptance.json` task
+evidence, durable receipt commit `f7a4a465`. Named manager session
+`codex-project-manager-20261009` uses available `/root` session transport.
+This is an explicit owner appointment and delegated disposition under PM059,
+not a fabricated human selection or an extension inferred from earlier acceptance.
+
+For NSD-C06 the appointed manager records:
+`USER-SCHEMATIC-DELIVERY: select successor — UVT-S5A-BUILD / S5A-C04, retained execution authorization only`.
+FIRST-SYMBOL-WIRE-01 C01-C06 close at accepted source
+`94c95ae66270b703fdbe1d17e9e2811f1932133e` and reviewed packet
+`f00055c5a85b5a0242b5198d8293e7e049dd7af1`. Existing objective availability and
+actual reserved product review are reused; no new product proof or acceptance.
+
+The selected successor has existing execution authority, complete implementation
+and an explicitly released prior claim. It requires a fresh synchronized
+Frontier/beads claim before scheduled work. Selection does not resolve its reported
+shared-desktop focus/concurrent-input proof blocker or pass remaining native
+Wayland/HUMAN, N01-N17, C05/C06 or CAM/T04 obligations. No product semantics,
+dependency, scope reduction, waiver, destructive action, claim takeover or new
+successor execution grant is introduced. PM059 owner-reserved decisions retain
+their bounds. Independent governance review of the actual disposition receipt
+passed without findings; synchronized publication receives its own scoped review.

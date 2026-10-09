@@ -21,7 +21,7 @@
     "Unpassed Clippy13 and GUI supervision parity intake defects",
     "Explicit owner successor selection; no automatic phase advancement"
   ],
-  "closure_publication": "Runtime, focused proof, independent review and objective availability complete. Formal synchronized closure awaits an explicit successor selection because the selector requires one actionable canonical item and no successor is authorized.",
+  "closure_publication": "Synchronized NSD-C06 closure published under explicit owner-delegated manager successor selection. Original acceptance and all retained qualification obligations preserved.",
   "successor_disposition": {
     "timestamp_utc": "2026-10-09T23:05:15Z",
     "manager_session": "codex-project-manager-20261009",
@@ -50,13 +50,29 @@
       "No new product mechanism, dependency, scope reduction, waiver, destructive action, HUMAN finding or fabricated review PASS.",
       "Future successor selection requires its existing authorization and prerequisites."
     ],
-    "closure_publication": "Disposition recorded; synchronized Frontier/tracker publication follows this durable receipt.",
+    "closure_publication": "NSD-C06 complete; accepted delivery landed at94c95ae6, tracker closed and canonical successor UVT-S5A-BUILD/S5A-C04 selected with unchanged execution authority and no claim.",
     "independent_governance_review": {
       "reviewer": "/root/management_review",
       "outcome": "PASS",
       "candidate_blob": "3f970645",
       "base_blob": "270a3e08",
       "scope": "Actual appointment/delegation and successor-disposition receipt diff only; no findings. Not synchronized closure, S5A qualification, HUMAN assessment or runtime acceptance."
+    },
+    "receipt_commit": "f7a4a4657b76ee16aa0387dfa600730ec4451132",
+    "closure_governance_review": {
+      "reviewer": "/root/management_review",
+      "outcome": "PASS",
+      "base_commit": "f7a4a4657b76ee16aa0387dfa600730ec4451132",
+      "findings": [],
+      "candidate_blobs": {
+        "issues": "f347004d03747127dbd785157758706bcceaf8cc",
+        "PM059": "e1a7197b10592416600fe0da8cd9b9bd47024dd1",
+        "acceptance": "416d49858d4de67bdc5e8ef82d132a70fa93ebf1",
+        "PROGRESS": "df3b138da16f9a0eef1a7ee366326c33dbd12464",
+        "Frontier": "f041354d5123070b450c7ced8e03ecd57b1aefa4",
+        "traceability": "fcecfe090e8436e5a2a77b879402228d38805ab5"
+      },
+      "scope": "Actual six-file synchronized NSD-C06 closure and retained-authority successor selection. Reviewer independently checked selector next, traceability and diff. No S5A, runtime, physical/HUMAN or wider qualification PASS."
     }
   }
 }
