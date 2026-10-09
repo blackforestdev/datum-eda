@@ -1,0 +1,9 @@
+{
+  "pid": 4096267,
+  "command": "target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit ",
+  "binary_sha256": "c8b0fd3ea2af2dc9c2e3a5f2167d75c34e6da489312ecd08571380596e5e8236",
+  "settings": {
+    "XDG_SESSION_TYPE": "wayland",
+    "WAYLAND_DISPLAY": "wayland-0"
+  }
+}

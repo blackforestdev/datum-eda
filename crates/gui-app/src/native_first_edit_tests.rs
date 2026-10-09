@@ -338,3 +338,74 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
         std::thread::sleep(Duration::from_millis(10));
     }
 }
+
+#[test]
+#[ignore = "requires real DATUM_FIRST_EDIT_PROJECT copy and native Wayland; pending edit failure safety"]
+#[allow(deprecated)]
+fn pending_move_worker_failure_restores_confirmed_scene() {
+    let root = PathBuf::from(std::env::var_os("DATUM_FIRST_EDIT_PROJECT").unwrap());
+    let board = root.join("board/board.json");
+    let bytes = std::fs::read(&board).unwrap();
+    let args =
+        GuiArgs::try_parse_from(["datum-gui", "--project-root", root.to_str().unwrap()]).unwrap();
+    let events = EventLoop::<()>::with_user_event()
+        .with_wayland()
+        .with_any_thread(true)
+        .build()
+        .unwrap();
+    let wake = events.create_proxy();
+    let window = Arc::new(
+        events
+            .create_window(winit::window::Window::default_attributes().with_visible(false))
+            .unwrap(),
+    );
+    let launch = args.load_launch_state(Some(wake.clone())).unwrap();
+    let mut runtime = pollster::block_on(Runtime::new(window, launch, Some(1.0), wake)).unwrap();
+    let base = runtime.workspace().scene.clone();
+    let component = base.components.iter().find(|c| !c.locked).unwrap();
+    let preview = FootprintMovePreview::begin(
+        &base,
+        &component.object_id,
+        component.position,
+        runtime.workspace().authoring.snap,
+    )
+    .unwrap();
+    let destination = PointNm {
+        x: component.position.x + runtime.workspace().authoring.snap.grid_nm,
+        y: component.position.y,
+    };
+    runtime.session.workspace_mut().scene = preview.scene_at(destination).unwrap();
+    runtime.native_edit.pending_move_base = Some(base.clone());
+    // A disconnected result channel represents worker loss, with no forged
+    // canonical result or write. The pending display must not claim success.
+    let (sender, receiver) = mpsc::channel();
+    runtime.native_edit.pending = Some(receiver);
+    drop(sender);
+    assert!(runtime.poll_native_edit());
+    assert!(
+        runtime.native_edit.blocked,
+        "unconfirmed outcome requires reopen"
+    );
+    assert_eq!(
+        serde_json::to_vec(&runtime.workspace().scene).unwrap(),
+        serde_json::to_vec(&base).unwrap(),
+        "worker loss restores the complete last confirmed scene"
+    );
+    assert!(runtime.queue_native_edit(NativeEditAction::Save));
+    assert!(
+        !runtime.native_edit.pending(),
+        "blocked editor must not send another mutation"
+    );
+    assert_eq!(
+        std::fs::read(board).unwrap(),
+        bytes,
+        "failure handling cannot write the Project"
+    );
+    runtime.begin_application_terminal_shutdown();
+    let deadline = Instant::now() + Duration::from_secs(6);
+    while !runtime.application_terminal_shutdown_complete() {
+        assert!(Instant::now() < deadline, "owned terminal shutdown");
+        runtime.poll_terminal_output();
+        std::thread::sleep(Duration::from_millis(10));
+    }
+}

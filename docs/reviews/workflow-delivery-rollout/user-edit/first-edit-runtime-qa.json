@@ -2,7 +2,7 @@
   "packet": "UED-FIRST-MOVE-01-RUNTIME-QA",
   "task": "USER-EDIT-DELIVERY",
   "step": "UED-C07",
-  "source_parent": "c9c0fba2e92cebe0e69a29d95804742947852dec",
+  "source_parent": "c25efc2bfbecf4b018d4dfb4dcf21e8c64e132fd",
   "source_blobs": [
     {
       "path": "crates/gui-app/src/main.rs",
@@ -10,7 +10,7 @@
     },
     {
       "path": "crates/gui-app/src/runtime_native_edit.rs",
-      "blob": "26d81899f1c5eba675841a59b08c6733df7c57af"
+      "blob": "b8448e82af02a35c6239d46b6dbf4bf49f965422"
     },
     {
       "path": "crates/gui-app/src/runtime_primary_pointer.rs",
@@ -26,11 +26,15 @@
     },
     {
       "path": "crates/gui-app/src/native_move_frame_tests.rs",
-      "blob": "aa82566023ddd35b7081d2bd506b5d8ad0dd60cd"
+      "blob": "bbb5eb322c3dc3200086c89ac2cfa29e3b1e7716"
     },
     {
       "path": "crates/gui-app/src/app_frame.rs",
       "blob": "8c76dccf140c395704f90801448e8f8418a499ec"
+    },
+    {
+      "path": "crates/gui-app/src/native_first_edit_tests.rs",
+      "blob": "a5b1001771325e7aa2aeb5e0e91784534e69bacc"
     }
   ],
   "authority": "Retained owner first-footprint edit correction grant and PM059 manager appointment; no successor grant.",
@@ -127,7 +131,7 @@
   "ordinary_build_cohort": {
     "datum-gui": {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
-      "sha256": "c8b0fd3ea2af2dc9c2e3a5f2167d75c34e6da489312ecd08571380596e5e8236"
+      "sha256": "00bda1c7bac9077951e0a6295b837075a2d1ebbca190fe3b61538cb2ad6c0af6"
     },
     "datum-eda": {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
@@ -138,7 +142,7 @@
       "sha256": "74e034b6059ee4d44903e55ad488b2221919cd242b9cb7e35f48235b429efa98"
     }
   },
-  "ordinary_build_cohort_log": "first-edit-runtime-logs/presented-repair-build.log",
+  "ordinary_build_cohort_log": "first-edit-runtime-logs/placement-build.log",
   "motion_dispatch_cause": {
     "introduced_by": "fcb7633caa6c8b7fed5e85a8b92eb76c694a9ba7",
     "path": "crates/gui-app/src/runtime_native_edit.rs::native_move_pointer",
@@ -219,5 +223,41 @@
       "pointer_batch_ms": 14
     },
     "remaining": "Demonstrated Move presentation starvation is repaired and independently PASS. Original recovery exhaustion remains unattributed/open; availability withdrawn, UED-C07 in progress, physical/HUMAN and wider qualification open; no successor grant."
+  },
+  "placement_correction": {
+    "issue": "dat-first-edit-placement-snapback-koyu",
+    "owner_observation": "Owner ordinary Wayland QA confirms moving selected object now works on prior5155 candidate; destination left-click visibly returns it to origin. Partial owner evidence for movement only, no broader acceptance.",
+    "owner_pin": "first-edit-runtime-logs/placement-owner-process.json; GUIc8b0fd3e, inherited Wayland with no DATUM/WGPU/VK/CLI overrides; original running process is not modified or closed.",
+    "owner_journal": "Latest captured journal move before4a0e1b92 ->afteraca63ac7, Footprint9acb0175-ec72-581c-8990-42131a6d6ea7, position(146000000,92160000)->(141400000,100460000). Canonical mutation applied; this does not prove the owner waited for visible completion.",
+    "introduced_by": "fcb7633caa6c8b7fed5e85a8b92eb76c694a9ba7 queue_native_edit successful-start branch calls cancel_native_move.",
+    "reproduction": {
+      "result": "FAIL before repair; immediate placement assertion shows original(140200000,91500000), expected click pose(146500000,93600000)",
+      "log": "first-edit-runtime-logs/placement-before-proof.log",
+      "limits": "Assertion aborts a copied Project worker; ensuing daemon Broken pipe is fixture-abort evidence, not owner crash cause."
+    },
+    "repair": "Prepare whole final click-derived scene before starting mutation. Successful worker start ends gesture without Cancel/base restoration and holds final pose with Applying Project action. Only qualified canonical refresh replaces it; unknown/disconnected outcome restores complete last confirmed scene and blocks editing. No new writer, persistence, geometry, timeout, dependency or authority mechanism.",
+    "proof": {
+      "result": "1 PASS, 0 failures; 74.20 seconds",
+      "log": "first-edit-runtime-logs/placement-after-proof.log",
+      "configuration": "Existing ordinary production App/Winit Wayland/WGPU Vulkan fixture, trace OFF; in-process pointer events and normalized M. No X11, physical-compositor or full HUMAN qualification inferred.",
+      "subject": "Footprint ca340e78-04a5-5307-a024-9c5720a807d2",
+      "pending_position_nm": [
+        146500000,
+        93600000
+      ],
+      "pending_presentation_observed": true,
+      "pending_status": "Applying Project action",
+      "canonical_position_exactly_matches_click": true,
+      "committed_revision": "4da9a200fb99aef8fa5eb863a07643c46eeb2f0942ba80709608ac8b2eb93bc2",
+      "behavior": "Presented final placement remains away from origin throughout observed pending frames, followed by same canonical position and Edit committed; translated preview, Cancel, presented Undo/Redo and byte-exact Save/reopen pass. Production completion wakes retained."
+    },
+    "failure_safety": {
+      "result": "1 PASS, 0 failures; 10.17 seconds",
+      "log": "first-edit-runtime-logs/placement-failure-proof.log",
+      "question": "Does worker result-channel disconnection restore complete last confirmed scene, block further mutation and preserve source bytes?",
+      "method": "Existing real-board Runtime test module and actual native Wayland host; dropped in-process result sender, no canonical write or OS input injection. Complete serialized scene equality, blocked editor and unchanged copied board bytes asserted. Not ordinary pixel/HUMAN proof."
+    },
+    "review": "Reserved independent bounded candidate review pending.",
+    "remaining": "Original recovery episode remains unattributed/open; UED-C07 and development availability withheld, no successor or wider qualification. Source-relative exact geometry, source bytes, canonical guards and existing review gates retained."
   }
 }

@@ -19,6 +19,8 @@ struct Fixture {
     selected_component: Option<String>,
     original_label: Option<datum_gui_render::RectPx>,
     committed_label: Option<datum_gui_render::RectPx>,
+    committing_position: Option<PointNm>,
+    pending_placement_presented: bool,
 }
 impl Fixture {
     fn mouse(&mut self, events: &ActiveEventLoop, x: f64, y: f64, click: bool) {
@@ -305,8 +307,37 @@ impl Fixture {
                     .expect("rendered Footprint must expose its authored label");
                 let x = (region.rect.x + region.rect.width * 0.5) as f64;
                 let y = (region.rect.y + region.rect.height * 0.5) as f64;
-                eprintln!("move-frame destination presented_hit={:?}", region.target);
+                let click_world = runtime
+                    .prepared_scene()
+                    .unwrap()
+                    .world_point_at_screen(x as f32, y as f32)
+                    .unwrap()
+                    .0;
+                let runtime = self.app.runtime.as_ref().unwrap();
+                let destination = runtime
+                    .native_edit
+                    .preview
+                    .as_ref()
+                    .unwrap()
+                    .destination(click_world, runtime.workspace().authoring.snap)
+                    .unwrap();
+                self.committing_position = Some(destination);
                 self.mouse(events, x, y, true);
+                assert_eq!(
+                    self.app
+                        .runtime
+                        .as_ref()
+                        .unwrap()
+                        .workspace()
+                        .scene
+                        .components
+                        .iter()
+                        .find(|c| Some(&c.component_uuid) == self.selected_component.as_ref())
+                        .unwrap()
+                        .position,
+                    destination,
+                    "Placement must retain the clicked pose while the canonical edit is pending"
+                );
                 assert!(
                     self.app.runtime.as_ref().unwrap().native_edit.pending(),
                     "destination click must commit rather than reselect"
@@ -321,6 +352,22 @@ impl Fixture {
                 assert!(
                     !runtime.native_edit.blocked,
                     "committed refresh must be qualified"
+                );
+                assert_eq!(
+                    runtime
+                        .workspace()
+                        .scene
+                        .components
+                        .iter()
+                        .find(|c| Some(&c.component_uuid) == self.selected_component.as_ref())
+                        .unwrap()
+                        .position,
+                    self.committing_position.unwrap(),
+                    "qualified canonical placement must match the final click"
+                );
+                eprintln!(
+                    "move-frame pending_placement_presented={}",
+                    self.pending_placement_presented
                 );
                 let after = std::fs::read(&self.board_path).unwrap();
                 assert_ne!(after, self.preimage);
@@ -451,6 +498,39 @@ impl ApplicationHandler for Fixture {
             events.exit();
             return;
         }
+        if self.stage == 20 {
+            let runtime = self.app.runtime.as_ref().unwrap();
+            if runtime.native_edit.pending()
+                && !runtime.renderer.render_session().has_pending_frame()
+            {
+                let position = runtime
+                    .workspace()
+                    .scene
+                    .components
+                    .iter()
+                    .find(|c| Some(&c.component_uuid) == self.selected_component.as_ref())
+                    .unwrap()
+                    .position;
+                assert_eq!(
+                    Some(position),
+                    self.committing_position,
+                    "pending placement must not return to its origin"
+                );
+                let label = self.selected_label();
+                assert_ne!(
+                    Some(label),
+                    self.original_label,
+                    "pending placement must be presented away from its origin"
+                );
+                if !self.pending_placement_presented {
+                    eprintln!(
+                        "move-frame pending placement presented at={position:?} label={label:?} status={:?}",
+                        runtime.workspace().last_command_status
+                    );
+                }
+                self.pending_placement_presented = true;
+            }
+        }
         if started.elapsed() > Duration::from_millis(100) {
             eprintln!(
                 "move-frame ordinary_round_ms={} production_workspace_pending={pending:?}",
@@ -535,6 +615,8 @@ fn ordinary_app_select_m_move_commit_history_reopen() {
         selected_component: None,
         original_label: None,
         committed_label: None,
+        committing_position: None,
+        pending_placement_presented: false,
     };
     events.run_app(&mut fixture).unwrap();
     assert_eq!(

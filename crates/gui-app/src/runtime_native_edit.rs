@@ -19,6 +19,7 @@ pub(super) struct EditWork {
     preview_tip: Option<String>,
     pending_position: Option<PointNm>,
     preview_awaiting_presentation: bool,
+    pending_move_base: Option<datum_gui_protocol::BoardReviewSceneV1>,
     pending: Option<mpsc::Receiver<Answer>>,
     client: Arc<Mutex<Option<NativeProjectClient>>>,
     wake: winit::event_loop::EventLoopProxy<()>,
@@ -31,6 +32,7 @@ impl EditWork {
             preview_tip: None,
             pending_position: None,
             preview_awaiting_presentation: false,
+            pending_move_base: None,
             pending: None,
             client: Arc::new(Mutex::new(None)),
             wake,
@@ -155,6 +157,14 @@ impl Runtime {
             return true;
         }
         false
+    }
+    fn restore_pending_move_base(&mut self) {
+        if let Some(base) = self.native_edit.pending_move_base.take()
+            && base.project_uuid == self.workspace().scene.project_uuid
+        {
+            self.session.workspace_mut().scene = base;
+            self.invalidate_scene();
+        }
     }
     // The bounded first-edit capability moves one complete Footprint. Never
     // silently reduce a Run, compound selection or another object to a subset.
@@ -369,10 +379,36 @@ impl Runtime {
             expected_tip,
             action,
         );
+        // Build the final click-derived preview before dispatching the writer.
+        // Ending a gesture is not cancellation: keep this complete pending pose
+        // visible until the qualified canonical response replaces it.
+        let pending_move = match (action, self.native_edit.preview.as_ref()) {
+            (NativeEditAction::Move { x_nm, y_nm, .. }, Some(preview)) => {
+                match preview.scene_at(PointNm { x: x_nm, y: y_nm }) {
+                    Ok(scene) => Some((preview.base.clone(), scene)),
+                    Err(error) => {
+                        self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
+                        return true;
+                    }
+                }
+            }
+            _ => None,
+        };
         let inputs = native_edit_selection::Inputs::capture(self);
         match self.native_edit.start(intent, backing.request, inputs) {
             Ok(()) => {
-                self.cancel_native_move();
+                if let Some((base, scene)) = pending_move {
+                    self.native_edit.pending_move_base = Some(base);
+                    self.native_edit.preview = None;
+                    self.native_edit.preview_tip = None;
+                    self.native_edit.pending_position = None;
+                    self.native_edit.preview_awaiting_presentation = false;
+                    self.session.workspace_mut().scene = scene;
+                    self.session.workspace_mut().cancel_authoring_gesture();
+                    self.invalidate_scene();
+                } else {
+                    self.cancel_native_move();
+                }
                 self.session.workspace_mut().last_command_status = Some(EditorCommandStatus {
                     action: "native_project_edit".into(),
                     detail: "Applying Project action".into(),
@@ -394,6 +430,7 @@ impl Runtime {
             Err(_) => {
                 self.native_edit.pending = None;
                 self.native_edit.blocked = true;
+                self.restore_pending_move_base();
                 self.log_console_refusal(
                     ConsoleFeedbackSource::Tool,
                     "Edit worker stopped; reopen the Project before editing",
@@ -403,6 +440,7 @@ impl Runtime {
         };
         self.native_edit.pending = None;
         if self.workspace().scene.project_uuid != answer.intent.project_id.to_string() {
+            self.native_edit.pending_move_base = None;
             return false;
         }
         if answer
@@ -413,11 +451,13 @@ impl Runtime {
             let inputs = native_edit_selection::Inputs::capture(self);
             if let Err(error) = self.native_edit.reconcile_again(answer, inputs) {
                 self.native_edit.blocked = true;
+                self.restore_pending_move_base();
                 self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
             }
             return true;
         }
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
+            self.native_edit.pending_move_base = None;
             let workspace = self.session.workspace_mut();
             workspace.scene = next.scene;
             workspace.schematic_scene = next.schematic_scene;
@@ -439,6 +479,7 @@ impl Runtime {
             self.invalidate_scene();
         } else {
             self.native_edit.blocked = true;
+            self.restore_pending_move_base();
         }
         match answer.result {
             Ok(message) => {
