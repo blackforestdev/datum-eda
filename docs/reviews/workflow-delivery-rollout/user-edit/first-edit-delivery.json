@@ -107,10 +107,10 @@
   },
   "delivered_project_state": "Read-only snapshot of the current Datum-owned owner QA Project; owner edits preserved. Native proof mutated private copies only. Original KiCad inputs match retained SHA256 pins.",
   "synchronized_closure_boundary": {
-    "status": "C07 complete. C08 objective availability approved; formal closure publication pending explicit owner canonical successor selection.",
-    "requirement": "PM025 and current selector require exactly one actionable canonical item; all-complete UED cannot remain canonical. Existing UED grant selects_successor=false.",
-    "owner_request": "Select and authorize bounded readiness for already-directed native library-backed symbol placement and wire connection, or designate another existing Frontier task. This is successor planning selection, not execution authority.",
-    "claim": "Explicitly released; no first-edit runtime implementation or new test campaign remains required."
+    "status": "Closed: owner explicitly selects next bounded native schematic readiness.",
+    "owner_disposition": "remove the blockers and begin the next logical development work",
+    "claim": "Released",
+    "successor": "USER-SCHEMATIC-DELIVERY planning only; no execution or broad qualification inferred."
   },
   "previous_delivery": {
     "source_commit": "a07ce3e57e29179072adbc9e55534008984312dc",

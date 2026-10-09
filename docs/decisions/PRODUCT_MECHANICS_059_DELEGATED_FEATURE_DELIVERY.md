@@ -546,3 +546,127 @@ authorize bounded readiness for the already-directed native library-backed symbo
 placement/wire-connection delivery, or designate another existing Frontier task.
 This does not grant successor execution. All full S5A/GWP/NA/C04–C06, physical
 Wayland/HUMAN, CAM/T04, wider platform and full writer obligations remain pending.
+
+### Owner-selected native schematic delivery readiness — 2026-10-09
+
+The owner directs “remove the blockers and begin the next logical development
+work” in response to the proposed bounded readiness for native library-backed
+symbol placement and wire connection. This selects that readiness successor and
+resolves UED-C08 publication. First-edit objective manager acceptance remains
+pinned to `a365ae5e` and actual reserved receipts. USER-EDIT-DELIVERY lands with
+its claim released; all broader qualification and historical defects remain open.
+
+USER-SCHEMATIC-DELIVERY initially has bounded readiness authority. The existing
+schematic/GUI authoring contracts control; full NATIVE-AUTHORING remains open.
+No representation, dependency, import expansion or new product mechanism is granted.
+
+<!-- REQ:USER-SCHEMATIC-DELIVERY:NSD-C01 -->
+Reconcile actual symbol/library, wire, typed GUI, canonical writer/history and
+Project setup owners; produce one concrete execution scope in this existing
+delivery record. No general coverage matrix or fixture campaign.
+
+<!-- REQ:USER-SCHEMATIC-DELIVERY:NSD-C02 -->
+<!-- OWNER:USER-SCHEMATIC-DELIVERY:NSD-C02:SCHEMATIC-EXECUTION -->
+Authorize the source-backed bounded implementation scope: existing native library
+symbol selection, complete preview/cancel/placement and connected wire gesture,
+canonical history/Save/reopen, necessary existing native sheet/pool setup, ordinary
+Wayland/WGPU integration and reserved independent review. Reuse ratified contracts
+and engine primitives; no private writer, new dependency, import expansion or
+broad authoring acceptance.
+
+<!-- REQ:USER-SCHEMATIC-DELIVERY:NSD-C03 -->
+Implement authorized native schematic user behavior through shared tooling and
+canonical asynchronous edits; preserve revision/cancellation and electrical identity.
+
+<!-- REQ:USER-SCHEMATIC-DELIVERY:NSD-C04 -->
+Verify focused cancel/commit/connected membership/history/Save/reopen and failure
+safety in ordinary Wayland/WGPU; resolve actual defects and obtain reserved
+bounded candidate review. Reuse adequate existing evidence.
+
+<!-- REQ:USER-SCHEMATIC-DELIVERY:NSD-C05 -->
+<!-- OWNER:USER-SCHEMATIC-DELIVERY:NSD-C05:SCHEMATIC-DEVELOPMENT-ACCEPTANCE -->
+Disposition objective bounded development availability with actual proof and
+independent review; no self-review, full qualification or automatic successor.
+
+<!-- EVIDENCE:USER-SCHEMATIC-DELIVERY:NSD-C01-READINESS -->
+
+NSD-C01 is complete against source `a4806669af33d813b7ad1a74c2a199585495f152`. The smallest missing behavior is
+manual native-library symbol placement followed by connected schematic wiring
+in the ordinary application, not a missing engine substrate. Source owners:
+
+- `gui-protocol/src/native_edit_client.rs`: typed actions currently Move, Undo,
+  Redo and Save only. Add schematic intent adapters to the same worker transport.
+- `gui-app/src/runtime_native_edit.rs`: reuse asynchronous guarded execution,
+  pending-write exclusion and atomic refreshed scene/selection publication.
+- `engine/src/api/native_write/registry.rs`: currently aggregates project, board
+  and waiver verbs; schematic adapters are missing from this route. Register
+  adapters over existing builders, preserving fresh revision/lease validation.
+- `engine/src/api/native_write/schematic_symbols.rs`: existing placement batch
+  can atomically create the symbol and resolved ComponentInstance binding.
+- `cli/src/commands/schematic/symbol_library_materialization.rs` and
+  `symbol_mutations.rs`: existing complete pool-pin materialization and qualified
+  entity/gate/part resolution must be reused/extracted into the engine owner;
+  GUI must not invent a second binding algorithm or accept compatibility-only
+  identifiers as equivalent to native library placement.
+- `engine/src/api/native_write/schematic_connectivity.rs`: existing wire and
+  Junction builders are reusable. Segment-only CLI behavior lacks auto-junction
+  inference; implement the contract's wire gesture and same-batch T-junctions
+  rather than silently substituting a disconnected line tool.
+- `engine/src/api/native_write/schematic_sheets.rs`: existing canonical sheet
+  creation and shard/history handling are available; no private setup writer.
+
+Read-only inspection of the delivered DOA2526-first-edit Project finds
+`project.json` pools empty and `schematic/schematic.json` sheets empty. Its board
+and owner edits remain intact. Therefore library/sheet setup is a real first-use
+prerequisite. It does not justify changing the frozen KiCad schematic importer
+or hand-editing Project JSON. Reuse the existing native setup and library
+authoring/attachment primitives on a separately Datum-owned schematic delivery
+Project; preserve the current first-edit Project and original KiCad files.
+
+FIRST-SYMBOL-WIRE-01 recommended execution scope:
+
+1. Expose the existing qualified native library reads and symbol binding through
+   the engine; extend existing typed writer adapters, avoiding new persistence,
+   transport or source-model mechanisms. Establish a native sheet and an owned
+   resolvable library using existing canonical setup capabilities. Library
+   content/provenance must already be authorized; no new external dependency or
+   unapproved imported library.
+2. Ordinary schematic UI: choose native symbol, enter reference/value, preview,
+   cancel without writes and click to place with complete pin identities and
+   ComponentInstance binding. Use existing ratified library/tool surfaces; any
+   protected prototype edit remains in Claude's lane.
+3. Place Wire: snap to exact existing pins/grid, preview a connected wire gesture,
+   finish/cancel under the existing contract, compose all segments and required
+   T-junction markers as one canonical batch. Derived connectivity must show
+   the intended pins on the same net. No tolerance or partial membership.
+4. Reuse asynchronous interaction and first-edit history/Save/reopen. Pending
+   edits cannot start another write; stale revision/cancel must not publish a
+   false applied scene. Undo/redo restores complete objects and connectivity.
+5. Focused ordinary Wayland/WGPU native proof on the delivered Project, isolated
+   guard/cancel/history failure controls reusing existing fixtures, actual reserved
+   independent candidate review, then pinned development delivery. Do not force
+   X11 or claim physical HUMAN proof.
+
+No existing first-edit defect or full S5A/NA proof is added as an implementation
+prerequisite. This slice does not close full NATIVE-AUTHORING, GUI-WRITE-PATH,
+S5A/C04–C06, CAM/T04, physical HUMAN, hierarchy/library-editor, other schematic
+verbs, physical placement or routing obligations. Those remain explicitly open;
+there is no broad acceptance or mandatory-scope waiver. No new tests or fixture
+construction were needed to answer this readiness question.
+
+Exact remaining decision: authorize FIRST-SYMBOL-WIRE-01 execution under the
+existing schematic authoring and PM059/PM060 contracts, including necessary
+canonical sheet/library setup and bounded GUI/engine adapters, focused native
+verification and reserved review. NSD-C02 preserves the distinction between the
+owner's selected readiness successor and the concrete production execution grant.
+
+Readiness source SHA256 pins:
+- `crates/gui-protocol/src/native_edit_client.rs`: `5e08ef53a9865bad7b303c9890a375106eb192dcb5321f049bf44238b33ac59e`
+- `crates/gui-app/src/runtime_native_edit.rs`: `e19478714651e47bf3298c312b6595e894b4759ff8dfceb8245ef7bbb90dc27f`
+- `crates/engine/src/api/native_write/registry.rs`: `c8f91d50b6d96b19907c739daa43902a012d32ac2889a41af0d138d736312083`
+- `crates/engine/src/api/native_write/schematic_symbols.rs`: `b8b9a4487e43764465f7fb1e7ade6b99c0e15a65ec7bbbfa79da31d2034ef9bd`
+- `crates/engine/src/api/native_write/schematic_connectivity.rs`: `d23266bcc241ec2f62013ae0d005839d294a35d70846b9431b86f8adc0f75821`
+- `crates/engine/src/api/native_write/schematic_sheets.rs`: `35207d364ad3db11bb53deb6d69a635c3bf8df1cfc7ab898544c6f53c94b4a37`
+- `crates/cli/src/commands/schematic/symbol_library_materialization.rs`: `a2e114efd497a28396100f737bc1148d08963ec4fb354fa8313b405a2e8b0f1b`
+- `crates/cli/src/commands/schematic/symbol_mutations.rs`: `8e4b83521563eb1fd37af3e536c10ec418c3e45766d74a114fd79bc1010615da`
+- `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`: `7259766f1f8c0cd377347612120c0df044ccb522a7166bdbe91346b462ad66bc`
