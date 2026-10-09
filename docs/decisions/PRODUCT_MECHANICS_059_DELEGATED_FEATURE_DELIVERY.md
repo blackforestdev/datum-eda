@@ -727,3 +727,49 @@ NSD-C03 is complete; NSD-C04 selects the actual reserved candidate review and
 remaining focused safety checks. No implementation PASS, bounded development
 acceptance, physical compositor/HUMAN proof, full authoring/S5A/C04-C06,
 performance budget, CAM/T04 or automatic successor is inferred.
+
+<!-- EVIDENCE:USER-SCHEMATIC-DELIVERY:NSD-C04-INDEPENDENT-PASS -->
+
+Reserved independent audit session `01a0e343-3d9c-70f1-899e-5bd239513383`
+returns actual bounded implementation **PASS** for source
+`94c95ae66270b703fdbe1d17e9e2811f1932133e`, engine unit `9cda8d99`, reviewed
+delivery packet blob `f00055c5a85b5a0242b5198d8293e7e049dd7af1`. No mandatory
+source findings. Unmodified actual receipt is archived at
+`docs/reviews/workflow-delivery-rollout/native-schematic/independent-review.json`,
+SHA256 `740f7766f46a0d8914fbb5c0981b2e3fa11e423b20e4a6a2e207bce47d1b2aff`. Independent guarded production App
+Wayland/WGPU replay on a private copy passed the declared symbol/cancel/place,
+exact connected three-segment wire, complete physical Run membership, undo/redo,
+Save/reopen workflow (one case, 7.53 seconds). Reviewer inspected ordinary
+executable reopen capture and verified cohort/seed/original preimages. Producer
+engine four cases (including Manual/Tool/Assistant negatives), daemon ten and CLI
+eight are explicitly reused at their scopes, not independently rerun.
+
+NSD-C04 is complete for the declared bounded integration/proof/review. Required
+drift invocation did not pass: initial /tmp reserve refusal is preserved; exact
+session-owned temporary Projects were moved to disk with evidence retained.
+Subsequent Clippy executed and failed 13 lints in five unchanged baseline files,
+captured as `dat-preexisting-engine-clippy-k2kn`. The remaining battery was not
+reached. Existing GUI-supervision parity drift remains
+`dat-first-edit-parity-drift-dlkt`. No gate PASS or waiver is claimed. Source
+health and its 13 regressions, workspace/staged formatting, file lane, menu model,
+project state, spec governance and traceability passed separately. Physical
+compositor/HUMAN, full authoring/GWP/S5A/C04-C06, performance, CAM/T04 and all
+other qualification remain open.
+
+The reserved audit also confirms the actual delegation boundary: the owner
+appointment at UED-C02 covers the first-footprint edit, excludes successor phase
+delegation, and the schematic grant retains that appointment at its bounds.
+NSD-C05's recommended manager response does not appoint a manager. Therefore
+implementation and review need no renewed approval, but objective schematic
+development acceptance must be dispositioned directly by the owner or by an
+explicit extension of the named manager's scope to FIRST-SYMBOL-WIRE-01/NSD-C05.
+No authority is inferred from the reviewer's assessment.
+
+The implementation claim is explicitly released with C03/C04 complete and C05
+selected at its owner boundary. The exact ordinary launch candidate is:
+`/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-schematic --focus-pane schematic`.
+Use Place > Symbol, enter reference/value, Place and click the sheet; Escape
+cancels preview. Place > Wire or W connects exact pins/grid vertices; Finish Wire
+completes the batch. Ctrl+Z, Ctrl+Shift+Z/Ctrl+Y and Ctrl+S use canonical history
+and Save. Original KiCad and owner board edits are preserved. No successor is
+selected or authorized by this delivered candidate.

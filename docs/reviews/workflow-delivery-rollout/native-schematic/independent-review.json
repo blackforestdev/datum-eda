@@ -1,0 +1,43 @@
+{
+  "reviewer": "owner-reserved independent audit01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "94c95ae66270b703fdbe1d17e9e2811f1932133e",
+  "engine_commit": "9cda8d99",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/native-schematic/first-symbol-wire-delivery.json",
+  "packet_blob_reviewed": "f00055c5a85b5a0242b5198d8293e7e049dd7af1",
+  "outcome": "PASS for bounded FIRST-SYMBOL-WIRE-01 implementation using reviewed focused evidence and independent ordinary Wayland/WGPU replay; no manager acceptance or full qualification",
+  "mandatory_source_findings": [],
+  "source_review": [
+    "Native symbol adapter resolves authorized library entity/gate/part, materializes complete stable pins with checked absolute placement, binds ComponentInstance and commits through shared canonical writer. Reference uniqueness/missing-library/exact-pose errors remain explicit.",
+    "Manual GUI provenance uses existing CommitSource::Manual; default Tool and Assistant keep proposal restrictions. Schematic requests require current model revision and transaction tip; canonical helper still freshly validates under real writer lease.",
+    "Native first births reuse existing complete final-partition planner only for actually empty pre-topology. Nonempty unadopted source and historical generic builders retain explicit adoption. Recorded identity operations share atomic batch/inverse/history; reads allocate nothing.",
+    "Wire gesture commits all segments and exact T junctions in one batch. Exact integer contact excludes noncontacts/crossings without endpoints; no tolerance. Preview/cancel, pending-write refusal, complete source refresh and uncertain-outcome reconciliation use existing async engine path."
+  ],
+  "independent_replay": {
+    "path": "target/user-edit-review/nsd-94c95ae6/workflow-reserve-restored.log",
+    "sha256": "5e4cf9c27e3a7868ddd26dc5df06d5358b3d767bbc0f98d9ec6b39ae3b1f9f72",
+    "tests_passed": 1,
+    "runtime_seconds": 7.53,
+    "result": "Production App/Winit Wayland/WGPU native replay on private blank prepared Project: choose U1/U2 library symbols, preview/cancel byte preservation, complete placement bindings/pins, exact terminal-snapped connected three-segment wire, undo/redo exact authored bytes, Save and reopened authoritative U1 OUT/U2 IN- membership pass. In-process production events, not physical compositor/HUMAN proof."
+  },
+  "visual_evidence": "Inspected target/nsd-reopen-ordinary.png from separately reopened ordinary binary: persisted U1/U2 and connecting wire visible. This is scoped visible reopen evidence, not visual prototype conformance or HUMAN acceptance.",
+  "reused_proof": [
+    "Final producer engine4 PASS, including Manual success, Tool/Assistant proposal refusal without changed revision, first-birth undo/reopen and nonempty legacy negative, T contacts and exact integer extremes.",
+    "Producer daemon10 and CLI8 plus unchanged canonical writer exclusion/uncertain/history safety reused at recorded scopes. No independent engine/CLI rerun."
+  ],
+  "pins": "Delivery candidate cohort/log hashes verified; current GUI/CLI/daemon unchanged after independent replay. Prepared owner Project, existing board Project and original KiCad preimages preserved; only private copy mutated. Production source unchanged. Manager tracker intake remains separate owned dirty work.",
+  "resource_and_gate_disclosure": {
+    "initial_attempt": {
+      "path": "target/user-edit-review/nsd-94c95ae6/workflow.log",
+      "sha256": "ccc1235c9c147761d669af5ac5af4c4dd797e75326c06310a0a6ed37a25f11c8",
+      "result": "Guard refused before compilation/window for /tmp reserve; not product evidence."
+    },
+    "restoration": "Implementer preserved exact owned temporary test Projects on disk-backed target and removed only those owned /tmp copies; concrete reserve restoration permitted one actual guarded replay. No waiver.",
+    "clippy": "Required broader drift Clippy actually failed13 errors in five files reported byte-identical to prior e17cbc52. Failure retained in target/nsd-drift-gates-reserve-restored.log and tracked separately; not PASS or waived. Source-health regression proof passed at producer scope. This bounded implementation PASS does not assert full required-gate completion."
+  },
+  "remaining": [
+    "Manager objective NSD disposition and delivery publication pending; no self-acceptance or successor authority.",
+    "Clippy13 failures remain disclosed/unpassed; any separately required gate remains binding.",
+    "Physical compositor/HUMAN, broader authoring/GWP/S5A/CAM, board latency z9vn and historical recovery dhj9 remain open.",
+    "No full parity PASS inferred; broader or previously recorded parity failures remain separate and unwaived."
+  ]
+}
