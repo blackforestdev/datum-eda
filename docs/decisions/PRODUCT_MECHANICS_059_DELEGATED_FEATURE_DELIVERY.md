@@ -498,3 +498,51 @@ tracing-off independent native replay passed presented motion/cancel/history and
 exact Save/reopen (74.03 seconds); receipt is `first-edit-presentation-review.json`.
 This dispositions the demonstrated presentation correction only. Original recovery
 attribution and availability remain open; no UED-C07 acceptance or successor.
+
+### Reviewed first-edit delivery restored — 2026-10-09
+
+This outcome supersedes the current availability status of the earlier withdrawal;
+its failure evidence and scoped historical receipts remain intact. UED-C07 is
+complete on source `a365ae5ee4813c0280ccad1e770c45c7c9802d92`, packet blob
+`4428877b00f4fbac4132c59ccd0d9815de104c24`. The actual reserved independent
+`first-edit-journal-read-review.json` PASS and
+`first-edit-completion-reconciliation.json` support bounded completion, with the
+producer native workflow and prior independent replay reused at their scopes.
+No new test run or independent execution is attributed to the latest source review.
+
+The scoped ordinary-failure disposition is supported by reviewed selected-target
+and pending-write guards, frame-coalesced preview, canonical writer repairs,
+complete native Wayland/WGPU consecutive A/B move/cancel/commit, exact history,
+Save/reopen and subsequent interaction without recovery exhaustion. The owner
+now reports: “the edits for move object are much better now. we need to move on
+to more of the development.” This is owner-observed movement improvement, not
+complete physical-input/HUMAN qualification. The originating historical recovery
+stop remains unproven and `dat-first-edit-native-recovery-dhj9` stays open.
+Approximately one-second confirmation remains tracked in
+`dat-first-edit-confirmation-latency-z9vn`; no instantaneous-response claim or
+invented numeric acceptance budget is made. The stale structural ownership check
+`dat-private-writer-journal-gate-0u2x` remains disclosed/unpassed; independent
+reconciliation identified no demonstrated first-edit safety dependency. This
+disposition does not waive separately required broader writer gates.
+
+The previously owner-appointed manager approves bounded objective development
+availability of this exact candidate under UED-C08. The refreshed
+`first-edit-delivery.json` pins the matching ordinary GUI/CLI/daemon, current
+read-only snapshot of the owner's editable Project, unchanged original KiCad
+inputs, actual review receipts and focused workflow/safety logs. Select an existing
+Footprint, press M, preview, Escape to cancel or left-click the destination to
+commit; undo/redo, Save and reopen are delivered. Pending commit cannot pick up
+another object or start another write. Geometry edits invalidate old occupied
+copper; no refill, CAM waiver or stale-fill acceptance is supplied.
+
+UED-C07 completion and explicit claim release are synchronized. Objective C08
+acceptance is recorded; its formal closure publication alone remains pending an
+explicit owner canonical-successor selection. The current selector requires one
+actionable canonical item and rejects an all-complete canonical task, while this
+grant authorizes no automatic successor. Consequently the existing C08 boundary
+remains selected and unclaimed; no runtime work or additional proof is invented
+to keep this implementation open. The smallest owner decision is to select and
+authorize bounded readiness for the already-directed native library-backed symbol
+placement/wire-connection delivery, or designate another existing Frontier task.
+This does not grant successor execution. All full S5A/GWP/NA/C04–C06, physical
+Wayland/HUMAN, CAM/T04, wider platform and full writer obligations remain pending.

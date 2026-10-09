@@ -1,6 +1,6 @@
 {
   "kind": "ordinary_application",
-  "source_commit": "a07ce3e57e29179072adbc9e55534008984312dc",
+  "source_commit": "a365ae5ee4813c0280ccad1e770c45c7c9802d92",
   "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
   "workflow_results": {
     "Open the persistent owner-board-derived Datum Project": true,
@@ -14,28 +14,33 @@
     "Fresh revision validation and project writer exclusion protect commit": true,
     "Commit and compensating undo/redo survive reopen": true
   },
-  "evidence_mode": "Existing owner-board-derived native Project, production GUI Runtime on native Wayland/WGPU with programmatic production input callbacks, plus default visible ordinary application reopen and inspected native screenshot. No physical input replay or HUMAN acceptance.",
-  "workflow_evidence": "first-edit-logs/first-edit-corrected-matching-workflow.log",
-  "visible_ordinary_reopen": "first-edit-logs/first-edit-corrected-ordinary-live.log and first-edit-logs/first-edit-ordinary-window.png",
+  "evidence_mode": "Production App/Winit native Wayland/WGPU Vulkan on Intel HD Graphics P630/Mesa25.0.7, using in-process production input events on private owner-board copies. Current owner reports movement much better; no physical compositor/HUMAN/pixel qualification inferred.",
+  "workflow_evidence": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-qualified-workflow-proof.log",
+  "visible_ordinary_reopen": {
+    "historical_only": "first-edit-logs/first-edit-corrected-ordinary-live.log and first-edit-logs/first-edit-ordinary-window.png",
+    "current_candidate": "Current native production App workflow verifies Save/reopen; no new current pixel screenshot or physical-input acceptance claimed."
+  },
   "safety_evidence": [
-    "first-edit-logs/first-edit-corrected-matching-workflow.log",
-    "first-edit-logs/journal-tail-review-correction.log",
-    "first-edit-logs/journal-torn-existing-correction.log",
-    "writer-implementation.json (retained existing guarded exclusion/stale/commit-boundary proof)",
-    "first-edit-implementation.json (source, original, Project and binary pins)"
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-cohort-build.log",
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-integrity-proof.log",
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-prefix-proof.log",
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-duplicate-proof.log",
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-qualified-workflow-proof.log",
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-native.log",
+    "writer-implementation.json (unchanged guarded exclusion and stale validation evidence at its original scope)"
   ],
   "binary_cohort": [
     {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
-      "sha256": "139b1207835abf551e35e1c87fe88d09e10c93da8a7c71b4ca97e08fd2941a69"
+      "sha256": "1d2c4177efa275ae1bba2c6f02a72411ef9eea6ce17a42c19ab5f7834e2fe22d"
     },
     {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
-      "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+      "sha256": "d3f03fccc7b6554fe5723c823a7cc7b46943640ce682b6a91243c1c9133a76e6"
     },
     {
       "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
-      "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+      "sha256": "1f603bab61e17e70f1f60de6b71dbf405a44fd9dc7b69c2082cfc1b38e582c00"
     }
   ],
   "project_root": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
@@ -46,19 +51,19 @@
     },
     {
       "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json",
-      "sha256": "013ea1dcc77c9a45acbb830140e133fafc43778f20af9ca81134c700ba04dec0"
+      "sha256": "d206abe4153cc1c2f94578a06cf062ab873e7cce30dc3a34eb6e0370c5b89c57"
     },
     {
       "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl",
-      "sha256": "15c404e042d03490e7c69fbcd3785ab1d2687e444b3a091e83a22daa1e823701"
+      "sha256": "06867a02a9296d5bd4a5542e1ee1c9347a530370e2499415fac6ab77f16b41e9"
     },
     {
       "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/cursor.json",
-      "sha256": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337"
+      "sha256": "c51542556812aebfbf87e752437514c07fd9f1c36e3e28893aaef89e432f0706"
     },
     {
       "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/revision/v1/head.json",
-      "sha256": "dd2a60f6a8ffa02a4afbe3a9e77042bc4e521da2941cbd8fca01b5433b5db889"
+      "sha256": "af6081663e356c8ecf4f6441912451f94239ecaf982c967382df848a6dfc7896"
     }
   ],
   "originals": [
@@ -80,63 +85,174 @@
   "copper_validity": "Moving a Footprint invalidates existing fill correspondence; committed scene omits stale occupied copper. Preview retains source copper. No refill/CAM waiver.",
   "delivery_steps": [
     "Open persistent native Project via --project-root; --board is import/view, not this edit/reopen path.",
-    "M or Edit > Move; click Footprint or its Pad, move pointer for preview, click destination to commit.",
+    "Select an existing Footprint, then press M or Edit > Move; move the pointer for preview and left-click the destination to commit the selected Footprint. During pending commit, another click or M cannot start another write.",
     "Escape cancels preview with no design write.",
     "Ctrl+Z undo; Ctrl+Shift+Z or Ctrl+Y redo; Ctrl+S confirms Save; reopen with same --project-root."
   ],
   "independent_review": {
-    "outcome": "PASS",
-    "receipt": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-corrected-review.json",
-    "receipt_sha256": "f2b100660a90dc0108badbbc6791ea55d668b5038178e922e1cb86c36bafc9a9",
-    "packet_blob": "1370cb179ec481b6be5101f8cccdc47e1a26e7cc",
-    "finding_dispositions": [
-      {
-        "id": "UED-IR-01",
-        "disposition": "RESOLVED",
-        "evidence": "Fresh revision-qualified selection/lifetime preparation preserves surviving selection/focus through edit, history, Save and refusal. Independent real-board callback replay passed."
-      },
-      {
-        "id": "UED-IR-02",
-        "disposition": "RESOLVED",
-        "evidence": "Checked snapped invocation-reference delta preserves original off-grid anchor and grab offset; source and literal arithmetic regression reviewed; independent real-board off-grid move passed."
-      },
-      {
-        "id": "UED-IR-03",
-        "disposition": "RESOLVED",
-        "evidence": "Complete unterminated accepted records preserved and framed; committed damaged tails refuse without mutation. Both corrected and existing genuine torn-tail tests independently passed."
-      }
-    ],
-    "independent_logs": [
-      {
-        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/journal-complete.log",
-        "sha256": "f4ef1d033cc1be92b9d9c6a92192a189c69e187f5b85829d7ebe0d16bf3948a1",
-        "outcome": "PASS: one focused test"
-      },
-      {
-        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/journal-torn.log",
-        "sha256": "56de6b64b54450ca9892bd3dc6b6450cf30ac9c5742df69cf7d59ad3fe944157",
-        "outcome": "PASS: one focused test"
-      },
-      {
-        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/workflow.log",
-        "sha256": "7c3e1d246ad3f0a6bf0a1acf4623221472ca25b15082f5c2bc585a0346641222",
-        "outcome": "PASS: one focused test"
-      }
-    ]
+    "outcome": "PASS for bounded same-lease journal-read reuse; latency unresolved, no development acceptance",
+    "source_commit": "a365ae5ee4813c0280ccad1e770c45c7c9802d92",
+    "packet_blob": "4428877b00f4fbac4132c59ccd0d9815de104c24",
+    "receipt_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-journal-read-review.json",
+    "receipt_sha256": "93d9b1254b9a2b17f527e3ffb347f363af50b49655d2eac0713b49256cd826eb",
+    "limits": "Actual independent source review verified exact source/binary/log pins and reused producer focused/native proof. No additional independent execution or measurement claimed."
   },
   "manager_disposition": {
+    "status": "APPROVED: bounded objective development availability; C08 formal synchronized closure awaits explicit owner successor selection.",
     "session": "codex-user-edit-delivery-20261008",
     "appointment": "Owner UED-FIRST-MOVE-01 approval of e7fd1b28dd2c8ecb79eab6a7f30a5ed594f6c8b4 / 874ae14396bd25ed282df3cd95cb5f2aed93461d, durably recorded in 49ef303e and PM059",
-    "timestamp_utc": "2026-10-08T22:22:35Z",
-    "response": "USER-EDIT-DELIVERY: manager approve DEVELOPMENT-BUILD-ACCEPTANCE \u2014 a07ce3e57e29179072adbc9e55534008984312dc; actual reserved independent corrected review PASS, packet 1370cb179ec481b6be5101f8cccdc47e1a26e7cc",
-    "criteria": "Every first-edit ordinary workflow and safety requirement is evidenced by actual production Runtime on Wayland/WGPU plus ordinary visible reopen, guarded engine safety proof, exact pins and actual independent replay. Only bounded development availability accepted; no physical-input, HUMAN, full qualification or successor grant."
+    "timestamp_utc": "2026-10-09T17:41:15Z",
+    "response": "USER-EDIT-DELIVERY: manager approve DEVELOPMENT-BUILD-ACCEPTANCE \u2014 a365ae5ee4813c0280ccad1e770c45c7c9802d92; packet 4428877b00f4fbac4132c59ccd0d9815de104c24; actual reserved first-edit-journal-read-review.json PASS and first-edit-completion-reconciliation.json assessment.",
+    "criteria": "Declared first-edit workflow and focused safety evidence are adequate; current exact native production App replay and actual bounded independent source PASS are retained at their scopes. Current owner movement improvement supports scoped ordinary-failure disposition. No physical/HUMAN, performance budget, historical crash resolution, full qualification or successor grant."
   },
-  "delivered_project_state": "Datum-owned project preserves the demonstration moves used in producer verification; original KiCad board and schematic remain byte-identical.",
+  "delivered_project_state": "Read-only snapshot of the current Datum-owned owner QA Project; owner edits preserved. Native proof mutated private copies only. Original KiCad inputs match retained SHA256 pins.",
   "synchronized_closure_boundary": {
-    "status": "pending owner canonical successor selection",
-    "implementation_and_review": "Complete; actual reserved independent PASS, bounded objective development-build acceptance approved by appointed manager.",
-    "requirement": "PM025/project_status.py: exactly one canonical_next required and landed cannot be canonical; UED post_completion selects_successor=false.",
-    "owner_request": "Approve bounded readiness for already-directed native symbol-placement/wire-editing delivery, or designate another existing Frontier task. No new feature execution or representation authority inferred.",
-    "claim": "Explicitly released; no unfinished first-edit implementation."
+    "status": "C07 complete. C08 objective availability approved; formal closure publication pending explicit owner canonical successor selection.",
+    "requirement": "PM025 and current selector require exactly one actionable canonical item; all-complete UED cannot remain canonical. Existing UED grant selects_successor=false.",
+    "owner_request": "Select and authorize bounded readiness for already-directed native library-backed symbol placement and wire connection, or designate another existing Frontier task. This is successor planning selection, not execution authority.",
+    "claim": "Explicitly released; no first-edit runtime implementation or new test campaign remains required."
+  },
+  "previous_delivery": {
+    "source_commit": "a07ce3e57e29179072adbc9e55534008984312dc",
+    "binary_cohort": [
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+        "sha256": "139b1207835abf551e35e1c87fe88d09e10c93da8a7c71b4ca97e08fd2941a69"
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda",
+        "sha256": "d5f1013ee0279cd2b35369575be287c0419de35952f2f0a730f14b5d2f29a4dd"
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/target/debug/eda-engine-daemon",
+        "sha256": "550af1b1334dba6b805b7f0ec22ae1df885537fe3fe4102d2b930ae8f0f54186"
+      }
+    ],
+    "project_pins": [
+      {
+        "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/project.json",
+        "sha256": "b621f78d159c2a4f21a781e00517f4575ee833febfada7b7a048c6749b88547d"
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json",
+        "sha256": "d206abe4153cc1c2f94578a06cf062ab873e7cce30dc3a34eb6e0370c5b89c57"
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl",
+        "sha256": "06867a02a9296d5bd4a5542e1ee1c9347a530370e2499415fac6ab77f16b41e9"
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/cursor.json",
+        "sha256": "c51542556812aebfbf87e752437514c07fd9f1c36e3e28893aaef89e432f0706"
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/revision/v1/head.json",
+        "sha256": "af6081663e356c8ecf4f6441912451f94239ecaf982c967382df848a6dfc7896"
+      }
+    ],
+    "independent_review": {
+      "outcome": "PASS",
+      "receipt": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-corrected-review.json",
+      "receipt_sha256": "f2b100660a90dc0108badbbc6791ea55d668b5038178e922e1cb86c36bafc9a9",
+      "packet_blob": "1370cb179ec481b6be5101f8cccdc47e1a26e7cc",
+      "finding_dispositions": [
+        {
+          "id": "UED-IR-01",
+          "disposition": "RESOLVED",
+          "evidence": "Fresh revision-qualified selection/lifetime preparation preserves surviving selection/focus through edit, history, Save and refusal. Independent real-board callback replay passed."
+        },
+        {
+          "id": "UED-IR-02",
+          "disposition": "RESOLVED",
+          "evidence": "Checked snapped invocation-reference delta preserves original off-grid anchor and grab offset; source and literal arithmetic regression reviewed; independent real-board off-grid move passed."
+        },
+        {
+          "id": "UED-IR-03",
+          "disposition": "RESOLVED",
+          "evidence": "Complete unterminated accepted records preserved and framed; committed damaged tails refuse without mutation. Both corrected and existing genuine torn-tail tests independently passed."
+        }
+      ],
+      "independent_logs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/journal-complete.log",
+          "sha256": "f4ef1d033cc1be92b9d9c6a92192a189c69e187f5b85829d7ebe0d16bf3948a1",
+          "outcome": "PASS: one focused test"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/journal-torn.log",
+          "sha256": "56de6b64b54450ca9892bd3dc6b6450cf30ac9c5742df69cf7d59ad3fe944157",
+          "outcome": "PASS: one focused test"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-independent-logs/workflow.log",
+          "sha256": "7c3e1d246ad3f0a6bf0a1acf4623221472ca25b15082f5c2bc585a0346641222",
+          "outcome": "PASS: one focused test"
+        }
+      ]
+    },
+    "manager_disposition": {
+      "session": "codex-user-edit-delivery-20261008",
+      "appointment": "Owner UED-FIRST-MOVE-01 approval of e7fd1b28dd2c8ecb79eab6a7f30a5ed594f6c8b4 / 874ae14396bd25ed282df3cd95cb5f2aed93461d, durably recorded in 49ef303e and PM059",
+      "timestamp_utc": "2026-10-08T22:22:35Z",
+      "response": "USER-EDIT-DELIVERY: manager approve DEVELOPMENT-BUILD-ACCEPTANCE \u2014 a07ce3e57e29179072adbc9e55534008984312dc; actual reserved independent corrected review PASS, packet 1370cb179ec481b6be5101f8cccdc47e1a26e7cc",
+      "criteria": "Every first-edit ordinary workflow and safety requirement is evidenced by actual production Runtime on Wayland/WGPU plus ordinary visible reopen, guarded engine safety proof, exact pins and actual independent replay. Only bounded development availability accepted; no physical-input, HUMAN, full qualification or successor grant."
+    },
+    "synchronized_closure_boundary": {
+      "status": "pending owner canonical successor selection",
+      "implementation_and_review": "Complete; actual reserved independent PASS, bounded objective development-build acceptance approved by appointed manager.",
+      "requirement": "PM025/project_status.py: exactly one canonical_next required and landed cannot be canonical; UED post_completion selects_successor=false.",
+      "owner_request": "Approve bounded readiness for already-directed native symbol-placement/wire-editing delivery, or designate another existing Frontier task. No new feature execution or representation authority inferred.",
+      "claim": "Explicitly released; no unfinished first-edit implementation."
+    },
+    "status": "Withdrawn after owner ordinary-workflow failure; retained historical evidence only."
+  },
+  "project_snapshot_utc": "2026-10-09T17:40:13.403651+00:00",
+  "current_native_results": {
+    "result": "PASS",
+    "workflow": "Same production App/Winit Wayland/WGPU private-owner-copy complete consecutive A/B Footprint move/cancel/commit, pending refusal, direct B selection, exact clicked pose, Undo/Redo, Save/reopen and immediate following M.",
+    "runtime_s": 10.95,
+    "A_click_to_confirm_ms": 1115,
+    "B_click_to_confirm_ms": 1011,
+    "following_B_M_dispatch_us": 909,
+    "fixture_stage0_elapsed_ms": 3908,
+    "first_selection_handler_us": 14310,
+    "direct_B_selection_handler_us": 12463,
+    "limits": "In-process production-dispatch native events, not physical compositor/HUMAN/pixel qualification. Single descriptive trial; no material latency improvement established relative to eaec A1119/B1038 or independent1182/1055; no percentile/budget/acceptance claim."
+  },
+  "configuration": "Wayland / WGPU Vulkan / Intel HD Graphics P630(KBL GT2) / Mesa25.0.7. Same checked dev package profiles as eaec. Ordinary GUI/CLI/daemon rebuilt together; explicit matching EDA_CLI_BIN in replay; trace timing/fault injection OFF. No recovery timeout change.",
+  "raw_logs": {
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-cohort-build.log": {
+      "sha256": "d7d49f3db576974226d06864e2568b4f243af4976c1ed64d76f29247216ae4ca"
+    },
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-integrity-proof.log": {
+      "sha256": "b70fe447dc81e98f39d2bf68f408de7367c3ef22f03a5c94c4ac941bb5abebb1"
+    },
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-prefix-proof.log": {
+      "sha256": "8a8e733ba88e9e10600fd34c54266000f03887fd19a9afbf21e37a4ec0d5f8fd"
+    },
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-duplicate-proof.log": {
+      "sha256": "54f0837438924fd889f0bde47b11597fc392a477937ad6749af8205efc9405d4"
+    },
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-qualified-workflow-proof.log": {
+      "sha256": "b61d25ec645d9071ab0a83bd283900f77e33f7e5828379c3037fa4aa663108ec"
+    },
+    "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/journal-read-native.log": {
+      "sha256": "4d7d6f34a159f391d29ddbeb3c44377b672283740782a25fbaae7b705ee72496"
+    }
+  },
+  "completion_reconciliation": {
+    "receipt": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-completion-reconciliation.json",
+    "scope": "Actual reserved independent read-only completion assessment. C07 supportable; objective C08 disposition remains manager responsibility."
+  },
+  "ordinary_failure_disposition": {
+    "status": "Current bounded first-edit development delivery eligible for restored availability; historical failure not declared fixed.",
+    "evidence": "Reviewed selected-target/pending-write guards, preview motion coalescing, canonical writer and source-build repairs; exact current Wayland/WGPU native consecutive-move workflow passes without recovery exhaustion. Owner reports edits much better.",
+    "retained": "dat-first-edit-native-recovery-dhj9 remains open: original recovery stop cause unproven. dat-first-edit-confirmation-latency-z9vn retains approximately one-second commit confirmation. No timeout change, invented budget or HUMAN acceptance.",
+    "structural_check": "dat-private-writer-journal-gate-0u2x remains open/unpassed; reviewer found stale structural ownership check, no demonstrated first-edit safety dependency. No broader gate waiver."
+  },
+  "owner_qa": {
+    "reported_text": "the edits for move object are much better now. we need to move on to more of the development.",
+    "candidate_context": "Reported after session verified target/debug/datum-gui matches reviewed a365ae5e binary and supplied ordinary project-root launch command. Owner process/binary not independently captured.",
+    "scope": "Owner-observed movement improvement only; no inferred timing, Save/reopen/HUMAN/full acceptance or successor feature grant. Retain original failure evidence and separate open issues."
   }
 }

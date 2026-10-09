@@ -1048,5 +1048,10 @@
     "remaining": "~1-second z9vn confirmation remains OPEN; no claimed instantaneous or fully resolved placement. C07 in progress, C08 availability withdrawn. Unattributed dhj9, gate0u2x, physical Wayland/HUMAN, S5A C04\u2013C06 and CAM/T04 unchanged.",
     "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
     "original_inputs": "Owner native board/journal and original KiCad board/schematic unchanged; hashes match usable-engine-preimages.json. Private copies only mutated."
+  },
+  "owner_qa_after_reviewed_repairs": {
+    "reported_text": "the edits for move object are much better now. we need to move on to more of the development.",
+    "candidate_context": "Reported after session verified target/debug/datum-gui matches reviewed a365ae5e binary and supplied ordinary project-root launch command. Owner process/binary not independently captured.",
+    "scope": "Owner-observed movement improvement only; no inferred timing, Save/reopen/HUMAN/full acceptance or successor feature grant. Retain original failure evidence and separate open issues."
   }
 }
