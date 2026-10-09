@@ -1,4 +1,4 @@
-mod workspace_loading;
+pub mod workspace_loading;
 pub use workspace_loading::load_board_editor_workspace_with_model;
 use workspace_loading::load_workspace_state_impl;
 mod pad_center;
@@ -1195,29 +1195,6 @@ pub fn production_status_from_production_json(
         panel_projections,
     ))
 }
-/// Project the board project's companion schematic into a review scene, if
-/// one exists next to the loaded board file (`<stem>.kicad_sch`). This is
-/// carried alongside the board `scene` so pane B can draw real schematic
-/// geometry; it reuses the existing schematic projector rather than authoring
-/// new geometry. Robust by design: a missing or unparsable schematic yields
-/// `None` and never disturbs the board load.
-fn load_sibling_schematic_scene(board_path: &Path) -> Option<BoardReviewSceneV1> {
-    let sibling = board_path.with_extension("kicad_sch");
-    if !sibling.is_file() {
-        return None;
-    }
-    match schematic_scene_import::load_scene_from_kicad_schematic_import(&sibling) {
-        Ok((scene, _)) => Some(scene),
-        Err(error) => {
-            eprintln!(
-                "datum-gui warning: skipped companion schematic {}: {error:#}",
-                sibling.display()
-            );
-            None
-        }
-    }
-}
-
 fn load_production_status(cli: &[String], request: &LiveReviewRequest) -> Result<ProductionStatus> {
     if request.board_file.is_some() {
         return Ok(ProductionStatus::default());

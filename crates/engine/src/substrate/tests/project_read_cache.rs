@@ -269,3 +269,21 @@ fn project_read_cache_nonretaining_reuses_only_while_caller_owns_model() {
     );
     assert!(Arc::ptr_eq(&reopened, &cache.resolve(&fixture.0).unwrap()));
 }
+
+#[test]
+fn durable_confirmation_preserves_cache_and_repairs_missing_cursor() {
+    let fixture = Fixture::new();
+    let root = &fixture.0;
+    let path = root.join(".datum/journal/cursor.json");
+    crate::api::native_write::durability::resolve_durable(root).unwrap();
+    let bytes = std::fs::read(&path).unwrap();
+    let mut cache = ProjectReadCache::default();
+    let before = cache.resolve(root).unwrap();
+    crate::api::native_write::durability::resolve_durable(root).unwrap();
+    assert_eq!(std::fs::read(&path).unwrap(), bytes);
+    assert!(Arc::ptr_eq(&before, &cache.resolve(root).unwrap()));
+    std::fs::remove_file(&path).unwrap();
+    crate::api::native_write::durability::resolve_durable(root).unwrap();
+    assert_eq!(std::fs::read(&path).unwrap(), bytes);
+    assert!(!Arc::ptr_eq(&before, &cache.resolve(root).unwrap()));
+}

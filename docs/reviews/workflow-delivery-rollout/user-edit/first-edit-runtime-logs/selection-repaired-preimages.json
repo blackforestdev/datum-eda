@@ -1,0 +1,13 @@
+{
+  "preimages": {
+    "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json": "5d58005280842f60c4f1628c4afdc464c51d1c70b7ce9c4146df0e1546345667",
+    "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+  },
+  "environment": {
+    "XDG_SESSION_TYPE": "wayland",
+    "WAYLAND_DISPLAY": "wayland-0",
+    "DISPLAY": ":1"
+  },
+  "initial_build_limitation": "Initial multi-package build named GUI and CLI bins but did not select the daemon bin; first replay retains prior daemon hash and is configuration-specific evidence only. Matching daemon build and final replay required."
+}

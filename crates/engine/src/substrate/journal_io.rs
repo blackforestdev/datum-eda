@@ -253,7 +253,17 @@ pub(crate) fn write_journal_cursor(
         crate::revision::create_directory_durable(parent)?;
     }
     let json = to_json_deterministic(cursor)?;
-    std::fs::write(&path, format!("{json}\n"))?;
+    let desired = format!("{json}\n");
+    let unchanged = match std::fs::read(&path) {
+        Ok(existing) => existing == desired.as_bytes(),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
+        Err(error) => return Err(error.into()),
+    };
+    // Reconfirm durability even when bytes already match, but avoid invalidating
+    // authoritative read evidence through an unnecessary truncate/write.
+    if !unchanged {
+        std::fs::write(&path, desired)?;
+    }
     std::fs::File::open(&path)?.sync_all()?;
     if let Some(parent) = path.parent() {
         sync_directory(parent)?;

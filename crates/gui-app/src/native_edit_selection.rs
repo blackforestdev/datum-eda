@@ -36,16 +36,6 @@ pub(super) struct Prepared {
     pub session: runtime_selection::NativeSelectionSession,
     pub cache: runtime_selection::SelectionReadCache,
 }
-pub(super) fn prepare(
-    root: &std::path::Path,
-    next: &mut datum_gui_protocol::ReviewWorkspaceState,
-    inputs: Inputs,
-) -> Result<Prepared> {
-    let mut cache = runtime_selection::SelectionReadCache::default();
-    let model = cache.resolve(root)?;
-    prepare_from_model(next, inputs, model, cache)
-}
-
 pub(super) fn prepare_from_model(
     next: &mut datum_gui_protocol::ReviewWorkspaceState,
     inputs: Inputs,

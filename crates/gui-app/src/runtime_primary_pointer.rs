@@ -103,6 +103,12 @@ impl Runtime {
                 focus_changed = true;
             }
         }
+        // Move acts on an acquired gesture, not every click while its toolbar
+        // mode remains selected. Idle clicks select; pending moves are refused.
+        let authoring_gesture = self.active_tool_is_authoring()
+            && (self.workspace().tool != WorkspaceTool::Move
+                || self.native_edit.preview.is_some()
+                || self.native_edit.pending());
         let hit_started = std::time::Instant::now();
         let prepared_target = self.presented_hits.hit_test(x, y).cloned();
         let hit_elapsed = hit_started.elapsed();
@@ -123,7 +129,7 @@ impl Runtime {
             return true;
         }
         if let Some(target) = prepared_target
-            && !(self.active_tool_is_authoring()
+            && !(authoring_gesture
                 && matches!(
                     target,
                     HitTarget::AuthoredObject(_) | HitTarget::ReviewAction(_)
@@ -182,7 +188,9 @@ impl Runtime {
                 }
                 _ => None,
             };
-            if self.handle_authoring_canvas_click(world_point, target_object_id) {
+            if authoring_gesture
+                && self.handle_authoring_canvas_click(world_point, target_object_id)
+            {
                 self.trace_click(format!(
                     "primary click ({x:.1}, {y:.1}) world ({}, {}) handled by authoring tool {}; prepare {}ms; retained {}ms",
                     world_point.x,

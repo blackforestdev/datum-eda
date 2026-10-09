@@ -11,20 +11,34 @@ pub fn load_board_editor_workspace_with_model(
         request.board_file.is_none(),
         "Native edit requires a native Project"
     );
-    let (state, model) = load_workspace(request, false)?;
+    let (state, model) = load_workspace(request, false, None)?;
     Ok((state, model.context("Native Project basis unavailable")?))
+}
+
+/// Project a caller's fresh engine-resolved basis. Native edit publication still
+/// qualifies revision and journal tip against the canonical writer afterward.
+pub fn project_board_editor_workspace(
+    request: &LiveReviewRequest,
+    model: Arc<DesignModel>,
+) -> Result<ReviewWorkspaceState> {
+    anyhow::ensure!(
+        request.board_file.is_none(),
+        "Native projection requires a native Project"
+    );
+    Ok(load_workspace(request, false, Some(model))?.0)
 }
 
 pub(super) fn load_workspace_state_impl(
     request: &LiveReviewRequest,
     include_review: bool,
 ) -> Result<ReviewWorkspaceState> {
-    Ok(load_workspace(request, include_review)?.0)
+    Ok(load_workspace(request, include_review, None)?.0)
 }
 
 fn load_workspace(
     request: &LiveReviewRequest,
     include_review: bool,
+    resolved: Option<Arc<DesignModel>>,
 ) -> Result<(ReviewWorkspaceState, Option<Arc<DesignModel>>)> {
     let workspace_started = std::time::Instant::now();
     let cli = cli_prefix()?;
@@ -50,9 +64,10 @@ fn load_workspace(
     ));
     let basis_started = std::time::Instant::now();
     let model = if request.board_file.is_none() {
-        Some(Arc::new(
-            ProjectResolver::new(&request.project_root).resolve()?,
-        ))
+        Some(match resolved {
+            Some(model) => model,
+            None => Arc::new(ProjectResolver::new(&request.project_root).resolve()?),
+        })
     } else {
         None
     };
@@ -144,6 +159,29 @@ fn load_workspace(
         workspace_started.elapsed().as_millis()
     ));
     Ok((state, model))
+}
+
+/// Project the board project's companion schematic into a review scene, if
+/// one exists next to the loaded board file (`<stem>.kicad_sch`). This is
+/// carried alongside the board `scene` so pane B can draw real schematic
+/// geometry; it reuses the existing schematic projector rather than authoring
+/// new geometry. Robust by design: a missing or unparsable schematic yields
+/// `None` and never disturbs the board load.
+fn load_sibling_schematic_scene(board_path: &Path) -> Option<BoardReviewSceneV1> {
+    let sibling = board_path.with_extension("kicad_sch");
+    if !sibling.is_file() {
+        return None;
+    }
+    match schematic_scene_import::load_scene_from_kicad_schematic_import(&sibling) {
+        Ok((scene, _)) => Some(scene),
+        Err(error) => {
+            eprintln!(
+                "datum-gui warning: skipped companion schematic {}: {error:#}",
+                sibling.display()
+            );
+            None
+        }
+    }
 }
 
 pub(super) fn load_gui_supervision_snapshot(

@@ -438,5 +438,134 @@
     "retained_boundaries": "C07/availability not accepted; original dat-first-edit-native-recovery-dhj9 unresolved. C04\u2013C06, native HUMAN and broader authoring qualification retained. No successor, budget, dependency, prototype, source-model change or waiver.",
     "source_commit": "fbd200f00e67e53efdaedf206eb03c483a6fb8c5",
     "manager_disposition": "Actual reserved correctness PASS received. Accept this bounded repair for retained UED-C07 continuation only. Remaining confirmation latency z9vn and original recovery dhj9 stay open; C07, development availability, C08 and broader gates are not accepted. No successor grant."
+  },
+  "selection_target_correction": {
+    "owner_report": "Long/intermittent edit confirmation; grabbing other objects while an object remains selected is not functional.",
+    "execution_authority": "Retained UED-FIRST-MOVE-01 execution and appointed bounded PM059 delivery manager; UED-C07 repair. No new policy, dependency, tolerance or successor.",
+    "issue": "dat-first-edit-move-target-eitk",
+    "reproduction": "Extended existing ordinary App fixture through the next object click after move/commit/history/Save. Prior runtime fails stage25: preview B while selection A. before-proof.log is a real failure; before-native.log preserves native receipts.",
+    "causes": [
+      "Persistent Move toolbar mode consumed every subsequent canvas click as authoring, without acquiring matching selected identity.",
+      "Worker published empty cache, forcing cold authority resolution on next click. Restoring populated cache alone still leaves 1275.973ms dispatch because fresh durability confirmation rewrites already-correct cursor bytes and invalidates ctime-qualified cache evidence."
+    ],
+    "correction": [
+      "Idle Move canvas clicks enter shared selection; active preview retains target; pending Move refuses new move without retry. New preview requires current matching project/revision/Object Footprint identity.",
+      "Existing worker-owned byte-qualified read cache supplies the same complete immutable workspace/selection basis and transfers with atomic publication and superseding selection. Fresh canonical durability/revision/tip checks remain.",
+      "Exact deterministic cursor bytes are compared under existing writer guard. Matching bytes skip truncate/write but file and parent-directory fsync always execute; missing/different bytes still write/sync, other read errors propagate. No persistence-format or recovery boundary change."
+    ],
+    "fixture": "Existing owner-board ordinary App/Winit Wayland/WGPU replay extended, not a new artificial board. Includes pending refusal, next click B, M B, hover A without retarget, cancel B without writes, plus original preview/cancel/commit/exact history/Save/reopen. Input is in-process, not physical compositor/HUMAN qualification.",
+    "focused_engine_proof": "durable_confirmation_preserves_cache_and_repairs_missing_cursor: PASS; exact bytes and Arc reuse after unchanged durable confirmation, missing cursor restored and old cache invalidated.",
+    "intermediate_result": "Target-only repaired replay PASS; next correct Object selection1301.948ms. Populated cache but old cursor rewrite PASS; next selection1275.973ms, confirmation5525ms. Not a latency budget.",
+    "build_cohort_error": "Initial multi-package named GUI/CLI bins omitted daemon; first repaired proof stopped with SIGTERM before completion after stale daemon automatic build waited on outer Cargo guard. Preserved raw evidence, not credited as native success or owner failure reproduction. Matching explicit daemon and final replay pending.",
+    "logs": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-before-proof.log",
+        "sha256": "3e9e4b463ee4607ff8caa281233152ef4e8b6bea0e9f9978457696da377c4e94"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-before-native.log",
+        "sha256": "2d99c6c07c8621fb1413b562c7098f7bf42d402e02ff075b409c518bf33ad6fb"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-after-proof.log",
+        "sha256": "3983fae1313b2bff1b336e3d1918a94aae2d14cee478351b32de2291f66a3a66"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-after-native.log",
+        "sha256": "6a886de8183a531865f79bd11c920a6725877a44012a40130aaca23a9e3eadac"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-final-proof.log",
+        "sha256": "2362bec2b72402a5bfec1477bba02e855b4676f7fd4f032d74ffbeed35216278"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-final-native.log",
+        "sha256": "85fc8e6f6a00702d28504568b1f7156a9b43d51e1ca9bcfbe7825f93fcf9af59"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-cursor-proof.log",
+        "sha256": "dfbbcbdd79c385839c5e240d02874bcee3801253f9db0d5d05b66e97fd56e6f3"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-repaired-build.log",
+        "sha256": "e097dfb6b0040b71cccb085465453b5fad8ade1bc3215461b9b02fb735e0b6d7"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-repaired-proof.log",
+        "sha256": "921530700de04338df8472113a0f841afd46207fe8d8c3e916f7a22e042fc565"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-repaired-native.log",
+        "sha256": "15cb75767941886f3fab9c4becbe6a597fe46f82078daa5521c386dbd9e05c09"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-private-writer-gate.log",
+        "sha256": "a0317c19eff36cac387f4160918f9541c429009af95e77df10b692bef2106ee4"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-source-health.log",
+        "sha256": "0be8a35175ff128bf3bfe7c2571c16324915502c3fa2381b6e9571548a419efe"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-repaired-preimages.json",
+        "sha256": "ddefd812ec4ba0baabe6bb7d5102d31b2783d03f79ce776410170dc7d7f8a7fb"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-repaired-daemon-build.log",
+        "sha256": "ae55cd55a2db02c101d675241f617f29f77276b13909857b3b9989efa27c56e9"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-matching-proof.log",
+        "sha256": "2cfc57479d1612c276f511aedce9cd2b195a7b7ed2218f54769698ef9b5eb2a6"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-matching-native.log",
+        "sha256": "fa5a9e0d2e88cf0c71e149f0b48125235473495793132e528d8da5198b0c7508"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-cache-regression-proof.log",
+        "sha256": "d6bb0be4de1d6b5466d9fa046c6cf2bbb224ec04613f9f1db58781f455eb5091"
+      }
+    ],
+    "review": "PENDING actual reserved bounded candidate review",
+    "retained_gaps": [
+      "Confirmation latency z9vn remains open; no instant confirmation or development acceptance.",
+      "Original recovery-stop dhj9 attribution remains open.",
+      "Private-writer source-pattern gate0u2x still fails unchanged journal ownership location, no waiver.",
+      "UED-C07 in progress; C08/full S5A/platform/HUMAN/CAM and successor remain unpassed/ungranted."
+    ],
+    "source_blobs": {
+      "crates/engine/src/substrate/journal_io.rs": "44c6de50961fcb68c7ce6101ca17e9bed04d438d",
+      "crates/engine/src/substrate/tests/project_read_cache.rs": "e3faa897ec3832bb41b135fb6a8072b83260b9b8",
+      "crates/gui-app/src/runtime_primary_pointer.rs": "a0f4f46bd99fad2c22763752bef56d061851a162",
+      "crates/gui-app/src/runtime_native_edit.rs": "2e2e553ed1facefbcea1d73a94c6746f44504d1f",
+      "crates/gui-app/src/native_edit_selection.rs": "624aafe4f7f58e6c0cf8284f0b575dce4cececb7",
+      "crates/gui-app/src/native_move_frame_tests.rs": "4b4f3931b6d4319dab157edfe762c104ca475a86",
+      "crates/gui-app/src/native_move_frame_steps.rs": "556d4762487d4f532b8b651c1f65b0f1119ddc85",
+      "crates/gui-protocol/src/lib.rs": "882fd689b01a71950cd478bea1c019a98ca9323c",
+      "crates/gui-protocol/src/workspace_loading.rs": "ace85abe9b77ae8c4cfcf81e18e14fde29a09efe"
+    },
+    "binary_sha256": {
+      "target/debug/datum-gui": "21a43f181773a664987246af351f27d0477ddd3c6bc4d589c0edb7245b39636d",
+      "target/debug/datum-eda": "a9ffa719a4ebc44d3ff92a7e454061343041139bea00374d8396723a884ed3a2",
+      "target/debug/eda-engine-daemon": "004834703999e04904c6e5fed52a637923e6a83cd061d48a92559f8a48a61454"
+    },
+    "native_result": {
+      "result": "PASS25.82s: complete ordinary App workflow plus subsequent correct selection/M and cancellation without writes. Matching GUI/CLI/daemon; no trace timing or queue fault-injection settings.",
+      "backend": "Winit Wayland; WGPU Vulkan; Intel HD Graphics P630/KBL GT2 integrated; Intel Mesa25.0.7-2+deb13u1",
+      "next_selection_handler_us": 23317,
+      "previous_correct_selection_handler_us": 1275973,
+      "click_to_confirm_ms": 6070,
+      "pending_click_handler_us": 517,
+      "scope": "One measured replay on a private copy of owner Datum project, no synthetic board or arbitrary acceptance budget. In-process input/native surface presentation, not physical compositor/HUMAN or pixel evidence. No rendering pause reported in this trial."
+    },
+    "cache_regression": "Existing ProjectReadCache module10 PASS0 fail: identical-byte reuse, same-length external edit, input replacement, cursor changes, malformed/removed inputs, unsupported symlink/external pool/recovery/size cases remain validated. New durable-confirmation regression included; no weaker predicates.",
+    "preimages": {
+      "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json": "5d58005280842f60c4f1628c4afdc464c51d1c70b7ce9c4146df0e1546345667",
+      "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+    },
+    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
+    "verification_status": "Source/runtime correction demonstrated, actual reserved bounded candidate review pending. C07 in progress and availability not accepted. Confirmation6070ms is remaining defect, not resolved by handler improvement."
   }
 }

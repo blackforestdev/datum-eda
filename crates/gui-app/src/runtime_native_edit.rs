@@ -69,8 +69,12 @@ impl EditWork {
                     // failures still require a fresh recovery-qualified description.
                     let before=match &operation {Ok(receipt)=>receipt.description.clone(),Err(_)=>client.describe(&intent.project_root)?};
                     let refreshed=std::time::Instant::now();
-                    let (mut next,model)=datum_gui_protocol::load_board_editor_workspace_with_model(&request)?;
-                    let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,Default::default())?;
+                    // Populate existing byte-qualified read evidence on the worker;
+                    // publishing an empty cache would cold-resolve on the next click.
+                    let mut cache=runtime_selection::SelectionReadCache::default();
+                    let model=cache.resolve(&intent.project_root)?;
+                    let mut next=datum_gui_protocol::workspace_loading::project_board_editor_workspace(&request,model.clone())?;
+                    let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,cache)?;
                     trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));
                     let after=client.describe(&intent.project_root)?;
                     trace_startup_timing(format!("native edit qualified answer {}ms",started.elapsed().as_millis()));
@@ -112,10 +116,16 @@ impl EditWork {
                     let next = answer.next.as_mut().context("Edit scene unavailable")?;
                     // Read-only superseding projection. The committed mutation is
                     // never resent when input selection changed during preparation.
-                    answer.selection = Some(native_edit_selection::prepare(
-                        &answer.intent.project_root,
+                    let prepared = answer
+                        .selection
+                        .take()
+                        .context("Qualified selection basis unavailable")?;
+                    let model = prepared.session.model.clone();
+                    answer.selection = Some(native_edit_selection::prepare_from_model(
                         next,
                         inputs,
+                        model,
+                        prepared.cache,
                     )?);
                     let owner = client
                         .lock()
@@ -261,6 +271,22 @@ impl Runtime {
                 return true;
             }
         };
+        // The selected source identity is the authoring target. Never move a
+        // hovered object while the Inspector still describes another subject.
+        let current = matches!(&self.workspace().selection,
+            datum_gui_protocol::SelectionTarget::Native(view)
+            if !view.stale && view.project.to_string() == preview.base.project_uuid
+                && view.revision.0 == preview.base.source_revision
+                && matches!(&view.subject, datum_gui_protocol::SelectionSubject::Object(id)
+                    if id.class == datum_gui_protocol::AuthoredSelectionClass::Footprint
+                        && id.id.to_string() == preview.component.component_uuid));
+        if !current {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Select a current Footprint before moving",
+            );
+            return true;
+        }
         let target = preview.component.object_id.clone();
         self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
             world,
