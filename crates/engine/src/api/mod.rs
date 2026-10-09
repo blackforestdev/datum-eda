@@ -22,6 +22,7 @@ use persistence_helpers::{
     deterministic_net_class_uuid, net_class_sidecar_payload, persist_net_class_sidecar,
     persist_package_assignment_sidecar, persist_part_assignment_sidecar, persist_rule_sidecar,
 };
+mod native_project_reads;
 mod project_surface;
 mod query_surface;
 mod save_kicad;
@@ -64,6 +65,7 @@ pub struct Engine {
     redo_stack: Vec<ImportedSessionUndoRecord>,
     undo_depth: usize,
     redo_depth: usize,
+    native_project_reads: crate::substrate::ProjectReadCache,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -167,6 +169,7 @@ impl Engine {
             redo_stack: Vec::new(),
             undo_depth: 0,
             redo_depth: 0,
+            native_project_reads: Default::default(),
         })
     }
 

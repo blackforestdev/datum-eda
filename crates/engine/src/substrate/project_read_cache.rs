@@ -41,9 +41,30 @@ impl ProjectReadCache {
     /// transient diagnostics and pending recovery bypass reuse, not validation. The cache
     /// retains at most one model and has no global project registry.
     pub fn resolve(&mut self, root: &Path) -> Result<Arc<DesignModel>, EngineError> {
+        self.resolve_impl(root, None)
+    }
+
+    /// Reuse the same complete byte evidence while the canonical writer owns
+    /// exclusion. The guard replaces only the busy probe, never input checks.
+    pub(crate) fn resolve_with_lease(
+        &mut self,
+        root: &Path,
+        lease: &crate::revision::ProjectWriteLease,
+    ) -> Result<Arc<DesignModel>, EngineError> {
+        validate_read_lease(root, lease)?;
+        let model = self.resolve_impl(root, Some(lease))?;
+        validate_read_lease(root, lease)?;
+        Ok(model)
+    }
+
+    fn resolve_impl(
+        &mut self,
+        root: &Path,
+        lease: Option<&crate::revision::ProjectWriteLease>,
+    ) -> Result<Arc<DesignModel>, EngineError> {
         if let Some(entry) = &self.entry
             && entry.root == root
-            && unchanged(root, &entry.input)
+            && unchanged(root, &entry.input, lease)
             && let Some(model) = entry.model.upgrade()
         {
             return Ok(model);
@@ -51,11 +72,15 @@ impl ProjectReadCache {
         // Release the old snapshot before potentially expensive reconstruction.
         self.entry = None;
         self.retained_model = None;
-        if !root.join(".datum/revision/writer.lock").exists() {
+        if lease.is_none() && !root.join(".datum/revision/writer.lock").exists() {
             drop(crate::revision::ProjectWriteLease::acquire(root)?);
         }
-        let before = capture(root);
-        let model = Arc::new(ProjectResolver::new(root).resolve()?);
+        let before = capture(root, lease);
+        let resolver = ProjectResolver::new(root);
+        let model = Arc::new(match lease {
+            Some(lease) => resolver.resolve_with_lease(lease)?,
+            None => resolver.resolve()?,
+        });
         if let Some(before) = before
             // These join diagnostics derive only from the compared model inputs.
             // Preserve them verbatim; all IO, integrity and unknown diagnostics
@@ -72,7 +97,7 @@ impl ProjectReadCache {
                 .source_shards
                 .iter()
                 .all(|shard| shard.path.strip_prefix(root).is_ok_and(cache_input_path))
-            && unchanged(root, &before)
+            && unchanged(root, &before, lease)
         {
             self.entry = Some(Entry {
                 root: root.to_owned(),
@@ -85,6 +110,19 @@ impl ProjectReadCache {
         }
         Ok(model)
     }
+}
+
+fn validate_read_lease(
+    root: &Path,
+    lease: &crate::revision::ProjectWriteLease,
+) -> Result<(), EngineError> {
+    lease.validate(root)?;
+    if std::fs::symlink_metadata(root.join(".datum/revision/write.lock")).is_ok() {
+        return Err(EngineError::Operation(
+            "legacy write.lock requires reconciliation; mixed writers unsupported".into(),
+        ));
+    }
+    Ok(())
 }
 
 // These transport receipts are not resolver inputs. If a project explicitly
@@ -116,21 +154,25 @@ const MAX_ENTRIES: usize = 4096;
 const MAX_BYTES: u64 = 32 * 1024 * 1024;
 const MAX_RETAINED_INPUT: usize = 8 * 1024 * 1024;
 
-fn capture(root: &Path) -> Option<Vec<u8>> {
+fn capture(root: &Path, lease: Option<&crate::revision::ProjectWriteLease>) -> Option<Vec<u8>> {
     let mut input = Input::Capture(Vec::new());
-    scan(root, &mut input)?;
+    scan(root, &mut input, lease)?;
     let Input::Capture(bytes) = input else {
         unreachable!()
     };
     Some(bytes)
 }
 
-fn unchanged(root: &Path, expected: &[u8]) -> bool {
+fn unchanged(
+    root: &Path,
+    expected: &[u8],
+    lease: Option<&crate::revision::ProjectWriteLease>,
+) -> bool {
     let mut input = Input::Compare {
         expected,
         position: 0,
     };
-    scan(root, &mut input).is_some()
+    scan(root, &mut input, lease).is_some()
         && matches!(input, Input::Compare { position, .. } if position == expected.len())
 }
 
@@ -170,7 +212,11 @@ impl Input<'_> {
     }
 }
 
-fn scan(root: &Path, input: &mut Input<'_>) -> Option<()> {
+fn scan(
+    root: &Path,
+    input: &mut Input<'_>,
+    lease: Option<&crate::revision::ProjectWriteLease>,
+) -> Option<()> {
     // A symlink target or a recovery lease can change without local file bytes
     // changing. Do not memoize either case, including symlinked ancestors.
     for ancestor in root.ancestors().filter(|p| !p.as_os_str().is_empty()) {
@@ -182,7 +228,9 @@ fn scan(root: &Path, input: &mut Input<'_>) -> Option<()> {
             return None;
         }
     }
-    if crate::revision::ProjectWriteLease::is_busy(root) {
+    if let Some(lease) = lease {
+        validate_read_lease(root, lease).ok()?;
+    } else if crate::revision::ProjectWriteLease::is_busy(root) {
         return None;
     }
     let stages = root.join(".datum/revision/v1/stage");

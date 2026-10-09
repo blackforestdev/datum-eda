@@ -31,6 +31,7 @@ fn run_drc_does_not_count_unfilled_authored_zone_as_copper() {
     let pad = uuid::Uuid::new_v4();
     let zone = uuid::Uuid::new_v4();
     let engine = Engine {
+        native_project_reads: Default::default(),
         pool: Pool::default(),
         pool_index: PoolIndex::open_in_memory().expect("pool index should initialize"),
         design: Some(Design {

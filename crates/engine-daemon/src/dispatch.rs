@@ -378,13 +378,16 @@ fn dispatch_request_inner(
             }
         }
         "native.describe" => match serde_json::from_value::<NativeDescribeParams>(request.params) {
-            Ok(params) => {
-                native_describe_response(request.id, &params.project_root, params.confirm_durable)
-            }
+            Ok(params) => native_describe_response(
+                engine,
+                request.id,
+                &params.project_root,
+                params.confirm_durable,
+            ),
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "native.write" => match serde_json::from_value::<NativeWriteParams>(request.params) {
-            Ok(params) => native_write_response(request.id, params),
+            Ok(params) => native_write_response(engine, request.id, params),
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "revision.catalog" => serialized_success_response(
@@ -467,14 +470,15 @@ fn explain_violation_response(
 /// the stale-guard anchor a `native.write` client needs (current
 /// `model_revision`), plus the manifest name and journal length.
 fn native_describe_response(
+    engine: &mut Engine,
     request_id: Value,
     project_root: &Path,
     confirm_durable: bool,
 ) -> JsonRpcResponse {
     let resolved = if confirm_durable {
-        eda_engine::api::native_write::durability::resolve_durable(project_root)
+        engine.confirm_native_project_durable(project_root)
     } else {
-        ProjectResolver::new(project_root).resolve()
+        engine.read_native_project(project_root)
     };
     match resolved {
         Ok(model) => success_response(
@@ -507,7 +511,11 @@ fn native_describe_response(
 /// Error codes: -32602 invalid params (bad source, empty reason),
 /// -32060 engine resolve/build/commit failure, -32061 stale
 /// `expected_model_revision`, -32062 unknown verb.
-fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRpcResponse {
+fn native_write_response(
+    engine: &mut Engine,
+    request_id: Value,
+    params: NativeWriteParams,
+) -> JsonRpcResponse {
     let reason = params.reason.trim().to_string();
     if reason.is_empty() {
         return error_response(
@@ -534,8 +542,8 @@ fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRp
         .clone()
         .unwrap_or_else(|| "datum-eda-daemon".to_string());
 
-    let mut model = match ProjectResolver::new(&params.project_root).resolve() {
-        Ok(model) => model,
+    let mut model = match engine.read_native_project(&params.project_root) {
+        Ok(model) => std::sync::Arc::unwrap_or_clone(model),
         Err(err) => return error_response(request_id, -32060, &err.to_string()),
     };
     if let Some(expected) = params.expected_model_revision.as_deref()

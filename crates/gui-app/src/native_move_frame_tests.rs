@@ -3,6 +3,8 @@
 use super::*;
 use std::time::{Duration, Instant};
 use winit::platform::wayland::EventLoopBuilderExtWayland;
+#[path = "native_move_frame_repeat.rs"]
+mod repeat;
 #[path = "native_move_frame_steps.rs"]
 mod steps;
 
@@ -25,6 +27,7 @@ struct Fixture {
     commit_started: Option<Instant>,
     pending_placement_presented: bool,
     post_move_component: Option<String>,
+    first_committed_position: Option<PointNm>,
 }
 impl Fixture {
     fn mouse(&mut self, events: &ActiveEventLoop, x: f64, y: f64, click: bool) {
@@ -166,7 +169,7 @@ impl ApplicationHandler for Fixture {
                 started.elapsed().as_millis()
             );
         }
-        if self.stage < 29
+        if self.stage < 34
             && self.stage_started.elapsed() >= Duration::from_millis(20)
             && self.app.runtime.as_ref().is_some_and(|r| {
                 r.surface_transaction.has_presented()
@@ -182,7 +185,7 @@ impl ApplicationHandler for Fixture {
             ));
             events.exit();
         }
-        if self.stage == 29
+        if self.stage == 34
             && self
                 .app
                 .runtime
@@ -193,12 +196,12 @@ impl ApplicationHandler for Fixture {
         }
         // Retain the ordinary native scheduler. Only an actual next script input
         // adds a wake; pending edits rely on production worker/queue wakes.
-        let script_due = (self.stage < 29
+        let script_due = (self.stage < 34
             && self.app.runtime.as_ref().is_some_and(|r| {
                 !r.native_edit.pending()
                     // At these stages there is no next input yet: require actual
                     // production completion/presentation wakes, not script polling.
-                    && (!matches!(self.stage, 17 | 19..=23 | 26..=27)
+                    && (!matches!(self.stage, 17 | 19..=23 | 26..=27 | 29..=33)
                         || (!r.renderer.render_session().has_pending_frame()
                             && !r.native_move_frame_needed()))
                     && r.surface_transaction.has_presented()
@@ -248,6 +251,7 @@ fn ordinary_app_select_m_move_commit_history_reopen() {
         commit_started: None,
         pending_placement_presented: false,
         post_move_component: None,
+        first_committed_position: None,
     };
     events.run_app(&mut fixture).unwrap();
     assert_eq!(
@@ -256,7 +260,7 @@ fn ordinary_app_select_m_move_commit_history_reopen() {
         "Save leaves committed bytes unchanged"
     );
     assert!(fixture.failure.is_none(), "{:?}", fixture.failure);
-    assert_eq!(fixture.stage, 29);
+    assert_eq!(fixture.stage, 34);
     let reopened = load_board_editor_workspace_state(
         &fixture
             .app

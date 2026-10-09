@@ -287,3 +287,61 @@ fn durable_confirmation_preserves_cache_and_repairs_missing_cursor() {
     assert_eq!(std::fs::read(&path).unwrap(), bytes);
     assert!(!Arc::ptr_eq(&before, &cache.resolve(root).unwrap()));
 }
+
+#[test]
+fn guarded_cache_reuse_keeps_input_identity_and_writer_exclusion() {
+    let fixture = Fixture::new();
+    let other = Fixture::new();
+    let root = &fixture.0;
+    let mut cache = ProjectReadCache::default();
+    let before = cache.resolve(root).unwrap();
+    let lease = crate::revision::ProjectWriteLease::acquire(root).unwrap();
+    assert!(Arc::ptr_eq(
+        &before,
+        &cache.resolve_with_lease(root, &lease).unwrap()
+    ));
+    assert!(cache.resolve_with_lease(&other.0, &lease).is_err());
+    assert!(
+        cache.resolve(root).is_err(),
+        "ordinary reader cannot reuse through another live guard"
+    );
+    let path = root.join("project.json");
+    let text = std::fs::read_to_string(&path).unwrap();
+    std::fs::write(&path, text.replace("resolver-test", "external-edit")).unwrap();
+    let changed = cache.resolve_with_lease(root, &lease).unwrap();
+    assert!(!Arc::ptr_eq(&before, &changed));
+    assert_eq!(changed.project.name, "external-edit");
+    assert_eq!(
+        *changed,
+        ProjectResolver::new(root)
+            .resolve_with_lease(&lease)
+            .unwrap()
+    );
+}
+
+#[test]
+fn engine_durable_reads_reuse_only_current_input_and_still_refuse_busy_writer() {
+    let fixture = Fixture::new();
+    let root = &fixture.0;
+    let mut engine = crate::api::Engine::new().unwrap();
+    let first = engine.confirm_native_project_durable(root).unwrap();
+    let cursor = std::fs::read(root.join(".datum/journal/cursor.json")).unwrap();
+    let second = engine.confirm_native_project_durable(root).unwrap();
+    // First confirmation can create a missing cursor; establish its post-sync basis.
+    let third = engine.confirm_native_project_durable(root).unwrap();
+    assert!(Arc::ptr_eq(&second, &third));
+    assert_eq!(first.model_revision, third.model_revision);
+    assert_eq!(
+        std::fs::read(root.join(".datum/journal/cursor.json")).unwrap(),
+        cursor
+    );
+    let lease = crate::revision::ProjectWriteLease::acquire(root).unwrap();
+    assert!(engine.confirm_native_project_durable(root).is_err());
+    drop(lease);
+    let path = root.join("project.json");
+    let text = std::fs::read_to_string(&path).unwrap();
+    std::fs::write(&path, text.replace("resolver-test", "external-edit")).unwrap();
+    let changed = engine.confirm_native_project_durable(root).unwrap();
+    assert!(!Arc::ptr_eq(&third, &changed));
+    assert_eq!(changed.project.name, "external-edit");
+}

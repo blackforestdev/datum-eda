@@ -312,6 +312,7 @@ impl Fixture {
                 let after = std::fs::read(&self.board_path).unwrap();
                 assert_ne!(after, self.preimage);
                 self.committed = Some(after);
+                self.first_committed_position = self.committing_position;
                 self.committed_label = Some(self.selected_label());
                 assert_ne!(
                     self.committed_label, self.original_label,
@@ -489,9 +490,13 @@ impl Fixture {
                     self.post_move_component.as_ref().unwrap()
                 );
             }
+            28..=33 => {
+                self.repeat_move(events);
+                return;
+            }
             _ => {
                 runtime.begin_application_terminal_shutdown();
-                self.stage = 29;
+                self.stage = 34;
                 return;
             }
         }

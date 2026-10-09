@@ -589,5 +589,111 @@
     "verification_status": "Actual bounded independent PASS received; wrong-target bug closed for source483f236e. C07 remains in progress and development availability unaccepted. Slow confirmation and original recovery attribution remain open.",
     "manager_disposition": "Owner-appointed PM059 manager records actual reserved PASS and accepts only current-selection/cache/durable-cursor correction under retained UED-C07. Close dat-first-edit-move-target-eitk; unchanged first-edit grant continues. No C07/C08, native/HUMAN/full qualification or successor acceptance.",
     "whitespace_check": "Source/governance diff check passed. Whole staged diff warned only about preserved raw-log trailing blank lines; raw receipts intentionally byte-exact. The source commit proof paragraph should be read at source scope, not as a whole-log diff PASS."
+  },
+  "confirmation_read_reuse_correction": {
+    "owner_feedback": "Reserved audit relayed latest owner QA: fresh build better but Applying Project action blocks the next action for seconds. Retained UED-C07/z9vn repair, not a successor grant.",
+    "issue": "dat-first-edit-confirmation-latency-z9vn",
+    "execution_authority": "Retained UED-FIRST-MOVE-01 and PM059 bounded owner appointment. Existing guarded engine-owned query cache reuse only; no write-policy, persistence, dependency, tolerance or acceptance change.",
+    "existing_cost_evidence": "Prior confirmation-trace-proof.log: canonical operation3267\u20133660ms, complete workspace/selection1025\u20131124ms, final qualified answer5779\u20136242ms. Source confirms execute initial durable describe, preparation resolve plus canonical fresh guard resolve, post-write durable describe, separate worker model, final durable describe. No new broad profiling campaign.",
+    "correction": [
+      "One existing bounded ProjectReadCache per engine supplies native.describe and native.write preparation. Full root/input bytes and identity must still match; any unsupported/transient/recovery condition uses ProjectResolver fallback. Canonical commit still reacquires and resolves its fresh persisted preimage, validates guards and performs the one commit/journal path.",
+      "Durable confirmation reuses only parsed immutable model, not confirmation receipts. Current non-cloneable writer lease validates its root/inode before and after cache use, and legacy write.lock still refuses. Every shard/store/journal/cursor/root file/directory fsync runs on every confirmation; failures propagate and retries reissue synchronization.",
+      "GUI execute describe/write/reconcile, unknown receipt correlation, final fresh durable revision/tip validation and atomic complete scene/selection publication remain unchanged. No pending edits permitted on stale state; Applying remains until full publication."
+    ],
+    "focused_safety": [
+      "Existing cache module12PASS0fail: guarded same-input Arc reuse, wrong-root guard refusal, ordinary reader refusal through live guard, changed-input invalidation, engine confirmation reuse under fresh lease and busy writer refusal, plus prior complete exact-input cases.",
+      "Existing daemon native-write module11PASS0fail: stale revision/invalid writes still refused, dry-run and canonical journal writes unchanged.",
+      "Initial engine compile failed because an existing direct Engine test initializer lacked new default field; one-line constructor correction, failed log retained and not credited."
+    ],
+    "native_fixture": "Extend existing ordinary App fixture to commit B after the original A workflow and selection/cancel case, verify B clicked pose and A preservation, measure fully qualified final publication, immediately M acquired B/cancel, Save/reopen committed bytes. Private latest owner-project copy; Wayland/WGPU in-process input, not physical compositor/HUMAN.",
+    "logs": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-cache-proof.log",
+        "sha256": "3d677f7824fe6972f492aecd565a58fd31253ec8c0473d6a2531b197a99765dd"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-cache-corrected-proof.log",
+        "sha256": "9c0d23c8411b5a4872d406d29653df08458ac895250c4c40cd072b0a33afe10c"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-cache-final-proof.log",
+        "sha256": "69810a0c35762c5942dfec7c5316dec80854fe229b323723e4a167decb91e124"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-native-write-proof.log",
+        "sha256": "399badd0950a4c50efee09b3edb9822feba67872a791635dd4597fef653ba92d"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-build.log",
+        "sha256": "7a35270ef57dbb6fb5189737ea06e31d4c5b1892bd6ba7d9b9a57022550357f8"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-preimages.json",
+        "sha256": "350f75c5ed8edee46cd4f0dbb43e8cae017505520eeb41f7ed8a1fee6156c3f8"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-workflow-proof.log",
+        "sha256": "cfce2c8ea3e68eb5acba377b9ebeb6abbf5ef096a900a6332e82c50de58274b3"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-corrected-workflow-proof.log",
+        "sha256": "1de57b912e6da9c175285c227cbe16e0ba133bb74a25e2552fe764bb63691ab8"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-final-workflow-proof.log",
+        "sha256": "f3d9d778be122498df487fefbc5d890671285a57aa460716becfe5e04a79880c"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-final-native.log",
+        "sha256": "c4da1f2e267f2f688dd3529988a1a52d5b7bd25d9faebaf6ba26533407ff62d1"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/latency-source-health.log",
+        "sha256": "9e017cfbbc254fa38300641f49ac77b79c5424100e461c807029eb3075d8f329"
+      }
+    ],
+    "preimages": {
+      "preimages": {
+        "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/board/board.json": "43df082ab36cb3c94f3846fe7b156afb4abd0f3770413b4f1a873c4c940b99e4",
+        "/home/bfadmin/Documents/datum_projects/DOA2526-first-edit/.datum/journal/transactions.jsonl": "f00658607659dfa71e9d5bb80a619dd0594dd25a9b7ee1987543455824eb8aa4",
+        "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+        "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
+      },
+      "environment": {
+        "XDG_SESSION_TYPE": "wayland",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "DISPLAY": ":1"
+      }
+    },
+    "review": "PENDING exact reserved bounded candidate review",
+    "remaining": "Still3794\u20134328ms waiting for final qualified publication, so z9vn remains open and no fast-commit/availability acceptance. Existing canonical fresh-preimage resolution, fresh post-write reconciliation and separate complete GUI model preparation remain; no skipped integrity/durability, stale-state edits, uncertainty retry or new protocol/model mechanism. Actual bounded review pending; original recovery dhj9, private-writer gate0u2x, C07/C08 and broader qualification remain open.",
+    "test_harness_corrections": "New repeated-input helper initially missed its NativeEditAction import, then held a preview borrow across mutable prepared-scene access. Corrected helper-only import/borrow ownership; both compile failures retained, not product reproductions or credited proof. Final full repeated native workflow passed.",
+    "native_result": {
+      "result": "PASS26.22s: original select/M/preview/cancel/commit/Undo/Redo/Save, correct next selection/M/cancel; second B commit preserves A and its clicked pose, immediate next M binds published B then cancel/Save/reopen passes.",
+      "first_A_click_to_confirm_ms": 4328,
+      "second_B_click_to_confirm_ms": 3794,
+      "B_following_M_dispatch_us": 1126,
+      "next_B_selection_us": 22681,
+      "limits": "Trace timing OFF, exact matching GUI/CLI/daemon, native Wayland/WGPU App input in-process. Historical confirmation5670\u20136070ms remains descriptive comparison, not controlled paired benchmark, arbitrary budget, physical compositor/HUMAN or instantaneous-commit acceptance.",
+      "backend": "Wayland; Vulkan; Intel HD Graphics P630/KBL GT2 integrated; Intel Mesa25.0.7-2+deb13u1"
+    },
+    "source_blobs": {
+      "crates/engine/src/api/mod.rs": "248edcb5223d1eb062ffded250f0828a582bb03d",
+      "crates/engine/src/api/native_project_reads.rs": "092245f73b1519fb4db243ccbb0733f0f2a93217",
+      "crates/engine/src/api/native_write/durability.rs": "9be0b3d4f1942ddab6dfa75af48e82e4f7dd1e50",
+      "crates/engine/src/api/tests/write_ops/write_ops_smoke_and_delete.rs": "46c5ac216cea23f3ade2270da1b22c25c33c88ea",
+      "crates/engine/src/substrate/project_read_cache.rs": "fccded09d629087c822489277856e66eb988d4a5",
+      "crates/engine/src/substrate/tests/project_read_cache.rs": "5a640fbe654a6a63b90ab8c29d5bb43c4d958f09",
+      "crates/engine-daemon/src/dispatch.rs": "f9a5bdcbe5a85423ef44e530567b8f3c37cc7150",
+      "crates/gui-app/src/native_move_frame_tests.rs": "77df0c48e7f9d68f2b6b26f706e90da143fd44f9",
+      "crates/gui-app/src/native_move_frame_steps.rs": "b1e7ee61301df39fd8b9cc35dc48064eed96939b",
+      "crates/gui-app/src/native_move_frame_repeat.rs": "9016168c81571b07d9a077666d1c2a8dafa446c1"
+    },
+    "binary_sha256": {
+      "target/debug/datum-gui": "f2f34195eac733e4a186cede50290c218e1256305f587b39d5039b3d4c74de80",
+      "target/debug/datum-eda": "f89a8b9d4565a5cb7a3aa5373674381e61d8960019e4969f15f132c2a92dcc7d",
+      "target/debug/eda-engine-daemon": "f6e13c8fd9a5e63a03d089c58528e2625532420d1a1c709f8301db510d29a2a2"
+    },
+    "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit"
   }
 }
