@@ -1,0 +1,40 @@
+{
+  "reviewer": "owner-reserved independent audit01a0e343-3d9c-70f1-899e-5bd239513383",
+  "source_commit": "483f236e20e20d0d24a5cf91cb05392901125f04",
+  "packet_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json",
+  "packet_blob": "50ede6d12e5b3828eb63f8e2b62eb64b3df7d01c",
+  "outcome": "PASS for bounded current-selection/cache/durable-cursor correction; no development acceptance",
+  "mandatory_findings": [],
+  "source_review": [
+    "Idle Move clicks use shared selection; only an acquired preview or pending action reaches authoring dispatch. Active preview target remains captured. New acquisition checks current nonstale project/revision/Object Footprint identity against full scene preview.",
+    "Worker-owned existing byte-qualified cache supplies complete immutable workspace and selection; cache transfers with atomic publication and superseding selection. Fresh durable canonical after-description/revision/tip validation retained; no mutation retry.",
+    "Cursor write compares complete deterministic bytes under existing writer ownership. Only identical bytes skip truncate/write. File sync_all and directory sync remain unconditional; missing/different cursor persists, non-NotFound read errors propagate. Existing ProjectReadCache exact-input validation unchanged."
+  ],
+  "independent_replays": [
+    {
+      "path": "target/user-edit-review/483f236e-replay/workflow.log",
+      "sha256": "30fcd6087d678c071f4506de38f4ee54780aed868d24695dca34d67887be1f6b",
+      "result": "1 PASS, zero failures"
+    },
+    {
+      "path": "target/user-edit-review/483f236e-replay/cache.log",
+      "sha256": "424f6601b248a1e4f05f9029ba170bb4f7d456a09acaad601fb8ac05e3a3ff9d",
+      "result": "1 PASS, zero failures"
+    }
+  ],
+  "ordinary_result": "Trace-OFF existing production App/Winit Wayland/WGPU fixture on fresh private ownerProject copy PASS24.80s. Original preview/cancel/pending/final placement/history/Save/reopen passed. Pending click/M refused without retry; subsequent idle Move click selected another current Footprint, M acquired exactly that identity, hover did not retarget, cancel did not write. No rendering pause in this trial.",
+  "observations": {
+    "subsequent_selection_handler_us": 21048,
+    "click_to_confirm_ms": 5670,
+    "burst_192_events_ms": 26,
+    "limits": "Single descriptive trial; no numeric budget, paired performance estimate or latency acceptance."
+  },
+  "cache_result": "Independent focused durable_confirmation_preserves_cache_and_repairs_missing_cursor PASS: identical cursor bytes preserve exact-byte-qualified Arc reuse after durability confirmation; removing cursor triggers durable restoration and cache invalidation. Existing unchanged cache module10-test producer proof reviewed/reused.",
+  "pins": "Nine source blobs/three binaries/seventeen logs/exact packet verified before replay. OwnerProject files and binary hashes unchanged after replay; worktree clean. Interrupted mismatched-daemon producer run preserved and not credited.",
+  "unrelated_failure": "Private-writer pattern gate0u2x remains recorded failing; no gate PASS or waiver credited. Whole diff raw-log trailing whitespace is retained evidence, not runtime source defect.",
+  "remaining": [
+    "Confirmation latency z9vn remains OPEN: independent5670ms, producer6070ms.",
+    "Original recovery exhaustion dhj9 remains unattributed/open; no C07/C08 development acceptance.",
+    "Physical compositor/HUMAN, screenshot-pixel and broader S5A/CAM qualification and successor execution remain outside scope."
+  ]
+}

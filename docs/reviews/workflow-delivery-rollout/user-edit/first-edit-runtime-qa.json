@@ -527,7 +527,27 @@
         "sha256": "d6bb0be4de1d6b5466d9fa046c6cf2bbb224ec04613f9f1db58781f455eb5091"
       }
     ],
-    "review": "PENDING actual reserved bounded candidate review",
+    "review": {
+      "outcome": "PASS for bounded current-selection/cache/durable-cursor correction; no development acceptance",
+      "source_commit": "483f236e20e20d0d24a5cf91cb05392901125f04",
+      "reviewed_packet_blob": "50ede6d12e5b3828eb63f8e2b62eb64b3df7d01c",
+      "receipt_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-selection-target-review.json",
+      "receipt_sha256": "c2ab39d6389604069765bf65c874bb76487eba513491bfc9a4bbbe17ae01578c",
+      "logs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-independent-workflow.log",
+          "sha256": "30fcd6087d678c071f4506de38f4ee54780aed868d24695dca34d67887be1f6b",
+          "result": "1 PASS, zero failures"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/selection-independent-cache.log",
+          "sha256": "424f6601b248a1e4f05f9029ba170bb4f7d456a09acaad601fb8ac05e3a3ff9d",
+          "result": "1 PASS, zero failures"
+        }
+      ],
+      "independent_selection_handler_us": 21048,
+      "independent_confirmation_ms": 5670
+    },
     "retained_gaps": [
       "Confirmation latency z9vn remains open; no instant confirmation or development acceptance.",
       "Original recovery-stop dhj9 attribution remains open.",
@@ -566,6 +586,8 @@
       "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch": "3ba2e98d9a53713d5785b40b8d37f616e019bc7da14051d2f4b52cf5ac1f19bd"
     },
     "ordinary_launch": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum_projects/DOA2526-first-edit",
-    "verification_status": "Source/runtime correction demonstrated, actual reserved bounded candidate review pending. C07 in progress and availability not accepted. Confirmation6070ms is remaining defect, not resolved by handler improvement."
+    "verification_status": "Actual bounded independent PASS received; wrong-target bug closed for source483f236e. C07 remains in progress and development availability unaccepted. Slow confirmation and original recovery attribution remain open.",
+    "manager_disposition": "Owner-appointed PM059 manager records actual reserved PASS and accepts only current-selection/cache/durable-cursor correction under retained UED-C07. Close dat-first-edit-move-target-eitk; unchanged first-edit grant continues. No C07/C08, native/HUMAN/full qualification or successor acceptance.",
+    "whitespace_check": "Source/governance diff check passed. Whole staged diff warned only about preserved raw-log trailing blank lines; raw receipts intentionally byte-exact. The source commit proof paragraph should be read at source scope, not as a whole-log diff PASS."
   }
 }
