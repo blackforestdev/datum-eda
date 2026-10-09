@@ -25,7 +25,7 @@ fn reference(id: Uuid) -> RevisionedRef {
     }
 }
 
-pub(super) struct BindingFixture {
+pub(in crate::api::native_write) struct BindingFixture {
     pub root: std::path::PathBuf,
     pub model: DesignModel,
     pub sheet: Uuid,
@@ -36,7 +36,7 @@ pub(super) struct BindingFixture {
     pub library_pin: Uuid,
 }
 
-pub(super) fn fixture(name: &str) -> BindingFixture {
+pub(in crate::api::native_write) fn fixture(name: &str) -> BindingFixture {
     let root = super::super::test_support::temp_project_root(name);
     let genesis = super::super::genesis::bootstrap_native_project(
         &root,

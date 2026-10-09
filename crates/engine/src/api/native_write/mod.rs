@@ -43,6 +43,8 @@ pub mod project;
 pub mod registry;
 pub mod revision;
 pub mod schematic_connectivity;
+pub mod schematic_edit;
+pub mod schematic_library;
 pub mod schematic_sheets;
 pub mod schematic_symbols;
 pub mod waivers;

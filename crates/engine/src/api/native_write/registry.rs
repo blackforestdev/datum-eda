@@ -52,6 +52,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::project::VERBS);
         verbs.extend_from_slice(super::board_components::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
+        verbs.extend_from_slice(super::schematic_edit::VERBS);
         verbs.sort_by(|a, b| a.id.cmp(b.id));
         for pair in verbs.windows(2) {
             assert_ne!(
@@ -141,6 +142,8 @@ mod tests {
                 "datum.project.set_name",
                 "datum.project.set_rule",
                 "datum.project.set_rules",
+                "datum.schematic.draw_wire",
+                "datum.schematic.place_symbol",
             ]
         );
     }

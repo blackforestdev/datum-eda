@@ -670,3 +670,14 @@ Readiness source SHA256 pins:
 - `crates/cli/src/commands/schematic/symbol_library_materialization.rs`: `a2e114efd497a28396100f737bc1148d08963ec4fb354fa8313b405a2e8b0f1b`
 - `crates/cli/src/commands/schematic/symbol_mutations.rs`: `8e4b83521563eb1fd37af3e536c10ec418c3e45766d74a114fd79bc1010615da`
 - `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`: `7259766f1f8c0cd377347612120c0df044ccb522a7166bdbe91346b462ad66bc`
+
+<!-- EVIDENCE:USER-SCHEMATIC-DELIVERY:NSD-C02-EXECUTION-GRANT -->
+
+Owner explicitly replies `USER-SCHEMATIC-DELIVERY: approve FIRST-SYMBOL-WIRE-01`
+after the concrete scope in `e17cbc52`. This grants NSD-C03/04 execution of that
+exact native sheet/library setup, qualified symbol placement and connected wire
+behavior, canonical asynchronous GUI integration, history/Save/reopen, focused
+ordinary Wayland/WGPU verification and reserved independent review. It grants no
+new dependency, representation, private writer, import expansion, tolerance or
+broader acceptance. Existing manager appointment is retained at its bounds;
+independent review and full qualification are not passed by approval.
