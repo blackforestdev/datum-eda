@@ -426,7 +426,17 @@
       "baseline_board_sha256": "0d734003ac1afdc15189a7d4fee945c935965bf866b34773e6afcd9698e22211",
       "saved_board_sha256": "362cbbd47eafe50521d37f6e6eae9f755bbf1c9e432a73477b4209b8d5983af0"
     },
-    "review": "Pending actual reserved bounded candidate review.",
-    "retained_boundaries": "C07/availability not accepted; original dat-first-edit-native-recovery-dhj9 unresolved. C04\u2013C06, native HUMAN and broader authoring qualification retained. No successor, budget, dependency, prototype, source-model change or waiver."
+    "review": {
+      "outcome": "PASS for bounded confirmation refresh correction; no latency or development acceptance",
+      "receipt_path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-confirmation-review.json",
+      "receipt_sha256": "dc052e400cb37cc1c70fba9c4df57a285c2bb1d9bd0622acd886e30c5f2ddd40",
+      "reviewed_packet_blob": "de870b68ccf489f292bf481a0303e479d1a9b4c2",
+      "archived_independent_log": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-independent-fbd200f0-workflow.log",
+      "independent_log_sha256": "ee687ca42cc8085d668b72a7cfc3c4a805f452e3b7fc6a96519cfd37e0724f9b",
+      "independent_click_to_confirm_ms": 4784
+    },
+    "retained_boundaries": "C07/availability not accepted; original dat-first-edit-native-recovery-dhj9 unresolved. C04\u2013C06, native HUMAN and broader authoring qualification retained. No successor, budget, dependency, prototype, source-model change or waiver.",
+    "source_commit": "fbd200f00e67e53efdaedf206eb03c483a6fb8c5",
+    "manager_disposition": "Actual reserved correctness PASS received. Accept this bounded repair for retained UED-C07 continuation only. Remaining confirmation latency z9vn and original recovery dhj9 stay open; C07, development availability, C08 and broader gates are not accepted. No successor grant."
   }
 }
