@@ -257,7 +257,30 @@
       "question": "Does worker result-channel disconnection restore complete last confirmed scene, block further mutation and preserve source bytes?",
       "method": "Existing real-board Runtime test module and actual native Wayland host; dropped in-process result sender, no canonical write or OS input injection. Complete serialized scene equality, blocked editor and unchanged copied board bytes asserted. Not ordinary pixel/HUMAN proof."
     },
-    "review": "Reserved independent bounded candidate review pending.",
-    "remaining": "Original recovery episode remains unattributed/open; UED-C07 and development availability withheld, no successor or wider qualification. Source-relative exact geometry, source bytes, canonical guards and existing review gates retained."
+    "review": {
+      "outcome": "PASS for bounded pending-placement correction; no development availability acceptance",
+      "source_commit": "5405a422541d7c335caa1bf4b5593b6ad6835ce6",
+      "packet_blob": "6a2073e82b24a0e977953204df591983b167afae",
+      "receipt": "first-edit-placement-review.json",
+      "archived_replays": [
+        {
+          "path": "first-edit-runtime-logs/independent-5405a422-placement-workflow.log",
+          "sha256": "3ab78d4d9c603116856e8cf5586b1f82e792abb57b9ec09aaff478b809a4fbfa"
+        },
+        {
+          "path": "first-edit-runtime-logs/independent-5405a422-placement-failure.log",
+          "sha256": "4662763922860bdde01f5b4d8428cee7be768dbbb957823d85fc9fb8aff08420"
+        }
+      ],
+      "ordinary_workflow": "1 PASS71.78s trace OFF; pending pose presented and final canonical position matches click; history/Save/reopen pass.",
+      "failure_safety": "1 PASS9.91s; dropped-worker full confirmed scene restoration, blocked editing and unchanged board."
+    },
+    "remaining": "Original recovery episode remains unattributed/open; UED-C07 and development availability withheld, no successor or wider qualification. Source-relative exact geometry, source bytes, canonical guards and existing review gates retained.",
+    "disposition": {
+      "manager": "owner-appointed codex-user-edit-delivery-20261008",
+      "authority": "Retained first-edit correction grant and PM059 delegated actual-review/unchanged-scope routine disposition",
+      "bug": "dat-first-edit-placement-snapback-koyu resolved by source5405a422 after actual reserved PASS",
+      "boundaries": "Original recovery issue remains open; no UED-C07 closure, availability acceptance, physical/HUMAN or successor grant."
+    }
   }
 }
