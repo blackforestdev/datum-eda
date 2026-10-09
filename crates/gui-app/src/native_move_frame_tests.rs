@@ -20,6 +20,7 @@ struct Fixture {
     original_label: Option<datum_gui_render::RectPx>,
     committed_label: Option<datum_gui_render::RectPx>,
     committing_position: Option<PointNm>,
+    commit_started: Option<Instant>,
     pending_placement_presented: bool,
 }
 impl Fixture {
@@ -322,6 +323,7 @@ impl Fixture {
                     .destination(click_world, runtime.workspace().authoring.snap)
                     .unwrap();
                 self.committing_position = Some(destination);
+                self.commit_started = Some(Instant::now());
                 self.mouse(events, x, y, true);
                 assert_eq!(
                     self.app
@@ -366,8 +368,9 @@ impl Fixture {
                     "qualified canonical placement must match the final click"
                 );
                 eprintln!(
-                    "move-frame pending_placement_presented={}",
-                    self.pending_placement_presented
+                    "move-frame pending_placement_presented={} click_to_confirm_ms={}",
+                    self.pending_placement_presented,
+                    self.commit_started.unwrap().elapsed().as_millis()
                 );
                 let after = std::fs::read(&self.board_path).unwrap();
                 assert_ne!(after, self.preimage);
@@ -616,6 +619,7 @@ fn ordinary_app_select_m_move_commit_history_reopen() {
         original_label: None,
         committed_label: None,
         committing_position: None,
+        commit_started: None,
         pending_placement_presented: false,
     };
     events.run_app(&mut fixture).unwrap();

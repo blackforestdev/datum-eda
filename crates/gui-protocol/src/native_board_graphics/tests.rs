@@ -103,7 +103,7 @@ fn recorded_graphics_reopen_as_source_qualified_native_scene_without_selection_w
     let model = f.reopen();
     assert_eq!(model.model_revision, f.model.model_revision);
     let authority = NativeSelectionResolution::capture(&model).unwrap();
-    let (scene, _) = crate::load_scene_from_engine(&LiveReviewRequest {
+    let (scene, _) = crate::workspace_loading::load_scene_from_engine(&LiveReviewRequest {
         project_root: f.root.clone(),
         board_file: None,
         artifact_path: None,

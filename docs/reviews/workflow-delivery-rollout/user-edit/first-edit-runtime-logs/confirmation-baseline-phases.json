@@ -1,0 +1,69 @@
+[
+  {
+    "args": [
+      "project",
+      "query",
+      "/home/bfadmin/Documents/datum-eda/target/user-edit-confirmation/baseline",
+      "output-jobs"
+    ],
+    "elapsed_ms": 754,
+    "status": 0
+  },
+  {
+    "args": [
+      "project",
+      "query",
+      "/home/bfadmin/Documents/datum-eda/target/user-edit-confirmation/baseline",
+      "manufacturing-plans"
+    ],
+    "elapsed_ms": 679,
+    "status": 0
+  },
+  {
+    "args": [
+      "project",
+      "query",
+      "/home/bfadmin/Documents/datum-eda/target/user-edit-confirmation/baseline",
+      "panel-projections"
+    ],
+    "elapsed_ms": 663,
+    "status": 0
+  },
+  {
+    "args": [
+      "artifact",
+      "list",
+      "/home/bfadmin/Documents/datum-eda/target/user-edit-confirmation/baseline"
+    ],
+    "elapsed_ms": 682,
+    "status": 0
+  },
+  {
+    "args": [
+      "proposal",
+      "list",
+      "/home/bfadmin/Documents/datum-eda/target/user-edit-confirmation/baseline"
+    ],
+    "elapsed_ms": 637,
+    "status": 0
+  },
+  {
+    "args": [
+      "context",
+      "refresh",
+      "--project-root",
+      "/home/bfadmin/Documents/datum-eda/target/user-edit-confirmation/baseline"
+    ],
+    "elapsed_ms": 715,
+    "status": 0
+  },
+  {
+    "args": [
+      "check",
+      "list",
+      "/home/bfadmin/Documents/datum-eda/target/user-edit-confirmation/baseline"
+    ],
+    "elapsed_ms": 632,
+    "status": 0
+  }
+]

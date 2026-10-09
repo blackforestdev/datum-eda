@@ -28,7 +28,7 @@ fn provenance() -> WriteProvenance {
     )
 }
 pub(super) fn scene(root: &Path) -> BoardReviewSceneV1 {
-    load_scene_from_engine(&LiveReviewRequest {
+    crate::workspace_loading::load_scene_from_engine(&LiveReviewRequest {
         project_root: root.into(),
         board_file: None,
         artifact_path: None,

@@ -282,5 +282,151 @@
       "bug": "dat-first-edit-placement-snapback-koyu resolved by source5405a422 after actual reserved PASS",
       "boundaries": "Original recovery issue remains open; no UED-C07 closure, availability acceptance, physical/HUMAN or successor grant."
     }
+  },
+  "confirmation_correction": {
+    "source_parent": "a3c4fb1961552ea1c8e014574c9ab6c284026cc4",
+    "source_blobs": [
+      {
+        "path": "crates/gui-app/src/runtime_native_edit.rs",
+        "blob": "705b8e463bfda7dbbe45265c2a879fe0f95c139d"
+      },
+      {
+        "path": "crates/gui-app/src/native_edit_selection.rs",
+        "blob": "b68662301949beee1ce7d71d5c5ba2e489c01daf"
+      },
+      {
+        "path": "crates/gui-app/src/native_move_frame_tests.rs",
+        "blob": "0467806a9b54468c8e9043a72f6b7f65938f9bbe"
+      },
+      {
+        "path": "crates/gui-protocol/src/lib.rs",
+        "blob": "c543744971028871dd82b447842b2da247a68bc9"
+      },
+      {
+        "path": "crates/gui-protocol/src/workspace_loading.rs",
+        "blob": "4f6264b9d0c0d82903e9c1dda3b8b3c7fe5edf69"
+      },
+      {
+        "path": "crates/gui-protocol/src/workspace_loading_tests.rs",
+        "blob": "463361dfba197ebd1b96002d2e6bf3a471cd3462"
+      },
+      {
+        "path": "crates/gui-protocol/src/source_shard_status.rs",
+        "blob": "1f3dfb57ccc9b56df88fce1b840f63e92a4e2760"
+      },
+      {
+        "path": "crates/gui-protocol/src/native_schematic_scene.rs",
+        "blob": "161d7b0592f40cc86b265239712c9f06b08e0be5"
+      }
+    ],
+    "owner_report": "Fresh binary kinda works, performance low; owner identifies left-click placement / commit confirmation.",
+    "cause": "Post-edit full workspace refresh repeatedly resolves the same Project for scene, schematic, shards, supervision and selection, plus independent empty production/check queries. Confirmed durable receipt was followed by a redundant pre-refresh description.",
+    "repair": "One freshly resolved immutable model supplies complete scene, native schematic, source shards, supervision and complete selection. Canonically empty production/check collections avoid redundant CLI resolution; nonempty paths unchanged. Confirmed receipt supplies pre-refresh revision/tip boundary, while the fresh post-refresh durability/revision/tip checks and failure recovery remain. No writer, geometry, persistence, timeout or acceptance rule changed.",
+    "configuration": "Ordinary production App Winit Wayland loop, WGPU Vulkan Intel HD Graphics P630 / Mesa 25.0.7; in-process native callbacks, not compositor-injected/HUMAN input; final proof trace OFF.",
+    "logs": {
+      "baseline-phases.json": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-baseline-phases.json",
+        "sha256": "c1d8a44cde92b7f78875900464238a322a0a0ecd6eef203b1c656827c6483c1d"
+      },
+      "owner-before-native.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-owner-before-native.log",
+        "sha256": "757893f32839128bfeb0dc559000e58177d8a595a4f346a48e89c1f359f5a5ae"
+      },
+      "owner-before-process.json": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-owner-before-process.json",
+        "sha256": "06aa9b464d9c63a6121af90b8d2356170f308a9eaf9fb7fb85bd5af9d1326a0a"
+      },
+      "parity-compile-before.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-parity-compile-before.log",
+        "sha256": "5755019584e5f9551591d510c9e8ebf57caaa1d4474b0334552d064535ef52ea"
+      },
+      "parity-final.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-parity-final.log",
+        "sha256": "aa5597c772ffd5109fba322df2fcd89afb4985a680a99cb018242291da4abd91"
+      },
+      "native-proof.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-native-proof.log",
+        "sha256": "4b085c8430c56b6e2f4cc98b7975127ae1d204c29f19c7642a675787ff13bc71"
+      },
+      "trace-proof.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-trace-proof.log",
+        "sha256": "d52e178b1734f8dfea300113a43a93dab7b1c53be111cb8344fe6d1c1ee7eeae"
+      },
+      "trace-native.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-trace-native.log",
+        "sha256": "79269d45b146e56264d2a48628caa8172ea037ea2d7eedce646dd016a1d2cd8c"
+      },
+      "final-proof.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-final-proof.log",
+        "sha256": "4c73efd2b62a70b13b6848aaf3c8bdb763e55a0ff9774cea226cae7ba688f8c7"
+      },
+      "final-native.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-final-native.log",
+        "sha256": "db5d04af7e297d08773dcecc0bf7b8d93b718d7a19b2ff02c5a2e53f94cc6938"
+      },
+      "final-build.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-final-build.log",
+        "sha256": "e504aa0c96c7e62aa3865516b397e5549faad08433bdf233f2d02240c0fcae19"
+      },
+      "source-health-tests.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-source-health-tests.log",
+        "sha256": "df28df2c0871bb72ec49ed71af3cd75db10f155ee77c54b486882d5352613a14"
+      },
+      "private-writer-gate.log": {
+        "path": "docs/reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-logs/confirmation-private-writer-gate.log",
+        "sha256": "a0317c19eff36cac387f4160918f9541c429009af95e77df10b692bef2106ee4"
+      }
+    },
+    "measured": {
+      "historical_workspace_refresh_ms": [
+        8057,
+        8401
+      ],
+      "scope": "Historical trace-enabled same design evidence, not a controlled paired benchmark. Current trace-enabled refresh 909\u20131078ms; final trace-OFF click-to-confirm 5130ms.",
+      "trace_workspace_ms": [
+        909,
+        1078
+      ],
+      "trace_complete_workspace_and_selection_ms": [
+        1025,
+        1172
+      ],
+      "trace_canonical_operation_ms": [
+        3267,
+        3660
+      ],
+      "final_click_to_confirm_ms": 5130,
+      "final_click_dispatch_us": 4327,
+      "final_pointer_batch_ms": 13,
+      "final_native_replay_seconds": 25.79,
+      "remaining": "Confirmed placement still takes approximately five seconds; track separately in dat-first-edit-confirmation-latency-z9vn. No instantaneous confirmation or acceptance claimed."
+    },
+    "verification": {
+      "parity": "2 passed: existing materialized-scene/journal regression moved to its loading owner; existing owner-board copy complete fresh projection equality with prior loaders and unchanged board bytes. Import-only cleanup afterward does not alter this scope.",
+      "native": "1 passed: actual presented preview/cancel, clicked pending pose, final canonical position and revision, presented Undo/Redo, exact Save/reopen through ordinary App; no rendering recovery reported. Full membership and source predicates unchanged.",
+      "reused": "Existing qualified worker-loss restoration and durability/recovery evidence remain at their recorded scopes; no duplicate rerun.",
+      "source_health": "13 policy regressions pass; touched legacy lib production 3500\u21923225 and inline test tail 1835\u21921705, real workspace owner and existing regression extraction; source health and workspace rustfmt pass.",
+      "unrelated_gate": "check_schematic_private_writers.py fails unchanged journal owner assertions now implemented in journal_io.rs; dat-private-writer-journal-gate-0u2x captures this. No gate PASS or waiver claimed."
+    },
+    "ordinary_binaries": [
+      {
+        "path": "target/debug/datum-gui",
+        "sha256": "82015360994843bd947331167c6577103ab481e633090ca171a6b0e81f48a07c"
+      },
+      {
+        "path": "target/debug/datum-eda",
+        "sha256": "92a3d78d325bded4ab6a11f9adcf02324c9a0538e5201d27a750d3fd169f5047"
+      },
+      {
+        "path": "target/debug/eda-engine-daemon",
+        "sha256": "74e034b6059ee4d44903e55ad488b2221919cd242b9cb7e35f48235b429efa98"
+      }
+    ],
+    "project_copy": {
+      "baseline_board_sha256": "0d734003ac1afdc15189a7d4fee945c935965bf866b34773e6afcd9698e22211",
+      "saved_board_sha256": "362cbbd47eafe50521d37f6e6eae9f755bbf1c9e432a73477b4209b8d5983af0"
+    },
+    "review": "Pending actual reserved bounded candidate review.",
+    "retained_boundaries": "C07/availability not accepted; original dat-first-edit-native-recovery-dhj9 unresolved. C04\u2013C06, native HUMAN and broader authoring qualification retained. No successor, budget, dependency, prototype, source-model change or waiver."
   }
 }

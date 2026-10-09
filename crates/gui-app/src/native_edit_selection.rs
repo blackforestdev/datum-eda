@@ -43,6 +43,15 @@ pub(super) fn prepare(
 ) -> Result<Prepared> {
     let mut cache = runtime_selection::SelectionReadCache::default();
     let model = cache.resolve(root)?;
+    prepare_from_model(next, inputs, model, cache)
+}
+
+pub(super) fn prepare_from_model(
+    next: &mut datum_gui_protocol::ReviewWorkspaceState,
+    inputs: Inputs,
+    model: Arc<eda_engine::substrate::DesignModel>,
+    cache: runtime_selection::SelectionReadCache,
+) -> Result<Prepared> {
     anyhow::ensure!(
         model.model_revision.0 == next.scene.source_revision
             && model.project.project_id.to_string() == next.scene.project_uuid

@@ -59,13 +59,21 @@ impl EditWork {
                     let mut owner = client.lock().map_err(|_|anyhow::anyhow!("Native editor worker unavailable"))?;
                     if owner.is_none() {*owner=Some(NativeProjectClient::spawn()?);}
                     let client=owner.as_ref().unwrap();
+                    let started=std::time::Instant::now();
                     let operation=client.execute(&intent);
+                    trace_startup_timing(format!("native edit canonical operation {}ms",started.elapsed().as_millis()));
                     // Qualify the entire refresh against both revision and tip,
                     // including an undo/redo cycle that restores the same bytes.
-                    let before=client.describe(&intent.project_root)?;
-                    let mut next=load_board_editor_workspace_state(&request)?;
-                    let selection=native_edit_selection::prepare(&intent.project_root,&mut next,inputs)?;
+                    // A confirmed receipt already carries a freshly resolved, durable
+                    // post-write description. It is the pre-refresh boundary;
+                    // failures still require a fresh recovery-qualified description.
+                    let before=match &operation {Ok(receipt)=>receipt.description.clone(),Err(_)=>client.describe(&intent.project_root)?};
+                    let refreshed=std::time::Instant::now();
+                    let (mut next,model)=datum_gui_protocol::load_board_editor_workspace_with_model(&request)?;
+                    let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,Default::default())?;
+                    trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));
                     let after=client.describe(&intent.project_root)?;
+                    trace_startup_timing(format!("native edit qualified answer {}ms",started.elapsed().as_millis()));
                     let qualified=before.get("model_revision")==after.get("model_revision")
                         && before.get("transaction_tip")==after.get("transaction_tip")
                         && after.get("project_id")==Some(&serde_json::json!(intent.project_id))

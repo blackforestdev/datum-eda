@@ -1,12 +1,6 @@
 //! Native source projection uses the same immutable basis as selection authority.
+use crate::BoardReviewSceneV1;
 use crate::selection_resolution::{NativeSelectionResolution, SelectionAuthority};
-use crate::{BoardReviewSceneV1, LiveReviewRequest};
-use eda_engine::substrate::ProjectResolver;
-
-pub(crate) fn load(request: &LiveReviewRequest) -> anyhow::Result<Option<BoardReviewSceneV1>> {
-    let model = ProjectResolver::new(&request.project_root).resolve()?;
-    project_native_schematic_scene(&model, &request.project_root)
-}
 
 pub fn project_native_schematic_scene(
     model: &eda_engine::substrate::DesignModel,

@@ -34,6 +34,12 @@ pub fn load_source_shard_status(request: &LiveReviewRequest) -> Result<SourceSha
         return Ok(SourceShardStatusSummary::default());
     }
     let model = ProjectResolver::new(&request.project_root).resolve()?;
+    Ok(project_source_shard_status(&model))
+}
+
+pub(crate) fn project_source_shard_status(
+    model: &eda_engine::substrate::DesignModel,
+) -> SourceShardStatusSummary {
     let mut summary = SourceShardStatusSummary {
         total: model.source_shards.len(),
         ..SourceShardStatusSummary::default()
@@ -55,7 +61,7 @@ pub fn load_source_shard_status(request: &LiveReviewRequest) -> Result<SourceSha
             });
         }
     }
-    Ok(summary)
+    summary
 }
 
 pub fn load_accepted_transaction_tip(request: &LiveReviewRequest) -> Result<Option<String>> {
