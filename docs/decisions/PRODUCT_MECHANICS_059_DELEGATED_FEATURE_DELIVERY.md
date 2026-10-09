@@ -773,3 +773,37 @@ cancels preview. Place > Wire or W connects exact pins/grid vertices; Finish Wir
 completes the batch. Ctrl+Z, Ctrl+Shift+Z/Ctrl+Y and Ctrl+S use canonical history
 and Save. Original KiCad and owner board edits are preserved. No successor is
 selected or authorized by this delivered candidate.
+
+<!-- EVIDENCE:USER-SCHEMATIC-DELIVERY:NSD-C05-OWNER-ACCEPTANCE -->
+
+The owner replies `USER-SCHEMATIC-DELIVERY: manager approve` to the pending
+NSD-C05 packet for the only reviewed candidate, source
+`94c95ae66270b703fdbe1d17e9e2811f1932133e`, packet blob
+`f00055c5a85b5a0242b5198d8293e7e049dd7af1`, evidence commit `c5db9d4d`.
+This explicitly approves bounded objective development availability. The recording
+session `codex-user-edit-delivery-20261008` handles this owner-directed disposition;
+no broader standing appointment or successor authority is inferred from the short
+reply. Exact disposition and launch are preserved in
+`docs/reviews/workflow-delivery-rollout/native-schematic/development-acceptance.json`.
+Actual independent PASS and finite ordinary Wayland/WGPU proof are reused; current
+GUI/CLI/daemon and four preserved source hashes were checked and still match.
+No implementation change, rebuild or repeated proof is needed for this approval.
+
+NSD-C05 is complete and `development_ready` is true for FIRST-SYMBOL-WIRE-01.
+Designers can choose a qualified native symbol, enter reference/value, preview,
+cancel or place it, connect exact pins with a wire gesture, undo/redo and
+Save/reopen in the prepared native Project. The ordinary launch remains the
+command pinned in C04. Original KiCad inputs and existing owner board edits are
+preserved. Physical compositor/HUMAN, full authoring/GWP/S5A/C04-C06, CAM/T04,
+undecided budgets and the disclosed Clippy/parity defects remain unpassed and
+unwaived. Development availability is not complete qualification.
+
+<!-- REQ:USER-SCHEMATIC-DELIVERY:NSD-C06 -->
+<!-- OWNER:USER-SCHEMATIC-DELIVERY:NSD-C06:SCHEMATIC-SUCCESSOR-SELECTION -->
+Record an explicit owner successor selection and publish synchronized closure of
+this accepted delivery. This administrative boundary expresses the existing
+no-automatic-successor contract and the selector's one-actionable-item invariant;
+it adds no feature implementation or qualification prerequisite. C01-C05 remain
+complete, with no live implementation claim. Do not reopen acceptance or repeat
+proof while waiting. A successor requires its own existing authorization and
+prerequisites; this owner acceptance supplies none.

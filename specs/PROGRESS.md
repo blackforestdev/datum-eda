@@ -211,7 +211,7 @@
    PM059 ordinary-workflow, concrete prerequisite and development-evidence validation implemented in 27e98908 with 60 focused tests and governance checks passed. First-edit manager ownership, actual writer review and qualification boundaries unchanged; no automatic grant or acceptance. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 - **Deliver first native symbol placement and wire connection** (`USER-SCHEMATIC-DELIVERY`; `dat-first-native-schematic-948o`).
-   FIRST-SYMBOL-WIRE-01 implemented at94c95ae6 and reserved bounded review PASS with independent Wayland/WGPU native replay. C03/C04 complete; claim explicitly released. NSD-C05 objective schematic development acceptance awaits owner or explicit manager scope extension; no implementation reapproval, all-gates PASS, full qualification or successor authority. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**.*
+   Owner approves FIRST-SYMBOL-WIRE-01 development availability at94c95ae6, reviewed packetf00055c5 and actual reserved PASS. C01-C05 complete; no implementation claim. Ordinary native symbol/wire/history/Save/reopen delivered. NSD-C06 retains only explicit successor-selection/closure boundary; full qualification and disclosed Clippy/parity defects remain unpassed. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
