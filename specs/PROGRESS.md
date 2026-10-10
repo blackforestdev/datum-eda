@@ -439,7 +439,7 @@ full per-reference detail; `progress_anchor` is the path/name below):
 | `specs/ERC_SPEC.md` | engine + CLI ERC tests + `check_erc_connectivity_parity` + `erc_pin_taxonomy_surface` parity | remaining target ERC result-shape and passive-only rule gaps are documented; finding revision keys are not complete across all library object revisions |
 | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | engine + CLI connectivity tests + `check_erc_connectivity_parity` + `schematic_connectivity_surface` parity | target graph shape and future diagnostics beyond the shipped read surfaces remain partial |
 | `specs/IMPORT_SPEC.md` | `check_import_query_determinism` (CI) + `PG-IDENTITY-SUBSTRATE` | feature matrices / round-trip ungated (import frozen) |
-| `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` | spec-governance coverage + decision 019 authority | implementation not started; Phase 1 app shell / board-render fidelity acceptance and screenshot-golden matrix remain future work |
+| `docs/gui/DATUM_GUI_PRODUCT_SPEC.md` | spec-governance coverage + decision 019 authority | SURFACE-S02 schematic candidate now specifies document/pane composition, readiness, shared tooling, authority, accessibility and ordinary-workflow proof dispositions. Bounded native Symbol/Wire/isolated Move evidence exists; complete surface and HUMAN qualification remain open. |
 | `docs/gui/DATUM_GUI_CODE_LEVERAGE_AUDIT.md` | spec-governance coverage + decision 019 authority | audit classifications steer follow-on implementation, but no code migration is complete until each keep/adapt/replace/delete item is tied to commits/tests |
 
 Decision records `000..016` are `doctrine` — most are **enforced** by named
@@ -486,6 +486,8 @@ continue only after the relevant substrate contracts are implemented or after an
 explicit governance decision records why a fidelity slice is exempt.
 
 ### Library Foundation Investigation — Repository-Owned Planning
+
+SURFACE-S02 now has a schematic planning candidate in the existing GUI Product spec, supported by the [complete shell-route preflight](../docs/reviews/workflow-delivery-rollout/surface-route-preflight.json). Existing shell and domain authorities are mapped as consumers; historical terminology and stale authoring summaries remain explicit reconciliation items. Independent candidate review is pending; no implementation successor, approved seed or HUMAN disposition is claimed.
 
 | Evidence | Current | Required outcome |
 | --- | --- | --- |

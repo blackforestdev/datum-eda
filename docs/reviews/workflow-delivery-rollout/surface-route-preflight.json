@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "status": "preflight_coverage_complete_mapping_recommendations_pending",
+  "task": "GUI-SURFACE-SPECS",
+  "step": "SURFACE-S02",
+  "issue_id": "dat-gui-surface-specs-usb",
+  "purpose": "Read-only source/consumer coverage and authority mapping recommendations before selected schematic surface refinement.",
+  "authority_boundary": "Retained planning grant and manager-requested S02 preflight only. This is not independent acceptance, product ratification, runtime qualification, S03 selection, or implementation authorization.",
+  "source_head": "5c30a700b0bd2339b9b1d4e8d769ba9c7f4e02c0",
+  "manifest": {
+    "path": "specs/evidence_traceability_manifest.json",
+    "sha256": "028af65f98e68060389064f036746a4b5ac6b0d0357b127c6751faf3ea7e4b39",
+    "route_id": "prototype-editor-shell-and-panes",
+    "reviewed_digest_observed": "f2da88b9265c0788faac77f795bb0640a7711abeea35f7d14bfc072dc80b7ccd",
+    "membership": {
+      "sources": [
+        "docs/gui/prototypes/board-editor.html",
+        "docs/gui/prototypes/schematic-editor.html",
+        "docs/gui/prototypes/workspace-panes.html"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md"
+      ]
+    },
+    "mutated": false
+  },
+  "coverage": [
+    {
+      "path": "docs/gui/prototypes/board-editor.html",
+      "role": "source",
+      "sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07",
+      "line_count": 333,
+      "read_ranges_inclusive": [
+        [
+          1,
+          333
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/gui/prototypes/schematic-editor.html",
+      "role": "source",
+      "sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0",
+      "line_count": 404,
+      "read_ranges_inclusive": [
+        [
+          1,
+          205
+        ],
+        [
+          206,
+          404
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/gui/prototypes/workspace-panes.html",
+      "role": "source",
+      "sha256": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd",
+      "line_count": 230,
+      "read_ranges_inclusive": [
+        [
+          1,
+          230
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+      "role": "consumer",
+      "sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f",
+      "line_count": 615,
+      "read_ranges_inclusive": [
+        [
+          1,
+          210
+        ],
+        [
+          211,
+          415
+        ],
+        [
+          416,
+          615
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+      "role": "consumer",
+      "sha256": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed",
+      "line_count": 591,
+      "read_ranges_inclusive": [
+        [
+          1,
+          200
+        ],
+        [
+          201,
+          400
+        ],
+        [
+          401,
+          591
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+      "role": "consumer",
+      "sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c",
+      "line_count": 247,
+      "read_ranges_inclusive": [
+        [
+          1,
+          247
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+      "role": "consumer",
+      "sha256": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990",
+      "line_count": 187,
+      "read_ranges_inclusive": [
+        [
+          1,
+          187
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+      "role": "consumer",
+      "sha256": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8",
+      "line_count": 184,
+      "read_ranges_inclusive": [
+        [
+          1,
+          184
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "role": "additional_requested_authority",
+      "sha256": "fa0334035a9cb42425ccb9bd87c6f50fe8dcb59c4bce05c47510d4cc5d2b11c7",
+      "line_count": 377,
+      "read_ranges_inclusive": [
+        [
+          1,
+          200
+        ],
+        [
+          201,
+          377
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    },
+    {
+      "path": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+      "role": "additional_requested_authority",
+      "sha256": "7259766f1f8c0cd377347612120c0df044ccb522a7166bdbe91346b462ad66bc",
+      "line_count": 685,
+      "read_ranges_inclusive": [
+        [
+          1,
+          180
+        ],
+        [
+          181,
+          365
+        ],
+        [
+          366,
+          550
+        ],
+        [
+          551,
+          685
+        ]
+      ],
+      "coverage": "complete_untruncated_text",
+      "matches_head_blob": true
+    }
+  ],
+  "coverage_accounting": {
+    "listed_sources": 3,
+    "listed_consumers": 5,
+    "additional_requested_files": 2,
+    "complete_files": 10,
+    "remaining_listed_files": [],
+    "prior_S01_partial_reviews_used_as_complete_evidence": false,
+    "truncation_recovery": "A broad all-route consumer listing exceeded its output budget; no complete all-route inventory read is claimed. Schematic contract lines366\u2013550 were reread alone with untruncated output. Every range credited above was delivered in full.",
+    "stability": "All ten read files match the pinned HEAD blobs; manifest SHA matches preflight start. No source or consumer edits were observed."
+  },
+  "mapping_recommendations": [
+    {
+      "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "observed_direct_routes": [],
+      "recommended_route": "prototype-editor-shell-and-panes",
+      "recommended_role": "consumer",
+      "rationale": "PM019 explicitly names this file as its governed realization. The existing route owns board/schematic/workspace shell prototypes and already includes PM019, design, conformance and PM021. Adding the realization completes that shell authority chain without assigning a prototype to a second route.",
+      "disposition": "recommendation_only_manager_owns_manifest_transaction"
+    },
+    {
+      "path": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+      "observed_direct_routes": [],
+      "recommended_route": "prototype-editor-shell-and-panes",
+      "recommended_role": "consumer",
+      "rationale": "For S02, this contract supplies the schematic interaction and operation boundary consumed by the schematic-editor prototype and product target. Include it in the shell route as a cross-surface domain consumer; do not turn HTML into authority for electrical semantics, commit classes, or normalized engine operations. Its numbered mechanics and shared-tool contract dependencies remain controlling.",
+      "limitation": "This is an S02 visual/interaction evidence mapping recommendation, not a finding that this route is the sole domain-mechanics evidence chain. Separate electrical, selection and documentation amendments must follow their actual authority and owning routes before any affected normative edit.",
+      "disposition": "recommendation_only_manager_owns_manifest_transaction"
+    }
+  ],
+  "findings": [
+    {
+      "id": "S02-PREFLIGHT-01",
+      "subject": "Shared shell",
+      "evidence": [
+        "PM019 Application Shell / Document And View Model / GUI Edit Authority",
+        "PM021 Decision / Full-Screen Stage",
+        "GUI Design Workspace & Mode Model"
+      ],
+      "finding": "One cohesive window, recursive binary tiling, focus-owned tools and Inspector, shared model projections, view-only layout state, Zoom and Stage are existing direction. No detached-window mechanism may be inferred."
+    },
+    {
+      "id": "S02-PREFLIGHT-02",
+      "subject": "Historical prototype status and terminology",
+      "evidence": [
+        "All three HTML historical study markers",
+        "Publish brief Locked elements6",
+        "GUI Product Document Model",
+        "Schematic Authoring Purpose & Scope"
+      ],
+      "finding": "Historical prototypes and older text say Schematic Sheet; the later Publish brief reserves Sheet for Publish and calls schematic Design continuous. Record the terminology conflict for owning-authority reconciliation; do not silently bless the historical wording or invent replacement hierarchy semantics."
+    },
+    {
+      "id": "S02-PREFLIGHT-03",
+      "subject": "Production visual values and proof",
+      "evidence": [
+        "GUI Conformance \u00a70\u2013\u00a71, \u00a72.10, \u00a74 G9/G10",
+        "GUI Design Locked decisions"
+      ],
+      "finding": "HTML pixel sizes and font stacks are mockup placeholders; token authority governs values. Same-engine committed goldens provide regression evidence; cross-engine visual judgment remains HUMAN. Existing interim/EXPECTED RED descriptions are documentary claims, not fresh gate results."
+    },
+    {
+      "id": "S02-PREFLIGHT-04",
+      "subject": "Selection and feedback amendments",
+      "evidence": [
+        "GUI Design Console contract and S5 selection clauses",
+        "GUI Conformance \u00a72.5 and \u00a78",
+        "Publish brief Locked elements2\u20134"
+      ],
+      "finding": "Current text carries typed same-identity selection, merely-related baseline appearance, output-only focused-pane Console, terminal-only dock, and retained unverified definition-editor obligations. Older cross-probe prose cannot supply new selection or mutation authority."
+    },
+    {
+      "id": "S02-PREFLIGHT-05",
+      "subject": "Authoring contract internal inconsistencies",
+      "evidence": [
+        "Schematic Authoring Current-engine grounding / Confirmed IR facts",
+        "Tool Inventory transform/delete/label/port/set-field Not yet supported",
+        "Omitted create-sheet / Not-Yet-Supported hierarchy / Open Owner Questions4"
+      ],
+      "finding": "Updated journaled symbol/connectivity/hierarchy claims coexist with old no-operation/no-undo/private-writer and no-hierarchy summaries. These are concrete reconciliation candidates. Backend progress, target operation shape and ordinary GUI designer delivery must remain separate; this review did not run runtime proof."
+    },
+    {
+      "id": "S02-PREFLIGHT-06",
+      "subject": "Electrical identity authority",
+      "evidence": [
+        "Schematic Authoring PM053 C01\u2013C03 amendment"
+      ],
+      "finding": "The final PM053 clause controls earlier conflicting identity summaries: stable identities, occurrence-qualified relationships, lawful pending/mismatch and no allocation from reads. Names/member equality cannot establish Bus identity; Bus has no board projection. Do not expand the amendment into unratified C04\u2013C07 or geometry/acceptance claims."
+    },
+    {
+      "id": "S02-PREFLIGHT-07",
+      "subject": "Numerical assertions",
+      "evidence": [
+        "Schematic Authoring run-erc validating checks",
+        "GUI Conformance S5 disposition amendment"
+      ],
+      "finding": "Existing 0% FP/FN and other numerical text are observed assertions, not new supported acceptance budgets. Any proposed threshold refinement needs applicable PM051 derivation and authority; no number was changed or ratified."
+    }
+  ],
+  "remaining_actions": [
+    {
+      "owner": "manager",
+      "action": "Decide direct consumer mapping and register this review artifact/classification in the existing governance transaction; deliberately reconcile changed route digests after reviewing the resulting route. No digest is refreshed by this receipt."
+    },
+    {
+      "owner": "S02 planning lane",
+      "action": "Before normative refinement, load the actual controlling numbered decisions/shared tooling for affected semantics and complete any additional owning-route review triggered by the chosen edit scope. This packet completes only the requested eight-file shell route plus two additional files."
+    },
+    {
+      "owner": "S02 planning lane and visual owner",
+      "action": "Buildable schematic surface refinement and any bounded prototype reconciliation remain outstanding. Send exact HTML changes to Claude; owner visual/product disposition and actual independent review remain later required steps."
+    }
+  ],
+  "separate_blockers": {
+    "provider_export": "Authorized original provider export and applicable internal-use rights remain unresolved in library-foundation-investigation.json. That acquisition question is separate from S02 preflight and does not block this completed reading task.",
+    "unrelated_defect": "dat-aperture-process-basis-ttr9 remains separately tracked; not a new S02 prerequisite."
+  },
+  "validation_boundary": {
+    "builds_run": false,
+    "runtime_tests_run": false,
+    "screenshots_captured": false,
+    "html_modified": false,
+    "normative_specs_modified": false,
+    "governance_metadata_modified": false,
+    "independent_review_claimed": false,
+    "product_acceptance_claimed": false,
+    "new_product_rules": false
+  }
+}
