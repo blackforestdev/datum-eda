@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "kind": "S5A-C04 bounded native gesture Escape cancellation",
+  "source_commit": "964f23370567f99e4a3cc18e0cfc90d16ca81faa",
+  "gui_sha256": "12687ddda014ab2d62b639dc0cb8b86ee45e0f0334c0079a71d118e41792cf0a",
+  "cli_sha256": "6833fba2e588e3db1fe712a237bac42a6e80de27eb2bd28cb7b65272c0a9a56b",
+  "configuration": "Existing X11 production input on KDE Wayland desktop, WGPU Vulkan Intel HDP630/Mesa25.0.7. Environment in raw results; no physical Wayland/HUMAN qualification.",
+  "fixture": "Existing semantic-scope source unchanged; exact preimages/revision in raw receipts.",
+  "question": "Does Escape cancel an actually activated Ctrl rectangle or closed lasso without publishing subtraction, and suppress the later mouse release while preserving complete prior selection?",
+  "prior": "Exact Compound Wire73000000-0000-4000-8000-000000000008 and Wire73000000-0000-4000-8000-000000000009, empty paths, focusWire9, revision67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa.",
+  "rectangle": {
+    "result": "gesture-ctrl-rectangle-acknowledged-result.json",
+    "result_sha256": "6f65625ee5524adb2b0307951849e4cad507058e4cf18b267cdeac264c38d30d",
+    "harness": "native_gesture_ctrl_rectangle_acknowledged.py",
+    "harness_sha256": "59a281fec9af9396b164f9d2d1098ef290fa8f74d811daa89188993b52f03b5b",
+    "input": "Owned prior held modifiers neutralized; fresh CONTROL acknowledged before LeftPressed680,350, motion780,420. Active dotted rectangle captured. Full Escape followed by mouse release preserves exact prior subject/focus/revisionseq3. Subsequent native WireDseq4 and idle Escapeseq5 succeed. Finally releases owned mouse/modifiers, normal owner_drop50/50.",
+    "independent_review": "Actual reserved bounded PASS reviewer01a0e343-3d9c-70f1-899e-5bd239513383, reported by appointed manager01a122e5-f602-7f61-a144-0d1ce7116a77. Exact source/GUI/result/harness pins, native input chronology, visible boundary, complete state/source+journal invariance and cleanup checked. No reviewer build/input/rerun.",
+    "limits": "Actual active Ctrl rectangle cancellation only; no subtraction-result acceptance, async-evaluation cancellation, focus/capture/window/content/pane loss, all N13, full C04/C05/HUMAN/physical Wayland. Active boundary observed; no full appearance qualification."
+  },
+  "lasso": {
+    "result": "gesture-escape-cancellation-qualified-result.json",
+    "result_sha256": "7867b40dc4c93fcbcf7fa5ef733fbd5bc104790292a39924dd0ca64a2fb195df",
+    "harness": "native_gesture_escape_cancellation_qualified.py",
+    "harness_sha256": "275820b603ad346348eb278b7945175d6ba22d154c3dd9d83260224de59b0e45",
+    "input": "Actual CONTROL before press780,350; leftward closed path680,350 ->680,420 ->780,420 ->780,350. Active dotted closed boundary captured. Escape and mouse release preserve exact priorseq3; subsequent WireD4 and idleclear5 work, normal owner_drop65/65.",
+    "independent_review": "Actual reserved PARTIAL PASS: Ctrl closed-lasso cancellation and subsequent/idle actions only. Rectangle in this raw result is mislabeled Ctrl and explicitly NOT credited. No reviewer build/input/rerun.",
+    "limits": "No Ctrl rectangle credit from this trial, subtraction-result or full visual/HUMAN/Wayland/N13 qualification."
+  },
+  "preserved_failed_evidence": [
+    "failed-outside-world-field-* trialstart650 lies outside minworldfield658, so gesture neverbegins. CONTROL prepress/focus intact; Escapeidleclear is not cancellation defect.",
+    "7867 raw result rectangle action wrongly says Ctrl: initial failed trial left ownedCtrl held, launch synthesizedCtrl, Shiftrelease reset runtime modifiers; rectanglepress logged0 and no visibleboundary. At most pending plainpress/drag cancellation inference, no active rectangle proof. Raw result immutable; third exact acknowledged trial corrects this evidence gap.",
+    "Producer captures have partial-frame/black-background limitations; reviewer reported visible boundary/full-window content. Retain original PNGs and assert observed boundary only, no full visual acceptance."
+  ],
+  "nonmutation": "Successful raw preimage source/journal hashes match after each trial and rechecked at packaging. No production source change, source operation or original KiCad file write.",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-gesture-cancel-evidence.tar.xz",
+    "sha256": "49155d240dc7fad409a17405667807b16f58ce64e043bd27509ac005e9885286",
+    "size_bytes": 574144,
+    "raw_files": 29,
+    "files": {
+      "failed-outside-world-field-gesture-escape-cancellation-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "failed-outside-world-field-gesture-escape-cancellation-rectangle-cancelled-before-release.png": "0d1d41ff85d2548110937817ba3a9c075af89e751c0b80f8d11d7c926e0c7d37",
+      "failed-outside-world-field-gesture-escape-cancellation-rectangle-in-progress.png": "aba9fd810c22899a96ae112423607e6df93685efdcee793f47ee3adad3baa657",
+      "failed-outside-world-field-gesture-escape-cancellation-stdout.log": "fe55abd1555673d7e58ffa8e2668d1ac17a434fe1fc9487dd63f39df57957904",
+      "failed-outside-world-field-gesture-escape-cancellation.log": "d21bbe509ef98fe740e5b147cb85a1e03f8161176d25178836eeb8bd4527c75d",
+      "gesture-ctrl-rectangle-acknowledged-fresh-idle-escape.png": "6add0b1155c13832b7925d1caa06ee241f9e9034426f1f74a66cae3d5934bc75",
+      "gesture-ctrl-rectangle-acknowledged-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "gesture-ctrl-rectangle-acknowledged-rectangle-cancelled-after-release.png": "aba9fd810c22899a96ae112423607e6df93685efdcee793f47ee3adad3baa657",
+      "gesture-ctrl-rectangle-acknowledged-rectangle-cancelled-before-release.png": "aba9fd810c22899a96ae112423607e6df93685efdcee793f47ee3adad3baa657",
+      "gesture-ctrl-rectangle-acknowledged-rectangle-in-progress.png": "885eb33425e0f2e3d7e99c713c89f8a548dd0c16bc71c131c3addba666597017",
+      "gesture-ctrl-rectangle-acknowledged-result.json": "6f65625ee5524adb2b0307951849e4cad507058e4cf18b267cdeac264c38d30d",
+      "gesture-ctrl-rectangle-acknowledged-stdout.log": "24e453b076065c61ccb11fc390f73efbc79715d16edb4198697e95fe690041f4",
+      "gesture-ctrl-rectangle-acknowledged-subsequent-wire.png": "e6d17f42edc3ef5d4397e8facf514f9234f52f966af2e6d69a26e98901e2c259",
+      "gesture-ctrl-rectangle-acknowledged.log": "878e9d50d14d5db5398f90ba66a368ddafeab6c9f9d04f08ce3587c13654fbd7",
+      "gesture-escape-cancellation-qualified-fresh-idle-escape.png": "6add0b1155c13832b7925d1caa06ee241f9e9034426f1f74a66cae3d5934bc75",
+      "gesture-escape-cancellation-qualified-lasso-cancelled-after-release.png": "de1ae4b16ef13bbbe1d29600382c0e633a4444036b1e616880b51eef348deeeb",
+      "gesture-escape-cancellation-qualified-lasso-cancelled-before-release.png": "de1ae4b16ef13bbbe1d29600382c0e633a4444036b1e616880b51eef348deeeb",
+      "gesture-escape-cancellation-qualified-lasso-in-progress.png": "f8f6a0699122e94bffbee14d8aca591e2728ba7bdd4145317032dd9e930a33a7",
+      "gesture-escape-cancellation-qualified-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "gesture-escape-cancellation-qualified-rectangle-cancelled-after-release.png": "aba9fd810c22899a96ae112423607e6df93685efdcee793f47ee3adad3baa657",
+      "gesture-escape-cancellation-qualified-rectangle-cancelled-before-release.png": "aba9fd810c22899a96ae112423607e6df93685efdcee793f47ee3adad3baa657",
+      "gesture-escape-cancellation-qualified-rectangle-in-progress.png": "aba9fd810c22899a96ae112423607e6df93685efdcee793f47ee3adad3baa657",
+      "gesture-escape-cancellation-qualified-result.json": "7867b40dc4c93fcbcf7fa5ef733fbd5bc104790292a39924dd0ca64a2fb195df",
+      "gesture-escape-cancellation-qualified-stdout.log": "24e453b076065c61ccb11fc390f73efbc79715d16edb4198697e95fe690041f4",
+      "gesture-escape-cancellation-qualified-subsequent-wire.png": "e6d17f42edc3ef5d4397e8facf514f9234f52f966af2e6d69a26e98901e2c259",
+      "gesture-escape-cancellation-qualified.log": "39b9abe196b93116e7b35de55c2145ab19f32122ec954430f995d0903fb3a5d5",
+      "native_gesture_ctrl_rectangle_acknowledged.py": "59a281fec9af9396b164f9d2d1098ef290fa8f74d811daa89188993b52f03b5b",
+      "native_gesture_escape_cancellation.py": "81f7319937fd1d4caac165d9fdd41e24f17d12f53c03bcb0a885d3e23ffa10f2",
+      "native_gesture_escape_cancellation_qualified.py": "275820b603ad346348eb278b7945175d6ba22d154c3dd9d83260224de59b0e45"
+    }
+  },
+  "boundaries": "C04 stays in progress. C05/C06, remaining N01-N17, physical Wayland/HUMAN and CAM/T04 unpassed; no new dependency, fixture, tolerance, budget, timeout, persistence, prototype or product authority."
+}
